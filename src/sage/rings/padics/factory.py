@@ -841,7 +841,8 @@ Qp = Qp_class("Qp")
 def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
           print_mode=None, ram_name=None, res_name=None, print_pos=None,
        print_sep=None, print_max_ram_terms=None,
-       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None,
+       check=True, implementation='FLINT', prefix=None):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\QQ_p` of degree `n`.
@@ -852,54 +853,57 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       integer, it is the prime power `q` in `\QQ_q`. If ``q`` is a
       :class:`Factorization` object, it is the factorization of the prime power `q`.
       As a tuple it is the pair ``(p, n)``, and as a list it is a single
-      element list ``[(p, n)]``.
+      element list ``[(p, n)]``
 
     - ``prec`` -- integer (default: 20); the precision cap of the field.
       Individual elements keep track of their own precision.  See
-      TYPES and PRECISION below.
+      TYPES and PRECISION below
 
     - ``type`` -- string (default: ``'capped-rel'``); valid types are
       ``'capped-rel'``, ``'floating-point'``, ``'lattice-cap'``
-      and ``'lattice-float'``.  See TYPES and PRECISION below.
+      and ``'lattice-float'``.  See TYPES and PRECISION below
 
     - ``modulus`` -- polynomial (default: ``None``); a polynomial defining an
-      unramified extension of `\QQ_p`.  See MODULUS below.
+      unramified extension of `\QQ_p`.  See MODULUS below
 
     - ``names`` -- string or tuple (``None`` is only allowed when `q=p`); the
-      name of the generator, reducing to a generator of the residue field.
+      name of the generator, reducing to a generator of the residue field
 
     - ``print_mode`` -- string (default: ``None``); valid modes are ``'series'``,
-      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below.
+      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below
 
     - ``ram_name`` -- string (defaults to string representation of `p` if
       ``None``). ``ram_name`` controls how the prime is printed. See PRINTING
-      below.
+      below
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds to
       adding a ``'0'`` to the end of the name).  Controls how elements of
-      the residue field print.
+      the residue field print
 
     - ``print_pos`` -- boolean (default: ``None``); whether to only use positive
-      integers in the representations of elements. See PRINTING below.
+      integers in the representations of elements. See PRINTING below
 
     - ``print_sep`` -- string (default: ``None``); the separator character used
-      in the ``'bars'`` mode. See PRINTING below.
+      in the ``'bars'`` mode. See PRINTING below
 
     - ``print_max_ram_terms`` -- integer (default: ``None``) the maximum number
-      of powers of `p` shown.  See PRINTING below.
+      of powers of `p` shown.  See PRINTING below
 
     - ``print_max_unram_terms`` -- integer (default: ``None``); the maximum
       number of entries shown in a coefficient of `p`.  See PRINTING
-      below.
+      below
 
     - ``print_max_terse_terms`` -- integer (default: ``None``); the maximum
       number of terms in the polynomial representation of an element
-      (using ``'terse'``).  See PRINTING below.
+      (using ``'terse'``).  See PRINTING below
 
     - ``show_prec`` -- boolean (default: ``None``); whether to show the precision
-      for elements.  See PRINTING below.
+      for elements.  See PRINTING below
 
     - ``check`` -- boolean (default: ``True``); whether to check inputs
+
+    - ``prefix`` -- string (default: ``None``); argument to be passed to the
+      residue field
 
     OUTPUT: the corresponding unramified `p`-adic field
 
@@ -1332,6 +1336,17 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: K1 = F.extension(x^2-13,names = 'g')
         sage: K0 is K1
         True
+
+    We check that :issue:`39933` is fixed::
+
+        sage: K = GF(9)
+        sage: R = QqFP(K.cardinality(), prec=2, modulus=K.modulus(), names=K.variable_names(), res_name=K.variable_name(), prefix=K._prefix)
+        sage: R.convert_map_from(K)
+        Lifting morphism:
+          From: Finite Field in z2 of size 3^2
+          To:   3-adic Unramified Extension Field in z2 defined by x^2 + 2*x + 2
+        sage: R(K.zero())
+        0
     """
     if isinstance(q, Element):
         F = Integer(q).factor()
@@ -1392,7 +1407,8 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            unram=True, implementation=implementation,
+                            prefix=prefix)
 
 ######################################################
 # Short constructor names for different types
@@ -2065,7 +2081,8 @@ Zp = Zp_class("Zp")
 def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
           print_mode=None, ram_name=None, res_name=None, print_pos=None,
        print_sep=None, print_max_ram_terms=None,
-       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None,
+       check=True, implementation='FLINT', prefix=None):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\ZZ_p` of degree `n`.
@@ -2074,59 +2091,62 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     - ``q`` -- integer, list or tuple: the prime power in `\QQ_q`.  Or a
       :class:`Factorization` object, single element list ``[(p, n)]`` where ``p`` is
-      a prime and ``n`` a positive integer, or the pair ``(p, n)``.
+      a prime and ``n`` a positive integer, or the pair ``(p, n)``
 
     - ``prec`` -- integer (default: 20); the precision cap of the
       field.  Individual elements keep track of their own precision.
-      See TYPES and PRECISION below.
+      See TYPES and PRECISION below
 
     - ``type`` -- string (default: ``'capped-rel'``); valid types are
       ``'capped-abs'``, ``'capped-rel'``, ``'fixed-mod'``, and
-      ``'floating-point'``.  See TYPES and PRECISION below.
+      ``'floating-point'``.  See TYPES and PRECISION below
 
     - ``modulus`` -- polynomial (default: ``None``); a polynomial defining an
-      unramified extension of `\ZZ_p`.  See MODULUS below.
+      unramified extension of `\ZZ_p`.  See MODULUS below
 
     - ``names`` -- string or tuple (``None`` is only allowed when
       `q=p`); the name of the generator, reducing to a generator of
       the residue field
 
     - ``print_mode`` -- string (default: ``None``); valid modes are ``'series'``,
-      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below.
+      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below
 
     - ``ram_name`` -- string (defaults to string representation of `p` if
       ``None``); ``ram_name`` controls how the prime is printed. See PRINTING
-      below.
+      below
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds
       to adding a ``'0'`` to the end of the name); controls how
-      elements of the residue field print.
+      elements of the residue field print
 
     - ``print_pos`` -- boolean (default: ``None``); whether to only use
       positive integers in the representations of elements. See
-      PRINTING below.
+      PRINTING below
 
     - ``print_sep`` -- string (default: ``None``); the separator
-      character used in the ``'bars'`` mode. See PRINTING below.
+      character used in the ``'bars'`` mode. See PRINTING below
 
     - ``print_max_ram_terms`` -- integer (default: ``None``); the maximum
-      number of powers of `p` shown.  See PRINTING below.
+      number of powers of `p` shown.  See PRINTING below
 
     - ``print_max_unram_terms`` -- integer (default: ``None``) the
       maximum number of entries shown in a coefficient of `p`.  See
-      PRINTING below.
+      PRINTING below
 
     - ``print_max_terse_terms`` -- integer (default: ``None``); the maximum
       number of terms in the polynomial representation of an element
-      (using ``'terse'``).  See PRINTING below.
+      (using ``'terse'``).  See PRINTING below
 
     - ``show_prec`` -- boolean (default: ``None``); whether to show the
-      precision for elements.  See PRINTING below.
+      precision for elements.  See PRINTING below
 
     - ``check`` -- boolean (default: ``True``) whether to check inputs
 
     - ``implementation`` -- string (default: ``'FLINT'``); which
-      implementation to use.  ``'NTL'`` is the other option.
+      implementation to use.  ``'NTL'`` is the other option
+
+    - ``prefix`` -- string (default: ``None``); argument to be passed to the
+      residue field
 
     OUTPUT: the corresponding unramified `p`-adic ring
 
@@ -2625,7 +2645,8 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            unram=True, implementation=implementation,
+                            prefix=prefix)
 
 ######################################################
 # Short constructor names for different types
@@ -3282,7 +3303,8 @@ class pAdicExtension_class(UniqueFactory):
                                   unram_name=None, ram_name=None, print_pos=None,
                                   print_sep=None, print_alphabet=None, print_max_ram_terms=None,
                                   print_max_unram_terms=None, print_max_terse_terms=None,
-                                  show_prec=None, check=True, unram=False, implementation='FLINT'):
+                                  show_prec=None, check=True, unram=False,
+                                  implementation='FLINT', prefix=None):
         r"""
         Create a key from input parameters for
         :data:`pAdicExtension <sage.rings.padics.factory.pAdicExtension>`.
@@ -3307,7 +3329,8 @@ class pAdicExtension_class(UniqueFactory):
               -1,
               -1,
               'bigoh',
-              'NTL'),
+              'NTL',
+              None),
              {'approx_modulus': (1 + O(5^3))*x^4 + O(5^4)*x^3 + O(5^4)*x^2 + O(5^4)*x + 2*5 + 4*5^2 + 4*5^3 + O(5^4)})
 
             sage: A = Qp(3,5)
@@ -3370,6 +3393,8 @@ class pAdicExtension_class(UniqueFactory):
                 names = names[0]
             if not isinstance(names, str):
                 names = str(names)
+            if prefix is not None and not isinstance(prefix, str):
+                prefix = str(prefix)
         else:
             exact_modulus = modulus
             approx_modulus = modulus.change_ring(base)
@@ -3425,7 +3450,7 @@ class pAdicExtension_class(UniqueFactory):
             implementation = "NTL" # for testing - FLINT ramified extensions not implemented yet
         key = (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
                print_sep, tuple(print_alphabet), print_max_ram_terms, print_max_unram_terms,
-               print_max_terse_terms, show_prec, implementation)
+               print_max_terse_terms, show_prec, implementation, prefix)
         return key, {'approx_modulus': approx_modulus}
 
     def create_object(self, version, key, approx_modulus=None, shift_seed=None):
@@ -3440,7 +3465,13 @@ class pAdicExtension_class(UniqueFactory):
 
             sage: R = Zp(5,3)
             sage: S.<x> = R[]
-            sage: pAdicExtension.create_object(version = (6,4,2), key = ('e', R, x^4 - 15, x^4 - 15, ('w', None, None, 'w'), 12, None, 'series', True, '|', (),-1,-1,-1,'NTL'), shift_seed = S(3 + O(5^3)))
+            sage: pAdicExtension.create_object(version=(6,4,2),
+            ....:                              key=('e', R, x^4 - 15, x^4 - 15,
+            ....:                                   ('w', None, None, 'w'), 12,
+            ....:                                   None, 'series', True, '|',
+            ....:                                   (), -1, -1, -1, 'NTL',
+            ....:                                   None),
+            ....:                              shift_seed=S(3 + O(5^3)))
             5-adic Eisenstein Extension Ring in w defined by x^4 - 15
         """
         polytype = key[0]
@@ -3449,7 +3480,8 @@ class pAdicExtension_class(UniqueFactory):
             key.append('NTL')
         if version[0] < 8:
             (polytype, base, premodulus, approx_modulus, names, prec, halt, print_mode, print_pos, print_sep,
-             print_alphabet, print_max_ram_terms, print_max_unram_terms, print_max_terse_terms, implementation) = key
+             print_alphabet, print_max_ram_terms, print_max_unram_terms,
+             print_max_terse_terms, implementation, prefix) = key
             from sage.structure.element import Expression
             if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
@@ -3459,7 +3491,7 @@ class pAdicExtension_class(UniqueFactory):
         else:
             (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
              print_sep, print_alphabet, print_max_ram_terms, print_max_unram_terms,
-             print_max_terse_terms, show_prec, implementation) = key
+             print_max_terse_terms, show_prec, implementation, prefix) = key
             if polytype in ('e', 're'):
                 unif = exact_modulus.base_ring()(base.uniformizer())
                 shift_seed = (-exact_modulus[:exact_modulus.degree()] / unif).change_ring(base)
@@ -3471,9 +3503,22 @@ class pAdicExtension_class(UniqueFactory):
         if polytype == 'p':
             raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
         T = ext_table[polytype, type(base.ground_ring_of_tower()).__base__]
+        if polytype == 'u':
+            return T(exact_modulus, approx_modulus, prec,
+                     {'mode': print_mode, 'pos': print_pos, 'sep': print_sep,
+                      'alphabet': print_alphabet,
+                      'max_ram_terms': print_max_ram_terms,
+                      'max_unram_terms': print_max_unram_terms,
+                      'max_terse_terms': print_max_terse_terms,
+                      'show_prec': show_prec},
+                     shift_seed, names, implementation, prefix)
         return T(exact_modulus, approx_modulus, prec,
-                 {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                  'max_ram_terms': print_max_ram_terms, 'max_unram_terms': print_max_unram_terms, 'max_terse_terms': print_max_terse_terms, 'show_prec': show_prec},
+                 {'mode': print_mode, 'pos': print_pos, 'sep': print_sep,
+                  'alphabet': print_alphabet,
+                  'max_ram_terms': print_max_ram_terms,
+                  'max_unram_terms': print_max_unram_terms,
+                  'max_terse_terms': print_max_terse_terms,
+                  'show_prec': show_prec},
                  shift_seed, names, implementation)
 
 
