@@ -1342,6 +1342,9 @@ cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_
             ind2[0] += 1
     return 1
 
+# ETuples are short-lived in polynomial arithmetic; this reuses the Python
+# object shell while keeping _data allocation/deallocation unchanged.
+@cython.freelist(1000)
 cdef class ETuple:
     """
     Representation of the exponents of a polydict monomial. If
