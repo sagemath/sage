@@ -1476,9 +1476,9 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             sage: O = OctonionAlgebra(GF(3))
             sage: J = JordanAlgebra(O)
             sage: J.some_elements()
-            [[-1  0  0]
-             [ 0 -1  0]
-             [ 0  0 -1],
+            [[0 0 0]
+             [0 0 0]
+             [0 0 0],
              [1 0 0]
              [0 1 0]
              [0 0 1],
