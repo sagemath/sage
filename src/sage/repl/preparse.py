@@ -236,6 +236,8 @@ AUTHORS:
 # ****************************************************************************
 
 import re
+import tokenize
+from io import StringIO
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -1079,6 +1081,127 @@ def parse_ellipsis(code, preparse_step=True):
     return code
 
 
+def _case_pattern_ranges(code):
+    r"""
+    Return ranges occupied by structural pattern matching patterns.
+
+    Sage numeric preparsing must not wrap literals in ``case`` patterns:
+    Python interprets ``case 1`` as a literal pattern, but
+    ``case Integer(1)`` as a class pattern.
+
+    INPUT:
+
+    - ``code`` -- string
+
+    OUTPUT:
+
+    A list of ``(start, stop)`` pairs.  For each ``case pattern:`` clause,
+    the range covers only ``pattern``.  If there is a guard, it stops before
+    the top-level ``if`` so that guard expressions are still preparsed.
+
+    Only ``case`` clauses directly inside a ``match`` suite are recognized;
+    ordinary uses of the soft keyword ``case`` are ignored.
+
+    TESTS::
+
+        sage: from sage.repl.preparse import _case_pattern_ranges
+        sage: code = 'match [1]:\n    case [1]if 1/2 < x: pass'
+        sage: [code[a:b] for a, b in _case_pattern_ranges(code)]
+        [' [1]']
+        sage: _case_pattern_ranges('case = lambda x=1: x + 2')
+        []
+        sage: _case_pattern_ranges('case[1]: int = 2')
+        []
+        sage: code = 'A \\ B\nmatch 1:\n    case 1: pass'
+        sage: [code[a:b] for a, b in _case_pattern_ranges(code)]
+        [' 1']
+        sage: code = 'match 1:\n\f    case 1: pass'
+        sage: [code[a:b] for a, b in _case_pattern_ranges(code)]
+        [' 1']
+        sage: _case_pattern_ranges('case\rλ')
+        []
+    """
+    if 'case' not in code:
+        return []
+
+    # String literals have already been replaced by ``%(L...)s`` markers.
+    # Mask them with same-length strings so token positions still refer to
+    # ``code`` and glued guards such as ``case 'x'if ...`` remain tokenizable.
+    token_code = re.sub(r'%\(L\d+\)s',
+                        lambda m: "''".ljust(len(m.group())), code)
+    # Sage's infix backslash operator is not valid Python syntax and makes
+    # ``tokenize`` stop early.  Substitute another one-character operator,
+    # while preserving explicit line continuations and all source offsets.
+    token_code = re.sub(r'\\(?!\r?\n)', '/', token_code)
+    # ``tokenize`` only advances its row counter at newlines; unlike
+    # ``str.splitlines``, form feeds must remain part of the current line.
+    line_offsets = [0] + [m.end() for m in re.finditer('\n', code)]
+
+    def offset(position):
+        row, column = position
+        return line_offsets[row - 1] + column
+
+    tokens = []
+    try:
+        tokens.extend(tokenize.generate_tokens(StringIO(token_code).readline))
+    except (IndentationError, tokenize.TokenError, UnicodeDecodeError):
+        # Leave malformed or incomplete input for Python to diagnose, while
+        # retaining any complete clauses tokenized before the error.
+        pass
+
+    ranges = []
+    suites = []
+    pending_match_suite = False
+    statement_head = None
+
+    for index, token in enumerate(tokens):
+        if token.type in (tokenize.INDENT, tokenize.DEDENT):
+            if token.type == tokenize.INDENT:
+                suites.append(pending_match_suite)
+            elif suites:
+                suites.pop()
+            pending_match_suite = False
+            statement_head = None
+            continue
+        if token.type in (tokenize.COMMENT, tokenize.NL):
+            continue
+        if token.type == tokenize.NEWLINE:
+            pending_match_suite = statement_head == 'match'
+            statement_head = None
+            continue
+
+        if statement_head is None:
+            pending_match_suite = False
+            statement_head = token.string
+
+            if (token.type == tokenize.NAME and token.string == 'case'
+                    and suites and suites[-1]):
+                pattern_start = offset(token.end)
+                guard_start = None
+                pattern_depth = 0
+                for header_index in range(index + 1, len(tokens)):
+                    header_token = tokens[header_index]
+                    if header_token.type == tokenize.NEWLINE:
+                        break
+                    if header_token.type != tokenize.OP:
+                        if (guard_start is None and pattern_depth == 0
+                                and header_token.type == tokenize.NAME
+                                and header_token.string == 'if'):
+                            guard_start = offset(header_token.start)
+                        continue
+                    if header_token.string in '([{':
+                        pattern_depth += 1
+                    elif header_token.string in ')]}':
+                        pattern_depth -= 1
+                    elif header_token.string == ':' and pattern_depth == 0:
+                        pattern_end = (offset(header_token.start)
+                                       if guard_start is None else guard_start)
+                        ranges.append((pattern_start, pattern_end))
+                        break
+
+    return ranges
+
+
 def extract_numeric_literals(code):
     """
     Pulls out numeric literals and assigns them to global variables.
@@ -1271,6 +1394,8 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'ComplexNumber(0, str().join(map(chr, [53])))'
     """
     literals = {}
+    case_ranges = _case_pattern_ranges(code)
+    case_range_index = 0
     last = 0
     new_code = []
 
@@ -1289,6 +1414,20 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         start, end = m.start(), m.end()
         num = m.group(1)
         postfix = m.groups()[-1].upper()
+
+        while (case_range_index < len(case_ranges)
+               and start >= case_ranges[case_range_index][1]):
+            case_range_index += 1
+        in_case_pattern = (case_range_index < len(case_ranges)
+                           and start >= case_ranges[case_range_index][0])
+
+        if in_case_pattern:
+            python_postfix = postfix.replace('R', '').replace('L', '')
+            if (not python_postfix and len(num) >= 2
+                    and num[1] not in 'oObBxX' and '.' not in num
+                    and 'e' not in num and 'E' not in num):
+                num = re.sub(r'^(?:0_?)+', '', num) or '0'
+            postfix += 'R'
 
         if 'R' in postfix:
             postfix = postfix.replace('L', '')
@@ -1351,7 +1490,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
             literals[num_name] = num_make
 
         new_code.append(code[last:start])
-        if extract:
+        if extract and not in_case_pattern:
             new_code.append(num_name + ' ')
         else:
             new_code.append(num_make)
@@ -1784,6 +1923,91 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         sage: _ = preparse(lots_of_numbers)
         sage: print(preparse("type(100r), type(100)"))
         type(100), type(Integer(100))
+
+    Check numeric literals in structural pattern matching
+    (:issue:`40454`)::
+
+        sage: print(preparse('''match 1:
+        ....:     case 1: print("hit")'''))
+        match Integer(1):
+            case 1: print("hit")
+        sage: exec(preparse('''match 1:
+        ....:     case 1: answer = True'''))
+        sage: answer
+        True
+        sage: print(preparse('''match [1, 2]:
+        ....:     case [1, x] if x == 2: print(x)
+        ....:     case [3, _]: pass'''))
+        match [Integer(1), Integer(2)]:
+            case [1, x] if x == Integer(2): print(x)
+            case [3, _]: pass
+        sage: t = tmp_filename(ext='.sage')
+        sage: with open(t, 'w') as f:
+        ....:     _ = f.write('match 1:\n    case 1: match_answer = 2\n')
+        sage: load(t)
+        sage: match_answer
+        2
+        sage: exec(preparse('''match 1r:
+        ....:     case 1r: raw_answer = True'''))
+        sage: raw_answer
+        True
+        sage: exponential_pattern_answer = True
+        sage: exec(preparse('''match 1:
+        ....:     case 00e3: exponential_pattern_answer = False'''))
+        sage: exponential_pattern_answer
+        True
+        sage: print(preparse('''match 1:
+        ....:     case 0_1: print("hit")'''))
+        match Integer(1):
+            case 1: print("hit")
+        sage: print(preparse('''match 1:
+        ....:     case 1 \\
+        ....:         : print("hit")'''))
+        match Integer(1):
+            case 1         : print("hit")
+
+    ``case`` and ``match`` are soft keywords, so when they are used as
+    ordinary identifiers the following literals are still preparsed.  In
+    particular a conditional expression on a line beginning with ``case`` is
+    not a guard, because the line has no terminating colon::
+
+        sage: print(preparse('''case = 0
+        ....: for i in range(10):
+        ....:     pass'''))
+        case = Integer(0)
+        for i in range(Integer(10)):
+            pass
+        sage: print(preparse('case = 1 if cond else 2'))
+        case = Integer(1) if cond else Integer(2)
+        sage: print(preparse('case = lambda x=1: x + 2'))
+        case = lambda x=Integer(1): x + Integer(2)
+        sage: print(preparse('case[1]: int = 2'))
+        case[Integer(1)]: int = Integer(2)
+
+    A guard's expression is preparsed even when it is written without a
+    space before its bracket, and a conditional expression inside the guard
+    is preparsed in full::
+
+        sage: print(preparse('''match v:
+        ....:     case _ if(x == 2): pass'''))
+        match v:
+            case _ if(x == Integer(2)): pass
+        sage: print(preparse('''match v:
+        ....:     case _ if[1, 2]: pass'''))
+        match v:
+            case _ if[Integer(1), Integer(2)]: pass
+        sage: print(preparse('''match v:
+        ....:     case [1]if 1/2 < x: pass'''))
+        match v:
+            case [1]if Integer(1)/Integer(2) < x: pass
+        sage: print(preparse('''match v:
+        ....:     case 1.if x == 2: pass'''))
+        match v:
+            case 1.if x == Integer(2): pass
+        sage: print(preparse('''match v:
+        ....:     case x if 1 if b else 2: pass'''))
+        match v:
+            case x if Integer(1) if b else Integer(2): pass
     """
     global quote_state
     if reset:
