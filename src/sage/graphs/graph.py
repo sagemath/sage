@@ -2633,7 +2633,7 @@ class Graph(GenericGraph):
         return left == right
 
     @doc_index("Algorithmically hard stuff")
-    def is_perfect(self, certificate=False) -> bool:
+    def is_perfect(self, certificate=False):
         r"""
         Test whether the graph is perfect.
 
