@@ -1104,7 +1104,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         # letting PARI do it, so that we can cache the factorisation.
         return lift.__pari__().Zn_issquare(self._parent.factored_order())
 
-    def sqrt(self, extend=True, all=False):
+    def sqrt(self, extend=True, all=False, algorithm=None):
         r"""
         Return square root or square roots of ``self`` modulo `n`.
 
@@ -1116,6 +1116,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return {all}
           square roots of self, instead of just one
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         ALGORITHM: Calculates the square roots mod `p` for each of
         the primes `p` dividing the order of the ring, then lifts
@@ -1145,6 +1148,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             9
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
+            sage: GF(next_prime(2^40))(4).sqrt(algorithm='tonelli')^2
+            4
 
         Error message as requested in :issue:`38802`::
 
@@ -2899,7 +2904,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         # letting PARI do it, so that we can cache the factorisation.
         return lift.__pari__().Zn_issquare(self._parent.factored_order())
 
-    def sqrt(self, extend=True, all=False):
+    def sqrt(self, extend=True, all=False, algorithm=None):
         r"""
         Return square root or square roots of ``self`` modulo `n`.
 
@@ -2913,6 +2918,9 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         - ``all`` -- boolean (default: ``False``); if
           ``True``, return {all} square roots of self, instead of
           just one.
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         ALGORITHM: Calculates the square roots mod `p` for each of
         the primes `p` dividing the order of the ring, then lifts
@@ -2942,6 +2950,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             9
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
+            sage: GF(107)(4).sqrt(algorithm='tonelli')^2
+            4
 
         ::
 
@@ -3041,7 +3051,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
                     return []
                 raise ValueError("self must be a square")
         # Either it failed but extend was True, or the generic algorithm is better
-        return IntegerMod_abstract.sqrt(self, extend=extend, all=all)
+        return IntegerMod_abstract.sqrt(self, extend=extend, all=all, algorithm=algorithm)
 
     def _balanced_abs(self):
         r"""
