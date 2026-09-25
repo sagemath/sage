@@ -101,6 +101,13 @@ We draw a circle and a curve::
 
     g = circle((1,1), 1) + plot(x**2, (x,0,5))
     sphinx_plot(g)
+    
+We can also plot symbolic maximum and minimum functions::
+
+    sage: plot(max_symbolic(x, 2), (x, 0, 4))
+    Graphics object consisting of 1 graphics primitive
+    sage: plot(min_symbolic(x^2, x+2), (x, -2, 2))
+    Graphics object consisting of 1 graphics primitive
 
 Notice that the aspect ratio of the above plot makes the plot very tall
 because the plot adopts the default aspect ratio of the circle (to make
