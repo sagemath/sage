@@ -4368,17 +4368,19 @@ cdef class Matrix(Matrix1):
 
         Over the Rational Numbers:
 
-        The ``algorithm`` keyword can be set to ``'default'`` or ``'padic'`` to
-        use the `p`-adic algorithm from the IML library (for dense or sparse
-        matrices), or to ``'linbox'`` to use the LinBox library (only for
-        sparse matrices).
-        Kernels are computed by the IML library for dense matrices in
+        The ``algorithm`` keyword can be set to ``'default'`` or ``'flint'`` to
+        use the FLINT library for dense matrices, to ``'padic'`` to use the
+        `p`-adic algorithm from the IML library (for dense or sparse matrices),
+        or to ``'linbox'`` to use the LinBox library (only for sparse
+        matrices).
+        Kernels are computed by the FLINT library for dense matrices in
         :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`,
         and sparse matrices are first converted to dense matrices.
         Kernels are computed by the LinBox library for sparse matrices in
         :meth:`~sage.matrix.matrix_rational_sparse.Matrix_rational_sparse._right_kernel_matrix_linbox`.
-        The 'computed' format of the basis vectors returned by IML are exactly
-        the negatives of the vectors in the 'pivot' format. ::
+        For the example below, the 'computed' format of the basis vectors
+        returned by FLINT is exactly the negative of the vectors in the
+        'pivot' format. ::
 
             sage: A = matrix(QQ, [[1, 0, 1, -3, 1],
             ....:                 [-5, 1, 0, 7, -3],
@@ -5115,8 +5117,8 @@ cdef class Matrix(Matrix1):
         Matrices may have any field as a base ring.  Number fields are
         computed by PARI library code, matrices over `GF(2)` are computed
         by the M4RI library, and matrices over the rationals are computed by
-        the IML library.  For any of these specialized cases, general-purpose
-        code can be called instead with the keyword setting
+        the FLINT library by default.  For any of these specialized cases,
+        general-purpose code can be called instead with the keyword setting
         ``algorithm='generic'``.
 
         Over an arbitrary field, with two basis formats.  Same vector space,
