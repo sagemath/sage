@@ -64,6 +64,8 @@ bi-point-determining graphs we use Corollary (4.6) in
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.libs.gap.libgap import libgap
+from sage.libs.gap.util import GAPError
+from sage.misc.cachefunc import cached_function
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -1667,7 +1669,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             f_N = left.generating_series()[N] * factorial(N)
             return f_N * R(S_n)
 
-        M = libgap.TableOfMarks(S_n)
+        M = _table_of_marks_symmetric_group(n)
         m = libgap.MarksTom(M).Length().sage()
         C_n = [libgap.RepresentativeTom(M, i+1) for i in range(m)]
         l_G = [H.gap()
@@ -3084,6 +3086,43 @@ class RestrictedSpeciesElement(LazyCombinatorialSpeciesElement):
 ######################################################################
 # helpers for functorial composition
 ######################################################################
+
+
+@cached_function
+def _table_of_marks_symmetric_group(n):
+    r"""
+    Return the table of marks of the symmetric group on `n` letters.
+
+    GAP's ``tomlib`` package provides precomputed tables of marks for
+    the symmetric groups in a range of small degrees.  Looking up the
+    precomputed table is dramatically faster than computing it from the
+    group, and it is feasible for degrees where computing from the
+    group is not.  When the table is not in the library -- either
+    because the degree is out of range or because ``tomlib`` is not
+    installed -- we fall back to computing it from the group.
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _table_of_marks_symmetric_group
+        sage: M = _table_of_marks_symmetric_group(4)
+        sage: M.MarksTom().Length().sage()
+        11
+
+    The fallback (for degrees not stored in ``tomlib``) gives the same
+    table::
+
+        sage: from sage.rings.species import _SymmetricGroup
+        sage: _table_of_marks_symmetric_group(3) == libgap.TableOfMarks(_SymmetricGroup(3))
+        True
+    """
+    try:
+        tom = libgap.TableOfMarks("S%s" % n)
+    except GAPError:
+        # ``tomlib`` is not installed at all
+        tom = libgap.fail
+    if tom != libgap.fail:
+        return tom
+    return libgap.TableOfMarks(_SymmetricGroup(n))
 
 
 def weighted_partitions_by_capacity(weights, capacities):
