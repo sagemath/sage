@@ -224,6 +224,7 @@ if [ -z "$ECM_CONFIGURE_USER" ]; then
 fi
 echo
 
+unset OPENMP_CFLAGS
 sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 
 ###############################################################################

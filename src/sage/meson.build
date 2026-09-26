@@ -35,10 +35,16 @@ conf_data.set('NTL_LIBDIR', '')
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
-openmp = dependency('openmp', required: false, disabler: true)
+openmp = dependency('openmp', required: false)
 if openmp.found()
-  conf_data.set('OPENMP_CFLAGS', '-fopenmp')
-  conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+  if host_machine.system() == 'darwin'
+    conf_data.set('OPENMP_CFLAGS', '-Xpreprocessor -fopenmp')
+    conf_data.set('OPENMP_CXXFLAGS', '-Xpreprocessor -fopenmp')
+    conf_data.set('OPENMP_CLIB', '-lomp')
+  else
+    conf_data.set('OPENMP_CFLAGS', '-fopenmp')
+    conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+  endif
 endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
 ecm_bin = find_program(
