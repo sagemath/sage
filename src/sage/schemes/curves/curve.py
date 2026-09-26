@@ -19,7 +19,6 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
-
 - Katie Ahrens (2024): fixed #28336
 """
 # ****************************************************************************
@@ -42,7 +41,7 @@ from sage.schemes.generic.divisor import Divisor_curve
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.qqbar import QQbar
 
 class Curve_generic(AlgebraicScheme_subscheme):
@@ -288,7 +287,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         k=self.base_ring()
 
         #handle the rational case
-        if is_RationalField(k):
+        if isinstance(k, RationalField):
             curve_over_closure = self.change_ring(QQbar)
             if len(curve_over_closure.defining_polynomial().factor()) > 1:
                 if self.is_irreducible():
@@ -408,6 +407,115 @@ class Curve_generic(AlgebraicScheme_subscheme):
             raise TypeError("(=%s) must be a field" % F)
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
+
+    def is_geometrically_irreducible(self) -> bool:
+        r"""
+        Return ``True`` if and only if the curve is geometrically irreducible.
+
+        A curve is geometrically irreducible if it remains irreducible
+        after extending scalars to the algebraic closure of the field
+        over which it is the curve is defined.
+
+        EXAMPLES:
+
+        Some curves are geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            True
+
+        Here is a curve that is geometrically irreducible over a finite field::
+
+            sage: R.<x,y> = GF(5)[]
+            sage: C = Curve(x^2 + 2*x - y + 2)
+            sage: C.is_geometrically_irreducible()
+            True
+
+        Some curves are irreducible but not geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve(x^2 + y^2)
+            sage: C.is_irreducible()
+            True
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Here is a curve that is not geometrically irreducible over a finite field::
+
+            sage: R.<x,y> = GF(5)[]
+            sage: f = x^2 + 2
+            sage: C = Curve(f)
+            sage: C.is_irreducible()
+            True
+            sage: C.is_geometrically_irreducible()
+            False
+            sage: K.<z> = GF(25)
+            sage: g = f.change_ring(K)
+            sage: g.factor()
+            (x + (2*z - 1)) * (x + (-2*z + 1))
+
+        If a curve is not irreducible, it is not geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve((x+1)*(y+1))
+            sage: C.is_irreducible()
+            False
+            sage: C.is_geometrically_irreducible()
+            False
+
+            sage: R.<x,y> = GF(5)[]
+            sage: C = Curve((x^2+1)*(y^3+1))
+            sage: C.is_irreducible()
+            False
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Over an algebraically closed field, geometric irreducibility is
+        the same as irreducibility::
+
+            sage: R.<x,y> = QQbar[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            True
+            sage: C = Curve(x^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Inexact fields such as ``RR`` and ``CC`` are not yet supported::
+
+            sage: R.<x,y> = RR[]
+            sage: C = Curve(x^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Check for geometric irreducibility of curve over Real Field with 53 bits of precision not implemented
+
+            sage: R.<x,y> = CC[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Check for geometric irreducibility of curve over Complex Field with 53 bits of precision not implemented
+        """
+        k = self.base_ring()
+
+        curve_over_closure = None
+
+        # Singular's primary decomposition (used by ``is_irreducible``) does
+        # not support rings such as ``QQbar[x,y]``, so factor directly.
+        if k is QQbar:
+            curve_over_closure = self
+        elif isinstance(k, RationalField):
+            curve_over_closure = self.change_ring(QQbar)
+        elif k.is_finite():
+            closure = GF(k.characteristic()**self.defining_polynomial().degree())
+            curve_over_closure = self.change_ring(closure)
+
+        if curve_over_closure is None:
+            raise NotImplementedError(f"Check for geometric irreducibility of curve over {k} not implemented")
+
+        return len(curve_over_closure.defining_polynomial().factor()) == 1
 
     def is_singular(self, P=None) -> bool:
         r"""
