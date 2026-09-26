@@ -94,8 +94,9 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FfpackTileRecursive, FflasLeft, FflasRight, vector, list as std_list, \
-    RankProfileFromLU, PLUQtoEchelonPermutation, MathPerm2LAPACKPerm
+    FflasUnit, FfpackTileRecursive, FflasLeft, FflasRight, vector, \
+    list as std_list, RankProfileFromLU, PLUQtoEchelonPermutation, \
+    MathPerm2LAPACKPerm, LAPACKPerm2MathPerm, LUdivine
 
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
@@ -404,7 +405,7 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     """
     Compute the minimal polynomial.
     """
-    cdef Py_ssize_t i
+    cdef size_t i
     cdef ModField *F = new ModField(<long>modulus)
     cdef vector[ModField.Element] *minP = new vector[ModField.Element]()
 
@@ -423,7 +424,7 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
     """
     Compute the characteristic  polynomial.
     """
-    cdef Py_ssize_t i
+    cdef size_t i
     cdef ModField *F = new ModField(<long>modulus)
     cdef ModDensePolyRing * R = new ModDensePolyRing(F[0])
     cdef ModDensePoly  P
@@ -949,6 +950,105 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
         return A
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using FFLAS-FFPACK.
+
+        TESTS::
+
+            sage: for p in (7, 1048583):
+            ....:     A = matrix(GF(p), [[0, 1, 2], [1, 2, 3], [1, 2, 3]],
+            ....:                implementation='linbox')
+            ....:     P, L, U = A.LU()
+            ....:     assert A == P * L * U
+            ....:     assert all(L[i, i] == 1 for i in range(3))
+
+        Preserve the lower factor when the echelon form skips columns,
+        including rectangular matrices of deficient rank::
+
+            sage: examples = (
+            ....:     [[0, 0, 1, 2], [0, 0, 2, 4], [0, 0, 3, 6]],
+            ....:     [[0, 1, 2], [0, 2, 4], [0, 0, 1], [0, 0, 2]],
+            ....:     [[0, 1, 0, 2, 3], [0, 2, 0, 4, 6], [0, 0, 0, 1, 2]])
+            sage: for p in (7, 1048583):
+            ....:     for entries, rank in zip(examples, (1, 2, 2)):
+            ....:         A = matrix(GF(p), entries, implementation='linbox')
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
+            ....:         assert A.rank() == rank
+            ....:         assert all(L[i, i] == 1 for i in range(A.nrows()))
+            ....:         assert all(U[i, j] == 0
+            ....:                    for i in range(A.nrows())
+            ....:                    for j in range(min(i, A.ncols())))
+
+        Empty and zero matrices also have a compact decomposition::
+
+            sage: for p in (7, 1048583):
+            ....:     for m, n in ((0, 0), (0, 3), (3, 0), (3, 4)):
+            ....:         A = matrix(GF(p), m, n, implementation='linbox')
+            ....:         perm, M = A.LU(format='compact')
+            ....:         assert perm == tuple(range(m)) and M == A
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
+        """
+        if self.p <= 2 or not is_prime(self.p):
+            return None
+
+        cdef size_t i, j, rank
+        cdef size_t nrows = self._nrows
+        cdef size_t ncols = self._ncols
+        cdef vector[size_t] P
+        cdef vector[size_t] Q
+        cdef vector[size_t] math_perm
+        cdef ModField *F
+        cdef Matrix_modn_dense_template M = self.__copy__()
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), M
+
+        P.resize(nrows)
+        Q.resize(ncols)
+        math_perm.resize(nrows)
+        for i in range(nrows):
+            P[i] = i
+        for j in range(ncols):
+            Q[j] = j
+
+        F = new ModField(<long>self.p)
+        try:
+            sig_on()
+            try:
+                rank = LUdivine(F[0], FflasUnit, FflasTrans,
+                                 nrows, ncols, <ModField.Element *>M._entries,
+                                 ncols, &P[0], &Q[0])
+            finally:
+                sig_off()
+        finally:
+            del F
+
+        # LUdivine already stores L below the diagonal.  Keep those entries
+        # and clear only the gaps before the pivots and the trailing zero
+        # block of the echelon form.  A rank-zero matrix is already zero.
+        if rank:
+            for i in range(rank):
+                sig_check()
+                if Q[i] > i:
+                    memset(M._entries + i * ncols + i, 0,
+                           (Q[i] - i) * sizeof(celement))
+            if rank < ncols:
+                for i in range(rank, nrows):
+                    sig_check()
+                    memset(M._entries + i * ncols + rank, 0,
+                           (ncols - rank) * sizeof(celement))
+
+        for i in range(rank, nrows):
+            sig_check()
+            P[i] = i
+        LAPACKPerm2MathPerm(&math_perm[0], &P[0], nrows)
+
+        self.cache('rank', Integer(rank))
+        return tuple(math_perm[i] for i in range(nrows)), M
 
     cpdef _add_(self, right):
         r"""
@@ -2068,7 +2168,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                     start_row = start_row + 1
                     break
         self.cache('pivots', tuple(pivots))
-        self.cache('pivot_rows', tuple(range(r)))
+        self.cache('pivot_rows', tuple(range(start_row)))
         self.cache('in_echelon_form', True)
 
     def pivots(self) -> tuple:
