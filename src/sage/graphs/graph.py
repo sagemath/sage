@@ -8347,7 +8347,7 @@ class Graph(GenericGraph):
             # Compute a uv min-edge-cut.
             #
             # The graph is split into U,V with u \in U and v\in V.
-            flow, edges, [U, V] = G.edge_cut(u, v, use_edge_labels=True,
+            flow, edges, [U, V] = G.edge_cut(u, v, by_weight=True,
                                              vertices=True, algorithm=algorithm,
                                              solver=solver, verbose=verbose,
                                              integrality_tolerance=integrality_tolerance)
