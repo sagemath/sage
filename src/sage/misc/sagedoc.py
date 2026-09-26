@@ -1628,7 +1628,24 @@ class _sage_doc:
         """
         url = self._base_url + os.path.join(name, "index.html")
         path = os.path.join(self._base_path, name, "index.html")
-        if not os.path.exists(path):
+
+        candidates = [path]
+
+        # for editable builds
+        from sage.config import get_editable_root
+        editable_root = get_editable_root()
+        if editable_root is not None:
+            _, editable_build = editable_root
+            candidates.append(os.path.join(editable_build,"src","doc","index.html"))
+
+        # this loop will first look for the base path
+        # if the base path does not exist, only then
+        # will it look for the editable path
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                path = candidate
+                break
+        else:
             if name == "reference":
                 target = "doc-html-reference-reference_top"
             else:
