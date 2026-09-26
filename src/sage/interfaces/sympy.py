@@ -52,7 +52,7 @@ AUTHORS:
 #   Distributed under GNU GPL3, see www.gnu.org
 ################################################################
 from sage.misc.misc import run_once
-
+from sympy import RootSum as SympyRootSum
 
 # ################         numbers and constants      ##############
 
@@ -1393,3 +1393,63 @@ def sympy_set_to_list(set, vars):
         if isinstance(set, Union):
             return [sympy_set_to_list(iv, vars) for iv in set._args]
     return set
+
+# RootSum conversion
+
+def _sympy_rootsum_to_sage(sympy_root_sum):
+    """
+    Convert SymPy RootSum to Sage RootSum.
+    """
+    from sage.symbolic.rootsum import root_sum
+    from sage.symbolic.ring import SR
+    from sympy import symbols, preorder_traversal
+
+    poly = sympy_root_sum.poly
+    func = sympy_root_sum.fun
+
+    try:
+        sage_poly = poly._sage_()
+    except ValueError as e:
+        if "variable name" in str(e) and "_" in str(e):
+            poly_expr = poly.as_expr()
+            gens = poly.gens
+            if gens:
+                old_var = str(gens[0])
+                new_var = old_var.lstrip('_')
+                if not new_var:
+                    new_var = 'r'
+                new_poly_expr = poly_expr.subs(gens[0], symbols(new_var))
+                sage_poly = new_poly_expr._sage_()
+            else:
+                raise
+        else:
+            raise
+
+    args = func.args
+    expr = func.expr
+
+    try:
+        sage_expr = expr._sage_()
+    except ValueError as e:
+        if "variable name" in str(e) and "_" in str(e):
+            for node in preorder_traversal(expr):
+                if hasattr(node, 'name') and node.name.startswith('_'):
+                    old_name = node.name
+                    new_name = old_name.lstrip('_')
+                    if not new_name:
+                        new_name = 'r'
+                    expr = expr.subs(symbols(old_name), symbols(new_name))
+            sage_expr = expr._sage_()
+        else:
+            raise
+
+    var_name = str(args[0])
+    if var_name.startswith('_'):
+        var_name = var_name.lstrip('_')
+        if not var_name:
+            var_name = 'r'
+
+    def summand(r):
+        return sage_expr.subs({SR(var_name): r})
+
+    return root_sum(sage_poly, summand)
