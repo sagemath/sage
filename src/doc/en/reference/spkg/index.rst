@@ -34,8 +34,8 @@ To install an optional package, you can use Sage's package management system.
 Basic Installation
 ~~~~~~~~~~~~~~~~~~
 
-To install an optional package, use the following command in a system
-terminal (not from the Sage prompt):
+To install an optional package from Sage-the-distribution, use the
+following command in a system terminal (not from the Sage prompt):
 
 .. code-block:: console
 
@@ -49,9 +49,24 @@ For example, to install the optional package `bliss`:
 
 .. note::
 
-    The ``sage -i`` command is part of Sage-the-distribution. It may not
-    work in Conda or other packaged installations. In that case, use the
-    package manager of your installation instead.
+    The ``sage -i`` command is part of Sage-the-distribution and requires
+    a source installation. It may not work if you installed SageMath
+    through Conda, a system package manager, or another distribution.
+
+    If you use a Conda or pip-based installation:
+
+    - Use ``conda install`` or ``pip install`` to install equivalent
+      packages from those ecosystems.
+    - Some Sage data packages are available on PyPI as ``sage-data-*``
+      packages. For example, to install the Cremona elliptic curve
+      database:
+
+      .. code-block:: console
+
+          python -m pip install sage-data-elliptic-curves
+
+    - For instructions specific to your setup, see the
+      `Sage installation guide <https://doc.sagemath.org/html/en/installation/>`_.
 
 Using the Package List
 ~~~~~~~~~~~~~~~~~~~~~~
