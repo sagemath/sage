@@ -58,6 +58,8 @@ from sage.misc.flatten import flatten
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
+from sage.parallel.ncpus import ncpus
+from sage.rings.complex_arb import ComplexBallField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
@@ -69,6 +71,71 @@ from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 
 roots_interval_cache: dict[tuple, Any] = {}
+
+
+@parallel
+def _evaluate_chunk(function, chunk) -> list:
+    r"""
+    Evaluate ``function`` on each of the arguments in ``chunk``.
+
+    Helper for :func:`_parallel_map`; ``chunk`` is a list of pairs
+    ``(index, args)``.
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _evaluate_chunk
+        sage: _evaluate_chunk(lambda a, b: a + b, [(0, (1, 2)), (1, (3, 4))])
+        [3, 7]
+    """
+    return [function(*args) for _, args in chunk]
+
+
+def _parallel_map(function, inputs) -> list:
+    r"""
+    Evaluate a function on a list of inputs, in parallel if possible.
+
+    The output has the format of the iterator of a function decorated with
+    :func:`~sage.parallel.decorate.parallel`: a list of pairs
+    ``((args, kwds), value)``, which here follows the order of ``inputs``.
+
+    The inputs are split into a few chunks for each available CPU (see
+    :func:`~sage.parallel.ncpus.ncpus`) and a process is forked for each
+    chunk, instead of one for each input: the computations for a single
+    input are often much faster than forking a process. Having several
+    chunks per CPU balances the load when some CPUs are slower than others.
+    With only one CPU the values are computed in the current process.
+
+    INPUT:
+
+    - ``function`` -- a function, possibly decorated with ``@parallel``
+    - ``inputs`` -- list of tuples of arguments
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _parallel_map
+        sage: @parallel
+        ....: def f(a, b):
+        ....:     return a + b
+        sage: _parallel_map(f, [(1, 2), (3, 4), (5, 6)])
+        [(((1, 2), {}), 3), (((3, 4), {}), 7), (((5, 6), {}), 11)]
+    """
+    inputs = [tuple(args) for args in inputs]
+    # the undecorated function: a function decorated with @parallel takes a
+    # first argument which is a list as a list of inputs
+    function = getattr(function, 'func', function)
+    n = ncpus()
+    if n <= 1 or len(inputs) <= 1:
+        return [((args, {}), function(*args)) for args in inputs]
+    m = min(4 * n, len(inputs))
+    indexed = list(enumerate(inputs))
+    values = [None] * len(inputs)
+    chunks = [(function, indexed[k::m]) for k in range(m)]
+    for ((_, chunk), _), chunk_values in _evaluate_chunk(chunks):
+        if not isinstance(chunk_values, list):
+            raise ChildProcessError("a forked process did not return its results")
+        for (i, _), value in zip(chunk, chunk_values):
+            values[i] = value
+    return [((args, {}), value) for args, value in zip(inputs, values)]
 
 
 def braid_from_piecewise(strands):
@@ -524,6 +591,116 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
          (0.7651655429449553, -1.015686131039112, -0.25243563967299404),
          (1.0, -1.026166099551513, -0.3276894025360433)]
     """
+    return _followstrand(f, factors, x0, x1, y0a, prec, {})
+
+
+def _segment_polynomial(f, x0, x1, prec, cache):
+    r"""
+    Return `f((1-t) x_0 + t x_1, y)` with interval coefficients.
+
+    The result is stored in ``cache``, so that the substitution is done
+    once per polynomial and segment, instead of once per strand.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+    - ``x0``, ``x1`` -- complex numbers, the ends of the segment
+    - ``prec`` -- the precision of the intervals
+    - ``cache`` -- dictionary used to store the results
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _segment_polynomial
+        sage: R.<x, y> = QQ[]
+        sage: cache = {}
+        sage: _segment_polynomial(x^2 + y, 1, 1 + I, 53, cache)
+        -x^2 + 2*I*x + y + 1
+        sage: _segment_polynomial(x^2 + y, 1, 1 + I, 53, cache) is cache[(x^2 + y, 53)]
+        True
+    """
+    key = (f, prec)
+    try:
+        return cache[key]
+    except KeyError:
+        pass
+    CIF = ComplexIntervalField(prec)
+    G = f.change_ring(QQbar).change_ring(CIF)
+    x = G.parent().gen(0)
+    g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
+    cache[key] = g
+    return g
+
+
+def _segment_coefficients(f, x0, x1, prec, degree, cache) -> list:
+    r"""
+    Return the interval coefficients of `f((1-t) x_0 + t x_1, y)` in the
+    format expected by ``sirocco``.
+
+    The list contains, for each monomial `t^{d-i} y^i` with `d \leq`
+    ``degree`` (ordered by `d` and then by `i`), the endpoints of the real
+    and imaginary parts of its coefficient. Results are stored in ``cache``.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+    - ``x0``, ``x1`` -- complex numbers, the ends of the segment
+    - ``prec`` -- the precision of the intervals
+    - ``degree`` -- the bound for the total degree of the monomials
+    - ``cache`` -- dictionary used to store the results
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _segment_coefficients
+        sage: R.<x, y> = QQ[]
+        sage: cache = {}
+        sage: c = _segment_coefficients(x + 2*y, 0, 1, 53, 1, cache)
+        sage: len(c), c[4:6], c[8:10]
+        (12, [1.00000000000000, 1.00000000000000], [2.00000000000000, 2.00000000000000])
+        sage: _segment_coefficients(x + 2*y, 0, 1, 53, 1, cache) is c
+        True
+    """
+    key = (f, prec, degree)
+    try:
+        return cache[key]
+    except KeyError:
+        pass
+    CIF = ComplexIntervalField(prec)
+    g = _segment_polynomial(f, x0, x1, prec, cache)
+    x, y = g.parent().gens()
+    coefs = []
+    for d in range(degree + 1):
+        for i in range(d + 1):
+            c = CIF(g.coefficient({x: d - i, y: i}))
+            coefs += list(c.real().endpoints())
+            coefs += list(c.imag().endpoints())
+    cache[key] = coefs
+    return coefs
+
+
+def _followstrand(f, factors, x0, x1, y0a, prec, cache) -> list[tuple]:
+    r"""
+    Implementation of :func:`followstrand`.
+
+    The additional argument ``cache`` is a dictionary where the
+    coefficients of the polynomials restricted to the segment are stored;
+    it can be shared by all the strands of a segment.
+
+    TESTS::
+
+        sage: # needs sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import _followstrand, followstrand
+        sage: R.<x, y> = QQ[]
+        sage: f = x^2 + y^3
+        sage: x0, x1 = CC(1, 0), CC(1, 0.5)
+        sage: fup, fdown = f.subs({y: y - 1/10}), f.subs({y: y + 1/10})
+        sage: cache = {}
+        sage: a = _followstrand(f, [fup, fdown], x0, x1, -1.0, 53, cache)
+        sage: a == followstrand(f, [fup, fdown], x0, x1, -1.0)
+        True
+        sage: b = _followstrand(fup, [f, fdown], x0, x1, -0.9, 53, cache)
+        sage: b == followstrand(fup, [f, fdown], x0, x1, -0.9)
+        True
+    """
     if f.degree() == 1:
         CF = ComplexField(prec)
         g = f.change_ring(CF)
@@ -532,20 +709,9 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
         y1 = CF[y](g.subs({x: x1})).roots()[0][0]
         res = [(0.0, y0.real(), y0.imag()), (1.0, y1.real(), y1.imag())]
         return res
-    CIF = ComplexIntervalField(prec)
     CC = ComplexField(prec)
-    G = f.change_ring(QQbar).change_ring(CIF)
-    x, y = G.parent().gens()
-    g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
-    coefs = []
-    deg = g.total_degree()
-    for d in range(deg + 1):
-        for i in range(d + 1):
-            c = CIF(g.coefficient({x: d - i, y: i}))
-            cr = c.real()
-            ci = c.imag()
-            coefs += list(cr.endpoints())
-            coefs += list(ci.endpoints())
+    deg = _segment_polynomial(f, x0, x1, prec, cache).total_degree()
+    coefs = _segment_coefficients(f, x0, x1, prec, deg, cache)
     yr = CC(y0a).real()
     yi = CC(y0a).imag()
     coefsfactors = []
@@ -553,15 +719,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
     for fc in factors:
         degfc = fc.degree()
         degsfactors.append(degfc)
-        G = fc.change_ring(QQbar).change_ring(CIF)
-        g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
-        for d in range(degfc + 1):
-            for i in range(d + 1):
-                c = CIF(g.coefficient({x: d - i, y: i}))
-                cr = c.real()
-                ci = c.imag()
-                coefsfactors += list(cr.endpoints())
-                coefsfactors += list(ci.endpoints())
+        coefsfactors += _segment_coefficients(fc, x0, x1, prec, degfc, cache)
     from sage.libs.sirocco import (contpath, contpath_mp,
                                    contpath_comps, contpath_mp_comps)
     try:
@@ -576,7 +734,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
             points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
-        return followstrand(f, factors, x0, x1, y0a, 2 * prec)
+        return _followstrand(f, factors, x0, x1, y0a, 2 * prec, cache)
 
 
 def newton(f, x0, i0):
@@ -611,6 +769,7 @@ def newton(f, x0, i0):
     return x0 - f(x0) / f.derivative()(i0)
 
 
+@cached_function
 def fieldI(field: NumberField) -> NumberField:
     r"""
     Return the (either double or trivial) extension of a number field which contains ``I``.
@@ -675,6 +834,107 @@ def fieldI(field: NumberField) -> NumberField:
             return F1
 
 
+@cached_function
+def _coefficients_in_y(f) -> tuple:
+    r"""
+    Return the coefficients of ``f`` as a polynomial in the second variable.
+
+    They are univariate polynomials in the first variable, so that ``f`` can
+    be restricted to many vertical lines without a multivariate substitution
+    for each one.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _coefficients_in_y
+        sage: R.<x, y> = QQ[]
+        sage: _coefficients_in_y(x^2*y^2 + 3*y - x)
+        (-x, 3, x^2)
+    """
+    y = f.parent().gen(1)
+    return tuple(f.polynomial(y).list())
+
+
+def _restriction(f, x0):
+    r"""
+    Return the univariate polynomial ``f(x0, y)``.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables over a field `F`
+    - ``x0`` -- an element of `F`
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _restriction, fieldI
+        sage: R.<x, y> = fieldI(QQ)[]
+        sage: f = x^2*y^2 + 3*y - x
+        sage: _restriction(f, 2)
+        4*y^2 + 3*y - 2
+        sage: _restriction(f, 2) == f.subs({x: 2}).polynomial(y)
+        True
+    """
+    F = f.base_ring()
+    x0 = F(x0)
+    return F[f.parent().gen(1)]([c(x0) for c in _coefficients_in_y(f)])
+
+
+def _isolated_roots(pol, prec=53) -> list:
+    r"""
+    Return disjoint complex balls isolating the roots of ``pol``.
+
+    Each ball contains exactly one root of ``pol`` and the balls are pairwise
+    disjoint. The roots are computed with certified ball arithmetic, which
+    avoids exact computations in `\QQbar`; the working precision is doubled
+    until all the roots are isolated.
+
+    INPUT:
+
+    - ``pol`` -- a nonconstant univariate polynomial with coefficients in
+      `\QQ` or in a number field with a fixed embedding in `\QQbar`
+
+    - ``prec`` -- integer (default: 53); the initial precision in bits
+
+    OUTPUT: list of complex balls, one for each distinct root of ``pol``
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _isolated_roots, fieldI
+        sage: K = fieldI(QQ)
+        sage: t = polygen(K)
+        sage: rts = _isolated_roots(t^3 - 1); len(rts)
+        3
+        sage: CBF100 = ComplexBallField(100)
+        sage: all(sum(b.overlaps(CBF100(r)) for b in rts) == 1
+        ....:     for r in (t^3 - 1).roots(QQbar, multiplicities=False))
+        True
+
+    Multiple roots are returned once::
+
+        sage: len(_isolated_roots((t - 1)^2 * (t + K.gen())))
+        2
+    """
+    squarefree = False
+    while True:
+        try:
+            return pol.roots(ComplexBallField(2 * prec), multiplicities=False)
+        except ValueError:
+            # The roots are not isolated at this precision. Multiple roots
+            # can never be isolated, so the squarefree part is used from now
+            # on; it is not computed beforehand, since the polynomials used in
+            # this module are usually squarefree.
+            if not squarefree:
+                d = pol.gcd(pol.derivative())
+                if d.degree() > 0:
+                    pol = pol // d
+                squarefree = True
+            else:
+                prec *= 2
+
+
 @parallel
 def roots_interval(f, x0) -> dict:
     """
@@ -720,31 +980,81 @@ def roots_interval(f, x0) -> dict:
           -0.933012701892219 + 1.29903810567666*I,
           -0.0669872981077806 + 0.433012701892219*I)]
     """
-    F1 = f.base_ring()
-    x, y = f.parent().gens()
-    fx = F1[y](f.subs({x: F1(x0)}))
-    roots = fx.roots(QQbar, multiplicities=False)
-    result = {}
+    fx = _restriction(f, x0)
+    # Certified isolating balls replace the exact roots in QQbar: proving
+    # the interval Newton condition at an exact algebraic root forces QQbar
+    # to decide that f(root) is exactly zero, which is very expensive.
+    roots = _isolated_roots(fx)
+    n = len(roots)
+    dfx = fx.derivative()
+    # Data that only depends on the precision is computed once for all the
+    # roots: rounded centers, the derivative with interval coefficients and
+    # balls whose accuracy (twice the precision) is enough to round to it.
+    centers = {}
+    derivatives = {}
+    refined = {53: roots}
+
+    def data(prec):
+        if prec not in centers:
+            CF = ComplexField(prec)
+            centers[prec] = [CF(r) for r in roots]
+            derivatives[prec] = dfx.change_ring(ComplexIntervalField(prec))
+        return centers[prec], derivatives[prec]
+
+    def refined_roots(prec):
+        # The ball of ``finer`` that contains the same root as a ball r of
+        # ``roots`` overlaps r; it is identified as the only ball of ``finer``
+        # overlapping r. Another ball can only overlap r if its root is close
+        # to r, so smaller balls are computed until the matching is unique.
+        if prec not in refined:
+            p = prec
+            while True:
+                finer = _isolated_roots(fx, p)
+                matches = [[b for b in finer if b.overlaps(r)] for r in roots]
+                if all(len(m) == 1 for m in matches):
+                    break
+                p *= 2
+            refined[prec] = [m[0] for m in matches]
+        return refined[prec]
+
+    boxes = []
+    precs = []
     for i, r in enumerate(roots):
         prec = 53
-        IF = ComplexIntervalField(prec)
-        CF = ComplexField(prec)
         divisor = 4
-        diam = min((CF(r) - CF(r0)).abs()
-                   for r0 in roots[:i] + roots[i + 1:]) / divisor
-        envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        while newton(fx, r, r + envelop) not in r + envelop:
-            prec += 53
+        while True:
             IF = ComplexIntervalField(prec)
-            CF = ComplexField(prec)
-            divisor *= 2
-            diam = min((CF(r) - CF(r0)).abs()
-                       for r0 in roots[:i] + roots[i + 1:]) / divisor
+            c, dfxI = data(prec)
+            diam = min((c[i] - c[j]).abs() for j in range(n) if j != i) / divisor
             envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        qapr = QQ(CF(r).real()) + QQbar.gen() * QQ(CF(r).imag())
-        if qapr not in r + envelop:
+            box = IF(r) + envelop
+            # The ball r contains a root of fx and it is contained in box. If
+            # the derivative does not vanish on the (convex) box, this root is
+            # the only one in box. This is the condition checked by the
+            # interval Newton operator at an exact root.
+            if not dfxI(box).contains_zero():
+                break
+            prec += 53
+            divisor *= 2
+        boxes.append(box)
+        precs.append(prec)
+    # The rational approximations of the roots are taken at a common
+    # precision, from balls whose accuracy is well beyond it, so that they
+    # are the roundings of the exact roots. Hence roots with the same real
+    # part have approximations with the same real part: the strands are read
+    # in the order of the exact roots (by real part, then imaginary part),
+    # which is the order used by :func:`strand_components`. A part whose ball
+    # contains zero is set to zero.
+    prec = max(precs)
+    RFp = RealField(prec)
+    I0 = QQbar.gen()
+    result = {}
+    for rp, box in zip(refined_roots(prec), boxes):
+        qr, qi = (QQ.zero() if part.contains_zero() else QQ(RFp(part.mid()))
+                  for part in (rp.real(), rp.imag()))
+        if box.parent()(qr, qi) not in box:
             raise ValueError("could not approximate roots with exact values")
-        result[qapr] = r + envelop
+        result[qr + I0 * qi] = box
     return result
 
 
@@ -799,17 +1109,20 @@ def populate_roots_interval_cache(inputs) -> None:
         sage: (f, 3) in roots_interval_cache
         True
         sage: roots_interval_cache[(f, 3)]
-        {-1.255469441943070? - 0.9121519421827974?*I: -2.? - 1.?*I,
-         -1.255469441943070? + 0.9121519421827974?*I: -2.? + 1.?*I,
-         0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
-         0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
-         14421467174121563/9293107134194871: 2.? + 0.?*I}
+        {-1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? - 1.?*I,
+         1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? + 1.?*I,
+         -1753706701770506814078961/1188234435371560487870233*I + 1134722748456088598770855/2366240566292053371152767: 1.? - 2.?*I,
+         1753706701770506814078961/1188234435371560487870233*I + 1134722748456088598770855/2366240566292053371152767: 1.? + 2.?*I,
+         585192171259718720724302/377094332771307119686215: 2.? + 0.?*I}
     """
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
+    # computed before forking, so that the processes inherit them
+    for f in {inp[0] for inp in tocompute}:
+        _coefficients_in_y(f)
     problem_par = True
     while problem_par:  # hack to deal with random fails in parallelization
         try:
-            result = roots_interval(tocompute)
+            result = _parallel_map(roots_interval, tocompute)
             for r in result:
                 roots_interval_cache[r[0][0]] = r[1]
             problem_par = False
@@ -867,37 +1180,53 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
         sage: B = braid_in_segment(glist, p1b, p2b); B              # needs sirocco
-        s5*s3^-1
+        s3*s5*s3^-1
+
+    The strands are read in the order of the exact roots, by real part
+    and then by imaginary part. Over ``p1b`` some roots have the same real
+    part; the first factor ``s3`` puts two of them in this order::
+
+        sage: # needs sage.rings.real_mpfr sage.symbolic
+        sage: gx = g.subs({g.parent().gen(0): Kw1(p1b)}).univariate_polynomial()
+        sage: rts = gx.roots(QQbar, multiplicities=False)
+        sage: any(a.real() == b.real() for a, b in combinations(rts, 2))
+        True
     """
     precision1 = precision.copy()
     g = prod(glist)
     F1 = fieldI(g.base_ring())
-    g = g.change_ring(F1)
-    glist1 = [f.change_ring(F1) for f in glist]
-    x, y = g.parent().gens()
+    if g.base_ring() is F1:
+        # nothing to convert; change_ring would rebuild every polynomial
+        glist1 = list(glist)
+    else:
+        g = g.change_ring(F1)
+        glist1 = [f.change_ring(F1) for f in glist]
     intervals = {}
     if not precision1:
         precision1 = {f: 53 for f in glist1}
-    y0s = []
+    x0F = F1(x0)
     for f in glist1:
-        if f.variables() == (y,):
-            f0 = F1[y](f)
-        else:
-            f0 = F1[y](f.subs({x: F1(x0)}))
-        y0sf = f0.roots(QQbar, multiplicities=False)
-        y0s += list(y0sf)
+        f0 = _restriction(f, x0F)
+        # certified isolating balls for the roots; they play the role of
+        # the exact roots in QQbar, which are much more expensive
+        y0sf = _isolated_roots(f0, precision1[f])
         while True:
             CIFp = ComplexIntervalField(precision1[f])
-            intervals[f] = [r.interval(CIFp) for r in y0sf]
+            intervals[f] = [CIFp(r) for r in y0sf]
             if not any(a.overlaps(b) for a, b in
                        combinations(intervals[f], 2)):
                 break
             precision1[f] *= 2
+            y0sf = _isolated_roots(f0, precision1[f])
     strands = []
+    # the restrictions of the polynomials to the segment are shared
+    # by all the strands
+    segment_cache = {}
     for f in glist:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in glist if p != f],
-                               x0, x1, i.center(), precision1[f])
+            aux = _followstrand(f, [p for p in glist if p != f],
+                                x0, x1, i.center(), precision1[f],
+                                segment_cache)
             strands.append(aux)
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b]
                       for b in strands]
@@ -1369,11 +1698,19 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     vertices = list(set(flatten(segs)))
     tocacheverts = tuple([(gF, v) for v in vertices])
     populate_roots_interval_cache(tocacheverts)
+    # The groups used by braid_from_piecewise and the coefficients of the
+    # polynomials are computed here, so that forked processes inherit them
+    # instead of computing them again.
+    B = BraidGroup(d)
+    SymmetricGroup(d)
+    for g0 in glistF:
+        _coefficients_in_y(g0)
     end_braid_computation = False
     while not end_braid_computation:
         try:
-            braidscomputed = braid_in_segment([(glistF, seg[0], seg[1])
-                                               for seg in segs])
+            braidscomputed = _parallel_map(braid_in_segment,
+                                           [(glistF, seg[0], seg[1])
+                                            for seg in segs])
             segsbraids = {}
             for braidcomputed in braidscomputed:
                 seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
@@ -1385,7 +1722,6 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
             end_braid_computation = True
         except ChildProcessError:  # hack to deal with random fails first time
             pass
-    B = BraidGroup(d)
     result = []
     for path in geombasis:
         braidpath = B.one()
@@ -1445,6 +1781,16 @@ def conjugate_positive_form(braid) -> list[list]:
         sage: s1 = B.gen(1)^3
         sage: conjugate_positive_form(s1)
         [[s1^3, []]]
+
+    A braid given by a word `u v u^{-1}` is decomposed through `v`::
+
+        sage: # needs libbraiding
+        sage: B = BraidGroup(4)
+        sage: u = B([2, -1, 3, 3])
+        sage: t = u * B([1, 1, 3]) / u
+        sage: L = conjugate_positive_form(t)
+        sage: t == prod(prod(b) * a / prod(b) for a, b in L)
+        True
     """
     from sage.features.libbraiding import Libbraiding
     Libbraiding().require()
@@ -1452,6 +1798,24 @@ def conjugate_positive_form(braid) -> list[list]:
 
     B = braid.parent()
     d = B.strands()
+    # A braid given by a word u * v * u^-1, as the braids of a braid
+    # monodromy, is decomposed through the core v: the costly computations
+    # below depend on the length of the word, and v is often much shorter.
+    w = braid.Tietze()
+    n = len(w)
+    k = 0
+    while 2 * k + 1 < n and w[k] == -w[n - 1 - k]:
+        k += 1
+    if k:
+        u = B(w[:k])
+        shorts = []
+        for alpha, gammas in conjugate_positive_form(B(w[k:n - k])):
+            # conjugate by u * gamma, written as in the general case below
+            A1 = rightnormalform(u * prod(gammas, B.one()))
+            if A1[-1][0] % 2:
+                alpha = B([d - i for i in alpha.Tietze()])
+            shorts.append([alpha, [B(a0) for a0 in A1[:-1]]])
+        return shorts
     rnf = rightnormalform(braid)
     ex = rnf[-1][0]
     if ex >= 0:
@@ -1476,8 +1840,15 @@ def conjugate_positive_form(braid) -> list[list]:
         if sg0 == B.one():
             res0 = [B(a), []]
         else:
-            bra = sg0 * B(a) / sg0
-            br1, sg = bra.super_summit_set_element()
+            if len(blocks) == 1:
+                # The only block is ``braid1`` itself, hence ``bra`` below
+                # would be ``braid``, whose super summit set element and
+                # conjugating braid have been computed above; this is the
+                # usual case and it is costly for long braids.
+                br1, sg = braid1, sg0
+            else:
+                bra = sg0 * B(a) / sg0
+                br1, sg = bra.super_summit_set_element()
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a0) for a0 in A1[:-1]]
@@ -1547,19 +1918,84 @@ def braid2rels(L) -> list:
     U = [tuple(sign(k1) * (abs(k1) + k) for k1 in br.Tietze()) for br in U0]
     pasos = [B.one()]
     pasos.extend(reversed(L1))
-    for C in pasos:
-        U = [(F(a) * C.inverse()).Tietze() for a in U]
-        ga = F / U
-        P = ga.gap().PresentationFpGroup()
-        dic = P.TzOptions().sage()
-        dic['protected'] = d
-        dic['printLevel'] = 0
-        P.SetTzOptions(dic)
-        P.TzGoGo()
-        P.TzGoGo()
-        gb = P.FpGroupPresentation().sage()
-        U = [rel.Tietze() for rel in gb.relations()]
-    return U
+    # For each braid C in pasos, the relations are transformed by the action
+    # of C^-1 and the presentation is simplified; this is done in GAP, without
+    # converting the intermediate presentations to Sage.
+    Fg = F.gap()
+    rels = [F(a).gap() for a in U]
+    steps = [list(C.inverse().Tietze()) for C in pasos]
+    result = _gap_braid2rels_loop()(Fg, rels, steps, d)
+    return [tuple(r.sage()) for r in result]
+
+
+_braid2rels_loop = None
+
+
+def _gap_braid2rels_loop():
+    r"""
+    Return the GAP function doing the main loop of :func:`braid2rels`.
+
+    The function takes a free group `F` of rank `d`, a list of words in `F`,
+    a list of braids given by Tietze words and the integer `d`. For each
+    braid, it applies its right action (the same as
+    :class:`~sage.groups.braid.MappingClassGroupAction`) to the words and
+    replaces them by the relators of the presentation obtained after
+    applying ``TzGoGo`` twice, with the generators protected. It returns the
+    final relators as Tietze words.
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _gap_braid2rels_loop
+        sage: F = FreeGroup(3); B = BraidGroup(3)
+        sage: U = [(1, 2, -1, -2, 3)]
+        sage: C = B([1, -2])
+        sage: new = _gap_braid2rels_loop()(F.gap(), [F(u).gap() for u in U],
+        ....:                              [list(C.Tietze())], 3)
+
+    The same computation in Sage::
+
+        sage: G = F / [(F(u) * C).Tietze() for u in U]
+        sage: P = G.gap().PresentationFpGroup()
+        sage: dic = P.TzOptions().sage()
+        sage: dic['protected'] = 3; dic['printLevel'] = 0
+        sage: P.SetTzOptions(dic); P.TzGoGo(); P.TzGoGo()
+        sage: old = [list(r.Tietze()) for r in P.FpGroupPresentation().sage().relations()]
+        sage: new.sage() == old
+        True
+    """
+    global _braid2rels_loop
+    if _braid2rels_loop is None:
+        from sage.libs.gap.libgap import libgap
+        _braid2rels_loop = libgap.eval(r"""
+        function(F, rels, steps, d)
+            local gens, imgs, step, j, i, G, P;
+            gens := GeneratorsOfGroup(F);
+            for step in steps do
+                for j in step do
+                    imgs := ShallowCopy(gens);
+                    if j > 0 then
+                        imgs[j] := gens[j] * gens[j + 1] * gens[j]^-1;
+                        imgs[j + 1] := gens[j];
+                    else
+                        i := -j;
+                        imgs[i] := gens[i + 1];
+                        imgs[i + 1] := gens[i + 1]^-1 * gens[i] * gens[i + 1];
+                    fi;
+                    rels := List(rels, w -> MappedWord(w, gens, imgs));
+                od;
+                G := F / rels;
+                P := PresentationFpGroup(G);
+                TzOptions(P).protected := d;
+                TzOptions(P).printLevel := 0;
+                TzGoGo(P);
+                TzGoGo(P);
+                G := FpGroupPresentation(P);
+                rels := List(RelatorsOfFpGroup(G),
+                             r -> MappedWord(r, FreeGeneratorsOfFpGroup(G), gens));
+            od;
+            return List(rels, r -> TietzeWordAbstractWord(r, gens));
+        end""")
+    return _braid2rels_loop
 
 
 @parallel
@@ -1653,14 +2089,16 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     if d == 1:
         return Fv / [(1, j, -1, -j) for j in range(2, d + v + 1)]
     bmh = [br for j, br in enumerate(bm) if j not in vertical0]
+    # _parallel_map keeps the order of the inputs, so that the presentation
+    # does not depend on the order in which parallel computations finish
     if not puiseux:
-        relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
+        relations_h = _parallel_map(relation, [(x, b) for x in F.gens() for b in bmh])
         rel_h = [r[1] for r in relations_h]
     else:
-        conjugate_desc = conjugate_positive_form_p(bmh)
+        conjugate_desc = _parallel_map(conjugate_positive_form_p, [(b,) for b in bmh])
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
-        relations_h = braid2rels_p(trenzas_desc_1)
+        relations_h = _parallel_map(braid2rels_p, [(L,) for L in trenzas_desc_1])
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
@@ -1916,7 +2354,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: G.sorted_presentation()
         Finitely presented group
         < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
-                           x3^-1*x1^-1*x0^-1*x3*x0*x1, x2^-1*x0^-1*x2*x0 >
+                           x3^-1*x1^-1*x3*x0*x1*x0^-1, x2^-1*x0^-1*x2*x0 >
         sage: dic
         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
         sage: fundamental_group_arrangement(L, vertical=True)
