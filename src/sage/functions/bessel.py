@@ -21,6 +21,9 @@ The main objects which are exported from this module are:
  * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- the Spherical Bessel J function
  * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- the Spherical Hankel function of the first kind
  * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- the Spherical Hankel function of the second kind
+ * :func:`spherical_bessel_J_sequence` -- certified spherical Bessel J values and derivatives
+ * :func:`spherical_bessel_Y_sequence` -- certified spherical Bessel Y values and derivatives
+ * :func:`spherical_hankel1_sequence` -- certified spherical Hankel values and derivatives
 
 -  Bessel functions, first defined by the Swiss mathematician
    Daniel Bernoulli and named after Friedrich Bessel, are canonical
@@ -179,6 +182,8 @@ AUTHORS:
     - Some of the documentation here has been adapted from David Joyner's
       original documentation of Sage's special functions module (2006).
 
+    - Tong Su (2026): certified spherical Bessel and Hankel sequences
+
 REFERENCES:
 
 - [AS-Bessel]_
@@ -199,6 +204,7 @@ REFERENCES:
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Benjamin Jones <benjaminfjones@gmail.com>
+#       Copyright (C) 2026 Tong Su <OutisNemosseus@users.noreply.github.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -218,6 +224,7 @@ from sage.functions.gamma import gamma
 from sage.functions.hyperbolic import sinh, cosh
 from sage.functions.trig import sin, cos
 from sage.misc.lazy_import import lazy_import
+from sage.rings.complex_arb import ComplexBall
 from sage.rings.infinity import infinity, unsigned_infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -2041,6 +2048,271 @@ class SphericalHankel2(BuiltinFunction):
 
 
 spherical_hankel2 = SphericalHankel2()
+
+
+def _spherical_sequence_max_order(max_order):
+    """Validate a maximum order for a spherical Bessel sequence."""
+    try:
+        value = ZZ(max_order)
+    except (TypeError, ValueError):
+        raise ValueError("max_order must be a nonnegative integer") from None
+    if value < 0 or value != max_order:
+        raise ValueError("max_order must be a nonnegative integer")
+    return value
+
+
+def _spherical_sequence_argument(z):
+    """Validate an argument for a certified spherical Bessel sequence."""
+    if not isinstance(z, ComplexBall):
+        raise TypeError("z must be an element of a ComplexBallField")
+    if z.contains_zero():
+        raise NotImplementedError(
+            "spherical sequences are not implemented for balls containing zero"
+        )
+    if not z.real() > 0:
+        raise NotImplementedError(
+            "spherical sequences are only implemented when the entire real "
+            "interval of z is strictly positive"
+        )
+    return z
+
+
+def _spherical_sequence_derivatives(all_values, max_order, z):
+    """Return derivatives through ``max_order`` from one extra value."""
+    derivatives = [-all_values[1]]
+    derivatives.extend(
+        all_values[ell - 1] - (ell + 1) * all_values[ell] / z
+        for ell in range(1, max_order + 1)
+    )
+    return derivatives
+
+
+def _spherical_bessel_sequence(max_order, z, kind):
+    """Return a certified spherical Bessel or Hankel sequence."""
+    max_order = _spherical_sequence_max_order(max_order)
+    z = _spherical_sequence_argument(z)
+    parent = z.parent()
+    factor = (parent.pi() / (2 * z)).sqrt(analytic=True)
+    imaginary_unit = parent(0, 1)
+
+    all_values = []
+    for ell in range(max_order + 2):
+        order = QQ(2 * ell + 1) / 2
+        if kind == "J":
+            value = factor * z.bessel_J(order)
+        elif kind == "Y":
+            value = factor * z.bessel_Y(order)
+        else:
+            cylindrical_J, cylindrical_Y = z.bessel_J_Y(order)
+            value = factor * (cylindrical_J
+                              + imaginary_unit * cylindrical_Y)
+        all_values.append(value)
+
+    values = all_values[:max_order + 1]
+    derivatives = _spherical_sequence_derivatives(all_values, max_order, z)
+    return values, derivatives
+
+
+def spherical_bessel_J_sequence(max_order, z):
+    r"""
+    Return certified spherical Bessel J values and their derivatives.
+
+    This returns ``(values, derivatives)``, where both lists contain orders
+    from zero through ``max_order``.  The values are computed directly from
+    the certified :class:`ComplexBall` cylindrical Bessel J function using
+
+    .. MATH::
+
+        j_\ell(z) = \sqrt{\frac{\pi}{2z}} J_{\ell+1/2}(z).
+
+    This first implementation requires the entire real interval of ``z`` to
+    be strictly positive and requires ``z`` not to contain zero.  In
+    particular, balls touching or crossing the imaginary axis are rejected.
+    These restrictions ensure a consistent principal square-root branch.
+    Unsupported complex-ball domains raise :exc:`NotImplementedError`; this
+    function never falls back to mpmath.
+
+    INPUT:
+
+    - ``max_order`` -- a nonnegative integer; consistently with coercion to
+      Sage integers, the Python booleans ``False`` and ``True`` are accepted
+      as zero and one, respectively
+    - ``z`` -- an element of a :class:`ComplexBallField` in the domain above
+
+    OUTPUT: a pair ``(values, derivatives)`` of lists in exactly the parent
+    of ``z``
+
+    EXAMPLES:
+
+    The functions are available from the global Sage namespace::
+
+        sage: from sage.all import (spherical_bessel_J_sequence,
+        ....:     spherical_bessel_Y_sequence, spherical_hankel1_sequence)
+        sage: C = ComplexBallField(53)
+        sage: z = C(2)
+        sage: j, jp = spherical_bessel_J_sequence(8, z)
+        sage: y, yp = spherical_bessel_Y_sequence(8, z)
+        sage: h, hp = spherical_hankel1_sequence(8, z)
+        sage: tuple(map(len, (j, jp, y, yp, h, hp)))
+        (9, 9, 9, 9, 9, 9)
+        sage: all(v.parent() is C for seq in (j, jp, y, yp, h, hp)
+        ....:     for v in seq)
+        True
+        sage: j[0].accuracy() > 40 and j[0].rad() < 1e-14
+        True
+
+    Parent and precision are preserved for a genuinely complex ball with
+    nonzero radius at a different precision::
+
+        sage: D = ComplexBallField(192)
+        sage: error = D.base()(0).add_error(2^-180)
+        sage: w = D(D.base()(3) + error, D.base()(1/7) + error)
+        sage: w.rad() > 0 and w.real() > 0
+        True
+        sage: j42, jp42 = spherical_bessel_J_sequence(42, w)
+        sage: (len(j42), len(jp42))
+        (43, 43)
+        sage: all(v.parent() is D for seq in (j42, jp42) for v in seq)
+        True
+        sage: all(v.parent().precision() == 192 for seq in (j42, jp42) for v in seq)
+        True
+        sage: min(v.accuracy() for seq in (j42, jp42) for v in seq) > 150
+        True
+
+    Orders zero and one produce lists of the documented lengths::
+
+        sage: tuple(map(len, spherical_bessel_J_sequence(0, z)))
+        (1, 1)
+        sage: tuple(map(len, spherical_bessel_J_sequence(1, z)))
+        (2, 2)
+
+    The low-order closed forms are enclosed::
+
+        sage: (j[0] - z.sin()/z).contains_zero()
+        True
+        sage: (j[1] - z.sin()/z^2 + z.cos()/z).contains_zero()
+        True
+        sage: (y[0] + z.cos()/z).contains_zero()
+        True
+        sage: (y[1] + z.cos()/z^2 + z.sin()/z).contains_zero()
+        True
+
+    The Hankel identities hold for values and derivatives::
+
+        sage: I = C(0, 1)
+        sage: all((h[n] - j[n] - I*y[n]).contains_zero() for n in range(9))
+        True
+        sage: all((hp[n] - jp[n] - I*yp[n]).contains_zero() for n in range(9))
+        True
+        sage: I.parent() is C
+        True
+
+    The three-term recurrence holds for all three sequences::
+
+        sage: def recurrence_holds(values):
+        ....:     return all((values[n+1] - (2*n+1)/z*values[n]
+        ....:                 + values[n-1]).contains_zero()
+        ....:                for n in range(1, 8))
+        sage: recurrence_holds(j) and recurrence_holds(y) and recurrence_holds(h)
+        True
+
+    So do the derivative identities::
+
+        sage: def derivatives_hold(values, derivatives):
+        ....:     return ((derivatives[0] + values[1]).contains_zero()
+        ....:             and all((derivatives[n] - values[n-1]
+        ....:                      + (n+1)/z*values[n]).contains_zero()
+        ....:                     for n in range(1, 9)))
+        sage: (derivatives_hold(j, jp) and derivatives_hold(y, yp)
+        ....:  and derivatives_hold(h, hp))
+        True
+
+    The J/Y Wronskian is enclosed::
+
+        sage: all((j[n]*yp[n] - jp[n]*y[n] - 1/z^2).contains_zero()
+        ....:     for n in range(9))
+        True
+
+    Python booleans follow Sage's integer coercion convention::
+
+        sage: tuple(map(len, spherical_bessel_J_sequence(False, z)))
+        (1, 1)
+        sage: tuple(map(len, spherical_bessel_J_sequence(True, z)))
+        (2, 2)
+
+    Invalid orders and input types fail explicitly::
+
+        sage: spherical_bessel_J_sequence(-1, z)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_order must be a nonnegative integer
+        sage: spherical_bessel_J_sequence(3/2, z)
+        Traceback (most recent call last):
+        ...
+        ValueError: max_order must be a nonnegative integer
+        sage: spherical_bessel_J_sequence(3, 2)
+        Traceback (most recent call last):
+        ...
+        TypeError: z must be an element of a ComplexBallField
+
+    Zero-containing balls are outside the initial implementation's domain::
+
+        sage: spherical_bessel_J_sequence(2, C(0))
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are not implemented for balls containing zero
+        sage: spherical_bessel_J_sequence(2, C(1).add_error(2))
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are not implemented for balls containing zero
+
+    The entire real interval must be strictly positive::
+
+        sage: spherical_bessel_J_sequence(2, C(-2, 1))
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are only implemented when the entire real interval of z is strictly positive
+        sage: spherical_bessel_J_sequence(2, C(0, 1))
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are only implemented when the entire real interval of z is strictly positive
+        sage: touching = C(C.base()(1).add_error(1), 1)
+        sage: spherical_bessel_J_sequence(2, touching)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are only implemented when the entire real interval of z is strictly positive
+        sage: crossing = C(C.base()(1).add_error(2), 1)
+        sage: spherical_bessel_J_sequence(2, crossing)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: spherical sequences are only implemented when the entire real interval of z is strictly positive
+    """
+    return _spherical_bessel_sequence(max_order, z, "J")
+
+
+def spherical_bessel_Y_sequence(max_order, z):
+    r"""
+    Return certified spherical Bessel Y values and their derivatives.
+
+    The cylindrical values are evaluated directly using
+    :meth:`ComplexBall.bessel_Y`.  See
+    :func:`spherical_bessel_J_sequence` for the return contract, supported
+    domain, exceptions, and examples.
+    """
+    return _spherical_bessel_sequence(max_order, z, "Y")
+
+
+def spherical_hankel1_sequence(max_order, z):
+    r"""
+    Return certified spherical Hankel H1 values and their derivatives.
+
+    For each order, cylindrical J and Y are computed simultaneously by
+    :meth:`ComplexBall.bessel_J_Y`, combined as ``J + I*Y`` in the input
+    parent, and multiplied by the spherical conversion factor.  See
+    :func:`spherical_bessel_J_sequence` for the return contract, supported
+    domain, exceptions, and examples.
+    """
+    return _spherical_bessel_sequence(max_order, z, "H1")
 
 
 def spherical_bessel_f(F, n, z):
