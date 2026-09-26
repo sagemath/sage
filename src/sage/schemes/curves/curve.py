@@ -20,6 +20,7 @@ AUTHORS:
 
 - William Stein (2005)
 - Katie Ahrens (2024): fixed #28336
+- Trevor K. Karn (2026): added `is_geometrically_irreducible()`
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -509,7 +510,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         elif isinstance(k, RationalField):
             curve_over_closure = self.change_ring(QQbar)
         elif k.is_finite():
-            closure = GF(k.characteristic()**self.defining_polynomial().degree())
+            closure = k.extension(self.defining_polynomial().degree())
             curve_over_closure = self.change_ring(closure)
 
         if curve_over_closure is None:

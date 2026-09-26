@@ -1614,13 +1614,14 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
         TESTS:
 
-        Geometric genus is not defined for geometrically reducible curves. You
-        may get a nonsensical answer if the condition is not met::
+        Geometric genus is not defined for geometrically reducible curves::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^2 + y^2)
             sage: C.genus()  # indirect doctest
-            -1
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Curve is not geometrically irreducible
         """
         return self.defining_ideal().genus()
 
