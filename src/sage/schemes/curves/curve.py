@@ -19,6 +19,8 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
+- Katie Ahrens (2024): fixed #28336
+- Trevor K. Karn (2026): added `is_geometrically_irreducible()`
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -38,8 +40,10 @@ from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.divisor_group import DivisorGroup
 from sage.schemes.generic.divisor import Divisor_curve
 
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
-
+from sage.rings.rational_field import RationalField
+from sage.rings.qqbar import QQbar
 
 class Curve_generic(AlgebraicScheme_subscheme):
     r"""
@@ -153,7 +157,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         INPUT:
 
         - ``base_ring`` -- the base ring of the divisor group; usually, this is
-          `\ZZ` (default) or `\QQ`
+          `\ZZ` (default) or `\QQ`.
 
         OUTPUT: the divisor group of the curve
 
@@ -200,16 +204,52 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
             sage: C.genus()
             1
+
+            Throw an error if the curve is not geometrically irreducible. Addresses issue #28336.
+            sage: x,y = PolynomialRing(QQ, 2, names='x,y').gens()
+            sage: C = Curve(x^2+y^2)
+            sage: C.genus()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Curve is not geometrically irreducible
+
+            sage: FF.<y> =QQ[]
+            sage: R.<x> = FF[]
+            sage: K = QQ[y, x]
+            sage: poly2 = K(x^2 - y^4)
+            sage: C2 = Curve(poly2)
+            sage: C2.genus()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Curve is not irreducible over the ground field
+
+
+            Geometric irreducibility is also checked for finite fields.
+            sage: x,y = PolynomialRing(GF(5), 2, names='x,y').gens()
+            sage: C = Curve(x^2+2)
+            sage: C.genus()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Curve is not geometrically irreducible
         """
+
         return self.geometric_genus()
 
     def geometric_genus(self):
         r"""
         Return the geometric genus of the curve.
 
+        This is by definition the genus of the normalization of the projective
+        closure of the curve over the algebraic closure of the base field; the
+        base field must be a prime field.
+
+        .. NOTE::
+
+            This calls Singular's genus command.
+
         EXAMPLES:
 
-        Examples of projective curves::
+        Examples of projective curves. ::
 
             sage: P2 = ProjectiveSpace(2, GF(5), names=['x','y','z'])
             sage: x, y, z = P2.coordinate_ring().gens()
@@ -223,7 +263,15 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-        Examples of affine curves::
+        Addressing issue #28336::
+        
+            sage: C = Curve(x^2+y^2)
+            sage: C.geometric_genus()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Curve is not irreducible over the ground field
+
+        Examples of affine curves. ::
 
             sage: x, y = PolynomialRing(GF(5), 2, 'xy').gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
@@ -236,22 +284,31 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-        .. WARNING::
-
-            Geometric genus is only defined for `geometrically irreducible curve
-            <https://stacks.math.columbia.edu/tag/0BYE>`_. This method does not
-            check the condition. You may get a nonsensical result if the curve is
-            not geometrically irreducible::
-
-                sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-                sage: C = Curve(x^2 + y^2, P2)
-                sage: C.geometric_genus()  # nonsense!
-                -1
         """
+        k=self.base_ring()
+
+        #handle the rational case
+        if isinstance(k, RationalField):
+            curve_over_closure = self.change_ring(QQbar)
+            if len(curve_over_closure.defining_polynomial().factor()) > 1:
+                if self.is_irreducible():
+                    raise NotImplementedError("Curve is not geometrically irreducible")
+                else:
+                    raise NotImplementedError("Curve is not irreducible over the ground field")
+
+        #handle the finite field case
+        if k.is_finite():
+            if len(self.change_ring(GF(k.characteristic()**self.defining_polynomial().degree())).defining_polynomial().factor()) > 1:
+                if self.is_irreducible():
+                    raise NotImplementedError("Curve is not geometrically irreducible")
+                else:
+                    raise NotImplementedError("Curve is not irreducible over the ground field")
+
         try:
             return self._genus
         except AttributeError:
-            raise NotImplementedError
+            self._genus = self.defining_ideal().genus()
+            return self._genus
 
     def union(self, other):
         """
@@ -274,7 +331,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the subscheme of singular points of this curve.
 
-        OUTPUT: a subscheme in the ambient space of this curve
+        OUTPUT:
+
+        - a subscheme in the ambient space of this curve.
 
         EXAMPLES::
 
@@ -312,10 +371,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: ``None``) field over which to find the singular
+        - ``F`` -- (default: None) field over which to find the singular
           points; if not given, the base ring of this curve is used
 
-        OUTPUT: list of points in the ambient space of this curve
+        OUTPUT: a list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -350,6 +409,115 @@ class Curve_generic(AlgebraicScheme_subscheme):
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 
+    def is_geometrically_irreducible(self) -> bool:
+        r"""
+        Return ``True`` if and only if the curve is geometrically irreducible.
+
+        A curve is geometrically irreducible if it remains irreducible
+        after extending scalars to the algebraic closure of the field
+        over which it is the curve is defined.
+
+        EXAMPLES:
+
+        Some curves are geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            True
+
+        Here is a curve that is geometrically irreducible over a finite field::
+
+            sage: R.<x,y> = GF(5)[]
+            sage: C = Curve(x^2 + 2*x - y + 2)
+            sage: C.is_geometrically_irreducible()
+            True
+
+        Some curves are irreducible but not geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve(x^2 + y^2)
+            sage: C.is_irreducible()
+            True
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Here is a curve that is not geometrically irreducible over a finite field::
+
+            sage: R.<x,y> = GF(5)[]
+            sage: f = x^2 + 2
+            sage: C = Curve(f)
+            sage: C.is_irreducible()
+            True
+            sage: C.is_geometrically_irreducible()
+            False
+            sage: K.<z> = GF(25)
+            sage: g = f.change_ring(K)
+            sage: g.factor()
+            (x + (2*z - 1)) * (x + (-2*z + 1))
+
+        If a curve is not irreducible, it is not geometrically irreducible::
+
+            sage: R.<x,y> = QQ[]
+            sage: C = Curve((x+1)*(y+1))
+            sage: C.is_irreducible()
+            False
+            sage: C.is_geometrically_irreducible()
+            False
+
+            sage: R.<x,y> = GF(5)[]
+            sage: C = Curve((x^2+1)*(y^3+1))
+            sage: C.is_irreducible()
+            False
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Over an algebraically closed field, geometric irreducibility is
+        the same as irreducibility::
+
+            sage: R.<x,y> = QQbar[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            True
+            sage: C = Curve(x^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            False
+
+        Inexact fields such as ``RR`` and ``CC`` are not yet supported::
+
+            sage: R.<x,y> = RR[]
+            sage: C = Curve(x^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Check for geometric irreducibility of curve over Real Field with 53 bits of precision not implemented
+
+            sage: R.<x,y> = CC[]
+            sage: C = Curve(x^2 + y^2 + 1)
+            sage: C.is_geometrically_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Check for geometric irreducibility of curve over Complex Field with 53 bits of precision not implemented
+        """
+        k = self.base_ring()
+
+        curve_over_closure = None
+
+        # Singular's primary decomposition (used by ``is_irreducible``) does
+        # not support rings such as ``QQbar[x,y]``, so factor directly.
+        if k is QQbar:
+            curve_over_closure = self
+        elif isinstance(k, RationalField):
+            curve_over_closure = self.change_ring(QQbar)
+        elif k.is_finite():
+            closure = k.extension(self.defining_polynomial().degree())
+            curve_over_closure = self.change_ring(closure)
+
+        if curve_over_closure is None:
+            raise NotImplementedError(f"Check for geometric irreducibility of curve over {k} not implemented")
+
+        return len(curve_over_closure.defining_polynomial().factor()) == 1
+
     def is_singular(self, P=None) -> bool:
         r"""
         Return whether ``P`` is a singular point of this curve, or if no point
@@ -359,13 +527,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- (default: ``None``) a point on this curve
+        - ``P`` -- (default: None) a point on this curve
 
         OUTPUT:
 
-        boolean; if a point ``P`` is provided, and if ``P`` lies on this
-        curve, returns ``True`` if ``P`` is a singular point of this curve, and
-        ``False`` otherwise. If no point is provided, returns ``True`` or False
+        A boolean. If a point ``P`` is provided, and if ``P`` lies on this
+        curve, returns True if ``P`` is a singular point of this curve, and
+        False otherwise. If no point is provided, returns True or False
         depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
@@ -392,9 +560,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``C`` -- a curve in the same ambient space as this curve
+        - ``C`` -- a curve in the same ambient space as this curve.
 
-        - ``P`` -- a point in the ambient space of this curve
+        - ``P`` -- a point in the ambient space of this curve.
 
         EXAMPLES::
 
@@ -447,11 +615,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: ``None``) field over which to compute the
+        - ``F`` -- (default: None); field over which to compute the
           intersection points; if not specified, the base ring of this curve is
           used
 
-        OUTPUT: list of points in the ambient space of this curve
+        OUTPUT: a list of points in the ambient space of this curve
 
         EXAMPLES::
 
