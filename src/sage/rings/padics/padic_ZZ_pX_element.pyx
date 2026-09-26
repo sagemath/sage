@@ -86,13 +86,19 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3
             sage: W([5,10,15,20])
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + w^16 + 2*w^17 + 2*w^18 + w^19 + 4*w^20 + w^21 + 4*w^22 + 4*w^23 + 2*w^24
+            sage: W(list(range(1, 12))) == sum(i * w^(i - 1) for i in range(1, 12))
+            True
         """
         cdef ntl_ZZ_pContext_class ctx
+        cdef ntl_ZZX integral
+        cdef ntl_ZZ_pX modular
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
-            self._set_from_ZZX((<ntl_ZZX>ntl_ZZX(L)).x)
+            integral = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZX(integral.x)
         else:
-            self._set_from_ZZ_pX(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx)
+            modular = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZ_pX(&modular.x, ctx)
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef int _set_from_list_rel(self, L, long relprec) except -1:
@@ -117,13 +123,30 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3 + O(w^25)
             sage: W([5,10,15,20], relprec=16)
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + w^16 + 2*w^17 + 2*w^18 + w^19 + 4*w^20 + O(w^21)
+
+        A list may be longer than the degree of the extension; it is reduced
+        modulo the defining polynomial.  This used to abort in NTL::
+
+            sage: W(list(range(1, 12))) == sum(i * w^(i - 1) for i in range(1, 12))
+            True
+            sage: K.<pi> = Qp(7, 5).extension(x^3 - 7)
+            sage: c = [Qp(7, 5)(i + 1)^-1 for i in range(20)]
+            sage: K(c) == sum(a * pi^i for i, a in enumerate(c))
+            True
+            sage: Q.<a> = Qq(125, 5, implementation='NTL')
+            sage: Q([1, 2, 3, 4, 5]) == 1 + 2*a + 3*a^2 + 4*a^3 + 5*a^4
+            True
         """
         cdef ntl_ZZ_pContext_class ctx
+        cdef ntl_ZZX integral
+        cdef ntl_ZZ_pX modular
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
-            self._set_from_ZZX_rel((<ntl_ZZX>ntl_ZZX(L)).x, relprec)
+            integral = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZX_rel(integral.x, relprec)
         else:
-            self._set_from_ZZ_pX_rel(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, relprec)
+            modular = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZ_pX_rel(&modular.x, ctx, relprec)
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef int _set_from_list_abs(self, L, long absprec) except -1:
@@ -147,13 +170,19 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3 + O(w^25)
             sage: W([5,10,15,20], absprec=16)  # indirect doctest
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + O(w^16)
+            sage: W(list(range(1, 12))) == sum(i * w^(i - 1) for i in range(1, 12))
+            True
         """
         cdef ntl_ZZ_pContext_class ctx
+        cdef ntl_ZZX integral
+        cdef ntl_ZZ_pX modular
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
-            self._set_from_ZZX_abs((<ntl_ZZX>ntl_ZZX(L)).x, absprec)
+            integral = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZX_abs(integral.x, absprec)
         else:
-            self._set_from_ZZ_pX_abs(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec - (min_val * self.parent().e()))
+            modular = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZ_pX_abs(&modular.x, ctx, absprec - (min_val * self.parent().e()))
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef int _set_from_list_both(self, L, long absprec, long relprec) except -1:
@@ -189,11 +218,15 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             g^-41 + O(g^-2)
         """
         cdef ntl_ZZ_pContext_class ctx
+        cdef ntl_ZZX integral
+        cdef ntl_ZZ_pX modular
         L, min_val, ctx = preprocess_list(self, L)
         if ctx is None:
-            self._set_from_ZZX_both((<ntl_ZZX>ntl_ZZX(L)).x, absprec, relprec)
+            integral = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZX_both(integral.x, absprec, relprec)
         else:
-            self._set_from_ZZ_pX_both(&(<ntl_ZZ_pX>ntl_ZZ_pX(L, ctx)).x, ctx, absprec - (min_val * self.parent().e()), relprec)
+            modular = reduced_list_polynomial(self, L, ctx)
+            self._set_from_ZZ_pX_both(&modular.x, ctx, absprec - (min_val * self.parent().e()), relprec)
             self._pshift_self(mpz_get_si((<Integer>min_val).value))
 
     cdef long _check_ZZ_pContext(self, ntl_ZZ_pContext_class ctx) except -1:
@@ -617,6 +650,29 @@ def _test_preprocess_list(R, L):
         ([1], -1, NTL modulus 25)
     """
     return preprocess_list(R(0), L)
+
+
+cdef reduced_list_polynomial(pAdicZZpXElement elt, L,
+                             ntl_ZZ_pContext_class ctx):
+    r"""
+    Return the NTL polynomial with coefficients ``L``, reduced modulo the
+    defining polynomial of the parent of ``elt``.
+
+    ``L`` is a list returned by :func:`preprocess_list`; it describes
+    `\sum_i L_i x^i` for the generator `x` of the extension.  The element
+    setters expect at most as many coefficients as the degree of the
+    extension; longer input made NTL abort or the conversion fail, so a
+    longer list is reduced first.  The defining polynomial is monic, so the
+    reduction is exact.
+    """
+    poly = ntl_ZZX(L) if ctx is None else ntl_ZZ_pX(L, ctx)
+    if len(L) <= elt.prime_pow.deg:
+        return poly
+    modulus = [Integer(c) for c in
+               elt.parent().defining_polynomial(exact=True).list()]
+    if ctx is None:
+        return poly % ntl_ZZX(modulus)
+    return poly % ntl_ZZ_pX(modulus, ctx)
 
 
 cdef preprocess_list(pAdicZZpXElement elt, L):
