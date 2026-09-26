@@ -604,10 +604,22 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         sage: b = Mod(2,37);  a = b^20
         sage: bsgs(b, a, (0r, 36r))
         20
+
+    BSGS works with immutable matrices whose products may be mutable
+    (:issue:`42378`)::
+
+        sage: # needs sage.rings.finite_rings
+        sage: m = Matrix(GF(101), [[1, 1], [1, 2]])
+        sage: n = m^17
+        sage: m.set_immutable()
+        sage: n.set_immutable()
+        sage: bsgs(m, n, (0, 50))
+        17
     """
     Z = integer_ring.ZZ
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
+    mut = hasattr(a, 'set_immutable')
 
     lb, ub = bounds
     lb = Z(lb)
@@ -641,12 +653,16 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         i = lb + i0
         if identity == d:        # identity == b^(-1)*a^i, so return i
             return Z(i)
+        if mut:
+            d.set_immutable()
         table[d] = i
         d = op(d, a)
 
     c = op(c, inverse(d))     # this is now a**(-m)
     d = identity
     for i in xsrange(m):
+        if mut:
+            d.set_immutable()
         j = table.get(d)
         if j is not None:  # then d == b*a**(-i*m) == a**j
             return Z(i * m + j)
