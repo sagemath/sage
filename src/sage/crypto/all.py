@@ -22,5 +22,6 @@ lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  ])
 
 lazy_import('sage.crypto.public_key.key_exchange', 'all', 'key_exchange')
+lazy_import('sage.crypto.public_key.digital_signature', 'all', 'digital_signature')
 
 del lazy_import
