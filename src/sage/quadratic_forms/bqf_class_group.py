@@ -66,6 +66,7 @@ the group invariants, and element orders, can be computed::
 AUTHORS:
 
 - Lorenz Panny (2023)
+- Valter Wik (2026)
 """
 
 # ****************************************************************************
@@ -78,22 +79,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import random_prime
+from sage.categories.morphism import Morphism
+from sage.groups.additive_abelian.additive_abelian_wrapper import (
+    AdditiveAbelianGroupWrapper,
+    basis_from_generators,
+)
+from sage.groups.generic import multiple, order_from_multiple
+from sage.libs.pari import pari
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-
+from sage.misc.prandom import randrange
+from sage.quadratic_forms.binary_qf import BinaryQF
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.finite_rings.integer_mod import Mod
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import AdditiveGroupElement
-from sage.categories.morphism import Morphism
-
-from sage.misc.prandom import randrange
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod import Mod
-from sage.arith.misc import random_prime
-from sage.groups.generic import order_from_multiple, multiple
-from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-from sage.quadratic_forms.binary_qf import BinaryQF
-
-from sage.libs.pari import pari
 
 
 class BQFClassGroup(Parent, UniqueRepresentation):
@@ -717,10 +720,15 @@ class BQFClassGroupQuotientMorphism(Morphism):
             raise TypeError('G needs to be a BQFClassGroup')
         if not isinstance(H, BQFClassGroup):
             raise TypeError('H needs to be a BQFClassGroup')
-        f2 = ZZ(G.discriminant() / H.discriminant())
-        if not f2.is_square():
+        index2 = ZZ(G.discriminant() / H.discriminant())
+        if not index2.is_square():
             raise ValueError('morphism only defined when disc(G) = f^2 * disc(H)')
+        self._index = index2.sqrt()
         super().__init__(G, H)
+
+    @cached_method
+    def _index_factorization(self):
+        return self._index.factor()
 
     def _call_(self, elt):
         r"""
@@ -742,3 +750,182 @@ class BQFClassGroupQuotientMorphism(Morphism):
         bqf = elt.form()
         bqf *= one
         return self.codomain()(bqf)
+
+    def preimage(self, elt):
+        r"""
+        Compute a preimage of a form class `elt` under this morphism.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
+            sage: G = BQFClassGroup(-4*117117)
+            sage: H = BQFClassGroup(-4*77)
+            sage: proj = BQFClassGroupQuotientMorphism(G, H)
+            sage: elt = H(BinaryQF(9, 4, 9))
+            sage: proj(proj.preimage(elt)) == elt
+            True
+        """
+        return self.domain()(_preimage_form(self._index, elt.form()))
+
+    @cached_method
+    def kernel(self):
+        r"""
+        Return the kernel of this morphism as an :class:`AdditiveAbelianGroupWrapper`.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
+            sage: G = BQFClassGroup(-4*117117)
+            sage: H = BQFClassGroup(-4*77)
+            sage: proj = BQFClassGroupQuotientMorphism(G, H)
+            sage: ker = proj.kernel(); ker
+            Additive abelian group isomorphic to Z/2 + Z/12 embedded in Form Class Group of Discriminant -468468
+            sage: all(proj(f).is_zero() for f in ker)
+            True
+        """
+        gens, orders = [], []
+        cur_disc = self.codomain().discriminant()
+        kernel_order = ZZ.one()
+        for fac, mult in self._index_factorization():
+            for _ in range(mult):
+                gen, step_order = _kernel_gen_prime_index(fac, cur_disc)
+                step_order_zz = step_order.prod()
+
+                new_gens, new_orders = [], []
+                for g, o in zip(gens, orders):
+                    lift = _preimage_form(fac, g.form()).form_class()
+
+                    # The order of the lift need only have a *multiple* of o as order,
+                    # but since it also lies in the kernel we can bound the
+                    # order by the kernel order of this step
+                    lift_mult = lift * o
+                    if lift_mult.is_zero():
+                        lift_ord_mult = 1
+                    else:
+                        lift_ord_mult = order_from_multiple(lift_mult, step_order_zz, [p for p, _ in step_order])
+                    new_gens.append(lift)
+                    new_orders.append(o * lift_ord_mult)
+                gens, orders = new_gens, new_orders
+
+                gens.append(gen.form_class())
+                orders.append(step_order_zz)
+
+                kernel_order *= step_order_zz
+                cur_disc *= fac**2
+
+        if ZZ.prod(orders) == kernel_order:
+            # The lifted generators are already independent
+            return AdditiveAbelianGroupWrapper(
+                self.domain(), gens, orders
+            )
+
+        basis, basis_orders = basis_from_generators(gens, orders)
+        assert ZZ.prod(basis_orders) == kernel_order
+        return AdditiveAbelianGroupWrapper(self.domain(), basis, basis_orders)
+
+def _preimage_form(index, elt):
+    r"""
+    Compute a preimage of a binary quadratic form `elt` under the
+    natural projection from the class group of discriminant `index^2 D` to the
+    class group of discriminant `D`, where `index` is a positive integer, not necessarily prime.
+    """
+    if index == 1:
+        return elt
+
+    a_coprime_part = index.prime_to_m_part(elt[0])
+    if a_coprime_part == index:
+        # Index already coprime to a.
+        # This corresponds to the action of diag(1, index)
+        return BinaryQF([elt[0], elt[1] * index, elt[2] * index**2])
+
+    # The idea here is to act with a matrix of determinant `index` but ensure
+    # that the result is still primitive. Writing out the action of the below
+    # matrix (which has det `a_part * a_coprime_part = index`) we get the result
+    #
+    # (A, B, C) = (
+    #   a*a_part**2,
+    #   index*(2*a*t + b),
+    #   a_coprime_part*(a*t**2 + b*t + c)
+    # )
+    #
+    # For primes p|a_part we know p|a so p|A, and since p|index we have p|B, so we
+    # need p not to divide C. This happens only if a*t**2 + b*t + c != 0 mod p,
+    # and since p|a that <=> b*t + c != 0 mod p, and t is chosen to ensure this.
+    # (by assuming primitivity of the input form)
+
+    a_part = index // a_coprime_part
+    t = a_part.prime_to_m_part(elt[2])
+    if t == a_part:
+        t = 0
+    return elt * matrix([[a_part, t*a_coprime_part], [0, a_coprime_part]])
+
+def _kernel_gen_prime_index(ell, D):
+    r"""
+    Compute a generator of the kernel of the natural projection map from the
+    class group of discriminant `ell^2 D` to the class group of discriminant `D`,
+    where `ell` is assumed prime.
+
+    EXAMPLES::
+
+    Split case:
+
+        sage: from sage.quadratic_forms.bqf_class_group import _kernel_gen_prime_index
+        sage: q, n = _kernel_gen_prime_index(5, -19); n
+        2^2
+        sage: q.discriminant() == 5**2 * -19
+        True
+
+    Inert case:
+
+        sage: q, n = _kernel_gen_prime_index(3, -19); n
+        2^2
+        sage: q.discriminant() == 3^2 * -19
+        True
+
+    Ramified case:
+
+        sage: q, n = _kernel_gen_prime_index(19, -19); n
+        19
+        sage: q.discriminant() == 19^2 * -19
+        True
+    """
+    delta = D % 2
+    split_symbol = ZZ(D).kronecker(ell)
+    F = GF(ell)
+    c0 = (delta - D)//4
+    x = F['x'].gen()
+
+    # The kernel is isomorphic to (O / ell*O)^* / F_ell
+    # (except the special cases D = -3, -4, handled below)
+
+    # O / ell*O is isomorphic to F_ell[x]/(minpoly),
+    # so its splitting behavior reflects the kernels
+    minpoly = x**2 - delta*x + c0
+
+    ker_order = ZZ(ell - split_symbol).factor()
+
+    if split_symbol == 1:
+        # split; O/ell*O = F_ell x F_ell
+        u, v = minpoly.roots(multiplicities=False)
+        z = F.multiplicative_generator()
+        r = (z*v - u) / (z - 1)
+    elif split_symbol == -1:
+        # inert; O/ell*O = F_{ell^2}
+        F2 = F.extension(minpoly, 'w')
+        # We could use F2.multiplicative_generator() but that unnecessarily factors
+        # ell^2 - 1 when we only need the ell + 1 subgroup
+        z = F2._element_of_factored_order(ker_order)
+        r = -(z[0] + 1)/z[1]
+    else: # split_symbol == 0
+        # ramified; O/ell*O = F_ell[x]/(x^2)
+        u = minpoly.any_root()
+        r = u + 1
+
+    if D == -3:
+        ker_order //= 3
+    elif D == -4:
+        ker_order //= 2
+
+    r = ZZ(r)
+    A, B, C = r**2 - delta*r + c0, ell*(2*r - delta), ell**2
+    return BinaryQF(A, B, C), ker_order
