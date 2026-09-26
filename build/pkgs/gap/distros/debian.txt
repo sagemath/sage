@@ -1,2 +1,9 @@
 gap
 libgap-dev
+gap-character-tables
+gap-table-of-marks
+gap-alnuth
+gap-factint
+gap-laguna
+gap-fga
+gap-polenta
