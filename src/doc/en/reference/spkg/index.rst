@@ -34,39 +34,51 @@ To install an optional package, you can use Sage's package management system.
 Basic Installation
 ~~~~~~~~~~~~~~~~~~
 
-To install an optional package from Sage-the-distribution, use the
-following command in a system terminal (not from the Sage prompt):
+To install an optional package when building Sage from source, enable it
+during configuration and then run ``make``:
 
 .. code-block:: console
 
-    sage -i <package_name>
+    ./configure --enable-<package_name>=yes
+    make
 
-For example, to install the optional package `bliss`:
+For example, to enable the optional package `bliss`:
 
 .. code-block:: console
 
-    sage -i bliss
+    ./configure --enable-bliss=yes
+    make
+
+To see all available configure options:
+
+.. code-block:: console
+
+    ./configure --help
+
+For Python packages that are not part of Sage-the-distribution, use pip:
+
+.. code-block:: console
+
+    ./sage --pip install <package_name>
 
 .. note::
 
-    The ``sage -i`` command is part of Sage-the-distribution and requires
-    a source installation. It may not work if you installed SageMath
-    through Conda, a system package manager, or another distribution.
+    The legacy ``sage -i`` command is obsolete and should not be used.
+    Use the ``./configure`` and ``make`` approach for Sage packages, and
+    ``./sage --pip install`` for external Python packages.
 
-    If you use a Conda or pip-based installation:
+    If you installed SageMath through Conda, a system package manager, or
+    another distribution, use the package manager of your installation
+    instead (e.g., ``conda install``, ``apt install``, ``brew install``).
+    Some Sage data packages are available on PyPI as ``sage-data-*``
+    packages. For example, to install the Cremona elliptic curve database:
 
-    - Use ``conda install`` or ``pip install`` to install equivalent
-      packages from those ecosystems.
-    - Some Sage data packages are available on PyPI as ``sage-data-*``
-      packages. For example, to install the Cremona elliptic curve
-      database:
+    .. code-block:: console
 
-      .. code-block:: console
+        python -m pip install sage-data-elliptic-curves
 
-          python -m pip install sage-data-elliptic-curves
-
-    - For instructions specific to your setup, see the
-      `Sage installation guide <https://doc.sagemath.org/html/en/installation/>`_.
+    For instructions specific to your setup, see the
+    `Sage installation guide <https://doc.sagemath.org/html/en/installation/>`_.
 
 Using the Package List
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -124,14 +136,14 @@ Some optional SageMath packages can be installed using pip:
 
 .. code-block:: console
 
-    ./sage -pip install <package_name>
+    ./sage --pip install <package_name>
 
 For example, to install the `graph-genus` package (which provides faster
 graph genus algorithms):
 
 .. code-block:: console
 
-    ./sage -pip install graph-genus
+    ./sage --pip install graph-genus
 
 This method is particularly useful for Python packages that are not
 distributed as standard Sage packages.
