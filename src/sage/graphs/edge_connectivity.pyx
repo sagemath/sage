@@ -11,8 +11,6 @@ matroid approach of [Gabow1995]_.
 .. TODO::
 
     - Implement the tree-packing strengthening proposed in [BHKP2008]_
-    - Fix the DFS-based speed-up initialization of [GKLP2021]_ for digraphs
-      with multiple edges, for which it is currently disabled
     - Extend to weighted digraphs
 """
 # ****************************************************************************
@@ -82,6 +80,23 @@ cdef class GabowEdgeConnectivity:
         ....:                             use_rec=True).edge_connectivity()
         sage: ec1 == ec2 and ec2 == ec3
         True
+
+    The same holds for digraphs with multiple edges, for which the
+    initialization was disabled until :issue:`42838`: it filtered on a stale
+    copy of the edge assignment, and so could both miscount and exhaust
+    memory::
+
+        sage: D = DiGraph([(0, 1), (0, 1), (1, 0), (1, 2),
+        ....:              (2, 3), (2, 3), (3, 0), (3, 2)], multiedges=True)
+        sage: GabowEdgeConnectivity(D, dfs_preprocessing=False).edge_connectivity()
+        1
+        sage: GabowEdgeConnectivity(D, dfs_preprocessing=True).edge_connectivity()
+        1
+        sage: D = DiGraph([(0, 2), (0, 3), (1, 3), (1, 4), (2, 0), (2, 0),
+        ....:              (3, 1), (3, 2), (3, 4), (3, 4), (4, 1), (4, 3)],
+        ....:             multiedges=True)
+        sage: GabowEdgeConnectivity(D, dfs_preprocessing=True).edge_connectivity()
+        1
 
     TESTS:
 
@@ -218,7 +233,6 @@ cdef class GabowEdgeConnectivity:
 
     cdef int num_start_f_trees  # number of f-trees at the beginning of an iteration
     cdef int num_joins  # number of joined vertices from dfs
-    cdef bint* T  # whether an edge is in the proven k-intersection
     cdef bint* visited  # for method find_dfs_tree
     cdef int * incident_edge_index  # used for DFS initialization
     cdef bint dfs_preprocessing  # whether to use DFS-based fast initialization
@@ -283,11 +297,6 @@ cdef class GabowEdgeConnectivity:
         if not isinstance(G, DiGraph):
             raise ValueError("this method is for directed graphs only")
         G._scream_if_not_simple(allow_loops=True, allow_multiple_edges=True)
-        # The DFS-based speed-up initialization of [GKLP2021]_ assumes a simple
-        # digraph and miscounts on parallel arcs; disable it when the digraph
-        # has multiple edges (the base algorithm handles them correctly).
-        if G.has_multiple_edges():
-            self.dfs_preprocessing = False
         if G.size() > INT_MAX - 2:
             raise ValueError("the graph is too large for this code")
 
@@ -342,7 +351,6 @@ cdef class GabowEdgeConnectivity:
         self.incident_edge_index = <int*>self.mem.calloc(self.n, sizeof(int))
         self.tree_edges.resize(self.max_ec)
         self.tree_edges_incident.resize(self.n)
-        self.T = <bint*>self.mem.calloc(self.m, sizeof(bint))
         self.visited = <bint*>self.mem.calloc(self.n, sizeof(bint))
 
         # Phase 2 (arborescence extraction) buffers
@@ -365,7 +373,6 @@ cdef class GabowEdgeConnectivity:
             self.edge_state_1[i] = self.UNUSED  # edge i is unused
             self.edge_state_2[i] = self.UNUSED
             self.labels[i] = self.UNUSED  # edge i is unlabeled
-            self.T[i] = False  # edge i doesn't belong to any k-intersection yet
 
         _ = self.compute_edge_connectivity()
         sig_check()
@@ -640,7 +647,10 @@ cdef class GabowEdgeConnectivity:
                 # Visit the next incident edge of u
                 edge_index[u] -= 1
                 e_id = self.my_g_reversed[u][edge_index[u]]
-                if not self.T[e_id]:
+                # Consider only the unused edges, i.e. the edges of G \ T.
+                # my_edge_state is the assignment of the direction currently
+                # being explored, as set by construct_trees.
+                if self.my_edge_state[e_id] == self.UNUSED:
                     v = self.my_to[e_id]
                     if not self.visited[v] and v != self.root_vertex:
                         # Make v belong to the f-tree rooted at r
@@ -679,9 +689,10 @@ cdef class GabowEdgeConnectivity:
         cdef int e_id, v
         for e_id in self.my_g_reversed[u]:
             v = self.my_to[e_id]
-            # Ensure a vertex is not visited, is not a proven k-intersection edge
-            # and root_vertex remains deficient
-            if not self.visited[v] and not self.T[e_id] and v != self.root_vertex:
+            # Ensure a vertex is not visited, that the edge is unused, i.e.
+            # that it belongs to G \ T, and that root_vertex remains deficient
+            if (not self.visited[v] and self.my_edge_state[e_id] == self.UNUSED
+                    and v != self.root_vertex):
                 # Make current vertex belong to the f_tree rooted at r
                 self.root[v] = r
                 self.forests[v] = False
@@ -1126,15 +1137,10 @@ cdef class GabowEdgeConnectivity:
 
         # Arrange the edges of each tree
         for j in range(tree + 1):
-            if self.dfs_preprocessing:
-                for e_id in self.tree_edges[j]:
-                    self.T[e_id] = False
             self.tree_edges[j].clear()
         for j in range(self.m):
             if self.my_edge_state[j] != self.UNUSED:
                 self.tree_edges[self.my_edge_state[j]].push_back(j)
-                if self.dfs_preprocessing:
-                    self.T[j] = True
 
         for j in range(tree + 1):
             if not j or j == tree or self.tree_flag[j]:
@@ -1358,13 +1364,11 @@ cdef class GabowEdgeConnectivity:
 
         cdef int i, j, t, round_i, current_k
 
-        # Reset out-direction edge state, tree edge lists, edge labels,
-        # the DFS-tree edge marker and the Phase 2 markers, so this method
-        # is independent of any prior run.
+        # Reset out-direction edge state, tree edge lists, edge labels and
+        # the Phase 2 markers, so this method is independent of any prior run.
         for j in range(self.m):
             self.edge_state_1[j] = self.UNUSED
             self.labels[j] = self.UNUSED
-            self.T[j] = False
             self.extracted_edge[j] = False
             self.in_union[j] = False
         cdef int sz = <int>self.tree_edges.size()
@@ -1428,7 +1432,6 @@ cdef class GabowEdgeConnectivity:
             # (current_k - 1)-intersection on what remains.
             for j in range(self.m):
                 self.labels[j] = self.UNUSED
-                self.T[j] = False
                 if self.in_union[j] and not self.extracted_edge[j]:
                     self.edge_state_1[j] = self.UNUSED
             self.next_f_tree = 0
