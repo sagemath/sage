@@ -215,29 +215,28 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None, immutable=False):
 
     EXAMPLES::
 
-        sage: g = graphs.RandomBipartite(5, 2, 0.5)                                     # needs numpy
-        sage: g.vertices(sort=True)                                                     # needs numpy
+        sage: g = graphs.RandomBipartite(5, 2, 0.5)
+        sage: g.vertices(sort=True)
         [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1)]
 
     TESTS::
 
-        sage: g = graphs.RandomBipartite(5, -3, 0.5)                                    # needs numpy
+        sage: g = graphs.RandomBipartite(5, -3, 0.5)
         Traceback (most recent call last):
         ...
         ValueError: n1 and n2 should be integers strictly greater than 0
-        sage: g = graphs.RandomBipartite(5, 3, 1.5)                                     # needs numpy
+        sage: g = graphs.RandomBipartite(5, 3, 1.5)
         Traceback (most recent call last):
         ...
         ValueError: parameter p is a probability, and so should be a real value between 0 and 1
 
     :issue:`12155`::
 
-        sage: graphs.RandomBipartite(5, 6, .2).complement()                             # needs numpy
+        sage: graphs.RandomBipartite(5, 6, .2).complement()
         complement(Random bipartite graph of order 5+6 with edge probability 0.200000000000000): Graph on 11 vertices
 
     Test assigned positions::
 
-        sage: # needs numpy
         sage: graphs.RandomBipartite(1, 2, .1, set_position=True).get_pos()
         {(0, 0): (1, 1.0), (1, 0): (0, 0), (1, 1): (2.0, 0.0)}
         sage: graphs.RandomBipartite(2, 1, .1, set_position=True).get_pos()
@@ -254,12 +253,11 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None, immutable=False):
         set_random_seed(seed)
 
     from itertools import chain
-    from numpy.random import uniform
 
     name = f"Random bipartite graph of order {n1}+{n2} with edge probability {p}"
     S1 = [(0, i) for i in range(n1)]
     S2 = [(1, i) for i in range(n2)]
-    edges = ((v, w) for w in S2 for v in S1 if uniform() <= p)
+    edges = ((v, w) for w in S2 for v in S1 if random() <= p)
     g = Graph([chain(S1, S2), edges], format="vertices_and_edges",
               name=name, immutable=immutable)
 

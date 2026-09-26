@@ -563,8 +563,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
     Bipartite graphs are not factor-critical::
 
-        sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5)        # needs numpy
-        sage: G.is_factor_critical()                                                # needs numpy
+        sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5)
+        sage: G.is_factor_critical()
         False
 
     Graphs with even order are not factor critical::
