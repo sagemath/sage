@@ -258,7 +258,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         return (2 * y + h(x)).valuation() > 0
 
     def find_char_zero_weierstrass_point(self, Q):
-        """
+        r"""
         Given `Q` a point on self in a Weierstrass disc, finds the
         center of the Weierstrass disc (if defined over self.base_ring())
 
@@ -299,6 +299,19 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             Traceback (most recent call last):
             ...
             ValueError: (1 + O(5^8) : 1 + O(5^8) : 0) is not in a Weierstrass disc.
+
+        TESTS:
+
+        The Weierstrass points of this curve over `\QQ_{13}` have
+        `x \equiv 2, 3, 11 \pmod{13}`, and `11 \equiv -2`; the disc at `2` has
+        its own centre, whatever the order of the roots::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(x^3 - 3*x^2 - 4*x - 1).change_ring(Qp(13, 30))
+            sage: W = [W for W in H.rational_weierstrass_points()
+            ....:      if W[2] and W[0].residue() == 2][0]
+            sage: H.find_char_zero_weierstrass_point(W)[0].residue()
+            2
 
         AUTHOR:
 
@@ -418,6 +431,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             sage: HK.is_same_disc(P,S)
             True
             sage: HK.is_same_disc(Q,S)
+            False
+
+        TESTS:
+
+        Reductions with the same `y`-coordinate whose `x`-coordinates differ
+        by a root of unity are different points::
+
+            sage: H = HyperellipticCurve(x^3 + x^2 - x).change_ring(Qp(7, 10))
+            sage: H.is_same_disc(H(1, 1), H(-1, 1))
             False
         """
         return self.residue_disc(P) == self.residue_disc(Q)
@@ -648,6 +670,24 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             (0, 0)
             sage: HK.coleman_integrals_on_basis(S,T)
             (0, 0)
+
+        TESTS:
+
+        Points in the discs of `(1, 1)` and `(-1, 1)`, whose reductions differ
+        by a root of unity in the `x`-coordinate: the direct integral agrees
+        with the path through the Weierstrass point `(0, 0)`::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^3 + x^2 - x; K = Qp(7, 20)
+            sage: H = HyperellipticCurve(f).change_ring(K)
+            sage: def point(a):
+            ....:     y = K(f(a)).sqrt()
+            ....:     return H(K(a), y if (y - 1).valuation() > 0 else -y)
+            sage: P, Q, W = point(29), point(6), H(0, 0)
+            sage: direct = H.coleman_integrals_on_basis(P, Q)
+            sage: direct == (H.coleman_integrals_on_basis(P, W)
+            ....:            + H.coleman_integrals_on_basis(W, Q))
+            True
 
         AUTHORS:
 
