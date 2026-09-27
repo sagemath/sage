@@ -31,7 +31,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
     """
     def _repr_(self):
         r"""
-        Return the string representation of this category.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
