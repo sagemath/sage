@@ -42,7 +42,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
             sage: s1._repr_()
             'Category of bases of Supersymmetric functions over Rational Field'
         """
-        return "Category of bases of %s" % self.base()
+        return "Category of bases of {}".format(self.base())
 
     def super_categories(self):
         r"""
