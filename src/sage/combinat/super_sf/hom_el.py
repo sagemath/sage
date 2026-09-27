@@ -192,11 +192,22 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             res = self.base_ring().one()
             monomial_coeff = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
-            R = PolynomialRing(self.base_ring(), x_gens)
+            y_gens = [alphabet_y + str(i) for i in range(m)]
+            variables = x_gens + y_gens
+            R = PolynomialRing(self.base_ring(), variables)
             R_gens = R.gens_dict()
             x_gens = [R_gens[gen] for gen in x_gens]
+            y_gens = [R_gens[gen] for gen in y_gens]
             req_sum = R.zero()
             fin_res = R.zero()
+            def el_i(i, x_gens, y_gens):
+                res = R.zero()
+                for ki in k:
+                    for p in range(ki+1):
+                        for seq1 in combinations(range(m), (ki - p)):
+                            for seq2 in combinations_with_replacement(range(n), p):
+                                    res_prod = prod([y_gens[i] for i in seq1]) * prod([x_gens[j] for j in seq2])
+                                    req_sum += res_prod
             if not m:
                 if basis_name == 'homogeneous':
                     for k in monomial_coeff:
@@ -233,8 +244,8 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
                 if basis_name == 'homogeneous':
                     for k in monomial_coeff:
                         for ki in k:
-                            for p in range(1, ki+1):
-                                for seq1 in combinations(range(n), (ki - p)):
+                            for p in range(ki+1):
+                                for seq1 in combinations(range(m), (ki - p)):
                                     for seq2 in combinations_with_replacement(range(n), p):
                                             res_prod = prod([y_gens[i] for i in seq1]) * prod([x_gens[j] for j in seq2])
                                             req_sum += res_prod
@@ -244,11 +255,21 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
                 elif basis_name == 'elementary':
                     for k in monomial_coeff:
                         for ki in k:
-                            for p in range(1, ki+1):
+                            for p in range(ki+1):
                                 for seq1 in combinations(range(n), (ki - p)):
-                                    for seq2 in combinations_with_replacement(range(n), p):
+                                    for seq2 in combinations_with_replacement(range(m), p):
                                         res_prod = prod([y_gens[i] for i in seq2]) * prod([x_gens[j] for j in seq1])
                                         req_sum += res_prod
                             res *= req_sum
                         fin_res += monomial_coeff[k] * res
                 return fin_res
+# split into separate functions for each h_i/e_i
+# replace for loops with an explicit function
+# n = 0 case
+# clean up code. No need for special case for when n,m = 0
+# swap x_gens and y_gens when going from hom to el. Comment about it.
+# TODO:
+# Write one function for h_i using x_gens and y_gens. Swap the variable sets for e_i.
+# No need for special cases. Trace code to see if special cases are satisfied. Write doctests for the same.
+# Finish 1st PR comments and rebuild.
+# Test all files and see what's left.
