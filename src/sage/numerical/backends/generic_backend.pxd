@@ -29,15 +29,15 @@ cdef class GenericBackend (SageObject):
     cpdef best_known_objective_bound(self)
     cpdef get_relative_objective_gap(self)
     cpdef get_variable_value(self, int variable)
-    cpdef bint is_maximization(self) noexcept
+    cpdef bint is_maximization(self) except? -1
     cpdef write_lp(self, name)
     cpdef write_mps(self, name, int modern)
     cpdef row(self, int i)
-    cpdef int ncols(self) noexcept
-    cpdef int nrows(self) noexcept
-    cpdef bint is_variable_binary(self, int) noexcept
-    cpdef bint is_variable_integer(self, int) noexcept
-    cpdef bint is_variable_continuous(self, int) noexcept
+    cpdef int ncols(self) except? -1
+    cpdef int nrows(self) except? -1
+    cpdef bint is_variable_binary(self, int) except? -1
+    cpdef bint is_variable_integer(self, int) except? -1
+    cpdef bint is_variable_continuous(self, int) except? -1
     cpdef problem_name(self, name=*)
     cpdef row_bounds(self, int index)
     cpdef col_bounds(self, int index)
@@ -50,10 +50,10 @@ cdef class GenericBackend (SageObject):
     cpdef base_ring(self)
     cpdef __copy__(self)
     cpdef copy(self)
-    cpdef bint is_variable_basic(self, int index) noexcept
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept
-    cpdef bint is_slack_variable_basic(self, int index) noexcept
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept
+    cpdef bint is_variable_basic(self, int index) except? -1
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) except? -1
+    cpdef bint is_slack_variable_basic(self, int index) except? -1
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) except? -1
 
     cdef object obj_constant_term
 

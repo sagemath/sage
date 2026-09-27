@@ -23,6 +23,7 @@ py.install_sources(
   'glpk_exact_backend_test.py',
   'glpk_graph_backend.pxd',
   'glpk_graph_backend.pyx',
+  'glpk_thread_resources.py',
   'highs_backend.pxd',
   'highs_backend.pyx',
   'interactivelp_backend.pxd',

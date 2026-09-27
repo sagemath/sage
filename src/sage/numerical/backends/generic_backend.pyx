@@ -872,7 +872,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef int ncols(self) noexcept:
+    cpdef int ncols(self) except? -1:
         """
         Return the number of columns/variables.
 
@@ -899,7 +899,7 @@ cdef class GenericBackend:
         p = self
         tester.assertGreaterEqual(self.ncols(), 0)
 
-    cpdef int nrows(self) noexcept:
+    cpdef int nrows(self) except? -1:
         """
         Return the number of rows/constraints.
 
@@ -917,7 +917,7 @@ cdef class GenericBackend:
 
         raise NotImplementedError()
 
-    cpdef bint is_maximization(self) noexcept:
+    cpdef bint is_maximization(self) except? -1:
         """
         Test whether the problem is a maximization
 
@@ -1146,7 +1146,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_binary(self, int index) noexcept:
+    cpdef bint is_variable_binary(self, int index) except? -1:
         """
         Test whether the given variable is of binary type.
 
@@ -1169,7 +1169,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_integer(self, int index) noexcept:
+    cpdef bint is_variable_integer(self, int index) except? -1:
         """
         Test whether the given variable is of integer type.
 
@@ -1192,7 +1192,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_continuous(self, int index) noexcept:
+    cpdef bint is_variable_continuous(self, int index) except? -1:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1420,7 +1420,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_basic(self, int index) noexcept:
+    cpdef bint is_variable_basic(self, int index) except? -1:
         """
         Test whether the given variable is basic.
 
@@ -1451,7 +1451,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) except? -1:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1482,7 +1482,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_basic(self, int index) noexcept:
+    cpdef bint is_slack_variable_basic(self, int index) except? -1:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -1513,7 +1513,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) except? -1:
         """
         Test whether the given variable is nonbasic at lower bound.
 

@@ -22,8 +22,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
     cdef int __INTEGER
     cdef object _linear_functions_parent
     cdef object _linear_constraints_parent
-    cpdef int number_of_constraints(self) noexcept
-    cpdef int number_of_variables(self) noexcept
+    cpdef int number_of_constraints(self) except? -1
+    cpdef int number_of_variables(self) except? -1
     cdef int _check_redundant
     cdef list _constraints
     cpdef sum(self, L)
