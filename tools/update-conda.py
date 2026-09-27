@@ -13,12 +13,13 @@ from grayskull.strategy.py_toml import get_all_toml_info
 from grayskull.strategy.pypi import extract_requirements, normalize_requirements_list
 from packaging.requirements import Requirement
 
-platforms = {
+platforms: dict[str, str] = {
     "linux-64": "linux",
     "linux-aarch64": "linux-aarch64",
     "osx-64": "macos-x86_64",
     "osx-arm64": "macos",
     "win-64": "win",
+    "emscripten-wasm32": "wasm"
 }
 
 # Get source directory from command line arguments
@@ -39,15 +40,18 @@ pythons = ["3.12", "3.13", "3.14"]
 tags = [""]
 
 
-def write_env_file(env_file: Path, dependencies: list[str]) -> None:
+def write_env_file(env_file: Path, dependencies: list[str], platform: str) -> None:
+    channels = ["conda-forge", "nodefaults"]
+    if platform == "emscripten-wasm32":
+        channels.insert(0, "https://repo.prefix.dev/emscripten-forge-4x")
+
     env_file.write_text(
-        """name: sage
+        f"""name: sage
 channels:
-  - conda-forge
-  - nodefaults
+{"".join(f"  - {channel}\n" for channel in channels)}
 dependencies:
+{"".join(f"  - {req}\n" for req in dependencies)}
 """
-        + "".join(f"  - {req}" + "\n" for req in dependencies)
     )
     print(f"Conda environment file written to {env_file}")
 
@@ -59,6 +63,7 @@ def filter_requirements(dependencies: set[str], python: str, platform: str) -> s
         "osx-64": "darwin",
         "osx-arm64": "darwin",
         "win-64": "win32",
+        "emscripten-wasm32": "emscripten",# see https://peps.python.org/pep-0776/#platform-identification
     }[platform]
     platform_machine = {
         "linux-64": "x86_64",
@@ -66,6 +71,7 @@ def filter_requirements(dependencies: set[str], python: str, platform: str) -> s
         "osx-64": "x86_64",
         "osx-arm64": "arm64",
         "win-64": "x86_64",
+        "emscripten-wasm32": "wasm32",
     }[platform]
     env = {
         "python_version": python,
@@ -101,7 +107,7 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             pinned_dependencies = sorted(pinned_dependencies)
 
             env_file = source_dir / f"environment{tag}-{python}.yml"
-            write_env_file(env_file, pinned_dependencies)
+            write_env_file(env_file, pinned_dependencies, platform_key)
             lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
             lock_file_gen = (
                 source_dir / f"environment{tag}-{python}-{platform_value}.yml"
@@ -113,8 +119,6 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                 [
                     "conda-lock",
                     "--mamba",
-                    "--channel",
-                    "conda-forge",
                     "--kind",
                     "env",
                     "--platform",
