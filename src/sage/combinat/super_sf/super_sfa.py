@@ -1,5 +1,5 @@
 r"""
-Bases of Supersymmetric functions
+Bases of Supersymmetric Functions
 
 AUTHORS:
 
