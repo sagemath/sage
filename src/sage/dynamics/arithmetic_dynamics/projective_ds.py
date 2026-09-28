@@ -8416,19 +8416,29 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         fixed point.
 
         A dynamical system is polynomial if it has a totally ramified
-        fixed point. This is equivalent to the existence of a critical
-        point of multiplicity at least `d - 1` that is also a fixed
-        point, where `d` is the degree.
+        fixed point. Over a field of characteristic zero this is
+        equivalent to the existence of a critical point of multiplicity
+        at least `d - 1` that is also a fixed point, where `d` is the
+        degree.
 
         The function must be defined over an absolute number field or a
         finite field.
 
         ALGORITHM:
 
-        We compute the critical locus (the Wronskian ideal) and the
-        first dynatomic polynomial. If any irreducible factor of the
-        critical locus has multiplicity at least `d - 1` and divides
-        the dynatomic polynomial, then the map is polynomial.
+        In characteristic zero, ramification is always tame and a
+        totally ramified fixed point is exactly a critical point of
+        multiplicity at least `d - 1` that is also fixed. We detect
+        this by factoring the Wronskian ideal and checking divisibility
+        against the first dynatomic polynomial.
+
+        In finite characteristic, wild ramification can occur and the
+        multiplicity of a critical point in the Wronskian need not
+        equal the local ramification index. In particular, when the
+        characteristic divides the degree, the Wronskian is identically
+        zero for polynomial maps. In that case we fall back to the
+        original algorithm, which builds the splitting field of the
+        fixed points through successive field extensions.
 
         OUTPUT: boolean
 
@@ -8495,6 +8505,30 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([x^5 + y^5, y^5])
             sage: f.is_polynomial()
             True
+
+        In finite characteristic with `p \\mid d`, the Wronskian is
+        identically zero for polynomial maps, but the splitting-field
+        fallback still returns the correct answer::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(3), 1)
+            sage: f = DynamicalSystem_projective([x^3, y^3])
+            sage: f.is_polynomial()
+            True
+
+        Wild ramification counterexample (`p \\mid d`, high Wronskian
+        multiplicity but not totally ramified)::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(2), 1)
+            sage: f = DynamicalSystem([x^2*(x+y), x^2*y + x*y^2 + y^3])
+            sage: f.is_polynomial()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(3), 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])
+            sage: f.is_polynomial()
+            False
         """
         if self.codomain().dimension_relative() != 1:
             raise NotImplementedError("space must have dimension equal to 1")
@@ -8503,33 +8537,78 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             raise NotImplementedError("must be over an absolute number field or finite field")
 
         d = self.degree()
-
-        # Degree 1 maps are always polynomial (Mobius transformations).
         if d == 1:
             return True
 
-        # The critical locus. For dimension 1 this ideal is principal.
-        wr = self.wronskian_ideal()
-        w = wr.gen(0)
-
-        if w.is_zero():
+        # Fast path: characteristic zero. Ramification is always tame,
+        # so a critical point of multiplicity >= d-1 is exactly a
+        # totally ramified fixed point.
+        if K.characteristic() == 0:
+            wr = self.wronskian_ideal()
+            w = wr.gen(0)
+            if w.is_zero():
+                return False
+            if w.degree() < d - 1:
+                return False
+            D1 = self.dynatomic_polynomial(1)
+            R = w.parent()
+            if D1.parent() != R:
+                D1 = R(D1)
+            for L, e in w.factor():
+                if e >= d - 1 and L.divides(D1):
+                    return True
             return False
 
-        # A critical point of multiplicity >= d-1 has degree at least d-1.
-        if w.degree() < d - 1:
-            return False
-
-        # Fixed points.
-        D1 = self.dynatomic_polynomial(1)
-        R = w.parent()
-        if D1.parent() != R:
-            D1 = R(D1)
-
-        # Look for a critical factor of multiplicity >= d-1 that is fixed.
-        for L, e in w.factor():
-            if e >= d - 1 and L.divides(D1):
+        # Slow path: finite fields. Wild ramification can occur when
+        # the characteristic divides the degree, so we use the original
+        # splitting-field algorithm.
+        q = K.characteristic()
+        deg = K.degree()
+        var = K.variable_name()
+        g = self
+        G = self.dehomogenize(1).dynatomic_polynomial(1)
+        if G.degree() <= g.degree():
+            if len((g[1]).factor()) == 1:
                 return True
-
+        i = 0
+        if G.degree() != 0:
+            G = G.polynomial(G.variable(0))
+        while G.degree() != 0:
+            Y = G.factor()
+            R = G.parent()
+            u = G
+            for p, exp in Y:
+                if p.degree() == 1:
+                    if len((g[0]*p[1] + g[1]*p[0]).factor()) == 1:
+                        return True
+                    G = R(G/(p**exp))
+                else:
+                    u = p
+            if G.degree() != 0:
+                if K == QQ:
+                    from sage.rings.number_field.number_field import NumberField
+                    L = NumberField(u, 't'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]
+                    K = L
+                elif K in FiniteFields():
+                    deg = deg*G.degree()
+                    K = GF(q**(deg), prefix=var)
+                else:
+                    L = K.extension(u, 't'+str(i))
+                    i += 1
+                    phi1 = K.embeddings(L)[0]
+                    K = L
+                    L = K.absolute_field('t'+str(i))
+                    i += 1
+                    phi = K.embeddings(L)[0]*phi1
+                    K = L
+                if K in FiniteFields():
+                    G = G.change_ring(K)
+                    g = g.change_ring(K)
+                else:
+                    G = G.change_ring(phi)
+                    g = g.change_ring(phi)
         return False
 
     def normal_form(self, return_conjugation=False):
