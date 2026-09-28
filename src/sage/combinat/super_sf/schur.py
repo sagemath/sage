@@ -197,3 +197,6 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
 
 # monomial - comul, mul and antipode - define by coercion
 # lift map to powersum
+# Monomial - moens thesis
+# Schur product - moens thesis
+# Re-implement schur coproduct via coercion to powersum
