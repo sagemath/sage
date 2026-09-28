@@ -826,6 +826,23 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             Eo_4(X)
             sage: A(AlternatingGroup(4), {1: range(1, 5)})
             Eo_4(Y)
+
+        The species of bicoloured polygons `P^{bic}_{2n}`, polygons
+        with `2n` vertices whose edges are alternately coloured with
+        two colours, is defined in Example 2.6.28 of [BLL1998]_ (see
+        :issue:`42858`)::
+
+            sage: A = AtomicSpecies("X")
+            sage: G = graphs.CycleGraph(6)
+            sage: len([G.set_edge_label(2*i, 2*i+1, "x") for i in range(3)])
+            3
+            sage: A(G.automorphism_group(edge_labels=True))
+            Pb_6
+            sage: G = graphs.CycleGraph(8)
+            sage: len([G.set_edge_label(2*i, 2*i+1, "x") for i in range(4)])
+            4
+            sage: A(G.automorphism_group(edge_labels=True))
+            Pb_8
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
         from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
@@ -857,7 +874,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             if n >= 4 and not n % 2:
                 gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
-                        [(i, i+1) for i in range(1, n, 2)]]
+                        [(1, 2)] + [(i, n - i + 3) for i in range(3, n//2 + 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
 
     def __contains__(self, x) -> bool:
