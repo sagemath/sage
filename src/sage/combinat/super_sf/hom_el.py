@@ -93,12 +93,14 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             sage: e = s.e()
             sage: h = s.h()
             sage: f = e[6,5]
-            sage: h(e.antipode(f))
-            h[6,5]
+
+            sage: # Tests
             sage: h.antipode(h[2])
             h[1, 1] - h[2]
             sage: e(h.antipode(h[2]))
             e[2]
+            sage: all(e(h[la].antipode()) == e[la] for la in Partitions(6))
+            True
         """
         if self.basis_name == 'homogeneous':
             e = self.realization_of().e()
@@ -179,17 +181,39 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             EXAMPLES::
 
                 sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-                sage: s = SuperSymmetricFunctions(QQ)
-                sage: h = s.h()
-                sage: h[3,2].expand(3)
-                100*x1^2*x2^2*x3^2 + 360*x1^2*x2^2*x3*y1 + 324*x1^2*x2^2*y1^2 +
-                180*x1^2*x2*x3*y1*y2 + 324*x1^2*x2*y1^2*y2 +
-                81*x1^2*y1^2*y2^2 + 60*x1^2*x2^2*x3 + 108*x1^2*x2^2*y1 +
-                90*x1^2*x2*x3*y1 + 162*x1^2*x2*y1^2 + 54*x1^2*x2*y1*y2 +
-                81*x1^2*y1^2*y2
+                sage: Sym = SuperSymmetricFunctions(QQ)
+                sage: h = Sym.h()
+                sage: h[2,1].expand(1,1)  # corner cases for homogeneous
+                x0^3 + 2*x0^2*y0 + x0*y0^2
+                sage: h[2,1].expand(0,1)
+                0
+                sage: h[2,1].expand(0,0)
+                0
+                sage: h[2,1].expand(1,0)
+                x0^3
+
+                sage: # Comparing with Sym
+                sage: sym = SymmetricFunctions(QQ)
+                sage: h1 = sym.h()
+                sage: h[2,1].expand(2,0) == h1[2,1].expand(2)
+                True
+
+                sage: # Checking corner cases for elementary
+                sage: e = Sym.e()
+                sage: e[2,1].expand(1,1)
+                x0^2*y0 + 2*x0*y0^2 + y0^3
+                sage: e[2,1].expand(1,0)
+                0
+                sage: e[2,1].expand(0,0)
+                0
+                sage: e[2,1].expand(0,1)
+                y0^3
+                sage: # Comparing with sym
+                sage: e1 = sym.e()
+                sage: e[2,1].expand(2,0) == e1[2,1].expand(2)
+                True
             """
             basis_name = self.parent().basis_name
-            res = self.base_ring().one()
             monomial_coeff = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
             y_gens = [alphabet_y + str(i) for i in range(m)]
@@ -198,78 +222,37 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             R_gens = R.gens_dict()
             x_gens = [R_gens[gen] for gen in x_gens]
             y_gens = [R_gens[gen] for gen in y_gens]
-            req_sum = R.zero()
-            fin_res = R.zero()
-            def el_i(i, x_gens, y_gens):
-                res = R.zero()
-                for ki in k:
-                    for p in range(ki+1):
-                        for seq1 in combinations(range(m), (ki - p)):
-                            for seq2 in combinations_with_replacement(range(n), p):
-                                    res_prod = prod([y_gens[i] for i in seq1]) * prod([x_gens[j] for j in seq2])
-                                    req_sum += res_prod
-            if not m:
-                if basis_name == 'homogeneous':
-                    for k in monomial_coeff:
-                        for ki in k:
-                            for p in range(1, ki+1):
-                                for seq2 in combinations_with_replacement(range(n), p):
-                                    if basis_name == 'homogeneous':
-                                        res_prod = prod([x_gens[j] for j in seq2])
-                                        req_sum += res_prod
-                            res *= req_sum
-                        fin_res += monomial_coeff[k] * res
-                    return fin_res
 
-                elif basis_name == 'elementary':
-                    for k in monomial_coeff:
-                        for ki in k:
-                            for p in range(1, ki+1):
-                                for seq1 in combinations(range(n), (ki - p)):
-                                    res_prod = prod([x_gens[j] for j in seq1])
-                                    req_sum += res_prod
-                            res *= req_sum
-                        fin_res += monomial_coeff[k] * res
-                    return fin_res
+            def el_i(i, X_gens, Y_gens, x_count, y_count):
+                req_sum = R.zero()
+                for p in range(i+1):
+                    for seq1 in combinations(range(y_count), (i - p)):
+                        for seq2 in combinations_with_replacement(range(x_count), p):
+                                res_prod = prod([Y_gens[i] for i in seq1]) * prod([X_gens[j] for j in seq2])
+                                req_sum += res_prod
+                return req_sum
+
+            if basis_name == 'homogeneous':
+
+                fin_res = R.zero()
+                for part in monomial_coeff:
+                    res_prod = R.one()
+                    for p in part:
+                        res_prod *= el_i(p, x_gens, y_gens, n, m)
+                    fin_res += monomial_coeff[part] * res_prod
+                return fin_res
+
+            elif basis_name == 'elementary':
+
+                fin_res = R.zero()
+                for part in monomial_coeff:
+                    res_prod = R.one()
+                    for p in part:
+                        res_prod *= el_i(p, y_gens, x_gens, m, n)
+                        # Same function el_i used for hom and el,
+                        # except with gens swapped as per definition
+                    fin_res += monomial_coeff[part] * res_prod
+                return fin_res
 
             else:
-                y_gens = [alphabet_y + str(i) for i in range(m)]
-                variables = x_gens + y_gens
-                R = PolynomialRing(self.base_ring(), variables)
-                R_gens = R.gens_dict()
-                x_gens = [R_gens[gen] for gen in x_gens]
-                y_gens = [R_gens[gen] for gen in y_gens]
-                req_sum = R.zero()
-                fin_res = R.zero()
-                if basis_name == 'homogeneous':
-                    for k in monomial_coeff:
-                        for ki in k:
-                            for p in range(ki+1):
-                                for seq1 in combinations(range(m), (ki - p)):
-                                    for seq2 in combinations_with_replacement(range(n), p):
-                                            res_prod = prod([y_gens[i] for i in seq1]) * prod([x_gens[j] for j in seq2])
-                                            req_sum += res_prod
-                            res *= req_sum
-                        fin_res += monomial_coeff[k] * res
-
-                elif basis_name == 'elementary':
-                    for k in monomial_coeff:
-                        for ki in k:
-                            for p in range(ki+1):
-                                for seq1 in combinations(range(n), (ki - p)):
-                                    for seq2 in combinations_with_replacement(range(m), p):
-                                        res_prod = prod([y_gens[i] for i in seq2]) * prod([x_gens[j] for j in seq1])
-                                        req_sum += res_prod
-                            res *= req_sum
-                        fin_res += monomial_coeff[k] * res
-                return fin_res
-# split into separate functions for each h_i/e_i
-# replace for loops with an explicit function
-# n = 0 case
-# clean up code. No need for special case for when n,m = 0
-# swap x_gens and y_gens when going from hom to el. Comment about it.
-# TODO:
-# Write one function for h_i using x_gens and y_gens. Swap the variable sets for e_i.
-# No need for special cases. Trace code to see if special cases are satisfied. Write doctests for the same.
-# Finish 1st PR comments and rebuild.
-# Test all files and see what's left.
+                raise ValueError("invalid basis name")
