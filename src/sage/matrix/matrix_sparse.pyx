@@ -1034,6 +1034,64 @@ cdef class Matrix_sparse(matrix.Matrix):
                    self._ncols, sparse=True)
         return M(v)
 
+    def is_symmetric(self) -> bool:
+        r"""
+        Return whether this matrix is symmetric.
+
+        The generic implementation compares the `n(n-1)/2` pairs of
+        off-diagonal entries and is therefore quadratic in the dimension of
+        the matrix, even when almost all of those entries are zero. Here only
+        the nonzero entries are visited, so the running time is linear in
+        their number.
+
+        EXAMPLES::
+
+            sage: M = matrix(ZZ, 3, 3, {(0, 1): 1, (1, 0): 1}, sparse=True)
+            sage: M.is_symmetric()
+            True
+            sage: M[0, 2] = 5
+            sage: M.is_symmetric()
+            False
+
+        A matrix that is not square is not symmetric::
+
+            sage: matrix(ZZ, 2, 3, sparse=True).is_symmetric()
+            False
+
+        TESTS:
+
+        An entry that is stored but zero is treated like any other zero::
+
+            sage: M = matrix(ZZ, 2, 2, sparse=True)
+            sage: M[0, 1] = 0
+            sage: M.is_symmetric()
+            True
+
+        Symmetry agrees with equality to the transpose (:issue:`18810`)::
+
+            sage: for _ in range(30):
+            ....:     M = random_matrix(ZZ, 8, 8, density=0.2, sparse=True)
+            ....:     assert M.is_symmetric() == (M == M.transpose())
+            ....:     N = M + M.transpose()
+            ....:     assert N.is_symmetric() == (N == N.transpose())
+
+        Entries need not come from an exact ring::
+
+            sage: R.<x> = QQ[]
+            sage: M = matrix(R, 2, 2, {(0, 1): x, (1, 0): x}, sparse=True)
+            sage: M.is_symmetric()
+            True
+        """
+        if self._nrows != self._ncols:
+            return False
+        cdef dict D = self._dict()
+        zero = self.base_ring().zero()
+        cdef Py_ssize_t i, j
+        for (i, j), v in D.items():
+            if i != j and D.get((j, i), zero) != v:
+                return False
+        return True
+
     def density(self):
         """
         Return the density of the matrix.

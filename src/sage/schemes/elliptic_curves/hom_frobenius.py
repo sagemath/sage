@@ -60,11 +60,11 @@ Computing the dual of Frobenius is supported as well::
     sage: E = EllipticCurve([GF(17^6).gen(), 0])
     sage: pi = EllipticCurveHom_frobenius(E)
     sage: pihat = pi.dual(); pihat
-    Isogeny of degree 17
-     from Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x
-          over Finite Field in z6 of size 17^6
-       to Elliptic Curve defined by y^2 = x^3 + z6*x
-          over Finite Field in z6 of size 17^6
+    Composite morphism of degree 17 = 17*1:
+      From: Elliptic Curve defined by y^2 = x^3 + (15*z6^5+5*z6^4+8*z6^3+12*z6^2+11*z6+7)*x
+            over Finite Field in z6 of size 17^6
+      To:   Elliptic Curve defined by y^2 = x^3 + z6*x
+            over Finite Field in z6 of size 17^6
     sage: pihat.is_separable()
     True
     sage: pihat * pi == EllipticCurveHom_scalar(E,17)   # known bug -- #6413
@@ -124,7 +124,7 @@ TESTS::
        From: Elliptic Curve defined by y^2 = x^3 + (12*z5^4+14*z5^3+z5^2+4*z5+13)*x + 1 over Finite Field in z5 of size 17^5
        To:   Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 17^5]
     sage: prod(fs[::-1])
-    Composite morphism of degree 1419857 = 17^5:
+    Frobenius endomorphism of degree 1419857 = 17^5:
       From: Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 17^5
       To:   Elliptic Curve defined by y^2 = x^3 + z5*x + 1 over Finite Field in z5 of size 17^5
 
@@ -160,7 +160,7 @@ from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, find_post_isomorphism
-from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
+from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
 from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
 
@@ -308,6 +308,28 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
                 f'\n  To:   {self._codomain}'
 
     # EllipticCurveHom methods
+
+    @staticmethod
+    def _composition_impl(left, right):
+        r"""
+        Helper method to compose other elliptic-curve morphisms with
+        :class:`EllipticCurveHom_frobenius` objects. Called by
+        :meth:`EllipticCurveHom._composition_`.
+
+        TESTS::
+
+            sage: F.<t> = GF((11, 23), modulus = [9,1,8] + [0]*20 + [1])
+            sage: E = EllipticCurve([1, t])
+            sage: phi = E.frobenius_isogeny(6)
+            sage: psi = phi.codomain().frobenius_isogeny(7)
+            sage: psi * phi
+            Frobenius isogeny of degree 34522712143931 = 11^13:
+              From: Elliptic Curve defined by y^2 = x^3 + x + t over Finite Field in t of size 11^23
+              To:   Elliptic Curve defined by y^2 = x^3 + x + (7*t^22+7*t^21+5*t^18+8*t^17+2*t^16+8*t^15+3*t^14+5*t^13+4*t^12+3*t^11+9*t^10+3*t^9+6*t^8+4*t^7+7*t^6+8*t^5+9*t^4+4*t^3+5*t^2+2*t+10) over Finite Field in t of size 11^23
+        """
+        if isinstance(left, EllipticCurveHom_frobenius) and isinstance(right, EllipticCurveHom_frobenius):
+            return EllipticCurveHom_frobenius(right._domain, left._n + right._n)
+        return NotImplemented
 
     def rational_maps(self):
         """
@@ -493,7 +515,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             Phis = []
             for _ in range(self._n):
                 Ep = EllipticCurve([a**self._p for a in E.a_invariants()])
-                Phis.append(EllipticCurveIsogeny(Ep, ker, codomain=E))
+                Phis.append(_construct_isogeny(Ep, ker, codomain=E))
                 E, ker = Ep, ker.map_coefficients(lambda c: c**self._p)
             Phi = EllipticCurveHom_composite.from_factors(Phis[::-1], self._codomain)
 

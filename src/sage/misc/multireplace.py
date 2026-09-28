@@ -20,7 +20,7 @@ import re
 # The simplest, lambda-based implementation
 #
 
-def multiple_replace(dic, text):
+def multiple_replace(dic: dict[str, str], text: str) -> str:
     """
     Replace in 'text' all occurrences of any key in the given
     dictionary by its corresponding value.  Returns the new string.
