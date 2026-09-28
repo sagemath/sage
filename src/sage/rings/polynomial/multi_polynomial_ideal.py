@@ -5086,7 +5086,33 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             Requires computation of a Groebner basis, which can be a very
             expensive operation.
+
+        TESTS:
+
+        Check that :issue:`40399` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y,z> = R[]
+            sage: I = S.ideal(y)
+            sage: y in I
+            True
+            sage: x*y in I
+            True
+            sage: z in I
+            False
+            sage: x in I
+            False
+            sage: I2 = S.ideal([y^2 + x*z, y + z])
+            sage: (y^2 + x*z) in I2
+            True
+            sage: x*(y + z) in I2
+            True
+            sage: x in I2
+            False
         """
+        phi = self.ring().flattening_morphism()
+        if phi.codomain() is not self.ring():
+            return phi(f) in phi.codomain().ideal([phi(g) for g in self.gens()])
         return self.reduce(f).is_zero()
 
     def homogenize(self, var='h'):
