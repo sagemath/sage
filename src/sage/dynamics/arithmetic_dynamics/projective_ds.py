@@ -8415,8 +8415,20 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         Check to see if the dynamical system has a totally ramified
         fixed point.
 
+        A dynamical system is polynomial if it has a totally ramified
+        fixed point. This is equivalent to the existence of a critical
+        point of multiplicity at least `d - 1` that is also a fixed
+        point, where `d` is the degree.
+
         The function must be defined over an absolute number field or a
         finite field.
+
+        ALGORITHM:
+
+        We compute the critical locus (the Wronskian ideal) and the
+        first dynatomic polynomial. If any irreducible factor of the
+        critical locus has multiplicity at least `d - 1` and divides
+        the dynatomic polynomial, then the map is polynomial.
 
         OUTPUT: boolean
 
@@ -8469,75 +8481,55 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         TESTS:
 
-        See :issue:`25242`::
+        See :issue:`25242` ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem([x^2 + y^2, x*y])
             sage: F2 = F.conjugate(matrix(QQ,2,2, [1,2,3,5]))
-            sage: F2.is_polynomial()                                                    # needs sage.libs.pari
+            sage: F2.is_polynomial()
             False
+
+        Check a high-degree polynomial map::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^5 + y^5, y^5])
+            sage: f.is_polynomial()
+            True
         """
         if self.codomain().dimension_relative() != 1:
             raise NotImplementedError("space must have dimension equal to 1")
         K = self.base_ring()
         if K not in FiniteFields() and (K not in NumberFields() or not K.is_absolute()):
             raise NotImplementedError("must be over an absolute number field or finite field")
-        if K in FiniteFields():
-            q = K.characteristic()
-            deg = K.degree()
-            var = K.variable_name()
-        g = self
-        #get polynomial defining fixed points
-        G = self.dehomogenize(1).dynatomic_polynomial(1)
-        # see if infty = (1,0) is fixed
-        if G.degree() <= g.degree():
-            #check if infty is totally ramified
-            if len((g[1]).factor()) == 1:
+
+        d = self.degree()
+
+        # Degree 1 maps are always polynomial (Mobius transformations).
+        if d == 1:
+            return True
+
+        # The critical locus. For dimension 1 this ideal is principal.
+        wr = self.wronskian_ideal()
+        w = wr.gen(0)
+
+        if w.is_zero():
+            return False
+
+        # A critical point of multiplicity >= d-1 has degree at least d-1.
+        if w.degree() < d - 1:
+            return False
+
+        # Fixed points.
+        D1 = self.dynatomic_polynomial(1)
+        R = w.parent()
+        if D1.parent() != R:
+            D1 = R(D1)
+
+        # Look for a critical factor of multiplicity >= d-1 that is fixed.
+        for L, e in w.factor():
+            if e >= d - 1 and L.divides(D1):
                 return True
-        #otherwise we need to create the tower of extensions
-        #which contain the fixed points. We do
-        #this successively so we can exit early if
-        #we find one and not go all the way to the splitting field
-        i = 0 #field index
-        if G.degree() != 0:
-            G = G.polynomial(G.variable(0))
-        while G.degree() != 0:
-            Y = G.factor()
-            R = G.parent()
-            u = G
-            for p,exp in Y:
-                if p.degree() == 1:
-                    if len((g[0]*p[1] + g[1]*p[0]).factor()) == 1:
-                        return True
-                    G = R(G/(p**exp)) # we already checked this root
-                else:
-                    u = p #need to extend to get these roots
-            if G.degree() != 0:
-                #create the next extension
-                if K == QQ:
-                    from sage.rings.number_field.number_field import NumberField
-                    L = NumberField(u, 't'+str(i))
-                    i += 1
-                    phi = K.embeddings(L)[0]
-                    K = L
-                elif K in FiniteFields():
-                    deg = deg*G.degree()
-                    K = GF(q**(deg), prefix=var)
-                else:
-                    L = K.extension(u, 't'+str(i))
-                    i += 1
-                    phi1 = K.embeddings(L)[0]
-                    K = L
-                    L = K.absolute_field('t'+str(i))
-                    i += 1
-                    phi = K.embeddings(L)[0]*phi1
-                    K = L
-                if K in FiniteFields():
-                    G = G.change_ring(K)
-                    g = g.change_ring(K)
-                else:
-                    G = G.change_ring(phi)
-                    g = g.change_ring(phi)
+
         return False
 
     def normal_form(self, return_conjugation=False):
