@@ -181,6 +181,7 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
             INPUT:
 
             - ``n`` -- nonnegative integer
+            - ``m`` -- nonnegative integer
             - ``alphabet_x`` -- (default: ``'x'``) a variable for the expansion `x`
             - ``alphabet_y`` -- (default: ``'y'``) a variable for the expansion `y`
 
