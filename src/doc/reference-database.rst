@@ -2376,6 +2376,9 @@
               two-player games.*
               http://www.maths.lse.ac.uk/personal/stengel/ETissue/ARSvS.pdf (2010)
 
+.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
+                Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
+
 .. [DHSW2003] Dumas, Heckenbach, Saunders, Welker, "Computing
               simplicial homology based on efficient Smith normal form
               algorithms," in "Algebra, geometry, and software
@@ -2449,9 +2452,6 @@
 .. [Djo2024] \D. Đoković.
             *Two classes of Hadamard matrices of Goethals-Seidel type*
             :arxiv:`2404.14375`
-
-.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
-                Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
 
 .. [DJP2001] \X. Droubay, J. Justin, G. Pirillo, *Episturmian words
              and some constructions of de Luca and Rauzy*,
