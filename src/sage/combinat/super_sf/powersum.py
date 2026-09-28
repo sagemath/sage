@@ -214,14 +214,13 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
                                     for x in x_gens1)
                                 for p in part)
                             for part in self_parts)
-            else:
-                y_gens = [alphabet_y + str(i) for i in range(m)]
-                R = PolynomialRing(self.base_ring(), x_gens + y_gens)
-                R_gens = R.gens()
-                x_gens1 = R_gens[:n]
-                y_gens1 = R_gens[n:]
-                return sum(self_parts[part] *
-                        prod(sum(x**p - y**p
-                                    for x, y in zip(x_gens1, y_gens1))
-                                for p in part)
-                        for part in self_parts)
+            y_gens = [alphabet_y + str(i) for i in range(m)]
+            R = PolynomialRing(self.base_ring(), x_gens + y_gens)
+            R_gens = R.gens()
+            x_gens1 = R_gens[:n]
+            y_gens1 = R_gens[n:]
+            return sum(self_parts[part] *
+                    prod(sum(x**p - y**p
+                                for x, y in zip(x_gens1, y_gens1))
+                            for p in part)
+                    for part in self_parts)

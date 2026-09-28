@@ -242,7 +242,7 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
 
-            elif basis_name == 'elementary':
+            if basis_name == 'elementary':
 
                 fin_res = R.zero()
                 for part in monomial_coeff:
@@ -253,6 +253,3 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
                         # except with gens swapped as per definition
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
-
-            else:
-                raise ValueError("invalid basis name")
