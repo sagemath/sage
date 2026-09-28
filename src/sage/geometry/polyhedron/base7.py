@@ -92,8 +92,8 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.centroid()
             (1/4, 0, 0)
 
-            sage: P = polytopes.associahedron(['A', 2])                                 # needs sage.combinat
-            sage: P.centroid()                                                          # needs sage.combinat
+            sage: P = polytopes.associahedron(['A', 2])
+            sage: P.centroid()
             (2/21, 2/21)
 
             sage: P = polytopes.permutahedron(4, backend='normaliz')    # optional - pynormaliz
@@ -513,13 +513,13 @@ class Polyhedron_base7(Polyhedron_base6):
 
         If the base ring is exact, the answer is exact::
 
-            sage: P5 = polytopes.regular_polygon(5)                                     # needs sage.rings.number_field
-            sage: P5.volume()                                                           # needs sage.rings.number_field
+            sage: P5 = polytopes.regular_polygon(5)
+            sage: P5.volume()
             2.377641290737884?
 
-            sage: polytopes.icosahedron().volume()                                      # needs sage.groups sage.rings.number_field
+            sage: polytopes.icosahedron().volume()
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.groups sage.rings.number_field
+            sage: numerical_approx(_)  # abs tol 1e9
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
@@ -532,7 +532,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume()
             0
-            sage: P.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: P.volume(measure='induced')
             1.414213562373095?
             sage: P.volume(measure='induced_rational')                  # optional - latte_int
             1
@@ -553,7 +553,7 @@ class Polyhedron_base7(Polyhedron_base6):
             ....:                          [-1,1,1], [-1,2,0]])
             sage: P.volume()
             0
-            sage: P.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: P.volume(measure='induced')
             2.598076211353316?
             sage: P.volume(measure='induced', engine='normaliz')
             2.598076211353316
@@ -587,19 +587,19 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: RDF(w)    # abs tol 1e-9
             1.5340627082974878
 
-            sage: all(polytopes.simplex(d).volume(measure='induced')                    # needs sage.rings.number_field sage.symbolic
+            sage: all(polytopes.simplex(d).volume(measure='induced')
             ....:        == sqrt(d+1)/factorial(d)
             ....:     for d in range(1,5))
             True
 
             sage: I = Polyhedron([[-3, 0], [0, 9]])
-            sage: I.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: I.volume(measure='induced')
             9.48683298050514?
             sage: I.volume(measure='induced_rational')                  # optional - latte_int
             3
 
             sage: T = Polyhedron([[3, 0, 0], [0, 4, 0], [0, 0, 5]])
-            sage: T.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: T.volume(measure='induced')
             13.86542462386205?
             sage: T.volume(measure='induced_rational')                  # optional - latte_int
             1/2
@@ -833,21 +833,21 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: R.<x, y, z> = QQ[]
             sage: P = polytopes.simplex(2)
-            sage: V = AA(P.volume(measure='induced'))                                   # needs sage.rings.number_field
-            sage: V.radical_expression()                                                # needs sage.rings.number_field sage.symbolic
+            sage: V = AA(P.volume(measure='induced'))
+            sage: V.radical_expression()
             1/2*sqrt(3)
-            sage: P.integrate(R(1), measure='induced') == V             # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: P.integrate(R(1), measure='induced') == V             # optional - latte_int
             True
 
         Computing the mass center::
 
-            sage: (P.integrate(x, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(x, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
-            sage: (P.integrate(y, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(y, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
-            sage: (P.integrate(z, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(z, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
 
@@ -862,8 +862,8 @@ class Polyhedron_base7(Polyhedron_base6):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
-            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.groups sage.rings.number_field
+            sage: P = polytopes.icosahedron()
+            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF

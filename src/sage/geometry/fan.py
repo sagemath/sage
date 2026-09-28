@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Rational polyhedral fans
 
@@ -479,7 +478,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: fan = Fan([c1, c2], allow_arrangement=True)
         sage: fan.n_generating_cones()
         7
-        sage: fan.plot()                                                                # needs sage.plot
+        sage: fan.plot()
         Graphics3d Object
 
     Cones of different dimension::
@@ -499,7 +498,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: c3 = Cone([[0, 1, 1], [1, 0, 1], [0, -1, 1], [-1, 0, 1]])
         sage: c1 = Cone([[0, 0, 1]])
         sage: fan1 = Fan([c1, c3], allow_arrangement=True)
-        sage: fan1.plot()                                                               # needs sage.plot
+        sage: fan1.plot()
         Graphics3d Object
 
     A 3-d cone and two 2-d cones::
@@ -1607,9 +1606,9 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             False
             sage: f.support_contains(0)   # 0 converts to the origin in the lattice
             True
-            sage: f.support_contains(1/2, sqrt(3))                                      # needs sage.symbolic
+            sage: f.support_contains(1/2, sqrt(3))
             True
-            sage: f.support_contains(-1/2, sqrt(3))                                     # needs sage.symbolic
+            sage: f.support_contains(-1/2, sqrt(3))
             False
         """
         if len(args) == 1:
@@ -2564,9 +2563,9 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             [(1, 0), (1, 0), (1, 0), (1, 0)]
 
             sage: g = toric_varieties.Cube_deformation(10).fan().vertex_graph()
-            sage: g.automorphism_group().order()                                        # needs sage.groups
+            sage: g.automorphism_group().order()
             48
-            sage: g.automorphism_group(edge_labels=True).order()                        # needs sage.groups
+            sage: g.automorphism_group(edge_labels=True).order()
             4
         """
         from sage.geometry.cone import classify_cone_2d
@@ -3017,7 +3016,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         EXAMPLES::
 
             sage: fan = toric_varieties.dP6().fan()                                     # needs palp
-            sage: fan.plot()                                                            # needs palp sage.plot
+            sage: fan.plot()                                                            # needs palp
             Graphics object consisting of 31 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())

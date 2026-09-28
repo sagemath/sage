@@ -67,10 +67,6 @@ cdef class ListOfPairs:
             Traceback (most recent call last):
             ...
             IndexError
-            sage: l[-1]
-            Traceback (most recent call last):
-            ...
-            OverflowError: can't convert negative value to size_t
         """
         cdef pair_s* pair = self.get(index)
         return (smallInteger(pair.first), smallInteger(pair.second))

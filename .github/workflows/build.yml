@@ -29,7 +29,7 @@ concurrency:
 #
 # The three workflows:
 #
-#  - build.yml (with jobs test-new, test-long),
+#  - build.yml (with job test-long),
 #  - doc-build.yml,
 #  - doc-build-pdf.yml
 #
@@ -50,7 +50,7 @@ concurrency:
 # This baseline is transparently improved by our use of the GH Actions cache,
 # see https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api.
 #
-# Jobs test-long is only started after test-new completed;
+# Job test-long builds Sage and runs tests;
 # but the workflows doc-build.yml and doc-build-pdf.yml are started independently.
 #
 #  - When nothing is cached and the 3 workflows are launched in parallel,
@@ -156,7 +156,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=${{ needs.test-new.outputs.build_targets }}
+            TARGETS=build
 
       - name: Start container
         id: container
@@ -273,7 +273,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=${{ needs.test-new.outputs.build_targets }}
+            TARGETS=build
 
       - name: Start container
         id: container

@@ -600,8 +600,8 @@ def rearrangement(p, ambient_dim=None, lattice=None):
         sage: ambient_dim = ZZ.random_element(2,10).abs()
         sage: p = ZZ.random_element(1, ambient_dim)
         sage: K = cones.rearrangement(p, ambient_dim)
-        sage: P = SymmetricGroup(ambient_dim).random_element().matrix()                 # needs sage.groups
-        sage: all(K.contains(P*r) for r in K)                                           # needs sage.groups
+        sage: P = SymmetricGroup(ambient_dim).random_element().matrix()
+        sage: all(K.contains(P*r) for r in K)
         True
 
     The smallest ``p`` components of every element of the rearrangement

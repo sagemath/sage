@@ -1,0 +1,48 @@
+diff --git a/configure b/configure
+--- a/configure
++++ b/configure
+@@ -585,4 +585,5 @@
+ ac_unique_file="src/macsys.lisp"
+-ac_subst_vars='SBCL_EXTRA_ARGS
++ac_subst_vars='MAXIMA_FAS_DIR
++SBCL_EXTRA_ARGS
+ LTLIBOBJS
+ LIBOBJS
+@@ -859,5 +860,6 @@ ac_precious_vars='build_alias
+ host_alias
+ target_alias
++MAXIMA_FAS_DIR
+ EMACS
+ EMACSLOADPATH
+ MAKEINFO'
+@@ -1569,3 +1571,5 @@ Some influential environment variables:
++  MAXIMA_FAS_DIR
++              directory where Maxima's ECL FAS is installed
+   EMACS       the Emacs editor command
+   EMACSLOADPATH
+               the Emacs library search path
+diff --git a/src/Makefile.in b/src/Makefile.in
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -241,4 +241,5 @@ LTLIBOBJS = @LTLIBOBJS@
+ MAKEINFO = @MAKEINFO@
++MAXIMA_FAS_DIR = @MAXIMA_FAS_DIR@
+ MKDIR_P = @MKDIR_P@
+ NEED_MATHJAX = @NEED_MATHJAX@
+ NO_DISPLAYMATH = @NO_DISPLAYMATH@
+@@ -1374,3 +1375,15 @@
++@ECL_TRUE@.PHONY: sage-install-maxima-fas sage-uninstall-maxima-fas
++@ECL_TRUE@install-data-local: sage-install-maxima-fas
++@ECL_TRUE@sage-install-maxima-fas: binary-ecl/maxima
++@ECL_TRUE@	test -n "$(MAXIMA_FAS_DIR)"
++@ECL_TRUE@	$(MKDIR_P) "$(DESTDIR)$(MAXIMA_FAS_DIR)"
++@ECL_TRUE@	$(INSTALL_DATA) binary-ecl/maxima.fas \
++@ECL_TRUE@		"$(DESTDIR)$(MAXIMA_FAS_DIR)/maxima.fas"
++
++@ECL_TRUE@uninstall-local: sage-uninstall-maxima-fas
++@ECL_TRUE@sage-uninstall-maxima-fas:
++@ECL_TRUE@	rm -f "$(DESTDIR)$(MAXIMA_FAS_DIR)/maxima.fas"
++
+ @ECL_TRUE@binary-ecl/maxima:
+ @ECL_TRUE@	$(MAKE) bd
+ @ECL_TRUE@	echo '$(QUIET) $(LOADDEFSYSTEM) $(DEFSYSTEMCOMPILE) (build-maxima-lib) (ext:quit)' | $(EXECUTEECL)

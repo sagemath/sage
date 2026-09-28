@@ -1576,29 +1576,31 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: A = random_matrix(GF(2),3,3)
-            sage: A._magma_init_(magma)                             # optional - magma
-            'Matrix(GF(2),3,3,StringToIntegerSequence("..."))'
+            sage: A._magma_init_(magma)
+            'Matrix(GF(2),3,3,[...])'
             sage: A = random_matrix(GF(2),100,100)
             sage: B = random_matrix(GF(2),100,100)
-            sage: magma(A*B) == magma(A) * magma(B)                 # optional - magma
+            sage: magma(A*B) == magma(A) * magma(B)
             True
 
         TESTS::
 
+            sage: # optional - magma
             sage: A = random_matrix(GF(2),0,3)
-            sage: magma(A)                          # optional - magma
+            sage: magma(A)
             Matrix with 0 rows and 3 columns
             sage: A = matrix(GF(2),2,3,[0,1,1,1,0,0])
-            sage: A._magma_init_(magma)             # optional - magma
-            'Matrix(GF(2),2,3,StringToIntegerSequence("0 1 1 1 0 0"))'
-            sage: magma(A)                          # optional - magma
+            sage: A._magma_init_(magma)
+            'Matrix(GF(2),2,3,[0,1,1,1,0,0])'
+            sage: magma(A)
             [0 1 1]
             [1 0 0]
         """
         s = self.base_ring()._magma_init_(magma)
-        return 'Matrix(%s,%s,%s,StringToIntegerSequence("%s"))' % (
-            s, self._nrows, self._ncols, self._export_as_string())
+        w = self._export_as_string(comma=True)
+        return f'Matrix({s},{self._nrows},{self._ncols},[{w}])'
 
     def determinant(self):
         """
@@ -2031,31 +2033,42 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             gdFree(buf)
         return unpickle_matrix_mod2_dense_v2, (r,c, data, size, self._is_immutable)
 
-    cpdef _export_as_string(self):
+    cpdef _export_as_string(self, bint comma=False):
         """
         Return space separated string of the entries in this matrix.
+
+        INPUT:
+
+        - ``comma`` -- boolean; (default: ``False``)
+          to select comma as separator instead of space
 
         EXAMPLES::
 
             sage: w = matrix(GF(2),2,3,[1,0,1,1,1,0])
             sage: w._export_as_string()
             '1 0 1 1 1 0'
+            sage: w._export_as_string(comma=True)
+            '1,0,1,1,1,0'
         """
         cdef Py_ssize_t i, j, k, n
         cdef char *s
+        cdef char sep, c0, c1
 
         if self._nrows == 0 or self._ncols == 0:
             data = ''
         else:
+            sep = <char>44 if comma else <char>32
+            c0 = <char>48
+            c1 = <char>49
             n = self._nrows*self._ncols*2 + 2
             s = <char*> check_malloc(n * sizeof(char))
             k = 0
             sig_on()
             for i in range(self._nrows):
                 for j in range(self._ncols):
-                    s[k] = <char>(48 + (1 if mzd_read_bit(self._entries,i,j) else 0))  # "0" or "1"
+                    s[k] = c1 if mzd_read_bit(self._entries, i, j) else c0
                     k += 1
-                    s[k] = <char>32  # space
+                    s[k] = sep
                     k += 1
             sig_off()
             s[k-1] = <char>0

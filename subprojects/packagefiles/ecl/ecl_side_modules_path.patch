@@ -1,0 +1,37 @@
+diff --git a/src/Makefile.in b/src/Makefile.in
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -52,5 +52,7 @@
+ libdir=@libdir@
+ includedir=@includedir@
+ ecldir=@ecldir@
++ECL_SIDE_MODULES_PATH = @ECL_SIDE_MODULES_PATH@
++export ECL_SIDE_MODULES_PATH
+-
++
+ # Programs used by "make install":
+diff --git a/src/configure b/src/configure
+--- a/src/configure
++++ b/src/configure
+@@ -749,5 +749,6 @@ DEBUG_CFLAGS
+ ECL_CFLAGS
+ buildir
++ECL_SIDE_MODULES_PATH
+ ecldir
+ target_alias
+ host_alias
+@@ -846,6 +847,7 @@ ac_precious_vars='build_alias
+ host_alias
+ target_alias
+ ecldir
++ECL_SIDE_MODULES_PATH
+ CC
+ CFLAGS
+ LDFLAGS
+@@ -1579,4 +1581,6 @@ Some influential environment variables:
+   ecldir      the directory where *.fas files are installed
++  ECL_SIDE_MODULES_PATH
++              colon-separated list of side-module directories
+   CC          C compiler command
+   CFLAGS      C compiler flags
+   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a

@@ -1629,8 +1629,17 @@ class _sage_doc:
         url = self._base_url + os.path.join(name, "index.html")
         path = os.path.join(self._base_path, name, "index.html")
         if not os.path.exists(path):
-            raise OSError("""The document '{0}' does not exist.  Please build it
-with 'sage -docbuild {0} html' and try again.""".format(name))
+            if name == "reference":
+                target = "doc-html-reference-reference_top"
+            else:
+                target = f"doc-html-other-en-{name}"
+            raise OSError(
+                f"The document '{name}' does not exist. To build it from a Sage source checkout, run\n"
+                f"'meson compile -C builddir {target}', replacing 'builddir' with your Meson build directory.\n"
+                f"Then open 'builddir/src/doc/html/en/{name}/index.html' in your web browser.\n"
+                "See https://doc.sagemath.org/html/en/developer/sage_manuals.html#building-the-manuals\n"
+                f"for build instructions, or read the document at https://doc.sagemath.org/html/en/{name}/."
+            )
 
         if testing:
             return (url, path)
