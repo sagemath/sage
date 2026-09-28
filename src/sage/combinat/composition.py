@@ -1736,7 +1736,7 @@ class Compositions(UniqueRepresentation, Parent):
                     kwargs['min_length'] = max(len(inner), kwargs['min_length'])
                 else:
                     kwargs['min_length'] = len(inner)
-            return IntegerListsLex(n, **kwargs)
+            return Compositions_with_constraints(n, **kwargs)
 
     def __init__(self, is_infinite=False, category=None):
         """
@@ -1908,6 +1908,130 @@ class Compositions(UniqueRepresentation, Parent):
         L = [x for x in range(len(code)) if code[x] == 1]  # the positions of the letter 1
         c = [L[i] - L[i - 1] for i in range(1, len(L))] + [len(code) - L[-1]]
         return self.element_class(self, c)
+
+
+class Compositions_with_constraints(IntegerListsLex):
+    r"""
+    Compositions of `n` with constraints on part sizes and number of parts.
+
+    This subclass of :class:`IntegerListsLex` provides an efficient
+    :meth:`cardinality` implementation for the common case where constraints
+    are limited to ``min_part``, ``max_part``, ``min_length``, ``max_length``,
+    and ``length``.  For more complex constraints (slope bounds, or per-position
+    ``inner``/``outer`` bounds), the default enumeration-based method is used.
+    """
+    def cardinality(self) -> Integer:
+        r"""
+        Return the number of compositions satisfying the constraints.
+
+        For constraints involving only bounds on part size and number of parts,
+        this is computed via an efficient inclusion-exclusion formula rather
+        than by enumeration.
+
+        EXAMPLES::
+
+            sage: Compositions(50, max_length=15, max_part=5).cardinality()
+            1631768987
+            sage: Compositions(4, max_length=2).cardinality()
+            4
+            sage: Compositions(4, max_part=2).cardinality()
+            5
+            sage: Compositions(4, min_part=2).cardinality()
+            2
+            sage: Compositions(4, length=2).cardinality()
+            3
+            sage: Compositions(4, min_length=2).cardinality()
+            7
+            sage: Compositions(6, min_part=2, length=3).cardinality()
+            1
+
+        Large example that would be impractical to enumerate::
+
+            sage: Compositions(100, max_length=20, max_part=10).cardinality()
+            2627566796724230015
+
+        TESTS::
+
+            sage: Compositions(0, max_part=3).cardinality()
+            1
+            sage: Compositions(1, max_part=3, min_length=2).cardinality()
+            0
+            sage: Compositions(4, outer=[3,1,2]).cardinality()
+            3
+            sage: Compositions(4, min_part=2, max_part=1).cardinality()
+            0
+        """
+        from math import inf as _inf
+        from sage.arith.misc import binomial
+
+        backend = self.backend
+
+        # Fall back to enumeration for complex constraints (slopes, per-position
+        # floor/ceiling from inner=/outer=)
+        if (backend.min_slope != -_inf
+                or backend.max_slope != _inf
+                or backend.floor.limit_start() != 0
+                or backend.ceiling.limit_start() != 0
+                or backend.min_sum != backend.max_sum):
+            return super().cardinality()
+
+        n = Integer(backend.min_sum)
+        min_part = backend.min_part
+        max_part = backend.max_part
+        min_length = Integer(backend.min_length)
+        max_length = backend.max_length
+
+        if n < 0:
+            return ZZ.zero()
+
+        # The only composition of 0 is the empty composition.
+        if n == 0:
+            if min_length <= 0 and max_length >= 0:
+                return ZZ.one()
+            return ZZ.zero()
+
+        # Determine the valid range of lengths k.
+        lo = max(min_length, Integer(1))
+        if max_part < _inf:
+            # Need k * max_part >= n, i.e., k >= ceil(n / max_part)
+            lo = max(lo, -(-n // max_part))  # ceiling division
+        hi = min(max_length, n // min_part)
+
+        if lo > hi:
+            return ZZ.zero()
+
+        def count_exact(k):
+            r"""
+            Number of compositions of ``n`` into exactly ``k`` parts,
+            each in ``[min_part, max_part]``, via inclusion-exclusion.
+            """
+            if k == 0:
+                return ZZ.one() if n == 0 else ZZ.zero()
+            # Substitute a_i -> a_i - (min_part - 1) so parts lie in [1, M].
+            m = n - k * (min_part - 1)
+            if m < k:
+                return ZZ.zero()
+            if max_part == _inf:
+                return binomial(m - 1, k - 1)
+            M = max_part - min_part + 1
+            if M < 1:
+                return ZZ.zero()
+            # Inclusion-exclusion over j parts that exceed M.
+            result = ZZ.zero()
+            j = 0
+            while True:
+                remainder = m - j * M
+                if remainder < k:
+                    break
+                term = binomial(k, j) * binomial(remainder - 1, k - 1)
+                if j % 2 == 0:
+                    result += term
+                else:
+                    result -= term
+                j += 1
+            return result
+
+        return sum(count_exact(k) for k in range(lo, hi + 1))
 
 
 # Allows to unpickle old constrained Compositions_constraints objects.
