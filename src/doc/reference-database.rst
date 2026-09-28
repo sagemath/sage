@@ -1,3 +1,6 @@
+..  
+  Note that entries in this file are supposed to be sorted alphabetically *by label*
+
 .. [AAGMRZ2019] \M. Aagaard, R. AlTawy, G. Gong, K. Mandal, R. Rohit, N. Zidaric
                 *WAGE: An Authenticated CipherSubmission to the NIST LWC Competition*
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/wage-spec.pdf
@@ -2450,14 +2453,14 @@
 .. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
                 Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
 
+.. [DJP2001] \X. Droubay, J. Justin, G. Pirillo, *Episturmian words
+             and some constructions of de Luca and Rauzy*,
+             Theoret. Comput. Sci.  255 (2001) 539--553.
+
 .. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
              cryptosystems from supersingular elliptic curve isogenies. Journal
              of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
              https://eprint.iacr.org/2011/506.pdf
-
-.. [DJP2001] \X. Droubay, J. Justin, G. Pirillo, *Episturmian words
-             and some constructions of de Luca and Rauzy*,
-             Theoret. Comput. Sci.  255 (2001) 539--553.
 
 .. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
              *Fundamental groups of blow-ups*. Selecta Math.,
