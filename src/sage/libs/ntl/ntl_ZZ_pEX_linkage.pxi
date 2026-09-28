@@ -399,7 +399,11 @@ cdef inline int celement_gcd(ZZ_pEX_c* res, ZZ_pEX_c* a, ZZ_pEX_c *b, cparent pa
     if parent != NULL:
         parent[0].zzpc[0].restore()
         parent[0].zzpec[0].restore()
-    ZZ_pEX_GCD(res[0], a[0], b[0])
+    sig_on()
+    try:
+        ZZ_pEX_GCD(res[0], a[0], b[0])
+    finally:
+        sig_off()
 
 cdef inline int celement_xgcd(ZZ_pEX_c* res, ZZ_pEX_c* s, ZZ_pEX_c *t, ZZ_pEX_c* a, ZZ_pEX_c *b, cparent parent) except -2:
     """

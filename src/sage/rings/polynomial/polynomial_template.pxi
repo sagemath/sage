@@ -387,7 +387,6 @@ cdef class Polynomial_template(Polynomial):
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
         celement_gcd(&r.x, &(<Polynomial_template>self).x, &(<Polynomial_template>other).x, (<Polynomial_template>self)._cparent)
-        #assert(r._parent(pari(self).gcd(pari(other))) == r)
         return r
 
     @coerce_binop
