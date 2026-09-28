@@ -58,13 +58,13 @@
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
 
-.. [ACEP2020] Federico Ardila, Federico Castillo, Christopher Eur, Alexander Postnikov,
-         *Coxeter submodular functions and deformations of Coxeter permutahedra*,
-         Advances in Mathematics, Volume 365, 13 May 2020.
-
 .. [AC2019] \Daniele Agostini, Lynn Chua,
             Computing theta functions with Julia,
             Journal of Software for Algebra and Geometry 11 (2021): 41-51
+
+.. [ACEP2020] Federico Ardila, Federico Castillo, Christopher Eur, Alexander Postnikov,
+         *Coxeter submodular functions and deformations of Coxeter permutahedra*,
+         Advances in Mathematics, Volume 365, 13 May 2020.
 
 .. [ACFLSS04] \F. N. Abu-Khzam, R. L. Collins, M. R. Fellows, M. A.  Langston,
               \W. H. Suters, and C. T. Symons: Kernelization Algorithm for the
