@@ -187,10 +187,22 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
             EXAMPLES::
 
                 sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-                sage: s = SuperSymmetricFunctions(QQ)
-                sage: p = s.p()
-                sage: p[[4]].expand(3,0)
-                x1^4 + x2^4 + x3^4 - y1^4 - y2^4 - y3^4
+                sage: Sym = SuperSymmetricFunctions(QQ)
+                sage: p = Sym.p()
+                sage: p[2,1].expand(1,0)  # Checking corner cases
+                x0^3
+                sage: p[2,1].expand(1,1)
+                x0^3 - x0^2*y0 - x0*y0^2 + y0^3
+                sage: p[2,1].expand(0,0)
+                0
+                sage: p[2,1].expand(0,1)
+                0
+
+                sage: # Comparing with Sym
+                sage: sym = SymmetricFunctions(QQ)
+                sage: p1 = sym.p()
+                sage: p[2,1].expand(3,0) == p1[2,1].expand(3)
+                True
             """
             self_parts = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
