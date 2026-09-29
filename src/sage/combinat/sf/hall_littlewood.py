@@ -25,9 +25,7 @@ from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.morphism import SetMorphism
 from sage.combinat.sf import sfa
-from sage.libs.symmetrica.symmetrica import (
-    hall_littlewood_symmetrica as hall_littlewood,
-)
+from sage.combinat.sf.transition_kernels import hall_littlewood_qp_to_s
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
@@ -42,8 +40,8 @@ s_to_qp_cache = {}
 QQt = QQ['t'].fraction_field()
 
 # TODO: optimize! which is the fastest way of computing HL's and kostka-polynomials?
-# Qp basis is computed using symmetrica, while P basis is computed using rigged
-# configurations
+# Qp basis is computed using Jing's vertex operators, while P basis is computed
+# using rigged configurations
 
 
 class HallLittlewood(UniqueRepresentation):
@@ -913,8 +911,8 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
     def __init__(self, hall_littlewood):
         r"""
-        The Hall-Littlewood `Qp` basis is calculated through the symmetrica
-        library (see the function ``HallLittlewood_qp._to_s``).
+        The Hall-Littlewood `Qp` basis is calculated with Jing's vertex
+        operators (see the function ``HallLittlewood_qp._to_s``).
 
         INPUT:
 
@@ -980,14 +978,12 @@ class HallLittlewood_qp(HallLittlewood_generic):
             sage: [f21(p) for p in Partitions(3)]
             [t, 1, 0]
         """
-        t = QQt.gen()
-
         if not part:
             return lambda part2: QQt.one()
 
-        res = hall_littlewood(part) # call to symmetrica (returns in variable x)
-        f = lambda part2: res.coefficient(part2).subs(x=t)
-        return f
+        res = hall_littlewood_qp_to_s(part)
+        zero = QQt.zero()
+        return lambda part2: QQt(res.get(tuple(part2), zero))
 
     def _s_cache(self, n):
         r"""

@@ -5680,18 +5680,54 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             conditions like ``lambda part: max(part) < 3`` which
             would require extra work to handle the empty partition.
         """
-        from . import classical
+        from sage.combinat.partition import Partitions
+        from sage.misc.misc_c import prod
+
+        from . import transition_kernels as tk
         parent = self.parent()
+        basis = parent.basis_name()
+        if basis not in ("Schur", "monomial", "homogeneous", "elementary", "powersum"):
+            raise ValueError(f"cannot expand the {basis} basis directly")
         resPR = PolynomialRing(parent.base_ring(), n, alphabet)
         if self == parent.zero():
             return resPR.zero()
-        import sage.libs.symmetrica.all as symmetrica
-        e = getattr(symmetrica, 'compute_{}_with_alphabet'.format(classical.translate[parent.basis_name()].lower()))
+
+        def monomials(expansion):
+            # the polynomial sum_mu c_mu m_mu(x_1, ..., x_n)
+            return resPR(
+                {
+                    e: c
+                    for mu, c in expansion.items()
+                    if len(mu) <= n
+                    for e in tk.monomial_exponents(mu, n)
+                }
+            )
+
+        generators = {}
+
+        def generator(k):
+            # h_k, e_k or p_k in n variables
+            g = generators.get(k)
+            if g is None:
+                if basis == "homogeneous":
+                    g = monomials({tuple(mu): 1 for mu in Partitions(k)})
+                elif basis == "elementary":
+                    g = monomials({(1,) * k: 1})
+                else:
+                    g = monomials({(k,): 1})
+                generators[k] = g
+            return g
 
         def f(part):
             if not part:
                 return resPR.one()
-            return resPR.zero() if condition(part) else resPR(e(part, n, alphabet))
+            if condition(part):
+                return resPR.zero()
+            if basis == "Schur":
+                return monomials(tk.s_to_m(part))
+            if basis == "monomial":
+                return monomials({tuple(part): 1})
+            return prod(generator(k) for k in part)
         return parent._apply_module_morphism(self, f)
 
     def is_schur_positive(self):
