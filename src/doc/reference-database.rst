@@ -2786,7 +2786,6 @@
 .. [Fed2015] Federal Agency on Technical Regulation and Metrology (GOST),
              GOST R 34.12-2015, (2015)
 
-
 .. [Fedorov2015] Roman Fedorov, *Variations of Hodge structures for hypergeometric
    differential operators and parabolic Higgs bundles*,
    :arxiv:`1505.01704`
