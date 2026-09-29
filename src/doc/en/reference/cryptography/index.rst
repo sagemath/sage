@@ -48,6 +48,10 @@ Public Key Cryptography
    sage/crypto/public_key/key_exchange/finite_field_diffie_hellman
    sage/crypto/public_key/key_exchange/sidh
 
+   sage/crypto/public_key/digital_signature/digital_signature_base
+   sage/crypto/public_key/digital_signature/digital_signature_algorithm
+   sage/crypto/public_key/digital_signature/ecdsa
+
    sage/crypto/public_key/blum_goldwasser
 
 .. include:: ../footer.txt
