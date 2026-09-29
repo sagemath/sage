@@ -1,0 +1,75 @@
+% TikZ code with built-in styling for game trees
+% TikZ libraries required for game trees
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows.meta}
+
+% Style settings for game tree formatting
+\tikzset{
+    every node/.append style={font=\rmfamily},
+    every text node part/.append style={align=center},
+    node distance=1.5mm,
+    thick
+}
+
+% Built-in macro definitions for game tree drawing
+\newdimen\ndiam
+\ndiam1.5mm
+\newdimen\sqwidth
+\sqwidth1.6mm
+\newdimen\spx
+\spx.7mm
+\newdimen\spy
+\spy.5mm
+\newdimen\paydown
+\paydown2.5ex
+\newdimen\treethickn
+\treethickn1.0pt
+\definecolor{chancecolor}{RGB}{117,145,56}
+
+% Game tree content from Untitled extensive game.ef
+\begin{tikzpicture}[scale=0.8
+  , StealthFill/.tip={Stealth[line width=.7pt,inset=0pt,length=13pt,angle'=30]}]
+% \draw [help lines, color=green] (-5,0) grid (5,-6);
+%% player 1 name Amy
+\def\playerone{Amy}
+%% player 2 name Bob
+\def\playertwo{Bob}
+%% level -2.0 node 1 player 1
+\draw [line width=\treethickn] (0,2) node[right,xshift=\spx,yshift=\spy,color=black]{\playerone\strut}
+   ;
+%% level 2.0 node 2 player 2 xshift -2.0 from 1 move game
+\draw [line width=\treethickn,color=black] (-2,-2) node[left,xshift=-\spx,yshift=\spy,color=black]{\playertwo\strut}
+   -- (0,2);
+\draw (-1,0) node[left,xshift=-0.5mm,color=black] {game\strut};
+%% level 6.0 node 3 xshift -1.0 from 2 move game payoffs 3 2
+\draw [line width=\treethickn,color=black] (-3,-6)
+   node[below,yshift=0.1\paydown] {$3\strut$}
+   node[below,yshift=-0.9\paydown] {$2\strut$}
+   -- (-2,-2);
+\draw (-2.5,-4) node[left,xshift=-0.5mm,color=black] {game\strut};
+%% level 6.0 node 4 xshift 1.0 from 2 move movie payoffs 1 1
+\draw [line width=\treethickn,color=black] (-1,-6)
+   node[below,yshift=0.1\paydown] {$1\strut$}
+   node[below,yshift=-0.9\paydown] {$1\strut$}
+   -- (-2,-2);
+\draw (-1.5,-4) node[right,xshift=0.5mm,color=black] {movie\strut};
+%% level 4.0 node 5 player 2 xshift 2.0 from 1 move movie
+\draw [line width=\treethickn,color=black] (2,-4) node[right,xshift=\spx,yshift=\spy,color=black]{\playertwo\strut}
+   -- (0,2);
+\draw (1,-1) node[right,xshift=0.5mm,color=black] {movie\strut};
+%% level 6.0 node 6 xshift -1.0 from 5 move game payoffs 0 0
+\draw [line width=\treethickn,color=black] (1,-6)
+   node[below,yshift=0.1\paydown] {$0\strut$}
+   node[below,yshift=-0.9\paydown] {$0\strut$}
+   -- (2,-4);
+\draw (1.5,-5) node[left,xshift=-0.5mm,color=black] {game\strut};
+%% level 6.0 node 7 xshift 1.0 from 5 move movie payoffs 2 3
+\draw [line width=\treethickn,color=black] (3,-6)
+   node[below,yshift=0.1\paydown] {$2\strut$}
+   node[below,yshift=-0.9\paydown] {$3\strut$}
+   -- (2,-4);
+\draw (2.5,-5) node[right,xshift=0.5mm,color=black] {movie\strut};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (0,2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (-2,-2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (2,-4) {};
+\end{tikzpicture}
