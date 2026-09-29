@@ -180,7 +180,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         return self._Zq(randint(1, self._q - 1))
 
     def public_key(self, secret_key) -> IntegerMod_abstract:
-        """
+        r"""
         Return the DSA public key for ``secret_key``.
 
         INPUT:
@@ -189,7 +189,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
 
         OUTPUT:
 
-        The group element ``generator^secret_key`` in `\\Zmod{p}`
+        The group element ``generator**secret_key`` in `\Zmod{p}`
 
         EXAMPLES::
 
