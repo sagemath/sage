@@ -356,7 +356,7 @@ def lfun_elliptic_curve(E):
         sage: E = EllipticCurve([1, a])
         sage: L = LFunction(lfun_elliptic_curve(E))
         sage: L(3)
-        1.00412346717019
+        1.0041234671...
     """
     return pari.lfuncreate(E)
 
@@ -537,12 +537,12 @@ def lfun_genus2(C):
         sage: L = LFunction(lfun_genus2(C))  # this one is broken
         ...
         sage: L(3)
-        0.965946926261520
+        0.965...
 
         sage: C = HyperellipticCurve(x^2 + x, x^3 + x^2 + 1)
         sage: L = LFunction(lfun_genus2(C))
         sage: L(2)
-        0.364286342944359
+        0.364286342944...
 
     TESTS::
 
@@ -598,7 +598,7 @@ class LFunction(SageObject):
         sage: L.derivative(1, E.rank())
         1.51863300057685
         sage: L.taylor_series(1, 4)
-        ...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
+        ...e-... + (...e-...)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
 
     .. RUBRIC:: Number field
 
@@ -872,7 +872,7 @@ class LFunction(SageObject):
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200,algorithm='pari')
             sage: L.taylor_series(1, 3)
-            2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            ...e-... + (...e-...)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
         Check that :issue:`25402` is fixed::
 
