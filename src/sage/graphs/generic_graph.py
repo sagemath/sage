@@ -7586,6 +7586,19 @@ class GenericGraph(GenericGraph_pyx):
             sage: len(all_edges) == len(set(all_edges))
             True
 
+        A directed graph need not be strongly connected, as long as every
+        vertex is reachable from the root, and the number of arborescences can
+        exceed its edge connectivity::
+
+            sage: DiGraph([(0, 1), (1, 2)]).edge_disjoint_spanning_trees(1, root=0)
+            [Digraph on 3 vertices]
+            sage: D = digraphs.Complete(5)
+            sage: D.add_edges([(i, 5) for i in range(4)] + [(5, 0)])
+            sage: D.edge_connectivity()
+            1
+            sage: len(D.edge_disjoint_spanning_trees(4, root=0))
+            4
+
         With ``k=None``, a directed graph yields as many arborescences as its
         edge connectivity, and an undirected graph a maximum packing of
         spanning trees. By Nash-Williams, a graph with edge connectivity
