@@ -932,6 +932,47 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.ncols()
 
+    def backend_index(self, v):
+        r"""
+        Return the backend column index of a variable component.
+
+        This index is the coordinate of ``v`` in the polyhedron returned by
+        :meth:`polyhedron`.  It is assigned when the component is created and
+        does not depend on its key or name.  A solver may also create columns
+        that do not correspond to user-defined variable components.
+
+        INPUT:
+
+        - ``v`` -- a variable component belonging to this program, such as
+          ``x[i]`` for a :class:`MIPVariable` ``x``
+
+        An expression absent from the program's component mapping raises
+        ``KeyError``.
+
+        OUTPUT:
+
+        A nonnegative integer.
+
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: x = p.new_variable()
+            sage: p.backend_index(x['first'])
+            0
+            sage: p.backend_index(x['second'])
+            1
+            sage: p.backend_index(x['first'])
+            0
+            sage: try:
+            ....:     p.backend_index(2*x['first'])
+            ....: except KeyError:
+            ....:     print('not a variable component')
+            not a variable component
+
+        See :issue:`38799`.
+        """
+        return self._variables[v]
+
     def constraints(self, indices=None):
         r"""
         Return a list of constraints, as 3-tuples.
@@ -1043,8 +1084,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         OUTPUT:
 
-        A :func:`Polyhedron` object whose `i`-th variable represents the `i`-th
-        variable of ``self``.
+        A :func:`Polyhedron` object whose `i`-th coordinate represents the
+        variable component with :meth:`backend_index` equal to `i`, if that
+        backend column belongs to a user-defined component.
 
         .. warning::
 
@@ -1133,6 +1175,21 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.add_constraint(18.5*x + 5.1*y <= 110.3)
             sage: p.polyhedron()
             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
+
+        The backend indices identify the coordinates of the polyhedron
+        (see :issue:`38799`)::
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: x = p.new_variable()
+            sage: y = p.new_variable()
+            sage: p.backend_index(x['a']), p.backend_index(y['b']), p.backend_index(x['c'])
+            (0, 1, 2)
+            sage: p.backend_index(x['a']), p.number_of_variables()
+            (0, 3)
+            sage: p.add_constraint(2*x['a'] + y['b'] <= 1)
+            sage: P = p.polyhedron()
+            sage: P.contains((0, 1, 0)), P.contains((1, 0, 0))
+            (True, False)
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         cdef GenericBackend b = self._backend
