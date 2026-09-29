@@ -58,7 +58,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
       If ``False``, a probabilistic test is used. This should be set to
       ``False`` when using large (cryptographic size) primes, otherwise
       checking primality will take too long. If this is not specified, then the
-      default behaviour is to use the current value of `proof.arithmetic()`.
+      default behaviour is to use the current value of ``proof.arithmetic()``.
 
     REFERENCES:
 
