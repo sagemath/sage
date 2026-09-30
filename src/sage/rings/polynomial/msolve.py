@@ -49,6 +49,7 @@ from sage.misc.converting_dict import KeyConvertingDict
 from sage.misc.sage_eval import sage_eval
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_arb import RealBallField
 from sage.rings.real_double import RealDoubleField_class
@@ -463,6 +464,9 @@ def _grp_random_matrix(n, changevar=True):
         [0 1 0]  [0 1 0]  [1 0]
         [0 0 1], [0 0 1], [0 1], [1]
         ]
+
+        sage: len(_grp_random_matrix(3))
+        4
     """
 
     while True:
@@ -692,7 +696,7 @@ def _rough_eval(point,poly,precision):
     Internal Function
 
     Function computing the isolation interval that a polynomial takes on a box
-    approximating a point. Uses MPFI with precision management to obtain a 
+    approximating a point. Uses MPFI with precision management to obtain a
     sufficiently precise result.
 
     INPUT:
@@ -866,7 +870,7 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         - ``point`` -- list of lists; list of isolation intervals,
         in msolve approximation format
 
-        - ``low_prec`` list; first coordinate of ``point``, but with isolating 
+        - ``low_prec`` list; first coordinate of ``point``, but with isolating
         interval at a lower precision
 
         - ``threads`` -- integer; number of threads to be used by msolve in
@@ -965,8 +969,8 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
         - ``changevar`` -- boolean (default ``True``); uses A = Identity and
         sigma = [1,...,1] if set to ``False``
 
-        - ``_retry`` -- integer (default 0); inner variable counting how many 
-        attempts have been made at trying to obtain finitely many critical 
+        - ``_retry`` -- integer (default 0); inner variable counting how many
+        attempts have been made at trying to obtain finitely many critical
         points (main function gives up after 3 attempts)
 
     OUTPUT:
