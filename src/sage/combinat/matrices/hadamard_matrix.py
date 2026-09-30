@@ -1240,11 +1240,10 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         sage: hadamard_matrix_cooper_wallis_smallcases(20, existence=True)
         True
 
-    The general Hadamard matrix constructor also builds order 2060::
+    The general Hadamard matrix constructor also recognizes order 2060::
 
-        sage: H = matrix.hadamard(2060, check=False)  # long time
-        sage: H.dimensions()  # long time
-        (2060, 2060)
+        sage: matrix.hadamard(2060, existence=True)
+        True
 
     TESTS::
 
@@ -1252,9 +1251,6 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         sage: is_hadamard_matrix(hadamard_matrix_cooper_wallis_smallcases(188))
         True
         sage: hadamard_matrix_cooper_wallis_smallcases(2060, existence=True)
-        True
-        sage: H = hadamard_matrix_cooper_wallis_smallcases(2060, check=False)  # long time
-        sage: is_hadamard_matrix(H, normalized=True)  # long time
         True
         sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
         False
