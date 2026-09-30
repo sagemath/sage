@@ -1428,6 +1428,19 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
         sage: Q = [[j,k] for i,j,k in P]
         sage: LP = list_plot(Q)                                                         # needs sage.plot
 
+    Python floating-point initial values are accepted (see :issue:`33730`)::
+
+        sage: x, y, t = var('x y t')
+        sage: P = desolve_system_rk4([x, y], [x, y],
+        ....:                        ics=[float(0), float(1), float(2)],
+        ....:                        ivar=t, end_points=0.1, step=0.1)
+        sage: P[0]
+        [0.0, 1.0, 2.0]
+        sage: abs(P[1][1] - 1.1051708333333333) < 1e-10
+        True
+        sage: abs(P[1][2] - 2.2103416666666666) < 1e-10
+        True
+
     ALGORITHM:
 
     `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
@@ -1456,7 +1469,8 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
     varss = [varsi._maxima_().str() for varsi in vars]
     varstr = "[" + ",".join(varss) + "]"
     x0 = ics[0]
-    icss = [ics[i]._maxima_().str() for i in range(1, len(ics))]
+    from sage.symbolic.ring import SR
+    icss = [SR(ic)._maxima_().str() for ic in ics[1:]]
     icstr = "[" + ",".join(icss) + "]"
     step = abs(step)
 
