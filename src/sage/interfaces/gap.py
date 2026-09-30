@@ -196,7 +196,6 @@ AUTHORS:
 # ****************************************************************************
 
 import os
-import platform
 import re
 import string
 import time
