@@ -259,6 +259,86 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return self.free_module().index_in(self.ring().free_module())
 
+    def factor(self):
+        r"""
+        Return the factorization of this ideal into prime ideals.
+
+        This is currently implemented only for ideals of maximal orders.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^3 - 37)
+            sage: O = K.maximal_order()
+            sage: I = 29 * O
+            sage: F = I.factor()
+            sage: F.prod().ring() is O
+            True
+            sage: F.prod() == I
+            True
+            sage: all(P.ring() is O for P, _ in F)
+            True
+            sage: sorted((P.norm(), e) for P, e in F)
+            [(29, 1), (841, 1)]
+            sage: I.factor() is F
+            True
+
+        Ideals of non-maximal orders are not yet supported::
+
+            sage: R = K.order(a)
+            sage: R.is_maximal()
+            False
+            sage: R.ideal(29).factor()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: factorization is not implemented for non-maximal orders
+
+        TESTS:
+
+        The unit ideal has the empty factorization, while the zero ideal
+        cannot be factored::
+
+            sage: U = O.ideal(1).factor()
+            sage: list(U)
+            []
+            sage: U.prod() == O.ideal(1)
+            True
+            sage: O.ideal(0).factor()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: factorization of 0 is not defined
+
+        This also works for quadratic and relative number fields.  The primes
+        2, 3, and 5 are respectively ramified, inert, and split in
+        `\QQ(i)`::
+
+            sage: Q.<i> = QuadraticField(-1)
+            sage: OQ = Q.maximal_order()
+            sage: all((p * OQ).factor().prod() == p * OQ for p in (2, 3, 5))
+            True
+
+            sage: L.<u, v> = NumberField([x^2 + 1, x^2 - 3])
+            sage: OL = L.maximal_order()
+            sage: J = OL.ideal(5)
+            sage: G = J.factor()
+            sage: G.prod() == J and all(P.ring() is OL for P, _ in G)
+            True
+        """
+        O = self.ring()
+        if self.is_zero():
+            raise ArithmeticError("factorization of 0 is not defined")
+        if not O.is_maximal():
+            raise NotImplementedError(
+                "factorization is not implemented for non-maximal orders"
+            )
+
+        try:
+            return self.__factorization
+        except AttributeError:
+            F = O.fractional_ideal(self.gens()).factor()
+            self.__factorization = F.base_change(O.ideal_monoid())
+            return self.__factorization
+
 
 def _positive_sqrt(R, D):
     r"""
