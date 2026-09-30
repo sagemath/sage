@@ -1,6 +1,10 @@
 _prereq: Represents system packages required for installing SageMath from source
 ================================================================================
 
+.. raw:: latex
+
+   \hypertarget{spkg-prereq}{}
+
 Description
 -----------
 
