@@ -462,7 +462,8 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
       functions should be functions of a tuple with `n` components
       (assuming `n` variables). If the constraints are specified as a list
       of intervals and there are no constraints for a given variable, that
-      component can be (``None``, ``None``).
+      component can be (``None``, ``None``). An empty list specifies that
+      there are no bounds.
 
     - ``x0`` -- initial point for finding minimum
 
@@ -470,8 +471,8 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
 
       - ``'default'`` -- default choices
 
-      - ``'l-bfgs-b'`` -- only effective if you specify bound constraints;
-        see [ZBN1997]_
+      - ``'l-bfgs-b'`` -- use L-BFGS-B when constraints are specified as a
+        list of intervals (including an empty list); see [ZBN1997]_
 
     - ``gradient`` -- (optional) gradient function. This will be computed
       automatically for symbolic functions. This is only used when the
@@ -538,6 +539,64 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         sage: c2(y,x) = 1-y
         sage: minimize_constrained(f, [c1, c2], (0,0)) # abs tol 1e-04
         (1.0, 0.0)
+
+    Invalid algorithms are rejected instead of being treated as TNC
+    (:issue:`42711`)::
+
+        sage: f = lambda p: p[0]^2
+        sage: minimize_constrained(f, [(0, 1)], [0.5], algorithm='nonsense')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown algorithm 'nonsense'
+
+    An empty constraint list means that there are no bound constraints::
+
+        sage: f = lambda p: (p[0] - 1)^2
+        sage: all(abs(minimize_constrained(f, [], [0], algorithm=algorithm)[0] - 1) < 1e-6
+        ....:     for algorithm in ('default', 'l-bfgs-b'))
+        True
+        sage: x = SR.var('x')                                                        # needs sage.symbolic
+        sage: abs(minimize_constrained((x - 1)^2, [], [0])[0] - 1) < 1e-6           # needs sage.symbolic
+        True
+
+    Bounds dispatch remains compatible with interval sequences accepted by
+    SciPy::
+
+        sage: import numpy as np
+        sage: g = lambda p: (p[0] - 1)^2 + (p[1] - 1)^2
+        sage: p = minimize_constrained(g, [(0, 2), np.array((0, 2))], [0, 0])
+        sage: all(abs(a - 1) < 1e-6 for a in p)
+        True
+
+    Constraint functions can be arbitrary callable objects::
+
+        sage: from functools import partial
+        sage: def constraint(p, lower=0):
+        ....:     return p[0] - lower
+        sage: class Constraint:
+        ....:     def __call__(self, p):
+        ....:         return p[0]
+        ....:     def method(self, p):
+        ....:         return p[0]
+        sage: constraint_object = Constraint()
+        sage: constraints = [partial(constraint, lower=0), constraint_object,
+        ....:                constraint_object.method, len]
+        sage: all(abs(minimize_constrained(f, [c], [0])[0] - 1) < 1e-3
+        ....:     for c in constraints)
+        True
+        sage: abs(minimize_constrained(f, constraint_object, [0])[0] - 1) < 1e-3
+        True
+
+    Invalid constraint specifications give a descriptive error::
+
+        sage: minimize_constrained(f, [42], [0])
+        Traceback (most recent call last):
+        ...
+        TypeError: constraints must be a callable, a list of callables, or a list of bounds
+        sage: minimize_constrained(f, [constraint, 42], [0])
+        Traceback (most recent call last):
+        ...
+        TypeError: constraints must be a callable, a list of callables, or a list of bounds
     """
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
@@ -545,7 +604,9 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
     if int(numpy.version.short_version[0]) > 1:
         numpy.set_printoptions(legacy="1.25")
     from scipy import optimize
-    function_type = type(lambda x, y: x+y)
+
+    if not isinstance(algorithm, str) or algorithm not in ('default', 'l-bfgs-b'):
+        raise ValueError(f"unknown algorithm {algorithm!r}")
 
     if isinstance(func, Expression):
         var_list = func.arguments()
@@ -561,7 +622,9 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         if isinstance(cons, Expression):
             fast_cons = fast_callable(cons, vars=var_list, domain=float)
             cons = lambda p: numpy.array([fast_cons(*p)])
-        elif isinstance(cons, list) and isinstance(cons[0], Expression):
+        elif (isinstance(cons, list) and cons
+              and all(isinstance(constraint, Expression)
+                      for constraint in cons)):
             fast_cons = [fast_callable(ci, vars=var_list, domain=float)
                          for ci in cons]
             cons = lambda p: numpy.array([a(*p) for a in fast_cons])
@@ -569,21 +632,28 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         f = func
 
     if isinstance(cons, list):
-        if isinstance(cons[0], (tuple, list)) or cons[0] is None:
+        if not cons or isinstance(cons[0], (tuple, list)) or cons[0] is None:
+            bounds = cons or None
             if gradient is not None:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=bounds, **args)[0]
                 else:
-                    min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
+                    min = optimize.fmin_tnc(f, x0, gradient, bounds=bounds, messages=0, **args)[0]
             else:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=bounds, **args)[0]
                 else:
-                    min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
-        elif isinstance(cons[0], (function_type, Expression)):
+                    min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=bounds, messages=0, **args)[0]
+        elif all(callable(constraint) for constraint in cons):
             min = optimize.fmin_cobyla(f, x0, cons, **args)
-    elif isinstance(cons, (function_type, Expression)):
-        min = optimize.fmin_cobyla(f, x0, cons, **args)
+        else:
+            raise TypeError("constraints must be a callable, a list of "
+                            "callables, or a list of bounds")
+    elif callable(cons):
+        min = optimize.fmin_cobyla(f, x0, [cons], **args)
+    else:
+        raise TypeError("constraints must be a callable, a list of callables, "
+                        "or a list of bounds")
     return vector(RDF, min)
 
 
