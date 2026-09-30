@@ -173,7 +173,6 @@ from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.flatten import flatten
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
