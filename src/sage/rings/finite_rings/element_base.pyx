@@ -838,32 +838,32 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         a = self**(n // 2)
         return a == 1 or a == 0
 
-    def square_root(self, extend=False, all=False):
+    def sqrt(self, *, extend=False, all=False, algorithm=None, name=None):
         """
         The square root function.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
-          square root in an extension ring, if necessary. Otherwise, raise a
-          :exc:`ValueError` if the root is not in the base ring.
-
-           .. WARNING::
-
-               This option is not implemented!
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
+          square root in an extension ring when necessary
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return all
-          square roots of ``self``, instead of just one
+          square roots of ``self``
 
-        .. WARNING::
+        - ``algorithm`` -- optional algorithm hint (default: ``None``);
+          accepted for the common finite-field interface; this implementation
+          always uses its backend default
 
-           The ``'extend'`` option is not implemented (yet).
+        - ``name`` -- string (default: ``None``); name of the generator when
+          a quadratic extension is created
 
         EXAMPLES::
 
             sage: F = FiniteField(7^2, 'a')
             sage: F(2).square_root()
-            4
+            3
+            sage: F(2).square_root()**2
+            2
             sage: F(3).square_root()
             2*a + 6
             sage: F(3).square_root()**2
@@ -874,24 +874,29 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: K(3).square_root()
             Traceback (most recent call last):
             ...
-            ValueError: must be a perfect square.
+            ValueError: element is not a square
         """
-        try:
-            return self.nth_root(2, extend=extend, all=all)
-        except ValueError:
-            raise ValueError("must be a perfect square.")
+        if all:
+            roots = self.nth_root(2, extend=False, all=True)
+            if roots or not extend:
+                return roots
+        else:
+            try:
+                return self.nth_root(2, extend=False, all=False)
+            except ValueError as error:
+                if str(error) != "no nth root":
+                    raise
 
-    def sqrt(self, extend=False, all=False):
-        """
-        See :meth:`square_root`.
+        if extend:
+            from sage.categories.finite_fields import _sqrt_in_extension
+            return _sqrt_in_extension(
+                self, all_roots=all, name=name, algorithm=algorithm
+            )
+        if all:
+            return []
+        raise ValueError("element is not a square")
 
-        EXAMPLES::
-
-            sage: k.<a> = GF(3^17)
-            sage: (a^3 - a - 1).sqrt()
-            a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
-        """
-        return self.square_root(extend=extend, all=all)
+    square_root = sqrt
 
     def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""

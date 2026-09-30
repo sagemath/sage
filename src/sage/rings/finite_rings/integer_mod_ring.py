@@ -714,6 +714,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         if it is found that the ring is in fact a field::
 
             sage: R = IntegerModRing(127)
+            sage: q = R(4)
             sage: R.category()
             Join of Category of finite commutative rings
                 and Category of subquotients of monoids
@@ -725,6 +726,17 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             Join of Category of finite enumerated fields
                 and Category of subquotients of monoids
                 and Category of quotients of semigroups
+
+        TESTS::
+
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla'):
+            ....:         roots = method(extend=False, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 2
+            ....:         assert all(r.parent() is R and r**2 == q for r in roots)
+
+        EXAMPLES:
 
         It is possible to mistakenly put `\ZZ/n\ZZ` into the category of fields.
         In this case, :meth:`is_field` will return ``True`` without performing a

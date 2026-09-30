@@ -616,6 +616,111 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         return self._polynomial
 
+    def _sqrt_finite_decomposition(self, *, all, algorithm=None):
+        r"""
+        Return square roots using primary decomposition, if available.
+
+        This is an internal fast path for finite polynomial quotient rings.
+        It returns ``NotImplemented`` when the parent has no useful
+        decomposition, so the generic finite-ring implementation can fall
+        back to enumeration.  With ``all=False``, ``None`` means that the
+        decomposition proved that no root exists.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3)[]
+            sage: A.<a> = R.quotient((x + 1)^2 * (x^2 + 1))
+            sage: roots = A.one().sqrt(extend=False, all=True,
+            ....:                      algorithm='backend-default')
+            sage: len(roots), len(set(roots))
+            (4, 4)
+            sage: all(root**2 == 1 for root in roots)
+            True
+            sage: root = A.one()._sqrt_finite_decomposition(
+            ....:     all=False, algorithm='backend-default')
+            sage: root**2 == 1
+            True
+
+        The work depends on the primary components and the output, rather
+        than on the cardinality of their full Cartesian product::
+
+            sage: S.<y> = GF(101)[]
+            sage: B = S.quotient(prod(y - i for i in range(6)))
+            sage: B.cardinality()
+            1061520150601
+            sage: roots = B.one().sqrt(extend=False, all=True)
+            sage: len(roots), all(root**2 == 1 for root in roots)
+            (64, True)
+
+        If any component has no root, no CRT combinations are constructed::
+
+            sage: T.<z> = GF(5)[]
+            sage: C.<c> = T.quotient((z - 1) * (z + 1))
+            sage: C(z + 2).sqrt(extend=False, all=True)
+            []
+
+        TESTS:
+
+        Neither the one-root nor the all-roots path enumerates the full
+        quotient when a decomposition is available::
+
+            sage: from unittest.mock import patch
+            sage: square = C((z + 2)**2)
+            sage: with patch.object(type(C), '__iter__',
+            ....:                   side_effect=AssertionError("full enumeration")):
+            ....:     assert square.sqrt(extend=False)**2 == square
+            sage: with patch.object(type(C), '__iter__',
+            ....:                   side_effect=AssertionError("full enumeration")):
+            ....:     C(z + 2).sqrt(extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: element is not a square
+        """
+        parent = self.parent()
+        decomposition = parent._sqrt_primary_decomposition()
+        if decomposition is None:
+            return NotImplemented
+
+        _, components, evaluations, basis = decomposition
+        lift = self.lift()
+        roots_by_component = []
+        for component, evaluation in zip(components, evaluations):
+            if evaluation is None:
+                value = component(lift)
+            else:
+                value = lift(evaluation)
+            if all:
+                roots = value.sqrt(extend=False, all=True,
+                                   algorithm=algorithm)
+                if not roots:
+                    return []
+                roots_by_component.append(roots)
+            else:
+                try:
+                    root = value.sqrt(extend=False, all=False,
+                                      algorithm=algorithm)
+                except ValueError as error:
+                    if str(error) != "element is not a square":
+                        raise
+                    return None
+                roots_by_component.append((root,))
+
+        from itertools import product
+        polynomial_ring = parent.polynomial_ring()
+        zero = polynomial_ring.zero()
+        def combine(roots):
+            return parent(sum(
+                ((root.lift() if evaluation is None else
+                  polynomial_ring(root)) * multiplier
+                 for root, evaluation, multiplier in
+                 zip(roots, evaluations, basis)),
+                zero,
+            ))
+
+        if not all:
+            return combine(tuple(roots[0] for roots in roots_by_component))
+        return [combine(roots) for roots in product(*roots_by_component)]
+
     def __iter__(self):
         return iter(self.list())
 
