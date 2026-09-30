@@ -2267,6 +2267,18 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: Q.weil_pairing(P, 5)
             zeta5^3
 
+        An example over a p-adic field (currently not implemented)::
+
+            sage: # needs sage.rings.padics
+            sage: K = Qp(5)
+            sage: E = EllipticCurve(K, [0, 1])
+            sage: P = E(0)
+            sage: Q = E(0)
+            sage: P.weil_pairing(Q, 5)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Weil pairing over p-adic base rings is not implemented
+
         TESTS:
 
         Check that the original Sage implementation still works and
@@ -2309,6 +2321,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         P = self
         E = P.curve()
+        K = E.base_ring()
 
         if Q.curve() is not E:
             raise ValueError("points must both be on the same curve")
@@ -2327,6 +2340,14 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if algorithm != 'sage':
             raise ValueError('unknown algorithm')
 
+        # Over local / p-adic base rings, exact torsion testing via n*P == 0
+        # is unreliable, so Weil pairing is not implemented
+        if hasattr(K, "is_padic") and K.is_padic():
+            raise NotImplementedError(
+                "Weil pairing over p-adic base rings is not implemented"
+            )
+
+        # Existing behavior for other base rings (finite fields, number fields)
         # Test if P, Q are both in E[n]
         if n*P or n*Q:
             raise ValueError("points must both be n-torsion")
