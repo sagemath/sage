@@ -30,12 +30,16 @@ AUTHORS:
 
 - Lorenz Panny (2026): :meth:`~EllipticCurveHom.kernel_subgroup`, :meth:`~EllipticCurveHom.kernel_gens`
 """
+import operator
+
 from sage.arith.misc import integer_floor
+from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import coercion_model
 from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_not_equal
 from sage.rings.number_field import number_field_base
 
@@ -136,6 +140,119 @@ class EllipticCurveHom(Morphism):
             ret = EllipticCurveHom_composite.from_factors([other, self])
 
         return ret
+
+    def __mul__(self, other):
+        r"""
+        Compose this elliptic-curve morphism with another map, or multiply
+        it by a scalar.
+
+        When multiplying by an integer, the result is the composition of
+        the scalar-multiplication endomorphism on the codomain curve with
+        this morphism (:issue:`42789`).
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: phi * 5
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi * 5r
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi * 5 == phi * E.scalar_multiplication(5)
+            True
+
+        Multiplying two maps computes their composition::
+
+            sage: phi.dual() * phi
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+
+        Multiplying by an incompatible type returns ``NotImplemented`` (raising
+        a :class:`TypeError`)::
+
+            sage: phi * "invalid"
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+        """
+        if isinstance(other, Map):
+            return super().__mul__(other)
+        return coercion_model.bin_op(self, other, operator.mul)
+
+    def __rmul__(self, other):
+        r"""
+        Multiply this elliptic-curve morphism by a scalar on the left
+        (:issue:`42789`).
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: 5 * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: 5r * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: 5 * phi == phi * 5
+            True
+
+        Multiplying by an incompatible type returns ``NotImplemented`` (raising
+        a :class:`TypeError`)::
+
+            sage: "invalid" * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+        """
+        return coercion_model.bin_op(other, self, operator.mul)
+
+    def _rmul_(self, other):
+        r"""
+        Multiply this elliptic-curve morphism by a scalar on the left.
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: phi._rmul_(5)
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+        """
+        return self.codomain().scalar_multiplication(other) * self
+
+    def _acted_upon_(self, other, self_on_left):
+        r"""
+        Implement the action of integers on elliptic-curve morphisms within
+        Sage's coercion framework (:issue:`42789`).
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: 5 * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi * 5
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+        """
+        try:
+            if other in ZZ:
+                return self._rmul_(other)
+        except (TypeError, ValueError):
+            pass
+        return None
 
     def _add_(self, other):
         r"""
