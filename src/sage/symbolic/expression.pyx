@@ -1653,10 +1653,32 @@ cdef class Expression(Expression_abc):
 
             sage: RIF(sqrt(2))
             1.414213562373095?
+
+        Functions which cannot be evaluated in interval arithmetic, e.g.
+        because their numerical values come from mpmath without error
+        bounds, are enclosed using ball arithmetic when possible::
+
+            sage: y = RIF(Ei(1)); y
+            1.895117816355937?
+            sage: y.diameter() > 0
+            True
+            sage: int(Ei(1)), floor(Ei(3))
+            (1, 9)
+            sage: RIF(struve_H(1, 1))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to simplify to a real interval approximation
         """
+        # Errors raised by numerical evaluation functions called from
+        # Pynac reach us as RuntimeError
         try:
             return self._eval_self(R)
-        except TypeError:
+        except (TypeError, RuntimeError):
+            pass
+        try:
+            from sage.rings.real_arb import RealBallField
+            return R(self._arb_(RealBallField(R.prec())))
+        except (ImportError, TypeError, ValueError, RuntimeError):
             raise TypeError("unable to simplify to a real interval approximation")
 
     def _complex_mpfi_(self, R):
@@ -1667,10 +1689,27 @@ cdef class Expression(Expression_abc):
 
             sage: CIF(pi)
             3.141592653589794?
+
+        Functions which cannot be evaluated in interval arithmetic are
+        enclosed using ball arithmetic when possible::
+
+            sage: CIF(Ei(1 + I))
+            1.764625985563854? + 2.38776985151053?*I
+            sage: CIF(struve_H(1, 1))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to simplify to a complex interval approximation
         """
+        # Errors raised by numerical evaluation functions called from
+        # Pynac reach us as RuntimeError
         try:
             return self._eval_self(R)
-        except TypeError:
+        except (TypeError, RuntimeError):
+            pass
+        try:
+            from sage.rings.complex_arb import ComplexBallField
+            return R(self._arb_(ComplexBallField(R.prec())))
+        except (ImportError, TypeError, ValueError, RuntimeError):
             raise TypeError("unable to simplify to a complex interval approximation")
 
     def _arb_(self, R):
@@ -3392,6 +3431,18 @@ cdef class Expression(Expression_abc):
             sage: z = SR.var("z", domain="integer")
             sage: bool(z != 0)
             True
+
+        Numerical values of special functions computed by mpmath carry no
+        error bound and must not be used to prove relations. Here
+        ``li(3) = Ei(log(3))``, so neither strict inequality holds::
+
+            sage: a, b = Ei(log(3)), log_integral(3)
+            sage: bool(a < b), bool(a > b)
+            (False, False)
+            sage: (a < b).test_relation()
+            NotImplemented
+            sage: bool(Ei(1) > 1), bool(Ei(1) < 2)
+            (True, True)
         """
         if self.is_relational():
             # constants are wrappers around Sage objects, compare directly
