@@ -55,10 +55,35 @@ cdef class FiniteRingElement(CommutativeRingElement):
         Test very large modulus (assumed impossible to factor in reasonable time)::
 
             sage: p = 2^1024 + 643
-            sage: a = GF(p, proof=False)(3)**(29*283*3539)
+            sage: K = GF(p, proof=False)
+            sage: K.factored_unit_order.is_in_cache()
+            False
+            sage: a = K(3)**(29*283*3539)
             sage: r = a._nth_root_common(29*283*3539*12345, False, "Johnston", False)
             sage: r**(29*283*3539*12345) == a
             True
+            sage: K.factored_unit_order.is_in_cache()
+            False
+
+        A cached factorization of the unit group order avoids factoring ``n``.
+        Here ``n`` is a product of two primes of about 192 bits each::
+
+            sage: from sage.structure.factorization import Factorization
+            sage: r = 3138550867693340381917894711603833208051177722232017256453
+            sage: s = 12554203470773361527671578846415332832204710888928069025857
+            sage: q = 70*r*s + 1
+            sage: K = GF(q, proof=False)
+            sage: F = Factorization([(2, 1), (5, 1), (7, 1), (r, 1), (s, 1)])
+            sage: K.factored_unit_order.set_cache((F,))
+            sage: n = 2*r*s
+            sage: a = K(3)^n
+            sage: from unittest.mock import patch
+            sage: with patch('sage.rings.factorint_pari.factor_using_pari',  # needs sage.libs.pari
+            ....:            side_effect=AssertionError("unexpected factorization")):
+            ....:     root = a.nth_root(n)
+            sage: root^n == a  # needs sage.libs.pari
+            True
+            sage: K.factored_unit_order.clear_cache()
         """
         K = self.parent()
         q = K.order()
@@ -86,6 +111,20 @@ cdef class FiniteRingElement(CommutativeRingElement):
         if cunningham:
             from sage.rings.factorint import factor_cunningham
             F = factor_cunningham(n)
+        elif n.nbits() < 40:
+            # Integer.factor() has a dedicated fast path in this range; it is
+            # cheaper than scanning a potentially long cached factorization.
+            F = n.factor()
+        elif K.factored_unit_order.is_in_cache():
+            known_factorization, = K.factored_unit_order()
+            F = []
+            remaining = n
+            for p, _ in known_factorization:
+                v, remaining = remaining.val_unit(p)
+                if v:
+                    F.append((p, v))
+                if remaining == 1:
+                    break
         else:
             F = n.factor()
         from sage.groups.generic import discrete_log
@@ -913,6 +952,20 @@ cdef class FinitePolyExtElement(FiniteRingElement):
           only currently supported option.  For IntegerMod elements, the problem
           is reduced to the prime modulus case using CRT and `p`-adic logs,
           and then this algorithm used.
+
+        If a complete prime factorization of the multiplicative group order
+        `q-1` is already known, it can be installed in the parent cache with
+        :meth:`~sage.misc.cachefunc.CachedFunction.set_cache`.  For sufficiently
+        large ``n``, this can avoid factoring the part that divides `q-1`.
+        The cache value is trusted and is not validated::
+
+            sage: from sage.structure.factorization import Factorization
+            sage: K = GF(31)
+            sage: K.factored_unit_order.set_cache(
+            ....:     (Factorization([(2, 1), (3, 1), (5, 1)]),))
+            sage: K(25).nth_root(5)
+            5
+            sage: K.factored_unit_order.clear_cache()
 
         OUTPUT:
 
