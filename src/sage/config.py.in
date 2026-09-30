@@ -45,6 +45,7 @@ coxeter3_enabled = @COXETER3_ENABLED@
 eclib_enabled = @ECLIB_ENABLED@
 libbraiding_enabled = @LIBBRAIDING_ENABLED@
 libhomfly_enabled = @LIBHOMFLY_ENABLED@
+m4rie_enabled = @M4RIE_ENABLED@
 mcqd_enabled = @MCQD_ENABLED@
 meataxe_enabled = @MEATAXE_ENABLED@
 rankwidth_enabled = @RANKWIDTH_ENABLED@
