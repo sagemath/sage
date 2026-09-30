@@ -1192,6 +1192,65 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     return H
 
 
+def hadamard_matrix_2060(check=True):
+    r"""
+    Construct a Hadamard matrix of order 2060.
+
+    This uses the Cooper-Wallis construction with four disjoint periodic
+    ternary sequences of length 103 and a Williamson quadruple of order 5.
+    The sequences are encoded by their orbits under multiplication by
+    `\{1,46,56\}` in `\ZZ/103\ZZ`. The 35-symbol seed and the Williamson
+    rows are from the construction at
+    https://github.com/schneiderlo/hadamard-2060.
+
+    INPUT:
+
+    - ``check`` -- boolean (default: ``True``); whether to check the resulting
+      Hadamard matrix
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_2060
+        sage: H = hadamard_matrix_2060(check=False)  # long time
+        sage: H.dimensions()  # long time
+        (2060, 2060)
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(H)  # long time
+        True
+    """
+    p = 103
+    multipliers = (1, 46, 56)
+    state = "04037071214226636752235627311036350"
+    williamson_rows = ((1, 1, -1, -1, 1),
+                       (1, -1, 1, 1, -1),
+                       (1, -1, -1, -1, -1),
+                       (1, -1, -1, -1, -1))
+
+    rows = [[0] * p for _ in range(4)]
+    seen = set()
+    orbits = []
+    for a in range(p):
+        if a not in seen:
+            orbit = {(a * h) % p for h in multipliers}
+            seen.update(orbit)
+            orbits.append(orbit)
+
+    assert len(orbits) == len(state)
+    for symbol, orbit in zip(state, orbits):
+        value = int(symbol)
+        row = rows[value & 3]
+        sign = -1 if value & 4 else 1
+        for position in orbit:
+            row[position] = sign
+
+    A, B, C, D = (matrix.circulant(row) for row in williamson_rows)
+    return hadamard_matrix_cooper_wallis_construction(*rows, A, B, C, D,
+                                                      check=check)
+
+
 def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     r"""
     Construct Hadamard matrices using the Cooper-Wallis construction for some small values of `n`.
@@ -1818,6 +1877,14 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         True
         sage: matrix.hadamard(324, existence=True)
         True
+        sage: matrix.hadamard(2060, existence=True)
+        True
+        sage: matrix.hadamard(2060, existence=True, construction_name=True)
+        'cooper-wallis 2060'
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: H = matrix.hadamard(2060, check=False)  # long time
+        sage: is_hadamard_matrix(H, normalized=True)  # long time
+        True
     """
     name = str(n)
     if construction_name:
@@ -1869,6 +1936,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = hadamard_matrix_156()
+    elif n == 2060:
+        name = "cooper-wallis " + name
+        if existence:
+            return report_name(name)
+        M = normalise_hadamard(hadamard_matrix_2060(check=False))
     elif hadamard_matrix_cooper_wallis_smallcases(n, existence=True):
         name = "cooper-wallis small cases: " + name
         if existence:
