@@ -1196,9 +1196,10 @@ def hadamard_matrix_2060(check=True):
     r"""
     Construct a Hadamard matrix of order 2060.
 
-    This uses Loïc Schneider's construction of four disjoint periodic
-    ternary sequences of length 103 and a Williamson quadruple of order 5,
-    combined by the Cooper-Wallis construction.
+    This uses the Cooper-Wallis construction with four disjoint periodic
+    ternary sequences of length 103 and a Williamson quadruple of order 5.
+    Loïc Schneider found these sequences and the Williamson quadruple
+    that make this construction work for order 2060.
     The sequences are encoded by their orbits under multiplication by
     `\{1,46,56\}` in `\ZZ/103\ZZ`. The 35-symbol seed and the Williamson
     rows are available at
