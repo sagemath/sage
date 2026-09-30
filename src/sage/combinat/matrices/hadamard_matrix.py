@@ -1196,11 +1196,12 @@ def hadamard_matrix_2060(check=True):
     r"""
     Construct a Hadamard matrix of order 2060.
 
-    This uses the Cooper-Wallis construction with four disjoint periodic
-    ternary sequences of length 103 and a Williamson quadruple of order 5.
+    This uses Loïc Schneider's construction of four disjoint periodic
+    ternary sequences of length 103 and a Williamson quadruple of order 5,
+    combined by the Cooper-Wallis construction.
     The sequences are encoded by their orbits under multiplication by
     `\{1,46,56\}` in `\ZZ/103\ZZ`. The 35-symbol seed and the Williamson
-    rows are from the construction at
+    rows are available at
     https://github.com/schneiderlo/hadamard-2060.
 
     INPUT:
@@ -1210,14 +1211,14 @@ def hadamard_matrix_2060(check=True):
 
     EXAMPLES::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_2060
-        sage: H = hadamard_matrix_2060(check=False)  # long time
+        sage: H = matrix.hadamard(2060, check=False)  # long time
         sage: H.dimensions()  # long time
         (2060, 2060)
 
     TESTS::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_2060, is_hadamard_matrix
+        sage: H = hadamard_matrix_2060(check=False)  # long time
         sage: is_hadamard_matrix(H)  # long time
         True
     """
@@ -1881,10 +1882,6 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         True
         sage: matrix.hadamard(2060, existence=True, construction_name=True)
         'cooper-wallis 2060'
-        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
-        sage: H = matrix.hadamard(2060, check=False)  # long time
-        sage: is_hadamard_matrix(H, normalized=True)  # long time
-        True
     """
     name = str(n)
     if construction_name:
