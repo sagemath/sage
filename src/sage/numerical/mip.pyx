@@ -969,6 +969,16 @@ cdef class MixedIntegerLinearProgram(SageObject):
             ....:     print('not a variable component')
             not a variable component
 
+        A component of another program has no index in ``p``::
+
+            sage: q = MixedIntegerLinearProgram(solver='GLPK')
+            sage: y = q.new_variable()
+            sage: try:
+            ....:     p.backend_index(y[0])
+            ....: except KeyError:
+            ....:     print('not a component of p')
+            not a component of p
+
         See :issue:`38799`.
         """
         return self._variables[v]
