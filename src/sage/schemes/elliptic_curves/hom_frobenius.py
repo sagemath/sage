@@ -153,6 +153,7 @@ from sage.structure.sequence import Sequence
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.richcmp import op_EQ
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
@@ -330,6 +331,41 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         if isinstance(left, EllipticCurveHom_frobenius) and isinstance(right, EllipticCurveHom_frobenius):
             return EllipticCurveHom_frobenius(right._domain, left._n + right._n)
         return NotImplemented
+
+    @staticmethod
+    def _comparison_impl(left, right, op):
+        r"""
+        Compare two Frobenius isogenies without constructing rational maps.
+
+        TESTS:
+
+        Comparing high-degree Frobenius maps should not build their
+        bivariate rational maps, whose exponents can exceed Singular's
+        internal limit (:issue:`42623`)::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: p = 17
+            sage: E = EllipticCurve(GF(p), [1, 0])
+            sage: pi = EllipticCurveHom_frobenius(E, 10)
+            sage: pi == pi
+            True
+            sage: pi == EllipticCurveHom_frobenius(E, 9)
+            False
+            sage: pi != EllipticCurveHom_frobenius(E, 9)
+            True
+            sage: p = 2^31 - 1
+            sage: E = EllipticCurve(GF(p), [1, 0])
+            sage: pi = EllipticCurveHom_frobenius(E, 2)
+            sage: pi == EllipticCurveHom_frobenius(E, 2)
+            True
+        """
+        if op != op_EQ:
+            return NotImplemented
+        if not isinstance(left, EllipticCurveHom_frobenius):
+            return NotImplemented
+        if not isinstance(right, EllipticCurveHom_frobenius):
+            return NotImplemented
+        return left.domain() == right.domain() and left._n == right._n
 
     def rational_maps(self):
         """
