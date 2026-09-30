@@ -517,10 +517,10 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
         ....:            19,15,7,return_data=True,isinteger=True)
         sage: [j for i,j in p.get_values(a).items()]
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 307, 0, 0, 1, 34]
-        sage: codes.bounds.delsarte_bound_additive_hamming_space(19,15,7,solver='glpk')
+        sage: codes.bounds.delsarte_bound_additive_hamming_space(19,15,7)
         3
         sage: codes.bounds.delsarte_bound_additive_hamming_space(\
-        ....:    19,15,7, isinteger=True, solver='glpk')
+        ....:    19,15,7, isinteger=True)
         3
     """
     from sage.numerical.mip import MIPSolverException
