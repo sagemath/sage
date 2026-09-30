@@ -1289,9 +1289,9 @@ def norm(x):
     r"""
     Return the norm of ``x``.
 
-    For matrices and vectors, this returns the L2-norm. The L2-norm of a
-    vector `\textbf{v} = (v_1, v_2, \dots, v_n)`, also called the Euclidean
-    norm, is defined as
+    For matrices, this returns the L2-norm.  For vectors whose parent uses
+    the standard dot product, this returns the Euclidean norm.  The Euclidean
+    norm of a vector `\textbf{v} = (v_1, v_2, \dots, v_n)` is defined as
 
     .. MATH::
 
@@ -1301,7 +1301,9 @@ def norm(x):
 
     where `|v_i|` is the complex modulus of `v_i`. The Euclidean norm is often
     used for determining the distance between two points in two- or
-    three-dimensional space.
+    three-dimensional space.  If the parent of a vector defines a nonstandard
+    inner product, this instead returns the square root of the inner product
+    of the vector with itself.
 
     For complex numbers, the function returns the field norm. If
     `c = a + bi` is a complex number, then the norm of `c` is defined as the
@@ -1359,6 +1361,16 @@ def norm(x):
         sage: v = vector([a, b, c, d])
         sage: norm(v)
         sqrt(a^2 + b^2 + c^2 + d^2)
+
+    A nonstandard inner product defined by the parent determines the default
+    norm.  The coordinate 2-norm remains available as ``v.norm(2)``::
+
+        sage: V = VectorSpace(QQ, 2, inner_product_matrix=[[9, 0], [0, 1]])
+        sage: v = V([1, 0])
+        sage: norm(v)
+        3
+        sage: v.norm(2)
+        1
 
     The norm of matrices::
 
