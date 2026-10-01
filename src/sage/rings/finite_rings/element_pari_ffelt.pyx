@@ -1026,7 +1026,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return bool(i)
 
-    def sqrt(self, extend=False, all=False):
+    def sqrt(self, extend=False, all=False, algorithm=None):
         """
         Return a square root of ``self``, if it exists.
 
@@ -1039,6 +1039,9 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                This option is not implemented.
 
         - ``all`` -- boolean (default: ``False``)
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         OUTPUT:
 
@@ -1078,6 +1081,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: K.<a> = GF(3^17, implementation='pari_ffelt')
             sage: (a^3 - a - 1).sqrt()
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
+            sage: K(4).sqrt(algorithm='tonelli')^2 == K(4)
+            True
         """
         if extend:
             raise NotImplementedError

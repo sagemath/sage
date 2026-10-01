@@ -1036,14 +1036,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return True
         return self.element % 2 == 0
 
-    def sqrt(FiniteField_givaroElement self, extend=False, all=False):
+    def sqrt(FiniteField_givaroElement self, extend=False, all=False, algorithm=None):
         """
         Return a square root of this finite field element in its
         parent, if there is one.  Otherwise, raise a :exc:`ValueError`.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise,
           raise a :exc:`ValueError` if the root is not in the base ring.
 
@@ -1053,6 +1053,9 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return all
           square roots of ``self``, instead of just one
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         .. WARNING::
 
@@ -1094,6 +1097,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: K.<a> = FiniteField(9)
             sage: a.sqrt(extend = False, all = True)
             []
+            sage: K(4).sqrt(algorithm='tonelli')^2 == K(4)
+            True
         """
         if all:
             if self.is_square():
