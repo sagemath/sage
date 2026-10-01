@@ -15,9 +15,6 @@ AUTHORS:
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
-from sage.misc.lazy_attribute import lazy_attribute
-
 from sage.categories.modules import Modules
 from sage.categories.category_types import Category_over_base_ring
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
@@ -47,7 +44,8 @@ class OreModules(Category_over_base_ring):
             sage: Frob = K.frobenius_endomorphism()
             sage: cat = OreModules(K, Frob)
             sage: cat
-            Category of Ore modules over Finite Field in a of size 5^3 twisted by a |--> a^5
+            Category of Ore modules over Finite Field in a of size 5^3
+            twisted by a |--> a^5
 
             sage: S = cat.ore_ring('y')
             sage: cat is OreModules(K, S)
@@ -123,9 +121,11 @@ class OreModules(Category_over_base_ring):
             sage: Frob = K.frobenius_endomorphism()
             sage: cat = OreModules(K, Frob)
             sage: cat._repr_object_names()
-            'Ore modules over Finite Field in a of size 5^3 twisted by a |--> a^5'
+            'Ore modules over Finite Field in a of size 5^3
+            twisted by a |--> a^5'
         """
-        return "Ore modules over %s %s" % (self.base_ring(), self._ore._repr_twist())
+        return "Ore modules over %s %s" % (self.base_ring(),
+                                           self._ore._repr_twist())
 
     def ore_ring(self, var='x'):
         r"""
@@ -142,10 +142,12 @@ class OreModules(Category_over_base_ring):
             sage: Frob = K.frobenius_endomorphism()
             sage: cat = OreModules(K, Frob)
             sage: cat.ore_ring()
-            Ore Polynomial Ring in x over Finite Field in a of size 5^3 twisted by a |--> a^5
+            Ore Polynomial Ring in x over Finite Field in a of size 5^3
+            twisted by a |--> a^5
 
             sage: cat.ore_ring('y')
-            Ore Polynomial Ring in y over Finite Field in a of size 5^3 twisted by a |--> a^5
+            Ore Polynomial Ring in y over Finite Field in a of size 5^3
+            twisted by a |--> a^5
         """
         return self._ore.change_variable_name(var)
 
