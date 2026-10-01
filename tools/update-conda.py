@@ -41,15 +41,15 @@ tags = [""]
 
 
 def write_env_file(env_file: Path, dependencies: list[str]) -> None:
-    # TODO: Remove python_rc from channels and _python_rc from dependencies
     env_file.write_text(
         """name: sage
 channels:
   - conda-forge/label/python_rc
   - conda-forge
-  - nodefaults
+nodefaults: true
 dependencies:
   - _python_rc
+  - _numpy_rc
 """
         + "".join(f"  - {req}" + "\n" for req in dependencies)
     )
@@ -117,10 +117,6 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                 [
                     "conda-lock",
                     "--mamba",
-                    "--channel",
-                    "conda-forge/label/python_rc",
-                    "--channel",
-                    "conda-forge",
                     "--kind",
                     "env",
                     "--platform",
