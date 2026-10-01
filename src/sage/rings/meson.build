@@ -200,7 +200,7 @@ foreach name, pyx : extension_data
     deps += [gmpy2, mpfr, mpc]
   elif name == 'complex_mpfr'
     deps += [gmpy2, mpfr]
-  elif name == 'factorint_flint'
+  elif name in ['factorint_flint', 'fast_arith']
     deps += [flint]
   elif name == 'integer'
     deps += [gmpy2]
