@@ -491,9 +491,7 @@ def _padic_sha_bound(E, p, analytic):
         # Exactly the untwisted rank-zero shortcut in Sha.an_padic.
         return analytic.sha(E).valuation(p)
 
-    base = pAdicLseriesOrdinary if E.is_ordinary(p) else pAdicLseriesSupersingular
-
-    class ExactSymbols(base):
+    class ExactSymbols:
         # Use the existing series/precision algorithms with a private set of
         # symbols.  Initializing these attributes directly avoids constructing
         # and then discarding an uncertified L_ratio normalization in the base
@@ -516,7 +514,13 @@ def _padic_sha_bound(E, p, analytic):
             values = pari.mseval(M, symbol)
             return max([ZZ.zero()] + [QQ(v).denominator().valuation(p) for v in values])
 
-    lp = ExactSymbols()
+    class ExactOrdinaryLseries(ExactSymbols, pAdicLseriesOrdinary):
+        pass
+
+    class ExactSupersingularLseries(ExactSymbols, pAdicLseriesSupersingular):
+        pass
+
+    lp = ExactOrdinaryLseries() if E.is_ordinary(p) else ExactSupersingularLseries()
     P = analytic.gens(E)[0]
     r = 1
     for prec in (20, 40, 80):

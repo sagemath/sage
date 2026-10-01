@@ -6541,14 +6541,14 @@
             K3 surface: Simplicial blowups and slicings*, Experimental
             Mathematics, Volume 20, Issue 2, 2011.
 
-.. [SKWWHF1998] \B. Schneier, J. Kelsey, D. Whiting, D. Wagner, C. Hall,
-                and N. Ferguson, *Twofish: A 128-bit block cipher*; in
-                AES Submission, (1998).
-
 .. [Skinner2016] Christopher Skinner. *Multiplicative reduction and the
                 cyclotomic main conjecture for* `\mathrm{GL}_2`.
                 Pacific Journal of Mathematics 283 (2016), no. 1, 171--200.
                 :doi:`10.2140/pjm.2016.283.171`.
+
+.. [SKWWHF1998] \B. Schneier, J. Kelsey, D. Whiting, D. Wagner, C. Hall,
+                and N. Ferguson, *Twofish: A 128-bit block cipher*; in
+                AES Submission, (1998).
 
 .. [Sky2003] Brian Skyrms. *The stag hunt and the evolution of social
              structure*. Cambridge University Press, 2003.
