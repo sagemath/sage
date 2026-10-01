@@ -263,9 +263,9 @@ def _is_seed_acyclic(B, allowed_directions):
 
 def _find_partner_sets(A, allowed_directions):
     r"""
-    Compute partner sets among the allowed directions.
+    Iterate over the partner sets among the allowed directions.
 
-    Two directions(indices) are partners if their exchange polynomials have a
+    Two directions (indices) are partners if their exchange polynomials have a
     non-constant common divisor.
 
     EXAMPLES::
@@ -273,54 +273,42 @@ def _find_partner_sets(A, allowed_directions):
         sage: from sage.algebras.banff_cluster_algebra import _find_partner_sets
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: A = ClusterAlgebra(B, scalars=QQ)
-        sage: _find_partner_sets(A, [0, 1])
+        sage: list(_find_partner_sets(A, [0, 1]))
         [(0,), (1,)]
         sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
         sage: A = ClusterAlgebra(B, scalars=QQ)
-        sage: _find_partner_sets(A, [0, 1, 2])
+        sage: list(_find_partner_sets(A, [0, 1, 2]))
         [(0, 2), (1,)]
     """
     B = A.b_matrix()
     n = B.nrows()
     R = PolynomialRing(A.base_ring(), n, names='x')
-    exch_polys = [R(1)] * n
+    exch_polys = [R.one()] * n
     gens = R.gens()
 
     for i in allowed_directions:
-        f = (
-            prod(gens[h] ** B[h, i] for h in range(n) if B[h, i] > 0)
-            + prod(gens[h] ** (-B[h, i]) for h in range(n) if B[h, i] < 0)
+        exch_polys[i] = (
+            prod(g ** B[h, i] for h, g in enumerate(gens) if B[h, i] > 0)
+            + prod(g ** (-B[h, i]) for h, g in enumerate(gens) if B[h, i] < 0)
         )
-        exch_polys[i] = f
 
-    partner_sets = []
     unassigned = set(allowed_directions)
 
     while unassigned:
         i = unassigned.pop()
-        current_set = {i}
-        partners = set()
         f_i = exch_polys[i]
-
-        for j in list(unassigned):
-            f_j = exch_polys[j]
-            common_divisor = gcd(f_i, f_j)
-            if not common_divisor.is_unit():
-                partners.add(j)
-
-        current_set.update(partners)
-        partner_sets.append(tuple(sorted(current_set)))
+        partners = {j for j in unassigned
+                    if not gcd(f_i, exch_polys[j]).is_unit()}
         unassigned -= partners
-
-    return partner_sets
+        yield tuple(sorted(partners | {i}))
 
 
 def _find_sink_or_source_covering_pair(B, allowed_directions):
     r"""
     Find a sink or source in the principal part.
 
-    Returns a tuple ``(i, j, "sink")`` or ``(i, j, "source")``, where
-    ``i`` is a sink/source and ``j`` is a neighboring vertex witnessing it.
+    Return a tuple ``(i, j, 1)`` if ``i`` is a source or ``(i, j, -1)`` if
+    ``i`` is a sink, where ``j`` is a neighboring vertex witnessing it.
     Returns ``None`` if no such vertex exists.
 
     EXAMPLES::
@@ -328,7 +316,7 @@ def _find_sink_or_source_covering_pair(B, allowed_directions):
         sage: from sage.algebras.banff_cluster_algebra import _find_sink_or_source_covering_pair
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: _find_sink_or_source_covering_pair(B, [0, 1])
-        (0, 1, 'source')
+        (0, 1, 1)
         sage: B = Matrix([[0, 1, -1], [-1, 0, 1], [1, -1, 0]])
         sage: _find_sink_or_source_covering_pair(B, [0, 1, 2]) is None
         True
@@ -340,13 +328,13 @@ def _find_sink_or_source_covering_pair(B, allowed_directions):
         if all(x >= 0 for x in row) and any(x != 0 for x in row):
             for j in allowed_directions:
                 if B[i, j] > 0:
-                    return (i, j, "source")
+                    return (i, j, 1)
 
         # sink: all <=0 and at least one nonzero; pick j with B[i,j] < 0
         if all(x <= 0 for x in row) and any(x != 0 for x in row):
             for j in allowed_directions:
                 if B[i, j] < 0:
-                    return (i, j, "sink")
+                    return (i, j, -1)
 
     return None
 
@@ -629,9 +617,7 @@ def _FiniteLaurentIntersectionRing_charts_for_acyclic(acyclic_chart: ClusterAlge
 
     charts = [acyclic_chart]
 
-    partner_sets = _find_partner_sets(A, acyclic_chart.allowed_directions)
-
-    for S in partner_sets:
+    for S in _find_partner_sets(A, acyclic_chart.allowed_directions):
         for J in Subsets(S):
             if not J:
                 continue
@@ -1322,7 +1308,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
                 seed.mutate(i)
 
                 cluster = seed.cluster_variables()
-                if cover_type == "source":
+                if cover_type == 1:
                     sign = 1
                 else:
                     sign = -1
