@@ -124,8 +124,6 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             sage: a == copy(a)
             True
         """
-        if self._degree == 0:
-            return self
         from copy import copy
         return self._new(copy(self._vector_numpy))
 
