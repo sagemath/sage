@@ -11,3 +11,5 @@
 pkgconfig
 zlib
 boost
+gcc10
++gfortran

@@ -37,3 +37,4 @@ pkgconfig(bzip2)
 pkgconf
 pkgconfig(zlib)
 boost-base
+gcc-fortran

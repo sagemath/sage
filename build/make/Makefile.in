@@ -77,11 +77,6 @@ $(SAGE_PKGCONFIG)/openblas.pc $(SAGE_PKGCONFIG)/blas.pc $(SAGE_PKGCONFIG)/cblas.
 BUILT_PACKAGES = @SAGE_BUILT_PACKAGES@
 DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
-# Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
-# of packages if GCC changed.
-# See m4/sage_spkg_collect.m4 and https://github.com/sagemath/sage/issues/24703
-GCC_DEP = @SAGE_GCC_DEP@
-
 # Versions of all the packages, in the format
 #
 # vers_<pkgname> = <pkgvers>
@@ -209,7 +204,7 @@ SAGE_I_TARGETS = sagelib doc
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-uninstall \
-	python3_venv _clean-broken-gcc
+	python3_venv
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
 PYTHON_MINOR = @PYTHON_MINOR@
@@ -247,7 +242,7 @@ all-build: toolchain-deps
 build-start: all-build
 
 # The preliminary build phase: toolchain.
-base-toolchain: _clean-broken-gcc
+base-toolchain:
 	+$(MAKE_REC) toolchain
 
 # All targets except for the documentation
@@ -355,20 +350,6 @@ doc-pdf: sagemath_doc_pdf
 
 doc-uninstall:
 	rm -rf "$(SAGE_SHARE)/doc/sage"
-
-# Special target for cleaning up a broken GCC install detected by configure
-# This should check for the .clean-broken-gcc stamp, and if found clean
-# everything up along with the stamp file itself.  This target is then run
-# as a prerequisite to installing any other packages.
-_clean-broken-gcc:
-	@if [ -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc" ]; then \
-	   rm -f "$(SAGE_LOCAL)/bin/gcc"; \
-	   rm -f "$(SAGE_LOCAL)/gcc-"*; \
-	   rm -f "$(SAGE_LOCAL)/bin/g++"; \
-	   rm -f "$(SAGE_SPKG_INST)/gcc-"*; \
-	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
-	   echo "Cleaned up old broken GCC install"; \
-	fi
 
 # Implicit rules for uninstalling packages that no longer exist in the source tree.
 %-SAGE_LOCAL-uninstall:
@@ -500,13 +481,9 @@ debug-check:
 # the name of some arbitrary file, or it is the '|' symbol) then it is just
 # used verbatim.
 #
-# As a special case, also adds a special variable GCC_DEP for all packages
-# except for gcc itself.  See the definition of GCC_DEP above
-#
 # Positional arguments:
 #     $(1): package name
 pkg_deps = \
-	$(if $(filter gcc,$(1)),,$$(GCC_DEP))\
 	$(foreach dep,$(deps_$(1)),\
         $(if $(value inst_$(dep)),$$(inst_$(dep)),$(dep)))
 

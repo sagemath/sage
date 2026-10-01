@@ -44,8 +44,6 @@ export SAGE_MPC_PREFIX="@SAGE_MPC_PREFIX@"
 # empty if --disable-doc was passed
 export SAGE_DOCS="@SAGE_DOCS@"
 
-# Location of system crti.o, in case we build our own gcc
-export SAGE_CRTI_DIR="@SAGE_CRTI_DIR@"
 
 export SAGE_DARWIN_ACCELERATE="@SAGE_DARWIN_ACCELERATE@"
 

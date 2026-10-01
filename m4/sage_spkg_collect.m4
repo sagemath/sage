@@ -84,16 +84,6 @@ AS_IF([properties=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --f
     AC_MSG_ERROR([Package directory missing. Re-run bootstrap.])dnl
 ])
 
-# To deal with ABI incompatibilities when gcc is upgraded, every package
-# (except gcc) should depend on gcc if gcc is already installed.
-# See https://github.com/sagemath/sage/issues/24703
-if test x$SAGE_INSTALL_GCC = xexists; then
-    SAGE_GCC_DEP='$(SAGE_LOCAL)/bin/gcc'
-else
-    SAGE_GCC_DEP=''
-fi
-AC_SUBST([SAGE_GCC_DEP])
-
 # Packages that are actually built/installed as opposed to packages that are
 # not required on this platform or that can be taken from the underlying system
 # installation. Note that this contains packages that are not actually going to

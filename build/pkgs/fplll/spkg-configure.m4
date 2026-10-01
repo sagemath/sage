@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([fplll], [
-  SAGE_SPKG_DEPCHECK([gcc mpfr], [
+  SAGE_SPKG_DEPCHECK([mpfr], [
     dnl If we're using the system mpfr, use pkgconfig to determine
     dnl if there's a usable system copy of fplll. Unless there's
     dnl a system that ships fplll without fplll.pc file, falling
