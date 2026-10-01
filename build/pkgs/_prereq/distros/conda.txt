@@ -20,3 +20,4 @@ pkg-config
 zlib
 zlib-devel
 libboost-devel
+fortran-compiler

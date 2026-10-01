@@ -21,3 +21,4 @@ bzip2
 devel/pkgconf
 zlib
 devel/boost-libs
+lang/gcc

@@ -41,11 +41,6 @@ if [ -z "$MAKE" ]; then
     export MAKE=make
 fi
 
-# Make the special target _clean-broken-gcc before trying to build any other
-# packages.  This is necessary if configure detected a broken GCC installed
-# in Sage; Issue #25011
-$MAKE _clean-broken-gcc
-
 # If "make" doesn't understand the -q option (although we require
 # GNU make, which supports it), it should exit with a non-zero status
 # which is not a problem.

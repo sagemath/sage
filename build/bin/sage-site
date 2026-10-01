@@ -175,8 +175,7 @@ if [ "$1" = '-i' ]; then
     fi
 
     if [ -z "$NO_DEPS" ]; then
-        # Make sure that the toolchain is up-to-date
-        # (which is a dependency of every package)
+        # Prepare optional ccache and generated pkg-config facade files
         $MAKE all-toolchain
     fi
 

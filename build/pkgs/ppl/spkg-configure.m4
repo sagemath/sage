@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([ppl], [
-  SAGE_SPKG_DEPCHECK([gcc glpk gmp], [
+  SAGE_SPKG_DEPCHECK([glpk gmp], [
     # If our dependencies come from the system, then we can use the
     # system ppl, too. This macro works sort-of like the
     # PKG_CHECK_MODULES macro, defining e.g. PPL_CFLAGS when a

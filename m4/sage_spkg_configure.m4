@@ -180,7 +180,7 @@ m4_popdef([SPKG_NAME])
 ])
 ])
 AC_DEFUN([SAGE_SPKG_CONFIGURE], [
-    SAGE_SPKG_CONFIGURE_BASE([$1], [$2], [$3], [$4], [$5], [AC_REQUIRE([SAGE_SPKG_CONFIGURE_GCC])])
+    SAGE_SPKG_CONFIGURE_BASE([$1], [$2], [$3], [$4], [$5])
 ])
 
 # SYNOPSIS
