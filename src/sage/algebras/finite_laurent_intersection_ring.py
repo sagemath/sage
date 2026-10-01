@@ -44,8 +44,7 @@ Auxiliary classes:
 
 REFERENCES:
 
-- Mara Pompili and Daniel Smertnig, "Factoriality and Class Groups of Upper Cluster Algebras
-  and Finite Laurent Intersection Rings: A Computational Approach", 2026. arXiv:2601.07520.
+- [PS2026]_
 
 AUTHORS:
 
@@ -318,6 +317,26 @@ class FiniteLaurentIntersectionRingChart(SageObject):
         return chart
 
     def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are the same chart.
+
+        Two charts are equal if they have the same coefficient ring, variable names,
+        term order and substitution data.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(QQ, ("x1", "x2"))
+            sage: x1, x2 = C0.F.gens()
+            sage: C1 = FiniteLaurentIntersectionRingChart(QQ, ("y1", "y2"), base_fraction_field=C0.F,
+            ....:                                         this_to_base=[x1, x2/x1])
+            sage: C1.compute_base_to_this(C0)
+            sage: C2 = FiniteLaurentIntersectionRingChart(QQ, ("y1", "y2"), base_fraction_field=C0.F,
+            ....:                                         this_to_base=[x1, x2/x1])
+            sage: C2.compute_base_to_this(C0)
+            sage: C1 == C2
+            True
+        """
         if not isinstance(other, FiniteLaurentIntersectionRingChart):
             return NotImplemented
         return (
@@ -330,6 +349,9 @@ class FiniteLaurentIntersectionRingChart(SageObject):
         )
 
     def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+        """
         return hash((
             self.base_ring,
             self.var_names,
@@ -578,6 +600,15 @@ class FiniteLaurentIntersectionRingChart(SageObject):
 
     def _repr_(self):
 
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: FiniteLaurentIntersectionRingChart(QQ, ("y1", "y2"))
+            FiniteLaurentIntersectionRingChart(('y1', 'y2')) over Rational Field. No substitution data.
+        """
         if self.this_to_base is not None:
             lines = [f"FiniteLaurentIntersectionRingChart({self.var_names})over {self.base_ring} with substitutions:"]
             for name, img in zip(self.var_names, self.this_to_base):
@@ -627,6 +658,17 @@ class FiniteLaurentIntersectionRingPrimeDivisor:
     irreducible: Any
 
     def __repr__(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart, FiniteLaurentIntersectionRingPrimeDivisor
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x1", "x2"))
+            sage: x1, x2 = C.P.gens()
+            sage: FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + x2)
+            PrimeDivisor(chart=('x1', 'x2'), p=x1 + x2)
+        """
         return f"PrimeDivisor(chart={self.chart.var_names}, p={self.irreducible})"
 
 
@@ -694,6 +736,27 @@ class FiniteLaurentIntersectionRingDivisor(Element):
     """
 
     def __init__(self, parent, data=None):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``parent`` -- a :class:`FiniteLaurentIntersectionRingDivisorGroup`
+        - ``data`` -- ``None`` (the zero divisor), a dictionary mapping prime
+          divisors to integer coefficients, or an iterable of
+          ``(prime, coefficient)`` pairs
+
+        Terms with coefficient zero are discarded, and repeated primes are added.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: G = A.divisor_group()
+            sage: P, Q, _, _ = A.extra_primes()
+            sage: G([(P, 1), (P, 2)])
+            3*PrimeDivisor(chart=('x_11', 'x_12', 'x_13'), p=x_11 + x_13)
+        """
         super().__init__(parent)
         d = {}
         if data is None:
@@ -711,12 +774,37 @@ class FiniteLaurentIntersectionRingDivisor(Element):
         self._data = d
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1*x3).divisor()
+            1*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
+             1*PrimeDivisor(chart=('x_31', 'x_32', 'x_33'), p=x_32 + 1) +
+             2*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
+        """
         if not self._data:
             return "0"
         parts = [f"{e}*{P}" for P, e in self._data.items()]
         return " +\n ".join(parts)
 
     def __iter__(self):
+        r"""
+        Iterate over the pairs ``(prime, coefficient)`` of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: [e for _, e in D]
+            [1, 1, 2]
+        """
         return iter(self._data.items())
 
     def _richcmp_(self, other, op):
@@ -817,6 +905,22 @@ class FiniteLaurentIntersectionRingDivisor(Element):
         return list(self._data.values())
 
     def _add_(self, other):
+        r"""
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: E = A(x2 + 1).divisor()
+            sage: D + E
+            2*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
+             2*PrimeDivisor(chart=('x_31', 'x_32', 'x_33'), p=x_32 + 1) +
+             3*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1) +
+             1*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x2 + 1)
+        """
         out = dict(self._data)
         for P, e in other._data.items():
             out[P] = out.get(P, ZZ(0)) + e
@@ -825,21 +929,91 @@ class FiniteLaurentIntersectionRingDivisor(Element):
         return self.parent()(out)
 
     def _neg_(self):
+        r"""
+        Return the negative of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: D + (-D)
+            0
+        """
         return self.parent()({P: -e for P, e in self._data.items()})
 
     def _sub_(self, other):
+        r"""
+        Return the difference of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: E = A(x2 + 1).divisor()
+            sage: D - E
+            1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1) +
+             -1*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x2 + 1)
+        """
         return self._add_(other._neg_())
 
     def _scalar_mul(self, n):
+        r"""
+        Return the product of ``self`` with the integer ``n``.
+
+        INPUT:
+
+        - ``n`` -- an integer
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: D._scalar_mul(2) == D + D
+            True
+            sage: D._scalar_mul(4)
+            4*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
+             4*PrimeDivisor(chart=('x_31', 'x_32', 'x_33'), p=x_32 + 1) +
+             8*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
+        """
         n = ZZ(n)
         if n == 0:
             return self.parent().zero()
         return self.parent()({P: n*e for P, e in self._data.items()})
 
     def _lmul_(self, n):
+        r"""
+        Return the product ``n * self`` of an integer ``n`` and ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: 3*D == D + D + D
+            True
+        """
         return self._scalar_mul(n)
 
     def _rmul_(self, n):
+        r"""
+        Return the product ``self * n`` of ``self`` and an integer ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: D*3 == 3*D
+            True
+        """
         return self._scalar_mul(n)
 
     def is_effective(self):
@@ -966,11 +1140,41 @@ class FiniteLaurentIntersectionRingDivisorGroup(Parent):
     Element = FiniteLaurentIntersectionRingDivisor
 
     def __init__(self, flir, base_ring=ZZ):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``flir`` -- the ambient :class:`FiniteLaurentIntersectionRing`
+        - ``base_ring`` -- the ring of coefficients of the divisors (default: ``ZZ``)
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
+            sage: A = example_A3()
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(A)
+            sage: G.flir() is A
+            True
+        """
         self._A = flir
         self._base_ring = base_ring
         Parent.__init__(self, category=AdditiveGroups())  # type: ignore[call-arg]
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A.divisor_group()
+            Divisor group Div(A) of FiniteLaurentIntersectionRing over Rational Field
+              rank n = 3
+              #charts = 5
+              base vars = ('x1', 'x2', 'x3') with coefficients in Integer Ring
+        """
         return f"Divisor group Div(A) of {self._A} with coefficients in {self._base_ring}"
 
     def _element_constructor_(self, x=None):
@@ -979,8 +1183,18 @@ class FiniteLaurentIntersectionRingDivisorGroup(Parent):
 
         INPUT:
 
-        - ``x`` -- ``None`` (zero divisor), a dict, an iterable of pairs, or an existing
-          :class:`FiniteLaurentIntersectionRingDivisor` in this parent.
+        - ``x`` -- ``None`` (the zero divisor), a dictionary mapping prime divisors
+          to integers, an iterable of pairs ``(prime, coefficient)``, or an
+          existing :class:`FiniteLaurentIntersectionRingDivisor` in this parent
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: G = A.divisor_group()
+            sage: P, Q, _, _ = A.extra_primes()
+            sage: G({P: 1})
+            1*PrimeDivisor(chart=('x_11', 'x_12', 'x_13'), p=x_11 + x_13)
         """
         if x is None or x == 0:
             return self.element_class(self, {})
@@ -1028,7 +1242,16 @@ class FiniteLaurentIntersectionRingDivisorGroup(Parent):
         return self({P: 1})
 
     def flir(self):
-        """Return the ambient FiniteLaurentIntersectionRing object associated to this divisor group."""
+        r"""
+        Return the ambient finite Laurent intersection ring of this divisor group.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A.divisor_group().flir() is A
+            True
+        """
         return self._A
 
 
@@ -1122,6 +1345,23 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
     """
 
     def __init__(self, element, atoms, factorizations, units=None, verbose=False):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``element`` -- a :class:`FiniteLaurentIntersectionRingElement`
+        - ``atoms`` -- the list of atoms appearing in the factorizations
+        - ``factorizations`` -- a list of factorizations, each a list of
+          ``(atom, exponent)`` pairs
+        - ``units`` -- a list with one unit for each factorization, or a single
+          unit used for all of them (default: ``None``, meaning that all units
+          are ``1``)
+        - ``verbose`` -- boolean (default: ``False``); whether the string
+          representation is verbose
+
+        Usually a factorization is built with :meth:`from_element`.
+        """
         self._element = element
         self._atoms = list(atoms)
         self._factorizations = [
@@ -1144,74 +1384,189 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
 
     @classmethod
     def from_element(cls, f, verbose=False):
-        """
-        Build FiniteLaurentIntersectionRingFactorization from a FiniteLaurentIntersectionRingElement
+        r"""
+        Build a :class:`FiniteLaurentIntersectionRingFactorization` of an element.
+
+        INPUT:
+
+        - ``f`` -- a :class:`FiniteLaurentIntersectionRingElement`
+        - ``verbose`` -- boolean (default: ``False``); whether the string
+          representation of the result is verbose
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingFactorization
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: f = A((x1 + 1)**2)
+            sage: F = FiniteLaurentIntersectionRingFactorization.from_element(f)
+            sage: F
+            [[((x1^2 + 2*x1 + 1)/x2, 1), (x2, 1)], [(x1 + 1, 2)]]
         """
         A = f.parent()
         atoms, factorizations, units = A.factorizations(f)
         return cls(f, atoms=atoms, factorizations=factorizations, units=units, verbose=verbose)
 
     def element(self):
+        r"""
+        Return the element that was factored.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: f = A((x1 + 1)**2)
+            sage: f.factor().element() is f
+            True
+        """
         return self._element
 
     def atoms(self):
-        """
+        r"""
         Return the list of atoms appearing in any factorization.
-        An atom is a non-unit element that cannot be factored as a product of two non-units.
-        In other words, an atom is an irreducible element.
+
+        An atom is a non-unit element that cannot be factored as a product of two
+        non-units.  In other words, an atom is an irreducible element.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.atoms()
+            [x2, x1 + 1, (x1^2 + 2*x1 + 1)/x2]
         """
         return self._atoms
 
     def units(self):
-        """
+        r"""
         Return the list of units corresponding to each factorization.
+
         A unit is an element that has a multiplicative inverse in the ring.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A((x1 + 1)**2).factor().units()
+            [1, 1]
         """
         return self._units
 
     def has_nontrivial_units(self):
-        """
-        Return True if any factorization has a nontrivial unit (i.e., not equal to 1).
+        r"""
+        Return whether any factorization has a nontrivial unit (that is, a unit
+        different from `1`).
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A(2*(x1 + 1)**2).factor().has_nontrivial_units()
+            True
         """
         one = self._element.parent().fraction_field(1)
         return any(u != one for u in self._units)
 
     def factorizations(self):
-        """
-        Return the list of factorizations, each factorization is a list of (atom, exponent) pairs.
+        r"""
+        Return the list of factorizations.
+
+        Each factorization is a list of ``(atom, exponent)`` pairs.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.factorizations()
+            [[(x1 + 1, 2)], [(x2, 1), ((x1^2 + 2*x1 + 1)/x2, 1)]]
         """
         return self._factorizations
 
     def factorization(self):
-        """
+        r"""
         Return the factorization if it is unique, otherwise raise an error.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A(x1 + x2).factor().factorization()
+            [(x1 + x2, 1)]
+            sage: A((x1 + 1)**2).factor().factorization()
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a unique factorization.
         """
         if self.num_factorizations() == 1:
             return self._factorizations[0]
         raise ValueError("Not a unique factorization.")
 
     def num_atoms(self):
-        """
+        r"""
         Return the number of distinct atoms appearing in any factorization.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A((x1 + 1)**2).factor().num_atoms()
+            3
         """
         return len(self._atoms)
 
     def num_factorizations(self):
-        """
+        r"""
         Return the number of distinct factorizations.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A((x1 + 1)**2).factor().num_factorizations()
+            2
         """
         return len(self._factorizations)
 
     def is_unit(self):
-        """
-        Return True if the element is a unit.
+        r"""
+        Return whether the element is a unit.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A.one().factor().is_unit()
+            True
         """
         return self.num_atoms() == 0
 
     def is_irreducible(self):
-        """
-        Return True if the element is irreducible (i.e., it has exactly one atom and exactly one factorization with exponent 1).
-        An element is irreducible if it is not a unit and cannot be factored into a product of two non-units.
+        r"""
+        Return whether the element is irreducible.
+
+        An element is irreducible if it has exactly one atom and exactly one
+        factorization with exponent `1`.  Equivalently, it is not a unit and cannot
+        be factored into a product of two non-units.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A(x1 + x2).factor().is_irreducible()
+            True
         """
         return (
             self.num_atoms() == 1
@@ -1221,32 +1576,100 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
         )
 
     def set_representation(self, verbose=True):
+        r"""
+        Choose whether the string representation of ``self`` is verbose.
+
+        INPUT:
+
+        - ``verbose`` -- boolean (default: ``True``)
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.set_representation()
+            sage: print(F)
+            Factorizations of x1^2 + 2*x1 + 1:
+            Atoms: [x2, x1 + 1, (x1^2 + 2*x1 + 1)/x2]
+            Number of factorizations: 2
+              1: 1 * ((x1^2 + 2*x1 + 1)/x2) * (x2)
+              2: 1 * (x1 + 1)^2
+        """
         self._verbose = bool(verbose)
 
     def set_of_lengths(self):
-        """
-        Length = sum of exponents in a factorization.
+        r"""
+        Return the set of lengths of the factorizations.
+
+        The length of a factorization is the sum of its exponents.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A((x1 + 1)**2).factor().set_of_lengths()
+            {2}
         """
         return {sum(exp for _, exp in fac) for fac in self._factorizations}
 
     def number_atoms_in_factorizations(self):
-        """
-        Number of distinct atoms appearing in each factorization.
+        r"""
+        Return the number of distinct atoms appearing in each factorization.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: A((x1 + 1)**2).factor().number_atoms_in_factorizations()
+            [1, 2]
         """
         return [len(fac) for fac in self._factorizations]
 
     def particular_factorization(self, i):
-        """
-        Return the i-th factorization as a list of (atom, exp).
+        r"""
+        Return the ``i``-th factorization as a list of ``(atom, exponent)`` pairs.
+
+        INPUT:
+
+        - ``i`` -- an integer; the index of the factorization
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.particular_factorization(0)
+            [(x1 + 1, 2)]
         """
         return self._factorizations[i]
 
     # ---------------- sorting ----------------
 
     def sort_factors(self, key=None):
-        """
+        r"""
         Sort the factors inside each factorization.
-        Default: by repr(atom), then exponent.
+
+        INPUT:
+
+        - ``key`` -- a function used to sort the ``(atom, exponent)`` pairs
+          (default: ``None``, meaning that pairs are sorted by ``repr`` of the
+          atom, then by the exponent)
+
+        OUTPUT: the list of sorted factorizations
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.sort_factors()
+            [[(x1 + 1, 2)], [((x1^2 + 2*x1 + 1)/x2, 1), (x2, 1)]]
         """
         sorted_fact_list = []
         for fac in self._factorizations:
@@ -1259,12 +1682,24 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
         return sorted_fact_list
 
     def sorted_factorizations_with_units(self):
-        """
-        Sort factorizations globally, preserving their units.
+        r"""
+        Sort the factorizations globally, preserving their units.
 
         Sorting convention:
-          - more distinct factors first
-          - then lexicographically by repr(atom), exponent
+
+        - more distinct factors first
+        - then lexicographically by ``repr`` of the atom, then the exponent
+
+        OUTPUT: a list of pairs ``(unit, factorization)``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.sorted_factorizations_with_units()
+            [(1, [((x1^2 + 2*x1 + 1)/x2, 1), (x2, 1)]), (1, [(x1 + 1, 2)])]
         """
         pairs = [
             (u, fac)
@@ -1280,16 +1715,43 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
         return sorted(pairs, key=factorization_key)
 
     def sort_all_factorizations(self):
-        """
-        Sort factorizations globally:
-          - more distinct factors first
-          - then lex by repr of factors.
+        r"""
+        Sort the factorizations globally.
+
+        Sorting convention:
+
+        - more distinct factors first
+        - then lexicographically by ``repr`` of the atom, then the exponent
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F.sort_all_factorizations()
+            [[((x1^2 + 2*x1 + 1)/x2, 1), (x2, 1)], [(x1 + 1, 2)]]
         """
         return [fac for _, fac in self.sorted_factorizations_with_units()]
 
     # ---------------- display ----------------
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        By default, this is the list of sorted factorizations.  If the
+        factorization is verbose, a more descriptive text is returned.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: F
+            [[((x1^2 + 2*x1 + 1)/x2, 1), (x2, 1)], [(x1 + 1, 2)]]
+        """
         if not self._verbose:
             return repr(self.sort_all_factorizations())
 
@@ -1328,18 +1790,38 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
     # ---------------- LaTeX ----------------
 
     def latex(self, env="aligned", include_display_math=True):
-        """
-        LaTeX block for all factorizations.
-        Uses Sage's latex() on the objects.
+        r"""
+        Return a LaTeX block displaying all factorizations.
+
+        INPUT:
+
+        - ``env`` -- string (default: ``"aligned"``); the LaTeX environment
+          containing the factorizations
+        - ``include_display_math`` -- boolean (default: ``True``); whether to wrap
+          the result in ``\[ ... \]``
+
+        The objects are converted with Sage's :func:`latex`.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+            sage: A = example_A2_generalized()
+            sage: x1, x2 = A._base_gens()
+            sage: F = A((x1 + 1)**2).factor()
+            sage: ltx = F.latex()
+            sage: ltx.startswith(r"\[") and ltx.endswith(r"\]")
+            True
+            sage: "is irreducible" in A(x1 + x2).factor().latex()
+            True
         """
         f_ltx = latex(self._element)
 
         if self.is_irreducible():
-            out = rf"{f_ltx}\ \\text{{is irreducible}}"
+            out = rf"{f_ltx}\ \text{{is irreducible}}"
             return rf"\[{out}\]" if include_display_math else out
 
         if self.is_unit():
-            out = rf"{f_ltx}\ \\text{{is a unit}}"
+            out = rf"{f_ltx}\ \text{{is a unit}}"
             return rf"\[{out}\]" if include_display_math else out
 
         sorted_pairs = self.sorted_factorizations_with_units()
@@ -1355,11 +1837,11 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
             for a, e in fac:
                 a_ltx = latex(a)
                 if e == 1:
-                    pieces.append(rf"\\left({a_ltx}\\right)")
+                    pieces.append(rf"\left({a_ltx}\right)")
                 else:
-                    pieces.append(rf"\\left({a_ltx}\\right)^{{{e}}}")
+                    pieces.append(rf"\left({a_ltx}\right)^{{{e}}}")
 
-            rhs = r" \\cdot ".join(pieces) if pieces else latex(u)
+            rhs = r" \cdot ".join(pieces) if pieces else latex(u)
 
             if idx == 0:
                 lines.append(rf"{f_ltx} &= {rhs}")
@@ -1367,7 +1849,7 @@ class FiniteLaurentIntersectionRingFactorization(SageObject):
                 lines.append(rf" &= {rhs}")
 
         body = r"\\ ".join(lines)
-        block = rf"\\begin{{{env}}}" + body + rf"\\end{{{env}}}"
+        block = rf"\begin{{{env}}}" + body + rf"\end{{{env}}}"
         return r"\[" + block + r"\]" if include_display_math else block
 
 
@@ -1474,6 +1956,30 @@ class ClassGroupData:
         (0, 0)
     """
     def __init__(self, M, primes):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``M`` -- an integer matrix with `r` rows and `n` columns
+        - ``primes`` -- the list of the `r` extra primes corresponding to the rows
+          of ``M``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
+            sage: M = matrix(ZZ, [[2, 0], [0, 3]])
+            sage: data = ClassGroupData(M, ['P1', 'P2'])
+            sage: data.M
+            [2 0]
+            [0 3]
+            sage: data.primes
+            ('P1', 'P2')
+            sage: data.diag
+            [1, 6]
+            sage: data.Cl()
+            Multiplicative Abelian group isomorphic to C6
+        """
         self.M = matrix(ZZ, M)                     # r x n integer matrix
         self.primes = tuple(primes)
         self.r = M.nrows()
@@ -1844,44 +2350,166 @@ class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
     """
 
     def __init__(self, parent, f, check=True):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``parent`` -- a :class:`FiniteLaurentIntersectionRing`
+        - ``f`` -- an element of the base fraction field of ``parent``
+        - ``check`` -- boolean (default: ``True``); whether to check that ``f``
+          lies in ``parent``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3, FiniteLaurentIntersectionRingElement
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: FiniteLaurentIntersectionRingElement(A, x1 + x3)
+            x1 + x3
+        """
         self._f = f
         if check:
             parent._check_membership(f)
         CommutativeAlgebraElement.__init__(self, parent)
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A((x2 + 1)/x1)
+            (x2 + 1)/x1
+        """
         return repr(self._f)
 
     def _richcmp_(self, other, op):
         # mathematical comparison
+        r"""
+        Compare ``self`` with ``other``.
+
+        Two elements are equal if they have the same parent and the same
+        representative in the base fraction field.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1) == A(x1)
+            True
+            sage: A(x1) == A(x2)
+            False
+        """
         if not isinstance(other, FiniteLaurentIntersectionRingElement):
             return NotImplemented
         return richcmp((self.parent(), self._f), (other.parent(), other._f), op)
 
     @property
     def f(self):
-        """
+        r"""
         Return the underlying element in the base fraction field.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: z = A((x2 + 1)/x1)
+            sage: z.f
+            (x2 + 1)/x1
         """
         return self._f
 
     def _add_(self, other):
+        r"""
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1) + A(x2)
+            x1 + x2
+        """
         return self.parent()(self._f + other._f, check=False)
 
     def _sub_(self, other):
+        r"""
+        Return the difference of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1) - A(x2)
+            x1 - x2
+        """
         return self.parent()(self._f - other._f, check=False)
 
     def _mul_(self, other):
+        r"""
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1) * A(x2)
+            x1*x2
+        """
         return self.parent()(self._f * other._f, check=False)
 
     def _neg_(self):
+        r"""
+        Return the negative of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: -A(x1)
+            -x1
+        """
         return self.parent()(-self._f, check=False)
 
     def __pow__(self, n):
+        r"""
+        Return ``self`` raised to the integer power ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1 + x3)**2
+            x1^2 + 2*x1*x3 + x3^2
+        """
         return self.parent()(self._f ** int(n), check=False)
 
     def __truediv__(self, other):
-        """Division in the ambient fraction field, with membership check."""
+        r"""
+        Return the quotient of ``self`` by ``other``.
+
+        The quotient is computed in the base fraction field and then checked to
+        lie in the ring.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x1*x2) / A(x2)
+            x1
+        """
         A = self.parent()
         if not isinstance(other, FiniteLaurentIntersectionRingElement) or other.parent() is not A:
             other = A(other)  # try coercion into the FiniteLaurentIntersectionRing
@@ -1896,8 +2524,20 @@ class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
         return A(q, check=False)
 
     def divisor(self):
-        """
-        Compute div_A(f) as an element of Div(A).
+        r"""
+        Return the principal divisor `\operatorname{div}_A(f)` of ``self``.
+
+        OUTPUT: a :class:`FiniteLaurentIntersectionRingDivisor` in the divisor
+        group of the parent
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: D.parent() is A.divisor_group()
+            True
         """
         if self.f == 0:
             raise ValueError("Divisor of 0 is undefined.")
@@ -1935,13 +2575,39 @@ class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
         return DivA(data)
 
     def factor(self, verbose=False):
-        """
-        Factor the element into atoms, returning a FiniteLaurentIntersectionRingFactorization.
+        r"""
+        Factor ``self`` into atoms.
+
+        INPUT:
+
+        - ``verbose`` -- boolean (default: ``False``); whether the string
+          representation of the result is verbose
+
+        OUTPUT: a :class:`FiniteLaurentIntersectionRingFactorization`
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: w = A(x2 + 1)
+            sage: w.factor()
+            [[((x2 + 1)/x1, 1), (x1, 1)], [((x2 + 1)/x3, 1), (x3, 1)]]
         """
         return FiniteLaurentIntersectionRingFactorization.from_element(self, verbose=verbose)
 
     def atoms(self):
-        """Return the list of atoms of the element."""
+        r"""
+        Return the list of atoms dividing ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A(x2 + 1).atoms()
+            [x3, x1, (x2 + 1)/x1, (x2 + 1)/x3]
+        """
         return self.factor().atoms()
 
 # -----------------------------------------------------------------------------
@@ -2211,6 +2877,21 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     @staticmethod
     def __classcall__(cls, base_chart, charts, compute_base_to_charts=True, category=None):  # noqa: PLW0211
         # normalize inputs so caching works (UniqueRepresentation)
+        r"""
+        Normalize the input so that caching works.
+
+        The charts are converted to a tuple, so that equal input produces the same
+        (unique) ring.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(QQ, ("x1", "x2"))
+            sage: A1 = FiniteLaurentIntersectionRing(C0, [C0], compute_base_to_charts=False)
+            sage: A2 = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
+            sage: A1 is A2
+            True
+        """
         charts = tuple(charts)
         compute_base_to_charts = bool(compute_base_to_charts)
         return super().__classcall__(
@@ -2222,6 +2903,31 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         )
 
     def _init_flir_structure(self, base_chart: FiniteLaurentIntersectionRingChart, charts, compute_base_to_charts=True):
+        r"""
+        Set up the chart structure of ``self``.
+
+        INPUT:
+
+        - ``base_chart`` -- the base chart
+        - ``charts`` -- the charts defining the intersection
+        - ``compute_base_to_charts`` -- boolean (default: ``True``); whether to
+          compute the inverse substitutions of the charts where only
+          ``this_to_base`` is given
+
+        This resets the cached extra primes, divisor group and class group data.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(QQ, ("x1", "x2"))
+            sage: x1, x2 = C0.F.gens()
+            sage: C1 = FiniteLaurentIntersectionRingChart(QQ, ("y1", "y2"), base_fraction_field=C0.F,
+            ....:                                         this_to_base=[x1, x2/x1])
+            sage: A = FiniteLaurentIntersectionRing(C0, [C1])
+            sage: A._init_flir_structure(C0, [C0, C1])
+            sage: len(A.charts)
+            2
+        """
         self._base_chart = base_chart
         self.charts = list(charts)
         self.n = self._base_chart.n
@@ -2242,6 +2948,32 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
                     raise ValueError(f"Chart {ch.var_names} incomplete: need this_to_base at least.")
 
     def __init__(self, base_chart: FiniteLaurentIntersectionRingChart, charts, compute_base_to_charts=True, category=None):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``base_chart`` -- a :class:`FiniteLaurentIntersectionRingChart`; the
+          base chart
+        - ``charts`` -- the charts defining the intersection
+        - ``compute_base_to_charts`` -- boolean (default: ``True``); whether to
+          compute the inverse substitutions of the charts where only
+          ``this_to_base`` is given
+        - ``category`` -- a category (default: the category of commutative algebras
+          over the coefficient ring)
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(QQ, ("x1", "x2"))
+            sage: A = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
+            sage: A.base_ring()
+            Rational Field
+            sage: A.n
+            2
+            sage: A in CommutativeAlgebras(QQ)
+            True
+        """
         self._init_flir_structure(base_chart, charts, compute_base_to_charts=compute_base_to_charts)
 
         if category is None:
@@ -2266,6 +2998,18 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return self._base_chart.F
 
     def _repr_(self) -> str:
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: example_A3()
+            FiniteLaurentIntersectionRing over Rational Field
+              rank n = 3
+              #charts = 5
+              base vars = ('x1', 'x2', 'x3')
+        """
         lines = []
         lines.append(f"FiniteLaurentIntersectionRing over {self._base_chart.base_ring}")
         lines.append(f"  rank n = {self.n}")
@@ -2275,6 +3019,18 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
     def _coerce_map_from_(self, S):
         # allow coercion from the base ring
+        r"""
+        Return whether there is a coercion map from ``S`` to ``self``.
+
+        Coercion is allowed from everything that coerces into the base ring.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A.has_coerce_map_from(QQ)
+            True
+        """
         if self.base_ring().has_coerce_map_from(S):
             return True
         return super()._coerce_map_from_(S)
@@ -2339,17 +3095,47 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
     def _normalize(self, p):
         r"""
-        Normalize a nonzero polynomial by dividing by its leading coefficient.
+        Normalize a polynomial by dividing it by its leading coefficient.
+
         The leading term depends on the term order of the parent polynomial ring.
+        The zero polynomial is returned unchanged.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: p1, p2, p3 = A._base_chart.P.gens()
+            sage: A._normalize(3*p1 + 3)
+            x1 + 1
         """
         if p == 0:
             return p
         return p / p.leading_coefficient()
 
     def _base_gens(self):
+        r"""
+        Return the generators of the base fraction field.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A._base_gens()
+            (x1, x2, x3)
+        """
         return self._base_chart.F.gens()
 
     def _xprod_in_base(self):
+        r"""
+        Return the product `x_1 \cdots x_n` of the generators of the base chart.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A._xprod_in_base()
+            x1*x2*x3
+        """
         xs = self._base_gens()
         out = xs[0]
         for i in range(1, self.n):
@@ -2357,6 +3143,21 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return out
 
     def _prod_of_chart_gens_as_base_expr(self, chart: FiniteLaurentIntersectionRingChart):
+        r"""
+        Return the product of the generators of ``chart`` as an expression in the base.
+
+        INPUT:
+
+        - ``chart`` -- a :class:`FiniteLaurentIntersectionRingChart` with
+          substitution data ``this_to_base``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A._prod_of_chart_gens_as_base_expr(A.charts[1])
+            (x1^2*x3 + x1*x3^2)/x2
+        """
         if chart.this_to_base is None:
             raise ValueError("Chart missing this_to_base substitution.")
         out = chart.this_to_base[0]
@@ -2365,6 +3166,25 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return out
 
     def _gcd_polys(self, P, polys):
+        r"""
+        Return the gcd of the polynomials in ``polys``.
+
+        INPUT:
+
+        - ``P`` -- the polynomial ring containing the polynomials
+        - ``polys`` -- a list of polynomials in ``P``
+
+        OUTPUT: the gcd of ``polys``, or ``0`` if ``polys`` is empty
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: P = A._base_chart.P
+            sage: p1, p2, p3 = P.gens()
+            sage: A._gcd_polys(P, [p1^2, p1*p2])
+            x1
+        """
         if not polys:
             return P(0)
         g = polys[0]
@@ -2386,6 +3206,20 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         and cleared of its monomial part. Any generator that becomes
         a unit in ``chart`` is dropped.
         The surviving polynomials are multiplied together.
+
+        INPUT:
+
+        - ``chart`` -- a :class:`FiniteLaurentIntersectionRingChart`
+        - ``generators_in_base`` -- a list of elements of the base fraction field
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: chart = A.charts[2]
+            sage: A._generators_product_in_chart(chart, [x1, x2 + 1])
+            x_22^2 + 2*x_22 + 1
         """
         surviving_factors = []
         for l in generators_in_base:
@@ -2418,6 +3252,30 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         The product is computed by :meth:`_generators_product_in_chart`.
 
         The products are cached lazily in ``reference``.
+
+        INPUT:
+
+        - ``chart`` -- the chart in which the candidates were found
+        - ``candidate_factors`` -- the irreducible polynomials of ``chart.P``
+          dividing the pushed-forward product of the base generators
+        - ``previously_seen_generators`` -- for each earlier chart, the list of its
+          generators as expressions in the base
+        - ``factor_list`` -- the primes found so far
+
+        OUTPUT: a list of :class:`FiniteLaurentIntersectionRingPrimeDivisor`
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: chart = A.charts[2]
+            sage: numerator = chart._substitute_from_base(A._xprod_in_base()).numerator()
+            sage: candidates = [f for f, _ in numerator.factor() if not chart.L(f).is_unit()]
+            sage: candidates
+            [x_22 + 1]
+            sage: previous = [list(c.this_to_base) for c in A.charts[1:2]]
+            sage: A._confirmed_new_primes(chart, candidates, previous, [])
+            [PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1)]
         """
         new_primes = []
         num_earlier_charts = len(previously_seen_generators)
@@ -2541,8 +3399,25 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return factor_list
 
     def _valuation_of_base_element_at_prime(self, base_expr, P: FiniteLaurentIntersectionRingPrimeDivisor):
-        """
-        v_P(base_expr): multiplicity of P.irreducible in the factorization after substituting into chart.
+        r"""
+        Return the valuation `v_P` of ``base_expr`` at the prime divisor ``P``.
+
+        This is the multiplicity of ``P.irreducible`` in the factorization of
+        ``base_expr`` after substituting it into the chart of ``P``.
+
+        INPUT:
+
+        - ``base_expr`` -- an element of the base fraction field
+        - ``P`` -- a :class:`FiniteLaurentIntersectionRingPrimeDivisor`
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: P1, P2, P3, P4 = A.extra_primes()
+            sage: [A._valuation_of_base_element_at_prime(x1*x3, P) for P in (P1, P2, P3, P4)]
+            [0, 1, 1, 2]
         """
         chart = P.chart
         expr_in_chart = chart._substitute_from_base(base_expr)
@@ -2557,8 +3432,20 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return e
 
     def _coeffs_on_extra_primes(self, base_expr):
-        """
-        Return dict Pi -> v_{Pi}(base_expr) for Pi in extra_primes.
+        r"""
+        Return the valuations of ``base_expr`` at the extra primes.
+
+        OUTPUT: a dictionary mapping each extra prime `P_i` with
+        `v_{P_i}(\mathtt{base\_expr}) \neq 0` to this valuation
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: coeffs = A._coeffs_on_extra_primes(x1*x3)
+            sage: sorted(coeffs.values())
+            [1, 1, 2]
         """
         coeffs = {}
         for Pi in self.extra_primes():
@@ -2572,14 +3459,21 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # ------------------------
 
     def divisor_group(self):
-        """Return the divisor group associated to this object.
+        r"""
+        Return the divisor group associated to this finite Laurent intersection ring.
 
-        Constructs (on first call) and returns an FiniteLaurentIntersectionRingDivisorGroup representing the
-        divisor group of this FiniteLaurentIntersectionRing instance. The constructed group is created with
-        base_ring=ZZ and cached on the instance as `_div_group_cache` so subsequent
-        calls return the same object.
+        The group is constructed on the first call, with coefficients in `\ZZ`, and
+        cached in ``_div_group_cache``.  Subsequent calls return the same object.
 
-        The cache attribute name is `_div_group_cache`.
+        OUTPUT: a :class:`FiniteLaurentIntersectionRingDivisorGroup`
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: DivA = A.divisor_group()
+            sage: DivA is A.divisor_group()
+            True
         """
 
         if getattr(self, "_div_group_cache", None) is None:
@@ -2663,8 +3557,25 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return self.divisor_group()(data)
 
     def _compute_relation_matrix(self):
-        """
-        Build M = C^T, where C_{i,j} = v_{P_j}(x_i)
+        r"""
+        Build the relation matrix `M = C^T` of the class group.
+
+        Here `C_{i,j} = v_{P_j}(x_i)`, where `P_j` runs over the extra primes.
+
+        OUTPUT: a pair ``(M, primes)`` where ``primes`` is the list of extra primes
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: M, primes = A._compute_relation_matrix()
+            sage: M
+            [0 1 0]
+            [1 0 0]
+            [0 0 1]
+            [1 0 1]
+            sage: primes == A.extra_primes()
+            True
         """
         primes = self.extra_primes()
         r = len(primes)
@@ -2677,7 +3588,29 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return C.transpose(), primes
 
     def class_data(self, recompute=False):
-        """ Return the ClassGroupData object (cached)"""
+        r"""
+        Return the :class:`ClassGroupData` object of ``self``.
+
+        The result is cached.
+
+        INPUT:
+
+        - ``recompute`` -- boolean (default: ``False``); whether to discard the
+          cached data and compute it again
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: data = A.class_data()
+            sage: data.M
+            [0 1 0]
+            [1 0 0]
+            [0 0 1]
+            [1 0 1]
+            sage: A.class_data() is data
+            True
+        """
 
         if (self._class_data_cache is None) or recompute:
             M, primes = self._compute_relation_matrix()
@@ -2709,9 +3642,27 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # ------------------------
 
     def _to_H(self, D: FiniteLaurentIntersectionRingDivisor):
-        """
-        Project ``D \\in Div(A)`` to ``hv \\in H = \\ZZ^r`` (FreeModule element)
-        with respect to the ordering of extra_primes().
+        r"""
+        Project the divisor ``D`` to the module `H = \ZZ^r`.
+
+        The coordinates are taken with respect to the ordering of
+        :meth:`extra_primes`.  Base primes are expressed through the valuations of
+        their generator at the extra primes.
+
+        INPUT:
+
+        - ``D`` -- a divisor, a prime divisor (interpreted with coefficient `1`),
+          or a dictionary mapping prime divisors to coefficients
+
+        OUTPUT: an element of the free module ``class_data().H``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A._to_H(A(x1*x3).divisor())
+            (0, 1, 1, 2)
         """
 
         if isinstance(D, FiniteLaurentIntersectionRingPrimeDivisor):
@@ -2867,38 +3818,112 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # ----------------------------------------------------------------
 
     def _divisor_basis(self, D: FiniteLaurentIntersectionRingDivisor):
-        """
-        Return a stable ordered list of prime divisors occurring in the support of D
+        r"""
+        Return a stable ordered list of the prime divisors in the support of ``D``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: len(A._divisor_basis(D))
+            3
         """
         Ps = sorted(D.support(), key=lambda P: repr(P))
         return Ps
 
     def _divisor_to_vector(self, D: FiniteLaurentIntersectionRingDivisor, basis):
-        """
-        Given a divisor D and a list of prime divisors as basis, return the vector of coefficients.
+        r"""
+        Return the vector of coefficients of ``D`` with respect to ``basis``.
+
+        INPUT:
+
+        - ``D`` -- a divisor
+        - ``basis`` -- a list of prime divisors
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: basis = A._divisor_basis(D)
+            sage: A._divisor_to_vector(D, basis)
+            (1, 1, 2)
         """
         return vector(ZZ, [D.coeff(P) for P in basis])
 
     def _vector_to_divisor(self, v, basis):
-        """
-        Given a vector of coefficients and a list of prime divisors as basis, return the corresponding divisor.
+        r"""
+        Return the divisor with coefficients ``v`` with respect to ``basis``.
+
+        INPUT:
+
+        - ``v`` -- a vector of integers
+        - ``basis`` -- a list of prime divisors
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: basis = A._divisor_basis(D)
+            sage: A._vector_to_divisor(vector(ZZ, [1, 1, 2]), basis) == D
+            True
         """
         data = {P: int(e) for P, e in zip(basis, v) if e != 0}
         return self.divisor(data)
 
     def _is_effective_on_basis(self, v):
+        r"""
+        Return whether all the coefficients in ``v`` are nonnegative.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A._is_effective_on_basis([1, 0, 2])
+            True
+        """
         return all(int(c) >= 0 for c in v)
 
     def _componentwise_leq(self, a, b):
+        r"""
+        Return whether ``a`` is smaller than or equal to ``b`` in every coordinate.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: A._componentwise_leq([1, 2], [1, 3])
+            True
+        """
         return all(int(x) <= int(y) for x, y in zip(a, b))
 
     def _principal_support_lattice(self, D):
-        """
-        Return (support, K), where support = [Q1,...,Qt] is the support of D
-        in a fixed order, and K is the lattice of c in Z^t such that
-        sum c_i Q_i is principal.
+        r"""
+        Return the support of ``D`` and the lattice of principal combinations.
 
-        This computes K = { c : B*c in Im_Z(M) } using the Smith normal form of M.
+        OUTPUT: a pair ``(support, K)``, where ``support = [Q1,...,Qt]`` is the
+        support of ``D`` in a fixed order, and ``K`` is the lattice of
+        `c \in \ZZ^t` such that `\sum c_i Q_i` is principal.
+
+        This computes `K = \{ c : B c \in \operatorname{Im}_{\ZZ}(M) \}` using the
+        Smith normal form of `M`.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: support, K = A._principal_support_lattice(D)
+            sage: len(support)
+            3
+            sage: K.rank()
+            2
         """
         support = sorted(D.support(), key=lambda Q: repr(Q))
         data = self.class_data()
@@ -2949,9 +3974,24 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return support, K
 
     def _principal_effective_subdivisors_via_kernel(self, D):
-        """
-        Enumerate all effective principal subdivisors E <= D
-        using the SNF-based lattice and polyhedral enumeration.
+        r"""
+        Return all effective principal subdivisors `E \leq D` of ``D``.
+
+        This uses the Smith normal form based lattice from
+        :meth:`_principal_support_lattice` and enumerates the integral points of a
+        polyhedron.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: D = A(x1*x3).divisor()
+            sage: E = A._principal_effective_subdivisors_via_kernel(D)
+            sage: len(E)
+            4
+            sage: A.divisor() in E and D in E
+            True
         """
         support, K = self._principal_support_lattice(D)
         bounds = vector(ZZ, [ZZ(D.coeff(Q)) for Q in support])
@@ -3002,6 +4042,26 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return out
 
     def _find_atoms(self, a: FiniteLaurentIntersectionRingElement):
+        r"""
+        Return the atoms dividing the element ``a``.
+
+        An atom is an irreducible element.  They are found by looking for the
+        minimal nonzero effective principal subdivisors of the divisor of ``a``.
+
+        INPUT:
+
+        - ``a`` -- a nonzero :class:`FiniteLaurentIntersectionRingElement`
+
+        OUTPUT: a list of atoms
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A._find_atoms(A(x2 + 1))
+            [x3, x1, (x2 + 1)/x1, (x2 + 1)/x3]
+        """
         if a.f == 0:
             raise ValueError("Zero has no factorizations.")
 
@@ -3046,8 +4106,24 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return atoms
 
     def _all_solutions_bounded(self, target,  cols, bounds):
-        """
-        Solve target = sum ci * cols[i] with ci in [0, bounds[i]], ci\\in ZZ_{\\ge 0}.
+        r"""
+        Solve ``target = sum(c_i * cols[i])`` with `0 \leq c_i \leq` ``bounds[i]``.
+
+        INPUT:
+
+        - ``target`` -- a vector of integers
+        - ``cols`` -- a list of vectors of nonnegative integers
+        - ``bounds`` -- a list of upper bounds for the coefficients
+
+        OUTPUT: the list of all solutions, as tuples of coefficients
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: cols = [vector(ZZ, [1, 0]), vector(ZZ, [0, 1]), vector(ZZ, [1, 1])]
+            sage: A._all_solutions_bounded(vector(ZZ, [2, 1]), cols, [2, 1, 1])
+            [(1, 0, 1), (2, 1, 0)]
         """
         n = len(cols)
         m = len(target)
@@ -3084,11 +4160,29 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         return sols
 
     def factorizations(self, a: FiniteLaurentIntersectionRingElement):
-        """
-        Return  all factorizations of a as follows:
-            - list of atoms that divide a
-            - list of factorizations, where each factorization is a list of (atom, exponent) pairs.
-            - units
+        r"""
+        Return all the factorizations of ``a`` into atoms.
+
+        INPUT:
+
+        - ``a`` -- a nonzero :class:`FiniteLaurentIntersectionRingElement`
+
+        OUTPUT: a triple ``(atoms, factorizations, units)``, where
+
+        - ``atoms`` is the list of atoms dividing ``a``
+        - ``factorizations`` is the list of factorizations, each a list of
+          ``(atom, exponent)`` pairs
+        - ``units`` is the list of units, one for each factorization
+
+        EXAMPLES::
+
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+            sage: A = example_A3()
+            sage: x1, x2, x3 = A._base_gens()
+            sage: A.factorizations(A(x2 + 1))
+            ([x3, x1, (x2 + 1)/x1, (x2 + 1)/x3],
+             [[(x1, 1), ((x2 + 1)/x1, 1)], [(x3, 1), ((x2 + 1)/x3, 1)]],
+             [1, 1])
         """
 
         if a.f == 0:
@@ -3136,10 +4230,24 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
 def example_A3(K=None):
     r"""
-    Return a standard rank-`3` FiniteLaurentIntersectionRing example with five charts.
+    Return a standard rank-`3` finite Laurent intersection ring with five charts.
 
-    This example is modeled on the Cluster Algebra of type `A_3`.
+    This example is modeled on the cluster algebra of type `A_3`.
 
+    INPUT:
+
+    - ``K`` -- the coefficient field (default: ``QQ``)
+
+    EXAMPLES::
+
+        sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
+        sage: A = example_A3()
+        sage: A.n
+        3
+        sage: len(A.charts)
+        5
+        sage: A.class_group()
+        Multiplicative Abelian group isomorphic to Z
     """
     if K is None:
         K = QQ
@@ -3173,9 +4281,24 @@ def example_A3(K=None):
 
 def example_A2_generalized(K=None):
     r"""
-    Return a standard rank-`2` FiniteLaurentIntersectionRing example with three charts.
+    Return a standard rank-`2` finite Laurent intersection ring with three charts.
 
-    The example is modeled on a generalzed Cluster Algebra of type of rank 2.
+    The example is modeled on a generalized cluster algebra of rank `2`.
+
+    INPUT:
+
+    - ``K`` -- the coefficient field (default: ``QQ``)
+
+    EXAMPLES::
+
+        sage: from sage.algebras.finite_laurent_intersection_ring import example_A2_generalized
+        sage: A = example_A2_generalized()
+        sage: A.n
+        2
+        sage: len(A.charts)
+        3
+        sage: A.class_group()
+        Multiplicative Abelian group isomorphic to C2
     """
     if K is None:
         K = QQ
