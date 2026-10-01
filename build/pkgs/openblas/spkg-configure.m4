@@ -3,7 +3,6 @@ SAGE_SPKG_CONFIGURE([openblas], [dnl CHECK
  [AC_CHECK_HEADER([Accelerate/Accelerate.h], [dnl macOS
   ], [AC_MSG_ERROR([Cannot locate Accelerate headers. Make sure XCode CL tools are installed.])])],
  [
-  SAGE_SPKG_DEPCHECK([gfortran], [dnl
     SAVE_LIBS="$LIBS"
     SAVE_CFLAGS="$CFLAGS"
     m4_pushdef([SAGE_OPENBLAS_MIN_VERSION_MAJOR], [0])
@@ -131,6 +130,5 @@ SAGE_SPKG_CONFIGURE([openblas], [dnl CHECK
     ])
     LIBS="$SAVE_LIBS"
     CFLAGS="$SAVE_CFLAGS"
-  ])
  ])
 ])

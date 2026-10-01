@@ -10,11 +10,11 @@ export qe=$(pwd -P)
 #   https://github.com/sagemath/sage/issues/22653
 # * Use ARFLAGS that also work on macOS, avoiding the U option, see
 #   https://github.com/sagemath/sage/issues/28388
-LIBS=-lreadline
+LIBS="$SAGE_READLINE_LIBS"
 if [ "$UNAME" = "Linux" ]; then
    LIBS="$LIBS -lrt"
 fi
-$MAKE -j1 opt SHELL=/bin/sh FLAGSo="${CXXFLAGS} -Wl,-rpath,$SAGE_LOCAL/lib" ARFLAGS="crv" LIBS="$LIBS"
+$MAKE -j1 opt SHELL=/bin/sh FLAGSo="${CXXFLAGS} ${CPPFLAGS} ${SAGE_READLINE_CFLAGS} -Wl,-rpath,$SAGE_LOCAL/lib" ARFLAGS="crv" LIBS="$LIBS"
 if [ $? -ne 0 ]; then
    echo >&2 "Error building qepcad."
    exit 1

@@ -24,3 +24,6 @@ pkgconf
 zlib-dev
 boost
 boost-dev
+gfortran
+ncurses-dev
+readline-dev

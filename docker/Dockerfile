@@ -186,9 +186,6 @@ RUN patch -p1 < "$HOME"/sage-context.patch
 FROM source-from-context AS make-build
 # Make sure that the result runs on most CPUs.
 ENV SAGE_FAT_BINARY=yes
-# Just to be sure Sage doesn't try to build its own GCC (even though
-# it shouldn't with a recent GCC package from the system and with gfortran)
-ENV SAGE_INSTALL_GCC=no
 # Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.

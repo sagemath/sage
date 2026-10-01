@@ -64,20 +64,14 @@ already must be installed on your system:
 - `Fundamental system packages required for installing from source
   <../reference/spkg/_prereq.html>`_
 
-- `C/C++ compilers <../reference/spkg/gcc.html>`_
-
 If you have sufficient privileges (for example, on Linux you can
 use ``sudo`` to become the ``root`` user), then you can install these packages
 using the commands for your platform indicated in the pages linked above.
 If you do not have the privileges to do this, ask your system administrator to
 do this for you.
 
-In addition to these minimal prerequisites, we strongly recommend to use system
-installations of the following:
-
-- `Fortran compiler <../reference/spkg/gfortran.html>`_
-
-- `Python <../reference/spkg/python3.html>`_
+The prerequisites include C, C++, and Fortran compilers and Python.
+Sage uses system installations of these tools; it does not build them.
 
 Sage developers will also need the `system packages required for
 bootstrapping <../reference/spkg/_bootstrap.html>`_; they cannot be
@@ -749,22 +743,16 @@ Here are some of the more commonly used variables affecting the build process:
 
   While some programs allow you to use this to specify your C
   compiler, **not every Sage package recognizes this**.
-  If GCC is installed within Sage, :envvar:`CC` is ignored and Sage's ``gcc``
-  is used instead.
 
 .. envvar:: CPP
 
   Similarly, this will set the C preprocessor for some Sage
   packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CPP` is ignored and Sage's ``cpp``
-  is used instead.
 
 .. envvar:: CXX
 
   Similarly, this will set the C++ compiler for some Sage
   packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CXX` is ignored and Sage's ``g++``
-  is used instead.
 
 .. envvar:: FC
 
@@ -773,8 +761,6 @@ Here are some of the more commonly used variables affecting the build process:
   However, for historical reasons, the value is hardcoded during the initial
   ``make`` and subsequent changes to ``$FC`` might be ignored (in which case,
   the original value will be used instead).
-  If GCC is installed within Sage, :envvar:`FC` is ignored and Sage's
-  ``gfortran`` is used instead.
 
 .. envvar:: CFLAGS
 .. envvar:: CXXFLAGS
@@ -882,10 +868,6 @@ Sage-specific environment variables controlling the build process
      As of Sage 9.1, the test suites for the Python 2 and 3 spkgs fail
      on most platforms.  So when this variable is empty or unset, Sage
      uses a default of ``!python2,!python3``.
-
-.. envvar:: SAGE_INSTALL_GCC
-
-  **Obsolete, do not use, to be removed**
 
 .. envvar:: SAGE_INSTALL_CCACHE
 

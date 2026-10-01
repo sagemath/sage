@@ -12,7 +12,7 @@ chmod -R a+rX .
 export MAKE="$MAKE -j1"
 
 # building
-$MAKE CC="$CC" || die "Error building LiE. Did you install bison?"
+$MAKE CC="$CC $SAGE_READLINE_CFLAGS $SAGE_NCURSES_CFLAGS" READLINE_LIBS="$SAGE_READLINE_LIBS" NCURSES_LIBS="$SAGE_NCURSES_LIBS" || die "Error building LiE. Did you install bison?"
 
 # "install" the LiE package by moving over the complete build
 # directory to $SAGE_LOCAL/lib/lie

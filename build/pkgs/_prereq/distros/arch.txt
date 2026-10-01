@@ -22,3 +22,6 @@ patch
 pkgconf
 zlib
 boost
+gcc-fortran
+readline
+ncurses

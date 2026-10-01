@@ -32,3 +32,5 @@ app-arch/bzip2
 dev-util/pkgconf
 sys-libs/zlib
 dev-libs/boost
+sys-libs/readline
+sys-libs/ncurses
