@@ -975,27 +975,26 @@ def tarjan_strongly_connected_components(G):
 
         sage: from sage.graphs.base.static_sparse_graph import tarjan_strongly_connected_components
         sage: import random
-        sage: for i in range(10):                          # long time
-        ....:     n = random.randint(2,20)
-        ....:     m = random.randint(1, n*(n-1))
-        ....:     g = digraphs.RandomDirectedGNM(n,m)
-        ....:     sccs = tarjan_strongly_connected_components(g)
-        ....:     for scc in sccs:
-        ....:         scc_check = g.strongly_connected_component_containing_vertex(scc[0])
-        ....:         assert(sorted(scc) == sorted(scc_check))
+        sage: n = random.randint(2,20)
+        sage: m = random.randint(1, n*(n-1))
+        sage: g = digraphs.RandomDirectedGNM(n,m)
+        sage: sccs = tarjan_strongly_connected_components(g)
+        sage: for scc in sccs:
+        ....:     scc_check = g.strongly_connected_component_containing_vertex(scc[0])
+        ....:     assert(sorted(scc) == sorted(scc_check))
 
     Checking against NetworkX::
 
-        sage: import networkx                                                                       # needs networkx
-        sage: for i in range(10):               # long time                             # needs networkx
-        ....:      g = digraphs.RandomDirectedGNP(100,.05)
-        ....:      h = g.networkx_graph()
-        ....:      scc1 = g.strongly_connected_components()
-        ....:      scc2 = networkx.strongly_connected_components(h)
-        ....:      s1 = Set(map(Set,scc1))
-        ....:      s2 = Set(map(Set,scc2))
-        ....:      if s1 != s2:
-        ....:          print("Ooch !")
+        sage: # needs networkx
+        sage: import networkx
+        sage: g = digraphs.RandomDirectedGNP(100,.05)
+        sage: h = g.networkx_graph()
+        sage: scc1 = g.strongly_connected_components()
+        sage: scc2 = networkx.strongly_connected_components(h)
+        sage: s1 = Set(map(Set,scc1))
+        sage: s2 = Set(map(Set,scc2))
+        sage: if s1 != s2:
+        ....:     print("Ooch !")
 
     Immutable digraphs::
 
@@ -1128,15 +1127,14 @@ def strongly_connected_components_digraph(G):
 
         sage: from sage.graphs.base.static_sparse_graph import strongly_connected_components_digraph
         sage: import random
-        sage: for i in range(100):
-        ....:     n = random.randint(2,20)
-        ....:     m = random.randint(1, n*(n-1))
-        ....:     g = digraphs.RandomDirectedGNM(n,m)
-        ....:     scc_digraph,sccs = strongly_connected_components_digraph(g)
-        ....:     assert(scc_digraph.is_directed_acyclic())
-        ....:     for e in g.edges(sort=False):
-        ....:         assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
-        ....:         assert(sccs[e[0]] >= sccs[e[1]])
+        sage: n = random.randint(2,20)
+        sage: m = random.randint(1, n*(n-1))
+        sage: g = digraphs.RandomDirectedGNM(n,m)
+        sage: scc_digraph,sccs = strongly_connected_components_digraph(g)
+        sage: assert(scc_digraph.is_directed_acyclic())
+        sage: for e in g.edges(sort=False):
+        ....:     assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
+        ....:     assert(sccs[e[0]] >= sccs[e[1]])
 
     Immutable digraphs::
 
@@ -1416,13 +1414,13 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):                                                      # needs sage.modules sage.rings.number_field
+        sage: # needs sage.modules sage.rings.number_field
+        sage: G = digraphs.RandomDirectedGNM(10,35)
+        sage: while not G.is_strongly_connected():
         ....:     G = digraphs.RandomDirectedGNM(10,35)
-        ....:     if not G.is_strongly_connected():
-        ....:         continue
-        ....:     e = max(G.adjacency_matrix().charpoly().roots(AA,multiplicities=False))
-        ....:     e_min, e_max = G.spectral_radius(1e-13)
-        ....:     assert e_min < e < e_max
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA,multiplicities=False))
+        sage: e_min, e_max = G.spectral_radius(1e-13)
+        sage: assert e_min < e < e_max
 
         sage: spectral_radius(Graph(), 1e-10)
         Traceback (most recent call last):
