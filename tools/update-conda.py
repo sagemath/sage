@@ -35,7 +35,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13", "3.14"]
+pythons = ["3.13", "3.14"]
 tags = [""]
 
 
