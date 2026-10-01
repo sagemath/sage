@@ -1,0 +1,1 @@
+sage-data-elliptic-curves >=0.8.1
