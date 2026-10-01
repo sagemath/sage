@@ -85,6 +85,46 @@ class Submodule_free_ambient(Module_free_ambient):
         [  y*z   x*z]
           To:   Ambient free module of rank 2 over the integral domain
         Multivariate Polynomial Ring in x, y, z over Rational Field
+
+    Containment is decided using Gröbner bases (see :issue:`40301`)::
+
+        sage: R.<x, y> = QQ[]
+        sage: F = FreeModule(R, 1)
+        sage: G = F.submodule([F([0])])
+        sage: F([1]) in G
+        False
+        sage: F([0]) in G
+        True
+        sage: F2 = FreeModule(R, 2)
+        sage: G2 = F2.submodule([F2.0])
+        sage: F2.0 in G2
+        True
+        sage: F2.1 in G2
+        False
+
+    Over base rings for which no Gröbner-basis membership test is
+    available (for instance inexact rings), nonzero submodules skip the
+    membership check and containment keeps the historical permissive
+    behavior, so it may report false positives; see
+    :meth:`_check_element_membership`.
+
+    For a submodule of a *quotient* module there is in general no coercion
+    between the submodule and the quotient module, so the ``in`` operator
+    (which relies on such a coercion) is deliberately conservative and may
+    report ``False`` for a genuine member. Test membership by attempting
+    the conversion instead, which uses the Gröbner basis check directly::
+
+        sage: S.<x,y,z> = QQ[]
+        sage: M = S**2
+        sage: N = M.submodule([vector([x - y, z]), vector([y*z, x*z])])
+        sage: Q = M.quotient_module(N)
+        sage: NQ = Q.submodule([Q([1, x])])
+        sage: NQ(Q([1, x]))
+        (1, x)
+        sage: NQ(Q([0, 1]))
+        Traceback (most recent call last):
+        ...
+        TypeError: element (0, 1) is not in this submodule
     """
     def __init__(self, ambient, gens, check=True, already_echelonized=False):
         r"""
@@ -189,33 +229,198 @@ class Submodule_free_ambient(Module_free_ambient):
             True
             sage: s._groebner_basis_contains(M.2)
             False
+
+        Univariate polynomial rings that are not PIDs are supported by
+        wrapping into a libsingular multivariate ring with one variable
+        (see :issue:`40301`)::
+
+            sage: R.<x> = ZZ[]
+            sage: F = FreeModule(R, 2)
+            sage: G = F.submodule([F.0])
+            sage: G._groebner_basis_contains(F.0)
+            True
+            sage: G._groebner_basis_contains(F.1)
+            False
+
+        Nonzero submodules over univariate polynomial rings that are
+        not PIDs (e.g. ``ZZ[x]``) are decided correctly, including the
+        distinction between the ``ZZ[x]``-span and the ``QQ(x)``-span::
+
+            sage: R.<x> = ZZ[]
+            sage: F = FreeModule(R, 2)
+            sage: G = F.submodule([vector(R, [x, 1]), vector(R, [1, x])])
+            sage: G._groebner_basis_contains(vector(R, [x, 1]))
+            True
+            sage: G._groebner_basis_contains((x + 2) * vector(R, [x, 1])
+            ....:                            + (x - 3) * vector(R, [1, x]))
+            True
+            sage: G._groebner_basis_contains(vector(R, [2*x, 2]))
+            True
+            sage: G._groebner_basis_contains(vector(R, [1, 0]))
+            False
+
+        Nonzero submodules over multivariate polynomial rings over
+        ``ZZ`` are also supported by Singular's module Gröbner-basis
+        machinery; integer-linear-combination membership is decided
+        correctly::
+
+            sage: R.<x, y> = ZZ[]
+            sage: F = FreeModule(R, 2)
+            sage: G = F.submodule([vector(R, [x, y]), vector(R, [y, x])])
+            sage: G._groebner_basis_contains(vector(R, [x, y]))
+            True
+            sage: G._groebner_basis_contains(vector(R, [2*x, 2*y]))
+            True
+            sage: G._groebner_basis_contains(vector(R, [x + y, x + y]))
+            True
+            sage: G._groebner_basis_contains((3*x + y) * vector(R, [x, y])
+            ....:                            + (x - 5) * vector(R, [y, x]))
+            True
+            sage: G._groebner_basis_contains(vector(R, [1, 1]))
+            False
+            sage: G._groebner_basis_contains(vector(R, [x, 0]))
+            False
+            sage: G._groebner_basis_contains(vector(R, [1, 0]))
+            False
+
+        The zero submodule needs no Gröbner basis machinery: membership
+        just means being the zero vector, which is decided exactly even
+        over an inexact coefficient ring::
+
+            sage: R.<x, y> = CC[]
+            sage: F = FreeModule(R, 1)
+            sage: Z = F.submodule([F([0])])
+            sage: Z._groebner_basis_contains(F([0]))
+            True
+            sage: Z._groebner_basis_contains(F([1]))
+            False
+
+        For a nonzero submodule over an inexact ring, no reliable
+        Gröbner-basis membership test is available, so this low-level
+        method raises :class:`NotImplementedError`; the higher-level check
+        :meth:`_check_element_membership` then skips the membership test,
+        keeping the historical permissive behavior::
+
+            sage: G = F.submodule([F([1])])
+            sage: G._groebner_basis_contains(F([1]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Gröbner basis membership test is not implemented for modules over ...
+
+        Exact rings that Singular does not support also raise
+        :class:`NotImplementedError` at this low-level boundary::
+
+            sage: A.<t> = ZZ[]
+            sage: B.<w> = A[]
+            sage: F = FreeModule(B, 2)
+            sage: G = F.submodule([F.gen(0)])
+            sage: G._groebner_basis_contains(F.gen(1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Gröbner basis membership test is not implemented for modules over ...
+
+        Even queries that are mathematically true (such as ``v in <v>``)
+        cannot be decided over inexact coefficient rings, so this
+        low-level method raises :class:`NotImplementedError`::
+
+            sage: R.<x, y> = CC[]
+            sage: F = FreeModule(R, 2)
+            sage: G = F.submodule([F([1, 0]), F([0, 1])])
+            sage: G._groebner_basis_contains(F([1, 0]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Gröbner basis membership test is not implemented for modules over ...
+            sage: G2 = F.submodule([vector(R, [x, y])])
+            sage: G2._groebner_basis_contains(vector(R, [x, y]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Gröbner basis membership test is not implemented for modules over ...
         """
         from sage.libs.singular.function import singular_function
         from sage.libs.singular.option import opt_verb
         from sage.matrix.constructor import matrix
+        from sage.modules.quotient_module import QuotientModule_free_ambient
+        from sage.rings.polynomial.multi_polynomial_libsingular import \
+            MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            MPolynomialRing_base
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
         from sage.rings.quotient_ring import QuotientRing_generic
         from sage.structure.element import Vector
 
         R = self.base_ring()
         n = self.degree()
+        ambient = self._ambient
 
-        # Determine the polynomial ring and ideal generators
+        # Short-circuit the zero submodule (no generators and no module
+        # or ring relations) before any Gröbner basis machinery is
+        # invoked: membership then only asks whether ``v`` is zero, which
+        # is decided exactly even when ``R`` is inexact.
+        has_module_relations = (isinstance(ambient, QuotientModule_free_ambient)
+                                and bool(ambient.relations().gens()))
+        has_ring_relations = (isinstance(R, QuotientRing_generic)
+                              and bool(R.defining_ideal().gens()))
+        if not self.gens() and not has_module_relations and not has_ring_relations:
+            if isinstance(v, (list, tuple, Vector)):
+                return all(not c for c in v)
+            return not v
+
+        if not R.is_exact():
+            raise NotImplementedError(
+                "Gröbner basis membership test is not implemented for "
+                "modules over {}".format(R))
+
+        def _singular_wrap(ring):
+            """
+            Return a libsingular multivariate polynomial ring equivalent
+            to ``ring`` if possible, else raise ``NotImplementedError``.
+            """
+            if isinstance(ring, MPolynomialRing_libsingular):
+                return ring
+            names = [str(v) for v in ring.variable_names()]
+            try:
+                wrapped = PolynomialRing(ring.base_ring(), names,
+                                         implementation='singular')
+            except (TypeError, ValueError, NotImplementedError) as exc:
+                raise NotImplementedError(
+                    "Gröbner basis membership test is not implemented "
+                    "for modules over {}: {}".format(ring, exc))
+            if not isinstance(wrapped, MPolynomialRing_libsingular):
+                raise NotImplementedError(
+                    "Gröbner basis membership test is not implemented "
+                    "for modules over {}".format(ring))
+            return wrapped
+
+        # Determine the polynomial ring ``poly_ring`` in which the Gröbner
+        # basis computation is performed, and a callable ``to_poly`` that
+        # maps elements of ``R`` into ``poly_ring``. ``ideal_gens`` lists
+        # the defining ideal generators when ``R`` is a quotient ring.
         if isinstance(R, QuotientRing_generic):
-            poly_ring = R.cover_ring()
-            ideal_gens = R.defining_ideal().gens()
-            do_lift = True
-        else:
-            from sage.rings.polynomial.multi_polynomial_ring_base import \
-                MPolynomialRing_base
-            if isinstance(R, MPolynomialRing_base):
-                poly_ring = R
-                ideal_gens = []
-                do_lift = False
+            cover = R.cover_ring()
+            ideal_gens_raw = list(R.defining_ideal().gens())
+            if isinstance(cover, (MPolynomialRing_base, PolynomialRing_generic)):
+                poly_ring = _singular_wrap(cover)
+                ideal_gens = [poly_ring(f) for f in ideal_gens_raw]
+
+                def to_poly(c):
+                    return poly_ring(c.lift())
             else:
                 raise NotImplementedError(
                     "Gröbner basis membership test is not implemented for "
                     "modules over {}".format(R)
                 )
+        elif isinstance(R, (MPolynomialRing_base, PolynomialRing_generic)):
+            poly_ring = _singular_wrap(R)
+            ideal_gens = []
+
+            to_poly = poly_ring.__call__
+        else:
+            raise NotImplementedError(
+                "Gröbner basis membership test is not implemented for "
+                "modules over {}".format(R)
+            )
 
         # Suppress "_ is no standard basis" warning from Singular
         opt_verb['not_warn_sb'] = True
@@ -226,11 +431,15 @@ class Submodule_free_ambient(Module_free_ambient):
         # Lift generators of self to the polynomial ring
         gen_rows = []
         for g in self.gens():
-            if do_lift:
-                row = [c.lift() for c in g]
-            else:
-                row = list(g)
-            gen_rows.append(row)
+            gen_rows.append([to_poly(c) for c in g])
+
+        # If the ambient module is itself a quotient ``M / W``, then
+        # ``self`` is a subquotient and ``v`` is in ``self`` iff ``v`` is
+        # in the submodule of ``M`` spanned by the generators of ``self``
+        # together with the generators of ``W``.
+        if isinstance(ambient, QuotientModule_free_ambient):
+            for w in ambient.relations().gens():
+                gen_rows.append([to_poly(c) for c in w])
 
         # Add ideal relation generators: for each ideal generator f and
         # each standard basis vector e_j, add f * e_j as a row
@@ -241,7 +450,8 @@ class Submodule_free_ambient(Module_free_ambient):
                 gen_rows.append(row)
 
         if not gen_rows:
-            # Zero submodule: only zero vector is contained
+            # Should not happen here (handled by the early short-circuit
+            # above), but kept for safety.
             if isinstance(v, (list, tuple, Vector)):
                 return all(c == 0 for c in v)
             return v == 0
@@ -249,26 +459,29 @@ class Submodule_free_ambient(Module_free_ambient):
         # Build the matrix and compute Gröbner basis
         # Singular's std() for modules expects the matrix transposed
         # (columns = generators)
-        gen_matrix = matrix(poly_ring, gen_rows).transpose()
-        gb = std(gen_matrix, ring=poly_ring)
-
-        # Lift the target vector
-        if do_lift:
-            v_lifted = matrix(poly_ring, [[c.lift() for c in v]]).transpose()
-        else:
-            v_lifted = matrix(poly_ring, [list(v)]).transpose()
+        try:
+            gen_matrix = matrix(poly_ring, gen_rows).transpose()
+            gb = std(gen_matrix, ring=poly_ring)
+            v_lifted = matrix(poly_ring, [[to_poly(c) for c in v]]).transpose()
+            remainder = reduce_func(v_lifted, gb, ring=poly_ring)
+        except (TypeError, ValueError, RuntimeError) as exc:
+            raise NotImplementedError(
+                "Gröbner basis membership test failed for modules over "
+                "{}: {}".format(R, exc))
 
         # Reduce v modulo the Gröbner basis; zero result means v is in the submodule
-        remainder = reduce_func(v_lifted, gb, ring=poly_ring)
         return matrix(remainder).is_zero()
 
     def _check_element_membership(self, x):
         r"""
         Check that ``x`` belongs to this submodule using Gröbner bases.
 
-        This overrides the no-op in the base class to verify actual submodule
-        membership. For rings where Gröbner basis computation is not
-        implemented, this falls back to no check.
+        This overrides the no-op in the base class to verify actual
+        submodule membership. When no Gröbner-basis membership test is
+        available for the base ring, the check is skipped, keeping the
+        historical permissive behavior: a possible false positive is
+        preferred over silently rejecting a genuine member.
+        See :issue:`40301`.
 
         EXAMPLES::
 
@@ -281,20 +494,54 @@ class Submodule_free_ambient(Module_free_ambient):
             Traceback (most recent call last):
             ...
             TypeError: element (0, 1, 0, 0, 0, 0, 0, 0, 0, 0) is not in this submodule
+
+        Membership in the zero submodule is decided exactly even over
+        inexact rings, since it only asks whether the element is zero::
+
+            sage: R.<x, y> = CC[]
+            sage: F = FreeModule(R, 1)
+            sage: Z = F.submodule([F([0])])
+            sage: Z._check_element_membership(F([0]).list())  # no error
+            sage: Z._check_element_membership(F([1]).list())
+            Traceback (most recent call last):
+            ...
+            TypeError: element (1.00000000000000,) is not in this submodule
+            sage: F([1]) in Z
+            False
+
+        For nonzero submodules over inexact rings, no reliable membership
+        test is available, so the check is skipped; in particular a
+        genuine member such as ``F([2])`` here is never rejected::
+
+            sage: H = F.submodule([F([1])])
+            sage: H._check_element_membership(F([2]).list())  # no error
+            sage: F([2]) in H
+            True
+
+        The same permissive fallback applies to exact rings whose
+        Gröbner-basis membership test is unavailable. Genuine members are
+        accepted, at the price of possible false positives::
+
+            sage: A.<t> = ZZ[]
+            sage: B.<w> = A[]
+            sage: F = FreeModule(B, 2)
+            sage: G = F.submodule([F.gen(0)])
+            sage: w * F.gen(0) in G
+            True
+            sage: F.gen(1) in G  # false positive: membership is not decidable here
+            True
         """
         try:
-            if not self._groebner_basis_contains(x):
-                raise ArithmeticError
+            contained = self._groebner_basis_contains(x)
         except NotImplementedError:
-            # For rings where we can't do the Gröbner basis check,
-            # fall back to no check (old behavior)
-            pass
-        except ArithmeticError:
+            # No membership test is available for this ring: keep the
+            # historical permissive behavior rather than rejecting
+            # elements whose membership cannot be decided, which would
+            # silently exclude genuine members.
+            return
+        if not contained:
             raise TypeError(
-                "element {} is not in this submodule".format(
-                    tuple(x)
-                )
-            )
+                "element {} is not in this submodule".format(tuple(x)))
 
     def _repr_(self):
         """
