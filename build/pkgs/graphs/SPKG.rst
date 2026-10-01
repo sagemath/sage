@@ -8,6 +8,13 @@ A database of graphs. Created by Emily Kirkman based on the work of
 Jason Grout. Since April 2012 it also contains the ISGCI graph database.
 
 
+Python Package
+--------------
+
+Installed from https://pypi.org/project/sage-data-graphs/.
+The Python distribution includes the data and provides an
+``importlib.resources`` API.
+
 Upstream Contact
 ----------------
 
