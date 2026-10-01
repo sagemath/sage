@@ -12,6 +12,13 @@ Includes two databases:
 -  William Stein's database of interesting curves
 
 
+Python Package
+--------------
+
+Installed from https://pypi.org/project/sage-data-elliptic-curves/.
+The Python distribution includes the data and provides an
+``importlib.resources`` API.
+
 Upstream Contact
 ----------------
 

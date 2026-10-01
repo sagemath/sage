@@ -1,0 +1,3 @@
+SAGE_SPKG_CONFIGURE([graphs], [
+  SAGE_PYTHON_PACKAGE_CHECK([graphs])
+])

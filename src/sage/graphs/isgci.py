@@ -375,16 +375,19 @@ Methods
 -------
 """
 
-from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
-from sage.misc.unknown import Unknown
-from sage.features.databases import DatabaseGraphs
-from sage.misc.cachefunc import cached_method
-
 import os
 import zipfile
-from urllib.request import urlopen
 from ssl import create_default_context as default_context
+from urllib.request import urlopen
+
+from sage.features.databases import DatabaseGraphs
+from sage.misc.cachefunc import cached_method
+from sage.misc.unknown import Unknown
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
 # ****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -788,19 +791,20 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._download_db()  # optional - internet
         """
         import tempfile
-        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+
+        from sage.env import DOT_SAGE
+
+        data_dir = os.path.join(DOT_SAGE, "db", "graphs")
+        os.makedirs(data_dir, exist_ok=True)
         u = urlopen('https://www.graphclasses.org/data.zip',
                     context=default_context())
         with tempfile.NamedTemporaryFile(suffix='.zip') as f:
             f.write(u.read())
-            z = zipfile.ZipFile(f.name)
-
-            # Save a systemwide updated copy whenever possible
-            try:
+            f.seek(0)
+            with zipfile.ZipFile(f) as z:
+                # Keep downloaded updates separate from installed package data.
                 z.extract(_XML_FILE, data_dir)
                 z.extract(_SMALLGRAPHS_FILE, data_dir)
-            except OSError:
-                pass
 
     def _parse_db(self):
         r"""
@@ -811,9 +815,18 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._parse_db()
         """
         import xml.etree.ElementTree as ET
+
+        from sage.env import DOT_SAGE, GRAPHS_DATA_DIR
         from sage.graphs.graph import Graph
 
         data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+
+        user_data_dir = os.path.join(DOT_SAGE, "db", "graphs")
+        if not GRAPHS_DATA_DIR and all(
+            os.path.isfile(os.path.join(user_data_dir, name))
+            for name in (_XML_FILE, _SMALLGRAPHS_FILE)
+        ):
+            data_dir = user_data_dir
         xml_file = os.path.join(data_dir, _XML_FILE)
         tree = ET.ElementTree(file=xml_file)
         root = tree.getroot()
@@ -847,7 +860,7 @@ class GraphClasses(UniqueRepresentation):
         This method downloads the ISGCI database from the website
         `GraphClasses.org <http://www.graphclasses.org/>`_. It then extracts the
         zip file and parses its XML content. The XML file is saved in the directory
-        controlled by the :class:`DatabaseGraphs` class (usually, ``$HOME/.sage/db``).
+        ``$DOT_SAGE/db/graphs`` (usually, ``$HOME/.sage/db/graphs``).
 
         EXAMPLES::
 

@@ -20,6 +20,13 @@ License
 
 GPL
 
+Python Package
+--------------
+
+Installed from https://pypi.org/project/sage-data-polytopes/.
+The Python distribution includes the data and provides an
+``importlib.resources`` API.
+
 Upstream Contact
 ----------------
 
