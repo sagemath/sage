@@ -21,3 +21,5 @@ zlib
 zlib-devel
 libboost-devel
 fortran-compiler
+readline
+ncurses

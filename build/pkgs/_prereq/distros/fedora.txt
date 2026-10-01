@@ -40,3 +40,5 @@ pkg-config
 zlib-devel
 boost-devel
 gcc-gfortran
+readline-devel
+ncurses-devel

@@ -38,3 +38,7 @@ pkgconf
 pkgconfig(zlib)
 boost-base
 gcc-fortran
+readline-devel
+pkgconfig(readline)
+pkgconfig(ncurses)
+pkgconfig(ncursesw)

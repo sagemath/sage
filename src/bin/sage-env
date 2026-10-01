@@ -614,10 +614,6 @@ if [ -r "$SAGE_RC_FILE" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    # If we move the Sage tree then ncurses cannot find terminfo, hence, we
-    # tell it where to find it. See Issue Ticket #15091
-    export TERMINFO="$SAGE_LOCAL/share/terminfo"
-
     # If nodejs is installed, activate the nodeenv containing it.
 
     nodeenv_activate="$SAGE_LOCAL/share/nodejs/activate"

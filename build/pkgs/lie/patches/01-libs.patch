@@ -10,7 +10,7 @@ diff -ur a/Makefile b/Makefile
  
  Lie.exe: date.o
 -	$(CC) -o Lie.exe $(objects) date.o static/*.o box/*.o -lreadline
-+	$(CC) -o Lie.exe $(objects) date.o static/*.o box/*.o $(LDFLAGS) -lreadline -lncurses
++	$(CC) -o Lie.exe $(objects) date.o static/*.o box/*.o $(LDFLAGS) $(READLINE_LIBS) $(NCURSES_LIBS)
  	chmod g+w Lie.exe
  Liegap.exe: gapdate.o
  	$(CC) -o Liegap.exe $(GAP_objects) gapdate.o static/*.o box/*.o

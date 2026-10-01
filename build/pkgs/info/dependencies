@@ -1,4 +1,4 @@
-ncurses
+
 
 Both perl and (g)awk are checked by the ./configure script, but perl is part
 of the _prereq package, and (g)awk is seemingly assumed throughout the build

@@ -37,3 +37,5 @@ pkg-config
 libz-dev
 libboost-dev
 gfortran
+libreadline-dev
+libncurses-dev

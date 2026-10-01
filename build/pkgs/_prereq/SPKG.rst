@@ -28,6 +28,13 @@ computer:
 - **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.
   (some Linux distros package these separately, e.g. Debian/Ubuntu needs
   packages ``bzip2`` and ``libbz2-dev``; Fedora needs ``bzip2`` and ``bzip2-devel``.)
+- **GNU readline/history**: the libraries and development headers, including
+  ``readline/readline.h``. Apple's libedit compatibility library does not
+  provide the required GNU API; install GNU readline separately on macOS.
+- **ncurses/terminfo**: the terminal libraries and development headers, including
+  ``ncurses.h``. A wide-character ncurses installation is also supported.
+  Some distributions split the terminfo library into a separate package;
+  install the dependencies of their readline and ncurses development packages.
 - **pkgconf**, also known as ``pkg-config``.
 - **zlib**: the library ``libz`` with its headers, and its pkg-config zlib.pc file.
   (some Linux distros package these separately.)

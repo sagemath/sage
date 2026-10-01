@@ -620,6 +620,67 @@ AC_CHECK_LIB(m,sqrt,[],[
                        AC_MSG_ERROR([Exiting, since a maths library was not found.])
                        ])
 
+###############################################################################
+# System terminal libraries (readline/history and ncurses/terminfo)
+###############################################################################
+
+sage_terminal_save_CPPFLAGS="$CPPFLAGS"
+sage_terminal_save_LIBS="$LIBS"
+AC_LANG_PUSH([C])
+
+# Prefer pkg-config, including wide ncurses on systems providing only that ABI.
+PKG_CHECK_MODULES([NCURSES], [ncurses >= 6.0], [], [
+    PKG_CHECK_MODULES([NCURSESW], [ncursesw >= 6.0], [
+        NCURSES_CFLAGS="$NCURSESW_CFLAGS"
+        NCURSES_LIBS="$NCURSESW_LIBS"
+    ], [
+        AC_SEARCH_LIBS([wresize], [ncurses ncursesw curses], [
+            AS_IF([test "$ac_cv_search_wresize" != "none required"], [
+                NCURSES_LIBS="$ac_cv_search_wresize"
+            ])
+        ], [AC_MSG_ERROR([could not find a suitable ncurses library. SAGE_PREREQ_URL])])
+    ])
+])
+CPPFLAGS="$sage_terminal_save_CPPFLAGS $NCURSES_CFLAGS"
+LIBS="$NCURSES_LIBS $sage_terminal_save_LIBS"
+AC_CHECK_HEADER([ncurses.h], [], [
+    AC_MSG_ERROR([could not find ncurses.h. SAGE_PREREQ_URL])
+])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <ncurses.h>]], [[wresize(0, 0, 0);]])], [], [
+    AC_MSG_ERROR([could not link against ncurses with wresize support. SAGE_PREREQ_URL])
+])
+
+PKG_CHECK_MODULES([READLINE], [readline >= 6.0], [
+    PKG_CHECK_VAR([SAGE_READLINE_PREFIX], [readline], [prefix])
+], [
+    AC_SEARCH_LIBS([rl_bind_keyseq], [readline], [
+        AS_IF([test "$ac_cv_search_rl_bind_keyseq" != "none required"], [
+            READLINE_LIBS="$ac_cv_search_rl_bind_keyseq"
+        ])
+    ], [AC_MSG_ERROR([could not find GNU readline with rl_bind_keyseq support. SAGE_PREREQ_URL])])
+])
+# Include the terminal backend for static readline installations too.
+READLINE_LIBS="$READLINE_LIBS $NCURSES_LIBS"
+CPPFLAGS="$sage_terminal_save_CPPFLAGS $READLINE_CFLAGS $NCURSES_CFLAGS"
+LIBS="$READLINE_LIBS $sage_terminal_save_LIBS"
+AC_CHECK_HEADER([readline/readline.h], [], [
+    AC_MSG_ERROR([could not find readline/readline.h. SAGE_PREREQ_URL])
+])
+# Apple's libedit compatibility library is insufficient: require this GNU API.
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+#include <readline/readline.h>]], [[rl_bind_keyseq("", 0);]])], [], [
+    AC_MSG_ERROR([could not link against GNU readline with rl_bind_keyseq support. SAGE_PREREQ_URL])
+])
+
+AC_SUBST([NCURSES_CFLAGS])
+AC_SUBST([NCURSES_LIBS])
+AC_SUBST([READLINE_CFLAGS])
+AC_SUBST([READLINE_LIBS])
+AC_SUBST([SAGE_READLINE_PREFIX])
+CPPFLAGS="$sage_terminal_save_CPPFLAGS"
+LIBS="$sage_terminal_save_LIBS"
+AC_LANG_POP([C])
+
 # Check that we are not building in a directory containing spaces
 AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
       AC_MSG_ERROR([the path to the Sage root directory ($ac_pwd) contains a space. Sage will not build correctly in this case])
