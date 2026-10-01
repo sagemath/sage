@@ -16,15 +16,13 @@ on:
         description: 'Stringified JSON object listing tox system factors'
         type: string
         # 'tox -e update_docker_platforms' updates below
-        # Only distros with Python 3.12+ are supported (Sage now requires system Python 3.12+)
+        # Only distros with Python 3.13+ are supported (Sage now requires system Python 3.13+)
         default: >-
           [
-           "ubuntu-noble",
            "ubuntu-resolute",
            "debian-trixie",
            "fedora-42",
            "fedora-43",
-           "centos-stream-10",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
