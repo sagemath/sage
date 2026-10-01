@@ -195,9 +195,7 @@ For an element `f` of the algebra, one can compute its atoms::
 
 REFERENCES:
 
-- [...] Mara Pompili and Daniel Smertnig, *Factoriality and Class
-  Groups of Upper Cluster Algebras and Finite Laurent Intersection Rings:
-  A Computational Approach*, 2026. :arxiv:`2601.07520`.
+- [PS2026]_
 
 AUTHORS:
 
@@ -206,6 +204,7 @@ AUTHORS:
 """
 
 from copy import copy
+from itertools import combinations
 
 from sage.algebras.cluster_algebra import (
     ClusterAlgebra,
@@ -217,7 +216,6 @@ from sage.algebras.finite_laurent_intersection_ring import (
     FiniteLaurentIntersectionRingElement,
 )
 from sage.arith.misc import gcd
-from sage.combinat.subset import Subsets
 from sage.graphs.digraph import DiGraph
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.misc_c import prod
@@ -475,6 +473,36 @@ class ClusterAlgebraChart(SageObject):
         return cls(seed_chart, A_chart, to_chart, from_chart, allowed_directions)
 
     def __init__(self, seed_chart, A_chart, to_chart, from_chart, allowed_directions):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``seed_chart`` -- the seed of the base algebra defining the chart
+        - ``A_chart`` -- a :class:`ClusterAlgebra` whose initial seed corresponds to
+          ``seed_chart``
+        - ``to_chart`` -- the map from the base fraction field to the fraction field
+          of ``A_chart``
+        - ``from_chart`` -- the inverse map of ``to_chart``
+        - ``allowed_directions`` -- the mutation directions still active in this
+          branch of the recursion
+
+        Charts are usually built with :meth:`from_pair`, which computes the two maps.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.banff_cluster_algebra import ClusterAlgebraChart
+            sage: B = matrix([[0, 1], [-1, 0]])
+            sage: A = ClusterAlgebra(B)
+            sage: A_chart = ClusterAlgebra(B, cluster_variable_prefix='x0_')
+            sage: chart = ClusterAlgebraChart.from_pair(A.initial_seed(), A_chart, [0, 1])
+            sage: chart2 = ClusterAlgebraChart(chart.seed, chart.chart, chart.to_chart,
+            ....:                              chart.from_chart, (0, 1))
+            sage: chart2.allowed_directions
+            [0, 1]
+            sage: chart2.chart is A_chart
+            True
+        """
         self.chart = A_chart
         self.to_chart = to_chart
         self.from_chart = from_chart
@@ -501,6 +529,23 @@ class ClusterAlgebraChart(SageObject):
         return self.chart.ambient()
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.banff_cluster_algebra import ClusterAlgebraChart
+            sage: B = matrix([[0, 1], [-1, 0]])
+            sage: A = ClusterAlgebra(B)
+            sage: A_chart = ClusterAlgebra(B, cluster_variable_prefix='x0_')
+            sage: chart = ClusterAlgebraChart.from_pair(A.initial_seed(), A_chart, [0, 1])
+            sage: chart
+            ClusterAlgebraChart(
+              seed: The initial seed of a Cluster Algebra with cluster variables x0, x1 and no coefficients over Integer Ring
+              chart: A Cluster Algebra with cluster variables x0_0, x0_1 and no coefficients over Integer Ring
+              allowed directions: [0, 1]
+            )
+        """
         return (
             "ClusterAlgebraChart(\n"
             "  seed: {}\n"
@@ -515,11 +560,13 @@ class ClusterAlgebraChart(SageObject):
 
 
 def _freeze_and_continue(A, allowed_directions, current_seed, counter: dict, max_steps=None):
-    """
-    Recursively walk mutations of ``current_seed`` within
-    ``allowed_directions`` until every branch reaches an acyclic
-    exchange matrix, freezing (removing from ``allowed_directions``) one
-    direction of a sink/source-covering pair at each cyclic step.
+    r"""
+    Recursively walk mutations of ``current_seed``.
+
+    The walk stays within ``allowed_directions`` until every branch reaches an
+    acyclic exchange matrix.  At each cyclic step, one direction of a
+    sink/source-covering pair is frozen (that is, removed from
+    ``allowed_directions``).
 
     INPUT:
 
@@ -536,6 +583,23 @@ def _freeze_and_continue(A, allowed_directions, current_seed, counter: dict, max
     OUTPUT: a list of :class:`ClusterAlgebraChart` objects, one per acyclic
     chart discovered along every branch of the recursion
 
+    EXAMPLES::
+
+        sage: from sage.algebras.banff_cluster_algebra import _freeze_and_continue
+        sage: B = Matrix([[0, 1, -1], [-1, 0, 1], [1, -1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: counter = {'count': 0, 'chart_num': 0}
+        sage: charts = _freeze_and_continue(A, [0, 1, 2], A.initial_seed(), counter)
+        sage: [chart.allowed_directions for chart in charts]
+        [[1, 2], [0, 1]]
+
+    The recursion budget can be bounded::
+
+        sage: _freeze_and_continue(A, [0, 1, 2], A.initial_seed(),
+        ....:                      {'count': 0, 'chart_num': 0}, max_steps=0)
+        Traceback (most recent call last):
+        ...
+        ValueError: Max steps exceeded in Banff recursion.
     """
     counter['count'] += 1
 
@@ -588,7 +652,7 @@ def _freeze_and_continue(A, allowed_directions, current_seed, counter: dict, max
 
 
 def _banff_algorithm(A, max_steps=None):
-    """
+    r"""
     Compute a set of acyclic charts via Banff recursion.
 
     INPUT:
@@ -600,6 +664,21 @@ def _banff_algorithm(A, max_steps=None):
     OUTPUT: a list of :class:`ClusterAlgebraChart`, covering ``A`` by
     acyclic charts
 
+    EXAMPLES::
+
+        sage: from sage.algebras.banff_cluster_algebra import _banff_algorithm
+        sage: B = Matrix([[0, 1], [-1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: charts = _banff_algorithm(A)
+        sage: len(charts)
+        1
+        sage: charts[0].allowed_directions
+        [0, 1]
+
+        sage: B = Matrix([[0, 1, -1], [-1, 0, 1], [1, -1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: len(_banff_algorithm(A))
+        2
     """
     B = A.b_matrix()
     allowed_directions = list(range(B.ncols()))
@@ -608,8 +687,8 @@ def _banff_algorithm(A, max_steps=None):
 
 
 def _FiniteLaurentIntersectionRing_charts_for_acyclic(acyclic_chart: ClusterAlgebraChart):
-    """
-    Given an acyclic chart, refine it to FiniteLaurentIntersectionRing charts using partner sets.
+    r"""
+    Refine an acyclic chart to finite Laurent intersection ring charts using partner sets.
 
     For every nonempty subset ``J`` of every partner set ``S`` found by
     :func:`_find_partner_sets`, this mutates the chart's seed along ``J``
@@ -625,6 +704,19 @@ def _FiniteLaurentIntersectionRing_charts_for_acyclic(acyclic_chart: ClusterAlge
     OUTPUT: a list of :class:`ClusterAlgebraChart`, starting with
     ``acyclic_chart`` itself followed by one chart per nonempty subset of
     each partner set.
+
+    EXAMPLES::
+
+        sage: from sage.algebras.banff_cluster_algebra import _banff_algorithm
+        sage: from sage.algebras.banff_cluster_algebra import _FiniteLaurentIntersectionRing_charts_for_acyclic
+        sage: B = Matrix([[0, 1], [-1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: acyclic_chart = _banff_algorithm(A)[0]
+        sage: charts = _FiniteLaurentIntersectionRing_charts_for_acyclic(acyclic_chart)
+        sage: charts[0] is acyclic_chart
+        True
+        sage: [chart.chart.variable_names() for chart in charts]
+        [('x0_0', 'x0_1'), ('x0_0p', 'x0_1'), ('x0_0', 'x0_1p')]
     """
     A = acyclic_chart.chart
     B = A.b_matrix()
@@ -633,39 +725,39 @@ def _FiniteLaurentIntersectionRing_charts_for_acyclic(acyclic_chart: ClusterAlge
     charts = [acyclic_chart]
 
     for S in _find_partner_sets(A, acyclic_chart.allowed_directions):
-        for J in Subsets(S):
-            if not J:
-                continue
+        for size in range(1, len(S) + 1):
+            for J in combinations(S, size):
+                seed_from_start = copy(acyclic_chart.seed)
+                for j in J:
+                    seed_from_start.mutate(j)
 
-            seed_from_start = copy(acyclic_chart.seed)
-            for j in J:
-                seed_from_start.mutate(j)
+                # rename variables so Sage doesn't identify different charts
+                var_names = [
+                    name + "p" if k in J else name
+                    for (k, name) in enumerate(A.variable_names())
+                ]
 
-            # rename variables so Sage doesn't identify different charts
-            var_names = [
-                name + "p" if k in J else name
-                for (k, name) in enumerate(A.variable_names())
-            ]
-
-            A_prime = ClusterAlgebra(
-                seed_from_start.b_matrix(),
-                scalars=A.base_ring(),
-                cluster_variable_names=var_names,
-            )
-            chart = ClusterAlgebraChart.from_pair(
-                seed_from_start,
-                A_prime,
-                allowed_directions=acyclic_chart.allowed_directions,
-            )
-            charts.append(chart)
+                A_prime = ClusterAlgebra(
+                    seed_from_start.b_matrix(),
+                    scalars=A.base_ring(),
+                    cluster_variable_names=var_names,
+                )
+                chart = ClusterAlgebraChart.from_pair(
+                    seed_from_start,
+                    A_prime,
+                    allowed_directions=acyclic_chart.allowed_directions,
+                )
+                charts.append(chart)
 
     return charts
 
 
 def _system_FiniteLaurentIntersectionRing_charts_for_acyclic(A, acyclic_charts: list[ClusterAlgebraChart]):
-    """
-    Apply :func:`_FiniteLaurentIntersectionRing_charts_for_acyclic` to every chart in
-    ``acyclic_charts`` and concatenate the results.
+    r"""
+    Refine every acyclic chart to finite Laurent intersection ring charts.
+
+    This applies :func:`_FiniteLaurentIntersectionRing_charts_for_acyclic` to
+    every chart in ``acyclic_charts`` and concatenates the results.
 
     INPUT:
 
@@ -676,6 +768,19 @@ def _system_FiniteLaurentIntersectionRing_charts_for_acyclic(A, acyclic_charts: 
 
     OUTPUT: the concatenation of ``_FiniteLaurentIntersectionRing_charts_for_acyclic(chart)`` over
     every ``chart`` in ``acyclic_charts``
+
+    EXAMPLES::
+
+        sage: from sage.algebras.banff_cluster_algebra import _banff_algorithm
+        sage: from sage.algebras.banff_cluster_algebra import _system_FiniteLaurentIntersectionRing_charts_for_acyclic
+        sage: B = Matrix([[0, 1], [-1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: len(_system_FiniteLaurentIntersectionRing_charts_for_acyclic(A, _banff_algorithm(A)))
+        3
+        sage: B = Matrix([[0, 1, -1], [-1, 0, 1], [1, -1, 0]])
+        sage: A = ClusterAlgebra(B, scalars=QQ)
+        sage: len(_system_FiniteLaurentIntersectionRing_charts_for_acyclic(A, _banff_algorithm(A)))
+        7
     """
     charts: list[ClusterAlgebraChart] = []
     for chart in acyclic_charts:
@@ -753,6 +858,26 @@ class BanffClusterElement(FiniteLaurentIntersectionRingElement, ClusterAlgebraEl
     """
 
     def __init__(self, parent, f, check=False):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``parent`` -- a :class:`BanffClusterAlgebra`
+        - ``f`` -- an element of the ambient fraction field of ``parent``
+        - ``check`` -- boolean (default: ``False``); whether to check that ``f``
+          lies in ``parent``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.banff_cluster_algebra import BanffClusterElement
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: F = A.ambient().fraction_field()
+            sage: x0, x1 = A.gens()
+            sage: BanffClusterElement(A, F(x0) + F(x1))
+            x0 + x1
+        """
         F = parent.ambient().fraction_field()
         L = parent.ambient()
 
@@ -768,9 +893,31 @@ class BanffClusterElement(FiniteLaurentIntersectionRingElement, ClusterAlgebraEl
         self.value = self._value
 
     def lift(self):
+        r"""
+        Return the representative of ``self`` in the ambient Laurent polynomial ring.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: (x0 + x1).lift().parent() is A.ambient()
+            True
+        """
         return self._value
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: (x0 + 1)/x1
+            (x0 + 1)/x1
+        """
         return repr(self._f)
 
     @property
@@ -797,38 +944,125 @@ class BanffClusterElement(FiniteLaurentIntersectionRingElement, ClusterAlgebraEl
 
     # --- arithmetic operations  ---
     def _add_(self, other):
+        r"""
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: x0 + x1
+            x0 + x1
+        """
         A = self.parent()
         if not isinstance(other, BanffClusterElement) or other.parent() is not A:
             other = A(other)
         return A(self._f + other._f, check=False)
 
     def _sub_(self, other):
+        r"""
+        Return the difference of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: x0 - x1
+            x0 - x1
+        """
         A = self.parent()
         if not isinstance(other, BanffClusterElement) or other.parent() is not A:
             other = A(other)
         return A(self._f - other._f, check=False)
 
     def _mul_(self, other):
+        r"""
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: (x0 + 1) * (x0 - 1)
+            x0^2 - 1
+        """
         A = self.parent()
         if not isinstance(other, BanffClusterElement) or other.parent() is not A:
             other = A(other)
         return A(self._f * other._f, check=False)
 
     def _lmul_(self, c):
+        r"""
+        Return the product ``c * self`` of a scalar ``c`` and ``self``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: x0._lmul_(QQ(2))
+            2*x0
+        """
         return self.parent()(c * self._f, check=False)
 
     def _rmul_(self, c):
+        r"""
+        Return the product ``self * c`` of ``self`` and a scalar ``c``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: x0._rmul_(QQ(1)/2)
+            1/2*x0
+        """
         return self.parent()(self._f * c, check=False)
 
     def _neg_(self):
+        r"""
+        Return the negative of ``self``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: -(x0 - x1)
+            -x0 + x1
+        """
         return self.parent()(-self._f, check=False)
 
     def __pow__(self, n):
+        r"""
+        Return ``self`` raised to the integer power ``n``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: (x0 + x1)**2
+            x0^2 + 2*x0*x1 + x1^2
+        """
         return self.parent()(self._f ** int(n), check=False)
 
     def __truediv__(self, other):
-        """
+        r"""
+        Return the quotient of ``self`` by ``other``.
+
         Division is only defined if the quotient lies in the algebra.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: (x0*x1) / x1
+            x0
         """
         A = self.parent()
         if not isinstance(other, BanffClusterElement) or other.parent() is not A:
@@ -949,6 +1183,20 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
     @staticmethod
     def __classcall__(cls, data, *args, **kwargs):  # noqa: PLW0211
 
+        r"""
+        Normalize the input before constructing a Banff cluster algebra.
+
+        This sets the defaults expected by
+        :class:`~sage.algebras.cluster_algebra.ClusterAlgebra` and then calls the usual
+        constructor.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A.variable_names()
+            ('x0', 'x1')
+        """
         kwargs = dict(kwargs)
 
         # things ClusterAlgebra.__init__ expects
@@ -990,6 +1238,32 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         flir=False,
         **kwargs,
     ):
+        r"""
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``data`` -- an exchange matrix accepted by
+          :class:`~sage.algebras.cluster_algebra.ClusterAlgebra`
+        - ``scalars`` -- the base ring (default: ``QQ``)
+        - ``term_order`` -- the monomial order used for the finite Laurent
+          intersection ring charts (default: ``"lex"``)
+        - ``check_Banff`` -- boolean (default: ``True``); whether to certify the
+          Banff property during construction
+        - ``max_steps`` -- optional recursion budget for the Banff algorithm
+        - ``flir`` -- boolean (default: ``False``); whether to initialize the finite
+          Laurent intersection ring structure immediately
+
+        Further keyword arguments are passed to
+        :class:`~sage.algebras.cluster_algebra.ClusterAlgebra`.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A.is_banff()
+            True
+        """
         kwargs = dict(kwargs)
 
         kwargs["scalars"] = scalars
@@ -1037,6 +1311,27 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             self._ensure_flir_initialized()
 
     def _ensure_flir_initialized(self, recompute=False):
+        r"""
+        Initialize the finite Laurent intersection ring structure of ``self``.
+
+        The structure is computed lazily: it is built the first time this method
+        is called and reused afterwards.
+
+        INPUT:
+
+        - ``recompute`` -- boolean (default: ``False``); whether to discard the
+          cached data and compute it again
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A._flir_initialized
+            False
+            sage: A._ensure_flir_initialized()
+            sage: A._flir_initialized
+            True
+        """
         if getattr(self, "_flir_initialized", False) and not recompute:
             return
 
@@ -1083,18 +1378,24 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
 
         This runs the Banff semi-algorithm.  If a Banff cover is found, the
         corresponding acyclic charts are cached and the method returns ``True``.
-        If the algorithm is inconclusive within the given budget, a
-        ``RuntimeError`` is raised.
+        A :class:`ValueError` is raised if the recursion exceeds ``max_steps``,
+        and a :class:`RuntimeError` is raised if the algorithm is otherwise
+        inconclusive.
 
         INPUT:
 
         - ``max_steps`` -- optional recursion budget
-        - ``recompute`` -- boolean, default ``False``; whether to ignore the
+        - ``recompute`` -- boolean (default: ``False``); whether to ignore the
           cached result and recompute the Banff cover
 
-        OUTPUT:
+        OUTPUT: ``True`` if a Banff cover is found
 
-        Boolean.  Returns ``True`` if a Banff cover is found.
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A.is_banff()
+            True
         """
         if not recompute and getattr(self, "_banff_certified", None) is True:
             return True
@@ -1111,6 +1412,24 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         raise RuntimeError("Banff semi-algorithm inconclusive within given budget. Try increasing max_steps.")
 
     def _element_constructor_(self, x, check=True):
+        r"""
+        Construct an element of ``self`` from ``x``.
+
+        INPUT:
+
+        - ``x`` -- an element of the ambient fraction field of ``self``, or
+          something that can be converted into one
+        - ``check`` -- boolean (default: ``True``); whether to check that ``x``
+          lies in ``self``
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: x0, x1 = A.gens()
+            sage: A(x0 + 1)
+            x0 + 1
+        """
         F = self.ambient().fraction_field()
 
         if isinstance(x, BanffClusterElement) and x.parent() is self:
@@ -1188,8 +1507,23 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
                 )
 
     def base_extend(self, R):
-        """
-        Minimal compatibility hook for Sage coercion machinery.
+        r"""
+        Return ``self`` if the scalars of ``self`` can be extended from ``R``.
+
+        This is a minimal compatibility hook for the Sage coercion machinery.
+        Base extension to a ring that does not coerce into the base ring of
+        ``self`` is not implemented.
+
+        INPUT:
+
+        - ``R`` -- a ring
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A.base_extend(QQ) is A
+            True
         """
         try:
             if self.base_ring().has_coerce_map_from(R):
@@ -1209,6 +1543,16 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         )
 
     def _coerce_map_from_(self, S):  # pyright: ignore[reportIncompatibleMethodOverride]
+        r"""
+        Return whether there is a coercion map from ``S`` to ``self``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A.has_coerce_map_from(QQ)
+            True
+        """
         if S is self:
             return True
         if S is self.base_ring():
@@ -1220,10 +1564,27 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
     # --- chart construction ---
 
     def _build_flir_charts(self, recompute=False):
-        """
-        Construct a system of FiniteLaurentIntersectionRingChart objects:
-          - base chart = initial Laurent ring
-          - additional charts = obtained from the Banff algorithm and refinements
+        r"""
+        Construct a system of :class:`FiniteLaurentIntersectionRingChart` objects.
+
+        The charts are obtained from the acyclic charts found by the Banff
+        algorithm and their refinements by partner sets.  The base chart (the
+        initial Laurent ring) is not part of the output.
+
+        INPUT:
+
+        - ``recompute`` -- boolean (default: ``False``); whether to discard the
+          cached charts and compute them again
+
+        OUTPUT: a list of :class:`FiniteLaurentIntersectionRingChart`
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: charts = A._build_flir_charts()
+            sage: [chart.var_names for chart in charts]
+            [('x0_0', 'x0_1'), ('x0_0p', 'x0_1'), ('x0_0', 'x0_1p')]
         """
 
         if (not recompute) and getattr(self, "_cached_flir_charts", None) is not None:
@@ -1274,7 +1635,32 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         return charts
 
     def _banff_algorithm_with_generators(self, current_seed, allowed_directions):
-        """ Find a covering pair, freeze at the two indices, and recursively continue. """
+        r"""
+        Find a covering pair, freeze at the two indices, and recursively continue.
+
+        If the principal part of ``current_seed`` is acyclic, the output consists
+        of the cluster variables of ``current_seed`` together with the cluster
+        variables obtained by one mutation in each allowed direction.  Otherwise
+        the method looks for a seed with a sink/source-covering pair, recurses
+        after freezing each of the two directions, and adds extra generators so
+        that the generators patch together correctly.
+
+        INPUT:
+
+        - ``current_seed`` -- a seed of ``self``
+        - ``allowed_directions`` -- the list of directions that may still be mutated
+
+        OUTPUT: a list of generators, as elements of ``self`` or of the cluster
+        algebra, which may contain repetitions
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: gens = A._banff_algorithm_with_generators(A.initial_seed(), [0, 1])
+            sage: gens
+            [x0, x1, (x1 + 1)/x0, (x1 + 1)/x0, (x0 + 1)/x1, (x0 + 1)/x1]
+        """
 
         # If the principal part of the seed is acyclic, we are done. We can explicitly
         # get a generating set by taking the current seed and mutating once in each direction
@@ -1323,10 +1709,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
                 seed.mutate(i)
 
                 cluster = seed.cluster_variables()
-                if cover_type == 1:
-                    sign = 1
-                else:
-                    sign = -1
+                sign = cover_type
 
                 a = A(-1)
                 u = A(1)
@@ -1505,12 +1888,24 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         return FiniteLaurentIntersectionRing.extra_primes(self, recompute=recompute)
 
     def divisor_group(self):
-        r""" Return the divisor group of this Banff cluster algebra.
-        The divisor group is the free abelian group generated by the height-one prime divisors of ``self``.
-        It is represented by an instance of :class:`FiniteLaurentIntersectionRingDivisorGroup`.
-        The group is constructed during FiniteLaurentIntersectionRing initialization and cached, so repeated calls return the same object.
+        r"""
+        Return the divisor group of this Banff cluster algebra.
 
-        OUTPUT: A :class:`FiniteLaurentIntersectionRingDivisorGroup`.
+        The divisor group is the free abelian group generated by the height-one
+        prime divisors of ``self``.  It is represented by an instance of
+        :class:`FiniteLaurentIntersectionRingDivisorGroup`.  The group is
+        constructed during the initialization of the finite Laurent intersection
+        ring structure and cached, so repeated calls return the same object.
+
+        OUTPUT: a :class:`FiniteLaurentIntersectionRingDivisorGroup`
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: DivA = A.divisor_group()
+            sage: DivA is A.divisor_group()
+            True
         """
         self._ensure_flir_initialized()
         return FiniteLaurentIntersectionRing.divisor_group(self)
@@ -1562,17 +1957,29 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         return FiniteLaurentIntersectionRing.divisor(self, data)
 
     def class_data(self, recompute=False):
-        r""" Return the data used to compute the divisor class group.
+        r"""
+        Return the data used to compute the divisor class group.
 
-        This includes the distinguished prime divisors, their valuation matrix, its Smith normal form,
-        and the resulting presentation of the divisor class group.
+        This includes the distinguished prime divisors, their valuation matrix, its
+        Smith normal form, and the resulting presentation of the divisor class group.
 
-        By default, previously computed data is reused.
-        Set ``recompute`` to ``True`` to discard the cached data and compute it again.
+        By default, previously computed data is reused.  Set ``recompute`` to
+        ``True`` to discard the cached data and compute it again.
 
-        INPUT: - ``recompute`` -- boolean (default: ``False``); whether to recompute the class-group data
+        INPUT:
 
-        OUTPUT: A :class:`ClassGroupData` instance.
+        - ``recompute`` -- boolean (default: ``False``); whether to recompute the
+          class-group data
+
+        OUTPUT: a :class:`ClassGroupData` instance
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: data = A.class_data()
+            sage: data is A.class_data()
+            True
         """
         self._ensure_flir_initialized(recompute=recompute)
         return FiniteLaurentIntersectionRing.class_data(self, recompute=recompute)
@@ -1735,6 +2142,16 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         return FiniteLaurentIntersectionRing.factorizations(self, a)
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: B = Matrix([[0, 1], [-1, 0]])
+            sage: A = BanffClusterAlgebra(B)
+            sage: A
+             A Banff Cluster Algebra with initial cluster variables x0, x1 over Rational Field.
+        """
         var_names = self.initial_cluster_variable_names()
         var_names_str = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
         return (f" A Banff Cluster Algebra with initial cluster variable"
