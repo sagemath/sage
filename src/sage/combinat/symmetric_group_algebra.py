@@ -2090,13 +2090,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         Over finite fields of square order with characteristic `p > n`, we can perform the unitary DFT::
 
             sage: GF25_S3 = SymmetricGroupAlgebra(GF(5**2), 3)
-            sage: U = GF25_S3.dft(form='unitary'); U
-            [       1        1        1        1        1        1]
-            [2*z2 + 4   z2 + 2 3*z2 + 1 4*z2 + 3 4*z2 + 3   z2 + 2]
-            [       0        2        0        2        3        3]
-            [       0   z2 + 1        0 4*z2 + 4   z2 + 1 4*z2 + 4]
-            [2*z2 + 4 4*z2 + 3 2*z2 + 4 4*z2 + 3 4*z2 + 3 4*z2 + 3]
-            [       1        4        4        1        1        4]
+            sage: U = GF25_S3.dft(form='unitary')
             sage: U*U.H == 1
             True
 
@@ -2139,13 +2133,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
             [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
             sage: GF49_S3 = SymmetricGroupAlgebra(GF(7**2), 3)
-            sage: GF49_S3._dft_unitary()
-            [5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5]
-            [2*z2 + 5   z2 + 6 5*z2 + 2 6*z2 + 1 6*z2 + 1   z2 + 6]
-            [       0 4*z2 + 5        0 4*z2 + 5 3*z2 + 2 3*z2 + 2]
-            [       0 3*z2 + 2        0 4*z2 + 5 3*z2 + 2 4*z2 + 5]
-            [2*z2 + 5 6*z2 + 1 2*z2 + 5 6*z2 + 1 6*z2 + 1 6*z2 + 1]
-            [5*z2 + 5 2*z2 + 2 2*z2 + 2 5*z2 + 5 5*z2 + 5 2*z2 + 2]
+            sage: U = GF49_S3._dft_unitary()
+            sage: U*U.H == 1
+            True
 
         TESTS::
 
@@ -2175,9 +2165,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             ValueError: the base ring must be a finite field of square order
             sage: GF9_S3 = SymmetricGroupAlgebra(GF(3**2), 3)
             sage: U = GF9_S3._dft_unitary()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
+            sage: U*U.H == 1
+            True
         """
         F = self.base_ring()
         G = self.group()
@@ -2202,8 +2191,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         assert F.characteristic() > 0, "F must have positive characteristic"
         if not (F.is_field() and F.is_finite() and F.order().is_square()):
             raise ValueError("the base ring must be a finite field of square order")
-        if F.characteristic().divides(G.cardinality()):
-            raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
         q = F.order().sqrt()
 
         def conj_square_root(u):
