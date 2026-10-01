@@ -10548,6 +10548,16 @@ class FiniteStateMachine(SageObject):
             finished: [[], ['a']]
             process (0 branches)
             finished: [[], ['a'], ['a', 'b']]
+
+        Outputs on epsilon transitions are included (:issue:`30027`)::
+
+            sage: T = Transducer([(0, 1, None, 'a'), (1, 2, 0, 'b'),
+            ....:                 (2, 3, None, 'c')],
+            ....:                initial_states=[0], final_states=[3])
+            sage: list(T.language(0))
+            []
+            sage: list(T.language(1))
+            [['a', 'b', 'c']]
         """
         kwargs['process_iterator_class'] = _FSMProcessIteratorAll_
         kwargs['max_length'] = max_length
@@ -11714,6 +11724,30 @@ class Automaton(FiniteStateMachine):
             sage: all(len(list(NAFs)) == R(ell) for ell, NAFs in
             ....:     itertools.groupby(NAF.language(5), key=len))
             True
+
+        Epsilon transitions are taken into account (:issue:`30027`)::
+
+            sage: A = automata.Word([0])
+            sage: list((A * A).language(1))
+            []
+            sage: list((A * A).language(2))
+            [[0, 0]]
+            sage: sorted(set(tuple(w) for w in A.kleene_star().language(3)))
+            [(), (0,), (0, 0), (0, 0, 0)]
+            sage: words = A.kleene_star().language()
+            sage: next(words)
+            []
+            sage: any(len(w) == 3 for w in itertools.islice(words, 6))
+            True
+
+        Epsilon cycles terminate, including when the length bound is zero::
+
+            sage: A = Automaton([(0, 1, None), (1, 0, None), (1, 2, 1)],
+            ....:               initial_states=[0], final_states=[1, 2])
+            sage: list(A.language(0))
+            [[]]
+            sage: list(A.language(1))
+            [[], [1]]
         """
         T = self.with_output()
         return T.language(max_length)
@@ -14671,7 +14705,6 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
             kwargs['input_tape'] = iter(0 for _ in range(max_length))
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
-        kwargs['check_epsilon_transitions'] = False
         super().__init__(*args, **kwargs)
 
 
