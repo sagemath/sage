@@ -225,6 +225,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import CommutativeAlgebraElement
+from sage.structure.sage_object import SageObject
 
 # ============================================================
 # Banff algorithm helpers
@@ -339,7 +340,7 @@ def _find_sink_or_source_covering_pair(B, allowed_directions):
     return None
 
 
-class ClusterAlgebraChart:
+class ClusterAlgebraChart(SageObject):
     r"""
     Stores a chart algebra A_chart plus morphisms between fraction fields.
     - seed: the seed in the original algebra that defines the chart
@@ -455,7 +456,7 @@ class ClusterAlgebraChart:
             F_std = Fpoly.subs(parent._yhat)
             g_mon = prod(parent.ambient().gen(k) ** g_vector[k] for k in range(parent.rank()))
             F_trop = parent.ambient()(Fpoly.subs(parent._y))._fraction_pair()[1]
-            return parent.ambient()(g_mon * F_std * F_trop) if False else (g_mon * F_std * F_trop)
+            return g_mon * F_std * F_trop
 
         mapping = [F(_raw_cluster_variable(seed_chart, i)) for i in range(n)]
         from_chart = F_prime.hom(mapping)
@@ -480,12 +481,26 @@ class ClusterAlgebraChart:
         self.seed = seed_chart
         self.allowed_directions = list(allowed_directions)
 
-    @property
     def lp_chart(self):
-        """The ambient Laurent polynomial ring of the chart."""
+        r"""
+        Return the ambient Laurent polynomial ring of the chart.
+
+        OUTPUT: the ambient Laurent polynomial ring of the cluster algebra
+        ``self.chart``
+
+        EXAMPLES::
+
+            sage: from sage.algebras.banff_cluster_algebra import ClusterAlgebraChart
+            sage: B = matrix([[0, 1], [-1, 0]])
+            sage: A = ClusterAlgebra(B)
+            sage: A_chart = ClusterAlgebra(B, cluster_variable_prefix='x0_')
+            sage: chart = ClusterAlgebraChart.from_pair(A.initial_seed(), A_chart, [0, 1])
+            sage: chart.lp_chart() == A_chart.ambient()
+            True
+        """
         return self.chart.ambient()
 
-    def __repr__(self):
+    def _repr_(self):
         return (
             "ClusterAlgebraChart(\n"
             "  seed: {}\n"
@@ -1233,7 +1248,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         charts = []
 
         for c in lp_like:
-            Lc = c.lp_chart
+            Lc = c.lp_chart()
             var_names = tuple(str(v) for v in Lc.gens())
 
             ch = FiniteLaurentIntersectionRingChart(
@@ -1719,7 +1734,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         self._ensure_flir_initialized()
         return FiniteLaurentIntersectionRing.factorizations(self, a)
 
-    def __repr__(self):
+    def _repr_(self):
         var_names = self.initial_cluster_variable_names()
         var_names_str = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
         return (f" A Banff Cluster Algebra with initial cluster variable"

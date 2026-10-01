@@ -158,6 +158,7 @@ from sage.rings.rational_field import QQ
 from sage.structure.element import CommutativeAlgebraElement, Element
 from sage.structure.parent import Parent
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
 # -----------------------------------------------------------------------------
@@ -165,7 +166,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 # -----------------------------------------------------------------------------
 
 
-class FiniteLaurentIntersectionRingChart:
+class FiniteLaurentIntersectionRingChart(SageObject):
     r"""
     A birational chart for a fixed base fraction field.
 
@@ -584,8 +585,6 @@ class FiniteLaurentIntersectionRingChart:
             return "\n".join(lines)
 
         return f"FiniteLaurentIntersectionRingChart({self.var_names}) over {self.base_ring}. No substitution data."
-
-    __repr__ = _repr_
 
 
 @dataclass(frozen=True)
@@ -1033,7 +1032,7 @@ class FiniteLaurentIntersectionRingDivisorGroup(Parent):
         return self._A
 
 
-class FiniteLaurentIntersectionRingFactorization:
+class FiniteLaurentIntersectionRingFactorization(SageObject):
     r"""
     Formal factorizations of an element of a FiniteLaurentIntersectionRing.
 
@@ -1290,7 +1289,7 @@ class FiniteLaurentIntersectionRingFactorization:
 
     # ---------------- display ----------------
 
-    def __repr__(self):
+    def _repr_(self):
         if not self._verbose:
             return repr(self.sort_all_factorizations())
 
@@ -2273,8 +2272,6 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         lines.append(f"  #charts = {len(self.charts)}")
         lines.append(f"  base vars = {self._base_chart.var_names}")
         return "\n".join(lines)
-
-    __repr__ = _repr_
 
     def _coerce_map_from_(self, S):
         # allow coercion from the base ring
