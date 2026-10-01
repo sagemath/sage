@@ -57,7 +57,7 @@ dependencies = [
   'matplotlib >=3.7.0',
   'memory_allocator',
   'mpmath >=1.1.0',
-  'networkx >=3.1',
+  'networkx >=3.5',
   'numpy >=1.25',
   'pexpect >=4.8.0',
   'pillow >=7.2.0',

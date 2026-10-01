@@ -133,7 +133,7 @@ other_documents = run_command(
 ).stdout().strip()
 other_documents_inventory = []
 foreach doc : other_documents.splitlines()
-  if doc == 'en/installation'
+  if doc in ['en/developer', 'en/installation']
     short_doc = doc.replace('/', '-')
     target = custom_target(
       'doc-inventory-other-' + short_doc,

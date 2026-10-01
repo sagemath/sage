@@ -11,7 +11,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
 #                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
 #                          Kristina Obrenovic Gilmour: is_projective_planar
-#                          in graph.py and associated method p2_forbidden_minors
+#                          in graph.py and associated method
+#                          p2_forbidden_minors
 #                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,7 +22,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
 from itertools import combinations
 from math import sin, cos, pi
 

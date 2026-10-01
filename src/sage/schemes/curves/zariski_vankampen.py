@@ -55,7 +55,6 @@ from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
-from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
@@ -63,7 +62,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve

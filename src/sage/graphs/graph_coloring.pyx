@@ -894,9 +894,9 @@ def fractional_chromatic_index(G, solver='PPL', verbose_constraints=False, verbo
     solvers::
 
         sage: g = graphs.PetersenGraph()
-        sage: g.fractional_chromatic_index(solver='GLPK')       # known bug             # needs sage.numerical.mip
-        3.0
-        sage: g.fractional_chromatic_index(solver='PPL')                                # needs sage.numerical.mip
+        sage: g.fractional_chromatic_index()
+        3
+        sage: g.fractional_chromatic_index(solver='PPL')
         3
     """
     G._scream_if_not_simple()
@@ -1381,9 +1381,9 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
         sage: from sage.graphs.graph_coloring import edge_coloring
         sage: g = graphs.PetersenGraph()
-        sage: edge_coloring(g, value_only=True, solver='GLPK')
+        sage: edge_coloring(g, value_only=True)
         4
-        sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')
+        sage: color_classes = edge_coloring(g, value_only=False)
         sage: len(color_classes)
         4
         sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
@@ -1393,7 +1393,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
         sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)            # needs networkx
         True
         sage: color_classes = edge_coloring(g, value_only=False,
-        ....:                               hex_colors=True, solver='GLPK')
+        ....:                               hex_colors=True)
         sage: sorted(color_classes.keys())
         ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
 
