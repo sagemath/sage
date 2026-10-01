@@ -1182,7 +1182,6 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
 
     @staticmethod
     def __classcall__(cls, data, *args, **kwargs):  # noqa: PLW0211
-
         r"""
         Normalize the input before constructing a Banff cluster algebra.
 
