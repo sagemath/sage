@@ -1,25 +1,34 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/debian
+// For format details, see https://aka.ms/devcontainer.json. For image variants, see:
+// https://github.com/devcontainers/images/tree/main/src/base-debian
 {
 	"name": "Conda",
-	"image": "mcr.microsoft.com/vscode/devcontainers/base:0-bullseye",
+	// The generated Linux environment currently requires glibc 2.39 or newer.
+	"image": "mcr.microsoft.com/devcontainers/base:2-trixie",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
+	"remoteEnv": {
+		"PATH": "/opt/conda/envs/sage-dev/bin:${containerEnv:PATH}"
+	},
 
-	// Setup conda environment
-	"onCreateCommand": ".devcontainer/onCreate-conda.sh || true",
+	// Initialize Conda once, then synchronize the development environment
+	// whenever the checked-out content changes.
+	"onCreateCommand": ".devcontainer/onCreate-conda.sh",
+	"updateContentCommand": ".devcontainer/updateContent-conda.sh",
 
 	// Install additional features.
 	"features": {
 		// For config options, see https://github.com/devcontainers/features/tree/main/src/conda
-		"ghcr.io/devcontainers/features/conda": {
-            "version": "latest",
-			"addCondaForge": "true"
-        }
+		"ghcr.io/devcontainers/features/conda:2": {
+			"version": "latest",
+			"addCondaForge": true
+		}
 	},
 	"customizations": {
 		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/opt/conda/envs/sage-dev/bin/python"
+			},
 			"extensions": [
 				"guyskk.language-cython",
 				"ms-toolsai.jupyter",
