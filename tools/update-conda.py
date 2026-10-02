@@ -36,9 +36,9 @@ parser.add_argument(
 )
 options = parser.parse_args()
 pypi_data_packages = {
-    "sage-data-elliptic-curves",
-    "sage-data-graphs",
-    "sage-data-polytopes",
+    "sagemath-data-elliptic-curves",
+    "sagemath-data-graphs",
+    "sagemath-data-polytopes",
 }
 
 pythons = ["3.12", "3.13", "3.14"]

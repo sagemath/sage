@@ -1,1 +1,1 @@
-sage-data-polytopes >=20170220.0
+sagemath-data-polytopes >=20170220.1

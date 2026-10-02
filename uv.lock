@@ -3063,33 +3063,6 @@ wheels = [
 ]
 
 [[package]]
-name = "sage-data-elliptic-curves"
-version = "0.8.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5d/97/a3e9b194e6130b6af842306f0bd762c99f2acd8fe38e95d2b47ba66807b7/sage_data_elliptic_curves-0.8.1.tar.gz", hash = "sha256:b31297c7357b8757092d734d74cfde5c3dc419dc9b14d751a1df5ae447b4d6eb", size = 4971561, upload-time = "2026-08-24T10:19:48.201Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/26/69/d9819200f8ba5693706801f42c5fb315910549ad49944b032358d4168e1c/sage_data_elliptic_curves-0.8.1-py3-none-any.whl", hash = "sha256:fbca3906bacd55ef980a80cdf778199f9e43ccee1f8fbde5a57039b04ecd2eff", size = 4325837, upload-time = "2026-08-24T10:19:46.441Z" },
-]
-
-[[package]]
-name = "sage-data-graphs"
-version = "20210214.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9e/f3/5da4ba5674e9dc8d6874b50f049267df393aabf0517e70a168da23846ac3/sage_data_graphs-20210214.0.tar.gz", hash = "sha256:4b82c49cca79ae0ff15942fe6ee05b00c64eb7bca9438648f89106add63b6620", size = 465036, upload-time = "2026-08-24T10:16:12.887Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/cd/a7657edf919e7f2642a284a4cd3fb1a14e4e8b7e424516cb2839cf914715/sage_data_graphs-20210214.0-py3-none-any.whl", hash = "sha256:4f0f07453a7394492226d036e71750370c95c310db951389b0f4773a2a272588", size = 472110, upload-time = "2026-08-24T10:16:11.004Z" },
-]
-
-[[package]]
-name = "sage-data-polytopes"
-version = "20170220.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/24/ce/6f93d59d07a5cf6b8a6e970a066470768dd6270c9ec332683e09b4addc9f/sage_data_polytopes-20170220.0.tar.gz", hash = "sha256:46ad7658853f28236ccc1f0cbecad4f43ff5b152fb7fb72fcf29158d8d71dc97", size = 61242, upload-time = "2026-08-24T10:19:49.316Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/c0/6f5f1a8d120c0d442c2d3bd4f860bc1755f75fab016e15800ef6b3d0b403/sage_data_polytopes-20170220.0-py3-none-any.whl", hash = "sha256:011a49712e3c2454b7ad2759ed360964ebefe3859d257d71ad1a5ff263fbb01c", size = 62528, upload-time = "2026-08-24T10:19:48.076Z" },
-]
-
-[[package]]
 name = "sage-numerical-backends-coin"
 version = "10.4"
 source = { registry = "https://pypi.org/simple" }
@@ -3125,9 +3098,9 @@ dependencies = [
     { name = "primecountpy", marker = "sys_platform != 'win32'" },
     { name = "ptyprocess" },
     { name = "requests" },
-    { name = "sage-data-elliptic-curves" },
-    { name = "sage-data-graphs" },
-    { name = "sage-data-polytopes" },
+    { name = "sagemath-data-elliptic-curves" },
+    { name = "sagemath-data-graphs" },
+    { name = "sagemath-data-polytopes" },
     { name = "scipy" },
     { name = "six" },
     { name = "sphinx" },
@@ -3223,9 +3196,9 @@ requires-dist = [
     { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "requests", specifier = ">=2.13.0" },
     { name = "rpy2", marker = "extra == 'r'", specifier = ">=3.3" },
-    { name = "sage-data-elliptic-curves", specifier = ">=0.8.1" },
-    { name = "sage-data-graphs", specifier = ">=20210214.0" },
-    { name = "sage-data-polytopes", specifier = ">=20170220.0" },
+    { name = "sagemath-data-elliptic-curves", specifier = ">=0.8.2" },
+    { name = "sagemath-data-graphs", specifier = ">=20210214.1" },
+    { name = "sagemath-data-polytopes", specifier = ">=20170220.1" },
     { name = "sage-numerical-backends-coin", marker = "extra == 'extra'" },
     { name = "scipy", specifier = ">=1.11" },
     { name = "six", specifier = ">=1.15.0" },
@@ -3275,6 +3248,33 @@ lint = [
 test = [
     { name = "coverage" },
     { name = "pytest" },
+]
+
+[[package]]
+name = "sagemath-data-elliptic-curves"
+version = "0.8.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/ab/ef83f5504fbbe3e08ded3dfb91fec6c9e051219499fcbe511b18d9dac5b7/sagemath_data_elliptic_curves-0.8.2.tar.gz", hash = "sha256:5540a8d91eb6b189d5a2960c2a2e3b3b671e5969be8c36ddb51b7ac4eed05596", size = 4971747, upload-time = "2026-10-02T21:57:35.858Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/73/ff/6b9c555fe7a159fe30735562e52683ea1e1b9281b62169d8b19430a1697d/sagemath_data_elliptic_curves-0.8.2-py3-none-any.whl", hash = "sha256:f77ac2b5225bb0fb74ec7a3173bab27009a20bc1286a2e159e0fabbd0b83d942", size = 4325958, upload-time = "2026-10-02T21:57:33.924Z" },
+]
+
+[[package]]
+name = "sagemath-data-graphs"
+version = "20210214.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/7b/2c18e019b90d9b0bdd84a83d6bd76450c5610761938308265518f17d17d8/sagemath_data_graphs-20210214.1.tar.gz", hash = "sha256:2d021f4df20c4b5026e9d3167e485c54739e34f37b824c190441eecdd0abb5dd", size = 465280, upload-time = "2026-10-02T21:57:43.761Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f8/3f/acaa9af3ecf66570b51c20dc442a65e27ae980adb9c37ebab0a7d2ef2d89/sagemath_data_graphs-20210214.1-py3-none-any.whl", hash = "sha256:1026877e28e79f6523b2637fec17d8479e094cc9436155c59b9ea15661a6e566", size = 472239, upload-time = "2026-10-02T21:57:41.84Z" },
+]
+
+[[package]]
+name = "sagemath-data-polytopes"
+version = "20170220.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/69/74/0a06131ee113a0022c52f4b6517fbeae6551e839472acc2264676167fea0/sagemath_data_polytopes-20170220.1.tar.gz", hash = "sha256:78e742c0f7d46132cd874041094a5aaa64a7978c3d35ff7b9cecab4fe1f1814d", size = 61393, upload-time = "2026-10-02T21:39:31.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/2d/406016b7506a10c730e2d6ec97708b498559035bdca6b3ba2543f0659791/sagemath_data_polytopes-20170220.1-py3-none-any.whl", hash = "sha256:269500292f058bc6299ad4613399183e884503c6df7f8ce09eebf5e0a19e2225", size = 62640, upload-time = "2026-10-02T21:39:30.402Z" },
 ]
 
 [[package]]
