@@ -97,6 +97,7 @@ py.install_sources(
   'puiseux_series_ring_element.pxd',
   'puiseux_series_ring_element.pyx',
   'qqbar.py',
+  'qqbar_calcium.pyx',
   'qqbar_decorators.py',
   'quotient_ring.py',
   'quotient_ring_element.py',
@@ -164,6 +165,7 @@ extension_data = {
   'power_series_poly': files('power_series_poly.pyx'),
   'power_series_ring_element': files('power_series_ring_element.pyx'),
   'puiseux_series_ring_element': files('puiseux_series_ring_element.pyx'),
+  'qqbar_calcium': files('qqbar_calcium.pyx'),
   'real_arb': files('real_arb.pyx'),
   'real_double': files('real_double.pyx'),
   'real_double_element_gsl': files('real_double_element_gsl.pyx'),
@@ -206,6 +208,8 @@ foreach name, pyx : extension_data
     deps += [gmpy2]
   elif name == 'power_series_pari'
     deps += [cypari2]
+  elif name == 'qqbar_calcium'
+    deps += [flint, mpfi]
   elif name == 'real_arb'
     deps += [flint, mpfi]
   elif name == 'real_double'
