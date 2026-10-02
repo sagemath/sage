@@ -794,6 +794,31 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
 
+        The result is an immutable matrix, so if you want to modify the
+        result then you need to make a copy. This checks that :issue:`42531`
+        is fixed::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: E = A.echelon_form()
+            sage: E.is_mutable()
+            False
+            sage: F = copy(E)
+            sage: F[0, 0] = 50
+            sage: A.echelon_form()[0, 0]  # unaffected by mutating the copy
+            1
+
+        Modifying the cached result must not be possible, and must not
+        corrupt the cache used by later calls::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: E = A.echelon_form()
+            sage: E[0, 0] = 0
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+            sage: A.echelon_form() == E
+            True
+
         TESTS:
 
         ``proof`` defaults to ``None``, so that the global
@@ -824,9 +849,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if x is not None:
             return x
         if self.fetch('in_echelon_form'):
-            return self
+            if self.is_immutable():
+                return self
+            E = self.__copy__()
+            E.set_immutable()
+            return E
 
         E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
+        E.set_immutable()
 
         self.cache(label, E)
         self.cache('pivots', pivots)
