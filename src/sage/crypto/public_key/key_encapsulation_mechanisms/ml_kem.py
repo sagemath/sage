@@ -33,6 +33,13 @@ class MLKEM(KEMBase):
     :meth:`from_parameter_set` to construct one of those, or pass the
     individual parameters to the constructor.
 
+    Keys and ciphertexts are represented as mathematical objects:
+    elements of the ring `R = \GF(q)[x] / (x^{n} + 1)` and vectors
+    thereof.  Byte-string serialization, as specified by FIPS 203, is
+    kept separate and is only used as an input to the symmetric
+    primitives `H`, `J`, `G` and for interoperability with other
+    implementations.
+
     EXAMPLES::
 
         sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
@@ -203,12 +210,6 @@ class MLKEM(KEMBase):
     def _ntt_inv(cls, f):
         r"""
         Return the inverse of :meth:`_ntt`.
-
-        INPUT:
-
-        - ``f`` -- element of ``R`` in NTT domain
-
-        OUTPUT: element of ``R``
         """
         F = cls._coeffs(f)
         i = 127
@@ -229,12 +230,6 @@ class MLKEM(KEMBase):
     def _multiply_ntts(cls, f, g):
         r"""
         Return the pointwise product of ``f`` and ``g`` in NTT domain.
-
-        INPUT:
-
-        - ``f``, ``g`` -- elements of ``R`` in NTT domain
-
-        OUTPUT: element of ``R``
         """
         F = cls._coeffs(f)
         G = cls._coeffs(g)
@@ -253,7 +248,7 @@ class MLKEM(KEMBase):
         return cls._from_list(H)
 
     # ------------------------------------------------------------------
-    # Compression and byte encoding (FIPS 203, Section 4.2)
+    # Compression (FIPS 203, Section 4.2)
     # ------------------------------------------------------------------
 
     @classmethod
@@ -270,6 +265,11 @@ class MLKEM(KEMBase):
         rounding half up as specified by FIPS 203.
         """
         return ((cls._Q * y) + (1 << (d - 1))) >> d
+
+    # ------------------------------------------------------------------
+    # Byte encoding (FIPS 203, Section 4.2).  Only needed as input to
+    # the symmetric primitives and for interoperability.
+    # ------------------------------------------------------------------
 
     @staticmethod
     def _encode(F, d):
@@ -305,6 +305,57 @@ class MLKEM(KEMBase):
             F.append((acc & mask) % cls._Q)
             acc >>= d
         return F
+
+    @classmethod
+    def _encode_ek(cls, rho, t_hat):
+        r"""
+        Serialize the public key ``(rho, t_hat)`` to bytes.
+        """
+        return b"".join(cls._encode(cls._coeffs(ti), 12) for ti in t_hat) + rho
+
+    @classmethod
+    def _decode_ek(cls, ek, k):
+        r"""
+        Deserialize the public key bytes ``ek`` into ``(rho, t_hat)``.
+        """
+        t_hat = [
+            cls._from_list(cls._decode(ek[384 * i : 384 * (i + 1)], 12))
+            for i in range(k)
+        ]
+        return ek[-32:], t_hat
+
+    @classmethod
+    def _encode_ct(cls, u, v, du, dv):
+        r"""
+        Serialize the ciphertext ``(u, v)`` to bytes.
+        """
+        c1 = b"".join(
+            cls._encode([cls._compress(x, du) for x in cls._coeffs(ui)], du)
+            for ui in u
+        )
+        c2 = cls._encode([cls._compress(x, dv) for x in cls._coeffs(v)], dv)
+        return c1 + c2
+
+    @classmethod
+    def _decode_ct(cls, c, du, dv, k):
+        r"""
+        Deserialize the ciphertext bytes ``c`` into ``(u, v)``.
+        """
+        c1_len = 32 * du * k
+        c1, c2 = c[:c1_len], c[c1_len:]
+        u = [
+            cls._from_list(
+                [
+                    cls._decompress(x, du)
+                    for x in cls._decode(c1[32 * du * i : 32 * du * (i + 1)], du)
+                ]
+            )
+            for i in range(k)
+        ]
+        v = cls._from_list(
+            [cls._decompress(x, dv) for x in cls._decode(c2, dv)]
+        )
+        return u, v
 
     # ------------------------------------------------------------------
     # Symmetric primitives (FIPS 203, Section 4.1)
@@ -391,21 +442,20 @@ class MLKEM(KEMBase):
         Generate a K-PKE key pair from the 32-byte seed ``d``.
 
         Implements Algorithm 13 of FIPS 203.
+
+        OUTPUT: tuple ``(rho, t_hat, s_hat)``, where ``rho`` is 32 bytes
+        and ``t_hat``, ``s_hat`` are lists of ``k`` elements of ``R``.
         """
         rho_sigma = cls._hash_g(d + bytes([k]))
         rho, sigma = rho_sigma[:32], rho_sigma[32:]
 
         A = [[cls._sample_ntt(rho, j, i) for j in range(k)] for i in range(k)]
 
-        s = []
-        N = 0
-        for _ in range(k):
-            s.append(cls._sample_poly_cbd(eta1, cls._prf(eta1, sigma, N)))
-            N += 1
-        e = []
-        for _ in range(k):
-            e.append(cls._sample_poly_cbd(eta1, cls._prf(eta1, sigma, N)))
-            N += 1
+        s = [cls._sample_poly_cbd(eta1, cls._prf(eta1, sigma, i)) for i in range(k)]
+        e = [
+            cls._sample_poly_cbd(eta1, cls._prf(eta1, sigma, k + i))
+            for i in range(k)
+        ]
 
         s_hat = [cls._ntt(si) for si in s]
         e_hat = [cls._ntt(ei) for ei in e]
@@ -417,39 +467,25 @@ class MLKEM(KEMBase):
                 acc = acc + cls._multiply_ntts(A[i][j], s_hat[j])
             t_hat.append(acc + e_hat[i])
 
-        ek_pke = (
-            b"".join(cls._encode(cls._coeffs(t_hat[i]), 12) for i in range(k)) + rho
-        )
-        dk_pke = b"".join(cls._encode(cls._coeffs(s_hat[i]), 12) for i in range(k))
-        return ek_pke, dk_pke
+        return rho, t_hat, s_hat
 
     @classmethod
-    def _kpke_encrypt(cls, ek_pke, m, r, k, eta1, eta2, du, dv):
+    def _kpke_encrypt(cls, rho, t_hat, m, r, k, eta1, eta2):
         r"""
-        Encrypt the 32-byte message ``m`` under ``ek_pke`` with
+        Encrypt the 32-byte message ``m`` under ``(rho, t_hat)`` with
         randomness ``r``.
 
         Implements Algorithm 14 of FIPS 203.
-        """
-        t_hat_bytes = ek_pke[: 384 * k]
-        rho = ek_pke[384 * k : 384 * k + 32]
 
-        t_hat = [
-            cls._from_list(cls._decode(t_hat_bytes[384 * i : 384 * (i + 1)], 12))
-            for i in range(k)
-        ]
+        OUTPUT: tuple ``(u, v)``, where ``u`` is a list of ``k``
+        elements of ``R`` and ``v`` is an element of ``R``.  These are
+        the *uncompressed* K-PKE ciphertext polynomials.
+        """
         A = [[cls._sample_ntt(rho, j, i) for j in range(k)] for i in range(k)]
 
-        y = []
-        e1 = []
-        N = 0
-        for _ in range(k):
-            y.append(cls._sample_poly_cbd(eta1, cls._prf(eta1, r, N)))
-            N += 1
-        for _ in range(k):
-            e1.append(cls._sample_poly_cbd(eta2, cls._prf(eta2, r, N)))
-            N += 1
-        e2 = cls._sample_poly_cbd(eta2, cls._prf(eta2, r, N))
+        y = [cls._sample_poly_cbd(eta1, cls._prf(eta1, r, i)) for i in range(k)]
+        e1 = [cls._sample_poly_cbd(eta2, cls._prf(eta2, r, k + i)) for i in range(k)]
+        e2 = cls._sample_poly_cbd(eta2, cls._prf(eta2, r, 2 * k))
 
         y_hat = [cls._ntt(yi) for yi in y]
 
@@ -468,47 +504,22 @@ class MLKEM(KEMBase):
         mu = cls._from_list([cls._decompress(x, 1) for x in cls._decode(m, 1)])
         v = v + mu
 
-        c1 = b"".join(
-            cls._encode([cls._compress(x, du) for x in cls._coeffs(u[i])], du)
-            for i in range(k)
-        )
-        c2 = cls._encode([cls._compress(x, dv) for x in cls._coeffs(v)], dv)
-        return c1 + c2
+        return u, v
 
     @classmethod
-    def _kpke_decrypt(cls, dk_pke, c, k, du, dv):
+    def _kpke_decrypt(cls, s_hat, u, v, k):
         r"""
-        Decrypt the ciphertext ``c`` using ``dk_pke``.
+        Decrypt the ciphertext ``(u, v)`` using ``s_hat``.
 
         Implements Algorithm 15 of FIPS 203.
+
+        OUTPUT: 32-byte message
         """
-        c1_len = 32 * du * k
-        c1, c2 = c[:c1_len], c[c1_len:]
-
-        u = [
-            cls._from_list(
-                [
-                    cls._decompress(x, du)
-                    for x in cls._decode(c1[32 * du * i : 32 * du * (i + 1)], du)
-                ]
-            )
-            for i in range(k)
-        ]
-        v = cls._from_list(
-            [cls._decompress(x, dv) for x in cls._decode(c2, dv)]
-        )
-
-        s_hat = [
-            cls._from_list(cls._decode(dk_pke[384 * i : 384 * (i + 1)], 12))
-            for i in range(k)
-        ]
-
         u_hat = [cls._ntt(ui) for ui in u]
         acc = cls._R(0)
         for i in range(k):
             acc = acc + cls._multiply_ntts(s_hat[i], u_hat[i])
         w = v - cls._ntt_inv(acc)
-
         return cls._encode([cls._compress(x, 1) for x in cls._coeffs(w)], 1)
 
     # ------------------------------------------------------------------
@@ -528,15 +539,23 @@ class MLKEM(KEMBase):
         - ``z`` -- optional 32-byte seed used in the implicit rejection
           path of :meth:`decaps`; if not provided a fresh seed is drawn
 
-        OUTPUT: tuple ``(public_key, secret_key)`` of :class:`bytes`
+        OUTPUT: tuple ``(pk, sk)`` where
+
+        - ``pk = (rho, t_hat)``: ``rho`` is 32 bytes, and ``t_hat`` is a
+          list of ``k`` elements of ``R``.
+        - ``sk = (s_hat, rho, t_hat, z)``: ``s_hat`` is a list of ``k``
+          elements of ``R``, and ``z`` is 32 bytes.
 
         EXAMPLES::
 
             sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
             sage: kem = MLKEM.from_parameter_set(512)
             sage: pk, sk = kem.keygen()
-            sage: isinstance(pk, bytes) and isinstance(sk, bytes)
-            True
+            sage: rho, t_hat = pk
+            sage: len(rho)
+            32
+            sage: len(t_hat)
+            2
         """
         if d is None:
             d = secrets.token_bytes(32)
@@ -545,10 +564,8 @@ class MLKEM(KEMBase):
         if len(d) != 32 or len(z) != 32:
             raise ValueError("d and z must be 32 bytes each.")
 
-        ek_pke, dk_pke = self._kpke_keygen(d, self.k, self.eta1)
-        ek = ek_pke
-        dk = dk_pke + ek + self._hash_h(ek) + z
-        return ek, dk
+        rho, t_hat, s_hat = self._kpke_keygen(d, self.k, self.eta1)
+        return (rho, t_hat), (s_hat, rho, t_hat, z)
 
     def encaps(self, public_key, m=None):
         r"""
@@ -558,11 +575,14 @@ class MLKEM(KEMBase):
 
         INPUT:
 
-        - ``public_key`` -- the recipient's public key (bytes)
+        - ``public_key`` -- the recipient's public key, i.e. a tuple
+          ``(rho, t_hat)`` as returned by :meth:`keygen`
         - ``m`` -- optional 32-byte message; if not provided, a fresh
           random message is drawn
 
-        OUTPUT: tuple ``(ciphertext, shared_secret)`` of :class:`bytes`
+        OUTPUT: tuple ``((u, v), K)``, where ``(u, v)`` is the
+        ciphertext (a list of ``k`` elements of ``R`` followed by an
+        element of ``R``) and ``K`` is the 32-byte shared secret.
 
         EXAMPLES::
 
@@ -578,13 +598,12 @@ class MLKEM(KEMBase):
         if len(m) != 32:
             raise ValueError("m must be 32 bytes.")
 
-        ek = public_key
+        rho, t_hat = public_key
+        ek = self._encode_ek(rho, t_hat)
         kr = self._hash_g(m + self._hash_h(ek))
         K, r = kr[:32], kr[32:]
-        c = self._kpke_encrypt(
-            ek, m, r, self.k, self.eta1, self.eta2, self.du, self.dv
-        )
-        return c, K
+        u, v = self._kpke_encrypt(rho, t_hat, m, r, self.k, self.eta1, self.eta2)
+        return (u, v), K
 
     def decaps(self, secret_key, ciphertext):
         r"""
@@ -594,8 +613,9 @@ class MLKEM(KEMBase):
 
         INPUT:
 
-        - ``secret_key`` -- the recipient's secret key (bytes)
-        - ``ciphertext`` -- a ciphertext produced by :meth:`encaps`
+        - ``secret_key`` -- the recipient's secret key, i.e. a tuple
+          ``(s_hat, rho, t_hat, z)`` as returned by :meth:`keygen`
+        - ``ciphertext`` -- a tuple ``(u, v)`` produced by :meth:`encaps`
 
         OUTPUT: 32-byte shared secret
 
@@ -609,23 +629,20 @@ class MLKEM(KEMBase):
             sage: ss1 == ss2
             True
         """
-        dk = secret_key
-        c = ciphertext
-        k = self.k
+        s_hat, rho, t_hat, z = secret_key
+        u, v = ciphertext
 
-        dk_pke = dk[: 384 * k]
-        ek_pke = dk[384 * k : 768 * k + 32]
-        h = dk[768 * k + 32 : 768 * k + 64]
-        z = dk[768 * k + 64 : 768 * k + 96]
+        ek = self._encode_ek(rho, t_hat)
+        h = self._hash_h(ek)
 
-        m_prime = self._kpke_decrypt(dk_pke, c, k, self.du, self.dv)
+        m_prime = self._kpke_decrypt(s_hat, u, v, self.k)
         kr_prime = self._hash_g(m_prime + h)
         K_prime, r_prime = kr_prime[:32], kr_prime[32:]
-        K_bar = self._hash_j(z + c)
 
-        c_prime = self._kpke_encrypt(
-            ek_pke, m_prime, r_prime, k, self.eta1, self.eta2, self.du, self.dv
+        c = self._encode_ct(u, v, self.du, self.dv)
+        u_prime, v_prime = self._kpke_encrypt(
+            rho, t_hat, m_prime, r_prime, self.k, self.eta1, self.eta2
         )
-        if c == c_prime:
+        if c == self._encode_ct(u_prime, v_prime, self.du, self.dv):
             return K_prime
-        return K_bar
+        return self._hash_j(z + c)
