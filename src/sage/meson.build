@@ -95,7 +95,7 @@ no_processing = [
   'typeset',
 ]
 foreach package : no_processing
-  install_subdir(package, install_dir: sage_install_dir)
+  install_subdir(package, install_dir: sage_install_dir, exclude_files: ['meson.build'])
 endforeach
 
 py.install_sources(
@@ -153,17 +153,7 @@ subdir('sat')
 # meson-python maps 'datadir' currently the python prefix, see
 # https://github.com/mesonbuild/meson-python/issues/517
 kernel_dir = get_option('datadir') / 'share/jupyter/kernels/sagemath'
-install_data('ext_data/notebook-ipython/logo.svg', install_dir: kernel_dir)
-install_data('ext_data/notebook-ipython/logo-64x64.png', install_dir: kernel_dir)
-kernel_data = configuration_data()
-kernel_data.set('SAGE_VERSION', meson.project_version())
-configure_file(
-  input: 'ext_data/notebook-ipython/kernel.json.in',
-  output: 'kernel.json',
-  install_dir: kernel_dir,
-  install: true,
-  configuration: kernel_data,
-)
+subdir('repl/ipython_kernel/kernel_spec')
 
 # Record what build-time features (e.g. external package support) were
 # enabled or disabled, and whether or not we should defer detection to
