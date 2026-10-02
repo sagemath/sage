@@ -3809,10 +3809,21 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: Hessenbergize only possible for matrices over a field
+
+        TESTS:
+
+        Modifying the returned matrix does not change the cached
+        Hessenberg form::
+
+            sage: A = matrix(QQ, [[2, 1, 0], [1, 3, 1], [0, 1, 4]])
+            sage: H = A.hessenberg_form()
+            sage: H[0, 0] = 1000
+            sage: A.hessenberg_form().charpoly() == A.charpoly()
+            True
         """
         X = self.fetch('hessenberg_form')
         if X is not None:
-            return X
+            return X.__copy__()
         R = self._base_ring
         if R not in _Fields:
             try:
@@ -3826,7 +3837,7 @@ cdef class Matrix(Matrix1):
             H.hessenbergize()
         # end if
         self.cache('hessenberg_form', H)
-        return H
+        return H.__copy__()
 
     def hessenbergize(self):
         """
@@ -6764,6 +6775,17 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        Modifying the returned sequence does not change the cached
+        eigenspaces::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_left(algebraic_multiplicity=True)
+            sage: _ = E.pop()
+            sage: len(A.eigenspaces_left(algebraic_multiplicity=True))
+            3
+            sage: len(A.eigenspaces_left())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -6783,7 +6805,7 @@ cdef class Matrix(Matrix1):
         x = self.fetch(key)
         if x is not None:
             if algebraic_multiplicity:
-                return x
+                return Sequence(x, universe=x.universe(), cr=True, check=False)
             return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         # Possible improvements:
@@ -6830,7 +6852,7 @@ cdef class Matrix(Matrix1):
         V = Sequence(V, cr=True, check=False)
         self.cache(key, V)
         if algebraic_multiplicity:
-            return V
+            return Sequence(V, universe=V.universe(), cr=True, check=False)
         return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     left_eigenspaces = eigenspaces_left
@@ -7011,6 +7033,17 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        Modifying the returned sequence does not change the cached
+        eigenspaces::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_right(algebraic_multiplicity=True)
+            sage: _ = E.pop()
+            sage: len(A.eigenspaces_right(algebraic_multiplicity=True))
+            3
+            sage: len(A.eigenspaces_right())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -7029,14 +7062,14 @@ cdef class Matrix(Matrix1):
         x = self.fetch(key)
         if x is not None:
             if algebraic_multiplicity:
-                return x
+                return Sequence(x, universe=x.universe(), cr=True, check=False)
             return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         V = self.transpose().eigenspaces_left(format=format, var=var, algebraic_multiplicity=True)
 
         self.cache(key, V)
         if algebraic_multiplicity:
-            return V
+            return Sequence(V, universe=V.universe(), cr=True, check=False)
         return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     right_eigenspaces = eigenspaces_right
@@ -7281,12 +7314,31 @@ cdef class Matrix(Matrix1):
             [-0.3722813232690144?, 5.372281323269015?]
             sage: A._eigenvalues_sage()
             [-0.3722813232690144?, 5.372281323269015?]
+
+        Modifying the returned sequence does not change the cached
+        eigenvalues::
+
+            sage: # needs sage.rings.number_field
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: ev = A.eigenvalues()
+            sage: ev.remove(5)
+            sage: A.eigenvalues()
+            [5, 3, 2]
+            sage: A.eigenvalues(extend=False)
+            [5, 3, 2]
+            sage: B = matrix(GF(7), [[1, 1], [0, 2]])
+            sage: B.set_immutable()
+            sage: ev = B.eigenvalues()
+            sage: ev[0] = 6
+            sage: ev.append(4)
+            sage: B.eigenvalues()
+            [2, 1]
         """
         x = self.fetch('eigenvalues')
         if x is not None:
             if not extend:
-                x = Sequence(i for i in x if i in self.base_ring())
-            return x
+                return Sequence(i for i in x if i in self.base_ring())
+            return Sequence(x, universe=x.universe(), check=False)
 
         if not self.base_ring().is_exact():
             from warnings import warn
@@ -7318,7 +7370,7 @@ cdef class Matrix(Matrix1):
 
         eigenvalues = Sequence(res)
         self.cache('eigenvalues', eigenvalues)
-        return eigenvalues
+        return Sequence(eigenvalues, universe=eigenvalues.universe(), check=False)
 
     def eigenvectors_left(self, other=None, *, extend=True, algorithm=None) -> list:
         r"""
@@ -10926,17 +10978,29 @@ cdef class Matrix(Matrix1):
         that computes the adjugate matrix from the characteristic polynomial.
 
         The result is cached.
+
+        TESTS:
+
+        Modifying the returned matrix does not change the cached
+        adjugate::
+
+            sage: M = Matrix(ZZ, 2, 2, [5, 2, 3, 4])
+            sage: N = M.adjugate()
+            sage: N[0, 0] = 100
+            sage: M.adjugate()
+            [ 4 -2]
+            [-3  5]
         """
         if self._nrows != self._ncols:
             raise ValueError("must be a square matrix")
 
         X = self.fetch('adjugate')
         if X is not None:
-            return X
+            return X.__copy__()
 
         X = self._adjugate()
         self.cache('adjugate', X)
-        return X
+        return X.__copy__()
 
     adjoint_classical = adjugate
 
@@ -15604,12 +15668,28 @@ cdef class Matrix(Matrix1):
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
             True
+
+        Modifying the returned matrices does not change the cached
+        factorization, which :meth:`cholesky` also uses::
+
+            sage: A = matrix(QQ, [[4, 2], [2, 5]])
+            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: L[1, 0] = 100
+            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: P*L*D*L.transpose()*P.transpose() == A
+            True
+            sage: A.cholesky()
+            [2 0]
+            [1 2]
         """
         cdef Py_ssize_t n     # size of the matrices
         cdef Py_ssize_t i, j  # loop indices
         cdef Matrix P, L, D   # output matrices
 
         p, L, d = self._block_ldlt(classical)
+        # Copy "L" so that neither the caller nor the loop below
+        # modifies the cached factorization.
+        L = L.__copy__()
         MS = L.matrix_space()
         P = MS.matrix(lambda i, j: p[j] == i)
 

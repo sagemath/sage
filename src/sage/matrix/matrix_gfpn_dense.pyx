@@ -1702,10 +1702,21 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: M.left_kernel_matrix()
             [0 0 0 0 1 0 0 0 0 0]
             [0 0 0 0 0 0 0 1 0 0]
+
+        TESTS:
+
+        Modifying the returned matrix does not change the cached
+        kernel matrix::
+
+            sage: N = M.left_kernel_matrix()
+            sage: N[0, 0] = 1
+            sage: M.left_kernel_matrix()
+            [0 0 0 0 1 0 0 0 0 0]
+            [0 0 0 0 0 0 0 1 0 0]
         """
         cdef Matrix_gfpn_dense OUT = self.fetch("left_kernel_matrix")
         if OUT is not None:
-            return OUT
+            return OUT.__copy__()
         if self.Data is NULL:
             raise ValueError("The matrix must not be empty")
         sig_on()
@@ -1715,7 +1726,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         OUT = new_mtx(mat, self)
         self.cache("left_kernel_matrix", OUT)
-        return OUT
+        return OUT.__copy__()
 
     cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
