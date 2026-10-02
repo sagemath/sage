@@ -11,7 +11,9 @@ Jason Grout. Since April 2012 it also contains the ISGCI graph database.
 Python Package
 --------------
 
-Installed from https://pypi.org/project/sage-data-graphs/.
+Installed from https://pypi.org/project/sagemath-data-graphs/.
+Source: https://github.com/sagemath/data-graphs/
+
 The Python distribution includes the data and provides an
 ``importlib.resources`` API.
 

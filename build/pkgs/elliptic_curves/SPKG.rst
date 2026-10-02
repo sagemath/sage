@@ -15,7 +15,9 @@ Includes two databases:
 Python Package
 --------------
 
-Installed from https://pypi.org/project/sage-data-elliptic-curves/.
+Installed from https://pypi.org/project/sagemath-data-elliptic-curves/.
+Source: https://github.com/sagemath/data-elliptic-curves/
+
 The Python distribution includes the data and provides an
 ``importlib.resources`` API.
 
