@@ -151,7 +151,7 @@ from IPython.terminal.interactiveshell import TerminalInteractiveShell
 from IPython.terminal.ipapp import IPAppCrashHandler, TerminalIPythonApp
 from traitlets import Bool, Type
 
-from sage.config import get_editable_root
+from sage import config as sage_config
 from sage.repl.configuration import SAGE_EXTENSION, sage_ipython_config
 from sage.repl.preparse import containing_block, preparse
 from sage.repl.prompts import InterfacePrompts
@@ -161,13 +161,16 @@ from sage.repl.prompts import InterfacePrompts
 # the sources for tracebacks.  Meson editable installs use an import hook
 # instead, so add the source root explicitly.  Appending it preserves the
 # editable loader's precedence for imports.
-_editable_root = get_editable_root()
+_get_editable_root = getattr(sage_config, "get_editable_root", None)
+_editable_root = _get_editable_root() if _get_editable_root is not None else None
 if _editable_root is not None:
     _editable_src = str(_editable_root[0] / "src")
     if _editable_src not in sys.path:
         sys.path.append(_editable_src)
     del _editable_src
 del _editable_root
+del _get_editable_root
+del sage_config
 
 # The following functions are part of the stable ABI since python 3.2
 # See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig

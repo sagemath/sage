@@ -4,11 +4,12 @@ import sys
 
 import pytest
 
-from sage.config import get_editable_root
+from sage import config as sage_config
 
 
 def test_cython_traceback_in_editable_install(tmp_path):
-    if get_editable_root() is None:
+    get_editable_root = getattr(sage_config, "get_editable_root", None)
+    if get_editable_root is None or get_editable_root() is None:
         pytest.skip("requires a Meson editable install")
 
     env = os.environ.copy()
@@ -35,3 +36,21 @@ shell.quit()
     )
     assert 'raise ZeroDivisionError("rational division by zero")' in result.stdout
     assert "Could not get source" not in result.stdout
+
+
+def test_import_with_config_without_editable_root(tmp_path):
+    """The interpreter remains importable with an older generated config.py."""
+    env = os.environ.copy()
+    env.pop("PYTHONPATH", None)
+    code = """
+import sage.config
+sage.config.__dict__.pop("get_editable_root", None)
+import sage.repl.interpreter
+"""
+    subprocess.run(
+        [sys.executable, "-c", code],
+        cwd=tmp_path,
+        env=env,
+        check=True,
+        timeout=60,
+    )
