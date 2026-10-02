@@ -3795,6 +3795,8 @@ cdef class Matrix(Matrix1):
         the Hessenberg form will (in general) only be defined over the
         fraction field of the base ring.
 
+        The result is cached, hence immutable.
+
         EXAMPLES::
 
             sage: A = matrix(ZZ, 4, [2, 1, 1, -2, 2, 2, -1, -1, -1,1,2,3,4,5,6,7])
@@ -3812,18 +3814,22 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Modifying the returned matrix does not change the cached
-        Hessenberg form::
+        The cached Hessenberg form cannot be modified::
 
             sage: A = matrix(QQ, [[2, 1, 0], [1, 3, 1], [0, 1, 4]])
             sage: H = A.hessenberg_form()
+            sage: H.is_immutable()
+            True
             sage: H[0, 0] = 1000
-            sage: A.hessenberg_form().charpoly() == A.charpoly()
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.hessenberg_form() is H
             True
         """
         X = self.fetch('hessenberg_form')
         if X is not None:
-            return X.__copy__()
+            return X
         R = self._base_ring
         if R not in _Fields:
             try:
@@ -3836,8 +3842,9 @@ cdef class Matrix(Matrix1):
             H = self.__copy__()
             H.hessenbergize()
         # end if
+        H.set_immutable()
         self.cache('hessenberg_form', H)
-        return H.__copy__()
+        return H
 
     def hessenbergize(self):
         """
@@ -6776,14 +6783,17 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
 
-        Modifying the returned sequence does not change the cached
-        eigenspaces::
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
 
             sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
             sage: E = A.eigenspaces_left(algebraic_multiplicity=True)
-            sage: _ = E.pop()
-            sage: len(A.eigenspaces_left(algebraic_multiplicity=True))
-            3
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
             sage: len(A.eigenspaces_left())
             3
         """
@@ -6805,7 +6815,7 @@ cdef class Matrix(Matrix1):
         x = self.fetch(key)
         if x is not None:
             if algebraic_multiplicity:
-                return Sequence(x, universe=x.universe(), cr=True, check=False)
+                return x
             return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         # Possible improvements:
@@ -6850,9 +6860,10 @@ cdef class Matrix(Matrix1):
                         evec_list = [(space)([m(v_j) for v_j in v]) for v in WB]
                         V.append((ev, space.span_of_basis(evec_list, already_echelonized=True), e))
         V = Sequence(V, cr=True, check=False)
+        V.set_immutable()
         self.cache(key, V)
         if algebraic_multiplicity:
-            return Sequence(V, universe=V.universe(), cr=True, check=False)
+            return V
         return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     left_eigenspaces = eigenspaces_left
@@ -7034,14 +7045,17 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
 
-        Modifying the returned sequence does not change the cached
-        eigenspaces::
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
 
             sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
             sage: E = A.eigenspaces_right(algebraic_multiplicity=True)
-            sage: _ = E.pop()
-            sage: len(A.eigenspaces_right(algebraic_multiplicity=True))
-            3
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
             sage: len(A.eigenspaces_right())
             3
         """
@@ -7062,14 +7076,14 @@ cdef class Matrix(Matrix1):
         x = self.fetch(key)
         if x is not None:
             if algebraic_multiplicity:
-                return Sequence(x, universe=x.universe(), cr=True, check=False)
+                return x
             return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         V = self.transpose().eigenspaces_left(format=format, var=var, algebraic_multiplicity=True)
 
         self.cache(key, V)
         if algebraic_multiplicity:
-            return Sequence(V, universe=V.universe(), cr=True, check=False)
+            return V
         return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     right_eigenspaces = eigenspaces_right
@@ -7091,6 +7105,10 @@ cdef class Matrix(Matrix1):
 
         If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
+
+        With the ``'sage'`` algorithm and ``extend=True`` the result is cached,
+        hence immutable. Use ``list`` or ``sorted`` to get a copy that can be
+        modified.
 
         EXAMPLES::
 
@@ -7315,30 +7333,31 @@ cdef class Matrix(Matrix1):
             sage: A._eigenvalues_sage()
             [-0.3722813232690144?, 5.372281323269015?]
 
-        Modifying the returned sequence does not change the cached
-        eigenvalues::
+        The cached eigenvalues cannot be modified::
 
             sage: # needs sage.rings.number_field
             sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
             sage: ev = A.eigenvalues()
+            sage: ev.is_immutable()
+            True
             sage: ev.remove(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: ev = list(ev)
+            sage: ev.remove(5)
+            sage: ev
+            [3, 2]
             sage: A.eigenvalues()
             [5, 3, 2]
             sage: A.eigenvalues(extend=False)
             [5, 3, 2]
-            sage: B = matrix(GF(7), [[1, 1], [0, 2]])
-            sage: B.set_immutable()
-            sage: ev = B.eigenvalues()
-            sage: ev[0] = 6
-            sage: ev.append(4)
-            sage: B.eigenvalues()
-            [2, 1]
         """
         x = self.fetch('eigenvalues')
         if x is not None:
             if not extend:
                 return Sequence(i for i in x if i in self.base_ring())
-            return Sequence(x, universe=x.universe(), check=False)
+            return x
 
         if not self.base_ring().is_exact():
             from warnings import warn
@@ -7369,8 +7388,9 @@ cdef class Matrix(Matrix1):
                     res.extend([r]*(e*ee))
 
         eigenvalues = Sequence(res)
+        eigenvalues.set_immutable()
         self.cache('eigenvalues', eigenvalues)
-        return Sequence(eigenvalues, universe=eigenvalues.universe(), check=False)
+        return eigenvalues
 
     def eigenvectors_left(self, other=None, *, extend=True, algorithm=None) -> list:
         r"""
@@ -10977,16 +10997,20 @@ cdef class Matrix(Matrix1):
         an inheriting class. Otherwise, use a generic division-free algorithm
         that computes the adjugate matrix from the characteristic polynomial.
 
-        The result is cached.
+        The result is cached, hence immutable.
 
         TESTS:
 
-        Modifying the returned matrix does not change the cached
-        adjugate::
+        The cached adjugate cannot be modified::
 
             sage: M = Matrix(ZZ, 2, 2, [5, 2, 3, 4])
             sage: N = M.adjugate()
+            sage: N.is_immutable()
+            True
             sage: N[0, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
             sage: M.adjugate()
             [ 4 -2]
             [-3  5]
@@ -10996,11 +11020,12 @@ cdef class Matrix(Matrix1):
 
         X = self.fetch('adjugate')
         if X is not None:
-            return X.__copy__()
+            return X
 
         X = self._adjugate()
+        X.set_immutable()
         self.cache('adjugate', X)
-        return X.__copy__()
+        return X
 
     adjoint_classical = adjugate
 

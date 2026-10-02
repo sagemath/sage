@@ -24024,9 +24024,7 @@ class GenericGraph(GenericGraph_pyx):
             M = self.kirchhoff_matrix(vertices=vertices)
         else:
             M = self.adjacency_matrix(vertices=vertices)
-        evals = M.eigenvalues()
-        evals.sort(reverse=True)
-        return evals
+        return sorted(M.eigenvalues(), reverse=True)
 
     def characteristic_polynomial(self, var='x', laplacian=False):
         r"""
