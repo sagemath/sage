@@ -919,19 +919,28 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
 
     allowed_lambda_interval = [low_prec[0] - approx[0], low_prec[1] - approx[0]]
     endpoints = list(itertools.chain.from_iterable(list(itertools.chain.from_iterable(inter_lambda_values))))
-    sorted_endpoints = sorted(endpoints, key=lambda x: (abs(x), x))
-
-    if (allowed_lambda_interval[0] <= sorted_endpoints[0] <= allowed_lambda_interval[1]) \
-            and (allowed_lambda_interval[0] <= sorted_endpoints[1] <= allowed_lambda_interval[1]):
-        if len(sorted_endpoints) == 2:
-            lambd = ceil(abs(sorted_endpoints[1]))+1
-        else:
-            lambd = RealIntervalField(prec=5*precision)(abs(sorted_endpoints[1]), abs(sorted_endpoints[2])).simplest_rational(True,True)
-    else:
+    if not endpoints:
         raise ValueError("Coordinates not precise enough to compute a good intersection line. Consider increasing the precision")
 
-    if len(sorted_endpoints) != 2 and allowed_lambda_interval[0] <= sorted_endpoints[2] <= allowed_lambda_interval[1]:
-        raise ValueError("Isolation box not precise enough to guarantee a single intersection point of the transverse line inside it. Consider increasing the precision")
+    in_critical  = [ep for ep in endpoints if allowed_lambda_interval[0] <= ep <= allowed_lambda_interval[1]]
+    out_critical = [ep for ep in endpoints if not (allowed_lambda_interval[0] <= ep <= allowed_lambda_interval[1])]
+
+    if not in_critical:
+        raise ValueError("Coordinates not precise enough to compute a good intersection line. Consider increasing the precision")
+
+    critical_upper = max(abs(ep) for ep in in_critical)
+    if not out_critical:
+        lambd = ceil(critical_upper) + 1
+    else:
+        other_lower = min(abs(ep) for ep in out_critical)
+        if other_lower <= critical_upper:
+            raise ValueError("Isolation box not precise enough to guarantee a single intersection point of the transverse line inside it. Consider increasing the precision")
+        if critical_upper == 0:
+            # RIF(0, v).simplest_rational(True, True) returns 0 in Sage when the
+            # lower bound is exactly zero; compute the simplest rational in (0, v) directly.
+            lambd = QQ(1) if other_lower >= 1 else QQ(1, floor(QQ(1) / other_lower) + 1)
+        else:
+            lambd = RealIntervalField(prec=(poly.degree()+1)*precision)(critical_upper, other_lower).simplest_rational(True, True)
 
     right_pt = [approx[0] + lambd]
     left_pt = [approx[0] - lambd]
@@ -1117,8 +1126,8 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                 right = list_of_matrices[0]*vector(sigma[:k] + right)
 
                 # Sanity check for the whole procedure
-                if left == 0 or right == 0 or sign(f.subs({variables[i]: left[i] for i in range(n)})) == sign(f.subs({variables[i]: right[i] for i in range(n)})):
-                    raise ValueError("Sanity check failed, something went wrong.")
+                if sign(f.subs({variables[i]: left[i] for i in range(n)})) == sign(f.subs({variables[i]: right[i] for i in range(n)})):
+                    raise ValueError("Sanity check failed. Either the change of variables or the specialisation point was not generic.")
 
                 # Reverting to original coordinates
                 left = inv_permutation(list(left))
