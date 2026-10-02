@@ -1,0 +1,27 @@
+Allow Sage to select its own PARI installation rather than Homebrew's.
+Backport the pari_prefix option from sagemath/cypari2#233, without also
+searching Homebrew when a prefix is explicitly configured.
+
+diff --git a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -45,7 +45,12 @@
+ # Also require shared library, since otherwise every Cython extension would include it's own copy of pari leading to hard-to-debug segmentation faults at runtime
+ pari_header_include_dirs = [] # additional dirs to search for PARI headers
+ pari_lib_dirs = [] # additional dirs to search for the PARI library
+-if host_machine.system() == 'darwin'
++pari_prefix = get_option('pari_prefix')
++if pari_prefix != ''
++  message('PARI prefix: ' + pari_prefix)
++  pari_header_include_dirs += include_directories(pari_prefix + '/include')
++  pari_lib_dirs += [pari_prefix + '/lib']
++elif host_machine.system() == 'darwin'
+   brew = find_program('brew', required: false)
+   if brew.found()
+     brew_prefix = run_command(brew, '--prefix', check: true).stdout().strip()
+diff --git a/meson.options b/meson.options
+new file mode 100644
+--- /dev/null
++++ b/meson.options
+@@ -0,0 +1 @@
++option('pari_prefix', type: 'string', value: '', description: 'location of the PARI installation to build against')
