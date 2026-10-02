@@ -14057,15 +14057,14 @@ cdef class Matrix(Matrix1):
                 C = L.change_ring(F_ac)
         else:
             C = L.__copy__()
+        if C is L:
+            # change_ring() returns the cached (immutable) "L" itself
+            # if the ring did not change, and we are about to modify "C".
+            C = L.__copy__()
 
-        # Overwrite the (strict) upper-triangular part of "C", since a
-        # priori it contains junk after _block_ldlt().
-        zero = C.base_ring().zero()
-        cdef Py_ssize_t i, j  # loop indices
+        cdef Py_ssize_t i  # loop index
         for i in range(n):
             C.rescale_col_c(i, splits[i], 0)
-            for j in range(i+1, n):
-                C.set_unsafe(i, j, zero)
         C.set_immutable()
         self.cache('cholesky', C)
         return C
@@ -15114,8 +15113,7 @@ cdef class Matrix(Matrix1):
           * An array ``p`` of the first `n` natural numbers, permuted
             in a way that represents the `n`-by-`n` permutation matrix
             `P`,
-          * A matrix whose lower-triangular portion is ``L``, but whose
-            (strict) upper-triangular portion is junk,
+          * The matrix ``L``, which is cached and hence immutable,
           * A list of the block-diagonal entries of ``D``.
 
         This is mainly useful to avoid having to "undo" the
@@ -15380,6 +15378,12 @@ cdef class Matrix(Matrix1):
             # We skipped this during the main loop, but it's necessary for
             # correctness.
             A.set_unsafe(i, i, one)
+            # The (strict) upper-triangular part of "A" still holds
+            # junk from the Schur complements, so clear it before "A"
+            # is cached as "L".
+            for j in range(i+1, n):
+                A.set_unsafe(i, j, zero)
+        A.set_immutable()
 
         result = (p, A, d)
         self.cache(cache_string, result)
@@ -15434,6 +15438,8 @@ cdef class Matrix(Matrix1):
           * `L` is unit lower-triangular,
           * `D` is a block-diagonal matrix whose blocks are of size
             one or two.
+
+        The matrix `L` is cached, hence immutable.
 
         With ``classical=True``, the permutation matrix `P` is always
         an identity matrix and the diagonal blocks are always
@@ -15694,43 +15700,49 @@ cdef class Matrix(Matrix1):
             sage: L == l and D == matrix.diagonal(d)
             True
 
-        Modifying the returned matrices does not change the cached
-        factorization, which :meth:`cholesky` also uses::
+        The cached factorization, which :meth:`cholesky` also uses,
+        cannot be modified::
 
             sage: A = matrix(QQ, [[4, 2], [2, 5]])
             sage: P,L,D = A.block_ldlt(classical=True)
+            sage: L.is_immutable()
+            True
             sage: L[1, 0] = 100
-            sage: P,L,D = A.block_ldlt(classical=True)
-            sage: P*L*D*L.transpose()*P.transpose() == A
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.block_ldlt(classical=True)[1] is L
             True
             sage: A.cholesky()
             [2 0]
             [1 2]
+
+        The matrix `D` is a new matrix even when it has only one block::
+
+            sage: A = matrix(QQ, [[3]])
+            sage: P,L,D = A.block_ldlt()
+            sage: D[0, 0] = -100
+            sage: A.block_ldlt()[2]
+            [3]
+            sage: A.is_positive_definite()
+            True
+            sage: matrix(QQ, 0, 0).block_ldlt()
+            ([], [], [])
         """
-        cdef Py_ssize_t n     # size of the matrices
-        cdef Py_ssize_t i, j  # loop indices
         cdef Matrix P, L, D   # output matrices
 
         p, L, d = self._block_ldlt(classical)
-        # Copy "L" so that neither the caller nor the loop below
-        # modifies the cached factorization.
-        L = L.__copy__()
         MS = L.matrix_space()
         P = MS.matrix(lambda i, j: p[j] == i)
 
         # Warning: when n == 0, this works, but returns a matrix
         # whose (nonexistent) entries are in ZZ rather than in
         # the base ring of P and L. Problematic? Who knows.
+        # Copy the blocks, since block_diagonal_matrix() returns (and
+        # subdivides) the block itself when there is only one, and the
+        # blocks belong to the cached factorization.
         from sage.matrix.constructor import block_diagonal_matrix
-        D = block_diagonal_matrix(d)
-
-        # Overwrite the (strict) upper-triangular part of "L", since a
-        # priori it contains the same entries as "A" did after _block_ldlt().
-        n = L._nrows
-        zero = MS.base_ring().zero()
-        for i in range(n):
-            for j in range(i+1, n):
-                L.set_unsafe(i, j, zero)
+        D = block_diagonal_matrix([X.__copy__() for X in d])
 
         return (P, L, D)
 
