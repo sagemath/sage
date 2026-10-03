@@ -26,6 +26,159 @@ optional packages.
 .. include:: index_optional.rst
 
 
+Installing Optional Packages
+----------------------------
+
+To install an optional package, you can use Sage's package management system.
+
+Basic Installation
+~~~~~~~~~~~~~~~~~~
+
+To install an optional package when building Sage from source, enable it
+during configuration and then run ``make``:
+
+.. code-block:: console
+
+    ./configure --enable-<package_name>=yes
+    make
+
+For example, to enable the optional package `bliss`:
+
+.. code-block:: console
+
+    ./configure --enable-bliss=yes
+    make
+
+To see all available configure options:
+
+.. code-block:: console
+
+    ./configure --help
+
+For Python packages that are not part of Sage-the-distribution, use pip:
+
+.. code-block:: console
+
+    ./sage --pip install <package_name>
+
+.. note::
+
+    The legacy ``sage -i`` command is obsolete and should not be used.
+    Use the ``./configure`` and ``make`` approach for Sage packages, and
+    ``./sage --pip install`` for external Python packages.
+
+    If you installed SageMath through Conda, a system package manager, or
+    another distribution, use the package manager of your installation
+    instead (e.g., ``conda install``, ``apt install``, ``brew install``).
+    Some Sage data packages are available on PyPI as ``sage-data-*``
+    packages. For example, to install the Cremona elliptic curve database:
+
+    .. code-block:: console
+
+        python -m pip install sage-data-elliptic-curves
+
+    For instructions specific to your setup, see the
+    `Sage installation guide <https://doc.sagemath.org/html/en/installation/>`_.
+
+Using the Package List
+~~~~~~~~~~~~~~~~~~~~~~
+
+To see a list of all available optional packages, run in a system terminal:
+
+.. code-block:: console
+
+    sage --optional
+
+To list experimental packages instead:
+
+.. code-block:: console
+
+    sage --experimental
+
+For more detailed information on listing packages, including how to list
+pip-installed packages, see the documentation for the
+:mod:`sage.misc.package` module.
+
+Alternatively, inside Sage you can use:
+
+.. code-block:: sage
+
+    from sage.misc.package import list_packages
+    list_packages('optional', local=True)     # Lists optional packages
+    list_packages('experimental', local=True) # Lists experimental packages
+
+.. note::
+
+    Use ``local=True`` to avoid network lookups to PyPI, which may fail
+    for some Sage package names.
+
+Installation from Source
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When installing from source, you can enable specific optional packages
+during the build process. For example, to enable the `bliss` package:
+
+.. code-block:: console
+
+    ./configure --enable-bliss=yes
+    make
+
+To see all available configure options:
+
+.. code-block:: console
+
+    ./configure --help
+
+Pip-Installable Optional Packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some optional SageMath packages can be installed using pip:
+
+.. code-block:: console
+
+    ./sage --pip install <package_name>
+
+For example, to install the `graph-genus` package (which provides faster
+graph genus algorithms):
+
+.. code-block:: console
+
+    ./sage --pip install graph-genus
+
+This method is particularly useful for Python packages that are not
+distributed as standard Sage packages.
+
+Verifying Installation
+~~~~~~~~~~~~~~~~~~~~~~
+
+To verify that an optional package was installed correctly, you can check
+Sage's package records:
+
+.. code-block:: sage
+
+    from sage.misc.package import list_packages
+    pkgs = list_packages('optional', local=True)
+    pkgs['bliss'].is_installed()   # True if installed
+
+To check whether the functionality is actually available, use the
+corresponding ``sage.features`` check. For example, for `bliss`:
+
+.. code-block:: sage
+
+    from sage.features.bliss import Bliss
+    Bliss().is_present()   # True if the feature is available
+
+For instructions on installing optional packages using your system's
+package manager (Homebrew, apt, dnf, etc.), see the individual
+package pages linked below. Each package page includes the correct
+package names for your distribution.
+
+Note
+~~~~
+
+Some optional packages may have additional system dependencies. See 
+:ref:`All External Packages <spkg>` for more information.
+
 Features
 --------
 
