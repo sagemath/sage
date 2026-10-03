@@ -8582,7 +8582,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return val
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
     def longest_cycle(self, induced=False, by_weight=False,
                       weight_function=None, check_weight=True,
                       immutable=None,
@@ -8782,7 +8782,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.longest_cycle(use_edge_labels=True)[0]                          # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42905 for details.
             7
         """
         self._scream_if_not_simple()
@@ -8965,7 +8965,7 @@ class GenericGraph(GenericGraph_pyx):
             best.set_pos({u: pp for u, pp in G.get_pos().items() if u in best})
         return (best_w, best) if by_weight else best
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
     def longest_path(self, s=None, t=None, by_weight=False,
                      weight_function=None, check_weight=True,
                      algorithm='MILP', immutable=None,
@@ -9211,7 +9211,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.longest_path(use_edge_labels=True)[0]                           # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42905 for details.
             6
         """
         self._scream_if_not_simple()
