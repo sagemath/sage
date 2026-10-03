@@ -3795,6 +3795,8 @@ cdef class Matrix(Matrix1):
         the Hessenberg form will (in general) only be defined over the
         fraction field of the base ring.
 
+        The result is cached, hence immutable.
+
         EXAMPLES::
 
             sage: A = matrix(ZZ, 4, [2, 1, 1, -2, 2, 2, -1, -1, -1,1,2,3,4,5,6,7])
@@ -3809,6 +3811,21 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: Hessenbergize only possible for matrices over a field
+
+        TESTS:
+
+        The cached Hessenberg form cannot be modified::
+
+            sage: A = matrix(QQ, [[2, 1, 0], [1, 3, 1], [0, 1, 4]])
+            sage: H = A.hessenberg_form()
+            sage: H.is_immutable()
+            True
+            sage: H[0, 0] = 1000
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.hessenberg_form() is H
+            True
         """
         X = self.fetch('hessenberg_form')
         if X is not None:
@@ -3825,6 +3842,7 @@ cdef class Matrix(Matrix1):
             H = self.__copy__()
             H.hessenbergize()
         # end if
+        H.set_immutable()
         self.cache('hessenberg_form', H)
         return H
 
@@ -6764,6 +6782,20 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_left(algebraic_multiplicity=True)
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: len(A.eigenspaces_left())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -6828,6 +6860,7 @@ cdef class Matrix(Matrix1):
                         evec_list = [(space)([m(v_j) for v_j in v]) for v in WB]
                         V.append((ev, space.span_of_basis(evec_list, already_echelonized=True), e))
         V = Sequence(V, cr=True, check=False)
+        V.set_immutable()
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
@@ -7011,6 +7044,20 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_right(algebraic_multiplicity=True)
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: len(A.eigenspaces_right())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -7058,6 +7105,10 @@ cdef class Matrix(Matrix1):
 
         If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
+
+        With the ``'sage'`` algorithm and ``extend=True`` the result is cached,
+        hence immutable. Use ``list`` or ``sorted`` to get a copy that can be
+        modified.
 
         EXAMPLES::
 
@@ -7281,11 +7332,31 @@ cdef class Matrix(Matrix1):
             [-0.3722813232690144?, 5.372281323269015?]
             sage: A._eigenvalues_sage()
             [-0.3722813232690144?, 5.372281323269015?]
+
+        The cached eigenvalues cannot be modified::
+
+            sage: # needs sage.rings.number_field
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: ev = A.eigenvalues()
+            sage: ev.is_immutable()
+            True
+            sage: ev.remove(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: ev = list(ev)
+            sage: ev.remove(5)
+            sage: ev
+            [3, 2]
+            sage: A.eigenvalues()
+            [5, 3, 2]
+            sage: A.eigenvalues(extend=False)
+            [5, 3, 2]
         """
         x = self.fetch('eigenvalues')
         if x is not None:
             if not extend:
-                x = Sequence(i for i in x if i in self.base_ring())
+                return Sequence(i for i in x if i in self.base_ring())
             return x
 
         if not self.base_ring().is_exact():
@@ -7317,6 +7388,7 @@ cdef class Matrix(Matrix1):
                     res.extend([r]*(e*ee))
 
         eigenvalues = Sequence(res)
+        eigenvalues.set_immutable()
         self.cache('eigenvalues', eigenvalues)
         return eigenvalues
 
@@ -10925,7 +10997,23 @@ cdef class Matrix(Matrix1):
         an inheriting class. Otherwise, use a generic division-free algorithm
         that computes the adjugate matrix from the characteristic polynomial.
 
-        The result is cached.
+        The result is cached, hence immutable.
+
+        TESTS:
+
+        The cached adjugate cannot be modified::
+
+            sage: M = Matrix(ZZ, 2, 2, [5, 2, 3, 4])
+            sage: N = M.adjugate()
+            sage: N.is_immutable()
+            True
+            sage: N[0, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: M.adjugate()
+            [ 4 -2]
+            [-3  5]
         """
         if self._nrows != self._ncols:
             raise ValueError("must be a square matrix")
@@ -10935,6 +11023,7 @@ cdef class Matrix(Matrix1):
             return X
 
         X = self._adjugate()
+        X.set_immutable()
         self.cache('adjugate', X)
         return X
 
@@ -13968,15 +14057,14 @@ cdef class Matrix(Matrix1):
                 C = L.change_ring(F_ac)
         else:
             C = L.__copy__()
+        if C is L:
+            # change_ring() returns the cached (immutable) "L" itself
+            # if the ring did not change, and we are about to modify "C".
+            C = L.__copy__()
 
-        # Overwrite the (strict) upper-triangular part of "C", since a
-        # priori it contains junk after _block_ldlt().
-        zero = C.base_ring().zero()
-        cdef Py_ssize_t i, j  # loop indices
+        cdef Py_ssize_t i  # loop index
         for i in range(n):
             C.rescale_col_c(i, splits[i], 0)
-            for j in range(i+1, n):
-                C.set_unsafe(i, j, zero)
         C.set_immutable()
         self.cache('cholesky', C)
         return C
@@ -15061,8 +15149,7 @@ cdef class Matrix(Matrix1):
           * An array ``p`` of the first `n` natural numbers, permuted
             in a way that represents the `n`-by-`n` permutation matrix
             `P`,
-          * A matrix whose lower-triangular portion is ``L``, but whose
-            (strict) upper-triangular portion is junk,
+          * The matrix ``L``, which is cached and hence immutable,
           * A list of the block-diagonal entries of ``D``.
 
         This is mainly useful to avoid having to "undo" the
@@ -15327,6 +15414,12 @@ cdef class Matrix(Matrix1):
             # We skipped this during the main loop, but it's necessary for
             # correctness.
             A.set_unsafe(i, i, one)
+            # The (strict) upper-triangular part of "A" still holds
+            # junk from the Schur complements, so clear it before "A"
+            # is cached as "L".
+            for j in range(i+1, n):
+                A.set_unsafe(i, j, zero)
+        A.set_immutable()
 
         result = (p, A, d)
         self.cache(cache_string, result)
@@ -15381,6 +15474,8 @@ cdef class Matrix(Matrix1):
           * `L` is unit lower-triangular,
           * `D` is a block-diagonal matrix whose blocks are of size
             one or two.
+
+        The matrix `L` is cached, hence immutable.
 
         With ``classical=True``, the permutation matrix `P` is always
         an identity matrix and the diagonal blocks are always
@@ -15640,9 +15735,36 @@ cdef class Matrix(Matrix1):
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
             True
+
+        The cached factorization, which :meth:`cholesky` also uses,
+        cannot be modified::
+
+            sage: A = matrix(QQ, [[4, 2], [2, 5]])
+            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: L.is_immutable()
+            True
+            sage: L[1, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.block_ldlt(classical=True)[1] is L
+            True
+            sage: A.cholesky()
+            [2 0]
+            [1 2]
+
+        The matrix `D` is a new matrix even when it has only one block::
+
+            sage: A = matrix(QQ, [[3]])
+            sage: P,L,D = A.block_ldlt()
+            sage: D[0, 0] = -100
+            sage: A.block_ldlt()[2]
+            [3]
+            sage: A.is_positive_definite()
+            True
+            sage: matrix(QQ, 0, 0).block_ldlt()
+            ([], [], [])
         """
-        cdef Py_ssize_t n     # size of the matrices
-        cdef Py_ssize_t i, j  # loop indices
         cdef Matrix P, L, D   # output matrices
 
         p, L, d = self._block_ldlt(classical)
@@ -15652,16 +15774,11 @@ cdef class Matrix(Matrix1):
         # Warning: when n == 0, this works, but returns a matrix
         # whose (nonexistent) entries are in ZZ rather than in
         # the base ring of P and L. Problematic? Who knows.
+        # Copy the blocks, since block_diagonal_matrix() returns (and
+        # subdivides) the block itself when there is only one, and the
+        # blocks belong to the cached factorization.
         from sage.matrix.constructor import block_diagonal_matrix
-        D = block_diagonal_matrix(d)
-
-        # Overwrite the (strict) upper-triangular part of "L", since a
-        # priori it contains the same entries as "A" did after _block_ldlt().
-        n = L._nrows
-        zero = MS.base_ring().zero()
-        for i in range(n):
-            for j in range(i+1, n):
-                L.set_unsafe(i, j, zero)
+        D = block_diagonal_matrix([X.__copy__() for X in d])
 
         return (P, L, D)
 
