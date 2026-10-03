@@ -117,6 +117,18 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
         sage: from sage.modular.modform.weight1 import hecke_stable_subspace
         sage: hecke_stable_subspace(DirichletGroup(59, QQ).0)
         [q - q^3 + q^4 - q^5 - q^7 - q^12 + q^15 + q^16 + 2*q^17 - q^19 - q^20 + q^21 + q^27 - q^28 - q^29 + q^35 + O(q^40)]
+
+    The subspace of modular ratios mapped into the ratio space by `T_2` is not
+    always `T_2`-stable, so one must iterate (this used to return a spurious
+    1-dimensional space)::
+
+        sage: chi = [c for c in DirichletGroup(43) if c.order() == 6 and c(-1) == -1][0]
+        sage: hecke_stable_subspace(chi)
+        []
+        sage: Gamma1(43).dimension_cusp_forms(1)
+        0
+        sage: [Gamma1(n).dimension_cusp_forms(1) for n in [61, 67, 79]]  # long time
+        [0, 0, 2]
     """
     # Deal quickly with the easy cases.
     if chi(-1) == 1:
@@ -167,11 +179,19 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     qvecs_trunc = [W(x.padded_list(r)) for x in qexps]
     Tvecs = [W(x.padded_list(r)) for x in Tl_images]
 
-    I = V.submodule(qvecs)
-    Iimage = W.span(qvecs_trunc)
-    TlI = W.span(Tvecs)
-    Jimage = Iimage.intersection(TlI)
-    J = I.Hom(W)(Tvecs).inverse_image(Jimage)
+    # The subspace {f in I : T_l(f) in I} need not itself be T_l-stable, so
+    # we iterate J_{i+1} = {f in J_i : T_l(f) in J_i} until it stabilises;
+    # the limit is the largest T_l-stable subspace of I. (Stopping after the
+    # first step overcounts, e.g. for the order 6 characters mod 43.)
+    I = V.submodule_with_basis(qvecs)
+    trunc = I.Hom(W)(qvecs_trunc)
+    Tl = I.Hom(W)(Tvecs)
+    J = I
+    while True:
+        Jnew = J.intersection(Tl.inverse_image(trunc(J)))
+        if Jnew.rank() == J.rank():
+            break
+        J = Jnew
 
     verbose("Hecke-stable subspace is %s-dimensional" % J.dimension(), t=t, level=1)
 
