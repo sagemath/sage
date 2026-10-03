@@ -90,6 +90,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
+    cysignals_version = (
+        source_dir / "build/pkgs/cysignals/package-version.txt"
+    ).read_text().strip()
+
     def process_platform_python(platform_key, platform_value, python):
         dependencies = get_dependencies(pyproject_toml, python, platform_key)
         for tag in tags:
@@ -133,7 +137,14 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             with open(lock_file_gen, "r+") as f:
                 content = f.read()
                 f.seek(0, 0)
-                f.write(f"name: sage{tag or '-dev'}\n{content}")
+                # Override conda's cysignals after solving its dependencies;
+                # conda-forge does not yet provide Sage's cysignals release.
+                f.write(
+                    f"name: sage{tag or '-dev'}\n{content}"
+                    "  # Use Sage's cysignals release while conda-forge catches up.\n"
+                    "  - pip:\n"
+                    f"    - cysignals=={cysignals_version}\n"
+                )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [

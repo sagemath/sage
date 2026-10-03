@@ -453,3 +453,6 @@ dependencies:
   - zlib-ng=2.3.3=h646e873_1
   - zstandard=0.25.0=py313h4b81b55_2
   - zstd=1.5.7=hbc1a06c_7
+  # Use Sage's cysignals release while conda-forge catches up.
+  - pip:
+    - cysignals==1.13.1
