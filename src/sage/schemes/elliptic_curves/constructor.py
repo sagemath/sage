@@ -77,6 +77,13 @@ class EllipticCurveFactory(UniqueFactory):
       arbitrary commutative ring, although most functionality is only
       implemented over fields.
 
+    For a native additive-group object using a twisted Edwards equation and
+    its complete Edwards addition law, see
+    :class:`~sage.schemes.elliptic_curves.ell_edwards.TwistedEdwardsCurve`.
+    This constructor returns Sage's Weierstrass-based elliptic-curve object,
+    while ``TwistedEdwardsCurve`` preserves Edwards coordinates and
+    operations.
+
     - ``EllipticCurve(j=j0)`` or ``EllipticCurve_from_j(j0)``: Return
       an elliptic curve with `j`-invariant ``j0``.
 

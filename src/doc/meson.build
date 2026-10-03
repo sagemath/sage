@@ -39,7 +39,7 @@ doc_bootstrap = custom_target(
     files('../../tools/bootstrap-docs.py'),
     meson.current_build_dir(),
   ],
-  env: {'SAGE_ROOT': root},
+  env: {'SAGE_ROOT': meson.global_source_root()},
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
   # so let's collect all source-related targets here.
