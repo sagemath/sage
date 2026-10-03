@@ -522,8 +522,10 @@ def symbolic_sum(expression, *args, **kwds):
     Another binomial identity (:issue:`7952`)::
 
         sage: t, k, i = var('t,k,i')
-        sage: sum(binomial(i + t, t), i, 0, k)
-        binomial(k + t + 1, t + 1)
+        sage: s = sum(binomial(i + t, t), i, 0, k); s                                   # random - depends on maxima version
+        binomial(k + t + 1, k)
+        sage: bool(s == binomial(k + t + 1, k))
+        True
 
     Summing a hypergeometric term::
 
