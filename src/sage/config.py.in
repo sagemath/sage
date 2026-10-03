@@ -1,6 +1,8 @@
-from pathlib import Path
-
-import sage
+# In an editable install, these replace what (in a non-editable
+# install) would have been the installation path. The cython()
+# function needs them so that it can locate headers and such.
+MESON_SOURCE_ROOT = r"@MESON_SOURCE_ROOT@"
+MESON_BUILD_ROOT = r"@MESON_BUILD_ROOT@"
 
 VERSION = "@PACKAGE_VERSION@"
 
@@ -51,76 +53,9 @@ rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
 
-def is_editable_install() -> bool:
-    """
-    Check whether this is an editable install of Sage.
 
-    EXAMPLES::
-
-        sage: from sage.config import is_editable_install
-        sage: is_editable_install()
-        False
-    """
-    # This function relies on the fact that meson-python sets up a custom
-    # loader for editable installs
-    # Alternatively, one could use the distribution metadata as in:
-    #  https://github.com/scientific-python/spin/blob/89e581c7201d0f6597ffc92c3e84894f99fc133b/spin/cmds/meson.py#L39
-    return type(sage.__loader__).__module__ == "_sagemath_editable_loader"
-
-
-def get_editable_root() -> tuple[Path, Path] | None:
-    """
-    Return the path to the Sage directory when using an editable
-    install.
-    Both the actual source directory and the build directory are returned, and are
-    guaranteed to exist.
-    If not using an editable install, or if the source/build directories do not
-    exist, return None.
-
-    EXAMPLES::
-
-        sage: from sage.config import get_editable_root
-        sage: get_editable_root() # random
-        (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
-    """
-    if (
-        not is_editable_install()
-        or r"@EDITABLE_SRC@" == ""
-        or r"@EDITABLE_BUILD@" == ""
-    ):
-        return None
-
-    src = Path(r"@EDITABLE_SRC@").resolve()
-    build = Path(r"@EDITABLE_BUILD@").resolve()
-    if src.is_dir() and build.is_dir():
-        return src, build
-    return None
-
-
-def get_include_dirs() -> list[Path]:
-    """
-    Return a list of directories to be used as include directories
-    when compiling Cython extensions that depend on Sage.
-
-    Headers should be included with the prefix "sage/", e.g.,
-    ``#include <sage/cpython/cython_metaclass.h>``.
-
-    EXAMPLES::
-
-        sage: from sage.config import get_include_dirs
-        sage: dirs = get_include_dirs()
-        sage: dirs # random
-        [
-            WindowsPath('<python>/site-packages'),
-            WindowsPath('<path_to_sage>/src'),
-            WindowsPath('<path_to_sage>/build/cp312/src'),
-            WindowsPath('<python>/site-packages/numpy/core/include')
-        ]
-    """
-    dirs: list[Path] = [Path(dir).parent for dir in sage.__path__]
-    editable_root = get_editable_root()
-    if editable_root is not None:
-        # We return both the source and build directory,
-        # because some headers are generated in the build directory.
-        dirs.extend([root / "src" for root in editable_root])
-    return [dir for dir in dirs if dir.is_dir()]
+def get_include_dirs():
+    from sage.misc.superseded import deprecation
+    deprecation(42525, "sage.config.get_include_dirs() has been moved to sage.misc.cython.get_include_dirs()")
+    from sage.misc.cython import get_include_dirs as _gid
+    return _gid()
