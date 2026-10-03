@@ -192,14 +192,10 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
                 0
                 sage: h[2,1].expand(1,0)
                 x0^3
-
-                sage: # Comparing with Sym
                 sage: sym = SymmetricFunctions(QQ)
                 sage: h1 = sym.h()
                 sage: h[2,1].expand(2,0) == h1[2,1].expand(2)
                 True
-
-                sage: # Checking corner cases for elementary
                 sage: e = Sym.e()
                 sage: e[2,1].expand(1,1)
                 x0^2*y0 + 2*x0*y0^2 + y0^3

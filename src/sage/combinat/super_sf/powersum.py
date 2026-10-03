@@ -198,8 +198,6 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
                 0
                 sage: p[2,1].expand(0,1)
                 0
-
-                sage: # Comparing with Sym
                 sage: sym = SymmetricFunctions(QQ)
                 sage: p1 = sym.p()
                 sage: p[2,1].expand(3,0) == p1[2,1].expand(3)
