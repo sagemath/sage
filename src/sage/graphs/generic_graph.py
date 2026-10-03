@@ -8582,7 +8582,9 @@ class GenericGraph(GenericGraph_pyx):
 
         return val
 
-    def longest_cycle(self, induced=False, use_edge_labels=False,
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
+    def longest_cycle(self, induced=False, by_weight=False,
+                      weight_function=None, check_weight=True,
                       immutable=None,
                       solver=None, verbose=0, *, integrality_tolerance=0.001):
         r"""
@@ -8609,11 +8611,19 @@ class GenericGraph(GenericGraph_pyx):
         - ``induced`` -- boolean (default: ``False``); whether to return the
           longest induced cycle or the longest cycle
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a cycle with maximum weight where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or to compute a cycle with the largest
-          possible number of edges (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          cycle with maximum weight where the weight of an edge is defined by
+          its label. Otherwise, compute a cycle with the largest possible
+          number of edges (i.e., edge weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable (di)graph. ``immutable=None`` (default) means that
@@ -8637,8 +8647,8 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT:
 
         A subgraph of ``self`` corresponding to a (directed if ``self`` is
-        directed) longest (induced) cycle. If ``use_edge_labels == True``, a
-        pair ``weight, cycle`` is returned.
+        directed) longest (induced) cycle. If ``by_weight == True``, a pair
+        ``weight, cycle`` is returned.
 
         EXAMPLES:
 
@@ -8677,13 +8687,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_edge(0, 10, 50)
             sage: D.add_edge(11, 1, 1)
             sage: D.add_edge(13, 0, 1)
-            sage: D.longest_cycle(induced=False, use_edge_labels=False)
+            sage: D.longest_cycle(induced=False, by_weight=False)
             longest cycle from Circuit: Digraph on 15 vertices
-            sage: D.longest_cycle(induced=False, use_edge_labels=True)
+            sage: D.longest_cycle(induced=False, by_weight=True)
             (55, longest cycle from Circuit: Digraph on 6 vertices)
-            sage: D.longest_cycle(induced=True, use_edge_labels=False)
+            sage: D.longest_cycle(induced=True, by_weight=False)
             longest induced cycle from Circuit: Digraph on 11 vertices
-            sage: D.longest_cycle(induced=True, use_edge_labels=True)
+            sage: D.longest_cycle(induced=True, by_weight=True)
             (54, longest induced cycle from Circuit: Digraph on 5 vertices)
 
         TESTS:
@@ -8746,35 +8756,49 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_edge(0, 10, 50)
             sage: D.add_edge(11, 1, 1)
             sage: D.add_edge(13, 0, 1)
-            sage: D.longest_cycle(induced=False, use_edge_labels=False, immutable=True).is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=False, immutable=True).is_immutable()
             True
-            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=True)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True, immutable=True)[1].is_immutable()
             True
             sage: D = DiGraph(D, immutable=True)
-            sage: D.longest_cycle(induced=False, use_edge_labels=True)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True)[1].is_immutable()
             True
-            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True, immutable=False)[1].is_immutable()
             False
             sage: # check that https://houseofgraphs.org/graphs/752 has circumference 6:
             sage: Graph('EJ~w', immutable=True).longest_cycle().order()
             6
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, {'w': 1}), (1, 2, {'w': 2}), (0, 2, {'w': 4})])
+            sage: G.longest_cycle(weight_function=lambda e: e[2]['w'])[0]           # needs sage.numerical.mip
+            7
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_cycle(use_edge_labels=True)[0]                          # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42905 for details.
+            7
         """
         self._scream_if_not_simple()
         G = self
         st = f" from {G.name()}" if G.name() else ""
         name = f"longest{' induced' if induced else ''} cycle{st}"
 
-        # Helper functions to manipulate weights
-        if use_edge_labels:
-            def weight(e):
-                return 1 if (len(e) < 3 or e[2] is None) else e[2]
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
+        # Helper function to weigh a subgraph
+        if by_weight:
             def total_weight(gg):
-                return sum(weight(e) for e in gg.edge_iterator())
+                return sum(weight_function(e) for e in gg.edge_iterator())
         else:
-            def weight(e):
-                return 1
-
             def total_weight(gg):
                 return gg.order()
 
@@ -8796,15 +8820,20 @@ class GenericGraph(GenericGraph_pyx):
                 if induced and len(block) < 4:
                     continue
                 h = G.subgraph(vertices=block)
+                # Pass the resolved weight function only when it is used: a
+                # non-None weight_function would turn by_weight on in the
+                # recursive call, which also decides the shape of its result.
                 C = h.longest_cycle(induced=induced,
-                                    use_edge_labels=use_edge_labels,
+                                    by_weight=by_weight,
+                                    weight_function=weight_function if by_weight else None,
+                                    check_weight=False,
                                     immutable=immutable,
                                     solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
                 if total_weight(C) > best_w:
                     best = C
                     best_w = total_weight(C)
-            return (best_w, best) if use_edge_labels else best
+            return (best_w, best) if by_weight else best
 
         # We now know that the graph is biconnected or that the digraph is
         # strongly connected.
@@ -8812,13 +8841,13 @@ class GenericGraph(GenericGraph_pyx):
         if ((induced and G.order() < 4) or
             (not induced and ((directed and G.order() < 2) or
                               (not directed and G.order() < 3)))):
-            if use_edge_labels:
+            if by_weight:
                 return 0, MyGraph(name=name, immutable=immutable)
             return MyGraph(name=name, immutable=immutable)
         if (not induced and ((directed and G.order() == 2) or
                              (not directed and G.order() == 3))):
             answer = MyGraph(G, immutable=immutable, name=name)
-            if use_edge_labels:
+            if by_weight:
                 return total_weight(answer), answer
             return answer
 
@@ -8841,7 +8870,8 @@ class GenericGraph(GenericGraph_pyx):
         edge = p.new_variable(binary=True, name='edge')
 
         # Objective function: maximize the size of the cycle
-        p.set_objective(p.sum(weight(e) * edge[F(e)] for e in G.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * edge[F(e)]
+                              for e in G.edge_iterator()))
 
         # We select as many vertices as edges
         p.add_constraint(p.sum(edge[F(e)] for e in G.edge_iterator())
@@ -8933,9 +8963,11 @@ class GenericGraph(GenericGraph_pyx):
         # We finally set the positions of the vertices and return the result
         if G.get_pos():
             best.set_pos({u: pp for u, pp in G.get_pos().items() if u in best})
-        return (best_w, best) if use_edge_labels else best
+        return (best_w, best) if by_weight else best
 
-    def longest_path(self, s=None, t=None, use_edge_labels=False,
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
+    def longest_path(self, s=None, t=None, by_weight=False,
+                     weight_function=None, check_weight=True,
                      algorithm='MILP', immutable=None,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -8957,11 +8989,19 @@ class GenericGraph(GenericGraph_pyx):
 
           This parameter can only be used when ``algorithm`` is ``'MILP'``.
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a path with maximum weight where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or to compute a path with the longest
-          possible number of edges (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          path with maximum weight where the weight of an edge is defined by
+          its label. Otherwise, compute a path with the longest possible number
+          of edges (i.e., edge weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
           This parameter can only be used when ``algorithm`` is ``'MILP'``.
 
@@ -8972,7 +9012,7 @@ class GenericGraph(GenericGraph_pyx):
 
           * ``'heuristic'`` is a randomized heuristic for finding a long path in
             an unweighted (di)graph. This heuristic does not take into account
-            parameters ``s``, ``t`` and ``use_edge_labels``. An error is raised
+            parameters ``s``, ``t`` and ``by_weight``. An error is raised
             if these parameters are set.
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
@@ -8997,12 +9037,12 @@ class GenericGraph(GenericGraph_pyx):
         .. NOTE::
 
             The length of a path is assumed to be the number of its edges, or
-            the sum of their labels (when ``use_edge_labels == True``).
+            the sum of their labels (when ``by_weight == True``).
 
         OUTPUT:
 
         A subgraph of ``self`` corresponding to a (directed if ``self`` is
-        directed) longest path. If ``use_edge_labels == True``, a pair ``weight,
+        directed) longest path. If ``by_weight == True``, a pair ``weight,
         path`` is returned.
 
         ALGORITHM:
@@ -9067,8 +9107,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u,v in g.edge_iterator(labels=False):
             ....:     g.set_edge_label(u, v, random())
             sage: g2 = 2 * g1
-            sage: lp1 = g1.longest_path(use_edge_labels=True)                           # needs sage.numerical.mip
-            sage: lp2 = g2.longest_path(use_edge_labels=True)                           # needs sage.numerical.mip
+            sage: lp1 = g1.longest_path(by_weight=True)                           # needs sage.numerical.mip
+            sage: lp2 = g2.longest_path(by_weight=True)                           # needs sage.numerical.mip
             sage: lp1[0] == lp2[0]                                                      # needs sage.numerical.mip
             True
 
@@ -9076,11 +9116,11 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: Graph().longest_path()
             Graph on 0 vertices
-            sage: Graph().longest_path(use_edge_labels=True)
+            sage: Graph().longest_path(by_weight=True)
             [0, Graph on 0 vertices]
             sage: graphs.EmptyGraph().longest_path()
             Graph on 0 vertices
-            sage: graphs.EmptyGraph().longest_path(use_edge_labels=True)
+            sage: graphs.EmptyGraph().longest_path(by_weight=True)
             [0, Graph on 0 vertices]
 
         Trivial graphs::
@@ -9089,11 +9129,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_vertex(0)
             sage: G.longest_path()
             Graph on 0 vertices
-            sage: G.longest_path(use_edge_labels=True)
+            sage: G.longest_path(by_weight=True)
             [0, Graph on 0 vertices]
             sage: graphs.CompleteGraph(1).longest_path()
             Graph on 0 vertices
-            sage: graphs.CompleteGraph(1).longest_path(use_edge_labels=True)
+            sage: graphs.CompleteGraph(1).longest_path(by_weight=True)
             [0, Graph on 0 vertices]
 
         Random test for digraphs::
@@ -9128,17 +9168,17 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.longest_path(algorithm='heuristic', s=0)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
             sage: G.longest_path(algorithm='heuristic', t=2)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
-            sage: G.longest_path(algorithm='heuristic', use_edge_labels=True)
+            sage: G.longest_path(algorithm='heuristic', by_weight=True)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
 
         Check the behavior of parameter ``immutable``::
@@ -9147,40 +9187,64 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u,v in g.edge_iterator(labels=False):
             ....:     g.set_edge_label(u, v, random())
             sage: g2 = DiGraph(2 * g1, immutable=True)
-            sage: lp1 = g1.longest_path(use_edge_labels=True)
-            sage: lp2 = g2.longest_path(use_edge_labels=True)
+            sage: lp1 = g1.longest_path(by_weight=True)
+            sage: lp2 = g2.longest_path(by_weight=True)
             sage: lp1[0] == lp2[0]
             True
             sage: not lp1[1].is_immutable() and lp2[1].is_immutable()
             True
-            sage: lp1 = g1.longest_path(use_edge_labels=True, immutable=True)
-            sage: lp2 = g2.longest_path(use_edge_labels=True, immutable=False)
+            sage: lp1 = g1.longest_path(by_weight=True, immutable=True)
+            sage: lp2 = g2.longest_path(by_weight=True, immutable=False)
             sage: lp1[1].is_immutable() and not lp2[1].is_immutable()
             True
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_path(weight_function=lambda e: 2 * e[2])[0]             # needs sage.numerical.mip
+            12
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_path(use_edge_labels=True)[0]                           # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42905 for details.
+            6
         """
         self._scream_if_not_simple()
 
         if algorithm not in ("heuristic", "MILP"):
             raise ValueError("algorithm must be either 'heuristic' or 'MILP'")
         if algorithm == 'heuristic':
-            if s is not None or t is not None or use_edge_labels:
-                raise ValueError("parameters s, t, and use_edge_labels can not "
+            if s is not None or t is not None or by_weight or weight_function is not None:
+                raise ValueError("parameters s, t, and by_weight can not "
                                  "be used in combination with algorithm 'heuristic'")
 
         if immutable is None:
             immutable = self.is_immutable()
 
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
+
         # Quick improvement
         if not self.is_connected():
-            if use_edge_labels:
+            # Pass the resolved weight function only when it is used: a
+            # non-None weight_function would turn by_weight on in the
+            # recursive call, which also decides the shape of its result.
+            if by_weight:
                 return max((g.longest_path(s=s, t=t, immutable=immutable,
-                                           use_edge_labels=use_edge_labels,
+                                           by_weight=True,
+                                           weight_function=weight_function,
+                                           check_weight=False,
                                            algorithm=algorithm)
                             for g in self.connected_components_subgraphs()),
                            key=lambda x: x[0])
 
             return max((g.longest_path(s=s, t=t, immutable=immutable,
-                                       use_edge_labels=use_edge_labels,
                                        algorithm=algorithm)
                         for g in self.connected_components_subgraphs()),
                        key=lambda x: x.order())
@@ -9212,7 +9276,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 from sage.graphs.graph import Graph as MyGraph
             GG = MyGraph(immutable=immutable)
-            return [0, GG] if use_edge_labels else GG
+            return [0, GG] if by_weight else GG
 
         # Calling the heuristic if asked
         if algorithm == "heuristic":
@@ -9228,14 +9292,6 @@ class GenericGraph(GenericGraph_pyx):
         # Epsilon... Must be less than 1/(n+1), but we want to avoid
         # numerical problems...
         epsilon = 1 / (2 * float(self.order()))
-
-        # Associating a weight to a label
-        if use_edge_labels:
-            def weight(x):
-                return x if (x is not None and x != {}) else 1
-        else:
-            def weight(x):
-                return 1
 
         from sage.numerical.mip import MixedIntegerLinearProgram
         p = MixedIntegerLinearProgram(solver=solver)
@@ -9301,8 +9357,8 @@ class GenericGraph(GenericGraph_pyx):
                                  max=0, min=0)
 
             # Defining the objective
-            p.set_objective(p.sum(weight(l) * edge_used[u, v]
-                                  for u, v, l in self.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * edge_used[e[0], e[1]]
+                                  for e in self.edge_iterator()))
         else:
             # We use edge_used[frozenset((u, v))] to avoid having two different
             # variables for edge (u, v)
@@ -9339,8 +9395,8 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(p.sum(edge_used[frozenset((t, u))] for u in self.neighbor_iterator(t)),
                                  max=1, min=1)
             # Defining the objective
-            p.set_objective(p.sum(weight(l) * edge_used[frozenset((u, v))]
-                                  for u, v, l in self.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * edge_used[frozenset((e[0], e[1]))]
+                                  for e in self.edge_iterator()))
 
         # Computing the result. No exception has to be raised, as this
         # problem always has a solution (there is at least one edge,
@@ -9356,8 +9412,8 @@ class GenericGraph(GenericGraph_pyx):
                      if edge_used[frozenset((u, v))])
         g = self.subgraph(vertices=(v for v in self if vertex_used[v]),
                           edges=edges, immutable=immutable)
-        if use_edge_labels:
-            return sum(map(weight, g.edge_labels())), g
+        if by_weight:
+            return sum(weight_function(e) for e in g.edge_iterator()), g
         return g
 
     def hamiltonian_path(self, s=None, t=None, use_edge_labels=False,
