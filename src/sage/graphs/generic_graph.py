@@ -11651,12 +11651,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.CompleteBipartiteGraph(2, 3)
             sage: g.edge_disjoint_paths(0, 1)
             [[0, 2, 1], [0, 3, 1], [0, 4, 1]]
+
+        TESTS:
+
+        There is no path when ``t`` is not reachable from ``s``::
+
+            sage: DiGraph([(0, 1)]).edge_disjoint_paths(1, 0)
+            []
+            sage: Graph([(0, 1), (2, 3)]).edge_disjoint_paths(0, 2)
+            []
         """
         obj, flow_graph = self.flow(s, t, value_only=False, integer=True, by_weight=False,
                                     algorithm=algorithm, solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
 
         paths = []
+        if not obj:
+            return paths
 
         while True:
             path = flow_graph.shortest_path(s, t)
