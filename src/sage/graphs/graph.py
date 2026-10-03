@@ -1561,7 +1561,11 @@ class Graph(GenericGraph):
     # Properties
 
     @doc_index("Graph properties")
-    def is_tree(self, certificate=False, output='vertex'):
+    def is_tree(
+        self,
+        certificate=False,
+        output='vertex'
+    ) -> bool | tuple[bool, list | None]:
         r"""
         Test if the graph is a tree.
 
@@ -1721,7 +1725,7 @@ class Graph(GenericGraph):
         return self.order() == self.size() + 1
 
     @doc_index("Graph properties")
-    def is_forest(self, certificate=False, output='vertex'):
+    def is_forest(self, certificate: bool = False, output='vertex'):
         """
         Test if the graph is a forest, i.e. a disjoint union of trees.
 
@@ -1771,7 +1775,7 @@ class Graph(GenericGraph):
                 return (False, cycle)
 
     @doc_index("Graph properties")
-    def is_cactus(self):
+    def is_cactus(self) -> bool:
         """
         Check whether the graph is cactus graph.
 
@@ -1842,7 +1846,7 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_block_graph(self):
+    def is_block_graph(self) -> bool:
         r"""
         Return whether this graph is a block graph.
 
@@ -1883,7 +1887,7 @@ class Graph(GenericGraph):
         return all(self.is_clique(vertices=block) for block in B)
 
     @doc_index("Graph properties")
-    def is_cograph(self):
+    def is_cograph(self) -> bool:
         """
         Check whether the graph is cograph.
 
@@ -1927,7 +1931,7 @@ class Graph(GenericGraph):
         return self.subgraph_search(P4, induced=True) is None
 
     @doc_index("Graph properties")
-    def is_apex(self):
+    def is_apex(self) -> bool:
         r"""
         Test if the graph is apex.
 
@@ -2185,7 +2189,7 @@ class Graph(GenericGraph):
         return list(apex)
 
     @doc_index("Graph properties")
-    def is_overfull(self):
+    def is_overfull(self) -> bool:
         r"""
         Test whether the current graph is overfull.
 
@@ -2283,7 +2287,7 @@ class Graph(GenericGraph):
             2 * self.size() > max(self.degree()) * (self.order() - 1))
 
     @doc_index("Graph properties")
-    def is_even_hole_free(self, certificate=False):
+    def is_even_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced even hole.
 
@@ -2382,7 +2386,7 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_odd_hole_free(self, certificate=False):
+    def is_odd_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced odd hole.
 
@@ -2453,7 +2457,11 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_triangle_free(self, algorithm='dense_graph', certificate=False):
+    def is_triangle_free(
+        self,
+        algorithm: str = 'dense_graph',
+        certificate: bool = False
+    ) -> bool | tuple[bool, list]:
         r"""
         Check whether ``self`` is triangle-free.
 
@@ -2575,7 +2583,7 @@ class Graph(GenericGraph):
         raise ValueError("Algorithm '%s' not yet implemented. Please contribute." % (algorithm))
 
     @doc_index("Graph properties")
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if the graph is a Split graph, ``False`` otherwise.
 
@@ -2762,7 +2770,7 @@ class Graph(GenericGraph):
         return self_complement.is_odd_hole_free(certificate=certificate)
 
     @doc_index("Graph properties")
-    def is_edge_transitive(self):
+    def is_edge_transitive(self) -> bool:
         r"""
         Check if ``self`` is an edge transitive graph.
 
@@ -2807,7 +2815,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnSets) == self.size()
 
     @doc_index("Graph properties")
-    def is_arc_transitive(self):
+    def is_arc_transitive(self) -> bool:
         r"""
         Check if ``self`` is an arc-transitive graph.
 
@@ -2847,7 +2855,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnTuples) == 2*self.size()
 
     @doc_index("Graph properties")
-    def is_half_transitive(self):
+    def is_half_transitive(self) -> bool:
         """
         Check if ``self`` is a half-transitive graph.
 
@@ -2884,7 +2892,7 @@ class Graph(GenericGraph):
                 not self.is_arc_transitive())
 
     @doc_index("Graph properties")
-    def is_semi_symmetric(self):
+    def is_semi_symmetric(self) -> bool:
         """
         Check if ``self`` is semi-symmetric.
 
@@ -2927,7 +2935,7 @@ class Graph(GenericGraph):
                 self.is_vertex_transitive())
 
     @doc_index("Graph properties")
-    def is_path(self):
+    def is_path(self) -> bool:
         r"""
         Check whether ``self`` is a path.
 
@@ -2980,7 +2988,7 @@ class Graph(GenericGraph):
         return deg_one_counter == 2 and seen_counter == order
 
     @doc_index("Graph properties")
-    def is_chordal_bipartite(self, certificate=False):
+    def is_chordal_bipartite(self, certificate=False) -> bool | tuple:
         r"""
         Check whether the given graph is chordal bipartite.
 
@@ -7560,7 +7568,7 @@ class Graph(GenericGraph):
         return list(core.values())
 
     @doc_index("Modules")
-    def is_module(self, vertices):
+    def is_module(self, vertices) -> bool:
         r"""
         Check whether ``vertices`` is a module of ``self``.
 
