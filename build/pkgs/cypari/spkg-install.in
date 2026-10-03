@@ -1,1 +1,9 @@
-cd src && sdh_pip_install .
+cd src
+
+# Meson's Homebrew search otherwise takes precedence over SAGE_LOCAL.
+# Use the PARI installation selected by configure.
+if [ -n "$SAGE_PARI_PREFIX" ]; then
+    sdh_pip_install -C "setup-args=-Dpari_prefix=$SAGE_PARI_PREFIX" .
+else
+    sdh_pip_install .
+fi
