@@ -1,9 +1,13 @@
 "Flatten nested lists"
 
+from __future__ import annotations
+
 import sys
+from typing import Any
 
 
-def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
+def flatten(in_list: Any, ltypes: tuple[type, ...] = (list, tuple),
+            max_level: int = sys.maxsize) -> list[Any]:
     """
     Flatten a nested list.
 
