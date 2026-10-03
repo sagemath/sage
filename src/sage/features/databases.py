@@ -16,8 +16,45 @@ Features for testing the presence of various databases
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import atexit
+from contextlib import ExitStack
+from functools import cache
+from importlib.resources import as_file, files
+
 from sage.env import sage_data_paths
 from sage.features import PythonModule, StaticFile
+
+# Keep extracted resources alive for callers that retain filenames or open
+# database connections. With installed wheels, as_file uses the original path.
+_data_resource_contexts = ExitStack()
+atexit.register(_data_resource_contexts.close)
+
+
+@cache
+def _packaged_data_path(package, subdirectory):
+    """
+    Return a packaged data directory, retaining any temporary extraction.
+    """
+    try:
+        resource = files(package).joinpath(subdirectory)
+    except ModuleNotFoundError:
+        return None
+    return str(_data_resource_contexts.enter_context(as_file(resource)))
+
+
+def _data_search_path(name, override, package, subdirectory=""):
+    """
+    Search legacy data directories before the packaged resources.
+
+    An explicit directory override remains authoritative.
+    """
+    if override:
+        return override
+    paths = list(sage_data_paths(name))
+    packaged_path = _packaged_data_path(package, subdirectory)
+    if packaged_path is not None:
+        paths.append(packaged_path)
+    return paths
 
 
 class DatabaseCremona(StaticFile):
@@ -51,7 +88,7 @@ class DatabaseCremona(StaticFile):
         """
         from sage.env import CREMONA_LARGE_DATA_DIR, CREMONA_MINI_DATA_DIR
 
-        CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
+        CREMONA_DATA_DIRS = {CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR}
         CREMONA_DATA_DIRS.discard(None)
         search_path = CREMONA_DATA_DIRS or sage_data_paths("cremona")
 
@@ -60,6 +97,10 @@ class DatabaseCremona(StaticFile):
         if name == "cremona_mini":
             spkg = "elliptic_curves"
             spkg_type = "standard"
+            if not CREMONA_DATA_DIRS:
+                search_path = _data_search_path(
+                    "cremona", None, "sage_data_elliptic_curves.data", "cremona"
+                )
 
         StaticFile.__init__(
             self,
@@ -95,7 +136,9 @@ class DatabaseEllcurves(StaticFile):
         """
         from sage.env import ELLCURVE_DATA_DIR
 
-        search_path = ELLCURVE_DATA_DIR or sage_data_paths("ellcurves")
+        search_path = _data_search_path(
+            "ellcurves", ELLCURVE_DATA_DIR, "sage_data_elliptic_curves.data", "ellcurves"
+        )
 
         StaticFile.__init__(
             self,
@@ -130,7 +173,9 @@ class DatabaseGraphs(StaticFile):
         """
         from sage.env import GRAPHS_DATA_DIR
 
-        search_path = GRAPHS_DATA_DIR or sage_data_paths("graphs")
+        search_path = _data_search_path(
+            "graphs", GRAPHS_DATA_DIR, "sage_data_graphs.data"
+        )
 
         StaticFile.__init__(
             self,
@@ -288,6 +333,10 @@ class DatabaseReflexivePolytopes(StaticFile):
         dirname = "Full3d"
         if name == "polytopes_db_4d":
             dirname = "Hodge4d"
+        else:
+            search_path = _data_search_path(
+                "reflexive_polytopes", POLYTOPE_DATA_DIR, "sage_data_polytopes", "data"
+            )
 
         StaticFile.__init__(self, name, filename=dirname, search_path=search_path)
 

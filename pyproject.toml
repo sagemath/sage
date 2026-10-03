@@ -67,6 +67,9 @@ dependencies = [
   'primecountpy; sys_platform != "win32"',
   'ptyprocess > 0.5',
   'requests >=2.13.0',
+  'sagemath-data-elliptic-curves >=0.8.2',
+  'sagemath-data-graphs >=20210214.1',
+  'sagemath-data-polytopes >=20170220.1',
   'scipy >=1.11',
   'sphinx >=9.1, <10',
   'sympy >=1.6, <2.0',
@@ -177,9 +180,6 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/sagemath-elliptic-curves",
-  "pkg:generic/sagemath-graphs",
-  "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/tachyon",
 ]
 

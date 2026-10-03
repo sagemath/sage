@@ -1,0 +1,1 @@
+sagemath-data-elliptic-curves >=0.8.2

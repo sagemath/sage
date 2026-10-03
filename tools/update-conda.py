@@ -35,11 +35,19 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
+pypi_data_packages = {
+    "sagemath-data-elliptic-curves",
+    "sagemath-data-graphs",
+    "sagemath-data-polytopes",
+}
+
 pythons = ["3.12", "3.13", "3.14"]
 tags = [""]
 
 
-def write_env_file(env_file: Path, dependencies: list[str]) -> None:
+def write_env_file(
+    env_file: Path, dependencies: list[str], pip_dependencies: list[str]
+) -> None:
     env_file.write_text(
         """name: sage
 channels:
@@ -48,6 +56,8 @@ channels:
 dependencies:
 """
         + "".join(f"  - {req}" + "\n" for req in dependencies)
+        + "  - pip:\n"
+        + "".join(f"    - {req}\n" for req in pip_dependencies)
     )
     print(f"Conda environment file written to {env_file}")
 
@@ -92,6 +102,13 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
 
     def process_platform_python(platform_key, platform_value, python):
         dependencies = get_dependencies(pyproject_toml, python, platform_key)
+        with pyproject_toml.open("rb") as f:
+            project = tomllib.load(f)
+        pip_dependencies = sorted(
+            requirement
+            for requirement in project["project"]["dependencies"]
+            if Requirement(requirement).name in pypi_data_packages
+        )
         for tag in tags:
             # Pin Python version
             pinned_dependencies = {
@@ -101,7 +118,7 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             pinned_dependencies = sorted(pinned_dependencies)
 
             env_file = source_dir / f"environment{tag}-{python}.yml"
-            write_env_file(env_file, pinned_dependencies)
+            write_env_file(env_file, pinned_dependencies, pip_dependencies)
             lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
             lock_file_gen = (
                 source_dir / f"environment{tag}-{python}-{platform_value}.yml"
@@ -169,9 +186,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
-        .replace("pkg:generic/sagemath-elliptic-curves", "sagemath-db-elliptic-curves")
-        .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
-        .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
         .replace("pkg:generic/highs", "highs")
         .replace("pkg:generic/libatomic_ops", "libatomic_ops")
@@ -187,6 +201,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
         "cibuildwheel",  # fails pip check since it claims to require the PyPI package patchelf which is not available on conda-forge yet (however, it just needs a patchelf which is installed from conda-forge already.)
     }
+    exclude_packages |= pypi_data_packages
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
             "4ti2",
