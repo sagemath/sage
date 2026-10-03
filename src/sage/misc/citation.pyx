@@ -71,9 +71,9 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
+        sage: integrate(x^2, x)  # Priming coercion model
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
+        sage: get_systems('integrate(x^2, x)')
         ['Maxima', 'ginac']
     """
     import cProfile

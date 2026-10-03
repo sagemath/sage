@@ -56,8 +56,16 @@ unsigned log2(unsigned n)
  *  the static flyweights on the heap. */
 int library_init::count = 0;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wuninitialized"
+// These objects deliberately reserve static storage and are reconstructed
+// with placement new by library_init.  Their self-initializers must not call
+// ex::ex(), which depends on the very flyweights being initialized here.
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wuninitialized"
+#elif defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 // static numeric -120
 const numeric *_num_120_p;
 const ex _ex_120 = _ex_120;
@@ -294,7 +302,11 @@ const ex _ex120 = _ex120;
 // static numeric 144
 const numeric *_num144_p;
 const ex _ex144 = _ex144;
-#pragma clang diagnostic pop
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#elif defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif
 
 /** Ctor of static initialization helpers.  The fist call to this is going
  *  to initialize the library, the others do nothing. */

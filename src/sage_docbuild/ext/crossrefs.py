@@ -116,10 +116,11 @@ def set_intersphinx_mappings(app, config):
     if app.config.multidoc_first_pass == 1 or not os.path.exists(invpath):
         return
 
-    install_path = os.path.join(SAGE_DOC, "html", "en", "installation")
-    install_inv = os.path.join(SAGE_DOC, "inventory", "en", "installation", "objects.inv")
-    if os.path.exists(install_inv):
-        app.config.intersphinx_mapping['installation'] = (install_path, install_inv)
+    for manual in ('developer', 'installation'):
+        manual_path = os.path.join(SAGE_DOC, "html", "en", manual)
+        manual_inv = os.path.join(SAGE_DOC, "inventory", "en", manual, "objects.inv")
+        if os.path.exists(manual_inv):
+            app.config.intersphinx_mapping[manual] = (manual_path, manual_inv)
 
     app.config.intersphinx_mapping.update({key: _intersphinx_mapping(key)
                                            for key in _intersphinx_targets})

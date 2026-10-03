@@ -13,14 +13,12 @@ AUTHOR:
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 2 of the License, or
 #  (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 # *****************************************************************************
-
 
 from sage.misc.latex import latex
 from sage.matrix.special import identity_matrix
 
-from sage.categories.modules import Modules
 from sage.categories.ore_modules import OreModules
 from sage.categories.homsets import Homsets
 from sage.categories.drinfeld_modules import DrinfeldModules

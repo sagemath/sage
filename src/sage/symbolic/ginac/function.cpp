@@ -40,17 +40,52 @@
 #include "cmatcher.h"
 #include "wildcard.h"
 #include "expairseq.h"
+#include "pyobject_ptr.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <stdexcept>
 #include <list>
 #include <limits>
+#include <type_traits>
 #ifdef DO_GINAC_ASSERT
 #  include <typeinfo>
 #endif
 
 namespace GiNaC {
+
+namespace {
+
+using internal::pyobject_ptr;
+
+// function_options predates type-safe callable wrappers and stores callbacks
+// with several signatures in a no-argument function-pointer field.  C++
+// guarantees that converting a function pointer to another function-pointer
+// type and back recovers the original value.  Keep that type-erasure boundary
+// here, and make every call site state the exact type it restores.
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
+template <typename To, typename From>
+To callback_cast(From callback) noexcept
+{
+	static_assert(std::is_pointer<To>::value,
+	              "callback destination must be a pointer");
+	static_assert(std::is_function<typename std::remove_pointer<To>::type>::value,
+	              "callback destination must be a function pointer");
+	static_assert(std::is_pointer<From>::value,
+	              "callback source must be a pointer");
+	static_assert(std::is_function<typename std::remove_pointer<From>::type>::value,
+	              "callback source must be a function pointer");
+	return reinterpret_cast<To>(callback);
+}
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
+} // namespace
 
 //////////
 // helper class function_options
@@ -132,28 +167,28 @@ function_options & function_options::latex_name(std::string const & tn)
 function_options & function_options::eval_func(eval_funcp_1 e)
 {
 	test_and_set_nparams(1);
-	eval_f = eval_funcp(e);
+	eval_f = callback_cast<eval_funcp>(e);
         pynac_eval_f = eval_f;
 	return *this;
 }
 function_options & function_options::eval_func(eval_funcp_2 e)
 {
 	test_and_set_nparams(2);
-	eval_f = eval_funcp(e);
+	eval_f = callback_cast<eval_funcp>(e);
         pynac_eval_f = eval_f;
 	return *this;
 }
 function_options & function_options::eval_func(eval_funcp_3 e)
 {
 	test_and_set_nparams(3);
-	eval_f = eval_funcp(e);
+	eval_f = callback_cast<eval_funcp>(e);
         pynac_eval_f = eval_f;
 	return *this;
 }
 function_options & function_options::eval_func(eval_funcp_6 e)
 {
 	test_and_set_nparams(6);
-	eval_f = eval_funcp(e);
+	eval_f = callback_cast<eval_funcp>(e);
         pynac_eval_f = eval_f;
 	return *this;
 }
@@ -161,183 +196,183 @@ function_options & function_options::eval_func(eval_funcp_6 e)
 function_options & function_options::evalf_func(evalf_funcp_1 ef)
 {
 	test_and_set_nparams(1);
-	evalf_f = evalf_funcp(ef);
+	evalf_f = callback_cast<evalf_funcp>(ef);
 	return *this;
 }
 function_options & function_options::evalf_func(evalf_funcp_2 ef)
 {
 	test_and_set_nparams(2);
-	evalf_f = evalf_funcp(ef);
+	evalf_f = callback_cast<evalf_funcp>(ef);
 	return *this;
 }
 function_options & function_options::evalf_func(evalf_funcp_3 ef)
 {
 	test_and_set_nparams(3);
-	evalf_f = evalf_funcp(ef);
+	evalf_f = callback_cast<evalf_funcp>(ef);
 	return *this;
 }
 function_options & function_options::evalf_func(evalf_funcp_6 ef)
 {
 	test_and_set_nparams(6);
-	evalf_f = evalf_funcp(ef);
+	evalf_f = callback_cast<evalf_funcp>(ef);
 	return *this;
 }
 
 function_options & function_options::conjugate_func(conjugate_funcp_1 c)
 {
 	test_and_set_nparams(1);
-	conjugate_f = conjugate_funcp(c);
+	conjugate_f = callback_cast<conjugate_funcp>(c);
 	return *this;
 }
 function_options & function_options::conjugate_func(conjugate_funcp_2 c)
 {
 	test_and_set_nparams(2);
-	conjugate_f = conjugate_funcp(c);
+	conjugate_f = callback_cast<conjugate_funcp>(c);
 	return *this;
 }
 function_options & function_options::conjugate_func(conjugate_funcp_3 c)
 {
 	test_and_set_nparams(3);
-	conjugate_f = conjugate_funcp(c);
+	conjugate_f = callback_cast<conjugate_funcp>(c);
 	return *this;
 }
 
 function_options & function_options::real_part_func(real_part_funcp_1 c)
 {
 	test_and_set_nparams(1);
-	real_part_f = real_part_funcp(c);
+	real_part_f = callback_cast<real_part_funcp>(c);
 	return *this;
 }
 function_options & function_options::real_part_func(real_part_funcp_2 c)
 {
 	test_and_set_nparams(2);
-	real_part_f = real_part_funcp(c);
+	real_part_f = callback_cast<real_part_funcp>(c);
 	return *this;
 }
 function_options & function_options::real_part_func(real_part_funcp_3 c)
 {
 	test_and_set_nparams(3);
-	real_part_f = real_part_funcp(c);
+	real_part_f = callback_cast<real_part_funcp>(c);
 	return *this;
 }
 
 function_options & function_options::imag_part_func(imag_part_funcp_1 c)
 {
 	test_and_set_nparams(1);
-	imag_part_f = imag_part_funcp(c);
+	imag_part_f = callback_cast<imag_part_funcp>(c);
 	return *this;
 }
 function_options & function_options::imag_part_func(imag_part_funcp_2 c)
 {
 	test_and_set_nparams(2);
-	imag_part_f = imag_part_funcp(c);
+	imag_part_f = callback_cast<imag_part_funcp>(c);
 	return *this;
 }
 function_options & function_options::imag_part_func(imag_part_funcp_3 c)
 {
 	test_and_set_nparams(3);
-	imag_part_f = imag_part_funcp(c);
+	imag_part_f = callback_cast<imag_part_funcp>(c);
 	return *this;
 }
 
 function_options & function_options::derivative_func(derivative_funcp_1 d)
 {
 	test_and_set_nparams(1);
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 function_options & function_options::derivative_func(derivative_funcp_2 d)
 {
 	test_and_set_nparams(2);
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 function_options & function_options::derivative_func(derivative_funcp_3 d)
 {
 	test_and_set_nparams(3);
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 function_options & function_options::derivative_func(derivative_funcp_6 d)
 {
 	test_and_set_nparams(6);
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 
 function_options & function_options::expl_derivative_func(expl_derivative_funcp_1 d)
 {
 	test_and_set_nparams(1);
-	expl_derivative_f = expl_derivative_funcp(d);
+	expl_derivative_f = callback_cast<expl_derivative_funcp>(d);
 	return *this;
 }
 function_options & function_options::expl_derivative_func(expl_derivative_funcp_2 d)
 {
 	test_and_set_nparams(2);
-	expl_derivative_f = expl_derivative_funcp(d);
+	expl_derivative_f = callback_cast<expl_derivative_funcp>(d);
 	return *this;
 }
 function_options & function_options::expl_derivative_func(expl_derivative_funcp_3 d)
 {
 	test_and_set_nparams(3);
-	expl_derivative_f = expl_derivative_funcp(d);
+	expl_derivative_f = callback_cast<expl_derivative_funcp>(d);
 	return *this;
 }
 
 function_options & function_options::power_func(power_funcp_1 d)
 {
 	test_and_set_nparams(1);
-	power_f = power_funcp(d);
+	power_f = callback_cast<power_funcp>(d);
 	return *this;
 }
 function_options & function_options::power_func(power_funcp_2 d)
 {
 	test_and_set_nparams(2);
-	power_f = power_funcp(d);
+	power_f = callback_cast<power_funcp>(d);
 	return *this;
 }
 function_options & function_options::power_func(power_funcp_3 d)
 {
 	test_and_set_nparams(3);
-	power_f = power_funcp(d);
+	power_f = callback_cast<power_funcp>(d);
 	return *this;
 }
 
 function_options & function_options::series_func(series_funcp_1 s)
 {
 	test_and_set_nparams(1);
-	series_f = series_funcp(s);
+	series_f = callback_cast<series_funcp>(s);
 	return *this;
 }
 function_options & function_options::series_func(series_funcp_2 s)
 {
 	test_and_set_nparams(2);
-	series_f = series_funcp(s);
+	series_f = callback_cast<series_funcp>(s);
 	return *this;
 }
 function_options & function_options::series_func(series_funcp_3 s)
 {
 	test_and_set_nparams(3);
-	series_f = series_funcp(s);
+	series_f = callback_cast<series_funcp>(s);
 	return *this;
 }
 
 function_options & function_options::subs_func(subs_funcp_1 s)
 {
 	test_and_set_nparams(1);
-	subs_f = subs_funcp(s);
+	subs_f = callback_cast<subs_funcp>(s);
 	return *this;
 }
 function_options & function_options::subs_func(subs_funcp_2 s)
 {
 	test_and_set_nparams(2);
-	subs_f = subs_funcp(s);
+	subs_f = callback_cast<subs_funcp>(s);
 	return *this;
 }
 function_options & function_options::subs_func(subs_funcp_3 s)
 {
 	test_and_set_nparams(3);
-	subs_f = subs_funcp(s);
+	subs_f = callback_cast<subs_funcp>(s);
 	return *this;
 }
 
@@ -346,51 +381,51 @@ function_options & function_options::subs_func(subs_funcp_3 s)
 function_options& function_options::eval_func(eval_funcp_exvector e)
 {
 	eval_use_exvector_args = true;
-	eval_f = eval_funcp(e);
+	eval_f = callback_cast<eval_funcp>(e);
         pynac_eval_f = eval_f;
 	return *this;
 }
 function_options& function_options::evalf_func(evalf_funcp_exvector ef)
 {
 	evalf_use_exvector_args = true;
-	evalf_f = evalf_funcp(ef);
+	evalf_f = callback_cast<evalf_funcp>(ef);
 	return *this;
 }
 function_options& function_options::conjugate_func(conjugate_funcp_exvector c)
 {
 	conjugate_use_exvector_args = true;
-	conjugate_f = conjugate_funcp(c);
+	conjugate_f = callback_cast<conjugate_funcp>(c);
 	return *this;
 }
 function_options& function_options::real_part_func(real_part_funcp_exvector c)
 {
 	real_part_use_exvector_args = true;
-	real_part_f = real_part_funcp(c);
+	real_part_f = callback_cast<real_part_funcp>(c);
 	return *this;
 }
 function_options& function_options::imag_part_func(imag_part_funcp_exvector c)
 {
 	imag_part_use_exvector_args = true;
-	imag_part_f = imag_part_funcp(c);
+	imag_part_f = callback_cast<imag_part_funcp>(c);
 	return *this;
 }
 
 function_options& function_options::derivative_func(derivative_funcp_exvector d)
 {
 	derivative_use_exvector_args = true;
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 function_options& function_options::power_func(power_funcp_exvector d)
 {
 	power_use_exvector_args = true;
-	power_f = power_funcp(d);
+	power_f = callback_cast<power_funcp>(d);
 	return *this;
 }
 function_options& function_options::series_func(series_funcp_exvector s)
 {
 	series_use_exvector_args = true;
-	series_f = series_funcp(s);
+	series_f = callback_cast<series_funcp>(s);
 	return *this;
 }
 
@@ -398,7 +433,7 @@ function_options& function_options::derivative_func(
 		derivative_funcp_exvector_symbol d)
 {
 	derivative_use_exvector_args = true;
-	derivative_f = derivative_funcp(d);
+	derivative_f = callback_cast<derivative_funcp>(d);
 	return *this;
 }
 
@@ -645,14 +680,15 @@ function::function(const archive_node &n, lst &sym_lst) : inherited(n, sym_lst)
 		if (!n.find_string("pickle", s))
 			throw std::runtime_error("function::function archive error: cannot read pickled function");
 		// unpickle
-		PyObject* arg = Py_BuildValue("s#",s.c_str(), s.size());
-		PyObject* sfunc = py_funcs.py_loads(arg);
-		Py_DECREF(arg);
-		if (PyErr_Occurred() != nullptr) {
+		pyobject_ptr arg(Py_BuildValue("s#", s.c_str(), s.size()));
+		if (!arg)
+			throw std::runtime_error("function::function archive error: cannot create pickle argument");
+		pyobject_ptr sfunc(py_funcs.py_loads(arg.get()));
+		if (!sfunc || PyErr_Occurred() != nullptr) {
 		    throw(std::runtime_error("function::function archive error: caught exception in py_loads"));
 		}
 		// get the serial of the new SFunction
-		unsigned int ser = py_funcs.py_get_serial_from_sfunction(sfunc);
+		unsigned int ser = py_funcs.py_get_serial_from_sfunction(sfunc.get());
 		if (PyErr_Occurred() != nullptr) {
 		    throw(std::runtime_error("function::function archive error: cannot get serial from SFunction"));
 		}
@@ -706,18 +742,17 @@ void function::archive(archive_node &n) const
 	if (python_func != 0u) {
 		n.add_unsigned("python", python_func);
 		// find the corresponding SFunction object
-		PyObject* sfunc = py_funcs.py_get_sfunction_from_serial(serial);
-		if (PyErr_Occurred() != nullptr) {
+		pyobject_ptr sfunc(py_funcs.py_get_sfunction_from_serial(serial));
+		if (!sfunc || PyErr_Occurred() != nullptr) {
 		    throw(std::runtime_error("function::archive cannot get serial from SFunction"));
 		}
 		// call python to pickle it
-		std::string* pickled = py_funcs.py_dumps(sfunc);
-		if (PyErr_Occurred() != nullptr) {
+		std::unique_ptr<std::string> pickled(py_funcs.py_dumps(sfunc.get()));
+		if (!pickled || PyErr_Occurred() != nullptr) {
 		    throw(std::runtime_error("function::archive py_dumps raised exception"));
 		}
 		// store the pickle in the archive
 		n.add_string("pickle", *pickled);
-		delete pickled;
 	} else {
 		n.add_unsigned("python", 0);
 		n.add_string("name", registered_functions()[serial].name);
@@ -737,22 +772,24 @@ void function::print(const print_context & c, unsigned level) const
 	const print_context_class_info *pc_info = &c.get_class_info();
 	if (serial >= static_cast<unsigned>(py_funcs.py_get_ginac_serial())) {
 		//convert arguments to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::print(): cannot convert arguments to Python");
 
-		std::string* sout;
+		std::unique_ptr<std::string> sout;
 		if (is_a<print_latex>(c)) {
-			sout = py_funcs.py_latex_function(serial, args);
-                        if (PyErr_Occurred() != nullptr) {
-                                throw(std::runtime_error("function::print(): python print function raised exception"));
-                        }
+			sout.reset(py_funcs.py_latex_function(serial, args.get()));
+				if (!sout || PyErr_Occurred() != nullptr) {
+					throw(std::runtime_error("function::print(): python print function raised exception"));
+				}
                         c.s << *sout;
                         c.s.flush();
 		}
 		else if (is_a<print_tree>(c)) {
-			sout = py_funcs.py_print_function(serial, args);
-                        if (PyErr_Occurred() != nullptr) {
-                                throw(std::runtime_error("function::print(): python print function raised exception"));
-                        }
+			sout.reset(py_funcs.py_print_function(serial, args.get()));
+				if (!sout || PyErr_Occurred() != nullptr) {
+					throw(std::runtime_error("function::print(): python print function raised exception"));
+				}
                         std::string fname = sout->substr(0, sout->find_first_of('('));
 			c.s << std::string(level, ' ') << class_name() << " "
 			    << fname << " @" << this << ", serial=" << serial
@@ -765,33 +802,36 @@ void function::print(const print_context & c, unsigned level) const
 			c.s << std::string(level + delta_indent, ' ') << "=====" << std::endl;
 		}
                 else {
-			sout = py_funcs.py_print_function(serial, args);
-                        if (PyErr_Occurred() != nullptr) {
-                                throw(std::runtime_error("function::print(): python print function raised exception"));
-                        }
+			sout.reset(py_funcs.py_print_function(serial, args.get()));
+				if (!sout || PyErr_Occurred() != nullptr) {
+					throw(std::runtime_error("function::print(): python print function raised exception"));
+				}
                         c.s << *sout;
                         c.s.flush();
 		}
 
-		delete sout;
-		Py_DECREF(args);
 	} else {
 
 		if (is_a<print_latex>(c)) {
-		        PyObject* sfunc = py_funcs.py_get_sfunction_from_serial(serial);
-                        if (PyObject_HasAttrString(sfunc, "_print_latex_")) {
-                                PyObject* args = py_funcs.exvector_to_PyTuple(seq);
-                                std::string* sout;
-                                sout = py_funcs.py_latex_function(serial, args);
-                                if (PyErr_Occurred() != nullptr) {
-                                        throw(std::runtime_error("function::print(): python print function raised exception"));
-                                }
-                                c.s << *sout;
-                                c.s.flush();
-                                delete sout;
-                                Py_DECREF(args);
-                                return;
-                        }
+		        pyobject_ptr sfunc(py_funcs.py_get_sfunction_from_serial(serial));
+			if (!sfunc)
+				throw std::runtime_error("function::print(): cannot get symbolic function");
+			const int has_print_latex = PyObject_HasAttrString(sfunc.get(), "_print_latex_");
+			if (has_print_latex < 0)
+				throw std::runtime_error("function::print(): cannot inspect symbolic function");
+			if (has_print_latex != 0) {
+				pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+				if (!args)
+					throw std::runtime_error("function::print(): cannot convert arguments to Python");
+				std::unique_ptr<std::string> sout(
+					py_funcs.py_latex_function(serial, args.get()));
+				if (!sout || PyErr_Occurred() != nullptr) {
+					throw(std::runtime_error("function::print(): python print function raised exception"));
+				}
+				c.s << *sout;
+				c.s.flush();
+				return;
+			}
 		}
 
                 const function_options &opt = registered_functions()[serial];
@@ -835,18 +875,18 @@ next_context:
 		// Method found, call it
 		current_serial = serial;
                 if (opt.print_use_exvector_args)
-                        (reinterpret_cast<print_funcp_exvector>(pdt[id]))(seq, c);
+                        callback_cast<print_funcp_exvector>(pdt[id])(seq, c);
                 else
                         switch (opt.nparams) {
                         // the following lines have been generated for max. 14 parameters
                         case 1:
-                                (reinterpret_cast<print_funcp_1>(pdt[id]))(seq[1 - 1], c);
+                                callback_cast<print_funcp_1>(pdt[id])(seq[1 - 1], c);
                                 break;
                         case 2:
-                                (reinterpret_cast<print_funcp_2>(pdt[id]))(seq[1 - 1], seq[2 - 1], c);
+                                callback_cast<print_funcp_2>(pdt[id])(seq[1 - 1], seq[2 - 1], c);
                                 break;
                         case 3:
-                                (reinterpret_cast<print_funcp_3>(pdt[id]))(seq[1 - 1], seq[2 - 1], seq[3 - 1], c);
+                                callback_cast<print_funcp_3>(pdt[id])(seq[1 - 1], seq[2 - 1], seq[3 - 1], c);
                                 break;
 
                         // end of generated lines
@@ -890,40 +930,40 @@ ex function::eval(int level) const
 	if (opt.pynac_eval_f == nullptr
             and (opt.python_func & function_options::eval_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::eval(): cannot convert arguments to Python");
 		// call opt.eval_f with this list
-		PyObject* pyresult = PyObject_CallMethod(reinterpret_cast<PyObject*>(eval_f),
-				const_cast<char*>("_eval_"), const_cast<char*>("O"), args);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_CallMethod(reinterpret_cast<PyObject*>(eval_f),
+				const_cast<char*>("_eval_"), const_cast<char*>("O"), args.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::eval(): python function raised exception"));
 		}
-		if ( pyresult == Py_None ) {
+		if (pyresult.get() == Py_None) {
 			return this->hold();
 		}
 		// convert output Expression to an ex
-		eval_result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		eval_result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::eval(): python function (Expression_to_ex) raised exception"));
 		}
 	}
 	else if (opt.eval_use_exvector_args)
-		eval_result = (reinterpret_cast<eval_funcp_exvector>(eval_f))(seq);
+		eval_result = callback_cast<eval_funcp_exvector>(eval_f)(seq);
 	else
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		eval_result = (reinterpret_cast<eval_funcp_1>(eval_f))(seq[1-1]);
+		eval_result = callback_cast<eval_funcp_1>(eval_f)(seq[1-1]);
 		break;
 	case 2:
-		eval_result = (reinterpret_cast<eval_funcp_2>(eval_f))(seq[1-1], seq[2-1]);
+		eval_result = callback_cast<eval_funcp_2>(eval_f)(seq[1-1], seq[2-1]);
 		break;
 	case 3:
-		eval_result = (reinterpret_cast<eval_funcp_3>(eval_f))(seq[1-1], seq[2-1], seq[3-1]);
+		eval_result = callback_cast<eval_funcp_3>(eval_f)(seq[1-1], seq[2-1], seq[3-1]);
 		break;
 	case 6:
-		eval_result = (reinterpret_cast<eval_funcp_6>(eval_f))(seq[1-1], seq[2-1], seq[3-1], seq[4-1], seq[5-1], seq[6-1]);
+		eval_result = callback_cast<eval_funcp_6>(eval_f)(seq[1-1], seq[2-1], seq[3-1], seq[4-1], seq[5-1], seq[6-1]);
 		break;
 
 		// end of generated lines
@@ -960,12 +1000,12 @@ ex function::evalf(int level, PyObject* kwds) const
                         try {
                                 return n.try_py_method(get_name());
                         }
-                        catch (std::logic_error) {
+                        catch (const std::logic_error&) {
                                 try {
                                         const numeric& nn = ex_to<numeric>(n.evalf()).try_py_method(get_name());
                                         return nn.to_dict_parent(kwds);
                                 }
-                                catch (std::logic_error) {}
+                                catch (const std::logic_error&) {}
                         }
                 }
 		return function(serial,eseq).hold();
@@ -973,35 +1013,37 @@ ex function::evalf(int level, PyObject* kwds) const
 	current_serial = serial;
 	if ((opt.python_func & function_options::evalf_python_f) != 0u) { 
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(eseq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(eseq));
+		if (!args)
+			throw std::runtime_error("function::evalf(): cannot convert arguments to Python");
+		pyobject_ptr callback(PyObject_GetAttrString(
+			reinterpret_cast<PyObject*>(opt.evalf_f), "_evalf_"));
+		if (!callback)
+			throw std::runtime_error("function::evalf(): cannot get Python callback");
 		// call opt.evalf_f with this list
-		PyObject* pyresult = PyObject_Call(
-			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.evalf_f),
-				"_evalf_"), args, kwds);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_Call(callback.get(), args.get(), kwds));
+		if (!pyresult) {
 			throw(std::runtime_error("function::evalf(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::evalf(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.evalf_use_exvector_args)
-		return (reinterpret_cast<evalf_funcp_exvector>(opt.evalf_f))(seq, kwds);
+		return callback_cast<evalf_funcp_exvector>(opt.evalf_f)(seq, kwds);
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<evalf_funcp_1>(opt.evalf_f))(eseq[1-1], kwds);
+		return callback_cast<evalf_funcp_1>(opt.evalf_f)(eseq[1-1], kwds);
 	case 2:
-		return (reinterpret_cast<evalf_funcp_2>(opt.evalf_f))(eseq[1-1], eseq[2-1], kwds);
+		return callback_cast<evalf_funcp_2>(opt.evalf_f)(eseq[1-1], eseq[2-1], kwds);
 	case 3:
-		return (reinterpret_cast<evalf_funcp_3>(opt.evalf_f))(eseq[1-1], eseq[2-1], eseq[3-1], kwds);
+		return callback_cast<evalf_funcp_3>(opt.evalf_f)(eseq[1-1], eseq[2-1], eseq[3-1], kwds);
 	case 6:
-		return (reinterpret_cast<evalf_funcp_6>(opt.evalf_f))(eseq[1-1], eseq[2-1], eseq[3-1], eseq[4-1], eseq[5-1], eseq[6-1], kwds);
+		return callback_cast<evalf_funcp_6>(opt.evalf_f)(eseq[1-1], eseq[2-1], eseq[3-1], eseq[4-1], eseq[5-1], eseq[6-1], kwds);
 
 		// end of generated lines
 	}
@@ -1047,25 +1089,34 @@ ex function::series(const relational & r, int order, unsigned options) const
 	current_serial = serial;
 	if ((opt.python_func & function_options::series_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::series(): cannot convert arguments to Python");
 		// create a dictionary {'order': order, 'options':options}
-		PyObject* kwds = Py_BuildValue("{s:i,s:I}","order",order,"options",options);
+		pyobject_ptr kwds(Py_BuildValue("{s:i,s:I}",
+		                                  "order", order,
+		                                  "options", options));
+		if (!kwds)
+			throw std::runtime_error("function::series(): cannot create keyword arguments");
 		// add variable to expand for as a keyword argument
-		PyDict_SetItemString(kwds, "var", py_funcs.ex_to_pyExpression(r.lhs()));
+		pyobject_ptr var(py_funcs.ex_to_pyExpression(r.lhs()));
+		if (!var || PyDict_SetItemString(kwds.get(), "var", var.get()) < 0)
+			throw std::runtime_error("function::series(): cannot set expansion variable");
 		// add the point of expansion as a keyword argument
-		PyDict_SetItemString(kwds, "at", py_funcs.ex_to_pyExpression(r.rhs()));
+		pyobject_ptr at(py_funcs.ex_to_pyExpression(r.rhs()));
+		if (!at || PyDict_SetItemString(kwds.get(), "at", at.get()) < 0)
+			throw std::runtime_error("function::series(): cannot set expansion point");
+		pyobject_ptr callback(PyObject_GetAttrString(
+			reinterpret_cast<PyObject*>(opt.series_f), "_series_"));
+		if (!callback)
+			throw std::runtime_error("function::series(): cannot get Python callback");
 		// call opt.series_f with this list
-		PyObject* pyresult = PyObject_Call(
-			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.series_f),
-				"_series_"), args, kwds);
-		Py_DECREF(args);
-		Py_DECREF(kwds);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_Call(callback.get(), args.get(), kwds.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::series(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::series(): python function (pyExpression_to_ex) raised exception"));
 		}
@@ -1073,8 +1124,8 @@ ex function::series(const relational & r, int order, unsigned options) const
 	}
 	if (opt.series_use_exvector_args) {
 		try {
-			res = (reinterpret_cast<series_funcp_exvector>(opt.series_f))(seq, r, order, options);
-		} catch (do_taylor) {
+			res = callback_cast<series_funcp_exvector>(opt.series_f)(seq, r, order, options);
+		} catch (const do_taylor&) {
 			res = basic::series(r, order, options);
 		}
 		return res;
@@ -1083,22 +1134,22 @@ ex function::series(const relational & r, int order, unsigned options) const
 		// the following lines have been generated for max. 14 parameters
 	case 1:
 		try {
-			res = (reinterpret_cast<series_funcp_1>(opt.series_f))(seq[1-1],r,order,options);
-		} catch (do_taylor) {
+			res = callback_cast<series_funcp_1>(opt.series_f)(seq[1-1],r,order,options);
+		} catch (const do_taylor&) {
 			res = basic::series(r, order, options);
 		}
 		return res;
 	case 2:
 		try {
-			res = (reinterpret_cast<series_funcp_2>(opt.series_f))(seq[1-1], seq[2-1],r,order,options);
-		} catch (do_taylor) {
+			res = callback_cast<series_funcp_2>(opt.series_f)(seq[1-1], seq[2-1],r,order,options);
+		} catch (const do_taylor&) {
 			res = basic::series(r, order, options);
 		}
 		return res;
 	case 3:
 		try {
-			res = (reinterpret_cast<series_funcp_3>(opt.series_f))(seq[1-1], seq[2-1], seq[3-1],r,order,options);
-		} catch (do_taylor) {
+			res = callback_cast<series_funcp_3>(opt.series_f)(seq[1-1], seq[2-1], seq[3-1],r,order,options);
+		} catch (const do_taylor&) {
 			res = basic::series(r, order, options);
 		}
 		return res;
@@ -1117,18 +1168,18 @@ ex function::subs(const exmap & m, unsigned options) const
 
 	if ((opt.python_func & function_options::subs_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.subs_args_to_PyTuple(m, options, seq);
+		pyobject_ptr args(py_funcs.subs_args_to_PyTuple(m, options, seq));
+		if (!args)
+			throw std::runtime_error("function::subs(): cannot convert arguments to Python");
 		// call opt.subs_f with this list
-		PyObject* pyresult = PyObject_CallMethod(
+		pyobject_ptr pyresult(PyObject_CallMethod(
 				reinterpret_cast<PyObject*>(opt.subs_f),
-				const_cast<char*>("_subs_"), const_cast<char*>("O"), args);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+				const_cast<char*>("_subs_"), const_cast<char*>("O"), args.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::subs(): python method (_subs_) raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::subs(): python function (pyExpression_to_ex) raised exception"));
 		}
@@ -1139,11 +1190,11 @@ ex function::subs(const exmap & m, unsigned options) const
 
 	switch (opt.nparams) {
 	case 1:
-		return (reinterpret_cast<subs_funcp_1>(opt.subs_f))(m, seq[1-1]);
+		return callback_cast<subs_funcp_1>(opt.subs_f)(m, seq[1-1]);
 	case 2:
-		return (reinterpret_cast<subs_funcp_2>(opt.subs_f))(m, seq[1-1], seq[2-1]);
+		return callback_cast<subs_funcp_2>(opt.subs_f)(m, seq[1-1], seq[2-1]);
 	case 3:
-		return (reinterpret_cast<subs_funcp_3>(opt.subs_f))(m, seq[1-1], seq[2-1], seq[3-1]);
+		return callback_cast<subs_funcp_3>(opt.subs_f)(m, seq[1-1], seq[2-1], seq[3-1]);
 
 		// end of generated lines
 	}
@@ -1162,35 +1213,35 @@ ex function::conjugate() const
 
 	if ((opt.python_func & function_options::conjugate_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::conjugate(): cannot convert arguments to Python");
 		// call opt.conjugate_f with this list
-		PyObject* pyresult = PyObject_CallMethod(
+		pyobject_ptr pyresult(PyObject_CallMethod(
 				reinterpret_cast<PyObject*>(opt.conjugate_f),
-				const_cast<char*>("_conjugate_"), const_cast<char*>("O"), args);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+				const_cast<char*>("_conjugate_"), const_cast<char*>("O"), args.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::conjugate(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::conjugate(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.conjugate_use_exvector_args) {
-		return (reinterpret_cast<conjugate_funcp_exvector>(opt.conjugate_f))(seq);
+		return callback_cast<conjugate_funcp_exvector>(opt.conjugate_f)(seq);
 	}
 
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<conjugate_funcp_1>(opt.conjugate_f))(seq[1-1]);
+		return callback_cast<conjugate_funcp_1>(opt.conjugate_f)(seq[1-1]);
 	case 2:
-		return (reinterpret_cast<conjugate_funcp_2>(opt.conjugate_f))(seq[1-1], seq[2-1]);
+		return callback_cast<conjugate_funcp_2>(opt.conjugate_f)(seq[1-1], seq[2-1]);
 	case 3:
-		return (reinterpret_cast<conjugate_funcp_3>(opt.conjugate_f))(seq[1-1], seq[2-1], seq[3-1]);
+		return callback_cast<conjugate_funcp_3>(opt.conjugate_f)(seq[1-1], seq[2-1], seq[3-1]);
 
 		// end of generated lines
 	}
@@ -1208,33 +1259,33 @@ ex function::real_part() const
 
 	if ((opt.python_func & function_options::real_part_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::real_part(): cannot convert arguments to Python");
 		// call opt.real_part_f with this list
-		PyObject* pyresult = PyObject_CallMethod(reinterpret_cast<PyObject*>(opt.real_part_f),
-				const_cast<char*>("_real_part_"), const_cast<char*>("O"), args);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_CallMethod(reinterpret_cast<PyObject*>(opt.real_part_f),
+				const_cast<char*>("_real_part_"), const_cast<char*>("O"), args.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::real_part(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::real_part(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.real_part_use_exvector_args)
-		return (reinterpret_cast<real_part_funcp_exvector>(opt.real_part_f))(seq);
+		return callback_cast<real_part_funcp_exvector>(opt.real_part_f)(seq);
 
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<real_part_funcp_1>(opt.real_part_f))(seq[1-1]);
+		return callback_cast<real_part_funcp_1>(opt.real_part_f)(seq[1-1]);
 	case 2:
-		return (reinterpret_cast<real_part_funcp_2>(opt.real_part_f))(seq[1-1], seq[2-1]);
+		return callback_cast<real_part_funcp_2>(opt.real_part_f)(seq[1-1], seq[2-1]);
 	case 3:
-		return (reinterpret_cast<real_part_funcp_3>(opt.real_part_f))(seq[1-1], seq[2-1], seq[3-1]);
+		return callback_cast<real_part_funcp_3>(opt.real_part_f)(seq[1-1], seq[2-1], seq[3-1]);
 
 		// end of generated lines
 	}
@@ -1252,33 +1303,33 @@ ex function::imag_part() const
 
 	if ((opt.python_func & function_options::imag_part_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::imag_part(): cannot convert arguments to Python");
 		// call opt.imag_part_f with this list
-		PyObject* pyresult = PyObject_CallMethod(reinterpret_cast<PyObject*>(opt.imag_part_f),
-				const_cast<char*>("_imag_part_"), const_cast<char*>("O"), args);
-		Py_DECREF(args);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_CallMethod(reinterpret_cast<PyObject*>(opt.imag_part_f),
+				const_cast<char*>("_imag_part_"), const_cast<char*>("O"), args.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::imag_part(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::imag_part(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.imag_part_use_exvector_args)
-		return (reinterpret_cast<imag_part_funcp_exvector>(opt.imag_part_f))(seq);
+		return callback_cast<imag_part_funcp_exvector>(opt.imag_part_f)(seq);
 
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<imag_part_funcp_1>(opt.imag_part_f))(seq[1-1]);
+		return callback_cast<imag_part_funcp_1>(opt.imag_part_f)(seq[1-1]);
 	case 2:
-		return (reinterpret_cast<imag_part_funcp_2>(opt.imag_part_f))(seq[1-1], seq[2-1]);
+		return callback_cast<imag_part_funcp_2>(opt.imag_part_f)(seq[1-1], seq[2-1]);
 	case 3:
-		return (reinterpret_cast<imag_part_funcp_3>(opt.imag_part_f))(seq[1-1], seq[2-1], seq[3-1]);
+		return callback_cast<imag_part_funcp_3>(opt.imag_part_f)(seq[1-1], seq[2-1], seq[3-1]);
 
 		// end of generated lines
 	}
@@ -1314,25 +1365,28 @@ ex function::derivative(const symbol & s) const
 
 		if ((opt.python_func & function_options::derivative_python_f) != 0u) {
 			// convert seq to a PyTuple of Expressions
-			PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+			pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+			if (!args)
+				throw std::runtime_error("function::derivative(): cannot convert arguments to Python");
 			// create a dictionary {'diff_param': s}
-			PyObject* symb = py_funcs.ex_to_pyExpression(s);
-			PyObject* kwds = Py_BuildValue("{s:O}","diff_param",
-					symb);
+			pyobject_ptr symb(py_funcs.ex_to_pyExpression(s));
+			if (!symb)
+				throw std::runtime_error("function::derivative(): cannot convert differentiation variable to Python");
+			pyobject_ptr kwds(Py_BuildValue("{s:O}", "diff_param", symb.get()));
+			if (!kwds)
+				throw std::runtime_error("function::derivative(): cannot create keyword arguments");
+			pyobject_ptr callback(PyObject_GetAttrString(
+				reinterpret_cast<PyObject*>(opt.derivative_f), "_tderivative_"));
+			if (!callback)
+				throw std::runtime_error("function::derivative(): cannot get Python callback");
 			// call opt.derivative_f with this list
-			PyObject* pyresult = PyObject_Call(
-				PyObject_GetAttrString(
-					reinterpret_cast<PyObject*>(opt.derivative_f),
-					"_tderivative_"), args, kwds);
-			Py_DECREF(symb);
-			Py_DECREF(args);
-			Py_DECREF(kwds);
-			if (pyresult == nullptr) { 
+			pyobject_ptr pyresult(PyObject_Call(
+				callback.get(), args.get(), kwds.get()));
+			if (!pyresult) {
 				throw(std::runtime_error("function::derivative(): python function raised exception"));
 			}
 			// convert output Expression to an ex
-			result = py_funcs.pyExpression_to_ex(pyresult);
-			Py_DECREF(pyresult);
+			result = py_funcs.pyExpression_to_ex(pyresult.get());
 			if (PyErr_Occurred() != nullptr) { 
 				throw(std::runtime_error("function::derivative(): python function (pyExpression_to_ex) raised exception"));
 			}
@@ -1342,7 +1396,7 @@ ex function::derivative(const symbol & s) const
 		if (!opt.derivative_use_exvector_args)
 			throw(std::runtime_error("function::derivative(): cannot call C++ function without exvector args"));
 		
-		return (reinterpret_cast<derivative_funcp_exvector_symbol>(opt.derivative_f))(seq, s);
+		return callback_cast<derivative_funcp_exvector_symbol>(opt.derivative_f)(seq, s);
 
 	} 
         // Chain rule
@@ -1444,8 +1498,8 @@ tinfo_t function::return_type_tinfo() const
 		// argument. Thus, exp() of a matrix behaves like a matrix, etc.
 		if (seq.empty())
 			return this;
-		
-			return seq.begin()->return_type_tinfo();
+
+		return seq.begin()->return_type_tinfo();
 	
 }
 
@@ -1473,41 +1527,45 @@ ex function::pderivative(unsigned diff_param) const // partial differentiation
 	current_serial = serial;
 	if ((opt.python_func & function_options::derivative_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::pderivative(): cannot convert arguments to Python");
 		// create a dictionary {'diff_param': diff_param}
-		PyObject* kwds = Py_BuildValue("{s:I}","diff_param",diff_param);
+		pyobject_ptr kwds(Py_BuildValue("{s:I}", "diff_param", diff_param));
+		if (!kwds)
+			throw std::runtime_error("function::pderivative(): cannot create keyword arguments");
+		pyobject_ptr callback(PyObject_GetAttrString(
+			reinterpret_cast<PyObject*>(opt.derivative_f), "_derivative_"));
+		if (!callback)
+			throw std::runtime_error("function::pderivative(): cannot get Python callback");
 		// call opt.derivative_f with this list
-		PyObject* pyresult = PyObject_Call(
-			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.derivative_f),
-				"_derivative_"), args, kwds);
-		Py_DECREF(args);
-		Py_DECREF(kwds);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_Call(
+			callback.get(), args.get(), kwds.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::pderivative(): python function raised exception"));
 		}
-		if ( pyresult == Py_None ) {
+		if (pyresult.get() == Py_None) {
 			return fderivative(serial, diff_param, seq);
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::pderivative(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.derivative_use_exvector_args)
-		return (reinterpret_cast<derivative_funcp_exvector>(opt.derivative_f))(seq, diff_param);
+		return callback_cast<derivative_funcp_exvector>(opt.derivative_f)(seq, diff_param);
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<derivative_funcp_1>(opt.derivative_f))(seq[1-1],diff_param);
+		return callback_cast<derivative_funcp_1>(opt.derivative_f)(seq[1-1],diff_param);
 	case 2:
-		return (reinterpret_cast<derivative_funcp_2>(opt.derivative_f))(seq[1-1], seq[2-1],diff_param);
+		return callback_cast<derivative_funcp_2>(opt.derivative_f)(seq[1-1], seq[2-1],diff_param);
 	case 3:
-		return (reinterpret_cast<derivative_funcp_3>(opt.derivative_f))(seq[1-1], seq[2-1], seq[3-1],diff_param);
+		return callback_cast<derivative_funcp_3>(opt.derivative_f)(seq[1-1], seq[2-1], seq[3-1],diff_param);
 	case 6:
-		return (reinterpret_cast<derivative_funcp_6>(opt.derivative_f))(seq[1-1], seq[2-1], seq[3-1], seq[4-1], seq[5-1], seq[6-1], diff_param);
+		return callback_cast<derivative_funcp_6>(opt.derivative_f)(seq[1-1], seq[2-1], seq[3-1], seq[4-1], seq[5-1], seq[6-1], diff_param);
 
 		// end of generated lines
 	}
@@ -1523,15 +1581,15 @@ ex function::expl_derivative(const symbol & s) const // explicit differentiation
 		// Invoke the defined explicit derivative function.
 		current_serial = serial;
 		if (opt.expl_derivative_use_exvector_args)
-			return (reinterpret_cast<expl_derivative_funcp_exvector>(opt.expl_derivative_f))(seq, s);
+			return callback_cast<expl_derivative_funcp_exvector>(opt.expl_derivative_f)(seq, s);
 		switch (opt.nparams) {
 			// the following lines have been generated for max. 14 parameters
 			case 1:
-				return (reinterpret_cast<expl_derivative_funcp_1>(opt.expl_derivative_f))(seq[0], s);
+				return callback_cast<expl_derivative_funcp_1>(opt.expl_derivative_f)(seq[0], s);
 			case 2:
-				return (reinterpret_cast<expl_derivative_funcp_2>(opt.expl_derivative_f))(seq[0], seq[1], s);
+				return callback_cast<expl_derivative_funcp_2>(opt.expl_derivative_f)(seq[0], seq[1], s);
 			case 3:
-				return (reinterpret_cast<expl_derivative_funcp_3>(opt.expl_derivative_f))(seq[0], seq[1], seq[2], s);
+				return callback_cast<expl_derivative_funcp_3>(opt.expl_derivative_f)(seq[0], seq[1], seq[2], s);
 		}
 	}
 	// There is no fallback for explicit derivative.
@@ -1551,37 +1609,44 @@ ex function::power(const ex & power_param) const // power of function
 	current_serial = serial;
 	if ((opt.python_func & function_options::power_python_f) != 0u) {
 		// convert seq to a PyTuple of Expressions
-		PyObject* args = py_funcs.exvector_to_PyTuple(seq);
+		pyobject_ptr args(py_funcs.exvector_to_PyTuple(seq));
+		if (!args)
+			throw std::runtime_error("function::power(): cannot convert arguments to Python");
 		// create a dictionary {'power_param': power_param}
-		PyObject* kwds = PyDict_New();
-		PyDict_SetItemString(kwds, "power_param", py_funcs.ex_to_pyExpression(power_param));
+		pyobject_ptr kwds(PyDict_New());
+		if (!kwds)
+			throw std::runtime_error("function::power(): cannot create keyword arguments");
+		pyobject_ptr py_power_param(py_funcs.ex_to_pyExpression(power_param));
+		if (!py_power_param ||
+		    PyDict_SetItemString(kwds.get(), "power_param", py_power_param.get()) < 0)
+			throw std::runtime_error("function::power(): cannot set power parameter");
+		pyobject_ptr callback(PyObject_GetAttrString(
+			reinterpret_cast<PyObject*>(opt.power_f), "_power_"));
+		if (!callback)
+			throw std::runtime_error("function::power(): cannot get Python callback");
 		// call opt.power_f with this list
-		PyObject* pyresult = PyObject_Call(
-			PyObject_GetAttrString(reinterpret_cast<PyObject*>(opt.power_f),
-				"_power_"), args, kwds);
-		Py_DECREF(args);
-		Py_DECREF(kwds);
-		if (pyresult == nullptr) { 
+		pyobject_ptr pyresult(PyObject_Call(
+			callback.get(), args.get(), kwds.get()));
+		if (!pyresult) {
 			throw(std::runtime_error("function::power(): python function raised exception"));
 		}
 		// convert output Expression to an ex
-		ex result = py_funcs.pyExpression_to_ex(pyresult);
-		Py_DECREF(pyresult);
+		ex result = py_funcs.pyExpression_to_ex(pyresult.get());
 		if (PyErr_Occurred() != nullptr) { 
 			throw(std::runtime_error("function::power(): python function (pyExpression_to_ex) raised exception"));
 		}
 		return result;
 	}
 	if (opt.power_use_exvector_args)
-		return (reinterpret_cast<power_funcp_exvector>(opt.power_f))(seq,  power_param);
+		return callback_cast<power_funcp_exvector>(opt.power_f)(seq, power_param);
 	switch (opt.nparams) {
 		// the following lines have been generated for max. 14 parameters
 	case 1:
-		return (reinterpret_cast<power_funcp_1>(opt.power_f))(seq[1-1],power_param);
+		return callback_cast<power_funcp_1>(opt.power_f)(seq[1-1],power_param);
 	case 2:
-		return (reinterpret_cast<power_funcp_2>(opt.power_f))(seq[1-1], seq[2-1],power_param);
+		return callback_cast<power_funcp_2>(opt.power_f)(seq[1-1], seq[2-1],power_param);
 	case 3:
-		return (reinterpret_cast<power_funcp_3>(opt.power_f))(seq[1-1], seq[2-1], seq[3-1],power_param);
+		return callback_cast<power_funcp_3>(opt.power_f)(seq[1-1], seq[2-1], seq[3-1],power_param);
 
 		// end of generated lines
 	}
@@ -1770,4 +1835,3 @@ bool has_function(const ex& x,
 }
 
 } // namespace GiNaC
-

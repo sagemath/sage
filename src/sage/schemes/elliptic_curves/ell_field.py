@@ -5,6 +5,10 @@ This module defines the class
 :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`, based on
 :class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`, for
 elliptic curves over general fields.
+
+AUTHORS:
+
+- Travis Morrison, Lorenz Panny (2026): :func:`rational_kernel_polynomials`
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -27,7 +31,7 @@ from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from .constructor import EllipticCurve
-from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from .ell_curve_isogeny import EllipticCurveIsogeny, _construct_isogeny, isogeny_codomain_from_kernel
 from . import ell_generic
 
 
@@ -1899,19 +1903,33 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
         if algorithm == "velusqrt":
             from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
-            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
+            phi = EllipticCurveHom_velusqrt(self, kernel)
+            if model is not None:
+                if codomain is not None:
+                    raise ValueError("cannot specify a codomain curve and model name simultaneously")
+                from sage.schemes.elliptic_curves.ell_field import compute_model
+                codomain = compute_model(phi.codomain(), model)
+            if codomain is not None:
+                phi = phi.codomain().isomorphism_to(codomain) * phi
+            return phi
         if algorithm == "factored":
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            if len(phi.factors()) == 1:
+                phi = phi.factors()[0]
+            return phi
         if algorithm == "traditional":
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
+            return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
         if kernel is not None:
             # Check for multiple points or point of known order
             kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                if len(phi.factors()) == 1:
+                    phi = phi.factors()[0]
+                return phi
 
             if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
                 # Single point on the curve; unpack the list for compatibility with velusqrt
@@ -1931,22 +1949,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # Otherwise fall back to the standard case
                 elif known_order:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                    return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
-        try:
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except NotImplementedError as err:
-            if kernel is None:
-                raise err
-            try:
-                from .ell_curve_isogeny import _factored_isogeny_from_kernel_polynomial
-                return _factored_isogeny_from_kernel_polynomial(self, kernel,
-                                                               codomain=codomain,
-                                                               model=model,
-                                                               check=check)
-            except NotImplementedError:
-                raise err
-        except AttributeError as e:
-            raise RuntimeError("Unable to construct isogeny: %s" % e)
+                    phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                    if len(phi.factors()) == 1:
+                        phi = phi.factors()[0]
+                    return phi
+
+        return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
     def isogeny_codomain(self, kernel):
         r"""
@@ -3620,6 +3628,78 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
+
+def rational_kernel_polynomials(E, l):
+    r"""
+    Returns an iterator over all kernel polynomials
+    of `E` that define an `\ell`-isogeny.
+
+    The `j`-invariant of `E` must not equal `0` or `1728`.
+
+    INPUT:
+
+    - ``E`` -- elliptic curve
+    - ``l`` -- prime integer
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve('26b1')
+        sage: next(rational_kernel_polynomials(E, 7))
+        x^3 - 3*x^2 - x + 3
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve(GF(419), [1, 280])
+        sage: next(rational_kernel_polynomials(E, 13))
+        x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337
+        sage: next(rational_kernel_polynomials(E, 11))
+        Traceback (most recent call last):
+        ...
+        StopIteration
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: list(rational_kernel_polynomials(E, 13))
+        [x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337,
+         x^6 + 151*x^5 + 140*x^4 + 392*x^3 + 12*x^2 + 100*x + 333]
+        sage: list(rational_kernel_polynomials(E, 11))
+        []
+
+    ALGORITHM: Adapted from the implementation
+    https://github.com/travismo/beyond-the-SEA/blob/edd845a/isogenies.sage
+    of [MPSW25]_.
+    """
+    if E.j_invariant() in (0, 1728):
+        raise NotImplementedError('the case j(E) ∈ {0, 1728} is currently not supported')
+
+    if any(E.a_invariants()[:-2]):
+        Ew = E.short_weierstrass_model()
+        iso = E.isomorphism_to(Ew)
+    else:
+        Ew = E
+        iso = None
+
+    from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+    j = E.j_invariant()
+    F = classical_modular_polynomial(l, j)
+    x = F.parent().gen()
+    F //= x**F.valuation(x)
+    F //= (x - 1728)**F.valuation(x - 1728)
+
+    from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model, compute_isogeny_kernel_polynomial
+
+    def compute(Etilde):
+        if iso:
+            return (Ew.isogeny(None, Etilde, l) * iso).kernel_polynomial()
+        return compute_isogeny_kernel_polynomial(E, Etilde, l)
+
+    for j in F.roots(multiplicities=False):
+        for Etilde in normalized_model(Ew, j, l, all=True):
+            yield compute(Etilde)
 
 
 def point_of_order(E, n):

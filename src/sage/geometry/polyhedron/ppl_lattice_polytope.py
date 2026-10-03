@@ -48,7 +48,7 @@ only differ by a lattice automorphism::
     sage: square = LatticePolytope_PPL((-1,-1), (-1,1), (1,-1), (1,1))
     sage: fibers = [ f.vertices() for f in square.fibration_generator(1) ];  fibers
     [((1, 0), (-1, 0)), ((0, 1), (0, -1)), ((-1, -1), (1, 1)), ((-1, 1), (1, -1))]
-    sage: square.pointsets_mod_automorphism(fibers)                                     # needs sage.groups
+    sage: square.pointsets_mod_automorphism(fibers)
     (frozenset({(-1, -1), (1, 1)}), frozenset({(-1, 0), (1, 0)}))
 
 AUTHORS:
@@ -638,7 +638,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: square = LatticePolytope_PPL((-1,-1), (-1,1), (1,-1), (1,1))
             sage: fibers = [f.vertices() for f in square.fibration_generator(1)]
-            sage: square.pointsets_mod_automorphism(fibers)                             # needs sage.graphs sage.groups
+            sage: square.pointsets_mod_automorphism(fibers)
             (frozenset({(-1, -1), (1, 1)}), frozenset({(-1, 0), (1, 0)}))
 
             sage: cell24 = LatticePolytope_PPL(
@@ -647,7 +647,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             ....:     (1,-1,-1,0), (0,0,-1,0), (0,-1,0,0), (-1,0,0,0), (1,-1,0,0), (1,0,-1,0),
             ....:     (0,1,1,-1), (-1,1,1,0), (-1,1,0,0), (-1,0,1,0), (0,-1,-1,1), (0,0,0,-1))
             sage: fibers = [f.vertices() for f in cell24.fibration_generator(2)]
-            sage: cell24.pointsets_mod_automorphism(fibers)     # long time             # needs sage.graphs sage.groups
+            sage: cell24.pointsets_mod_automorphism(fibers)     # long time
             (frozenset({(-1, 0, 0, 0),
                         (-1, 0, 0, 1),
                         (0, 0, 0, -1),
@@ -1033,25 +1033,25 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: Z3square = LatticePolytope_PPL((0,0), (1,2), (2,1), (3,3))
-            sage: Z3square.lattice_automorphism_group()                                 # needs sage.graphs sage.groups
+            sage: Z3square.lattice_automorphism_group()
             Permutation Group with generators [(), ((1,2),(2,1)),
             ((0,0),(3,3)), ((0,0),(3,3))((1,2),(2,1))]
 
-            sage: G1 = Z3square.lattice_automorphism_group(point_labels=(1,2,3,4))      # needs sage.graphs sage.groups
-            sage: G1                                                                    # needs sage.graphs sage.groups
+            sage: G1 = Z3square.lattice_automorphism_group(point_labels=(1,2,3,4))
+            sage: G1
             Permutation Group with generators [(), (2,3), (1,4), (1,4)(2,3)]
-            sage: G1.cardinality()                                                      # needs sage.graphs sage.groups
+            sage: G1.cardinality()
             4
 
-            sage: G2 = Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4))  # needs sage.graphs sage.groups
-            sage: G2 == PermutationGroup([[(2,3)], [(1,2),(3,4)], [(1,4)]])             # needs sage.graphs sage.groups
+            sage: G2 = Z3square.restricted_automorphism_group(vertex_labels=(1,2,3,4))
+            sage: G2 == PermutationGroup([[(2,3)], [(1,2),(3,4)], [(1,4)]])
             True
-            sage: G2.cardinality()                                                      # needs sage.graphs sage.groups
+            sage: G2.cardinality()
             8
 
             sage: points = Z3square.integral_points(); points
             ((0, 0), (1, 1), (1, 2), (2, 1), (2, 2), (3, 3))
-            sage: Z3square.lattice_automorphism_group(points,                           # needs sage.graphs sage.groups
+            sage: Z3square.lattice_automorphism_group(points,
             ....:                                     point_labels=(1,2,3,4,5,6))
             Permutation Group with generators [(), (3,4), (1,6)(2,5), (1,6)(2,5)(3,4)]
 
@@ -1060,7 +1060,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: lp = LatticePolytope_PPL((1,0,0), (0,1,0), (-1,-1,0))
-            sage: lp.lattice_automorphism_group(point_labels=(0,1,2))                   # needs sage.graphs sage.groups
+            sage: lp.lattice_automorphism_group(point_labels=(0,1,2))
             Permutation Group with generators [(), (1,2), (0,1), (0,1,2), (0,2,1), (0,2)]
         """
         if not self.is_full_dimensional():

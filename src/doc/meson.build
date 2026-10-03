@@ -39,7 +39,7 @@ doc_bootstrap = custom_target(
     files('../../tools/bootstrap-docs.py'),
     meson.current_build_dir(),
   ],
-  env: {'SAGE_ROOT': root},
+  env: {'SAGE_ROOT': meson.global_source_root()},
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
   # so let's collect all source-related targets here.
@@ -133,7 +133,7 @@ other_documents = run_command(
 ).stdout().strip()
 other_documents_inventory = []
 foreach doc : other_documents.splitlines()
-  if doc == 'en/installation'
+  if doc in ['en/developer', 'en/installation']
     short_doc = doc.replace('/', '-')
     target = custom_target(
       'doc-inventory-other-' + short_doc,

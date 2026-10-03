@@ -1667,7 +1667,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
             sage: from sage.rings.real_lazy import LazyAlgebraic
             sage: a = LazyAlgebraic(RLF, x^3-10, 1.5)
             sage: float(a)
-            2.154434690031883...
+            2.154434690031884...
         """
         return self.eval(float)
 
