@@ -187,9 +187,9 @@ protected:
 class make_flat_inserter
 {
 	public:
-		make_flat_inserter(const epvector &epv, bool b)
+		make_flat_inserter(const epvector & /*epv*/, bool /*b*/)
 		{}
-		make_flat_inserter(const exvector &v, bool b)
+		make_flat_inserter(const exvector & /*v*/, bool /*b*/)
                 {}
 		ex handle_factor(const ex &x, const ex &coeff)
 		{

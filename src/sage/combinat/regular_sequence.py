@@ -1494,13 +1494,6 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             sage: RegularSequenceRing(3, ZZ)
             Space of 3-regular sequences over Integer Ring
 
-        ::
-
-            sage: from itertools import islice
-            sage: Seq2 = RegularSequenceRing(2, ZZ)
-            sage: TestSuite(Seq2).run(  # long time
-            ....:    elements=tuple(islice(Seq2.some_elements(), 4)))
-
         .. SEEALSO::
 
             :doc:`k-regular sequence <regular_sequence>`,

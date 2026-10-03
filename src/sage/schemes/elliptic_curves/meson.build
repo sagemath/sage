@@ -10,6 +10,7 @@ py.install_sources(
   'descent_two_isogeny.pyx',
   'ec_database.py',
   'ell_curve_isogeny.py',
+  'ell_edwards.py',
   'ell_egros.py',
   'ell_field.py',
   'ell_finite_field.py',
@@ -74,4 +75,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, numpy],
   )
 endforeach
-
