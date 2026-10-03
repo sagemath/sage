@@ -639,6 +639,11 @@
 .. [BCN1989] Andries E. Brouwer, Arjeh M. Cohen, and Arnold Neumaier.
              *Distance-Regular Graphs*, Springer, 1989.
 
+.. [BCS2025] Ashay Burungale, Francesc Castella, and Christopher Skinner.
+             *Base change and Iwasawa main conjectures for* `\mathrm{GL}_2`.
+             International Mathematics Research Notices 2025, no. 8, rnaf082.
+             :doi:`10.1093/imrn/rnaf082`.
+
 .. [BD1989] \R. J. Bradford and J. H. Davenport, *Effective tests for
             cyclotomic polynomials*, Symbolic and Algebraic
             Computation (1989), pp. 244--251,
@@ -1556,6 +1561,12 @@
 .. [Car1972a] \R. W. Carter. *Conjugacy classes in the Weyl group*, Comp. Math.
               Vol 26 (1972) 1-59.
 
+.. [Castella2018err] Francesc Castella. *On the p-part of the
+                    Birch--Swinnerton-Dyer formula for multiplicative primes*.
+                    Cambridge Journal of Mathematics 6 (2018), no. 1, 1--23,
+                    with the corrected Theorem A' in the
+                    `erratum <https://web.math.ucsb.edu/~castella/Birch-erratum.pdf>`_.
+
 .. [CB2007] Nicolas Courtois, Gregory V. Bard: Algebraic Cryptanalysis
             of the Data Encryption Standard, In 11-th IMA Conference,
             Cirencester, UK, 18-20 December 2007, Springer
@@ -1710,6 +1721,11 @@
              *Directing Road Networks by Listing Strong Orientations*,
              Combinatorial Algorithms, Proceedings of 27th International Workshop,
              IWOCA 2016, August 17-19, 2016, pages 83--95.
+
+.. [CGS2025] Francesc Castella, Giada Grossi, and Christopher Skinner.
+             *Mazur's main conjecture at Eisenstein primes*.
+             Mathematische Annalen 393 (2025), no. 2, 2451--2506.
+             :arxiv:`2303.04373`.
 
 .. [CGW2013] Daniel Cabarcas, Florian Göpfert, and Patrick
              Weiden. Provably Secure LWE-Encryption with Uniform
@@ -4385,6 +4401,11 @@
 .. [Kob1993] Neal Koblitz, *Introduction to Elliptic Curves and
              Modular Forms*.  Springer GTM 97, 1993.
 
+.. [Kob2013] Shinichi Kobayashi. *The p-adic Gross--Zagier formula for
+             elliptic curves at supersingular primes*.
+             Inventiones Mathematicae 191 (2013), 527--629.
+             :doi:`10.1007/s00222-012-0400-9`.
+
 .. [Koe1999] Wolfram Koepf: Efficient Computation of Chebyshev
              Polynomials in Computer Algebra Systems: A Practical
              Guide. John Wiley, Chichester (1999): 79-99.
@@ -5963,6 +5984,10 @@
              Providence, RI, 2013.
              :arxiv:`1112.6163`
 
+.. [PR1987] Bernadette Perrin-Riou. *Points de Heegner et dérivées de
+            fonctions L p-adiques*. Inventiones Mathematicae 89 (1987),
+            455--510. :doi:`10.1007/BF01388982`.
+
 .. [PR2003] Perrin-Riou, *Arithmétique des courbes elliptiques à
             réduction supersingulière en p*,
             Experiment. Math. 12 (2003), no. 2, 155-186.
@@ -6515,6 +6540,11 @@
 .. [SK2011] \J. Spreer and W. Kühnel, *Combinatorial properties of the
             K3 surface: Simplicial blowups and slicings*, Experimental
             Mathematics, Volume 20, Issue 2, 2011.
+
+.. [Skinner2016] Christopher Skinner. *Multiplicative reduction and the
+                cyclotomic main conjecture for* `\mathrm{GL}_2`.
+                Pacific Journal of Mathematics 283 (2016), no. 1, 171--200.
+                :doi:`10.2140/pjm.2016.283.171`.
 
 .. [SKWWHF1998] \B. Schneier, J. Kelsey, D. Whiting, D. Wagner, C. Hall,
                 and N. Ferguson, *Twofish: A 128-bit block cipher*; in
@@ -7367,6 +7397,11 @@
 .. [Wu2018] Wuthrich, Christian.
             *Numerical modular symbols for elliptic curves*.
             Math. Comp. 87 (2018), no. 313, 2393-2423.
+
+.. [Wuthrich2014] Christian Wuthrich. *On the integrality of modular symbols
+                 and Kato's Euler system for elliptic curves*.
+                 Documenta Mathematica 19 (2014), 381--402.
+                 :doi:`10.4171/DM/450`.
 
 .. [WW1972] \J. Wallis and A.L. Whiteman,
             Some classes of Hadamard matrices with constant diagonal,

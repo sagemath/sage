@@ -92,6 +92,7 @@ To be sorted
    :maxdepth: 1
 
    sage/schemes/elliptic_curves/BSD
+   sage/schemes/elliptic_curves/bsd_certificates
    sage/schemes/elliptic_curves/cardinality
    sage/schemes/elliptic_curves/descent_two_isogeny
    sage/schemes/elliptic_curves/ell_egros

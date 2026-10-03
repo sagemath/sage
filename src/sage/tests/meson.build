@@ -9,6 +9,7 @@ py.install_sources(
   'book_stein_modform.py',
   'combinatorial_hopf_algebras.py',
   'cython.pyx',
+  'elliptic_curve_prove_bsd.py',
   'finite_poset.py',
   'functools_partial_src.py',
   'gosper-sum.py',
