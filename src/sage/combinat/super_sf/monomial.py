@@ -30,7 +30,7 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
 
     REFERENCES:
 
-    - [BHS25]_
+    - [Moe2007]_
 
     INPUT:
 

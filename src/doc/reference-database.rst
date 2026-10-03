@@ -5389,6 +5389,9 @@
 .. [Mo2009] \D. Moody, Des. Codes Cryptogr. (2009)
             52: 381. :doi:`10.1007/s10623-009-9287-x`
 
+.. [Moe2007] Moens, Els. *Supersymmetric Schur functions and Lie superalgebra
+             representations*, PhD thesis, Ghent University, 2007.
+
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.

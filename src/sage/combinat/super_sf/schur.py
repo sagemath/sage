@@ -61,7 +61,12 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     def product_on_basis(self, left, right):  # add reference
         r"""
         Return the product of ``left`` and ``right``.
-        The product
+        The product of two supersymmetric Schur functions is the same as
+        that of the symmetric versions.
+
+        REFERENCES:
+
+        - [Moe2007]_
 
         INPUT:
 
@@ -198,5 +203,4 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
 # monomial - comul, mul and antipode - define by coercion
 # lift map to powersum
 # Monomial - moens thesis
-# Schur product - moens thesis
-# Re-implement schur coproduct via coercion to powersum
+# Unsure about Schur coproduct
