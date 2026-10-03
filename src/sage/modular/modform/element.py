@@ -492,6 +492,12 @@ class ModularForm_abstract(ModuleElement):
              1,
              4*zeta10 + 1,
              -9*zeta10^3 + 1]
+
+        One-shot iterators are accepted, preserving order and duplicates::
+
+            sage: delta = CuspForms(1, 12).0
+            sage: delta.coefficients(n for n in [3, 1, 3, 2])
+            [252, 1, 252, -24]
         """
         try:
             self.__coefficients
@@ -499,6 +505,8 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients = {}
         if isinstance(X, (int, Integer)):
             X = list(range(1, ZZ(X) + 1))
+        else:
+            X = list(X)
         Y = [n for n in X if n not in self.__coefficients]
         v = self._compute(Y)
         for i in range(len(v)):
