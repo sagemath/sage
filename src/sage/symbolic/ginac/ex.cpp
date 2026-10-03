@@ -138,22 +138,30 @@ bool ex::match(const ex & pattern, exvector& vec) const
         return ret;
 }
 
+static bool find_matches(const ex & expression, const ex & pattern, lst & found)
+{
+	if (expression.match(pattern)) {
+		found.append(expression);
+		return true;
+	}
+	bool any_found = false;
+	for (size_t i = 0; i < expression.nops(); ++i)
+		if (find_matches(expression.op(i), pattern, found))
+			any_found = true;
+	return any_found;
+}
+
 /** Find all occurrences of a pattern. The found matches are appended to
  *  the "found" list. If the expression itself matches the pattern, the
  *  children are not further examined. This function returns true when any
  *  matches were found. */
 bool ex::find(const ex & pattern, lst & found) const
 {
-	if (match(pattern)) {
-		found.append(*this);
+	const bool any_found = find_matches(*this, pattern, found);
+	if (any_found) {
 		found.sort();
 		found.unique();
-		return true;
 	}
-	bool any_found = false;
-	for (size_t i=0; i<nops(); i++)
-		if (op(i).find(pattern, found))
-			any_found = true;
 	return any_found;
 }
 
@@ -756,7 +764,7 @@ static bool _collect_powers(ex& e, ex& repl, bool& collected)
 ex ex::collect_powers() const
 {
         ex the_ex = *this;
-        bool b;
+        bool b = false;
         ex r;
         (void)_collect_powers(the_ex, r, b);
         return b? r:the_ex;
