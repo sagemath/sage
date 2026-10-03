@@ -235,7 +235,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     EXAMPLES::
 
         sage: import sage.misc.dev_tools as dt
-        sage: dt.find_objects_from_name('FareySymbol')                                  # needs sage.modular
+        sage: dt.find_objects_from_name('FareySymbol')
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
         sage: # needs sympy
@@ -261,7 +261,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
     same object may be included in the output::
 
-        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)                # needs sage.rings.real_mpfr
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
         [Real Field with 53 bits of precision,
          ...
          Real Field with 53 bits of precision,
@@ -309,7 +309,7 @@ def import_statements(*objects, **kwds):
 
     EXAMPLES::
 
-        sage: import_statements(WeylGroup, lazy_attribute)                              # needs sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute)
         from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.misc.lazy_attribute import lazy_attribute
 
@@ -319,7 +319,7 @@ def import_statements(*objects, **kwds):
     If ``lazy`` is True, then :func:`lazy_import` statements are
     displayed instead::
 
-        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)                   # needs sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)
         from sage.misc.lazy_import import lazy_import
         lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
         lazy_import('sage.misc.lazy_attribute', 'lazy_attribute')
@@ -337,7 +337,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(euler_phi)
         from sage.arith.misc import euler_phi
 
-        sage: import_statements(x)                                                      # needs sage.symbolic
+        sage: import_statements(x)
         from sage.calculus.predefined import x
 
     If you don't like the warning you can disable them with the option ``verbose``::
@@ -345,13 +345,13 @@ def import_statements(*objects, **kwds):
         sage: import_statements(ZZ, verbose=False)
         from sage.rings.integer_ring import Z
 
-        sage: import_statements(x, verbose=False)                                       # needs sage.symbolic
+        sage: import_statements(x, verbose=False)
         from sage.calculus.predefined import x
 
     If the object has several names, an other way to get the import
     statement you expect is to use a string instead of the object::
 
-        sage: import_statements(matrix)                                                 # needs sage.modules
+        sage: import_statements(matrix)
         # ** Warning **: several names for that object: Matrix, matrix
         from sage.matrix.constructor import Matrix
 
@@ -366,7 +366,7 @@ def import_statements(*objects, **kwds):
     The strings are allowed to be comma-separated names, and parenthesis
     are stripped for convenience::
 
-        sage: import_statements('(floor, ceil)')                                        # needs sage.symbolic
+        sage: import_statements('(floor, ceil)')
         from sage.functions.other import floor, ceil
 
     Specifying a string is also useful for objects that are not
@@ -443,9 +443,9 @@ def import_statements(*objects, **kwds):
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
         from sage.rings.cif import CIF
-        sage: import_statements(NaN)                                                    # needs sage.symbolic
+        sage: import_statements(NaN)
         from sage.symbolic.constants import NaN
-        sage: import_statements(pi)                                                     # needs sage.symbolic
+        sage: import_statements(pi)
         from sage.symbolic.constants import pi
         sage: import_statements('SAGE_ENV')
         from sage.env import SAGE_ENV
