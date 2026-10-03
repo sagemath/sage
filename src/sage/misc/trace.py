@@ -3,7 +3,7 @@ Interactively tracing execution of a command
 """
 
 
-def trace(code, preparse=True):
+def trace(code: str, preparse: bool = True) -> None:
     r"""
     Evaluate Sage code using the interactive tracer and return the
     result. The string ``code`` must be a valid expression
