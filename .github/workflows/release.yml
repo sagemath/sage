@@ -86,13 +86,13 @@ jobs:
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v4
         with:
-          python-version: 3.12
+          python-version: 3.13
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
           activate-environment: sage-dev
-          environment-file: environment-3.12-linux.yml
+          environment-file: environment-3.13-linux.yml
 
       - name: Create source distribution
         shell: bash -l {0}
@@ -187,7 +187,7 @@ jobs:
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.12, <3.13"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.13, <3.15"
       # Environment during wheel build
       CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
@@ -211,7 +211,7 @@ jobs:
         # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
         id: python
         with:
-          python-version: "3.12 - 3.13"
+          python-version: "3.13 - 3.14"
           update-environment: false
 
       - name: Bootstrap

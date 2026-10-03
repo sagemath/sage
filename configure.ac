@@ -385,7 +385,7 @@ PKG_CHECK_MODULES([liblzma], [liblzma], [], [
 # Check for Python 3 for venv (required system package)
 ########################################################################
 
-m4_pushdef([PYTHON_MIN_VERSION],               [3.12.0])
+m4_pushdef([PYTHON_MIN_VERSION],               [3.13.0])
 m4_pushdef([PYTHON_LT_VERSION],                [3.15.0])
 
 AC_ARG_WITH([python],

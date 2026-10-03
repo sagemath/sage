@@ -12,7 +12,7 @@ Namely, the following standard tools must be installed on your computer:
 
 - **liblzma/xz**: XZ Utils, the free general-purpose data compression software
   with a high compression ratio.
-- **python**: Python 3.12 or later from your system package manager or another
+- **python**: Python 3.13 or later from your system package manager or another
   external installation. Sage no longer builds its own Python interpreter; it
   uses this interpreter to create ``SAGE_VENV``. It needs to have the
   development headers and the following standard modules available:
@@ -34,7 +34,7 @@ to ``PKG_CONFIG_PATH``::
 
     $ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/foo/lib/pkgconfig
 
-Python 3.12 (or later) with development headers is available with most
+Python 3.13 (or later) with development headers is available with most
 supported distributions (package names such as ``python3-devel`` on Fedora,
 ``python3-dev`` on Debian/Ubuntu).
 It can also be built from source from https://www.python.org/downloads/.
