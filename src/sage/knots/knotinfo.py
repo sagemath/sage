@@ -1469,7 +1469,7 @@ class KnotInfoBase(Enum):
 
         .. MATH::
 
-            \Delta(O) = 1,\,\,\,   \Delta(L_+) -  \Delta(L_-) = z (\Delta(L_0 + \Delta(L_{\infty}))
+            \Delta(O) = 1,\,\,\,   \Delta(L_+) +  \Delta(L_-) = z (\Delta(L_0 + \Delta(L_{\infty}))
 
         Furthermore, removing a curl of sign `\epsilon` leads to a multiplication
         of `\Delta(L)` with `a^{\epsilon}`.
@@ -1492,7 +1492,7 @@ class KnotInfoBase(Enum):
             sage: L = KnotInfo.L2a1_1
             sage: K = KnotInfo.K4_1
 
-            sage: L.kauffman_polynomial()
+            sage: lkp = L.kauffman_polynomial(); lkp
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
             sage: kp1 = K.kauffman_polynomial(); kp1
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
@@ -1500,12 +1500,19 @@ class KnotInfoBase(Enum):
             sage: (kp2.degree(), len(kp2.coefficients()))                # optional database_knotinfo
             (16, 69)
 
+        Comparison with Sage's results::
+
+            sage: L.link().kauffman_polynomial() == lkp
+            True
+            sage: K.link().kauffman_polynomial() == kp1
+            True
+
         Comparison with Jones polynomial::
 
             sage: # needs sage.symbolic
             sage: a, z = kp1.variables()
-            sage: j    = K.jones_polynomial(skein_normalization=True)
-            sage: t,   = j.variables()
+            sage: j = K.jones_polynomial(skein_normalization=True)
+            sage: t, = j.variables()
             sage: kp1.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
             True
 

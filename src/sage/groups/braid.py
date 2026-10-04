@@ -567,75 +567,14 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b.plot(orientation='left-right', color='red')                         # needs sage.plot
             Graphics object consisting of 12 graphics primitives
         """
-        from sage.plot.bezier_path import bezier_path
-        from sage.plot.colors import rainbow
-        from sage.plot.plot import Graphics, line
-        if orientation == 'top-bottom':
-            orx = 0
-            ory = -1
-            nx = 1
-            ny = 0
-        elif orientation == 'left-right':
-            orx = 1
-            ory = 0
-            nx = 0
-            ny = -1
-        elif orientation == 'bottom-top':
-            orx = 0
-            ory = 1
-            nx = 1
-            ny = 0
-        else:
-            raise ValueError('unknown value for "orientation"')
-        n = self.strands()
-        if isinstance(color, (list, tuple)):
-            if len(color) != n:
-                raise TypeError(f"color (={color}) must contain exactly {n} colors")
-            col = list(color)
-        elif color == "rainbow":
-            col = rainbow(n)
-        else:
-            col = [color]*n
-        braid = self.Tietze()
-        a = Graphics()
-        op = gap
-        for i, m in enumerate(braid):
-            for j in range(n):
-                if m == j+1:
-                    a += bezier_path([[(j*nx+i*orx, i*ory+j*ny), (j*nx+orx*(i+0.25), j*ny+ory*(i+0.25)),
-                                       (nx*(j+0.5)+orx*(i+0.5), ny*(j+0.5)+ory*(i+0.5))],
-                                      [(nx*(j+1)+orx*(i+0.75), ny*(j+1)+ory*(i+0.75)),
-                                       (nx*(j+1)+orx*(i+1), ny*(j+1)+ory*(i+1))]], color=col[j], **kwds)
-                elif m == j:
-                    a += bezier_path([[(nx*j+orx*i, ny*j+ory*i), (nx*j+orx*(i+0.25), ny*j+ory*(i+0.25)),
-                                       (nx*(j-0.5+4*op)+orx*(i+0.5-2*op), ny*(j-0.5+4*op)+ory*(i+0.5-2*op)),
-                                       (nx*(j-0.5+2*op)+orx*(i+0.5-op), ny*(j-0.5+2*op)+ory*(i+0.5-op))]],
-                                     color=col[j], **kwds)
-                    a += bezier_path([[(nx*(j-0.5-2*op)+orx*(i+0.5+op), ny*(j-0.5-2*op)+ory*(i+0.5+op)),
-                                       (nx*(j-0.5-4*op)+orx*(i+0.5+2*op), ny*(j-0.5-4*op)+ory*(i+0.5+2*op)),
-                                       (nx*(j-1)+orx*(i+0.75), ny*(j-1)+ory*(i+0.75)),
-                                       (nx*(j-1)+orx*(i+1), ny*(j-1)+ory*(i+1))]], color=col[j], **kwds)
-                    col[j], col[j-1] = col[j-1], col[j]
-                elif -m == j+1:
-                    a += bezier_path([[(nx*j+orx*i, ny*j+ory*i), (nx*j+orx*(i+0.25), ny*j+ory*(i+0.25)),
-                                       (nx*(j+0.5-4*op)+orx*(i+0.5-2*op), ny*(j+0.5-4*op)+ory*(i+0.5-2*op)),
-                                       (nx*(j+0.5-2*op)+orx*(i+0.5-op), ny*(j+0.5-2*op)+ory*(i+0.5-op))]],
-                                     color=col[j], **kwds)
-                    a += bezier_path([[(nx*(j+0.5+2*op)+orx*(i+0.5+op), ny*(j+0.5+2*op)+ory*(i+0.5+op)),
-                                       (nx*(j+0.5+4*op)+orx*(i+0.5+2*op), ny*(j+0.5+4*op)+ory*(i+0.5+2*op)),
-                                       (nx*(j+1)+orx*(i+0.75), ny*(j+1)+ory*(i+0.75)),
-                                       (nx*(j+1)+orx*(i+1), ny*(j+1)+ory*(i+1))]], color=col[j], **kwds)
-                elif -m == j:
-                    a += bezier_path([[(nx*j+orx*i, ny*j+ory*i), (nx*j+orx*(i+0.25), ny*j+ory*(i+0.25)),
-                                       (nx*(j-0.5)+orx*(i+0.5), ny*(j-0.5)+ory*(i+0.5))],
-                                      [(nx*(j-1)+orx*(i+0.75), ny*(j-1)+ory*(i+0.75)),
-                                       (nx*(j-1)+orx*(i+1), ny*(j-1)+ory*(i+1))]], color=col[j], **kwds)
-                    col[j], col[j-1] = col[j-1], col[j]
-                else:
-                    a += line([(nx*j+orx*i, ny*j+ory*i), (nx*j+orx*(i+1), ny*j+ory*(i+1))], color=col[j], **kwds)
-        a.set_aspect_ratio(aspect_ratio)
-        a.axes(axes)
-        return a
+        from sage.monoids.tangles import KauffmanTangles
+        B = self.parent()
+        gs = list(B.gens_dict().keys())
+        es = ['e' + g for g in gs]
+        KT = KauffmanTangles(tuple(gs + es))
+        t = KT(self)
+        return t.plot(color=color, orientation=orientation, gap=gap,
+                      aspect_ratio=aspect_ratio, axes=axes, **kwds)
 
     def plot3d(self, color='rainbow'):
         """
@@ -1029,10 +968,12 @@ class Braid(FiniteTypeArtinGroupElement):
             R = LaurentPolynomialRing(ZZ, 'A')
             A = R.gens()[0]
             one = ZZ.one()
-            quantum_integer = lambda d: R({i: one for i in range(-2*d, 2*d+1, 4)})
+
+            def quantum_integer(d): return R({i: one for i in range(-2*d, 2*d+1, 4)})
         else:
             A = variab
-            quantum_integer = lambda d: (A**(2*(d+1))-A**(-2*(d+1))) // (A**2-A**(-2))
+
+            def quantum_integer(d): return (A**(2*(d+1))-A**(-2*(d+1))) // (A**2-A**(-2))
 
         n = self.strands()
         trace_sum = sum(quantum_integer(d) * self.TL_matrix(d, variab=variab).trace()

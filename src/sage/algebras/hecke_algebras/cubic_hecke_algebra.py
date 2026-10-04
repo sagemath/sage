@@ -125,16 +125,22 @@ AUTHORS:
 # ###########################################################################
 from warnings import warn
 
+from sage.algebras.hecke_algebras.cubic_hecke_base_ring import (
+    CubicHeckeRingOfDefinition,
+)
+from sage.algebras.hecke_algebras.cubic_hecke_matrix_rep import (
+    AbsIrreducibleRep,
+    CubicHeckeMatrixSpace,
+    RepresentationType,
+)
+from sage.algebras.splitting_algebra import solve_with_extension
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.groups.cubic_braid import CubicBraidGroup
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.verbose import verbose
-from sage.groups.cubic_braid import CubicBraidGroup
-from sage.rings.integer_ring import ZZ
-from sage.algebras.splitting_algebra import solve_with_extension
 from sage.modules.free_module_element import vector
-from sage.matrix.matrix_space import MatrixSpace
-from sage.algebras.hecke_algebras.cubic_hecke_base_ring import CubicHeckeRingOfDefinition
-from sage.algebras.hecke_algebras.cubic_hecke_matrix_rep import CubicHeckeMatrixSpace, AbsIrreducibleRep, RepresentationType
+from sage.rings.integer_ring import ZZ
 
 
 ##############################################################################
@@ -461,7 +467,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
         """
         return self.parent().orientation_antiinvolution(self)
 
-    def formal_markov_trace(self, extended=False, field_embedding=False):
+    def formal_markov_trace(self, generic=False, extension_ring=False, extended=False, field_embedding=False):
         r"""
         Return a formal expression which can be specialized to Markov traces
         which factor through the cubic Hecke algebra.
@@ -503,13 +509,13 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``extended`` -- boolean (default: ``False``); if set to ``True`` the
-          base ring of the Markov trace module is constructed as an extension
-          of generic extension ring of ``self``; per default it is constructed
-          upon the generic base ring
-        - ``field_embedding`` -- boolean (default: ``False``); if set to ``True``
-          the base ring of the module is the smallest field containing the
-          generic extension ring of ``self``; ignored if ``extended=False``
+        - ``generic`` -- boolean (default: ``False``); if set to ``True`` the
+          base ring of the module is the Markov trace version of the generic
+          base ring or extension ring of ``self``
+        - ``extension_ring`` -- boolean (default: ``False``); if set to ``True``
+          the base ring of the Markov trace module is constructed as an extension
+          of extension ring of ``self`` (adding the writhe parameter ``s``);
+          per default it is constructed upon an extension of the base ring
 
         EXAMPLES::
 
@@ -524,20 +530,21 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
                over Multivariate Polynomial Ring in u, v, w, s
                over Integer Ring localized at (s, w, v, u)
 
-            sage: f = b3_1.formal_markov_trace(extended=True); f
+            sage: f = b3_1.formal_markov_trace(extension_ring=True); f
+            ((u^2*s^2-v*s^2+u*w)/s)*B[U1] - (u*v-w)*B[U2]
+            sage: f.parent().base_ring()
+            Splitting Algebra of T^2 + T + 1 with roots [E3, -E3 - 1]
+              over Splitting Algebra of h^3 - u*h^2 + v*h - w with roots [a, b, -b - a + u]
+              over Multivariate Polynomial Ring in u, v, w, s
+              over Integer Ring localized at (s, w, v, u)
+
+            sage: f = b3_1.formal_markov_trace(generic=True, extension_ring=True); f
             (a^2*b*c*s^-1+a*b^2*c*s^-1+a*b*c^2*s^-1+a^2*s+a*b*s+b^2*s+a*c*s+b*c*s+c^2*s)*B[U1]
               + (-a^2*b-a*b^2-a^2*c+(-2)*a*b*c-b^2*c-a*c^2-b*c^2)*B[U2]
             sage: f.parent().base_ring()
             Multivariate Laurent Polynomial Ring in a, b, c, s
               over Splitting Algebra of x^2 + x + 1 with roots [e3, -e3 - 1]
               over Integer Ring
-
-            sage: f = b3_1.formal_markov_trace(extended=True, field_embedding=True); f
-            ((a^2*b*c+a*b^2*c+a*b*c^2+a^2*s^2+a*b*s^2+b^2*s^2+a*c*s^2+b*c*s^2+c^2*s^2)/s)*B[U1]
-            - (a^2*b+a*b^2+a^2*c+2*a*b*c+b^2*c+a*c^2+b*c^2)*B[U2]
-            sage: f.parent().base_ring()
-            Fraction Field of Multivariate Polynomial Ring in a, b, c, s
-              over Cyclotomic Field of order 3 and degree 2
 
         Obtaining the well known link invariants from it::
 
@@ -565,20 +572,18 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             sage: g == K3_1.link().links_gould_polynomial()
             True
         """
+        if extended:
+            from sage.misc.superseded import deprecation
+            deprecation(41513, "extended is deprecated, use arguments generic and extension_ring instead.")
+
+        if field_embedding:
+            from sage.misc.superseded import deprecation
+            deprecation(41513, "field_embedding is deprecated, use arguments generic and extension_ring instead.")
+
         cha = self.parent()
         vs = self.to_vector()
-        mtcf = cha._markov_trace_coeffs()
-        M = cha._markov_trace_module(extended=extended, field_embedding=field_embedding)
-        if M != mtcf[0].parent():
-            if field_embedding:
-                # intermediate step needed since internal coercion to the field
-                # maps (u, v, w ) -> (a, b, c)
-                MI = cha._markov_trace_module(extended=extended, field_embedding=False)
-                RI = MI.base_ring()
-                mtcf = [MI.from_vector(cf.to_vector()) for cf in mtcf]
-                vs = vs.change_ring(RI)
-            mtcf = [M.from_vector(cf.to_vector()) for cf in mtcf]
-
+        mtcf = cha._markov_trace_coeffs(generic=generic, extension_ring=extension_ring)
+        M = mtcf[0].parent()
         R = M.base_ring()
         return M.linear_combination((mtcf[i], R(val)) for i, val in vs.items())
 
@@ -792,7 +797,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     # private methods
     ############################################################################
     @staticmethod
-    def __classcall_private__(cls, n=None, names='c', cubic_equation_parameters=None, cubic_equation_roots=None):
+    def __classcall_private__(cls, n=None, names='c', cubic_equation_parameters=None, cubic_equation_roots=None, warning=True):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -833,9 +838,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         names = tuple(normalize_names(n, names))
         return super().__classcall__(cls, names,
                                      cubic_equation_parameters=cubic_equation_parameters,
-                                     cubic_equation_roots=cubic_equation_roots)
+                                     cubic_equation_roots=cubic_equation_roots,
+                                     warning=warning)
 
-    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None):
+    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None, warning=True):
         r"""
         Initialize ``self``.
 
@@ -858,7 +864,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # ----------------------------------------------------------------------
         # preparing use of data base anf file cache
         # ----------------------------------------------------------------------
-        from sage.databases.cubic_hecke_db import CubicHeckeDataBase, CubicHeckeFileCache
+        from sage.databases.cubic_hecke_db import (
+            CubicHeckeDataBase,
+            CubicHeckeFileCache,
+        )
         self._database = CubicHeckeDataBase()
         self._filecache = CubicHeckeFileCache(self._nstrands)
 
@@ -977,7 +986,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 ext_ring_names = list(generic_extension_ring_names)
                 cubic_equation_roots = solve_with_extension(cubic_equation,
                                                             ext_ring_names,
-                                                            var='S', flatten=True)
+                                                            var='S', flatten=True,
+                                                            warning=warning)
 
         # ----------------------------------------------------------------------
         # interpreting user given cubic equation roots to define the
@@ -1095,7 +1105,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # defining the algebra itself
         # ----------------------------------------------------------------------
         if self._cubic_braid_group.is_finite():
-            from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+            from sage.categories.finite_dimensional_algebras_with_basis import (
+                FiniteDimensionalAlgebrasWithBasis,
+            )
             category = FiniteDimensionalAlgebrasWithBasis(base_ring)
         else:
             from sage.categories.algebras_with_basis import AlgebrasWithBasis
@@ -2666,20 +2678,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     # --------------------------------------------------------------------------
     # _markov_trace_module
     # --------------------------------------------------------------------------
-    def _markov_trace_module(self, extended=False, field_embedding=False):
+    def _markov_trace_module(self):
         r"""
         Return the module that contains the formal Markov trace as elements.
-
-        INPUT:
-
-        - ``extended`` -- boolean (default: ``False``); if set to ``True`` the
-          base ring of the module is the Markov trace version of the generic
-          extension ring of ``self``.
-
-        - ``field_embedding`` -- boolean (default: ``False``); if set to ``True`
-          the base ring of the module is the smallest field containing the
-          generic extension ring of ``self``. The keyword is meaningless if
-          ``extended=False``.
 
         OUTPUT: a :class:`~sage.combinat.free_module.CombinatorialFreeModule`
 
@@ -2690,36 +2691,30 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             Free module generated by {U1, U2}
               over Multivariate Polynomial Ring in u, v, w, s
               over Integer Ring localized at (s, w, v, u)
-
-            sage: CHA2._markov_trace_module(extended=True)
-            Free module generated by {U1, U2}
-              over Multivariate Laurent Polynomial Ring in a, b, c, s
-              over Splitting Algebra of x^2 + x + 1 with roots [e3, -e3 - 1]
-              over Integer Ring
-
-            sage: CHA2._markov_trace_module(extended=True, field_embedding=True)
-            Free module generated by {U1, U2}
-              over Fraction Field of Multivariate Polynomial Ring in a, b, c, s
-              over Cyclotomic Field of order 3 and degree 2
         """
-        from sage.modules.free_module import FreeModule
         from sage.databases.cubic_hecke_db import MarkovTraceModuleBasis
+        from sage.modules.free_module import FreeModule
         basis = [b for b in MarkovTraceModuleBasis if b.strands() <= self._nstrands]
         BRM = self.base_ring(generic=True).markov_trace_version()
-        if extended:
-            BRM = BRM.extension_ring()
-            if field_embedding:
-                emb = BRM.field_embedding()
-                BRM = emb.codomain()
         return FreeModule(BRM, basis)
 
     # --------------------------------------------------------------------------
     # _markov_trace_coeffs
     # --------------------------------------------------------------------------
     @cached_method
-    def _markov_trace_coeffs(self):
+    def _markov_trace_coeffs(self, generic=False, extension_ring=False):
         r"""
         Return a list of formal Markov traces of the basis elements of ``self``.
+
+        INPUT:
+
+        - ``generic`` -- boolean (default: ``False``); if set to ``True`` the
+          base ring of the module is the Markov trace version of the generic
+          base ring or extension ring of ``self``
+        - ``extension_ring`` -- boolean (default: ``False``); if set to ``True``
+          the base ring of the Markov trace module is constructed as an extension
+          of extension ring of ``self`` (adding the writhe parameter ``s``);
+          per default it is constructed upon an extension of the base ring
 
         OUTPUT:
 
@@ -2738,12 +2733,51 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
               over Integer Ring localized at (s, w, v, u)
         """
         M = self._markov_trace_module()
-        Mbas = M.basis().keys()
-        db = self._database
-        sec = db.section.markov_tr_cfs
-        cfs = db.read(sec, variables=M.base_ring().gens(), nstrands=self._nstrands)
-        d = self.dimension()
-        return [sum(cfs[bas_ele][i]*M(bas_ele) for bas_ele in Mbas) for i in range(d)]
+        BM = M.base_ring()
+        if generic and not extension_ring:
+            Mbas = M.basis().keys()
+            db = self._database
+            sec = db.section.markov_tr_cfs
+            cfs = db.read(sec, variables=M.base_ring().gens(), nstrands=self._nstrands)
+            d = self.dimension()
+            return [sum(cfs[bas_ele][i]*M(bas_ele) for bas_ele in Mbas) for i in range(d)]
+
+        mtcf = self._markov_trace_coeffs(generic=True, extension_ring=False)
+        if extension_ring:
+            BME = BM.extension_ring()
+            B = self.extension_ring()
+            BG = self.extension_ring(generic=True)
+            if generic or B == BG:
+                B = BME
+            elif B == BG.as_splitting_algebra():
+                B = BME.as_splitting_algebra()
+        else:
+            B = self.base_ring()
+            BG = self.base_ring(generic=True)
+            if generic or B == BG:
+                return mtcf
+
+        try:
+            # first see, if there is alraedy a convert map
+            f = B.convert_map_from(BM)
+        except TypeError:
+            # if not replace B by a specialition of the generic ring
+            writhe_parameter = 's'
+            B = B[writhe_parameter]
+            s = B.gen()
+            B = B.localization(s)
+            if extension_ring:
+                gens = self.cubic_equation_roots()
+                B = BME.create_specialization(gens, im_writhe_parameter=s)
+            else:
+                gens = self.cubic_equation_parameters()
+                B = BM.create_specialization(gens, im_writhe_parameter=s)
+            f = B.convert_map_from(BM)
+
+        MB = M.change_ring(B)
+        from sage.modules.free_module_element import vector as vec
+        mtcfB = [MB.from_vector(vec([f(c) for c in cf.to_vector()])) for cf in mtcf]
+        return mtcfB
 
     ############################################################################
     # --------------------------------------------------------------------------
