@@ -415,12 +415,13 @@ static ex cos_eval(const ex & x)
                         if (c.is_rational()) {
                                 numeric den = c.denom();
                                 numeric num = c.numer().mod(den * *_num2_p);
-                                if (num > den)
-                                        num = den * *_num2_p - num;
-                                if (num*(*_num2_p) > den)
-                                        return mul(_ex_1, cos_eval((den-num)*Pi/den));
-                                
-                                        return cos((num*Pi)/den).hold();
+	                                if (num > den) {
+	                                        num = den * *_num2_p - num;
+	                                }
+	                                if (num*(*_num2_p) > den)
+	                                        return mul(_ex_1, cos_eval((den-num)*Pi/den));
+
+	                                return cos((num*Pi)/den).hold();
                         }
                 }
 	}
@@ -959,10 +960,10 @@ static ex sec_eval(const ex & x)
                 return power(res, _ex_1);
         }
         // cos has reflected also the argument so take it
-        if (is_ex_the_function(res, cos))
-                return sec(res.op(0)).hold();
-        
-                return -sec((-res).op(0)).hold();
+	        if (is_ex_the_function(res, cos))
+	                return sec(res.op(0)).hold();
+
+	        return -sec((-res).op(0)).hold();
 }
 
 static ex sec_deriv(const ex & x, unsigned deriv_param)
@@ -1070,11 +1071,11 @@ static ex csc_eval(const ex & x)
 
         // Handle simplification via sin
         ex res = sin_eval(x);
-        if (not is_ex_the_function(res, sin) && not is_ex_the_function(_ex_1*res, sin)) {
-                if (res.is_zero())
-                        return UnsignedInfinity;
-                
-                        return power(res, _ex_1);
+	        if (not is_ex_the_function(res, sin) && not is_ex_the_function(_ex_1*res, sin)) {
+	                if (res.is_zero())
+	                        return UnsignedInfinity;
+
+	                return power(res, _ex_1);
         }
         // sin has reflected also the argument so take it
         if (is_ex_the_function(res, sin))
@@ -1377,7 +1378,8 @@ static ex atan_series(const ex &arg,
 		// method:
 		// This is the branch cut: assemble the primitive series manually and
 		// then add the corresponding complex step function.
-		const symbol &s = ex_to<symbol>(rel.lhs());
+		const ex lhs = rel.lhs();
+		const symbol &s = ex_to<symbol>(lhs);
 		const ex &point = rel.rhs();
 		const symbol foo;
 		const ex replarg = series(atan(arg), s==foo, order).subs(foo==point, subs_options::no_pattern);

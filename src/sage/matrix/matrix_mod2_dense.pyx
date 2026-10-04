@@ -105,7 +105,7 @@ TESTS::
 # ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_str, sig_off
+from cysignals.signals cimport sig_on, sig_str, sig_off, sig_check
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
@@ -1195,6 +1195,85 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.subdivide(*self.subdivisions())
 
         return A
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using M4RI.
+
+        TESTS::
+
+            sage: A = matrix(GF(2), [[0, 1, 0, 1], [0, 1, 1, 1],
+            ....:                    [0, 0, 0, 1], [0, 1, 1, 0]])
+            sage: P, L, U = A.LU()
+            sage: A == P * L * U
+            True
+            sage: L.is_triangular('lower') and U.is_triangular('upper')
+            True
+
+        Rank-deficient rectangular matrices can have pivots separated by
+        more than one machine word.  Preserve the lower factor when clearing
+        the remaining entries of the zero rows::
+
+            sage: A = matrix(GF(2), 4, 67,
+            ....:            {(0, 1): 1, (0, 65): 1, (1, 65): 1, (2, 1): 1},
+            ....:            sparse=False)
+            sage: for B in (A, A.transpose(), matrix(GF(2), 2, 1, [1, 1]),
+            ....:           zero_matrix(GF(2), 3, 4)):
+            ....:     P, L, U = B.LU()
+            ....:     assert B == P * L * U
+            ....:     assert L.is_triangular('lower')
+            ....:     assert all(U[i, j] == 0 for i in range(U.nrows())
+            ....:                for j in range(min(i, U.ncols())))
+            sage: A.rank()
+            2
+        """
+        cdef Py_ssize_t i, j
+        cdef long rank
+        cdef rci_t pivot
+        cdef Py_ssize_t nrows = self._nrows
+        cdef Py_ssize_t ncols = self._ncols
+        cdef Matrix_mod2_dense B = self.__copy__()
+        cdef mzp_t *P = NULL
+        cdef mzp_t *Q = NULL
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), B
+
+        P = mzp_init(nrows)
+        Q = mzp_init(ncols)
+        try:
+            sig_on()
+            try:
+                rank = mzd_ple(B._entries, P, Q, 0)
+            finally:
+                sig_off()
+
+            perm = list(range(nrows))
+            for i in range(nrows):
+                sig_check()
+                j = P.values[i]
+                perm[i], perm[j] = perm[j], perm[i]
+
+            # PLE already stores the lower factor in its final position.
+            # Clear the displaced diagonal and restore each echelon pivot.
+            for i in range(rank):
+                sig_check()
+                pivot = Q.values[i]
+                for j in range(i, pivot, m4ri_radix):
+                    mzd_clear_bits(B._entries, i, j, min(m4ri_radix, pivot - j))
+                mzd_write_bit(B._entries, i, pivot, 1)
+
+            # Rows below the rank contain only the rank-column lower factor.
+            for i in range(rank, nrows):
+                sig_check()
+                for j in range(rank, ncols, m4ri_radix):
+                    mzd_clear_bits(B._entries, i, j, min(m4ri_radix, ncols - j))
+        finally:
+            mzp_free(P)
+            mzp_free(Q)
+
+        self.cache('rank', rank)
+        return tuple(perm), B
 
     def _list(self):
         """

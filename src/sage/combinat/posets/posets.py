@@ -7656,18 +7656,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         q = polygen(ZZ, 'q')
         ring = q.parent()
-        hasse = self._hasse_diagram
-        if len(hasse) == 1:
-            return q.parent().one()
-        maxi = hasse.top()
-        mini = hasse.bottom()
-        if (mini is None) or (maxi is None):
-            raise ValueError("the poset is not bounded")
-        f = ring.sum(ring.monomial(len(ch))
-                     for ch in hasse.chains(exclude=[mini, maxi]))
-        d = f.degree()
-        f = (1 - q)**d * q * f(q=q / (1 - q))
-        return ring(f)
+        f = self.f_polynomial()
+        h = (1-q)**f.degree() * f(q/(1-q))
+        return ring(h)
 
     def flag_f_polynomial(self):
         r"""
