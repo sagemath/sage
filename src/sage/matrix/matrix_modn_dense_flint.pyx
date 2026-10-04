@@ -27,6 +27,7 @@ AUTHORS:
 import sys
 
 from cpython.sequence cimport *
+from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 from libc.string cimport memcpy
 
@@ -346,6 +347,49 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
         nmod_mat_set(M._matrix, self._matrix)
         sig_off()
         return M
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact LU decomposition using FLINT.
+
+        TESTS::
+
+            sage: A = matrix(GF(7), [[0, 1, 2], [1, 2, 3], [1, 2, 3]],
+            ....:            implementation='flint')
+            sage: P, L, U = A.LU()
+            sage: A == P * L * U
+            True
+            sage: L.is_triangular('lower') and all(L[i, i] == 1 for i in range(3))
+            True
+            sage: U.is_triangular('upper')
+            True
+        """
+        if not self._parent._base.is_field():
+            return None
+
+        cdef Py_ssize_t i
+        cdef slong rank
+        cdef slong *P
+        cdef Matrix_modn_dense_flint M = self.__copy__()
+        cdef Py_ssize_t nrows = self._nrows
+        cdef Py_ssize_t ncols = self._ncols
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), M
+
+        P = <slong *>check_allocarray(nrows, sizeof(slong))
+        try:
+            sig_on()
+            try:
+                rank = nmod_mat_lu(P, M._matrix, 0)
+            finally:
+                sig_off()
+            perm = tuple(P[i] for i in range(nrows))
+        finally:
+            sig_free(P)
+
+        self.cache('rank', Integer(rank))
+        return perm, M
 
     def __neg__(self):
         r"""

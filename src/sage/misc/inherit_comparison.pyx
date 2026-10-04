@@ -51,7 +51,6 @@ cdef class InheritComparisonMetaclass(type):
 
     EXAMPLES::
 
-        sage: # needs sage.misc.cython
         sage: cython(
         ....: '''
         ....: cimport cython

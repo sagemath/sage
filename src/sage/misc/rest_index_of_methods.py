@@ -58,7 +58,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
-        sage: print(gen_rest_table_index([graphs.PetersenGraph]))                       # needs sage.graphs
+        sage: print(gen_rest_table_index([graphs.PetersenGraph]))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -83,7 +83,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
 
     The table of a class::
 
-        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
+        sage: print(gen_rest_table_index(Graph))
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -109,7 +109,6 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
 
     The inherited methods do not show up::
 
-        sage: # needs sage.graphs
         sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75
         True
         sage: from sage.graphs.generic_graph import GenericGraph
@@ -148,14 +147,14 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
     A function that is imported into a class under a different name is listed
     under its 'new' name::
 
-        sage: 'cliques_maximum' in gen_rest_table_index(Graph)                          # needs sage.graphs
+        sage: 'cliques_maximum' in gen_rest_table_index(Graph)
         True
-        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
+        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)
         False
 
     Check that :issue:`36178` is fixed::
 
-        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
+        sage: print(gen_rest_table_index(Graph))
         ...
            :meth:`~sage.graphs.graph.Graph.independent_set` @ Return a maximum independent set.
         ...
@@ -247,17 +246,17 @@ def list_of_subfunctions(root, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
-        sage: Graph.bipartite_color in l                                                # needs sage.graphs
+        sage: l = list_of_subfunctions(Graph)[0]
+        sage: Graph.bipartite_color in l
         True
 
     TESTS:
 
     A ``staticmethod`` is not callable. We must handle them correctly, however::
 
-        sage: class A:                                                                  # needs sage.graphs
+        sage: class A:
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)                                                   # needs sage.graphs
+        sage: list_of_subfunctions(A)
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
     """
@@ -317,8 +316,8 @@ def gen_thematic_rest_table_index(root, additional_categories=None, only_local_f
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
-        sage: Graph.bipartite_color in l                                                # needs sage.graphs
+        sage: l = list_of_subfunctions(Graph)[0]
+        sage: Graph.bipartite_color in l
         True
     """
     from collections import defaultdict
