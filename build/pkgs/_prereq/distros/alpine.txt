@@ -24,3 +24,4 @@ pkgconf
 zlib-dev
 boost
 boost-dev
+gfortran
