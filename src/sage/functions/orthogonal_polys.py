@@ -745,6 +745,20 @@ class Func_chebyshev_T(ChebyshevFunction):
 
         raise ValueError("no special value found")
 
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: chebyshev_T(1/3, CBF(1/2))
+            [0.939692620785908 +/- 5.37e-16]
+            sage: RIF(chebyshev_T(1/3, 1/2))                                          # needs sage.symbolic
+            0.93969262078590843?
+        """
+        return [x, n]
+
     def _evalf_(self, n, x, **kwds):
         """
         Evaluates
@@ -1148,6 +1162,20 @@ class Func_chebyshev_U(ChebyshevFunction):
             return (b+a)*(b-a), both and 2*b*(x*b-a)
         return 2*a*(b-x*a), both and (b+a)*(b-a)
 
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: chebyshev_U(1/3, CBF(1/2))
+            [1.13715804260326 +/- 3.58e-15]
+            sage: RIF(chebyshev_U(1/3, 1/2))                                          # needs sage.symbolic
+            1.1371580426032578?
+        """
+        return [x, n]
+
     def _evalf_(self, n, x, **kwds):
         """
         Evaluate
@@ -1370,6 +1398,20 @@ class Func_legendre_P(GinacFunction):
                                               'maple': 'LegendreP',
                                               'giac': 'legendre'})
 
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: legendre_P(1/3, CBF(1/2))
+            [0.87604415946997 +/- 5.03e-15]
+            sage: RIF(legendre_P(1/3, 1/2))                                           # needs sage.symbolic
+            0.87604415946997?
+        """
+        return [x, n]
+
 
 legendre_P = Func_legendre_P()
 
@@ -1455,6 +1497,20 @@ class Func_legendre_Q(BuiltinFunction):
                 return -(sqrt(SR.pi()))/2 * sin(SR.pi()/2*n) * gam
             except TypeError:
                 pass
+
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: legendre_Q(1/3, CBF(1/2))
+            [-0.03995329475989 +/- 4.84e-15]
+            sage: RIF(legendre_Q(1/3, 1/2))                                          # needs sage.symbolic
+            -0.03995329475989?
+        """
+        return [x, n]
 
     def _evalf_(self, n, x, parent=None, **kwds):
         """
@@ -2238,6 +2294,20 @@ class Func_jacobi_P(OrthogonalFunction):
         s = sum(binomial(n, m) * gamma(a+b+n+m+1) / gamma(a+m+1) * ((x-1)/2)**m for m in range(n+1))
         r = gamma(a+n+1) / factorial(n) / gamma(n+a+b+1) * s
         return r.to_gamma().gamma_normalize().normalize()
+
+    def _method_arguments(self, n, a, b, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: jacobi_P(1/3, 1/2, 2/3, CBF(1/5))
+            [0.85400186266923 +/- 9.00e-15]
+            sage: RIF(jacobi_P(1/3, 1/2, 2/3, 1/5))                                   # needs sage.symbolic
+            0.854001862669228?
+        """
+        return [x, n, a, b]
 
     def _evalf_(self, n, a, b, x, **kwds):
         """
