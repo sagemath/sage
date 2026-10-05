@@ -2036,22 +2036,24 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = graphs.CompleteGraph(8)
-        sage: colors = acyclic_edge_coloring(g)                                         # needs sage.numerical.mip
+        sage: colors = acyclic_edge_coloring(g)  # long time
 
     Each color class is of course a matching ::
 
-        sage: all(max(gg.degree()) <= 1 for gg in colors)                               # needs sage.numerical.mip
+        sage: all(max(gg.degree()) <= 1 for gg in colors)  # long time
         True
 
-    These matchings being a partition of the edge set::
+    These matchings being a partition of the edge set ::
 
-        sage: all(any(gg.has_edge(e) for gg in colors)                                  # needs sage.numerical.mip
+        sage: all(any(gg.has_edge(e) for gg in colors)  # long time
         ....:     for e in g.edge_iterator(labels=False))
         True
 
     Besides, the union of any two of them is a forest ::
 
-        sage: all(g1.union(g2).is_forest() for g1 in colors for g2 in colors)           # needs sage.numerical.mip
+        sage: all(g1.union(g2).is_forest()  # long time
+        ....:     for g1 in colors
+        ....:     for g2 in colors)
         True
 
     If one wants to acyclically color a cycle on `4` vertices, at least 3 colors

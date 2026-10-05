@@ -240,8 +240,10 @@ class NumberFieldIdeal(Ideal_generic):
             sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 3); K
             Number Field in a with defining polynomial x^2 + 3
-            sage: f = K.factor(15); f
+            sage: f = K.factor(15); f  # random - depends on pari version
             (Fractional ideal (-a))^2 * (Fractional ideal (5))
+            sage: f[0][0] == K.ideal(a)
+            True
             sage: (f[0][0] < f[1][0])  # potentially random
             True
             sage: (f[0][0] == f[0][0])

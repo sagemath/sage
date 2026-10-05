@@ -2081,7 +2081,8 @@ def SRG_176_49_12_14(immutable=False):
             continue
         if (aut.order() == 2 and
                 all(i in aut(i) for i in d.ground_set())):
-            return Graph(((u, v) for u in d.ground_set() for v in aut(u)),
+            return Graph(((u, v) for u in d.ground_set() for v in aut(u)
+                          if u != v),
                          format='list_of_edges', loops=False,
                          name='Higman symmetric 2-design', immutable=immutable)
 

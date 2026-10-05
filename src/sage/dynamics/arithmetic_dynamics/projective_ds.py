@@ -8415,8 +8415,30 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         Check to see if the dynamical system has a totally ramified
         fixed point.
 
+        A dynamical system is polynomial if it has a totally ramified
+        fixed point. Over a field of characteristic zero this is
+        equivalent to the existence of a critical point of multiplicity
+        at least `d - 1` that is also a fixed point, where `d` is the
+        degree.
+
         The function must be defined over an absolute number field or a
         finite field.
+
+        ALGORITHM:
+
+        In characteristic zero, ramification is always tame and a
+        totally ramified fixed point is exactly a critical point of
+        multiplicity at least `d - 1` that is also fixed. We detect
+        this by factoring the Wronskian ideal and checking divisibility
+        against the first dynatomic polynomial.
+
+        In finite characteristic, wild ramification can occur and the
+        multiplicity of a critical point in the Wronskian need not
+        equal the local ramification index. In particular, when the
+        characteristic divides the degree, the Wronskian is identically
+        zero for polynomial maps. In that case we fall back to the
+        original algorithm, which builds the splitting field of the
+        fixed points through successive field extensions.
 
         OUTPUT: boolean
 
@@ -8469,12 +8491,43 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         TESTS:
 
-        See :issue:`25242`::
+        See :issue:`25242` ::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem([x^2 + y^2, x*y])
             sage: F2 = F.conjugate(matrix(QQ,2,2, [1,2,3,5]))
-            sage: F2.is_polynomial()                                                    # needs sage.libs.pari
+            sage: F2.is_polynomial()
+            False
+
+        Check a high-degree polynomial map::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^5 + y^5, y^5])
+            sage: f.is_polynomial()
+            True
+
+        In finite characteristic with `p \\mid d`, the Wronskian is
+        identically zero for polynomial maps, but the splitting-field
+        fallback still returns the correct answer::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(3), 1)
+            sage: f = DynamicalSystem_projective([x^3, y^3])
+            sage: f.is_polynomial()
+            True
+
+        Wild ramification counterexample (`p \\mid d`, high Wronskian
+        multiplicity but not totally ramified)::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(2), 1)
+            sage: f = DynamicalSystem([x^2*(x+y), x^2*y + x*y^2 + y^3])
+            sage: f.is_polynomial()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(3), 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2, x*y])
+            sage: f.is_polynomial()
             False
         """
         if self.codomain().dimension_relative() != 1:
@@ -8482,38 +8535,56 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         K = self.base_ring()
         if K not in FiniteFields() and (K not in NumberFields() or not K.is_absolute()):
             raise NotImplementedError("must be over an absolute number field or finite field")
-        if K in FiniteFields():
-            q = K.characteristic()
-            deg = K.degree()
-            var = K.variable_name()
+
+        d = self.degree()
+        if d == 1:
+            return True
+
+        # Fast path: characteristic zero. Ramification is always tame,
+        # so a critical point of multiplicity >= d-1 is exactly a
+        # totally ramified fixed point.
+        if K.characteristic() == 0:
+            wr = self.wronskian_ideal()
+            w = wr.gen(0)
+            if w.is_zero():
+                return False
+            if w.degree() < d - 1:
+                return False
+            D1 = self.dynatomic_polynomial(1)
+            R = w.parent()
+            if D1.parent() != R:
+                D1 = R(D1)
+            for L, e in w.factor():
+                if e >= d - 1 and L.divides(D1):
+                    return True
+            return False
+
+        # Slow path: finite fields. Wild ramification can occur when
+        # the characteristic divides the degree, so we use the original
+        # splitting-field algorithm.
+        q = K.characteristic()
+        deg = K.degree()
+        var = K.variable_name()
         g = self
-        #get polynomial defining fixed points
         G = self.dehomogenize(1).dynatomic_polynomial(1)
-        # see if infty = (1,0) is fixed
         if G.degree() <= g.degree():
-            #check if infty is totally ramified
             if len((g[1]).factor()) == 1:
                 return True
-        #otherwise we need to create the tower of extensions
-        #which contain the fixed points. We do
-        #this successively so we can exit early if
-        #we find one and not go all the way to the splitting field
-        i = 0 #field index
+        i = 0
         if G.degree() != 0:
             G = G.polynomial(G.variable(0))
         while G.degree() != 0:
             Y = G.factor()
             R = G.parent()
             u = G
-            for p,exp in Y:
+            for p, exp in Y:
                 if p.degree() == 1:
                     if len((g[0]*p[1] + g[1]*p[0]).factor()) == 1:
                         return True
-                    G = R(G/(p**exp)) # we already checked this root
+                    G = R(G/(p**exp))
                 else:
-                    u = p #need to extend to get these roots
+                    u = p
             if G.degree() != 0:
-                #create the next extension
                 if K == QQ:
                     from sage.rings.number_field.number_field import NumberField
                     L = NumberField(u, 't'+str(i))

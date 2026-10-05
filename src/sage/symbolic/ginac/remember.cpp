@@ -34,11 +34,9 @@ namespace GiNaC {
 //////////
 
 remember_table_entry::remember_table_entry(function const & f, ex  r)
-  : hashvalue(f.gethash()), seq(f.seq), result(std::move(r))
-{
-	++last_access = access_counter;
-	successful_hits = 0;
-}
+  : hashvalue(f.gethash()), seq(f.seq), result(std::move(r)),
+    last_access(++access_counter), successful_hits(0)
+{}
 
 bool remember_table_entry::is_equal(function const & f) const
 {
@@ -47,7 +45,7 @@ bool remember_table_entry::is_equal(function const & f) const
 	size_t num = seq.size();
 	for (size_t i=0; i<num; ++i)
 		if (!seq[i].is_equal(f.seq[i])) return false;
-	++last_access = access_counter;
+	last_access = ++access_counter;
 	++successful_hits;
 	return true;
 }
