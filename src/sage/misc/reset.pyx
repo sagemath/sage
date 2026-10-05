@@ -58,6 +58,14 @@ def reset(vars=None, attached=False):
 
     TESTS:
 
+    Ensure that ``reset()`` does not modify ``__name__`` (:issue:`40525`)::
+
+        sage: __name__
+        '__main__'
+        sage: reset()
+        sage: __name__
+        '__main__'
+
     Confirm that assumptions do not survive a reset (:issue:`10855`)::
 
         sage: assume(x > 3)
@@ -83,7 +91,9 @@ def reset(vars=None, attached=False):
                 del G[k]
             except KeyError:
                 pass
+    old_name = G.get('__name__', '__main__')
     restore()
+    G['__name__'] = old_name
     forget()
     reset_interfaces()
     if attached:
