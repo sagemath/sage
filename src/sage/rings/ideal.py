@@ -28,6 +28,7 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 
 from types import GeneratorType
 
+from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.structure.element import MonoidElement
@@ -658,6 +659,7 @@ class Ideal_generic(MonoidElement):
         """
         return len(self.__gens)
 
+    @cached_method
     def gens_reduced(self):
         r"""
         Same as :meth:`gens()` for this ideal, since there is currently no
@@ -671,6 +673,11 @@ class Ideal_generic(MonoidElement):
             sage: ZZ.ideal(5).gens_reduced()
             (5,)
         """
+        if not getattr(self.__ring, 'eagerly_reduce_ideal_gens_by_gcd', True):
+            from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+            if self.__ring in PrincipalIdealDomains():
+                from sage.arith.misc import gcd
+                return gcd(self.gens()),
         return self.gens()
 
     def is_maximal(self) -> bool:
