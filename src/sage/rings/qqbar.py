@@ -6279,15 +6279,13 @@ class AlgebraicReal(AlgebraicNumber_base):
             # is the only possible rounding boundary inside the interval.
             # Overflow has a finite boundary but an infinite endpoint.
             if math.nextafter(lower, math.inf) == upper:
+                two = QQ(2)
                 if math.isinf(lower) or math.isinf(upper):
-                    midpoint = QQ(2)**1024 - QQ(2)**970
+                    midpoint = two**1024 - two**970
                     if lower < 0:
                         midpoint = -midpoint
                 else:
-                    lower_num, lower_den = lower.as_integer_ratio()
-                    upper_num, upper_den = upper.as_integer_ratio()
-                    midpoint = (QQ(lower_num) / lower_den +
-                                QQ(upper_num) / upper_den) / 2
+                    midpoint = (QQ(lower) + QQ(upper)) / two
 
                 if self < midpoint:
                     return lower
