@@ -4040,6 +4040,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             ....:         lhs = B[i]
             ....:         rhs = sum(c*g for c,g in zip(v+(1,), B))
             ....:         assert lhs.reduced_norm() <= rhs.reduced_norm()
+
+        Check that the shortest found vector matches :meth:`minimal_element`::
+
+            sage: B[0].reduced_norm() == I.minimal_element().reduced_norm()
+            True
         """
         if not self.quaternion_algebra().is_definite():
             raise TypeError("The quaternion algebra must be definite")
