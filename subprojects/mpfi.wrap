@@ -1,5 +1,6 @@
 [wrap-git]
 url = https://gitlab.inria.fr/mpfi/mpfi.git
-revision = head
+# MPFI 1.5.5; keep the Meson source list in sync when updating.
+revision = 918adeef5e938baa677fa5fd8a7d72757e8335ea
 depth = 1
 patch_directory = mpfi

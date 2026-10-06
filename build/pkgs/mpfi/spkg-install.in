@@ -2,8 +2,11 @@ export CFLAGS="-O2 -g -fPIC $CFLAGS"
 
 cd src
 
+# The GitLab archive does not include generated Autotools files.
+autoreconf -fi || sdh_die "Error bootstrapping MPFI (requires Autoconf, Automake and Libtool)"
+
 # Use newer version of config.guess and config.sub (see Issue #19716)
-cp "$SAGE_ROOT"/config/config.* .
+cp "$SAGE_ROOT"/config/config.* build-aux/
 
 sdh_configure $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_GMP
 sdh_make

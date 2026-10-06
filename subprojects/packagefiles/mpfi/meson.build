@@ -1,7 +1,7 @@
 project(
     'mpfi',
     'c',
-    version: '1.5.4'
+    version: '1.5.5'
 )
 
 c = meson.get_compiler('c')
@@ -16,9 +16,10 @@ conf.set('PACKAGE_VERSION', '"' + meson.project_version() + '"')
 # Check for functions
 conf.set('HAVE_DUP2', c.has_function('dup2') ? 1 : 0)
 conf.set('HAVE_GETTIMEOFDAY', c.has_function('gettimeofday') ? 1 : 0)
-conf.set('HAVE_MPFR_Q_SUB', c.has_function('mpfr_q_sub') ? 1 : 0)
-conf.set('HAVE_MPFR_Z_SUB', c.has_function('mpfr_z_sub') ? 1 : 0)
-conf.set('HAVE_MPFR_Z_DIV', c.has_function('mpfr_z_div') ? 1 : 0)
+# MPFI uses #ifndef to enable fallbacks for missing MPFR functions.
+conf.set('HAVE_MPFR_Q_SUB', c.has_function('mpfr_q_sub', dependencies: mpfr))
+conf.set('HAVE_MPFR_Z_SUB', c.has_function('mpfr_z_sub', dependencies: mpfr))
+conf.set('HAVE_MPFR_Z_DIV', c.has_function('mpfr_z_div', dependencies: mpfr))
 
 configure_file(
   output: 'mpfi_config.h',
@@ -51,7 +52,8 @@ src = files(
     'src/mid.c', 'src/mig.c', 'src/mul.c', 'src/mul_2exp.c',
     'src/mul_2si.c', 'src/mul_2ui.c', 'src/mul_d.c', 'src/mul_fr.c',
     'src/mul_q.c', 'src/mul_si.c', 'src/mul_ui.c', 'src/mul_z.c',
-    'src/neg.c', 'src/nrandom.c', 'src/out_str.c', 'src/predicates.c',
+    'src/neg.c', 'src/nrandom.c', 'src/out_str.c',
+    'src/point_eval.c', 'src/predicates.c',
     'src/print_binary.c', 'src/put.c', 'src/put_d.c', 'src/put_fr.c',
     'src/put_q.c', 'src/put_si.c', 'src/put_ui.c', 'src/put_z.c',
     'src/q_div.c', 'src/q_sub.c', 'src/quadrant.c', 'src/rec_sqrt.c',
