@@ -4077,7 +4077,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         if not self.quaternion_algebra().is_definite():
             raise ValueError('quaternion algebra must be definite')
         pariqf = self.quadratic_form().__pari__()
-        _, v = pariqf.qfminim(None, None, 1)
+        _, _, V = pariqf.qfminim(m=1, flag=2)
+        v, = V
         return sum(ZZ(c) * g for c, g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
