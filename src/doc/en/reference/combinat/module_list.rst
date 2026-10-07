@@ -484,6 +484,18 @@ Comprehensive module list
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
 
+``sage.combinat.super_sf``
+--------------------------
+
+.. toctree::
+    :maxdepth: 1
+
+    sage/combinat/super_sf/super_sf
+    sage/combinat/super_sf/super_sfa
+    sage/combinat/super_sf/powersum
+    sage/combinat/super_sf/hom_el
+    sage/combinat/super_sf/all
+
 ``sage.combinat.words``
 -----------------------
 
