@@ -4018,6 +4018,20 @@ cdef class NumberFieldElement(NumberFieldElement_base):
              0.02240347229957875780769746914391,
              0.780028961749618,
              1.16048938497298]
+
+        The weighting is by the local degree, so it must not be applied at a
+        real place.  With ``prec=53`` the places map into ``RDF`` and ``CDF``
+        rather than into ``RealField`` and ``ComplexField``, which used to
+        make the real places be weighted as if they were complex
+        (:issue:`31185`)::
+
+            sage: K.<s> = QuadraticField(2)
+            sage: s.local_height_arch(1, weighted=True)
+            0.3465735902799726547086160607291
+            sage: s.local_height_arch(1, weighted=True, prec=53)
+            0.3465735902799727
+            sage: s.global_height(prec=53)
+            0.346573590279973
         """
         K = self.number_field()
         emb = K.places(prec=prec)[i]
@@ -4026,7 +4040,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if a <= Kv.one():
             return Kv.zero()
         ht = a.log()
-        if weighted and not isinstance(Kv, sage.rings.abc.RealField):
+        if weighted and not isinstance(Kv, (sage.rings.abc.RealField,
+                                            sage.rings.abc.RealDoubleField)):
             ht*=2
         return ht
 
