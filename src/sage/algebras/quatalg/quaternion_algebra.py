@@ -4070,7 +4070,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I = O*141 + O*alpha; I.norm()
             141
             sage: el = I.minimal_element(); el
-            13/2 - 7/6*i + j + 2/3*k
+            5 + 8/3*i - 1/2*j + 5/6*k
             sage: el.reduced_norm()
             282
         """
@@ -4624,10 +4624,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             True
             sage: OO = R[0].left_order()
             sage: S = OO.right_ideal([3*a for a in R[0].basis()])
-            sage: R[0].is_right_equivalent(S, certificate=True)
-            (True, 1/3)
-            sage: -1/3*S == R[0]
+            sage: t = R[0].is_right_equivalent(S, certificate=True); t
+            (True, -1/6*i + 1/6*k)
+            sage: t[1]*S == R[0]
             True
+
+        ::
 
             sage: B.<i,j,k> = QuaternionAlgebra(101)
             sage: I = B.maximal_order().unit_ideal()
