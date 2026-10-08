@@ -2325,6 +2325,51 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return lower
         raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
 
+    def analytic_rank(self, leading_coefficient=False):
+        r"""
+        Return an integer that is *probably* the analytic rank of this
+        elliptic curve.
+
+        INPUT:
+
+        - ``leading_coefficient`` -- boolean (default: ``False``); if set to
+          ``True``, return a tuple ``(rank, lead)`` where ``lead`` is the value
+          of the first nonzero derivative of the `L`-function of the elliptic
+          curve.
+
+        .. WARNING::
+
+            - Over most signatures of number fields, nothing is known about modularity,
+              so in particular it is not know whenther the `L`-function of the elliptic curve
+              has analytic continuation to the points `s=1` where the analytic rank
+              is defined to be the order of vanishing.
+            - Even when the previous issue is not a problem, the Pari implementation (which is
+              currently internally used) is not (and in principle cannot be, with current knowledge,
+              even over `\QQ`) rigorous.
+              Roughly, it computes `L^{(i)}(E,1)` for `i=0,1,2,\dots` until it finds a value
+              which does not look close to `0`.
+
+        EXAMPLES::
+
+            sage: K.<s> = QuadraticField(229)
+            sage: EllipticCurve(K, "11a").analytic_rank()
+            0
+            sage: EllipticCurve(K, "11a").analytic_rank(leading_coefficient=True) # rel tol 1e-14
+            (0, 0.106450756746162)
+
+        TESTS::
+
+            sage: EllipticCurve(K, "389a1").analytic_rank(leading_coefficient=True)  # rel tol 1e-14, long time
+            (3, 61.0121760477620)
+            sage: len(EllipticCurve(K, "389a1").gens())  # long time
+            3
+        """
+        ldata = self.integral_model().pari_curve().lfuncreate()
+        rank = ZZ(ldata.lfunorderzero())
+        if leading_coefficient:
+            return rank, ldata.lfun(1, rank)
+        return rank
+
     def gens(self, **kwds):
         r"""
         Return some points of infinite order on this elliptic curve.
