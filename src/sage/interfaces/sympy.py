@@ -1073,6 +1073,84 @@ def _sympysage_true(self):
 # ------------------------------------------------------------------
 
 
+def _sympysage_rootsum(self):
+    """
+    Convert a SymPy ``RootSum`` to a Sage ``root_sum``.
+
+    The polynomial generator and the lambda variable are aligned to a
+    single fresh symbol before conversion.  The name of this symbol is
+    chosen to avoid any collision with the free symbols of the summand
+    or the polynomial, so that ``RootSum(_r**5 - _r + 1,
+    Lambda(_r, log(r - _r)))`` does not capture the free ``r``.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: sympy_init()
+        sage: from sympy import Symbol, Lambda, RootSum, log
+        sage: r = Symbol('r')
+        sage: RootSum(r**5 - r + 1, Lambda(r, sin(r)))._sage_()
+        root_sum(r^5 - r + 1, r, sin(r))
+
+    The polynomial generator and the lambda variable may differ; they
+    are aligned to a common bound symbol::
+
+        sage: z = Symbol('z')
+        sage: r = Symbol('r')
+        sage: RootSum(z**5 - z + 1, Lambda(r, sin(r)))._sage_()
+        root_sum(r^5 - r + 1, r, sin(r))
+
+    A name collision with a free symbol is resolved by choosing a
+    fresh name::
+
+        sage: _r = Symbol('_r')
+        sage: r = Symbol('r')
+        sage: RootSum(_r**5 - _r + 1, Lambda(_r, log(r - _r)))._sage_()
+        root_sum(r1^5 - r1 + 1, r1, log(r - r1))
+    """
+    from sage.symbolic.rootsum import root_sum
+    from sympy import Symbol as SympySymbol
+
+    lam = self.fun
+    poly_expr_sympy = self.poly.as_expr()
+    poly_gen_sympy = self.poly.gens[0]
+    lam_var_sympy = lam.variables[0]
+    lam_expr_sympy = lam.expr
+
+    # Collect all free symbols, excluding the two bound ones.
+    free = (poly_expr_sympy.free_symbols | lam_expr_sympy.free_symbols)
+    free.discard(poly_gen_sympy)
+    free.discard(lam_var_sympy)
+    free_names = {str(s) for s in free}
+
+    # Prefer a name that does not start with an underscore.
+    candidates = [str(lam_var_sympy), str(poly_gen_sympy), 'r']
+    base_name = next(
+        (c for c in candidates if c and not c.startswith('_')),
+        'r',
+    )
+
+    # Guarantee no collision with any free symbol.
+    name = base_name
+    i = 0
+    while name in free_names:
+        i += 1
+        name = "%s%d" % (base_name, i)
+
+    common = SympySymbol(name)
+
+    # Simultaneous substitution: both generator and lambda variable
+    # become the same fresh symbol.
+    poly_expr_sympy = poly_expr_sympy.subs(
+        {poly_gen_sympy: common}, simultaneous=True)
+    lam_expr_sympy = lam_expr_sympy.subs(
+        {lam_var_sympy: common}, simultaneous=True)
+
+    return root_sum(poly_expr_sympy._sage_(),
+                    common._sage_(),
+                    lam_expr_sympy._sage_())
+
+
 @run_once
 def sympy_init():
     """
@@ -1124,7 +1202,7 @@ def sympy_init():
     from sympy.polys.domains.integerring import IntegerRing
     from sympy.polys.domains.rationalfield import RationalField
     from sympy.polys.domains.polynomialring import PolynomialRing
-    from sympy.polys.rootoftools import CRootOf
+    from sympy.polys.rootoftools import CRootOf, RootSum
     from sympy.polys.rootisolation import RealInterval, ComplexInterval
     from sympy.series.order import Order
     from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix, Matrix, SparseMatrix
@@ -1191,6 +1269,7 @@ def sympy_init():
     BooleanFalse._sage_ = _sympysage_false
     BooleanTrue._sage_ = _sympysage_true
     ceiling._sage_ = _sympysage_ceiling
+    RootSum._sage_ = _sympysage_rootsum
 
 
 def check_expression(expr, var_symbols, only_from_sympy=False):

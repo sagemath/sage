@@ -109,8 +109,10 @@ class IndefiniteIntegral(BuiltinFunction):
 
         Check that :issue:`28842` is fixed::
 
-            sage: integrate(1/(x^4 + x^3 + 1), x)
-            integrate(1/(x^4 + x^3 + 1), x)
+            sage: R = integrate(1/(x^4 + x^3 + 1), x)
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: R.operator() is root_sum
+            True
 
         Check that :issue:`32002` is fixed. This needs giac since only
         giac can integrate it in any case::
@@ -641,12 +643,14 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no closed form integral. Notice
-    that the answer comes back as an expression that contains an
-    integral itself. ::
+    We next integrate a function with no elementary closed form.  Sage
+    returns an expression that contains a :class:`~sage.symbolic.rootsum.RootSumFunction`
+    over a resolvent polynomial. ::
 
-        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x); A
-        integrate(1/((x^4 + x + 1)*(x - 4)), x)
+        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x)
+        sage: from sage.symbolic.rootsum import root_sum
+        sage: any(op.operator() is root_sum for op in A.operands())
+        True
 
     Sometimes, in this situation, using the algorithm "maxima"
     gives instead a partially integrated answer::
