@@ -75,7 +75,6 @@ from sage.sets.set import Set
 from sage.misc.functional import is_even
 from sage.combinat.subset import Subsets
 import sage.misc.prandom as random
-from sage.misc.superseded import deprecated_function_alias
 
 # Miscellaneous utility functions.
 

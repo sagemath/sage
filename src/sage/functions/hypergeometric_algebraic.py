@@ -1357,7 +1357,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         classes = dict.fromkeys(range(1, len(self.top())+1), Primes(modulus=0))
         for c in range(d):
             if gcd(c, d) == 1:
-                Delta = QQ(1/c) % d
+                Delta = ~QQ(c) % d
                 j = self._parameters.interlacing_number(Delta)
                 classes[j] = classes[j].union(Primes(modulus=d, classes=[c]))
         for p in Primes():

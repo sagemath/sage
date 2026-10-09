@@ -141,18 +141,22 @@ Factorizations can involve fairly abstract mathematical objects::
     sage: x = ZZ['x'].0
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
-    sage: f = K.factor(15); f
+    sage: f = K.factor(15); f  # random - depends on pari version
     (Fractional ideal (-a))^2 * (Fractional ideal (5))
     sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
     sage: f.unit()
     Fractional ideal (1)
-    sage: g = K.factor(9); g
+    sage: g = K.factor(9); g  # random - depends on pari version
     (Fractional ideal (-a))^4
-    sage: f.lcm(g)
+    sage: f.lcm(g)  # random - depends on pari version
     (Fractional ideal (-a))^4 * (Fractional ideal (5))
-    sage: f.gcd(g)
+    sage: list(f.lcm(g)) == [(K.ideal(a), 4), (K.ideal(5), 1)]
+    True
+    sage: f.gcd(g)  # random - depends on pari version
     (Fractional ideal (-a))^2
+    sage: list(f.gcd(g)) == [(K.ideal(a), 2)]
+    True
     sage: f.is_integral()
     True
 

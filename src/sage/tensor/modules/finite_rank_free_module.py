@@ -527,7 +527,7 @@ The components on the basis are returned by the square bracket operator for
 # ******************************************************************************
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom

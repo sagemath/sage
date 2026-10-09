@@ -96,9 +96,9 @@ class GrossZagierLseries(SageObject):
             sage: from sage.modular.modform.l_series_gross_zagier import GrossZagierLseries
             sage: G = GrossZagierLseries(e, A)
             sage: G(3)
-            -0.272946890617449
+            -0.272946890617...
             sage: G(3, 1)
-            0.212442670030197
+            0.212442670030...
         """
         return self._lfunction.derivative(s, der)
 
@@ -120,6 +120,6 @@ class GrossZagierLseries(SageObject):
             sage: from sage.modular.modform.l_series_gross_zagier import GrossZagierLseries
             sage: G = GrossZagierLseries(e, A)
             sage: G.taylor_series(2,3)
-            -0.613002046122888 + 0.490374999263489*z - 0.122903033710347*z^2 + O(z^3)
+            -0.6130020461228... + 0.490374999263...*z - 0.1229030337103...*z^2 + O(z^3)
         """
         return self._lfunction.taylor_series(s, series_prec, var)

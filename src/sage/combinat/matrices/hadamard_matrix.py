@@ -1198,11 +1198,16 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     This function calls the function :func:`hadamard_matrix_cooper_wallis_construction`
     with the appropriate arguments.
-    It constructs the matrices `X_1`, `X_2`, `X_3`, `X_4` using either
-    T-matrices or the T-sequences from :func:`sage.combinat.t_sequences.T_sequences_smallcases`.
+    It constructs the matrices `X_1`, `X_2`, `X_3`, `X_4` using stored
+    T-matrices or T-sequences from
+    :func:`sage.combinat.t_sequences.T_sequences_smallcases`.
     The matrices `A`, `B`, `C`, `D` are taken from :func:`williamson_type_quadruples_smallcases`.
 
-    Data for T-matrices of order 67 is taken from [Saw1985]_.
+    Data for T-matrices of order 67 is taken from [Saw1985]_. For order
+    2060, Loïc Schneider found the length-103 sequences and identified the
+    order-5 Williamson quadruple that make the Cooper-Wallis construction
+    work; see https://github.com/schneiderlo/hadamard-2060. The quadruple
+    is already provided by :func:`williamson_type_quadruples_smallcases`.
 
     INPUT:
 
@@ -1235,10 +1240,17 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         sage: hadamard_matrix_cooper_wallis_smallcases(20, existence=True)
         True
 
+    The general Hadamard matrix constructor also recognizes order 2060::
+
+        sage: matrix.hadamard(2060, existence=True)
+        True
+
     TESTS::
 
         sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_cooper_wallis_smallcases, is_hadamard_matrix
         sage: is_hadamard_matrix(hadamard_matrix_cooper_wallis_smallcases(188))
+        True
+        sage: hadamard_matrix_cooper_wallis_smallcases(2060, existence=True)
         True
         sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
         False
@@ -1262,6 +1274,27 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         )
     }
 
+    if n % (4 * 103) == 0:
+        # Loïc Schneider's T-sequences of length 103 are encoded by the
+        # orbits of {1, 46, 56} in Z/103Z and a 35-symbol seed.
+        state = "04037071214226636752235627311036350"
+        rows = [[0] * 103 for _ in range(4)]
+        seen = set()
+        orbits = []
+        for a in range(103):
+            if a not in seen:
+                orbit = {(a * h) % 103 for h in (1, 46, 56)}
+                seen.update(orbit)
+                orbits.append(orbit)
+        assert len(orbits) == len(state)
+        for symbol, orbit in zip(state, orbits):
+            value = int(symbol)
+            row = rows[value & 3]
+            sign = -1 if value & 4 else 1
+            for position in orbit:
+                row[position] = sign
+        db[103] = tuple(rows)
+
     for T_seq_len in divisors(n//4):
         will_size = n // (4*T_seq_len)
         if (T_seq_len in db or T_sequences_smallcases(T_seq_len, existence=True)) and williamson_type_quadruples_smallcases(will_size, existence=True):
@@ -1277,6 +1310,9 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
             will_matrices = williamson_type_quadruples_smallcases(will_size)
             A, B, C, D = map(matrix.circulant, will_matrices)
             M = hadamard_matrix_cooper_wallis_construction(e1, e2, e3, e4, A, B, C, D, check=False)
+
+            if n == 2060:
+                M = normalise_hadamard(M)
 
             if check:
                 assert is_hadamard_matrix(M)
@@ -1818,6 +1854,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         True
         sage: matrix.hadamard(324, existence=True)
         True
+        sage: matrix.hadamard(2060, existence=True)
+        True
+        sage: matrix.hadamard(2060, existence=True, construction_name=True)
+        'cooper-wallis small cases: 2060'
     """
     name = str(n)
     if construction_name:
