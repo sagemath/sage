@@ -928,9 +928,27 @@ cdef class IntegerRing_class(Ring):
             Traceback (most recent call last):
             ...
             TypeError: I must be an ideal of ZZ
+
+        Python integers are accepted as well (see :issue:`42933`)::
+
+            sage: ZZ.quo(int(3))
+            Ring of integers modulo 3
+            sage: ZZ.quo(int(0))
+            Integer Ring
+            sage: ZZ.quo(int(-5)) is ZZ.quo(-5)
+            True
+            sage: [ZZ.quo(n) for n in range(3)]
+            [Integer Ring, Ring of integers modulo 1, Ring of integers modulo 2]
+
+        Other non-integer types are still rejected::
+
+            sage: ZZ.quo(5.0)
+            Traceback (most recent call last):
+            ...
+            TypeError: I must be an ideal of ZZ or an integer
         """
-        if isinstance(I, Integer):
-            n = I
+        if isinstance(I, (Integer, int)):
+            n = Integer(I)
         elif isinstance(I, sage.rings.ideal.Ideal_generic):
             if not (I.ring() is self):
                 raise TypeError("I must be an ideal of ZZ")
