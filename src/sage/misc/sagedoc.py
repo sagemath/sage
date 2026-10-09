@@ -685,7 +685,7 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')                                           # needs sage.modules
+        sage: format('<<<identity_matrix>>>')
         '...Definition: identity_matrix(...'
         sage: format('<<<identity_matrix>>>')[:28]                                      # needs sphinx
         'Definition: identity_matrix('
@@ -708,9 +708,9 @@ def format(s, embedded=False):
         ....: "    `x \\geq y`",
         ....: "    '''",
         ....: "    return -x"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print(sage_getdoc(testfunc))                                              # needs sage.misc.cython
+        sage: print(sage_getdoc(testfunc))
         <BLANKLINE>
             This is a doc string with raw latex
         <BLANKLINE>
@@ -837,7 +837,7 @@ def format_src(s):
         sage: from sage.misc.sagedoc import format_src
         sage: format_src('unladen swallow')
         'unladen swallow'
-        sage: format_src('<<<Sq>>>')[5:15]                                              # needs sage.combinat sage.modules
+        sage: format_src('<<<Sq>>>')[5:15]
         'Sq(*nums):'
     """
     if not isinstance(s, str):
@@ -1124,7 +1124,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     Note that you can do tab completion on the ``module`` string.
     Another way to accomplish a similar search::
 
-        sage: len(search_src("matrix", path_re="calc",                                  # needs sage.modules
+        sage: len(search_src("matrix", path_re="calc",
         ....:                interact=False).splitlines()) > 15
         True
 
@@ -1412,8 +1412,8 @@ def my_getsource(obj, oname=''):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix)                                         # needs sage.modules
-        sage: s[15:34]                                                                  # needs sage.modules
+        sage: s = my_getsource(identity_matrix)
+        sage: s[15:34]
         'def identity_matrix'
     """
     try:
@@ -1451,7 +1451,7 @@ class _sage_doc:
 
         sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-374:-215]                        # needs sage.modules
+        sage: browse_sage_doc(identity_matrix, 'rst')[-374:-215]
         '...Full MatrixSpace of 3 by 3 sparse matrices...'
     """
     def __init__(self):
@@ -1479,9 +1479,9 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc(identity_matrix, 'rst')                               # needs sage.modules
+            sage: browse_sage_doc(identity_matrix, 'rst')
             "...**File:**...**Type:**...**Definition:** identity_matrix..."
-            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')    # needs sage.modules
+            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')
             True
             sage: browse_sage_doc(identity_matrix, 'html', False)                       # needs sagemath_doc_html sphinx
             '...div...File:...Type:...Definition:...identity_matrix...'
@@ -1489,7 +1489,7 @@ class _sage_doc:
         In the 'text' version, double colons have been replaced with
         single ones (among other things)::
 
-            sage: '::' in browse_sage_doc(identity_matrix, 'rst')                       # needs sage.modules
+            sage: '::' in browse_sage_doc(identity_matrix, 'rst')
             True
             sage: '::' in browse_sage_doc(identity_matrix, 'text')                      # needs sphinx
             False

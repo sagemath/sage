@@ -588,11 +588,11 @@ class FunctionField_polymod(FunctionField):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: L.<theta> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
             sage: latex(L)
-            \text{Function field in } y \text{ defined by } y^{5} - 2 x y + \frac{-x^{4} - 1}{x}
+            \text{Function field in } \theta \text{ defined by } \theta^{5} - 2 x \theta + \frac{-x^{4} - 1}{x}
         """
-        return (fr"\text{{Function field in }} {self.variable_name()} "
+        return (fr"\text{{Function field in }} {self.latex_name()} "
                 fr"\text{{ defined by }} {self._polynomial._latex_()}")
 
     def base_field(self):
