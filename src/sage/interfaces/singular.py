@@ -2546,6 +2546,9 @@ class SingularGBLogPrettyPrinter:
         """
         verbosity = self.verbosity
 
+        if isinstance(s, bytes):
+            s = s.decode('utf-8', errors='replace')
+
         if self.storage:
             s = self.storage + s
             self.storage = ""
@@ -2566,7 +2569,12 @@ class SingularGBLogPrettyPrinter:
             if line.startswith(">"):
                 continue
 
-            if line.startswith("std") or line.startswith("slimgb"):
+            if line.startswith("std"):
+                print("std is used")
+                continue
+
+            if line.startswith("slimgb"):
+                print("slimgb is used")
                 continue
 
             # collect stats returned about avoided reductions to zero
@@ -2574,6 +2582,7 @@ class SingularGBLogPrettyPrinter:
             if match:
                 self.prod, self.chain = map(int, re.match(SingularGBLogPrettyPrinter.crt_lne1, line).groups())
                 self.storage = ""
+                print(f"{self.prod} product criterion and {self.chain} chain criterion used")
                 continue
             match = re.match(SingularGBLogPrettyPrinter.crt_lne2, line)
             if match:
@@ -2610,7 +2619,7 @@ class SingularGBLogPrettyPrinter:
                     print("Maximal degree found: %s" % token)
 
                 elif re.match(SingularGBLogPrettyPrinter.num_crit, token) and verbosity >= 1:
-                    print("Leading term degree: %2d. Critical pairs: %s." % (self.curr_deg, token[1:-1]))
+                    print("Leading term degree: %2d. Critical pairs still to be reduced: %s." % (self.curr_deg, token[1:-1]))
 
                 elif re.match(SingularGBLogPrettyPrinter.red_num, token) and verbosity >= 3:
                     print("Performing complete reduction of %s elements." % token[3:-1])
