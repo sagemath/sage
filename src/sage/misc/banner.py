@@ -11,7 +11,7 @@ SageMath version and banner info
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sys
-from typing import TypedDict, cast
+from typing import TypedDict, cast, LiteralString, TypedDict
 
 from sage.env import SAGE_BANNER, SAGE_VERSION
 from sage.version import banner as sage_banner
@@ -62,43 +62,39 @@ def banner_text(full: bool = True) -> str:
 
     EXAMPLES::
 
-        sage: print(sage.misc.banner.banner_text(full=True))
+        sage: from sage.misc.banner import banner_text
+        sage: print(banner_text(full=True))
         ┌────────────────────────────────────────────────────────────────────┐
         │ SageMath version ...
-        sage: print(sage.misc.banner.banner_text(full=False))
+        sage: print(banner_text(full=False))
         SageMath version ..., Release Date: ...
     """
     if not full:
         return sage_banner
 
     bars = "─" * 68
-    s = []
-    a = s.append
-    a('┌' + bars + '┐')
-    a("\n│ %-66s │\n" % sage_banner)
+    lines = []
+    lines.append(f"┌{bars}┐")
+    lines.append(f"\n│ {sage_banner:<66} │\n")
     python_version = sys.version_info[:3]
-    a("│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
-    a('└' + bars + '┘')
-    pre = version_dict()['prerelease']
-    try:
-        import sage.all
-        have_sage_all = True
-    except ImportError:
-        have_sage_all = False
-    if pre or not have_sage_all:
-        red_in = '\033[31m'
-        red_out = '\033[0m'
-        bars2 = bars.replace('─', '━')
-        a('\n')
-        a(red_in + '┏' + bars2 + '┓' + '\n')
-        if pre:
-            a("┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
-        if not have_sage_all:
-            a("┃ %-66s ┃\n" % 'Warning: sage.all is not available; this is a limited REPL.')
-        a('┗' + bars2 + '┛' + red_out)
-    return ''.join(s)
+    lines.append(
+        f"│ {'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version):<66} │\n"
+    )
+    lines.append(f"└{bars}┘")
+    if version_dict()["prerelease"]:
+        red_in = "\033[31m"
+        red_out = "\033[0m"
+        bars2 = bars.replace("─", "━")
+        lines.append("\n")
+        lines.append(f"{red_in}┏{bars2}┓\n")
+        lines.append(
+            f"┃ {'Warning: this is a prerelease version, and it may be unstable.':<66} ┃\n"
+        )
+        lines.append(f"┗{bars2}┛{red_out}")
+    return "".join(lines)
 
 
+def banner() -> None:
 def banner() -> None:
     """
     Print the Sage banner.
@@ -193,8 +189,13 @@ def version_dict() -> VersionDict:
     return version_info
 
 
-def require_version(major: int, minor: int = 0, tiny: float = 0,
-                    prerelease: bool = False, print_message: bool = False) -> bool:
+def require_version(
+    major: int,
+    minor: int = 0,
+    tiny: float = 0,
+    prerelease: bool = False,
+    print_message: bool = False,
+) -> bool:
     """
     Return ``True`` if Sage version is at least ``major.minor.tiny``.
 
@@ -235,13 +236,18 @@ def require_version(major: int, minor: int = 0, tiny: float = 0,
         False
     """
     vers = version_dict()
-    prerelease_checked = (prerelease if vers['prerelease'] else True)
-    if (vers['major'] > major
-        or (vers['major'] == major and vers['minor'] > minor)
-        or (vers['major'] == major and vers['minor'] == minor
-            and vers['tiny'] > tiny)
-        or (vers['major'] == major and vers['minor'] == minor
-            and vers['tiny'] == tiny and prerelease_checked)):
+    prerelease_checked = prerelease if vers["prerelease"] else True
+    if (
+        vers["major"] > major
+        or (vers["major"] == major and vers["minor"] > minor)
+        or (vers["major"] == major and vers["minor"] == minor and vers["tiny"] > tiny)
+        or (
+            vers["major"] == major
+            and vers["minor"] == minor
+            and vers["tiny"] == tiny
+            and prerelease_checked
+        )
+    ):
         return True
     if print_message:
         print(f"This code requires at least version {major}.{minor} of SageMath to run correctly.")
