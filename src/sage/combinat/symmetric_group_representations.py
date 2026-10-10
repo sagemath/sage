@@ -34,7 +34,8 @@ from sage.misc.functional import sqrt
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation, Permutations, from_cycles
 from sage.combinat.tableau import StandardTableaux, Tableau
-from sage.matrix.constructor import matrix
+from sage.combinat.combination import Combinations
+from sage.matrix.constructor import matrix, block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer_ring import ZZ
