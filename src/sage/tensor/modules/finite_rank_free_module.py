@@ -244,7 +244,7 @@ This is also revealed by the category of each module::
     Category of finite dimensional modules over Integer Ring
     sage: N.category()
     Category of finite dimensional modules with basis over
-     (Dedekind domains and euclidean domains and noetherian rings
+     (euclidean domains and noetherian rings
      and infinite enumerated sets and metric spaces)
 
 In other words, the module created by ``FreeModule`` is actually `\ZZ^3`,
@@ -527,7 +527,7 @@ The components on the basis are returned by the square bracket operator for
 # ******************************************************************************
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom

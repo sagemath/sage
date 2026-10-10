@@ -2802,7 +2802,7 @@ class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
-        s = L(lambda n: 2**binomial(n, 2) / factorial(n))
+        s = L(lambda n: 2**ZZ(n).binomial(2) / ZZ(n).factorial())
         if self._connected:
             return s.log()
         return s

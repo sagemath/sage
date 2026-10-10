@@ -65,17 +65,17 @@ def cputime(
     EXAMPLES::
 
         sage: t = cputime()
-        sage: F = gp.factor(2^199-1)                                                    # needs sage.libs.pari
+        sage: F = gp.factor(2^199-1)
         sage: cputime(t)            # somewhat random
         0.010999000000000092
 
         sage: t = cputime(subprocesses=True)
-        sage: F = gp.factor(2^199-1)                                                    # needs sage.libs.pari
+        sage: F = gp.factor(2^199-1)
         sage: cputime(t)            # somewhat random
         0.091999
 
         sage: w = walltime()
-        sage: F = gp.factor(2^199-1)                                                    # needs sage.libs.pari
+        sage: F = gp.factor(2^199-1)
         sage: walltime(w)           # somewhat random
         0.58425593376159668
 
@@ -149,8 +149,8 @@ class GlobalCputime:
 
         sage: t = cputime(subprocesses=True)
         sage: P = PolynomialRing(QQ,7,'x')
-        sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.libs.singular
-        sage: gb = I.groebner_basis()  # calls Singular                                 # needs sage.libs.singular
+        sage: I = sage.rings.ideal.Katsura(P)
+        sage: gb = I.groebner_basis()  # calls Singular
         sage: cputime(subprocesses=True) - t    # output random
         0.462987
 
@@ -196,8 +196,8 @@ class GlobalCputime:
 
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: gb = I.groebner_basis()  # calls Singular
             sage: cputime(subprocesses=True) + t # output random
             2.798708
         """
@@ -212,8 +212,8 @@ class GlobalCputime:
 
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: gb = I.groebner_basis()  # calls Singular
             sage: cputime(subprocesses=True) - t # output random
             0.462987
         """
@@ -248,7 +248,7 @@ def walltime(t: float = 0) -> float:
     EXAMPLES::
 
         sage: w = walltime()
-        sage: F = factor(2^199-1)                                                       # needs sage.libs.pari
+        sage: F = factor(2^199-1)
         sage: walltime(w)   # somewhat random
         0.8823847770690918
     """

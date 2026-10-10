@@ -129,6 +129,12 @@ Using Conda
 
         $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
 
+
+To rebuild the documentation after editing it, see
+:ref:`Building the manuals <section-building-manuals>` in the Sage Developer's
+Guide.
+
+
 .. _system_package_manager:
 
 Using the system package manager
@@ -239,6 +245,8 @@ Remarks
 
     $ mamba env update --file environment-3.12-linux.yml --name sage-dev
 
+
+.. _section-meson-build-directory:
 
 Background information
 ======================

@@ -61,7 +61,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -122,21 +122,22 @@ jobs:
             build/cp313/meson-info/
 
   macos:
-    name: Build and Test (macos-${{ matrix.version }})
-    runs-on: macos-${{ matrix.version }}
+    name: Build and Test (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        version:
-          - '15'
-          - '26'
+        runner:
+          - macos-15
+          - macos-26
+          - darwin-27
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -163,7 +164,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure() || success()
         with:
-          name: macos-${{ matrix.version }}-log
+          name: ${{ matrix.runner }}-log
           path: |
             build/cp312/meson-logs/
             build/cp312/meson-info/

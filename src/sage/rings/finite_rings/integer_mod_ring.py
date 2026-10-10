@@ -1960,6 +1960,17 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ....:     s1 = set(f.roots(multiplicities=False))
             ....:     s2 = set(d for d in R if f(d) == 0)
             ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
+
+        Check that :issue:`42796` is fixed::
+
+            sage: x = polygen(Zmod(4))
+            sage: f = 2*x - 2
+            sage: f.roots(multiplicities=False)
+            [1, 3]
+            sage: x = polygen(Zmod(9))
+            sage: f = 3*x - 3
+            sage: f.roots(multiplicities=False)
+            [1, 4, 7]
         """
 
         # This function only supports roots in an IntegerModRing
@@ -2000,11 +2011,13 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             # whole eqn divided by g
             N_by_g = N.divide_knowing_divisible_by(g)
             a_by_g = al.divide_knowing_divisible_by(g)
+            b_by_g = bl.divide_knowing_divisible_by(g)
             _R = Zmod(N_by_g)
-            assert _R(a_by_g).is_unit()
+            _S = _R[f.parent().variable_name()]
+            f = _S([b_by_g, a_by_g])
 
             # single root
-            _root = self(f.roots(_R, multiplicities=False)[0])
+            _root = self(f.any_root())
             inc = self(N_by_g)
             return [_root + k * inc for k in range(g)]
 

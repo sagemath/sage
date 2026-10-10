@@ -197,11 +197,11 @@ playing strategy number `i` is given by the matrix/vector multiplication
 `(Ay)_i`, ie element in position `i` of the matrix/vector multiplication
 `Ay`) ::
 
-    sage: y = var('y')                                                                  # needs sage.symbolic
+    sage: y = var('y')
     sage: A = matrix([[1, -1], [-1, 1]])
-    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',                  # needs sage.symbolic
+    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',
     ....:          legend_label='$u_1(r_1, (y, 1-y))$', axes_labels=['$y$', ''])
-    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',                  # needs sage.symbolic
+    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',
     ....:           legend_label='$u_1(r_2, (y, 1-y))$'); p
     Graphics object consisting of 2 graphics primitives
 
@@ -2812,79 +2812,10 @@ class NormalFormGame(SageObject, MutableMapping):
           * When set to ``False`` it is assumed that players aim to
             minimise their utility.
 
-        - ``solver`` -- (optional) the backend the ``'lp'`` algorithm builds
-          its :class:`~sage.numerical.mip.MixedIntegerLinearProgram` with; see
-          that class for the MILP solvers Sage offers.  It may also be
-          ``'gambit'``, to use the LP solver included with the gambit library.
-          ``'PPL'`` and ``'gambit'`` compute in exact arithmetic and the
-          others, ``'GLPK'`` and ``'Coin'`` among them, in floating point.
-          ``None``, the default, means ``'PPL'`` when ``rational`` is ``True``
-          and the default Sage LP solver, normally GLPK, when it is ``False``.
-
-        - ``rational`` -- boolean (default: ``True``); whether to answer with
-          rational probabilities rather than floating point ones, which is done
-          in whichever of two ways the algorithm allows.  ``'lcp'``, ``'lp'``
-          and ``'enummixed'`` are asked to compute in exact arithmetic
-          throughout; ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'`` and
-          ``'enumpoly'`` have no exact mode, so they compute in floating point
-          and their answer is then rounded to the exact equilibrium it
-          approximates, as described under ``tolerance``.
-
-          An algorithm that cannot answer in the kind of number that was asked
-          for says so with a warning and answers in the other one.  That
-          happens to ``'lp'`` when it is given an inexact LP backend along
-          with ``rational=True``; the other way round, it happens with
-          ``rational=False`` to ``'enumpure'``, ``'simpdiv'`` and Sage's own
-          ``'enumeration'`` and ``'lrs'``, which do all of their work in exact
-          arithmetic.
-
-          Note that exact arithmetic does not by itself make an answer exact:
-          ``'simpdiv'`` refines a grid, so it returns a rational that
-          approximates an equilibrium.
-
-        - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
-          probability computed by one of the numerical algorithms may be moved
-          in order to round it to a rational.  A rounded profile is returned
-          only once gambit has confirmed, in exact arithmetic, that it is an
-          equilibrium; when it is not -- as happens when the equilibrium is
-          genuinely irrational, which a game of three or more players may have
-          -- the floating point answer is returned instead, with a warning.
-          The larger the tolerance the simpler the rationals that are tried, so
-          a value that is too small can round an equilibrium to an
-          unenlightening exact form rather than fail to round it; the default
-          matches the accuracy the gambit solvers themselves aim for.  Has no
-          effect when ``rational`` is ``False``.
-
-        - ``phc_path`` -- (optional) a path (a string or
-          :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. When
-          given, the ``'enumpoly'`` algorithm solves the underlying systems of
-          polynomial equations with PHCpack instead of gambit's built-in
-          solver. This is only supported by the ``'enumpoly'`` algorithm;
-          passing it for any other
-          algorithm raises a :class:`ValueError`. PHCpack is available from
-          https://homepages.math.uic.edu/~jan/download.html.
-
-        OUTPUT:
-
-        A sorted list holding one *mixed strategy profile* per computed
-        equilibrium.  Each profile is a list with one entry per player, in the
-        order the players were added to the game, and each entry is a tuple
-        giving the probability that player assigns to each of their pure
-        strategies, in the order of that player's strategies.  So for a
-        2-player game ``[[(1/2, 1/2), (1/3, 2/3)]]`` is a single equilibrium in
-        which the first player mixes uniformly over two strategies and the
-        second plays their strategies with probabilities `1/3` and `2/3`.
-        The probabilities of each player sum to one.
-
-        A probability that was found exactly is an element of
-        :class:`~sage.rings.rational.Rational` and one that was not is a Python
-        float; which of the two an algorithm gives follows ``rational``, and
-        ``rational`` and ``tolerance`` above describe the cases in which it
-        cannot be followed.  The numerical gambit solvers may in addition find
-        only a sample of the equilibria rather than all of them.
-
-        .. SEEALSO:: ``_extract_gambit_equilibria()``, which converts gambit's
-            own profile objects into this format.
+        - ``solver`` -- (optional) see :class:`MixedIntegerLinearProgram`
+          for more information on the MILP solvers in Sage, may also
+          be ``'gambit'`` to use the MILP solver included with the gambit
+          library. Note that ``None`` means to use the default Sage LP solver.
 
         EXAMPLES:
 
@@ -2995,7 +2926,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(1/2, 1/2), (1/2, 1/2)]]
             sage: A = matrix([[2, 1], [1, 3]])
             sage: cg = NormalFormGame([A])
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk', rational=False)
+            sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin', rational=False)  # optional - sage_numerical_backends_coin
@@ -3009,7 +2940,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[1, 2, 1], [1, 1, 2], [2, 1, 1]])
             sage: B = matrix([[2, 1, 2], [2, 2, 1], [1, 2, 2]])
             sage: cg = NormalFormGame([A, B])
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk', rational=False)
+            sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
             sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin', rational=False)  # optional - sage_numerical_backends_coin
@@ -3032,7 +2963,7 @@ class NormalFormGame(SageObject, MutableMapping):
         game generates a :exc:`ValueError`::
 
             sage: cg = NormalFormGame([A, A])
-            sage: cg.obtain_nash(algorithm='lp', solver='glpk', rational=False)
+            sage: cg.obtain_nash(algorithm='lp')
             Traceback (most recent call last):
             ...
             ValueError: the 'lp' algorithm only works for two-player constant-sum games, ...
@@ -3062,7 +2993,9 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs')  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', solver='glpk', rational=False)
+            sage: gg.obtain_nash(algorithm='lp')
+            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: gg.obtain_nash(algorithm='LCP')  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
             sage: gg.obtain_nash(algorithm='lcp')  # optional - pygambit
             [[(1, 0), (1, 0)]]
@@ -3070,8 +3003,9 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs', maximization=False)  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', solver='glpk',
-            ....:                rational=False, maximization=False)
+            sage: gg.obtain_nash(algorithm='lp', maximization=False)
+            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
             sage: gg.obtain_nash(algorithm='lcp', maximization=False)  # optional - pygambit
             [[(1, 0), (1, 0)]]
@@ -3226,7 +3160,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.obtain_nash(algorithm='lp', solver='invalid', rational=False)
             Traceback (most recent call last):
             ...
-            ValueError: 'solver' should be set to 'GLPK', ..., None
+            ValueError: 'solver' should be set to ..., None
              (in which case the default one is used), or a callable.
 
         Passing ``phc_path`` with an algorithm other than ``'enumpoly'``
@@ -3850,7 +3784,7 @@ class NormalFormGame(SageObject, MutableMapping):
         nasheq = self._extract_gambit_equilibria(equilibria)
         return sorted(nasheq)
 
-    def _solve_LP(self, solver=None, maximization=True, rational=True):
+    def _solve_LP(self, solver=None, maximization=True):
         r"""
         Solve a constant sum :class:`NormalFormGame` using
         the specified LP solver.
@@ -3860,7 +3794,7 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``solver`` -- the backend to be used to solve the LP:
 
           * ``'gambit'`` -- this uses the solver included within the gambit
-            library to create and solve the LP; it computes exactly
+            library to create and solve the LP
 
           * ``'PPL'`` -- this computes exactly as well
 
