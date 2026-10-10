@@ -1191,6 +1191,23 @@ class WittVectorRing_phantom(WittVectorRing):
             <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
 
             sage: TestSuite(W).run()
+
+            sage: W = WittVectorRing(GF(25), prec=2)
+            sage: W
+            Ring of truncated 5-typical Witt vectors of length 2 over Finite Field in z2 of size 5^2
+            sage: type(W)
+            <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
+
+            sage: TestSuite(W).run()
+
+        We check that :issue:`39933` is fixed::
+
+            sage: K = GF(9)
+            sage: R = PolynomialRing(K, 'x', 10)
+            sage: W = WittVectorRing(R, prec=2, algorithm="phantom")
+            sage: W([R.zero(), R.one()])
+            (0, 1)
+            sage: TestSuite(W).run()
         """
         msg = "the 'phantom' algorithm only works when the coefficient ring is"\
             " a finite field of char. p, or a polynomial ring on that field"
