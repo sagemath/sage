@@ -57,6 +57,14 @@ Weighted Projective Schemes
    sage/schemes/weighted_projective/weighted_projective_point
    sage/schemes/weighted_projective/weighted_projective_homset
 
+Hodge Special Fourfolds
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/hodge_special_fourfolds/sff
+
 Products of Projective Spaces
 -----------------------------
 
