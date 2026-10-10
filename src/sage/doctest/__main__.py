@@ -100,6 +100,8 @@ def _make_parser():
     parser.add_argument("-i", "--initial", action="store_true", default=False, help="only show the first failure in each file")
     parser.add_argument("--exitfirst", action="store_true", default=False, help="end the test run immediately after the first failure or unexpected exception")
     parser.add_argument("--force_lib", "--force-lib", action="store_true", default=False, help="do not import anything from the tested file(s)")
+    parser.add_argument("--runtime-docstrings", action="store_true", default=False,
+                        help="discover Python doctests from runtime docstrings")
     parser.add_argument("--if-installed", action="store_true", default=False, help="skip Python/Cython files that are not installed as modules")
     parser.add_argument("--abspath", action="store_true", default=False, help="print absolute paths rather than relative paths")
     parser.add_argument("--verbose", action="store_true", default=False, help="print debugging output during the test")
