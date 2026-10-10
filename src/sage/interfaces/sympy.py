@@ -1100,6 +1100,15 @@ def _sympysage_rootsum(self):
         sage: RootSum(z**5 - z + 1, Lambda(r, sin(r)))._sage_()
         root_sum(r^5 - r + 1, r, sin(r))
 
+    A polynomial generator occurring in the lambda body is free there::
+
+        sage: from sympy import Dummy
+        sage: z = Symbol('z')
+        sage: i = Dummy('i')
+        sage: rs = RootSum(z**5 - z + 1, Lambda(i, log(z-i)), auto=False)._sage_()
+        sage: rs.free_variables()
+        (z,)
+
     A name collision with a free symbol is resolved by choosing a
     fresh name::
 
@@ -1118,9 +1127,8 @@ def _sympysage_rootsum(self):
     lam_expr_sympy = lam.expr
 
     # Collect all free symbols, excluding the two bound ones.
-    free = (poly_expr_sympy.free_symbols | lam_expr_sympy.free_symbols)
-    free.discard(poly_gen_sympy)
-    free.discard(lam_var_sympy)
+    free = ((poly_expr_sympy.free_symbols - {poly_gen_sympy})
+            | (lam_expr_sympy.free_symbols - {lam_var_sympy}))
     free_names = {str(s) for s in free}
 
     # Prefer a name that does not start with an underscore.

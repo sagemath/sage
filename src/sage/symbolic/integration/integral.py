@@ -643,9 +643,10 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no elementary closed form.  Sage
-    returns an expression that contains a :class:`~sage.symbolic.rootsum.RootSumFunction`
-    over a resolvent polynomial. ::
+    A rational function can have a compact antiderivative represented
+    using a :class:`~sage.symbolic.rootsum.RootSumFunction` over a resolvent
+    polynomial.  Expanding it into individual logarithmic terms is not
+    necessary. ::
 
         sage: A = integral(1/ ((x-4) * (x^4+x+1)), x)
         sage: from sage.symbolic.rootsum import root_sum
