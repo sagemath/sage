@@ -1554,8 +1554,8 @@ class NormalFormGame(SageObject, MutableMapping):
             prisoners_dilemma = NormalFormGame([A, B])
             sphinx_plot(prisoners_dilemma.plot())
 
-        Both players are named beside the table, the first down its side and
-        the second above its columns::
+        The first player is named down the side of the table, and the second
+        in its top left corner, beside the row of their strategies::
 
             sage: # needs sage.plot
             sage: sorted(t.string for t in p
