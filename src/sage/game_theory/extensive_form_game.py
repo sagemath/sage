@@ -15,8 +15,8 @@ A game can either be built in Sage with the tree-building methods
 referred to by the ``pygambit`` ``Node`` object reached by navigating action
 labels down from the root, ``g.root``.  For instance, in the game below
 ``battle.root`` is the root and ``battle.root.children['game']`` is the child
-reached by Amy's action ``'game'``.  The moves themselves take the **action**
-labels (a required argument).
+reached by Amy's action ``'game'``.  The moves themselves require action
+labels as an argument.
 
 Its other main purpose is to provide a Sage entry point to gambit's extensive
 form games: convert back to the underlying gambit game with
@@ -86,10 +86,20 @@ chooses and that Bob then chooses, having seen what she picked::
     sage: battle
     An extensive form game with 2 players
 
-Drawing the game with ``battle.plot(backend='gtdraw')`` shows the tree the
-moves have built:
+Drawing the game with ``battle.plot()`` shows the tree the moves have built:
 Amy's move at the root, one of Bob's below each of her actions, and the payoffs
-to Amy and Bob at the four ends, hers written above his.
+to Amy and Bob at the four ends.  Amy's node is red and Bob's are blue; as Bob
+moves at two nodes he can tell apart, they are numbered as his first and second
+information set.
+
+.. image:: ../../media/battle-of-the-sexes-sage.png
+   :align: center
+   :width: 450 px
+   :alt: Amy moves at the root and Bob at each of her two children.
+
+With the optional gtdraw package, ``battle.plot(backend='gtdraw')`` draws the
+same tree as a publication-quality TikZ picture, the payoffs to Amy written
+above those to Bob:
 
 .. image:: ../../media/battle-of-the-sexes.png
    :align: center
@@ -142,9 +152,17 @@ hers::
     ....:     battle.set_outcome(battle.root.children[amy].children[bob],
     ....:                        '{},{}'.format(amy, bob), payoff)
 
-The tree is the one drawn above, except that Bob's two nodes are now enclosed
-together in the shaded information set carrying his name, which is how a
-drawing says that he cannot tell them apart:
+The tree is the one drawn above, except that Bob's two nodes now belong to a
+single information set.  The default drawing says so by no longer numbering
+them, as Bob has only the one set:
+
+.. image:: ../../media/battle-of-the-sexes-simultaneous-sage.png
+   :align: center
+   :width: 450 px
+   :alt: The same tree, with Bob's two nodes no longer numbered.
+
+gtdraw encloses the two nodes together in the shaded information set carrying
+his name, which is how a drawing says that he cannot tell them apart:
 
 .. image:: ../../media/battle-of-the-sexes-simultaneous.png
    :align: center
@@ -387,10 +405,12 @@ _STRATEGIC_ONLY_ALGORITHMS = ('enummixed', 'enumpure', 'gnm', 'ipa', 'liap',
 # game with more players than this cycles through the list again.
 _PLAYER_COLORS = ['red', 'blue', 'green', 'orange', 'purple', 'brown']
 
-# How :meth:`ExtensiveFormGame.plot` sizes a tree: the vertical distance
-# between two levels, as a multiple of the horizontal distance between two
-# nodes, how many inches of figure a node is given, and the size in inches past
-# which the figure does not grow any further.
+# How :meth:`ExtensiveFormGame.plot` sizes a tree: the horizontal distance
+# between two neighboring leaves, wide enough for the action labels of two
+# sibling branches to sit side by side without overlapping, the vertical
+# distance between two levels, how many inches of figure a unit of either is
+# given, and the size in inches past which the figure does not grow any further.
+_NODE_SPACING = 1.5
 _LEVEL_SPACING = 2
 _INCHES_PER_NODE = 1
 _MAX_FIGSIZE = 30
@@ -429,17 +449,43 @@ class GameTreeTikzPicture(TikzPicture):
         sage: g.set_outcome(g.root.children['R'], 'R', [3, 1])
         sage: t = g.plot(backend='gtdraw')
         sage: t
-        Game tree TikZ picture
+        Game tree TikZ picture with players Alice and Bob
         sage: r'\begin{tikzpicture}' in t.content()
         True
     """
+    def __init__(self, content, players=(), **kwds):
+        r"""
+        Initialize the picture of a game tree played by ``players``.
+
+        INPUT:
+
+        - ``content`` -- string; the TikZ code of the picture
+
+        - ``players`` -- list of strings (default: ``()``); the labels of the
+          players of the game, in the order the game lists them, which the
+          short representation of the picture names
+
+        - ``**kwds`` -- passed on to
+          :class:`~sage.misc.latex_standalone.TikzPicture`
+
+        EXAMPLES::
+
+            sage: from sage.game_theory.extensive_form_game import GameTreeTikzPicture
+            sage: GameTreeTikzPicture('', players=['Alice', 'Bob'])
+            Game tree TikZ picture with players Alice and Bob
+        """
+        super().__init__(content, **kwds)
+        self._players = list(players)
+
     def _repr_(self):
         r"""
         Return a short string representation.
 
-        Unlike :meth:`sage.misc.latex_standalone.Standalone._repr_`, which
-        prints the LaTeX document, this stays on one line: it is the text the
-        command line shows next to the launched viewer.  Use ``print(self)``
+        It names the players of the game, so that pictures of different games
+        can be told apart.  Unlike
+        :meth:`sage.misc.latex_standalone.Standalone._repr_`, which prints the
+        LaTeX document, this stays on one line: it is the text the command line
+        shows next to the launched viewer.  Use ``print(self)``
         for the document and :meth:`~sage.misc.latex_standalone.Standalone.content`
         for the TikZ source.
 
@@ -452,9 +498,25 @@ class GameTreeTikzPicture(TikzPicture):
             sage: g.set_outcome(g.root.children['L'], 'L', [2, 5])
             sage: g.set_outcome(g.root.children['R'], 'R', [3, 1])
             sage: g.plot(backend='gtdraw')._repr_()
-            'Game tree TikZ picture'
+            'Game tree TikZ picture with players Alice and Bob'
+
+        A one player game, and a picture made without naming any players::
+
+            sage: from sage.game_theory.extensive_form_game import GameTreeTikzPicture
+            sage: GameTreeTikzPicture('', players=['Alice'])
+            Game tree TikZ picture with player Alice
+            sage: GameTreeTikzPicture('', players=['Alice', 'Bob', 'Carol'])
+            Game tree TikZ picture with players Alice, Bob and Carol
+            sage: GameTreeTikzPicture('')
+            Game tree TikZ picture
         """
-        return "Game tree TikZ picture"
+        text = "Game tree TikZ picture"
+        if len(self._players) == 1:
+            text += " with player " + self._players[0]
+        elif self._players:
+            text += " with players {} and {}".format(
+                ", ".join(self._players[:-1]), self._players[-1])
+        return text
 
     def _rich_repr_(self, display_manager, **kwds):
         r"""
@@ -538,7 +600,7 @@ class ExtensiveFormGame(SageObject):
     (:meth:`root`).  For example ``g.root.children['L']`` is the child of the
     root reached by the action labeled ``'L'``, and
     ``g.root.children['L'].children['l']`` the grandchild after ``'l'``.  The
-    tree-building methods take such nodes and the required **action** labels;
+    tree-building methods take such nodes and the required action labels;
     they are :meth:`add_player`, :meth:`append_move`, :meth:`append_chance_move`,
     :meth:`append_infoset`, :meth:`set_outcome`, :meth:`set_chance_probs`,
     :meth:`insert_move` and :meth:`delete_tree`.
@@ -1248,8 +1310,9 @@ class ExtensiveFormGame(SageObject):
         chance node, the payoffs below a terminal node, and the action labels
         along the branches, a branch out of a chance node also carrying its
         probability, as it does in gtdraw.  A node is colored by whose move it
-        is -- the first player of the game red, the second blue, chance gray
-        and a terminal node white -- and, when the player has more than one
+        is -- the first player of the game red, the second blue, then green,
+        orange, purple and brown, cycling for a game with more players than
+        that, chance gray and a terminal node white -- and, when the player has more than one
         information set, the number after their name says which of them the
         node belongs to, so imperfect information is visible: the nodes a
         player cannot tell apart carry the same number.
@@ -1305,6 +1368,14 @@ class ExtensiveFormGame(SageObject):
             sage: for a, payoff in zip(['l', 'r'], [[0, 0], [1, 3]]):
             ....:     g.set_outcome(g.root.children['R'].children[a],
             ....:                   'R,{}'.format(a), payoff)
+
+        Drawn with the default backend, Alice's node is red, Bob's two are
+        blue, and the payoffs are written below the four leaves:
+
+        .. image:: ../../media/imperfect-information-sage.png
+           :align: center
+           :width: 450 px
+           :alt: Alice moves at the root and Bob at both of her children.
 
         The default ``'sage'`` backend needs nothing beyond Sage and gives a
         :class:`~sage.plot.graphics.Graphics` object, which can be shown, saved
@@ -1381,6 +1452,21 @@ class ExtensiveFormGame(SageObject):
             sage: sorted(s for s in drawn if s.startswith('Alice'))
             ['Alice 1', 'Alice 2']
 
+        Drawn, the coin flip game looks like this:
+
+        .. image:: ../../media/coin-sage.png
+           :align: center
+           :width: 450 px
+           :alt: A gray chance node whose two branches lead to Alice 1 and Alice 2.
+
+        gtdraw draws the chance node as a square and writes the probabilities
+        as fractions:
+
+        .. image:: ../../media/coin-gtdraw.png
+           :align: center
+           :width: 300 px
+           :alt: The coin flip game drawn by gtdraw.
+
         The gtdraw backend draws the same tree as TikZ.  Its
         :meth:`~sage.misc.latex_standalone.Standalone.content` is the source,
         which mentions the players and the tree itself::
@@ -1388,7 +1474,7 @@ class ExtensiveFormGame(SageObject):
             sage: # optional - pygambit gtdraw
             sage: picture = g.plot(backend='gtdraw')
             sage: picture
-            Game tree TikZ picture
+            Game tree TikZ picture with players Alice and Bob
             sage: tikz = picture.content()
             sage: print(tikz.splitlines()[0])
             % TikZ code with built-in styling for game trees
@@ -1398,6 +1484,14 @@ class ExtensiveFormGame(SageObject):
             True
             sage: r'\def\playertwo{Bob}' in tikz
             True
+
+        Compiled with LaTeX, the picture of the game ``g`` from above looks
+        like this, Bob's information set enclosing his two nodes:
+
+        .. image:: ../../media/imperfect-information-gtdraw.png
+           :align: center
+           :width: 280 px
+           :alt: Alice's game drawn by gtdraw, Bob's two nodes in one information set.
 
         Its many options control the look of the picture.  Growing the tree
         left to right instead of top to bottom, shading the information sets
@@ -1412,6 +1506,14 @@ class ExtensiveFormGame(SageObject):
             sage: print([line for line in colorblind.content().splitlines()
             ....:        if 'definecolor{p1rgb}' in line][0])
             \definecolor{p1rgb}{RGB}{0,127,255}
+
+        With all three of these options together the same game is drawn as
+        follows:
+
+        .. image:: ../../media/imperfect-information-gtdraw-options.png
+           :align: center
+           :width: 400 px
+           :alt: The game grown left to right, with a shaded information set and colorblind-safe colors.
 
         Suppressing the action labels drops ``'L'`` from the picture::
 
@@ -1698,6 +1800,7 @@ class ExtensiveFormGame(SageObject):
             # its TikZ code in, so that the picture matches gtdraw's own output.
             return GameTreeTikzPicture(
                 tikz,
+                players=[p.label for p in game.players],
                 standalone_config=['border=10pt'],
                 usepackage=['graphicx'],
                 usetikzlibrary=['shapes', 'arrows.meta'],
@@ -1780,10 +1883,11 @@ class ExtensiveFormGame(SageObject):
             vertex_colors.setdefault(color, []).append(index)
 
         # Lay the tree out by hand, rather than with ``layout='tree'``, so that
-        # the picture can be sized from it.  The levels are spread out
-        # vertically to leave room for the action labels along the branches.
+        # the picture can be sized from it.  The nodes are spread out in both
+        # directions to leave room for the action labels along the branches.
         pos = graph.layout_tree(tree_root=root_index, tree_orientation='down')
-        pos = {v: (x, _LEVEL_SPACING * y) for v, (x, y) in pos.items()}
+        pos = {v: (_NODE_SPACING * x, _LEVEL_SPACING * y)
+               for v, (x, y) in pos.items()}
         xs = [x for x, _ in pos.values()]
         ys = [y for _, y in pos.values()]
 

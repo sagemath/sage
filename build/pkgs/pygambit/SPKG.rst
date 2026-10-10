@@ -10,7 +10,7 @@ form games.
 
 In Sage it backs most of the algorithms offered by
 :meth:`sage.game_theory.normal_form_game.NormalFormGame.obtain_nash` --
-``'LCP'``, ``'lp'``, ``'enummixed'``, ``'enumpure'``, ``'gnm'``, ``'ipa'``,
+``'lcp'``, ``'lp'``, ``'enummixed'``, ``'enumpure'``, ``'gnm'``, ``'ipa'``,
 ``'simpdiv'``, ``'logit'``, ``'liap'`` and ``'enumpoly'``, the last one being
 the default for games with more than two players -- as well as the ``'gambit'``
 MILP solver of the ``'lp'`` algorithm.  It also underlies

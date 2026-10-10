@@ -217,6 +217,20 @@ at which both players are indifferent::
     sage: matching_pennies.obtain_nash(algorithm='enumeration')
     [[(1/2, 1/2), (1/2, 1/2)]]
 
+Drawing the game with its best responses underlined shows why the equilibrium
+has to be mixed: in every cell exactly one of the two players would rather
+switch, so no cell has both of its utilities underlined::
+
+    sage: matching_pennies.plot(best_responses=True)                                    # needs sage.plot
+    Graphics object consisting of 26 graphics primitives
+
+.. PLOT::
+
+    A = matrix([[1, -1], [-1, 1]])
+    B = matrix([[-1, 1], [1, -1]])
+    matching_pennies = NormalFormGame([A, B])
+    sphinx_plot(matching_pennies.plot(best_responses=True))
+
 The utilities to both players at this Nash equilibrium
 is easily computed::
 
@@ -245,6 +259,18 @@ Here is an instance of `Rock-Paper-Scissors-Lizard-Spock
     sage: g = NormalFormGame([A])
     sage: g.obtain_nash(algorithm='enumeration')
     [[(1/5, 1/5, 1/5, 1/5, 1/5), (1/5, 1/5, 1/5, 1/5, 1/5)]]
+
+The second player's utilities are the negatives of the first's:
+
+.. PLOT::
+
+    A = matrix([[0, -1, 1, 1, -1],
+                [1, 0, -1, -1, 1],
+                [-1, 1, 0, 1, -1],
+                [-1, 1, -1, 0, 1],
+                [1, -1, 1, -1, 0]])
+    moves = ['rock', 'paper', 'scissors', 'lizard', 'Spock']
+    sphinx_plot(NormalFormGame([A]).plot(strategy_labels=[moves, moves]))
 
 We can also study games where players aim to minimize their utility.
 Here is the Prisoner's Dilemma (where players are aiming to reduce
@@ -487,6 +513,27 @@ player)::
     sage: NormalFormGame([A, B, C]) == threegame
     True
 
+The payoff arrays can equally be given as nested lists, indexed the same way::
+
+    sage: A = [[[3, 1], [2, 3]], [[9, 3], [8, 2]]]
+    sage: B = [[[1, 5], [6, 5]], [[7, 2], [4, 6]]]
+    sage: C = [[[4, 9], [5, 8]], [[9, 3], [6, 4]]]
+    sage: NormalFormGame([A, B, C]) == threegame
+    True
+
+A game with three players is drawn as a pivot table, the third player's
+strategies nested inside the columns of the second's.  Its two pure Nash
+equilibria are the shaded cells, those in which all three utilities are
+underlined:
+
+.. PLOT::
+
+    A = [[[3, 1], [2, 3]], [[9, 3], [8, 2]]]
+    B = [[[1, 5], [6, 5]], [[7, 2], [4, 6]]]
+    C = [[[4, 9], [5, 8]], [[9, 3], [6, 4]]]
+    threegame = NormalFormGame([A, B, C])
+    sphinx_plot(threegame.plot(best_responses=True, pure_nash=True))
+
 The above requires a lot of input that could be simplified if there is
 another data structure with our utilities and/or a structure to the
 utilities.  The following example creates a game with a relatively strange
@@ -572,10 +619,8 @@ It is also possible to generate a Normal form game from a gambit Game::
      (1, 0): [10.0, 2.0],
      (1, 1): [5.0, 5.0]}
 
-For more information on using Gambit in Sage see ``Using Gambit in
-Sage``. This includes how to access Gambit
-directly using the version of iPython shipped with Sage and an explanation
-as to why the ``int`` calls are needed to handle the Sage preparser.
+For more information on using gambit's Python interface directly, see the
+`pygambit documentation <https://gambitproject.readthedocs.io/>`_.
 
 Here is a slightly longer game that would take too long to solve with
 ``'enumeration'``. Consider the following:
@@ -810,8 +855,10 @@ _OUTER_RULE = 2
 _RULE_STEP = 0.5
 
 # The color :meth:`NormalFormGame.plot` shades a pure Nash equilibrium with.
-# The players own the colors of ``_PLAYER_COLORS``, so it is none of those.
-_NASH_COLOR = 'lightyellow'
+# The players own the colors of ``_PLAYER_COLORS``, so it is none of those: a
+# neutral grey, which stands out from the white cells by lightness alone and
+# so does not depend on telling hues apart.
+_NASH_COLOR = '#d9d9d9'
 
 # The gambit solvers that answer in rationals whatever ``rational`` is set to:
 # ``enumpure`` and its extensive form counterpart ``enumpure_agent`` enumerate
@@ -1063,9 +1110,10 @@ class NormalFormGame(SageObject, MutableMapping):
         player game these are the two payoff matrices (Sage matrices); for a
         game with more than 2 players each payoff array is an `N`-dimensional
         numpy array (a Sage matrix being only 2-dimensional cannot describe
-        the payoffs of a game with more than 2 players). All arrays must have
-        the same shape and the number of arrays must equal their common number
-        of dimensions.
+        the payoffs of a game with more than 2 players). A payoff array can
+        also be given as nested lists, which are read as a numpy array. All
+        arrays must have the same shape and the number of arrays must equal
+        their common number of dimensions.
 
       * a single matrix, in which case a 2 player zero-sum game is constructed.
 
@@ -1124,6 +1172,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: arraygame = NormalFormGame([A, B, C])
             sage: arraygame == threegame
             True
+            sage: NormalFormGame([A.tolist(), B.tolist(), C.tolist()]) == threegame
+            True
             sage: arraygame
             Normal Form Game with the following utilities: {(0, 0, 0): [3, 1, 4],
              (0, 0, 1): [1, 5, 9],
@@ -1148,6 +1198,46 @@ class NormalFormGame(SageObject, MutableMapping):
              (1, 1): [5.0, 5.0]}
 
         TESTS:
+
+        Payoff arrays given as nested lists work for any number of players,
+        including a two player game and a zero-sum game given by the first
+        player's payoffs alone, and can be mixed with Sage matrices::
+
+            sage: NormalFormGame([[[1, 2], [3, 4]], [[4, 3], [2, 1]]])
+            Normal Form Game with the following utilities: {(0, 0): [1, 4],
+             (0, 1): [2, 3], (1, 0): [3, 2], (1, 1): [4, 1]}
+            sage: NormalFormGame([[[1, -1], [-1, 1]]])
+            Normal Form Game with the following utilities: {(0, 0): [1, -1],
+             (0, 1): [-1, 1], (1, 0): [-1, 1], (1, 1): [1, -1]}
+            sage: (NormalFormGame([matrix([[1, 2], [3, 4]]), [[4, 3], [2, 1]]])
+            ....:  == NormalFormGame([matrix([[1, 2], [3, 4]]),
+            ....:                     matrix([[4, 3], [2, 1]])]))
+            True
+
+        Exact payoffs given as nested lists stay exact::
+
+            sage: g = NormalFormGame([[[1/2, 1], [0, 2]], [[2, 1], [0, 3]]])
+            sage: g[0, 0]
+            [1/2, 2]
+            sage: [type(u) for u in g[0, 0]]
+            [<class 'sage.rings.rational.Rational'>,
+             <class 'sage.rings.integer.Integer'>]
+            sage: g.obtain_nash(algorithm='enumeration')
+            [[(0, 1), (0, 1)], [(3/4, 1/4), (2/3, 1/3)], [(1, 0), (1, 0)]]
+            sage: g == NormalFormGame([matrix(QQ, [[1/2, 1], [0, 2]]),
+            ....:                      matrix(QQ, [[2, 1], [0, 3]])])
+            True
+
+        Nested lists must be rectangular, and of the same shape::
+
+            sage: NormalFormGame([[[1, 2], [3]], [[1, 2], [3, 4]]])
+            Traceback (most recent call last):
+            ...
+            ValueError: a payoff array given as nested lists must be rectangular
+            sage: NormalFormGame([[[1, 2], [3, 4]], [[1, 2, 5], [3, 4, 6]]])
+            Traceback (most recent call last):
+            ...
+            ValueError: matrices must be the same size
 
         Raise error if matrices aren't the same size::
 
@@ -1198,6 +1288,23 @@ class NormalFormGame(SageObject, MutableMapping):
         # is known to be present -- otherwise resolving it would raise instead
         # of giving the ``TypeError`` below.
         if isinstance(generator, list):
+            # A payoff array given as nested lists is read as a numpy array,
+            # which has the shape the rest of the construction relies on.  It
+            # is an array of objects, so that exact payoffs stay exact rather
+            # than being coerced to floats along with the rest of the array.
+            if np is not None:
+                arrays = []
+                for m in generator:
+                    if not (hasattr(m, "dimensions") or hasattr(m, "shape")):
+                        m = np.asarray(m, dtype=object)
+                        # An array of objects does not reject lists of unequal
+                        # length; it holds the lists themselves as entries.
+                        if any(isinstance(entry, (list, tuple))
+                               for entry in m.flat):
+                            raise ValueError("a payoff array given as nested "
+                                             "lists must be rectangular")
+                    arrays.append(m)
+                generator = arrays
             if len(generator) == 1:
                 generator.append(-generator[-1])
             self._n_matrix_game(generator)
@@ -1408,7 +1515,7 @@ class NormalFormGame(SageObject, MutableMapping):
           payoffs are all underlined is a pure Nash equilibrium
 
         - ``pure_nash`` -- boolean (default: ``False``); whether to shade the
-          cells that are pure Nash equilibria
+          cells that are pure Nash equilibria in light grey
 
         - ``player_labels`` -- list (default: ``None``); a name for each
           player, in the order the game lists them.  By default the players are
@@ -1439,6 +1546,13 @@ class NormalFormGame(SageObject, MutableMapping):
             Graphics object consisting of 22 graphics primitives
             sage: isinstance(p, Graphics)
             True
+
+        .. PLOT::
+
+            A = matrix([[2, 5], [0, 4]])
+            B = matrix([[2, 0], [5, 4]])
+            prisoners_dilemma = NormalFormGame([A, B])
+            sphinx_plot(prisoners_dilemma.plot())
 
         Both players are named beside the table, the first down its side and
         the second above its columns::
@@ -1472,6 +1586,13 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: sorted(set(q.options()['rgbcolor'] for q in underlined))
             ['blue', 'red']
 
+        .. PLOT::
+
+            A = matrix([[2, 5], [0, 4]])
+            B = matrix([[2, 0], [5, 4]])
+            prisoners_dilemma = NormalFormGame([A, B])
+            sphinx_plot(prisoners_dilemma.plot(best_responses=True))
+
         With ``pure_nash`` that equilibrium is shaded.  It is the cell in the
         top left, where both players play their first strategy::
 
@@ -1485,6 +1606,17 @@ class NormalFormGame(SageObject, MutableMapping):
             [0.0, 0.0, -1.0, -1.0]
             sage: shaded[0].xdata[0]   # its first column
             0.0
+
+        Together, ``best_responses`` and ``pure_nash`` show both why the top
+        left cell is an equilibrium and that it is the only one:
+
+        .. PLOT::
+
+            A = matrix([[2, 5], [0, 4]])
+            B = matrix([[2, 0], [5, 4]])
+            prisoners_dilemma = NormalFormGame([A, B])
+            sphinx_plot(prisoners_dilemma.plot(best_responses=True,
+                                               pure_nash=True))
 
         Since the players and their strategies have no names of their own,
         they are named after their indices, but any names can be given::
@@ -1500,6 +1632,15 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: sorted(set(t.string for t in named
             ....:            if hasattr(t, 'string') and not t.string[0].isdigit()))
             ['Amy', 'Bob', 'movie', 'video games']
+
+        .. PLOT::
+
+            A = matrix([[3, 1], [0, 2]])
+            B = matrix([[2, 1], [0, 3]])
+            battle_of_the_sexes = NormalFormGame([A, B])
+            choices = ['video games', 'movie']
+            sphinx_plot(battle_of_the_sexes.plot(player_labels=['Amy', 'Bob'],
+                                                 strategy_labels=[choices, choices]))
 
         A game with three players is drawn as a pivot table, the third player
         nested inside the columns of the second, and its payoffs are written in
@@ -1526,6 +1667,14 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: len([q for q in three.plot(pure_nash=True)
             ....:      if isinstance(q, Polygon)])
             2
+
+        .. PLOT::
+
+            A = [[[3, 1], [2, 3]], [[9, 3], [8, 2]]]
+            B = [[[1, 5], [6, 5]], [[7, 2], [4, 6]]]
+            C = [[[4, 9], [5, 8]], [[9, 3], [6, 4]]]
+            three = NormalFormGame([A, B, C])
+            sphinx_plot(three.plot(best_responses=True, pure_nash=True))
 
         TESTS:
 
@@ -2772,6 +2921,17 @@ class NormalFormGame(SageObject, MutableMapping):
              [(4/5, 1/5, 0), (2/3, 1/3)],
              [(1, 0, 0), (1, 0)]]
 
+        Only the last of them is pure, and it is the one cell of the table in
+        which both utilities are underlined (see :meth:`plot`); the other two
+        are mixed, so they are not single cells of the table:
+
+        .. PLOT::
+
+            A = matrix([[3, 3], [2, 5], [0, 6]])
+            B = matrix([[3, 2], [2, 6], [3, 1]])
+            g = NormalFormGame([A, B])
+            sphinx_plot(g.plot(best_responses=True, pure_nash=True))
+
         Here is a slightly larger game::
 
             sage: A = matrix([[160, 205, 44],
@@ -2918,7 +3078,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         Note that outputs for all algorithms are as lists of lists of
         tuples and the equilibria have been sorted so that all algorithms give
-        a comparable output (although ``'lcp'`` returns floats)::
+        a comparable output::
 
             sage: enumeration_eqs = g.obtain_nash(algorithm='enumeration')
             sage: [[type(s) for s in eq] for eq in enumeration_eqs]
@@ -2963,6 +3123,15 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: coordination.obtain_nash(algorithm='simpdiv')  # optional - pygambit
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
 
+        The three pure equilibria are the shaded cells on the diagonal of its
+        table; the four mixed ones mix over them:
+
+        .. PLOT::
+
+            I3 = matrix.identity(3)
+            coordination = NormalFormGame([I3, I3])
+            sphinx_plot(coordination.plot(best_responses=True, pure_nash=True))
+
         A 3 player game, coming from a local max cut instance, with two pure equilibria where
         either player is on one side of the cut and one mixed equilibrium where all players mix uniformly::
 
@@ -2977,6 +3146,16 @@ class NormalFormGame(SageObject, MutableMapping):
              [(1, 0), (0, 1), (1, 0)]]
             sage: max_cut_game.obtain_nash(algorithm='enumpure')  # optional - pygambit
             [[(0, 1), (1, 0), (0, 1)], [(1, 0), (0, 1), (1, 0)]]
+
+        Its two pure equilibria are the shaded cells of its table:
+
+        .. PLOT::
+
+            A = [[[0, -1], [2, 1]], [[1, 2], [-1, 0]]]
+            B = [[[0, 2], [4, 2]], [[2, 4], [2, 0]]]
+            C = [[[0, 1], [2, -1]], [[-1, 2], [1, 0]]]
+            max_cut_game = NormalFormGame([A, B, C])
+            sphinx_plot(max_cut_game.plot(best_responses=True, pure_nash=True))
 
         The solvers with no exact mode answer exactly as well, their floating
         point answer being rounded back to the equilibrium it approximates.
