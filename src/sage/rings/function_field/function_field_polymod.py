@@ -1038,7 +1038,7 @@ class FunctionField_polymod(FunctionField):
 
         if (isinstance(self._base_field, RationalFunctionField) and
                 self._base_field.constant_field().is_prime_field()):
-            from sage.interfaces.singular import singular
+            from sage.libs.singular.function import singular_function, lib as singular_lib
 
             # making the auxiliary ring which only has polynomials
             # with integral coefficients.
@@ -1047,8 +1047,9 @@ class FunctionField_polymod(FunctionField):
             intMinPoly, d = self._make_monic_integral(self._polynomial)
             curveIdeal = tmpAuxRing.ideal(intMinPoly)
 
-            singular.lib('normal.lib')  # loading genus method in Singular
-            return int(curveIdeal._singular_().genus())
+            singular_lib('normal.lib')  # loading genus method in Singular
+            genus = singular_function("genus")
+            return genus(curveIdeal)
 
         raise NotImplementedError("computation of genus over non-prime "
                                   "constant fields not implemented yet")
