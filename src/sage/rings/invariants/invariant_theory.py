@@ -4231,9 +4231,7 @@ class InvariantTheoryFactory:
         In the case of binary quadratics and cubics, the form is reconstructed
         based on the value of the discriminant. See also
         :func:`~sage.rings.invariants.reconstruction.binary_quadratic_coefficients_from_invariants` and
-        :func:`~sage.rings.invariants.reconstruction.binary_cubic_coefficients_from_invariants`.
-        These functions will always return the
-        same result if the discriminant is nonzero::
+        :func:`~sage.rings.invariants.reconstruction.binary_cubic_coefficients_from_invariants`::
 
             sage: discriminant = 1
             sage: invariant_theory.binary_form_from_invariants(2, [discriminant])
