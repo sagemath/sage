@@ -5608,6 +5608,9 @@
 .. [MW2012] Ivan Marin and Emmanuel Wagner, *A Cubic Defining Algebra for the
             Links-Gould PolynomiaL* (:arxiv:`1203.5981v1` [mathGT] 27. Mar 2012)
 
+.. [Mye1991] Roger B. Myerson, *Game Theory: Analysis of Conflict*,
+             Harvard University Press, 1991.
+
 .. [NaiRow2011] Naidu and Rowell, *A finiteness property for braided fusion
                 categories*. Algebr. Represent. Theory 14 (2011), no. 5, 837-855.
                 :arxiv:`0903.4157`.
@@ -5962,6 +5965,11 @@
              Geometry, Contemp. Math., 605, Amer. Math. Soc.,
              Providence, RI, 2013.
              :arxiv:`1112.6163`
+
+.. [PR1997] Michele Piccione and Ariel Rubinstein, *On the interpretation
+            of decision problems with imperfect recall*,
+            Games Econom. Behav. 20 (1997), no. 1, pp. 3--24,
+            :doi:`10.1006/game.1997.0536`.
 
 .. [PR2003] Perrin-Riou, *Arithmétique des courbes elliptiques à
             réduction supersingulière en p*,
@@ -6421,6 +6429,11 @@
 .. [Sei2002] \T. R. Seifullin, *Computation of determinants, adjoint
              matrices, and characteristic polynomials without division*
              :doi:`10.1023/A:1021878507303`
+
+.. [Selten1975] Reinhard Selten, *Reexamination of the perfectness concept
+                for equilibrium points in extensive games*,
+                Internat. J. Game Theory 4 (1975), no. 1, pp. 25--55,
+                :doi:`10.1007/BF01766400`.
 
 .. [Ser1972] Jean-Pierre Serre,
              Propriétés galoisiennes des points d'ordre fini

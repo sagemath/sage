@@ -1,0 +1,70 @@
+% TikZ code with built-in styling for game trees
+% TikZ libraries required for game trees
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows.meta}
+
+% Style settings for game tree formatting
+\tikzset{
+    every node/.append style={font=\rmfamily},
+    every text node part/.append style={align=center},
+    node distance=1.5mm,
+    thick
+}
+
+% Built-in macro definitions for game tree drawing
+\newdimen\ndiam
+\ndiam1.5mm
+\newdimen\sqwidth
+\sqwidth1.6mm
+\newdimen\spx
+\spx.7mm
+\newdimen\spy
+\spy.5mm
+\newdimen\paydown
+\paydown2.5ex
+\newdimen\treethickn
+\treethickn1.0pt
+\definecolor{chancecolor}{RGB}{117,145,56}
+
+% Game tree content from Untitled extensive game.ef
+\begin{tikzpicture}[scale=0.8
+  , StealthFill/.tip={Stealth[line width=.7pt,inset=0pt,length=13pt,angle'=30]}]
+% \draw [help lines, color=green] (-5,0) grid (5,-6);
+%% player 1 name Alice
+\def\playerone{Alice}
+%% level -2.0 node 1 player 0
+\def\playerzero{Chance}
+\draw [line width=\treethickn] (0,2) node[right,xshift=\spx,yshift=\spy,color=black]{\playerzero\strut}
+   ;
+%% level 2.0 node 2 player 1 xshift -2.0 from 1 move H~(\frac{1}{2})
+\draw [line width=\treethickn,color=black] (-2,-2) node[left,xshift=-\spx,yshift=\spy,color=black]{\playerone\strut}
+   -- (0,2);
+\draw (-1,0) node[left,xshift=-1mm,color=black] {H~($\frac{1}{2}$)\strut};
+%% level 6.0 node 3 xshift -1.0 from 2 move bet payoffs
+\draw [line width=\treethickn,color=black] (-3,-6)
+   -- (-2,-2);
+\draw (-2.5,-4) node[left,xshift=-0.5mm,color=black] {bet\strut};
+%% level 6.0 node 4 xshift 1.0 from 2 move fold payoffs
+\draw [line width=\treethickn,color=black] (-1,-6)
+   -- (-2,-2);
+\draw (-1.5,-4) node[right,xshift=0.5mm,color=black] {fold\strut};
+%% level 4.0 node 5 player 1 xshift 2.0 from 1 move T~(\frac{1}{2})
+\draw [line width=\treethickn,color=black] (2,-4) node[right,xshift=\spx,yshift=\spy,color=black]{\playerone\strut}
+   -- (0,2);
+\draw (1,-1) node[right,xshift=1mm,color=black] {T~($\frac{1}{2}$)\strut};
+%% level 6.0 node 6 xshift -1.0 from 5 move bet payoffs
+\draw [line width=\treethickn,color=black] (1,-6)
+   -- (2,-4);
+\draw (1.5,-5) node[left,xshift=-0.5mm,color=black] {bet\strut};
+%% level 6.0 node 7 xshift 1.0 from 5 move fold payoffs
+\draw [line width=\treethickn,color=black] (3,-6)
+   -- (2,-4);
+\draw (2.5,-5) node[right,xshift=0.5mm,color=black] {fold\strut};
+\node[inner sep=0pt,minimum size=\sqwidth,draw=black,fill=red,shape=rectangle] at (0,2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (-2,-2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (-3,-6) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (-1,-6) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (2,-4) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (1,-6) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=black,fill=black,shape=circle] at (3,-6) {};
+\end{tikzpicture}
