@@ -1095,110 +1095,69 @@ class CohomologyRing_mod2(CohomologyRing):
             """
             P = self.parent()
             scomplex = P.complex()
+            base_ring = P.base_ring()
             if isinstance(scomplex, CubicalComplex):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
                 scomplex = SimplicialComplex(scomplex, immutable=True)
-                P = scomplex.cohomology_ring(self.base_ring())
+                P = scomplex.cohomology_ring(base_ring)
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
                 print(scomplex, isinstance(scomplex, SimplicialComplex))
                 raise NotImplementedError('Steenrod squares are not implemented for '
                                           'this type of cell complex')
-            scomplex = P.complex()
-            base_ring = P.base_ring()
             if not is_GF2(base_ring):
                 # This should never happen: the class should only be
                 # instantiated in characteristic 2.
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
             # We keep the same notation as in [GDR1999].
-            # The trivial cases:
             if i == 0:
                 # Sq^0 is the identity.
                 return self
-
             # Construct each graded component of ``self``
-            ret = P.zero()
-            H = scomplex.homology_with_basis(base_ring)
             deg_comp = {}
             for index, coeff in self:
-                d = deg_comp.get(index[0], {})
-                d[index] = coeff
-                deg_comp[index[0]] = d
+                deg_comp.setdefault(index[0], {})[index] = coeff
 
-            # Do the square on each graded component of ``self``.
-            for j in deg_comp:
-                # Make it into an actual element
-                m = j + i
-                if not P._graded_indices.get(m, []) or i > j:
+            ret = P.zero()
+            H = scomplex.homology_with_basis(base_ring)
+
+            # Apply Sq^i to each graded component of ``self``.
+            for j, j_component in deg_comp.items():
+                if j < i:
+                    # Sq^i annihilates degrees < i
                     continue
-                elt = P._from_dict(deg_comp[j], remove_zeros=False)
-                if i == j:
+                m = j + i
+                if not P._graded_indices.get(m, []):
+                    # Target cohomology is trivial
+                    continue
+                # Make it into an actual element
+                elt = P._from_dict(j_component, remove_zeros=False)
+                if j == i:
                     ret += elt.cup_product(elt)
                     continue
-
                 n = j - i
-                # Now assemble the indices over which the sums take place.
-                # S(n) is defined to be floor((m+1)/2) + floor(n/2).
-                S_n = (m+1) // 2 + n // 2
-                if n == 0:
-                    sums = [[S_n]]
-                else:
-                    sums = [[i_n] + l for i_n in range(S_n, m+1)
-                            for l in sum_indices(n-1, i_n, S_n)]
-                # At this point, 'sums' is a list of lists of the form
-                # [i_n, i_{n-1}, ..., i_0]. (It is reversed from the
-                # obvious order because this is closer to the order in
-                # which the face maps will be applied.)  Now we sum over
-                # these, according to the formula in [GDR1999], Corollary 3.2.
+                face_maps = Sq_face_maps(m, n)
                 result = {}
                 cycle = elt.to_cycle()
                 n_chains = scomplex.n_chains(j, base_ring)
                 for gamma_index in H._graded_indices.get(m, []):
                     gamma_coeff = base_ring.zero()
                     for cell, coeff in H._to_cycle_on_basis((m, gamma_index)):
-                        for indices in sums:
-                            indices = list(indices)
+                        for left_face_maps, right_face_maps in face_maps:
                             left = cell
+                            for k in left_face_maps:
+                                left = scomplex.face(left, k)
                             right = cell
-                            # Since we are working with a simplicial complex, 'cell' is a simplex.
-                            if not m % 2:
-                                left_endpoint = m
-                                while indices:
-                                    right_endpoint = indices[0] - 1
-                                    for k in range(left_endpoint, indices.pop(0), -1):
-                                        left = scomplex.face(left, k)
-                                    try:
-                                        left_endpoint = indices[0] - 1
-                                        for k in range(right_endpoint, indices.pop(0), -1):
-                                            right = scomplex.face(right, k)
-                                    except IndexError:
-                                        pass
-                                for k in range(right_endpoint, -1, -1):
-                                    right = scomplex.face(right, k)
-                            else:
-                                right_endpoint = m
-                                while indices:
-                                    left_endpoint = indices[0] - 1
-                                    try:
-                                        for k in range(right_endpoint, indices.pop(0), -1):
-                                            right = scomplex.face(right, k)
-                                        right_endpoint = indices[0] - 1
-                                    except IndexError:
-                                        pass
-                                    for k in range(left_endpoint, indices.pop(0), -1):
-                                        left = scomplex.face(left, k)
-                                for k in range(right_endpoint, -1, -1):
-                                    right = scomplex.face(right, k)
-
-                            if ((hasattr(left, 'is_nondegenerate')
-                                 and left.is_nondegenerate()
-                                 and right.is_nondegenerate())
-                                    or not hasattr(left, 'is_nondegenerate')):
-                                left = n_chains(left)
-                                right = n_chains(right)
-                                gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
+                            for k in right_face_maps:
+                                right = scomplex.face(right, k)
+                            if hasattr(left, "is_degenerate"):
+                                if left.is_degenerate() or right.is_degenerate():
+                                     continue
+                            left = n_chains(left)
+                            right = n_chains(right)
+                            gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
                     if gamma_coeff != base_ring.zero():
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)
@@ -1393,7 +1352,145 @@ class CohomologyRing_mod2(CohomologyRing):
                           len(H_basis_cod), entries)
 
 
-def sum_indices(k, i_k_plus_one, S_k_plus_one):
+def Sq_face_maps(m, n):
+    """
+    Find pairs (left_face_maps, right_face_maps) of lists of integers
+    indexing the face maps to apply for each term in the sum
+    computing a Steenrod square `Sq^i : H^j \to H^{j+i}` as in
+    González-Díaz and Réal [GDR1999]_, Corollary 3.2.
+
+    INPUT:
+
+    - ``m`` -- The degree `j+i` of output cochains.
+    - ``n`` -- The difference `j-i`; one less than the length of the indices.
+
+    TESTS::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_face_maps
+        sage: Sq_face_maps(0, 0) # Sq^0(H^0)
+        [([], [])]
+        sage: Sq_face_maps(1, 1) # Sq^0(H^1)
+        [([], [])]
+        sage: Sq_face_maps(2, 0) # Sq^1(H^1)
+        [([2], [0])]
+        sage: Sq_face_maps(2, 2) # Sq^0(H^2)
+        [([], [])]
+        sage: Sq_face_maps(3, 1) # Sq^1(H^2)
+        [([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(4, 0) # Sq^2(H^2)
+        [([4, 3], [1, 0])]
+        sage: Sq_face_maps(3, 3) # Sq^0(H^3)
+        [([], [])]
+        sage: Sq_face_maps(4, 2) # Sq^1(H^3)
+        [([4], [2]), ([4], [0]), ([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(5, 1) # Sq^2(H^3)
+        [([2, 1], [5, 4]), ([3, 2], [5, 0]), ([4, 3], [1, 0])]
+        sage: Sq_face_maps(6, 0) # Sq^3(H^3)
+        [([6, 5, 4], [2, 1, 0])]
+        sage: Sq_face_maps(4, 4) # Sq^0(H^4)
+        [([], [])]
+        sage: Sq_face_maps(5, 3) # Sq^1(H^4)
+        [([3], [5]), ([1], [5]), ([4], [2]), ([4], [0]), ([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(6, 2) # Sq^2(H^4)
+        [([6, 5], [3, 2]), ([6, 5], [3, 0]), ([6, 5], [1, 0]), ([6, 1], [4, 3]), ([6, 2], [4, 0]), ([6, 3], [1, 0]), ([2, 1], [5, 4]), ([3, 2], [5, 0]), ([4, 3], [1, 0])]
+        sage: Sq_face_maps(7, 1) # Sq^3(H^4)
+        [([3, 2, 1], [7, 6, 5]), ([4, 3, 2], [7, 6, 0]), ([5, 4, 3], [7, 1, 0]), ([6, 5, 4], [2, 1, 0])]
+        sage: Sq_face_maps(8, 0) # Sq^4(H^4)
+        [([8, 7, 6, 5], [3, 2, 1, 0])]
+    """
+    return [Sq_indices_to_face_maps(indices, m)
+            for indices in Sq_sum_indices(m, n)]
+
+def Sq_indices_to_face_maps(indices, m):
+    """
+    Given a subset `[i_n, i_{n-1}, ..., i_0]` of `{0, ..., m}`,
+    partition its complement into two parts by
+    dealing out contiguous segments alternately between
+    the two output bins. The segment smaller than `i_0`
+    should always go in the right bin.
+
+    TESTS::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_indices_to_face_maps
+        sage: # Input the positions of the bars in "b|a|bbb|aaa"
+        sage: Sq_indices_to_face_maps([7, 3, 1], 10)
+        ([10, 9, 8, 2], [6, 5, 4, 0])
+        sage: # Input the positions of the bars in "|a||a|bb|a|b"
+        sage: Sq_indices_to_face_maps([10, 8, 5, 3, 2, 0], 11)
+        ([9, 4, 1], [11, 7, 6])
+    """
+    omitted = [-1] + sorted(indices) + [m + 1]
+    blocks = list(zip(omitted, omitted[1:]))
+    left_face_maps = []
+    right_face_maps = []
+    for block_index, (left_i, right_i) in enumerate(blocks):
+        between_i = range(left_i + 1, right_i)
+        if block_index % 2:
+            left_face_maps.extend(between_i)
+        else:
+            right_face_maps.extend(between_i)
+    return left_face_maps[::-1], right_face_maps[::-1]
+
+def Sq_sum_indices(m, n):
+    r"""
+    Find the indices `[i_n, i_{n-1}, ..., i_0]` to sum over
+    when computing a Steenrod square `Sq^i : H^j \to H^{j+i}`
+    as in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
+
+    When :func:`Sq_indices_to_face_maps` is applied to indices
+    produced by this function, the resulting left and right
+    face map lists will have the same length.
+
+    INPUT:
+
+    - ``m`` -- The degree `j+i` of output cochains.
+    - ``n`` -- The difference `j-i`; one less than the length of the indices.
+
+    TESTS::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_sum_indices
+        sage: Sq_sum_indices(0, 0) # Sq^0(H^0)
+        [[0]]
+        sage: Sq_sum_indices(1, 1) # Sq^0(H^1)
+        [[1, 0]]
+        sage: Sq_sum_indices(2, 0) # Sq^1(H^1)
+        [[1]]
+        sage: Sq_sum_indices(2, 2) # Sq^0(H^2)
+        [[2, 1, 0]]
+        sage: Sq_sum_indices(3, 1) # Sq^1(H^2)
+        [[2, 0], [3, 1]]
+        sage: Sq_sum_indices(4, 0) # Sq^2(H^2)
+        [[2]]
+        sage: Sq_sum_indices(3, 3) # Sq^0(H^3)
+        [[3, 2, 1, 0]]
+        sage: Sq_sum_indices(4, 2) # Sq^1(H^3)
+        [[3, 1, 0], [3, 2, 1], [4, 2, 0], [4, 3, 1]]
+        sage: Sq_sum_indices(5, 1) # Sq^2(H^3)
+        [[3, 0], [4, 1], [5, 2]]
+        sage: Sq_sum_indices(6, 0) # Sq^3(H^3)
+        [[3]]
+        sage: Sq_sum_indices(4, 4) # Sq^0(H^4)
+        [[4, 3, 2, 1, 0]]
+        sage: Sq_sum_indices(5, 3) # Sq^1(H^4)
+        [[4, 2, 1, 0], [4, 3, 2, 0], [5, 3, 1, 0], [5, 3, 2, 1], [5, 4, 2, 0], [5, 4, 3, 1]]
+        sage: Sq_sum_indices(6, 2) # Sq^2(H^4)
+        [[4, 1, 0], [4, 2, 1], [4, 3, 2], [5, 2, 0], [5, 3, 1], [5, 4, 2], [6, 3, 0], [6, 4, 1], [6, 5, 2]]
+        sage: Sq_sum_indices(7, 1) # Sq^3(H^4)
+        [[4, 0], [5, 1], [6, 2], [7, 3]]
+        sage: Sq_sum_indices(8, 0) # Sq^4(H^4)
+        [[4]]
+    """
+    # S(n) is defined to be floor((m+1)/2) + floor(n/2).
+    S_n = (m+1) // 2 + n // 2
+    if n == 0:
+        return [[S_n]]
+    sums = [[i_n] + l for i_n in range(S_n, m+1)
+            for l in Sq_sum_indices_helper(n-1, i_n, S_n)]
+    # Sort in decreasing order because this is closer to
+    # the order in which the face maps will be applied.
+    return sums
+
+def Sq_sum_indices_helper(k, i_k_plus_one, S_k_plus_one):
     r"""
     This is a recursive function for computing the indices for the
     nested sums in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
@@ -1421,17 +1518,17 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     EXAMPLES::
 
-        sage: from sage.homology.homology_vector_space_with_basis import sum_indices
-        sage: sum_indices(1, 3, 3)
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_sum_indices_helper
+        sage: Sq_sum_indices_helper(1, 3, 3)
         [[1, 0], [2, 1]]
-        sage: sum_indices(0, 4, 2)
+        sage: Sq_sum_indices_helper(0, 4, 2)
         [[2]]
     """
     S_k = -S_k_plus_one + k//2 + (k+1)//2 + i_k_plus_one
     if k == 0:
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
-            for l in sum_indices(k-1, i_k, S_k)]
+            for l in Sq_sum_indices_helper(k-1, i_k, S_k)]
 
 
 def is_GF2(R) -> bool:
