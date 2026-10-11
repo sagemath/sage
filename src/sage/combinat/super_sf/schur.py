@@ -85,9 +85,9 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
                                                          self.base_ring()))
     
-    def coproduct_on_basis(self, mu):
+    def coproduct_by_coercion(self, n):
         r"""
-        Return the coproduct of ``self(mu)``.
+        Return the coproduct of ``self(n)``.
 
         INPUT:
 
@@ -98,12 +98,13 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
             sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
             sage: Sym = SuperSymmetricFunctions(QQ)
             sage: s = Sym.schur()
-            sage: s.coproduct_on_basis([2])
+            sage: s.coproduct_by_coercion([2])
             s[] # s[2] + s[1] # s[1] + s[2] # s[]
         """
-        T = self.tensor_square()
-        return T.element_class(T, convert_remove_zeroes(lrcalc.coprod(mu, all=1),
-                                                        self.base_ring()))
+        Sym = self.realization_of()
+        h = Sym.h()
+        el = h.coproduct_on_generators(n)
+        return self(el)
 
     def _to_hom_el_on_basis(self, part, basis_name='homogeneous'):
         r"""

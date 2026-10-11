@@ -99,15 +99,15 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
 
         EXAMPLES::
 
-        sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-        sage: Sym = SuperSymmetricFunctions(QQ)
-        sage: m = Sym.m()
-        sage: el = m[1,1,1]
-        sage: m.lift_on_basis(el)
-        -1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] - 1/3*p[] # p[3] +
-        1/2*p[1] # p[1, 1] - 1/2*p[1] # p[2] - 1/2*p[1, 1] # p[1] +
-        1/6*p[1, 1, 1] # p[] +1/2*p[2] # p[1] - 1/2*p[2, 1] # p[] +
-        1/3*p[3] # p[]
+            sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
+            sage: Sym = SuperSymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: el = m[1,1,1]
+            sage: m.lift_on_basis(el)
+            -1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] - 1/3*p[] # p[3] +
+            1/2*p[1] # p[1, 1] - 1/2*p[1] # p[2] - 1/2*p[1, 1] # p[1] +
+            1/6*p[1, 1, 1] # p[] +1/2*p[2] # p[1] - 1/2*p[2, 1] # p[] +
+            1/3*p[3] # p[]
         """
         p = self.realization_of().p()
         pow_el = p(el)
