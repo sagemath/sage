@@ -222,6 +222,20 @@ def detex(s, embedded=False):
         '(| x * y |]\n'
         sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\unknownmacro\to`')
         '(<=<=<-- -->\\unknownmacro-->\n'
+
+    TESTS:
+
+    Without Sphinx, empty docstrings remain empty and nonempty docstrings
+    end with exactly one newline. Leading indentation is preserved::
+
+        sage: from unittest.mock import patch
+        sage: with patch.dict(sys.modules, {'sage.misc.sphinxify': None}):
+        ....:     assert detex('') == ''
+        ....:     assert detex('\n\n') == ''
+        ....:     assert detex('docs') == 'docs\n'
+        ....:     assert detex('docs\n\n') == 'docs\n'
+        ....:     assert detex('   docs\n') == '   docs\n'
+        ....:     assert detex('``code`` and `math`') == '"code" and math\n'
     """
     s = _rmcmd(s, 'url')
     s = _rmcmd(s, 'code')
@@ -245,7 +259,9 @@ def detex(s, embedded=False):
         try:
             from .sphinxify import sphinxify
         except ImportError:
-            s = s.replace('``', '"').replace('`', '') + '\n'
+            s = s.replace('``', '"').replace('`', '').rstrip()
+            if s:
+                s += '\n'
         else:
             s = sphinxify(s, format='text')
         # Do math substitutions. The strings to be replaced should be
