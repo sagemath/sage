@@ -912,13 +912,13 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 

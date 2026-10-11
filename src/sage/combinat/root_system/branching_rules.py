@@ -1365,9 +1365,8 @@ def branching_rule(Rtype, Stype, rule='default'):
         ntypes = len(Stypes)
         if Stype.is_compound():
             def br(x):
-                yl = []
-                for i in range(ntypes):
-                    yl.append(rules[i](x[shifts[stor[i]]:shifts[stor[i]+1]]))
+                yl = [rules[i](x[shifts[stor[i]]:shifts[stor[i]+1]])
+                      for i in range(ntypes)]
                 return flatten(yl)
         else:
             j = stor[0]

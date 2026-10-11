@@ -1030,7 +1030,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             return self._from_dict({order[i]: c for i, c in vector.items()},
                                    coerce=False)
         R = self.base_ring()
-        return self._from_dict({order[i]: R(c) for i, c in vector.items() if R(c)},
+        return self._from_dict({order[i]: c for i, coeff in vector.items()
+                                if (c := R(coeff))},
                                coerce=False, remove_zeros=False)
 
     def sum(self, iter_of_elements):
