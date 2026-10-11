@@ -84,7 +84,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         """
         return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
                                                          self.base_ring()))
-    
+
     def coproduct_by_coercion(self, n):
         r"""
         Return the coproduct of ``self(n)``.
@@ -134,16 +134,14 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
                     req_matrix[i][j] = h[part[i] - i + j]
             req_matrix = matrix(req_matrix)
             return req_matrix.det()
-
-        elif basis_name == 'elementary':
-            e = self.realization_of().e()
-            part = part.conjugate()
-            l = len(part)
-            for i in range(l):
-                for j in range(l):
-                    req_matrix[i][j] = e[part[i] - i + j]
-            req_matrix = matrix(req_matrix)
-            return req_matrix.det()
+        e = self.realization_of().e()
+        part = part.conjugate()
+        l = len(part)
+        for i in range(l):
+            for j in range(l):
+                req_matrix[i][j] = e[part[i] - i + j]
+        req_matrix = matrix(req_matrix)
+        return req_matrix.det()
 
     def lift_on_basis(self, part):
         r"""
@@ -164,7 +162,6 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
             sage: s.lift_on_basis(part)
             0
         """
-        R = self.base_ring()
         req_sum = {}
         for mu in Partitions(sum(part), ending=part):
             for nu in Partitions(sum(part), ending=part):
