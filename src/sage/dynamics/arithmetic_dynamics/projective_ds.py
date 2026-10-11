@@ -3689,6 +3689,55 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             [-w - 1      0]  [     0 -w - 1]  [w 0]  [0 w]  [0 1]  [1 0]
             [     0      1], [     1      0], [0 1], [1 0], [1 0], [0 1]
             ]
+
+        TESTS:
+
+        Check that :issue:`42865` is fixed: ``num_cpus`` is forwarded as a
+        keyword to :meth:`conjugating_set`, not positionally as ``R``. Use a
+        stub so the test does not depend on CPU availability or timing::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: f = DynamicalSystem([x^2 + x*z, y^2, z^2])
+            sage: calls = []
+            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
+            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
+            ....:     return []
+            sage: f.conjugating_set = mock_conjugating_set
+            sage: f.automorphism_group(num_cpus=1)
+            []
+            sage: calls
+            [{'R': None, 'num_cpus': 1}]
+            sage: calls.clear()
+            sage: f.automorphism_group()
+            []
+            sage: calls
+            [{'R': None, 'num_cpus': 2}]
+
+        The same forwarding applies on the number-field dimension-1 path that
+        uses :meth:`conjugating_set`::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(3)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([y^2, x^2])
+            sage: calls = []
+            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
+            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
+            ....:     return []
+            sage: f.conjugating_set = mock_conjugating_set
+            sage: f.automorphism_group(num_cpus=1)
+            []
+            sage: calls
+            [{'R': None, 'num_cpus': 1}]
+
+        The reported ``P^1`` over ``QQ`` example still accepts ``num_cpus``
+        without error (that path uses a specialized algorithm)::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem([x^2 + x*y, y^2])
+            sage: G = f.automorphism_group(num_cpus=1)                                  # needs sage.libs.pari
+            sage: all(f.conjugate(m) == f for m in G)                                   # needs sage.libs.pari
+            True
         """
         alg = kwds.get('algorithm', None)
         p = kwds.get('starting_prime', 5)
@@ -3696,9 +3745,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         iso_type = kwds.get('iso_type', False)
         num_cpus = kwds.get('num_cpus', 2)
         if self.domain().dimension_relative() != 1:
-            return self.conjugating_set(self, num_cpus)
+            return self.conjugating_set(self, num_cpus=num_cpus)
         if self.base_ring() != QQ and self.base_ring() != ZZ:
-            return self.conjugating_set(self, num_cpus)
+            return self.conjugating_set(self, num_cpus=num_cpus)
         self.normalize_coordinates()
         if (self.degree() == 1) or (self.degree() == 0):
             raise NotImplementedError("rational function of degree 1 not implemented")
@@ -9543,13 +9592,35 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
             sage: f = DynamicalSystem_projective([x^3 + x*z^2, y^3 + y*z^2, z^3])
             sage: all(f.conjugate(m) == f for m in f.automorphism_group())            # needs sage.rings.function_field
             True
+
+        TESTS:
+
+        Check that :issue:`42865` is fixed for finite fields: ``num_cpus`` is
+        forwarded as a keyword to :meth:`conjugating_set`::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
+            sage: calls = []
+            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
+            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
+            ....:     return []
+            sage: f.conjugating_set = mock_conjugating_set
+            sage: f.automorphism_group(num_cpus=1)
+            []
+            sage: calls
+            [{'R': None, 'num_cpus': 1}]
+            sage: calls.clear()
+            sage: f.automorphism_group()
+            []
+            sage: calls
+            [{'R': None, 'num_cpus': 2}]
         """
         absolute = kwds.get('absolute', False)
         iso_type = kwds.get('iso_type', False)
         return_functions = kwds.get('return_functions', False)
         num_cpus = kwds.get('num_cpus', 2)
         if self.domain().dimension_relative() != 1:
-            return self.conjugating_set(self, num_cpus)
+            return self.conjugating_set(self, num_cpus=num_cpus)
         f = self.dehomogenize(1)
         z = f[0].parent().gen()
         self.normalize_coordinates()
