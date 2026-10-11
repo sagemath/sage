@@ -5703,6 +5703,9 @@
         Transactions of the AMS, **368** (2016), 6835-6886.
         :arxiv:`1212.6853`
 
+.. [NS2009] Phong Q. Nguyen, Damien Stehlé: *Low-dimensional lattice basis
+            reduction revisited*. ACM Transactions on Algorithms, 5(4), 2009.
+
 .. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
             Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
             :doi:`10.1016/j.jctb.2007.12.005`.
