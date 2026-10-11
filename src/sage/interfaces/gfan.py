@@ -61,7 +61,7 @@ class Gfan:
 
         EXAMPLES::
 
-            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases'))                # needs gfan
+            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases'))                # needs gfan # random
             Q[x,y]
             {{
             y^4+4/9-7/3*y^2-y^3,

@@ -366,7 +366,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
                     return False
                 dsG = G.invariants()[::-1]  # descending
                 dsH = H.invariants()[::-1]  # descending
-                if not all(iG.divides(iH) for iG,iH in zip(dsG, dsH)):
+                if not all(iG.divides(iH) for iG, iH in zip(dsG, dsH)):
                     return False
             # test if generating set of G is contained in H
             return all(g.element() in H for g in G.gens())
@@ -424,8 +424,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ALGORITHM:
 
-        This reduces to p-groups, then calls :func:`_discrete_log_pgroup` which
-        implements a basic version of the recursive algorithm from [Suth2008]_.
+        This reduces to p-groups, then calls
+        ``_discrete_log_pgroup`` which implements a basic version of the
+        recursive algorithm from [Suth2008]_.
 
         AUTHORS:
 
@@ -925,6 +926,7 @@ def _basis_relation_pgroup(p, alphas, vals, beta, h):
             continue
         return list(e) + [p**v]
 
+
 def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     r"""
     Given a basis of a `p`-subgroup of a finite abelian group
@@ -1049,6 +1051,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         vals.append(h)
     # assert all(a.order() == p**v for a,v in zip(alphas,vals))
 
+
 def expand_basis(gens, new_gen, ords=None, new_ord=None):
     r"""
     Given a basis of a subgroup `G` of some finite abelian
@@ -1134,6 +1137,7 @@ def expand_basis(gens, new_gen, ords=None, new_ord=None):
                 ms.append(p ** v)
 
     return gammas, ms
+
 
 def basis_from_generators(gens, ords=None):
     r"""

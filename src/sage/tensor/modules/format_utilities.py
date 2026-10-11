@@ -33,10 +33,8 @@ def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
-    Adapted from method
-    :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
-    of class
-    :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
+    Adapted from the method ``DifferentialFormFormatter._is_atomic`` of class
+    ``DifferentialFormFormatter``
     written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:
@@ -111,10 +109,8 @@ def is_atomic_wedge_txt(expression) -> bool:
     Helper function to check whether some text-formatted expression is atomic
     in terms of wedge products.
 
-    Adapted from method
-    :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
-    of class
-    :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
+    Adapted from the method ``DifferentialFormFormatter._is_atomic`` of class
+    ``DifferentialFormFormatter``
     written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:
@@ -148,10 +144,8 @@ def is_atomic_wedge_latex(expression):
     Helper function to check whether LaTeX-formatted expression is atomic in
     terms of wedge products.
 
-    Adapted from method
-    :meth:`~sage.tensor.differential_form_element.DifferentialFormFormatter._is_atomic`
-    of class
-    :class:`~sage.tensor.differential_form_element.DifferentialFormFormatter`
+    Adapted from the method ``DifferentialFormFormatter._is_atomic`` of class
+    ``DifferentialFormFormatter``
     written by Joris Vankerschaver (2010) and modified by Michael Jung (2020).
 
     INPUT:

@@ -113,6 +113,7 @@ Partition Refinement
    sage/groups/perm_gps/partn_ref/refinement_graphs
    sage/groups/perm_gps/partn_ref/refinement_lists
    sage/groups/perm_gps/partn_ref/refinement_matrices
+   sage/groups/perm_gps/partn_ref2/refinement_generic
 
 Internals
 ---------

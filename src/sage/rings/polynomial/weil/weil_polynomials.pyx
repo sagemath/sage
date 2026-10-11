@@ -15,19 +15,23 @@ for smaller problem sizes. To enable support, ensure that your compiler supports
 OpenMP and remove the appropriate # characters in the distutils commands below.
 (You may also need to move those lines to the start of the file.)
 
-AUTHOR:
-  -- Kiran S. Kedlaya (2007-05-28): initial version
-  -- (2015-08-29): switch from NTL to FLINT
-  -- (2017-10-03): consolidate Sage layer into .pyx file
-                   define WeilPolynomials iterator
-                   reverse convention for polynomials
-                   pass multiprecision integers to/from C
-  -- (2019-02-02): update for Python3
-                   improve parallel mode
-  -- (2019-12-19): final packaging for Sage (with help from David Roe)
+AUTHORS:
+
+- Kiran S. Kedlaya (2007-05-28): initial version
+
+- Kiran S. Kedlaya (2015-08-29): switch from NTL to FLINT
+
+- Kiran S. Kedlaya (2017-10-03): consolidate Sage layer into .pyx file;
+  define WeilPolynomials iterator; reverse convention for polynomials; pass
+  multiprecision integers to/from C
+
+- Kiran S. Kedlaya (2019-02-02): update for Python3; improve parallel mode
+
+- Kiran S. Kedlaya (2019-12-19): final packaging for Sage (with help from
+  David Roe)
 
 A standalone version of this code can be found at
-   https://github.com/kedlaya/root-unitary
+https://github.com/kedlaya/root-unitary.
 """
 # Remove second # from the next two lines to enable OpenMP support.
 ##distutils: libraries = gomp

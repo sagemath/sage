@@ -223,13 +223,12 @@ cdef extern from "mpfi.h":
     # than the second argument and the right bound is greater
     # (round +infty) than the third one
 
-
-    int mpfi_interv_d(mpfi_ptr, double,double)
-    int mpfi_interv_si(mpfi_ptr, long,long)
-    int mpfi_interv_ui(mpfi_ptr, unsigned long,unsigned long)
-    int mpfi_interv_z(mpfi_ptr, mpz_srcptr,mpz_srcptr)
-    int mpfi_interv_q(mpfi_ptr, mpq_srcptr,mpq_srcptr)
-    int mpfi_interv_fr(mpfi_ptr, mpfr_srcptr,mpfr_srcptr)
+    int mpfi_interv_d(mpfi_ptr, double, double)
+    int mpfi_interv_si(mpfi_ptr, long, long)
+    int mpfi_interv_ui(mpfi_ptr, unsigned long, unsigned long)
+    int mpfi_interv_z(mpfi_ptr, mpz_srcptr, mpz_srcptr)
+    int mpfi_interv_q(mpfi_ptr, mpq_srcptr, mpq_srcptr)
+    int mpfi_interv_fr(mpfi_ptr, mpfr_srcptr, mpfr_srcptr)
 
     # Inclusion tests
     # tests if the first argument is inside the interval

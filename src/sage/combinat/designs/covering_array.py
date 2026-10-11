@@ -20,8 +20,8 @@ following functions:
     :delim: |
 
     :meth:`~sage.combinat.designs.designs_pyx.is_covering_array` | Check that an input list of lists is a `CA(N;t,k,v)`.
-    :meth:`~sage.combinat.designs.covering_array.CA_relabel` | Return a relabelled version of the `CA`.
-    :meth:`~sage.combinat.designs.covering_array.CA_standard_label` | Return a version of the `CA` relabelled to symbols `(0,\dots,n-1)`.
+    :func:`~sage.combinat.designs.orthogonal_arrays.OA_relabel` | Return a relabelled version of the `CA`.
+    :func:`~sage.combinat.designs.orthogonal_arrays.OA_standard_label` | Return a version of the `CA` relabelled to symbols `(0,\dots,n-1)`.
     :meth:`~sage.combinat.designs.covering_array.truncate_columns` | Return an array with `k` columns from a larger one.
     :meth:`~sage.combinat.designs.covering_array.Kleitman_Spencer_Katona` | Return a `CA(N; 2, k, 2)` using N as input.
     :meth:`~sage.combinat.designs.covering_array.column_Kleitman_Spencer_Katona` | Return a `CA(N; 2, k, 2)` using k as input.

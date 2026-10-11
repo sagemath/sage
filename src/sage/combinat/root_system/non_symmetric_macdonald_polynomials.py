@@ -178,7 +178,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     The ``i``-th Demazure-Lusztig operator is an operator on `K[L]`
     which interpolates between the reflection `s_i` and the Demazure operator `\pi_i`
-    (see :meth:`.root_lattice_realization.RootLatticeRealization.Algebras.ParentMethods.demazure_lusztig_operators`).::
+    (see
+    :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`).::
 
         sage: KL = L.algebra(K); KL
         Algebra of the Ambient space of the Root system of type ['C', 2, 1]
@@ -1566,8 +1567,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         .. SEEALSO::
 
-            - :meth:`.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
-            - :meth:`affine_retract`
+            - :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
+            - :meth:`~sage.combinat.root_system.non_symmetric_macdonald_polynomials.NonSymmetricMacdonaldPolynomials.affine_retract`
             - :meth:`L_prime`
 
         EXAMPLES:
@@ -1631,7 +1632,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         .. SEEALSO::
 
-            - :meth:`.hecke_algebra_representation.HeckeAlgebraRepresentation.affine_retract`
+            - :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_retract`
             - :meth:`affine_lift`
             - :meth:`L_prime`
 

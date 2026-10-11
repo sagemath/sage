@@ -879,7 +879,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         where we sum over all (classically highest weight) rigged
         configurations of weight `\lambda` where `cc` is the
         :meth:`cocharge statistic
-        <sage.combinat.rigged_configurations.rigged_configuration_element.RiggedConfigurationElement.cc>`.
+        <sage.combinat.rigged_configurations.rigged_configuration_element.KRRCSimplyLacedElement.cc>`.
         This is known to reduce to
 
         .. MATH::
@@ -897,7 +897,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         This is conjecturally equal to the
         :meth:`one dimensional configuration sum
-        <sage.combinat.crystals.tensor_product.CrystalOfWords.one_dimensional_configuration_sum>`
+        <sage.categories.loop_crystals.KirillovReshetikhinCrystals.TensorProducts.ParentMethods.one_dimensional_configuration_sum>`
         of the corresponding tensor product of Kirillov-Reshetikhin crystals, see [HKOTT2002]_.
         This has been proven in general for type `A_n^{(1)}` [BijectionLRT]_,
         single factors `B^{r,s}` in type `D_n^{(1)}` [OSS2011]_ with the result

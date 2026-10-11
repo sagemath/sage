@@ -99,7 +99,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
     def summation(self, x, y):
         r"""
         Return the product of ``x`` and ``y`` in the semigroup, as per
-        :meth:`CommutativeAdditiveSemigroups.ParentMethods.summation`.
+        :meth:`~sage.categories.additive_magmas.AdditiveMagmas.ParentMethods.summation`.
 
         EXAMPLES::
 

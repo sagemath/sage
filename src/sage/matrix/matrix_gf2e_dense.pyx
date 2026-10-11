@@ -81,11 +81,12 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix
 from sage.structure.element cimport Element
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
 
@@ -94,8 +95,10 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
+from sage.libs.m4ri cimport (m4ri_word, m4ri_radix, mzd_copy, mzd_clear_bits,
+                           mzp_t, mzp_init, mzp_free, rci_t)
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -137,8 +140,9 @@ cdef m4ri_word poly_to_word(f) except? -1:
     propagated::
 
         sage: from sage.doctest.util import ensure_interruptible_after
+        sage: A = MatrixSpace(GF(2^8), 2^10).random_element()
         sage: with ensure_interruptible_after(0.5):
-        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+        ....:     A.echelonize(algorithm='builtin')
     """
     return f.to_integer()
 
@@ -237,6 +241,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -425,8 +436,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
             This function is very slow. Use ``*`` operator instead.
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -468,18 +478,71 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A*B == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
         ans = self.new_matrix(nrows = self.nrows(), ncols = right.ncols())
-        if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
-            return ans
-        sig_on()
-        ans._entries = mzed_mul(ans._entries, self._entries, (<Matrix_gf2e_dense>right)._entries)
-        sig_off()
+        ans._set_to_product(self, <Matrix0>right)
         return ans
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using M4RIE.
+
+        ``mzed_mul`` takes the destination as its first argument, so the
+        product is written straight into the destination's M4RIE storage and
+        M4RIE still picks the multiplication routine, exactly as for ``*``.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(2^8)
+            sage: A = matrix(K, 2, 3, range(6))
+            sage: B = matrix(K, 3, 2, range(6, 12))
+            sage: C = matrix(K, 2, 2, [a] * 4)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination, overwriting the entries
+        it held before::
+
+            sage: C.set_to_product(matrix(K, 2, 0), matrix(K, 0, 2))
+            sage: C.is_zero()
+            True
+
+        A destination with no rows or no columns has nothing to write::
+
+            sage: D = matrix(K, 0, 2)
+            sage: D.set_to_product(matrix(K, 0, 3), matrix(K, 3, 2))
+            sage: D
+            []
+        """
+        cdef Matrix_gf2e_dense _left = <Matrix_gf2e_dense>left
+        cdef Matrix_gf2e_dense _right = <Matrix_gf2e_dense>right
+
+        # ``mzed_set_ui`` is not valid for a zero-column matrix.
+        if self._nrows == 0 or self._ncols == 0:
+            return
+
+        if _left._ncols == 0:
+            sig_on()
+            mzed_set_ui(self._entries, 0)
+            sig_off()
+            return
+
+        sig_on()
+        self._entries = mzed_mul(self._entries, _left._entries, _right._entries)
+        sig_off()
 
     cpdef Matrix_gf2e_dense _multiply_newton_john(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
         """
@@ -529,8 +592,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_newton_john(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -577,8 +639,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_karatsuba(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -628,8 +689,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_strassen(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -700,7 +760,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -717,7 +777,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzed_cmp(self._entries,
-                                         (<Matrix_gf2e_dense>right)._entries))
+                                         (<Matrix_gf2e_dense>other)._entries))
 
     def __copy__(self):
         """
@@ -741,6 +801,111 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             mzed_copy(A._entries, <const_mzed_t *>self._entries)
 
         return A
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using M4RIE.
+
+        TESTS::
+
+            sage: K.<a> = GF(2^4)
+            sage: A = matrix(K, [[0, a, 1, a + 1], [0, a^2, a, 1],
+            ....:                [0, 0, 0, a], [1, a + 1, 0, 1]])
+            sage: P, L, U = A.LU()
+            sage: A == P * L * U
+            True
+            sage: L.is_triangular('lower') and U.is_triangular('upper')
+            True
+
+        Check diagonal normalization and skipped pivots across machine words
+        for several packed field widths, including rank-deficient tall and
+        wide matrices::
+
+            sage: for e in (2, 4, 8, 16):
+            ....:     K = GF(2^e, 'a')
+            ....:     a = K.gen()
+            ....:     A = matrix(K, 4, 67, {(0, 1): a, (0, 65): a + 1,
+            ....:                          (1, 65): a^2, (2, 1): a^2,
+            ....:                          (2, 65): a^2 + a}, sparse=False)
+            ....:     for B in (A, A.transpose(), matrix(K, 2, 1, [a, a]),
+            ....:               zero_matrix(K, 3, 4)):
+            ....:         P, L, U = B.LU()
+            ....:         assert B == P * L * U
+            ....:         assert L.is_triangular('lower')
+            ....:         assert all(U[i, j] == 0 for i in range(U.nrows())
+            ....:                    for j in range(min(i, U.ncols())))
+            ....:     assert A.rank() == 2
+
+        The native factorization remains interruptible::
+
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: A = MatrixSpace(GF(2^15), 2^10).random_element()
+            sage: with ensure_interruptible_after(0.5):
+            ....:     A.LU()
+        """
+        cdef rci_t i, j, pivot
+        cdef int rank
+        cdef Py_ssize_t bit, start, stop
+        cdef rci_t nrows = self._nrows
+        cdef rci_t ncols = self._ncols
+        cdef m4ri_word diagonal, inverse, value
+        cdef const gf2e *ff
+        cdef Matrix_gf2e_dense B = self.__copy__()
+        cdef mzp_t *P = NULL
+        cdef mzp_t *Q = NULL
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), B
+
+        P = mzp_init(nrows)
+        Q = mzp_init(ncols)
+        try:
+            sig_on()
+            try:
+                rank = mzed_ple(B._entries, P, Q)
+            finally:
+                sig_off()
+
+            perm = list(range(nrows))
+            for i in range(nrows):
+                sig_check()
+                j = P.values[i]
+                perm[i], perm[j] = perm[j], perm[i]
+
+            # M4RIE stores the diagonal in L and normalizes the pivots of E.
+            # Move that diagonal into U and normalize L in place.
+            ff = B._entries.finite_field
+            for j in range(rank):
+                sig_check()
+                diagonal = mzed_read_elem(B._entries, j, j)
+                pivot = Q.values[j]
+                if diagonal != 1:
+                    inverse = ff.inv(ff, diagonal)
+                    for i in range(j + 1, nrows):
+                        value = mzed_read_elem(B._entries, i, j)
+                        if value:
+                            mzed_write_elem(B._entries, i, j, ff.mul(ff, value, inverse))
+                    if pivot + 1 < ncols:
+                        mzed_rescale_row(B._entries, j, pivot + 1, diagonal)
+
+                start = <Py_ssize_t>j * B._entries.w
+                stop = <Py_ssize_t>pivot * B._entries.w
+                for bit in range(start, stop, m4ri_radix):
+                    mzd_clear_bits(B._entries.x, j, bit, min(m4ri_radix, stop - bit))
+                mzed_write_elem(B._entries, j, pivot, diagonal)
+
+            start = <Py_ssize_t>rank * B._entries.w
+            stop = B._entries.x.ncols
+            for i in range(rank, nrows):
+                sig_check()
+                for bit in range(start, stop, m4ri_radix):
+                    mzd_clear_bits(B._entries.x, i, bit, min(m4ri_radix, stop - bit))
+        finally:
+            mzp_free(P)
+            mzp_free(Q)
+
+        self.cache('rank', rank)
+        return tuple(perm), B
 
     def __bool__(self):
         """
@@ -971,6 +1136,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             return self
 
         cdef int full
+        cdef size_t r = 0
 
         full = int(reduced)
 
@@ -1002,7 +1168,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sig_off()
 
         elif algorithm == 'builtin':
-            self._echelon_in_place(algorithm='classical')
+            r = len(self._echelon_in_place(algorithm='classical'))
 
         else:
             raise ValueError("No algorithm '%s'." % algorithm)

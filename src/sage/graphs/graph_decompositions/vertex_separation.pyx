@@ -1124,15 +1124,13 @@ cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
 cdef inline int minimum(int a, int b) noexcept:
     if a < b:
         return a
-    else:
-        return b
+    return b
 
 
 cdef inline int maximum(int a, int b) noexcept:
     if a > b:
         return a
-    else:
-        return b
+    return b
 
 
 #################################################################

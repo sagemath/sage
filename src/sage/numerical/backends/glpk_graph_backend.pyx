@@ -57,6 +57,14 @@ Methods index
 
 Classes and methods
 -------------------
+
+TESTS:
+
+This module is deprecated::
+
+    sage: import sage.numerical.backends.glpk_graph_backend
+    ...DeprecationWarning...
+
 """
 
 #*****************************************************************************
@@ -76,6 +84,9 @@ from sage.cpython.string import FS_ENCODING
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
 from sage.numerical.mip import MIPSolverException
+from sage.misc.superseded import deprecation
+
+deprecation(42802, "The GLPK backends are obsolete and will be removed, use HiGHs instead")
 
 cdef class GLPKGraphBackend():
     """
@@ -376,8 +387,7 @@ cdef class GLPKGraphBackend():
 
         if nonecount:
             return [self.add_vertex() for i in range(nonecount)]
-        else:
-            return None
+        return None
 
     cpdef set_vertex_demand(self, vertex, demand):
         """

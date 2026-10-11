@@ -93,16 +93,18 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
 
     These tests are reliable since the tested package does not exist::
 
+        sage: security = list("encyclopedie"); shuffle(security)
+        sage: word = "".join(security)
         sage: nap = 'hey_this_is_NOT_a_python_package'
-        sage: pypi = 'http://this.is.not.pypi.com/'
+        sage: pypi = f'http://{word}_not_pypi.com/'
         sage: pip_remote_version(nap, pypi_url=pypi, ignore_URLError=True) # optional - internet
         doctest:...: UserWarning: failed to fetch the version of
         pkg='hey_this_is_NOT_a_python_package' at
-        http://this.is.not.pypi.com/.../json
+        http://..._not_pypi.com/.../json
         sage: pip_remote_version(nap, pypi_url=pypi, ignore_URLError=False) # optional - internet
         Traceback (most recent call last):
         ...
-        HTTPError: HTTP Error 404: Not Found
+        urllib.error.URLError: <urlopen error ... Name or service not known>
     """
     url = '{pypi_url}/{pkg}/json'.format(pypi_url=pypi_url, pkg=pkg)
 

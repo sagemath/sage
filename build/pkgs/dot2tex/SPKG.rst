@@ -9,7 +9,7 @@ Graphviz a more LaTeX friendly look and feel. This is accomplished by
 converting xdot output from Graphviz to a series of PSTricks or PGF/TikZ
 commands.
 
-See https://github.com/kjellmf/dot2tex/
+See https://github.com/sagemath/dot2tex/
 
 License
 -------
@@ -21,6 +21,7 @@ Upstream Contact
 ----------------
 
 -  Kjell Magne Fauske, km@fauskes.net
+-  SageMath developers
 
 Dependencies
 ------------
@@ -37,18 +38,9 @@ Self-tests dependencies:
 -  texlive-pictures
 -  texlive-pstricks
 
-Patches
--------
-
--  remove_test_semicolon.patch:
-
-   Remove the failing semicolon test for the open dot2tex
-   issue #5 - https://github.com/kjellmf/dot2tex/issues/5
-
-
 Special Update/Build Instructions
 ---------------------------------
 
 Make sure corresponding optional doctests still pass:
 
-   sage -t --long --optional=dot2tex,graphviz,sage src/
+   sage -t --long --optional=dot2tex,graphviz,sage --all

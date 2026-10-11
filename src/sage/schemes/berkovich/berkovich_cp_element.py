@@ -2371,8 +2371,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
                 return other
 
         # join is symmetric, so we flip self and other so that self > other
-        else:
-            return other.join(self, basepoint)
+        return other.join(self, basepoint)
 
     def involution_map(self):
         r"""

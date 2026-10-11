@@ -43,7 +43,7 @@ def kernel_info() -> tuple[str, str, str]:
     Return the GAP version, architecture, and root paths in a tuple.
 
     The first two are used as cache keys to invalidate old workspaces
-    in :func:`sage.interfaces.gap_workspace.gap_workspace_file`. The
+    in ``sage.interfaces.gap_workspace.gap_workspace_file``. The
     root paths are required to initialize libgap. In the past we
     computed the root paths at build-time, but that may not work if
     (say) the build and target hosts have different libdirs.

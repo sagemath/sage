@@ -5,7 +5,9 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
+- Sebastian Oehms (2018-07-19): added
+  :meth:`~sage.rings.finite_rings.element_base.FinitePolyExtElement.conjugate`
+  (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -439,14 +441,14 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             Traceback (most recent call last):
             ...
             StopIteration
-            sage: list(a)   # implicit doctest
+            sage: list(a)   # indirect doctest
             [5, 7]
-            sage: tuple(a)  # implicit doctest
+            sage: tuple(a)  # indirect doctest
             (5, 7)
             sage: b = F(11)
-            sage: list(b)   # implicit doctest
+            sage: list(b)   # indirect doctest
             [11, 0]
-            sage: tuple(b)  # implicit doctest
+            sage: tuple(b)  # indirect doctest
             (11, 0)
             sage: list(b.polynomial())
             [11]
@@ -455,21 +457,21 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
-            sage: list(a) == a.list()  # implicit doctest
+            sage: list(a) == a.list()  # indirect doctest
             True
 
         ::
 
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
 
         ::
 
             sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
         """
         return iter(self.list())
@@ -886,8 +888,10 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         EXAMPLES::
 
             sage: k.<a> = GF(3^17)
-            sage: (a^3 - a - 1).sqrt()
+            sage: (a^3 - a - 1).sqrt() # random - depends on pari version
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
+            sage: _^2 == a^3 - a - 1
+            True
         """
         return self.square_root(extend=extend, all=all)
 

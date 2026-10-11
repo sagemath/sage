@@ -741,7 +741,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
               where `m_i` denotes the multiplicity of the part `i` in
               `\lambda`, and where the square brackets stand for
-              plethysm (:meth:`plethysm`). This definition makes
+              plethysm (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`). This definition makes
               the symmetry (but not the integrality!) of
               `\mathbf{GR}_\lambda` obvious.
 
@@ -968,7 +968,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             `e_{m_j}` are elementary symmetric functions, and `\pi_j` are
             the images of the Gessel-Reutenauer symmetric function
             `\mathbf{GR}_{(j)}` (see :meth:`gessel_reutenauer`) under the
-            involution `\omega` (i.e. :meth:`omega_involution`)::
+            involution `\omega` (i.e. :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution`)::
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: s = Sym.s()
@@ -2620,10 +2620,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
             p_k \{ p_\mu/z_\mu \} = \sum_{\nu : \nu^k = \mu } p_{\nu}/z_{\nu}~,
 
-        where `\nu^k` is the `k`-th power of `nu` (see
-        :~sage.combinat.partition.partition_power`).
+        where `\nu^k` is the `k`-th power of `nu`.
 
-        .. SEEALSO:: :func:`~sage.combinat.partition.partition_power`,
+        .. SEEALSO:: ``sage.combinat.partition.partition_power``,
             :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.inner_plethysm`
 
         INPUT:
@@ -3340,9 +3339,21 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         `f \left[ g \right]` or by `f \circ g`. It is an algebra map
         in `f`, but not (generally) in `g`.
 
-        By default, the degree one elements are taken to be the
-        generators for the ``self``'s base ring. This setting can be
-        modified by specifying the ``include`` and ``exclude`` keywords.
+        By default, the degree one elements are taken to be the variables
+        returned by ``variable_names_recursive`` on the base ring of
+        ``self``.  If the base ring does not implement this method, there
+        are no default degree one elements.  This setting can be modified
+        by specifying the ``include`` and ``exclude`` keywords.
+
+        In particular, algebraic or symbolic elements are not inferred to
+        be degree one variables::
+
+            sage: p = SymmetricFunctions(QQbar).p()
+            sage: p[2](QQbar(sqrt(-1)))
+            I
+            sage: p = SymmetricFunctions(SR).p()
+            sage: p[2](SR("x") * p[2])
+            x*p[4]
 
         INPUT:
 
@@ -3506,6 +3517,27 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s[2](5)
             15*B[] # B[]
 
+        Infinite polynomial rings do not have a finite collection of
+        variables and therefore have no default degree one elements
+        (:issue:`42687`)::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: p = SymmetricFunctions(R).p()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: (a[0] * p[2])(s[2])
+            a_0*s[2, 2] - a_0*s[3, 1] + a_0*s[4]
+            sage: p[2]((a[0] + a[7]) * p[1])
+            (a_7+a_0)*p[2]
+            sage: p[2].plethysm((a[0] + a[7]) * p[1], include=[a[0], a[7]])
+            (a_7^2+a_0^2)*p[2]
+
+        This also works for the sparse implementation::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ, implementation='sparse')
+            sage: p = SymmetricFunctions(R).p()
+            sage: (a[0] * p[2])(s[2])
+            a_0*s[2, 2] - a_0*s[3, 1] + a_0*s[4]
+
         .. TODO::
 
             The implementation of plethysm in
@@ -3596,7 +3628,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         below for a representation-theoretic interpretation.
         In the following equations, we denote the outer product
         (i.e., the standard product on the ring of symmetric functions,
-        :meth:`~sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.product`)
+        :meth:`~sage.categories.magmas.Magmas.ParentMethods.product`)
         by `\cdot` and the Kronecker product (:meth:`itensor`) by `\ast`).
 
         .. MATH::
@@ -3623,8 +3655,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         (where `f` has constant term `0`) by expanding `f` in the
         power sum basis and `g` in the dual basis `p_\mu/z_\mu`.
 
-        .. SEEALSO:: :meth:`itensor`, :func:`~sage.combinat.partition.partition_power`,
-            :meth:`plethysm`
+        .. SEEALSO:: :meth:`itensor`, ``sage.combinat.partition.partition_power``,
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
 
         This operation admits a representation-theoretic interpretation
         in the case where `f` is a Schur function `s_\lambda` and
@@ -3802,7 +3834,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         The default implementation converts to the Schur basis, then
         performs the automorphism and changes back.
 
-        :meth:`omega_involution()` is a synonym for the :meth:`omega()` method.
+        :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega` method.
 
         EXAMPLES::
 
@@ -4019,7 +4051,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             The internal product is sometimes referred to as "inner product"
             in the literature, but unfortunately this name is shared by a
             different operation, namely the Hall inner product
-            (see :meth:`scalar`).
+            (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         INPUT:
 
@@ -5333,7 +5365,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         .. SEEALSO::
 
-            :meth:`plethysm`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
 
         .. TODO::
 
@@ -5387,7 +5419,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         The `n`-th Verschiebung operator is adjoint to the `n`-th
         Adams operator (see :meth:`adams_operator` for its definition)
-        with respect to the Hall scalar product (:meth:`scalar`).
+        with respect to the Hall scalar product (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier
@@ -6812,7 +6844,8 @@ def _variables_recursive(R, include=None, exclude=None):
     If ``include`` is specified, only these variables are returned
     as elements of ``R``.  Otherwise, all variables in ``R``
     (recursively) with the exception of those in ``exclude`` are
-    returned.
+    returned.  If ``R`` does not implement ``variable_names_recursive``,
+    return an empty list.
 
     EXAMPLES::
 
@@ -6827,6 +6860,10 @@ def _variables_recursive(R, include=None, exclude=None):
 
         sage: _variables_recursive(S, include=[b])
         [b]
+
+        sage: A.<x> = InfinitePolynomialRing(QQ)
+        sage: _variables_recursive(A)
+        []
 
     TESTS::
 
@@ -6843,12 +6880,11 @@ def _variables_recursive(R, include=None, exclude=None):
         degree_one = [R(g) for g in include]
     else:
         try:
-            degree_one = [R(g) for g in R.variable_names_recursive()]
+            variable_names_recursive = R.variable_names_recursive
         except AttributeError:
-            try:
-                degree_one = R.gens()
-            except (NotImplementedError, AttributeError):
-                degree_one = []
+            degree_one = []
+        else:
+            degree_one = [R(g) for g in variable_names_recursive()]
         if exclude is not None:
             degree_one = [g for g in degree_one if g not in exclude]
 

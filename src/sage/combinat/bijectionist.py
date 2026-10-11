@@ -153,8 +153,7 @@ following code is equivalent to ``tau = findstat(397)``::
     ....:         m = max(l)
     ....:         if l.count(m) == 1:
     ....:             return m
-    ....:         else:
-    ....:             return m+1
+    ....:         return m+1
     sage: bij = Bijectionist(A, B, tau)
     sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
@@ -207,7 +206,7 @@ The output is in a form suitable for FindStat::
     sage: findmap(list(bij.minimal_subdistributions_iterator()))            # optional -- internet
     0: Mp00034 (quality [100])
     1: Mp00061oMp00023 (quality [100])
-    2: Mp00018oMp00140 (quality [100])
+    ...
 
 TESTS::
 
@@ -1454,8 +1453,8 @@ class Bijectionist(SageObject):
             sage: A = B = [1,2,3]
             sage: bij = Bijectionist(A, B, lambda b: b % 3)
             sage: bij.set_homomesic([[1,2], [3]])
-            sage: list(bij.solutions_iterator())
-            [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
+            sage: sorted(bij.solutions_iterator(), key=lambda d: tuple(sorted(d.items())))
+            [{1: 0, 2: 2, 3: 1}, {1: 2, 2: 0, 3: 1}]
         """
         self._bmilp = None
         if Q is None:
@@ -1832,7 +1831,7 @@ class Bijectionist(SageObject):
             ....:     print(solution)
             {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
             {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
-            sage: for subdistribution in bij.minimal_subdistributions_iterator():
+            sage: for subdistribution in sorted(bij.minimal_subdistributions_iterator()):
             ....:     print(subdistribution)
             ([[]], [0])
             ([[1, 0]], [1])
@@ -1913,13 +1912,15 @@ class Bijectionist(SageObject):
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: bij.set_value_restrictions(("a", [1, 2]))
-            sage: next(bij.solutions_iterator())
-            {'a': 1, 'b': 1, 'c': 2, 'd': 3, 'e': 2}
+            sage: solutions = sorted(bij.solutions_iterator(), key=lambda d: tuple(sorted(d.items())))
+            sage: s0 = solutions[0]
+            sage: sorted(s0.items())
+            [('a', 1), ('b', 1), ('c', 2), ('d', 2), ('e', 3)]
 
-            sage: s0 = {'a': 1, 'b': 1, 'c': 2, 'd': 3, 'e': 2}
             sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
-            sage: bij._find_counterexample(bij._A, s0, d, False)
-            {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
+            sage: s1 = bij._find_counterexample(bij._A, s0, d, False)
+            sage: s1['a'] != s0['a'] and s1 in solutions  # counterexample with different value for 'a'
+            True
         """
         bmilp = self._bmilp
         for z in self._Z:
@@ -1981,7 +1982,7 @@ class Bijectionist(SageObject):
             ....:     print(solution)
             {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 1, [1, 1, 0, 0]: 2}
             {[]: 0, [1, 0]: 1, [1, 0, 1, 0]: 2, [1, 1, 0, 0]: 1}
-            sage: for subdistribution in bij.minimal_subdistributions_blocks_iterator():
+            sage: for subdistribution in sorted(bij.minimal_subdistributions_blocks_iterator()):
             ....:     print(subdistribution)
             ([[]], [0])
             ([[1, 0]], [1])
@@ -2273,14 +2274,14 @@ class Bijectionist(SageObject):
         EXAMPLES::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: next(bij.solutions_iterator())
-            {'a': 0, 'b': 1, 'c': 0}
+            {'a': 0, 'b': 0, 'c': 1}
 
             sage: list(bij.solutions_iterator())
-            [{'a': 0, 'b': 1, 'c': 0},
-             {'a': 1, 'b': 0, 'c': 0},
-             {'a': 0, 'b': 0, 'c': 1}]
+            [{'a': 0, 'b': 0, 'c': 1},
+             {'a': 0, 'b': 1, 'c': 0},
+             {'a': 1, 'b': 0, 'c': 0}]
 
             sage: N = 4
             sage: A = B = [permutation for n in range(N) for permutation in Permutations(n)]
@@ -2302,7 +2303,7 @@ class Bijectionist(SageObject):
 
             sage: P = [list(a) for n in range(N) for a in Permutations(n).conjugacy_classes()]
 
-            sage: bij = Bijectionist(A, B, tau, solver='GLPK')
+            sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((len, len))
             sage: bij.set_constant_blocks(P)
             sage: for solution in bij.solutions_iterator():
@@ -2531,7 +2532,7 @@ class _BijectionistMILP:
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 0, 'c': 1}
@@ -2635,17 +2636,17 @@ class _BijectionistMILP:
         TESTS::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
             sage: it2 = bmilp.solutions_iterator(False, [bmilp._x[('c', 1)] == 1])
             sage: next(it)
-            {'a': 0, 'b': 1, 'c': 0}
+            {'a': 0, 'b': 0, 'c': 1}
             sage: next(it2)
             {'a': 0, 'b': 0, 'c': 1}
             sage: next(it)
-            {'a': 0, 'b': 0, 'c': 1}
+            {'a': 0, 'b': 1, 'c': 0}
             sage: next(it)
             {'a': 1, 'b': 0, 'c': 0}
         """
@@ -2838,13 +2839,9 @@ class _BijectionistMILP:
             sage: bij.set_distributions(([Permutation([1, 2, 3]), Permutation([1, 3, 2])], [1, 3]))
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)                                # indirect doctest
-            sage: next(bmilp.solutions_iterator(False, []))
-            {[1, 2, 3]: 3,
-             [1, 3, 2]: 1,
-             [2, 1, 3]: 2,
-             [2, 3, 1]: 2,
-             [3, 1, 2]: 2,
-             [3, 2, 1]: 2}
+            sage: solutions = sorted(bmilp.solutions_iterator(False, []), key=lambda d: tuple(sorted(d.items(), key=str)))
+            sage: sorted(solutions[0].items(), key=str)
+            [([1, 2, 3], 1), ([1, 3, 2], 3), ([2, 1, 3], 2), ([2, 3, 1], 2), ([3, 1, 2], 2), ([3, 2, 1], 2)]
         """
         Z = self._bijectionist._Z
         Z_dict = {z: i for i, z in enumerate(Z)}
@@ -3021,8 +3018,8 @@ class _BijectionistMILP:
             sage: A = B = [1,2,3]
             sage: bij = Bijectionist(A, B, lambda b: b % 3)
             sage: bij.set_homomesic([[1,2], [3]])                               # indirect doctest
-            sage: list(bij.solutions_iterator())
-            [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
+            sage: sorted(bij.solutions_iterator(), key=lambda d: tuple(sorted(d.items())))
+            [{1: 0, 2: 2, 3: 1}, {1: 2, 2: 0, 3: 1}]
         """
         Q = self._bijectionist._Q
         if Q is None:

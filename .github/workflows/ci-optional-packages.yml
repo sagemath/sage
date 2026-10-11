@@ -17,7 +17,7 @@ jobs:
        opt_targets_macos: ${{ steps.convert.outputs.opt_targets_macos }}
     steps:
      - name: Checkout
-       uses: actions/checkout@v4
+       uses: actions/checkout@v7
 
      - name: Convert input
        id: convert
@@ -45,19 +45,20 @@ jobs:
 
   macos:
     needs: prepare
-    name: Build and Test optional packages (macos-${{ matrix.version }})
-    runs-on: macos-${{ matrix.version }}
+    name: Build and Test optional packages (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        version:
-          - '15'
-          - '26'
+        runner:
+          - macos-15
+          - macos-26
+          - darwin-27
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 

@@ -39,7 +39,7 @@ category of toric varieties and toric morphisms.
 
     Do not create the toric morphisms (or any morphism of schemes)
     directly from the ``SchemeMorphism...`` classes. Instead, use the
-    :meth:`~sage.schemes.generic.scheme.hom` method common to all
+    :meth:`~sage.schemes.generic.scheme.Scheme.hom` method common to all
     algebraic schemes to create new homomorphisms.
 
 EXAMPLES:
@@ -388,7 +388,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -453,7 +453,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -461,7 +461,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     INPUT:
 
     Same as for
-    :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial`.
+    :class:`~sage.schemes.generic.morphism.SchemeMorphism_polynomial`.
 
     OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`
 
@@ -770,7 +770,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -1301,7 +1301,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.

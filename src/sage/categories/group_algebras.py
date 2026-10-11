@@ -203,7 +203,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             .. SEEALSO::
 
-                - :meth:`Groups.Algebras.ElementMethods.central_form`
+                - :meth:`sage.categories.group_algebras.GroupAlgebras.ElementMethods.central_form`
                 - :meth:`Monoids.Algebras.ElementMethods.is_central`
             """
             return tuple([self.sum_of_monomials(conj) for conj in
@@ -377,7 +377,7 @@ class GroupAlgebras(AlgebrasCategory):
             - A formal linear combination of the conjugacy class
               representatives representing its coordinates in the
               canonical basis of the center. See
-              :meth:`Groups.Algebras.ParentMethods.center_basis` for
+              :meth:`sage.categories.group_algebras.GroupAlgebras.ParentMethods.center_basis` for
               details.
 
             .. WARNING::
@@ -420,7 +420,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             .. SEEALSO::
 
-                - :meth:`Groups.Algebras.ParentMethods.center_basis`
+                - :meth:`sage.categories.group_algebras.GroupAlgebras.ParentMethods.center_basis`
                 - :meth:`Monoids.Algebras.ElementMethods.is_central`
             """
             from sage.combinat.free_module import CombinatorialFreeModule

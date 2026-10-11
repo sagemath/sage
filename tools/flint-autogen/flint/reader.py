@@ -16,6 +16,11 @@ import os
 from .env import FLINT_INCLUDE_DIR, FLINT_DOC_DIR
 
 
+def signature_has_struct(func_signature):
+    s = " " + func_signature.replace(",", " ").replace("(", " ").replace(")", " ") + " "
+    return ' struct ' in s
+
+
 class Extractor:
     r"""
     Tool to extract function declarations from a flint .rst file
@@ -148,6 +153,8 @@ class Extractor:
                 raise RuntimeError(func_signature)
             elif 'va_list ' in func_signature:
                 print('Warning: va_list unsupported {}'.format(func_signature))
+            elif signature_has_struct(func_signature):
+                print('Warning: struct unsupported {}'.format(func_signature))
             else:
                 signatures.append(func_signature)
         self.signatures = signatures

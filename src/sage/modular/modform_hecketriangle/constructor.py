@@ -65,7 +65,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     - ``ep`` -- ``None`` if `f` is not homogeneous, otherwise
       the multiplier of `f` (which is the second component of its degree)
 
-    - ``analytic_type`` -- the :class:`AnalyticType` of `f`
+    - ``analytic_type`` -- the :class:`~sage.modular.modform_hecketriangle.analytic_type.AnalyticType` of `f`
 
     For the zero function the degree `(0, 1)` is chosen.
 
@@ -328,7 +328,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
       (default: ``False``)
 
     For the variables ``group``, ``base_ring``, ``red_hom``
-    the same arguments as for the class :class:`FormsRing_abstract` can be used.
+    the same arguments as for the class :class:`~sage.modular.modform_hecketriangle.abstract_ring.FormsRing_abstract` can be used.
     The variables will then be put in canonical form.
 
     OUTPUT: the FormsRing with the given properties

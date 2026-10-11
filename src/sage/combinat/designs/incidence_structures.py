@@ -1191,17 +1191,21 @@ class IncidenceStructure(SageObject):
           integers, or labelled elements
 
           - ``labels is False`` -- default; in this case the first vertices
-            of the graphs are the elements of :meth:`ground_set`, and appear
-            in the same order. Similarly, the following vertices represent the
-            elements of :meth:`blocks`, and appear in the same order.
+            of the graphs are the elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`,
+            and appear in the same order. Similarly, the following vertices
+            represent the elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.blocks`,
+            and appear in the same order.
 
           - ``labels is True``, the points keep their original labels, and the
             blocks are :func:`Set <Set>` objects.
 
             Note that the labelled incidence graph can be incorrect when
             blocks are repeated, and on some (rare) occasions when the
-            elements of :meth:`ground_set` mix :func:`Set` and non-:func:`Set
-            <Set>` objects.
+            elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
+            mix :func:`Set` and non-:func:`Set <Set>` objects.
 
         EXAMPLES::
 
@@ -1358,14 +1362,15 @@ class IncidenceStructure(SageObject):
               of ``perm``) is relabeled to ``perm[p]``
 
             - an iterable of length ``n`` -- the first point returned by
-              :meth:`ground_set` is relabeled to ``perm[0]``, the second to
-              ``perm[1]``, ...
+              :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
+              is relabeled to ``perm[0]``, the second to ``perm[1]``, ...
 
             - a callable -- then each point ``p`` is relabeled to
               ``perm(p)``
 
             - ``None`` -- the incidence structure is relabeled to be on
-              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
+              `\{0,1,...,n-1\}` in the ordering given by
+              :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
 
         - ``inplace`` -- boolean (default: ``False``); if ``True`` then return
           a relabeled graph and does not touch ``self``

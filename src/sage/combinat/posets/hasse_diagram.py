@@ -94,6 +94,11 @@ class HasseDiagram(DiGraph):
         sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]}); H
         Hasse diagram of a poset containing 4 elements
         sage: TestSuite(H).run()
+
+    .. automethod:: _precompute_intervals
+    .. autoattribute:: _leq_storage
+    .. autoattribute:: _meet
+    .. autoattribute:: _join
     """
     def _repr_(self) -> str:
         r"""
@@ -632,8 +637,10 @@ class HasseDiagram(DiGraph):
 
         .. NOTE::
 
-            The method :meth:`_precompute_intervals()` creates a cache
-            which is used if available, making the function very fast.
+            The method
+            :meth:`~sage.combinat.posets.hasse_diagram.HasseDiagram._precompute_intervals`
+            creates a cache which is used if available, making the function
+            very fast.
 
         .. SEEALSO:: :meth:`interval_iterator`
 
@@ -668,7 +675,7 @@ class HasseDiagram(DiGraph):
 
         .. NOTE::
 
-            This becomes much faster when first calling :meth:`_leq_storage`,
+            This becomes much faster when first calling :attr:`_leq_storage`,
             which precomputes the principal upper ideals.
 
         EXAMPLES::
@@ -861,8 +868,9 @@ class HasseDiagram(DiGraph):
         Return ``True`` if the poset is ranked, and ``False`` otherwise.
 
         A poset is *ranked* if it admits a rank function. For more information
-        about the rank function, see :meth:`~rank_function`
-        and :meth:`~is_graded`.
+        about the rank function, see
+        :meth:`~sage.combinat.posets.hasse_diagram.HasseDiagram.rank_function`
+        and :meth:`~sage.combinat.posets.posets.FinitePoset.is_graded`.
 
         EXAMPLES::
 
@@ -1058,7 +1066,7 @@ class HasseDiagram(DiGraph):
 
         .. NOTE::
 
-            The result is cached in :meth:`_moebius_function_matrix`.
+            The result is cached in ``_moebius_function_matrix``.
 
         .. SEEALSO:: :meth:`lequal_matrix`, :meth:`coxeter_transformation`
 
@@ -1552,9 +1560,9 @@ class HasseDiagram(DiGraph):
         .. NOTE::
 
             If ``self`` is a meet-semilattice, then the return of this method
-            is the same as :meth:`_meet`. Once the matrix has been computed,
-            it is stored in :meth:`_meet`. Delete this attribute if you want to
-            recompute the matrix.
+            is the same as :attr:`_meet`. Once the matrix has been computed,
+            it is stored in :attr:`_meet`. Delete this attribute if you want
+            to recompute the matrix.
 
         EXAMPLES::
 
@@ -1717,8 +1725,8 @@ class HasseDiagram(DiGraph):
         .. NOTE::
 
             If ``self`` is a join-semilattice, then the return of this method
-            is the same as :meth:`_join`. Once the matrix has been computed,
-            it is stored in :meth:`_join`. Delete this attribute if you want
+            is the same as :attr:`_join`. Once the matrix has been computed,
+            it is stored in :attr:`_join`. Delete this attribute if you want
             to recompute the matrix.
 
         EXAMPLES::

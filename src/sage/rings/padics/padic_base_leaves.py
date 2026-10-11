@@ -32,8 +32,9 @@ power of `p` that this element is stored modulo::
     22
 
 The number of times that `p` divides the element is called the
-valuation, and can be accessed with the methods :meth:`valuation` and
-:meth:`ordp`:
+valuation, and can be accessed with the methods
+:meth:`~sage.rings.padics.padic_generic_element.pAdicGenericElement.valuation` and
+:meth:`~sage.rings.padics.padic_generic_element.pAdicGenericElement.ordp`:
 
     sage: a.valuation()
     2
@@ -111,8 +112,9 @@ track precision of elements.::
     1 + 2*5^2 + 5^3
 
 `p`-adic rings and fields should be created using the creation
-functions :func:`Zp` and :func:`Qp` as above.  This will ensure that there is
-only one instance of `\ZZ_p` and `\QQ_p` of a given
+functions :data:`Zp <sage.rings.padics.factory.Zp>` and
+:data:`Qp <sage.rings.padics.factory.Qp>` as above.  This will ensure that
+there is only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
 class names.::
 
@@ -898,7 +900,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
     .. SEEALSO::
 
-        :meth:`label`
+        :meth:`~sage.rings.padics.generic_nodes.pAdicLatticeGeneric.label`
 
     EXAMPLES::
 
@@ -1028,7 +1030,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
     .. SEEALSO::
 
-        :meth:`label`
+        :meth:`~sage.rings.padics.generic_nodes.pAdicLatticeGeneric.label`
 
     EXAMPLES::
 

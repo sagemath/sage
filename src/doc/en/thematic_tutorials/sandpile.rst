@@ -924,7 +924,7 @@ Sandpile
 
 - :ref:`groebner <groebner>` --- A Groebner basis for the homogeneous toppling ideal.
 
-- :ref:`group_gens <group_gens>` --- A minimal list of generators for the sandpile group.
+- :ref:`group_generators <group_generators>` --- A minimal list of generators for the sandpile group.
 
 - :ref:`group_order <group_order>` --- The size of the sandpile group.
 
@@ -1346,9 +1346,9 @@ EXAMPLES::
 
 ---
 
-.. _group_gens:
+.. _group_generators:
 
-**group_gens(verbose=True)**
+**group_generators(verbose=True)**
 
 A minimal list of generators for the sandpile group.  If ``verbose`` is ``False``
 then the generators are represented as lists of integers.
@@ -1364,13 +1364,13 @@ list of SandpileConfig (or of lists of integers if ``verbose`` is ``False``)
 EXAMPLES::
 
     sage: s = sandpiles.Cycle(5)
-    sage: s.group_gens()
-    [{1: 0, 2: 1, 3: 1, 4: 1}]
-    sage: s.group_gens()[0].order()
+    sage: s.group_generators()
+    ({1: 0, 2: 1, 3: 1, 4: 1},)
+    sage: s.group_generators()[0].order()
     5
     sage: s = sandpiles.Complete(5)
-    sage: s.group_gens(False)
-    [[2, 3, 2, 2], [2, 2, 3, 2], [2, 2, 2, 3]]
+    sage: s.group_generators(False)
+    ([2, 3, 2, 2], [2, 2, 3, 2], [2, 2, 2, 3])
     sage: [i.order() for i in s.group_gens()]
     [5, 5, 5]
     sage: s.invariant_factors()

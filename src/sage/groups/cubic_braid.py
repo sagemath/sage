@@ -51,8 +51,11 @@ for the conversion maps between the two realizations. In addition, we can
 construct other realizations and maps to matrix groups with help of the
 Burau representation. In case ``gap3`` and ``CHEVIE`` are installed, the
 reflection groups (via the ``gap3`` interface) are available, too. This can
-be done using the methods :meth:`as_classical_group`, :meth:`as_matrix_group`,
-:meth:`as_permutation_group`, and :meth:`as_reflection_group`.
+be done using the methods
+:meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_classical_group`,
+:meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_matrix_group`,
+:meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_permutation_group`, and
+:meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_reflection_group`.
 
 TESTS::
 
@@ -338,7 +341,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
     def braid(self):
         r"""
-        Return the canonical braid preimage of ``self`` as a :class:`Braid`.
+        Return the canonical braid preimage of ``self`` as a
+        :class:`~sage.groups.braid.Braid`.
 
         EXAMPLES::
 
@@ -357,7 +361,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         r"""
         Return the Burau matrix of the cubic braid coset.
 
-        This method uses the same method belonging to :class:`Braid`, but
+        This method uses the same method belonging to
+        :class:`~sage.groups.braid.Braid`, but
         reduces the indeterminate to a primitive sixth (resp. twelfth in case
         ``reduced='unitary'``) root of unity.
 
@@ -373,7 +378,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
           must be constructed in a splitting field
         - ``reduced`` -- boolean or string (default: ``False``); for more
           information see the documentation of :meth:`burau_matrix` of
-          :class:`Braid`
+          :class:`~sage.groups.braid.Braid`
 
         OUTPUT:
 
@@ -568,15 +573,16 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     of order 3.
 
     These groups are implemented as a particular case of finitely presented
-    groups similar to the :class:`BraidGroup_class`.
+    groups similar to the :class:`~sage.groups.braid.BraidGroup_class`.
 
     A cubic braid group can be created by giving the number of strands, and
     the name of the generators in a similar way as it works for the
-    :class:`BraidGroup_class`.
+    :class:`~sage.groups.braid.BraidGroup_class`.
 
     INPUT:
 
-    - ``names`` -- see the corresponding documentation of :class:`BraidGroup_class`
+    - ``names`` -- see the corresponding documentation of
+      :class:`~sage.groups.braid.BraidGroup_class`
     - ``cbg_type`` -- (default: ``CubicBraidGroup.type.Coxeter``;
       see explanation below) enum type :class:`CubicBraidGroup.type`
 
@@ -887,9 +893,12 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     def _internal_test_attached_group(self, attached_group, tester):
         r"""
         Test conversion maps from ``self`` to the given attached Group,
-        which must have been defined using the :meth:`as_classical_group`,
-        :meth:`as_matrix_group`, :meth:`as_permutation_group` or
-        :meth:`as_reflection_group`.
+        which must have been defined using the
+        :meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_classical_group`,
+        :meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_matrix_group`,
+        :meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_permutation_group`
+        or
+        :meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_reflection_group`.
 
         INPUT:
 
@@ -1461,7 +1470,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         - ``var`` -- string used for the indeterminate name in case ``root_bur``
           must be constructed in a splitting field
         - ``reduced`` -- boolean (default: ``False``); for more information
-          see the documentation of :meth:`Braid.burau_matrix`
+          see the documentation of
+          :meth:`~sage.groups.braid.Braid.burau_matrix`
 
         EXAMPLES::
 
@@ -1891,7 +1901,8 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
           classical group is a subgroup of ``PSp(n,3)`` being centralized
           by the element return for option ``embedded=False``. Otherwise the
           image of this element inside the embedded classical group will be
-          returned (see option embedded of :meth:`classical_group`).
+          returned (see option embedded of
+          :meth:`~sage.groups.cubic_braid.CubicBraidGroup.as_classical_group`).
 
         OUTPUT:
 

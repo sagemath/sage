@@ -812,7 +812,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                - :meth:`Algebras.SemiSimple.FiniteDimensional.WithBasis.ParentMethods.central_orthogonal_idempotents`
+                - :meth:`~sage.categories.finite_dimensional_semisimple_algebras_with_basis.FiniteDimensionalSemisimpleAlgebrasWithBasis.ParentMethods.central_orthogonal_idempotents`
                 - :meth:`idempotent_lift`
 
             EXAMPLES::

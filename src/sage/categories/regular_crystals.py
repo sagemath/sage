@@ -118,9 +118,10 @@ class RegularCrystals(Category_singleton):
         structure: it only relates `\varepsilon_a` and `\varphi_a` to
         `e_a` and `f_a` respectively.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 
@@ -800,9 +801,9 @@ class RegularCrystals(Category_singleton):
             of weight `0` with respect to `I`; that is, we need to have
             `\varepsilon_j(b) = \varphi_j(b)` for all `j \in I`.
 
-            See [As2008]_. See also :meth:`dual_equivalence_graph` for
-            a definition of `i`-elementary dual equivalence
-            transformations.
+            See [As2008]_. See also
+            :meth:`~sage.categories.regular_crystals.RegularCrystals.ParentMethods.dual_equivalence_graph`
+            for a definition of `i`-elementary dual equivalence transformations.
 
             INPUT:
 

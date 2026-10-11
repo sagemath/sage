@@ -800,7 +800,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding',
+                                   *args, lll_algorithm=None, **kwargs):
         r"""
         Compute a vector `w` in this lattice which is close to the target vector `t`.
         The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
@@ -816,10 +817,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
 
-        - ``algorithm`` -- string (default: 'embedding'):
+        - ``algorithm`` -- string (default: ``'embedding'``); the approximation
+          algorithm:
 
           - ``'embedding'`` -- embeds the lattice in a d+1 dimensional space
-            and seeks short vectors using LLL. This calls LLL twice but is
+            and seeks short vectors using LLL. This may call LLL twice but is
             usually still quick.
 
           - ``'nearest_plane'`` -- uses the "NEAREST PLANE" algorithm from [Bab86]_
@@ -828,9 +830,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             This yields slightly worse results than the other algorithms but is
             at least faster than ``'nearest_plane'``.
 
-        - ``*args`` -- passed through to :meth:`LLL`
+        - ``*args`` -- positional arguments passed through to :meth:`LLL`
+          after ``delta``
 
-        - ``**kwds`` -- passed through to :meth:`LLL`
+        - ``lll_algorithm`` -- string (default: ``None``); the algorithm passed
+          to :meth:`LLL`; when ``None``, use the default LLL algorithm
+
+        - ``**kwargs`` -- passed through to :meth:`LLL`
 
         OUTPUT: the vector `w` described above
 
@@ -840,6 +846,16 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[1, 0], [0, 1]])
             sage: L.approximate_closest_vector((-6, 5/3))
             (-6, 2)
+
+        Positional arguments and the choice of LLL algorithm are passed through
+        to :meth:`LLL` (:issue:`42731`)::
+
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), None, 'embedding', 3/4)
+            (1, 1)
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), lll_algorithm='NTL:LLL')
+            (1, 1)
 
         The quality of the approximation depends on ``delta``::
 
@@ -863,9 +879,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
+        if lll_algorithm is not None:
+            kwargs['algorithm'] = lll_algorithm
+
         # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
-            self.LLL(*args, delta=delta, **kwargs)
+            self.LLL(delta, *args, **kwargs)
 
         B = self._reduced_basis
         t = vector(t)
@@ -878,7 +897,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             L[-1, -1] = weight
 
             # The vector should be the last row but we iterate just in case
-            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
+            for v in reversed(L.LLL(delta, *args, **kwargs).rows()):
                 if abs(v[-1]) == weight:
                     return t - v[:-1]*v[-1].sign()
             raise ValueError('No suitable vector found in basis.'

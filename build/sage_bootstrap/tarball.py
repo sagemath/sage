@@ -166,9 +166,8 @@ class Tarball(object):
                     log.error(f'Got:      {sha1}')
                     return False
                 return True
-            else:
-                log.warning('No checksum available for {0}'.format(self.package.name))
-                return False
+            log.warning('No checksum available for {0}'.format(self.package.name))
+            return False
         
         return True
 
@@ -206,12 +205,11 @@ class Tarball(object):
             if self.checksum_verifies():
                 log.info('Using cached file {destination}'.format(destination=destination))
                 return
-            else:
-                # Garbage in the upstream directory? Ignore it.
-                # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Issue #23972).
-                log.warning('Invalid checksum; ignoring cached file {destination}'
-                            .format(destination=destination))
+            # Garbage in the upstream directory? Ignore it.
+            # Don't delete it because maybe somebody just forgot to
+            # update the checksum (Issue #23972).
+            log.warning('Invalid checksum; ignoring cached file {destination}'
+                        .format(destination=destination))
                 
         # Traditional download logic for tarballs and platform-independent wheels
         successful_download = False
@@ -302,12 +300,11 @@ class Tarball(object):
                 self.__filename = tarball_filename
                 self.__tarball_info = tarball_info
                 return
-            else:
-                # Garbage in the upstream directory? Ignore it.
-                # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Issue #23972).
-                log.warning('Invalid checksum; ignoring cached file {destination}'
-                            .format(destination=destination))
+            # Garbage in the upstream directory? Ignore it.
+            # Don't delete it because maybe somebody just forgot to
+            # update the checksum (Issue #23972).
+            log.warning('Invalid checksum; ignoring cached file {destination}'
+                        .format(destination=destination))
         
         # Download logic for platform-specific wheels
         successful_download = False

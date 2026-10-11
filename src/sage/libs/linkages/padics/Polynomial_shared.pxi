@@ -15,7 +15,7 @@ AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -23,8 +23,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from cpython.list cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational

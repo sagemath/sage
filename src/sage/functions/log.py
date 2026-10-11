@@ -3,9 +3,11 @@ Logarithmic functions
 
 AUTHORS:
 
-- Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:issue:`12113`)
+- Yoora Yi Tenen (2012-11-16): Add documentation for
+  :class:`log <sage.functions.log.Function_log1>` (:issue:`12113`)
 
-- Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
+- Tomas Kalvoda (2015-04-01): Add
+  :class:`exp_polar <sage.functions.log.Function_exp_polar>` (:issue:`18085`)
 """
 
 from sage.misc.functional import log
@@ -193,7 +195,8 @@ class Function_log1(GinacFunction):
     r"""
     The natural logarithm of ``x``.
 
-    See :meth:`log()` for extensive documentation.
+    See :class:`log <sage.functions.log.Function_log1>` for extensive
+    documentation.
 
     EXAMPLES::
 
@@ -275,7 +278,8 @@ class Function_log2(GinacFunction):
     """
     Return the logarithm of x to the given base.
 
-    See :meth:`log() <sage.functions.log.log>` for extensive documentation.
+    See :class:`log <sage.functions.log.Function_log1>` for extensive
+    documentation.
 
     EXAMPLES::
 
@@ -656,7 +660,8 @@ class Function_lambert_w(BuiltinFunction):
         0.3303661247616807
 
     Warning: The integral of a non-principal branch is not implemented,
-    neither is numerical integration using GSL. The :meth:`numerical_integral`
+    neither is numerical integration using GSL. The
+    :func:`~sage.calculus.integration.numerical_integral`
     function does work if you pass a lambda function::
 
         sage: numerical_integral(lambda x: lambert_w(x), 0, 1)                          # needs sage.modules

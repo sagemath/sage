@@ -5,6 +5,8 @@ AUTHORS:
 
 - Nicolas Thiery (2008): Initial version
 - Nils Bruin (2013-05): Cython version
+
+.. autoclass:: sage.misc.lazy_attribute::_lazy_attribute
 """
 
 # ****************************************************************************
@@ -353,9 +355,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
-        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: P = MyParent(category=Rings())
+        sage: P.element_class    # indirect doctest
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications

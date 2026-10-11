@@ -216,7 +216,7 @@ cdef inline int compare(int a, int b) noexcept:
     cdef unsigned int aa = a, bb = b  # signed ints lead to badness like a>b>c>a...
     if aa*BT_REORDERING_CONSTANT > bb*BT_REORDERING_CONSTANT:
         return 1
-    elif aa*BT_REORDERING_CONSTANT < bb*BT_REORDERING_CONSTANT:
+    if aa*BT_REORDERING_CONSTANT < bb*BT_REORDERING_CONSTANT:
         return -1
     return 0
 

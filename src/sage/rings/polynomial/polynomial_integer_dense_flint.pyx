@@ -1648,8 +1648,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         g = self // c
         if deg < 30 or deg > 300:
             return c.factor() * g._factor_ntl()
-        else:
-            return c.factor() * g._factor_pari()
+        return c.factor() * g._factor_pari()
 
     def factor_mod(self, p):
         """

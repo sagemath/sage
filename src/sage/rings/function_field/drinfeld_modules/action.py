@@ -3,7 +3,7 @@ r"""
 The module action induced by a Drinfeld module
 
 This module provides the class
-:class:`sage.rings.function_field.drinfeld_module.action.DrinfeldModuleAction`.
+:class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`.
 
 AUTHORS:
 

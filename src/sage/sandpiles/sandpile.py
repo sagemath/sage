@@ -20,7 +20,7 @@ MAJOR CHANGES
 
 NEW METHODS
 
-**Sandpile**: avalanche_polynomial, genus, group_gens, help, jacobian_representatives, markov_chain, picard_representatives, smith_form, stable_configs, stationary_density, tutte_polynomial.
+**Sandpile**: avalanche_polynomial, genus, group_generators, help, jacobian_representatives, markov_chain, picard_representatives, smith_form, stable_configs, stationary_density, tutte_polynomial.
 
 **SandpileConfig**: burst_size, help.
 
@@ -453,7 +453,8 @@ class Sandpile(DiGraph):
             dict                     -- A dictionary of dictionaries representing a directed graph.
             genus                    -- The genus: (# non-loop edges) - (# vertices) + 1.
             groebner                 -- Return a Groebner basis for the homogeneous toppling ideal.
-            group_gens               -- A minimal list of generators for the sandpile group.
+            group_generators         -- A minimal tuple of generators for the sandpile group.
+            group_gens               -- A minimal tuple of generators for the sandpile group.
             group_order              -- The size of the sandpile group.
             h_vector                 -- The number of superstable configurations in each degree.
             help                     -- List of Sandpile-specific methods (not inherited from ...Graph...).
@@ -700,8 +701,8 @@ class Sandpile(DiGraph):
             if name == '_superstables':
                 self._set_superstables()
                 return deepcopy(self.__dict__[name])
-            if name == '_group_gens':
-                self._set_group_gens()
+            if name == '_group_generators':
+                self._set_group_generators()
                 return deepcopy(self.__dict__[name])
             if name == '_group_order':
                 self.__dict__[name] = det(self._reduced_laplacian.dense_matrix())
@@ -1428,25 +1429,27 @@ class Sandpile(DiGraph):
             return deepcopy(self._superstables)
         return [s.values() for s in self._superstables]
 
-    def _set_group_gens(self):
+    def _set_group_generators(self) -> None:
         r"""
         A minimal list of generators for the sandpile group.
 
         EXAMPLES::
 
             sage: s = sandpiles.Cycle(3)
-            sage: s._set_group_gens()
-            sage: '_group_gens' in s.__dict__
+            sage: s._set_group_generators()
+            sage: '_group_generators' in s.__dict__
             True
         """
         D, U, _ = self.reduced_laplacian().transpose().smith_form()
         F = U.inverse()
-        self._group_gens = [SandpileConfig(self, [Integer(j) for j in F.column(i)]).equivalent_recurrent()
-                            for i in range(F.nrows()) if D[i][i] != 1]
+        self._group_generators = tuple(
+            SandpileConfig(self, [Integer(j)
+                                  for j in F.column(i)]).equivalent_recurrent()
+            for i in range(F.nrows()) if D[i][i] != 1)
 
-    def group_gens(self, verbose=True) -> list:
+    def group_generators(self, verbose=True) -> tuple:
         r"""
-        A minimal list of generators for the sandpile group.
+        A minimal tuple of generators for the sandpile group.
 
         If ``verbose`` is ``False``
         then the generators are represented as lists of integers.
@@ -1457,27 +1460,29 @@ class Sandpile(DiGraph):
 
         OUTPUT:
 
-        list of SandpileConfig
+        tuple of SandpileConfig
         (or of lists of integers if ``verbose`` is ``False``)
 
         EXAMPLES::
 
             sage: s = sandpiles.Cycle(5)
-            sage: s.group_gens()
-            [{1: 0, 2: 1, 3: 1, 4: 1}]
-            sage: s.group_gens()[0].order()
+            sage: s.group_generators()
+            ({1: 0, 2: 1, 3: 1, 4: 1},)
+            sage: s.group_generators()[0].order()
             5
             sage: s = sandpiles.Complete(5)
-            sage: s.group_gens(False)
-            [[2, 3, 2, 2], [2, 2, 3, 2], [2, 2, 2, 3]]
-            sage: [i.order() for i in s.group_gens()]
+            sage: s.group_generators(False)
+            ([2, 3, 2, 2], [2, 2, 3, 2], [2, 2, 2, 3])
+            sage: [i.order() for i in s.group_generators()]
             [5, 5, 5]
             sage: s.invariant_factors()
             [1, 5, 5, 5]
         """
         if verbose:
-            return deepcopy(self._group_gens)
-        return [c.values() for c in self._group_gens]
+            return self._group_generators
+        return tuple(c.values() for c in self._group_generators)
+
+    group_gens = group_generators  # to be deprecated
 
     def genus(self):
         r"""

@@ -37,7 +37,6 @@ py.install_sources(
   'series_impl.pyi',
   'subring.py',
   'symbols.py',
-  'symengine.py',
   'tests.py',
   'units.py',
   subdir: 'sage/symbolic',
@@ -126,7 +125,6 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/symbolic',
     install: true,
     override_options: ['cython_language=cpp'],
-    cpp_args: '-std=c++11',
     include_directories: [
       inc_cpython,
       inc_ext,

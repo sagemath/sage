@@ -16,6 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from libc.limits cimport SHRT_MAX
+
 from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
@@ -88,7 +90,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     - ``base_ring`` -- a Sage ring
 
-    - ``n`` -- the number of variables (> 0)
+    - ``n`` -- the number of variables (at least 1 and fitting in a signed C
+      ``short``)
 
     - ``names`` -- list of names of length ``n``
 
@@ -195,9 +198,9 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
-        sage: R = PolynomialRing(GF(1000000007), ("a", "b"), implementation="singular"); print(sing_print(R))
+        sage: R = PolynomialRing(GF(100000007), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/1000000007...
+        // coefficients: ZZ/100000007...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -301,7 +304,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: PolynomialRing(GF((2^31+11)^2), ("a", "b"), implementation="singular")
         Traceback (most recent call last):
         ...
-        TypeError: characteristic must be <= 2147483647.
+        TypeError: characteristic must be < 2^29.
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -333,7 +336,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _ring  = NULL
 
     n = int(n)
-    if n < 1:
+    # Singular stores the number of variables in a signed short.
+    if n < 1 or n > SHRT_MAX:
         raise NotImplementedError(f"polynomials in {n} variables are not supported in Singular")
 
     nvars = n
@@ -529,7 +533,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         isprime = ch.is_prime()
 
-        if isprime and ch <= 2147483647 and isinstance(base_ring, FiniteField_generic):
+        if isprime and ch < 2**29 and isinstance(base_ring, FiniteField_generic):
             # don't use this branch for e.g. Zmod(5)
             characteristic = base_ring.characteristic()
 
@@ -541,7 +545,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         else:
             modbase, cexponent = ch.perfect_power()
 
-            if modbase == 2 and 1 < cexponent <= 8*sizeof(unsigned long):  # see :issue:`40855`
+            if modbase == 2 and 1 < cexponent <= <long>(8 * sizeof(unsigned long)):  # see :issue:`40855`
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
             elif modbase.is_prime() and cexponent > 1:
@@ -559,8 +563,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     elif isinstance(base_ring, FiniteField_generic):
         assert not base_ring.is_prime_field()  # would have been handled above
-        if base_ring.characteristic() > 2147483647:
-            raise TypeError("characteristic must be <= 2147483647.")
+        if base_ring.characteristic() >= 2**29:
+            raise TypeError("characteristic must be < 2^29.")
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
@@ -622,7 +626,7 @@ cdef class ring_wrapper_Py():
     This is useful to store ring pointers in Python containers.
 
     You must not construct instances of this class yourself, use
-    :func:`wrap_ring` instead.
+    ``wrap_ring`` instead.
 
     EXAMPLES::
 

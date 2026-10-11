@@ -343,14 +343,12 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if isinstance(S, sage.rings.abc.RealField):
             if S.prec() >= 53:
                 return ToRDF(S)
-            else:
-                return None
-        elif is_numpy_type(S):
+            return None
+        if is_numpy_type(S):
             import numpy
             if issubclass(S, numpy.integer) or issubclass(S, numpy.floating):
                 return ToRDF(S)
-            else:
-                return None
+            return None
 
         try:
             from sage.rings.real_mpfr import RR
@@ -1404,8 +1402,7 @@ cdef class RealDoubleElement(FieldElement):
         # Use signbit instead of >= to handle -0.0 correctly
         if not libc.math.signbit(self._value):
             return self
-        else:
-            return self._new_c(-self._value)
+        return self._new_c(-self._value)
 
     cpdef RealDoubleElement abs(RealDoubleElement self):
         """
@@ -1420,8 +1417,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         if self._value >= 0:
             return self
-        else:
-            return self._new_c(-self._value)
+        return self._new_c(-self._value)
 
     def __lshift__(x, y):
         """
@@ -1468,7 +1464,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         if self._value == 1:
             return 1
-        elif self._value == -1:
+        if self._value == -1:
             return 2
         return sage.rings.infinity.infinity
 
@@ -1767,16 +1763,15 @@ cdef class RealDoubleElement(FieldElement):
         cdef double y = (<RealDoubleElement>right)._value
         if op == Py_LT:
             return x < y
-        elif op == Py_LE:
+        if op == Py_LE:
             return x <= y
-        elif op == Py_EQ:
+        if op == Py_EQ:
             return x == y
-        elif op == Py_NE:
+        if op == Py_NE:
             return x != y
-        elif op == Py_GT:
+        if op == Py_GT:
             return x > y
-        else:
-            return x >= y
+        return x >= y
 
     ############################
     # Special Functions
@@ -1844,8 +1839,7 @@ cdef class RealDoubleElement(FieldElement):
             if all:
                 if x.is_zero():
                     return [x]
-                else:
-                    return [x, -x]
+                return [x, -x]
             else:
                 return x
         if not extend:

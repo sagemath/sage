@@ -339,7 +339,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         Return the affine Grothendieck polynomial indexed by the partition ``la``.
         Because this belongs to the completion of the algebra, and hence is an infinite
         sum, it computes only up to those symmetric functions of degree at most ``m``.
-        See :meth:`_AffineGrothendieckPolynomial` for the code.
+        The result is cached by ``_AffineGrothendieckPolynomial()``.
 
         INPUT:
 

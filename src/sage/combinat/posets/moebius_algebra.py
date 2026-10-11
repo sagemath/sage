@@ -508,7 +508,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             j = L.join(x, y)
             return self.sum_of_terms((z, moebius(a, z) * q**(R - rank(a)))
                                      for z in L.order_filter([j])
-                                     for a in L.closed_interval(j, z))
+                                     for a in L.interval(j, z))
 
         @cached_method
         def one(self):
@@ -592,7 +592,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             L = M._lattice
 
             def poly(x, y):
-                return L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
+                return L.interval_as_poset(x, y).characteristic_polynomial()
+
             return N.sum_of_terms((y, poly(x, y)(q=q))
                                   for y in L.order_filter([x]))
 

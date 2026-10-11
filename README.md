@@ -85,7 +85,7 @@ Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
 2GB might be not enough for building Sage from source.
 Then all instructions for installation in Linux apply.
 
-As an alternative, you can also run Linux on Windows using Docker ([see
+As an alternative, you can also run Sage on Windows using Docker ([see
 below](#sagemath-docker-images)) or other virtualization solutions.
 
 [macOS] Preparing the Platform
@@ -455,14 +455,15 @@ in the Installation Guide.
 SageMath Docker images
 ----------------------
 
-[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
+[![Docker Status](https://img.shields.io/docker/v/sagemath/sagemath?style=for-the-badge&logo=docker)](https://hub.docker.com/r/sagemath/sagemath)
 
 SageMath is available on Docker Hub and can be downloaded by:
+
 ``` bash
 docker pull sagemath/sagemath
 ```
 
-Currently, only stable versions are kept up to date.
+These images provide a simple way for Windows users to run Sage locally (see item C on [SageMath Windows installation](https://github.com/sagemath/sage-windows#welcome-to-the-sagemath-windows-installation)).
 
 Troubleshooting
 ---------------

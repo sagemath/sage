@@ -14,6 +14,8 @@ from sage.categories.fields import Fields
 from sage.libs.gap.libgap import libgap
 from sage.structure.element cimport Matrix
 from sage.matrix.args cimport MatrixArgs_init
+from sage.matrix.matrix0 cimport Matrix as Matrix0
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_gap(Matrix_dense):
@@ -347,7 +349,7 @@ cdef class Matrix_gap(Matrix_dense):
         ans._libgap = left._libgap - (<Matrix_gap> right)._libgap
         return ans
 
-    cdef Matrix _matrix_times_matrix_(left, Matrix right):
+    cdef Matrix _matrix_times_matrix_(self, Matrix right):
         r"""
         TESTS::
 
@@ -358,11 +360,62 @@ cdef class Matrix_gap(Matrix_dense):
             [ 1 -1]
             [ 7 -7]
         """
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right.")
-        cdef Matrix_gap M = left._new(left._nrows, right._ncols)
-        M._libgap = <Matrix_gap> ((<Matrix_gap> left)._libgap * (<Matrix_gap> right)._libgap)
+        check_matrix_multiplication_sizes(self, right)
+        cdef Matrix_gap M = self._new(self._nrows, right._ncols)
+        M._set_to_product(<Matrix0>self, <Matrix0>right)
         return M
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using GAP.
+
+        A GAP matrix wraps a single immutable GAP object rather than a buffer
+        of entries, so the destination is reused by rebinding that object to
+        the GAP product; there is no storage to overwrite entry by entry.
+
+        GAP has no product for a matrix with no rows or columns, so a product
+        with a zero dimension is built directly as the zero matrix.
+
+        INPUT:
+
+        - ``left`` -- a GAP matrix over the base ring of ``self``
+        - ``right`` -- a GAP matrix over the base ring of ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(QQ, 2, implementation='gap')
+            sage: m1 = M([1,2,-4,3])
+            sage: m2 = M([-1,1,1,-1])
+            sage: C = M(1)
+            sage: C.set_to_product(m1, m2)
+            sage: C
+            [ 1 -1]
+            [ 7 -7]
+
+        The destination can be reused::
+
+            sage: C.set_to_product(m2, m1)
+            sage: C == m2 * m1
+            True
+
+        TESTS:
+
+        A product with a zero dimension gives the zero matrix::
+
+            sage: C.set_to_product(MatrixSpace(QQ, 2, 0, implementation='gap')(),
+            ....:                  MatrixSpace(QQ, 0, 2, implementation='gap')())
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_gap _left = <Matrix_gap>left
+        cdef Matrix_gap _right = <Matrix_gap>right
+        if self._nrows == 0 or self._ncols == 0 or _left._ncols == 0:
+            self._libgap = libgap([[0] * self._ncols
+                                   for _ in range(self._nrows)])
+            return
+        self._libgap = _left._libgap * _right._libgap
 
     def transpose(self):
         r"""

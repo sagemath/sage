@@ -37,6 +37,9 @@ REFERENCES:
 
 Functions
 ---------
+
+.. autofunction:: _construct_gs_difference_family_from_full
+.. autofunction:: _construct_gs_difference_family_from_compact
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -2230,7 +2233,7 @@ def _construct_gs_difference_family_from_compact(rep1, rep2, H, mu):
     modulo `n`.
 
     The other two sets are constructed using
-    :func:`_construct_gs_difference_family_from_full`.
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`.
 
     INPUT:
 
@@ -2273,9 +2276,11 @@ def spin_goethals_seidel_difference_family(n, existence=False, check=True):
     each value of `n`, either a full representation of `S_1, S_2` together with
     the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
     multiplier.
-    This data is used to construct the difference family using the functions
-    :func:`_construct_gs_difference_family_from_full` and
-    :func:`_construct_gs_difference_family_from_compact`.
+    This data is used to construct the difference family using the helper
+    functions
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`
+    and
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_compact`.
 
     Additionally, this function also checks if a (skew) difference family can be
     constructed using :func:`skew_spin_goethals_seidel_difference_family`.
@@ -2393,9 +2398,11 @@ def skew_spin_goethals_seidel_difference_family(n, existence=False, check=True):
     the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
     multiplier.
 
-    This data is used to construct the difference family using the functions
-    :func:`_construct_gs_difference_family_from_full` and
-    :func:`_construct_gs_difference_family_from_compact`.
+    This data is used to construct the difference family using the helper
+    functions
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`
+    and
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_compact`.
 
     INPUT:
 

@@ -11,8 +11,8 @@ Mutability Cython Implementation
 #                  https://www.gnu.org/licenses/
 ##########################################################################
 
-cimport cython
 from sage.misc.decorators import rename_keyword, sage_wraps
+
 
 cdef class Mutability:
     r"""
@@ -339,7 +339,7 @@ def require_immutable(f):
     """
     @sage_wraps(f)
     def new_f(self, *args, **kwds):
-        if not getattr(self,'_is_immutable',False):
+        if not getattr(self, '_is_immutable', False):
             raise ValueError("{} instance is mutable, {} must not be called".format(type(self), repr(f)))
         return f(self, *args, **kwds)
     return new_f

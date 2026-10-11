@@ -10,6 +10,10 @@ The Sage distribution includes most programs and libraries on which
 Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
+.. envvar:: FC
+
+   Fortran compiler command passed to ``./configure``.
+
 .. include:: index_standard.rst
 
 
@@ -31,6 +35,7 @@ Features
    sage/features
    sage/features/join_feature
    sage/features/all
+   sage/features/build_feature
    sage/features/sagemath
    sage/features/pkg_systems
    sage/features/bliss
@@ -39,6 +44,7 @@ Features
    sage/features/csdp
    sage/features/databases
    sage/features/dvipng
+   sage/features/eclib
    sage/features/ffmpeg
    sage/features/four_ti_2
    sage/features/gap
@@ -50,6 +56,7 @@ Features
    sage/features/kenzo
    sage/features/latex
    sage/features/latte
+   sage/features/libbraiding
    sage/features/libhomfly
    sage/features/lrs
    sage/features/mcqd
@@ -61,6 +68,7 @@ Features
    sage/features/rankwidth
    sage/features/rubiks
    sage/features/sirocco
+   sage/features/singular
    sage/features/tdlib
    sage/features/topcom
 
@@ -88,4 +96,3 @@ All External Packages
    :maxdepth: 1
 
    index_alph
-

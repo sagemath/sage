@@ -140,9 +140,9 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         return self._hint
 
     # Comparisons, using the associated polynomial ideal.
-    def _richcmp_(self, right_r, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
-        Comparison of ``self`` and ``right_r``.
+        Comparison of ``self`` and ``other``.
 
         When testing equality, we first check generators to save time.
 
@@ -168,19 +168,19 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             True
         """
         if op in (op_EQ, op_NE):
-            if set(self.gens()) == set(right_r.gens()): # Early abort
+            if set(self.gens()) == set(other.gens()):  # Early abort
                 return (op == op_EQ)
-            return ((self.polynomial_ideal() == right_r.polynomial_ideal()) == (op == op_EQ))
+            return ((self.polynomial_ideal() == other.polynomial_ideal()) == (op == op_EQ))
         if op == op_LE:
-            if all(f in right_r.gens() for f in self.gens()): # Early abort
+            if all(f in other.gens() for f in self.gens()):  # Early abort
                 return True
-            return self.polynomial_ideal(saturate=False) <= right_r.polynomial_ideal()
+            return self.polynomial_ideal(saturate=False) <= other.polynomial_ideal()
         if op == op_GE:
-            return right_r._richcmp_(self, op_LE)
+            return other._richcmp_(self, op_LE)
         if op == op_LT:
-            return self._richcmp_(right_r, op_LE) and self._richcmp_(right_r, op_NE)
+            return self._richcmp_(other, op_LE) and self._richcmp_(other, op_NE)
         if op == op_GT:
-            return right_r._richcmp_(self, op_LE) and right_r._richcmp_(self, op_NE)
+            return other._richcmp_(self, op_LE) and other._richcmp_(self, op_NE)
         raise ValueError("invalid comparison")
 
     def __contains__(self, f) -> bool:

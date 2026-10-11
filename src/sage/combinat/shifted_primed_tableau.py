@@ -842,7 +842,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
 class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
     """
-    Class for elements of ``crystals.ShiftedPrimedTableau``.
+    Class for elements of ``crystals.ShiftedPrimedTableaux``.
     """
 
     def _to_matrix(self):

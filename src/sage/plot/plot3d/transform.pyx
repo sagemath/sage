@@ -25,15 +25,15 @@ pi = RDF.pi()
 
 
 cdef class Transformation:
-    def __init__(self, scale=(1,1,1),
-                       rot=None,
-                       trans=[0,0,0],
-                       m=None):
+    def __init__(self, scale=None,
+                 rot=None,
+                 trans=None,
+                 m=None):
 
         if scale is None:
-            scale = (1,1,1)
+            scale = (1, 1, 1)
         if trans is None:
-            trans = [0,0,0]
+            trans = [0, 0, 0]
 
         # TODO: determine for sure if x3d does scale or rotation first
         if m is not None:
@@ -41,7 +41,7 @@ cdef class Transformation:
 
         else:
             m = matrix(RDF, 3, 3,
-                      [scale[0], 0, 0, 0, scale[1], 0, 0, 0, scale[2]])
+                       [scale[0], 0, 0, 0, scale[1], 0, 0, 0, scale[2]])
 
             if rot is not None:
                 # rotate about v by theta
@@ -49,7 +49,7 @@ cdef class Transformation:
                 m *= rotate_arbitrary((vx, vy, vz), theta)
 
             self.matrix = m.augment(matrix(RDF, 3, 1, list(trans))) \
-                           .stack(matrix(RDF, 1, 4, [0,0,0,1]))
+                           .stack(matrix(RDF, 1, 4, [0, 0, 0, 1]))
 
         # this raw data is used for optimized transformations
         m_data = self.matrix.list()
@@ -96,7 +96,7 @@ cdef class Transformation:
         point_c_transform(&upper, self._matrix_data, bounds[0])
         cdef int i
         for i in range(1, 8):
-            temp.x = bounds[ i & 1      ].x
+            temp.x = bounds[i & 1].x
             temp.y = bounds[(i & 2) >> 1].y
             temp.z = bounds[(i & 4) >> 2].z
             point_c_transform(&res, self._matrix_data, temp)
@@ -122,12 +122,12 @@ cdef class Transformation:
     def max_scale(self):
         if self._svd is None:
             self._svd = self.matrix[0:3, 0:3].SVD()
-        return self._svd[1][0,0]
+        return self._svd[1][0, 0]
 
     def avg_scale(self):
         if self._svd is None:
             self._svd = self.matrix[0:3, 0:3].SVD()
-        return (self._svd[1][0,0] * self._svd[1][1,1] * self._svd[1][2,2]) ** (1/3.0)
+        return (self._svd[1][0, 0] * self._svd[1][1, 1] * self._svd[1][2, 2]) ** (1/3.0)
 
 
 def rotate_arbitrary(v, double theta):
@@ -184,7 +184,7 @@ def rotate_arbitrary(v, double theta):
 
     AUTHORS:
 
-       - Robert Bradshaw
+    - Robert Bradshaw
 
     ALGORITHM:
 
@@ -242,8 +242,8 @@ def rotate_arbitrary(v, double theta):
         Re-expressing some entries in terms of y and resolving the absolute
         values introduced by eliminating y, we get the desired result.
     """
-    cdef double x,y,z, len_v
-    x,y,z = v
+    cdef double x, y, z, len_v
+    x, y, z = v
     len_v = sqrt(x*x+y*y+z*z)
     # normalize for an easier formula
     x /= len_v
@@ -254,14 +254,15 @@ def rotate_arbitrary(v, double theta):
     entries = [
         (1 - cos_t)*x*x + cos_t,
         sin_t*z - (cos_t - 1)*x*y,
-       -sin_t*y + (1 - cos_t)*x*z,
+        -sin_t*y + (1 - cos_t)*x*z,
 
-       -sin_t*z + (1 - cos_t)*x*y,
+        -sin_t*z + (1 - cos_t)*x*y,
         (1 - cos_t)*y*y + cos_t,
         sin_t*x - (cos_t - 1)*z*y,
 
         sin_t*y - (cos_t - 1)*x*z,
-       -(cos_t - 1)*z*y - sin_t*x,
-        (1 - cos_t)*z*z + cos_t        ]
+        -(cos_t - 1)*z*y - sin_t*x,
+        (1 - cos_t)*z*z + cos_t
+    ]
 
     return matrix(RDF, 3, 3, entries)

@@ -1,29 +1,29 @@
-"""
-Genus
+r"""
+Graph genus algorithms
 
-This file contains a moderately-optimized implementation to compute the
-genus of simple connected graph.  It runs about a thousand times faster
-than the previous version in Sage, not including asymptotic improvements.
+This module integrates algorithms for the orientable genus of a simple
+connected graph.  The built-in ``'simple'`` algorithm is always available.
+The optional :ref:`graph_genus <spkg_graph_genus>` package provides the
+``'page'`` and ``'multi_genus'`` algorithms.
 
-The algorithm works by enumerating combinatorial embeddings of a graph,
+The simple algorithm works by enumerating combinatorial embeddings of a graph,
 and computing the genus of these via the Euler characteristic.  We view
 a combinatorial embedding of a graph as a pair of permutations `v,e`
 which act on a set `B` of `2|E(G)|` "darts".  The permutation `e` is an
 involution, and its orbits correspond to edges in the graph.  Similarly,
 The orbits of `v` correspond to the vertices of the graph, and those of
-`f = ve` correspond to faces of the embedded graph.
-
-The requirement that the group `<v,e>` acts transitively on `B` is
-equivalent to the graph being connected.  We can compute the genus of a
-graph by
-
-    `2 - 2g = V - E + F`
-
+`f = ve` correspond to faces of the embedded graph. The requirement that
+the group `<v,e>` acts transitively on `B` is equivalent to the graph
+being connected.  We can compute the genus of a graph by `2 - 2g = V - E + F`
 where `E`, `V`, and `F` denote the number of orbits of `e`, `v`, and
 `f` respectively.
 
-We make several optimizations to the naive algorithm, which are
-described throughout the file.
+AUTHORS:
+
+- Tom Boothby (2010): original simple backtracking algorithm
+- Gunnar Brinkmann (2022): MultiGenus algorithm
+- Alexander Metzger and Austin Ulrigg (2026): PAGE algorithm
+- Alexander Metzger (2026): Sage integration of PAGE and MultiGenus
 """
 
 # ****************************************************************************
@@ -40,12 +40,180 @@ from libc.string cimport memcpy
 from memory_allocator cimport MemoryAllocator
 from cysignals.signals cimport sig_on, sig_off
 
-# cimport sage.combinat.permutation_cython
-
-from sage.combinat.permutation_cython cimport next_swap, reset_swap
+from sage.combinat.permutation_cython cimport next_swap as sjt_next_swap, reset_swap as sjt_reset_swap
 
 from sage.graphs.base.dense_graph cimport DenseGraph
 from sage.graphs.graph import Graph
+
+
+def _graph_genus():
+    r"""
+    Return the optional :mod:`graph_genus` module, or raise a feature error.
+    """
+    try:
+        import graph_genus
+    except ImportError:
+        from sage.features.graph_genus import GraphGenus
+
+        GraphGenus().require()
+    return graph_genus
+
+
+def _has_graph_genus():
+    r"""
+    Return whether the optional :mod:`graph_genus` module is importable.
+    """
+    try:
+        import graph_genus  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def _select_algorithm(algorithm):
+    r"""
+    Normalize the genus algorithm selection.
+    """
+    if algorithm is None:
+        if _has_graph_genus():
+            return 'page'
+        return 'simple'
+    if algorithm not in ('page', 'multi_genus', 'simple'):
+        raise ValueError("unknown algorithm {!r}".format(algorithm))
+    return algorithm
+
+
+def simple_connected_graph_genus(
+    G, set_embedding=False, check=True, minimal=True, algorithm=None
+):
+    r"""
+    Compute the genus of a simple connected graph.
+
+    INPUT:
+
+    - ``G`` -- a simple connected graph
+
+    - ``set_embedding`` -- boolean (default: ``False``); whether to store a
+      minimum-genus combinatorial embedding on ``G``
+
+    - ``check`` -- boolean (default: ``True``); whether to validate and simplify
+      the graph before the computation
+
+    - ``minimal`` -- boolean (default: ``True``); whether to compute minimum
+      genus.  If ``False``, only ``algorithm='simple'`` is supported.
+
+    - ``algorithm`` -- string or ``None`` (default: ``None``); one of
+      ``'page'``, ``'multi_genus'``, or ``'simple'``.  If ``None``, Sage uses
+      ``'page'`` when the optional :ref:`graph_genus <spkg_graph_genus>`
+      package is installed and otherwise uses ``'simple'``.
+
+    OUTPUT: integer; the orientable genus of ``G``
+
+    EXAMPLES::
+
+        sage: import sage.graphs.genus
+        sage: from sage.graphs.genus import simple_connected_graph_genus as genus
+        sage: graphs.CompleteGraph(5).genus()
+        1
+        sage: graphs.CompleteGraph(5).genus(algorithm='simple')
+        1
+        sage: graphs.CompleteGraph(5).genus(algorithm='page')      # optional - graph_genus
+        1
+        sage: graphs.CompleteGraph(5).genus(algorithm='multi_genus')  # optional - graph_genus
+        1
+        sage: G = graphs.PetersenGraph()
+        sage: genus(G, algorithm='simple')
+        1
+        sage: genus(G, algorithm='page')                            # optional - graph_genus
+        1
+        sage: genus(G, algorithm='multi_genus')                     # optional - graph_genus
+        1
+
+    ALGORITHM:
+
+    The ``'simple'`` algorithm is always available and is the fallback default
+    when the optional :ref:`graph_genus <spkg_graph_genus>` package is not
+    installed.  It is a direct rotation-system enumeration; it is useful for
+    maximum genus and as a compact reference implementation, but has much worse
+    scaling.
+
+    The optional ``'page'`` algorithm is provided by ``graph_genus`` and is
+    based on the cycle-fitting method of [MetUlr2026]_.  It is usually the best
+    choice for low-degree sparse graphs. For example, PAGE solves 3-cages
+    through many girth-9 examples in seconds where the simple enumerator takes
+    days or does not finish.  The optional ``'multi_genus'`` algorithm is also
+    provided by ``graph_genus`` and wraps Brinkmann's implementation [Bri2022]_,
+    which is often extremely fast on complete, complete multipartite, and many
+    dense/small examples, but has fixed C integer-size limits.
+
+    TESTS::
+
+        sage: G = graphs.CompleteGraph(5)
+        sage: assert genus(G, set_embedding=True, algorithm='simple') == 1
+        sage: assert len(G.faces(G.get_embedding())) == 5
+        sage: for alg in ('page', 'multi_genus'):                 # optional - graph_genus
+        ....:     G = graphs.CompleteGraph(5)
+        ....:     assert genus(G, set_embedding=True, algorithm=alg) == 1
+        ....:     assert len(G.faces(G.get_embedding())) == 5
+        sage: genus(graphs.CompleteGraph(5), set_embedding=False,  # optional - graph_genus
+        ....:       algorithm='multi_genus')
+        1
+        sage: genus(graphs.CompleteGraph(5), algorithm='unknown')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown algorithm 'unknown'
+        sage: genus(graphs.CompleteGraph(5), minimal=False,        # optional - graph_genus
+        ....:       algorithm='page')
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: algorithm 'page' only computes minimum genus
+    """
+    algorithm = _select_algorithm(algorithm)
+
+    if algorithm != 'simple' and not minimal:
+        raise NotImplementedError(
+            "algorithm {!r} only computes minimum genus".format(algorithm)
+        )
+
+    if minimal and G.is_planar(set_embedding=set_embedding):
+        return 0
+
+    if check:
+        if not G.is_connected():
+            raise ValueError("cannot compute the genus of a disconnected graph")
+        if G.is_directed() or G.has_multiple_edges() or G.has_loops():
+            G = G.to_simple()
+
+    if algorithm == 'simple':
+        return _simple_connected_graph_genus(
+            G, set_embedding=set_embedding, check=False, minimal=minimal
+        )
+    return _graph_genus_algorithm(G, set_embedding, algorithm)
+
+
+def _graph_genus_algorithm(G, set_embedding, algorithm):
+    r"""
+    Compute genus using the optional :mod:`graph_genus` package.
+    """
+    graph_genus = _graph_genus()
+    vertices = list(G)
+    index = {v: i for i, v in enumerate(vertices)}
+    adjacency_list = []
+
+    for v in vertices:
+        row = [index[u] for u in G.neighbor_iterator(v)]
+        row.sort()
+        adjacency_list.append(row)
+
+    genus, rotation = graph_genus.embed(adjacency_list, algorithm=algorithm)
+
+    if set_embedding:
+        embedding = {}
+        for i, v in enumerate(vertices):
+            embedding[v] = [vertices[j] for j in rotation[i]]
+        G.set_embedding(embedding)
+
+    return genus
 
 
 cdef inline int edge_map(int i) noexcept:
@@ -103,12 +271,12 @@ cdef class simple_connected_genus_backtracker:
         2
     """
     cdef MemoryAllocator mem
-    cdef int **vertex_darts
-    cdef int *face_map
-    cdef int *degree
-    cdef int *visited
-    cdef int *face_freeze
-    cdef int **swappers
+    cdef int ** vertex_darts
+    cdef int * face_map
+    cdef int * degree
+    cdef int * visited
+    cdef int * face_freeze
+    cdef int ** swappers
     cdef int num_darts, num_verts, num_cycles, record_genus
 
     def __init__(self, DenseGraph G):
@@ -133,14 +301,14 @@ cdef class simple_connected_genus_backtracker:
 
         # Allocate arrays
         self.mem = MemoryAllocator()
-        self.degree = <int *> self.mem.malloc(self.num_verts * sizeof(int))
-        self.face_map = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.visited = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.face_freeze = <int *> self.mem.malloc(self.num_darts * sizeof(int))
-        self.vertex_darts = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        self.swappers = <int **>self.mem.malloc(self.num_verts * sizeof(int *))
-        cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
-        cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
+        self.degree = <int*> self.mem.malloc(self.num_verts * sizeof(int))
+        self.face_map = <int*> self.mem.malloc(self.num_darts * sizeof(int))
+        self.visited = <int*> self.mem.malloc(self.num_darts * sizeof(int))
+        self.face_freeze = <int*> self.mem.malloc(self.num_darts * sizeof(int))
+        self.vertex_darts = <int**> self.mem.malloc(self.num_verts * sizeof(int*))
+        self.swappers = <int**> self.mem.malloc(self.num_verts * sizeof(int*))
+        cdef int * w = <int*> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
+        cdef int * s = <int*> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
         cdef int i, j, dv, u, v
 
@@ -241,9 +409,9 @@ cdef class simple_connected_genus_backtracker:
             return {0: []}
 
         cdef int i, j, v
-        cdef int *w
-        cdef int *face_map = self.face_freeze
-        cdef list darts_to_verts = [0 for i in range(self.num_darts)]
+        cdef int * w
+        cdef int * face_map = self.face_freeze
+        cdef list darts_to_verts = [0 for _ in range(self.num_darts)]
         cdef dict embedding = {}
         cdef list orbit_v
 
@@ -338,8 +506,8 @@ cdef class simple_connected_genus_backtracker:
         before the flip, the cycle breaks into three.  Otherwise, the number of
         cycles stays the same.
         """
-        cdef int *w = self.vertex_darts[v]
-        cdef int *face_map = self.face_map
+        cdef int * w = self.vertex_darts[v]
+        cdef int * face_map = self.face_map
 
         cdef int v0, v1, v2, e0, e1, e2, f0, f1, f2, j, k
 
@@ -449,9 +617,9 @@ cdef class simple_connected_genus_backtracker:
             return 0
         sig_on()
         if style == 1:
-            g = self.genus_backtrack(cutoff, record_embedding, &min_genus_check)
+            g = self.genus_backtrack(cutoff, record_embedding, & min_genus_check)
         elif style == 2:
-            g = self.genus_backtrack(cutoff, record_embedding, &max_genus_check)
+            g = self.genus_backtrack(cutoff, record_embedding, & max_genus_check)
         sig_off()
         return g
 
@@ -460,19 +628,19 @@ cdef class simple_connected_genus_backtracker:
         Reset the swapper associated with vertex ``v``.
         """
         cdef int d = self.degree[v] - 1
-        reset_swap(d, self.swappers[v], self.swappers[v] + d)
+        sjt_reset_swap(d, self.swappers[v], self.swappers[v] + d)
 
     cdef int next_swap(self, int v) noexcept:
         """
         Compute and return the next swap associated with the vertex ``v``.
         """
         cdef int d = self.degree[v] - 1
-        return next_swap(d, self.swappers[v], self.swappers[v] + d)
+        return sjt_next_swap(d, self.swappers[v], self.swappers[v] + d)
 
     cdef int genus_backtrack(self,
                              int cutoff,
                              bint record_embedding,
-                             (int (*)(simple_connected_genus_backtracker, int, bint, int) noexcept) check_embedding) noexcept:
+                             (int(*)(simple_connected_genus_backtracker, int, bint, int) noexcept) check_embedding) noexcept:
         """
         Here's the main backtracking routine.
 
@@ -486,7 +654,7 @@ cdef class simple_connected_genus_backtracker:
         From that point forward, we compute the amount that each flip changes
         the number of cycles.
         """
-        cdef int next_swap, vertex
+        cdef int next_swap_index, vertex
 
         for vertex in range(self.num_verts):
             self.reset_swap(vertex)
@@ -498,21 +666,21 @@ cdef class simple_connected_genus_backtracker:
         if check_embedding(self, cutoff, record_embedding, 1):
             return self.record_genus
 
-        next_swap = self.next_swap(vertex)
+        next_swap_index = self.next_swap(vertex)
         while True:
-            while next_swap == -1:
+            while next_swap_index == -1:
                 self.reset_swap(vertex)
                 vertex -= 1
                 if vertex < 0:
                     return self.record_genus
-                next_swap = self.next_swap(vertex)
-            self.flip(vertex, next_swap + 1)
+                next_swap_index = self.next_swap(vertex)
+            self.flip(vertex, next_swap_index + 1)
 
             if check_embedding(self, cutoff, record_embedding, 0):
                 return self.record_genus
 
             vertex = self.num_verts-1
-            next_swap = self.next_swap(vertex)
+            next_swap_index = self.next_swap(vertex)
 
 cdef int min_genus_check(simple_connected_genus_backtracker self,
                          int cutoff,
@@ -551,42 +719,17 @@ cdef int max_genus_check(simple_connected_genus_backtracker self,
     return 0
 
 
-def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=True):
+def _simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=True):
     """
-    Compute the genus of a simple connected graph.
+    Compute the genus of a simple connected graph using the original Sage
+    rotation-system backtracking algorithm.
 
-    .. WARNING::
-
-        THIS MAY SEGFAULT OR HANG ON:
-            * DISCONNECTED GRAPHS
-            * DIRECTED GRAPHS
-            * LOOPED GRAPHS
-            * MULTIGRAPHS
-
-        DO NOT CALL WITH ``check = False`` UNLESS YOU ARE CERTAIN.
-
-    EXAMPLES::
-
-        sage: import sage.graphs.genus
-        sage: from sage.graphs.genus import simple_connected_graph_genus as genus
-        sage: [genus(g) for g in graphs(6) if g.is_connected()].count(1)
-        13
-        sage: G = graphs.FlowerSnark()
-        sage: genus(G)  # see [1]
-        2
-        sage: G = graphs.BubbleSortGraph(4)
-        sage: genus(G)
-        0
-        sage: G = graphs.OddGraph(3)
-        sage: genus(G)
-        1
-
-    REFERENCES:
-
-    [1] :doi:`10.1007/s00373-007-0729-9`
+    This algorithm enumerates combinatorial embeddings directly. It can return
+    minimum or maximum genus embeddings, but it scales like a product of local
+    rotation permutations and is usually practical only on small graphs.
     """
     cdef int style, cutoff
-    oG = G  # original graph
+    oG = G
 
     if minimal and G.is_planar(set_embedding=set_embedding):
         return 0
@@ -608,7 +751,7 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
         cutoff = 1
     else:
         style = 2
-        cutoff = 1 + (G.n_edges() - G.n_vertices()) / 2  # rounding here is ok
+        cutoff = 1 + (G.n_edges() - G.n_vertices()) / 2
 
     g = GG.genus(style=style, cutoff=cutoff, record_embedding=set_embedding)
     if set_embedding:

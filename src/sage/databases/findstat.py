@@ -222,7 +222,6 @@ import inspect
 import html
 import requests
 from json.decoder import JSONDecodeError
-import itertools
 
 # Combinatorial collections
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix, AlternatingSignMatrices
@@ -1634,7 +1633,7 @@ class FindStatFunction(SageObject):
           statistic followed by its description on a separate line
 
         This information is used when submitting the statistic or map with
-        :meth:`submit`.
+        ``submit``.
 
         EXAMPLES::
 
@@ -1732,7 +1731,7 @@ class FindStatFunction(SageObject):
         <https://findstat.org/NewStatistic>.
 
         This information is used when submitting the statistic with
-        :meth:`submit`.
+        :meth:`~sage.databases.findstat.FindStatStatistic.submit`.
 
         EXAMPLES::
 
@@ -2957,7 +2956,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
                 Mp00116: Kasraoui-Zeng: Perfect matchings -> Perfect matchings
                 St000042: The number of crossings of a perfect matching.
         """
-        if self.compound_map():
+        if len(self.compound_map()):
             self.compound_map().info()
         self.statistic().info()
 
@@ -3070,7 +3069,7 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
             print("after subtracting %s from every value" % (-self.offset()))
         if self.offset() > 0:
             print("after adding %s to every value" % self.offset())
-        if self.compound_map():
+        if len(self.compound_map()):
             if self.offset():
                 print("and applying")
             else:
@@ -3108,7 +3107,8 @@ class FindStatMap(Element,
     map available in the FindStat database.
 
     This class provides methods to inspect various properties of
-    these maps, in particular :meth:`code`.
+    these maps, in particular
+    :meth:`~sage.databases.findstat.FindStatFunction.sage_code`.
 
     EXAMPLES::
 
@@ -3330,7 +3330,7 @@ class FindStatMap(Element,
         - ``value`` -- string; the new name of the map
 
         This information is used when submitting the map with
-        :meth:`submit`.
+        :meth:`~sage.databases.findstat.FindStatMap.submit`.
 
         TESTS::
 

@@ -50,7 +50,7 @@ from sage.rings.polynomial.polynomial_quotient_ring_element import (
 )
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.rings.ring import CommutativeRing, Field
+from sage.rings.ring import Ring, Field
 from sage.structure.category_object import normalize_names
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
@@ -556,31 +556,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         except (TypeError, ValueError):
             return False
 
-    def _coerce_impl(self, x):
-        """
-        Return the coercion of x into this polynomial quotient ring.
-
-        The rings that coerce into the quotient ring canonically are:
-
-        - this ring
-
-        - any canonically isomorphic ring
-
-        - anything that coerces into the ring of which this is the
-          quotient
-        """
-        if isinstance(x, PolynomialQuotientRingElement):
-            if x.parent() == self:
-                return self.element_class(self, self.__ring(x.lift()), check=False)
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.polynomial_ring().coerce(x))
-
     ############################################
-    # Methods to make the category framework happy...
+    # Method to make the category framework happy...
     #
-
-    retract = _coerce_impl
-    ambient = CommutativeRing.base
+    ambient = Ring.base
 
     def lift(self, x):
         """
@@ -668,6 +647,35 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         return hash((self.polynomial_ring(), self.modulus()))
 
+    def _cache_key(self):
+        """
+        Return a key which identifies this ring for caching.
+
+        This is used as a fallback by cached functions and methods when
+        this ring is not hashable, which happens when the coefficients of
+        the modulus are inexact, e.g., `p`-adic numbers.
+
+        EXAMPLES::
+
+            sage: R.<x> = Zq(4, names='a')[]
+            sage: S = R.quotient(x)
+            sage: S._cache_key()
+            (<class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic'>,
+             Univariate Polynomial Ring in x over 2-adic Unramified Extension Ring in a defined by x^2 + x + 1,
+             (1 + O(2^20))*x)
+
+        TESTS:
+
+        Check that :issue:`42518` is fixed::
+
+            sage: R.<x> = Zq(7^2, names='T')[]
+            sage: S = R.quotient(x)
+            sage: 5 * S(123)
+            6 + 3*7 + 5*7^2 + 7^3 + O(7^20)
+        """
+        return (PolynomialQuotientRing_generic,
+                self.polynomial_ring(), self.modulus())
+
     def _singular_init_(self, S=None):
         """
         Represent ``self`` in the Singular interface.
@@ -693,7 +701,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Rpoly = S(self.polynomial_ring())
         Rpoly.set_ring()
         modulus = S(self.modulus()) # should live in Rpoly
-        Rtmp = S(self.polynomial_ring().change_var(self.variable_name()))
+        Rtmp = S(self.polynomial_ring().change_variable_name(self.variable_name()))
         Rtmp.set_ring()
         self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
@@ -1906,7 +1914,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     def _isomorphic_ring(self):
         """
         Return a ring isomorphic to this ring which is not a
-        :class:`PolynomialQuotientRing` but of a type which offers more
+        :class:`PolynomialQuotientRing_generic` but of a type which offers more
         functionality.
 
         OUTPUT:
@@ -2096,8 +2104,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
     r"""
-    A coercion map from a :class:`PolynomialQuotientRing` to a
-    :class:`PolynomialQuotientRing` that restricts to the coercion map on the
+    A coercion map from a :class:`PolynomialQuotientRing_generic` to a
+    :class:`PolynomialQuotientRing_generic` that restricts to the coercion map on the
     underlying ring of constants.
 
     EXAMPLES::
@@ -2202,7 +2210,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         return richcmp(self.parent(), other.parent(), op)
 
 
-class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeRing):
+class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, Ring):
     """
     EXAMPLES::
 
@@ -2248,8 +2256,10 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeR
     def field_extension(self, names):
         r"""
         Take a polynomial quotient ring, and return a tuple with three
-        elements: the :class:`NumberField` defined by the same polynomial quotient
-        ring, a homomorphism from its parent to the :class:`NumberField` sending the
+        elements: the :func:`~sage.rings.number_field.number_field.NumberField`
+        defined by the same polynomial quotient
+        ring, a homomorphism from its parent to the
+        :func:`~sage.rings.number_field.number_field.NumberField` sending the
         generators to one another, and the inverse isomorphism.
 
         OUTPUT:
@@ -2410,7 +2420,9 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
 
     def base_field(self):
         r"""
-        Alias for :meth:`base_ring`, when we're defined over a field.
+        Alias for
+        :meth:`~sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic.base_ring`,
+        when we're defined over a field.
         """
         return self.base_ring()
 

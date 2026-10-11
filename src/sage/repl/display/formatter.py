@@ -6,7 +6,7 @@ formatters. It has two main features, by default the displayhook
 contains a new facility for displaying lists of matrices in an easier
 to read format::
 
-    sage: [identity_matrix(i) for i in range(2, 5)]                                     # needs sage.modules
+    sage: [identity_matrix(i) for i in range(2, 5)]
     [
                     [1 0 0 0]
            [1 0 0]  [0 1 0 0]
@@ -14,7 +14,7 @@ to read format::
     [0 1], [0 0 1], [0 0 0 1]
     ]
 
-This facility uses :meth:`_repr_` (and a simple string) to try do a nice read
+This facility uses ``_repr_`` (and a simple string) to try do a nice read
 format (see :meth:`sage.structure.parent.Parent._repr_option` for details).
 
 With this displayhook there exists an other way for displaying object and more
@@ -23,17 +23,17 @@ generally, all sage expression as an ASCII art object::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
-    sage: shell.run_cell('integral(x^2/pi^x, x)')                                       # needs sage.symbolic
+    sage: shell.run_cell('integral(x^2/pi^x, x)')
        -x / 2    2                      \
     -pi  *\x *log (pi) + 2*x*log(pi) + 2/
     --------------------------------------
                      3
                    log (pi)
-    sage: shell.run_cell("i = var('i')")                                                # needs sage.symbolic
-    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                        # needs sage.symbolic
+    sage: shell.run_cell("i = var('i')")
+    sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
         10      9      8      7      6      5      4      3      2
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
-    sage: shell.run_cell('StandardTableaux(4).list()')                                  # needs sage.combinat
+    sage: shell.run_cell('StandardTableaux(4).list()')
     [
     [                                                                  1  4    1  3
     [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -61,13 +61,13 @@ This other facility uses a simple
 
 from io import StringIO
 
-from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from IPython.core.display import DisplayObject
-
+from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from ipywidgets import Widget
 
+from sage.features import FeatureNotPresentError
+from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.repl.display.pretty_print import SagePrettyPrinter
-from sage.misc.lazy_import import lazy_import
 
 IPYTHON_NATIVE_TYPES = (DisplayObject, Widget)
 
@@ -76,6 +76,69 @@ TEXT_LATEX = 'text/latex'
 TEXT_HTML = 'text/html'
 
 lazy_import('matplotlib.figure', 'Figure')
+
+
+def _resolve_lazy_import(obj):
+    """
+    Return the object behind a lazy import.
+
+    Objects that are not lazy imports are returned unchanged.  A lazy import
+    may resolve to another one, so resolution is repeated; a cyclic chain of
+    lazy imports is left alone rather than followed forever.
+
+    The lazy import itself is kept whenever it does not resolve to something
+    displayable, so that the caller still sees the proxy and its established
+    behaviour: :meth:`~sage.misc.lazy_import.LazyImport.__repr__` reports a
+    missing feature instead of raising, and
+    :meth:`~sage.repl.rich_output.display_manager.DisplayManager.displayhook`
+    reads ``None`` as "nothing to display".
+
+    EXAMPLES::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: from sage.repl.display.formatter import _resolve_lazy_import
+        sage: _resolve_lazy_import(42)
+        42
+        sage: _resolve_lazy_import(LazyImport('sage.rings.integer_ring', 'ZZ'))
+        Integer Ring
+
+    Chains of lazy imports are resolved all the way down::
+
+        sage: import sys, types
+        sage: module = types.ModuleType('sage_doctest_lazy_module')
+        sage: sys.modules['sage_doctest_lazy_module'] = module
+        sage: module.inner = LazyImport('sage.rings.integer_ring', 'ZZ')
+        sage: _resolve_lazy_import(LazyImport('sage_doctest_lazy_module', 'inner'))
+        Integer Ring
+
+    A lazy import that does not resolve to a displayable object is returned
+    as is::
+
+        sage: module.nothing = None
+        sage: proxy = LazyImport('sage_doctest_lazy_module', 'nothing')
+        sage: _resolve_lazy_import(proxy) is proxy
+        True
+        sage: del sys.modules['sage_doctest_lazy_module']
+
+        sage: from sage.features import PythonModule
+        sage: feature = PythonModule('math')
+        sage: feature.hide()
+        sage: proxy = LazyImport('math', 'sqrt', feature=feature)
+        sage: _resolve_lazy_import(proxy) is proxy
+        True
+        sage: feature.unhide()
+    """
+    seen = []
+    while isinstance(obj, LazyImport) and not any(obj is s for s in seen):
+        seen.append(obj)
+        try:
+            resolved = obj._get_object()
+        except FeatureNotPresentError:
+            break
+        if resolved is None:
+            break
+        obj = resolved
+    return obj
 
 
 class SageDisplayFormatter(DisplayFormatter):
@@ -115,7 +178,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
         EXAMPLES::
 
-            sage: [identity_matrix(i) for i in range(3,7)]                              # needs sage.modules
+            sage: [identity_matrix(i) for i in range(3,7)]
             [
                                              [1 0 0 0 0 0]
                                 [1 0 0 0 0]  [0 1 0 0 0 0]
@@ -127,8 +190,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('%display ascii_art')   # indirect doctest
-            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
-            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')                                # needs sage.symbolic
+            sage: shell.run_cell("i = var('i')")
+            sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
                 10      9      8      7      6      5      4      3      2
             10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
             sage: shell.run_cell('%display default')
@@ -181,7 +244,26 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: Repper()
             __repr__ called
             I am repper
+
+        A lazily imported class is displayed like the class it stands for.  In
+        particular, IPython does not call an ordinary instance method such as
+        :meth:`_repr_svg_` without an instance (:issue:`41697`)::
+
+            sage: shell = get_test_shell()
+            sage: shell.run_cell('Tableau')
+            <class 'sage.combinat.tableau.Tableau'>
+            sage: shell.run_cell('DyckWord')
+            <class 'sage.combinat.dyck_word.DyckWord'>
+            sage: shell.run_cell('PlanePartition')
+            <class 'sage.combinat.plane_partition.PlanePartition'>
+
+        The class itself is unaffected and still hands out its methods::
+
+            sage: shell.run_cell('Tableau._repr_svg_')
+            <function Tableau._repr_svg_ at ...>
+            sage: shell.quit()
         """
+        obj = _resolve_lazy_import(obj)
         sage_format, sage_metadata = self.dm.displayhook(obj)
         assert PLAIN_TEXT in sage_format, 'plain text is always present'
 
@@ -223,11 +305,11 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell = get_test_shell()
             sage: shell.run_cell('%precision 4')
             '%.4f'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
             4
             sage: shell.run_cell('%precision')
             '%r'
-            sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
             None
         """
         try:
@@ -299,8 +381,8 @@ class SagePlainTextFormatter(PlainTextFormatter):
             sage: fmt(2)
             ---- calling ipython formatter ----
             '2'
-            sage: a = identity_matrix(ZZ, 2)                                            # needs sage.modules
-            sage: fmt([a, a])                                                           # needs sage.modules
+            sage: a = identity_matrix(ZZ, 2)
+            sage: fmt([a, a])
             ---- calling ipython formatter ----
             '[\n[1 0]  [1 0]\n[0 1], [0 1]\n]'
         """

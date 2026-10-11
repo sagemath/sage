@@ -106,6 +106,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from sage.graphs.base.sparse_graph cimport SparseGraph
 from sage.graphs.base.sparse_graph cimport SparseGraphBackend
 from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+from sage.graphs.base.static_sparse_backend import _direct_static_sparse_backend_from_edges
 
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
@@ -479,7 +480,7 @@ def RandomLobster(n, p, q, seed=None, immutable=False):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_lobster(n, p, q, seed=seed),
+    return Graph(networkx.random_lobster_graph(n, p, q, seed=seed),
                  immutable=immutable)
 
 
@@ -834,15 +835,20 @@ cdef class TreeIterator:
 
         cdef int i
 
-        cdef object G = Graph(self.n, sparse=True)
-        cdef SparseGraph SG = (<SparseGraphBackend?> G._backend)._cg
-
-        for i in range(1, self.n):
-            SG.add_arc_unsafe(i, self.current_level_sequence[i] - 1)
+        cdef object G = Graph(self.n, sparse=True, immutable=self.immutable)
+        cdef SparseGraph SG
 
         if self.immutable:
-            G._backend = StaticSparseBackend(G, loops=False, multiedges=False)
+            G._backend = _direct_static_sparse_backend_from_edges(
+                range(self.n),
+                ((i, self.current_level_sequence[i] - 1)
+                 for i in range(1, self.n)),
+                False, False, False, False)
             G._immutable = True
+        else:
+            SG = (<SparseGraphBackend?> G._backend)._cg
+            for i in range(1, self.n):
+                SG.add_arc_unsafe(i, self.current_level_sequence[i] - 1)
 
         return G
 

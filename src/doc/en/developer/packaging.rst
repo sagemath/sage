@@ -289,8 +289,11 @@ something like the following to install it:
         sdh_install doc/ "$SAGE_SHARE"/doc/PACKAGE_NAME
     fi
 
-At build time :envvar:`CFLAGS`, :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`,
-and :envvar:`F77FLAGS` are usually set to ``-g -O2 -march=native``
+At build time :envvar:`CFLAGS <installation:CFLAGS>`,
+:envvar:`CXXFLAGS <installation:CXXFLAGS>`,
+:envvar:`FCFLAGS <installation:FCFLAGS>`, and
+:envvar:`F77FLAGS <installation:F77FLAGS>` are usually set to
+``-g -O2 -march=native``
 (according to `debugging options <../installation/source.html#sage-debug>`_
 and whether building
 `fat binaries <../installation/source.html#sage-fat-binary>`_).
@@ -308,7 +311,9 @@ Slightly modified versions are available:
     # Use flags as set by the user, possibly empty.
     export CFLAGS=$ORIGINAL_CFLAGS
 
-Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
+Likewise for :envvar:`CXXFLAGS <installation:CXXFLAGS>`,
+:envvar:`FCFLAGS <installation:FCFLAGS>`, and
+:envvar:`F77FLAGS <installation:F77FLAGS>`.
 
 .. note::
 

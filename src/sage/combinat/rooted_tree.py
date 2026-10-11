@@ -215,8 +215,9 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This does not matter
-            unless you are inside the :meth:`clone` context manager,
+            method (see :meth:`~sage.combinat.rooted_tree.RootedTree.normalize`). This does not matter
+            unless you are inside the
+            :meth:`~sage.structure.list_clone.ClonableElement.clone` context manager,
             because outside of it every rooted tree is already
             normalized.
 
@@ -908,8 +909,9 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This does not matter
-            unless you are inside the :meth:`clone` context manager,
+            method (see :meth:`~sage.combinat.rooted_tree.RootedTree.normalize`). This does not matter
+            unless you are inside the
+            :meth:`~sage.structure.list_clone.ClonableElement.clone` context manager,
             because outside of it every rooted tree is already
             normalized.
 
@@ -920,7 +922,7 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
             would return, as it wants to encode the whole labelled
             tree including its labelling rather than just the
             unlabelled tree. Therefore, be careful with using this
-            method on subclasses of :class:`RootedOrderedTree`;
+            method on subclasses of ``RootedOrderedTree``;
             under some circumstances they could inherit it from
             another superclass instead of from :class:`RootedTree`,
             which would cause the method to forget the labelling.

@@ -179,7 +179,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
     def is_atomic(self):
         """
-        Implement :meth:`CartanType_abstract.is_atomic`.
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`.
 
         `D_2` is atomic, like all `D_n`, despite being non irreducible.
 

@@ -2394,7 +2394,7 @@ class BinaryQuintic(AlgebraicForm):
         - ``reduce_gcd`` -- if set to ``True``, then a variant of this canonical
           form is computed where the coefficients are coprime integers. The
           obtained form is then unique up to multiplication by a unit. See also
-          :meth:`~sage.rings.invariants.reconstruction.binary_quintic_from_invariants`'.
+          :func:`~sage.rings.invariants.reconstruction.binary_quintic_coefficients_from_invariants`.
 
         OUTPUT:
 
@@ -3307,7 +3307,8 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
     You should use the :class:`invariant_theory
     <InvariantTheoryFactory>` factory object to construct instances
     of this class. See
-    :meth:`~InvariantTheoryFactory.ternary_biquadratics` for
+    :meth:`~sage.rings.invariants.invariant_theory.InvariantTheoryFactory.ternary_biquadratic`
+    for
     details.
 
     REFERENCES:
@@ -3521,7 +3522,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
     You should use the :class:`invariant_theory
     <InvariantTheoryFactory>` factory object to construct instances
     of this class. See
-    :meth:`~InvariantTheoryFactory.quaternary_biquadratics` for
+    :meth:`~sage.rings.invariants.invariant_theory.InvariantTheoryFactory.quaternary_biquadratic`
+    for
     details.
 
     REFERENCES:
@@ -4228,8 +4230,9 @@ class InvariantTheoryFactory:
 
         In the case of binary quadratics and cubics, the form is reconstructed
         based on the value of the discriminant. See also
-        :meth:`binary_quadratic_coefficients_from_invariants` and
-        :meth:`binary_cubic_coefficients_from_invariants`. These methods will always return the
+        :func:`~sage.rings.invariants.reconstruction.binary_quadratic_coefficients_from_invariants` and
+        :func:`~sage.rings.invariants.reconstruction.binary_cubic_coefficients_from_invariants`.
+        These functions will always return the
         same result if the discriminant is nonzero::
 
             sage: discriminant = 1
@@ -4255,7 +4258,8 @@ class InvariantTheoryFactory:
             Binary quintic with coefficients (1, 0, 0, 0, 0, 1)
 
         An optional ``scaling`` argument may be provided in order to scale the
-        resulting quintic. For more details, see :meth:`binary_quintic_coefficients_from_invariants`::
+        resulting quintic. For more details, see
+        :func:`~sage.rings.invariants.reconstruction.binary_quintic_coefficients_from_invariants`::
 
             sage: invariants = [3, 4, 7]
             sage: invariant_theory.binary_form_from_invariants(5, invariants)

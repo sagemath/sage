@@ -65,7 +65,7 @@ AUTHORS:
 - David Roe (2012-3-1) -- initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 David Roe <roed@math.harvard.edu>
 #                          William Stein <wstein@gmail.com>
 #
@@ -73,8 +73,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 cdef inline int cconstruct(celement value, PowComputer_class prime_pow) except -1:

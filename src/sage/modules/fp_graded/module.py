@@ -1120,7 +1120,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         underlying algebra is finite-dimensional. Indeed, the current
         implementation only works if the algebra has a ``top_class``
         method, which gets used in
-        :meth:`sage.modules.fp_graded.morphism._resolve_kernel`.
+        ``sage.modules.fp_graded.morphism.FPModuleMorphism._resolve_kernel``.
 
         EXAMPLES::
 

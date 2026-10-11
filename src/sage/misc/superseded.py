@@ -92,7 +92,7 @@ def deprecation(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :func:`experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`.
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
@@ -108,7 +108,6 @@ def deprecation_cython(issue_number, message, stacklevel=3):
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
-        sage: # needs sage.misc.cython
         sage: cython(
         ....: '''
         ....: from sage.misc.superseded import deprecation_cython, deprecation
@@ -149,7 +148,7 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     - ``message`` -- string; an explanation what is going on
 
     - ``warning_class`` -- (default: ``Warning``) a class inherited
-      from a Python :class:`~exceptions.Warning`
+      from a Python :exc:`Warning`
 
     - ``stack_level`` -- integer (default: `3`); this is passed on to
       :func:`warnings.warn`
@@ -168,8 +167,8 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     .. SEEALSO::
 
         :func:`deprecation`,
-        :func:`experimental`,
-        :class:`exceptions.Warning`.
+        :class:`~sage.misc.superseded.experimental`,
+        :exc:`Warning`.
     """
     _check_issue_number(issue_number)
     message += '\nSee https://github.com/sagemath/sage/issues/' + str(issue_number) + ' for details.'
@@ -207,7 +206,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :class:`mark_as_experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`,
         :func:`deprecation`.
     """
@@ -256,7 +255,7 @@ class experimental:
         TESTS:
 
         The following test works together with the doc-test for
-        :meth:`__experimental_self_test` to demonstrate that warnings are issued only
+        ``__experimental_self_test`` to demonstrate that warnings are issued only
         once, even in doc-tests (see :issue:`20601`).
         ::
 
@@ -270,7 +269,7 @@ class experimental:
 
         .. SEEALSO::
 
-            :func:`experimental`,
+            :class:`~sage.misc.superseded.experimental`,
             :func:`warning`,
             :func:`deprecation`.
         """
@@ -353,7 +352,6 @@ class DeprecatedFunctionAlias:
         r"""
         TESTS::
 
-            sage: # needs sage.combinat
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: g = deprecated_function_alias(13109, number_of_partitions)
             sage: g.__doc__
@@ -388,8 +386,8 @@ class DeprecatedFunctionAlias:
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g = deprecated_function_alias(13109, number_of_partitions)            # needs sage.combinat
-            sage: g.__name__                                                            # needs sage.combinat
+            sage: g = deprecated_function_alias(13109, number_of_partitions)
+            sage: g.__name__
             'g'
 
             sage: class cls():
@@ -400,14 +398,14 @@ class DeprecatedFunctionAlias:
             sage: cls().old_meth.__name__
             'old_meth'
 
-            sage: cython('\n'.join([                                                    # needs sage.misc.cython
+            sage: cython('\n'.join([
             ....:     r"from sage.misc.superseded import deprecated_function_alias",
             ....:     r"cdef class cython_cls():",
             ....:     r"    def new_cython_meth(self):",
             ....:     r"        return 1",
             ....:     r"    old_cython_meth = deprecated_function_alias(13109, new_cython_meth)"
             ....: ]))
-            sage: cython_cls().old_cython_meth.__name__                                 # needs sage.misc.cython
+            sage: cython_cls().old_cython_meth.__name__
             'old_cython_meth'
         """
         # first look through variables in stack frames
@@ -531,8 +529,8 @@ def deprecated_function_alias(issue_number, func, *, replacement=None, replaceme
     EXAMPLES::
 
         sage: from sage.misc.superseded import deprecated_function_alias
-        sage: g = deprecated_function_alias(13109, number_of_partitions)                # needs sage.combinat sage.libs.flint
-        sage: g(5)                                                                      # needs sage.combinat sage.libs.flint
+        sage: g = deprecated_function_alias(13109, number_of_partitions)
+        sage: g(5)
         doctest:...: DeprecationWarning: g is deprecated.
         Please use sage.combinat.partition.number_of_partitions instead.
         See https://github.com/sagemath/sage/issues/13109 for details.

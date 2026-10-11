@@ -336,7 +336,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             EXAMPLES::
 
@@ -605,7 +607,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             .. TODO::
 
@@ -667,9 +671,9 @@ class Algebras(AlgebrasCategory):
 
             .. SEEALSO::
 
-                - :meth:`demazure_lusztig_operators`.
-                - :meth:`demazure_lusztig_operator_on_classical_on_basis`.
-                - :meth:`q_project`
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operator_on_classical_on_basis`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.q_project`
 
             EXAMPLES::
 

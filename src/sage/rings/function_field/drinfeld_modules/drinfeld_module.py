@@ -2,18 +2,19 @@
 r"""
 Drinfeld modules
 
-This module provides the class
-:class:`sage.rings.function_field.drinfeld_module.drinfeld_module.DrinfeldModule`.
+For Drinfeld modules in characteristic zero and the analytic theory, see
+:mod:`sage.rings.function_field.drinfeld_modules.drinfeld_module_charzero`
 
-For finite Drinfeld modules and their theory of complex multiplication, see
-class
-:class:`sage.rings.function_field.drinfeld_module.finite_drinfeld_module.DrinfeldModule`.
+For Drinfeld modules over finite field and their theory of complex
+multiplication, see
+:mod:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite`
 
 AUTHORS:
 
 - Antoine Leudière (2022-04): initial version
 - Xavier Caruso (2022-06): initial version
 - David Ayotte (2023-03): added basic `j`-invariants
+- Arix Eggink (2026-06): added automorphism_group_order
 """
 
 # *****************************************************************************
@@ -30,6 +31,7 @@ from sage.arith.misc import gcd
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.misc.functional import log
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_import import lazy_import
@@ -46,7 +48,6 @@ from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
-
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
@@ -71,7 +72,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. NOTE::
 
-        See also :class:`sage.categories.drinfeld_modules`.
+        See also :mod:`sage.categories.drinfeld_modules`.
 
     The *base morphism* is the morphism `\gamma: \GF{q}[T] \to K`.
     The monic polynomial that generates the kernel of `\gamma` is called
@@ -106,7 +107,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. NOTE::
 
         Finite Drinfeld modules are implemented in the class
-        :class:`sage.rings.function_field.drinfeld_modules.finite_drinfeld_module`.
+        :class:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite`.
 
     Classical references on Drinfeld modules include [Gos1998]_,
     [Rosen2002]_, [VS06]_ and [Gek1991]_.
@@ -210,12 +211,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. RUBRIC:: The base field of a Drinfeld module
 
     The base field of the Drinfeld module is retrieved using
-    :meth:`base`::
+    :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base`::
 
         sage: phi.base()
         Finite Field in z of size 3^12
 
-    The base morphism is retrieved using :meth:`base_morphism`::
+    The base morphism is retrieved using
+    :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_morphism`::
 
         sage: phi.base_morphism()
         Ring morphism:
@@ -289,6 +291,43 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.coefficient(1)
         1
 
+    .. RUBRIC:: Getters to context objects
+
+    There are many rings and ring extensions associated to a Drinfeld module.
+    For the convenience of the reader, we hereby list the methods that can be
+    used to retrieve them.
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base`:
+      the base field `K` of the Drinfeld module, a *field* object, with no
+      extra structure
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_morphism`:
+      the base morphism `\gamma: \GF{q}[T] \to K` of the category of the
+      Drinfeld module
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.A_field`:
+      the base field `K`
+      (:meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base` or
+      :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_ring`)
+      of the Drinfeld module seen as an `\GF{q}[T]`-algebra, defined by `\gamma`
+      (:meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_morphism`);
+      this is *ring extension* object::
+
+        sage: phi.A_field() is phi.base().over(phi.base_morphism())
+        True
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_over_constants_field`:
+      the field `K` seen as an extension of `\GF{q}`, independently of `\gamma`;
+      this is a *ring extension* object
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_ring`:
+      an alias to :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base`
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.function_ring`:
+      the polynomial ring `\GF{q}[T]`
+
+    - :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.ore_polring`:
+      the Ore polynomial ring `K\{\tau\}`
 
     .. RUBRIC:: Morphisms and isogenies
 
@@ -330,7 +369,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           Defn: 0
 
     The underlying Ore polynomial is retrieved with the method
-    :meth:`ore_polynomial`::
+    :meth:`sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism.ore_polynomial`::
 
         sage: frobenius_endomorphism.ore_polynomial()
         τ^6
@@ -386,7 +425,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     `\GF{q}[T]`-module structure on any field extension `L/K`. Let
     `x \in L` and `a` be in the function ring; the action is defined as
     `(a, x) \mapsto \phi_a(x)`. The method :meth:`action` returns a
-    :class:`sage.rings.function_field.drinfeld_modules.action.Action`
+    :class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`
     object representing the Drinfeld module action.
 
     .. NOTE::
@@ -525,7 +564,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            sage: from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
             sage: K.<z12> = Fq.extension(6)
@@ -600,17 +639,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         # Instantiate the appropriate class:
         if A_field.is_finite():
-            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
         if isinstance(A_field, FractionField_generic):
             ring = A_field.ring()
             if (isinstance(ring, PolynomialRing_generic)
             and ring.base_ring() is function_ring_base
             and base_morphism(T) == ring.gen()):
-                from .charzero_drinfeld_module import DrinfeldModule_rational
+                from .drinfeld_module_charzero import DrinfeldModule_rational
                 return DrinfeldModule_rational(gen, category)
         if not category._characteristic:
-            from .charzero_drinfeld_module import DrinfeldModule_charzero
+            from .drinfeld_module_charzero import DrinfeldModule_charzero
             return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
@@ -835,7 +874,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def action(self):
         r"""
         Return the action object
-        (:class:`sage.rings.function_field.drinfeld_modules.action.Action`)
+        (:class:`sage.rings.function_field.drinfeld_modules.action.DrinfeldModuleAction`)
         that represents the module action, on the base codomain, that is
         induced by the Drinfeld module.
 
@@ -867,6 +906,168 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
         return DrinfeldModuleAction(self)
+
+    def automorphism_group_order(self, level=False, absolute=False, extension=None):
+        r"""
+        Return the order of the automorphism group of the Drinfeld module.
+
+        The automorphism group of a Drinfeld module is of the form `(\GF{q^M})^\times`
+        for some integer `M`. Note that this always is a cyclic group.
+
+        - If ``level`` is set to ``True``, the method returns this `M`, otherwise it
+          returns the order `q^M-1`.
+
+        - If ``absolute`` is set to ``True``, the method returns the size or level
+          (depending on the input ``level``) of the absolute automorphism group.
+          Otherwise, the method returns the size or level (depending on the input
+          ``level``) of the automorphism group in the field ``extension`` or the
+          extension of degree ``extension`` of the base field.
+
+        This code is based on Lemma 3.8.2 of [Pap2023]_.
+
+        INPUT:
+
+        - ``level`` (default: ``False``) -- boolean
+
+        - ``absolute`` (default: ``False``) -- boolean
+
+        - ``extension`` (default: ``None``) -- an extension of the base field `K`;
+          when `K` is a finite field, an integer (interpreted as the degree
+          of the extension) is also allowed.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi.automorphism_group_order()
+            24
+
+        ::
+
+            sage: Fq = GF(3^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^12)
+            sage: phi.automorphism_group_order()
+            728
+            sage: phi.automorphism_group_order(absolute=True)
+            282429536480
+            sage: phi.automorphism_group_order(level=True)
+            3
+            sage: phi.automorphism_group_order(level=True, absolute=True)
+            12
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(level=True, extension=L)
+            6
+            sage: phi.automorphism_group_order(level=True, extension=2)
+            6
+
+        ::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A, [S, 1, 3, 0, S+1])
+            sage: phi.automorphism_group_order(level=True, absolute=True)
+            1
+            sage: phi.automorphism_group_order(absolute=True)
+            6
+
+        ::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A, [S, 1, 3, 0, S+1])
+            sage: phi.automorphism_group_order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Drinfeld module must be over a finite field for non absolute automorphism group computations
+
+        TESTS::
+
+            sage: Fq = GF(3^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^12)
+            sage: phi.automorphism_group_order(absolute=True, extension=2)
+            Traceback (most recent call last):
+            ...
+            ValueError: when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(absolute=True, extension=L)
+            Traceback (most recent call last):
+            ...
+            ValueError: when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups
+            sage: L2 = Fq.extension(4)
+            sage: phi.automorphism_group_order(level=True, extension = L2)
+            Traceback (most recent call last):
+            ...
+            ValueError: extension must be a field extension of the base field
+
+        ::
+
+            sage: Fq = GF(2^7)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(1)
+            sage: phi = DrinfeldModule(A, [z, 1])
+            sage: phi.automorphism_group_order(absolute=True)
+            127
+            sage: phi.automorphism_group_order()
+            127
+            sage: phi.automorphism_group_order(extension=2)
+            127
+
+        ::
+
+            sage: Fq = GF(3)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A,[S,1])
+            sage: phi.automorphism_group_order(absolute=True)
+            2
+
+        ::
+
+            sage: Fq = GF(2^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^8)
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(extension=L)
+            65535
+
+        """
+        if not (absolute or self.is_finite()):
+            raise NotImplementedError('Drinfeld module must be over a finite field for non absolute automorphism group computations')
+        if absolute and extension is not None:
+            raise ValueError('when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups')
+        r = self.rank()
+        level_ = gcd([r] + [i for i in range(1, r) if self._gen[i] != 0])
+        q = self.function_ring().base_ring().order()
+        if not absolute:
+            K = self.base()
+            if isinstance(extension, (int, Integer)):
+                extension_degree = extension
+            elif extension is None:
+                extension_degree = 1
+            else:
+                size = extension.order()
+                if size.is_power_of(K.order()):
+                    extension_degree = log(size, K.order())
+                else:
+                    raise ValueError('extension must be a field extension of the base field')
+            n = log(K.order(), q)*extension_degree
+            level_ = gcd(level_, n)
+        if level:
+            return level_
+        return q**level_ - 1
 
     def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
         r"""
@@ -1183,7 +1384,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         INPUT:
 
         - ``A_field`` -- a field or an instance of
-          class:`sage.rings.ring_extension.RingExtension`
+          :class:`sage.rings.ring_extension.RingExtension_generic`
 
         EXAMPLES::
 
@@ -1463,7 +1664,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_finite()
             False
         """
-        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        from sage.rings.function_field.drinfeld_modules.drinfeld_module_finite import DrinfeldModule_finite
         return isinstance(self, DrinfeldModule_finite)
 
     def j_invariant(self, parameter=None, check=True):
@@ -1787,7 +1988,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isinstance(phi.morphism(), RingHomomorphism)
             True
 
-        Actually, the ``DrinfeldModule`` method :meth:`__call__` simply
+        Actually, the ``DrinfeldModule`` method ``__call__`` simply
         class the ``__call__`` method of this morphism::
 
             sage: phi.morphism()(T) == phi(T)
@@ -2071,6 +2272,65 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if not self.function_ring().has_coerce_map_from(x.parent()):
             raise ValueError("%s is not element of the function ring" % x)
         return self.Hom(self)(x)
+
+    def anderson_motive(self, dual=False, names=None):
+        r"""
+        Return the Anderson motive, or its dual depending on the
+        attribute ``dual``, attached to this Drinfeld module.
+
+        By definition, the Anderson motive of a Drinfeld module
+        `\phi : A \to K\{\tau\}` is `K\{\tau\}` endowed by:
+
+        - the structure of `A`-module where `a \in A` acts by
+          right multiplication by `\phi_a`
+
+        - the structure of `K`-vector space given by standard
+          left multiplication
+
+        INPUT:
+
+        - ``dual`` - a boolean (default: ``False``)
+
+        - ``names`` - a string of a list of strings (default: ``None``),
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as row vectors
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: M = phi.anderson_motive()
+            sage: M
+            Anderson motive of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+
+        Here the rank of the Anderson motive should be understood as its
+        rank over `A \otimes K`; it is also the rank `r` of the underlying
+        Drinfeld module. More precisely, `M` has a canonical basis, which
+        is formed by the Ore polynomials `1, \ldots, \tau^{r-1}`::
+
+            sage: tau = phi.ore_variable()
+            sage: [M(tau^i) for i in range(phi.rank())]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+
+        Setting the argument ``names`` allows to give names to the vectors
+        of the aforementionned canonical basis::
+
+            sage: M = phi.anderson_motive(names='e')
+            sage: M
+            Anderson motive <e0, e1, e2> of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+            sage: M.basis()
+            [e0, e1, e2]
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
+            for more documentation on the implementation of Anderson motives
+            in SageMath.
+        """
+        from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive_drinfeld
+        return AndersonMotive_drinfeld(self, dual, names=names)
 
     def frobenius_relative(self, n=1):
         r"""

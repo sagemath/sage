@@ -94,7 +94,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
     def product(self, x, y):
         r"""
         Return the product of ``x`` and ``y`` in the semigroup, as per
-        :meth:`Semigroups.ParentMethods.product`.
+        :meth:`sage.categories.magmas.Magmas.ParentMethods.product`.
 
         EXAMPLES::
 
@@ -208,7 +208,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
     def product(self, x, y):
         r"""
         Return the product of ``x`` and ``y`` in the semigroup, as per
-        :meth:`Semigroups.ParentMethods.product`.
+        :meth:`sage.categories.magmas.Magmas.ParentMethods.product`.
 
         EXAMPLES::
 

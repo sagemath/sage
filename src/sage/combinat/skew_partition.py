@@ -102,7 +102,8 @@ is an involution::
     sage: SkewPartition([[4,3,1],[2]]).conjugate().conjugate()
     [4, 3, 1] / [2]
 
-The :meth:`jacobi_trudi()` method computes the Jacobi-Trudi matrix. See
+The :meth:`~sage.combinat.skew_partition.SkewPartition.jacobi_trudi`
+method computes the Jacobi-Trudi matrix. See
 [Mac1995]_ for a definition and discussion.
 
 ::

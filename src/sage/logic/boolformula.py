@@ -1076,7 +1076,7 @@ class BooleanFormula:
 
     def convert_opt(self, tree):
         r"""
-        Convert a parse tree to the tuple form used by :meth:`bool_opt()`.
+        Convert a parse tree to a tuple representation.
 
         INPUT:
 
@@ -1228,7 +1228,7 @@ class BooleanFormula:
         EXAMPLES:
 
         This example illustrates the use of :meth:`reduce_op` with
-        :func:`apply_func`::
+        :func:`~sage.logic.logicparser.apply_func`::
 
             sage: import sage.logic.propcalc as propcalc, sage.logic.logicparser as logicparser
             sage: s = propcalc.formula("a->b^c")

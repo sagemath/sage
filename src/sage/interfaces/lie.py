@@ -810,11 +810,11 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
         t = self.type()
         if t == 'grp':
             raise ValueError("cannot convert Lie groups to native Sage objects")
-        elif t == 'mat':
+        if t == 'mat':
             import sage.matrix.constructor
             data = sage_eval(str(self).replace('\n', '').strip())
             return sage.matrix.constructor.matrix(data)
-        elif t == 'pol':
+        if t == 'pol':
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             from sage.rings.rational_field import QQ
 
@@ -849,12 +849,11 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
                 pol += coef * monomial
 
             return pol
-        elif t == 'tex':
+        if t == 'tex':
             return repr(self)
-        elif t == 'vid':
+        if t == 'vid':
             return None
-        else:
-            return ExpectElement._sage_(self)
+        return ExpectElement._sage_(self)
 
 
 @instancedoc

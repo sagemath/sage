@@ -826,6 +826,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
     r"""
     Define a simplicial complex.
 
+    .. automethod:: _contractible_subcomplex
+
     INPUT:
 
     - ``maximal_faces`` -- set of maximal faces
@@ -2097,7 +2099,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
            subcomplex is zero in dimension `-1`.
 
         The rows and columns of the boundary matrices are indexed by
-        the lists given by the :meth:`_n_cells_sorted` method, which by
+        the lists given by the
+        :meth:`~sage.topology.cell_complex.GenericCellComplex._n_cells_sorted`
+        method, which by
         default are sorted.
 
         EXAMPLES::

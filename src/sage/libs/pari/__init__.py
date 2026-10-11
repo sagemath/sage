@@ -74,8 +74,8 @@ Output precision for printing
 Even though PARI reals have a precision, not all significant bits are
 printed by default. The maximum number of digits when printing a PARI
 real can be set using the methods
-:meth:`Pari.set_real_precision_bits` or
-:meth:`Pari.set_real_precision`.
+:meth:`Pari.set_real_precision_bits <cypari2.pari_instance.Pari.set_real_precision_bits>` or
+:meth:`Pari.set_real_precision <cypari2.pari_instance.Pari.set_real_precision>`.
 
 We create a very precise approximation of pi and see how it is printed
 in PARI::
@@ -114,8 +114,8 @@ three kinds of calls:
    ``pari(1.0).sin()``.
 
 In the first case, the relevant precision is the one set by the methods
-:meth:`Pari.set_real_precision_bits` or
-:meth:`Pari.set_real_precision`::
+:meth:`Pari.set_real_precision_bits <cypari2.pari_instance.Pari.set_real_precision_bits>` or
+:meth:`Pari.set_real_precision <cypari2.pari_instance.Pari.set_real_precision>`::
 
     sage: pari.set_real_precision_bits(150)
     sage: pari("sin(1)")
@@ -127,8 +127,8 @@ In the first case, the relevant precision is the one set by the methods
 In the second case, the precision can be given as the argument
 ``precision`` in the function call, with a default of 53 bits.
 The real precision set by
-:meth:`Pari.set_real_precision_bits` or
-:meth:`Pari.set_real_precision` is irrelevant.
+:meth:`Pari.set_real_precision_bits <cypari2.pari_instance.Pari.set_real_precision_bits>` or
+:meth:`Pari.set_real_precision <cypari2.pari_instance.Pari.set_real_precision>` is irrelevant.
 
 In these examples, we convert to Sage to ensure that PARI's real
 precision is not used when printing the numbers. As explained before,

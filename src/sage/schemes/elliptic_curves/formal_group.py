@@ -742,7 +742,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         k = self.curve().base_ring()
         fl = self.log(prec)
-        F = fl.reverse()
+        F = fl.revert()
 
         S = LaurentSeriesRing(k,'z')
         z = S.gen()

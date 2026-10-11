@@ -124,8 +124,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     .. NOTE::
 
         This class should not be called directly; use
-        :class:`sage.constructor.EllipticCurve` to construct
-        elliptic curves.
+        :class:`EllipticCurve <sage.schemes.elliptic_curves.constructor.EllipticCurveFactory>`
+        to construct elliptic curves.
 
     EXAMPLES:
 
@@ -475,6 +475,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Generator 1 is [29604565304828237474403861024284371796799791624792913256602210:-256256267988926809388776834045513089648669153204356603464786949:490078023219787588959802933995928925096061616470779979261000]; height 95.98037...
             Regulator = 95.98037...
         """
+        from sage.misc.superseded import deprecation
+        deprecation(41990, "the mwrank() method is deprecated, the same information can be obtained more efficiently using other methods that make use of the library (eclib) interface")
+
         if not options:
             from sage.interfaces.mwrank import mwrank
         else:
@@ -2418,7 +2421,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             obtained by calling :meth:`mwrank` with carefully chosen
             parameters.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        This method is now deprecated::
+
+            sage: EllipticCurve([0,0,1,-1,0]).mwrank()
+            ...DeprecationWarning...
+
+        ::
 
             sage: E = EllipticCurve('37a1')
             sage: E.ngens()
@@ -4636,8 +4646,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             The codomains of the isogenies returned are standard
             minimal models.  This is because the functions
-            :meth:`isogenies_prime_degree_genus_0()` and
-            :meth:`isogenies_sporadic_Q()` are implemented that way for
+            :func:`~sage.schemes.elliptic_curves.isogeny_small_degree.isogenies_prime_degree_genus_0`
+            and
+            :func:`~sage.schemes.elliptic_curves.isogeny_small_degree.isogenies_sporadic_Q`
+            are implemented that way for
             curves defined over `\QQ`.
 
         EXAMPLES::

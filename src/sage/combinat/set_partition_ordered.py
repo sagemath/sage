@@ -794,7 +794,7 @@ class OrderedSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`Word.to_ordered_set_partition`
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.to_ordered_set_partition`
 
         .. WARNING::
 
@@ -1028,7 +1028,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`Word.to_ordered_set_partition`
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.to_ordered_set_partition`
 
         EXAMPLES::
 

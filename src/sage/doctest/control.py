@@ -75,7 +75,7 @@ class DocTestDefaults(SageObject):
     The interface of this object should be compatible with the ``options`` input
     to :class:`DocTestController`, that is, the same interface as the
     argument object parsed by the :class:`argparse.ArgumentParser` in
-    :func:`sage.doctest.__main__._make_parser`.
+    ``sage.doctest.__main__._make_parser``.
 
     INPUT:
 
@@ -424,7 +424,7 @@ class DocTestController(SageObject):
         - ``options`` -- either options generated from the command line by sage-runtests
           or a :class:`DocTestDefaults` object (possibly with some entries modified).
           The attributes available in this object are defined by the :class:`argparse.ArgumentParser`
-          in :func:`sage.doctest.__main__._make_parser`.
+          in ``sage.doctest.__main__._make_parser``.
         - ``args`` -- list of filenames to doctest
 
         EXAMPLES::
@@ -959,7 +959,7 @@ class DocTestController(SageObject):
     def expand_files_into_sources(self):
         r"""
         Expand ``self.files``, which may include directories, into a
-        list of :class:`sage.doctest.FileDocTestSource`
+        list of :class:`sage.doctest.sources.FileDocTestSource`
 
         This function also handles the optional command line option.
 
@@ -1109,7 +1109,8 @@ class DocTestController(SageObject):
 
         INPUT:
 
-        - ``source`` -- a :class:`DocTestSource` instance
+        - ``source`` -- a
+          :class:`~sage.doctest.sources.DocTestSource` instance
 
         OUTPUT: a dictionary
 

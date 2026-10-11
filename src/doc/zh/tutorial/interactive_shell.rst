@@ -337,7 +337,7 @@ GMP 表现稍好（预料之中，因为为 Sage 构建的 PARI 版本使用 GMP
 
 如上文所述，Sage 使用 IPython 作为前端，因此你可以使用任何 IPython 的命令和功能。
 你可以阅读
-`完整的 IPython 文档 <http://ipython.scipy.org/moin/Documentation>`_ 。
+`完整的 IPython 文档 <https://ipython.readthedocs.io/en/stable/>`_ 。
 下面是一些有趣的技巧 -- 在 IPython 中，这些被称为 "Magic 命令"：
 
 - 如果你想输入一些复杂代码，可以使用 ``%edit`` （或 ``%ed`` 或 ``ed``）打开一个编辑器。

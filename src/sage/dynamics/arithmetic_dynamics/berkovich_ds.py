@@ -469,7 +469,8 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     INPUT:
 
-    - ``dynamical_system`` -- a :class:`DynamicalSystem_Projective`
+    - ``dynamical_system`` -- a
+      :class:`~sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective`
       of relative dimension 1. If this input is not defined
       over a `p`-adic field, then ``domain`` MUST be specified.
 
@@ -967,7 +968,8 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
     INPUT:
 
-    - ``dynamical_system`` -- a :class:`DynamicalSystem_affine`
+    - ``dynamical_system`` -- a
+      :class:`~sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine`
       of relative dimension 1
 
     - ``domain`` -- (optional) affine or projective Berkovich space

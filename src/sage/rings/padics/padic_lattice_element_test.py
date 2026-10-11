@@ -2,7 +2,7 @@ import pytest
 from sage.rings.padics.factory import ZpLC, ZpLF, QpLC, QpLF
 
 # ZpLC, ZpLF, QpLC, and QpLF all raise FutureWarnings
-from warnings import catch_warnings, filterwarnings
+from warnings import filterwarnings
 filterwarnings("ignore", category=FutureWarning)
 
 
@@ -33,9 +33,10 @@ def R4():
 #
 #   https://github.com/pytest-dev/pytest/issues/349
 #
-elements = ( "R1", "R2", "R3", "R4" )
+elements = ("R1", "R2", "R3", "R4")
 
 
+@pytest.mark.long
 @pytest.mark.parametrize("e", elements)
 def test_padic_lattice_element(e, request):
     r"""

@@ -1,7 +1,7 @@
 r"""
 Quantum-valued polynomial rings
 
-This provides a `q`-analogue of the :class:`~sage.rings.polynomials.integer_valued_polynomials.IntegerValuedPolynomialRing`.
+This provides a `q`-analogue of the :class:`~sage.rings.polynomial.integer_valued_polynomials.IntegerValuedPolynomialRing`.
 
 AUTHORS:
 

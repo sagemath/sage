@@ -145,7 +145,7 @@ def load(filename, globals, attach=False):
         sage: with NamedTemporaryFile(mode='w', suffix='.pyx') as file:
         ....:     _ = file.write("print(('hi', 2^3)); z = -2^7")
         ....:     _ = file.seek(0)
-        ....:     sage.repl.load.load(file.name, context)                                         # needs sage.misc.cython
+        ....:     sage.repl.load.load(file.name, context)
         Compiling ...
         ('hi', 1)
         sage: context["z"]

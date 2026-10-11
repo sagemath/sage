@@ -6,6 +6,8 @@ build a complete graph on 15 elements, one can do::
 
     sage: g = graphs.CompleteGraph(15)
 
+.. autodata:: sage.graphs.graph_generators::graphs
+
 To get a path with 4 vertices, and the house graph::
 
     sage: p = graphs.PathGraph(4)
@@ -298,6 +300,16 @@ __append_to_doc(
      "WheelGraph",
      "WindmillGraph"])
 
+__doc__ += """
+**Graphs defined by systems of equations**
+"""
+
+__append_to_doc(
+    ["Akq",
+     "Dkq",
+     "LUWGraph",
+     "WengerGraph"])
+
 
 __doc__ += """
 **Graphs from classical geometries over finite fields**
@@ -524,7 +536,8 @@ class GraphGenerators:
     representatives.
 
     Also: see the use of the nauty package for generating graphs
-    at the :meth:`nauty_geng` method.
+    at the
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.nauty_geng` method.
 
     INPUT:
 
@@ -1105,7 +1118,7 @@ class GraphGenerators:
         OUTPUT:
 
         A generator which will produce the graphs as
-        :class:`~sage/graphs.bipartite_graph.BipartiteGraph`. These will be
+        :class:`~sage.graphs.bipartite_graph.BipartiteGraph`. These will be
         simple bipartite graphs: no loops, no multiple edges, no directed edges.
 
         EXAMPLES:
@@ -1242,7 +1255,7 @@ class GraphGenerators:
 
     def nauty_genktreeg(self, options='', debug=False, immutable=False):
         r"""
-        Return a generator which creates all `k`-trees using nauty..
+        Return a generator which creates all `k`-trees using nauty.
 
         A `k`-tree is an undirected graph formed by starting with a complete
         graph on `k + 1` vertices and then repeatedly add vertices in such a
@@ -1841,7 +1854,8 @@ class GraphGenerators:
 
             n       : the number of vertices (the only compulsory parameter).
                       This number must be in range `3\cdots 64`.
-                      It can also be given as "nd", where the suffix "d" means
+                      It can also be given as ``n`` followed by suffix ``d``,
+                      where the suffix ``d`` means
                       "dual", in which case it is converted by adding 4 then
                       dividing by 2, i.e., `(28+4)/2 = 16`. In the case of
                       triangulations, this calculation yields the number of
@@ -2735,7 +2749,9 @@ class GraphGenerators:
 ###########################################################################
     from sage.graphs import cographs as cographs_module
     from sage.graphs import strongly_regular_db
+    from sage.graphs.generators import luw_graphs
     from sage.graphs.generators import families
+    Akq = staticmethod(luw_graphs.Akq)
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
     AztecDiamondGraph = staticmethod(families.AztecDiamondGraph)
     BarbellGraph = staticmethod(families.BarbellGraph)
@@ -2748,6 +2764,7 @@ class GraphGenerators:
     cographs = staticmethod(cographs_module.cographs)
     CubeGraph = staticmethod(families.CubeGraph)
     CubeConnectedCycle = staticmethod(families.CubeConnectedCycle)
+    Dkq = staticmethod(luw_graphs.Dkq)
     DipoleGraph = staticmethod(families.DipoleGraph)
     distance_regular_graph = staticmethod(distance_regular.distance_regular_graph)
     DorogovtsevGoltsevMendesGraph = staticmethod(families.DorogovtsevGoltsevMendesGraph)
@@ -2778,6 +2795,7 @@ class GraphGenerators:
     LCFGraph = staticmethod(families.LCFGraph)
     line_graph_forbidden_subgraphs = staticmethod(families.line_graph_forbidden_subgraphs)
     LollipopGraph = staticmethod(families.LollipopGraph)
+    LUWGraph = staticmethod(luw_graphs.LUWGraph)
     MathonPseudocyclicMergingGraph = staticmethod(families.MathonPseudocyclicMergingGraph)
     MathonPseudocyclicStronglyRegularGraph = staticmethod(families.MathonPseudocyclicStronglyRegularGraph)
     MuzychukS6Graph = staticmethod(families.MuzychukS6Graph)
@@ -2802,6 +2820,7 @@ class GraphGenerators:
     TruncatedBiwheelGraph = staticmethod(families.TruncatedBiwheelGraph)
     TuranGraph = staticmethod(families.TuranGraph)
     UstimenkoGraph = staticmethod(distance_regular.UstimenkoGraph)
+    WengerGraph = staticmethod(luw_graphs.WengerGraph)
     WheelGraph = staticmethod(families.WheelGraph)
     WindmillGraph = staticmethod(families.WindmillGraph)
 
