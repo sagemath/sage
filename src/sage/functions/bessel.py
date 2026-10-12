@@ -420,6 +420,20 @@ class Function_Bessel_J(BuiltinFunction):
         n, x = get_coercion_model().canonical_coercion(n, x)
         return _mpmath_utils_call(_mpmath_besselj, n, x, parent=parent)
 
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: bessel_J(1/3, CBF(2))
+            [0.44293981814858 +/- 8.94e-15]
+            sage: RIF(bessel_J(1, 1))                                               # needs sage.symbolic
+            0.440050585744934?
+        """
+        return [x, n]
+
     def _derivative_(self, n, x, diff_param):
         """
         Return the derivative of the Bessel J function.
@@ -638,6 +652,20 @@ class Function_Bessel_Y(BuiltinFunction):
         n, x = get_coercion_model().canonical_coercion(n, x)
         return _mpmath_utils_call(_mpmath_bessely, n, x, parent=parent)
 
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: bessel_Y(1/3, CBF(2))
+            [0.3431999662603 +/- 5.03e-14]
+            sage: RIF(bessel_Y(1, 1))                                               # needs sage.symbolic
+            -0.78121282130029?
+        """
+        return [x, n]
+
     def _derivative_(self, n, x, diff_param):
         """
         Return the derivative of the Bessel Y function.
@@ -829,6 +857,20 @@ class Function_Bessel_I(BuiltinFunction):
             3.9533702174026093965
         """
         return _mpmath_utils_call(_mpmath_besseli, n, x, parent=parent)
+
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: bessel_I(1/3, CBF(2))
+            [2.1587825813729 +/- 6.22e-14]
+            sage: RIF(bessel_I(1, 1))                                               # needs sage.symbolic
+            0.565159103992485?
+        """
+        return [x, n]
 
     def _derivative_(self, n, x, diff_param):
         """
@@ -1026,6 +1068,20 @@ class Function_Bessel_K(BuiltinFunction):
             0.42102443824070833333562737921260903614
         """
         return _mpmath_utils_call(_mpmath_besselk, n, x, parent=parent)
+
+    def _method_arguments(self, n, x):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: bessel_K(1/3, CBF(2))
+            [0.116544961296 +/- 2.61e-13]
+            sage: RIF(bessel_K(1, 1))                                               # needs sage.symbolic
+            0.60190723019723?
+        """
+        return [x, n]
 
     def _derivative_(self, n, x, diff_param):
         """
