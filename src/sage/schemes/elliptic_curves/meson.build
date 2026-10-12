@@ -4,6 +4,7 @@ py.install_sources(
   '__init__.py',
   'addition_formulas_ring.py',
   'all.py',
+  'bsd_certificates.py',
   'cardinality.py',
   'cm.py',
   'constructor.py',
