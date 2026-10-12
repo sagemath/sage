@@ -24,7 +24,7 @@ see :issue:`12849`::
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
-    <span class="sig-name descname"><span class="pre">numerical_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span>...
+    ...<span class="sig-name descname"><span class="pre">numerical_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span>...
 
 Check that sphinx is not imported at Sage start-up::
 
@@ -400,107 +400,6 @@ def skip_TESTS_block(docstring):
     return s[1:]  # Remove empty line from the beginning.
 
 
-def process_dollars(s):
-    r"""nodetex
-    Replace dollar signs with backticks.
-
-    More precisely, do a regular expression search.  Replace a plain
-    dollar sign ($) by a backtick (`).  Replace an escaped dollar sign
-    (\\$) by a dollar sign ($).  Don't change a dollar sign preceded or
-    followed by a backtick (\`$ or \$`), because of strings like
-    "``$HOME``".  Don't make any changes on lines starting with more
-    spaces than the first nonempty line in ``s``, because those are
-    indented and hence part of a block of code or examples.
-
-    This also doesn't replaces dollar signs enclosed in curly braces,
-    to avoid nested math environments.
-
-    EXAMPLES::
-
-        sage: from sage.misc.sagedoc import process_dollars
-        sage: process_dollars('hello')
-        'hello'
-        sage: process_dollars('some math: $x=y$')
-        doctest:warning...
-        DeprecationWarning: using dollar signs to mark up math in Sage docstrings
-        is deprecated; use backticks instead
-        See https://github.com/sagemath/sage/issues/33973 for details.
-        'some math: `x=y`'
-
-    Replace \\$ with $, and don't do anything when backticks are involved::
-
-        sage: process_dollars(r'a ``$REAL`` dollar sign: \$')
-        'a ``$REAL`` dollar sign: $'
-
-    Don't make any changes on lines indented more than the first
-    nonempty line::
-
-        sage: s = '\n first line\n     indented $x=y$'
-        sage: s == process_dollars(s)
-        True
-
-    Don't replace dollar signs enclosed in curly braces::
-
-        sage: process_dollars(r'f(n) = 0 \text{ if $n$ is prime}')
-        'f(n) = 0 \\text{ if $n$ is prime}'
-
-    This is not perfect::
-
-        sage: process_dollars(r'$f(n) = 0 \text{ if $n$ is prime}$')
-        '`f(n) = 0 \\text{ if $n$ is prime}$'
-
-    The regular expression search doesn't find the last $.
-    Fortunately, there don't seem to be any instances of this kind of
-    expression in the Sage library, as of this writing.
-    """
-    if s.find("$") == -1:
-        return s
-    from sage.misc.superseded import deprecation
-    # find how much leading whitespace s has, for later comparison:
-    # ignore all $ on lines which start with more whitespace.
-    whitespace = re.match(r'\s*\S', s.lstrip('\n'))
-    whitespace = ' ' * (whitespace.end() - 1)  # leading whitespace
-    # Indices will be a list of pairs of positions in s, to search between.
-    # If the following search has no matches, then indices will be (0, len(s)).
-    indices = [0]
-    # This searches for "$blah$" inside a pair of curly braces --
-    # don't change these, since they're probably coming from a nested
-    # math environment.  So for each match, search to the left of its
-    # start and to the right of its end, but not in between.
-    for m in re.finditer(r"{[^{}$]*\$([^{}$]*)\$[^{}$]*}", s):
-        indices[-1] = (indices[-1], m.start())
-        indices.append(m.end())
-    indices[-1] = (indices[-1], len(s))
-    # regular expression for $ (not \$, `$, $`, and only on a line
-    # with no extra leading whitespace).
-    #
-    # in detail:
-    #   re.compile("^" # beginning of line
-    #               + "(%s%)?" % whitespace
-    #               + r"""(\S # non whitespace
-    #                     .*?)? # non-greedy match any non-newline characters
-    #                     (?<!`|\\)\$(?!`) # $ with negative lookbehind and lookahead
-    #                  """, re.M | re.X)
-    #
-    # except that this doesn't work, so use the equivalent regular
-    # expression without the 're.X' option.  Maybe 'whitespace' gets
-    # eaten up by re.X?
-    regexp = "^" + "(%s)?" % whitespace + r"(\S.*?)?(?<!`|\\)\$(?!`)"
-    dollar = re.compile(regexp, re.M)
-    # regular expression for \$
-    slashdollar = re.compile(r"\\\$")
-    for start, end in indices:
-        while dollar.search(s, start, end):
-            m = dollar.search(s, start, end)
-            s = s[:m.end() - 1] + "`" + s[m.end():]
-            deprecation(33973,
-                        "using dollar signs to mark up math in Sage docstrings "
-                        "is deprecated; use backticks instead")
-        while slashdollar.search(s, start, end):
-            m = slashdollar.search(s, start, end)
-            s = s[:m.start()] + "$" + s[m.end():]
-    return s
-
 
 # When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
 # and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
@@ -806,7 +705,6 @@ def format(s, embedded=False):
             i_0 += i
 
     if 'nodetex' not in directives:
-        s = process_dollars(s)
         s = skip_TESTS_block(s)
         if not embedded:
             s = process_mathtt(s)
