@@ -322,10 +322,10 @@ bool useries_can_handle(const ex& the_ex, const symbol& s)
                         (void) nd.op(1).degree(s).to_long();
                         (void) nd.op(1).ldegree(s).to_long();
                 }
-                catch (conversion_error) {
+                catch (const conversion_error&) {
                         throw std::runtime_error("exponent too big");
                 }
-                catch (std::runtime_error) {}
+                catch (const std::runtime_error&) {}
         }
         return ok;
 }
@@ -406,7 +406,7 @@ ex useries(const ex& the_ex, const symbol& x, int order, unsigned options)
         try {
                 ldeg = low_series_degree(the_ex);
         }
-        catch (ldegree_error) {
+        catch (const ldegree_error&) {
                 may_extend = true;
         }
 
