@@ -1013,17 +1013,23 @@ def Rbound(Y, tol):
     return R
 
 
-def Rbound_deriv(Y, N, tol):
+def Rbound_deriv(Y, N, tol, Yinv_y_norm=None):
     r"""
     Compute radius for Riemann theta function summation with derivatives.
 
-    See Theorem 3.1 in [AC2019]_.
+    See Theorem 3.1 in [AC2019]_. For an arbitrary evaluation point
+    `z = x + i*y`, its proof applies with an upper bound on `\|Y^{-1}y\|`
+    in place of `\sqrt{g}`. We use the greater of these two quantities,
+    so that a radius for order ``N`` also covers lower derivative orders.
 
     INPUT:
 
     - ``Y`` -- real matrix. Positive definite (imaginary part of a Riemann matrix)
     - ``N`` -- integer. Order of derivative.
     - ``tol`` -- real number. Tolerance for error allowed in theta function summation.
+    - ``Yinv_y_norm`` -- nonnegative real number; optional. An upper bound on
+      `\|Y^{-1}y\|` at the evaluation point. If omitted, use the bound
+      `\sqrt{g}` from the reduced-domain hypothesis of Theorem 3.1.
 
     OUTPUT: radius for summation to restrict error term to be within specified tolerance.
 
@@ -1049,9 +1055,14 @@ def Rbound_deriv(Y, N, tol):
 
     gRR = RR(g)
     g_over_two = gRR/2
-    g_sqrt = gRR.sqrt()
+    H = gRR.sqrt()
+    if Yinv_y_norm is not None:
+        Yinv_y_norm = RR(Yinv_y_norm)
+        if Yinv_y_norm < 0:
+            raise ValueError("Yinv_y_norm must be nonnegative")
+        H = max(H, Yinv_y_norm)
 
-    C = [binom(N, i)*pi**(-i/2) * (Yinv_norm)**i * g_sqrt**(N-i) for i in range(N+1)]
+    C = [binom(N, i)*pi**(-i/2) * (Yinv_norm)**i * H**(N-i) for i in range(N+1)]
     LC = (2*pi)**N * g_over_two * (2/rho)**g
 
     def f(R):
@@ -1389,7 +1400,7 @@ cdef class RiemannTheta:
         else:
             return result[0]
 
-    cdef double Rbound(self, maxnderiv, tol):
+    cdef double Rbound(self, maxnderiv, tol, Yinv_y_norm=None):
         r"""
         Return radius bound for summation
 
@@ -1399,12 +1410,18 @@ cdef class RiemannTheta:
 
         - ``maxnderiv`` -- integer. (Maximal) order of derivative for which to compute bound.
         - ``tol`` -- real number. Tolerance allowed.
+        - ``Yinv_y_norm`` -- nonnegative real number; optional. An upper bound
+          on `\|Y^{-1}y\|`, used when derivatives are requested.
 
         OUTPUT: radius for summation.
 
         This method is cdef only, so cannot be tested from python.
         """
-        key = (maxnderiv, tol)
+        if maxnderiv == 0:
+            Yinv_y_norm = None
+        elif Yinv_y_norm is not None:
+            Yinv_y_norm = max(self.RR(self.g).sqrt(), Yinv_y_norm)
+        key = (maxnderiv, tol, Yinv_y_norm)
         try:
             return self.Rbound_dict[key]
         except KeyError:
@@ -1412,7 +1429,7 @@ cdef class RiemannTheta:
         if maxnderiv == 0:
             R = Rbound(self.Y, tol)
         else:
-            R = Rbound_deriv(self.Y, maxnderiv, tol)
+            R = Rbound_deriv(self.Y, maxnderiv, tol, Yinv_y_norm)
         self.Rbound_dict[key] = R
         return R
 
@@ -1478,7 +1495,10 @@ cdef class RiemannTheta:
 
         # compute the enumeration radius
         cdef long maxnderiv = max((<Vector_long> l).n for l in derivs)
-        cdef double R = self.Rbound(maxnderiv, tol)
+        # The derivative polynomial depends on Y^-1*y, not just its
+        # fractional part used to centre the Gaussian summation ball.
+        Yinv_y_norm = Yinv_y.norm() if maxnderiv else None
+        cdef double R = self.Rbound(maxnderiv, tol, Yinv_y_norm)
         cdef double Rsqr = R**2
 
         # use pari's Finke-Pohst implementation to get lattice points.
@@ -1487,7 +1507,7 @@ cdef class RiemannTheta:
         # increase the radius to make sure we include the ball we want.
         # We later throw out the points we do not need.
         cdef Gen V
-        npoints, _, V = pari.qfminim(self.Y, (R+(self.Ynorm(c)/self.pi).sqrt())**2/double_pi, flag=2)
+        npoints, _, V = pari.qfminim(self.Y, (R+self.Ynorm(c).sqrt())**2/double_pi, flag=2)
         npoints = npoints // 2
 
         # note that Pari's Finke-Pohst only returns one representative for each
