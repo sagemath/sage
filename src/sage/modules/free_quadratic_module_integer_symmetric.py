@@ -1566,6 +1566,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [(1, 0, 6, -8), (1, 0, 5, -9), (2, 0, 5, -9), (1, -1, 5, -9), (2, 1, 6, -9),
              (1, 0, 6, -9), (2, 0, 6, -9), (1, 0, 5, -10), (1, -1, 6, -9), (1, -1, 5, -10)]
         """
+        from sage.modules.free_module_element import vector
         L = self.LLL()
         dim = L.dimension()
         basis = L.basis_matrix()
@@ -1577,10 +1578,14 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         assert ok
 
         coord = None
+        offset = 0
         if target is not None:
-            coord = basis.solve_left(target)
-            Mu = 1 + matrix([gso.get_mu(i, j) for j in range(dim)]
-                            for i in range(dim))
+            target = vector(target)
+            coord = L.gram_matrix().solve_right(basis * self.inner_product_matrix() * target)
+            shift = vector(ZZ, [c.round() for c in coord])
+            coord -= shift
+            offset = shift * basis
+            Mu = 1 + matrix([gso.get_mu(i, j) for j in range(dim)] for i in range(dim))
             coord *= Mu
 
         count = 8
@@ -1598,7 +1603,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             for length, comb in combs:
                 vec = sum(ZZ(c) * b for c, b in zip(comb, basis))
                 if tuple(vec) not in seen:
-                    yield vec
+                    yield vec + offset
                     seen.add(tuple(vec))
             count *= 2
 
@@ -1653,9 +1658,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: t = vector([1/2, -133/7, 123.44, -11])
             sage: close = L.enumerate_close_vectors(t)
             sage: vecs = [next(close) for _ in range(10)]
-            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
-            [(-1, -16, 121, 148), (0, -17, 122, 148), (-3, -22, 122, 148), (1, -18, 123, 148), (-2, -23, 123, 148),
-             (2, -19, 124, 148), (3, -20, 125, 148), (4, -21, 126, 148), (-3, -19, 124, 152), (-2, -20, 125, 152)]
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: sorted(vecs, key=dist)
+            [(36, -41, 66, 36), (35, -40, 65, 36), (37, -42, 67, 36), (34, -39, 64, 36), (39, -39, 64, 32),
+             (38, -43, 68, 36), (40, -40, 65, 32), (36, -44, 64, 32), (35, -43, 63, 32), (38, -38, 63, 32)]
         """
         yield from self._fplll_enumerate(target)
 
