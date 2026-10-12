@@ -3580,8 +3580,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         The following keywords are used in most cases:
 
-        - ``num_cpus`` -- (default: 2) the number of threads to use. Setting to a
-          larger number can greatly speed up this function
+        - ``num_cpus`` -- positive integer (default: 2); the number of threads
+          to use. Setting to a larger number can greatly speed up this function
 
         The following keywords are used only when the dimension of the domain is 1 and
         the base ring is the rationals, but ignored in all other cases:
@@ -3692,52 +3692,26 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         TESTS:
 
-        Check that :issue:`42865` is fixed: ``num_cpus`` is forwarded as a
-        keyword to :meth:`conjugating_set`, not positionally as ``R``. Use a
-        stub so the test does not depend on CPU availability or timing::
-
-            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: f = DynamicalSystem([x^2 + x*z, y^2, z^2])
-            sage: calls = []
-            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
-            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
-            ....:     return []
-            sage: f.conjugating_set = mock_conjugating_set
-            sage: f.automorphism_group(num_cpus=1)
-            []
-            sage: calls
-            [{'R': None, 'num_cpus': 1}]
-            sage: calls.clear()
-            sage: f.automorphism_group()
-            []
-            sage: calls
-            [{'R': None, 'num_cpus': 2}]
-
-        The same forwarding applies on the number-field dimension-1 path that
-        uses :meth:`conjugating_set`::
+        Check that :issue:`42865` is fixed. Over ``QQbar``,
+        ``automorphism_group`` delegates to :meth:`conjugating_set`. If
+        ``num_cpus`` were again passed as the second positional argument, then
+        ``num_cpus=QQ`` would be bound to ``R`` and raise an unrelated
+        ``NotImplementedError`` from sigma-invariant computation. With the
+        fix, ``num_cpus`` is forwarded by keyword, so an invalid value is
+        rejected by :meth:`conjugating_set`::
 
             sage: # needs sage.rings.number_field
-            sage: K.<w> = CyclotomicField(3)
-            sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: f = DynamicalSystem_projective([y^2, x^2])
-            sage: calls = []
-            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
-            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
-            ....:     return []
-            sage: f.conjugating_set = mock_conjugating_set
-            sage: f.automorphism_group(num_cpus=1)
-            []
-            sage: calls
-            [{'R': None, 'num_cpus': 1}]
-
-        The reported ``P^1`` over ``QQ`` example still accepts ``num_cpus``
-        without error (that path uses a specialized algorithm)::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: f = DynamicalSystem([x^2 + x*y, y^2])
-            sage: G = f.automorphism_group(num_cpus=1)                                  # needs sage.libs.pari
-            sage: all(f.conjugate(m) == f for m in G)                                   # needs sage.libs.pari
-            True
+            sage: P.<x,y> = ProjectiveSpace(QQbar, 1)
+            sage: f = DynamicalSystem_projective([x^2, y^2])
+            sage: sorted(f.automorphism_group(num_cpus=1))
+            [
+            [0 1]  [1 0]
+            [1 0], [0 1]
+            ]
+            sage: f.automorphism_group(num_cpus=QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: num_cpus must be a positive integer
         """
         alg = kwds.get('algorithm', None)
         p = kwds.get('starting_prime', 5)
@@ -8034,8 +8008,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         - ``R`` -- a field or embedding
 
-        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel;
-          increasing ``num_cpus`` can potentially greatly speed up this function
+        - ``num_cpus`` -- positive integer (default: 2); the number of threads
+          to run in parallel; increasing ``num_cpus`` can potentially greatly
+          speed up this function
 
         OUTPUT: set of conjugating `n+1` by `n+1` matrices
 
@@ -8067,6 +8042,19 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2, w^2])
             sage: len(f.conjugating_set(f, num_cpus=3))                                 # needs sage.rings.function_field
             24
+
+        Invalid values of ``num_cpus`` are rejected::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2, y^2])
+            sage: f.conjugating_set(f, num_cpus=QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: num_cpus must be a positive integer
+            sage: f.conjugating_set(f, num_cpus=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: num_cpus must be a positive integer
 
         ::
 
@@ -8193,6 +8181,12 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             [ 2  1]
             ]
         """
+        try:
+            num_cpus = ZZ(num_cpus)
+        except (TypeError, ValueError):
+            raise TypeError("num_cpus must be a positive integer")
+        if num_cpus < 1:
+            raise ValueError("num_cpus must be a positive integer")
         f = copy(self)
         g = copy(other)
         try:
@@ -8286,8 +8280,9 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         - ``R`` -- a field or embedding
 
-        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel;
-          increasing ``num_cpus`` can potentially greatly speed up this function
+        - ``num_cpus`` -- positive integer (default: 2); the number of threads
+          to run in parallel; increasing ``num_cpus`` can potentially greatly
+          speed up this function
 
         OUTPUT: boolean
 
@@ -8413,6 +8408,12 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: f.is_conjugate(g)
             True
         """
+        try:
+            num_cpus = ZZ(num_cpus)
+        except (TypeError, ValueError):
+            raise TypeError("num_cpus must be a positive integer")
+        if num_cpus < 1:
+            raise ValueError("num_cpus must be a positive integer")
         f = copy(self)
         g = copy(other)
         if R is None:
@@ -9497,8 +9498,8 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         The following keywords are used when the dimension of the domain
         is greater than 1:
 
-        - ``num_cpus`` -- (default: 2) the number of threads to use; setting to a
-          larger number can greatly speed up this function
+        - ``num_cpus`` -- positive integer (default: 2); the number of threads
+          to use; setting to a larger number can greatly speed up this function
 
         The following keywords are used when the dimension of the domain is 1:
 
@@ -9595,25 +9596,17 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         TESTS:
 
-        Check that :issue:`42865` is fixed for finite fields: ``num_cpus`` is
-        forwarded as a keyword to :meth:`conjugating_set`::
+        Check that :issue:`42865` is fixed for finite fields in dimension
+        greater than 1: ``num_cpus`` is forwarded by keyword, so an invalid
+        value raises a ``TypeError`` from :meth:`conjugating_set` rather than
+        being misinterpreted as ``R``::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])
-            sage: calls = []
-            sage: def mock_conjugating_set(other, R=None, num_cpus=2):
-            ....:     calls.append({'R': R, 'num_cpus': num_cpus})
-            ....:     return []
-            sage: f.conjugating_set = mock_conjugating_set
-            sage: f.automorphism_group(num_cpus=1)
-            []
-            sage: calls
-            [{'R': None, 'num_cpus': 1}]
-            sage: calls.clear()
-            sage: f.automorphism_group()
-            []
-            sage: calls
-            [{'R': None, 'num_cpus': 2}]
+            sage: f.automorphism_group(num_cpus=QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: num_cpus must be a positive integer
         """
         absolute = kwds.get('absolute', False)
         iso_type = kwds.get('iso_type', False)
