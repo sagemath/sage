@@ -1622,11 +1622,22 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: short = L.enumerate_short_vectors()
             sage: vecs = [next(short) for _ in range(20)]
-            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            sage: sorted(vecs, key=lambda v: (v * L.inner_product_matrix() * v, v))
             [(1, -1, 1, 0), (2, -2, 2, 0), (3, -3, 3, 0), (0, 3, 2, 4), (1, 2, 3, 4),
              (3, 2, -2, -4), (4, 4, 1, 0), (-1, 4, 1, 4), (3, 5, 0, 0), (4, 1, -1, -4),
              (2, 1, 4, 4), (2, 3, -3, -4), (5, 3, 2, 0), (2, 6, -1, 0), (5, 0, 0, -4),
              (-2, 5, 0, 4), (4, -4, 4, 0), (1, 4, -4, -4), (6, 2, 3, 0), (3, 0, 5, 4)]
+
+        There may be many distinct short lattice vectors of the same length::
+
+            sage: G = matrix([[2,-1,0,0], [-1,2,-1,-1], [0,-1,2,0], [0,-1,0,2]])
+            sage: L = IntegralLattice(G)
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(50)]
+            sage: sorted(v * L.inner_product_matrix() * v for v in vecs)
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+             4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+             6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
 
         This example demonstrates that the lattice inner product is used for the norm::
 
@@ -1635,10 +1646,50 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice(Q, basis=B)
             sage: short = L.enumerate_short_vectors()
             sage: vecs = [next(short) for _ in range(20)]
-            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            sage: sorted(vecs, key=lambda v: (v * L.inner_product_matrix() * v, v))
             [(0, -2), (0, -4), (0, -6), (0, -8), (0, -10), (0, -12), (0, -14), (0, -16),
             (0, -18), (0, -20), (0, -22), (0, -24), (0, -26), (0, -28), (0, -30), (-1, -1),
             (-1, 1), (-1, -3), (-1, 3), (0, -32)]
+
+        TESTS:
+
+        Only a Gram matrix (standard basis)::
+
+            sage: G = matrix([[2,5,3], [5,15,11], [3,11,13]])
+            sage: L = IntegralLattice(G)
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(v * L.inner_product_matrix() * v for v in vecs)
+            [2, 3, 3, 4, 5, 5, 6, 6, 7, 7]
+
+        Only a basis (standard inner product)::
+
+            sage: L = IntegralLattice(3, [[1,2,3], [4,5,6], [7,8,10]])
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(v * L.inner_product_matrix() * v for v in vecs)
+            [1, 2, 3, 3, 4, 5, 5, 6, 6, 6]
+
+        Non-standard basis and Gram matrix::
+
+            sage: G = matrix([[2,-1,0], [-1,2,-1], [0,-1,2]])
+            sage: L = IntegralLattice(G, basis=[[1,1,0], [0,2,1], [1,0,3]])
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(v * L.inner_product_matrix() * v for v in vecs)
+            [2, 6, 6, 8, 10, 10, 18, 18, 18, 18]
+
+        Non-full rank with a non-standard basis and a non-standard inner product::
+
+            sage: G = matrix([[2,-1,0], [-1,2,-1], [0,-1,2]])
+            sage: L = IntegralLattice(G, basis=[[1,0,1], [0,1,1]])
+            sage: L.gram_matrix()
+            [4 0]
+            [0 2]
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(v * L.inner_product_matrix() * v for v in vecs)
+            [2, 4, 6, 6, 8, 12, 12, 16, 18, 18]
         """
         yield from self._fplll_enumerate()
 
@@ -1656,12 +1707,112 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: t = vector([1/2, -133/7, 123.44, -11])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
             sage: close = L.enumerate_close_vectors(t)
             sage: vecs = [next(close) for _ in range(10)]
-            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
             sage: sorted(vecs, key=dist)
             [(36, -41, 66, 36), (35, -40, 65, 36), (37, -42, 67, 36), (34, -39, 64, 36), (39, -39, 64, 32),
              (38, -43, 68, 36), (40, -40, 65, 32), (36, -44, 64, 32), (35, -43, 63, 32), (38, -38, 63, 32)]
+
+        A target vector inside the lattice is its own closest vector::
+
+            sage: L = IntegralLattice(3, [[1,2,3], [4,5,6], [7,8,10]])
+            sage: t = vector([5, 7, 9])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: dist(vecs[0])
+            0
+            sage: vecs[0] == t
+            True
+            sage: sorted(dist(v) for v in vecs)
+            [0, 1, 1, 2, 2, 3, 3, 3, 3, 4]
+
+        There may be many distinct close lattice vectors at the same distance::
+
+            sage: G = matrix([[2,-1,0,0], [-1,2,-1,-1], [0,-1,2,0], [0,-1,0,2]])
+            sage: L = IntegralLattice(G)
+            sage: t = vector([1, 1, 1/2, 1/2])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(16)]
+            sage: sorted(vecs[:8])
+            [(0, 0, 0, 0), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 0, 1),
+             (1, 1, 1, 0), (1, 1, 1, 1), (1, 2, 1, 1), (2, 2, 1, 1)]
+            sage: sorted(dist(v) for v in vecs)
+            [1, 1, 1, 1, 1, 1, 1, 1,
+             3, 3, 3, 3, 3, 3, 3, 3]
+
+        This example demonstrates that the lattice inner product is used for the distance::
+
+            sage: G = matrix([[2,-1,0], [-1,2,-1], [0,-1,2]])
+            sage: L = IntegralLattice(G, basis=[[1,0,1], [0,1,1]])
+            sage: t = vector([3/2, -1/3, 7])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: vecs[0]
+            (4, 3, 7)
+            sage: sorted(dist(v) for v in vecs)
+            [325/18, 331/18, 337/18, 343/18, 391/18, 403/18, 409/18, 421/18, 457/18, 463/18]
+
+        TESTS:
+
+        Only a Gram matrix (standard basis)::
+
+            sage: G = matrix([[2,5,3], [5,15,11], [3,11,13]])
+            sage: L = IntegralLattice(G)
+            sage: t = vector([7/3, -5/2, 11/4])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: vecs[0]
+            (3, -3, 3)
+            sage: sorted(dist(v) for v in vecs)
+            [53/144, 221/144, 317/144, 389/144, 413/144, 437/144, 461/144, 509/144, 533/144, 581/144]
+
+        Only a basis (standard inner product)::
+
+            sage: L = IntegralLattice(3, [[1,2,3], [4,5,6], [7,8,10]])
+            sage: t = vector([1/2, -17/3, 9])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: vecs[0]
+            (0, -6, 9)
+            sage: sorted(dist(v) for v in vecs)
+            [13/36, 49/36, 49/36, 73/36, 97/36, 97/36, 109/36, 109/36, 109/36, 133/36]
+            sage: next(L.enumerate_close_vectors(vector(RR, [0.5, -17/3, 9])))
+            (0, -6, 9)
+
+        Non-standard basis and Gram matrix::
+
+            sage: G = matrix([[2,-1,0], [-1,2,-1], [0,-1,2]])
+            sage: L = IntegralLattice(G, basis=[[1,1,0], [0,2,1], [1,0,3]])
+            sage: t = vector([3/2, -1/3, 7])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: vecs[0]
+            (1, -1, 6)
+            sage: sorted(dist(v) for v in vecs)
+            [25/18, 55/18, 67/18, 97/18, 103/18, 157/18, 163/18, 163/18, 169/18, 181/18]
+
+        Non-full rank with a non-standard basis and a non-standard inner product::
+
+            sage: G = matrix([[2,-1,0], [-1,2,-1], [0,-1,2]])
+            sage: L = IntegralLattice(G, basis=[[1,0,1], [0,1,1]])
+            sage: L.gram_matrix()
+            [4 0]
+            [0 2]
+            sage: t = vector([3/2, -1/3, 7])
+            sage: dist = lambda v: (t - v) * L.inner_product_matrix() * (t - v)
+            sage: close = L.enumerate_close_vectors(t)
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: vecs[0]
+            (4, 3, 7)
+            sage: sorted(dist(v) for v in vecs)
+            [325/18, 331/18, 337/18, 343/18, 391/18, 403/18, 409/18, 421/18, 457/18, 463/18]
         """
         yield from self._fplll_enumerate(target)
 
