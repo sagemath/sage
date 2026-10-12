@@ -19,7 +19,6 @@ import warnings
 
 from sage.env import (
     SAGE_DOC,
-    SAGE_EXTCODE,
     SAGE_VERSION,
 )
 
@@ -208,12 +207,13 @@ class SageKernelSpec:
             sage: spec._install_spec()
             sage: spec._symlink_resources()
         """
-        path = os.path.join(SAGE_EXTCODE, 'notebook-ipython')
+        path = os.path.join(os.path.dirname(__file__), 'kernel_spec')
         for filename in os.listdir(path):
-            self.symlink(
-                os.path.join(path, filename),
-                os.path.join(self.kernel_dir, filename)
-            )
+            if filename.startswith('logo'):
+                self.symlink(
+                    os.path.join(path, filename),
+                    os.path.join(self.kernel_dir, filename)
+                )
         self.symlink(
             SAGE_DOC,
             os.path.join(self.kernel_dir, 'doc')
