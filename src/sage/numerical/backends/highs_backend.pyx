@@ -56,8 +56,6 @@ cdef class HiGHSBackend(GenericBackend):
 
         # Initialize metadata
         self.prob_name = ""
-        self.col_name_var = {}
-        self.row_name_var = {}
         self.numcols = 0
         self.numrows = 0
         self.obj_constant_term = 0.0
@@ -240,11 +238,13 @@ cdef class HiGHSBackend(GenericBackend):
             if status != kHighsStatusOk:
                 raise MIPSolverException("HiGHS: Failed to set variable integrality")
 
-        # Set name if provided
-        if name is not None:
-            name_bytes = str(name).encode('utf-8')
-            Highs_passColName(self.highs, col_idx, name_bytes)
-            self.col_name_var[col_idx] = str(name)
+        # Set the column name, defaulting to x_N
+        if name is None:
+            name = f"x_{col_idx}"
+        name_bytes = str(name).encode('utf-8')
+        status = Highs_passColName(self.highs, col_idx, name_bytes)
+        if status != kHighsStatusOk:
+            raise MIPSolverException("HiGHS: Failed to set column name")
 
         return col_idx
 
@@ -364,11 +364,13 @@ cdef class HiGHSBackend(GenericBackend):
             if status != kHighsStatusOk:
                 raise MIPSolverException("HiGHS: Failed to set variable integrality")
 
-        # Set name if provided
-        if name is not None:
-            name_bytes = str(name).encode('utf-8')
-            Highs_passColName(self.highs, col_idx, name_bytes)
-            self.col_name_var[col_idx] = str(name)
+        # Set the column name, defaulting to x_N
+        if name is None:
+            name = f"x_{col_idx}"
+        name_bytes = str(name).encode('utf-8')
+        status = Highs_passColName(self.highs, col_idx, name_bytes)
+        if status != kHighsStatusOk:
+            raise MIPSolverException("HiGHS: Failed to set column name")
 
         return col_idx
 
@@ -465,9 +467,18 @@ cdef class HiGHSBackend(GenericBackend):
         model_status = Highs_getModelStatus(self.highs)
 
         if model_status == kHighsModelStatusOptimal:
-            return 0  # Success
+            # Success
+            return 0
         elif model_status == kHighsModelStatusModelEmpty:
-            return 0  # Empty model is trivially optimal
+            for r in range(self.nrows()):
+                # Even when there are no variables, there may be rows
+                # declaring bounds on the empty sum that make the problem
+                # infeasible even when the model is empty.
+                b = self.row_bounds(r)
+                if ( (b[0] is not None and b[0] > 0) or
+                     (b[1] is not None and b[1] < 0) ):
+                    raise MIPSolverException("HiGHS: Problem is infeasible")
+            return 0
         elif model_status == kHighsModelStatusInfeasible:
             raise MIPSolverException("HiGHS: Problem is infeasible")
         elif model_status == kHighsModelStatusUnbounded:
@@ -521,9 +532,14 @@ cdef class HiGHSBackend(GenericBackend):
             2.0
         """
         cdef double obj_value
-
         obj_value = Highs_getObjectiveValue(self.highs)
-        # HiGHS already includes the offset, so don't add it again
+
+        # HiGHS will omit the constant term from the objective
+        # function's value if the model is empty!
+        model_status = Highs_getModelStatus(self.highs)
+        if model_status == kHighsModelStatusModelEmpty:
+            return self.obj_constant_term
+
         return obj_value
 
     cpdef get_variable_value(self, int variable):
@@ -818,7 +834,7 @@ cdef class HiGHSBackend(GenericBackend):
             sage: p.add_linear_constraint([(0, 1), (1, 1)], None, 2.0)
         """
         cdef double lb, ub
-        cdef HighsInt num_nz
+        cdef HighsInt num_nz, row_idx
         cdef HighsInt* indices
         cdef double* values
         cdef HighsInt status
@@ -876,8 +892,11 @@ cdef class HiGHSBackend(GenericBackend):
 
         # Handle name
         if name is not None:
-            self.row_name_var[name] = self.numrows
-
+            name_bytes = str(name).encode('utf-8')
+            row_idx = self.numrows
+            status = Highs_passRowName(self.highs, row_idx, name_bytes)
+            if status != kHighsStatusOk:
+                raise MIPSolverException("HiGHS: Failed to set constraint name")
         self.numrows += 1
 
     cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
@@ -907,7 +926,7 @@ cdef class HiGHSBackend(GenericBackend):
         """
         cdef int i
         cdef double lb, ub
-        cdef HighsInt status
+        cdef HighsInt status, row_idx
 
         # Convert bounds
         if lower_bound is None:
@@ -932,7 +951,11 @@ cdef class HiGHSBackend(GenericBackend):
             if names is not None and i < len(names):
                 name = names[i]
                 if name is not None:
-                    self.row_name_var[name] = self.numrows
+                    name_bytes = str(name).encode('utf-8')
+                    row_idx = self.numrows
+                    status = Highs_passRowName(self.highs, row_idx, name_bytes)
+                    if status != kHighsStatusOk:
+                        raise MIPSolverException("HiGHS: Failed to set constraint name")
 
             self.numrows += 1
 
@@ -1504,8 +1527,23 @@ cdef class HiGHSBackend(GenericBackend):
             'x'
         """
         if index < 0 or index >= self.numcols:
-            raise ValueError(f"invalid column index {index}")
-        return self.col_name_var.get(index, f"x_{index}")
+            raise IndexError(f"invalid column index {index}")
+
+        cdef char* cn
+        cn = <char*> malloc((kHighsMaximumStringLength + 1) * sizeof(char))
+        if cn == NULL:
+            raise MemoryError("failed to allocate memory for column name")
+
+        cdef HighsInt status
+        status = Highs_getColName(self.highs, index, cn)
+        if status != kHighsStatusOk:
+            free(cn)
+            raise MIPSolverException("HiGHS: Failed to obtain column name")
+
+        result = cn.decode('utf-8')
+        free(cn)
+        return result
+
 
     cpdef col_bounds(self, int index):
         """
@@ -1803,12 +1841,29 @@ cdef class HiGHSBackend(GenericBackend):
         if index < 0 or index >= self.numrows:
             raise ValueError(f"invalid row index {index}")
 
-        # Search for name in dictionary
-        for name, idx in self.row_name_var.items():
-            if idx == index:
-                return str(name)
+        cdef char* rn
+        rn = <char*> malloc((kHighsMaximumStringLength + 1) * sizeof(char))
+        if rn == NULL:
+            raise MemoryError("failed to allocate memory for row name")
 
-        return f"constraint_{index}"
+        cdef HighsInt status
+        status = Highs_getRowName(self.highs, index, rn)
+        if status != kHighsStatusOk:
+            # HiGHS won't let you set the empty string as a row name,
+            # and it also doesn't return the empty string when the
+            # name is unset. This is somewhat at odds with what we
+            # expect in Sage. Reading the code, the only way the
+            # status can be "not OK" is if the index is bad; we
+            # already checked the index, so if we get here, the only
+            # reason is because this row has no name. Return the empty
+            # string by default.
+            free(rn)
+            return ""
+
+        result = rn.decode('utf-8')
+        free(rn)
+        return result
+
 
     cpdef solver_parameter(self, name, value=None):
         """
@@ -1867,6 +1922,12 @@ cdef class HiGHSBackend(GenericBackend):
         cdef double double_value
         cdef HighsInt bool_value
         cdef char* str_value
+
+        # Property name aliases, for parity with other backends
+        if name == "timelimit":
+            name = "time_limit"
+        elif name == "mip_gap_tolerance":
+            name = "mip_rel_gap"
 
         name_bytes = str(name).encode('utf-8')
 
@@ -2072,20 +2133,6 @@ cdef class HiGHSBackend(GenericBackend):
 
         self.numrows -= 1
 
-        # Update row name mapping
-        names_to_update = {}
-        names_to_remove = []
-        for name, row_idx in self.row_name_var.items():
-            if row_idx < i:
-                names_to_update[name] = row_idx
-            elif row_idx > i:
-                names_to_update[name] = row_idx - 1
-            else:
-                names_to_remove.append(name)
-
-        for name in names_to_remove:
-            del self.row_name_var[name]
-        self.row_name_var.update(names_to_update)
 
     cpdef remove_constraints(self, constraints):
         """
@@ -2718,11 +2765,11 @@ cdef class HiGHSBackend(GenericBackend):
 
             try:
                 status = Highs_writeModel(self.highs, temp_file)
-                if status != kHighsStatusOk:
+                if status not in [kHighsStatusOk, kHighsStatusWarning]:
                     raise MIPSolverException("HiGHS: Failed to write model for copy")
 
                 status = Highs_readModel(p.highs, temp_file)
-                if status != kHighsStatusOk:
+                if status not in [kHighsStatusOk, kHighsStatusWarning]:
                     raise MIPSolverException("HiGHS: Failed to read model for copy")
 
                 # Turn off logging for the copied model
@@ -2732,8 +2779,6 @@ cdef class HiGHSBackend(GenericBackend):
                     os.unlink(temp_file.decode('utf-8'))
 
         p.prob_name = self.prob_name
-        p.col_name_var = copy(self.col_name_var)
-        p.row_name_var = copy(self.row_name_var)
         p.numcols = self.numcols
         p.numrows = self.numrows
         p.obj_constant_term = self.obj_constant_term

@@ -47,19 +47,19 @@ class VoronoiDiagram(SageObject):
     Get the Voronoi diagram of a regular pentagon in ``AA^2``.
     All cells meet at the origin::
 
-        sage: DV = VoronoiDiagram([[AA(c) for c in v]                                   # needs sage.rings.number_field
+        sage: DV = VoronoiDiagram([[AA(c) for c in v]
         ....:                      for v in polytopes.regular_polygon(5).vertices_list()]); DV
         The Voronoi diagram of 5 points of dimension 2 in the Algebraic Real Field
-        sage: all(P.contains([0, 0]) for P in DV.regions().values())                    # needs sage.rings.number_field
+        sage: all(P.contains([0, 0]) for P in DV.regions().values())
         True
-        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())           # needs sage.rings.number_field
+        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())
         False
 
     If the vertices are not converted to ``AA`` before, the method throws an error::
 
-        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()                   # needs sage.groups sage.rings.number_field
+        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())                  # needs sage.groups sage.rings.number_field
+        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())
         Traceback (most recent call last):
         ...
         NotImplementedError: Base ring of the Voronoi diagram must be
@@ -227,7 +227,7 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V        # needs sage.rings.number_field
+            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V
             The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
             sage: VoronoiDiagram([])
             The empty Voronoi diagram.
@@ -273,7 +273,7 @@ class VoronoiDiagram(SageObject):
         Trying to plot a Voronoi diagram of dimension other than 2 gives an
         error::
 
-            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()                         # needs sage.plot
+            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()
             Traceback (most recent call last):
             ...
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not

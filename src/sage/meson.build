@@ -2,8 +2,8 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
-conf_data.set('EDITABLE_SRC', root)
-conf_data.set('EDITABLE_BUILD', root_build)
+conf_data.set('MESON_SOURCE_ROOT', meson.global_source_root())
+conf_data.set('MESON_BUILD_ROOT', meson.global_build_root())
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
@@ -32,10 +32,6 @@ conf_data.set_quoted('SAGE_THREEJS_DIR', threejs_dir)
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
-ecl_config = find_program('ecl-config', required: false)
-if ecl_config.found()
-  conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
-endif
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
@@ -107,7 +103,6 @@ py.install_sources(
   'all.py',
   'all_cmdline.py',
   'all_test.py',
-  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',

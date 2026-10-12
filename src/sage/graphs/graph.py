@@ -1044,6 +1044,23 @@ class Graph(GenericGraph):
             {0: 'foo'}
             sage: Graph(g).get_vertices()
             {0: 'foo'}
+
+        Check that vertex attributes are properly set (:issue:`42841`)::
+
+            sage: G = Graph(2)
+            sage: G.get_vertices()
+            {0: None, 1: None}
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = Graph(G)
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: G.get_vertices()
+            {0: 'abc', 1: None}
+            sage: H = Graph(G)
+            sage: H.get_vertices()
+            {0: 'abc', 1: None}
         """
         GenericGraph.__init__(self)
 
@@ -1211,7 +1228,8 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
 
         elif format == 'NX':
@@ -1543,7 +1561,11 @@ class Graph(GenericGraph):
     # Properties
 
     @doc_index("Graph properties")
-    def is_tree(self, certificate=False, output='vertex'):
+    def is_tree(
+        self,
+        certificate=False,
+        output='vertex'
+    ) -> bool | tuple[bool, list | None]:
         r"""
         Test if the graph is a tree.
 
@@ -1703,7 +1725,7 @@ class Graph(GenericGraph):
         return self.order() == self.size() + 1
 
     @doc_index("Graph properties")
-    def is_forest(self, certificate=False, output='vertex'):
+    def is_forest(self, certificate: bool = False, output='vertex'):
         """
         Test if the graph is a forest, i.e. a disjoint union of trees.
 
@@ -1753,7 +1775,7 @@ class Graph(GenericGraph):
                 return (False, cycle)
 
     @doc_index("Graph properties")
-    def is_cactus(self):
+    def is_cactus(self) -> bool:
         """
         Check whether the graph is cactus graph.
 
@@ -1824,7 +1846,7 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_block_graph(self):
+    def is_block_graph(self) -> bool:
         r"""
         Return whether this graph is a block graph.
 
@@ -1865,7 +1887,7 @@ class Graph(GenericGraph):
         return all(self.is_clique(vertices=block) for block in B)
 
     @doc_index("Graph properties")
-    def is_cograph(self):
+    def is_cograph(self) -> bool:
         """
         Check whether the graph is cograph.
 
@@ -1909,7 +1931,7 @@ class Graph(GenericGraph):
         return self.subgraph_search(P4, induced=True) is None
 
     @doc_index("Graph properties")
-    def is_apex(self):
+    def is_apex(self) -> bool:
         r"""
         Test if the graph is apex.
 
@@ -2167,7 +2189,7 @@ class Graph(GenericGraph):
         return list(apex)
 
     @doc_index("Graph properties")
-    def is_overfull(self):
+    def is_overfull(self) -> bool:
         r"""
         Test whether the current graph is overfull.
 
@@ -2265,7 +2287,7 @@ class Graph(GenericGraph):
             2 * self.size() > max(self.degree()) * (self.order() - 1))
 
     @doc_index("Graph properties")
-    def is_even_hole_free(self, certificate=False):
+    def is_even_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced even hole.
 
@@ -2364,7 +2386,7 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_odd_hole_free(self, certificate=False):
+    def is_odd_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced odd hole.
 
@@ -2435,7 +2457,11 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_triangle_free(self, algorithm='dense_graph', certificate=False):
+    def is_triangle_free(
+        self,
+        algorithm: str = 'dense_graph',
+        certificate: bool = False
+    ) -> bool | tuple[bool, list]:
         r"""
         Check whether ``self`` is triangle-free.
 
@@ -2557,7 +2583,7 @@ class Graph(GenericGraph):
         raise ValueError("Algorithm '%s' not yet implemented. Please contribute." % (algorithm))
 
     @doc_index("Graph properties")
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if the graph is a Split graph, ``False`` otherwise.
 
@@ -2744,7 +2770,7 @@ class Graph(GenericGraph):
         return self_complement.is_odd_hole_free(certificate=certificate)
 
     @doc_index("Graph properties")
-    def is_edge_transitive(self):
+    def is_edge_transitive(self) -> bool:
         r"""
         Check if ``self`` is an edge transitive graph.
 
@@ -2789,7 +2815,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnSets) == self.size()
 
     @doc_index("Graph properties")
-    def is_arc_transitive(self):
+    def is_arc_transitive(self) -> bool:
         r"""
         Check if ``self`` is an arc-transitive graph.
 
@@ -2829,7 +2855,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnTuples) == 2*self.size()
 
     @doc_index("Graph properties")
-    def is_half_transitive(self):
+    def is_half_transitive(self) -> bool:
         """
         Check if ``self`` is a half-transitive graph.
 
@@ -2866,7 +2892,7 @@ class Graph(GenericGraph):
                 not self.is_arc_transitive())
 
     @doc_index("Graph properties")
-    def is_semi_symmetric(self):
+    def is_semi_symmetric(self) -> bool:
         """
         Check if ``self`` is semi-symmetric.
 
@@ -2909,7 +2935,7 @@ class Graph(GenericGraph):
                 self.is_vertex_transitive())
 
     @doc_index("Graph properties")
-    def is_path(self):
+    def is_path(self) -> bool:
         r"""
         Check whether ``self`` is a path.
 
@@ -2962,7 +2988,7 @@ class Graph(GenericGraph):
         return deg_one_counter == 2 and seen_counter == order
 
     @doc_index("Graph properties")
-    def is_chordal_bipartite(self, certificate=False):
+    def is_chordal_bipartite(self, certificate=False) -> bool | tuple:
         r"""
         Check whether the given graph is chordal bipartite.
 
@@ -3204,6 +3230,7 @@ class Graph(GenericGraph):
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
+                                    immutable=None,
                                     *, integrality_tolerance=1e-3):
         r"""
         Return a degree-constrained subgraph.
@@ -3236,6 +3263,10 @@ class Graph(GenericGraph):
         - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its degree constrained subgraph will behave the same way.
+
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
@@ -3263,6 +3294,23 @@ class Graph(GenericGraph):
             sage: m = g.degree_constrained_subgraph(bounds=bounds)                      # needs sage.numerical.mip
             sage: m.size()                                                              # needs sage.numerical.mip
             3
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: bounds = lambda x: [1,1]
+            sage: g = graphs.CycleGraph(4)
+            sage: g.degree_constrained_subgraph(bounds=bounds).is_immutable()
+            False
+            sage: g.degree_constrained_subgraph(bounds=bounds, immutable=True).is_immutable()
+            True
+            sage: g = graphs.CycleGraph(4, immutable=True)
+            sage: g.degree_constrained_subgraph(bounds=bounds).is_immutable()
+            True
+            sage: g.degree_constrained_subgraph(bounds=bounds, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple()
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
@@ -3299,10 +3347,12 @@ class Graph(GenericGraph):
         except MIPSolverException:
             return False
 
-        g = copy(self)
+        g = self.copy(immutable=False)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         g.delete_edges(e for e in g.edge_iterator(labels=False) if not b[frozenset(e)])
-        return g
+        if immutable is None:
+            immutable = self.is_immutable()
+        return g.copy(immutable=True) if immutable else g
 
     # Coloring
 
@@ -3778,11 +3828,11 @@ class Graph(GenericGraph):
 
         # Dict to store parent of each vertex in disjoint-set forest
         # representing components of current induced subgraph.
-        dsf = {v: None for v in self.vertices()}
+        dsf = dict.fromkeys(self.vertices())
 
         # Dict to store size of tree rooted at each vertex.
         if weights is None:
-            sizes = {v: 1 for v in self.vertices()}
+            sizes = dict.fromkeys(self.vertices(), 1)
         else:
             sizes = dict(weights)
 
@@ -5433,7 +5483,7 @@ class Graph(GenericGraph):
     # Constructors
 
     @doc_index("Basic methods")
-    def to_directed(self, data_structure=None, sparse=None):
+    def to_directed(self, data_structure=None, sparse=None, immutable=None):
         """
         Return a directed version of the graph.
 
@@ -5449,6 +5499,19 @@ class Graph(GenericGraph):
           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
           alias for ``data_structure="dense"``.
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable digraph. Only used when ``data_structure=None``.
+
+          * ``immutable=None`` (default) means that the graph and its directed
+            version will behave the same way.
+
+          * ``immutable=True`` is a shortcut for
+            ``data_structure='static_sparse'``
+
+          * ``immutable=False`` means that the created digraph is mutable. When
+            used with an immutable graph, the data structure used is
+            ``'sparse'`` unless anything else is specified.
+
         EXAMPLES::
 
             sage: graphs.PetersenGraph().to_directed()
@@ -5456,10 +5519,31 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        Immutable graphs yield immutable graphs::
+        Immutable graphs yield immutable graphs by default::
 
             sage: Graph([[1, 2]], immutable=True).to_directed()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([[1, 2]], immutable=False)
+            sage: G.to_directed().is_immutable()
+            False
+            sage: G.to_directed(immutable=True).is_immutable()
+            True
+            sage: G.to_directed(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_directed(data_structure='sparse', immutable=True).is_immutable()
+            False
+            sage: G = Graph([[1, 2]], immutable=True)
+            sage: G.to_directed().is_immutable()
+            True
+            sage: G.to_directed(immutable=False).is_immutable()
+            False
+            sage: G.to_directed(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_directed(data_structure='sparse', immutable=True).is_immutable()
+            False
 
         :issue:`17005`::
 
@@ -5490,20 +5574,45 @@ class Graph(GenericGraph):
         from itertools import chain
         edges = chain(self.edge_iterator(),
                       ((v, u, l) for u, v, l in self.edge_iterator()))
+        if data_structure is not None:
+            # parameter immutable is not used when data_structure is not None
+            immutable = None
         return _initialize_digraph(self, edges, name=self.name(),
-                                   data_structure=data_structure, sparse=sparse)
+                                   data_structure=data_structure, sparse=sparse,
+                                   immutable=immutable)
 
     @doc_index("Basic methods")
-    def to_undirected(self):
+    def to_undirected(self, immutable=None):
         """
         Since the graph is already undirected, simply returns a copy of itself.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and the returned copy behave the same way.
 
         EXAMPLES::
 
             sage: graphs.PetersenGraph().to_undirected()
             Petersen graph: Graph on 10 vertices
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph(1, immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G = Graph(1, immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
         """
-        return self.copy()
+        return self.copy(immutable=immutable)
 
     @doc_index("Basic methods")
     def join(self, other, labels='pairs', immutable=None):
@@ -5798,7 +5907,8 @@ class Graph(GenericGraph):
         f.close()
 
     @doc_index("Algorithmically hard stuff")
-    def topological_minor(self, H, vertices=False, paths=False, solver=None, verbose=0,
+    def topological_minor(self, H, vertices=False, paths=False, solver=None,
+                          verbose=0, immutable=None,
                           *, integrality_tolerance=1e-3):
         r"""
         Return a topological `H`-minor from ``self`` if one exists.
@@ -5824,6 +5934,10 @@ class Graph(GenericGraph):
 
         - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its topological minor will behave the same way.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -5877,6 +5991,23 @@ class Graph(GenericGraph):
             sage: g = graphs.RandomGNP(15,.3)
             sage: g = g.subgraph(edges=g.min_spanning_tree())
             sage: g.topological_minor(graphs.CycleGraph(3))                             # needs sage.numerical.mip
+            False
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: g = graphs.PetersenGraph()
+            sage: g.topological_minor(K4).is_immutable()
+            False
+            sage: g.topological_minor(K4,immutable=True).is_immutable()
+            True
+            sage: g = graphs.PetersenGraph(immutable=True)
+            sage: g.topological_minor(K4).is_immutable()
+            True
+            sage: g.topological_minor(K4, immutable=False).is_immutable()
             False
         """
         self._scream_if_not_simple()
@@ -6021,7 +6152,9 @@ class Graph(GenericGraph):
                         minor.set_vertex(g, h)
                         break
 
-        return minor
+        if immutable is None:
+            immutable = self.is_immutable()
+        return minor.copy(immutable=True) if immutable else minor
 
     # Cliques
 
@@ -7347,7 +7480,7 @@ class Graph(GenericGraph):
             if k is not None:
                 return ([], list(self)) if not k else (list(self), [])
             if with_labels:
-                return {u: 0 for u in self}
+                return dict.fromkeys(self, 0)
             return [0]*self.order()
 
         # Compute the degrees of each vertex and set up initial guesses for core
@@ -7435,7 +7568,7 @@ class Graph(GenericGraph):
         return list(core.values())
 
     @doc_index("Modules")
-    def is_module(self, vertices):
+    def is_module(self, vertices) -> bool:
         r"""
         Check whether ``vertices`` is a module of ``self``.
 
@@ -8056,6 +8189,7 @@ class Graph(GenericGraph):
 
     @doc_index("Connectivity, orientations, trees")
     def gomory_hu_tree(self, algorithm=None, solver=None, verbose=0,
+                       immutable=None,
                        *, integrality_tolerance=1e-3):
         r"""
         Return a Gomory-Hu tree of ``self``.
@@ -8092,6 +8226,10 @@ class Graph(GenericGraph):
           verbosity. Set to 0 by default, which means quiet.
 
           Only useful when ``algorithm == "LP"``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and Gomory-Hu tree will behave the same way.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -8172,10 +8310,23 @@ class Graph(GenericGraph):
             sage: T = G.gomory_hu_tree()
             sage: from itertools import combinations
             sage: for u,v in combinations(G,2):
-            ....:     assert T.flow(u,v,use_edge_labels=True) == G.flow(u,v,use_edge_labels=True)
+            ....:     assert T.flow(u,v,by_weight=True) == G.flow(u,v,by_weight=True)
 
             sage: graphs.EmptyGraph().gomory_hu_tree()
             Graph on 0 vertices
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.HouseGraph()
+            sage: G.gomory_hu_tree().is_immutable()
+            False
+            sage: G.gomory_hu_tree(immutable=True).is_immutable()
+            True
+            sage: G = graphs.HouseGraph(immutable=True)
+            sage: G.gomory_hu_tree().is_immutable()
+            True
+            sage: G.gomory_hu_tree(immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple()
 
@@ -8222,7 +8373,7 @@ class Graph(GenericGraph):
             # Compute a uv min-edge-cut.
             #
             # The graph is split into U,V with u \in U and v\in V.
-            flow, edges, [U, V] = G.edge_cut(u, v, use_edge_labels=True,
+            flow, edges, [U, V] = G.edge_cut(u, v, by_weight=True,
                                              vertices=True, algorithm=algorithm,
                                              solver=solver, verbose=verbose,
                                              integrality_tolerance=integrality_tolerance)
@@ -8262,7 +8413,9 @@ class Graph(GenericGraph):
                 stack.append((gX, vertices & frozenset(gX)))
 
         # Finally return the Gomory-Hu tree
-        return T
+        if immutable is None:
+            immutable = self.is_immutable()
+        return T.copy(immutable=True) if immutable else T
 
     @doc_index("Leftovers")
     def two_factor_petersen(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -9602,6 +9755,7 @@ class Graph(GenericGraph):
         minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
         dictionary from :meth:`~Graph.minor`::
 
+            sage: # long time
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
             sage: is_planar, minor_map = K44.is_projective_planar(return_map=True)
             sage: is_planar

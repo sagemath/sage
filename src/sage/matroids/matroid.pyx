@@ -7767,6 +7767,14 @@ cdef class Matroid(SageObject):
             sage: Matroid(matrix([])).partition()
             []
 
+        TESTS:
+
+        Check that :issue:`42816` is fixed::
+
+            sage: M = Matroid(groundset=[0,1,2,3], bases=[(0,3),(1,3),(2,3)])
+            sage: set.union(*M.partition()) == M.groundset()
+            True
+
         ALGORITHM:
 
         Reduce partition to a matroid intersection between a matroid sum
@@ -7783,27 +7791,30 @@ cdef class Matroid(SageObject):
         r = self.rank()
         hi = - (-n // r)
         lo = hi
-        X = set()
+
         # doubling step
         while True:
             p = PartitionMatroid([[(i, x) for i in range(hi)] for x in self.groundset()])
             X = MatroidSum([self] * hi)._intersection_unweighted(p)
-            if len(X) == self.size():
+            if len(X) == n:
+                solution = X
                 break
             lo = hi
             hi = min(hi * 2, n)
+
         # binary search step
         while lo < hi:
             mid = (lo+hi)//2
             p = PartitionMatroid([[(i, x) for i in range(mid)] for x in self.groundset()])
             X = MatroidSum([self] * mid)._intersection_unweighted(p)
-            if len(X) != self.size():
+            if len(X) != n:
                 lo = mid + 1
             else:
                 hi = mid
+                solution = X
 
         partition = {}
-        for i, x in X:
+        for i, x in solution:
             if i not in partition:
                 partition[i] = set()
             partition[i].add(x)

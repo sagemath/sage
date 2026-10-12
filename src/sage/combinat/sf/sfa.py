@@ -3339,9 +3339,21 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         `f \left[ g \right]` or by `f \circ g`. It is an algebra map
         in `f`, but not (generally) in `g`.
 
-        By default, the degree one elements are taken to be the
-        generators for the ``self``'s base ring. This setting can be
-        modified by specifying the ``include`` and ``exclude`` keywords.
+        By default, the degree one elements are taken to be the variables
+        returned by ``variable_names_recursive`` on the base ring of
+        ``self``.  If the base ring does not implement this method, there
+        are no default degree one elements.  This setting can be modified
+        by specifying the ``include`` and ``exclude`` keywords.
+
+        In particular, algebraic or symbolic elements are not inferred to
+        be degree one variables::
+
+            sage: p = SymmetricFunctions(QQbar).p()
+            sage: p[2](QQbar(sqrt(-1)))
+            I
+            sage: p = SymmetricFunctions(SR).p()
+            sage: p[2](SR("x") * p[2])
+            x*p[4]
 
         INPUT:
 
@@ -3504,6 +3516,27 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(T).s()
             sage: s[2](5)
             15*B[] # B[]
+
+        Infinite polynomial rings do not have a finite collection of
+        variables and therefore have no default degree one elements
+        (:issue:`42687`)::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: p = SymmetricFunctions(R).p()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: (a[0] * p[2])(s[2])
+            a_0*s[2, 2] - a_0*s[3, 1] + a_0*s[4]
+            sage: p[2]((a[0] + a[7]) * p[1])
+            (a_7+a_0)*p[2]
+            sage: p[2].plethysm((a[0] + a[7]) * p[1], include=[a[0], a[7]])
+            (a_7^2+a_0^2)*p[2]
+
+        This also works for the sparse implementation::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ, implementation='sparse')
+            sage: p = SymmetricFunctions(R).p()
+            sage: (a[0] * p[2])(s[2])
+            a_0*s[2, 2] - a_0*s[3, 1] + a_0*s[4]
 
         .. TODO::
 
@@ -6811,7 +6844,8 @@ def _variables_recursive(R, include=None, exclude=None):
     If ``include`` is specified, only these variables are returned
     as elements of ``R``.  Otherwise, all variables in ``R``
     (recursively) with the exception of those in ``exclude`` are
-    returned.
+    returned.  If ``R`` does not implement ``variable_names_recursive``,
+    return an empty list.
 
     EXAMPLES::
 
@@ -6826,6 +6860,10 @@ def _variables_recursive(R, include=None, exclude=None):
 
         sage: _variables_recursive(S, include=[b])
         [b]
+
+        sage: A.<x> = InfinitePolynomialRing(QQ)
+        sage: _variables_recursive(A)
+        []
 
     TESTS::
 
@@ -6842,12 +6880,11 @@ def _variables_recursive(R, include=None, exclude=None):
         degree_one = [R(g) for g in include]
     else:
         try:
-            degree_one = [R(g) for g in R.variable_names_recursive()]
+            variable_names_recursive = R.variable_names_recursive
         except AttributeError:
-            try:
-                degree_one = R.gens()
-            except (NotImplementedError, AttributeError):
-                degree_one = []
+            degree_one = []
+        else:
+            degree_one = [R(g) for g in variable_names_recursive()]
         if exclude is not None:
             degree_one = [g for g in degree_one if g not in exclude]
 

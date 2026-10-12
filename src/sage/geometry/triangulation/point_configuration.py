@@ -61,7 +61,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)                                                       # needs sage.plot
+    sage: t.plot(axes=False)
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -91,7 +91,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1], [0,0,1], [0,1,0], [1,-1,-1], [1,0,1], [1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)                                                 # needs sage.plot
+    sage: triang.plot(axes=False)
     Graphics3d Object
 
 .. PLOT::
@@ -116,7 +116,7 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     16
     sage: len(nonregular)
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                          # needs sage.plot
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -1126,10 +1126,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: pyramid = PointConfiguration([[1,0,0], [0,1,1], [0,1,-1],
             ....:                               [0,-1,-1], [0,-1,1]])
-            sage: G = pyramid.restricted_automorphism_group()                      # needs sage.graphs sage.groups
-            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])         # needs sage.graphs sage.groups
+            sage: G = pyramid.restricted_automorphism_group()
+            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])
             True
-            sage: DihedralGroup(4).is_isomorphic(G)                                # needs sage.graphs sage.groups
+            sage: DihedralGroup(4).is_isomorphic(G)
             True
 
         The square with an off-center point in the middle. Note that
@@ -1137,9 +1137,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `D_4` of the convex hull::
 
             sage: square = PointConfiguration([(3/4,3/4), (1,1), (1,-1), (-1,-1), (-1,1)])
-            sage: square.restricted_automorphism_group()                           # needs sage.graphs sage.groups
+            sage: square.restricted_automorphism_group()
             Permutation Group with generators [(3,5)]
-            sage: DihedralGroup(1).is_isomorphic(_)                                # needs sage.graphs sage.groups
+            sage: DihedralGroup(1).is_isomorphic(_)
             True
         """
         v_list = [ vector(p.projective()) for p in self ]
@@ -1527,9 +1527,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                            # needs sage.plot
+            sage: Tpos.plot(axes=False)
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)                                            # needs sage.plot
+            sage: Tneg.plot(axes=False)
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1544,7 +1544,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                            # needs sage.plot
+            sage: Tpos.plot(axes=False)
             Graphics3d Object
         """
         flips = []
@@ -2238,7 +2238,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([[0,0], [0,1], [1,0], [1,1], [-1,-1]])
-            sage: p.plot(axes=False)                                                    # needs sage.plot
+            sage: p.plot(axes=False)
             Graphics object consisting of 5 graphics primitives
 
         .. PLOT::
