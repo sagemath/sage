@@ -417,7 +417,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         sage: QQ(float(1.5))
         3/2
         sage: QQ(RDF(1.2))
-        6/5
+        5404319552844595/4503599627370496
 
     Conversion from fractions::
 
@@ -653,7 +653,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             mpq_set(self.value, temp_rational.value)
 
         elif isinstance(x, (float, sage.rings.real_double.RealDoubleElement)):
-            self.__set_value(sage.rings.real_mpfr.RealNumber(sage.rings.real_mpfr.RR, x), base)
+            self.__set_value(x.as_integer_ratio(), base)
 
         elif is_numpy_type(type(x)):
             import numpy

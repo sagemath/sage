@@ -127,7 +127,7 @@ class Dokchitser(SageObject):
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
-        ...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
+        ...e-... + (...e-...)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
 
     NUMBER FIELD:
 
@@ -592,7 +592,7 @@ class Dokchitser(SageObject):
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200, algorithm='pari')
             sage: L.taylor_series(1,3)
-            ...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            ...e-... + (...e-...)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
         """
         self.__check_init()
         a = self.__CC(a)

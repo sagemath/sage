@@ -548,7 +548,6 @@ cdef extern from "pynac_wrap.h":
         mpq_ptr py_mpq_from_rational(x)
 
         py_float(a, PyObject* kwds)
-        py_RDF_from_double(double x)
 
         py_factorial(x)
         py_doublefactorial(x)
