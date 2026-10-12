@@ -148,8 +148,7 @@ Deprecation checks::
     sage: pari.poltchebi(10)
     doctest:...: DeprecationWarning: the PARI/GP function poltchebi is obsolete (2013-04-03)
     512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1
-    sage: pari("x^3 + 1").polsturm(-1, 1)
-    doctest:...: DeprecationWarning: argument 2 of the PARI/GP function polsturm is undocumented and deprecated
+    sage: pari("x^3 + 1").polsturm([-1, 1])
     1
     sage: x = pari('10^100')
     sage: x.Str().length()

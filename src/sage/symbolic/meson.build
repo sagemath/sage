@@ -125,7 +125,6 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/symbolic',
     install: true,
     override_options: ['cython_language=cpp'],
-    cpp_args: '-std=c++11',
     include_directories: [
       inc_cpython,
       inc_ext,

@@ -222,7 +222,6 @@ import inspect
 import html
 import requests
 from json.decoder import JSONDecodeError
-import itertools
 
 # Combinatorial collections
 from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix, AlternatingSignMatrices

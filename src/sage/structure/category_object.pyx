@@ -212,14 +212,13 @@ cdef class CategoryObject(SageObject):
         EXAMPLES::
 
             sage: ZZ.categories()
-            [Join of Category of Dedekind domains
-                 and Category of euclidean domains
+            [Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
-             Category of Dedekind domains,
              Category of euclidean domains,
              Category of principal ideal domains,
+             Category of Dedekind domains,
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,

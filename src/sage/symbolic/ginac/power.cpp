@@ -436,8 +436,8 @@ ex power::eval(int level) const
 		if (eexponent.is_positive()) {
 			if (basis_inf.is_unsigned_infinity())
 				return UnsignedInfinity;
-			
-				return mul(pow(basis_inf.get_direction(), eexponent), Infinity);
+
+			return mul(pow(basis_inf.get_direction(), eexponent), Infinity);
                 }
 		throw(std::domain_error("power::eval(): pow(Infinity, c)"
 					" for constant of undetermined sign is not defined."));
@@ -455,8 +455,8 @@ ex power::eval(int level) const
 		if (abs_base > _ex1) {
 			if (ebasis.is_positive())
 				return Infinity;
-			
-				return UnsignedInfinity;
+
+			return UnsignedInfinity;
                         }
 		if (abs_base < _ex1) return _ex0;
 		if (abs_base == _ex1)
@@ -895,8 +895,8 @@ int power::compare_same_type(const basic & other) const
 	int cmpval = basis.compare(o.basis);
 	if (cmpval != 0)
 		return cmpval;
-	
-		return exponent.compare(o.exponent);
+
+	return exponent.compare(o.exponent);
 }
 
 unsigned power::return_type() const
@@ -1008,24 +1008,27 @@ ex power::expand(unsigned options) const
 	
 	// (x+y)^n
 	if (is_exactly_a<add>(expanded_basis)) {
-                if (int_exponent == 1)
-                        return expanded_basis;
-                if ((options & expand_options::expand_only_numerators) == 0 and
-                        int_exponent == -1)
-                        return dynallocate<power>(expanded_basis, _ex_1).
-                             setflag(status_flags::expanded|status_flags::evaluated);
-                if ((options & expand_options::expand_only_numerators) != 0 and
-                        int_exponent < 0)
-                        return this->hold();
-                if (int_exponent >= 0 or
-                        (options & expand_options::expand_only_numerators) != 0)
-		        return expand_add(ex_to<add>(expanded_basis),
-                                        int_exponent, options);
-                
-                        return dynallocate<power>(expand_add(ex_to<add>(expanded_basis),
-                                        -int_exponent, options), _ex_1).
-                        setflag(status_flags::expanded|status_flags::evaluated);
-        }
+		if (int_exponent == 1) {
+			return expanded_basis;
+		}
+		if ((options & expand_options::expand_only_numerators) == 0 and
+		    int_exponent == -1) {
+			return dynallocate<power>(expanded_basis, _ex_1).
+			       setflag(status_flags::expanded|status_flags::evaluated);
+		}
+		if ((options & expand_options::expand_only_numerators) != 0 and
+		    int_exponent < 0) {
+			return this->hold();
+		}
+		if (int_exponent >= 0 or
+		    (options & expand_options::expand_only_numerators) != 0)
+			return expand_add(ex_to<add>(expanded_basis),
+			                  int_exponent, options);
+
+		return dynallocate<power>(expand_add(ex_to<add>(expanded_basis),
+		                          -int_exponent, options), _ex_1).
+		       setflag(status_flags::expanded|status_flags::evaluated);
+	}
 	
 	// (x*y)^n -> x^n * y^n
 	if (is_exactly_a<mul>(expanded_basis))
@@ -1034,8 +1037,8 @@ ex power::expand(unsigned options) const
 	// cannot expand further
 	if (are_ex_trivially_equal(basis,expanded_basis) && are_ex_trivially_equal(exponent,expanded_exponent))
 		return this->hold();
-	
-		return (new power(expanded_basis,expanded_exponent))->setflag(status_flags::dynallocated | (options == 0 ? status_flags::expanded : 0));
+
+	return (new power(expanded_basis,expanded_exponent))->setflag(status_flags::dynallocated | (options == 0 ? status_flags::expanded : 0));
 }
 
 //////////

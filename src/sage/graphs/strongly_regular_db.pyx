@@ -1502,7 +1502,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t                        # needs sage.rings.finite_rings
         (<...is_twograph_descendant_of_srg...>, 8, 2)
         sage: g = t[0](*t[1:]); g                                                       # needs sage.rings.finite_rings
-        descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
+        descendant of complement(Johnson graph with parameters 8,2) at (0, 1): Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
         (27, 10, 1, 5)
         sage: t = is_twograph_descendant_of_srg(5,5,5,5); t
@@ -2081,7 +2081,8 @@ def SRG_176_49_12_14(immutable=False):
             continue
         if (aut.order() == 2 and
                 all(i in aut(i) for i in d.ground_set())):
-            return Graph(((u, v) for u in d.ground_set() for v in aut(u)),
+            return Graph(((u, v) for u in d.ground_set() for v in aut(u)
+                          if u != v),
                          format='list_of_edges', loops=False,
                          name='Higman symmetric 2-design', immutable=immutable)
 

@@ -301,11 +301,11 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             warn("Note: `_normalisation_factor_zz` has not been properly "
                  "implemented for non-spherical distributions.")
             import itertools
-            from sage.functions.log import log
             basis = self.B.LLL()
             base = vector(ZZ, [v.round() for v in basis.solve_left(self._c)])
             # BOUND is the largest integer such that |coords| <= 10^4
-            # However, this might still drift from true value for larger lattices
+            # However, this might still drift from true value for
+            # larger lattices
             # So optimally one should fix the TODO above
             BOUND = max(1, (self._RR(10**(4 / self.n)).ceil() - 1) // 2)
             BOUND = min(BOUND, 10)
