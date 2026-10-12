@@ -1830,8 +1830,8 @@ def clean_rfv_dict(rfv_dictionary) -> None:
         sage: clean_rfv_dict(rfv_dict)
         sage: len(rfv_dict)
         4
-        sage: rfv_dict
-        {(1, 3): [3, 2], (2, 1): [4, 6], (3, 0): [6, 6], (5, 4): [3, 6]}
+        sage: rfv_dict == {(1, 3): [3, 2], (2, 1): [4, 6], (3, 0): [6, 6], (5, 4): [3, 6]}
+        True
     """
     for a, val in list(rfv_dictionary.items()):
         if 1 in val:
