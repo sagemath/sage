@@ -8579,7 +8579,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
         G = DiGraph(pdict, format='dict_of_lists')
-        a = {e: 0 for e in G.edge_iterator(labels=False)}
+        a = dict.fromkeys(G.edge_iterator(labels=False), 0)
         for i in self:
             a[((0, i), (1, i))] = 1
         return (G, a)

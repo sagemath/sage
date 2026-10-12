@@ -300,7 +300,7 @@ class AbsoluteOrderFactory(OrderFactory):
             if module_rep.rank() != K.degree():
                 raise ValueError("the module defining an absolute order must have full rank")
 
-        return (K, module_rep), {"is_maximal": is_maximal, "is_maximal_at": {p: True for p in is_maximal_at}}
+        return (K, module_rep), {"is_maximal": is_maximal, "is_maximal_at": dict.fromkeys(is_maximal_at, True)}
 
     def create_object(self, version, key, is_maximal=None, is_maximal_at=()):
         r"""
@@ -398,7 +398,7 @@ class RelativeOrderFactory(OrderFactory):
         they are applied to the underlying absolute order, they then get
         pickled when the underlying order is pickled.
         """
-        return (K, absolute_order), {"is_maximal": is_maximal, "is_maximal_at": {p: True for p in is_maximal_at}}
+        return (K, absolute_order), {"is_maximal": is_maximal, "is_maximal_at": dict.fromkeys(is_maximal_at, True)}
 
     def create_object(self, version, key, is_maximal=None, is_maximal_at=()):
         r"""
