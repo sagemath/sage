@@ -3765,13 +3765,29 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         [-2/3*x^3 + x^2 - 2/3*x + 1, 6/13*x^3 - x^2 + 6/13*x, 8/39*x^3 + 8/39*x]
         sage: [[bi % mj for mj in mods] for bi in b]
         [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+
+    TESTS:
+
+    Moduli that are not pairwise coprime, but where the first one is
+    coprime to the others::
+
+        sage: b, coprime = CRT_basis([14, 33, 9], require_coprime_moduli=False)
+        sage: len(b), coprime
+        (3, False)
+        sage: CRT_vectors([[5], [15], [3]], [14, 33, 9])
+        [1335]
+
+    Python integers as moduli::
+
+        sage: CRT_vectors([[1, 2], [7, 2]], [int(10), int(4)])
+        [11, 2]
     """
     n = len(moduli)
     if n == 0:
         return []
-    cs = []
     try:
         M = prod(moduli)
+        cs = []
         for m in moduli:
             Mm = M // m
             d, _, v = xgcd(m, Mm)
@@ -3785,6 +3801,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
     except ValueError:
         if require_coprime_moduli:
             raise
+        from sage.arith.functions import lcm
         e = [1]
         M_i = moduli[0]
         for i in range(1, n):
@@ -3792,11 +3809,11 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
             d_i = gcd(M_i, m_i)
             e_i = CRT(0, 1, M_i // d_i, m_i // d_i)
             e.append(e_i)
-            M_i = M_i.lcm(m_i)
+            M_i = lcm(M_i, m_i)
         partial_prod_table = [1]
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
-        cs.extend(e[i] * partial_prod_table[-i - 1] for i in range(n))
+        cs = [e[i] * partial_prod_table[-i - 1] for i in range(n)]
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
