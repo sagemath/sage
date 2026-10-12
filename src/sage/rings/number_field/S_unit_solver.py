@@ -2007,7 +2007,8 @@ def construct_comp_exp_vec(rfv_to_ev_dict, q) -> dict:
         ....:                   (3, 3): [(3, 2)], (5, 3): [(5, 0)], (4, 6): [(2, 1)],
         ....:                   (3, 4): [(3, 5)], (4, 3): [(0, 5)], (5, 2): [(3, 1)],
         ....:                   (2, 4): [(2, 0)]}
-        sage: construct_comp_exp_vec(rfv_to_ev_dict, 7)
+        sage: d = construct_comp_exp_vec(rfv_to_ev_dict, 7)
+        sage: dict(sorted(d.items()))
         {(0, 1): [(1, 4)],
          (0, 2): [(0, 2)],
          (0, 4): [(3, 0)],
