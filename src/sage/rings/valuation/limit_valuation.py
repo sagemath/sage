@@ -64,13 +64,62 @@ The same phenomenon can be observed for valuations on number fields::
         [ Gauss valuation induced by Valuation at the infinite place,
             v(y) = 1/2, v(y^2 - 1/x) = +Infinity ]
 
+Canonical representatives
+-------------------------
+
+A limit valuation has many finite descriptions: one may multiply its defining
+polynomial by a unit, add factors that have finite value, or replace a Mac Lane
+approximant by a later valuation on the same branch.  The checked
+:class:`LimitValuationFactory` removes these choices before using its arguments
+as a factory key.
+
+More precisely, write the monic squarefree defining polynomial as
+`G=\prod_i P_i`, with the `P_i` irreducible.  A factor which is an
+equivalence-unit for the input approximation stays an equivalence-unit along
+the selected branch and therefore has finite limit value.  Such factors cannot
+generate the support of the limit valuation and are discarded.  There must be
+exactly one remaining factor `P`; otherwise the input does not determine a
+unique limit valuation.  This factor must be integral for the coefficient
+valuation so that the Mac Lane algorithm applies.  The stability and
+finite-refinement properties used here are recalled below with references to
+[Mac1936II]_.
+
+The extensions associated with `P` are represented by
+:meth:`Mac Lane approximants
+<sage.rings.valuation.valuation.DiscreteValuation.mac_lane_approximants>`.
+Requiring these approximants to be incomparable separates the distinct
+extensions.  The unique approximant comparable with the input valuation is
+then selected by
+:meth:`~sage.rings.valuation.valuation.DiscreteValuation.mac_lane_approximant`.
+Thus the canonical factory key is the pair consisting of this approximant and
+`P`.  This is the same normalization used for valuations on number fields and
+function fields.  Inputs for which the factor or the branch is not unique are
+rejected rather than assigned an arbitrary key.
+
+Unchecked internal constructions may retain a squarefree product in place of
+`P`, with the invariant that exactly one of its irreducible factors has
+infinite limit value.  To evaluate a polynomial `f`, put `s=\gcd(G,f)` and
+`t=G/s`.  Squarefreeness makes `s` and `t` coprime, so exactly one contains the
+support factor.  The other becomes an equivalence-unit after finitely many Mac
+Lane steps by Theorem 5.1 of [Mac1936II]_.  Refinement therefore terminates and
+shrinks `G` towards its support.
+
+Finally, two limit valuations extending the same coefficient valuation but
+having different supports or different Mac Lane branches are incomparable.
+For legacy product representations, evaluating each defining polynomial under
+the other valuation first exposes the support factors.  If the supports agree,
+the incomparable Mac Lane approximants distinguish the branches: comparable
+initial approximants describe the same branch, while incomparable ones
+describe distinct extensions.  This gives the comparison criterion used in
+this module.
+
 REFERENCES:
 
 Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Section 4.6 of [Rüt2014]_.
 """
 # ****************************************************************************
-#       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2016-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -89,12 +138,22 @@ class LimitValuationFactory(UniqueFactory):
 
     INPUT:
 
-    - ``base_valuation`` -- a discrete (pseudo-)valuation on a polynomial ring
-      which is a discrete valuation on the coefficient ring which can be
-      uniquely augmented (possibly only in the limit) to a pseudo-valuation
-      that sends ``G`` to infinity.
+    - ``base_valuation`` -- a discrete (pseudo-)valuation on an exact
+      polynomial ring which is a discrete valuation on the coefficient ring
+      and which can be uniquely augmented (possibly only in the limit) to a
+      pseudo-valuation that sends ``G`` to infinity
 
-    - ``G`` -- a squarefree polynomial in the domain of ``base_valuation``
+    - ``G`` -- a nonzero nonconstant squarefree polynomial in the domain of
+      ``base_valuation`` whose leading coefficient is a unit; after making it
+      monic, the factor selected by ``base_valuation`` must be integral for the
+      valuation on the coefficient ring
+
+    - ``check`` -- boolean (default: ``True``); whether to validate and
+      canonicalize the arguments; internal callers may set this to ``False``
+      when ``G`` is monic, squarefree, and integral and ``base_valuation``
+      singles out a unique branch towards ``G``; unchecked calls use their
+      arguments as the factory key and therefore do not canonicalize
+      equivalent descriptions
 
     EXAMPLES::
 
@@ -104,14 +163,29 @@ class LimitValuationFactory(UniqueFactory):
         sage: w(x)
         +Infinity
     """
-    def create_key(self, base_valuation, G):
+    def create_key(self, base_valuation, G, check=True):
         r"""
         Create a key from the parameters of this valuation.
 
+        ALGORITHM:
+
+        First, normalize ``G`` to a monic polynomial and factor it exactly.
+        Factors that are equivalence-units for ``base_valuation`` have finite
+        value on every continuation of the selected branch, so they cannot be
+        the support of the limit valuation.  Require exactly one remaining
+        irreducible factor.
+
+        Next, compute mutually incomparable Mac Lane approximants for that
+        factor.  They distinguish the extensions of the coefficient
+        valuation.  The unique approximant comparable with
+        ``base_valuation`` is its canonical representative, so it and the
+        irreducible factor form a factory key independent of the original
+        presentation.  See the module-level discussion of canonical
+        representatives for the mathematical justification.
+
         EXAMPLES:
 
-        Note that this does not normalize ``base_valuation`` in any way. It is
-        easily possible to create the same limit in two different ways::
+        Equivalent descriptions of the same limit give the same key::
 
             sage: R.<x> = QQ[]
             sage: v = GaussValuation(R, QQ.valuation(2))
@@ -119,14 +193,101 @@ class LimitValuationFactory(UniqueFactory):
             sage: v = v.augmentation(x, infinity)
             sage: u = valuations.LimitValuation(v, x)
             sage: u == w
-            False
+            True
+            sage: u is w
+            True
+            sage: valuations.LimitValuation(v._base_valuation, 2*x) is w
+            True
+            sage: valuations.LimitValuation(v, x*(x + 1)) is w
+            True
 
-        The point here is that this is not meant to be invoked from user code.
-        But mostly from other factories which have made sure that the
-        parameters are normalized already.
+            sage: vK = QQ.valuation(2)
+            sage: v = GaussValuation(R, vK)
+            sage: G = x^2 + 1
+            sage: a = vK.mac_lane_approximants(G, require_incomparability=True)[0]
+            sage: w = valuations.LimitValuation(v, G)
+            sage: w is valuations.LimitValuation(a, 2*G)
+            True
+            sage: w is valuations.LimitValuation(a.augmentation(G, infinity), G)
+            True
+
+        A reducible defining polynomial is replaced by the irreducible factor
+        selected by ``base_valuation``::
+
+            sage: F = (x^2 + 7) * (x^2 + 9)
+            sage: G = x^2 + 7
+            sage: V = vK.mac_lane_approximants(F, require_incomparability=True)  # needs sage.geometry.polyhedron
+            sage: w = valuations.LimitValuation(V[1], F)                        # needs sage.geometry.polyhedron
+            sage: w is valuations.LimitValuation(V[1], G)                       # needs sage.geometry.polyhedron
+            True
+
+        The defining polynomial must be nonzero and nonconstant::
+
+            sage: valuations.LimitValuation(v, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: G must be nonzero
+            sage: valuations.LimitValuation(v, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: G must be nonconstant
+
+        It must also be integral for the coefficient valuation::
+
+            sage: valuations.LimitValuation(v, x^2 + x/2 + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: G must be integral
+
+        The parameters must single out one limit valuation::
+
+            sage: bad = next(a for a in V if valuations.LimitValuation(a, F)(G) != oo)  # needs sage.geometry.polyhedron
+            sage: valuations.LimitValuation(bad, G)                              # needs sage.geometry.polyhedron
+            Traceback (most recent call last):
+            ...
+            ValueError: base_valuation must single out one irreducible factor of G
+
+            sage: v = GaussValuation(R, QQ.valuation(5))
+            sage: G = x^2 + 1
+            sage: valuations.LimitValuation(v, G)
+            Traceback (most recent call last):
+            ...
+            ValueError: ... does not approximate a unique extension ...
         """
-        if not base_valuation.restriction(G.parent().base_ring()).is_discrete_valuation():
+        domain = base_valuation.domain()
+        G = domain.coerce(G)
+        if not check:
+            return base_valuation, G
+
+        if not domain.is_exact():
+            raise NotImplementedError("limit valuations over inexact rings are not supported")
+        if G == 0:
+            raise ValueError("G must be nonzero")
+        if G.is_constant():
+            raise ValueError("G must be nonconstant")
+
+        leading_coefficient = G.leading_coefficient()
+        if not leading_coefficient.is_unit():
+            raise ValueError("the leading coefficient of G must be a unit")
+        G //= leading_coefficient
+        if not G.is_squarefree():
+            raise ValueError("G must be squarefree")
+
+        vK = base_valuation.restriction(domain.base_ring())
+        if not vK.is_discrete_valuation():
             raise ValueError("base_valuation must be discrete on the coefficient ring.")
+
+        factors = [factor.monic() for factor, _ in G.factor()]
+        factors = [factor for factor in factors
+                   if not base_valuation.is_equivalence_unit(factor)]
+        if len(factors) != 1:
+            raise ValueError(
+                "base_valuation must single out one irreducible factor of G")
+        G = factors[0]
+        approximants = vK.mac_lane_approximants(
+            G, assume_squarefree=True, require_incomparability=True)
+        base_valuation = vK.mac_lane_approximant(
+            G, base_valuation, approximants=approximants)
         return base_valuation, G
 
     def create_object(self, version, key):
@@ -138,8 +299,28 @@ class LimitValuationFactory(UniqueFactory):
             sage: R.<x> = QQ[]
             sage: v = GaussValuation(R, QQ.valuation(2))
             sage: w = valuations.LimitValuation(v, x^2 + 1)  # indirect doctest
+
+        If the defining polynomial is already a key polynomial, its final
+        augmentation is restored when needed.  In particular, this preserves
+        a nontrivial residue field extension::
+
+            sage: G = x^2 + x + 1
+            sage: w = valuations.LimitValuation(v, G)
+            sage: w.residue_ring()                                              # needs sage.rings.finite_rings
+            Finite Field in u1 of size 2^2
+            sage: w._approximation.mu()
+            +Infinity
+            sage: a = w.residue_ring().gen()                                    # needs sage.rings.finite_rings
+            sage: w.reduce(w.lift(a)) == a                                      # needs sage.rings.finite_rings
+            True
+            sage: u = valuations.LimitValuation(v.augmentation(G, infinity), G)
+            sage: u is w
+            True
         """
         base_valuation, G = key
+        leading_coefficient = G.leading_coefficient()
+        if leading_coefficient.is_unit():
+            G //= leading_coefficient
         from .valuation_space import DiscretePseudoValuationSpace
         parent = DiscretePseudoValuationSpace(base_valuation.domain())
         return parent.__make_element_class__(MacLaneLimitValuation)(parent, base_valuation, G)
@@ -331,6 +512,15 @@ class LimitValuation_generic(DiscretePseudoValuation):
             sage: w = v.extension(L)
             sage: w._base_valuation # indirect doctest
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2 , … ]
+
+        When the initial approximation is already a Gauss valuation (not an
+        augmented valuation), it is printed as is::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: u = valuations.LimitValuation(v, x)
+            sage: u  # indirect doctest
+            Gauss valuation induced by 2-adic valuation
         """
         from sage.rings.infinity import infinity
         from .augmented_valuation import AugmentedValuation_base
@@ -389,6 +579,11 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u = v._base_valuation
             sage: u.extensions(QQ['x'])
             [[ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 , … ]]
+
+        Extending to the same ring is a no-op::
+
+            sage: u.extensions(u.domain()) == [u]
+            True
         """
         if self.domain() is ring:
             return [self]
@@ -419,9 +614,31 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             u1
             sage: w.lift(s)  # indirect doctest
             y
+
+        Zero in the residue ring lifts to zero in the domain::
+
+            sage: w.lift(w.residue_ring().zero())
+            0
+
+        When improving the approximation produces a nontrivial residue field
+        extension, lifting uses that final approximation::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: G = (x^2 + x + 1)^2 + 2
+            sage: u = valuations.LimitValuation(v, G)
+            sage: u._approximation.mu()
+            1/2
+            sage: k = u.residue_ring(); k                                      # needs sage.rings.finite_rings
+            Finite Field in u1 of size 2^2
+            sage: a = k.gen()                                                   # needs sage.rings.finite_rings
+            sage: u.reduce(u.lift(a)) == a                                      # needs sage.rings.finite_rings
+            True
+            sage: u.lift(k.zero())                                              # needs sage.rings.finite_rings
+            0
         """
         F = self.residue_ring().coerce(F)
-        return self._initial_approximation.lift(F)
+        return self._approximation.lift(F)
 
     def uniformizer(self):
         r"""
@@ -459,6 +676,16 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: w = valuations.LimitValuation(V[2], f)
             sage: w((x^2 + 7) * (x + 3))
             +Infinity
+
+        The zero element always has infinite valuation::
+
+            sage: w(R.zero())
+            +Infinity
+
+        Constants are evaluated by the underlying coefficient valuation::
+
+            sage: w(R(8))
+            3
         """
         self._improve_approximation_for_call(f)
         if self._G.divides(f):
@@ -490,20 +717,48 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u._improve_approximation()                                            # needs sage.rings.number_field
             sage: u._approximation                                                      # needs sage.rings.number_field
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
+
+        The bound on the principal part below is only an optimization.  If it
+        is too short to exhibit a nontrivial equivalence decomposition, the
+        full Mac Lane step is repeated without the bound; this computes the
+        same next branch rather than choosing a different one.
         """
         from sage.rings.infinity import infinity
         if self._approximation(self._G) is infinity:
+            if self._approximation.mu() is infinity:
+                phi = self._approximation.phi()
+                assert phi.divides(self._G)
+                self._G = phi
             # an infinite valuation can not be improved further
             return
 
-        approximations = self._approximation.mac_lane_step(self._G,
-                          assume_squarefree=True,
-                          assume_equivalence_irreducible=True,
-                          check=False,
-                          principal_part_bound=1 if self._approximation.E() * self._approximation.F() == self._approximation.phi().degree() else None,
-                          report_degree_bounds_and_caches=True)
+        if self._approximation.is_key(self._G):
+            self._approximation = self._approximation.augmentation(
+                self._G, infinity, check=False)
+            self._G = self._approximation.phi()
+            return
+
+        principal_part_bound = (1 if self._approximation.E() * self._approximation.F()
+                                == self._approximation.phi().degree() else None)
+        options = {
+            'assume_squarefree': True,
+            'assume_equivalence_irreducible': True,
+            'check': False,
+            'report_degree_bounds_and_caches': True,
+        }
+        from .inductive_valuation import EquivalenceDecompositionTooSmall
+        try:
+            approximations = self._approximation.mac_lane_step(
+                self._G, principal_part_bound=principal_part_bound, **options)
+        except EquivalenceDecompositionTooSmall:
+            assert principal_part_bound is not None
+            approximations = self._approximation.mac_lane_step(
+                self._G, principal_part_bound=None, **options)
         assert (len(approximations) == 1)
-        self._approximation, _, _, self._next_coefficients, self._next_valuations = approximations[0]
+        (self._approximation, _, _, self._next_coefficients,
+         self._next_valuations) = approximations[0]
+        if self._approximation.mu() is infinity:
+            self._G = self._approximation.phi()
 
     def _improve_approximation_for_call(self, f):
         r"""
@@ -544,48 +799,47 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             valuation of key polynomials does not change during augmentations
             (Theorem 6.4 in [Mac1936II]_.) By the strict triangle inequality,
             `w(g)=v(g)`.
-            Note that any `g` which is coprime to `G` is an equivalence-unit
-            after finitely many steps of the Mac Lane algorithm. Indeed,
-            otherwise the valuation of `g` would be infinite (follows from
-            Theorem 5.1 in [Mac1936II]_) since the valuation of the key
-            polynomials increases.
-            When `f` is not coprime to `G`, consider `s=gcd(f,G)` and write
-            `G=st`. Since `G` is squarefree, either `s` or `t` have finite
-            valuation. With the above algorithm, this can be decided in
-            finitely many steps. From this we can deduce the valuation of `s`
-            (and in fact replace `G` with the factor with infinite valuation
-            for all future computations.)
+            Normally, the factory normalizes `G` to an irreducible polynomial.
+            The unchecked internal construction also accepts a squarefree
+            `G`; its invariant is that exactly one irreducible factor of the
+            current `G` has infinite limit value.  Put `s=\gcd(G,f)` and
+            `t=G/s`.  Since `G` is squarefree, `s` and `t` are coprime, and
+            exactly one of them can contain that support factor.  The other
+            one has finite value and becomes an equivalence-unit after
+            finitely many Mac Lane steps (Theorem 5.1 in [Mac1936II]_).  The
+            loop below therefore terminates and replaces `G` by the side that
+            contains its support.  If that side divides `f`, the limit value
+            of `f` is infinite; otherwise the remaining finite factor is
+            removed and the argument is repeated.
         """
-        from sage.rings.infinity import infinity
-        if self._approximation(self._approximation.phi()) is infinity:
-            # an infinite valuation can not be improved further
-            return
-
         if f == 0:
-            # zero always has infinite valuation (actually, this might
-            # not be desirable for inexact zero elements with leading
-            # zero coefficients.)
             return
 
-        while not self._approximation.is_equivalence_unit(f):
-            # TODO: I doubt that this really works over inexact fields
-            s = self._G.gcd(f)
-            if s.is_constant():
+        from sage.rings.infinity import infinity
+        if self._approximation.mu() is infinity:
+            phi = self._approximation.phi()
+            assert phi.divides(self._G)
+            self._G = phi
+            return
+
+        if self._approximation.is_equivalence_unit(f):
+            return
+
+        s = self._G.gcd(f)
+        if s.is_constant():
+            while not self._approximation.is_equivalence_unit(f):
                 self._improve_approximation()
-            else:
-                t = self._G // s
+            return
 
-                while True:
-                    if self._approximation.is_equivalence_unit(s):
-                        # t has infinite valuation
-                        self._G = t
-                        return self._improve_approximation_for_call(f // s)
-                    if self._approximation.is_equivalence_unit(t):
-                        # s has infinite valuation
-                        self._G = s
-                        return
-
-                    self._improve_approximation()
+        t = self._G // s
+        while True:
+            if self._approximation.is_equivalence_unit(s):
+                self._G = t
+                return self._improve_approximation_for_call(f // s)
+            if self._approximation.is_equivalence_unit(t):
+                self._G = s
+                return
+            self._improve_approximation()
 
     def _improve_approximation_for_reduce(self, f):
         r"""
@@ -629,9 +883,33 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: w = v.extension(L)
             sage: w.residue_ring()
             Finite Field of size 2
+
+        When the approximation is already infinite, the residue ring is the
+        residue ring of that final augmentation::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: u = valuations.LimitValuation(v, x)
+            sage: u._improve_approximation()
+            sage: u._approximation.mu()
+            +Infinity
+            sage: u.residue_ring()
+            Finite Field of size 2
         """
-        R = self._initial_approximation.residue_ring()
         from sage.categories.fields import Fields
+        from sage.rings.infinity import infinity
+        if self._approximation.mu() is not infinity and self._approximation.is_key(self._G):
+            final_approximation = self._approximation.augmentation(
+                self._G, infinity, check=False)
+            if final_approximation.psi().degree() > 1:
+                self._approximation = final_approximation
+
+        if self._approximation.mu() is infinity:
+            R = self._approximation.residue_ring()
+            assert R in Fields()
+            return R
+
+        R = self._approximation.residue_ring()
         if R in Fields():
             # the approximation ends in v(phi)=infty
             return R
@@ -644,6 +922,24 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         Return whether this valuation is greater or equal than ``other``
         everywhere.
 
+        ALGORITHM:
+
+        Distinct extensions of the same coefficient valuation are
+        incomparable.  Their supports first distinguish extensions attached
+        to coprime irreducible factors.  For unchecked or legacy objects,
+        ``_G`` may still be a squarefree product; evaluating each object on
+        the other's ``_G`` invokes
+        :meth:`_improve_approximation_for_call` and refines both products to
+        their support factors.  Different supports give incomparable limit
+        valuations.
+
+        Once the supports agree, mutually incomparable canonical Mac Lane
+        approximants distinguish the branches above that support.  Hence the
+        two limit valuations agree precisely when their initial approximants
+        are comparable.  Thus this method can return ``True`` only when the
+        valuations agree, although the operation being implemented is the
+        pointwise order.
+
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -652,31 +948,49 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
             sage: valuations.LimitValuation(V[0], F) >= valuations.LimitValuation(V[1], F)
             False
-            sage: valuations.LimitValuation(V[1], F) >= valuations.LimitValuation(V[1], G)
-            True
-            sage: valuations.LimitValuation(V[2], F) >= valuations.LimitValuation(V[2], G)
-            True
+
+        TESTS::
+
+            sage: # needs sage.geometry.polyhedron
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
+
+        An example with several valuations that correspond to factors of F over Q2 that are not rational::
+
+            sage: # needs sage.geometry.polyhedron
+            sage: R.<x> = QQ[]
+            sage: F = (x^2 - 17) * (x^2 - 25) * (x^7 - 1)
+            sage: G = (x^2 - 25) * (x^7 - 1)
+            sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
+
+            sage: # needs sage.geometry.polyhedron
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
         if isinstance(other, MacLaneLimitValuation):
-            if self._approximation.restriction(self._approximation.domain().base_ring()) == other._approximation.restriction(other._approximation.domain().base_ring()):
-                # Two MacLane limit valuations v,w over the same constant
-                # valuation are either equal or incomparable; neither v>w nor
-                # v<w can hold everywhere.
-                # They are equal iff they approximate the same factor of their
-                # defining G. Note that they can be equal even if the defining
-                # G is different, so we need to make sure that this can not be
-                # the case.
-                self._improve_approximation_for_call(other._G)
-                other._improve_approximation_for_call(self._G)
+            vK = self._approximation.restriction(
+                self._approximation.domain().base_ring())
+            wK = other._approximation.restriction(
+                other._approximation.domain().base_ring())
+            if vK == wK:
                 if self._G != other._G:
-                    assert self._G.gcd(other._G).is_one()
-                    return False
-
-                # If the valuations are comparable, they must approximate the
-                # same factor of G (see the documentation of LimitValuation:
-                # the approximation must *uniquely* single out a valuation.)
+                    if self._G.gcd(other._G).is_constant():
+                        return False
+                    from sage.rings.infinity import infinity
+                    if (self(other._G) is not infinity
+                            or other(self._G) is not infinity
+                            or self._G != other._G):
+                        return False
                 return (self._initial_approximation >= other._initial_approximation
                         or self._initial_approximation <= other._initial_approximation)
 
@@ -694,6 +1008,12 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: v = QQ.valuation(2)
             sage: w = v.extension(L)
             sage: w._base_valuation.restriction(K)
+            2-adic valuation
+
+        Restricting to ``ZZ`` (also a subring of the coefficient ring) gives
+        the corresponding `p`-adic valuation on `\ZZ`::
+
+            sage: w._base_valuation.restriction(ZZ)
             2-adic valuation
         """
         if ring.is_subring(self.domain().base()):
