@@ -47,6 +47,15 @@ The following backend is used for debugging and testing purposes.
 
    sage/numerical/backends/logging_backend
 
+Riemann theta functions
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/numerical/riemann_theta
+   sage/numerical/siegel_reduction
+
 Semidefinite Optimization (SDP) Solver backends
 -----------------------------------------------
 

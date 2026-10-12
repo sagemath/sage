@@ -1,3 +1,6 @@
+..  
+  Note that entries in this file are supposed to be sorted alphabetically *by label*
+
 .. [AAGMRZ2019] \M. Aagaard, R. AlTawy, G. Gong, K. Mandal, R. Rohit, N. Zidaric
                 *WAGE: An Authenticated CipherSubmission to the NIST LWC Competition*
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/wage-spec.pdf
@@ -54,6 +57,10 @@
 .. [AC1994] \R.J.R. Abel and Y.W. Cheng,
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
+
+.. [AC2019] \Daniele Agostini, Lynn Chua,
+            Computing theta functions with Julia,
+            Journal of Software for Algebra and Geometry 11 (2021): 41-51
 
 .. [ACEP2020] Federico Ardila, Federico Castillo, Christopher Eur, Alexander Postnikov,
          *Coxeter submodular functions and deformations of Coxeter permutahedra*,
@@ -2368,6 +2375,9 @@
               von Stengel. *Enumeration of Nash equilibria for
               two-player games.*
               http://www.maths.lse.ac.uk/personal/stengel/ETissue/ARSvS.pdf (2010)
+
+.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
+                Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
 
 .. [DHSW2003] Dumas, Heckenbach, Saunders, Welker, "Computing
               simplicial homology based on efficient Smith normal form
