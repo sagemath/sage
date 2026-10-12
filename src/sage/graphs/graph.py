@@ -3828,11 +3828,11 @@ class Graph(GenericGraph):
 
         # Dict to store parent of each vertex in disjoint-set forest
         # representing components of current induced subgraph.
-        dsf = {v: None for v in self.vertices()}
+        dsf = dict.fromkeys(self.vertices())
 
         # Dict to store size of tree rooted at each vertex.
         if weights is None:
-            sizes = {v: 1 for v in self.vertices()}
+            sizes = dict.fromkeys(self.vertices(), 1)
         else:
             sizes = dict(weights)
 
@@ -7480,7 +7480,7 @@ class Graph(GenericGraph):
             if k is not None:
                 return ([], list(self)) if not k else (list(self), [])
             if with_labels:
-                return {u: 0 for u in self}
+                return dict.fromkeys(self, 0)
             return [0]*self.order()
 
         # Compute the degrees of each vertex and set up initial guesses for core

@@ -474,7 +474,7 @@ class PathAlgebra(CombinatorialFreeModule):
             e_1 + e_2 + e_3
         """
         one = self.base_ring().one()
-        D = {index: one for index in self._semigroup.idempotents()}
+        D = dict.fromkeys(self._semigroup.idempotents(), one)
         return self._from_dict(D)
 
     ###########################################################################

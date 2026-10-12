@@ -1263,7 +1263,7 @@ class BipartiteGraph(Graph):
             False
         """
         # Map each vertex of the graph to a side
-        vertex_in_left = {v: True for v in self.left}
+        vertex_in_left = dict.fromkeys(self.left, True)
         for v in self.right:
             vertex_in_left[v] = False
 
@@ -1576,8 +1576,8 @@ class BipartiteGraph(Graph):
             (True, {})
         """
         if certificate:
-            color = {u: 0 for u in self.left}
-            color.update({u: 1 for u in self.right})
+            color = dict.fromkeys(self.left, 0)
+            color.update(dict.fromkeys(self.right, 1))
             return True, color
         return True
 
