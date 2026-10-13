@@ -646,7 +646,8 @@ authors, use the first letter of each of the family names followed by the
 year. Note that the year should be four digits, not just the last two -- Sage
 already has references from both 1910 and 2010, for example.
 
-Keep entries sorted case-insensitively by citation key, and keep existing
+Entries may appear in any order in the BibTeX file; the rendered bibliography
+is sorted independently, case-insensitively by citation key. Keep existing
 keys unchanged. Use ``and`` between authors. Protect capitalization in
 titles with braces, and preserve DOI identifiers in the ``doi`` field.
 DOI content negotiation can provide a BibTeX entry, but check it against the
