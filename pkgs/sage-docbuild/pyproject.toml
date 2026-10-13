@@ -36,7 +36,7 @@ packages = [
 include-package-data = false
 
 [tool.setuptools.package-data]
-sage_docbuild = ["reference-database.bib"]
+sage_docbuild = ["references/*.bib"]
 
 [tool.setuptools.dynamic]
 version = {file = ["VERSION.txt"]}
