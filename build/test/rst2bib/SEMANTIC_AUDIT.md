@@ -36,6 +36,7 @@ that does not fit the ordinary fields, such as secondary references and errata.
   corrected to identify the cited work or version. DOI retrieval is not required
   at documentation build time.
 - Ordinary `unsrt` formatting is exercised after removing `annotation`.
+  It succeeds for 1,972 records.
   Seven chapter citations omit an edition/publication date: the three
   Abramowitz–Stegun chapter links and four continuously maintained DLMF chapter
   links. Their missing years are explicit exceptions. Undated miscellaneous web
@@ -80,6 +81,12 @@ pages or institutional records, including [Pons](https://perso.lisn.upsaclay.fr/
 [Leroux](https://defeo.lu/students), and
 [Neurohr](https://oops.uni-oldenburg.de/3607/1/neueff18.pdf).
 
+Some publisher titles expand or phrase the title differently from the retained
+description. For `Fil2017`, the structured author, Ivana Protrka, follows the
+[published PDF's title page](https://doi.org/10.5592/CO/CCD.2016.05); the migrated
+description retains the name Ivana Filipan. Such differences are not treated as
+proof of a mismatched DOI without checking the actual work.
+
 ## Reproducing the checks
 
 ```sh
@@ -98,3 +105,10 @@ catalogue should still differ only in the previously documented `VT2001`
 mathematical-symbol encoding. See the [comparison instructions](README.md) and
 [migration report](../../../BIBTEX_MIGRATION_REPORT.md) for build commands and
 rendering validation.
+
+After these corrections, the real Sage Meson HTML and PDF catalogue targets
+passed, including the reference-manual inventories. The PDF contains 98 pages;
+its LaTeX log has no missing characters or undefined references. All 48
+documentation regression tests passed. HTML comparisons checked all 1,979
+entries against the corrected RST catalogue and the pre-audit BibTeX output;
+the observed differences are exactly those described above.

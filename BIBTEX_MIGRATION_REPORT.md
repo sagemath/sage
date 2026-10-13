@@ -2,8 +2,9 @@
 
 The bibliography migration preserves Sage's existing citation keys and reference
 descriptions, moves module bibliographies into shared BibTeX files, and provides
-local bibliographies for independently built manuals. The final two-file split
-produces the same catalogue HTML and LaTeX as the preceding single-file version.
+local bibliographies for independently built manuals. The original two-file split
+produced the same catalogue HTML and LaTeX as the preceding single-file version;
+the subsequent semantic audit and its corrections are recorded below.
 
 The initial validation covered code through commit
 [`2b440e3f44c`](https://github.com/dimpase/sage/commit/2b440e3f44c), on
