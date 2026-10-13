@@ -356,10 +356,10 @@ Value restrictions::
     sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
-    sage: next(bij.solutions_iterator())
     Traceback (most recent call last):
     ...
-    ValueError: no possible values found for singleton block [[1, 2]]
+    ValueError: the value restriction for element [1, 2] is empty:
+    none of the given values [4, 5] lie in Z = {0, 1, 2, 3}
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Martin Rubey <martin.rubey at tuwien.ac.at>
@@ -1044,7 +1044,7 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: the value restriction for element (1, 2) is empty:
-            none of the given values [(3, 4)] lie in Z = {(1, 2), (3, 4)}
+            none of the given values [3, 4] lie in Z = {(1, 2), (3, 4)}
 
         TESTS::
 
@@ -1055,7 +1055,7 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: the value restriction for element [1, 2] is empty:
-            none of the given values [4, 5] lie in Z = {0, 1, 2, 3, 4}
+            none of the given values [4, 5] lie in Z = {0, 1, 2, 3}
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1065,7 +1065,7 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: the value restriction for element [1, 2] is empty:
-            none of the given values [4, 5] lie in Z = {0, 1, 2, 3, 4}
+            none of the given values [4, 5] lie in Z = {0, 1, 2, 3}
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
