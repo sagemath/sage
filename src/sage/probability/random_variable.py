@@ -56,23 +56,53 @@ class DiscreteRandomVariable(RandomVariable_generic):
     """
     def __init__(self, X, f, codomain=None, check=False):
         r"""
-        Create free binary string monoid on `n` generators.
+        Create a discrete random variable on the discrete probability
+        space ``X`` with values given by the dictionary ``f``.
 
         INPUT:
 
-        - ``X`` -- a probability space
-        - ``f`` -- dictionary such that X[x] = value for x in X
-          is the discrete function on X
+        - ``X`` -- a discrete probability space
+        - ``f`` -- dictionary such that ``X[x] = value`` for ``x`` in ``X``
+          is the discrete function on ``X``
+        - ``codomain`` -- (default: the real field) the codomain of the
+          random variable
+        - ``check`` -- boolean (default: ``False``); if ``True`` and
+          ``self is X`` (that is, we are initializing a
+          :class:`DiscreteProbabilitySpace` through its inherited
+          :class:`DiscreteRandomVariable` interface), verify that the
+          values of ``f`` sum to one.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 1, 2: 2})
+            sage: F.function()
+            {1: 1, 2: 2}
+
+        The ``check`` flag has no effect for a normal random variable,
+        since its values need not sum to one::
+
+            sage: F = DiscreteRandomVariable(X, {1: 1, 2: 2}, check=True)
+            sage: F.function()
+            {1: 1, 2: 2}
         """
         if not isinstance(X, DiscreteProbabilitySpace):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)
-        if check:
-            raise NotImplementedError("Not implemented")
         if codomain is None:
             from sage.rings.real_mpfr import RealField
             RR = RealField()
         else:
             RR = codomain
+        if check and self is X:
+            # Called from DiscreteProbabilitySpace.__init__: ``f`` is
+            # the probability function and must sum to one.
+            one = sum(f.values())
+            if isinstance(RR, RationalField):
+                if not one == 1:
+                    raise TypeError("argument P (= %s) does not define a probability function" % f)
+            else:
+                if not abs(one - 1) < 2 ** (-RR.precision() + 1):
+                    raise TypeError("argument P (= %s) does not define a probability function" % f)
         RandomVariable_generic.__init__(self, X, RR)
         self._function = f
 
@@ -323,20 +353,43 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
             sage: X.entropy().n()
             1.50000000000000
+
+        With ``check=True``, the probabilities must sum to one::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, check=True)
+            sage: X.domain()
+            (1, 2)
+
+        Invalid probabilities raise an error::
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/4}, check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: argument P (= {1: 1/2, 2: 1/4}) does not define a probability function
+
+        The check is exact when the codomain is the rationals::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, codomain=QQ, check=True)
+            sage: X.domain()
+            (1, 2)
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/4}, codomain=QQ, check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: argument P (= {1: 1/2, 2: 1/4}) does not define a probability function
+
+        An invalid codomain raises an error::
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, codomain=ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument codomain (= Integer Ring) must be the reals or rationals
         """
         if codomain is None:
             from sage.rings.real_mpfr import RealField
             codomain = RealField()
         if not isinstance(codomain, sage.rings.abc.RealField) and not isinstance(codomain, RationalField):
             raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
-        if check:
-            one = sum(P.values())
-            if isinstance(codomain, RationalField):
-                if not one == 1:
-                    raise TypeError("Argument P (= %s) does not define a probability function")
-            else:
-                if not abs(one - 1) < 2 ** (-codomain.precision() + 1):
-                    raise TypeError("Argument P (= %s) does not define a probability function")
         ProbabilitySpace_generic.__init__(self, X, codomain)
         DiscreteRandomVariable.__init__(self, self, P, codomain, check)
 
@@ -357,12 +410,57 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         r"""
         The set of values of the probability space taking possibly nonzero
         probability (a subset of the domain).
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
+            sage: X.set()
+            {1, 2, 3}
+
+        The set is determined by the keys of the probability function,
+        not by the domain::
+
+            sage: X = DiscreteProbabilitySpace([1, 2, 3, 4], {1: 1/2, 2: 1/2})
+            sage: X.set()
+            {1, 2}
         """
         return Set(self.function())
 
     def entropy(self):
-        """
+        r"""
         The entropy of the probability space.
+
+        EXAMPLES::
+
+            A fair coin has an entropy of 1::
+
+                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+                sage: X.entropy()
+                1
+
+            Four equally likely outcomes have an entropy of 2::
+
+                sage: X = DiscreteProbabilitySpace([1, 2, 3, 4],
+                ....:     {1: 1/4, 2: 1/4, 3: 1/4, 4: 1/4})
+                sage: X.entropy()
+                2
+
+            A non-uniform distribution has less entropy::
+
+                sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
+                sage: X.entropy()
+                3/2
+
+            An outcome with zero probability contributes nothing to the
+            entropy::
+
+                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+                sage: X.entropy()
+                1
+                sage: Xz = DiscreteProbabilitySpace([1, 2, 3],
+                ....:     {1: 1/2, 2: 1/2, 3: 0})
+                sage: Xz.entropy()
+                1
         """
         def neg_xlog2x(p):
             if p == 0:
