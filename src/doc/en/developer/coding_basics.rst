@@ -608,7 +608,7 @@ introduction. Sage imposes these styles:
       If ``check`` is ``True``, then ...
 
 Sage's shared **BIBLIOGRAPHY** files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All bibliographical references should be stored in BibTeX files in
 :sage_root:`src/doc/references/`, for example
