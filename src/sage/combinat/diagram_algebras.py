@@ -1594,8 +1594,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         REFERENCES:
 
-        .. [GrLe1996] \J.J. Graham and G.I. Lehrer, Cellular algebras.
-           Inventiones mathematicae 123 (1996), 1--34.
+        - [GrLe1996]_
 
         EXAMPLES::
 
@@ -3858,8 +3857,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
         REFERENCES:
 
-        .. [Naz96] Maxim Nazarov, Young's Orthogonal Form for Brauer's
-           Centralizer Algebra. Journal of Algebra 182 (1996), 664--693.
+        - [Naz96]_
 
         EXAMPLES::
 

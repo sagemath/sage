@@ -27,40 +27,23 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Sta-EC2] Richard P. Stanley.
-   *Enumerative Combinatorics*, Volume 2.
-   Cambridge University Press, 2001.
+- [Sta-EC2]_
 
-.. [StaCat98] Richard Stanley. *Exercises on Catalan and Related Numbers
-   excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999)*,
-   version of 23 June 1998.
-   http://www-math.mit.edu/~rstan/ec/catalan.pdf
+- [StaCat98]_
 
-.. [Hag2008] James Haglund. *The* `q,t` -- *Catalan Numbers and the
-   Space of Diagonal Harmonics:
-   With an Appendix on the Combinatorics of Macdonald Polynomials*.
-   University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
+- [Hag2008]_
 
-.. [BandlowKillpatrick2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
-   between Dyck paths and 312-avoiding permutations*, Electronic
-   Journal of Combinatorics, Volume 8, Issue 1 (2001).
-   :doi:`10.37236/1584`.
+- [BandlowKillpatrick2001]_
 
-.. [EP2004] \S. Elizalde, I. Pak. *Bijections for refined restricted
-   permutations**. JCTA 105(2) 2004.
+- [EP2004]_
 
-.. [ClaessonKitaev2008] \A. Claesson, S. Kitaev. *Classification of bijections
-   between `321`- and `132`- avoiding permutations*. Séminaire
-   Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
+- [ClaessonKitaev2008]_
 
-.. [Knu1973] \D. Knuth. *The Art of Computer Programming, Vol. III*.
-   Addison-Wesley. Reading, MA. 1973.
+- [Knu1973]_
 
-.. [Kra2001] \C. Krattenthaler -- *Permutations with restricted
-   patterns and Dyck paths*, Adv. Appl. Math. 27 (2001), 510--530.
+- [Kra2001]_
 
-.. [DS1992] \A. Denise, R. Simion, *Two combinatorial statistics on
-   Dyck paths*, Discrete Math 137 (1992), 155--176.
+- [DS1992]_
 """
 
 # ****************************************************************************
