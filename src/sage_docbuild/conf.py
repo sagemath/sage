@@ -271,13 +271,13 @@ todo_include_todos = True
 # By default document is master.
 multidocs_is_master = True
 
-# All manuals use the same database, including independent docbuild runs.
-bibliography = Path(SAGE_DOC_SRC) / 'reference-database.bib'
-if not bibliography.is_file():
+# All manuals use the same bibliography files, including independent docbuild runs.
+bibliographies = sorted((Path(SAGE_DOC_SRC) / 'references').glob('*.bib'))
+if not bibliographies:
     # The separately distributed sage-docbuild wheel also carries the
-    # database, for manuals built against an installed Sage library.
-    bibliography = Path(__file__).with_name('reference-database.bib')
-bibtex_bibfiles = [str(bibliography)]
+    # bibliography files, for manuals built against an installed Sage library.
+    bibliographies = sorted(Path(__file__).with_name('references').glob('*.bib'))
+bibtex_bibfiles = [str(bibliography) for bibliography in bibliographies]
 bibtex_default_style = 'sage'
 bibtex_cite_id = '{key}'
 

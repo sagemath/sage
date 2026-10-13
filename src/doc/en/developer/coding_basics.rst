@@ -433,9 +433,9 @@ information. You can use the existing functions of Sage as templates.
        `p`. For any odd integer `k` between 1 and `p - 1`, inclusive,
        `g^k` is a generator modulo `p` if and only if `\gcd(k, p-1) = 1`.
 
-   The bibliographical reference should go in Sage's master
-   bibliography file,
-   :sage_root:`src/doc/reference-database.bib`:
+   The bibliographical reference should go in one of Sage's shared
+   bibliography files, for example
+   :sage_root:`src/doc/references/reference-database.bib`:
 
    .. CODE-BLOCK:: bibtex
 
@@ -500,8 +500,8 @@ information. You can use the existing functions of Sage as templates.
 
 - A **REFERENCES** block to list related books or papers (optional).
 
-  Almost all bibliographic information should be put in the master bibliography
-  file, see below. Citations will then link to the master bibliography where
+  Almost all bibliographic information should be put in the shared bibliography
+  files, see below. Citations will then link to the bibliography where
   the reader can find the bibliographic details (see below for citation
   syntax).  REFERENCE blocks in individual docstrings are therefore usually not
   necessary.
@@ -509,7 +509,7 @@ information. You can use the existing functions of Sage as templates.
   Nevertheless, a REFERENCE block can be useful if there are relevant sources
   which are not explicitly mentioned in the docstring or if the docstring is
   particularly long. In that case, add the bibliographic information to the
-  master bibliography file, if not already present, and add a reference block
+  shared bibliography files, if not already present, and add a reference block
   to your docstring as follows:
 
   .. CODE-BLOCK:: rest
@@ -523,7 +523,7 @@ information. You can use the existing functions of Sage as templates.
       - [Voe2003]_
 
   Note the trailing underscores which makes the citations into hyperlinks. See
-  below for more about the master bibliography file. For more about citations,
+  below for more about the shared bibliography files. For more about citations,
   see the `Sphinx/reST markup for citations
   <https://www.sphinx-doc.org/rest.html#citations>`_. For links to GitHub issues and PRs
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
@@ -607,12 +607,12 @@ introduction. Sage imposes these styles:
 
       If ``check`` is ``True``, then ...
 
-Sage's master **BIBLIOGRAPHY** file
+Sage's shared **BIBLIOGRAPHY** files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All bibliographical references should be stored in the master
-bibliography file,
-:sage_root:`src/doc/reference-database.bib`, in BibTeX format:
+All bibliographical references should be stored in BibTeX files in
+:sage_root:`src/doc/references/`, for example
+:sage_root:`src/doc/references/reference-database.bib`:
 
 .. CODE-BLOCK:: bibtex
 
@@ -646,13 +646,19 @@ authors, use the first letter of each of the family names followed by the
 year. Note that the year should be four digits, not just the last two -- Sage
 already has references from both 1910 and 2010, for example.
 
-Entries may appear in any order in the BibTeX file; the rendered bibliography
+All ``.bib`` files in this directory form one shared citation database.
+Citation keys must be unique across all files. To add another bibliography
+file, list it in :sage_root:`src/doc/references/meson.build` so Meson copies it
+into the documentation build directory. The ``sage-docbuild`` wheel includes
+all these ``.bib`` files automatically.
+
+Entries may appear in any order in each BibTeX file; the rendered bibliography
 is sorted independently, case-insensitively by citation key. Keep existing
 keys unchanged. Use ``and`` between authors. Protect capitalization in
 titles with braces, and preserve DOI identifiers in the ``doi`` field.
 DOI content negotiation can provide a BibTeX entry, but check it against the
 source and retain additional notes and links. Documentation builds use the
-checked-in database and do not fetch metadata.
+checked-in databases and do not fetch metadata.
 
 Entries migrated from the former reST database have an ``annotation`` field
 containing their complete original description in TeX, including mathematical
@@ -731,7 +737,7 @@ indentation:
         """
         <body of the function>
 
-The master bibliography file would contain
+One of the shared bibliography files would contain
 
 .. CODE-BLOCK:: bibtex
 
