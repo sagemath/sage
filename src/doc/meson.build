@@ -17,7 +17,8 @@ if not sphinx_check.found()
   subdir_done()
 endif
 
-doc_src = [fs.copyfile('reference-database.bib')]
+doc_src = []
+subdir('references')
 subdir('el')
 subdir('ca')
 subdir('zh')

@@ -286,14 +286,6 @@ def _documentation_citation_labels(doc_roots) -> tuple[set[str], bool]:
     labels: set[str] = set()
     have_bibliography = False
     for root in doc_roots:
-        bibfile = root / 'reference-database.bib'
-        bibfile_info = _citation_path_status(bibfile)
-        if bibfile_info is not None:
-            if not stat.S_ISREG(bibfile_info.st_mode):
-                raise OSError(f'citation bibliography is not a regular file: {bibfile}')
-            from pybtex.database import parse_file
-            labels.update(parse_file(bibfile).entries)
-            have_bibliography = True
         bibliography = root / 'en' / 'reference' / 'references' / 'index.rst'
         bibliography_info = _citation_path_status(bibliography)
         if bibliography_info is not None:
@@ -308,6 +300,16 @@ def _documentation_citation_labels(doc_roots) -> tuple[set[str], bool]:
         if not stat.S_ISDIR(root_info.st_mode):
             raise OSError(f'documentation source is not a directory: {root}')
         for path in _walk_citation_tree(root):
+            if path.parent == root / 'references' and path.suffix == '.bib':
+                bibfile_info = _citation_path_status(path)
+                if bibfile_info is None:
+                    continue
+                if not stat.S_ISREG(bibfile_info.st_mode):
+                    raise OSError(f'citation bibliography is not a regular file: {path}')
+                from pybtex.database import parse_file
+                labels.update(parse_file(path).entries)
+                have_bibliography = True
+                continue
             if path.suffix != '.rst':
                 continue
             try:
@@ -335,7 +337,7 @@ def citation_labels(single_file_path=None, single_file_source_root=None):
     when the bibliography of the reference manual is not among the sources.
 
     Most citations are collected in a reference manual, and the rest are
-    written in the docstring defining them.  The shared database is parsed as
+    written in the docstring defining them.  The shared databases are parsed as
     BibTeX; local definitions are parsed as reStructuredText so that examples
     and comments are not mistaken for definitions.  For a file
     of a second checkout, that checkout is searched as well as the active one.
