@@ -249,6 +249,12 @@ comparison JSON files are retained in the local validation workspace. They are
 not attached to this report. This document publishes their aggregate results and
 the correction record without depending on machine-specific file paths.
 
+The reusable comparison commands, exact expected differences, citation-key maps,
+and usage instructions are included in
+[`build/test/rst2bib/`](build/test/rst2bib/README.md). They accept explicit input
+paths and produce JSON reports. Generated documentation outputs remain separate
+inputs to these commands.
+
 The implementation history is available in the commits for the
 [shared bibliography](https://github.com/dimpase/sage/commit/3d680951d13),
 [docstring bibliography migration](https://github.com/dimpase/sage/commit/5f9bc16e632),
