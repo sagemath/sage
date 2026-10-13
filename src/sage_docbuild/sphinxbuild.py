@@ -286,6 +286,14 @@ def _documentation_citation_labels(doc_roots) -> tuple[set[str], bool]:
     labels: set[str] = set()
     have_bibliography = False
     for root in doc_roots:
+        bibfile = root / 'reference-database.bib'
+        bibfile_info = _citation_path_status(bibfile)
+        if bibfile_info is not None:
+            if not stat.S_ISREG(bibfile_info.st_mode):
+                raise OSError(f'citation bibliography is not a regular file: {bibfile}')
+            from pybtex.database import parse_file
+            labels.update(parse_file(bibfile).entries)
+            have_bibliography = True
         bibliography = root / 'en' / 'reference' / 'references' / 'index.rst'
         bibliography_info = _citation_path_status(bibliography)
         if bibliography_info is not None:
@@ -327,8 +335,9 @@ def citation_labels(single_file_path=None, single_file_source_root=None):
     when the bibliography of the reference manual is not among the sources.
 
     Most citations are collected in a reference manual, and the rest are
-    written in the docstring defining them.  Both are parsed as reStructuredText
-    so that examples and comments are not mistaken for definitions.  For a file
+    written in the docstring defining them.  The shared database is parsed as
+    BibTeX; local definitions are parsed as reStructuredText so that examples
+    and comments are not mistaken for definitions.  For a file
     of a second checkout, that checkout is searched as well as the active one.
 
     No answer is cached: a docbuild process can build more than one file, edit
