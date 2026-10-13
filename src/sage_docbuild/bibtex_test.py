@@ -21,8 +21,8 @@ def build(source, output, builder='html', fresh=False, doctrees=None):
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-@pytest.fixture
-def manual(tmp_path):
+@pytest.fixture(params=[False, True], ids=['one-bibfile', 'two-bibfiles'])
+def manual(tmp_path, request):
     source = tmp_path / 'source'
     source.mkdir()
     (source / 'refs.bib').write_text(r'''
@@ -46,6 +46,16 @@ bibtex_cite_id = '{key}'
 project = 'Bibliography test'
 latex_documents = [('index', 'test.tex', 'Bibliography test', 'Sage', 'manual')]
 ''')
+    if request.param:
+        bibfile = source / 'refs.bib'
+        text = bibfile.read_text()
+        cut = text.index('@misc{OtherKey,')
+        (source / 'extra.bib').write_text(text[cut:])
+        bibfile.write_text(text[:cut])
+        # Read OtherKey before ExistingKey: file order must not dictate the
+        # rendered order, and duplicate validation must span both files.
+        with (source / 'conf.py').open('a') as file:
+            file.write("\nbibtex_bibfiles = ['extra.bib', 'refs.bib']\n")
     (source / 'index.rst').write_text('''
 A manual
 ========
@@ -83,6 +93,7 @@ def test_html_citations_and_incremental_build(manual, tmp_path):
     assert r'\mathbb{Z}' in page
     assert '[ExistingKey]' in page
     assert '[OtherKey]' in unescape(re.sub(r'<[^>]*>', '', page))
+    assert page.index('id="existingkey"') < page.index('id="otherkey"')
     # Reuse the environment, then change a citing document. Cached BibTeX
     # entries must not be mistaken for local reST citation definitions.
     build(manual, output)
@@ -126,7 +137,7 @@ def test_missing_citation_is_an_error(manual, tmp_path):
 
 def test_case_collision_is_an_error(manual, tmp_path):
     with (manual / 'refs.bib').open('a') as file:
-        file.write('\n@misc{existingkey, note={A different entry}}\n')
+        file.write('\n@misc{otherkey, note={A different entry}}\n')
     result = subprocess.run(
         [sys.executable, '-m', 'sphinx', '-b', 'html', str(manual), str(tmp_path / 'html')],
         capture_output=True, text=True, check=False,
@@ -281,3 +292,16 @@ def test_bibliography_edit_after_inventory_build(manual, tmp_path):
     previous = (output / 'index.html').stat().st_mtime_ns
     build(manual, output, doctrees=doctrees)
     assert (output / 'index.html').stat().st_mtime_ns == previous
+
+
+def test_citation_scanner_loads_all_bibliography_files(tmp_path):
+    from sage_docbuild.sphinxbuild import _documentation_citation_labels
+
+    directory = tmp_path / 'references'
+    directory.mkdir()
+    (directory / 'first.bib').write_text('@misc{FirstKey, note={First reference}}')
+    (directory / 'second.bib').write_text('@misc{SecondKey, note={Second reference}}')
+    (directory / 'unrelated.txt').write_text('Not a bibliography.')
+    labels, have_bibliography = _documentation_citation_labels([tmp_path])
+    assert have_bibliography
+    assert labels == {'FirstKey', 'SecondKey'}
