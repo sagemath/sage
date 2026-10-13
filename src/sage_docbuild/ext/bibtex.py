@@ -50,7 +50,6 @@ class DatabaseParser(Parser):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.keys = []
         self.seen = set()
         self.data.want_entry = lambda key: True
 
@@ -58,7 +57,6 @@ class DatabaseParser(Parser):
         if key.upper() in self.seen:
             raise ExtensionError('bibliography contains case-insensitive duplicate keys')
         self.seen.add(key.upper())
-        self.keys.append(key)
         super().process_entry(entry_type, key, fields)
 
     def handle_error(self, error):
@@ -184,9 +182,6 @@ def validate_database(app):
     """Reject keys which would collide in the legacy citation index."""
     parser = DatabaseParser(encoding=app.config.bibtex_encoding)
     parser.parse_files(app.env.get_domain('cite').bibdata.bibfiles)
-    keys = parser.keys
-    if keys != sorted(keys, key=str.upper):
-        raise ExtensionError('bibliography must be sorted by citation key')
 
 
 def add_bibliography(app, docname, source):
