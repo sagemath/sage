@@ -15,7 +15,24 @@ Run the examples below from the Sage checkout. Replace the `before` and `after`
 paths with your saved outputs. The commands return zero when the comparison
 passes and nonzero otherwise. Without `--output`, the full report is JSON on
 standard output. With `--output`, the full report is saved to that file and its
-summary is printed. All three commands also provide `--help`.
+summary is printed. The commands also provide `--help`.
+
+## Structured metadata
+
+Rendering a preserved `annotation` does not test whether the ordinary BibTeX
+fields are correct. Check those separately:
+
+```sh
+python build/test/rst2bib/check-bibtex.py src/doc/references/*.bib \
+  --output metadata-check.json --tsv fields.tsv
+```
+
+This checks title/author structure, duplicate keys, TeX fields, and ordinary
+formatting after removing `annotation`. The TSV export supports manual inspection
+of author, editor, title, and publication fields. The checker is offline and
+does not establish that a DOI identifies the correct work; that requires checking
+the publication. See [the semantic audit](SEMANTIC_AUDIT.md) for the scope,
+correction evidence, and explicit exceptions for undated chapter citations.
 
 ## Baselines for the two pull requests
 
@@ -56,10 +73,10 @@ python build/test/rst2bib/compare-html-dom.py \
   --output catalogue-comparison.json
 ```
 
-`catalogue-differences.json` records the exact field changes for `GrLe1996` and
-`VT2001` described in the [migration report](../../../BIBTEX_MIGRATION_REPORT.md).
-The entire differences object must match this file; it does not allow arbitrary
-changes to those two entries. Omit `--expected-differences` when no changed
+`catalogue-differences.json` records the exact field changes for the 16
+documented differences, including the corrections in the
+[semantic audit](SEMANTIC_AUDIT.md). The entire differences object must match
+this file; it does not allow arbitrary changes to those entries. Omit `--expected-differences` when no changed
 reference is expected.
 
 For changed citation keys, `--key-map` accepts a JSON object mapping old keys to
