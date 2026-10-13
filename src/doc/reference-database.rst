@@ -6017,6 +6017,10 @@
             l'École normale supérieure.
             Vol. 44. No. 1. Elsevier, 2011.
 
+.. [PS2026] Mara Pompili and Daniel Smertnig, *Factoriality and Class
+    Groups of Upper Cluster Algebras and Finite Laurent Intersection
+    Rings: A Computational Approach*, 2026. :arxiv:`2601.07520`.
+
 .. [PSW1996] Boris Pittel, Joel Spencer and Nicholas Wormald. *Sudden
              Emergence of a Giant k-Core in a Random
              Graph*. (1996). J. Combinatorial Theory. Ser B 67. pages
