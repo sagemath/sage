@@ -17,6 +17,29 @@ passes and nonzero otherwise. Without `--output`, the full report is JSON on
 standard output. With `--output`, the full report is saved to that file and its
 summary is printed. All three commands also provide `--help`.
 
+## Baselines for the two pull requests
+
+[#42968](https://github.com/sagemath/sage/pull/42968) performs the corrections and
+centralizes references in RST. [#42966](https://github.com/sagemath/sage/pull/42966)
+then converts the consolidated database to BibTeX. The examples and fixtures
+below compare the original Sage 11.0.beta2 baseline (`0835358cba6`) with the
+combined result of both PRs.
+
+To check the conversion on its own, build the catalogue from the cleanup branch
+and compare it with the BibTeX branch using the narrower fixture:
+
+```sh
+python build/test/rst2bib/compare-html-dom.py \
+  cleanup/html/en/reference/references/index.html \
+  bibtex/html/en/reference/references/index.html \
+  --expected-differences build/test/rst2bib/conversion-differences.json \
+  --output conversion-comparison.json
+```
+
+Both catalogues have 1,979 entries. The only expected difference is `VT2001`'s
+mathematical-symbol encoding; the other 1,978 entries match. No added or missing
+entries are permitted in this comparison.
+
 ## Reference catalogue
 
 `compare-html-dom.py` compares each citation's anchor, normalized text, links and
