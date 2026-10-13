@@ -245,9 +245,10 @@ class SageDisplayFormatter(DisplayFormatter):
             __repr__ called
             I am repper
 
-        A lazily imported class is displayed like the class it stands for.  In
-        particular, IPython does not call an ordinary instance method such as
-        :meth:`_repr_svg_` without an instance (:issue:`41697`)::
+        A lazy import of :class:`sage.combinat.tableau.Tableau` is
+        displayed like the class it stands for. Moreover, IPython
+        will not call its instance methods without an actual instance
+        (:issue:`41697`)::
 
             sage: shell = get_test_shell()
             sage: shell.run_cell('Tableau')
@@ -259,9 +260,10 @@ class SageDisplayFormatter(DisplayFormatter):
 
         The class itself is unaffected and still hands out its methods::
 
-            sage: shell.run_cell('Tableau._repr_svg_')
-            <function Tableau._repr_svg_ at ...>
+            sage: shell.run_cell('Tableau.level')
+            <function Tableau.level at ...>
             sage: shell.quit()
+
         """
         obj = _resolve_lazy_import(obj)
         sage_format, sage_metadata = self.dm.displayhook(obj)

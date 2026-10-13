@@ -22,7 +22,7 @@ AUTHORS: William Stein and David Kohel
 var_name = 'x'
 
 
-def variable_names(n, name=None):
+def variable_names(n: int, name: str | None = None) -> tuple[str, ...]:
     r"""
     Convert a root string into a tuple of variable names by adding
     numbers in sequence.
@@ -54,7 +54,7 @@ def variable_names(n, name=None):
     return tuple(['%s%s' % (name, i) for i in range(n)])
 
 
-def latex_variable_names(n, name=None):
+def latex_variable_names(n: int, name: str | None = None) -> tuple[str, ...]:
     r"""
     Convert a root string into a tuple of variable names by adding
     numbers in sequence.
@@ -86,7 +86,7 @@ def latex_variable_names(n, name=None):
     return tuple(['%s_{%s}' % (name, i) for i in range(n)])
 
 
-def set_default_variable_name(name, separator=''):
+def set_default_variable_name(name: str, separator: str = '') -> None:
     r"""
     Change the default variable name and separator.
     """
@@ -99,7 +99,7 @@ def set_default_variable_name(name, separator=''):
 series_prec = 20
 
 
-def series_precision():
+def series_precision() -> int:
     """
     Return the Sage-wide precision for series (symbolic,
     power series, Laurent series).
@@ -112,7 +112,7 @@ def series_precision():
     return series_prec
 
 
-def set_series_precision(prec):
+def set_series_precision(prec: int) -> None:
     """
     Change the Sage-wide precision for series (symbolic,
     power series, Laurent series).
