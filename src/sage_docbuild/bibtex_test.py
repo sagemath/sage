@@ -10,11 +10,13 @@ import pytest
 pytest.importorskip('sphinxcontrib.bibtex')
 
 
-def build(source, output, builder='html', fresh=False):
+def build(source, output, builder='html', fresh=False, doctrees=None):
     command = [sys.executable, '-m', 'sphinx', '-b', builder, '-W', '--keep-going',
                '-j', '2', str(source), str(output)]
     if fresh:
         command.insert(3, '-E')
+    if doctrees is not None:
+        command[3:3] = ['-d', str(doctrees)]
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
 
@@ -174,3 +176,108 @@ def setup(app):
     page = (output / 'index.html').read_text()
     assert 'href="#otherkey"' in page
     assert 'https://example.org/a_b' in page
+
+
+@pytest.mark.parametrize('smartquotes', [True, False])
+def test_bibtex_typography_matches_native_citations(manual, tmp_path, smartquotes):
+    # BibTeX inserts its entries after Sphinx's normal typography transform.
+    # Compare actual rendered paragraphs with native reST citations, including
+    # quotes crossing inline markup and text which must stay literal.
+    with (manual / 'refs.bib').open('a') as file:
+        file.write(r'''
+@misc{QuoteKey,
+  annotation = {A. Author. "\emph{An author's title}".
+                \texttt{'literal'} and \(x'\).
+                \href{https://example.org/a_b}{An author's website}.
+                Escaped \textquotesingle{}quote\textquotesingle{} and
+                \textquotedbl{}double\textquotedbl{}.}
+}
+''')
+    with (manual / 'conf.py').open('a') as file:
+        file.write(f'\nsmartquotes = {smartquotes!r}\n')
+    index = manual / 'index.rst'
+    index.write_text(r'''
+A manual
+========
+
+[NativeQuoteKey]_.
+
+.. [NativeQuoteKey] A. Author. "*An author's title*".
+   ``'literal'`` and :math:`x'`.
+   `An author's website <https://example.org/a_b>`_.
+   Escaped \'quote\' and \"double\".
+''')
+    for page in manual.glob('*.rst'):
+        if page != index:
+            page.unlink()
+    output = tmp_path / 'html'
+
+    def paragraph(key):
+        page = (output / 'index.html').read_text()
+        citation = re.search(rf'<div class="citation" id="{key}".*?</div>', page, re.S)[0]
+        body = re.search(r'<p>(.*?)</p>', citation, re.S)[1]
+        return re.sub(r'\s+', ' ', unescape(body)).strip()
+
+    build(manual, output)
+    native = paragraph('nativequotekey')
+    index.write_text('A manual\n========\n\n[QuoteKey]_.\n')
+    build(manual, output)
+    assert paragraph('quotekey') == native
+
+
+def test_heading_colliding_with_uncited_entry(manual, tmp_path):
+    # Even uncited entries reserve IDs when parsing the bibliography. This
+    # used to break Sage's GSL heading while building the libraries manual.
+    (manual / 'index.rst').write_text('ExistingKey\n===========\n\n[OtherKey]_.\n')
+    for page in manual.glob('*.rst'):
+        if page.name != 'index.rst':
+            page.unlink()
+    output = tmp_path / 'html'
+    build(manual, output)
+    page = (output / 'index.html').read_text()
+    assert 'id="existingkey"' in page
+    assert 'href="#bibtex-1-otherkey"' in page
+
+
+def test_root_local_definition_and_removal(manual, tmp_path):
+    index = manual / 'index.rst'
+    index.write_text('''Title
+=====
+
+[ExistingKey]_ and [OtherKey]_.
+
+.. [ExistingKey] A local definition in the bibliography's document.
+''')
+    for page in manual.glob('*.rst'):
+        if page != index:
+            page.unlink()
+    output = tmp_path / 'html'
+    build(manual, output)
+    page = (output / 'index.html').read_text()
+    assert 'href="#existingkey"' in page
+    assert 'href="#bibtex-1-otherkey"' in page
+    index.write_text('Title\n=====\n\n[ExistingKey]_ and [OtherKey]_.\n')
+    build(manual, output)
+    page = (output / 'index.html').read_text()
+    assert 'href="#existingkey"' in page
+    assert 'href="#otherkey"' in page
+    assert 'A title with preserved capitals' in page
+
+
+def test_bibliography_edit_after_inventory_build(manual, tmp_path):
+    # Meson's inventory and HTML targets reuse the same doctrees. Reading the
+    # changed .bib during inventory must not leave the HTML output stale.
+    with (manual / 'conf.py').open('a') as file:
+        file.write("\nextensions.append('sage_docbuild.ext.inventory_builder')\n")
+    doctrees = tmp_path / 'doctrees'
+    output = tmp_path / 'html'
+    build(manual, output, doctrees=doctrees)
+    bibfile = manual / 'refs.bib'
+    bibfile.write_text(bibfile.read_text().replace('A title with preserved capitals', 'An updated title'))
+    build(manual, tmp_path / 'inventory', 'inventory', doctrees=doctrees)
+    build(manual, output, doctrees=doctrees)
+    assert 'An updated title' in (output / 'index.html').read_text()
+    assert 'href="index.html#existingkey"' in (output / 'chapter.html').read_text()
+    previous = (output / 'index.html').stat().st_mtime_ns
+    build(manual, output, doctrees=doctrees)
+    assert (output / 'index.html').stat().st_mtime_ns == previous
