@@ -6650,12 +6650,12 @@
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
 
-.. [Rees00] Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
-   Rolf S. Rees,
+.. [Rees00] Rolf S. Rees,
+   Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
 
-.. [Rees93] Two new direct product-type constructions for resolvable group-divisible designs,
-   Rolf S. Rees,
+.. [Rees93] Rolf S. Rees,
+   Two new direct product-type constructions for resolvable group-divisible designs,
    Journal of Combinatorial Designs 1.1 (1993): 15-26.
 
 .. [Reg09] Oded Regev. *On Lattices, Learning with Errors, Random
