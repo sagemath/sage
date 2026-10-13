@@ -956,6 +956,26 @@ cdef class Farey:
             ....:                                            linestyle=':',
             ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
+
+        TESTS:
+
+        All triangle boundaries and pairing arcs respect the requested
+        thickness for every tessellation mode (:issue:`38582`)::
+
+            sage: # needs sage.plot sage.symbolic
+            sage: F = FareySymbol(Gamma(6))
+            sage: for tessellation in ('Dedekind', 'coset', None):
+            ....:     g = F.fundamental_domain(tesselation=tessellation, thickness=0.1)
+            ....:     assert all(p.options()['thickness'] == 0.1 for p in g)
+            ....:     ax = g.matplotlib().axes[0]
+            ....:     assert all(p.get_linewidth() == float(0.1) for p in ax.patches)
+
+        The default thickness is unchanged::
+
+            sage: # needs sage.plot sage.symbolic
+            sage: g = F.fundamental_domain()
+            sage: all(p.options()['thickness'] == 1 for p in g)
+            True
         """
         from sage.plot.graphics import Graphics
         from sage.plot.colors import rainbow
@@ -989,8 +1009,10 @@ cdef class Farey:
                                          fill=options['fill'],
                                          linestyle=options['linestyle'],
                                          thickness=options['thickness'])
-                g += hyperbolic_triangle(A, D, C, color='gray')
-                g += hyperbolic_triangle(D, C, B, color='gray')
+                g += hyperbolic_triangle(A, D, C, color='gray',
+                                         thickness=options['thickness'])
+                g += hyperbolic_triangle(D, C, B, color='gray',
+                                         thickness=options['thickness'])
             elif options['tesselation'] == 'coset':
                 g += hyperbolic_triangle(A, B, C,
                                          alpha=options['alpha'],
