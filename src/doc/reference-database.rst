@@ -213,6 +213,11 @@
              addition formulas and applications*, Advances in Applied
              Mathematics 28 (2002) 302-342.
 
+.. [ALM2026] \E. Artal, A. Larraya and M.A. Marco-Buzunariz,
+             *Retraction of the complement of smooth projective hypersurfaces to an 
+              `n`-dimensional `\Delta`-complex.* 
+              https://https://arxiv.org/abs/2605.26768
+
 .. [ALPRRV2019] \E. Andreeva, V. Lallemand, A. Purnal, R. Reyhanitabar, A. Roy, D. Vizar
                 "ForkAE v.1"
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/forkae-spec.pdf

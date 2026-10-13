@@ -151,7 +151,7 @@ class DeltaComplex(GenericCellComplex):
       first in the prescribed way.  The three edges each start and end
       at the single vertex, ``Simplex(0)``.
 
-      .. image:: ../../media/torus_labelled.png
+      .. image:: ../../media    orus_labelled.png
 
     - ``data`` may be nested lists or tuples.  The n-th entry in the
       list is a list of the n-simplices in the complex, and each
@@ -1779,4 +1779,65 @@ class DeltaComplexExamples:
         return S
 
 
+    def HypersurfaceComplement(self, n, d):
+        r"""
+        A deformation retract of the complement of a smooth hypersurface of degree `d` in `\mathbb{CP}^n`.
+        
+        Return a Delta complex that is a strong deformation retract of the complement of a smooth hypersurface
+        of degree `d` in the projective complex space of dimension `n`.
+        
+        INPUT:
+        -``n`` -- positive integer; the dimension of the ambient space.
+        -``d`` -- positive integer; the degree of the hypersurface.
+        
+        EXAMPLES::
+            
+            sage: delta_complexes.HypersurfaceComplement(2,2)
+            Delta complex with 3 vertices and 14 simplices
+            sage: delta_complexes.HypersurfaceComplement(2,2).homology(1)
+            C2
+            sage: delta_complexes.HypersurfaceComplement(2,2).homology(2)
+            0
+        
+        REFERENCES:
+        
+        For more information on how the delta complex is computed, see [ALM2026]_.
+        
+        """
+        from sage.combinat.tuple import Tuples
+        resdic = [{tuple(i*[0]+[1] + (n-i)*[0]): None for i in range(n+1) }]+ [{} for i in range(n)]
+    
+        for nzerosi in range(n+1): 
+            for t in Tuples(range(d+1),n-nzerosi ):
+                T = nzerosi*[0] + [1] + list(t)
+                dimT = len(T) - T.count(0) - 2
+                if dimT >= 0:
+                    caras = []
+                    for i in range(n+1):
+                        if T[i] != 0:
+                            CT = copy(T)
+                            CT[i] = 0
+                            v = next(filter(lambda a : a != 0, CT))
+                            correct = v - 1
+                            for i in range(len(CT)):
+                                if CT[i] != 0:
+                                    CT[i] -= correct
+                                    if CT[i] <= 0:
+                                        CT[i] += d
+                            caras.append(tuple(CT))
+                    resdic[dimT+1][tuple(T)] = caras
+        
+        DC = [[tuple() for _ in range(n+1)]]
+        for i in range(1,n+1): 
+            lis = []
+            for p,v in resdic[i].items():
+                lisp = []
+                for s in v:
+                    lisp.append(list(resdic[i-1].keys()).index(s))
+                lis.append(lisp)
+            DC.append(lis)
+        
+        dc=DeltaComplex(DC) 
+        return dc
+        
 delta_complexes = DeltaComplexExamples()
