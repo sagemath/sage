@@ -3,8 +3,8 @@ r"""
 Generalized Tamari lattices
 
 These lattices depend on three parameters `a`, `b` and `m`, where `a`
-and `b` are positive integers and `m` is a nonnegative
-integer.
+is a positive integer, `b` is a nonnegative integer, and `m` is a
+nonnegative rational number.
 
 The elements are :func:`Dyck paths<sage.combinat.dyck_word.DyckWord>`
 in the `(a \times b)`-rectangle. The order relation depends on `m`.
@@ -49,6 +49,115 @@ are also available directly using the catalogue of posets, as follows::
 from __future__ import annotations
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+
+
+def _coerce_nonnegative_integer(value, name):
+    r"""
+    Return ``value`` as a nonnegative integer.
+
+    INPUT:
+
+    - ``value`` -- the value to coerce
+
+    - ``name`` -- string; the parameter name to use in error messages
+
+    EXAMPLES::
+
+        sage: from sage.combinat.tamari_lattices import _coerce_nonnegative_integer
+        sage: _coerce_nonnegative_integer(QQ(3), 'n')
+        3
+        sage: _coerce_nonnegative_integer(RDF(3), 'n')                                  # needs sage.rings.real_double
+        3
+        sage: _coerce_nonnegative_integer(Zmod(2)(1), 'n')                              # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+        sage: _coerce_nonnegative_integer(3/2, 'n')
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+    """
+    if isinstance(value, IntegerMod_abstract):
+        raise ValueError(f"{name} must be a nonnegative integer")
+    try:
+        value = ZZ(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} must be a nonnegative integer") from None
+    if value < 0:
+        raise ValueError(f"{name} must be a nonnegative integer")
+    return value
+
+
+def _coerce_positive_integer(value, name):
+    r"""
+    Return ``value`` as a positive integer.
+
+    INPUT:
+
+    - ``value`` -- the value to coerce
+
+    - ``name`` -- string; the parameter name to use in error messages
+
+    EXAMPLES::
+
+        sage: from sage.combinat.tamari_lattices import _coerce_positive_integer
+        sage: _coerce_positive_integer(QQ(3), 'a')
+        3
+        sage: _coerce_positive_integer(RDF(3), 'a')                                     # needs sage.rings.real_double
+        3
+        sage: _coerce_positive_integer(Zmod(2)(1), 'a')                                 # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: a must be a positive integer
+        sage: _coerce_positive_integer(0, 'a')
+        Traceback (most recent call last):
+        ...
+        ValueError: a must be a positive integer
+    """
+    try:
+        value = _coerce_nonnegative_integer(value, name)
+    except ValueError:
+        raise ValueError(f"{name} must be a positive integer") from None
+    if value == 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _coerce_nonnegative_rational(value, name):
+    r"""
+    Return ``value`` as a nonnegative rational number.
+
+    INPUT:
+
+    - ``value`` -- the value to coerce
+
+    - ``name`` -- string; the parameter name to use in error messages
+
+    EXAMPLES::
+
+        sage: from sage.combinat.tamari_lattices import _coerce_nonnegative_rational
+        sage: _coerce_nonnegative_rational(RDF(2)/5, 'm') == QQ(RDF(2)/5)               # needs sage.rings.real_double
+        True
+        sage: from fractions import Fraction
+        sage: _coerce_nonnegative_rational(Fraction('1/2'), 'm')
+        1/2
+        sage: _coerce_nonnegative_rational(Zmod(2)(1), 'm')                             # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: m must be a nonnegative rational number
+    """
+    if isinstance(value, IntegerMod_abstract):
+        raise ValueError(f"{name} must be a nonnegative rational number")
+    try:
+        value = QQ(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} must be a nonnegative rational number") from None
+    if value < 0:
+        raise ValueError(f"{name} must be a nonnegative rational number")
+    return value
 
 
 def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
@@ -167,7 +276,9 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     INPUT:
 
-    - ``a``, ``b`` -- integers with `a \geq b`
+    - ``a`` -- positive integer
+
+    - ``b`` -- nonnegative integer with `a \geq b`, unless `m = 0`
 
     - ``m`` -- a nonnegative rational number such that `a \geq b m`
 
@@ -206,11 +317,51 @@ def GeneralizedTamariLattice(a, b, m=1):
         sage: P = GeneralizedTamariLattice(5, 3, m=5/3); P
         Finite lattice containing 7 elements
 
+        sage: GeneralizedTamariLattice(3, 2, -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: m must be a nonnegative rational number
+        sage: GeneralizedTamariLattice(0, 0)
+        Traceback (most recent call last):
+        ...
+        ValueError: a must be a positive integer
+        sage: GeneralizedTamariLattice(3, -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: b must be a nonnegative integer
+        sage: GeneralizedTamariLattice(3/2, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: a must be a positive integer
+        sage: GeneralizedTamariLattice(2, 4, 1/4)
+        Traceback (most recent call last):
+        ...
+        ValueError: the condition a>=b does not hold
+        sage: GeneralizedTamariLattice(1, 3, 0)
+        Finite lattice containing 1 elements
 
     TESTS::
 
         sage: P.coxeter_transformation()**18 == 1                                       # needs sage.libs.flint
         True
+
+        sage: GeneralizedTamariLattice(3, 2, sqrt(2))                                   # needs sage.symbolic
+        Traceback (most recent call last):
+        ...
+        ValueError: m must be a nonnegative rational number
+        sage: GeneralizedTamariLattice(3, QQ(2))
+        Finite lattice containing 2 elements
+        sage: GeneralizedTamariLattice(3, RDF(2))                                      # needs sage.rings.real_double
+        Finite lattice containing 2 elements
+        sage: GeneralizedTamariLattice(Zmod(2)(1), 1)                                  # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: a must be a positive integer
+        sage: GeneralizedTamariLattice(7, 7, RDF(2)/5).is_lattice()                    # needs sage.rings.real_double
+        True
+        sage: from fractions import Fraction
+        sage: GeneralizedTamariLattice(3, 2, Fraction('1/2'))
+        Finite lattice containing 2 elements
 
     REFERENCES:
 
@@ -220,6 +371,12 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     - [CC2023]_
     """
+    a = _coerce_positive_integer(a, "a")
+    b = _coerce_nonnegative_integer(b, "b")
+    m = _coerce_nonnegative_rational(m, "m")
+
+    if m != 0 and a < b:
+        raise ValueError("the condition a>=b does not hold")
     if a < b * m:
         raise ValueError("the condition a>=b*m does not hold")
 
@@ -269,11 +426,36 @@ def TamariLattice(n, m=1):
 
         sage: posets.TamariLattice(3, 2)
         Finite lattice containing 12 elements
+        sage: posets.TamariLattice(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+        sage: posets.TamariLattice(3, -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: m must be a nonnegative integer
+        sage: posets.TamariLattice(3, 1/2)
+        Traceback (most recent call last):
+        ...
+        ValueError: m must be a nonnegative integer
+        sage: posets.TamariLattice(QQ(3))
+        Finite lattice containing 5 elements
+        sage: posets.TamariLattice(3, RDF(2))                                          # needs sage.rings.real_double
+        Finite lattice containing 12 elements
+        sage: posets.TamariLattice(Zmod(5)(3))                                         # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+        sage: posets.TamariLattice(3, 0)
+        Finite lattice containing 1 elements
 
     REFERENCES:
 
     - [BMFPR2011]_
     """
+    n = _coerce_nonnegative_integer(n, "n")
+    m = _coerce_nonnegative_integer(m, "m")
+
     return GeneralizedTamariLattice(m * n + 1, n, m)
 
 
@@ -378,11 +560,27 @@ def DexterSemilattice(n):
         4
         sage: P.chain_polynomial()
         q^5 + 19*q^4 + 47*q^3 + 42*q^2 + 14*q + 1
+        sage: posets.DexterSemilattice(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+        sage: posets.DexterSemilattice(1/2)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
+        sage: posets.DexterSemilattice(RDF(3))                                         # needs sage.rings.real_double
+        Finite meet-semilattice containing 5 elements
+        sage: posets.DexterSemilattice(Zmod(5)(3))                                     # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be a nonnegative integer
 
     REFERENCES:
 
     - [Cha18]_
     """
+    n = _coerce_nonnegative_integer(n, "n")
+
     a = n + 1
     b = n
 
