@@ -3266,12 +3266,12 @@ class DiGraph(GenericGraph):
         )
 
         NEG_INF = float('-inf')
-        pred = {v: None for v in self}
+        pred = dict.fromkeys(self)
 
         if source is None:
-            dist = {v: 0 for v in self}
+            dist = dict.fromkeys(self, 0)
         else:
-            dist = {v: NEG_INF for v in self}
+            dist = dict.fromkeys(self, NEG_INF)
             dist[source] = 0
 
         for u in topo_order:
@@ -3562,7 +3562,7 @@ class DiGraph(GenericGraph):
         g = 0
 
         for component in self.strongly_connected_components():
-            levels = {s: None for s in component}
+            levels = dict.fromkeys(component)
             vertices_in_scc = levels  # considers level as a set
             s = component[0]
             levels[s] = 0
