@@ -2,7 +2,13 @@
   "LocalRef027": {
     "text": {
       "before": "Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side, Rolf S. Rees, Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.",
-      "after": "Rolf S. Rees, Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side, Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266."
+      "after": "Rolf S. Rees, Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side \\(n\\) , Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266."
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)"
+      ]
     }
   },
   "LocalRef028": {
@@ -77,6 +83,12 @@
           "https://arxiv.org/abs/math/0105017"
         ]
       ]
+    }
+  },
+  "LocalRef129": {
+    "text": {
+      "before": "Ian Macdonald, Symmetric Functions and Orthogonal Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2",
+      "after": "Ian Macdonald, Symmetric Functions and Hall Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2"
     }
   }
 }

@@ -1,4 +1,63 @@
 {
+  "AH2002": {
+    "text": {
+      "before": "R. J. Aumann and S. Hart, Elsevier, eds. Computing equilibria for two-person games . http://www.maths.lse.ac.uk/personal/stengel/TEXTE/nashsurvey.pdf (2002)",
+      "after": "Bernhard von Stengel, Computing equilibria for two-person games . In R. J. Aumann and S. Hart (eds.), Handbook of Game Theory with Economic Applications , vol. 3, chapter 45, pp. 1723–1759. Elsevier, Amsterdam, 2002. http://www.maths.lse.ac.uk/personal/stengel/TEXTE/nashsurvey.pdf"
+    },
+    "emphasis": {
+      "before": [
+        "Computing equilibria for two-person games"
+      ],
+      "after": [
+        "Computing equilibria for two-person games",
+        "Handbook of Game Theory with Economic Applications"
+      ]
+    }
+  },
+  "BKLPPRSV2007": {
+    "text": {
+      "before": "A. Bogdanov, L. Knudsen, G. Leander, C. Paar, A. Poschmann, M. Robshaw, Y. Seurin, C. Vikkelsoe. PRESENT: An Ultra-Lightweight Block Cipher ; in Proceedings of CHES 2007; LNCS 7427; pp. 450-466; Springer Verlag 2007; available at https://doi.org/10.1007/978-1-4419-5906-5_605",
+      "after": "A. Bogdanov, L. Knudsen, G. Leander, C. Paar, A. Poschmann, M. Robshaw, Y. Seurin, C. Vikkelsoe. PRESENT: An Ultra-Lightweight Block Cipher ; in Proceedings of CHES 2007; LNCS 4727; pp. 450-466; Springer Verlag 2007; available at https://doi.org/10.1007/978-3-540-74735-2_31"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/978-1-4419-5906-5_605",
+          "https://doi.org/10.1007/978-1-4419-5906-5_605"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/978-3-540-74735-2_31",
+          "https://doi.org/10.1007/978-3-540-74735-2_31"
+        ]
+      ]
+    }
+  },
+  "CHPSS18": {
+    "text": {
+      "before": "C. Cid, T. Huang, T. Peyrin, Y. Sasaki, L. Song. Boomerang Connectivity Table: A New Cryptanalysis Tool (2018) IACR Transactions on Symmetric Cryptology. Vol 2017, Issue 4. pre-print available at https://eprint.iacr.org/2018/161.pdf",
+      "after": "C. Cid, T. Huang, T. Peyrin, Y. Sasaki, L. Song. Boomerang Connectivity Table: A New Cryptanalysis Tool . In Advances in Cryptology – EUROCRYPT 2018, LNCS 10821, pp. 683–714 (2018). https://doi.org/10.1007/978-3-319-78375-8_22 ; pre-print available at https://eprint.iacr.org/2018/161.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://eprint.iacr.org/2018/161.pdf",
+          "https://eprint.iacr.org/2018/161.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/978-3-319-78375-8_22",
+          "https://doi.org/10.1007/978-3-319-78375-8_22"
+        ],
+        [
+          "https://eprint.iacr.org/2018/161.pdf",
+          "https://eprint.iacr.org/2018/161.pdf"
+        ]
+      ]
+    }
+  },
   "GrLe1996": {
     "text": {
       "before": "J. Graham and G.I. Lehrer Cellular algebras . Invent. Math. 123 (1996), 1-34. https://www.ams.org/mathscinet-getitem?mr=MR1376244",
@@ -21,6 +80,180 @@
           "https://doi.org/10.1007/BF01232365"
         ]
       ]
+    }
+  },
+  "Ive2012": {
+    "text": {
+      "before": "S. Iveson, Tableaux on \\(k + 1\\) -cores, reduced words for affine permutations, and \\(k\\) -Schur expansions , Operators on \\(k\\) -tableaux and the \\(k\\) -Littlewood-Richardson rule for a special case, UC Berkeley: Mathematics, Ph.D. Thesis, https://escholarship.org/uc/item/7pd1v1b5",
+      "after": "S. Iveson, Operators on \\(k\\) -tableaux and the \\(k\\) -Littlewood-Richardson rule for a special case, UC Berkeley: Mathematics, Ph.D. Thesis, 2012, https://escholarship.org/uc/item/7pd1v1b5"
+    },
+    "math": {
+      "before": [
+        "\\(k + 1\\)",
+        "\\(k\\)",
+        "\\(k\\)",
+        "\\(k\\)"
+      ],
+      "after": [
+        "\\(k\\)",
+        "\\(k\\)"
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Tableaux on",
+        "-cores, reduced words for affine permutations, and",
+        "-Schur expansions"
+      ],
+      "after": []
+    }
+  },
+  "Jack1970": {
+    "text": {
+      "before": "H. Jack, A class of symmetric functions with a parameter , Proc. R. Soc. Edinburgh (A), 69, 1-18.",
+      "after": "H. Jack, A class of symmetric polynomials with a parameter , Proc. R. Soc. Edinburgh (A), 69, 1-18."
+    },
+    "emphasis": {
+      "before": [
+        "A class of symmetric functions with a parameter"
+      ],
+      "after": [
+        "A class of symmetric polynomials with a parameter"
+      ]
+    }
+  },
+  "JS2010": {
+    "text": {
+      "before": "B. Jones, A. Schilling. Affine structures and a tableau model for \\(E_6\\) crystals , J. Algebra. 324 (2010). 2512-2542. https://doi.org/10.1016/j.bbr.2011.03.031 , https://arxiv.org/abs/0909.2442 .",
+      "after": "B. Jones, A. Schilling. Affine structures and a tableau model for \\(E_6\\) crystals , J. Algebra. 324 (2010). 2512-2542. https://doi.org/10.1016/j.jalgebra.2010.07.041 , https://arxiv.org/abs/0909.2442 ."
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1016/j.bbr.2011.03.031",
+          "https://doi.org/10.1016/j.bbr.2011.03.031"
+        ],
+        [
+          "https://arxiv.org/abs/0909.2442",
+          "https://arxiv.org/abs/0909.2442"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1016/j.jalgebra.2010.07.041",
+          "https://doi.org/10.1016/j.jalgebra.2010.07.041"
+        ],
+        [
+          "https://arxiv.org/abs/0909.2442",
+          "https://arxiv.org/abs/0909.2442"
+        ]
+      ]
+    }
+  },
+  "KS2012": {
+    "text": {
+      "before": "Jerome Kelleher, Barry O’Sullivan, Generating all partitions: A Comparison of encodings , Journal of Mathematical Modelling and Algorithms, 11:89-104, 2012. https://doi.org/10.1007/s10852-011-9168-y https://arxiv.org/abs/0909.2331",
+      "after": "Jerome Kelleher, Barry O’Sullivan, Generating All Partitions: A Comparison of Two Encodings , preprint (2009). https://doi.org/10.48550/arXiv.0909.2331 , https://arxiv.org/abs/0909.2331 ."
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/s10852-011-9168-y",
+          "https://doi.org/10.1007/s10852-011-9168-y"
+        ],
+        [
+          "https://arxiv.org/abs/0909.2331",
+          "https://arxiv.org/abs/0909.2331"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.48550/arXiv.0909.2331",
+          "https://doi.org/10.48550/arXiv.0909.2331"
+        ],
+        [
+          "https://arxiv.org/abs/0909.2331",
+          "https://arxiv.org/abs/0909.2331"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Generating all partitions: A Comparison of encodings"
+      ],
+      "after": [
+        "Generating All Partitions: A Comparison of Two Encodings"
+      ]
+    }
+  },
+  "Lim2001": {
+    "text": {
+      "before": "C. H. Lim, A Revised Version of CRYPTON: CRYPTON V1.0 ; in FSE’01, pp. 31–45.",
+      "after": "C. H. Lim, A Revised Version of CRYPTON: CRYPTON V1.0 ; in FSE’99 (1999), pp. 31–45."
+    }
+  },
+  "Motsak2006": {
+    "text": {
+      "before": "Olekasandr Motsak. Computation of the central elements and centralizers of sets of elements in non-commutative polynomial algebras . Ph.D. Thesis, 2006. https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf",
+      "after": "Oleksandr Motsak. Computation of the central elements and centralizers of sets of elements in non-commutative polynomial algebras . Diploma thesis, 2006. https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf"
+    }
+  },
+  "NT2007": {
+    "text": {
+      "before": "Serguei Norine and Robin Thomas. Minimally Non-Pfaffian Graphs . Combinatorica, vol. 27, no. 5, pages: 587 – 600, Springer. 2007. https://doi.org/10.1016/j.jctb.2007.12.005 .",
+      "after": "Serguei Norine and Robin Thomas. Minimally Non-Pfaffian Graphs . Journal of Combinatorial Theory, Series B, vol. 98, no. 5, pages 1038–1055, 2008. https://doi.org/10.1016/j.jctb.2007.12.005 ."
+    }
+  },
+  "Reg09": {
+    "text": {
+      "before": "Oded Regev. On Lattices, Learning with Errors, Random Linear Codes, and Cryptography . in Journal of the ACM 56(6). ACM 2009, https://doi.org/10.1145/1060590.1060603",
+      "after": "Oded Regev. On Lattices, Learning with Errors, Random Linear Codes, and Cryptography . in Journal of the ACM 56(6). ACM 2009, https://doi.org/10.1145/1568318.1568324"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1145/1060590.1060603",
+          "https://doi.org/10.1145/1060590.1060603"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1145/1568318.1568324",
+          "https://doi.org/10.1145/1568318.1568324"
+        ]
+      ]
+    }
+  },
+  "Sch2013": {
+    "text": {
+      "before": "Schmidt, Jens M A Simple Test on 2-Vertex- and 2-Edge-Connectivity , Information Processing Letters, 113 (7): 241-244 https://doi.org/10.2307/2303897",
+      "after": "Schmidt, Jens M A Simple Test on 2-Vertex- and 2-Edge-Connectivity , Information Processing Letters, 113 (7): 241-244 https://doi.org/10.1016/j.ipl.2013.01.016"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.2307/2303897",
+          "https://doi.org/10.2307/2303897"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1016/j.ipl.2013.01.016",
+          "https://doi.org/10.1016/j.ipl.2013.01.016"
+        ]
+      ]
+    }
+  },
+  "Sil2007": {
+    "text": {
+      "before": "Joseph H. Silverman. The Arithmetic of Dynamics Systems. GTM 241, Springer-Verlag, New York, 2007.",
+      "after": "Joseph H. Silverman. The Arithmetic of Dynamical Systems. GTM 241, Springer-Verlag, New York, 2007."
+    }
+  },
+  "Ste1996": {
+    "text": {
+      "before": "John R. Stembridge, On the fully commutative elements of Coxeter groups , Journal of Algebraic Combinatorics, 5, pp. 355-385",
+      "after": "John R. Stembridge, On the fully commutative elements of Coxeter groups , Journal of Algebraic Combinatorics, 5, pp. 353-385"
     }
   },
   "VT2001": {
