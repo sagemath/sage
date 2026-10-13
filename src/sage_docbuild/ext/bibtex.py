@@ -6,10 +6,13 @@ The reference catalogue includes all entries and retains their citation keys.
 """
 
 import codecs
+import json
 import re
+from pathlib import Path
 
 import latexcodec  # noqa: F401 -- register the ulatex codec
 from docutils import nodes
+from docutils.utils import new_document
 from pybtex.database.input.bibtex import Parser
 from pybtex.plugin import register_plugin
 from pybtex.richtext import HRef, Tag, Text
@@ -19,7 +22,11 @@ from pybtex.style.labels import BaseLabelStyle
 from pybtex.style.sorting import BaseSortingStyle
 from sphinx.addnodes import pending_xref
 from sphinx.errors import ExtensionError
+from sphinx.transforms import SphinxSmartQuotes
 from sphinxcontrib.bibtex.citation_target import CitationTarget
+from sphinxcontrib.bibtex.directives import (
+    BibliographyDirective as BibtexBibliographyDirective,
+)
 from sphinxcontrib.bibtex.domain import BibtexDomain
 from sphinxcontrib.bibtex.roles import CitationRef
 
@@ -56,6 +63,32 @@ class DatabaseParser(Parser):
 
     def handle_error(self, error):
         raise ExtensionError(f'invalid bibliography: {error}')
+
+
+class BibliographyDirective(BibtexBibliographyDirective):
+    """Keep citation anchors from colliding with headings or local citations.
+
+    sphinxcontrib-bibtex reserves IDs for every database entry before it knows
+    which entries are cited. Keep the traditional IDs when possible, notably
+    in the reference catalogue, and prefix them when this document already
+    uses one of those IDs.
+    """
+
+    def run(self):
+        config = self.env.config
+        original = config.bibtex_cite_id
+        template = original
+        count = self.env.temp_data.get('bibtex_bibliography_count', 0) + 1
+        keyprefix = self.options.get('keyprefix', '')
+        entries = self.env.get_domain('cite').bibdata.data.entries
+        while any(nodes.make_id(template.format(bibliography_count=count, key=keyprefix + key))
+                  in self.state.document.ids for key in entries):
+            template = f'bibtex-{count}-' + template
+        config.bibtex_cite_id = template
+        try:
+            return super().run()
+        finally:
+            config.bibtex_cite_id = original
 
 
 def _group(text, start):
@@ -122,10 +155,12 @@ def _decode(text):
             r'\textasciitilde{}': '~',
             r'\textasciicircum{}': '^',
             r'\textbackslash{}': '\\',
+            r'\textquotesingle{}': "\x00'",
+            r'\textquotedbl{}': '\x00"',
         }.get(command, command[1:]))
         return chr(0xF0000 + len(literals) - 1)
 
-    text = re.sub(r'\\(?:textasciitilde|textasciicircum|textbackslash)\{\}|\\[{}%&#_$]',
+    text = re.sub(r'\\(?:textasciitilde|textasciicircum|textbackslash|textquotesingle|textquotedbl)\{\}|\\[{}%&#_$]',
                   protect, text)
     text = codecs.decode('x' + text + 'x', 'ulatex')[1:-1]
     for index, literal in enumerate(literals):
@@ -162,6 +197,63 @@ def add_bibliography(app, docname, source):
             or re.search(r'^\s*\.\. bibliography::', source[0], re.M)):
         return
     source[0] += '\n\n.. rubric:: Bibliography\n\n.. bibliography::\n'
+
+
+def bibliography_signature(app):
+    """Identify the bibliography version used by the current builder."""
+    return {str(path): bibfile.mtime
+            for path, bibfile in app.env.get_domain('cite').bibdata.bibfiles.items()}
+
+
+def bibliography_stamp(app):
+    """Keep output-format stamps beside Sphinx's other cached build data."""
+    return Path(app.doctreedir) / f'sage-bibtex-{app.builder.name}.json'
+
+
+def outdated_bibliography_documents(app, env, added, changed, removed):
+    """Rebuild citations after another builder refreshes the shared cache.
+
+    Sage builds inventories before HTML with the same doctrees. An inventory
+    pass can consume a bibliography-only change without updating HTML, so
+    compare with the bibliography used by this output format's last build.
+    """
+    try:
+        previous = json.loads(bibliography_stamp(app).read_text())
+    except (FileNotFoundError, ValueError):
+        previous = None
+    if previous == bibliography_signature(app):
+        return []
+    domain = env.get_domain('cite')
+    documents = {key.docname for key in domain.bibliographies}
+    documents.update(reference.docname for reference in domain.citation_refs)
+    documents.update(domain.data.get('sage_legacy_refs', {}))
+    return sorted(documents)
+
+
+def record_bibliography_build(app, exception):
+    """Record the bibliography only after a successful build of this format."""
+    if exception is None:
+        bibliography_stamp(app).write_text(json.dumps(bibliography_signature(app)))
+
+
+def smartquote_bibliography(app, doctree, docname):
+    """Apply Sphinx's typography to entries generated after its transforms.
+
+    Native citations have already passed through SphinxSmartQuotes. BibTeX
+    entries are inserted by a post-transform, so process only those entries,
+    respecting the language and the builder's smartquotes configuration.
+    """
+    domain = app.env.get_domain('cite')
+    generated = {(key.docname, node['ids'][0])
+                 for key, bibliography in domain.bibliographies.items()
+                 for node in bibliography.citation_nodes.values()}
+    citations = [node for node in doctree.findall(nodes.citation)
+                 if (node.get('docname'), node['ids'][0]) in generated]
+    document = new_document(docname, settings=doctree.settings)
+    document.extend(node.deepcopy() for node in citations)
+    SphinxSmartQuotes(document, None).apply()
+    for original, formatted in zip(citations, document.children):
+        original[:] = formatted.children
 
 
 def collect_legacy_references(app, doctree):
@@ -250,12 +342,16 @@ def setup(app):
     register_plugin('pybtex.style.formatting', 'sage', SageStyle)
     BibtexDomain.backend.tags['math'] = nodes.math
     app.setup_extension('sphinxcontrib.bibtex')
+    app.add_directive('bibliography', BibliographyDirective, override=True)
     app.add_config_value('sage_bibtex_auto_bibliography', True, 'env')
     app.connect('builder-inited', validate_database, priority=600)
     app.connect('source-read', add_bibliography)
+    app.connect('env-get-outdated', outdated_bibliography_documents)
+    app.connect('build-finished', record_bibliography_build)
+    app.connect('doctree-resolved', smartquote_bibliography)
     app.connect('doctree-read', collect_legacy_references)
     app.connect('env-purge-doc', purge_legacy_references)
     app.connect('env-merge-info', merge_legacy_references)
     app.connect('env-updated', prefer_local_citations, priority=400)
     app.connect('env-updated', publish_legacy_citations)
-    return {'env_version': 1, 'parallel_read_safe': True, 'parallel_write_safe': True}
+    return {'env_version': 2, 'parallel_read_safe': True, 'parallel_write_safe': True}
