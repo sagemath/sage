@@ -137,9 +137,11 @@
               pp. 225--275,
               :arxiv:`math/0203282v2`.
 
-.. [AH2002] \R. J. Aumann and S. Hart, Elsevier, eds. *Computing
-            equilibria for two-person
-            games*. http://www.maths.lse.ac.uk/personal/stengel/TEXTE/nashsurvey.pdf (2002)
+.. [AH2002] Bernhard von Stengel, *Computing equilibria for two-person games*.
+            In R. J. Aumann and S. Hart (eds.), *Handbook of Game Theory with
+            Economic Applications*, vol. 3, chapter 45, pp. 1723--1759.
+            Elsevier, Amsterdam, 2002.
+            http://www.maths.lse.ac.uk/personal/stengel/TEXTE/nashsurvey.pdf
 
 .. [AHK1994] Sheldon B. Akers, Doy Horel and Balakrishnan Krishnamurthy,
              *The star graph: An attractive alternative to the previous n-cube*.
@@ -1075,9 +1077,9 @@
 .. [BKLPPRSV2007]
             \A. Bogdanov, L. Knudsen, G. Leander, C. Paar, A. Poschmann,
             \M. Robshaw, Y. Seurin, C. Vikkelsoe. *PRESENT: An Ultra-Lightweight
-            Block Cipher*; in Proceedings of CHES 2007; LNCS 7427; pp. 450-466;
+            Block Cipher*; in Proceedings of CHES 2007; LNCS 4727; pp. 450-466;
             Springer Verlag 2007; available at
-            :doi:`10.1007/978-1-4419-5906-5_605`
+            :doi:`10.1007/978-3-540-74735-2_31`
 
 .. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
              *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
@@ -1911,8 +1913,9 @@
               :doi:`10.1007/s00373-020-02204-6`.
 
 .. [CHPSS18] \C. Cid, T. Huang, T. Peyrin, Y. Sasaki, L. Song.
-             *Boomerang Connectivity Table: A New Cryptanalysis Tool* (2018)
-             IACR Transactions on Symmetric Cryptology. Vol 2017, Issue 4.
+             *Boomerang Connectivity Table: A New Cryptanalysis Tool*.
+             In Advances in Cryptology – EUROCRYPT 2018, LNCS 10821,
+             pp. 683--714 (2018). :doi:`10.1007/978-3-319-78375-8_22`;
              pre-print available at https://eprint.iacr.org/2018/161.pdf
 
 .. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*.
@@ -4296,11 +4299,9 @@
               CANS, (2009), pp. 334-348.
 
 .. [Ive2012] \S. Iveson,
-             *Tableaux on* `k + 1`\ *-cores, reduced words for affine
-             permutations, and* `k`\ *-Schur expansions*,
              Operators on `k`-tableaux and the `k`-Littlewood-Richardson
              rule for a special case,
-             UC Berkeley: Mathematics,  Ph.D. Thesis,
+             UC Berkeley: Mathematics, Ph.D. Thesis, 2012,
              https://escholarship.org/uc/item/7pd1v1b5
 
 .. [Iwa1964] \N. Iwahori, On the structure of a Hecke ring of a
@@ -4321,7 +4322,7 @@
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
 
 .. [Jack1970] \H. Jack,
-              *A class of symmetric functions with a parameter*,
+              *A class of symmetric polynomials with a parameter*,
               Proc. R. Soc. Edinburgh (A), 69, 1-18.
 
 .. [JacMat96] Mark T. Jacobson and Peter Matthews, "Generating uniformly
@@ -4452,7 +4453,7 @@
 .. [JS2010] \B. Jones, A. Schilling.
             *Affine structures and a tableau model for* `E_6` *crystals*,
             \J. Algebra. **324** (2010). 2512-2542.
-            :doi:`10.1016/j.bbr.2011.03.031`, :arxiv:`0909.2442`.
+            :doi:`10.1016/j.jalgebra.2010.07.041`, :arxiv:`0909.2442`.
 
 .. [JS2021] \D. Jahn, C. Stump.
             *Bruhat intervals, subword complexes and brick polyhedra for
@@ -4928,10 +4929,9 @@
             3877--3889.
 
 .. [KS2012] Jerome Kelleher, Barry O'Sullivan,
-            *Generating all partitions: A Comparison of encodings*,
-            Journal of Mathematical Modelling and Algorithms, 11:89-104, 2012.
-            :doi:`10.1007/s10852-011-9168-y`
-            :arxiv:`0909.2331`
+            *Generating All Partitions: A Comparison of Two Encodings*,
+            preprint (2009).
+            :doi:`10.48550/arXiv.0909.2331`, :arxiv:`0909.2331`.
 
 .. [KS2015] Karel Klouda and Štěpán Starosta,
             *An Algorithm Enumerating All Infinite Repetitions in a D0L System*.
@@ -5205,7 +5205,7 @@
          https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=89a685057c2ce4f632b105dcaec264b9162a1800
 
 .. [Lim2001] \C. H. Lim,
-             *A Revised Version of CRYPTON: CRYPTON V1.0*; in FSE'01, pp. 31--45.
+             *A Revised Version of CRYPTON: CRYPTON V1.0*; in FSE'99 (1999), pp. 31--45.
 
 .. [Lin1999] \J. van Lint, Introduction to coding theory, 3rd ed.,
              Springer-Verlag GTM, 86, 1999.
@@ -5569,7 +5569,7 @@
             Atoms*, Journal of Algebraic Combinatorics, Vol. 29,
             (2009), No. 3, p.295-313. :arxiv:`0707.4267`
 
-.. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
+.. [MAC] Ian Macdonald, Symmetric Functions and Hall Polynomials,
    Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
    Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
    ISBN: 0-19-853489-2
@@ -5920,9 +5920,9 @@
               Archiv der Math., **113** (2019). pp. 229-235.
               :arxiv:`1804.09165`.
 
-.. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
+.. [Motsak2006] Oleksandr Motsak. *Computation of the central elements and
                 centralizers of sets of elements in non-commutative polynomial
-                algebras*. Ph.D. Thesis, 2006.
+                algebras*. Diploma thesis, 2006.
                 https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
 
 .. [MP2019] \M. Montes, D. Penazzi
@@ -6207,7 +6207,8 @@
         :arxiv:`1212.6853`
 
 .. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
-            Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
+            Journal of Combinatorial Theory, Series B, vol. 98, no. 5,
+            pages 1038--1055, 2008.
             :doi:`10.1016/j.jctb.2007.12.005`.
 
 .. [Nur2004] K. Nurmela. *Upper bounds for covering arrays by tabu search*.
@@ -6651,7 +6652,7 @@
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
 
 .. [Rees00] Rolf S. Rees,
-   Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
+   Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
 
 .. [Rees93] Rolf S. Rees,
@@ -6660,7 +6661,7 @@
 
 .. [Reg09] Oded Regev. *On Lattices, Learning with Errors, Random
            Linear Codes, and Cryptography*. in Journal of the ACM
-           56(6). ACM 2009, :doi:`10.1145/1060590.1060603`
+           56(6). ACM 2009, :doi:`10.1145/1568318.1568324`
 
 .. [Reg1958] \T. Regge, *Symmetry Properties of Clebsch-Gordan
              Coefficients*, Nuovo Cimento, Volume 10, pp. 544 (1958)
@@ -6996,7 +6997,7 @@
 .. [Sch2013] Schmidt, Jens M
              *A Simple Test on 2-Vertex- and 2-Edge-Connectivity*,
              Information Processing Letters, 113 (7): 241-244
-             :doi:`10.2307/2303897`
+             :doi:`10.1016/j.ipl.2013.01.016`
 
 .. [Sch2015] George Schaeffer. *Hecke stability and weight 1 modular forms*.
              Math. Z. 281:159-191, 2015. :doi:`10.1007/s00209-015-1477-9`
@@ -7117,7 +7118,7 @@
 .. [Sil1994] Joseph H. Silverman, Advanced topics in the arithmetic of
              elliptic curves. GTM 151, Springer-Verlag, New York, 1994.
 
-.. [Sil2007] Joseph H. Silverman. The Arithmetic of Dynamics Systems.
+.. [Sil2007] Joseph H. Silverman. The Arithmetic of Dynamical Systems.
              GTM 241, Springer-Verlag, New York, 2007.
 
 .. [Sil2009] Joseph H. Silverman, The Arithmetic of Elliptic
@@ -7382,7 +7383,7 @@
               Theoret. Comp. Sci. 412 (2011) 1111--1121
 
 .. [Ste1996] John R. Stembridge, *On the fully commutative elements of Coxeter
-             groups*, Journal of Algebraic Combinatorics, 5,  pp. 355-385
+             groups*, Journal of Algebraic Combinatorics, 5,  pp. 353-385
 
 .. [Ste1998] John R. Stembridge, *The enumeration of the fully commutative
              elements of Coxeter groups*, Journal of Algebraic Combinatorics,
