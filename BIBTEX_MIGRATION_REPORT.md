@@ -5,7 +5,7 @@ descriptions, moves module bibliographies into shared BibTeX files, and provides
 local bibliographies for independently built manuals. The final two-file split
 produces the same catalogue HTML and LaTeX as the preceding single-file version.
 
-This report covers code through commit
+The initial validation covered code through commit
 [`2b440e3f44c`](https://github.com/dimpase/sage/commit/2b440e3f44c), on
 [`docs/bibtex-references`](https://github.com/dimpase/sage/tree/docs/bibtex-references).
 The original documentation baseline is Sage 11.0.beta2, commit
@@ -18,7 +18,7 @@ The work is now split into two pull requests:
 
 1. [#42968](https://github.com/sagemath/sage/pull/42968) corrects inconsistent
    references and moves module bibliographies into the existing RST database.
-   Its two commits separate the corrections from the relocation.
+   Separate commits distinguish corrections from relocation.
 2. [#42966](https://github.com/sagemath/sage/pull/42966) converts that consolidated
    database to BibTeX and supplies the Sphinx integration, dependency/build
    metadata, developer documentation, and comparison tools.
@@ -26,10 +26,10 @@ The work is now split into two pull requests:
 The original-baseline comparisons below cover both parts together. The cleanup
 was additionally tested independently with the unchanged RST generator and
 Sphinx 9.1.0. Its catalogue and three standalone module pages build successfully.
-All 1,807 original shared entries remain: 1,806 render identically, with only the
-intended `GrLe1996` correction changing the rendered description. Comparison of
-all 177 relocated definitions finds the same five documented corrections as
-below. All 546 example blocks and the module prose remain unchanged after
+All 1,807 original shared entries remain. After the semantic audit described
+below, 1,792 render identically in the RST cleanup; 15 have documented corrections.
+Comparison of the 177 relocated definitions finds six documented changes.
+All 546 example blocks and the module prose remain unchanged after
 excluding the relocated bibliography and normalizing renamed keys. Executable
 AST/token checks also pass for all 62 edited source files.
 
@@ -37,7 +37,8 @@ Comparing the cleanup's 1,979-entry RST catalogue with the BibTeX catalogue find
 1,978 identical entries; only the documented `VT2001` mathematical-symbol
 encoding differs. The exact difference is recorded in
 [`conversion-differences.json`](build/test/rst2bib/conversion-differences.json).
-The BibTeX source and implementation are unchanged by the split.
+The semantic audit adds structured metadata corrections without changing the
+conversion implementation.
 
 ## Bibliography contents and preservation
 
@@ -47,13 +48,13 @@ The BibTeX source and implementation are unchanged by the split.
 | Bibliographic definitions migrated from docstrings | 177, from 60 Python and two Cython files |
 | New shared entries | 172; matching existing references reused |
 | Final shared entries | 1,979 |
-| Final DOI fields | 390 |
-| Original DOI fields | 364; identifiers unchanged except the `CS2022` punctuation correction described below |
+| Final DOI fields | 597 (207 added during the semantic audit) |
+| Original DOI fields | 364; corrected identifiers are recorded below and in the semantic audit |
 
 Migrated entries have an `annotation` field containing the complete original
 description in TeX, including mathematical expressions, formatting, notes, and
-hyperlinks. Sage renders that description. Ordinary structured BibTeX fields are
-also provided where available; new entries can use those fields without an
+hyperlinks. Sage renders that description. The semantic audit supplies titles for every record and corrects the ordinary
+author/editor and publication fields; new entries can use those fields without an
 `annotation`.
 
 DOI metadata was retrieved during migration to supply publication details.
@@ -109,9 +110,35 @@ The additional identifiers resolve to the publisher records for
 [Graham–Lehrer](https://doi.org/10.1007/BF01232365),
 [Bandlow–Killpatrick](https://doi.org/10.37236/1584), and
 [Crew–Spirkl](https://doi.org/10.1016/j.jcta.2021.105572).
-For `GrLe1996`, the initials correction applies to the displayed `annotation`;
-the structured `author` field still retains the original abbreviation
-`Graham, J.`.
+For `GrLe1996`, both the displayed description and structured author now use
+`J. J. Graham`.
+
+## Semantic audit after conversion
+
+The [structured-metadata audit](build/test/rst2bib/SEMANTIC_AUDIT.md) records the
+method, limitations, and source evidence for 16 additional corrections. It found
+that 453 converted entries had neither an author nor a title; the preserved
+`annotation` had hidden these omissions. All 1,979 entries now have titles and
+named people in the appropriate author/editor fields. Twenty authorless web
+resources are listed explicitly.
+
+The audit corrects five DOIs that identified different works or versions, restores
+truncated mathematical titles, separates chapter authors from editors, and fixes
+misclassified publication types. It adds 207 DOI fields. The source corrections
+are also applied to the preceding RST cleanup PR, so the conversion-only HTML
+comparison still has just the existing `VT2001` difference.
+
+The offline `check-bibtex.py` check passes for all entries. With `annotation`
+removed, 1,972 entries format using ordinary `unsrt`; seven chapter links omit
+a publication date and are explicit exceptions. It also checks serialized
+structure, malformed names, HTML in TeX fields, and duplicate keys. Deliberately
+malformed inputs confirmed that missing fields hidden by an annotation, duplicate
+keys, and initials parsed as family names are rejected. This does not claim
+independent verification of every bibliographic fact.
+
+The [per-key change list](build/test/rst2bib/metadata-changes.tsv) identifies every
+changed field. Comparing rendered HTML with the pre-audit catalogue finds exactly
+the 16 documented source corrections and no other changes, additions, or removals.
 
 ## Several BibTeX files
 
@@ -129,9 +156,9 @@ The final database is split as follows:
 | [`reference-database-extra.bib`](src/doc/references/reference-database-extra.bib) | 100 |
 
 The second file contains the last 100 entries of the former single file, from
-`VB1996` through `ZZ2005`. Their entry blocks were moved without reserialization.
-All 1,979 parsed records, including authors, DOI fields, and annotations, remain
-identical to the single-file version.
+`VB1996` through `ZZ2005`. At the time of the split, their entry blocks were moved without reserialization,
+and all 1,979 parsed records were identical to the single-file version. Subsequent
+metadata corrections keep the same file division.
 
 Meson copies the files listed in
 [`src/doc/references/meson.build`](src/doc/references/meson.build). The
@@ -215,17 +242,17 @@ normalized whitespace and excluded backlink labels.
 
 | Comparison | Result |
 | --- | --- |
-| Original catalogue entries | 1,805 of 1,807 match all checked fields exactly |
+| Original catalogue entries | 1,791 of 1,807 match all checked fields exactly |
 | Original catalogue anchors | All 1,807 identical |
-| Migrated docstring bibliography definitions | 172 of 177 match all checked fields exactly |
+| Migrated docstring bibliography definitions | 171 of 177 match all checked fields exactly |
 | Complete module-page prose | Identical after excluding relocated bibliography blocks and normalizing the three renamed citation keys |
 | Module example blocks | All 546 identical: 112 in `difference_family`, 196 in `dyck_word`, and 238 in `diagram_algebras` |
 
-The two differing catalogue entries are `GrLe1996` and `VT2001`, for the reasons
-documented above. The five differing docstring definitions are the enriched
-Graham–Lehrer reference, the added Bandlow–Killpatrick DOI, the corrected
-`OSShimo03` identifiers, and the author-before-title ordering in `Rees00` and
-`Rees93`.
+The 16 differing catalogue entries consist of `GrLe1996`, `VT2001`, and the
+14 additional shared-reference corrections listed in the semantic audit. The six
+differing docstring definitions are `GrLe1996`, `BandlowKillpatrick2001`,
+`OSShimo03`, `Rees00`, `Rees93`, and `MAC`. Exact text, link, formatting, and
+mathematics differences are recorded in the comparison fixtures.
 
 This comparison also caught and led to fixes for smart-quote changes, lost escaped
 quotes, changed DOI/arXiv link captions, the malformed `CS2022` DOI URL, a GSL

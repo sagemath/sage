@@ -663,8 +663,11 @@ checked-in databases and do not fetch metadata.
 Entries migrated from the former reST database have an ``annotation`` field
 containing their complete original description in TeX, including mathematical
 expressions and hyperlinks. Sage displays this description to preserve all
-the existing information. For new entries, use ordinary BibTeX fields;
-``annotation`` is optional.
+the existing information. Keep the ordinary ``author``, ``editor``, ``title``,
+and publication fields accurate too: rendering an ``annotation`` does not
+validate them. Check that retrieved DOI metadata identifies the cited work
+and edition, rather than a book review or a different version of a paper.
+For new entries, use ordinary BibTeX fields; ``annotation`` is optional.
 
 Both ``[Gau1801]_`` and ``:cite:p:`Gau1801``` work. Each separately built
 manual includes its cited references, so citations also resolve in standalone
