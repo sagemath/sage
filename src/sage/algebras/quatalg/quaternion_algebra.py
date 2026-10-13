@@ -2616,8 +2616,7 @@ class QuaternionOrder(Parent):
     def two_sided_prime_ideals(self):
         r"""
         Return a list containing all the two-sided prime ideals
-        of this order. If ``norm`` is given, return only a single
-        ideal of the given norm.
+        of this order.
 
         EXAMPLES::
 
