@@ -1,0 +1,70 @@
+{
+  "LocalRef034": {
+    "text": {
+      "before": "J.J. Graham and G.I. Lehrer, Cellular algebras. Inventiones mathematicae 123 (1996), 1–34.",
+      "after": "J.J. Graham and G.I. Lehrer Cellular algebras . Invent. Math. 123 (1996), 1-34. https://www.ams.org/mathscinet-getitem?mr=MR1376244 https://doi.org/10.1007/BF01232365"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244",
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244"
+        ],
+        [
+          "https://doi.org/10.1007/BF01232365",
+          "https://doi.org/10.1007/BF01232365"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Cellular algebras"
+      ]
+    }
+  },
+  "LocalRef039": {
+    "text": {
+      "before": "J. Bandlow, K. Killpatrick – An area-to_inv bijection between Dyck paths and 312-avoiding permutations , Electronic Journal of Combinatorics, Volume 8, Issue 1 (2001).",
+      "after": "J. Bandlow, K. Killpatrick – An area-to_inv bijection between Dyck paths and 312-avoiding permutations , Electronic Journal of Combinatorics, Volume 8, Issue 1 (2001). doi:10.37236/1584 ."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "doi:10.37236/1584",
+          "https://doi.org/10.37236/1584"
+        ]
+      ]
+    }
+  },
+  "LocalRef117": {
+    "text": {
+      "before": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1.1.192.2095 , arXiv 0810.5067 .",
+      "after": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1090/S1088-4165-03-00155-9 , arXiv math/0105017 ."
+    },
+    "links": {
+      "before": [
+        [
+          "doi:10.1.1.192.2095",
+          "https://doi.org/10.1.1.192.2095"
+        ],
+        [
+          "arXiv 0810.5067",
+          "https://arxiv.org/abs/0810.5067"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1090/S1088-4165-03-00155-9",
+          "https://doi.org/10.1090/S1088-4165-03-00155-9"
+        ],
+        [
+          "arXiv math/0105017",
+          "https://arxiv.org/abs/math/0105017"
+        ]
+      ]
+    }
+  }
+}
