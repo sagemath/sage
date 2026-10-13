@@ -28,7 +28,7 @@ was additionally tested independently with the unchanged RST generator and
 Sphinx 9.1.0. Its catalogue and three standalone module pages build successfully.
 All 1,807 original shared entries remain: 1,806 render identically, with only the
 intended `GrLe1996` correction changing the rendered description. Comparison of
-all 177 relocated definitions finds the same three documented corrections as
+all 177 relocated definitions finds the same five documented corrections as
 below. All 546 example blocks and the module prose remain unchanged after
 excluding the relocated bibliography and normalizing renamed keys. Executable
 AST/token checks also pass for all 62 edited source files.
@@ -93,6 +93,7 @@ descriptions.
 | `BandlowKillpatrick2001` | Publisher DOI was absent from the local description | Added DOI `10.37236/1584` |
 | `CS2022` | A sentence-ending full stop had been included in the DOI identifier | Changed `10.1016/j.jcta.2021.105572.` to `10.1016/j.jcta.2021.105572`, placing punctuation outside the hyperlink |
 | `VT2001` | A Unicode mathematical italic *n* caused a PDF font problem | Encoded the symbol as inline mathematics |
+| `Rees00`, `Rees93` | The author followed the paper title | Moved Rolf S. Rees before the title in both the RST cleanup and BibTeX descriptions |
 
 For `OSShimo03`, the intended work is the Okado–Schilling–Shimozono paper in
 *Representation Theory* 7 (2003), 101–163, identified by
@@ -216,14 +217,15 @@ normalized whitespace and excluded backlink labels.
 | --- | --- |
 | Original catalogue entries | 1,805 of 1,807 match all checked fields exactly |
 | Original catalogue anchors | All 1,807 identical |
-| Migrated docstring bibliography definitions | 174 of 177 match all checked fields exactly |
+| Migrated docstring bibliography definitions | 172 of 177 match all checked fields exactly |
 | Complete module-page prose | Identical after excluding relocated bibliography blocks and normalizing the three renamed citation keys |
 | Module example blocks | All 546 identical: 112 in `difference_family`, 196 in `dyck_word`, and 238 in `diagram_algebras` |
 
 The two differing catalogue entries are `GrLe1996` and `VT2001`, for the reasons
-documented above. The three differing docstring definitions are the enriched
-Graham–Lehrer reference, the added Bandlow–Killpatrick DOI, and the corrected
-`OSShimo03` identifiers.
+documented above. The five differing docstring definitions are the enriched
+Graham–Lehrer reference, the added Bandlow–Killpatrick DOI, the corrected
+`OSShimo03` identifiers, and the author-before-title ordering in `Rees00` and
+`Rees93`.
 
 This comparison also caught and led to fixes for smart-quote changes, lost escaped
 quotes, changed DOI/arXiv link captions, the malformed `CS2022` DOI URL, a GSL
