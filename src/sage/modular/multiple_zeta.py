@@ -142,19 +142,13 @@ and check that the first relation holds::
 
 REFERENCES:
 
-.. [Brown2012] Francis C. S. Brown, *On the decomposition of motivic
-   multiple zeta values*, Advanced Studies in Pure Mathematics 63,
-   2012. Galois-Teichmuller Theory and Arithmetic Geometry.
+- [Brown2012]_
 
-.. [Brown2019] Francis C. S. Brown, *From the Deligne-Ihara conjecture to
-   multiple modular values*, :arxiv:`1904.00179`
+- [Brown2019]_
 
-.. [Deli2012] Pierre Deligne, *Multizêtas, d’après Francis Brown*,
-   Séminaire Bourbaki, janvier 2012. http://www.bourbaki.ens.fr/TEXTES/1048.pdf
+- [Deli2012]_
 
-.. [Stie2020] \S. Stieberger, *Periods and Superstring Amplitudes*,
-   Periods in Quantum Field Theory and Arithmetic, Springer Proceedings
-   in Mathematics and Statistics 314, 2020
+- [Stie2020]_
 """
 # ****************************************************************************
 #       Copyright (C) 2020     Frédéric Chapoton
