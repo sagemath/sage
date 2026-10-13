@@ -2837,6 +2837,10 @@
               Series B, vol. 82, issue 2, (2001), pages: 175 -- 222, ISSN:
               0095 -- 8956, :doi:`10.1006/jctb.2000.2025`.
 
+.. [FIPS186-2] National Institute of Standards and Technology.
+               *Digital Signature Standard (DSS)*, FIPS PUB 186-2, 2000.
+               :doi:`10.6028/NIST.FIPS.186-2`
+
 .. [FIV2012] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
              hyperbolicity of a discrete metric space*. 2012.
              :arxiv:`1210.3323`.
@@ -6123,6 +6127,11 @@
              2003.
              `Downloadable from Reutenauer's website
              <https://reutenauer.math.uqam.ca/wp-content/uploads/2024/05/Free-Lie-Algebras-Handbook-2003-compresse.pdf>`_
+
+.. [RFC6979] \T. Pornin. *Deterministic Usage of the Digital Signature
+             Algorithm (DSA) and Elliptic Curve Digital Signature Algorithm
+             (ECDSA)*, in RFC 6979.
+             Available at https://www.rfc-editor.org/rfc/rfc6979
 
 .. [RH2003] \J. Rasch and A. C. H. Yu, *Efficient Storage Scheme for
             Pre-calculated Wigner 3j, 6j and Gaunt Coefficients*,
