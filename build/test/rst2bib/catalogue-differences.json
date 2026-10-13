@@ -1,0 +1,46 @@
+{
+  "GrLe1996": {
+    "text": {
+      "before": "J. Graham and G.I. Lehrer Cellular algebras . Invent. Math. 123 (1996), 1-34. https://www.ams.org/mathscinet-getitem?mr=MR1376244",
+      "after": "J.J. Graham and G.I. Lehrer Cellular algebras . Invent. Math. 123 (1996), 1-34. https://www.ams.org/mathscinet-getitem?mr=MR1376244 https://doi.org/10.1007/BF01232365"
+    },
+    "links": {
+      "before": [
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244",
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244",
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244"
+        ],
+        [
+          "https://doi.org/10.1007/BF01232365",
+          "https://doi.org/10.1007/BF01232365"
+        ]
+      ]
+    }
+  },
+  "VT2001": {
+    "text": {
+      "before": "Adam Van Tuyl: Computing the degree of the field of 𝑛‑torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf",
+      "after": "Adam Van Tuyl: Computing the degree of the field of \\(n\\) ‑torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf"
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)"
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Computing the degree of the field of 𝑛‑torsion points"
+      ],
+      "after": [
+        "Computing the degree of the field of \\(n\\) ‑torsion points"
+      ]
+    }
+  }
+}
