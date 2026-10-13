@@ -9647,8 +9647,9 @@ cdef class Matrix(Matrix1):
         Divide ``self`` into logical submatrices which can then be queried
         and extracted.
 
-        If a subdivision already exists, this method forgets the
-        previous subdivision and flushes the cache.
+        If a subdivision already exists and if it differs from the
+        requested one, we overwrite the previous subdivision and
+        clear the cache.
 
         INPUT:
 
@@ -9750,8 +9751,35 @@ cdef class Matrix(Matrix1):
             sage: A.subdivide(([], []))  # now reset
             sage: A._subdivisions is None
             True
+
+        Nothing is modified if we request a pre-existing
+        subdivision::
+
+            sage: A = matrix(QQ, 2, [[1,2],
+            ....:                    [3,4]])
+            sage: A.subdivisions()
+            ([], [])
+            sage: B = A.adjugate()     # cached
+            sage: A.subdivide([], [])
+            sage: A.adjugate() is B    # still cached after no-op
+            True
+            sage: A.subdivide([1],[1])
+            sage: A.adjugate() is B    # cache was clobbered
+            False
+            sage: A
+            [1|2]
+            [-+-]
+            [3|4]
+            sage: A.subdivisions()
+            ([1], [1])
+            sage: A.set_immutable()
+            sage: A.subdivide([1],[1])  # no-op, ok
+            sage: A.subdivide([],[])    # new subdivision, not ok
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable...
+
         """
-        self.check_mutability()
         if col_lines is None and row_lines is not None and isinstance(row_lines, tuple):
             tmp = row_lines
             row_lines, col_lines = tmp
@@ -9763,16 +9791,29 @@ cdef class Matrix(Matrix1):
             col_lines = []
         elif not isinstance(col_lines, list):
             col_lines = [col_lines]
-        if self._subdivisions is not None:
-            self.clear_cache()
-        if (not row_lines) and (not col_lines):
-            self._subdivisions = None
-        else:
-            l_row = sorted(row_lines)
-            l_col = sorted(col_lines)
-            l_row = [0] + [int(ZZ(x)) for x in l_row] + [self._nrows]
-            l_col = [0] + [int(ZZ(x)) for x in l_col] + [self._ncols]
-            self._subdivisions = (l_row, l_col)
+
+        if not row_lines and not col_lines:
+            # Special handling for ([], []) <--> None
+            if self._subdivisions is None:
+                return
+            else:
+                self.check_mutability()
+                self.clear_cache()
+                self._subdivisions = None
+                return
+
+        l_row = sorted(row_lines)
+        l_col = sorted(col_lines)
+        l_row = [0] + [int(ZZ(x)) for x in l_row] + [self._nrows]
+        l_col = [0] + [int(ZZ(x)) for x in l_col] + [self._ncols]
+
+        new_subdivisions = (l_row, l_col)
+        if self._subdivisions == new_subdivisions:
+            return
+
+        self.check_mutability()
+        self.clear_cache()
+        self._subdivisions = new_subdivisions
 
     def subdivision(self, i, j):
         """
