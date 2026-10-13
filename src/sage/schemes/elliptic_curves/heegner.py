@@ -5255,7 +5255,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; c = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[1]
             sage: g = H.kolyvagin_generators(f.domain().number_field(), c)
             sage: alpha_quaternion = f(g[0]); alpha_quaternion
@@ -5291,7 +5291,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
             sage: H.kolyvagin_generator(f.domain().number_field(), 5)
             a + 1
@@ -5342,7 +5342,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
             sage: H.kolyvagin_generators(f.domain().number_field(), 5*17)
             [-34*a + 1, 35*a + 106]
@@ -5424,8 +5424,8 @@ class HeegnerQuatAlg(SageObject):
             sage: N = 37; D = -7; ell = 17; c = 41; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.heegner_divisor(D,1).element().nonzero_positions()
-            [49, 51]
-            sage: k49 = H.kolyvagin_sigma_operator(D, c, 49); k49
+            [50, 51]
+            sage: k50 = H.kolyvagin_sigma_operator(D, c, 50); k50
             (79, 32, 31, 11, 53, 37, 1, 23, 15, 7, 0, 0, 0, 64, 32, 34, 53, 0, 27, 27, 0, 0, 0, 26, 0, 0, 18, 0, 22, 0, 53, 19, 27, 10, 0, 0, 0, 30, 35, 38, 0, 0, 0, 53, 0, 0, 4, 0, 0, 0, 0, 0)
             sage: k51 = H.kolyvagin_sigma_operator(D, c, 51); k51
             (20, 12, 57, 0, 0, 0, 0, 52, 23, 15, 0, 7, 0, 0, 19, 4, 0, 73, 11, 0, 104, 31, 0, 38, 31, 0, 0, 31, 5, 47, 0, 27, 35, 0, 57, 32, 24, 10, 0, 8, 0, 31, 41, 0, 0, 0, 16, 0, 0, 0, 0, 0)
@@ -5433,7 +5433,7 @@ class HeegnerQuatAlg(SageObject):
             Vector space of degree 52 and dimension 2 over Ring of integers modulo 3
             Basis matrix:
             2 x 52 dense matrix over Ring of integers modulo 3
-            sage: [b.dot_product(k49.element().change_ring(GF(q))) for b in V.basis()]
+            sage: [b.dot_product(k50.element().change_ring(GF(q))) for b in V.basis()]
             [1, 1]
             sage: [b.dot_product(k51.element().change_ring(GF(q))) for b in V.basis()]
             [1, 1]
