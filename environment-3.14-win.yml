@@ -157,6 +157,7 @@ dependencies:
   - keyring=25.7.0=pyh7428d3b_0
   - kiwisolver=1.5.0=py314hf309875_0
   - krb5=1.22.2=h719d79b_1
+  - latexcodec=2.0.1=pyh9f0ad1d_0
   - lcms2=2.19.1=hf2c6c5f_1
   - ld_impl_win-64=2.46.1=default_hfd38196_102
   - lerc=4.2.0=hd936e49_0
@@ -294,6 +295,8 @@ dependencies:
   - pure_eval=0.2.3=pyhd8ed1ab_1
   - py-rattler=0.25.0=py310hb39080a_2
   - pybind11-abi=11=hc364b38_1
+  - pybtex=0.26.1=pyhcf101f3_0
+  - pybtex-docutils=1.0.3=pyhcf101f3_4
   - pycodestyle=2.14.0=pyhd8ed1ab_0
   - pycosat=0.6.6=py314h5a2d7ad_4
   - pycparser=3.0=pyhcf101f3_0
@@ -359,6 +362,7 @@ dependencies:
   - sphinx-copybutton=0.5.2=pyhd8ed1ab_1
   - sphinx-inline-tabs=2025.12.21.14=pyhd8ed1ab_0
   - sphinxcontrib-applehelp=2.0.0=pyhd8ed1ab_1
+  - sphinxcontrib-bibtex=2.7.0=pyhd8ed1ab_0
   - sphinxcontrib-devhelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-htmlhelp=2.1.0=pyhd8ed1ab_1
   - sphinxcontrib-jsmath=1.0.1=pyhd8ed1ab_1
