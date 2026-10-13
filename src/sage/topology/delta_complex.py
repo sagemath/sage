@@ -1658,7 +1658,7 @@ class DeltaComplexExamples:
         A `\Delta`-complex representation of the torus, consisting of one
         vertex, three edges, and two triangles.
 
-        .. image:: ../../media    orus.png
+        .. image:: ../../media/torus.png
 
         EXAMPLES::
 
