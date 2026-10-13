@@ -1,0 +1,22 @@
+{
+  "VT2001": {
+    "text": {
+      "before": "Adam Van Tuyl: Computing the degree of the field of \ud835\udc5b\u2011torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf",
+      "after": "Adam Van Tuyl: Computing the degree of the field of \\(n\\) \u2011torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf"
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)"
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Computing the degree of the field of \ud835\udc5b\u2011torsion points"
+      ],
+      "after": [
+        "Computing the degree of the field of \\(n\\) \u2011torsion points"
+      ]
+    }
+  }
+}
