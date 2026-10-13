@@ -12,6 +12,33 @@ The original documentation baseline is Sage 11.0.beta2, commit
 [`0835358cba6`](https://github.com/sagemath/sage/commit/0835358cba6).
 Validation was performed on 12–13 October 2026.
 
+## Separate review of cleanup and conversion
+
+The work is now split into two pull requests:
+
+1. [#42968](https://github.com/sagemath/sage/pull/42968) corrects inconsistent
+   references and moves module bibliographies into the existing RST database.
+   Its two commits separate the corrections from the relocation.
+2. [#42966](https://github.com/sagemath/sage/pull/42966) converts that consolidated
+   database to BibTeX and supplies the Sphinx integration, dependency/build
+   metadata, developer documentation, and comparison tools.
+
+The original-baseline comparisons below cover both parts together. The cleanup
+was additionally tested independently with the unchanged RST generator and
+Sphinx 9.1.0. Its catalogue and three standalone module pages build successfully.
+All 1,807 original shared entries remain: 1,806 render identically, with only the
+intended `GrLe1996` correction changing the rendered description. Comparison of
+all 177 relocated definitions finds the same three documented corrections as
+below. All 546 example blocks and the module prose remain unchanged after
+excluding the relocated bibliography and normalizing renamed keys. Executable
+AST/token checks also pass for all 62 edited source files.
+
+Comparing the cleanup's 1,979-entry RST catalogue with the BibTeX catalogue finds
+1,978 identical entries; only the documented `VT2001` mathematical-symbol
+encoding differs. The exact difference is recorded in
+[`conversion-differences.json`](build/test/rst2bib/conversion-differences.json).
+The BibTeX source and implementation are unchanged by the split.
+
 ## Bibliography contents and preservation
 
 | Item | Result |
