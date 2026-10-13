@@ -2158,7 +2158,7 @@
 
 .. [CS2022] \Logan Crew, and Sophie Spirkl. *Modular relations of the Tutte symmetric function*,
             Journal of Combinatorial Theory, Series A, Volume 187, 2022, 105572,
-            :doi:`10.1016/j.jcta.2021.105572.`
+            :doi:`10.1016/j.jcta.2021.105572`.
 
 .. [CST2010] Tullio Ceccherini-Silberstein, Fabio Scarabotti,
              Filippo Tolli.
@@ -3350,9 +3350,10 @@
               *Hopf Algebras in Combinatorics*,
               :arxiv:`1409.8356v6`.
 
-.. [GrLe1996] \J. Graham and G.I. Lehrer
+.. [GrLe1996] \J.J. Graham and G.I. Lehrer
               *Cellular algebras*. Invent. Math. 123 (1996), 1-34.
               :mathscinet:`MR1376244`
+              :doi:`10.1007/BF01232365`
 
 .. [Gro1987] \M. Gromov. *Hyperbolic groups*. Essays in Group Theory, 8:75--263,
              1987. :doi:`10.1007/978-1-4613-9586-7_3`.

@@ -41,14 +41,15 @@ REFERENCES:
    With an Appendix on the Combinatorics of Macdonald Polynomials*.
    University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
 
-.. [BK2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
+.. [BandlowKillpatrick2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
    between Dyck paths and 312-avoiding permutations*, Electronic
    Journal of Combinatorics, Volume 8, Issue 1 (2001).
+   :doi:`10.37236/1584`.
 
 .. [EP2004] \S. Elizalde, I. Pak. *Bijections for refined restricted
    permutations**. JCTA 105(2) 2004.
 
-.. [CK2008] \A. Claesson, S. Kitaev. *Classification of bijections
+.. [ClaessonKitaev2008] \A. Claesson, S. Kitaev. *Classification of bijections
    between `321`- and `132`- avoiding permutations*. Séminaire
    Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
 
@@ -2119,7 +2120,7 @@ class DyckWord_complete(DyckWord):
     def to_312_avoiding_permutation(self) -> Permutation:
         r"""
         Convert ``self`` to a `312`-avoiding permutation using the bijection
-        by Bandlow and Killpatrick in [BK2001]_.
+        by Bandlow and Killpatrick in [BandlowKillpatrick2001]_.
 
         This sends the area to the inversion number.
 
@@ -2201,7 +2202,7 @@ class DyckWord_complete(DyckWord):
     @combinatorial_map(name='to 321 avoiding permutation')
     def to_321_avoiding_permutation(self) -> Permutation:
         r"""
-        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [CK2008]_)
+        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [ClaessonKitaev2008]_)
         to send ``self`` to a `321`-avoiding permutation.
 
         It is shown in [EP2004]_ that it sends the number of centered tunnels

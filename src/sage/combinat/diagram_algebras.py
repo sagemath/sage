@@ -935,7 +935,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         @OPTIONS@
 
         The compact representation ``[A/B;pi]`` of the Brauer algebra diagram
-        (see [GL1996]_) has the following components:
+        (see [GrLe1996]_) has the following components:
 
         - ``A`` -- list of pairs of positive elements (upper row) that
           are connected
@@ -1583,7 +1583,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
         entry is a list of arcs on the bottom row of the diagram, and the
         third entry is a permutation on the remaining nodes. This triple
         is called the *involution permutation triple*. For more
-        information, see [GL1996]_.
+        information, see [GrLe1996]_.
 
         INPUT:
 
@@ -1594,7 +1594,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         REFERENCES:
 
-        .. [GL1996] \J.J. Graham and G.I. Lehrer, Cellular algebras.
+        .. [GrLe1996] \J.J. Graham and G.I. Lehrer, Cellular algebras.
            Inventiones mathematicae 123 (1996), 1--34.
 
         EXAMPLES::
