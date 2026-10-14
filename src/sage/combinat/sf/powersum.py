@@ -530,7 +530,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             The action of the `n`-th Verschiebung operator on the Schur basis
             can also be computed explicitly. The following (probably clumsier
             than necessary) description can be obtained by solving exercise
-            7.61 in Stanley's [STA]_.
+            7.61 in Stanley's [EnumComb2]_.
 
             Let `\lambda` be a partition. Let `n` be a positive integer. If
             the `n`-core of `\lambda` is nonempty, then

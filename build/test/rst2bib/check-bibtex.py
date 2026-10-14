@@ -31,7 +31,13 @@ def check(paths, exceptions):
     formatter = find_plugin('pybtex.style.formatting', 'unsrt')()
     formatted = 0
     observed_incomplete = {}
+    dois = {}
     for key, entry in entries.items():
+        doi = entry.fields.get('doi', '').strip().casefold()
+        if doi:
+            if doi in dois:
+                errors.append(f'{key}: DOI also used by {dois[doi]}: {doi}')
+            dois[doi] = key
         title = entry.fields.get('title', '')
         if not title:
             errors.append(f'{key}: missing title')
@@ -58,7 +64,7 @@ def check(paths, exceptions):
                 errors.append(f'{key}: unbalanced braces in {field}')
         if re.search(r'\$[^$]*\\[_^]', title):
             errors.append(f'{key}: RST escape inside title mathematics')
-        if entry.fields.get('note') == entry.fields.get('annotation'):
+        if 'note' in entry.fields and entry.fields['note'] == entry.fields.get('annotation'):
             errors.append(f'{key}: full annotation duplicated as note')
 
         # Missing publication facts must remain explicit exceptions, not guessed

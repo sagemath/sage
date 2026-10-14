@@ -973,7 +973,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         r"""
         Return the scalar product of `P(part1)` and `P(part2)`.
 
-        This is equation (10.16) of [Mc1995]_ on page 380.
+        This is equation (10.16) of [Mac1995]_ on page 380.
 
         INPUT:
 
@@ -987,7 +987,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
         REFERENCES:
 
-        - [Mc1995]_
+        - [Mac1995]_
 
         EXAMPLES::
 

@@ -263,7 +263,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
     def diagonal_reading_word(self) -> Permutation:
         r"""
         Return a diagonal word of the labelled Dyck path corresponding to parking
-        function (see [Hag08]_ p. 75).
+        function (see [Hag2008]_ p. 75).
 
         OUTPUT:
 
@@ -576,7 +576,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
     def dinv(self) -> int:
         r"""
         Return the number of inversions of a labelled Dyck path corresponding
-        to the parking function (see [Hag08]_ p. 74).
+        to the parking function (see [Hag2008]_ p. 74).
 
         Same as the cardinality of :meth:`dinversion_pairs`.
 
