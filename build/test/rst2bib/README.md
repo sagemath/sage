@@ -27,12 +27,14 @@ python build/test/rst2bib/check-bibtex.py src/doc/references/*.bib \
   --output metadata-check.json --tsv fields.tsv
 ```
 
-This checks title/author structure, duplicate keys, TeX fields, and ordinary
+This checks title/author structure, duplicate keys and DOIs, TeX fields, and ordinary
 formatting after removing `annotation`. The TSV export supports manual inspection
 of author, editor, title, and publication fields. The checker is offline and
 does not establish that a DOI identifies the correct work; that requires checking
 the publication. See [the semantic audit](SEMANTIC_AUDIT.md) for the scope,
 correction evidence, and explicit exceptions for undated chapter citations.
+The subsequent [duplicate and URL audit](URL_AUDIT.md) records the review
+corrections applied only to #42966, including unresolved link checks.
 
 ## Baselines for the two pull requests
 
@@ -49,13 +51,17 @@ and compare it with the BibTeX branch using the narrower fixture:
 python build/test/rst2bib/compare-html-dom.py \
   cleanup/html/en/reference/references/index.html \
   bibtex/html/en/reference/references/index.html \
+  --key-map build/test/rst2bib/deduplicated-keys.json \
   --expected-differences build/test/rst2bib/conversion-differences.json \
   --output conversion-comparison.json
 ```
 
-Both catalogues have 1,979 entries. The only expected difference is `VT2001`'s
-mathematical-symbol encoding; the other 1,978 entries match. No added or missing
-entries are permitted in this comparison.
+The cleanup catalogue has 1,979 entries; the BibTeX catalogue has 1,955 after
+consolidating 24 duplicates. The key map accounts for every retired label.
+There are 1,834 identical descriptions and 145 documented differences, including
+the renamed entries, reviewed URL/metadata corrections, and `VT2001`'s
+mathematical-symbol encoding. No unmapped missing or additional entries are
+permitted in this comparison.
 
 ## Reference catalogue
 
@@ -68,14 +74,16 @@ additional citations require `--allow-added`.
 python build/test/rst2bib/compare-html-dom.py \
   before/html/en/reference/references/index.html \
   after/html/en/reference/references/index.html \
+  --key-map build/test/rst2bib/deduplicated-keys.json \
   --allow-added \
   --expected-differences build/test/rst2bib/catalogue-differences.json \
   --output catalogue-comparison.json
 ```
 
-`catalogue-differences.json` records the exact field changes for the 16
+`catalogue-differences.json` records the exact field changes for the 127
 documented differences, including the corrections in the
-[semantic audit](SEMANTIC_AUDIT.md). The entire differences object must match
+[semantic audit](SEMANTIC_AUDIT.md) and [URL audit](URL_AUDIT.md).
+The entire differences object must match
 this file; it does not allow arbitrary changes to those entries. Omit `--expected-differences` when no changed
 reference is expected.
 

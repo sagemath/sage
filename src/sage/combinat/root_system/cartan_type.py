@@ -2350,7 +2350,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
             Add the picture here, once root system plots in the
             weight lattice will be implemented. In the mean time, the
-            reader may look up the dual picture on Figure 2 of [HST09]_
+            reader may look up the dual picture on Figure 2 of [HST2008]_
             which was produced by MuPAD-Combinat.
 
         From this picture, one can read that translations by
@@ -2371,7 +2371,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        - [HST09]_
+        - [HST2008]_
         """
         a = self.a()
         acheck = self.acheck()

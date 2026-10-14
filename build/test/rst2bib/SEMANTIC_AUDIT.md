@@ -1,5 +1,9 @@
 # Structured bibliography audit
 
+This records the audit completed on 13 October 2026. The subsequent
+[duplicate and URL audit](URL_AUDIT.md) updates the counts and comparison
+fixtures, and applies the review remarks from #42968 only to #42966.
+
 This audit follows the initial conversion at `28cf1e290b0`. That conversion
 preserved rendered descriptions in `annotation`, but those descriptions hid
 incomplete or incorrectly assigned ordinary BibTeX fields. In particular, 453
@@ -100,9 +104,10 @@ round trip was also checked when generating the corrections. The checker rejects
 unexpected formatting failures and stale exception entries.
 
 The HTML comparison fixtures in this directory distinguish intended source
-corrections from conversion changes. The RST cleanup catalogue and the BibTeX
-catalogue should still differ only in the previously documented `VT2001`
-mathematical-symbol encoding. See the [comparison instructions](README.md) and
+corrections from conversion changes. At this stage, the RST cleanup catalogue
+and the BibTeX catalogue differed only in the previously documented `VT2001`
+mathematical-symbol encoding. The fixtures now also include the subsequent
+duplicate and URL corrections. See the [comparison instructions](README.md) and
 [migration report](../../../BIBTEX_MIGRATION_REPORT.md) for build commands and
 rendering validation.
 

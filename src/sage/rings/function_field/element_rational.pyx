@@ -375,7 +375,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in Lemma
-        3 of [GiTr1996]_.
+        3 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -426,7 +426,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Corollary 3 of [GiTr1996]_.
+        Corollary 3 of [GT1996]_.
 
         .. SEEALSO::
 

@@ -55,7 +55,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     This document is an introduction to working with symmetric function
     theory in Sage.
     It is not intended to be an introduction to the theory
-    of symmetric functions ([MAC]_ and [STA]_, Chapter 7, are two excellent
+    of symmetric functions ([Mac1995]_ and [EnumComb2]_, Chapter 7, are two excellent
     references.)  The reader is also expected to be familiar with Sage.
 
     .. rubric:: The algebra of symmetric functions
@@ -358,7 +358,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     .. rubric:: Plethysm
 
     The *plethysm* of symmetric functions is the operation corresponding to
-    composition of representations of the general linear group.  See [STA]_
+    composition of representations of the general linear group.  See [EnumComb2]_
     Chapter 7, Appendix 2 for details.
     ::
 
@@ -384,7 +384,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     The operation of inner plethysm ``f.inner_plethysm(g)`` models the
     composition of the `S_n` representation represented by `g` with the
     `GL_m` representation whose character is `f`.  See the documentation of
-    ``inner_plethysm``, [ST94]_ or [STA]_, exercise 7.74 solutions for more
+    ``inner_plethysm``, [ST94]_ or [EnumComb2]_, exercise 7.74 solutions for more
     information::
 
         sage: s = SymmetricFunctions(QQ).schur()
@@ -657,7 +657,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     functions with a parameter `t`.  The `k`-split basis has the property that
     `Q'_\lambda[X;t]` expands positively in the `k`-split basis and the
     `k`-split basis conjecturally expands positively in the `k`-Schur functions.
-    The definition can be found in [LLMSSZ]_ p. 81.::
+    The definition can be found in [LLMSSZ2013]_ p. 81.::
 
         sage: ksp3 = SymS3.ksplit()
         sage: ksp3(Qp[2,1,1,1])
@@ -774,7 +774,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     of ``Sym``.  The ``Element`` class inherits all of the methods from
     :class:`sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element`.
 
-    In the reference [MAC]_ on page 354, this basis is denoted
+    In the reference [Mac1995]_ on page 354, this basis is denoted
     `S_\lambda(x;t)` and the change of basis coefficients of the
     Macdonald ``J`` basis are the coefficients `K_{\lambda\mu}(q,t)`.
     Here is an example of its use::
@@ -805,9 +805,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     - [HT04]_
 
-    - [MAC]_
+    - [Mac1995]_
 
-    - [STA]_
+    - [EnumComb2]_
 
     - [ST94]_
 
