@@ -37,7 +37,7 @@ SAGE_SPKG_CONFIGURE([pari], [
             AC_MSG_RESULT([yes])
         else
             AC_MSG_RESULT([no; PARI/GP is affected by bug 2708])
-            AC_MSG_NOTICE([Install a patched PARI/GP and reconfigure.])
+            AC_MSG_NOTICE([Install a version unaffected by this bug and reconfigure.])
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes
         fi
