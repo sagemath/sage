@@ -6,7 +6,7 @@ produced the same catalogue HTML and LaTeX as the preceding single-file version;
 the subsequent semantic audit and its corrections are recorded below.
 The [14 October duplicate and URL audit](build/test/rst2bib/URL_AUDIT.md)
 consolidates 24 repeated entries, updates their citations, and repairs or upgrades
-435 URLs in #42966. It leaves #42968 unchanged. Other citation keys remain stable.
+433 URLs in #42966. It leaves #42968 unchanged. Other citation keys remain stable.
 
 The initial validation covered code through commit
 [`2b440e3f44c`](https://github.com/dimpase/sage/commit/2b440e3f44c), on
@@ -39,8 +39,8 @@ AST/token checks also pass for all 62 edited source files.
 Before the duplicate and URL audit, comparing the cleanup's 1,979-entry RST
 catalogue with the BibTeX catalogue found 1,978 identical entries and only the
 documented `VT2001` mathematical-symbol difference. The current comparison maps
-all 1,979 old keys to 1,955 canonical entries: 1,834 descriptions are identical
-and 145 have documented changes. The exact differences are recorded in
+all 1,979 old keys to 1,955 canonical entries: 1,835 descriptions are identical
+and 144 have documented changes. The exact differences are recorded in
 [`conversion-differences.json`](build/test/rst2bib/conversion-differences.json).
 The semantic audit adds structured metadata corrections without changing the
 conversion implementation.

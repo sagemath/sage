@@ -425,22 +425,6 @@
       ]
     }
   },
-  "LocalRef131": {
-    "links": {
-      "before": [
-        [
-          "doi:10.1006/aima.1994.1019",
-          "https://doi.org/10.1006/aima.1994.1019"
-        ]
-      ],
-      "after": [
-        [
-          "doi:10.1006/aima.1994.1019",
-          "https://linkinghub.elsevier.com/retrieve/pii/S000187088471019X"
-        ]
-      ]
-    }
-  },
   "LocalRef134": {
     "text": {
       "before": "Thomas Scharf, Jean-Yves Thibon. A Hopf-algebra approach to inner plethysm . Advances in Mathematics 104 (1994), pp. 30-58. ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz",
@@ -456,7 +440,7 @@
       "after": [
         [
           "doi:10.1006/aima.1994.1019",
-          "https://linkinghub.elsevier.com/retrieve/pii/S000187088471019X"
+          "https://doi.org/10.1006/aima.1994.1019"
         ]
       ]
     },

@@ -14,9 +14,14 @@ The cleanup branch and PR #42968 are unchanged.
   followed redirects, verified TLS certificates, and tried HTTPS for HTTP links.
   HEAD requests rejected with 400/405/501 were retried with GET. Failures received
   targeted retries, searches, and publication/institutional checks.
-- Changed 435 distinct URLs; [url-changes.tsv](url-changes.tsv) records the old
+- Changed 433 distinct URLs; [url-changes.tsv](url-changes.tsv) records the old
   and new addresses, canonical citation keys, and basis for each change.
   Both ordinary fields and rendered annotations were updated.
+  [url-relocations.tsv](url-relocations.tsv) contains only the 36 substantive
+  replacements, excluding 81 HTTP-to-HTTPS-only upgrades and 316
+  `dx.doi.org` → `doi.org` normalizations with unchanged DOI identifiers.
+  The `ST94` and `ST1994` annotations retain stable DOI links; publisher
+  redirect targets inadvertently recorded in the first audit were removed.
 - Kept 594 unique DOI fields. Duplicate records contribute their complementary
   metadata to the retained entry. DOI values are not removed just because a
   publisher denies automated access.
