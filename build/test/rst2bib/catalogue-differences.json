@@ -2296,7 +2296,7 @@
   "ST1994": {
     "text": {
       "before": "Simon, K. and Trunz, P., A cleanup on transitive orientation , Orders, Algorithms, and Applications, 1994, https://doi.org/10.1007/BFb0019427 , ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz",
-      "after": "Simon, K. and Trunz, P., A cleanup on transitive orientation , Orders, Algorithms, and Applications, 1994, https://link.springer.com/chapter/10.1007/BFb0019427?error=cookies_not_supported&code=aa5a6b39-b3ee-4a21-9b8e-cff0eb1991a5 , https://doi.org/10.1007/BFb0019427"
+      "after": "Simon, K. and Trunz, P., A cleanup on transitive orientation , Orders, Algorithms, and Applications, 1994, https://doi.org/10.1007/BFb0019427"
     },
     "links": {
       "before": [
@@ -2310,10 +2310,6 @@
         ]
       ],
       "after": [
-        [
-          "https://link.springer.com/chapter/10.1007/BFb0019427?error=cookies_not_supported&code=aa5a6b39-b3ee-4a21-9b8e-cff0eb1991a5",
-          "https://link.springer.com/chapter/10.1007/BFb0019427?error=cookies_not_supported&code=aa5a6b39-b3ee-4a21-9b8e-cff0eb1991a5"
-        ],
         [
           "https://doi.org/10.1007/BFb0019427",
           "https://doi.org/10.1007/BFb0019427"
