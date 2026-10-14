@@ -16,15 +16,13 @@ on:
         description: 'Stringified JSON object listing tox system factors'
         type: string
         # 'tox -e update_docker_platforms' updates below
-        # Only distros with Python 3.12+ are supported (Sage now requires system Python 3.12+)
+        # Only distros with Python 3.13+ are supported (Sage now requires system Python 3.13+)
         default: >-
           [
-           "ubuntu-noble",
            "ubuntu-resolute",
            "debian-trixie",
            "fedora-42",
            "fedora-43",
-           "centos-stream-10",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
@@ -119,9 +117,9 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
-          tool-cache: false
+          preinstalled-runtimes: false
           android: true
           dotnet: true
           haskell: true
