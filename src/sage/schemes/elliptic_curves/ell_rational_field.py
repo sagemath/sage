@@ -2463,19 +2463,19 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve([0, 0, 1, -1, 0])
-            sage: E.regulator()
+            sage: E.regulator()  # abs tol 1e-15
             0.0511114082399688
             sage: EllipticCurve('11a').regulator()
             1.00000000000000
-            sage: EllipticCurve('37a').regulator()
+            sage: EllipticCurve('37a').regulator()  # abs tol 1e-15
             0.0511114082399688
             sage: EllipticCurve('389a').regulator()
             0.152460177943144
-            sage: EllipticCurve('5077a').regulator()
+            sage: EllipticCurve('5077a').regulator()  # abs tol 1e-13
             0.41714355875838...
             sage: EllipticCurve([1, -1, 0, -79, 289]).regulator()
             1.50434488827528
-            sage: EllipticCurve([0, 0, 1, -79, 342]).regulator(proof=False)  # long time (6s on sage.math, 2011)
+            sage: EllipticCurve([0, 0, 1, -79, 342]).regulator(proof=False)  # long time (6s on sage.math, 2011)  # abs tol 1e-10
             14.790527570131...
         """
         R = RealField(precision)
@@ -2579,7 +2579,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: P=E(0,0)
             sage: Q=5*P; Q
             (1/4 : -5/8 : 1)
-            sage: E.saturation([Q])
+            sage: E.saturation([Q])  # abs tol 1e-15
             ([(0 : 0 : 1)], 5, 0.0511114082399688)
 
         TESTS:
@@ -5841,12 +5841,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: a = E.integral_points([P1,P2,P3], verbose=True)
             Using mw_basis  [(2 : 0 : 1), (3 : -4 : 1), (8 : -22 : 1)]
             e1,e2,e3:  -3.0124303725933... 1.0658205476962... 1.94660982489710
-            Minimal and maximal eigenvalues of height pairing matrix: 0.637920814585005,2.31982967525725
+            Minimal and maximal eigenvalues of height pairing matrix: 0.6379208145850...,2.319829675257...
             x-coords of points on compact component with  -3 <=x<= 1
             [-3, -2, -1, 0, 1]
             x-coords of points on non-compact component with  2 <=x<= 6
             [2, 3, 4]
-            starting search of remaining points using coefficient bound 5 and |x| bound 1.53897183921009e25
+            starting search of remaining points using coefficient bound 5 and |x| bound 1.53897183921...e25
             x-coords of extra integral points:
             [2, 3, 4, 8, 11, 14, 21, 37, 52, 93, 342, 406, 816]
             Total number of integral points: 18
