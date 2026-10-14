@@ -1157,7 +1157,7 @@ class RuleDualRSK(Rule):
 
     The RSK and dual RSK algorithms agree for permutation matrices.
 
-    For more information, see Chapter 7, Section 14 in [Sta-EC2]_
+    For more information, see Chapter 7, Section 14 in [EnumComb2]_
     (where dual RSK is called `\mathrm{RSK}^{\ast}`) or the third
     solution to Exercise 2.7.12(a) in [GR2018v5sol]_.
 
@@ -3014,7 +3014,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
     This correspondence has been introduced in [Knu1970]_, where it has
     been referred to as "Construction A".
 
-    For more information, see Chapter 7 in [Sta-EC2]_.
+    For more information, see Chapter 7 in [EnumComb2]_.
 
     We also note that integer matrices are in bijection with generalized
     permutations. Furthermore, we can convert any word `w` (and, in

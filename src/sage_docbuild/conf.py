@@ -18,6 +18,7 @@ behavior.
 import importlib
 import os
 import re
+from pathlib import Path
 
 import dateutil.parser
 from IPython.lib.lexers import IPyLexer, IPythonConsoleLexer
@@ -44,6 +45,7 @@ SAGE_LIVE_DOC = os.environ.get('SAGE_LIVE_DOC', 'no')
 extensions = [
     'sage_docbuild.ext.inventory_builder',
     'sage_docbuild.ext.multidocs',
+    'sage_docbuild.ext.bibtex',
     'sage_docbuild.ext.sage_autodoc',
     'sage_docbuild.ext.crossrefs',
     'sage_docbuild.ext.livedoc',
@@ -268,6 +270,16 @@ todo_include_todos = True
 
 # By default document is master.
 multidocs_is_master = True
+
+# All manuals use the same bibliography files, including independent docbuild runs.
+bibliographies = sorted((Path(SAGE_DOC_SRC) / 'references').glob('*.bib'))
+if not bibliographies:
+    # The separately distributed sage-docbuild wheel also carries the
+    # bibliography files, for manuals built against an installed Sage library.
+    bibliographies = sorted(Path(__file__).with_name('references').glob('*.bib'))
+bibtex_bibfiles = [str(bibliography) for bibliography in bibliographies]
+bibtex_default_style = 'sage'
+bibtex_cite_id = '{key}'
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
 copybutton_prompt_text = r"sage: |[.][.][.][.]: |>>> |[.][.][.] |\$ "
@@ -713,8 +725,6 @@ def reference_subdocument(directory=None):
     })
 
     latex_elements['hyperref'] = r"""
-\usepackage{xr}
-\externaldocument[../references/]{../references/references}
 % Include hyperref last.
 \usepackage{hyperref}
 % Fix anchor placement for figures with captions.
