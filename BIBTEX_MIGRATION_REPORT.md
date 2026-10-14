@@ -1,10 +1,12 @@
 # Sage BibTeX migration: changes and validation
 
-The bibliography migration preserves Sage's existing citation keys and reference
-descriptions, moves module bibliographies into shared BibTeX files, and provides
+The bibliography migration moves module bibliographies into shared BibTeX files and provides
 local bibliographies for independently built manuals. The original two-file split
 produced the same catalogue HTML and LaTeX as the preceding single-file version;
 the subsequent semantic audit and its corrections are recorded below.
+The [14 October duplicate and URL audit](build/test/rst2bib/URL_AUDIT.md)
+consolidates 24 repeated entries, updates their citations, and repairs or upgrades
+435 URLs in #42966. It leaves #42968 unchanged. Other citation keys remain stable.
 
 The initial validation covered code through commit
 [`2b440e3f44c`](https://github.com/dimpase/sage/commit/2b440e3f44c), on
@@ -34,9 +36,11 @@ All 546 example blocks and the module prose remain unchanged after
 excluding the relocated bibliography and normalizing renamed keys. Executable
 AST/token checks also pass for all 62 edited source files.
 
-Comparing the cleanup's 1,979-entry RST catalogue with the BibTeX catalogue finds
-1,978 identical entries; only the documented `VT2001` mathematical-symbol
-encoding differs. The exact difference is recorded in
+Before the duplicate and URL audit, comparing the cleanup's 1,979-entry RST
+catalogue with the BibTeX catalogue found 1,978 identical entries and only the
+documented `VT2001` mathematical-symbol difference. The current comparison maps
+all 1,979 old keys to 1,955 canonical entries: 1,834 descriptions are identical
+and 145 have documented changes. The exact differences are recorded in
 [`conversion-differences.json`](build/test/rst2bib/conversion-differences.json).
 The semantic audit adds structured metadata corrections without changing the
 conversion implementation.
@@ -45,11 +49,11 @@ conversion implementation.
 
 | Item | Result |
 | --- | --- |
-| Original shared citation keys | All 1,807 retained |
+| Original shared citation keys | All 1,807 accounted for, including documented duplicate-key mappings |
 | Bibliographic definitions migrated from docstrings | 177, from 60 Python and two Cython files |
 | New shared entries | 172; matching existing references reused |
-| Final shared entries | 1,979 |
-| Final DOI fields | 597 (207 added during the semantic audit) |
+| Final shared entries | 1,955 (24 duplicates consolidated after the initial 1,979-entry migration) |
+| Final DOI fields | 594, all unique; the earlier semantic audit had 597 fields before consolidation |
 | Original DOI fields | 364; corrected identifiers are recorded below and in the semantic audit |
 
 Migrated entries have an `annotation` field containing the complete original
@@ -153,7 +157,7 @@ The final database is split as follows:
 
 | File | Entries |
 | --- | ---: |
-| [`reference-database.bib`](src/doc/references/reference-database.bib) | 1,879 |
+| [`reference-database.bib`](src/doc/references/reference-database.bib) | 1,855 |
 | [`reference-database-extra.bib`](src/doc/references/reference-database-extra.bib) | 100 |
 
 The second file contains the last 100 entries of the former single file, from

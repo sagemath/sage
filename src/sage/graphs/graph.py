@@ -8659,7 +8659,7 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        - [Lein]_
+        - [Lei2013]_
         """
         from sage.matrix.constructor import matrix
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

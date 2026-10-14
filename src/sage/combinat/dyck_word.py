@@ -3,7 +3,7 @@ Dyck words
 
 A class of an object enumerated by the
 :func:`Catalan numbers<sage.combinat.combinat.catalan_number>`,
-see [Sta-EC2]_, [StaCat98]_ for details.
+see [EnumComb2]_, [StaCat98]_ for details.
 
 AUTHORS:
 
@@ -27,7 +27,7 @@ AUTHORS:
 
 REFERENCES:
 
-- [Sta-EC2]_
+- [EnumComb2]_
 
 - [StaCat98]_
 
@@ -2422,7 +2422,7 @@ class DyckWord_complete(DyckWord):
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta-EC2]_ and [StaCat98]_.
+        there. See [EnumComb2]_ and [StaCat98]_.
 
         EXAMPLES::
 
@@ -3829,7 +3829,7 @@ class CompleteDyckWords(DyckWords):
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta-EC2]_ and [StaCat98]_.
+        there. See [EnumComb2]_ and [StaCat98]_.
 
         EXAMPLES::
 
