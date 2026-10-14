@@ -520,7 +520,7 @@ def RandomTree(n, seed=None, immutable=False):
 
     Ensuring that we encounter no unexpected surprise ::
 
-        sage: graphs.RandomTree(randint(0, 20)).is_tree()
+        sage: graphs.RandomTree(randint(1, 20)).is_tree()
         True
 
     Random tree with one and zero vertices::
