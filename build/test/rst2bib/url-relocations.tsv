@@ -1,0 +1,37 @@
+keys	old_url	new_url	evidence
+Ge2005	ftp://ftp.cs.princeton.edu/reports/2005/737.pdf	https://www.cs.princeton.edu/techreports/2005/737.pdf	Replacement checked against publication or institutional record
+ST1994	ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz	https://doi.org/10.1007/BFb0019427	Replacement checked against publication or institutional record
+ST94	ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz	https://doi.org/10.1006/aima.1994.1019	Replacement checked against publication or institutional record
+Hu57	http://cms.math.ca/cjm/v9/p378	https://doi.org/10.4153/cjm-1957-045-0	Replacement checked against publication or institutional record
+Do2009	http://designtheory.org/database/	https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/	Replacement checked against publication or institutional record
+KeSm1998	http://dx.doi.org/10.6028/NIST.SP.800-17	https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-17.pdf	Publisher PDF verified; DOI retained in its metadata field
+Dro1987	http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf	https://doi.org/10.2307/2046419	Replacement checked against publication or institutional record
+LT1998	http://front.math.ucdavis.edu/9809.5122	https://arxiv.org/abs/math/9809122	Replacement checked against publication or institutional record
+FS1978	http://igm.univ-mlv.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf	https://www-igm.univ-eiffel.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf	Replacement checked against publication or institutional record
+Bee	http://linear.ups.edu/	https://linear.pugetsound.edu/	Replacement checked against publication or institutional record
+Las	http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz	https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf	Replacement checked against publication or institutional record
+LLT	http://www-igm.univ-mlv.fr/~jyt/ARTICLES/plactic.ps	https://alain-lascoux.github.io/files/lascoux_leclerc_thibon__plactic_(PRELIMINARY_VERSION).pdf	Replacement checked against publication or institutional record
+EM2001	http://www-math.mit.edu/~etingof/73509.pdf	https://math.mit.edu/~etingof/73509.pdf	Replacement checked against publication or institutional record
+StaCat98	http://www-math.mit.edu/~rstan/ec/catalan.pdf	https://math.mit.edu/~rstan/ec/catalan.pdf	Replacement checked against publication or institutional record
+Deli2012	http://www.bourbaki.ens.fr/TEXTES/1048.pdf	https://www.bourbaki.fr/TEXTES/1048.pdf	Replacement checked against publication or institutional record
+HKP2015	http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19	https://doi.org/10.37236/5026	Replacement checked against publication or institutional record
+BW1994	http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html	https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html	Replacement checked against publication or institutional record
+Atk1992	http://www.inria.fr/rrrt/rr-1779.html	https://inria.hal.science/inria-00077019	Replacement checked against publication or institutional record
+MR1995	http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf	https://doi.org/10.1006/jabr.1995.1336	Replacement checked against publication or institutional record
+Ack2016	http://www.math.leidenuniv.nl/nl/theses/Bachelor/	https://math.leidenuniv.nl/scripties/BachAckermans.pdf	Replacement checked against publication or institutional record
+MirMor2009	http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf	https://web.math.ucsb.edu/~drm/manuscripts/eiqf.pdf	Replacement checked against publication or institutional record
+AndHonk97	http://www.utu.fi/~honkala/designs.ps	https://apachepersonal.miun.se/~tomnil/designs/designsShortC.pdf	Replacement checked against publication or institutional record
+Vazirani2002	https://arxiv.org/abs/0107052v1	https://arxiv.org/abs/math/0107052v1	Replacement checked against publication or institutional record
+HKP2010	https://arxiv.org/abs/0309168v3	https://arxiv.org/abs/math/0309168v3	Replacement checked against publication or institutional record
+HNT06	https://arxiv.org/abs/0605262v1	https://arxiv.org/abs/math/0605262v1	Replacement checked against publication or institutional record
+Sch2006	https://arxiv.org/abs/0611617v2	https://arxiv.org/abs/math/0611617v2	Replacement checked against publication or institutional record
+Tingley2007	https://arxiv.org/abs/0702062v3	https://arxiv.org/abs/math/0702062v3	Replacement checked against publication or institutional record
+HLNT09	https://arxiv.org/abs/math/0912.0184v2	https://arxiv.org/abs/0912.0184v2	Replacement checked against publication or institutional record
+LJCR	https://dmgordon.org/cover	https://ljcr.dmgordon.org/cover.html	Replacement checked against publication or institutional record
+KeSm1998	https://doi.org/10.6028/NIST.SP.800-17	https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-17.pdf	Publisher PDF verified; DOI retained in its metadata field
+KV2010	https://math.dartmouth.edu/~jvoight/articles/73446.pdf	https://arxiv.org/abs/0808.3833	Replacement checked against publication or institutional record
+sudoku:royle	https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php/sudokumin.php	https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php	Replacement checked against publication or institutional record
+BvR1982	https://web.archive.org/web/20130423122429/http://oai.cwi.nl/oai/asset/304/0304A.pdf	https://ir.cwi.nl/pub/304	Replacement checked against publication or institutional record
+BL1984	https://web.archive.org/web/20130423123100/http://oai.cwi.nl/oai/asset/1817/1817A.pdf	https://ir.cwi.nl/pub/1817	Replacement checked against publication or institutional record
+MR1995	https://web.archive.org/web/20210829143748/http://lacim-membre.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf	https://doi.org/10.1006/jabr.1995.1336	Replacement checked against publication or institutional record
+KY04	https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf	https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/	Article verified on the journal institutional repository
