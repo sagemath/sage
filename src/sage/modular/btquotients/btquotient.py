@@ -2966,7 +2966,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         alpha0 = self._conv(alpha1)
 
         alpha = Matrix(QQ, 4, 1, alpha1)
-        alphamat = self.embed_quaternion(alpha)
+        alphamat = self.embed_quaternion(alpha, prec=max(self._prec, 40), exact=False)
         letters = self.get_nontorsion_generators()
         letters += [g for g in self._find_elements_in_order(1)
                     if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
