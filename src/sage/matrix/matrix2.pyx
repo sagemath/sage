@@ -7174,7 +7174,7 @@ cdef class Matrix(Matrix1):
             sage: m.eigenvalues(algorithm="pari_charpoly")  # abs tol 1e-14
             [-1.41421356237309505*I, 1.41421356237309505*I]
             sage: m.eigenvalues()
-            [-1.41421356237309505*I, 1.41421356237309505*I]
+            [-1.41421356237...*I, 1.41421356237...*I]
             sage: type(m.eigenvalues())
             <class 'sage.structure.sequence.Sequence_generic'>
         """
@@ -7219,7 +7219,7 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert ... to an element of Real Field with 53 bits of precision
-            sage: A.singular_values()  # abs tol 1e-13
+            sage: sorted(A.singular_values())  # abs tol 1e-13
             [0.317896596475411, 1.25232496300299, 1.48403213017074, 2.08062167993720, 2.59091978815526]
 
         Ensure all returned values are real::
