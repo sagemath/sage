@@ -625,7 +625,7 @@ def _finite_binomial_sum(expression, v, a, b):
         # Detect NaN via the standard trick: NaN is the only value
         # that is not equal to itself.
         try:
-            if term != term:
+            if term != term:  # noqa: PLR0124
                 return None
         except (TypeError, ValueError):
             pass
