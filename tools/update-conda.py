@@ -45,7 +45,7 @@ def write_env_file(env_file: Path, dependencies: list[str]) -> None:
 channels:
   - conda-forge/label/python_rc
   - conda-forge
-nodefaults: true
+  - nodefaults
 dependencies:
   - _python_rc
   - _numpy_rc
