@@ -9456,7 +9456,7 @@ class GenericGraph(GenericGraph_pyx):
             g.set_edge_label(u, v, label)
         return g
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42983, use_edge_labels='by_weight')
     def hamiltonian_path(self, s=None, t=None, by_weight=False,
                          weight_function=None, check_weight=True,
                          maximize=False, algorithm='MILP', immutable=None,
@@ -9623,7 +9623,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.hamiltonian_path(s=0, t=1, use_edge_labels=True)[0]                 # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42983 for details.
             3
 
         Parameter ``algorithm`` must be either ``'backtrack'`` or ``'MILP'``::
@@ -9798,7 +9798,7 @@ class GenericGraph(GenericGraph_pyx):
             return sum(weight_function(e) for e in tsp.edge_iterator()), tsp
         return tsp
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42983, use_edge_labels='by_weight')
     def traveling_salesman_problem(self, by_weight=False, weight_function=None,
                                    check_weight=True, maximize=False,
                                    solver=None, constraint_generation=None,
@@ -10063,7 +10063,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: tsp = G.traveling_salesman_problem(use_edge_labels=True)              # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42983 for details.
             sage: sum(tsp.edge_labels())                                                # needs sage.numerical.mip
             4
         """
