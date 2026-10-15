@@ -461,7 +461,7 @@ def _finite_binomial_sum(expression, v, a, b):
 
     This works around backend bugs in symbolic summation (Maxima's
     ``simplify_sum`` and SymPy's ``summation`` both fail on such sums).
-    See :trac:`42894`.
+    See :issue:`42894`.
 
     Only finite integer lower bounds are handled; ``a = -oo`` falls back
     to the backend.
@@ -775,7 +775,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        the summation the result might not be convertible into a Sage
        expression.
     
-    Check that :trac:`42894` is fixed::
+    Check that :issue:`42894` is fixed::
 
         sage: k = var('k')
         sage: n = 4
@@ -812,7 +812,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     # If the summand contains a binomial with finite support, evaluate
     # the finite sum directly instead of delegating to the backend.
     # This bypasses backend bugs in symbolic summation for such sums.
-    # See :trac:`42894`.
+    # See :issue:`42894`.
     res = _finite_binomial_sum(expression, v, a, b)
     if res is not None:
         return res
