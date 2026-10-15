@@ -896,7 +896,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
             [4 1 3]
             [2 3 1]
             sage: m = CoxeterMatrix([(1, 5, 2, 2, 2), (5, 1, 3, 2, 2), (2, 3, 1, 3, 2), (2, 2, 3, 1, 3), (2, 2, 2, 3, 1)]); FullyCommutativeElements(m)
-            Fully commutative elements of Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
+            Fully commutative elements of Coxeter group over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? with Coxeter matrix:
             [1 5 2 2 2]
             [5 1 3 2 2]
             [2 3 1 3 2]

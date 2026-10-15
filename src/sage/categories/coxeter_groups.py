@@ -24,6 +24,7 @@ from sage.misc.call import attrcall
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.flatten import flatten
 from sage.misc.lazy_import import LazyImport
+from sage.rings.integer_ring import ZZ
 from sage.structure.element import have_same_parent, parent
 
 
@@ -1431,12 +1432,52 @@ class CoxeterGroups(Category_singleton):
 
                 sage: W = SignedPermutations(3)                                         # needs sage.combinat
                 sage: W._test_coxeter_relations()                                       # needs sage.combinat
+
+                sage: # needs sage.groups
+                sage: W = CoxeterGroup([[1,4], [4,1]], base_ring=RDF)
+                sage: W._test_coxeter_relations()
+                sage: W = CoxeterGroup([[1,4], [4,1]], base_ring=RR)
+                sage: W._test_coxeter_relations()
             """
             tester = self._tester(**options)
             s = self.simple_reflections()
             one = self.one()
+            inexact_base_ring = False
+            tolerance = None
+            # Matrix realizations over inexact rings only satisfy finite
+            # relations up to roundoff.
+            try:
+                base_ring = self.base_ring()
+                inexact_base_ring = not base_ring.is_exact()
+            except (AttributeError, NotImplementedError):
+                pass
+            if inexact_base_ring:
+                try:
+                    tolerance = max(100 * base_ring.epsilon(), 1e-10)
+                except (AttributeError, TypeError, NotImplementedError):
+                    tolerance = 1e-10
+
+            def elements_equal(x, y):
+                if x == y:
+                    return True
+                if not inexact_base_ring:
+                    return False
+                try:
+                    x_mat = x.matrix()
+                    y_mat = y.matrix()
+                except (AttributeError, TypeError, NotImplementedError):
+                    return False
+                if (x_mat.nrows(), x_mat.ncols()) != (y_mat.nrows(), y_mat.ncols()):
+                    return False
+                try:
+                    return all(abs(a - b) <= tolerance
+                               for a, b in zip(x_mat.list(), y_mat.list()))
+                except (TypeError, ValueError):
+                    return False
+
             for si in s:
-                tester.assertEqual(si**2, one)
+                tester.assertTrue(elements_equal(si**2, one),
+                                  "Coxeter generator does not square to one")
             try:
                 cox_mat = self.coxeter_matrix()
             except ImportError:
@@ -1445,12 +1486,15 @@ class CoxeterGroups(Category_singleton):
             for ii, i in enumerate(I):
                 for j in I[ii + 1:]:
                     mij = cox_mat[i, j]
-                    if mij == -1:  # -1 stands for infinity
+                    if mij <= -1:  # any label <= -1 stands for an infinite bond
                         continue
+                    mij = ZZ(mij)
                     l = s[i] * s[j]
-                    tester.assertEqual(l**mij, one, "Coxeter relation fails")
+                    tester.assertTrue(elements_equal(l**mij, one),
+                                      "Coxeter relation fails")
                     for p in range(1, mij):
-                        tester.assertNotEqual(l**p, one, "unexpected relation")
+                        tester.assertFalse(elements_equal(l**p, one),
+                                           "unexpected relation")
 
     class ElementMethods:
         def has_descent(self, i, side='right', positive=False) -> bool:
