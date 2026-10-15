@@ -255,14 +255,18 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             k = self.parent().k
             n = self.parent().n
             a = min(b[0])
-            left = [j for j in (self.value[n-i-1]).reduced_word()
-                    if j != (a+x) % (k+1)]
-            right = [(j - x) % (k+1) for j in (self.value[n-i]).reduced_word()]
-            m = max([j for j in range(a) if (j+x) % (k+1) not in left])
-            right += [m+1]
+            left = [j for j in (self.value[n - i - 1]).reduced_word()
+                    if j != (a + x) % (k + 1)]
+            right = [(j - x) % (k + 1)
+                     for j in (self.value[n - i]).reduced_word()]
+            m = max([j for j in range(a) if (j + x) % (k + 1) not in left])
+            right += [m + 1]
             right.sort(reverse=True)
-            right = [(j + x) % (k+1) for j in right]
-            t = [self.value[j] for j in range(n-i-1)] + [W.from_reduced_word(left)] + [W.from_reduced_word(right)] + [self.value[j] for j in range(n-i+1, n)]
+            right = [(j + x) % (k + 1) for j in right]
+            t = [self.value[j] for j in range(n - i - 1)]
+            t.append(W.from_reduced_word(left))
+            t.append(W.from_reduced_word(right))
+            t.extend(self.value[j] for j in range(n - i + 1, n))
             return self.parent()(tuple(t))
 
         def f(self, i):
