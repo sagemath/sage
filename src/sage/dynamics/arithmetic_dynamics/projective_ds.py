@@ -3693,12 +3693,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         TESTS:
 
         Check that :issue:`42865` is fixed. Over ``QQbar``,
-        ``automorphism_group`` delegates to :meth:`conjugating_set`. If
+        ``automorphism_group`` delegates to ``conjugating_set``. If
         ``num_cpus`` were again passed as the second positional argument, then
         ``num_cpus=QQ`` would be bound to ``R`` and raise an unrelated
         ``NotImplementedError`` from sigma-invariant computation. With the
         fix, ``num_cpus`` is forwarded by keyword, so an invalid value is
-        rejected by :meth:`conjugating_set`::
+        rejected by ``conjugating_set``::
 
             sage: # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)
@@ -9598,7 +9598,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         Check that :issue:`42865` is fixed for finite fields in dimension
         greater than 1: ``num_cpus`` is forwarded by keyword, so an invalid
-        value raises a ``TypeError`` from :meth:`conjugating_set` rather than
+        value raises a ``TypeError`` from ``conjugating_set`` rather than
         being misinterpreted as ``R``::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
