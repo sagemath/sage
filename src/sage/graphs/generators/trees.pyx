@@ -253,7 +253,7 @@ def FibonacciTree(n, immutable=False):
     ::
 
         sage: l1 = [graphs.FibonacciTree(_).order() + 1 for _ in range(6)]              # needs sage.libs.pari
-        sage: l2 = list(fibonacci_sequence(2,8))                                        # needs sage.libs.pari
+        sage: l2 = list(fibonacci_sequence(2, 8))                                       # needs sage.libs.pari
         sage: l1 == l2                                                                  # needs sage.libs.pari
         True
 
@@ -352,7 +352,7 @@ def Caterpillar(spine, immutable=False):
 
     Distinct spine sequences can yield isomorphic caterpillars::
 
-        sage: graphs.Caterpillar([1,1,2]).is_isomorphic(graphs.Caterpillar([2,1,1]))
+        sage: graphs.Caterpillar([1, 1, 2]).is_isomorphic(graphs.Caterpillar([2, 1, 1]))
         True
 
     TESTS:
@@ -361,9 +361,9 @@ def Caterpillar(spine, immutable=False):
 
         sage: graphs.Caterpillar([7]).diameter()
         2
-        sage: graphs.Caterpillar([2,2,2,2]).diameter()
+        sage: graphs.Caterpillar([2, 2, 2, 2]).diameter()
         5
-        sage: graphs.Caterpillar([0,1,1,0]).diameter()
+        sage: graphs.Caterpillar([0, 1, 1, 0]).diameter()
         5
 
     Check the behavior of parameter immutable::
@@ -520,8 +520,7 @@ def RandomTree(n, seed=None, immutable=False):
 
     Ensuring that we encounter no unexpected surprise ::
 
-        sage: all( graphs.RandomTree(10).is_tree()
-        ....:      for i in range(100) )
+        sage: graphs.RandomTree(randint(1, 20)).is_tree()
         True
 
     Random tree with one and zero vertices::
@@ -751,7 +750,7 @@ cdef class TreeIterator:
         EXAMPLES::
 
             sage: from sage.graphs.generators.trees import TreeIterator
-            sage: t = TreeIterator(100) # indirect doctest
+            sage: t = TreeIterator(100)  # indirect doctest
             sage: print(t)
             Iterator over all trees with 100 vertices
         """
@@ -766,7 +765,7 @@ cdef class TreeIterator:
         EXAMPLES::
             sage: from sage.graphs.generators.trees import TreeIterator
             sage: t = TreeIterator(100)
-            sage: t = None # indirect doctest
+            sage: t = None  # indirect doctest
         """
         sig_free(self.l)
         sig_free(self.current_level_sequence)
@@ -805,7 +804,7 @@ cdef class TreeIterator:
 
             sage: from sage.graphs.generators.trees import TreeIterator
             sage: T = TreeIterator(5)
-            sage: [t for t in T] # indirect doctest
+            sage: [t for t in T]  # indirect doctest
             [Graph on 5 vertices, Graph on 5 vertices, Graph on 5 vertices]
 
         TESTS:
@@ -815,7 +814,7 @@ cdef class TreeIterator:
 
             sage: from sage.graphs.generators.trees import TreeIterator
             sage: T = TreeIterator(0)
-            sage: [t for t in T] # indirect doctest
+            sage: [t for t in T]  # indirect doctest
             [Graph on 0 vertices]
         """
         if not self.first_time and not self.q:
