@@ -519,6 +519,11 @@ def _finite_binomial_sum(expression, v, a, b):
 
         sage: _finite_binomial_sum(binomial(4, k^2 - k), k, 0, oo) is None
         True
+
+    Non-finite terms inside the support are rejected::
+
+        sage: _finite_binomial_sum(binomial(4, k)*log(k), k, 0, oo) is None
+        True
     """
     from sage.rings.infinity import infinity
     from sage.rings.integer import Integer
@@ -601,9 +606,31 @@ def _finite_binomial_sum(expression, v, a, b):
         return 0
 
     try:
-        return sum(expression.subs({v: k}) for k in range(lo, hi + 1))
+        terms = [expression.subs({v: k}) for k in range(lo, hi + 1)]
     except (ZeroDivisionError, ValueError, TypeError):
         return None
+
+    # Reject non-finite terms (log(0), tan(pi/2), etc.).  These do not
+    # raise on substitution but produce oo, -oo or zoo.
+    for term in terms:
+        try:
+            if term.is_infinity():
+                return None
+        except AttributeError:
+            # Plain Python number; assume finite.
+            pass
+        except (TypeError, ValueError):
+            # Cannot decide; be conservative and fall back.
+            return None
+        # Detect NaN via the standard trick: NaN is the only value
+        # that is not equal to itself.
+        try:
+            if term != term:
+                return None
+        except (TypeError, ValueError):
+            pass
+
+    return sum(terms)
 
 
 def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
