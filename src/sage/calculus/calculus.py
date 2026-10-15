@@ -514,6 +514,11 @@ def _finite_binomial_sum(expression, v, a, b):
         True
         sage: _finite_binomial_sum(binomial(4.5, k), k, 0, oo) is None
         True
+
+    Nonlinear bottoms are rejected::
+
+        sage: _finite_binomial_sum(binomial(4, k^2 - k), k, 0, oo) is None
+        True
     """
     from sage.rings.infinity import infinity
     from sage.rings.integer import Integer
@@ -571,6 +576,8 @@ def _finite_binomial_sum(expression, v, a, b):
     # coefficients.
     bottom = bottom.expand()
     if not bottom.is_polynomial(v):
+        return None
+    if bottom.degree(v) > 1:
         return None
 
     c = _concrete_int(bottom.coefficient(v))
@@ -774,7 +781,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        Maple and Mathematica, so even if the chosen backend can perform
        the summation the result might not be convertible into a Sage
        expression.
-    
+
     Check that :issue:`42894` is fixed::
 
         sage: k = var('k')
