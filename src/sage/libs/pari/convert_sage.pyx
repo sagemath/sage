@@ -139,8 +139,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     Converting a real number::
 
-        sage: pari.set_real_precision(70)
-        15
+        sage: _ = pari.set_real_precision(70)
         sage: z = pari('1.234'); z
         1.234000000000000000000000000000000000000000000000000000000000000000000
         sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
