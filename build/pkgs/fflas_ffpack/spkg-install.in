@@ -8,7 +8,9 @@ if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
 else
     LINBOX_BLAS="$(pkg-config --libs blas cblas)"
-    BLAS_CFLAGS="$(pkg-config --cflags blas cblas)"
+    # Filter out openmp flags leaked from pkg-config to prevent libtool errors on macOS,
+    # and because openmp is disabled for this package anyway.
+    BLAS_CFLAGS="$(pkg-config --cflags blas cblas | sed 's/-Xpreprocessor //g; s/-fopenmp//g')"
     if [ "$BLAS_CFLAGS" != "" ]; then
         LINBOX_BLAS_CFLAGS="--with-blas-cflags=$BLAS_CFLAGS"
     else
