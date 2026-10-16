@@ -657,6 +657,16 @@ cdef class Matrix(Matrix0):
             sage: sage_input(matrix(RR, 0, 0, []), verify=True)
             # Verified
             matrix(RR, 0, 0)
+
+        Subdivisions are kept (:issue:`18550`)::
+
+            sage: A = matrix(QQ, 2, 3, range(6))
+            sage: A.subdivide([1], [2])
+            sage: sage_input(A, verify=True)
+            # Verified
+            matrix(QQ, [[0, 1, 2], [3, 4, 5]]).subdivided([1], [2])
+            sage: sage_eval(sage_input(A)).subdivisions()
+            ([1], [2])
         """
         if self.is_sparse():
             entries = list(self.dict().items())
@@ -665,17 +675,22 @@ cdef class Matrix(Matrix0):
             # normally follow the comma
             entries = [(sib.name('(%d,%d)' % k), sib(v, 2))
                        for k, v in entries]
-            return sib.name('matrix')(self.base_ring(),
-                                      sib.int(self.nrows()),
-                                      sib.int(self.ncols()),
-                                      sib.dict(entries))
+            result = sib.name('matrix')(self.base_ring(),
+                                        sib.int(self.nrows()),
+                                        sib.int(self.ncols()),
+                                        sib.dict(entries))
         elif self.nrows() == 0 or self.ncols() == 0:
-            return sib.name('matrix')(self.base_ring(),
-                                      sib.int(self.nrows()),
-                                      sib.int(self.ncols()))
+            result = sib.name('matrix')(self.base_ring(),
+                                        sib.int(self.nrows()),
+                                        sib.int(self.ncols()))
         else:
             entries = [[sib(v, 2) for v in row] for row in self.rows()]
-            return sib.name('matrix')(self.base_ring(), entries)
+            result = sib.name('matrix')(self.base_ring(), entries)
+        row_lines, col_lines = self.subdivisions()
+        if row_lines or col_lines:
+            result = result.subdivided([sib.int(r) for r in row_lines],
+                                       [sib.int(c) for c in col_lines])
+        return result
 
     def numpy(self, dtype=None, copy=True):
         """
