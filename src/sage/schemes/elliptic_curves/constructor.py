@@ -762,7 +762,7 @@ def EllipticCurve_from_c4c6(c4, c6):
     return EllipticCurve([-K(c4) / K(48), -K(c6) / K(864)])
 
 
-def EllipticCurve_from_j(j, minimal_twist=True) -> EllipticCurve_generic:
+def EllipticCurve_from_j(j, minimal_twist=True) -> "EllipticCurve_generic":
     r"""
     Return an elliptic curve with given `j`-invariant.
 

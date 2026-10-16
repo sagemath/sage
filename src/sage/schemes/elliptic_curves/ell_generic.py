@@ -480,7 +480,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return False
         return P.curve() == self
 
-    def __call__(self, *args, **kwds) -> EllipticCurvePoint_field:
+    def __call__(self, *args, **kwds) -> "EllipticCurvePoint_field":
         r"""
         EXAMPLES::
 
@@ -729,7 +729,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         D = b*b + 4*fx
         return D.is_square()
 
-    def lift_x(self, x, all=False, extend=False) -> EllipticCurvePoint_field | list[EllipticCurvePoint_field]:
+    def lift_x(self, x, all=False, extend=False) -> "EllipticCurvePoint_field | list[EllipticCurvePoint_field]":
         r"""
         Return one or all points with given `x`-coordinate.
 

@@ -880,7 +880,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self) -> tuple[EllipticCurvePoint_finite_field, ...]:
+    def gens(self) -> "tuple[EllipticCurvePoint_finite_field, ...]":
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.
