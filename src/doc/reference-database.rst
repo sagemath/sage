@@ -4432,6 +4432,10 @@
              Groups of Matrices Whose Entries Are Integers*, The American
              Mathematical Monthly, Vol. 109, No. 2. (2002) pp. 173-186
 
+.. [KP2005] Jürgen Klüners and Sebastian Pauli, *Computing residue
+            class rings and Picard groups of orders*, J. Algebra **292**
+            no. 1 (2005), pp. 47-64. :doi:`10.1016/j.jalgebra.2005.04.013`
+
 .. [KP2011] Manuel Kauers and Peter Paule. The Concrete Tetrahedron.
             Springer-Verlag, 2011.
 

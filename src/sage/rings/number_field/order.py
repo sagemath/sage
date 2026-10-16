@@ -1322,8 +1322,9 @@ class Order(Parent, sage.rings.abc.Order):
     def conductor(self, as_self_ideal=False):
         r"""
         Return the conductor of this order, which can be
-        defined as `\{ x \in \O_K \mid x \cdot \O_K \subseteq \O \}`.
-        It is the largest `\O_K` ideal contained in `\O`.
+        defined as `\{ x \in \mathcal{O}_K \mid x \cdot \mathcal{O}_K
+        \subseteq \mathcal{O} \}`.
+        It is the largest `\mathcal{O}_K`-ideal contained in `\mathcal{O}`.
 
         In the quadratic case, the conductor is the unique positive integer `f`
         such that the discriminant of this order is `f^2` times the discriminant
@@ -1332,9 +1333,20 @@ class Order(Parent, sage.rings.abc.Order):
         In higher degree orders, no such integer can be associated and
         an ideal is returned instead.
 
-        .. OUTPUT::
+        INPUT:
 
-            
+        - ``as_self_ideal`` -- boolean (default: ``False``); only used in
+          degree other than `2`, see :meth:`conductor_ideal`
+
+        OUTPUT:
+
+        - if the number field has degree `2`: a positive :class:`Integer`;
+          ``as_self_ideal`` is ignored
+
+        - otherwise, if ``as_self_ideal`` is ``False``: a fractional ideal of
+          the number field (an ideal of the maximal order)
+
+        - otherwise: an ideal of ``self``
 
         .. SEEALSO::
 
@@ -1382,6 +1394,10 @@ class Order(Parent, sage.rings.abc.Order):
             sage: K.<a> = NumberField(x^3 + 2)
             sage: type(K.order(2*a).conductor())
             <class 'sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal'>
+            sage: type(K.order(2*a).conductor(as_self_ideal=True))
+            <class 'sage.rings.number_field.order_ideal.NumberFieldOrderIdeal_generic'>
+            sage: K.order(2*a).conductor(as_self_ideal=True).ring() == K.order(2*a)
+            True
         """
 
         # for quadratic fields we return an integer
@@ -1389,27 +1405,23 @@ class Order(Parent, sage.rings.abc.Order):
             D = self.discriminant()
             D0 = self._K.discriminant()
             return (D // D0).sqrt()
-        else:
-            return self.conductor_ideal(as_self_ideal=as_self_ideal)
+        return self.conductor_ideal(as_self_ideal=as_self_ideal)
 
     def conductor_ideal(self, as_self_ideal=False):
         r"""
         Return the conductor of ``self`` in its integral closure.
-        If ``as_self_ideal`` is ``True``, the conductor is 
+        If ``as_self_ideal`` is ``True``, the conductor is
         returned as an ideal of ``self``.
         Otherwise an ideal of the maximal order is returned (default).
 
-        INPUT::
+        INPUT:
 
         - ``as_self_ideal`` -- boolean (default: ``False``); if ``True``, return
           the conductor as an ideal of ``self`` rather than of the maximal order.
 
-        ALGORITHM::
+        ALGORITHM:
 
         We follow the algorithm of Section 6 of [KP2005]_.
-
-        AUTHORS::
-
 
         EXAMPLES::
 
