@@ -1060,7 +1060,7 @@ class Bijectionist(SageObject):
         # set_statistics
         self._bmilp = None
         set_Z = set(self._Z)
-        self._restrictions_possible_values = {a: set_Z for a in self._A}
+        self._restrictions_possible_values = dict.fromkeys(self._A, set_Z)
         for a, values in value_restrictions:
             assert a in self._A, f"element {a} was not found in A"
             self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)

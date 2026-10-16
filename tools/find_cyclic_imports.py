@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 DEFAULT_TOML_PATH = Path(__file__).parent / "known-cyclic-imports.toml"
 
 
-def discover_modules(package_root: Path) -> Generator[Path, None, None]:
+def discover_modules(package_root: Path) -> Generator[Path]:
     yield from package_root.glob("**/*.py")
     yield from package_root.glob("**/*.pyx")
 

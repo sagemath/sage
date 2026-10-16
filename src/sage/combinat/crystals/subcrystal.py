@@ -150,7 +150,7 @@ class Subcrystal(UniqueRepresentation, Parent):
 
         if virtualization is not None:
             if scaling_factors is None:
-                scaling_factors = {i:1 for i in index_set}
+                scaling_factors = dict.fromkeys(index_set, 1)
             from sage.combinat.crystals.virtual_crystal import VirtualCrystal
             return VirtualCrystal(ambient, virtualization, scaling_factors, contained,
                                   generators, cartan_type, index_set, category)
