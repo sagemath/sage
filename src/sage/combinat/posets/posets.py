@@ -320,7 +320,9 @@ if TYPE_CHECKING:
     import builtins
 
 
-def Poset(data=None, element_labels=None, cover_relations=False, linear_extension=False, category=None, facade=None, key=None):
+def Poset(data=None, element_labels=None, cover_relations=False,
+          linear_extension=False, category=None, facade=None, key=None,
+          check=True):
     r"""
     Construct a finite poset from various forms of input data.
 
@@ -757,7 +759,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         raise ValueError("Hasse diagram contains loops")
     if D.has_multiple_edges():
         raise ValueError("Hasse diagram contains multiple edges")
-    if cover_relations and not D.is_transitively_reduced():
+    if cover_relations and check and not D.is_transitively_reduced():
         raise ValueError("Hasse diagram is not transitively reduced")
 
     if element_labels is not None:
