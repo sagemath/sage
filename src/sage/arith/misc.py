@@ -29,6 +29,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
 from sage.rings.abc import RealField, ComplexField
+from sage.structure.factorization import Factorization
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.arith.functions import LCM_list
@@ -569,7 +570,7 @@ def is_prime(n) -> bool:
     return ret
 
 
-def is_pseudoprime(n):
+def is_pseudoprime(n) -> bool:
     r"""
     Test whether ``n`` is a pseudo-prime.
 
@@ -1287,7 +1288,7 @@ def next_probable_prime(n):
     return ZZ(n).next_probable_prime()
 
 
-def next_prime(n, proof=None):
+def next_prime(n, proof=None) -> Integer:
     """
     The next prime greater than the integer `n`. If `n` is prime, then this
     function does not return `n`, but the next prime after `n`. If the
@@ -1336,7 +1337,7 @@ def next_prime(n, proof=None):
     return ZZ(n).next_prime(proof)
 
 
-def previous_prime(n):
+def previous_prime(n) -> Integer:
     """
     The largest prime < n. The result is provably correct. If n <= 1,
     this function raises a :exc:`ValueError`.
@@ -1463,7 +1464,7 @@ def previous_prime_power(n):
     return ZZ(n).previous_prime_power()
 
 
-def random_prime(n, proof=None, lbound=2):
+def random_prime(n, proof=None, lbound=2) -> Integer:
     r"""
     Return a random prime `p` between ``lbound`` and `n`.
 
@@ -2644,7 +2645,7 @@ def trial_division(n, bound=None):
     return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds) -> Factorization:
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2886,7 +2887,7 @@ def radical(n, *args, **kwds):
     return m(*args, **kwds)
 
 
-def prime_divisors(n):
+def prime_divisors(n) -> list:
     """
     Return the list of prime divisors (up to units) of this element
     of a unique factorization domain.
@@ -4345,7 +4346,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x, y):
+def kronecker_symbol(x, y) -> Integer:
     """
     The Kronecker symbol `(x|y)`.
 
@@ -4393,7 +4394,7 @@ def kronecker_symbol(x, y):
 kronecker = kronecker_symbol
 
 
-def legendre_symbol(x, p):
+def legendre_symbol(x, p) -> int:
     r"""
     The Legendre symbol `(x|p)`, for `p` prime.
 
@@ -4445,7 +4446,7 @@ def legendre_symbol(x, p):
     return x.kronecker(p)
 
 
-def jacobi_symbol(a, b):
+def jacobi_symbol(a, b) -> Integer:
     r"""
     The Jacobi symbol of integers `a` and `b`, where `b` is odd.
 
@@ -4496,7 +4497,7 @@ def jacobi_symbol(a, b):
     return kronecker_symbol(a, b)
 
 
-def primitive_root(n, check=True):
+def primitive_root(n, check=True) -> Integer:
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a
