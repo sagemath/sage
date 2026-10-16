@@ -435,7 +435,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         return self + (-other)
 
-    def _acted_upon_(self, other, side) -> EllipticCurvePoint:
+    def _acted_upon_(self, other, side) -> "EllipticCurvePoint":
         r"""
         We implement ``_acted_upon_`` to provide scalar multiplications.
 
