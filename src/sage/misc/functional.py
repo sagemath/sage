@@ -24,6 +24,11 @@ import math
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
+    from sage.rings.infinity import PlusInfinity
 
 lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
