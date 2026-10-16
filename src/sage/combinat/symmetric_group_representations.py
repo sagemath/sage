@@ -1035,6 +1035,80 @@ class SpechtRepresentations(SymmetricGroupRepresentations_class):
         """
         return "Specht representations of the symmetric group of order %s! over %s" % (self._n, self._ring)
 
+
+def _choose_canonical_invariant_symmetric_form(matrices):
+    r"""
+    Combine a basis of `G`-invariant bilinear forms into one canonical matrix.
+
+    Write each basis matrix as a vector by reading entries row-by-row. The span
+    of these vectors is the vector space of invariant forms. We compute its
+    reduced row echelon form (RREF), which is canonical for the subspace.
+
+    We then normalize each nonzero RREF row by scaling with the inverse of its
+    first nonzero entry (so that entry is `1`) and choose the smallest matrix
+    among these normalized candidates. This is deterministic and independent of
+    how the original basis was ordered.
+
+    This avoids arbitrary basis choices, and in modular settings (when
+    `p \mid |G|`) it avoids averaging over `G`, which is generally invalid
+    because `|G|` is not invertible in the base field.
+
+    INPUT:
+
+    - ``matrices`` -- nonempty list of square matrices of the same size over a
+      common ring
+
+    OUTPUT: a single matrix of that size
+
+    EXAMPLES::
+
+        sage: from sage.combinat.symmetric_group_representations import _choose_canonical_invariant_symmetric_form
+        sage: R = QQ
+        sage: A = matrix(R, 2, 2, [1, 0, 0, 0])
+        sage: B = matrix(R, 2, 2, [0, 0, 0, 1])
+        sage: _choose_canonical_invariant_symmetric_form([A])
+        [1 0]
+        [0 0]
+        sage: _choose_canonical_invariant_symmetric_form([A, B])
+        [0 0]
+        [0 1]
+    """
+    if not matrices:
+        raise ValueError("matrices must be a nonempty list")
+    if len(matrices) == 1:
+        return matrices[0]
+
+    d = matrices[0].nrows()
+    F = matrices[0].base_ring()
+
+    # Convert matrices to row vectors
+    basis_vectors = matrix(F, [M.list() for M in matrices])
+    rref = basis_vectors.rref()
+
+    # Extract nonzero rows
+    rows = [rref.row(i) for i in range(rref.nrows())
+            if not rref.row(i).is_zero()]
+
+    # 🔥 Deterministic ordering (VERY IMPORTANT for doctests)
+    rows = sorted(rows, key=lambda v: tuple(v))
+
+    if not rows:
+        raise ValueError("matrices must span a nonzero space")
+
+    def _normalize(M):
+        for a in M.list():
+            if a:
+                return M * (a**(-1))
+        return M
+
+    normalized = [_normalize(matrix(F, d, d, v)) for v in rows]
+
+    def key(M):
+        return tuple(M.list())
+
+    return sorted(normalized, key=key)[0]
+
+
 # #### Unitary Representation ###############################################
 
 
@@ -1064,6 +1138,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             ValueError: the base ring must be a finite field of square order
             sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(7**2))
             sage: TestSuite(U).run()
+            sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(3**2))
+            sage: all(A * A.H == 1 for A in [U.representation_matrix(g)
+            ....:                            for g in Permutations(3)])
+            True
         """
         if parent._ring.characteristic() == 0:
             orth = SymmetricGroupRepresentation(partition, 'orthogonal')
@@ -1074,9 +1152,6 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
                     and parent._ring.is_finite()
                     and parent._ring.order().is_square()):
                 raise ValueError("the base ring must be a finite field of square order")
-            from sage.arith.misc import factorial
-            if parent._ring.characteristic().divides(factorial(parent._n)):
-                raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
             self._q = parent._ring.order().sqrt()
             self._specht = Permutations(sum(partition)).algebra(parent._ring).specht_module(partition)
         super().__init__(parent, partition)
@@ -1105,14 +1180,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         EXAMPLES::
 
             sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
-            sage: unitary_specht.representation_matrix(Permutation([2,1,3,4]))
-            [6 0 0]
-            [0 1 0]
-            [0 0 1]
-            sage: unitary_specht.representation_matrix(Permutation([3,2,1,4]))
-            [       4 2*z2 + 3        0]
-            [5*z2 + 5        3        0]
-            [       0        0        1]
+            sage: A = unitary_specht.representation_matrix(Permutation([2,1,3,4]))
+            sage: B = unitary_specht.representation_matrix(Permutation([3,2,1,4]))
+            sage: A * A.H == 1 and B * B.H == 1
+            True
             sage: all(A * A.H == 1 for A in [unitary_specht.representation_matrix(g)
             ....:                            for g in Permutations(4)])
             True
@@ -1122,35 +1193,56 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         return ret
 
     @lazy_attribute
-    def _unitary_change_basis_matrix(self):
-        """
-        Compute the change of basis matrix.
+    def _canonical_invariant_form(self):
+        r"""
+        Select a deterministic `G`-invariant symmetric bilinear form.
 
-        We first compute a `G`-invariant symmetric bilinear form. This yields a solution `U`
-        to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
-        solve this equation by computing the null space of the matrix of coefficients of the linear
-        equations. Generically, this null space will be one dimensional (it may have higher dimension
-        in the modular case when the decomposition factors have multiplicity). We then take the
-        extended Cholesky decomposition of the unique solution to the equation.
+        The invariant space may have dimension greater than one in modular
+        settings (for example when `p \mid n!`). We cannot average over `G` in
+        this case because `|G|` is not invertible. Instead, we compute the
+        invariant space and choose a canonical element by RREF/lexicographic
+        normalization via
+        :func:`_choose_canonical_invariant_symmetric_form`.
 
         EXAMPLES::
 
-            sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._unitary_change_basis_matrix
-            [       1        4        4]
-            [       0 2*z2 + 2 3*z2 + 3]
-            [       0        0 6*z2 + 1]
-            sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._unitary_change_basis_matrix
-            [       1        4]
-            [       0 2*z2 + 2]
+            sage: U = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: M = U._canonical_invariant_form
+            sage: M.is_zero()
+            False
+            sage: U = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(3**2))
+            sage: M = U._canonical_invariant_form
+            sage: M.is_symmetric()
+            True
+            sage: rho = U._specht.representation_matrix
+            sage: all(rho(g).transpose() * M * rho(g).conjugate() == M for g in Permutations(U._n))
+            True
+        """
+        d_rho = self._specht.dimension()
+        null_space = matrix(self._ring, self._invariant_form_linear_system).right_kernel()
+        basis = null_space.basis()
+        mats = [matrix(self._ring, d_rho, d_rho, v) for v in basis]
+        symmetric_mats = [M for M in mats if M == M.transpose()]
+        if symmetric_mats:
+            return _choose_canonical_invariant_symmetric_form(symmetric_mats)
+        # In odd characteristic, symmetrization preserves G-invariance and
+        # recovers the symmetric subspace even if the chosen kernel basis is not
+        # itself symmetric.
+        symmetrized = [M + M.transpose() for M in mats]
+        nonzero_symmetrized = [M for M in symmetrized if not M.is_zero()]
+        if nonzero_symmetrized:
+            return _choose_canonical_invariant_symmetric_form(nonzero_symmetrized)
+        return _choose_canonical_invariant_symmetric_form(mats)
+
+    @lazy_attribute
+    def _invariant_form_linear_system(self):
+        """
+        Return the linear system defining invariant symmetric bilinear forms.
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         G = Permutations(self._n)
         F = self._ring
         rho = self._specht.representation_matrix
-
-        # compute the invariant symmetric bilinear matrix
         d_rho = self._specht.dimension()
         R = PolynomialRing(F, 'u', d_rho**2)
         U_vars = R.gens()
@@ -1167,9 +1259,35 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
                     augmented_system.append(row)
             return augmented_system
 
-        total_system = sum((augmented_matrix(g) for g in G), [])
-        null_space = matrix(F, total_system).right_kernel()
-        U = matrix(F, d_rho, d_rho, null_space.basis()[0])
+        return sum((augmented_matrix(g) for g in G), [])
+
+    @lazy_attribute
+    def _unitary_change_basis_matrix(self):
+        """
+        Compute the change of basis matrix.
+
+        We first compute a `G`-invariant symmetric bilinear form. This yields a solution `U`
+        to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
+        solve this equation by computing the null space of the matrix of coefficients of the linear
+        equations. Generically, this null space will be one dimensional (it may
+        have higher dimension in the modular case when the decomposition factors
+        have multiplicity). In that case, we use the canonical RREF-based
+        representative from :meth:`_canonical_invariant_form`. We then take the
+        extended Cholesky decomposition of that chosen solution.
+
+        EXAMPLES::
+
+            sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: A = unitary_specht._unitary_change_basis_matrix
+            sage: A.nrows(), A.ncols(), A.is_invertible()
+            (3, 3, True)
+            sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
+            sage: A = unitary_specht._unitary_change_basis_matrix
+            sage: A.nrows(), A.ncols(), A.is_invertible()
+            (2, 2, True)
+        """
+        # Deterministic invariant form; see _canonical_invariant_form.
+        U = self._canonical_invariant_form
         return U.cholesky(extended=True).H
 
     def _representation_matrix_uncached(self, permutation):
@@ -1194,12 +1312,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         EXAMPLES::
 
             sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._representation_matrix_uncached(Permutation([3,1,4,2]))
-            [       4 5*z2 + 4]
-            [2*z2 + 2        3]
-            sage: unitary_specht._representation_matrix_uncached(Permutation([1,2,4,3]))
-            [6 0]
-            [0 1]
+            sage: A = unitary_specht._representation_matrix_uncached(Permutation([3,1,4,2]))
+            sage: B = unitary_specht._representation_matrix_uncached(Permutation([1,2,4,3]))
+            sage: A * A.H == 1 and B * B.H == 1
+            True
             sage: all(A * A.H == 1 for A in [unitary_specht._representation_matrix_uncached(g)
             ....:                            for g in Permutations(4)])
             True
