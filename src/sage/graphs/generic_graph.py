@@ -447,6 +447,7 @@ Methods
 # ****************************************************************************
 
 from copy import copy
+from typing import TYPE_CHECKING, Self
 
 from sage.features.igraph import python_igraph as igraph_feature
 from sage.graphs.dot2tex_utils import assert_have_dot2tex
@@ -464,6 +465,11 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
+
+
+if TYPE_CHECKING:
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -518,7 +524,7 @@ class GenericGraph(GenericGraph_pyx):
         for k, v in state.items():
             self.__dict__[k] = v
 
-    def __add__(self, other):
+    def __add__(self, other) -> "Graph | DiGraph":
         """
         Return a graph isomorphic to disjoint union of this graph with ``other``.
 
@@ -769,7 +775,7 @@ class GenericGraph(GenericGraph_pyx):
         raise TypeError("This graph is mutable, and thus not hashable. "
                         "Create an immutable copy by `g.copy(immutable=True)`")
 
-    def __mul__(self, n):
+    def __mul__(self, n) -> Self:
         r"""
         Return the sum of a graph with itself `n` times.
 
