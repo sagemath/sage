@@ -1,4 +1,5 @@
 # sage.doctest: needs sage.rings.finite_rings
+# ruff: noqa: TC001, TC003  (some annotations are used at runtime for doctests, replace these with Python 3.15 lazy imports eventually)
 r"""
 Finite fields
 
@@ -172,10 +173,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import annotations
 from collections import defaultdict
+from collections.abc import Callable
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 from sage.rings.integer import Integer
 
 try:
@@ -194,11 +196,6 @@ except ImportError:
 
 from sage.structure.factory import UniqueFactory
 from sage.misc.decorators import rename_keyword
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-    from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 
 
 class FiniteFieldFactory(UniqueFactory):
