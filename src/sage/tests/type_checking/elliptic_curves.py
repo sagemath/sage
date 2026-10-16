@@ -7,10 +7,7 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve, EllipticCurv
 from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
 from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.elliptic_curves.ell_point import (
-    EllipticCurvePoint_field,
-    EllipticCurvePoint_finite_field,
-)
+from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.structure.sequence import Sequence_generic
 
 
