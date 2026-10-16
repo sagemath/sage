@@ -1428,7 +1428,7 @@ class Graphics(WithEqualityById, SageObject):
         # Figure options
         'aspect_ratio': None, 'dpi': DEFAULT_DPI, 'fig_tight': True,
         'figsize': None, 'fontsize': None, 'frame': False,
-        'title': None, 'title_pos': None, 'transparent': False,
+        'stylesheet': None, 'title': None, 'title_pos': None, 'transparent': False,
         # Grid options
         'gridlines': None, 'gridlinesstyle': None,
         'hgridlinesstyle': None, 'vgridlinesstyle': None,
@@ -3293,6 +3293,22 @@ class Graphics(WithEqualityById, SageObject):
         (This test verifies that :issue:`8632` is fixed.)
 
         TESTS:
+
+        A stylesheet supplied to ``plot`` is applied when saving
+        (:issue:`31870`). Restore Matplotlib settings after the test::
+
+            sage: from matplotlib import rc_context, rcParams, style
+            sage: with rc_context({'axes.facecolor': 'white'}):
+            ....:     p = plot(lambda x: x*x, (0, 1), stylesheet='bmh')
+            ....:     p.save(tmp_filename(ext='.png'))
+            ....:     assert rcParams['axes.facecolor'] == style.library['bmh']['axes.facecolor']
+
+        Unrecognized stylesheet names leave the current style unchanged::
+
+            sage: with rc_context({'axes.facecolor': 'white'}):
+            ....:     p = plot(lambda x: x*x, (0, 1), stylesheet='not-a-matplotlib-style')
+            ....:     p.save(tmp_filename(ext='.png'))
+            ....:     assert rcParams['axes.facecolor'] == 'white'
 
         Legend labels should save correctly::
 
