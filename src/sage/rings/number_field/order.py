@@ -1448,8 +1448,9 @@ class Order(Parent, sage.rings.abc.Order):
             raise NotImplementedError("not implemented for relative orders")
 
         # this was first implemented by @kevinywlui: https://github.com/sagemath/sage-archive-2023-02-01/commit/25b1b10776d43cd715e7b384d330b5330ad6069b
-        from sage.modules.constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.matrix.special import block_matrix
+        from sage.modules.free_module_element import vector
 
         O = self
         OK = self.integral_closure()
