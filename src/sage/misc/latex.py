@@ -370,7 +370,7 @@ class LatexExpr(str):
         sage: str(latex(x^20 + 1))
         'x^{20} + 1'
     """
-    def __add__(self, other):
+    def __add__(self, other) -> "LatexExpr":
         r"""
         Add a LatexExpr and another LatexExpr (or a string).
 
@@ -407,7 +407,7 @@ class LatexExpr(str):
             pass
         return LatexExpr(left + right)
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> "LatexExpr":
         r"""
         Add a string and a LatexExpr.
 
