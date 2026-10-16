@@ -10,3 +10,6 @@
 pkgconf
 zlib
 boost
+gcc
+readline
+ncurses

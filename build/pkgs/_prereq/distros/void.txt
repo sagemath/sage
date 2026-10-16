@@ -34,3 +34,6 @@ patch
 bzip2-devel
 pkgconf
 boost-devel
+gcc-fortran
+readline-devel
+ncurses-devel

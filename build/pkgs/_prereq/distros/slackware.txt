@@ -33,3 +33,6 @@ bzip2
 pkg-config
 zlib
 boost
+gcc-gfortran
+readline
+ncurses

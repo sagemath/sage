@@ -11,3 +11,7 @@
 pkgconfig
 zlib
 boost
+gcc10
++gfortran
+readline
+ncurses

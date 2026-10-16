@@ -77,11 +77,6 @@ $(SAGE_PKGCONFIG)/openblas.pc $(SAGE_PKGCONFIG)/blas.pc $(SAGE_PKGCONFIG)/cblas.
 BUILT_PACKAGES = @SAGE_BUILT_PACKAGES@
 DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
-# Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
-# of packages if GCC changed.
-# See m4/sage_spkg_collect.m4 and https://github.com/sagemath/sage/issues/24703
-GCC_DEP = @SAGE_GCC_DEP@
-
 # Versions of all the packages, in the format
 #
 # vers_<pkgname> = <pkgvers>
@@ -204,12 +199,12 @@ SAGE_I_TARGETS = sagelib doc
 
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build all-sageruntime \
-	all-start build-start toolchain toolchain-deps base-toolchain \
+	all-start build-start toolchain base-toolchain \
 	pypi-sdists pypi-wheels wheels \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-uninstall \
-	python3_venv _clean-broken-gcc
+	python3_venv
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
 PYTHON_MINOR = @PYTHON_MINOR@
@@ -236,19 +231,19 @@ endif
 # Note that we put the "doc" target first in the rule below because
 # the doc build takes the most time and should be started as soon as
 # possible.
-all-start: toolchain-deps
+all-start: toolchain
 	+$(MAKE_REC) all-sage-docs all-sage
 
 # Build everything except the documentation
-all-build: toolchain-deps
+all-build: toolchain
 	+$(MAKE_REC) all-sage
 
 # This used to do run "sage-starts" script, now it's just an alias
 build-start: all-build
 
-# The preliminary build phase: toolchain.
-base-toolchain: _clean-broken-gcc
-	+$(MAKE_REC) toolchain
+# Compatibility aliases for the build preparation used by the top-level
+# Makefile, package installation, and Docker builds.
+base-toolchain all-toolchain: toolchain
 
 # All targets except for the documentation
 all-sage: \
@@ -256,17 +251,17 @@ all-sage: \
 		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 # Same but filtered by installation trees:
-all-build-local: toolchain-deps
+all-build-local: toolchain
 	+$(MAKE_REC) all-sage-local
 
 all-sage-local: $(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS)
 
-all-build-venv: toolchain-deps
+all-build-venv: toolchain
 	+$(MAKE_REC) all-sage-venv
 
 all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
-all-build-docs: toolchain-deps
+all-build-docs: toolchain
 	+$(MAKE_REC) all-sage-docs
 
 all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_UNINSTALLS)
@@ -277,30 +272,8 @@ download-for-sdist:
 	+env SAGE_INSTALL_FETCH_ONLY=yes SAGE_DOWNLOAD_ALL_WHEELS=yes $(MAKE_REC) -B SAGERUNTIME= \
 		$(SDIST_PACKAGES)
 
-# TOOLCHAIN consists of dependencies determined by configure.
-# These are built before anything else.
+# Prepare optional ccache and generated pkg-config facade files before builds.
 toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
-
-# Build all packages that GCC links against serially, otherwise this
-# leads to race conditions where some library which is used by GCC gets
-# reinstalled. Since system GCCs might use Sage's libraries, we do this
-# unconditionally. We still use the dependency checking from $(MAKE),
-# so this will not trigger useless rebuilds.
-# See #14168 and #14232.
-#
-# Note: This list consists of only the *runtime* dependencies of the toolchain.
-TOOLCHAIN_DEPS = $(MP_LIBRARY) mpfr mpc
-TOOLCHAIN_DEP_INSTS = \
-	$(foreach pkgname,$(TOOLCHAIN_DEPS),$(inst_$(pkgname)))
-
-toolchain-deps:
-	+@for target in $(TOOLCHAIN_DEP_INSTS); do \
-	    echo $(MAKE_REC) $$target; \
-	    $(MAKE_REC) $$target; \
-	done
-
-all-toolchain: base-toolchain
-	+$(MAKE_REC) toolchain-deps
 
 # Shorthand for a list of packages sufficient for building and installing
 # typical Python packages from source. Wheel packages only need pip.
@@ -314,7 +287,7 @@ PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling pytho
 # every part of Sage will work.  It does not include Maxima for example.
 SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 
-all-sageruntime: toolchain-deps
+all-sageruntime: toolchain
 	+$(MAKE_REC) $(SAGERUNTIME)
 
 
@@ -355,20 +328,6 @@ doc-pdf: sagemath_doc_pdf
 
 doc-uninstall:
 	rm -rf "$(SAGE_SHARE)/doc/sage"
-
-# Special target for cleaning up a broken GCC install detected by configure
-# This should check for the .clean-broken-gcc stamp, and if found clean
-# everything up along with the stamp file itself.  This target is then run
-# as a prerequisite to installing any other packages.
-_clean-broken-gcc:
-	@if [ -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc" ]; then \
-	   rm -f "$(SAGE_LOCAL)/bin/gcc"; \
-	   rm -f "$(SAGE_LOCAL)/gcc-"*; \
-	   rm -f "$(SAGE_LOCAL)/bin/g++"; \
-	   rm -f "$(SAGE_SPKG_INST)/gcc-"*; \
-	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
-	   echo "Cleaned up old broken GCC install"; \
-	fi
 
 # Implicit rules for uninstalling packages that no longer exist in the source tree.
 %-SAGE_LOCAL-uninstall:
@@ -500,13 +459,9 @@ debug-check:
 # the name of some arbitrary file, or it is the '|' symbol) then it is just
 # used verbatim.
 #
-# As a special case, also adds a special variable GCC_DEP for all packages
-# except for gcc itself.  See the definition of GCC_DEP above
-#
 # Positional arguments:
 #     $(1): package name
 pkg_deps = \
-	$(if $(filter gcc,$(1)),,$$(GCC_DEP))\
 	$(foreach dep,$(deps_$(1)),\
         $(if $(value inst_$(dep)),$$(inst_$(dep)),$(dep)))
 
@@ -548,11 +503,6 @@ pkg_deps = \
 # for installation by default.  However, we wish to be able to manually
 # install those packages later.
 #
-# For packages listed in $(TOOLCHAIN_DEPS) we also pass --keep-existing to
-# sage-spkg, and --keep-files to sage-spkg-uninstall since those packages can
-# have a recursive self-dependency, and should not be deleted while upgrading.
-# See Issue #25857
-
 # Positional arguments:
 #     $(1): package name
 #     $(2): package version
@@ -577,7 +527,6 @@ $(1)-$(4)-no-deps:
 	    exit 1; \
 	else \
 	    sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
-		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
 
@@ -590,8 +539,7 @@ $(1)-check: $(1)-$(4)-check
 
 $(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
-	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
-		$(1) '$$($(4))'; \
+	    sage-spkg-uninstall $(1) '$$($(4))'; \
 	fi
 
 $(1)-uninstall: $(1)-$(4)-uninstall
@@ -708,7 +656,6 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
 		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
-		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
 
@@ -721,8 +668,7 @@ $(1)-check: $(1)-$(4)-check
 
 $(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
-	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
-		$(1) '$$($(4))'; \
+	    sage-spkg-uninstall $(1) '$$($(4))'; \
 	fi
 
 $(1)-uninstall: $(1)-$(4)-uninstall
