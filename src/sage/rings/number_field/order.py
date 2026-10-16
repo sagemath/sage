@@ -1349,7 +1349,7 @@ class Order(Parent, sage.rings.abc.Order):
         - otherwise: an ideal of ``self``
 
         .. SEEALSO::
-            :meth:`sage.rings.number_field.number_field.conductor_ideal`
+            :meth:`conductor_ideal`,
             :meth:`sage.rings.number_field.number_field.NumberField_quadratic.order_of_conductor`
 
         EXAMPLES:
