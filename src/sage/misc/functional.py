@@ -24,6 +24,8 @@ import math
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 
 lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
@@ -1231,7 +1233,7 @@ def minimal_polynomial(x, var='x'):
 minpoly = minimal_polynomial
 
 
-def multiplicative_order(x):
+def multiplicative_order(x) -> Integer | PlusInfinity:
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
     raise :exc:`ArithmeticError` otherwise.
