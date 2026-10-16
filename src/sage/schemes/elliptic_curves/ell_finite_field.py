@@ -41,6 +41,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
 from sage.structure.sequence import Sequence_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -876,7 +880,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self) -> tuple[ell_point.EllipticCurvePoint_finite_field, ...]:
+    def gens(self) -> tuple[EllipticCurvePoint_finite_field, ...]:
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.

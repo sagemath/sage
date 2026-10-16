@@ -1034,7 +1034,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return text("$\\infty$", (-3, 3), **args)
         return point((self[0], self[1]), **args)
 
-    def _add_(self, other) -> EllipticCurvePoint_field:
+    def _add_(self, other) -> "EllipticCurvePoint_field":
         r"""
         Add this point to another point on the same elliptic curve.
 
@@ -4503,7 +4503,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         x, y = self.xy()
         return "%s![%s,%s]" % (E, x, y)
 
-    def _acted_upon_(self, other, side) -> EllipticCurvePoint_finite_field:
+    def _acted_upon_(self, other, side) -> "EllipticCurvePoint_finite_field":
         r"""
         We implement ``_acted_upon_`` to make use of the specialized faster
         scalar multiplication from PARI, and to keep track of cached point
