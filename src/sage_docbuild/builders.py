@@ -69,6 +69,7 @@ and its responsibility is now taken by the ``Makefile`` in ``$SAGE_ROOT/src/doc`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import functools
 import importlib.machinery
 import logging
@@ -84,13 +85,15 @@ import tempfile
 import threading
 import time
 import warnings
-from collections.abc import Generator
 from pathlib import Path
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 
 from . import build_options
-from .build_options import BuildOptions
 from .utils import build_many as _build_many
+
+if TYPE_CHECKING:
+    from .build_options import BuildOptions
+    from collections.abc import Generator
 
 logger = logging.getLogger(__name__)
 

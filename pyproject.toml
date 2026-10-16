@@ -349,6 +349,9 @@ quote-style = "preserve"
 
 [tool.ruff.lint]
 
+# Enable `from __future__ import annotations` imports
+future-annotations = true
+
 # Rules that we deliberately do not attempt to follow,  either because we
 # disagree with them or because following them is not currently practical.
 ignore = [

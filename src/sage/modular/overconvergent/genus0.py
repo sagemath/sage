@@ -194,7 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 
 import weakref
 
@@ -223,6 +223,10 @@ from sage.rings.rational_field import QQ
 from sage.structure.element import Vector, ModuleElement
 from sage.structure.richcmp import richcmp
 from .weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modular.modform.j_invariant', 'j_invariant_qexp')
 lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
