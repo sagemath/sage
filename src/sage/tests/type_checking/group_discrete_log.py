@@ -9,4 +9,4 @@ F = GF(11)
 g = F(2)
 
 assert_type(bsgs(g, g ** 7, (1, 10)), Integer)
-assert_type(discrete_log_rho(g ** 7, g, ord=10), Integer)
+assert_type(discrete_log_rho(g ** 2, g, ord=5), Integer)
