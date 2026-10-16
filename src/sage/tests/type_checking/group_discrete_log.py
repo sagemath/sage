@@ -7,7 +7,6 @@ from sage.rings.integer import Integer
 
 F = GF(11)
 g = F(2)
-h = g ** 2  # order 5
 
-assert_type(bsgs(h, g, (1, 10)), Integer)
-assert_type(discrete_log_rho(h, g, ord=5), Integer)
+assert_type(bsgs(g, g ** 7, (1, 10)), Integer)
+assert_type(discrete_log_rho(g ** 7, g, ord=10), Integer)
