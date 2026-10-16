@@ -103,7 +103,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
     but are not implemented.
     """
 
-    def quadratic_twist(self, D=None):
+    def quadratic_twist(self, D=None) -> EllipticCurve_field:
         r"""
         Return the quadratic twist of this curve by ``D``.
 

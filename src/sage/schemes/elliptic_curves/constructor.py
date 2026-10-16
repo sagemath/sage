@@ -41,6 +41,11 @@ from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
 from sage.misc.lazy_import import lazy_import
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 _Fields = Fields()
@@ -757,7 +762,7 @@ def EllipticCurve_from_c4c6(c4, c6):
     return EllipticCurve([-K(c4) / K(48), -K(c6) / K(864)])
 
 
-def EllipticCurve_from_j(j, minimal_twist=True):
+def EllipticCurve_from_j(j, minimal_twist=True) -> EllipticCurve_generic:
     r"""
     Return an elliptic curve with given `j`-invariant.
 
