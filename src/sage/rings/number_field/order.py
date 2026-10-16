@@ -1349,7 +1349,7 @@ class Order(Parent, sage.rings.abc.Order):
         - otherwise: an ideal of ``self``
 
         .. SEEALSO::
-
+            :meth:`sage.rings.number_field.number_field.conductor_ideal`
             :meth:`sage.rings.number_field.number_field.NumberField_quadratic.order_of_conductor`
 
         EXAMPLES:
@@ -1380,7 +1380,7 @@ class Order(Parent, sage.rings.abc.Order):
         The conductor is not always principal::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3-7)
+            sage: K.<a> = NumberField(x^3 - 7)
             sage: p = K.ideal(3).factor()[0][0]
             sage: O = K.order((p^2).gens())
             sage: O.conductor().is_principal()
@@ -1409,10 +1409,7 @@ class Order(Parent, sage.rings.abc.Order):
 
     def conductor_ideal(self, as_self_ideal=False):
         r"""
-        Return the conductor of ``self`` in its integral closure.
-        If ``as_self_ideal`` is ``True``, the conductor is
-        returned as an ideal of ``self``.
-        Otherwise an ideal of the maximal order is returned (default).
+        Return the conductor of self as an ideal of the maximal order (or of ``self``).
 
         INPUT:
 
@@ -1439,7 +1436,7 @@ class Order(Parent, sage.rings.abc.Order):
         By default, an ideal of the maximal order is returned but this behaviour can be changed with the
         ``as_self_ideal`` parameter::
 
-            sage: K.<a> = NumberField(x^3-7)
+            sage: K.<a> = NumberField(x^3 - 7)
             sage: p = K.ideal(3).factor()[0][0]
             sage: O = K.order((p^2).gens())
             sage: O.conductor_ideal(as_self_ideal=True).gens()
@@ -1447,9 +1444,12 @@ class Order(Parent, sage.rings.abc.Order):
             sage: O.conductor_ideal(as_self_ideal=False).gens()
             (3, 3*a, a^2 - 2*a - 2)
         """
+        if isinstance(self, Order_relative):
+            raise NotImplementedError("not implemented for relative orders")
+
         # this was first implemented by @kevinywlui: https://github.com/sagemath/sage-archive-2023-02-01/commit/25b1b10776d43cd715e7b384d330b5330ad6069b
-        from sage.modules.free_module_element import vector
-        from sage.matrix.all import block_matrix, matrix
+        from sage.modules.constructor import matrix
+        from sage.matrix.special import block_matrix
 
         O = self
         OK = self.integral_closure()
