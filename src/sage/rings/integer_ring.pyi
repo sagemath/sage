@@ -90,9 +90,6 @@ class IntegerRing_class(Ring):
     def completion(self, p: Any, prec: int, extras: Optional[dict] = {}) -> Any:
         ...
 
-    def order(self) -> Any:
-        ...
-
     def zeta(self, n: int = 2) -> Integer:
         ...
 
