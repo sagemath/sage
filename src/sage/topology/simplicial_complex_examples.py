@@ -1660,10 +1660,7 @@ def GenusSix():
 
     REFERENCES:
 
-    .. [ABS96] Amos Altshule, Jürgen Bokowski and Peter Schuchert,
-               *Neighborly 2-Manifolds with 12 Vertices*,
-               Journal of Combinatorial Theory, Series A, 75, 148-162 (1996),
-               :doi:`10.1006/jcta.1996.0069`
+    - [ABS96]_
     """
     L = ["014", "018", "023", "027", "036", "049",
          "056", "05b", "07a", "08a", "09b",

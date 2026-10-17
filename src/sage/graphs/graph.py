@@ -8659,8 +8659,7 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        .. [Lein] Tom Leinster, *The magnitude of metric spaces*.
-           Doc. Math. 18 (2013), 857-905.
+        - [Lein]_
         """
         from sage.matrix.constructor import matrix
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
