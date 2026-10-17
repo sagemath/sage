@@ -82,6 +82,17 @@ cdef caller_locals = builtins.locals
 state_at_init = None
 
 
+_MODULE_METADATA = frozenset([
+    '__cached__',
+    '__doc__',
+    '__file__',
+    '__loader__',
+    '__name__',
+    '__package__',
+    '__spec__',
+])
+
+
 def init(state=None):
     """
     Initialize some dictionaries needed by the :func:`show_identifiers`,
@@ -154,6 +165,8 @@ def _is_new_var(x, v, hidden):
         sage: sage.misc.session._is_new_var('_blue', blue, False)
         False
     """
+    if x in _MODULE_METADATA:
+        return False
     # We ignore all _ variable names unless hidden is True
     if not hidden and x.startswith('_'):
         return False
