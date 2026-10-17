@@ -1,5 +1,115 @@
+import os
+import select
+import signal
+import subprocess
+import sys
+import textwrap
+
 import pytest
 from sage.libs.gap.libgap import libgap
+
+
+def test_initialization_preserves_sigchld(tmp_path):
+    """Initialize in a fresh process with a host SIGCHLD handler installed."""
+    script = textwrap.dedent('''
+        import signal
+        import subprocess
+        import sys
+        from sage.libs.gap.libgap import libgap
+        from sage.libs.gap.saved_workspace import workspace
+
+        assert workspace()[1] == bool(int(sys.argv[1]))
+
+        received = []
+        signal.signal(signal.SIGCHLD, lambda signum, frame: received.append(signum))
+        assert libgap(1) == 1
+        received.clear()
+
+        # getsignal() only reads Python's cached handler, so send a real signal.
+        signal.raise_signal(signal.SIGCHLD)
+        assert received == [signal.SIGCHLD], received
+
+        # The host must also retain ownership of its children's exit statuses.
+        child = subprocess.run([sys.executable, '-c', 'raise SystemExit(23)'],
+                               timeout=30, check=False)
+        assert child.returncode == 23, child.returncode
+    ''')
+    # Exercise both a new workspace and loading the saved workspace.
+    for cached in (0, 1):
+        result = subprocess.run([sys.executable, '-c', script, str(cached)],
+                                env={**os.environ, 'DOT_SAGE': str(tmp_path)},
+                                capture_output=True, text=True, timeout=60,
+                                check=False)
+        assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize('signum', [signal.SIGINT, signal.SIGALRM])
+@pytest.mark.parametrize('interface', ['eval', 'function'])
+def test_interrupt_restores_signal_handlers(signum, interface):
+    """Interrupt GAP repeatedly and check recovery and the host's handlers."""
+    script = textwrap.dedent(r'''
+        import signal
+        import sys
+        from cysignals.signals import AlarmInterrupt
+        from sage.libs.gap.libgap import libgap
+        from sage.libs.gap.util import GAPError
+
+        body = r'PrintTo("*stdout*", "ready\n"); while true do od;'
+        spin = libgap.eval('function() ' + body + ' end')
+        received = []
+        for sig in (signal.SIGINT, signal.SIGALRM):
+            signal.signal(sig, lambda signum, frame: received.append(signum))
+
+        def check_handlers():
+            received.clear()
+            for sig in (signal.SIGINT, signal.SIGALRM):
+                signal.raise_signal(sig)
+            assert received == [signal.SIGINT, signal.SIGALRM], received
+            received.clear()
+
+        expected = KeyboardInterrupt if int(sys.argv[1]) == signal.SIGINT else AlarmInterrupt
+        for _ in range(3):
+            try:
+                if sys.argv[2] == 'eval':
+                    libgap.eval('if true then ' + body + ' fi')
+                else:
+                    spin()
+            except expected:
+                pass
+            else:
+                raise AssertionError('GAP was not interrupted')
+            assert not received, received
+            check_handlers()
+
+            assert libgap.eval('1 + 1') == 2
+            check_handlers()
+            try:
+                libgap.eval('Error("ordinary GAP error")')
+            except GAPError as error:
+                assert 'ordinary GAP error' in str(error), error
+            else:
+                raise AssertionError('GAPError was not raised')
+            check_handlers()
+    ''')
+    # Wait until GAP itself announces that it is running before interrupting.
+    # A Python thread cannot send the signal while libgap holds the GIL.
+    process = subprocess.Popen([sys.executable, '-u', '-c', script,
+                                str(int(signum)), interface],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               text=True)
+    try:
+        for _ in range(3):
+            ready, _, _ = select.select([process.stdout], [], [], 30)
+            assert ready, 'GAP did not reach the interruptible computation'
+            line = process.stdout.readline()
+            assert line == 'ready\n', line or process.communicate(timeout=30)[1]
+            process.send_signal(signum)
+        stdout, stderr = process.communicate(timeout=30)
+        assert process.returncode == 0, stdout + stderr
+    finally:
+        if process.poll() is None:
+            process.kill()
+        process.communicate()
 
 
 def test_libgap_can_read_and_write_files(tmpfile):
