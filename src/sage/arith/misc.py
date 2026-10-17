@@ -20,7 +20,10 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Iterator
 from collections.abc import Sequence as AbcSequence
-from typing import Any, Literal, overload
+from typing import TYPE_CHECKING, Any, Literal, overload
+
+if TYPE_CHECKING:
+    from sage.structure.factorization import Factorization
 
 from sage.misc.misc_c import prod
 from sage.rings.rational import Rational
@@ -33,7 +36,6 @@ from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.rings.integer import GCD_list, Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
 ##################################################################
@@ -2384,10 +2386,10 @@ def get_inverse_mod(order):
 
 
 @overload
-def power_mod(a: int, n: int, m: int) -> int: ...
+def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
 
 @overload
-def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+def power_mod(a: int, n: int, m: int) -> int: ...
 
 @overload
 def power_mod(a, n, m) -> Any: ...
