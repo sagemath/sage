@@ -2775,7 +2775,10 @@ cdef class GapElement_Function(GapElement):
 
     def _instancedoc_(self):
         r"""
-        Return the help string.
+        Return the help string from the current libgap session.
+
+        If several entries match, use the first in GAP's search order.
+        Return ``None`` if no entry or no text documentation is available.
 
         EXAMPLES::
 
@@ -2784,10 +2787,47 @@ cdef class GapElement_Function(GapElement):
             True
 
         You would get the full help by typing ``f?`` in the command line.
+
+        Undocumented and anonymous functions have no help string::
+
+            sage: f = libgap.eval('x -> x')
+            sage: f.__doc__ is None
+            True
         """
         libgap = self.parent()
-        from sage.interfaces.gap import gap
-        return gap.help(libgap.NameFunction(self).sage(), pager=False)
+        name = libgap.NameFunction(self).sage()
+        if name == 'unknown':
+            return None
+        # libgap uses a very wide screen to prevent wrapping printed objects.
+        # Help text should instead be formatted for reading in a pager.
+        screen = libgap.SizeScreen()
+        try:
+            libgap.SizeScreen([80, 24])
+            topic = libgap.SIMPLE_STRING(name)
+            exact, partial = libgap.HELP_GET_MATCHES(libgap.HELP_KNOWN_BOOKS[0], topic, True)
+            matches = exact or partial
+            if not matches:
+                return None
+            book, entry = matches[0]
+            handler = libgap.HELP_BOOK_HANDLER[book['handler'].sage()]
+            data = handler['HelpData'](book, entry, 'text')
+            if data == libgap.fail:
+                return None
+            start = 1
+            if isinstance(data, GapElement_Record):
+                data = dict(data)
+                start = int(data.get('start', 1))
+                data = data['lines']
+            if not isinstance(data, GapElement_String):
+                data = libgap.JoinStringsWithSeparator(data, '\n')
+            data = libgap.StripEscapeSequences(data)
+            # GAPDoc returns text in GAP's terminal encoding, which need not
+            # be UTF-8 (the default for conversion of libgap strings).
+            encoding = libgap.GAPInfo['TermEncoding'].sage()
+            text = char_to_str(GAP_CSTR_STRING((<GapElement>data).value), encoding)
+            return '\n'.join(text.split('\n')[start - 1:])
+        finally:
+            libgap.SizeScreen(screen)
 
 
 ############################################################################
