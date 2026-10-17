@@ -521,8 +521,71 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         if k == 0:
             return self.parent().zero()
         if k < 0:
-            return self._edwards_mul(-k)._neg_()
-        return self._edwards_mul(k)
+            Q = self._edwards_mul(-k)._neg_()
+        else:
+            Q = self._edwards_mul(k)
+        n = getattr(self, "_order", None)
+        if n is not None:
+            Q._order = n // n.gcd(k)
+        return Q
+
+    def additive_order(self):
+        r"""Return the order of this point in the group law.
+
+        The birational map :meth:`to_elliptic_curve` is a group
+        isomorphism, so the order is computed on the Weierstrass model
+        (where Sage's optimized algorithms are available) and cached on
+        this point.  Points of order dividing 8 -- the cofactor torsion
+        shared by all complete twisted Edwards curves -- are detected
+        directly without touching the Weierstrass model, and scalar
+        multiplications propagate a cached order to their result using
+        Lagrange's theorem, mirroring the behaviour of Weierstrass
+        points.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: C = TwistedEdwardsCurve(GF(19), 1, 2)
+            sage: P = C(1, 0)
+            sage: P.additive_order()
+            4
+            sage: P.order()
+            4
+            sage: C.zero().order()
+            1
+            sage: C(0, -1).order()
+            2
+            sage: (3 * P).order()
+            4
+            sage: E = C.to_elliptic_curve()
+            sage: all(Q.to_elliptic_curve().order() == Q.order()
+            ....:     for Q in C.some_elements())
+            True
+
+        The Ed25519 base point has prime order ``L``::
+
+            sage: from sage.crypto.ed25519 import ED25519_SUBGROUP_ORDER, Ed25519BasePoint
+            sage: B = Ed25519BasePoint()
+            sage: B.order() == ED25519_SUBGROUP_ORDER        # long time
+            True
+            sage: C25 = Ed25519()
+            sage: C25(0, -1).order()
+            2
+        """
+        if not self:
+            return ZZ.one()
+        R = self + self
+        if R.is_zero():
+            return ZZ(2)
+        R = R + R
+        if R.is_zero():
+            return ZZ(4)
+        R = R + R
+        if R.is_zero():
+            return ZZ(8)
+        o = self.to_elliptic_curve().additive_order()
+        self._order = o
+        return o
 
     def _edwards_mul(self, k):
         r"""Return ``[k]self`` for an integer ``k > 1``.
