@@ -1400,7 +1400,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self.bit_length()
 
-    def trailing_zero_bits(self):
+    cpdef mp_bitcnt_t trailing_zero_bits(self) noexcept:
         """
         Return the number of trailing zero bits in ``self``, i.e.
         the exponent of the largest power of 2 dividing ``self``.
@@ -1417,10 +1417,15 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             5
             sage: 0.trailing_zero_bits()
             0
+
+        TESTS::
+
+            sage: type(0.trailing_zero_bits()) is int
+            True
         """
         if mpz_sgn(self.value) == 0:
-            return int(0)
-        return int(mpz_scan1(self.value, 0))
+            return 0
+        return mpz_scan1(self.value, 0)
 
     def digits(self, base=10, digits=None, padto=0):
         r"""
@@ -4336,13 +4341,21 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - David Roe (3/31/07)
         """
+        cdef int cmp2
+        cdef Integer v
+        cdef mpz_t u
+
         if mpz_sgn(self.value) == 0:
             return sage.rings.infinity.infinity
-        if mpz_cmp_ui(p.value, 2) < 0:
+        cmp2 = mpz_cmp_ui(p.value, 2)
+        if cmp2 < 0:
             raise ValueError("You can only compute the valuation with respect to a integer larger than 1.")
 
-        cdef Integer v = PY_NEW(Integer)
-        cdef mpz_t u
+        v = PY_NEW(Integer)
+        if cmp2 == 0:
+            mpz_set_ui(v.value, mpz_scan1(self.value, 0))
+            return v
+
         mpz_init(u)
         sig_on()
         mpz_set_ui(v.value, mpz_remove(u, self.value, p.value))

@@ -37,6 +37,9 @@ class Integer(EuclideanDomainElement):
     def _xor(self, other: 'Integer') -> 'Integer':
         ...
 
+    def trailing_zero_bits(self) -> int:
+        ...
+
     def _exact_log_log2_iter(self, m: 'Integer') -> int:
         ...
 
