@@ -9,6 +9,7 @@ py.install_sources(
   'free_module.py',
   'free_module_element.pxd',
   'free_module_element.pyx',
+  'free_module_element.pyi',
   'free_module_homspace.py',
   'free_module_integer.py',
   'free_module_morphism.py',
