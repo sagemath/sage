@@ -10715,8 +10715,12 @@ class GenericGraph(GenericGraph_pyx):
         and setting it implies ``by_weight=True``::
 
             sage: D = DiGraph([(0, 1, {'cap': 3}), (1, 2, {'cap': 2})])
-            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'])                   # needs sage.numerical.mip
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='FF')
             2
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='LP')  # needs sage.numerical.mip
+            2.0
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='igraph')  # optional - python_igraph
+            2.0
 
         TESTS:
 
@@ -10724,7 +10728,7 @@ class GenericGraph(GenericGraph_pyx):
         ``by_weight``::
 
             sage: D = DiGraph([(0, 1, 3), (1, 2, 2)])
-            sage: D.flow(0, 2, use_edge_labels=True)                                    # needs sage.numerical.mip
+            sage: D.flow(0, 2, use_edge_labels=True, algorithm='FF')
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
             See https://github.com/sagemath/sage/issues/42772 for details.
@@ -10788,11 +10792,11 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 algorithm = "FF"
 
-        if (algorithm == "FF"):
+        if algorithm == "FF":
             return self._ford_fulkerson(x, y, value_only=value_only, integer=integer,
                                         by_weight=by_weight,
                                         weight_function=weight_function)
-        if (algorithm == 'igraph'):
+        if algorithm == 'igraph':
             vertices = list(self)
             x_int = vertices.index(x)
             y_int = vertices.index(y)
