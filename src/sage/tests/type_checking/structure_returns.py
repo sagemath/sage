@@ -1,7 +1,6 @@
-from typing import Any, assert_type, cast
+from typing import TYPE_CHECKING, Any, assert_type, cast
 
 from sage.matrix.constructor import matrix
-
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.rings.infinity import PlusInfinity
@@ -11,7 +10,10 @@ from sage.rings.rational_field import QQ
 from sage.rings.ring import Ring
 from sage.structure.category_object import CategoryObject
 from sage.structure.parent import Parent
-from sage.structure.parent_gens import ParentWithGens
+
+if TYPE_CHECKING:
+    from sage.structure.parent_gens import ParentWithGens
+
 
 R: CategoryObject = QQ['x']
 P = cast("Parent", QQ)
