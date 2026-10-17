@@ -8,9 +8,6 @@ from sage.rings.ring import Ring
 def is_IntegerRing(x: Any) -> bool:
     ...
 
-def crt_basis(X: list[Integer], xgcd: Any = None) -> list[Integer]:
-    ...
-
 class IntegerRing_class(Ring):
     def __init__(self) -> None:
         ...

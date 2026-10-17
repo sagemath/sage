@@ -8,13 +8,14 @@ from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ, crt_basis
 from sage.rings.rational_field import QQ
+from sage.rings.ring import Ring
 from sage.structure.category_object import CategoryObject
 from sage.structure.parent import Parent
 from sage.structure.parent_gens import ParentWithGens
 
 R: CategoryObject = QQ['x']
-P = cast(Parent, QQ)
-G = cast(ParentWithGens, QQ)
+P = cast("Parent", QQ)
+G = cast("ParentWithGens", QQ)
 
 assert_type(R.base_ring(), Ring)
 assert_type(R.variable_name(), str)
@@ -37,7 +38,7 @@ assert_type(G.ngens(), int)
 
 assert_type(crt_basis([ZZ(3), ZZ(5)]), list[Integer])
 
-mi = cast(Matrix_integer_dense, matrix(ZZ, [[1, 2], [3, 4]]))
+mi = cast("Matrix_integer_dense", matrix(ZZ, [[1, 2], [3, 4]]))
 assert_type(mi.LLL(), Matrix_integer_dense)
-md = cast(Matrix_dense, mi)
+md = cast("Matrix_dense", mi)
 assert_type(md.transpose(), Matrix_dense)
