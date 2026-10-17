@@ -292,6 +292,7 @@ from copy import copy
 from itertools import product
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.categories.category import Category
@@ -397,6 +398,9 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         of ``facade = True``, unless the opposite can be deduced from the
         context (i.e. for instance if a :meth:`Poset` is built from another
         :meth:`Poset`, itself built with ``facade = False``)
+
+    - ``key`` -- ignored; accepted for backward compatibility with the
+      former unique-representation constructor
 
     OUTPUT:
 
@@ -624,12 +628,11 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
             sage: P.an_element().parent()
             Integer Ring
 
-    .. rubric:: Unique representation
+    .. rubric:: Identity
 
-    As most parents, :class:`Poset` have unique representation (see
-    :class:`UniqueRepresentation`). Namely if two posets are created
-    from two equal data, then they are not only equal but actually
-    identical::
+    Finite posets are compared by their labeled order relation. The
+    constructor does not cache posets by their construction data, so two
+    posets created from the same data are equal but distinct parents::
 
         sage: data1 = [[1,2],[3],[3]]
         sage: data2 = [[1,2],[3],[3]]
@@ -638,21 +641,10 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         sage: P1 == P2
         True
         sage: P1 is P2
-        True
-
-    In situations where this behaviour is not desired, one can use the
-    ``key`` option::
-
-        sage: P1 = Poset(data1, key = "foo")
-        sage: P2 = Poset(data2, key = "bar")
-        sage: P1 is P2
-        False
-        sage: P1 == P2
         False
 
-    ``key`` can be any hashable value and is passed down to
-    :class:`UniqueRepresentation`. It is otherwise ignored by the
-    poset constructor.
+    The ``key`` option is accepted for backward compatibility. It is
+    otherwise ignored by the poset constructor.
 
     TESTS::
 
@@ -782,7 +774,15 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     return FinitePoset(D, elements=elements, category=category, facade=facade, key=key)
 
 
-class FinitePoset(UniqueRepresentation, Parent):
+def _unpickle_finite_poset(cls, hasse_diagram, elements, category, facade):
+    """
+    Reconstruct a finite poset from pickled constructor data.
+    """
+    return cls(hasse_diagram=hasse_diagram, elements=elements,
+               category=category, facade=facade)
+
+
+class FinitePoset(Parent, metaclass=ClasscallMetaclass):
     r"""
     A (finite) `n`-element poset constructed from a directed acyclic graph.
 
@@ -820,7 +820,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         :class:`~sage.combinat.posets.posets.FinitePoset`, itself built with
         ``facade = False``)
 
-    - ``key`` -- any hashable value (default: ``None``)
+    - ``key`` -- ignored; accepted for backward compatibility with the
+      former unique-representation constructor
 
     EXAMPLES::
 
@@ -871,8 +872,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         Category of facade finite enumerated posets
         sage: parent(PQ[0]) is str
         True
-        sage: PQ is Q
+        sage: PQ == Q
         True
+        sage: PQ is Q
+        False
 
     Changing a facade poset to a non facade poset::
 
@@ -907,12 +910,16 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     TESTS:
 
-    Equality is derived from :class:`UniqueRepresentation`. We check that this
-    gives consistent results::
+    Equality compares the underlying labeled posets, but independent
+    constructions from the same data give distinct parents::
 
         sage: P = Poset([[1,2],[3],[3]])
         sage: P == P
         True
+        sage: Poset([[1,2],[3],[3]]) == P
+        True
+        sage: Poset([[1,2],[3],[3]]) is P
+        False
         sage: Q = Poset([[1,2],[],[1]])
         sage: Q == P
         False
@@ -954,6 +961,58 @@ class FinitePoset(UniqueRepresentation, Parent):
     _lin_ext_type = LinearExtensionsOfPoset
     _desc = 'Finite poset'
 
+    def _comparison_key(self):
+        """
+        Return structural data used for equality and hashing.
+
+        The data is expressed in terms of the original element labels rather
+        than the internal integer labels.  A distinguished linear extension is
+        part of the structure when present.
+        """
+        covers = frozenset((self._elements[i], self._elements[j])
+                           for i, j in self._hasse_diagram.cover_relations_iterator())
+        if self._with_linear_extension:
+            elements = self._elements
+        else:
+            # Without a distinguished linear extension, ``_elements`` is an
+            # internal topological sort and its order is not part of the poset.
+            elements = frozenset(self._elements)
+        return (self._with_linear_extension, elements, covers)
+
+    def __eq__(self, other):
+        """
+        Return whether ``self`` and ``other`` define the same labeled poset.
+
+        Equal posets need not be identical parents::
+
+            sage: P = Poset([[1, 2], [3], [3]])
+            sage: Q = Poset([[1, 2], [3], [3]])
+            sage: P == Q
+            True
+            sage: P is Q
+            False
+        """
+        if self is other:
+            return True
+        if not isinstance(other, FinitePoset):
+            return NotImplemented
+        return self._comparison_key() == other._comparison_key()
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` and ``other`` define different labeled posets.
+        """
+        equality = self.__eq__(other)
+        if equality is NotImplemented:
+            return NotImplemented
+        return not equality
+
+    def __hash__(self):
+        """
+        Return a hash compatible with structural equality.
+        """
+        return hash(self._comparison_key())
+
     # The parsing of the construction data (like a list of cover relations)
     #   into a :class:`DiGraph` is done in :func:`Poset`.
     @staticmethod
@@ -969,7 +1028,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           or ``None`` if no such default linear extension is wanted
         - ``category`` -- (optional) a subcategory of :class:`FinitePosets`
         - ``facade`` -- (optional) boolean if this is a facade parent or not
-        - ``key`` -- (optional) a key value
+        - ``key`` -- ignored; accepted for backward compatibility
 
         TESTS::
 
@@ -985,6 +1044,52 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: p = Poset()
             sage: p is Poset(p, category=p.category())
             True
+
+        Check that posets whose element labels reference back to the
+        poset can be garbage collected (:issue:`14356`)::
+
+            sage: import gc, weakref
+            sage: class Foo:
+            ....:     pass
+            sage: foo = Foo()
+            sage: foo.dag = DiGraph({0: [1, 2], 1: [3], 2: [3]})
+            sage: foo.poset = Poset(foo.dag,
+            ....:     element_labels=[(i, foo) for i in range(4)],
+            ....:     key=id(foo))
+            sage: w = weakref.ref(foo.poset)
+            sage: del foo
+            sage: _ = gc.collect()
+            sage: w() is None
+            True
+
+        Same check when only ``key`` references the poset's owner
+        (default integer labels, no ``element_labels``)::
+
+            sage: foo = Foo()
+            sage: foo.poset = Poset(DiGraph({0: [1, 2], 1: [3], 2: [3]}),
+            ....:                   key=foo)
+            sage: w = weakref.ref(foo.poset)
+            sage: del foo
+            sage: _ = gc.collect()
+            sage: w() is None
+            True
+
+        Independent constructions from the same data give distinct
+        parents::
+
+            sage: data = [[1, 2], [3], [3]]
+            sage: P = Poset(data)
+            sage: Poset(data) is P
+            False
+            sage: import weakref, gc
+            sage: w = weakref.ref(P)
+            sage: del P
+            sage: _ = gc.collect()
+            sage: w() is None
+            True
+            sage: Q = Poset(data)
+            sage: Q == Poset(data)
+            True
         """
         assert isinstance(hasse_diagram, (FinitePoset, DiGraph))
         if isinstance(hasse_diagram, FinitePoset):
@@ -993,6 +1098,16 @@ class FinitePoset(UniqueRepresentation, Parent):
                 category = poset.category()
             if facade is None:
                 facade = poset in Sets().Facade()
+            # Fast path: when the input is already a compatible
+            # ``FinitePoset`` of the right class, avoid relabeling and
+            # re-constructing it.
+            if (isinstance(poset, cls)
+                    and category == poset.category()
+                    and facade == poset._is_facade
+                    and poset._with_linear_extension == (elements is not None)
+                    and (elements is None
+                         or tuple(elements) == poset._elements)):
+                return poset
             if elements is None:
                 relabel = dict(enumerate(poset._elements))
             else:
@@ -1001,7 +1116,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             hasse_diagram = poset._hasse_diagram.relabel(relabel, inplace=False)
             hasse_diagram = hasse_diagram.copy(immutable=True)
         else:
-            hasse_diagram = HasseDiagram(hasse_diagram, data_structure='static_sparse')
+            if not isinstance(hasse_diagram, HasseDiagram):
+                hasse_diagram = HasseDiagram(hasse_diagram, data_structure='static_sparse')
             if facade is None:
                 facade = True
             if elements is not None:
@@ -1011,10 +1127,121 @@ class FinitePoset(UniqueRepresentation, Parent):
         if category is not None and category.is_subcategory(Sets().Facade()):
             category = category._without_axiom("Facade")
         category = Category.join([FinitePosets().or_subcategory(category), FiniteEnumeratedSets()])
-        return super().__classcall__(cls, hasse_diagram=hasse_diagram,
-                                     elements=elements,
-                                     category=category, facade=facade,
-                                     key=key)
+
+        # Create the instance directly via typecall (equivalent to
+        # type.__call__). Pickling is handled by the __reduce__ override
+        # below, which recomputes construction data when needed instead of
+        # storing element labels in the instance.
+        result = typecall(
+            cls, hasse_diagram=hasse_diagram, elements=elements,
+            category=category, facade=facade, key=key)
+        # Store the "canonical" class (e.g. FinitePoset, not
+        # FinitePoset_with_category) so that __reduce__ can
+        # reconstruct through the same __classcall__ entry point.
+        result._reduction_cls = cls
+        return result
+
+    def __reduce__(self):
+        """
+        Return pickling data for this poset.
+
+        The constructor arguments are recomputed here at pickle time instead
+        of being stored as strong references when the poset is created.
+
+        TESTS::
+
+            sage: P = Poset({0: [1, 2], 1: [3], 2: [3]})
+            sage: loads(dumps(P)) == P
+            True
+            sage: P = Poset(DiGraph({'a':['b'],'b':['c'],'c':['d']}), facade=False)
+            sage: Q = loads(dumps(P))
+            sage: Q == P
+            True
+            sage: Q.cover_relations() == P.cover_relations()
+            True
+            sage: Q._is_facade
+            False
+        """
+        hd = self._hasse_diagram.relabel(
+            dict(enumerate(self._elements)), inplace=False)
+        hd = hd.copy(immutable=True)
+        elements = self._elements if self._with_linear_extension else None
+        reduction = (getattr(self, '_reduction_cls', self.__class__), hd,
+                     elements, self.category(), self._is_facade)
+        d = self.__getstate__()
+        if d:
+            return (_unpickle_finite_poset, reduction, d)
+        return (_unpickle_finite_poset, reduction)
+
+    def __getstate__(self):
+        """
+        Return the state to pickle for this poset.
+
+        Only cached methods that opt into ``do_pickle=True`` are preserved;
+        all other state is rebuilt by :meth:`__classcall__` / :meth:`__init__`
+        when the pickle is loaded. This keeps the pickle stream small and
+        avoids carrying strong references to element labels that could
+        defeat the leak fix from :issue:`14356`.
+
+        TESTS::
+
+            sage: P = Poset({0: [1, 2], 1: [3], 2: [3]})
+            sage: P.__getstate__()
+            {}
+            sage: loads(dumps(P)) is P
+            False
+
+        Cached methods that opt into ``do_pickle=True`` are preserved
+        across pickling. We simulate one by stashing a
+        :class:`~sage.misc.cachefunc.CachedFunction` directly into the
+        instance dictionary::
+
+            sage: from sage.misc.cachefunc import cached_function
+            sage: @cached_function(do_pickle=True)
+            ....: def f(x):
+            ....:     return x
+            sage: P.cached = f
+            sage: state = P.__getstate__()
+            sage: list(state) == ['cached']
+            True
+            sage: state['cached'] is f
+            True
+            sage: del P.cached
+        """
+        from sage.misc.cachefunc import CachedFunction
+        return {key: value for key, value in self.__dict__.items()
+                if isinstance(value, CachedFunction)
+                and value.is_pickled_with_cache()}
+
+    def __setstate__(self, d):
+        """
+        Restore the pickled state of this poset.
+
+        See :meth:`__getstate__` for what is preserved across pickling.
+        """
+        self.__dict__.update(d)
+
+    def __copy__(self):
+        """
+        Return ``self`` as a semantic copy.
+
+        Finite posets are immutable parents identified by identity, so
+        ``copy(P) is P``::
+
+            sage: from copy import copy, deepcopy
+            sage: P = Poset({0: [1, 2], 1: [3], 2: [3]})
+            sage: copy(P) is P
+            True
+            sage: deepcopy(P) is P
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        Return ``self`` as a semantic deep copy.  See :meth:`__copy__`.
+        """
+        return self
 
     def __init__(self, hasse_diagram, elements, category, facade, key) -> None:
         r"""
@@ -1158,8 +1385,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: all(P._vertex_to_element(P._element_to_vertex(x)) is x for x in P)
             True
         """
-        if isinstance(element, self.element_class) and element.parent() is self:
+        if isinstance(element, PosetElement) and element.parent() is self:
             return element.vertex
+        if isinstance(element, PosetElement) and element.parent() == self:
+            element = element.element
 
         try:
             return self._element_to_vertex_dict[element]
@@ -1310,6 +1539,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: all(P(x) is x for x in P)
             True
         """
+        if isinstance(element, PosetElement) and element.parent() == self:
+            element = element.element
         try:
             return self._list[self._element_to_vertex_dict[element]]
         except KeyError:

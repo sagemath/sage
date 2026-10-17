@@ -342,12 +342,11 @@ class AnalyticType(FiniteLatticePoset):
     @staticmethod
     def __classcall__(cls):
         r"""
-        Directly return the classcall of UniqueRepresentation
-        (skipping the classcalls of the other superclasses).
+        Return the singleton instance of ``cls``.
 
-        That's because ``self`` is supposed to be used as a Singleton.
-        It initializes the FinitelatticePoset with the proper arguments
-        by itself in ``self.__init__()``.
+        Skips :meth:`FinitePoset.__classcall__` (which expects a Hasse
+        diagram argument); ``self.__init__()`` initializes the underlying
+        :class:`FiniteLatticePoset` with the proper arguments by itself.
 
         EXAMPLES::
 
@@ -357,7 +356,30 @@ class AnalyticType(FiniteLatticePoset):
             sage: AT is AT2
             True
         """
-        return super(FinitePoset, cls).__classcall__(cls)
+        from sage.misc.classcall_metaclass import typecall
+        instance = cls.__dict__.get('_singleton_instance')
+        if instance is None:
+            instance = typecall(cls)
+            cls._singleton_instance = instance
+        return instance
+
+    def __reduce__(self):
+        r"""
+        Return pickling data for the singleton instance.
+
+        TESTS::
+
+            sage: from sage.modular.modform_hecketriangle.analytic_type import AnalyticType
+            sage: AT = AnalyticType()
+            sage: loads(dumps(AT)) is AT
+            True
+            sage: el = AT(["quasi", "weak"])
+            sage: loads(dumps(el)) == el
+            True
+            sage: loads(dumps(el)).parent() is AT
+            True
+        """
+        return (AnalyticType, ())
 
     def __init__(self):
         r"""
