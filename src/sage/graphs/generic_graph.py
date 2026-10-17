@@ -3903,7 +3903,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return self._backend.multiple_edges(None)
 
-    def allow_multiple_edges(self, new, check=True, keep_label='any'):
+    def allow_multiple_edges(self, new, check=True, keep_label='any', key=None):
         """
         Change whether multiple edges are permitted in the (di)graph.
 
@@ -3923,11 +3923,16 @@ class GenericGraph(GenericGraph_pyx):
           - ``'min'`` -- the smallest label
           - ``'max'`` -- the largest label
 
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge ``(u, v, l)`` as its one argument and returns the value used to
+          compare multiple edges when ``keep_label`` is ``'min'`` or ``'max'``.
+          By default, the labels themselves are compared.
+
         .. WARNING::
 
-            ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :exc:`TypeError` might be raised when working with non-comparable
-            objects.
+            ``'min'`` and ``'max'`` only works if the labels (or the values
+            returned by ``key``) can be compared. A :exc:`TypeError` might be
+            raised when working with non-comparable objects.
 
         EXAMPLES:
 
@@ -3965,6 +3970,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edges(sort=True)
             [(0, 1, 3)]
 
+        Labels that cannot be compared can be handled with a ``key``::
+
+            sage: G = Graph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (0, 1, {'w': 2})],
+            ....:           multiedges=True)
+            sage: G.allow_multiple_edges(False, keep_label='min', key=lambda e: e[2]['w'])
+            sage: G.edges(sort=False)
+            [(0, 1, {'w': 1})]
+
         The standard behavior with digraphs::
 
             sage: D = DiGraph(multiedges=True, sparse=True); D
@@ -3993,18 +4006,23 @@ class GenericGraph(GenericGraph_pyx):
             seen = dict()
             keep_min = keep_label == 'min'
             keep_max = keep_label == 'max'
-            for u, v, l in self.multiple_edges(sort=False):
+            if key is None:
+                def key(e):
+                    return e[2]
+            for e in self.multiple_edges(sort=False):
+                u, v, l = e
                 if (u, v) not in seen:
                     # This is the first time we see this edge
-                    seen[u, v] = l
+                    seen[u, v] = l, key(e)
                 else:
                     # This edge has already been seen: we have to remove
                     # something from the graph.
-                    oldl = seen[u, v]
-                    if (keep_min and l < oldl) or (keep_max and l > oldl):
+                    oldl, oldk = seen[u, v]
+                    k = key(e)
+                    if (keep_min and k < oldk) or (keep_max and k > oldk):
                         # Keep the new edge, delete the old one
                         self.delete_edge(u, v, oldl)
-                        seen[u, v] = l
+                        seen[u, v] = l, k
                     else:
                         # Delete the new edge
                         self.delete_edge(u, v, l)
@@ -9416,46 +9434,6 @@ class GenericGraph(GenericGraph_pyx):
             return sum(weight_function(e) for e in g.edge_iterator()), g
         return g
 
-    def _to_simple_by_weight(self, weight_function, maximize=False):
-        r"""
-        Return a mutable copy of ``self`` without loops and multiple edges.
-
-        Among parallel edges, the copy keeps one of minimum weight, or of
-        maximum weight if ``maximize`` is ``True``. The weights are those given
-        by ``weight_function``, not the labels themselves, so the labels need
-        not be comparable.
-
-        INPUT:
-
-        - ``weight_function`` -- function; takes an edge ``(u, v, l)`` and
-          returns its weight
-
-        - ``maximize`` -- boolean (default: ``False``); whether to keep an edge
-          of maximum weight rather than of minimum weight
-
-        EXAMPLES::
-
-            sage: G = DiGraph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (1, 1, {'w': 0})],
-            ....:             multiedges=True, loops=True)
-            sage: G._to_simple_by_weight(lambda e: e[2]['w']).edges(sort=False)
-            [(0, 1, {'w': 1})]
-            sage: G._to_simple_by_weight(lambda e: e[2]['w'], maximize=True).edges(sort=False)
-            [(0, 1, {'w': 3})]
-        """
-        g = self.to_simple(to_undirected=False, keep_label='any', immutable=False)
-        best = {}
-        for e in self.edge_iterator():
-            u, v, _ = e
-            if u == v:
-                continue
-            key = (u, v) if self.is_directed() else frozenset((u, v))
-            w = weight_function(e)
-            if key not in best or (w > best[key][0] if maximize else w < best[key][0]):
-                best[key] = (w, e)
-        for _, (u, v, label) in best.values():
-            g.set_edge_label(u, v, label)
-        return g
-
     @rename_keyword(deprecation=42983, use_edge_labels='by_weight')
     def hamiltonian_path(self, s=None, t=None, by_weight=False,
                          weight_function=None, check_weight=True,
@@ -9668,10 +9646,9 @@ class GenericGraph(GenericGraph_pyx):
         # Deal with loops and multiple edges
         #
         if self.has_loops() or self.has_multiple_edges():
-            if by_weight:
-                g = self._to_simple_by_weight(weight_function, maximize=maximize)
-            else:
-                g = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
+            keep_label = 'max' if (by_weight and maximize) else 'min'
+            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False,
+                               key=weight_function if by_weight else None)
         else:
             g = self.copy(immutable=False)
 
@@ -10138,10 +10115,9 @@ class GenericGraph(GenericGraph_pyx):
         ######################################
 
         if self.has_loops() or self.has_multiple_edges():
-            if by_weight:
-                g = self._to_simple_by_weight(weight_function, maximize=maximize)
-            else:
-                g = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
+            keep_label = 'max' if (by_weight and maximize) else 'min'
+            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False,
+                               key=weight_function if by_weight else None)
         else:
             g = self
 
@@ -20446,7 +20422,7 @@ class GenericGraph(GenericGraph_pyx):
             return G.copy(immutable=True)
         return G
 
-    def to_simple(self, to_undirected=True, keep_label='any', immutable=None):
+    def to_simple(self, to_undirected=True, keep_label='any', immutable=None, key=None):
         """
         Return a simple version of the ``self``.
 
@@ -20468,13 +20444,18 @@ class GenericGraph(GenericGraph_pyx):
 
         .. WARNING::
 
-            ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :exc:`TypeError` might be raised when working with non-comparable
-            objects.
+            ``'min'`` and ``'max'`` only works if the labels (or the values
+            returned by ``key``) can be compared. A :exc:`TypeError` might be
+            raised when working with non-comparable objects.
 
-        - ``immutable`` -- boolean (default: ``Non``); whether to create a
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable copy. ``immutable=None`` (default) means that the
           graph and its copy will behave the same way.
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge ``(u, v, l)`` as its one argument and returns the value used to
+          compare multiple edges when ``keep_label`` is ``'min'`` or ``'max'``.
+          By default, the labels themselves are compared.
 
         EXAMPLES::
 
@@ -20496,6 +20477,19 @@ class GenericGraph(GenericGraph_pyx):
             [(2, 3, 1), (3, 2, None)]
             sage: G.to_simple(to_undirected=False, keep_label='max').edges(sort=True)
             [(2, 3, 2), (3, 2, None)]
+
+        Labels that cannot be compared can be handled with a ``key``::
+
+            sage: G = DiGraph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (1, 1, {'w': 0})],
+            ....:             multiedges=True, loops=True)
+            sage: H = G.to_simple(to_undirected=False, keep_label='min',
+            ....:                 key=lambda e: e[2]['w'])
+            sage: H.edges(sort=False)
+            [(0, 1, {'w': 1})]
+            sage: H = G.to_simple(to_undirected=False, keep_label='max',
+            ....:                 key=lambda e: e[2]['w'])
+            sage: H.edges(sort=False)
+            [(0, 1, {'w': 3})]
 
         TESTS:
 
@@ -20522,7 +20516,7 @@ class GenericGraph(GenericGraph_pyx):
         else:
             g = self.copy(immutable=False)
         g.allow_loops(False)
-        g.allow_multiple_edges(False, keep_label=keep_label)
+        g.allow_multiple_edges(False, keep_label=keep_label, key=key)
         if immutable is None:
             immutable = self.is_immutable()
         if immutable:
