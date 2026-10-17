@@ -807,6 +807,20 @@ cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check that vertices that are not integers are handled correctly when the
+    graph has loops or multiple edges, or when ``forbidden_vertices`` is
+    given (see :issue:`42979`)::
+
+        sage: G = Graph([('a', 'b'), ('b', 'c'), ('b', 'c'), ('c', 'c')],
+        ....:           loops=True, multiedges=True)
+        sage: blocks_and_cut_vertices(G)
+        ([['b', 'c'], ['a', 'b']], ['b'])
+        sage: G = graphs.PathGraph(3).relabel(['a', 'b', 'c'], inplace=False)
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['a'])
+        ([['b', 'c']], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['b'])
+        ([['a'], ['c']], [])
     """
     from sage.graphs.generic_graph import GenericGraph
 
@@ -819,9 +833,9 @@ cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
             or g.is_directed() or forbidden):
         # Build the underlying undirected graph without loops or multiple edges,
         # and without the forbidden vertices
-        V = [v for v in g if v not in forbidden]
-        E = [(u, v) for u, v in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
-             if u != v and u not in forbidden and v not in forbidden]
+        V = [x for x in g if x not in forbidden]
+        E = [(x, y) for x, y in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
+             if x != y and x not in forbidden and y not in forbidden]
         from sage.graphs.graph import Graph
         g = Graph([V, E], format='vertices_and_edges')
 
