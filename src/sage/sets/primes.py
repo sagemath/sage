@@ -11,12 +11,17 @@ AUTHORS:
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.infinity import PlusInfinity
+    from sage.rings.integer import Integer
+
 from sage.arith.misc import euler_phi
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import EmptySetError
-from sage.rings.infinity import PlusInfinity, infinity
-from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 
 # ****************************************************************************
