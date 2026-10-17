@@ -6,6 +6,8 @@ AUTHORS:
 - Kevin Stueve (2010-01-17): in ``is_prime(n)``, delegated calculation to ``n.is_prime()``
 """
 
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -17,23 +19,22 @@ AUTHORS:
 # ****************************************************************************
 import math
 from collections.abc import Iterable, Iterator
+from collections.abc import Sequence as AbcSequence
+from typing import Any, Literal, overload
 
 from sage.misc.misc_c import prod
-
-from sage.structure.element import parent
-from sage.structure.coerce import py_scalar_to_element
-from sage.structure.sequence import Sequence
-
-from sage.rings.integer import Integer, GCD_list
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.rings.rational_field import QQ
-from sage.rings.abc import RealField, ComplexField
-from sage.structure.factorization import Factorization
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.element import parent
 
-from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.arith.functions import LCM_list
-
+from sage.rings.abc import ComplexField, RealField
+from sage.rings.fast_arith import arith_int, arith_llong, prime_range
+from sage.rings.integer import GCD_list, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 ##################################################################
 # Elementary Arithmetic
@@ -2026,6 +2027,12 @@ def xlcm(m, n):
     return (l, m, n)
 
 
+@overload
+def xgcd(a: int | Integer, b: int | Integer | None = ...) -> tuple[Integer, Integer, Integer]: ...
+
+@overload
+def xgcd(a, b=...) -> tuple[Any, Any, Any]: ...
+
 def xgcd(a, b=None):
     r"""
     Return the greatest common divisor and the Bézout coefficients of the input arguments.
@@ -2243,11 +2250,11 @@ def xkcd(n=""):
     """
     import contextlib
     import json
-    from sage.misc.html import html
     from ssl import create_default_context as default_context
-
-    from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
+
+    from sage.misc.html import html
 
     data = None
     if not n:
@@ -2281,6 +2288,12 @@ def xkcd(n=""):
     # it is produced by sage, see http://xkcd.com/1024/
     return html('<script> alert("Error: -41"); </script>')
 
+
+@overload
+def inverse_mod(a: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def inverse_mod(a, m) -> Any: ...
 
 def inverse_mod(a, m):
     """
@@ -2369,6 +2382,15 @@ def get_inverse_mod(order):
 #         raise "inverse_mod(a=%s,m=%s), error since GCD=%s"%(a,m,g)
 #     return s
 
+
+@overload
+def power_mod(a: int, n: int, m: int) -> int: ...
+
+@overload
+def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def power_mod(a, n, m) -> Any: ...
 
 def power_mod(a, n, m):
     """
@@ -3013,6 +3035,15 @@ def prime_to_m_part(n, m):
     return ZZ(n).prime_to_m_part(m)
 
 
+@overload
+def is_square(n: int | Integer, root: Literal[False] = ...) -> bool: ...
+
+@overload
+def is_square(n: int | Integer, *, root: Literal[True]) -> tuple[bool, Integer]: ...
+
+@overload
+def is_square(n, root: bool = ...) -> bool | tuple[bool, Any]: ...
+
 def is_square(n, root=False):
     """
     Return whether or not `n` is square.
@@ -3431,6 +3462,12 @@ def carmichael_lambda(n):
     return LCM_list(t)
 
 
+@overload
+def crt(a: int | Integer, b: int | Integer, m: int | Integer, n: int | Integer) -> Integer: ...
+
+@overload
+def crt(a, b, m=None, n=None) -> Any: ...
+
 def crt(a, b, m=None, n=None):
     r"""
     Return a solution to a Chinese Remainder Theorem problem.
@@ -3576,6 +3613,12 @@ def crt(a, b, m=None, n=None):
 
 CRT = crt
 
+
+@overload
+def CRT_list(values: AbcSequence[int] | AbcSequence[Integer], moduli: AbcSequence[int] | AbcSequence[Integer] | None = ...) -> Integer | int: ...
+
+@overload
+def CRT_list(values, moduli=None) -> Any: ...
 
 def CRT_list(values, moduli=None):
     r"""
