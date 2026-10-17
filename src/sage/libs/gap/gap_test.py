@@ -2,6 +2,102 @@ import pytest
 from sage.libs.gap.libgap import libgap
 
 
+@pytest.fixture
+def no_pexpect_gap(monkeypatch):
+    """Forbid both starting pexpect GAP and using its help interface."""
+    from sage.interfaces.gap import Gap
+
+    def no_pexpect(*args, **kwds):
+        raise AssertionError('help must not start pexpect GAP')
+
+    monkeypatch.setattr(Gap, '_start', no_pexpect)
+    monkeypatch.setattr(Gap, 'help', no_pexpect)
+
+
+@pytest.mark.parametrize('name', ['CyclicGroup', 'SymmetricGroup', 'Size', 'Socle'])
+def test_function_help_uses_libgap(name, no_pexpect_gap):
+    """Core and ambiguous help queries must not start pexpect GAP."""
+    doc = getattr(libgap, name).__doc__
+    assert f'{name}( ' in doc
+    assert '\x1b' not in doc
+
+
+def test_function_help_missing(capfd, no_pexpect_gap):
+    """Missing documentation should return None without printing a message."""
+    f = libgap.eval('x -> x')
+    assert f.__doc__ is None
+    libgap.SetNameFunction(f, 'SageUndocumentedFunctionHelpTest')
+    assert f.__doc__ is None
+    assert capfd.readouterr() == ('', '')
+
+
+def test_function_help_package(no_pexpect_gap):
+    """Use manuals from packages loaded in the current libgap session."""
+    from sage.features.gap import GapPackage
+
+    if not GapPackage('guava').is_present():
+        pytest.skip('GUAVA is not available')
+
+    assert 'RandomLinearCode' in libgap.RandomLinearCode.__doc__
+
+
+@pytest.mark.parametrize('encoding', ['UTF-8', 'ISO-8859-1', 'ANSI_X3.4-1968'])
+def test_function_help_encoding(encoding, no_pexpect_gap):
+    """Decode help using GAP's terminal encoding."""
+    original = libgap.GAPInfo['TermEncoding']
+    set_encoding = libgap.eval('function(s) GAPInfo.TermEncoding := s; end')
+    try:
+        set_encoding(encoding)
+        doc = libgap.SymmetricGroup.__doc__
+        assert 'SymmetricGroup' in doc
+        if encoding == 'UTF-8':
+            assert '‣ SymmetricGroup' in doc
+    finally:
+        set_encoding(original)
+
+
+@pytest.mark.parametrize('fail', [False, True])
+def test_function_help_preserves_state(fail, monkeypatch, no_pexpect_gap):
+    """Looking up documentation must preserve interactive help settings."""
+    state = libgap.eval('''function()
+        return rec(last := StructuralCopy(HELP_LAST), index := HELP_RING_IDX,
+                   books := StructuralCopy(HELP_BOOK_RING),
+                   topics := StructuralCopy(HELP_TOPIC_RING),
+                   original_topics := StructuralCopy(HELP_ORIG_TOPIC_RING),
+                   theme := StructuralCopy(GAPDocTextTheme),
+                   viewers := UserPreference("HelpViewers"),
+                   screen := SizeScreen(), encoding := GAPInfo.TermEncoding);
+        end''')
+    before = state()
+    if fail:
+        from sage.libs.gap.util import GAPError
+
+        lookup_error = libgap.eval('function(a, b, c) Error("help lookup failed"); end')
+        monkeypatch.setattr(libgap, 'HELP_GET_MATCHES', lookup_error)
+        with pytest.raises(GAPError, match='help lookup failed'):
+            libgap.CyclicGroup._instancedoc_()
+    else:
+        assert libgap.CyclicGroup.__doc__
+    assert state() == before
+
+
+@pytest.mark.parametrize('data, expected', [
+    ('"first\\nsecond"', 'first\nsecond'),
+    ('["first", "second"]', 'first\nsecond'),
+    ('rec(lines := "first\\nsecond", start := 2)', 'second'),
+    ('rec(lines := ["first", "second"], start := 2)', 'second'),
+    ('rec(lines := "first\\nsecond")', 'first\nsecond'),
+    ('fail', None),
+])
+def test_function_help_text_formats(data, expected, monkeypatch, no_pexpect_gap):
+    """Help book handlers can return strings, lists of lines, or pager records."""
+    matches = libgap.eval('[[], [[rec(handler := "SageHelpTest"), 1]]]')
+    monkeypatch.setattr(libgap, 'HELP_GET_MATCHES', lambda *args: matches)
+    handler = {'SageHelpTest': {'HelpData': lambda *args: libgap.eval(data)}}
+    monkeypatch.setattr(libgap, 'HELP_BOOK_HANDLER', handler)
+    assert libgap.CyclicGroup.__doc__ == expected
+
+
 def test_libgap_can_read_and_write_files(tmpfile):
     """
     Test that libgap can write to a temporary file and
