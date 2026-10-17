@@ -1,10 +1,12 @@
-from typing import assert_type, cast
+from typing import TYPE_CHECKING, assert_type, cast
+
+if TYPE_CHECKING:
+    from sage.rings.ring import Ring
 
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
 from sage.structure.element import (
     CommutativeRingElement,
     Element,
