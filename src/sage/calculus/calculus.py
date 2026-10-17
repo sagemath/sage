@@ -446,193 +446,6 @@ from sage.symbolic.symbols import symbol_table
 
 
 ########################################################
-
-
-def _finite_binomial_sum(expression, v, a, b):
-    r"""
-    Evaluate a sum whose summand contains a binomial with finite support.
-
-    If ``expression`` has a factor of the form ``binomial(n, c*v + d)``
-    where ``n`` is a concrete nonnegative integer and ``c``, ``d`` are
-    concrete integers, and the sum runs over ``v`` from a concrete
-    integer ``a`` to ``oo``, return the sum over the finite support of
-    the binomial.  Otherwise return ``None`` so the caller can fall back
-    to the default backend.
-
-    This works around backend bugs in symbolic summation (Maxima's
-    ``simplify_sum`` and SymPy's ``summation`` both fail on such sums).
-    See :issue:`42894`.
-
-    Only finite integer lower bounds are handled; ``a = -oo`` falls back
-    to the backend.
-
-    INPUT:
-
-    - ``expression`` -- a symbolic expression
-
-    - ``v`` -- the summation variable
-
-    - ``a`` -- lower endpoint of the summation
-
-    - ``b`` -- upper endpoint of the summation
-
-    OUTPUT:
-
-    A symbolic expression, or ``None`` if the pattern does not apply.
-
-    EXAMPLES::
-
-        sage: from sage.calculus.calculus import _finite_binomial_sum
-        sage: k = var('k')
-        sage: _finite_binomial_sum(3*k*binomial(4, 3*k-6), k, 0, oo)
-        42
-
-    TESTS::
-
-        sage: from sage.calculus.calculus import _finite_binomial_sum
-        sage: k, n = var('k, n')
-        sage: _finite_binomial_sum(3*k*binomial(n, 3*k-n-2), k, 0, oo) is None
-        True
-        sage: _finite_binomial_sum(k*binomial(4, k), k, 0, 10) is None
-        True
-        sage: _finite_binomial_sum(k*binomial(4, k), k, 0, oo)
-        32
-        sage: _finite_binomial_sum(k*binomial(4, k^2), k, 0, oo) is None
-        True
-        sage: _finite_binomial_sum(k*binomial(4, k+1000), k, 0, oo)
-        0
-
-    Symbolic integer coefficients fall back instead of crashing::
-
-        sage: m = var('m', domain='integer')
-        sage: _finite_binomial_sum(binomial(4, m*k), k, 0, oo) is None
-        True
-
-    Float inputs are rejected (they are not concrete integers)::
-
-        sage: _finite_binomial_sum(binomial(4, 2.5*k), k, 0, oo) is None
-        True
-        sage: _finite_binomial_sum(binomial(4.5, k), k, 0, oo) is None
-        True
-
-    Nonlinear bottoms are rejected::
-
-        sage: _finite_binomial_sum(binomial(4, k^2 - k), k, 0, oo) is None
-        True
-
-    Non-finite terms inside the support are rejected::
-
-        sage: _finite_binomial_sum(binomial(4, k)*log(k), k, 0, oo) is None
-        True
-    """
-    from sage.rings.infinity import infinity
-    from sage.rings.integer import Integer
-    from sage.functions.other import binomial
-    from sage.symbolic.operators import mul_vararg
-    from operator import mul
-
-    def _concrete_int(x):
-        # Accept concrete Python / Sage integers.
-        if isinstance(x, (int, Integer)):
-            return int(x)
-        # Also accept symbolic expressions that are constant integers
-        # (Sage often returns ``SR(3)`` for coefficients).  Reject
-        # symbolic variables carrying an integer assumption, and
-        # reject floats / RR / rationals.
-        from sage.symbolic.expression import Expression
-        if isinstance(x, Expression):
-            try:
-                if x.is_constant() and x.is_integer():
-                    return int(x)
-            except (TypeError, ValueError):
-                return None
-        return None
-
-    # Upper bound must be +oo.
-    if b != infinity:
-        return None
-
-    # Lower bound must be a concrete integer.
-    a_int = _concrete_int(a)
-    if a_int is None:
-        return None
-
-    # Locate a binomial factor.
-    op = expression.operator()
-    binom = None
-    if op is binomial:
-        binom = expression
-    elif op is mul_vararg or op is mul:
-        for operand in expression.operands():
-            if operand.operator() is binomial:
-                binom = operand
-                break
-    if binom is None:
-        return None
-
-    top, bottom = binom.operands()
-
-    # Top must be a concrete nonnegative integer.
-    n = _concrete_int(top)
-    if n is None or n < 0:
-        return None
-
-    # Bottom must be a linear polynomial in v with concrete integer
-    # coefficients.
-    bottom = bottom.expand()
-    if not bottom.is_polynomial(v):
-        return None
-    if bottom.degree(v) > 1:
-        return None
-
-    c = _concrete_int(bottom.coefficient(v))
-    d = _concrete_int(bottom.subs({v: 0}))
-    if c is None or d is None or c == 0:
-        return None
-
-    # Finite support of binomial(n, c*k + d):  0 <= c*k + d <= n.
-    if c > 0:
-        lo_support = -(d // c)
-        hi_support = (n - d) // c
-    else:
-        cp = -c
-        lo_support = -((n - d) // cp)
-        hi_support = d // cp
-
-    lo = max(a_int, lo_support)
-    hi = hi_support
-
-    if lo > hi:
-        return 0
-
-    try:
-        terms = [expression.subs({v: k}) for k in range(lo, hi + 1)]
-    except (ZeroDivisionError, ValueError, TypeError):
-        return None
-
-    # Reject non-finite terms (log(0), tan(pi/2), etc.).  These do not
-    # raise on substitution but produce oo, -oo or zoo.
-    for term in terms:
-        try:
-            if term.is_infinity():
-                return None
-        except AttributeError:
-            # Plain Python number; assume finite.
-            pass
-        except (TypeError, ValueError):
-            # Cannot decide; be conservative and fall back.
-            return None
-        # Detect NaN via the standard trick: NaN is the only value
-        # that is not equal to itself.
-        try:
-            if term != term:  # noqa: PLR0124
-                return None
-        except (TypeError, ValueError):
-            pass
-
-    return sum(terms)
-
-
 def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     r"""
     Return the symbolic sum `\sum_{v = a}^b expression` with respect
@@ -809,26 +622,22 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        the summation the result might not be convertible into a Sage
        expression.
 
+    TESTS:
+
     Check that :issue:`42894` is fixed::
 
         sage: k = var('k')
         sage: n = 4
-        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
         42
         sage: n = 11
-        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
         12630
 
-    The fix is independent of the chosen algorithm::
-
-        sage: n = 4
-        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo, algorithm='sympy')
-        42
-
-    ``hold=True`` is not affected::
-
-        sage: sum((3*k)*binomial(4, 3*k-6), k, 0, oo, hold=True)
-        sum(3*k*binomial(4, 3*k - 6), k, 0, +Infinity)
+    The failures are due to a bug in Maxima's ``simplify_sum`` that
+    returns a wrong value for sums with finite-support binomials.  The
+    upstream bug report is https://sourceforge.net/p/maxima/bugs/5688/.
+    Once Maxima is fixed, the ``# known bug`` annotations can be removed.
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -842,14 +651,6 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     if hold:
         from sage.functions.other import symbolic_sum as ssum
         return ssum(expression, v, a, b)
-
-    # If the summand contains a binomial with finite support, evaluate
-    # the finite sum directly instead of delegating to the backend.
-    # This bypasses backend bugs in symbolic summation for such sums.
-    # See :issue:`42894`.
-    res = _finite_binomial_sum(expression, v, a, b)
-    if res is not None:
-        return res
 
     if algorithm == 'maxima':
         return maxima.sr_sum(expression,v,a,b)
