@@ -655,7 +655,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
         return R.sum(self[:m])
 
-    def is_singleton(self):
+    def is_singleton(self) -> bool:
         r"""
         Return whether this is a singleton species.
 

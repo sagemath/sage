@@ -1818,7 +1818,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
-                pi.update({e: i for e in s})
+                pi.update(dict.fromkeys(s, i))
 
 
             def cycle_type(g):
@@ -2241,7 +2241,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return self.is_molecular() and len(self.support()[0]) == 1
 
-    def is_singleton(self):
+    def is_singleton(self) -> bool:
         r"""
         Return whether this is one of the singleton species of the parent.
 
@@ -2561,7 +2561,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         The `k`-sort species ``self`` should be homogeneous.
 
-        The entries of `multiplicities` are elements of the base ring.  They
+        The entries of ``multiplicities`` are elements of the base ring.  They
         are weights, not necessarily integer multiplicities.  The unweighted
         composition with the corresponding singleton species is computed first;
         the result is then combined by a Hadamard product with the exponential
@@ -2593,7 +2593,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         - ``names`` -- the (flat) list of names of the result
 
         - ``multiplicities`` -- a (flat) list of elements of the base
-          ring, of the same length as `names`; these are the weights
+          ring, of the same length as ``names``; these are the weights
           of the singleton species
 
         - ``degrees`` -- a `k`-tuple of compositions `c_1, \ldots,
@@ -2641,8 +2641,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: F._compose_with_weighted_singletons(["X0", "X1", "Y0"], [1, 1, 1], [[1, 1], [2]])
             X0*X1*E_2(Y0) + 2*X0*X1*Y0^2
 
-        The weights may be indeterminates in the base ring.  For example,
-        writing `R.<q> = QQ[]`::
+        The weights may be indeterminates in the base ring::
 
             sage: R.<q> = QQ[]
             sage: P = PolynomialSpecies(R, ["X"])

@@ -135,6 +135,12 @@ SAGE_SPKG_CONFIGURE([pari], [
     if test x$sage_spkg_install_pari = xyes; then
         AC_SUBST(SAGE_PARI_PREFIX, ['$SAGE_LOCAL'])
     else
-       AC_SUBST(SAGE_PARI_PREFIX, [''])
+        dnl GP's version and datadir have been checked against libpari above.
+        dnl Use the same prefix inference as the gp2c package. Passing this
+        dnl to cypari2 prevents its Homebrew search from choosing another PARI.
+        SAGE_PARI_PREFIX=$(dirname -- "$(dirname -- "$GP")")
+        dnl Account for systems where /bin is a symlink to /usr/bin.
+        AS_IF([test "x$SAGE_PARI_PREFIX" = "x/"], [SAGE_PARI_PREFIX=/usr])
+        AC_SUBST(SAGE_PARI_PREFIX)
     fi
 ])

@@ -42,10 +42,6 @@ jobs:
             python: '3.13'
             editable: true
             tests: 'all'
-          # Test for python 3.12
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'all'
 
     steps:
       - uses: actions/checkout@v7
@@ -74,7 +70,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.13-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
@@ -140,14 +136,14 @@ jobs:
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
 
-          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
+          # Use --no-deps and pip check below to verify that the environment file installs all necessary dependencies
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
-        if: matrix.tests == 'all' && matrix.python == '3.12'
+        if: matrix.tests == 'all' && matrix.python == '3.13'
         run: |
           python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
