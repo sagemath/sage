@@ -1773,6 +1773,13 @@ cdef class CoercionModel:
             pass
         action = self.discover_action(R, S, op, r, s)
         action = self.verify_action(action, R, S, op)
+        if action is not None:
+            # Drop the cached action's strong reference to its actor so
+            # that this global cache does not pin the actor in memory
+            # (:issue:`27358`).  Actions that were explicitly registered
+            # via :meth:`Parent.register_action` opt out of this via
+            # :meth:`Action._pin_actor`.
+            action._make_actor_weak()
         self._action_maps.set(R, S, op, action)
         return action
 

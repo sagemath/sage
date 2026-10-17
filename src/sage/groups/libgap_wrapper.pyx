@@ -124,13 +124,28 @@ class ParentLibGAP(SageObject):
             sage: H = G.subgroup([g])
             sage: g in H
             True
+
+        Check that transient subgroups are not retained in the ambient
+        group's coerce map list (:issue:`27358`)::
+
+            sage: from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
+            sage: G = AbelianGroupGap([2, 3, 4, 5])
+            sage: aut = G.automorphism_group()
+            sage: for _ in range(20):
+            ....:     H = aut.subgroup([aut.random_element() for _ in range(3)])
+            sage: len(aut._introspect_coerce()['_coerce_from_list'])
+            0
         """
         assert isinstance(libgap_parent, GapElement)
         self._libgap = libgap_parent
         self._ambient = ambient
         if ambient is not None:
             phi = self.hom(lambda x: ambient(x.gap()), codomain=ambient)  # the .gap() avoids an infinite recursion
-            ambient.register_coercion(phi)
+            # Register weakly: otherwise every transient subgroup would
+            # be retained for the lifetime of the ambient group via
+            # ``ambient._coerce_from_list`` / ``_registered_domains``
+            # (:issue:`27358`).
+            ambient.register_coercion(phi, weak=True)
 
     def ambient(self):
         """
