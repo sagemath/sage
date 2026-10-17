@@ -746,11 +746,26 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: X(Y, 0)
             Y + O^8
 
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E(0)
+            1
+
             sage: L1 = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L1.Sets()
             sage: L.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
+
+        The result lives in the ring of the substituted species, over the
+        common base ring of both factors::
+
+            sage: R.<q> = QQ[]
+            sage: L2 = LazyCombinatorialSpecies(R, "X")
+            sage: X1 = LazyCombinatorialSpecies(QQ, "X")(SymmetricGroup(1))
+            sage: E2q = (1+q)*L2(SymmetricGroup(2))
+            sage: E2q(X1)[2]
+            (q+1)*E_2
 
         It would be extremely nice to allow the following, but this
         poses theoretical problems::
@@ -764,10 +779,37 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         fP = self.parent()
         if len(args) != fP._arity:
             raise ValueError("arity of must be equal to the number of arguments provided")
+        if not args:
+            # the arity of self is zero, so there is nothing to substitute
+            return self
+
+        # Henderson type 1 substitution of an ordinary species with
+        # r-species
+        from sage.rings.lazy_species_hyperoctahedral import (
+            LazyHyperoctahedralSpeciesElement, Type1CompositionSpeciesElement)
+        if any(isinstance(arg, LazyHyperoctahedralSpeciesElement) for arg in args):
+            return Type1CompositionSpeciesElement(self, *args)
+
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
-        P = cm.common_parent(self.base_ring(), *[parent(g) for g in args])
+        lazy_args = [g for g in args
+                     if isinstance(g, LazyCombinatorialSpeciesElement)]
+        if lazy_args:
+            P = cm.common_parent(*[parent(g) for g in lazy_args])
+            BR = cm.common_parent(self.base_ring(), P.base_ring())
+            if P.base_ring() is not BR:
+                # the coercion model does not know that lazy species
+                # rings over different base rings share their sorts, so
+                # we construct the common parent by hand
+                P = LazyCombinatorialSpecies(
+                    BR,
+                    P._laurent_poly_ring._indices._indices.variable_names(),
+                    sparse=P._sparse)
+        else:
+            # the args are all zero, so the result lives in the parent
+            # of self
+            P = self.parent()
         # f = 0
         if isinstance(self._coeff_stream, Stream_zero):
             return P.zero()
@@ -777,7 +819,12 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
                or (isinstance(g, LazyModuleElement)
                    and isinstance(g._coeff_stream, Stream_zero))
                for g in args):
-            return P(self[0])
+            c = self[0]
+            if c:
+                c = list(c)[0][1]
+            else:
+                c = P.base_ring().zero()
+            return P(c)
 
         # f is a constant polynomial
         if (isinstance(self._coeff_stream, Stream_exact)
@@ -1498,9 +1545,16 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
-        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
-
-        args = [P(g) for g in args]
+        P = cm.common_parent(*[parent(g) for g in args])
+        BR = cm.common_parent(fP.base_ring(), P.base_ring())
+        if P.base_ring() is BR:
+            args = [P(g) for g in args]
+        else:
+            # the args stay in their own ring, whose weights coerce into
+            # the common base ring of the result
+            P = LazyCombinatorialSpecies(
+                BR, P._laurent_poly_ring._indices._indices.variable_names(),
+                sparse=P._sparse)
 
         for g in args:
             if g._coeff_stream._approximate_order == 0:
@@ -1512,6 +1566,21 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         gv = min(g._coeff_stream._approximate_order for g in args)
         R = P._internal_poly_ring.base_ring()
         L = fP._internal_poly_ring.base_ring()
+        if L.base_ring() is R.base_ring():
+            LR = L
+
+            def lcoeff(c):
+                return c
+        else:
+            # the homogeneous components of the outer species carry its
+            # weights, so they have to be re-based to the common base
+            # ring, in which also the weights of the args live
+            LR = PolynomialSpecies(
+                R.base_ring(),
+                fP._laurent_poly_ring._indices._indices.variable_names())
+
+            def lcoeff(c):
+                return R.base_ring()(c)
 
         # composition with zero and singleton species only relabels
         # the sorts.
@@ -1554,9 +1623,9 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                     # skip i=0 because it produces a term only for n=0
 
                     # compute homogeneous components
-                    lF = defaultdict(L)
+                    lF = defaultdict(LR)
                     for M, c in left[i]:
-                        lF[M.grade()] += L._from_dict({M: c})
+                        lF[M.grade()] += LR._from_dict({M: lcoeff(c)})
                     for mc, F in lF.items():
                         for degrees in weighted_vector_compositions(mc, n, weight_exp):
                             args_flat = [list(a[0:len(degrees[j])])
@@ -1685,13 +1754,33 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: pairs = E * E.restrict(2, 2)
             sage: G = subsets.functorial_composition(pairs)
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+
+        The two factors may be defined over different base rings, in which
+        case the result is defined over the common base ring::
+
+            sage: R.<q> = QQ[]
+            sage: Lq = LazyCombinatorialSpecies(R, "X")
+            sage: Eq = Lq.Sets()
+            sage: C = L.Cycles()
+            sage: ((1+q)*Eq).functorial_composition(C)[2]
+            (q+1)*E_2
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
-        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
-
-        args = [P(g) for g in args]
+        P = cm.common_parent(*[parent(g) for g in args])
+        BR = cm.common_parent(left.base_ring(), P.base_ring())
+        if P.base_ring() is not BR:
+            # the coercion model does not know that lazy species rings
+            # over different base rings share their sorts, so we
+            # construct the common parent by hand; the args stay in their
+            # own ring, whose weights coerce into the common base ring
+            P = LazyCombinatorialSpecies(
+                BR,
+                P._laurent_poly_ring._indices._indices.variable_names(),
+                sparse=P._sparse)
+        else:
+            args = [P(g) for g in args]
         if len(args) > 1:
             raise NotImplementedError("multisort functorial composition is not yet implemented")
 
@@ -1721,9 +1810,9 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        N = factorial(n) * self._right_gf[n]
+        N = ZZ(factorial(n) * self._right_gf[n])
         G = self._right
-        R = G.parent()._laurent_poly_ring
+        R = self.parent()._laurent_poly_ring
         left = self._left
         if not left[N]:
             return R.zero()
@@ -1733,7 +1822,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if not G_n or (len(G_n) == 1
                        and next(iter(G_n)).permutation_group()[0] == S_n):
             # we act trivially on G[n]
-            f_N = left.generating_series()[N] * factorial(N)
+            f_N = R.base_ring()(left.generating_series()[N]) * factorial(N)
             return f_N * R(S_n)
 
         M = libgap.TableOfMarks(S_n)
@@ -1774,9 +1863,9 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="orbits")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        N = factorial(n) * self._right_gf[n]
+        N = ZZ(factorial(n) * self._right_gf[n])
         G = self._right
-        R = G.parent()._laurent_poly_ring
+        R = self.parent()._laurent_poly_ring
         left = self._left
         if not left[N]:
             return R.zero()
@@ -1787,7 +1876,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if not G_n or (len(G_n) == 1
                        and next(iter(G_n)).permutation_group()[0] == S_n):
             # we act trivially on G[n]
-            f_N = left.generating_series()[N] * factorial(N)
+            f_N = R.base_ring()(left.generating_series()[N]) * factorial(N)
             return f_N * R(S_n)
 
         # lazily create the action corresponding to G
@@ -1870,11 +1959,25 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: C = L.Cycles()
             sage: G = C.arithmetic_product(Ep)
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+
+        The two factors may be defined over different base rings, in which
+        case the result is defined over the common base ring::
+
+            sage: R.<q> = QQ[]
+            sage: Lq = LazyCombinatorialSpecies(R, "X")
+            sage: Eq = Lq.Sets()
+            sage: E.arithmetic_product((1+q)*Eq)[2]
+            (2*q+2)*E_2
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
         P = cm.common_parent(F.base_ring(), parent(G))
+        if not isinstance(P, LazyCombinatorialSpecies):
+            # the coercion model does not know that lazy species rings
+            # over different base rings share their sorts, so we find the
+            # common parent of the two lazy rings directly
+            P = cm.common_parent(parent(F), parent(G))
         if P._arity != 1:
             raise NotImplementedError("multisort arithmetic product is not yet implemented")
 
@@ -2020,13 +2123,38 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
             + (2*C_5+6*X^5) + (2*C_6+{((1,2,3)(4,5,6),)}+2*E_2(X^3)+9*X^6) + O^7
 
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+
+        The factors may be defined over different base rings, in which
+        case the result is defined over the common base ring::
+
+            sage: R.<q> = QQ[]
+            sage: Lq = LazyCombinatorialSpecies(R, "X")
+            sage: Eq = Lq.Sets()
+            sage: E.hadamard_product((1+q)*Eq)[2]
+            (q+1)*E_2
+            sage: ((1+q)*Eq).hadamard_product(E)[2]
+            (q+1)*E_2
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
         P = cm.common_parent(left.base_ring(), parent(other))
+        if not isinstance(P, LazyCombinatorialSpecies):
+            # the coercion model does not know that lazy species rings
+            # over different base rings share their sorts, so we find the
+            # common parent of the two lazy rings directly
+            P = cm.common_parent(parent(left), parent(other))
+        R = P._laurent_poly_ring
 
-        coeff_stream = Stream_function(lambda n: left[n].hadamard_product(other[n]), P._sparse, 0)
+        def coefficient(n):
+            x, y = left[n], other[n]
+            if x.parent() is not R:
+                x = R(x)
+            if y.parent() is not R:
+                y = R(y)
+            return x.hadamard_product(y)
+
+        coeff_stream = Stream_function(coefficient, P._sparse, 0)
         super().__init__(P, coeff_stream)
         self._left = left
         self._other = other

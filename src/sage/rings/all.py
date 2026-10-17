@@ -127,6 +127,7 @@ lazy_import('sage.rings.lazy_series_ring', 'LazyPseudoDifferentialOperatorRing',
 
 # Lazy combinatorial species
 lazy_import('sage.rings.lazy_species', 'LazyCombinatorialSpecies')
+lazy_import('sage.rings.lazy_species_hyperoctahedral', 'LazyHyperoctahedralSpecies')
 
 # Tate algebras
 from sage.rings.tate_algebra import TateAlgebra

@@ -3549,6 +3549,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         parent = self.parent()
         R = parent.base_ring()
 
+        # The first Henderson plethysm: an ordinary symmetric function
+        # composed with an element of the power-sum algebra Lambda(r).
+        # See :mod:`sage.rings.sf_hyperoctahedral`.
+        if hasattr(Px, '_plethysm_type1'):
+            return Px._plethysm_type1(self, x)
+
         if not self:
             return R(0)
 
