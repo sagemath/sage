@@ -7,6 +7,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
 from .base_mutable import Polyhedron_mutable
 from .base_QQ import Polyhedron_QQ
 from .base_ZZ import Polyhedron_ZZ
@@ -292,12 +294,66 @@ class Polyhedron_ppl(Polyhedron_mutable):
             (A vertex at (0, 1/2), A vertex at (2, 0), A vertex at (4, 5/6))
             sage: p._ppl_polyhedron.minimized_generators()
             Generator_System {point(0/2, 1/2), point(2/1, 0/1), point(24/6, 5/6)}
+
+        PPL may choose a non-integral point generator even when its
+        class modulo the lineality has an integral representative.  In
+        the ``ZZ`` backend, we replace it by such a representative when
+        one exists (:issue:`42142`)::
+
+            sage: P = Polyhedron(eqns=[(-1, 1, 1, 1, -2)], base_ring=ZZ)
+            sage: P.Vrepresentation()
+            (A line in the direction (0, 0, 2, 1),
+             A line in the direction (2, 0, 0, 1),
+             A line in the direction (0, 2, 0, 1),
+             A vertex at (1, 0, 0, 0))
+
+        Point generators are treated independently.  Here PPL produces
+        two non-integral point generators, both of which have integral
+        representatives modulo the lineality::
+
+            sage: P = Polyhedron(ieqs=[(-1, 1, -2), (3, -1, 2)],
+            ....:                base_ring=ZZ, backend='ppl')
+            sage: P._ppl_polyhedron.minimized_generators()
+            Generator_System {line(2, 1), point(0/2, -3/2), point(0/2, -1/2)}
+            sage: P.n_vertices()
+            2
+            sage: all(v.vector() in ZZ^2 for v in P.vertices())
+            True
+
+        If no integral representative exists, construction fails::
+
+            sage: Polyhedron(eqns=[(-1, 2)], base_ring=ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: Polyhedron(eqns=[(-1, 2, 2)], base_ring=ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+
+        Merely containing an integral point is not sufficient.  Every
+        point-generator class modulo the lineality must have an integral
+        representative.  The following strip contains ``(1, 0)`` in its
+        interior, but neither boundary class has an integral representative::
+
+            sage: P = Polyhedron(ieqs=[(-1, 2, 0), (3, -2, 0)],
+            ....:                base_ring=QQ, backend='ppl')
+            sage: P.interior_contains((1, 0))
+            True
+            sage: Polyhedron(ieqs=[(-1, 2, 0), (3, -2, 0)],
+            ....:            base_ring=ZZ, backend='ppl')
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
         """
         if not self._is_mutable:
             raise TypeError("Vrepresentation of mutable polyhedra cannot be recomputed")
-        self._Vrepresentation = []
         gs = self._ppl_polyhedron.minimized_generators()
+        gs = tuple(gs)
         parent = self.parent()
+        lines = [[Integer(mpz) for mpz in g.coefficients()]
+                 for g in gs if g.is_line()]
+        self._Vrepresentation = []
         for g in gs:
             coefficients = [Integer(mpz) for mpz in g.coefficients()]
             if g.is_point():
@@ -305,7 +361,10 @@ class Polyhedron_ppl(Polyhedron_mutable):
                 if d.is_one():
                     parent._make_Vertex(self, coefficients)
                 else:
-                    parent._make_Vertex(self, [x/d for x in coefficients])
+                    point = [x/d for x in coefficients]
+                    if parent.base_ring() is ZZ and lines:
+                        point = self._integral_representative_mod_lines(point, lines)
+                    parent._make_Vertex(self, point)
             elif g.is_ray():
                 parent._make_Ray(self, coefficients)
             elif g.is_line():
@@ -313,6 +372,48 @@ class Polyhedron_ppl(Polyhedron_mutable):
             else:
                 assert False
         self._Vrepresentation = tuple(self._Vrepresentation)
+
+    @staticmethod
+    def _integral_representative_mod_lines(point, lines):
+        r"""
+        Return an integral point equivalent to ``point`` modulo ``lines``.
+
+        A minimized PPL generator system represents a polyhedron as
+        ``conv(points) + cone(rays) + span(lines)``.  Replacing any point
+        generator ``p`` independently by a point in ``p + span(lines)``
+        leaves the represented polyhedron unchanged.
+
+        Modulo the lineality, the point generators are the vertices of the
+        quotient polyhedron.  Consequently, an integral V-representation
+        exists only if every one of these classes has an integral
+        representative; an integral point elsewhere in the polyhedron is
+        not sufficient.
+        """
+        line_matrix = matrix(ZZ, lines)
+        equations = line_matrix.right_kernel_matrix()
+        if not equations.nrows():
+            return [ZZ.zero()] * len(point)
+
+        point = vector(point)
+        rhs = equations.change_ring(point.base_ring()) * point
+        if any(denominator(x) != 1 for x in rhs):
+            return point
+
+        hermite_transpose, transformation_transpose = equations.transpose().hermite_form(
+            transformation=True)
+        hermite = hermite_transpose.transpose()
+        transformation = transformation_transpose.transpose()
+        rhs = vector(ZZ, rhs)
+        coordinates = vector(ZZ, equations.ncols())
+        for i in range(hermite.nrows()):
+            residual = rhs[i] - sum(hermite[i, j] * coordinates[j] for j in range(i))
+            if not residual:
+                continue
+            d = hermite[i, i]
+            if not d or residual % d:
+                return point
+            coordinates[i] = residual // d
+        return transformation * coordinates
 
     def _init_Hrepresentation_from_ppl(self, minimize):
         """
