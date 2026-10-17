@@ -446,6 +446,8 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 from copy import copy
 from typing import TYPE_CHECKING, Self
 
@@ -524,7 +526,7 @@ class GenericGraph(GenericGraph_pyx):
         for k, v in state.items():
             self.__dict__[k] = v
 
-    def __add__(self, other) -> "Graph | DiGraph":
+    def __add__(self, other) -> Graph | DiGraph:
         """
         Return a graph isomorphic to disjoint union of this graph with ``other``.
 
