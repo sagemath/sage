@@ -11,15 +11,15 @@ from sage.structure.element import (
     PrincipalIdealDomainElement,
 )
 
-e = cast(Element, Integer(0))
+e = cast("Element", Integer(0))
 assert_type(e.is_zero(), bool)
 
-r = cast(CommutativeRingElement, QQ(3))
+r = cast("CommutativeRingElement", QQ(3))
 assert_type(r.inverse_mod(QQ(7)), CommutativeRingElement)
 
-p = cast(PrincipalIdealDomainElement, Integer(12))
+p = cast("PrincipalIdealDomainElement", Integer(12))
 assert_type(p.gcd(18), Element)
 assert_type(p.lcm(18), Element)
 
-Z = cast(Ring, ZZ)
+Z = cast("Ring", ZZ)
 assert_type(Z.order(), Integer | PlusInfinity)
