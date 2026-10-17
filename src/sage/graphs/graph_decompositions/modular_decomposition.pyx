@@ -529,7 +529,8 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Modular Decomposition tree containing both parallel and series modules::
 
-        sage: d = {2:[4,3,5], 1:[4,3,5], 5:[3,2,1,4], 3:[1,2,5], 4:[1,2,5]}
+        sage: d = {2: [4, 3, 5], 1: [4, 3, 5], 5: [3, 2, 1, 4],
+        ....:      3: [1, 2, 5], 4: [1, 2, 5]}
         sage: g = Graph(d)
         sage: print_md_tree(habib_maurer_algorithm(g))
         SERIES
@@ -543,11 +544,12 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Graph from Marc Tedder implementation of modular decomposition::
 
-        sage: d = {1:[5,4,3,24,6,7,8,9,2,10,11,12,13,14,16,17], 2:[1],
-        ....:       3:[24,9,1], 4:[5,24,9,1], 5:[4,24,9,1], 6:[7,8,9,1],
-        ....:       7:[6,8,9,1], 8:[6,7,9,1], 9:[6,7,8,5,4,3,1], 10:[1],
-        ....:       11:[12,1], 12:[11,1], 13:[14,16,17,1], 14:[13,17,1],
-        ....:       16:[13,17,1], 17:[13,14,16,18,1], 18:[17], 24:[5,4,3,1]}
+        sage: d = {1: [5, 4, 3, 24, 6, 7, 8, 9, 2, 10, 11, 12, 13, 14, 16, 17],
+        ....:      2: [1], 3: [24, 9, 1], 4: [5, 24, 9, 1], 5: [4, 24, 9, 1],
+        ....:      6: [7, 8, 9, 1], 7: [6, 8, 9, 1], 8: [6, 7, 9, 1],
+        ....:      9: [6, 7, 8, 5, 4, 3, 1], 10: [1], 11: [12, 1], 12: [11, 1],
+        ....:      13: [14, 16, 17, 1], 14: [13, 17, 1], 16: [13, 17, 1],
+        ....:      17: [13, 14, 16, 18, 1], 18: [17], 24: [5, 4, 3, 1]}
         sage: g = Graph(d)
         sage: check_modular_decomposition(habib_maurer_algorithm(g), g)
         True
@@ -563,7 +565,8 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Modular Decomposition tree containing both parallel and series modules::
 
-        sage: d = {2:[4,3,5], 1:[4,3,5], 5:[3,2,1,4], 3:[1,2,5], 4:[1,2,5]}
+        sage: d = {2: [4, 3, 5], 1: [4, 3, 5], 5: [3, 2, 1, 4],
+        ....:      3: [1, 2, 5], 4: [1, 2, 5]}
         sage: g = Graph(d)
         sage: print_md_tree(habib_maurer_algorithm(g))
         SERIES
@@ -1199,7 +1202,7 @@ def relabel_tree(root, perm):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: tuple_tree = (NodeType.SERIES, 1, 2, (NodeType.PARALLEL, 3, 4))
         sage: tree = nested_tuple_to_tree(tuple_tree)
-        sage: print_md_tree(relabel_tree(tree, (4,3,2,1)))
+        sage: print_md_tree(relabel_tree(tree, (4, 3, 2, 1)))
         SERIES
          4
          3
