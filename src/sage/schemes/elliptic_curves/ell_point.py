@@ -120,6 +120,8 @@ AUTHORS:
 - Lorenz Panny (2022): point addition over general rings
 """
 
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -435,7 +437,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         return self + (-other)
 
-    def _acted_upon_(self, other, side) -> "EllipticCurvePoint":
+    def _acted_upon_(self, other, side) -> EllipticCurvePoint:
         r"""
         We implement ``_acted_upon_`` to provide scalar multiplications.
 
@@ -743,7 +745,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return pari([x/z, y/z])
         return pari([0])
 
-    def order(self, algorithm=None) -> Integer | PlusInfinity:
+    def order(self, algorithm: str | None = None) -> Integer | PlusInfinity:
         r"""
         Return the order of this point on the elliptic curve.
 
@@ -1034,7 +1036,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return text("$\\infty$", (-3, 3), **args)
         return point((self[0], self[1]), **args)
 
-    def _add_(self, other) -> "EllipticCurvePoint_field":
+    def _add_(self, other: EllipticCurvePoint_field) -> EllipticCurvePoint_field:
         r"""
         Add this point to another point on the same elliptic curve.
 
@@ -1343,7 +1345,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         return len(self.division_points(m)) > 0
 
-    def division_points(self, m, poly_only=False) -> list:
+    def division_points(self, m: int | Integer, poly_only: bool = False) -> list:
         r"""
         Return a list of all points `Q` such that `mQ=P` where `P` = ``self``.
 
@@ -2920,7 +2922,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         True
     """
 
-    def order(self, algorithm=None) -> Integer | PlusInfinity:
+    def order(self, algorithm: str | None = None) -> Integer | PlusInfinity:
         r"""
         Return the order of this point on the elliptic curve.
 
@@ -4503,7 +4505,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         x, y = self.xy()
         return "%s![%s,%s]" % (E, x, y)
 
-    def _acted_upon_(self, other, side) -> "EllipticCurvePoint_finite_field":
+    def _acted_upon_(self, other, side) -> EllipticCurvePoint_finite_field:
         r"""
         We implement ``_acted_upon_`` to make use of the specialized faster
         scalar multiplication from PARI, and to keep track of cached point
@@ -4857,7 +4859,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         """
         return True
 
-    def order(self, algorithm=None) -> Integer:
+    def order(self, algorithm: str | None = None) -> Integer:
         r"""
         Return the order of this point on the elliptic curve.
 

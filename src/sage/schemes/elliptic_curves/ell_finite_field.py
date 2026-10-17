@@ -31,6 +31,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 from sage.groups import generic
 
 from sage.arith.functions import lcm
@@ -40,11 +42,11 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
-from sage.structure.sequence import Sequence_generic
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
+    from sage.structure.sequence import Sequence_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -243,7 +245,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
     rational_points = points
 
-    def count_points(self, n=1) -> Integer | list[Integer]:
+    def count_points(self, n: int = 1) -> Integer | list[Integer]:
         """
         Return the cardinality of this elliptic curve over the base field or extensions.
 
@@ -320,7 +322,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         """
         return 1 + self.base_field().order() - self.cardinality()
 
-    def cardinality(self, algorithm=None, extension_degree=1) -> Integer:
+    def cardinality(self, algorithm: str | None = None, extension_degree: int = 1) -> Integer:
         r"""
         Return the number of points on this elliptic curve.
 
@@ -880,7 +882,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self) -> "tuple[EllipticCurvePoint_finite_field, ...]":
+    def gens(self) -> tuple[EllipticCurvePoint_finite_field, ...]:
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.
@@ -1544,7 +1546,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 oc = other.cardinality(extension_degree=f_deg // o_deg)
                 return sc == oc
 
-    def is_supersingular(self, proof=True) -> bool:
+    def is_supersingular(self, proof: bool = True) -> bool:
         r"""
         Return ``True`` if this elliptic curve is supersingular, else ``False``.
 
