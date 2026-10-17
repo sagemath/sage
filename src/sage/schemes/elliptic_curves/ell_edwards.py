@@ -61,6 +61,22 @@ separate scalar-multiplication routine is required::
     ....:     for P in points for Q in points for R in points)
     True
 
+Scalar multiplication ``n * P`` is computed in extended homogeneous
+coordinates ``(X : Y : Z : T)`` with ``x = X/Z``, ``y = Y/Z`` and
+``T = XY/Z``, using the complete addition law of Hisil--Wong--Carter--Dawson.
+Only a single field inversion is performed, when the affine coordinates of
+the result are reconstructed.  Over prime fields ``GF(p)`` the arithmetic of
+the scalar-multiplication inner loop runs directly on Python integers, and
+points that are scalar-multiplied repeatedly build a cached fixed-base comb
+table, which makes repeated multiplications such as ``n * B`` for the
+Ed25519 base point substantially faster::
+
+    sage: from sage.crypto.ed25519 import Ed25519, Ed25519BasePoint
+    sage: B = Ed25519BasePoint()
+    sage: k = 2^100 + 12345
+    sage: (k * B).to_elliptic_curve() == k * B.to_elliptic_curve()
+    True
+
 The curve can be converted to the Weierstrass curve used by Sage's existing
 elliptic-curve algorithms.  The conversion is birational, so the identity
 and the exceptional 2-torsion point are handled explicitly::
@@ -82,7 +98,6 @@ REFERENCES:
 
 .. [Edwards2007] H. M. Edwards, *A normal form for elliptic curves*,
    Bulletin of the American Mathematical Society 44 (2007), 393--422.
-
 .. [Hisil2008] H. Hisil, K. K.-H. Wong, G. Carter, and E. Dawson,
    *Twisted Edwards Curves Revisited*, ASIACRYPT 2008, Lecture Notes in
    Computer Science 5350, 326--343.
@@ -102,11 +117,238 @@ AUTHORS:
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
+
+# Scalar-multiplication parameters.  One-shot multiplications use
+# double-and-add with a small table of ``[j]P`` for ``j < 2^_EDWARDS_MUL_WINDOW``.
+# Points that are scalar-multiplied ``_EDWARDS_COMB_THRESHOLD`` times over a
+# prime field invest in a fixed-base comb table with window width
+# ``_EDWARDS_COMB_WINDOW`` (radix 256, so a 255-bit scalar costs about 32
+# mixed additions and no doublings).  ``_EDWARDS_COMB_MAX_BITS`` bounds the
+# scalars served from the comb table; larger scalars fall back to the
+# windowed method.
+_EDWARDS_MUL_WINDOW = 4
+_EDWARDS_COMB_WINDOW = 8
+_EDWARDS_COMB_RADIX = 1 << _EDWARDS_COMB_WINDOW
+_EDWARDS_COMB_MASK = _EDWARDS_COMB_RADIX - 1
+_EDWARDS_COMB_MAX_BITS = 512
+_EDWARDS_COMB_THRESHOLD = 2
+
+
+def _edwards_ext_add(a, d, neg_a, one_a, P, Q):
+    """Return the sum of two points in extended coordinates over any field.
+
+    The unified addition law of Hisil--Wong--Carter--Dawson
+    (add-2008-hwcd) is complete for the curves accepted by
+    :class:`TwistedEdwardsCurve`, so no special cases are needed.
+    ``P`` and ``Q`` are ``(X, Y, Z, T)`` tuples with ``T = XY/Z``.
+    """
+    X1, Y1, Z1, T1 = P
+    X2, Y2, Z2, T2 = Q
+    A = X1 * X2
+    B = Y1 * Y2
+    C = d * T1 * T2
+    D = Z1 * Z2
+    E = (X1 + Y1) * (X2 + Y2) - A - B
+    F = D - C
+    G = D + C
+    if neg_a:
+        H = B + A
+    elif one_a:
+        H = B - A
+    else:
+        H = B - a * A
+    return (E * F, G * H, F * G, E * H)
+
+
+def _edwards_ext_dbl(a, neg_a, one_a, P):
+    """Return the double of ``P`` in extended coordinates (dbl-2008-hwcd)."""
+    X1, Y1, Z1 = P[0], P[1], P[2]
+    A = X1 * X1
+    B = Y1 * Y1
+    C = (Z1 + Z1) * Z1
+    if neg_a:
+        D = -A
+    elif one_a:
+        D = A
+    else:
+        D = a * A
+    E = (X1 + Y1) * (X1 + Y1) - A - B
+    G = D + B
+    F = G - C
+    H = D - B
+    return (E * F, G * H, F * G, E * H)
+
+
+def _edwards_ext_add_int(p, a, d, neg_a, one_a, P, Q):
+    """Extended-coordinate addition on Python integers modulo the prime ``p``."""
+    X1, Y1, Z1, T1 = P
+    X2, Y2, Z2, T2 = Q
+    A = X1 * X2 % p
+    B = Y1 * Y2 % p
+    C = T1 * d % p * T2 % p
+    D = Z1 * Z2 % p
+    E = ((X1 + Y1) * (X2 + Y2) - A - B) % p
+    F = (D - C) % p
+    G = (D + C) % p
+    if neg_a:
+        H = (B + A) % p
+    elif one_a:
+        H = (B - A) % p
+    else:
+        H = (B - a * A) % p
+    return (E * F % p, G * H % p, F * G % p, E * H % p)
+
+
+def _edwards_ext_dbl_int(p, a, neg_a, one_a, P):
+    """Extended-coordinate doubling on Python integers modulo the prime ``p``."""
+    X1, Y1, Z1 = P[0], P[1], P[2]
+    A = X1 * X1 % p
+    B = Y1 * Y1 % p
+    C = (Z1 + Z1) * Z1 % p
+    if neg_a:
+        D = p - A
+    elif one_a:
+        D = A
+    else:
+        D = a * A % p
+    E = ((X1 + Y1) * (X1 + Y1) - A - B) % p
+    G = (D + B) % p
+    F = (G - C) % p
+    H = (D - B) % p
+    return (E * F % p, G * H % p, F * G % p, E * H % p)
+
+
+def _edwards_mul_windowed_int(point, k, p):
+    """Windowed scalar multiplication of ``point`` on Python integers.
+
+    ``k`` must be a positive integer.  Builds the table of small multiples
+    ``[j]P``, ``1 <= j < 16``, and performs one inversion at the end.
+    """
+    C = point.parent()
+    a = int(C.a().lift())
+    d = int(C.d().lift())
+    neg_a = (a == p - 1)
+    one_a = (a == 1)
+    x0 = int(point._x.lift())
+    y0 = int(point._y.lift())
+    base = (x0, y0, 1, x0 * y0 % p)
+
+    k = int(k)
+    radix = 1 << _EDWARDS_MUL_WINDOW
+    digits = []
+    while k:
+        digits.append(k & (radix - 1))
+        k >>= _EDWARDS_MUL_WINDOW
+    digits.reverse()
+
+    table = [None] * radix
+    table[1] = base
+    for j in range(2, radix):
+        table[j] = _edwards_ext_add_int(p, a, d, neg_a, one_a, table[j - 1], base)
+
+    acc = table[digits[0]]
+    for digit in digits[1:]:
+        for _ in range(_EDWARDS_MUL_WINDOW):
+            acc = _edwards_ext_dbl_int(p, a, neg_a, one_a, acc)
+        if digit:
+            acc = _edwards_ext_add_int(p, a, d, neg_a, one_a, acc, table[digit])
+
+    X, Y, Z, _ = acc
+    zinv = pow(Z, -1, p)
+    return C.element_class(C, (X * zinv % p, Y * zinv % p), check=False)
+
+
+def _edwards_build_comb(point, p, bits):
+    """Build the fixed-base comb table for ``point`` over ``GF(p)``.
+
+    Returns ``(bits, rows, p, a, d, neg_a, one_a)`` where
+    ``rows[i][j]`` stores the affine triple ``(x, y, x + y)`` together with
+    ``d * x * y`` for the point ``[j * 16^i]P``.  All inversions are batched
+    with Montgomery's trick, so building the table costs a single modular
+    inversion per row.
+    """
+    C = point.parent()
+    a = int(C.a().lift())
+    d = int(C.d().lift())
+    neg_a = (a == p - 1)
+    one_a = (a == 1)
+    x0 = int(point._x.lift())
+    y0 = int(point._y.lift())
+
+    positions = max(1, (bits + _EDWARDS_COMB_WINDOW - 1) // _EDWARDS_COMB_WINDOW)
+    radix = 1 << _EDWARDS_COMB_WINDOW
+    rows = []
+    cur = (x0, y0, 1, x0 * y0 % p)
+    for _ in range(positions):
+        # Extended-coordinate multiples [j]([16^i]P) for j = 1..15.
+        ext = [(0, 1, 1, 0)]
+        for j in range(1, radix):
+            ext.append(_edwards_ext_add_int(p, a, d, neg_a, one_a, ext[j - 1], cur))
+        # Batch-invert the Z coordinates (never zero on a complete curve).
+        zs = [entry[2] for entry in ext[1:]]
+        prefix = []
+        acc = 1
+        for z in zs:
+            acc = acc * z % p
+            prefix.append(acc)
+        invs = [0] * len(zs)
+        inv = pow(acc, -1, p)
+        for i in range(len(zs) - 1, -1, -1):
+            invs[i] = inv * (prefix[i - 1] if i else 1) % p
+            inv = inv * zs[i] % p
+        row = [None]
+        for (X, Y, Z, T), zinv in zip(ext[1:], invs):
+            x = X * zinv % p
+            y = Y * zinv % p
+            row.append((x, y, (x + y) % p, d * (x * y % p) % p))
+        rows.append(row)
+        for _ in range(_EDWARDS_COMB_WINDOW):
+            cur = _edwards_ext_dbl_int(p, a, neg_a, one_a, cur)
+    return (bits, rows, p, a, d, neg_a, one_a)
+
+
+def _edwards_comb_mul(point, k, comb):
+    """Evaluate ``[k]point`` from a fixed-base comb table built by
+    :func:`_edwards_build_comb`.
+
+    Every nonzero base-16 digit of ``k`` contributes one mixed addition with
+    an affine table entry, so no doublings are needed at evaluation time.
+    """
+    bits, rows, p, a, d, neg_a, one_a = comb
+    k = int(k)
+    X, Y, Z, T = 0, 1, 1, 0
+    pos = 0
+    while k:
+        digit = k & _EDWARDS_COMB_MASK
+        if digit:
+            x2, y2, s2, c2 = rows[pos][digit]
+            A = X * x2 % p
+            B = Y * y2 % p
+            CC = T * c2 % p
+            E = ((X + Y) * s2 - A - B) % p
+            F = (Z - CC) % p
+            G = (Z + CC) % p
+            if neg_a:
+                H = (B + A) % p
+            elif one_a:
+                H = (B - A) % p
+            else:
+                H = (B - a * A) % p
+            X = E * F % p
+            Y = G * H % p
+            Z = F * G % p
+            T = E * H % p
+        k >>= _EDWARDS_COMB_WINDOW
+        pos += 1
+    zinv = pow(Z, -1, p)
+    C = point.parent()
+    return C.element_class(C, (X * zinv % p, Y * zinv % p), check=False)
 
 
 class TwistedEdwardsPoint(AdditiveGroupElement):
@@ -187,22 +429,226 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             \end{aligned}
 
         The parameter restrictions checked by the parent ensure that these
-        denominators are nonzero for every pair of affine points.
+        denominators are nonzero for every pair of affine points.  The
+        products ``x_1y_2`` and ``y_1x_2`` are shared with the denominator
+        ``t = d x_1x_2y_1y_2`` to keep the number of field operations
+        minimal.
         """
         C = self.parent()
-        x1, y1 = self.coordinates()
-        x2, y2 = other.coordinates()
-        t = C.d() * x1 * x2 * y1 * y2
+        x1, y1 = self._x, self._y
+        x2, y2 = other._x, other._y
+        u = x1 * y2
+        v = y1 * x2
+        t = C.d() * u * v
         dx = 1 + t
         dy = 1 - t
         if dx == 0 or dy == 0:
             raise ZeroDivisionError("the Edwards addition denominator is zero")
-        x3 = (x1 * y2 + y1 * x2) / dx
+        x3 = (u + v) / dx
         y3 = (y1 * y2 - C.a() * x1 * x2) / dy
-        return C((x3, y3), check=False)
+        return type(self)(C, (x3, y3), check=False)
 
     def _neg_(self):
-        return self.parent()((-self._x, self._y), check=False)
+        C = self.parent()
+        return type(self)(C, (-self._x, self._y), check=False)
+
+    def _acted_upon_(self, other, self_on_left):
+        r"""Return ``[other]self`` computed in extended Edwards coordinates.
+
+        This hook provides the scalar multiplication ``n * P`` and ``P * n``
+        for integer scalars, replacing the generic repeated-addition
+        default of the coercion model.  The computation uses the complete
+        extended-coordinate addition law, performs a single field inversion
+        at the very end, and over prime fields caches a fixed-base comb
+        table on points that are multiplied repeatedly.  Scalars that are
+        not integers return ``None`` so that the coercion model can look
+        for another action.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: C = TwistedEdwardsCurve(GF(19), 1, 2)
+            sage: P = C(1, 0)
+            sage: 7 * P
+            (18 : 0)
+            sage: 7 * P == sum([P]*7, C.zero())
+            True
+            sage: all(k * P == sum([P]*int(k), C.zero()) for k in range(1, 20))
+            True
+            sage: 0 * P
+            (0 : 1)
+            sage: 1 * P is P
+            True
+            sage: (-3) * P == -(3 * P)
+            True
+            sage: P * 5 == 5 * P
+            True
+
+        The result agrees with scalar multiplication on the birationally
+        equivalent Weierstrass model::
+
+            sage: E = C.to_elliptic_curve()
+            sage: all(k * P.to_elliptic_curve() == (k * P).to_elliptic_curve()
+            ....:     for k in [0, 1, 2, 3, 7, 100, 2^60 + 5])
+            True
+
+        A curve with a generic parameter ``a`` takes the same path::
+
+            sage: C17 = TwistedEdwardsCurve(GF(17), 4, 3)
+            sage: Q = C17(3, 6)
+            sage: all(k * Q == sum([Q]*int(k), C17.zero()) for k in range(1, 16))
+            True
+            sage: 12345 * Q == Q + 12344 * Q
+            True
+
+        Over fields that are not prime fields the same algorithm runs on
+        the field's own elements::
+
+            sage: F25.<z> = GF(25)
+            sage: C25 = TwistedEdwardsCurve(F25, 1, z + 2)
+            sage: P25 = C25(z + 3, 2)
+            sage: 12 * P25 == C25.zero()
+            True
+            sage: (12345 * P25).to_elliptic_curve() == 12345 * P25.to_elliptic_curve()
+            True
+        """
+        try:
+            k = ZZ(other)
+        except (TypeError, ValueError):
+            return None
+        if k == 1:
+            return self
+        if k == 0:
+            return self.parent().zero()
+        if k < 0:
+            Q = self._edwards_mul(-k)._neg_()
+        else:
+            Q = self._edwards_mul(k)
+        n = getattr(self, "_order", None)
+        if n is not None:
+            Q._order = n // n.gcd(k)
+        return Q
+
+    def additive_order(self):
+        r"""Return the order of this point in the group law.
+
+        The birational map :meth:`to_elliptic_curve` is a group
+        isomorphism, so the order is computed on the Weierstrass model
+        (where Sage's optimized algorithms are available) and cached on
+        this point.  Points of order dividing 8 -- the cofactor torsion
+        shared by all complete twisted Edwards curves -- are detected
+        directly without touching the Weierstrass model, and scalar
+        multiplications propagate a cached order to their result using
+        Lagrange's theorem, mirroring the behaviour of Weierstrass
+        points.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: C = TwistedEdwardsCurve(GF(19), 1, 2)
+            sage: P = C(1, 0)
+            sage: P.additive_order()
+            4
+            sage: P.order()
+            4
+            sage: C.zero().order()
+            1
+            sage: C(0, -1).order()
+            2
+            sage: (3 * P).order()
+            4
+            sage: E = C.to_elliptic_curve()
+            sage: all(Q.to_elliptic_curve().order() == Q.order()
+            ....:     for Q in C.some_elements())
+            True
+
+        The Ed25519 base point has prime order ``L``::
+
+            sage: from sage.crypto.ed25519 import ED25519_SUBGROUP_ORDER, Ed25519BasePoint
+            sage: B = Ed25519BasePoint()
+            sage: B.order() == ED25519_SUBGROUP_ORDER        # long time
+            True
+            sage: C25 = Ed25519()
+            sage: C25(0, -1).order()
+            2
+        """
+        if not self:
+            return ZZ.one()
+        R = self + self
+        if R.is_zero():
+            return ZZ(2)
+        R = R + R
+        if R.is_zero():
+            return ZZ(4)
+        R = R + R
+        if R.is_zero():
+            return ZZ(8)
+        o = self.to_elliptic_curve().additive_order()
+        self._order = o
+        return o
+
+    def _edwards_mul(self, k):
+        r"""Return ``[k]self`` for an integer ``k > 1``.
+
+        Dispatches between the generic field-element implementation and the
+        Python-integer fast path for prime base fields, and manages the
+        per-point fixed-base comb table.
+        """
+        C = self.parent()
+        p = C._edwards_prime_modulus()
+        if p is None:
+            return self._edwards_mul_field(k)
+        bits = int(k).bit_length()
+        if bits > _EDWARDS_COMB_MAX_BITS:
+            return _edwards_mul_windowed_int(self, k, p)
+        count = self.__dict__.get("_edwards_mult_count", 0) + 1
+        self.__dict__["_edwards_mult_count"] = count
+        if count < _EDWARDS_COMB_THRESHOLD:
+            return _edwards_mul_windowed_int(self, k, p)
+        comb = self.__dict__.get("_edwards_comb")
+        if comb is None or comb[0] < bits:
+            comb = _edwards_build_comb(self, p, bits)
+            self.__dict__["_edwards_comb"] = comb
+        return _edwards_comb_mul(self, k, comb)
+
+    def _edwards_mul_field(self, k):
+        r"""Return ``[k]self`` using the base field's own arithmetic.
+
+        Windowed left-to-right scalar multiplication in extended
+        coordinates with one inversion at the end.  Used over fields that
+        are not prime fields.
+        """
+        C = self.parent()
+        R = C.base_ring()
+        a = C.a()
+        d = C.d()
+        one = R.one()
+        neg_a = (a == -one)
+        one_a = (a == one)
+        x0, y0 = self._x, self._y
+        base = (x0, y0, one, x0 * y0)
+
+        digits = []
+        while k:
+            digits.append(k & 15)
+            k >>= _EDWARDS_MUL_WINDOW
+        digits.reverse()
+
+        table = [None] * (1 << _EDWARDS_MUL_WINDOW)
+        table[1] = base
+        for j in range(2, 1 << _EDWARDS_MUL_WINDOW):
+            table[j] = _edwards_ext_add(a, d, neg_a, one_a, table[j - 1], base)
+
+        acc = table[digits[0]]
+        for digit in digits[1:]:
+            for _ in range(_EDWARDS_MUL_WINDOW):
+                acc = _edwards_ext_dbl(a, neg_a, one_a, acc)
+            if digit:
+                acc = _edwards_ext_add(a, d, neg_a, one_a, acc, table[digit])
+
+        X, Y, Z, _ = acc
+        zinv = ~Z
+        return type(self)(C, (X * zinv, Y * zinv), check=False)
 
     def to_elliptic_curve(self):
         r"""Map this point to Sage's Weierstrass elliptic-curve model.
@@ -322,6 +768,28 @@ class TwistedEdwardsCurve(UniqueRepresentation, Parent):
     def d(self):
         r"""Return the coefficient ``d``."""
         return self._d
+
+    @cached_method
+    def _edwards_prime_modulus(self):
+        r"""Return the integer ``p`` if the base ring is ``GF(p)``, else ``None``.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: TwistedEdwardsCurve(GF(19), 1, 2)._edwards_prime_modulus()
+            19
+            sage: TwistedEdwardsCurve(QQ, 1, 2)._edwards_prime_modulus() is None
+            True
+        """
+        F = self.base_ring()
+        try:
+            if not F.is_finite() or F.degree() != 1:
+                return None
+            # A finite field of degree 1 is GF(p) for the prime p =
+            # characteristic, so no primality proof is needed here.
+            return int(F.characteristic())
+        except (AttributeError, NotImplementedError, TypeError, ValueError):
+            return None
 
     def is_on_curve(self, x, y=None):
         r"""Return whether the given affine coordinates satisfy the equation."""
