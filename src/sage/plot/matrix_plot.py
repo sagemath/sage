@@ -244,6 +244,85 @@ class MatrixPlot(GraphicPrimitive):
         subplot.xaxis.set_ticks_position('both')  # only tick marks, not tick labels
 
 
+def _is_nan_or_infinity(entry):
+    """
+    Return whether ``entry`` is an inexact infinity or NaN.
+    """
+    try:
+        return entry.is_infinity() or entry.is_NaN()
+    except AttributeError:
+        return False
+
+
+def _rescale_matrix_plot_value(value, scale, np):
+    """
+    Return ``value / scale`` as a float, preserving tiny nonzero signs.
+    """
+    if value == 0:
+        return 0.0
+    scaled = float(value / scale)
+    if scaled:
+        return scaled
+    if value > 0:
+        return np.finfo(float).tiny
+    return -np.finfo(float).tiny
+
+
+def _rescale_matrix_plot_options(options, scale, np):
+    """
+    Rescale color limits when dense matrix data has been rescaled.
+    """
+    for key in ['vmin', 'vmax']:
+        if options[key] is not None:
+            options[key] = _rescale_matrix_plot_value(options[key], scale, np)
+
+    norm = options['norm']
+    if norm is None or isinstance(norm, str):
+        return
+
+    import copy
+    norm = copy.copy(norm)
+    for key in ['vmin', 'vmax']:
+        value = getattr(norm, key, None)
+        if value is not None:
+            setattr(norm, key, _rescale_matrix_plot_value(value, scale, np))
+    options['norm'] = norm
+
+
+def _rescale_matrix_plot_array(mat, float_array, options, np):
+    """
+    Rescale exact dense matrix data if conversion to floats lost its scale.
+    """
+    if np.isfinite(float_array).all() and float_array.any():
+        return float_array
+
+    data = mat.numpy(dtype=object)
+    scale = None
+    for entry in data.ravel():
+        if _is_nan_or_infinity(entry):
+            return float_array
+        try:
+            if entry == 0:
+                continue
+            entry_abs = abs(entry)
+        except (ArithmeticError, TypeError, ValueError):
+            return float_array
+        if scale is None or entry_abs > scale:
+            scale = entry_abs
+
+    if scale is None:
+        return float_array
+
+    scaled_array = np.empty(data.shape, dtype=float)
+    for index, entry in np.ndenumerate(data):
+        scaled_array[index] = _rescale_matrix_plot_value(entry, scale, np)
+
+    if np.isfinite(scaled_array).all():
+        _rescale_matrix_plot_options(options, scale, np)
+        return scaled_array
+    return float_array
+
+
 @suboptions('colorbar', orientation='vertical', format=None)
 @suboptions('subdivision',boundaries=None, style=None)
 @options(aspect_ratio=1, axes=False, cmap='Greys', colorbar=False,
@@ -552,6 +631,30 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()
         1
+
+    Matrix entries that overflow to ``+/-Infinity`` when converted to
+    ``float`` are handled gracefully (see :issue:`1481`)::
+
+        sage: a = matrix(ZZ, 2, [16^1000, 0, 0, -16^1000])
+        sage: P = matrix_plot(a)
+        sage: P[0].xy_data_array.tolist()
+        [[1.0, 0.0], [0.0, -1.0]]
+        sage: P = matrix_plot(a, vmin=-16^1000, vmax=16^1000)
+        sage: P[0].options()['vmin'], P[0].options()['vmax']
+        (-1.0, 1.0)
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
+        ....:     P.save(f.name)
+
+    The rescaling uses the largest exact entry, not the finite entries
+    left after overflow::
+
+        sage: b = matrix(ZZ, 2, [16^1000, 0, 1, -16^1000])
+        sage: P = matrix_plot(b)
+        sage: float(P[0].xy_data_array[0, 0]), float(P[0].xy_data_array[1, 1])
+        (1.0, -1.0)
+        sage: bool(0 < P[0].xy_data_array[1, 0] < 1e-300)
+        True
     """
     import numpy as np
     import scipy.sparse as scipysparse
@@ -571,7 +674,8 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
                                     [col for (row,col),_ in entries]], dtype=int)
             mat = scipysparse.coo_matrix((data,positions), shape=(mat.nrows(), mat.ncols()))
         else:
-            mat = mat.change_ring(RDF).numpy()
+            float_mat = mat.change_ring(RDF).numpy()
+            mat = _rescale_matrix_plot_array(mat, float_mat, options, np)
     elif hasattr(mat, 'tocoo'):
         sparse = True
     else:
