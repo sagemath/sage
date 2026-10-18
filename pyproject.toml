@@ -570,6 +570,7 @@ select = [
   "UP034",
   "UP035",
   "UP036",
+  "UP037",
   "UP040",
   "UP041",
   "UP042",
@@ -738,3 +739,7 @@ ignore = ["E501", "E741"]
 no-build-isolation-package = ["sagemath"]
 # Build these packages from source instead of installing pre-built wheels.
 no-binary-package = ["cypari2", "pplpy", "primecountpy"]
+
+[tool.uv.sources]
+# Match build/pkgs/cypari and dimpase/tap/cypari2 for PARI 2.19 compatibility.
+cypari2 = { url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" }

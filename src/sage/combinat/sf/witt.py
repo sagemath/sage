@@ -100,19 +100,13 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     REFERENCES:
 
-    .. [HazWitt1] Michiel Hazewinkel. *Witt vectors. Part 1*.
-       :arxiv:`0804.3888v1`
+    - [HazWitt1]_
 
-    .. [DoranIV1996] William F. Doran IV.
-       *A Proof of Reutenauer's `-q_{(n)}` Conjecture*.
-       Journal of combinatorial theory, Series A 74, pp. 342-344 (1996),
-       article no. 0056. :doi:`10.1006/jcta.1996.0056`
+    - [DoranIV1996]_
 
-    .. [BorWi2004] James Borger, Ben Wieland.
-       *Plethystic algebra*.
-       :arxiv:`math/0407227v1`
+    - [BorWi2004]_
 
-    .. [GriRei18]_
+    - [GriRei18]_
 
     EXAMPLES:
 

@@ -175,6 +175,16 @@ def init_sage(controller: DocTestController | None = None) -> None:
         sage: {'a':23, 'b':34, 'au':56, 'bbf':234, 'aaa':234}
         {'a': 23, 'aaa': 234, 'au': 56, 'b': 34, 'bbf': 234}
     """
+    if sys.platform == 'darwin':
+        # Timer._quick_cputime uses psutil for pexpect processes on macOS.
+        # Import it before forking: its IOKit initialization can abort in a
+        # forked worker (https://github.com/giampaolo/psutil/issues/2713).
+        try:
+            import psutil  # noqa: F401
+        except ImportError:
+            # psutil is an optional dependency of the doctest timer.
+            pass
+
     try:
         # We need to ensure that the Matplotlib font cache is built to
         # avoid spurious warnings (see Issue #20222).
