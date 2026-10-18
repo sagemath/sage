@@ -463,8 +463,30 @@ class AugmentedValuation_base(InductiveValuation):
             sage: ww = w.augmentation((x^2 + x + u)^2 + 2, 5/3)
             sage: ww.psi()
             x + 1
+
+        Over a non-field coefficient ring, the normalization factor may not
+        exist in the domain::
+
+            sage: R.<x> = ZZ[]
+            sage: v = GaussValuation(R, ZZ.valuation(2)).augmentation(x + 1, 1/2)
+            sage: w = v.augmentation(x^2 + 1, infinity)
+            sage: w.psi()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: residue polynomial computation over Integer Ring
+            requires an equivalence unit of valuation -1, which is not available
         """
-        R = self._base_valuation.equivalence_unit(-self._base_valuation(self._phi))
+        normalization_value = -self._base_valuation(self._phi)
+        try:
+            R = self._base_valuation.equivalence_unit(normalization_value)
+        except ValueError as error:
+            from sage.categories.fields import Fields
+            if self.domain().base_ring() in Fields():
+                raise
+            raise NotImplementedError(
+                "residue polynomial computation over %s requires an equivalence "
+                "unit of valuation %s, which is not available"
+                % (self.domain().base_ring(), normalization_value)) from error
         F = self._base_valuation.reduce(self._phi * R, check=False).monic()
         assert F.is_irreducible()
         return F
