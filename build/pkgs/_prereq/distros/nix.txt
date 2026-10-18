@@ -21,3 +21,6 @@ bzip2
 pkg-config
 zlib
 boost
+gfortran
+readline
+ncurses

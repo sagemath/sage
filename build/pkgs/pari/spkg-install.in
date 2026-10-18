@@ -125,7 +125,7 @@ fi
 # Note that "--graphic=none" is (usually) added to PARI_CONFIGURE:
 #--with-gmp-include="/usr/include/x86_64-linux-gnu" \
 bash ./Configure --prefix="$SAGE_LOCAL" \
-    --with-readline="$SAGE_LOCAL" $SAGE_CONFIGURE_GMP \
+    --with-readline="${SAGE_READLINE_PREFIX:-yes}" $SAGE_CONFIGURE_GMP \
     --with-runtime-perl="/usr/bin/env perl" \
     --mt=pthread \
     --kernel=gmp $PARI_CONFIGURE || \

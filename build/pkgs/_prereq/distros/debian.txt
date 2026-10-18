@@ -11,8 +11,6 @@ binutils
 make
 m4
 perl
-# flex is needed to build gcc
-flex
 # python3-minimal is not enough on debian buster, ubuntu bionic - it does not have urllib
 # system python for bootstrapping the build
 python3
@@ -38,3 +36,6 @@ patch
 pkg-config
 libz-dev
 libboost-dev
+gfortran
+libreadline-dev
+libncurses-dev

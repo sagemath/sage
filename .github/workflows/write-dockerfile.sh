@@ -321,7 +321,7 @@ fi
 cat <<EOF
 
 FROM configured AS with-base-toolchain
-# We first compile base-toolchain because otherwise lots of packages are missing their dependency on 'patch'
+# Prepare optional ccache and generated pkg-config facade files before building packages
 ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
