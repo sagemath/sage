@@ -15,7 +15,7 @@ Polyhedral realization of `B(\infty)`
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.structure.parent import Parent
@@ -160,7 +160,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             raise ValueError("the support of seq is not the index set")
         return super().__classcall__(cls, cartan_type, seq)
 
-    def __init__(self, cartan_type, seq):
+    def __init__(self, cartan_type, seq) -> None:
         """
         Initialize ``self``.
 
@@ -180,7 +180,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
         self._tp = [C.module_generators[0] for C in self.crystals]
         self.module_generators = (self.element_class(self, self._tp),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -285,8 +285,10 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             N = len(self) + 1
             pos = None
             for k in range(1, N):
-                if all(self._sig(i,k) > self._sig(i,j) for j in range(1, k)) and \
-                        all(self._sig(i,k) >= self._sig(i,j) for j in range(k+1, N)):
+                if all(self._sig(i, k) > self._sig(i, j)
+                       for j in range(1, k)) and \
+                    all(self._sig(i, k) >= self._sig(i, j)
+                        for j in range(k + 1, N)):
                     crystal = self[-k].e(i)
                     pos = k
                     break
@@ -297,7 +299,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
 
             l = list(self)
             l[-pos] = crystal
-            if pos <= 2*nf and all(b._m == 0 for b in l[-2*nf:-nf]):
+            if pos <= 2 * nf and all(b._m == 0 for b in l[-2 * nf:-nf]):
                 return self.__class__(self.parent(), l[:-nf])
             return self.__class__(self.parent(), l)
 
@@ -317,8 +319,10 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             N = len(self) + 1
             pos = None
             for k in range(1, N):
-                if all(self._sig(i,k) >= self._sig(i,j) for j in range(1, k)) and \
-                        all(self._sig(i,k) > self._sig(i,j) for j in range(k+1, N)):
+                if all(self._sig(i, k) >= self._sig(i, j)
+                       for j in range(1, k)) and \
+                    all(self._sig(i, k) > self._sig(i, j)
+                        for j in range(k + 1, N)):
                     crystal = self[-k].f(i)
                     pos = k
                     break
