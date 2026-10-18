@@ -14,7 +14,7 @@ Or a Steiner Triple System on 19 points::
 
 **La Jolla Covering Repository**
 
-The La Jolla Covering Repository (LJCR, see [1]_) is an online database of
+The La Jolla Covering Repository (LJCR, see [LJCR]_) is an online database of
 covering designs. As it is frequently updated, it is not included in Sage, but
 one can query it through :meth:`designs.best_known_covering_design_from_LJCR
 <sage.combinat.designs.covering_design.best_known_covering_design_www>`::
@@ -71,8 +71,7 @@ which queries the LJCR.
 
 REFERENCES:
 
-.. [1] La Jolla Covering Repository,
-  https://dmgordon.org/cover
+- [LJCR]_
 """
 from sage.misc.lazy_import import lazy_import
 

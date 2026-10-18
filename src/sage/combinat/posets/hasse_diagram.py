@@ -1580,11 +1580,7 @@ class HasseDiagram(DiGraph):
 
         REFERENCE:
 
-        .. [Gec81] Fundamentals of Computation Theory
-          Gecseg, F.
-          Proceedings of the 1981 International Fct-Conference
-          Szeged, Hungaria, August 24-28, vol 117
-          Springer-Verlag, 1981
+        - [Gec81]_
 
         TESTS::
 

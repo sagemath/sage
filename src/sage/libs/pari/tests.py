@@ -1,10 +1,10 @@
 r"""
 Tests for the Sage <-> PARI interface
 
-The default precision is 64 bits, see :issue:`21425`::
+The default precision is at least 64 bits, see :issue:`21425`::
 
-    sage: pari("bitprecision(Pi)")
-    64
+    sage: pari("bitprecision(Pi)") >= 64
+    True
 
 Sage-specific API checks:
 
@@ -130,18 +130,18 @@ Conversion from matrices and vectors is supported::
     ([1, 2, 3; 4, 5, 6], 't_MAT')
     sage: v = vector([1.2, 3.4, 5.6])                                                   # needs sage.modules
     sage: pari(v)                                                                       # needs sage.modules
-    [1.20000000000000, 3.40000000000000, 5.60000000000000]
+    [1.20000000000..., 3.40000000000..., 5.60000000000...]
 
 Some more exotic examples::
 
     sage: # needs sage.rings.number_field
     sage: K.<a> = NumberField(polygen(QQ)^3 - 2)
     sage: pari(K)
-    [y^3 - 2, [1, 1], -108, 1, [[1, 1.25992104989487, 1.58740105196820; 1, -0.629960524947437 + 1.09112363597172*I, -0.793700525984100 - 1.37472963699860*I], [1, 1.25992104989487, 1.58740105196820; 1, 0.461163111024285, -2.16843016298270; 1, -1.72108416091916, 0.581029111014503], [16, 20, 25; 16, 7, -35; 16, -28, 9], [3, 0, 0; 0, 0, 6; 0, 6, 0], [6, 0, 0; 0, 6, 0; 0, 0, 3], [2, 0, 0; 0, 0, 1; 0, 1, 0], [2, [0, 0, 2; 1, 0, 0; 0, 1, 0]], [2, 3]], [1.25992104989487, -0.629960524947437 + 1.09112363597172*I], [1, y, y^2], [1, 0, 0; 0, 1, 0; 0, 0, 1], [1, 0, 0, 0, 0, 2, 0, 2, 0; 0, 1, 0, 1, 0, 0, 0, 0, 2; 0, 0, 1, 0, 1, 0, 1, 0, 0]]
+    [y^3 - 2, [1, 1], -108, 1, [[1, 1.25992104989..., 1.58740105196...; 1, -0.629960524947... + 1.09112363597...*I, -0.793700525984... - 1.37472963699...*I], [1, 1.25992104989..., 1.58740105196...; 1, 0.461163111024..., -2.16843016298...; 1, -1.72108416091..., 0.581029111014...], [16, 20, 25; 16, 7, -35; 16, -28, 9], [3, 0, 0; 0, 0, 6; 0, 6, 0], [6, 0, 0; 0, 6, 0; 0, 0, 3], [2, 0, 0; 0, 0, 1; 0, 1, 0], [2, [0, 0, 2; 1, 0, 0; 0, 1, 0]], [2, 3]], [1.25992104989..., -0.629960524947... + 1.09112363597...*I], [1, y, y^2], [1, 0, 0; 0, 1, 0; 0, 0, 1], [1, 0, 0, 0, 0, 2, 0, 2, 0; 0, 1, 0, 1, 0, 0, 0, 0, 2; 0, 0, 1, 0, 1, 0, 1, 0, 0]]
 
     sage: E = EllipticCurve('37a1')                                                     # needs sage.schemes
     sage: pari(E)                                                                       # needs sage.schemes
-    [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+    [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([..., 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
 Deprecation checks::
 
@@ -158,7 +158,7 @@ Deprecation checks::
     101
     sage: x = pari('1.234')
     sage: x
-    1.23400000000000
+    1.23400000000...
     sage: x.sizedigit()
     1
     sage: pari('7234.1').sizedigit()
@@ -170,15 +170,15 @@ Deprecation checks::
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.elllseries(2.1)
     doctest:...: DeprecationWarning: the PARI/GP function elllseries is obsolete (2016-08-08)
-    0.402838047956645
+    0.402838047956...
     sage: e.elllseries(1, precision=128)
-    -6.17606670058278 E-39
+    -6.17606670058... E-39
     sage: e.elllseries(1, precision=256)
-    -2.05598131842639 E-77
+    -2.05598131842... E-77
     sage: e.elllseries(-2)
     0
     sage: e.elllseries(2.1, A=1.1)
-    0.402838047956645
+    0.402838047956...
 
 A long list of doctests which used to be part of manually written code
 which is now automatically generated:
@@ -200,11 +200,11 @@ Reading a gp file::
 Constants::
 
     sage: pari.euler()
-    0.577215664901533
+    0.577215664901...
     sage: pari.euler(precision=100).sage()
     0.577215664901532860606512090082...
     sage: pari.pi()
-    3.14159265358979
+    3.14159265358...
     sage: pari.pi(precision=100).sage()
     3.1415926535897932384626433832...
 
@@ -414,7 +414,7 @@ Basic functions::
     sage: pari((x^2+x+1)/x).ceil()
     x + 1
     sage: pari(x^2+5*x+2.5).ceil()
-    x^2 + 5*x + 2.50000000000000
+    x^2 + 5*x + 2.50000000000...
 
     sage: x = pari(-2).Mod(5)
     sage: x.centerlift()
@@ -469,9 +469,9 @@ Basic functions::
     PariError: incorrect type in gconj (t_POLMOD)
 
     sage: pari('Mod(1+x,x^2-2)').conjvec()
-    [-0.414213562373095, 2.41421356237310]~
+    [-0.414213562373..., 2.41421356237...]~
     sage: pari('Mod(x,x^3-3)').conjvec()
-    [1.44224957030741, -0.721124785153704 - 1.24902476648341*I, -0.721124785153704 + 1.24902476648341*I]~
+    [1.44224957030..., -0.721124785153... - 1.24902476648...*I, -0.721124785153... + 1.24902476648...*I]~
     sage: pari('Mod(1+x,x^2-2)').conjvec(precision=192)[0].sage()
     -0.414213562373095048801688724209698078569671875376948073177
 
@@ -504,7 +504,7 @@ Basic functions::
     sage: pari((x^2+x+1)/x).floor()
     x + 1
     sage: pari(x^2+5*x+2.5).floor()
-    x^2 + 5*x + 2.50000000000000
+    x^2 + 5*x + 2.50000000000...
 
     sage: pari('"hello world"').floor()
     Traceback (most recent call last):
@@ -512,9 +512,9 @@ Basic functions::
     PariError: incorrect type in gfloor (t_STR)
 
     sage: pari(1.75).frac()
-    0.750000000000000
+    0.750000000000...
     sage: pari(sqrt(2)).frac()                                                          # needs sage.symbolic
-    0.414213562373095
+    0.414213562373...
     sage: pari('sqrt(-2)').frac()
     Traceback (most recent call last):
     ...
@@ -523,7 +523,7 @@ Basic functions::
     sage: pari('1+2*I').imag()
     2
     sage: pari(sqrt(-2)).imag()                                                         # needs sage.symbolic
-    1.41421356237310
+    1.41421356237...
     sage: pari('x+I').imag()
     1
     sage: pari('x+2*I').imag()
@@ -575,7 +575,7 @@ Basic functions::
     sage: x.type()
     't_REAL'
     sage: x.simplify()
-    1.50000000000000
+    1.50000000000...
     sage: y = x.simplify()
     sage: y.type()
     't_REAL'
@@ -697,186 +697,186 @@ Transcendental functions::
 
     sage: x = pari("-27.1")
     sage: x.abs()
-    27.1000000000000
+    27.1000000000...
     sage: pari('1 + I').abs(precision=128).sage()
     1.4142135623730950488016887242096980786
     sage: pari('x-1.2*x^2').abs()
-    1.20000000000000*x^2 - x
+    1.20000000000...*x^2 - x
     sage: pari('-2 + t + O(t^2)').abs()
     2 - t + O(t^2)
 
     sage: pari(0.5).acos()
-    1.04719755119660
+    1.04719755119...
     sage: pari(1/2).acos()
-    1.04719755119660
+    1.04719755119...
     sage: pari(1.1).acos()
-    0.443568254385115*I
+    0.443568254385...*I
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1.1+i).acos()                                                            # needs sage.rings.real_mpfr
-    0.849343054245252 - 1.09770986682533*I
+    0.849343054245... - 1.09770986682...*I
 
     sage: pari(2).acosh()
-    1.31695789692482
+    1.31695789692...
     sage: pari(0).acosh()
-    1.57079632679490*I
+    1.57079632679...*I
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(i).acosh()                                                               # needs sage.rings.real_mpfr
-    0.881373587019543 + 1.57079632679490*I
+    0.881373587019... + 1.57079632679...*I
 
     sage: pari(2).agm(2)
-    2.00000000000000
+    2.00000000000...
     sage: pari(0).agm(1)
     0
     sage: pari(1).agm(2)
-    1.45679103104691
+    1.45679103104...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).agm(-3)                                                             # needs sage.rings.real_mpfr
-    -0.964731722290876 + 1.15700282952632*I
+    -0.964731722290... + 1.15700282952...*I
 
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(2+i).arg()                                                               # needs sage.rings.real_mpfr
-    0.463647609000806
+    0.463647609000...
 
     sage: pari(pari(0.5).sin()).asin()
-    0.500000000000000
+    0.500000000000...
     sage: pari(2).asin()
-    1.57079632679490 - 1.31695789692482*I
+    1.57079632679... - 1.31695789692...*I
 
     sage: pari(2).asinh()
-    1.44363547517881
+    1.44363547517...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(2+i).asinh()                                                             # needs sage.rings.real_mpfr
-    1.52857091948100 + 0.427078586392476*I
+    1.52857091948... + 0.427078586392...*I
 
     sage: pari(1).atan()
-    0.785398163397448
+    0.785398163397...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1.5+i).atan()                                                            # needs sage.rings.real_mpfr
-    1.10714871779409 + 0.255412811882995*I
+    1.10714871779... + 0.255412811882...*I
 
     sage: pari(0).atanh()
-    0.E-19
+    0.E-...
     sage: pari(2).atanh()
-    0.549306144334055 - 1.57079632679490*I
+    0.549306144334... - 1.57079632679...*I
 
     sage: pari(2).besselh1(3)
-    0.486091260585891 - 0.160400393484924*I
+    0.486091260585... - 0.160400393484...*I
     sage: pari(2).besselh2(3)
-    0.486091260585891 + 0.160400393484924*I
+    0.486091260585... + 0.160400393484...*I
     sage: pari(2).besselj(3)
-    0.486091260585891
+    0.486091260585...
     sage: pari(2).besseljh(3)
-    0.412710032209716
+    0.412710032209...
     sage: pari(2).besseli(3)
-    2.24521244092995
+    2.24521244092...
 
     sage: # needs sage.rings.real_mpfr
     sage: C.<i> = ComplexField()
     sage: pari(2).besseli(3+i)
-    1.12539407613913 + 2.08313822670661*I
+    1.12539407613... + 2.08313822670...*I
     sage: C.<i> = ComplexField()
     sage: pari(2+i).bessely(3)
-    -0.280775566958244 - 0.486708533223726*I
+    -0.280775566958... - 0.486708533223...*I
 
     sage: pari(1.5).cos()
-    0.0707372016677029
+    0.0707372016677...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).cos()                                                               # needs sage.rings.real_mpfr
-    0.833730025131149 - 0.988897705762865*I
+    0.833730025131... - 0.988897705762...*I
     sage: pari('x+O(x^8)').cos()
     1 - 1/2*x^2 + 1/24*x^4 - 1/720*x^6 + 1/40320*x^8 + O(x^9)
 
     sage: pari(1.5).cosh()
-    2.35240961524325
+    2.35240961524...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).cosh()                                                              # needs sage.rings.real_mpfr
-    0.833730025131149 + 0.988897705762865*I
+    0.833730025131... + 0.988897705762...*I
     sage: pari('x+O(x^8)').cosh()
     1 + 1/2*x^2 + 1/24*x^4 + 1/720*x^6 + ...O(...)
 
     sage: pari(5).cotan()
-    -0.295812915532746
+    -0.295812915532...
     sage: x = RR(pi)                                                                    # needs sage.symbolic
     sage: pari(x).cotan()  # random
     -8.17674825 E15
 
     sage: pari(1).dilog()
-    1.64493406684823
+    1.64493406684...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).dilog()                                                             # needs sage.rings.real_mpfr
-    0.616850275068085 + 1.46036211675312*I
+    0.616850275068... + 1.46036211675...*I
 
     sage: pari(1).erfc()
-    0.157299207050285
+    0.157299207050...
 
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(i).eta()                                                                 # needs sage.rings.real_mpfr
-    0.998129069925959
+    0.998129069925...
 
     sage: pari(0).exp()
-    1.00000000000000
+    1.00000000000...
     sage: pari(1).exp()
-    2.71828182845905
+    2.71828182845...
     sage: pari('x+O(x^8)').exp()
     1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + 1/5040*x^7 + O(x^8)
 
     sage: pari(2).gamma()
-    1.00000000000000
+    1.00000000000...
     sage: pari(5).gamma()
-    24.0000000000000
+    24.0000000000...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).gamma()                                                             # needs sage.rings.real_mpfr
-    0.498015668118356 - 0.154949828301811*I
+    0.498015668118... - 0.154949828301...*I
     sage: pari(-1).gamma()
     Traceback (most recent call last):
     ...
     PariError: domain error in gamma: argument = nonpositive integer
 
     sage: pari(2).gammah()
-    1.32934038817914
+    1.32934038817...
     sage: pari(5).gammah()
-    52.3427777845535
+    52.3427777845...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).gammah()                                                            # needs sage.rings.real_mpfr
-    0.575315188063452 + 0.0882106775440939*I
+    0.575315188063... + 0.0882106775440...*I
 
     sage: pari(1).hyperu(2,3)
-    0.333333333333333
+    0.333333333333...
 
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).incgam(3-i)                                                         # needs sage.rings.real_mpfr
-    -0.0458297859919946 + 0.0433696818726677*I
+    -0.0458297859919... + 0.0433696818726...*I
     sage: pari(1).incgamc(2)
-    0.864664716763387
+    0.864664716763...
 
     sage: pari(5).log()
-    1.60943791243410
+    1.60943791243...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(i).log()                                                                 # needs sage.rings.real_mpfr
-    0.E-19 + 1.57079632679490*I
+    0.E-19 + 1.57079632679...*I
 
     sage: pari(100).lngamma()
-    359.134205369575
+    359.134205369...
     sage: pari(100).log_gamma()
-    359.134205369575
+    359.134205369...
 
     sage: pari(1).psi()
-    -0.577215664901533
+    -0.577215664901...
 
     sage: pari(1).sin()
-    0.841470984807897
+    0.841470984807...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).sin()                                                               # needs sage.rings.real_mpfr
-    1.29845758141598 + 0.634963914784736*I
+    1.29845758141... + 0.634963914784...*I
 
     sage: pari(0).sinh()
-    0.E-19
+    0.E-...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(1+i).sinh()                                                              # needs sage.rings.real_mpfr
-    0.634963914784736 + 1.29845758141598*I
+    0.634963914784... + 1.29845758141...*I
 
     sage: pari(2).sqrt()
-    1.41421356237310
+    1.41421356237...
 
     sage: pari(8).sqrtint()
     2
@@ -884,47 +884,47 @@ Transcendental functions::
     100000000000000000000000000000000000000000000000000
 
     sage: pari(2).tan()
-    -2.18503986326152
+    -2.18503986326...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: pari(i).tan()                                                                 # needs sage.rings.real_mpfr
-    0.761594155955765*I
+    0.761594155955...*I
 
     sage: pari(1).tanh()
-    0.761594155955765
+    0.761594155955...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: z = pari(i); z                                                                # needs sage.rings.real_mpfr
-    1.00000000000000*I
+    1.00000000000...*I
     sage: result = z.tanh()
     sage: result.real() <= 1e-18
     True
     sage: result.imag()
-    1.55740772465490
+    1.55740772465...
 
     sage: pari('2+O(7^5)').teichmuller()
     2 + 4*7 + 6*7^2 + 3*7^3 + O(7^5)
 
     sage: pari(0.5).theta(2)
-    1.63202590295260
+    1.63202590295...
 
     sage: pari(0.5).thetanullk(1)
-    0.548978532560341
+    0.548978532560...
 
     sage: # needs sage.rings.real_mpfr
     sage: C.<i> = ComplexField()
     sage: pari(i).weber()
-    1.18920711500272
+    1.18920711500...
     sage: pari(i).weber(1)
-    1.09050773266526
+    1.09050773266...
     sage: pari(i).weber(2)
-    1.09050773266526
+    1.09050773266...
 
     sage: pari(2).zeta()
-    1.64493406684823
+    1.64493406684...
     sage: x = RR(pi)^2/6                                                                # needs sage.symbolic
     sage: pari(x)                                                                       # needs sage.symbolic
-    1.64493406684823
+    1.64493406684...
     sage: pari(3).zeta()
-    1.20205690315959
+    1.20205690315...
     sage: pari('1+5*7+2*7^2+O(7^3)').zeta()
     4*7^-2 + 5*7^-1 + O(7^0)
 
@@ -1213,25 +1213,25 @@ Finite fields::
 Elliptic curves::
 
     sage: e = pari([0,1,0,1,0]).ellinit(); e
-    [0, 1, 0, 1, 0, 4, 2, 0, -1, -32, 224, -48, 2048/3, Vecsmall([1]), [Vecsmall([64, -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+    [0, 1, 0, 1, 0, 4, 2, 0, -1, -32, 224, -48, 2048/3, Vecsmall([1]), [Vecsmall([..., -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
     sage: pari([0,1/2,0,-3/4,0]).ellinit()
-    [0, 1/2, 0, -3/4, 0, 2, -3/2, 0, -9/16, 40, -116, 117/4, 256000/117, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+    [0, 1/2, 0, -3/4, 0, 2, -3/2, 0, -9/16, 40, -116, 117/4, 256000/117, Vecsmall([1]), [Vecsmall([..., 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
     sage: pari([0,0.5,0,-0.75,0]).ellinit()
-    [0, 0.500000000000000, 0, -0.750000000000000, 0, 2.00000000000000, -1.50000000000000, 0, -0.562500000000000, 40.0000000000000, -116.000000000000, 29.2500000000000, 2188.03418803419, Vecsmall([0]), [Vecsmall([64, 1])], [0, 0, 0, 0]]
+    [0, 0.500000000000..., 0, -0.750000000000..., 0, 2.00000000000..., -1.50000000000..., 0, -0.562500000000..., 40.0000000000..., -116.000000000..., 29.2500000000..., 2188.03418803..., Vecsmall([0]), [Vecsmall([..., 1])], [0, 0, 0, 0]]
     sage: pari([0,SR(I),0,1,0]).ellinit()                                               # needs sage.symbolic
-    [0, I, 0, 1, 0, 4*I, 2, 0, -1, -64, 352*I, -80, 16384/5, Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
+    [0, I, 0, 1, 0, 4*I, 2, 0, -1, -64, 352*I, -80, 16384/5, Vecsmall([0]), [Vecsmall([..., 0])], [0, 0, 0, 0]]
     sage: x = SR.symbol('x')                                                            # needs sage.symbolic
     sage: pari([0,x,0,2*x,1]).ellinit()                                                 # needs sage.symbolic
-    [0, x, 0, 2*x, 1, 4*x, 4*x, 4, -4*x^2 + 4*x, 16*x^2 - 96*x, -64*x^3 + 576*x^2 - 864, 64*x^4 - 576*x^3 + 576*x^2 - 432, (256*x^6 - 4608*x^5 + 27648*x^4 - 55296*x^3)/(4*x^4 - 36*x^3 + 36*x^2 - 27), Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
+    [0, x, 0, 2*x, 1, 4*x, 4*x, 4, -4*x^2 + 4*x, 16*x^2 - 96*x, -64*x^3 + 576*x^2 - 864, 64*x^4 - 576*x^3 + 576*x^2 - 432, (256*x^6 - 4608*x^5 + 27648*x^4 - 55296*x^3)/(4*x^4 - 36*x^3 + 36*x^2 - 27), Vecsmall([0]), [Vecsmall([..., 0])], [0, 0, 0, 0]]
 
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.ellheight([1,0])
-    0.476711659343740
+    0.476711659343...
     sage: e.ellheight([1,0], precision=128).sage()
     0.476711659343739537379486058884653059459022942211150879336
     sage: e.ellheight([1, 0], [-1, 1])
-    0.418188984498861
+    0.418188984498...
 
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: x = pari([1,0])
@@ -1273,7 +1273,7 @@ Elliptic curves::
     sage: # needs sage.schemes
     sage: E = EllipticCurve('389a1')
     sage: pari(E).ellanalyticrank()                                                     # needs sage.rings.number_field
-    [2, 1.51863300057685]
+    [2, 1.51863300057...]
 
     sage: e = pari([0, -1, 1, -10, -20]).ellinit()
     sage: e.ellap(2)
@@ -1290,26 +1290,26 @@ Elliptic curves::
 
     sage: e = pari([0,0,0,-82,0]).ellinit()
     sage: e.elleta()
-    [3.60546360143265, 3.60546360143265*I]
+    [3.60546360143..., 3.60546360143...*I]
     sage: w1, w2 = e.omega()
     sage: eta1, eta2 = e.elleta()
     sage: w1*eta2 - w2*eta1
-    6.28318530717959*I
+    6.28318530717...*I
 
     sage: e = pari([0,1,1,-2,0]).ellinit().ellminimalmodel()[0]
     sage: e.ellheightmatrix([[1,0], [-1,1]])
-    [0.476711659343740, 0.418188984498861; 0.418188984498861, 0.686667083305587]
+    [0.476711659343..., 0.418188984498...; 0.418188984498..., 0.686667083305...]
 
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: om = e.omega()
     sage: om
-    [2.49021256085506, -1.97173770155165*I]
+    [2.49021256085..., -1.97173770155...*I]
     sage: om.elleisnum(2)
-    10.0672605281120
+    10.0672605281...
     sage: om.elleisnum(4)
-    112.000000000000
+    112.000000000...
     sage: om.elleisnum(100)
-    2.15314248576078 E50
+    2.15314248576... E50
 
     sage: # needs sage.schemes
     sage: e = pari([0,0,0,0,1]).ellinit()
@@ -1363,7 +1363,7 @@ Elliptic curves::
     sage: e.ellordinate(0)
     [0, -1]
     sage: e.ellordinate(SR(I))                                                          # needs sage.symbolic
-    [0.582203589721741 - 1.38606082464177*I, -1.58220358972174 + 1.38606082464177*I]
+    [0.582203589721... - 1.38606082464...*I, -1.58220358972... + 1.38606082464...*I]
     sage: e.ellordinate(SR(I), precision=128)[0].sage()                                 # needs sage.symbolic
     0.58220358972174117723338947874993600727 - 1.3860608246417697185311834209833653345*I
     sage: e.ellordinate(1+3*5^1+O(5^3))                                                 # needs sage.rings.padics
@@ -1373,11 +1373,11 @@ Elliptic curves::
     sage: e.ellordinate(5)
     []
     sage: e.ellordinate(5.0)
-    [11.3427192823270, -12.3427192823270]
+    [11.3427192823..., -12.3427192823...]
 
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: e.ellpointtoz([0,0])
-    1.85407467730137
+    1.85407467730...
     sage: e.ellpointtoz([0])
     0
 
@@ -1423,7 +1423,7 @@ Elliptic curves::
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: C.<i> = ComplexField()
     sage: e.ellsigma(2+i)
-    1.43490215804166 + 1.80307856719256*I
+    1.43490215804... + 1.80307856719...*I
 
     sage: e = pari([0, 1, 1, -2, 0]).ellinit()
     sage: e.ellsub([1,0], [-1,1])
@@ -1431,24 +1431,24 @@ Elliptic curves::
 
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: e.ellzeta(1)
-    1.06479841295883
+    1.06479841295...
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: e.ellzeta(i-1)                                                                # needs sage.rings.real_mpfr
-    -0.350122658523049 - 0.350122658523049*I
+    -0.350122658523... - 0.350122658523...*I
 
     sage: e = pari([0,0,0,1,0]).ellinit()
     sage: C.<i> = ComplexField()                                                        # needs sage.rings.real_mpfr
     sage: e.ellztopoint(1+i)                                                            # needs sage.rings.real_mpfr
-    [0.E-... - 1.02152286795670*I, -0.149072813701096 - 0.149072813701096*I]
+    [0.E-... - 1.02152286795...*I, -0.149072813701... - 0.149072813701...*I]
     sage: e.ellztopoint(0)
     [0]
 
     sage: pari(SR(I)).ellj()                                                            # needs sage.symbolic
-    1728.00000000000
+    1728.00000000...
     sage: pari(SR(3*I)).ellj()                                                          # needs sage.symbolic
-    153553679.396729
-    sage: pari('quadgen(-3)').ellj()
-    0.E-54
+    153553679.396...
+    sage: abs(pari('quadgen(-3)').ellj()) < 1e-50
+    True
     sage: pari('quadgen(-7)').ellj(precision=256).sage()
     -3375.000000000000000000000000000000000000000000000000000000000000000000000000
     sage: pari(SR(-I)).ellj()                                                           # needs sage.symbolic
@@ -1499,7 +1499,7 @@ Quadratic class numbers::
     sage: pari(-104).quadclassunit()
     [6, [6], [Qfb(5, -4, 6)], 1]
     sage: pari(109).quadclassunit()
-    [1, [], [], 5.56453508676047, -1]
+    [1, [], [], 5.56453508676..., -1]
     sage: pari(10001).quadclassunit() # random generators
     [16, [16], [Qfb(10, 99, -5, 0.E-38)], 5.29834236561059]
     sage: pari(10001).quadclassunit()[0]
@@ -1507,7 +1507,7 @@ Quadratic class numbers::
     sage: pari(10001).quadclassunit()[1]
     [16]
     sage: pari(10001).quadclassunit()[3]
-    5.29834236561059
+    5.29834236561...
     sage: pari(3).quadclassunit()
     Traceback (most recent call last):
     ...
@@ -1716,7 +1716,7 @@ General number fields::
     [[1, [7605, 4]~, [5610, 5]~, [7913, -6]~; 0, 1, 0, -1; 0, 0, 1, 0; 0, 0, 0, 1], [[19320, 13720; 0, 56], [2, 1; 0, 1], 1, 1]]
 
     sage: pari('x^3 - 17').nfinit()
-    [x^3 - 17, [1, 1], -867, 3, [[1, 1.68006914259990, 2.57128159065824; 1, -0.340034571299952 - 2.65083754153991*I, -1.28564079532912 + 2.22679517779329*I], [1, 1.68006914259990, 2.57128159065824; 1, -2.99087211283986, 0.941154382464174; 1, 2.31080297023995, -3.51243597312241], [16, 27, 41; 16, -48, 15; 16, 37, -56], [3, 1, 0; 1, -11, 17; 0, 17, 0], [51, 0, 16; 0, 17, 3; 0, 0, 1], [17, 0, -1; 0, 0, 3; -1, 3, 2], [51, [-17, 6, -1; 0, -18, 3; 1, 0, -16]], [3, 17]], [2.57128159065824, -1.28564079532912 + 2.22679517779329*I], [3, x^2 - x + 1, 3*x], [1, 0, -1; 0, 0, 3; 0, 1, 1], [1, 0, 0, 0, -4, 6, 0, 6, -1; 0, 1, 0, 1, 1, -1, 0, -1, 3; 0, 0, 1, 0, 2, 0, 1, 0, 1]]
+    [x^3 - 17, [1, 1], -867, 3, [[1, 1.68006914259..., 2.57128159065...; 1, -0.340034571299... - 2.65083754153...*I, -1.28564079532... + 2.22679517779...*I], [1, 1.68006914259..., 2.57128159065...; 1, -2.99087211283..., 0.941154382464...; 1, 2.31080297023..., -3.51243597312...], [16, 27, 41; 16, -48, 15; 16, 37, -56], [3, 1, 0; 1, -11, 17; 0, 17, 0], [51, 0, 16; 0, 17, 3; 0, 0, 1], [17, 0, -1; 0, 0, 3; -1, 3, 2], [51, [-17, 6, -1; 0, -18, 3; 1, 0, -16]], [3, 17]], [2.57128159065..., -1.28564079532... + 2.22679517779...*I], [3, x^2 - x + 1, 3*x], [1, 0, -1; 0, 0, 3; 0, 1, 1], [1, 0, 0, 0, -4, 6, 0, 6, -1; 0, 1, 0, 1, 1, -1, 0, -1, 3; 0, 0, 1, 0, 2, 0, 1, 0, 1]]
     sage: pari('x^2 + 10^100 + 1').nfinit()
     [...]
     sage: pari('1.0').nfinit()

@@ -65,7 +65,7 @@ def JohnsonGraph(n, k, immutable=False):
     Graph `K(n,2)`.  In particular the complement of `J(5,2)` is isomorphic to
     the Petersen graph.::
 
-        sage: g = graphs.JohnsonGraph(5,2)
+        sage: g = graphs.JohnsonGraph(5, 2)
         sage: g.complement().is_isomorphic(graphs.PetersenGraph())
         True
 
@@ -139,7 +139,7 @@ def KneserGraph(n, k, immutable=False, name=None):
 
     EXAMPLES::
 
-        sage: KG = graphs.KneserGraph(5,2)
+        sage: KG = graphs.KneserGraph(5, 2)
         sage: sorted(KG.vertex_iterator(), key=str)
         [{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5},
          {3, 4}, {3, 5}, {4, 5}]
@@ -149,11 +149,11 @@ def KneserGraph(n, k, immutable=False, name=None):
 
     TESTS::
 
-        sage: KG = graphs.KneserGraph(0,0)
+        sage: KG = graphs.KneserGraph(0, 0)
         Traceback (most recent call last):
         ...
         ValueError: Parameter n should be a strictly positive integer
-        sage: KG = graphs.KneserGraph(5,6)
+        sage: KG = graphs.KneserGraph(5, 6)
         Traceback (most recent call last):
         ...
         ValueError: Parameter k should be a strictly positive integer inferior to n
@@ -458,7 +458,7 @@ def EgawaGraph(p, s, immutable=False):
     graph with parameters (s, 4).  ::
 
         sage: g = graphs.EgawaGraph(0, 4)
-        sage: g.is_isomorphic(graphs.HammingGraph(4,4))
+        sage: g.is_isomorphic(graphs.HammingGraph(4, 4))
         True
     """
     from sage.graphs.generators.basic import CompleteGraph
@@ -725,7 +725,7 @@ def LollipopGraph(n1, n2, immutable=False):
 
     Construct and show a lollipop graph Candy = 13, Stick = 4::
 
-        sage: g = graphs.LollipopGraph(13,4); g
+        sage: g = graphs.LollipopGraph(13, 4); g
         Lollipop graph: Graph on 17 vertices
         sage: g.show()                          # long time                             # needs sage.plot
 
@@ -1090,7 +1090,7 @@ def chang_graphs(immutable=False):
         (28, 12, 6, 4)
         (28, 12, 6, 4)
         sage: from itertools import combinations
-        sage: for g1,g2 in combinations(four_srg,2):
+        sage: for g1, g2 in combinations(four_srg, 2):
         ....:     assert not g1.is_isomorphic(g2)
 
     Construct the Chang graphs by Seidel switching::
@@ -1098,7 +1098,7 @@ def chang_graphs(immutable=False):
         sage: c3c5 = graphs.CycleGraph(3).disjoint_union(graphs.CycleGraph(5))
         sage: c8 = graphs.CycleGraph(8)
         sage: s = [K8.subgraph_search(c8).edges(sort=False),                            # needs sage.modules
-        ....:      [(0,1,None),(2,3,None),(4,5,None),(6,7,None)],
+        ....:      [(0, 1, None), (2, 3, None), (4, 5, None), (6, 7, None)],
         ....:      K8.subgraph_search(c3c5).edges(sort=False)]
         sage: [T8.seidel_switching(x, inplace=False).is_isomorphic(G)                   # needs sage.modules
         ....:  for x, G in zip(s, chang_graphs)]
@@ -1153,7 +1153,7 @@ def CirculantGraph(n, adjacency, immutable=False, name=None):
         sage: import networkx
         sage: n = networkx.cycle_graph(23)
         sage: spring23 = Graph(n)
-        sage: posdict23 = graphs.CirculantGraph(23,2)
+        sage: posdict23 = graphs.CirculantGraph(23, 2)
         sage: spring23.show()                   # long time
         sage: posdict23.show()  # long time
 
@@ -1164,7 +1164,7 @@ def CirculantGraph(n, adjacency, immutable=False, name=None):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.CirculantGraph(i+4, i+1)
+        ....:     k = graphs.CirculantGraph(i + 4, i + 1)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -1180,7 +1180,7 @@ def CirculantGraph(n, adjacency, immutable=False, name=None):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     spr = networkx.cycle_graph(i+3)
+        ....:     spr = networkx.cycle_graph(i + 3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
         sage: for i in range(3):
@@ -1195,9 +1195,9 @@ def CirculantGraph(n, adjacency, immutable=False, name=None):
 
     ::
 
-        sage: graphs.CirculantGraph(6,1) == graphs.CycleGraph(6)
+        sage: graphs.CirculantGraph(6, 1) == graphs.CycleGraph(6)
         True
-        sage: graphs.CirculantGraph(7,[1,3]).edges(sort=True, labels=false)
+        sage: graphs.CirculantGraph(7, [1, 3]).edges(sort=True, labels=false)
         [(0, 1),
         (0, 3),
         (0, 4),
@@ -1267,7 +1267,7 @@ def CubeGraph(n, embedding=1, immutable=False):
     The distance between `0100110` and `1011010` is `5`, as expected::
 
         sage: g = graphs.CubeGraph(7)
-        sage: g.distance('0100110','1011010')
+        sage: g.distance('0100110', '1011010')
         5
 
     Plot several `n`-cubes in a Sage Graphics Array::
@@ -1285,16 +1285,16 @@ def CubeGraph(n, embedding=1, immutable=False):
         ....:  j.append(n)
         ...
         sage: G = graphics_array(j)
-        sage: G.show(figsize=[6,4])             # long time
+        sage: G.show(figsize=[6, 4])             # long time
 
     Use the plot options to display larger `n`-cubes::
 
         sage: g = graphs.CubeGraph(9, embedding=1)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g.show(figsize=[12, 12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g.show(figsize=[12, 12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=3)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g.show(figsize=[12, 12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
     TESTS::
 
@@ -1409,9 +1409,9 @@ def GoethalsSeidelGraph(k, r, immutable=False):
 
     EXAMPLES::
 
-        sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.combinat sage.modules
+        sage: graphs.GoethalsSeidelGraph(3, 3)                                          # needs sage.combinat sage.modules
         Graph on 28 vertices
-        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.combinat sage.modules
+        sage: graphs.GoethalsSeidelGraph(3, 3).is_strongly_regular(parameters=True)     # needs sage.combinat sage.modules
         (28, 15, 6, 10)
     """
     from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -1680,7 +1680,7 @@ def FuzzyBallGraph(partition, q, immutable=False):
 
     EXAMPLES::
 
-        sage: F = graphs.FuzzyBallGraph([3,1],2); F
+        sage: F = graphs.FuzzyBallGraph([3, 1], 2); F
         Fuzzy-Ball([3, 1], 2): Graph on 8 vertices
         sage: F.adjacency_matrix(vertices=list(F))                                      # needs sage.modules
         [0 0 1 1 1 0 0 0]
@@ -1698,7 +1698,7 @@ def FuzzyBallGraph(partition, q, immutable=False):
     Laplacian::
 
         sage: m = 4; q = 2; k = 2
-        sage: g_list = [graphs.FuzzyBallGraph(p,q)                                      # needs sage.combinat sage.modules
+        sage: g_list = [graphs.FuzzyBallGraph(p, q)                                     # needs sage.combinat sage.modules
         ....:           for p in Partitions(m, length=k)]
         sage: set(g.laplacian_matrix(normalized=True,   # long time (7s on sage.math, 2011), needs sage.combinat sage.modules
         ....:                        vertices=list(g)).charpoly()
@@ -1760,14 +1760,14 @@ def GeneralizedPetersenGraph(n, k, immutable=False, name=None):
     EXAMPLES: For `k=1` the resulting graph will be isomorphic to a circular
     ladder graph. ::
 
-        sage: g = graphs.GeneralizedPetersenGraph(13,1)
+        sage: g = graphs.GeneralizedPetersenGraph(13, 1)
         sage: g2 = graphs.CircularLadderGraph(13)
         sage: g.is_isomorphic(g2)
         True
 
     The Desargues graph::
 
-        sage: g = graphs.GeneralizedPetersenGraph(10,3)
+        sage: g = graphs.GeneralizedPetersenGraph(10, 3)
         sage: g.girth()
         6
         sage: g.is_bipartite()
@@ -1800,7 +1800,7 @@ def GeneralizedPetersenGraph(n, k, immutable=False, name=None):
     from itertools import chain
     E1 = ((i, (i + 1) % n) for i in range(n))
     E2 = ((i, i + n) for i in range(n))
-    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    E3 = ((i + n, n + (i + k) % n) for i in range(n))
     G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
               name=name, immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
@@ -1843,8 +1843,8 @@ def IGraph(n, j, k, immutable=False):
     When `j = 1` the resulting graph will be isomorphic to a generalized
     Petersen graph::
 
-        sage: g = graphs.IGraph(7,1,2)
-        sage: g2 = graphs.GeneralizedPetersenGraph(7,2)
+        sage: g = graphs.IGraph(7, 1, 2)
+        sage: g2 = graphs.GeneralizedPetersenGraph(7, 2)
         sage: g.is_isomorphic(g2)
         True
 
@@ -1889,7 +1889,7 @@ def IGraph(n, j, k, immutable=False):
     from itertools import chain
     E1 = ((i, (i + j) % n) for i in range(n))
     E2 = ((i, i + n) for i in range(n))
-    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    E3 = ((i + n, n + (i + k) % n) for i in range(n))
     G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
               name=f"I-graph (n={n}, j={j}, k={k})",
               immutable=immutable)
@@ -2209,7 +2209,7 @@ def HararyGraph(k, n, immutable=False):
 
     Harary graphs `H_{k,n}`::
 
-        sage: h = graphs.HararyGraph(5,9); h
+        sage: h = graphs.HararyGraph(5, 9); h
         Harary graph 5, 9: Graph on 9 vertices
         sage: h.order()
         9
@@ -2223,8 +2223,8 @@ def HararyGraph(k, n, immutable=False):
     Connectivity of some Harary graphs::
 
         sage: n = 10
-        sage: for k in range(2,n):                                                      # needs sage.numerical.mip
-        ....:     g = graphs.HararyGraph(k,n)
+        sage: for k in range(2, n):                                                      # needs sage.numerical.mip
+        ....:     g = graphs.HararyGraph(k, n)
         ....:     if k != g.vertex_connectivity():
         ....:        print("Connectivity of Harary graphs not satisfied.")
     """
@@ -2271,7 +2271,7 @@ def HyperStarGraph(n, k, immutable=False):
 
     EXAMPLES::
 
-        sage: g = graphs.HyperStarGraph(6,3)
+        sage: g = graphs.HyperStarGraph(6, 3)
         sage: sorted(g.neighbors('011100'))
         ['101100', '110100', '111000']
         sage: g.plot()                          # long time                             # needs sage.plot
@@ -2359,26 +2359,26 @@ def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
 
     EXAMPLES::
 
-        sage: G = graphs.LCFGraph(4, [2,-2], 2)
+        sage: G = graphs.LCFGraph(4, [2, -2], 2)
         sage: G.is_isomorphic(graphs.TetrahedralGraph())
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(20, [10,7,4,-4,-7,10,-4,7,-7,4], 2)
+        sage: G = graphs.LCFGraph(20, [10, 7, 4, -4, -7, 10, -4, 7, -7, 4], 2)
         sage: G.is_isomorphic(graphs.DodecahedralGraph())
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(14, [5,-5], 7)
+        sage: G = graphs.LCFGraph(14, [5, -5], 7)
         sage: G.is_isomorphic(graphs.HeawoodGraph())
         True
 
     The largest cubic nonplanar graph of diameter three::
 
-        sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,
-        ....:                          -10,-7,6,-5,7,-10,-7,5,-6,7], 1)
+        sage: G = graphs.LCFGraph(20, [-10, -7, -5, 4, 7, -10, -7, -4, 5, 7,
+        ....:                          -10, -7, 6, -5, 7, -10, -7, 5, -6, 7], 1)
         sage: G.degree()
         [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
         sage: G.diameter()
@@ -2402,9 +2402,9 @@ def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
 
     Check the behavior of parameter immutable::
 
-        sage: graphs.LCFGraph(4, [2,-2], 2, immutable=False).is_immutable()
+        sage: graphs.LCFGraph(4, [2, -2], 2, immutable=False).is_immutable()
         False
-        sage: graphs.LCFGraph(4, [2,-2], 2, immutable=True).is_immutable()
+        sage: graphs.LCFGraph(4, [2, -2], 2, immutable=True).is_immutable()
         True
 
     PLOTTING: LCF Graphs are plotted as an `n`-cycle with edges in the
@@ -3049,7 +3049,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True, immutable=False):
     Here we explicitly list a solution as a list of states. ::
 
         sage: H = graphs.HanoiTowerGraph(3, 3, labels=True, positions=True)
-        sage: H.shortest_path((0,0,0), (1,1,1))
+        sage: H.shortest_path((0, 0, 0), (1, 1, 1))
         [(0, 0, 0), (0, 0, 1), (0, 2, 1), (0, 2, 2), (1, 2, 2), (1, 2, 0), (1, 1, 0), (1, 1, 1)]
 
     Some facts about this graph with `p` pegs and `d` disks:
@@ -3711,7 +3711,7 @@ def WheelGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:  k = graphs.WheelGraph(i+3)
+        ....:  k = graphs.WheelGraph(i + 3)
         ....:  g.append(k)
         ...
         sage: for i in range(3):
@@ -3730,7 +3730,7 @@ def WheelGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:  spr = networkx.wheel_graph(i+3)
+        ....:  spr = networkx.wheel_graph(i + 3)
         ....:  k = Graph(spr)
         ....:  g.append(k)
         ...
@@ -3803,20 +3803,20 @@ def WindmillGraph(k, n, immutable=False):
 
         sage: n = 5
         sage: W = graphs.WindmillGraph(2, n)
-        sage: W.is_isomorphic( graphs.StarGraph(n) )
+        sage: W.is_isomorphic(graphs.StarGraph(n))
         True
 
     The Windmill graph `Wd(3, n)` is the Friendship graph `F_n`::
 
         sage: n = 5
         sage: W = graphs.WindmillGraph(3, n)
-        sage: W.is_isomorphic( graphs.FriendshipGraph(n) )
+        sage: W.is_isomorphic(graphs.FriendshipGraph(n))
         True
 
     The Windmill graph `Wd(3, 2)` is the Butterfly graph::
 
         sage: W = graphs.WindmillGraph(3, 2)
-        sage: W.is_isomorphic( graphs.ButterflyGraph() )
+        sage: W.is_isomorphic(graphs.ButterflyGraph())
         True
 
     The Windmill graph `Wd(k, n)` has chromatic number `k`::
@@ -4002,7 +4002,7 @@ def MathonPseudocyclicMergingGraph(M, t, immutable=False):
         AssertionError...
 
         sage: M = ES(3)
-        sage: M = [M[1],M[0],M[2],M[3]]
+        sage: M = [M[1], M[0], M[2], M[3]]
         sage: G = mer(M, 2)
         Traceback (most recent call last):
         ...
@@ -4079,9 +4079,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
         sage: subg = next(iter(it))
         sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())
         ....:      for z in subg]
-        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
-        ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
-        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff))
+        sage: ff = list(map(lambda y: (y[0] - 1, y[1] - 1),
+        ....:          Permutation(map(lambda x: 1 + r.index(x^-1), r)).cycle_tuples()[1:]))
+        sage: L = sum(i*(r[a] - r[b]) for i, (a, b) in zip(range(1, len(ff) + 1), ff))
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)
         sage: G3x3.is_strongly_regular(parameters=True)
@@ -4193,7 +4193,7 @@ def TuranGraph(n, r, immutable=False):
     The Turan graph is a complete multipartite graph::
 
         sage: g = graphs.TuranGraph(13, 4)
-        sage: k = graphs.CompleteMultipartiteGraph([3,3,3,4])
+        sage: k = graphs.CompleteMultipartiteGraph([3, 3, 3, 4])
         sage: g.is_isomorphic(k)
         True
 
@@ -4216,7 +4216,7 @@ def TuranGraph(n, r, immutable=False):
 
     TESTS::
 
-        sage: g = graphs.TuranGraph(3,6)
+        sage: g = graphs.TuranGraph(3, 6)
         Traceback (most recent call last):
         ...
         ValueError: input parameters must satisfy "1 < r < n"
@@ -4298,34 +4298,35 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
 
         sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
         (378, 116, 34, 36)
-        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,
-        ....:        (1,(1,2)):0, (0,(0,2)):0, (3,(0,3)):0, (3,(1,3)):1}
+        sage: phi = {(2, (0, 2)): 0, (1, (1, 3)): 1, (0, (0, 3)): 1,
+        ....:        (2, (1, 2)): 1, (1, (1, 2)): 0, (0, (0, 2)): 0,
+        ....:        (3, (0, 3)): 0, (3, (1, 3)): 1}
         sage: graphs.MuzychukS6Graph(2, 2, Phi=phi).is_strongly_regular(parameters=True)
         (16, 5, 0, 2)
 
     TESTS::
 
-        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(2, 2, Phi='random',Sigma='random').is_strongly_regular(parameters=True)            # needs sage.rings.finite_rings
         (16, 5, 0, 2)
-        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3, 3, Phi='random',Sigma='random').is_strongly_regular(parameters=True)            # needs sage.rings.finite_rings
         (378, 116, 34, 36)
-        sage: graphs.MuzychukS6Graph(3,2)
+        sage: graphs.MuzychukS6Graph(3, 2)
         Traceback (most recent call last):
         ...
         AssertionError: n must be even or d must be odd
-        sage: graphs.MuzychukS6Graph(6,2)
+        sage: graphs.MuzychukS6Graph(6, 2)
         Traceback (most recent call last):
         ...
         AssertionError: n must be a prime power
-        sage: graphs.MuzychukS6Graph(3,1)
+        sage: graphs.MuzychukS6Graph(3, 1)
         Traceback (most recent call last):
         ...
         AssertionError: d must be at least 2
-        sage: graphs.MuzychukS6Graph(3,3,Phi=42)                                        # needs sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3, 3, Phi=42)                                      # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         AssertionError: Phi must be a dictionary or 'random' or 'fixed'
-        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)                                      # needs sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3, 3, Sigma=42)                                    # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         ValueError: Sigma must be 'random' or 'fixed'
@@ -4535,7 +4536,7 @@ def CubeConnectedCycle(d, immutable=False):
 
         sage: d = 4
         sage: g = graphs.CubeConnectedCycle(d)
-        sage: g.diameter() == 2*d+d//2-2
+        sage: g.diameter() == 2*d + d//2 - 2
         True
 
     All vertices have degree `3` when `d > 1` ::
@@ -4635,12 +4636,12 @@ def StaircaseGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:    k = graphs.StaircaseGraph(i+3)
+        ....:    k = graphs.StaircaseGraph(i + 3)
         ....:    g.append(k)
         sage: for i in range(3):
         ....:    n = []
         ....:    for m in range(3):
-        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i + m), vertex_labels=False))
         ....:    j.append(n)
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
@@ -4746,12 +4747,12 @@ def BiwheelGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:    k = graphs.BiwheelGraph(i+4)
+        ....:    k = graphs.BiwheelGraph(i + 4)
         ....:    g.append(k)
         sage: for i in range(3):
         ....:    n = []
         ....:    for m in range(3):
-        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i + m), vertex_labels=False))
         ....:    j.append(n)
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
@@ -4842,12 +4843,12 @@ def TruncatedBiwheelGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:    k = graphs.TruncatedBiwheelGraph(i+3)
+        ....:    k = graphs.TruncatedBiwheelGraph(i + 3)
         ....:    g.append(k)
         sage: for i in range(3):
         ....:    n = []
         ....:    for m in range(3):
-        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i + m), vertex_labels=False))
         ....:    j.append(n)
         sage: G = graphics_array(j)
         sage: G.show()                          # long time

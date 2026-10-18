@@ -534,15 +534,9 @@ class KleberTree(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [Kleber1] Michael Kleber.
-       *Combinatorial structure of finite dimensional representations of
-       Yangians: the simply-laced case*.
-       Internat. Math. Res. Notices. (1997) no. 4. 187-201.
+    - [Kleber1]_
 
-    .. [Kleber2] Michael Kleber.
-       *Finite dimensional representations of quantum affine algebras*.
-       Ph.D. dissertation at University of California Berkeley. (1998).
-       :arxiv:`math.QA/9809087`.
+    - [Kleber2]_
 
     EXAMPLES:
 
@@ -1106,9 +1100,7 @@ class VirtualKleberTree(KleberTree):
 
     REFERENCES:
 
-    .. [OSS03] Masato Okado, Anne Schilling, and Mark Shimozono.
-       *Virtual crystals and Klebers algorithm*. Commun. Math. Phys. **238**
-       (2003). 187-209. :arxiv:`math.QA/0209082`.
+    - [OSS03]_
 
     INPUT:
 
