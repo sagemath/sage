@@ -39,6 +39,8 @@ are implemented using the PolyBoRi library (cf.
 
    sage/rings/polynomial/msolve
 
+   sage/rings/polynomial/multivariate_small_roots
+
    sage/rings/polynomial/polydict
    sage/rings/polynomial/hilbert
 
