@@ -1846,8 +1846,34 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: A = matrix([[2, -1]])
             sage: P.preimage(A).backend()
             'ppl'
+
+            sage: # Integral matrix can define rational vertices: ZZ base ring falls back to QQ
+            sage: P = polytopes.hypercube(1)
+            sage: Q = P.preimage(matrix(ZZ, [[2]]))
+            sage: Q.base_ring()
+            Rational Field
+            sage: sorted(Q.vertices_list())
+            [[-1/2], [1/2]]
+
+            sage: # Fractional scalar outside base_ring
+            sage: sorted(P.preimage(QQ(1) / 2, new_base_ring=QQ).vertices_list())
+            [[-2], [2]]
+
+            sage: # new_base_ring parameter with RDF
+            sage: P_ieq = Polyhedron(ieqs=[[0, 1]])
+            sage: P_ieq.preimage(matrix([[2, -1]]), new_base_ring=RDF).base_ring()
+            Real Double Field
+
+            sage: # Specifying new_base_ring with composite number field
+            sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
+            sage: L.<sqrt3> = QuadraticField(3)                                         # needs sage.rings.number_field
+            sage: P_nf = polytopes.cube() * sqrt2                                       # needs sage.rings.number_field
+            sage: M = matrix([[sqrt3, 0, 0], [0, sqrt3, 0], [0, 0, 1]])                # needs sage.rings.number_field
+            sage: Q_nf = P_nf.preimage(M, new_base_ring=K.composite_fields(L)[0])      # needs sage.rings.number_field
+            sage: Q_nf.ambient_dim()                                                    # needs sage.rings.number_field
+            3
         """
-        if linear_transf in self.base_ring():
+        if not isinstance(linear_transf, Matrix):
             linear_transf = linear_transf * self.ambient_vector_space().matrix()
 
         if linear_transf.nrows() != self.ambient_dim():
@@ -1869,20 +1895,34 @@ class Polyhedron_base5(Polyhedron_base4):
         if self.is_empty():
             return new_parent.element_class(new_parent, [[], [], []], None)
 
-        new_inequalities = (
-            [inequality.b()] + list(inequality.A() * linear_transf)
+        R = new_parent.base_ring()
+        linear_transf = linear_transf.change_ring(R)
+        new_inequalities = [
+            [R(inequality.b())]
+            + list(inequality.A().change_ring(R) * linear_transf)
             for inequality in self.inequalities()
-        )
-        new_equations = (
-            [equation.b()] + list(equation.A() * linear_transf)
+        ]
+        new_equations = [
+            [R(equation.b())]
+            + list(equation.A().change_ring(R) * linear_transf)
             for equation in self.equations()
-        )
+        ]
 
-        return new_parent.element_class(
-            new_parent,
-            None,
-            [new_inequalities, new_equations],
-        )
+        try:
+            return new_parent.element_class(
+                new_parent,
+                None,
+                [new_inequalities, new_equations],
+            )
+        except TypeError:
+            if new_base_ring is None and R is ZZ:
+                new_parent = new_parent.base_extend(QQ)
+                return new_parent.element_class(
+                    new_parent,
+                    None,
+                    [new_inequalities, new_equations],
+                )
+            raise
 
     def inverse_image(self, linear_transf, new_base_ring=None):
         r"""
