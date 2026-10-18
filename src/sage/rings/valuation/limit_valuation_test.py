@@ -253,3 +253,221 @@ def test_invalid_polynomial_is_rejected():
     gauss = GaussValuation(T, K.valuation())
     with pytest.raises(NotImplementedError, match="inexact rings"):
         LimitValuation(gauss, T.gen())
+
+
+@pytest.mark.parametrize('degree', [1, 2])
+@pytest.mark.parametrize('operation', ['reduce', 'upper_bound'])
+@pytest.mark.parametrize('denominator', [1, 2])
+def test_fresh_limit_operations_on_support(degree, operation, denominator):
+    from sage.rings.infinity import infinity
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    # Separate factory keys keep other operations from refining the object
+    # before the operation under test encounters its support.
+    R = PolynomialRing(QQ, f'support_{degree}_{operation}_{denominator}')
+    x = R.gen()
+    G = x - 1 if degree == 1 else x**2 + 1
+    approximant, = QQ.valuation(2).mac_lane_approximants(
+        G, require_incomparability=True)
+    limit = LimitValuation(approximant.augmentation(G, infinity), G)
+
+    result = getattr(limit, operation)(G / denominator)
+    assert result == (0 if operation == 'reduce' else infinity)
+
+
+@pytest.mark.parametrize('branch', [0, 1])
+@pytest.mark.parametrize('operation', ['reduce', 'upper_bound'])
+def test_support_operations_refine_unchecked_composite(branch, operation):
+    from sage.rings.infinity import infinity
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(QQ, f'composite_support_{branch}_{operation}')
+    x = R.gen()
+    support = x**2 + 7
+    G = x * support
+    approximants = QQ.valuation(2).mac_lane_approximants(
+        G, require_incomparability=True)
+    approximants = [a for a in approximants
+                   if not a.is_equivalence_unit(support)]
+    assert len(approximants) == 2
+    limit = LimitValuation(approximants[branch], G, check=False)
+
+    # This quadratic splits over QQ_2: no finite approximation can be
+    # augmented by assigning infinity to the whole support polynomial.
+    result = getattr(limit, operation)(support / 2**10)
+    assert result == (0 if operation == 'reduce' else infinity)
+    assert limit._G == support
+
+
+def test_residue_ring_reuses_checks_until_approximation_or_support_changes(monkeypatch):
+    from sage.rings.infinity import infinity
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(QQ, 'residue_cache')
+    x = R.gen()
+    support = x**2 + 7
+    G = x * support
+    approximant = next(a for a in QQ.valuation(2).mac_lane_approximants(
+        G, require_incomparability=True)
+        if not a.is_equivalence_unit(support))
+    limit = LimitValuation(approximant, G, check=False)
+
+    checks = []
+    approximation_class = type(approximant)
+    is_key = approximation_class.is_key
+
+    def record_key_check(self, polynomial, *args, **kwds):
+        checks.append((self, polynomial))
+        return is_key(self, polynomial, *args, **kwds)
+
+    monkeypatch.setattr(approximation_class, 'is_key', record_key_check)
+    residue = limit.residue_ring()
+    assert checks
+    count = len(checks)
+    for _ in range(3):
+        assert limit.residue_ring() is residue
+        assert limit.reduce(R.one()) == residue.one()
+        assert limit.lift(residue.one()) == R.one()
+    assert len(checks) == count
+
+    # Discovering the support can change G without changing the approximation.
+    assert limit(support) is infinity
+    assert limit._G == support
+    assert limit._approximation is approximant
+    checks.clear()
+    assert limit.residue_ring() is residue
+    assert (approximant, support) in checks
+
+    # A later Mac Lane step also invalidates the check for the old state.
+    limit._improve_approximation()
+    assert limit._approximation is not approximant
+    checks.clear()
+    assert limit.residue_ring() is residue
+    assert (limit._approximation, support) in checks
+    count = len(checks)
+    assert limit.residue_ring() is residue
+    assert len(checks) == count
+
+
+def test_nontrivial_residue_field_round_trip_after_refinement():
+    from sage.rings.infinity import infinity
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(QQ, 'residue_extension')
+    x = R.gen()
+    G = (x**2 + x + 1)**2 + 2
+    limit = LimitValuation(GaussValuation(R, QQ.valuation(2)), G)
+    residue = limit.residue_ring()
+    assert residue.cardinality() == 4
+    assert limit._approximation.mu() is not infinity
+    for element in residue:
+        assert limit.reduce(limit.lift(element)) == element
+
+    limit._improve_approximation()
+    assert limit._approximation.mu() is infinity
+    residue = limit.residue_ring()
+    assert residue.cardinality() == 4
+    for element in residue:
+        assert limit.reduce(limit.lift(element)) == element
+
+
+@pytest.mark.parametrize('final_approximation', [False, True])
+@pytest.mark.parametrize('operation', ['residue_ring', 'reduce_support',
+                                      'reduce_one', 'lift_one'])
+def test_unsupported_integer_residue_operations(final_approximation, operation):
+    from sage.rings.infinity import infinity
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(ZZ, f'integer_residue_{final_approximation}_{operation}')
+    x = R.gen()
+    G = x**2 + 1
+    approximation = GaussValuation(R, ZZ.valuation(2)).augmentation(x + 1, QQ(1)/2)
+    if final_approximation:
+        approximation = approximation.augmentation(G, infinity)
+    limit = LimitValuation(approximation, G, check=not final_approximation)
+    method, args = {
+        'residue_ring': (limit.residue_ring, ()),
+        'reduce_support': (limit.reduce, (G,)),
+        'reduce_one': (limit.reduce, (R.one(),)),
+        'lift_one': (limit.lift, (1,)),
+    }[operation]
+    with pytest.raises(NotImplementedError,
+                       match=r'residue polynomial|polynomial rings over fields'):
+        method(*args)
+
+
+def test_integer_residual_polynomial_requires_normalizer():
+    from sage.rings.infinity import infinity
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+
+    R = PolynomialRing(ZZ, 'integer_residual_polynomial')
+    x = R.gen()
+    approximation = GaussValuation(R, ZZ.valuation(2)).augmentation(x + 1, QQ(1)/2)
+    final_approximation = approximation.augmentation(x**2 + 1, infinity)
+    with pytest.raises(NotImplementedError, match='residue polynomial'):
+        final_approximation.psi()
+
+
+@pytest.mark.parametrize('degree', [1, 2])
+def test_supported_integer_residue_operations(degree):
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(ZZ, f'supported_integer_residue_{degree}')
+    x = R.gen()
+    G = x - 1 if degree == 1 else x**2 + x + 1
+    limit = LimitValuation(GaussValuation(R, ZZ.valuation(2)), G)
+    residue = limit.residue_ring()
+    assert residue.cardinality() == 2**degree
+    assert limit.reduce(G) == residue.zero()
+    for element in residue:
+        lifted = limit.lift(element)
+        assert lifted.parent() is R
+        assert limit.reduce(lifted) == element
+
+
+def test_rational_residue_operations_with_negative_normalizer():
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+    from sage.rings.valuation.limit_valuation import LimitValuation
+
+    R = PolynomialRing(QQ, 'rational_negative_normalizer')
+    x = R.gen()
+    G = x**2 + 1
+    approximation = GaussValuation(R, QQ.valuation(2)).augmentation(x + 1, QQ(1)/2)
+    limit = LimitValuation(approximation, G)
+    residue = limit.residue_ring()
+    assert residue.cardinality() == 2
+    assert limit.reduce(G) == residue.zero()
+    for element in residue:
+        assert limit.reduce(limit.lift(element)) == element
+
+
+def test_integer_equivalence_unit_rejects_negative_value():
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.valuation.gauss_valuation import GaussValuation
+
+    R = PolynomialRing(ZZ, 'integer_equivalence_unit')
+    gauss = GaussValuation(R, ZZ.valuation(2))
+    with pytest.raises(ValueError, match='Semigroup'):
+        gauss.equivalence_unit(-1)
