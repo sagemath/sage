@@ -75,7 +75,7 @@ class CoxeterGroups(Category_singleton):
 
     .. SEEALSO::
 
-        - :mod:`sage.combinat.root_system`
+        - :mod:`sage.combinat.root_system.root_system`
         - :class:`WeylGroups`
         - :class:`GeneralizedCoxeterGroups`
 
@@ -514,7 +514,8 @@ class CoxeterGroups(Category_singleton):
 
             .. rubric:: Background
 
-            The weak order is returned as a :class:`RecursivelyEnumeratedSet_forest`.
+            The weak order is returned as a
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
             This is achieved by assigning to each element `u1` of the
             ideal a single ancestor `u=u1 s_i`, where `i` is the
             smallest descent of `u`.
@@ -1755,7 +1756,7 @@ class CoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                :meth:`braid_orbit_iter`
+                :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.braid_orbit_iter`
 
             EXAMPLES::
 
@@ -1780,7 +1781,7 @@ class CoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                :meth:`braid_orbit`
+                :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.braid_orbit`
 
             EXAMPLES::
 

@@ -9,10 +9,14 @@ AUTHORS:
 
 - Robert Bradshaw (2007-11): convert to Cython
 
-- Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
-  :meth:`_gap_` (compatibility to libgap framework, see :issue:`26750`)
+- Sebastian Oehms (2018-11): Added
+  :meth:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement.gap`
+  as synonym to ``_gap_``
+  (compatibility to libgap framework, see :issue:`26750`)
 
-- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:issue:`27234`)
+- Sebastian Oehms (2019-02): Implemented
+  :meth:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement.gap`
+  properly (:issue:`27234`)
 
 There are several ways to define a permutation group element:
 
@@ -1090,8 +1094,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             j = i
             if 1 <= j <= self.n:
                 return from_gap[self.perm[j-1]+1]
-            else:
-                return from_gap[i]
+            return from_gap[i]
 
     cpdef list _act_on_list_on_position(self, list x):
         r"""
@@ -1621,7 +1624,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: s.multiplicative_order()
             6
 
-        :meth:`order` is just an alias for :meth:`multiplicative_order`::
+        ``order`` is just an alias for
+        :meth:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement.multiplicative_order`::
 
             sage: s.order()
             6
@@ -2109,8 +2113,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         if as_list:
             return l5
-        else:
-            return l1, l2
+        return l1, l2
 
 
 cdef class SymmetricGroupElement(PermutationGroupElement):
@@ -2127,7 +2130,7 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
 
         .. SEEALSO::
 
-            :meth:`absolute_le`
+            :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.absolute_le`
 
         EXAMPLES::
 

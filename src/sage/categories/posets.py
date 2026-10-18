@@ -82,7 +82,9 @@ class Posets(Category):
         sage: y >= x
         True
 
-    .. SEEALSO:: :func:`Poset`, :class:`FinitePosets`, :class:`LatticePosets`
+    .. SEEALSO:: :func:`~sage.combinat.posets.posets.Poset`,
+        :class:`~sage.categories.finite_posets.FinitePosets`,
+        :class:`~sage.categories.lattice_posets.LatticePosets`
 
     TESTS::
 

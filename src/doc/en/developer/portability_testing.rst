@@ -1251,12 +1251,12 @@ are available:
   system packages installed, no source tree,
 
 * ``-configured`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-  the run of the ``configure`` script,
+  (:envvar:`SAGE_ROOT <installation:SAGE_ROOT>`) and has completed the
+  bootstrapping phase and the run of the ``configure`` script,
 
 * ``-with-targets-pre`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and a full installation
-  of all non-Python packages (:envvar:`SAGE_LOCAL`),
+  (:envvar:`SAGE_ROOT <installation:SAGE_ROOT>`) and a full installation
+  of all non-Python packages (:envvar:`SAGE_LOCAL <installation:SAGE_LOCAL>`),
 
 * ``-with-targets`` contains the full source tree and a full
   installation of Sage, including the HTML documentation, but ``make
@@ -1319,7 +1319,8 @@ you can see what it does:
 
 - Then, as part of the "updateContentCommand", it bootstraps and
   configures the source tree and starts to build Sage from source,
-  reusing the installation (:envvar:`SAGE_LOCAL`, :envvar:`SAGE_VENV`)
+  reusing the installation (:envvar:`SAGE_LOCAL <installation:SAGE_LOCAL>`,
+  :envvar:`SAGE_VENV <installation:SAGE_VENV>`)
   from the prebuilt image.
 
 After VS Code finished configuring the dev container (when the message "Done.

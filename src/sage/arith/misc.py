@@ -6,6 +6,8 @@ AUTHORS:
 - Kevin Stueve (2010-01-17): in ``is_prime(n)``, delegated calculation to ``n.is_prime()``
 """
 
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -17,22 +19,22 @@ AUTHORS:
 # ****************************************************************************
 import math
 from collections.abc import Iterable, Iterator
+from collections.abc import Sequence as AbcSequence
+from typing import Any, Literal, overload
 
 from sage.misc.misc_c import prod
-
-from sage.structure.element import parent
-from sage.structure.coerce import py_scalar_to_element
-from sage.structure.sequence import Sequence
-
-from sage.rings.integer import Integer, GCD_list
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.rings.rational_field import QQ
-from sage.rings.abc import RealField, ComplexField
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.element import parent
 
-from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.arith.functions import LCM_list
-
+from sage.rings.abc import ComplexField, RealField
+from sage.rings.fast_arith import arith_int, arith_llong, prime_range
+from sage.rings.integer import GCD_list, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 ##################################################################
 # Elementary Arithmetic
@@ -569,7 +571,7 @@ def is_prime(n) -> bool:
     return ret
 
 
-def is_pseudoprime(n):
+def is_pseudoprime(n) -> bool:
     r"""
     Test whether ``n`` is a pseudo-prime.
 
@@ -1014,20 +1016,26 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start=2, stop=None, proof=None):
+def primes(start=2, stop=None, step=None, *, proof=None) -> Iterator[Integer]:
     r"""
-    Return an iterator over all primes between ``start`` and ``stop-1``,
-    inclusive. This is much slower than :func:`prime_range`, but
-    potentially uses less memory.  As with :func:`next_prime`, the optional
-    argument ``proof`` controls whether the numbers returned are
-    guaranteed to be prime or not.
+    Return an iterator over all primes between ``start`` and ``stop - 1``,
+    inclusive (or between ``stop`` and ``start + 1`` if ``step`` is negative).
+    This is much slower than :func:`prime_range`, but potentially uses less
+    memory. As with :func:`next_prime`, the optional argument ``proof`` controls
+    whether the numbers returned are guaranteed to be prime or not.
 
     This command is like the Python 3 :func:`range` command, except it only
-    iterates over primes. In some cases it is better to use :func:`primes` than
-    :func:`prime_range`, because :func:`primes` does not build a list of all
-    primes in the range in memory all at once. However, it is potentially much
-    slower since it simply calls the :func:`next_prime` function repeatedly, and
-    :func:`next_prime` is slow.
+    iterates over primes and returns them as Sage integers.
+
+    .. SEEALSO::
+
+        - :func:`~sage.rings.fast_arith.prime_range` is an alternative that
+          uses more memory (but may be faster), because it returns a list of
+          primes all at once rather than yielding one prime at at time as an
+          iterator using :func:`next_prime`, which is slow.
+
+        - :class:`~sage.sets.primes.Primes` can be used to create sets of primes
+          with more complicated congruence conditions.
 
     INPUT:
 
@@ -1035,6 +1043,11 @@ def primes(start=2, stop=None, proof=None):
 
     - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
+
+    - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
+      the function yields only primes that are congruent to ``start`` modulo
+      ``step``. If ``step`` is negative, then the function will yield a
+      decreasing sequence of primes.
 
     - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
@@ -1053,6 +1066,8 @@ def primes(start=2, stop=None, proof=None):
         7
         sage: list(primes(13))
         [2, 3, 5, 7, 11]
+        sage: list(primes(11, 100, 10))
+        [11, 31, 41, 61, 71]
         sage: list(primes(10000000000, 10000000100))
         [10000000019, 10000000033, 10000000061, 10000000069, 10000000097]
         sage: max(primes(10^100, 10^100+10^4, proof=False))
@@ -1060,6 +1075,15 @@ def primes(start=2, stop=None, proof=None):
         sage: next(p for p in primes(10^20, infinity) if is_prime(2*p+1))
         100000000000000001243
 
+    We can count down:
+
+        sage: # needs sage.libs.pari
+        sage: list(primes(40, 1, -1))
+        [37, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3, 2]
+        sage: list(primes(101, 1, -4))
+        [101, 97, 89, 73, 61, 53, 41, 37, 29, 17, 13, 5]
+        sage: list(primes(50, 1, -5))
+        [5]
 
     TESTS::
 
@@ -1076,7 +1100,7 @@ def primes(start=2, stop=None, proof=None):
         13
         17
         19
-        sage: next(p for p in primes(10,oo)) # checks alternate infinity notation
+        sage: next(p for p in primes(10, oo)) # checks alternate infinity notation
         11
         sage: from numpy import int8                                                    # needs numpy
         sage: list(primes(int8(13)))                                                    # needs numpy
@@ -1084,7 +1108,38 @@ def primes(start=2, stop=None, proof=None):
         sage: from gmpy2 import mpz
         sage: list(primes(mpz(13)))
         [2, 3, 5, 7, 11]
+        sage: list(primes(2, 3, 100))
+        [2]
+        sage: list(primes(10, 20, -1))
+        []
+        sage: list(primes(20, 10, 1))
+        []
+
+    Make sure that step behaves exactly like in range::
+
+        sage: # needs sage.libs.pari
+        sage: a = randint(1, 50)
+        sage: b = randint(70, 100)
+        sage: step = randint(1, 5)
+        sage: list(primes(a, b, step)) == list(filter(is_prime, range(a, b, step)))
+        True
+        sage: a = randint(50, 100)
+        sage: b = randint(0, 30)
+        sage: step = randint(-5, -1)
+        sage: list(primes(a, b, step)) == list(filter(is_prime, range(a, b, step)))
+        True
     """
+
+    if isinstance(step, bool):
+        # For backwards compatibility - `proof` used to be the third parameter.
+        # We make sure that previous code still works by treating `step` as
+        # `proof` if `step` is a boolean and `proof` is None.
+
+        if proof is not None:
+            raise TypeError('step must be an integer or None')
+        proof = step
+        step = None
+
     from sage.rings.infinity import infinity
 
     start = ZZ(start)
@@ -1093,13 +1148,53 @@ def primes(start=2, stop=None, proof=None):
         start = ZZ(2)
     elif stop != infinity:
         stop = ZZ(stop)
-    n = start - 1
-    while True:
-        n = n.next_prime(proof)
-        if n < stop:
-            yield n
-        else:
-            return
+
+    if step is not None:
+        if not isinstance(step, (Integer, int)):
+            raise TypeError('step must be an integer or None')
+
+        step = Integer(step)
+        if step == 0:
+            raise ValueError('step must not be zero')
+    else:
+        step = 1
+
+    if step > 0:
+        def next_prime(n):
+            return n.next_prime(proof=proof)
+        def continue_condition(n):
+            return n < stop
+        n = start - 1
+    else:
+        def next_prime(n):
+            return n.previous_prime(proof=proof)
+        def continue_condition(n):
+            return n > stop
+        n = start + 1
+
+    if step == 1:
+        while True:
+            n = next_prime(n)
+            if continue_condition(n):
+                yield n
+            else:
+                return
+    else:
+        congruence = start % step
+        while True:
+            try:
+                n = next_prime(n)
+            except ValueError:
+                # If we are counting down we may try to call previous_prime on
+                # a number that has no previous prime. In this case, we stop.
+                assert step < 0
+                return
+
+            if continue_condition(n):
+                if n % step == congruence:
+                    yield n
+            else:
+                return
 
 
 def next_prime_power(n):
@@ -1194,7 +1289,7 @@ def next_probable_prime(n):
     return ZZ(n).next_probable_prime()
 
 
-def next_prime(n, proof=None):
+def next_prime(n, proof=None) -> Integer:
     """
     The next prime greater than the integer `n`. If `n` is prime, then this
     function does not return `n`, but the next prime after `n`. If the
@@ -1243,7 +1338,7 @@ def next_prime(n, proof=None):
     return ZZ(n).next_prime(proof)
 
 
-def previous_prime(n):
+def previous_prime(n) -> Integer:
     """
     The largest prime < n. The result is provably correct. If n <= 1,
     this function raises a :exc:`ValueError`.
@@ -1370,7 +1465,7 @@ def previous_prime_power(n):
     return ZZ(n).previous_prime_power()
 
 
-def random_prime(n, proof=None, lbound=2):
+def random_prime(n, proof=None, lbound=2) -> Integer:
     r"""
     Return a random prime `p` between ``lbound`` and `n`.
 
@@ -1635,7 +1730,7 @@ class Sigma:
         sage: sigma(mpz(100), mpz(4))
         106811523
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A description of this class, which computes the sum of the
         `k`-th powers of the divisors of `n`.
@@ -1648,7 +1743,7 @@ class Sigma:
         """
         return "Function that adds up (k-th powers of) the divisors of n"
 
-    def __call__(self, n, k=1):
+    def __call__(self, n, k=1) -> Integer:
         """
         Compute the sum of (the `k`-th powers of) the divisors of `n`.
 
@@ -1932,6 +2027,12 @@ def xlcm(m, n):
     return (l, m, n)
 
 
+@overload
+def xgcd(a: int | Integer, b: int | Integer | None = ...) -> tuple[Integer, Integer, Integer]: ...
+
+@overload
+def xgcd(a, b=...) -> tuple[Any, Any, Any]: ...
+
 def xgcd(a, b=None):
     r"""
     Return the greatest common divisor and the Bézout coefficients of the input arguments.
@@ -2149,11 +2250,11 @@ def xkcd(n=""):
     """
     import contextlib
     import json
-    from sage.misc.html import html
     from ssl import create_default_context as default_context
-
-    from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
+
+    from sage.misc.html import html
 
     data = None
     if not n:
@@ -2187,6 +2288,12 @@ def xkcd(n=""):
     # it is produced by sage, see http://xkcd.com/1024/
     return html('<script> alert("Error: -41"); </script>')
 
+
+@overload
+def inverse_mod(a: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def inverse_mod(a, m) -> Any: ...
 
 def inverse_mod(a, m):
     """
@@ -2275,6 +2382,15 @@ def get_inverse_mod(order):
 #         raise "inverse_mod(a=%s,m=%s), error since GCD=%s"%(a,m,g)
 #     return s
 
+
+@overload
+def power_mod(a: int, n: int, m: int) -> int: ...
+
+@overload
+def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def power_mod(a, n, m) -> Any: ...
 
 def power_mod(a, n, m):
     """
@@ -2551,7 +2667,7 @@ def trial_division(n, bound=None):
     return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds) -> Factorization:
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2793,7 +2909,7 @@ def radical(n, *args, **kwds):
     return m(*args, **kwds)
 
 
-def prime_divisors(n):
+def prime_divisors(n) -> list:
     """
     Return the list of prime divisors (up to units) of this element
     of a unique factorization domain.
@@ -2918,6 +3034,15 @@ def prime_to_m_part(n, m):
     """
     return ZZ(n).prime_to_m_part(m)
 
+
+@overload
+def is_square(n: int | Integer, root: Literal[False] = ...) -> bool: ...
+
+@overload
+def is_square(n: int | Integer, *, root: Literal[True]) -> tuple[bool, Integer]: ...
+
+@overload
+def is_square(n, root: bool = ...) -> bool | tuple[bool, Any]: ...
 
 def is_square(n, root=False):
     """
@@ -3070,6 +3195,10 @@ class Euler_Phi:
     relatively prime to `n`. Thus if `n \leq 0` then
     ``euler_phi(n)`` is defined and equals 0.
 
+    .. SEEALSO::
+
+        :meth:`sage.rings.integer.Integer.euler_phi`
+
     INPUT:
 
     - ``n`` -- integer
@@ -3078,14 +3207,8 @@ class Euler_Phi:
 
         sage: euler_phi(1)
         1
-        sage: euler_phi(2)
-        1
         sage: euler_phi(3)                                                              # needs sage.libs.pari
         2
-        sage: euler_phi(12)                                                             # needs sage.libs.pari
-        4
-        sage: euler_phi(37)                                                             # needs sage.libs.pari
-        36
 
     Notice that ``euler_phi`` is defined to be 0 on negative numbers and 0::
 
@@ -3128,7 +3251,7 @@ class Euler_Phi:
 
     - Alex Clemesha (2006-01-10): some examples
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string describing this class.
 
@@ -3140,7 +3263,7 @@ class Euler_Phi:
         """
         return "Number of positive integers <=n but relatively prime to n"
 
-    def __call__(self, n):
+    def __call__(self, n) -> Integer:
         """
         Call the ``euler_phi`` function.
 
@@ -3152,12 +3275,7 @@ class Euler_Phi:
             sage: Euler_Phi()(720)                                                      # needs sage.libs.pari
             192
         """
-        if n <= 0:
-            return ZZ.zero()
-        if n <= 2:
-            return ZZ.one()
-        from sage.libs.pari import pari
-        return ZZ(pari(n).eulerphi())
+        return ZZ(n).euler_phi()
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0, 0, 1),
              join=True, **kwds):
@@ -3344,6 +3462,12 @@ def carmichael_lambda(n):
     return LCM_list(t)
 
 
+@overload
+def crt(a: int | Integer, b: int | Integer, m: int | Integer, n: int | Integer) -> Integer: ...
+
+@overload
+def crt(a, b, m=None, n=None) -> Any: ...
+
 def crt(a, b, m=None, n=None):
     r"""
     Return a solution to a Chinese Remainder Theorem problem.
@@ -3489,6 +3613,12 @@ def crt(a, b, m=None, n=None):
 
 CRT = crt
 
+
+@overload
+def CRT_list(values: AbcSequence[int] | AbcSequence[Integer], moduli: AbcSequence[int] | AbcSequence[Integer] | None = ...) -> Integer | int: ...
+
+@overload
+def CRT_list(values, moduli=None) -> Any: ...
 
 def CRT_list(values, moduli=None):
     r"""
@@ -3976,8 +4106,8 @@ def binomial(x, m, **kwds):
         2
 
     For symbolic manipulation, you should use the function
-    :func:`~sage.functions.other.binomial` from the module
-    :mod:`sage.functions.other`::
+    :class:`binomial <sage.functions.other.Function_binomial>` from the
+    module :mod:`sage.functions.other`::
 
         sage: from sage.functions.other import binomial
         sage: binomial(k, i)                                                            # needs sage.symbolic
@@ -4259,7 +4389,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x, y):
+def kronecker_symbol(x, y) -> Integer:
     """
     The Kronecker symbol `(x|y)`.
 
@@ -4307,7 +4437,7 @@ def kronecker_symbol(x, y):
 kronecker = kronecker_symbol
 
 
-def legendre_symbol(x, p):
+def legendre_symbol(x, p) -> int:
     r"""
     The Legendre symbol `(x|p)`, for `p` prime.
 
@@ -4359,7 +4489,7 @@ def legendre_symbol(x, p):
     return x.kronecker(p)
 
 
-def jacobi_symbol(a, b):
+def jacobi_symbol(a, b) -> Integer:
     r"""
     The Jacobi symbol of integers `a` and `b`, where `b` is odd.
 
@@ -4410,7 +4540,7 @@ def jacobi_symbol(a, b):
     return kronecker_symbol(a, b)
 
 
-def primitive_root(n, check=True):
+def primitive_root(n, check=True) -> Integer:
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a
@@ -4665,7 +4795,7 @@ class Moebius:
         sage: moebius(mpz(-5))                                                          # needs sage.libs.pari
         -1
     """
-    def __call__(self, n):
+    def __call__(self, n) -> Integer:
         """
         EXAMPLES::
 
@@ -4675,23 +4805,20 @@ class Moebius:
         """
         n = py_scalar_to_element(n)
 
-        if not isinstance(n, Integer):
-            # Use a generic algorithm.
-            if n < 0:
-                n = -n
-            F = factor(n)
-            for _, e in F:
-                if e >= 2:
-                    return 0
-            return (-1)**len(F)
+        if isinstance(n, Integer):
+            # Use fast PARI algorithm
+            return n.moebius()
 
-        # Use fast PARI algorithm
-        if n == 0:
-            return ZZ.zero()
-        from sage.libs.pari import pari
-        return ZZ(pari(n).moebius())
+        # Fallback to a generic algorithm.
+        if n < 0:
+            n = -n
+        F = factor(n)
+        for _, e in F:
+            if e >= 2:
+                return ZZ.zero()
+        return ZZ((-1)**len(F))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a description of this function.
 
@@ -4874,9 +5001,15 @@ def continuant(v, n=None):
     return b
 
 
-def number_of_divisors(n):
+def number_of_divisors(n) -> Integer:
     r"""
     Return the number of divisors of the integer `n`.
+
+    This function just converts the input to an :class:`~sage.rings.integer.Integer`
+    and calls the :meth:`~sage.rings.integer.Integer.number_of_divisors` method
+    on it. If you already have an :class:`~sage.rings.integer.Integer`, it is
+    easier (and slightly faster) to call the
+    :meth:`~sage.rings.integer.Integer.number_of_divisors` method directly.
 
     INPUT:
 
@@ -4884,14 +5017,9 @@ def number_of_divisors(n):
 
     OUTPUT: integer; the number of divisors of `n`
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: number_of_divisors(100)                                                   # needs sage.libs.pari
-        9
-        sage: number_of_divisors(-720)                                                  # needs sage.libs.pari
-        30
-
-    Tests with numpy and gmpy2 numbers::
+    Tests with numpy, gmpy2, and Python numbers::
 
         sage: from numpy import int8                                                    # needs numpy
         sage: number_of_divisors(int8(100))                                             # needs numpy sage.libs.pari
@@ -4899,12 +5027,11 @@ def number_of_divisors(n):
         sage: from gmpy2 import mpz
         sage: number_of_divisors(mpz(100))                                              # needs sage.libs.pari
         9
+        sage: number_of_divisors(100r)                                                  # needs sage.libs.pari
+        9
     """
-    m = ZZ(n)
-    if m.is_zero():
-        raise ValueError("input must be nonzero")
-    from sage.libs.pari import pari
-    return ZZ(pari(m).numdiv())
+
+    return ZZ(n).number_of_divisors()
 
 
 def hilbert_symbol(a, b, p, algorithm='pari'):

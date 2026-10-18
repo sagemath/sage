@@ -123,6 +123,7 @@ from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 from sage.rings import integer_ring
 import sage.rings.integer
+from sage.rings.integer import Integer
 from sage.structure.element import parent
 
 #
@@ -507,7 +508,7 @@ class multiples:
         return self
 
 
-def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
+def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None) -> Integer:
     r"""
     Totally generic discrete baby-step giant-step function.
 
@@ -604,10 +605,22 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         sage: b = Mod(2,37);  a = b^20
         sage: bsgs(b, a, (0r, 36r))
         20
+
+    BSGS works with immutable matrices whose products may be mutable
+    (:issue:`42378`)::
+
+        sage: # needs sage.rings.finite_rings
+        sage: m = Matrix(GF(101), [[1, 1], [1, 2]])
+        sage: n = m^17
+        sage: m.set_immutable()
+        sage: n.set_immutable()
+        sage: bsgs(m, n, (0, 50))
+        17
     """
     Z = integer_ring.ZZ
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
+    mut = hasattr(a, 'set_immutable')
 
     lb, ub = bounds
     lb = Z(lb)
@@ -641,12 +654,16 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         i = lb + i0
         if identity == d:        # identity == b^(-1)*a^i, so return i
             return Z(i)
+        if mut:
+            d.set_immutable()
         table[d] = i
         d = op(d, a)
 
     c = op(c, inverse(d))     # this is now a**(-m)
     d = identity
     for i in xsrange(m):
+        if mut:
+            d.set_immutable()
         j = table.get(d)
         if j is not None:  # then d == b*a**(-i*m) == a**j
             return Z(i * m + j)
@@ -655,7 +672,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
-def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
+def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash) -> Integer:
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
     group of prime order.
@@ -827,8 +844,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``a`` -- group element
     - ``base`` -- group element (the base)
     - ``ord`` -- integer (multiple of order of base, ``None``, or
-      :mod:`oo <sage.rings.infinity>``); if this is
-      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      :data:`oo <sage.rings.infinity.infinity>`);
+      if this is :data:`oo <sage.rings.infinity.infinity>`, then it explicitly does
       not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other

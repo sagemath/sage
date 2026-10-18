@@ -85,7 +85,7 @@ cdef inline int ccmp(mpz_t a, mpz_t b, long prec, bint reduce_a, bint reduce_b, 
         ans = mpz_cmp(a,b)
         if ans > 0:
             return 1
-        elif ans < 0:
+        if ans < 0:
             return -1
         return 0
 

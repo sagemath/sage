@@ -52,7 +52,7 @@ class Schemes(Category):
 
         Make ``Schemes()`` a singleton category (and remove
         :class:`Schemes` from the workaround in
-        :meth:`.category_types.Category_over_base._test_category_over_bases`).
+        :meth:`~sage.categories.category_types.Category_over_base._test_category_over_bases`).
 
         This is currently incompatible with the dispatching below.
 

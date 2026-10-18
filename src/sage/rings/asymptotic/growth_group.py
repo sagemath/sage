@@ -706,7 +706,7 @@ class PartialConversionElement(SageObject):
     def split(self):
         r"""
         Split the contained ``raw_element`` according to the growth group's
-        :meth:`GrowthGroup._split_raw_element_`.
+        :meth:`~sage.rings.asymptotic.growth_group.GenericGrowthGroup._split_raw_element_`.
 
         EXAMPLES::
 
@@ -907,7 +907,7 @@ def _log_factor_(self, base=None, locals=None):
     - ``locals`` -- dictionary which may contain the following keys and values:
 
       - ``'log'`` -- value: a function. If not used, then the usual
-        :class:`log <sage.functions.log.Function_log>` is taken.
+        :class:`log <sage.functions.log.Function_log1>` is taken.
 
     OUTPUT:
 
@@ -1395,7 +1395,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 
@@ -1614,6 +1614,8 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         :class:`MonomialGrowthGroup`,
         :class:`ExponentialGrowthGroup`
+
+    .. automethod:: _split_raw_element_
     """
     # TODO: implement some sort of 'assume', where basic assumptions
     # for the variables can be stored. --> within the Cartesian product
@@ -2942,7 +2944,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 
@@ -3018,7 +3020,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a growth element
 
@@ -4018,7 +4020,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 

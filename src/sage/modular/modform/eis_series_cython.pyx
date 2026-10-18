@@ -141,7 +141,7 @@ cpdef Ek_ZZ(int k, int prec=10):
 cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
     Return the `q`-expansion up to precision ``prec`` of the weight `k`
-    Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`
+    Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly_sage.Fmpz_poly`
     object, normalised so the coefficients are integers with no common factor.
 
     Used internally by the functions

@@ -1723,8 +1723,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         e = self.parent().e()
         if e == 1:
             return [R(c, self.absprec) for c in L]
-        else:
-            return [R(c, (self.absprec - i - 1) // e + 1) for i, c in enumerate(L)]
+        return [R(c, (self.absprec - i - 1) // e + 1) for i, c in enumerate(L)]
 
     def polynomial(self, var='x'):
         """
@@ -2109,8 +2108,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                 self.prime_pow.eis_shift_capdiv(&u.value, &u.value, 1, rp)
         if n is None:
             return L
-        else:
-            return self.parent()(0, rp)
+        return self.parent()(0, rp)
 
     def _teichmuller_set_unsafe(self):
         """
@@ -2250,14 +2248,11 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         if self.prime_pow.e == 1:
             if minval <= self.absprec:
                 return minval
-            else:
-                return self.absprec
-        else:
-            val = minval * self.prime_pow.e + mini
-            if val <= self.absprec:
-                return val
-            else:
-                return self.absprec
+            return self.absprec
+        val = minval * self.prime_pow.e + mini
+        if val <= self.absprec:
+            return val
+        return self.absprec
 
     cpdef pAdicZZpXCAElement unit_part(self):
         """

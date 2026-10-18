@@ -156,7 +156,7 @@ TESTS::
 AUTHORS:
 
 - Sebastian Oehms 2019-12-09: initial version.
-- Sebastian Oehms 2022-03-05: fix some corner cases and add :meth:`factor` (:issue:`33463`)
+- Sebastian Oehms 2022-03-05: fix some corner cases and add :meth:`~sage.rings.localization.LocalizationElement.factor` (:issue:`33463`)
 """
 
 
@@ -230,7 +230,7 @@ def normalize_extra_units(base_ring, add_units, warning=True):
             F = list(n.factor())
             add_units_result += [f[0] for f in F]
         except (NotImplementedError, AttributeError):
-            # if :meth:`is_unit` or :meth:`factor` are not available we can't do any more.
+            # if :meth:`is_unit` or :meth:`~sage.rings.localization.LocalizationElement.factor` are not available we can't do any more.
             if warning:
                 from warnings import warn
                 warn('Localization may not be represented uniquely')
@@ -247,7 +247,7 @@ class LocalizationElement(IntegralDomainElement):
     INPUT:
 
     - ``parent`` -- instance of :class:`Localization`
-    - ``x`` -- instance of :class:`FractionFieldElement` whose parent is the
+    - ``x`` -- instance of :class:`~sage.rings.fraction_field_element.FractionFieldElement` whose parent is the
       fraction field of the parent's base ring
 
     EXAMPLES::

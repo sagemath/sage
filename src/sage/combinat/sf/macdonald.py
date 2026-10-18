@@ -649,7 +649,7 @@ def cmunu(mu, nu):
 
     where `c_{\mu\nu}` is the coefficient of `{\tilde H}_\nu` in
     `h_r^\perp {\tilde H}_\mu` and `B_{\mu/\nu}` is the bi-exponent generator
-    implemented in the function :func:`sage.combinat.sf.macdonald.Bmu`.
+    of the skew shape `\mu/\nu`.
 
     INPUT:
 
@@ -747,7 +747,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a
-        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        :class:`~sage.combinat.sf.sfa.SymmetricFunctionsFunctor` and `R` is a ring, such
         that ``F(R)`` returns ``self``.
 
         EXAMPLES::

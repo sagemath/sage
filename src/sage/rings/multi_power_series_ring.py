@@ -567,71 +567,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             return self.base_ring()
         return PowerSeriesRing(self.base_ring(), names=vars)
 
-    # this is defined in PowerSeriesRing_generic
-    # def __call__(self, f, prec=infinity):
-    #     """
-    #     Coerce object to this multivariate power series ring.
-    #     """
-    #     return
-
-    def _coerce_impl(self, f):
-        """
-        Return the canonical coercion of ``f`` into this multivariate power
-        series ring, if one is defined, or raise a :exc:`TypeError`.
-
-        The rings that canonically coerce to this multivariate power series
-        ring are:
-
-            - this ring itself
-
-            - a polynomial or power series ring in the same variables or a
-              subset of these variables (possibly empty), over any base
-              ring that canonically coerces into the base ring of this ring
-
-        EXAMPLES::
-
-            sage: R.<t,u,v> = PowerSeriesRing(QQ); R
-            Multivariate Power Series Ring in t, u, v over Rational Field
-            sage: S1.<t,v> = PolynomialRing(ZZ); S1
-            Multivariate Polynomial Ring in t, v over Integer Ring
-            sage: f1 = -t*v + 2*v^2 + v; f1
-            -t*v + 2*v^2 + v
-            sage: R(f1)
-            v - t*v + 2*v^2
-            sage: S2.<u,v> = PowerSeriesRing(ZZ); S2
-            Multivariate Power Series Ring in u, v over Integer Ring
-            sage: f2 = -2*v^2 + 5*u*v^2 + S2.O(6); f2
-            -2*v^2 + 5*u*v^2 + O(u, v)^6
-            sage: R(f2)
-            -2*v^2 + 5*u*v^2 + O(t, u, v)^6
-
-            sage: R2 = R.change_ring(GF(2))
-            sage: R2(f1)
-            v + t*v
-            sage: R2(f2)
-            u*v^2 + O(t, u, v)^6
-
-        TESTS::
-
-            sage: R.<t,u,v> = PowerSeriesRing(QQ)
-            sage: S1.<t,v> = PolynomialRing(ZZ)
-            sage: f1 = S1.random_element()
-            sage: g1 = R._coerce_impl(f1)
-            sage: f1.parent() == R
-            False
-            sage: g1.parent() == R
-            True
-        """
-        P = f.parent()
-        if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base,
-                          PowerSeriesRing_generic, MPowerSeriesRing_generic,
-                          LazyPowerSeriesRing)):
-            if set(P.variable_names()).issubset(set(self.variable_names())):
-                if self.has_coerce_map_from(P.base_ring()):
-                    return self(f)
-        else:
-            return self(self.base_ring().coerce(f))
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
         Replacement for method of PowerSeriesRing_generic.
@@ -798,6 +733,36 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
     def _element_constructor_(self, f, prec=None):
         """
+        Construct a multivariate power series from ``f``.
+
+        INPUT:
+
+        - ``f`` -- data used to the define a series
+        - ``prec`` -- the total-degree precision
+
+        EXAMPLES::
+
+            sage: R.<t,u,v> = PowerSeriesRing(QQ); R
+            Multivariate Power Series Ring in t, u, v over Rational Field
+            sage: S1.<t,v> = PolynomialRing(ZZ); S1
+            Multivariate Polynomial Ring in t, v over Integer Ring
+            sage: f1 = -t*v + 2*v^2 + v; f1
+            -t*v + 2*v^2 + v
+            sage: R(f1)
+            v - t*v + 2*v^2
+            sage: S2.<u,v> = PowerSeriesRing(ZZ); S2
+            Multivariate Power Series Ring in u, v over Integer Ring
+            sage: f2 = -2*v^2 + 5*u*v^2 + S2.O(6); f2
+            -2*v^2 + 5*u*v^2 + O(u, v)^6
+            sage: R(f2)
+            -2*v^2 + 5*u*v^2 + O(t, u, v)^6
+
+            sage: R2 = R.change_ring(GF(2))
+            sage: R2(f1)
+            v + t*v
+            sage: R2(f2)
+            u*v^2 + O(t, u, v)^6
+
         TESTS::
 
             sage: M = PowerSeriesRing(ZZ,5,'t')
@@ -823,6 +788,15 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             1 + x + y + x^2 + 2*x*y + y^2 + O(x, y, z)^3
             sage: R(x + y^2)
             x + y^2
+
+            sage: R.<t,u,v> = PowerSeriesRing(QQ)
+            sage: S1.<t,v> = PolynomialRing(ZZ)
+            sage: f1 = S1.random_element()
+            sage: g1 = R(f1)
+            sage: f1.parent() == R
+            False
+            sage: g1.parent() == R
+            True
         """
         if prec is None:
             try:

@@ -301,7 +301,7 @@ class ModularFormsRing(Parent):
 
         - ``i`` -- integer
 
-        OUTPUT: an instance of :class:`~sage.modular.modform.GradedModularFormElement`
+        OUTPUT: an instance of :class:`~sage.modular.modform.element.GradedModularFormElement`
 
         EXAMPLES::
 
@@ -348,7 +348,7 @@ class ModularFormsRing(Parent):
         - ``gens`` -- list of modular forms generating this ring
           (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
-          :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+          :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
           indeed a generating set.
 
@@ -429,7 +429,7 @@ class ModularFormsRing(Parent):
         - ``gens`` -- list of modular forms generating this ring
           (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
-          :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+          :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
           indeed a generating set.
 

@@ -683,7 +683,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
         OUTPUT:
 
-        A :class:`~sage.matroids.transversal_matroids.TransversalMatroid`
+        A :class:`~sage.matroids.transversal_matroid.TransversalMatroid`
         with a groundset element added to specified sets. Note that the
         ``newset`` option will make the new element a coloop. If
         ``newset == True``, a name will be generated; otherwise the

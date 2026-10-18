@@ -1243,7 +1243,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             e_2⎝-25  54 -25⎠
         """
         from sage.misc.latex import latex
-        from .format_utilities import is_atomic, FormattedExpansion
+        from .format_utilities import FormattedExpansion
         fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
         matrix = self.matrix(basis1, basis2)
         if all(element._name for element in basis1):

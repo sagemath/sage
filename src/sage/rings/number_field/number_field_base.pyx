@@ -278,8 +278,7 @@ cdef class NumberField(Field):
         from sage.symbolic.constants import pi
         if s > 0:
             return d * (4/pi)**s * n.factorial() / (n**n)
-        else:
-            return d * n.factorial() / (n**n)
+        return d * n.factorial() / (n**n)
 
     def bach_bound(self):
         r"""

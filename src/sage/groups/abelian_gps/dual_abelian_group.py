@@ -14,7 +14,10 @@ number `n > 0` of generators. Use
 :func:`~sage.groups.abelian_gps.abelian_group.AbelianGroup` function
 to create an abelian group, the
 :meth:`~sage.groups.abelian_gps.abelian_group.AbelianGroup_class.dual_group`
-method to create its dual, and then the :meth:`gen` and :meth:`gens`
+method to create its dual, and then the
+:meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.gen`
+and
+:meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.gens`
 methods to obtain the corresponding generators. You can print the
 generators as arbitrary strings using the optional ``names`` argument
 to the

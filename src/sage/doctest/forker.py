@@ -175,6 +175,16 @@ def init_sage(controller: DocTestController | None = None) -> None:
         sage: {'a':23, 'b':34, 'au':56, 'bbf':234, 'aaa':234}
         {'a': 23, 'aaa': 234, 'au': 56, 'b': 34, 'bbf': 234}
     """
+    if sys.platform == 'darwin':
+        # Timer._quick_cputime uses psutil for pexpect processes on macOS.
+        # Import it before forking: its IOKit initialization can abort in a
+        # forked worker (https://github.com/giampaolo/psutil/issues/2713).
+        try:
+            import psutil  # noqa: F401
+        except ImportError:
+            # psutil is an optional dependency of the doctest timer.
+            pass
+
     try:
         # We need to ensure that the Matplotlib font cache is built to
         # avoid spurious warnings (see Issue #20222).
@@ -294,7 +304,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
 class SageSpoofInOut(SageObject):
     r"""
-    We replace the standard :class:`doctest._SpoofOut` for three reasons:
+    We replace the standard ``doctest._SpoofOut`` for three reasons:
 
     - we need to divert the output of C programs that don't print
       through sys.stdout,
@@ -526,7 +536,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
           is enabled
 
         - ``optionflags`` -- controls the comparison with the expected
-          output.  See :mod:`testmod` for more information
+          output.  See :func:`doctest.testmod` for more information
 
         - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
@@ -555,8 +565,6 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
-        if sys.version_info < (3,13):
-            self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
         """
@@ -838,10 +846,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        if sys.version_info < (3,13):
-            self._DocTestRunner__record_outcome(test, failures, tries)
-        else:
-            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
+        self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
         self.total_walltime_skips += walltime_skips
         self.total_performed_tests += tries
         return TestResults(failures, tries)
@@ -850,7 +855,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         Run the examples in a given doctest.
 
-        This function replaces :class:`doctest.DocTestRunner.run`
+        This function replaces :meth:`doctest.DocTestRunner.run`
         since it needs to handle spoofing. It also leaves the display
         hook in place.
 
@@ -862,7 +867,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
           used to execute examples (passed in to the :func:`compile`)
 
         - ``out`` -- a function for writing the output (defaults to
-          :func:`sys.stdout.write`)
+          ``sys.stdout.write``)
 
         - ``clear_globs`` -- boolean (default: ``True``); whether to clear
           the namespace after running this doctest
@@ -931,7 +936,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         OUTPUT:
 
-        - returns ``(f, t)``, a :class:`doctest.TestResults` instance
+        - returns ``(f, t)``, a :class:`~sage.doctest.forker.TestResults`
+          instance
           giving the number of failures and the total number of tests
           run.
 
@@ -1873,13 +1879,14 @@ class DocTestDispatcher(SageObject):
         opt = self.controller.options
 
         job_client = None
-        try:
-            from gnumake_tokenpool import JobClient, NoJobServer
-        except ImportError:
-            pass
-        else:
+        # Using gnumake_tokenpool leads to doctest failures when
+        # testing in parallel. See #38116 and #42293.
+        if sys.platform != "darwin":
             try:
+                from gnumake_tokenpool import JobClient, NoJobServer
                 job_client = JobClient(use_cysignals=True)
+            except ImportError:
+                pass
             except NoJobServer:
                 pass
 
@@ -2189,7 +2196,7 @@ class DocTestWorker(multiprocessing.Process):
 
     INPUT:
 
-    - ``source`` -- a :class:`DocTestSource` instance
+    - ``source`` -- a :class:`~sage.doctest.sources.DocTestSource` instance
 
     - ``options`` -- an object representing doctest options
 

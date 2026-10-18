@@ -244,7 +244,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     Since the Symbolic Ring is the base ring for the algebra ``CM``, the
     coercion of a symbolic expression ``s`` is performed by the operation
     ``s*CM.one()``, which invokes the reflected multiplication operator
-    :meth:`sage.manifolds.scalarfield.ScalarField._rmul_`. If the symbolic
+    ``ScalarField._rmul_``. If the symbolic
     expression does not involve any chart coordinate, the outcome is a
     constant scalar field::
 

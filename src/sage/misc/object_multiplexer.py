@@ -20,13 +20,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import Any
+
 
 class MultiplexFunction:
     """
     A simple wrapper object for functions that are called on a list of
     objects.
     """
-    def __init__(self, multiplexer, name):
+    def __init__(self, multiplexer: 'Multiplex', name: str) -> None:
         """
         EXAMPLES::
 
@@ -39,7 +41,7 @@ class MultiplexFunction:
         self.multiplexer = multiplexer
         self.name = name
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, *args: Any, **kwds: Any) -> tuple | None:
         """
         EXAMPLES::
 
@@ -62,7 +64,7 @@ class Multiplex:
     new object implies that the same function is called on all
     children.
     """
-    def __init__(self, *args):
+    def __init__(self, *args: Any) -> None:
         """
         EXAMPLES::
 
@@ -73,7 +75,7 @@ class Multiplex:
         """
         self.children = [arg for arg in args if arg is not None]
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> MultiplexFunction:
         """
         EXAMPLES::
 

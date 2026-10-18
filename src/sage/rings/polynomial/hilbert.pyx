@@ -524,8 +524,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
             if AN.Back is None: # We are back on top, i.e., fhs is the First Hilber Series of I
                 if return_grading:
                     return fhs, w
-                else:
-                    return fhs
+                return fhs
             if AN is AN.Back.Left: # We store fhs and proceed to the sibling
                 # ... unless there is no sibling
                 if AN.Back.Right is None:

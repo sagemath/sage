@@ -582,7 +582,7 @@ Compared to Python, Sage has particular ways to handle objects:
 - Any classes for mathematical objects in Sage should inherit from
   :class:`SageObject` rather than from ``object``. Most of the time, they
   actually inherit from a subclass such as :class:`Parent` or
-  :class:`Element`.
+  :class:`~sage.structure.element.Element`.
 
 - Printing should be done through ``_repr_`` instead of ``__repr__`` to allow
   for renaming.

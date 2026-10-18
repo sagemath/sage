@@ -45,6 +45,7 @@ foreach name, pyx : extension_data_cpp
     include_directories: [
       inc_cpython,
       inc_ext,
+      inc_flint,
       inc_ntl,
       inc_rings,
       inc_rings_finite,

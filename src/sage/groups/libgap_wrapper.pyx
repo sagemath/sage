@@ -149,8 +149,7 @@ class ParentLibGAP(SageObject):
         """
         if self._ambient is None:
             return self
-        else:
-            return self._ambient
+        return self._ambient
 
     def is_subgroup(self):
         """
@@ -455,8 +454,7 @@ class ParentLibGAP(SageObject):
         gens = self.gens()
         if gens:
             return prod(gens)
-        else:
-            return self.one()
+        return self.one()
 
 
 cdef class ElementLibGAP(MultiplicativeGroupElement):
@@ -596,8 +594,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         """
         if self.is_one():
             return '1'
-        else:
-            return self._libgap._repr_()
+        return self._libgap._repr_()
 
     def _latex_(self):
         r"""

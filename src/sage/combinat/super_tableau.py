@@ -85,7 +85,7 @@ class SemistandardSuperTableau(Tableau):
         Semistandard super tableaux
     """
     @staticmethod
-    def __classcall_private__(cls, t):
+    def __classcall_private__(cls, t, check=True):
         r"""
         This ensures that a SemistandardSuperTableau is only ever constructed
         as an element_class call of an appropriate parent.
@@ -111,7 +111,7 @@ class SemistandardSuperTableau(Tableau):
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
         SST = SemistandardSuperTableaux_all()
-        return SST.element_class(SST, t)
+        return SST.element_class(SST, t, check=check)
 
     def __init__(self, parent, t, check=True, preprocessed=False):
         r"""
@@ -260,7 +260,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`StandardSuperTableau` is only ever
         constructed as an ``element_class`` call of an appropriate parent.
@@ -278,7 +278,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
             return t
 
         SST = StandardSuperTableaux_all()
-        return SST.element_class(SST, t)
+        return SST.element_class(SST, t, check=check)
 
     def check(self):
         r"""

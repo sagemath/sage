@@ -679,18 +679,19 @@ def rat_term_CIF(z, try_strict=True):
         corner_reals = []
         corner_imags = []
         for a, b in product(z.real().endpoints(), z.imag().endpoints()):
-            zz = CDF(a,b)
-            u = (two_pi_i_CDF*zz).exp()
-            f = u/(1-u)**2
+            zz = CDF(a, b)
+            u = (two_pi_i_CDF * zz).exp()
+            f = u / (1 - u)**2
             corner_reals.append(f.real())
             corner_imags.append(f.imag())
 
-        p1 = (((((r+2*x)*r - 6)*r + 2*x) * r) + 1)
-            # =  r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
-        p2 = (r*(x*(r+2*x)-4)+x)
-            # = r^2*x + 2*r*x^2 - 4*r + x
+        p1 = (((((r + 2 * x) * r - 6) * r + 2 * x) * r) + 1)
+        # = r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
 
-        df_dr = (r**2-1) * p2
+        p2 = (r * (x * (r + 2 * x) - 4) + x)
+        # = r^2*x + 2*r*x^2 - 4*r + x
+
+        df_dr = (r**2 - 1) * p2
         dg_dr = p1 * y
         dg_dx = r * df_dr / y
 
@@ -862,14 +863,14 @@ class EllipticCurveCanonicalHeight:
 
             sage: E = EllipticCurve([0,0,1,-1,0])
             sage: P = E(0,0)
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: H = E.height_function()
-            sage: H(P)
+            sage: H(P)  # abs tol 1e-15
             0.0511114082399688
-            sage: H([0,0])
+            sage: H([0,0])  # abs tol 1e-15
             0.0511114082399688
-            sage: H((0,0))
+            sage: H((0,0))  # abs tol 1e-15
             0.0511114082399688
 
         Over a number field other than `\QQ`::
@@ -2063,7 +2064,7 @@ class EllipticCurveCanonicalHeight:
             sage: h = E.height_function()
             sage: h.min(.01, 5)
             0.03987318057488725
-            sage: E.gen(0).height()
+            sage: E.gen(0).height()  # abs tol 1e-15
             0.0511114082399688
 
         After base change the lower bound can decrease::

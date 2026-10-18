@@ -640,7 +640,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: :class:`SchemeMorphism_point_affine`
+        OUTPUT: :class:`~sage.schemes.affine.affine_point.SchemeMorphism_point_affine`
 
         EXAMPLES::
 

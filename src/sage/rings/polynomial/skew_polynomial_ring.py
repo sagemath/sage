@@ -406,9 +406,9 @@ class SectionSkewPolynomialCenterInjection(Section):
                 mod = 0
         return self.codomain()(l)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
-        Compare this morphism with ``right``.
+        Compare this morphism with ``other``.
 
         TESTS::
 
@@ -426,9 +426,9 @@ class SectionSkewPolynomialCenterInjection(Section):
             False
         """
         if op == op_EQ:
-            return (self.domain() is right.domain()) and (self.codomain() is right.codomain())
+            return (self.domain() is other.domain()) and (self.codomain() is other.codomain())
         if op == op_NE:
-            return (self.domain() is not right.domain()) or (self.codomain() is not right.codomain())
+            return (self.domain() is not other.domain()) or (self.codomain() is not other.codomain())
         return NotImplemented
 
 
@@ -500,9 +500,9 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
             l += [self._embed(c)] + lz
         return self._codomain(l)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
-        Compare this morphism with ``right``.
+        Compare this morphism with ``other``.
 
         TESTS::
 
@@ -519,9 +519,9 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
             False
         """
         if op == op_EQ:
-            return (self.domain() is right.domain()) and (self.codomain() is right.codomain())
+            return (self.domain() is other.domain()) and (self.codomain() is other.codomain())
         if op == op_NE:
-            return (self.domain() is not right.domain()) or (self.codomain() is not right.codomain())
+            return (self.domain() is not other.domain()) or (self.codomain() is not other.codomain())
         return NotImplemented
 
     def section(self):

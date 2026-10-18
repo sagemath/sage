@@ -2,17 +2,16 @@ r"""
 Incidence structures (i.e. hypergraphs, i.e. set systems)
 
 An incidence structure is specified by a list of points, blocks, or an incidence
-matrix ([1]_, [2]_). :class:`IncidenceStructure` instances have the following methods:
+matrix ([BlockIncidenceWikipedia]_, [AK1992]_).
+:class:`IncidenceStructure` instances have the following methods:
 
 {METHODS_OF_IncidenceStructure}
 
 REFERENCES:
 
-.. [1] Block designs and incidence structures from wikipedia,
-  :wikipedia:`Block_design`
-  :wikipedia:`Incidence_structure`
+- [BlockIncidenceWikipedia]_
 
-.. [2] \E. Assmus, J. Key, Designs and their codes, CUP, 1992.
+- [AK1992]_
 
 AUTHORS:
 
@@ -902,7 +901,7 @@ class IncidenceStructure(SageObject):
                     d[x] += 1
             return {p: d[i] for i, p in enumerate(self._points)}
         from itertools import combinations
-        d = {t: 0 for t in combinations(range(self.n_points()), size)}
+        d = dict.fromkeys(combinations(range(self.n_points()), size), 0)
         for b in self._blocks:
             for s in combinations(b, size):
                 d[s] += 1
@@ -1191,17 +1190,21 @@ class IncidenceStructure(SageObject):
           integers, or labelled elements
 
           - ``labels is False`` -- default; in this case the first vertices
-            of the graphs are the elements of :meth:`ground_set`, and appear
-            in the same order. Similarly, the following vertices represent the
-            elements of :meth:`blocks`, and appear in the same order.
+            of the graphs are the elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`,
+            and appear in the same order. Similarly, the following vertices
+            represent the elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.blocks`,
+            and appear in the same order.
 
           - ``labels is True``, the points keep their original labels, and the
             blocks are :func:`Set <Set>` objects.
 
             Note that the labelled incidence graph can be incorrect when
             blocks are repeated, and on some (rare) occasions when the
-            elements of :meth:`ground_set` mix :func:`Set` and non-:func:`Set
-            <Set>` objects.
+            elements of
+            :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
+            mix :func:`Set` and non-:func:`Set <Set>` objects.
 
         EXAMPLES::
 
@@ -1358,14 +1361,15 @@ class IncidenceStructure(SageObject):
               of ``perm``) is relabeled to ``perm[p]``
 
             - an iterable of length ``n`` -- the first point returned by
-              :meth:`ground_set` is relabeled to ``perm[0]``, the second to
-              ``perm[1]``, ...
+              :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
+              is relabeled to ``perm[0]``, the second to ``perm[1]``, ...
 
             - a callable -- then each point ``p`` is relabeled to
               ``perm(p)``
 
             - ``None`` -- the incidence structure is relabeled to be on
-              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
+              `\{0,1,...,n-1\}` in the ordering given by
+              :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
 
         - ``inplace`` -- boolean (default: ``False``); if ``True`` then return
           a relabeled graph and does not touch ``self``

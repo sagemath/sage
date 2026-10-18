@@ -314,14 +314,12 @@ cdef class Action(Functor):
     def left_domain(self):
         if self._is_left:
             return self.G
-        else:
-            return self.domain()
+        return self.domain()
 
     def right_domain(self):
         if self._is_left:
             return self.domain()
-        else:
-            return self.G
+        return self.G
 
     def operation(self):
         return self.op
@@ -508,8 +506,7 @@ cdef class PrecomposedAction(Action):
     def domain(self):
         if self.S_precomposition is not None:
             return self.S_precomposition.domain()
-        else:
-            return self._action.domain()
+        return self._action.domain()
 
     def codomain(self):
         return self._action.codomain()
@@ -522,8 +519,7 @@ cdef class PrecomposedAction(Action):
         """
         if self._is_left:
             return self.G_precomposition
-        else:
-            return self.S_precomposition
+        return self.S_precomposition
 
     @property
     def right_precomposition(self):
@@ -533,8 +529,7 @@ cdef class PrecomposedAction(Action):
         """
         if self._is_left:
             return self.S_precomposition
-        else:
-            return self.G_precomposition
+        return self.G_precomposition
 
     def __invert__(self):
         return PrecomposedAction(~self._action, self.left_precomposition, self.right_precomposition)
@@ -628,13 +623,11 @@ cdef class ActionEndomorphism(Morphism):
             if left_c._action is right_c._action:
                 if left_c._action._is_left:
                     return ActionEndomorphism(left_c._action, left_c._g * right_c._g)
-                else:
-                    return ActionEndomorphism(left_c._action, right_c._g * left_c._g)
+                return ActionEndomorphism(left_c._action, right_c._g * left_c._g)
         return Morphism.__mul__(left, right)
 
     def __invert__(self):
         inv_g = ~self._g
         if parent(inv_g) is parent(self._g):
             return ActionEndomorphism(self._action, inv_g)
-        else:
-            return (~self._action)(self._g)
+        return (~self._action)(self._g)

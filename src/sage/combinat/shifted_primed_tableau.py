@@ -842,7 +842,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
 class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
     """
-    Class for elements of ``crystals.ShiftedPrimedTableau``.
+    Class for elements of ``crystals.ShiftedPrimedTableaux``.
     """
 
     def _to_matrix(self):
@@ -1309,7 +1309,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
         """
         read_w = self.reading_word()
         max_entry = max(read_w)
-        count = {i: 0 for i in range(max_entry+1)}
+        count = dict.fromkeys(range(max_entry + 1), 0)
         if index_set is None:
             index_set = self.parent().index_set()
         for l in reversed(read_w):

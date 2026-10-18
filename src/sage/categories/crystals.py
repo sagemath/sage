@@ -4,7 +4,8 @@ Crystals
 
 TESTS:
 
-Catch warnings produced by :func:`check_tkz_graph`::
+Catch warnings produced by
+:func:`~sage.graphs.graph_latex.check_tkz_graph`::
 
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random
@@ -1796,7 +1797,7 @@ class Crystals(Category_singleton):
             .. SEEALSO::
 
                 - :class:`.tensor.TensorProductsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`.
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
 
             EXAMPLES::
 
@@ -1858,7 +1859,7 @@ class CrystalMorphism(Morphism):
 
         index_set = cartan_type.index_set()
         if scaling_factors is None:
-            scaling_factors = {i: 1 for i in index_set}
+            scaling_factors = dict.fromkeys(index_set, 1)
         if virtualization is None:
             virtualization = {i: (i,) for i in index_set}
         elif not isinstance(virtualization, collections.abc.Mapping):

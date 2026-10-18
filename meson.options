@@ -59,6 +59,13 @@ option(
 )
 
 option(
+  'libbraiding',
+  type: 'feature',
+  value: 'auto',
+  description: 'libbraiding interface to braid groups'
+)
+
+option(
   'libhomfly',
   type: 'feature',
   value: 'auto',

@@ -620,8 +620,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         if self.is_identity():
             return x
-        else:
-            return x.pth_power(self._power)
+        return x.pth_power(self._power)
 
     def order(self):
         """
@@ -721,8 +720,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         if isinstance(right, FrobeniusEndomorphism_finite_field):
             return self.__class__(self.domain(), self._power + right.power())
-        else:
-            return RingHomomorphism._composition(self, right)
+        return RingHomomorphism._composition(self, right)
 
     def fixed_field(self):
         """

@@ -1,7 +1,7 @@
 """
 Fast Lattice Polygons using PPL
 
-See :mod:`ppl_lattice_polytope` for the implementation of
+See :mod:`sage.geometry.polyhedron.ppl_lattice_polytope` for the implementation of
 arbitrary-dimensional lattice polytopes. This module is about the
 specialization to 2 dimensions. To be more precise, the
 :class:`LatticePolygon_PPL_class` is used if the ambient space is of
@@ -403,11 +403,11 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: P = LatticePolytope_PPL((1,0), (0,1), (0,0), (2,2))
-            sage: P.plot()                                                              # needs sage.plot
+            sage: P.plot()
             Graphics object consisting of 6 graphics primitives
-            sage: LatticePolytope_PPL([0], [1]).plot()                                  # needs sage.plot
+            sage: LatticePolytope_PPL([0], [1]).plot()
             Graphics object consisting of 3 graphics primitives
-            sage: LatticePolytope_PPL([0]).plot()                                       # needs sage.plot
+            sage: LatticePolytope_PPL([0]).plot()
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d

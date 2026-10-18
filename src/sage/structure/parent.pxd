@@ -11,7 +11,6 @@ from sage.structure.coerce_dict cimport MonoDict, TripleDict
 
 cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef _element_constructor
-    cdef bint _element_init_pass_parent
     cdef public _convert_method_name
     cdef public _initial_coerce_list
     cdef public _initial_action_list

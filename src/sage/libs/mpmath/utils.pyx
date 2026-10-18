@@ -55,8 +55,7 @@ cdef mpfr_to_mpfval(mpfr_t value):
         from mpmath.libmp import finf, fninf
         if mpfr_sgn(value) > 0:
             return finf
-        else:
-            return fninf
+        return fninf
     if mpfr_sgn(value) == 0:
         from mpmath.libmp import fzero
         return fzero

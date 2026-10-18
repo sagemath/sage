@@ -621,7 +621,8 @@ class ConvexSet_base(SageObject, Set_base):
 
     def _test_convex_set(self, tester=None, **options):
         """
-        Run some tests on the methods of :class:`ConvexSet_base`.
+        Run some tests on the methods of
+        :class:`~sage.geometry.convex_set.ConvexSet_base`.
 
         TESTS::
 
@@ -701,7 +702,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         If ``self`` is empty, an :exc:`EmptySetError` will be raised.
 
-        The default implementation delegates to :meth:`_some_elements_`.
+        The default implementation delegates to ``_some_elements_``.
 
         EXAMPLES::
 
@@ -726,7 +727,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         If ``self`` is empty, an empty list is returned; no exception will be raised.
 
-        The default implementation delegates to :meth:`_some_elements_`.
+        The default implementation delegates to ``_some_elements_``.
 
         EXAMPLES::
 
@@ -902,7 +903,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         INPUT:
 
-        - ``scalar`` -- a scalar, not necessarily in :meth:`base_ring`
+        - ``scalar`` -- a scalar, not necessarily in ``base_ring``
 
         EXAMPLES::
 
@@ -1038,7 +1039,26 @@ class ConvexSet_compact(ConvexSet_closed):
         """
         return True
 
-    is_relatively_open = ConvexSet_closed.is_open
+    def is_relatively_open(self) -> bool:
+        r"""
+        Return whether ``self`` is relatively open.
+
+        A compact convex set can only be relatively open when it is empty or
+        its ambient space is zero-dimensional.
+
+        OUTPUT: boolean
+
+        EXAMPLES::
+
+            sage: cross3 = lattice_polytope.cross_polytope(3)
+            sage: cross3.is_relatively_open()
+            False
+            sage: point0 = LatticePolytope([[]]); point0
+            0-d reflexive polytope in 0-d lattice M
+            sage: point0.is_relatively_open()
+            True
+        """
+        return ConvexSet_closed.is_open(self)
 
 
 class ConvexSet_relatively_open(ConvexSet_base):

@@ -472,7 +472,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if isinstance(tags, collections.abc.Mapping):
         new_tags = dict(tags)
     elif tags is not None:
-        new_tags = {tag: None for tag in tags}
+        new_tags = dict.fromkeys(tags)
     else:
         new_tags = dict(current_tags)
 
@@ -480,7 +480,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         if isinstance(add_tags, collections.abc.Mapping):
             new_tags.update(add_tags)
         else:
-            new_tags.update({tag: None for tag in add_tags})
+            new_tags.update(dict.fromkeys(add_tags))
 
     if remove_tags is not None:
         for tag in remove_tags:
@@ -551,7 +551,7 @@ def parse_tolerance(source, want):
     - ``want`` -- string, the desired output of the doctest
 
     OUTPUT: ``want`` if there are no tolerance tags specified; a
-    :class:`MarkedOutput` version otherwise
+    :class:`~sage.doctest.marked_output.MarkedOutput` version otherwise
 
     EXAMPLES::
 
@@ -1225,11 +1225,13 @@ class SageOutputChecker(doctest.OutputChecker):
         r"""
         Check to see if the output matches the desired output.
 
-        If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
+        If ``want`` is a
+        :class:`~sage.doctest.marked_output.MarkedOutput` instance, takes into account the desired tolerance.
 
         INPUT:
 
-        - ``want`` -- string or :class:`MarkedOutput`
+        - ``want`` -- string or
+          :class:`~sage.doctest.marked_output.MarkedOutput`
         - ``got`` -- string
         - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
@@ -1380,7 +1382,8 @@ class SageOutputChecker(doctest.OutputChecker):
 
         INPUT:
 
-        - ``want`` -- string or :class:`MarkedOutput`
+        - ``want`` -- string or
+          :class:`~sage.doctest.marked_output.MarkedOutput`
         - ``got`` -- string
 
         OUTPUT: a tuple:
@@ -1408,7 +1411,8 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: OC.do_fixup('1.3090169943749475','Long-step dual simplex will be used\n1.3090169943749475')
             (True, '1.3090169943749475', '\n1.3090169943749475')
 
-        When ``want`` is an instance of class :class:`MarkedOutput`::
+        When ``want`` is an instance of class
+        :class:`~sage.doctest.marked_output.MarkedOutput`::
 
             sage: from sage.doctest.parsing import SageOutputChecker, SageDocTestParser
             sage: import doctest
@@ -1524,7 +1528,8 @@ class SageOutputChecker(doctest.OutputChecker):
         Report on the differences between the desired result and what
         was actually obtained.
 
-        If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
+        If ``want`` is a
+        :class:`~sage.doctest.marked_output.MarkedOutput` instance, takes into account the desired tolerance.
 
         INPUT:
 

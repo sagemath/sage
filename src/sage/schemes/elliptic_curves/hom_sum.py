@@ -210,7 +210,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).to_isogeny_chain()
-            Composite morphism of degree 28 = 4*1*7:
+            Composite morphism of degree 28 = 1*7*4:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
               To:   Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
 
@@ -224,7 +224,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: endo.degree()
             420
             sage: endo.to_isogeny_chain()
-            Composite morphism of degree 420 = 4*1*3*5*7:
+            Composite morphism of degree 420 = 1*3*5*7*1*4:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
 
@@ -245,9 +245,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: m2 = E.scalar_multiplication(2)
             sage: m3 = E.scalar_multiplication(3)
             sage: (m2 - m3).to_isogeny_chain()
-            Composite morphism of degree 1 = 1^2:
-              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
-              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              Via:  (u,r,s,t) = (-1, 0, -1, 0)
             sage: (m2 - m3).rational_maps()
             (x, -x - y)
 
@@ -389,9 +388,10 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         Internal method to compute and cache the degree of this sum morphism
         (and its dual).
 
-        ALGORITHM: Evaluate the composition with the dual on points of small
-        order and solve logarithms to eventually recover the degree using CRT.
-        (This is essentially Schoof's algorithm, applied to a scalar.)
+        :meta public:
+
+        ALGORITHM: Recursive application of the formula
+        `\deg(\varphi+\psi) = \deg(\varphi) + \deg(\psi) + \mathrm{tr}(\varphi\circ\widehat\psi)`.
 
         EXAMPLES::
 
@@ -427,25 +427,12 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         else:
             #TODO In some cases it would probably be faster to simply
             # compute the kernel polynomial using the addition formulas?
-            from sage.rings.finite_rings.integer_mod import Mod
-
-            lo, hi = self._degree_bounds()
-            M = hi - lo + 1
-            rem = Mod(0,1)
-            for l in Primes():
-                if rem.modulus() >= M:
-                    break
-                try:
-                    P = point_of_order(self._domain, l)
-                except ValueError:
-                    continue   # supersingular and l == p
-
-                Q = self.dual()._eval(self._eval(P))
-                d = discrete_log(Q, P, ord=l, operation='+')
-                rem = rem.crt(Mod(d-lo, l))
-
-            self._degree = lo + rem.lift()
-            self.dual()._degree = self._degree
+            mid = (len(self._phis) + 1) // 2
+            left = EllipticCurveHom_sum(self._phis[:mid])
+            right = EllipticCurveHom_sum(self._phis[mid:])
+            self._degree = left.degree() + right.degree() + left.trace_pairing(right)
+            if self.dual.is_in_cache():
+                self.dual()._degree = self._degree
 
     @staticmethod
     def _comparison_impl(left, right, op):
@@ -512,8 +499,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).rational_maps()
-            ((31*x^28 + 4*x^27 + 40*x^26 + ... + 3*x^2 + 19*x - 27)/(23*x^27 + 16*x^26 + 9*x^25 + ... - 43*x^2 - 22*x + 37),
-             (-3*x^42*y + 32*x^41*y + 16*x^40*y + ... - 27*x^2*y + 18*x*y - 42*y)/(-24*x^42 - 47*x^41 - 12*x^40 + ... + 18*x^2 - 48*x + 18))
+            ((x^28 + 49*x^27 - 15*x^26 + ... - 47*x^2 - 17*x + 24),
+             (8*x^42*y - 18*x^41*y - 9*x^40*y - ... - 29*x^2*y - 48*x*y + 11*y)/(-37*x^42 - 43*x^41 + 32*x^40 + ... - 48*x^2 + 27*x - 48))
 
         ALGORITHM: :meth:`to_isogeny_chain`.
         """
@@ -591,7 +578,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         return sum(phi.scaling_factor() for phi in self._phis)
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this sum morphism.
 
@@ -624,7 +611,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         ALGORITHM: Taking the dual distributes over addition.
         """
-        psi = EllipticCurveHom_sum((phi.dual() for phi in self._phis),
+        psi = EllipticCurveHom_sum((phi.dual(algorithm=algorithm) for phi in self._phis),
                                    domain=self._codomain, codomain=self._domain)
         psi._degree = self._degree
         if self.trace.is_in_cache():
@@ -703,12 +690,12 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES:

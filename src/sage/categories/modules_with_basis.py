@@ -26,10 +26,11 @@ from sage.categories.tensor import tensor, TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.homset import Homset
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.map import Map
-from sage.structure.element import Element, parent
+from sage.structure.element import Element, Matrix, parent
 
 
 lazy_import('sage.modules.with_basis.morphism',
@@ -39,6 +40,140 @@ lazy_import('sage.modules.with_basis.morphism',
              'DiagonalModuleMorphism',
              'TriangularModuleMorphismByLinearity',
              'TriangularModuleMorphismFromFunction'])
+
+
+class ModulesWithBasisHomset(Homset):
+    r"""
+    The homset of morphisms between two modules with a distinguished basis.
+
+    This behaves like a generic :class:`~sage.categories.homset.Homset`,
+    except that a matrix is interpreted as the matrix of the morphism in the
+    distinguished bases of the domain and codomain, by delegating to
+    :meth:`~ModulesWithBasis.ParentMethods.module_morphism`.
+
+    This makes
+    :func:`~sage.modules.vector_space_morphism.linear_transformation`
+    (and ``Hom(X, Y)(some_matrix)``) work for vector spaces built from a
+    combinatorial basis.
+
+    .. NOTE::
+
+        The matrix is interpreted with the same convention as
+        :func:`~sage.modules.vector_space_morphism.linear_transformation`
+        and :class:`~sage.modules.vector_space_homspace.VectorSpaceHomspace`:
+        the rows of the matrix are the images of the basis of the domain
+        (``side='left'`` there). This corresponds to ``side='right'`` of
+        :meth:`~ModulesWithBasis.ParentMethods.module_morphism`. A different
+        convention can be requested by passing ``side`` explicitly.
+
+    EXAMPLES::
+
+        sage: # needs sage.modules
+        sage: from sage.categories.modules_with_basis import ModulesWithBasisHomset
+        sage: X = CombinatorialFreeModule(QQ, [1, 2])
+        sage: Y = CombinatorialFreeModule(QQ, [1, 2, 3])
+        sage: H = Hom(X, Y)
+        sage: isinstance(H, ModulesWithBasisHomset)
+        True
+
+    TESTS:
+
+    Check that :issue:`40847` is fixed::
+
+        sage: # needs sage.modules
+        sage: V = VectorSpace(QQ, [0, 1, 2])
+        sage: phi = linear_transformation(V, V, identity_matrix(3))
+        sage: phi(V.basis()[0])
+        B[0]
+    """
+    def _element_constructor_(self, x=None, check=None, matrix=None, **options):
+        r"""
+        Construct a morphism in this homset from ``x``.
+
+        If a matrix is given (either as ``x`` or via the ``matrix`` keyword),
+        it is interpreted as the matrix of the morphism in the distinguished
+        bases of the domain and codomain, with the rows being the images of
+        the basis of the domain (see the note in
+        :class:`ModulesWithBasisHomset`). Otherwise the generic construction
+        of :meth:`sage.categories.homset.Homset._element_constructor_` is used.
+
+        EXAMPLES:
+
+        A matrix is interpreted in the distinguished bases, with rows being
+        the images of the basis of the domain::
+
+            sage: # needs sage.modules
+            sage: X = CombinatorialFreeModule(QQ, [1, 2]); X.rename('X')
+            sage: Y = CombinatorialFreeModule(QQ, [3, 4]); Y.rename('Y')
+            sage: H = Hom(X, Y)
+            sage: m = matrix([[1, 2], [3, 5]])
+            sage: psi = H(m)
+            sage: psi.parent() is H
+            True
+            sage: psi(X.monomial(1))
+            B[3] + 2*B[4]
+            sage: psi(X.monomial(2))
+            3*B[3] + 5*B[4]
+
+        This works for rectangular matrices, exactly as
+        :func:`~sage.modules.vector_space_morphism.linear_transformation`
+        does for ordinary vector spaces::
+
+            sage: # needs sage.modules
+            sage: Z = CombinatorialFreeModule(QQ, [5, 6, 7]); Z.rename('Z')
+            sage: H = Hom(X, Z)
+            sage: psi = H(matrix([[1, 2, 0], [0, 3, 4]]))
+            sage: psi(X.monomial(1))
+            B[5] + 2*B[6]
+
+        The positional and keyword matrix forms agree, and the underlying
+        matrix can be recovered with the matching ``side``::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y)
+            sage: H(m) == H(matrix=m)
+            True
+            sage: H(m).matrix(side='right') == m
+            True
+
+        As for a generic homset, the ``check`` argument is accepted (and
+        ignored), both for the matrix and the generic construction::
+
+            sage: # needs sage.modules
+            sage: H(m, check=False) == H(m)
+            True
+            sage: H(lambda v: Y.zero(), check=False)(X.monomial(1))
+            0
+
+        Explicit homset categories are preserved::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y, Modules(QQ))
+            sage: H(m).parent() is H
+            True
+
+        The other ways of constructing a morphism are unaffected; in
+        particular, if the argument is not a matrix it should be a
+        callable, which is then applied directly to elements::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y)
+            sage: phi = H(on_basis=lambda i: Y.monomial(i + 2))
+            sage: phi(X.monomial(1))
+            B[3]
+            sage: f = H(lambda v: Y.zero())
+            sage: f(X.monomial(1))
+            0
+        """
+        if matrix is None and isinstance(x, Matrix):
+            matrix, x = x, None
+        if matrix is not None:
+            options.setdefault('side', 'right')
+            options.setdefault('category', self.homset_category())
+            return self.domain().module_morphism(matrix=matrix,
+                                                 codomain=self.codomain(),
+                                                 **options)
+        return super()._element_constructor_(x, check=check, **options)
 
 
 class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
@@ -204,6 +339,42 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
     #   - On the element class, monomial_coefficients().
 
     class ParentMethods:
+        def _Hom_(self, Y, category):
+            r"""
+            Return the homset from ``self`` to ``Y`` in the category ``category``.
+
+            This returns a :class:`ModulesWithBasisHomset`, so that a matrix
+            is interpreted as the matrix of the morphism in the distinguished
+            bases (see :issue:`40847`). Free modules and vector spaces that
+            provide their own ``_Hom_`` (returning a
+            :class:`~sage.modules.free_module_homspace.FreeModuleHomspace`
+            or :class:`~sage.modules.vector_space_homspace.VectorSpaceHomspace`)
+            are unaffected, as their hook takes precedence.
+
+            This method is not meant to be called directly; use
+            :func:`~sage.categories.homset.Hom` instead.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: from sage.categories.modules_with_basis import ModulesWithBasisHomset
+                sage: C = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: H = Hom(C, C)
+                sage: isinstance(H, ModulesWithBasisHomset)
+                True
+
+            ::
+
+                sage: # needs sage.modules
+                sage: D = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
+                sage: C._Hom_(D, category=ModulesWithBasis(QQ))
+                Set of Morphisms from Free module generated by {'a', 'b'}
+                 over Rational Field to Free module generated by {'a', 'b', 'c'}
+                 over Rational Field in Category of vector spaces with basis
+                 over Rational Field
+            """
+            return ModulesWithBasisHomset(self, Y, category=category)
+
         @cached_method
         def basis(self):
             """
@@ -747,7 +918,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
-            :meth:`echelonize`, and reindexed by `0,1,...`.
+            :meth:`~sage.matrix.matrix2.Matrix.echelonize`, and reindexed by `0,1,...`.
 
             .. WARNING::
 
@@ -764,7 +935,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`ModulesWithBasis.FiniteDimensional.ParentMethods.quotient_module`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module`
                  - :class:`sage.modules.with_basis.subquotient.SubmoduleWithBasis`
 
             EXAMPLES:
@@ -924,7 +1095,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               ``self.submodule(submodule)``
 
             - ``check``, ``already_echelonized`` -- passed down to
-              :meth:`ModulesWithBasis.ParentMethods.submodule`
+              :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
 
             .. WARNING::
 
@@ -960,7 +1131,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`Modules.WithBasis.ParentMethods.submodule`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """
@@ -2243,6 +2414,46 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3*x*y^2
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
+
+        def change_ring(self, R):
+            r"""
+            Return this element with its coefficients converted to ``R``.
+
+            INPUT:
+
+            - ``R`` -- the new base ring
+
+            EXAMPLES::
+
+                sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: B = F.basis()
+                sage: x = B['a'] + 2*B['b']
+                sage: y = x.change_ring(ZZ)
+                sage: y
+                B['a'] + 2*B['b']
+                sage: y.parent().base_ring()
+                Integer Ring
+
+            If the base ring is unchanged, return the same element::
+
+                sage: x.change_ring(QQ) is x
+                True
+
+            Coefficients that become zero are removed::
+
+                sage: (7*B['a'] + B['b']).change_ring(GF(7))                            # needs sage.rings.finite_rings
+                B['b']
+
+            The coefficients must be convertible to the new base ring::
+
+                sage: (1/2*B['a']).change_ring(ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+            """
+            if R is self.base_ring():
+                return self
+            return self.map_coefficients(lambda c: c, new_base_ring=R)
 
         def map_coefficients(self, f, new_base_ring=None):
             """

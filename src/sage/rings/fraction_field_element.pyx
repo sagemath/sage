@@ -417,8 +417,7 @@ cdef class FractionFieldElement(FieldElement):
 
         if d == 1:
             return n
-        else:
-            return n ^ d
+        return n ^ d
 
     def __call__(self, *x, **kwds):
         """

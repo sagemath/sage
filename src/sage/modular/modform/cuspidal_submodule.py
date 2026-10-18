@@ -171,7 +171,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         Change the base ring of ``self`` to ``R``, when this makes sense.
 
         This differs from
-        :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
+        :meth:`~sage.modules.module.Module.base_extend`
         in that there may not be a canonical map from ``self`` to the new
         space, as in the first example below. If this space has a
         character then this may fail when the character cannot be

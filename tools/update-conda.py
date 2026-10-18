@@ -36,7 +36,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13", "3.14"]
+pythons = ["3.13", "3.14"]
 tags = [""]
 
 
@@ -96,6 +96,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
+    cysignals_version = (
+        source_dir / "build/pkgs/cysignals/package-version.txt"
+    ).read_text().strip()
+
     def process_platform_python(platform_key, platform_value, python):
         dependencies = get_dependencies(pyproject_toml, python, platform_key)
         for tag in tags:
@@ -137,7 +141,14 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             with open(lock_file_gen, "r+") as f:
                 content = f.read()
                 f.seek(0, 0)
-                f.write(f"name: sage{tag or '-dev'}\n{content}")
+                # Override conda's cysignals after solving its dependencies;
+                # conda-forge does not yet provide Sage's cysignals release.
+                f.write(
+                    f"name: sage{tag or '-dev'}\n{content}"
+                    "  # Use Sage's cysignals release while conda-forge catches up.\n"
+                    "  - pip:\n"
+                    f"    - cysignals=={cysignals_version}\n"
+                )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [
@@ -170,7 +181,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     all_requirements = {
         # Following can be removed once https://github.com/regro/cf-scripts/pull/2176 is used in grayskull
         req.replace("lrcalc", "python-lrcalc")
-        .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
@@ -179,6 +189,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
         .replace("pkg:generic/highs", "highs")
+        .replace("pkg:generic/libatomic_ops", "libatomic_ops")
         .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
@@ -309,7 +320,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     # https://github.com/sagemath/sage/pull/40679
     if platform != "win-64":
         all_requirements.remove("maxima")
-        all_requirements.add("maxima < 5.48.0")
+        all_requirements.add("maxima ==5.49.0")
         all_requirements.remove("singular")
         all_requirements.add("singular ==4.4.1.p5")
 

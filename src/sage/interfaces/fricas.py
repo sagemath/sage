@@ -995,8 +995,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     """
     Instances of this class represent objects in FriCAS.
 
-    Using the method :meth:`sage` we can translate some of them to
-    SageMath objects:
+    Using the method :meth:`~sage.interfaces.interface.InterfaceElement.sage`
+    we can translate some of them to SageMath objects:
 
     .. automethod:: _sage_
     """

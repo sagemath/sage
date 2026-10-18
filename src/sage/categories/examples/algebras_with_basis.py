@@ -49,7 +49,8 @@ class FreeAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         """
         Return the empty word, which index the one of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -64,7 +65,7 @@ class FreeAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, w1, w2):
         r"""
         Product of basis elements, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         EXAMPLES::
 

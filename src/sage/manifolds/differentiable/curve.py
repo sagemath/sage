@@ -466,7 +466,7 @@ class DifferentiableCurve(DiffMap):
               x == x  *passed*
               y == y  *passed*
               r == r  *passed*
-              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              ph == -2*pi*ceil(-1/2*(pi - ph)/pi) + ph  **failed**
             NB: a failed report can reflect a mere lack of simplification.
             sage: R.<t> = manifolds.RealLine()
             sage: c = U.curve({c_spher: (1,t)}, (t, 0, 2*pi), name='c')

@@ -20,8 +20,8 @@ AUTHORS:
 # ****************************************************************************
 
 from docutils import nodes
-from docutils.transforms import Transform
 from sphinx.ext.doctest import blankline_re
+from sphinx.transforms import SphinxTransform
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 default_role = 'math'
@@ -59,7 +59,12 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
         return None
 
     if what == 'method':
-        docstringlines[:] = [f'alias of :meth:`{original_name}`.']
+        module = getattr(obj, '__module__', None)
+        qualname = getattr(obj, '__qualname__', None)
+        target = f'{module}.{qualname}' if module and qualname else original_name
+        # The target is fully qualified so that it resolves from any page;
+        # the tilde keeps the rendered text short ("alias of foo()").
+        docstringlines[:] = [f'alias of :meth:`~{target}`.']
         return
 
     # We now have `what == 'function'`
@@ -124,20 +129,6 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
             break
 
 
-def process_dollars(app, what, name, obj, options, docstringlines):
-    r"""
-    Replace dollar signs with backticks.
-
-    See sage.misc.sagedoc.process_dollars for more information.
-    """
-    if len(docstringlines) and name.find("process_dollars") == -1:
-        from sage.misc.sagedoc import process_dollars as sagedoc_dollars
-        s = sagedoc_dollars("\n".join(docstringlines))
-        lines = s.split("\n")
-        for i in range(len(lines)):
-            docstringlines[i] = lines[i]
-
-
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
     If we're including inherited members, omit their docstrings.
@@ -180,7 +171,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
         del docstringlines[len(lines)]
 
 
-class SagemathTransform(Transform):
+class SagemathTransform(SphinxTransform):
     """
     Transform for code-blocks.
 
@@ -206,7 +197,6 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
     app.connect('autodoc-process-docstring', process_directives)
     app.connect('autodoc-process-docstring', process_docstring_module_title)
-    app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
     app.connect('autodoc-process-docstring', skip_TESTS_block)
 

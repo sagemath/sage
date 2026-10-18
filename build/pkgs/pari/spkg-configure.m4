@@ -27,6 +27,20 @@ SAGE_SPKG_CONFIGURE([pari], [
                 sage_spkg_install_pari=yes
             fi
         fi
+        AC_MSG_CHECKING([whether PARI/GP passes the low-precision mateigen test])
+        dnl https://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=2708
+        dnl GP can exit successfully after an error, so require the expected output.
+        gp_mateigen_check=`printf '%s\n' \
+            'f(b) = { localbitprec(b); mateigen([[0,1;-2,0]],1) };' \
+            'print(#f(53) == 2)' | $GP -qf 2>> config.log`
+        if test "x$gp_mateigen_check" = x1; then
+            AC_MSG_RESULT([yes])
+        else
+            AC_MSG_RESULT([no; PARI/GP is affected by bug 2708])
+            AC_MSG_NOTICE([Install a version unaffected by this bug and reconfigure.])
+            AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
+            sage_spkg_install_pari=yes
+        fi
         AC_MSG_CHECKING([is pari_elldata installed? ])
         gp_ell_check=`echo "r=ellinit(\"11a1\"); r[[11]]" | $GP -qf 2>> config.log`
         if test x$gp_ell_check = x20008; then
@@ -135,6 +149,12 @@ SAGE_SPKG_CONFIGURE([pari], [
     if test x$sage_spkg_install_pari = xyes; then
         AC_SUBST(SAGE_PARI_PREFIX, ['$SAGE_LOCAL'])
     else
-       AC_SUBST(SAGE_PARI_PREFIX, [''])
+        dnl GP's version and datadir have been checked against libpari above.
+        dnl Use the same prefix inference as the gp2c package. Passing this
+        dnl to cypari2 prevents its Homebrew search from choosing another PARI.
+        SAGE_PARI_PREFIX=$(dirname -- "$(dirname -- "$GP")")
+        dnl Account for systems where /bin is a symlink to /usr/bin.
+        AS_IF([test "x$SAGE_PARI_PREFIX" = "x/"], [SAGE_PARI_PREFIX=/usr])
+        AC_SUBST(SAGE_PARI_PREFIX)
     fi
 ])

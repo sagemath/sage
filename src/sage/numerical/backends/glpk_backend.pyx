@@ -7,6 +7,14 @@ AUTHORS:
 - John Perry (2012-01): glp_simplex preprocessing
 - John Perry and Raniere Gaia Silva (2012-03): solver parameters
 - Christian Kuper (2012-10): Additions for sensitivity analysis
+
+TESTS:
+
+This module is deprecated::
+
+    sage: import sage.numerical.backends.glpk_backend
+    ...DeprecationWarning...
+
 """
 
 # ****************************************************************************
@@ -30,7 +38,9 @@ from sage.cpython.string import FS_ENCODING
 from sage.numerical.mip import MIPSolverException
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.lp cimport *
+from sage.misc.superseded import deprecation
 
+deprecation(42802, "The GLPK backends are obsolete and will be removed, use HiGHs instead")
 
 cdef class GLPKBackend(GenericBackend):
     """
@@ -367,14 +377,12 @@ cdef class GLPKBackend(GenericBackend):
             n = <char *> glp_get_prob_name(self.lp)
             if n == NULL:
                 return ""
-            else:
-                return char_to_str(n)
+            return char_to_str(n)
 
-        else:
-            name = str_to_bytes(name)
-            if len(name) > 255:
-                raise ValueError("Problem name for GLPK must not be longer than 255 characters.")
-            glp_set_prob_name(self.lp, name)
+        name = str_to_bytes(name)
+        if len(name) > 255:
+            raise ValueError("Problem name for GLPK must not be longer than 255 characters.")
+        glp_set_prob_name(self.lp, name)
 
     cpdef set_objective(self, list coeff, d=0.0):
         """
@@ -1416,8 +1424,7 @@ cdef class GLPKBackend(GenericBackend):
 
         if s != NULL:
             return char_to_str(s)
-        else:
-            return ""
+        return ""
 
     cpdef row_name(self, int index):
         """
@@ -1456,8 +1463,7 @@ cdef class GLPKBackend(GenericBackend):
 
         if s != NULL:
             return char_to_str(s)
-        else:
-            return ""
+        return ""
 
     cpdef bint is_variable_binary(self, int index) noexcept:
         """
@@ -1658,32 +1664,29 @@ cdef class GLPKBackend(GenericBackend):
             sig_off()
             if x == DBL_MAX:
                 return None
-            else:
-                return x
-        else:
+            return x
+
+        sig_on()
+        min = glp_get_col_lb(self.lp, index + 1)
+        sig_off()
+
+        if value is None:
             sig_on()
-            min = glp_get_col_lb(self.lp, index + 1)
-            sig_off()
-
-            if value is None:
-                sig_on()
-                if min == -DBL_MAX:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_FR, 0, 0)
-                else:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_LO, min, 0)
-                sig_off()
+            if min == -DBL_MAX:
+                glp_set_col_bnds(self.lp, index + 1, GLP_FR, 0, 0)
             else:
-                dvalue = <double?> value
-
-                sig_on()
-                if min == -DBL_MAX:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_UP, 0, dvalue)
-
-                elif min == dvalue:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_FX,  dvalue, dvalue)
-                else:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_DB, min, dvalue)
-                sig_off()
+                glp_set_col_bnds(self.lp, index + 1, GLP_LO, min, 0)
+            sig_off()
+        else:
+            dvalue = <double?> value
+            sig_on()
+            if min == -DBL_MAX:
+                glp_set_col_bnds(self.lp, index + 1, GLP_UP, 0, dvalue)
+            elif min == dvalue:
+                glp_set_col_bnds(self.lp, index + 1, GLP_FX,  dvalue, dvalue)
+            else:
+                glp_set_col_bnds(self.lp, index + 1, GLP_DB, min, dvalue)
+            sig_off()
 
     cpdef variable_lower_bound(self, int index, value=False):
         """
@@ -1758,32 +1761,29 @@ cdef class GLPKBackend(GenericBackend):
             sig_off()
             if x == -DBL_MAX:
                 return None
-            else:
-                return x
-        else:
+            return x
+
+        sig_on()
+        max = glp_get_col_ub(self.lp, index + 1)
+        sig_off()
+
+        if value is None:
             sig_on()
-            max = glp_get_col_ub(self.lp, index + 1)
-            sig_off()
-
-            if value is None:
-                sig_on()
-                if max == DBL_MAX:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_FR, 0.0, 0.0)
-                else:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_UP, 0.0, max)
-                sig_off()
-
+            if max == DBL_MAX:
+                glp_set_col_bnds(self.lp, index + 1, GLP_FR, 0.0, 0.0)
             else:
-                dvalue = <double?> value
-
-                sig_on()
-                if max == DBL_MAX:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_LO, value, 0.0)
-                elif max == value:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_FX,  value, value)
-                else:
-                    glp_set_col_bnds(self.lp, index + 1, GLP_DB, value, max)
-                sig_off()
+                glp_set_col_bnds(self.lp, index + 1, GLP_UP, 0.0, max)
+            sig_off()
+        else:
+            dvalue = <double?> value
+            sig_on()
+            if max == DBL_MAX:
+                glp_set_col_bnds(self.lp, index + 1, GLP_LO, value, 0.0)
+            elif max == value:
+                glp_set_col_bnds(self.lp, index + 1, GLP_FX,  value, value)
+            else:
+                glp_set_col_bnds(self.lp, index + 1, GLP_DB, value, max)
+            sig_off()
 
     cpdef write_lp(self, filename):
         """
@@ -2633,8 +2633,7 @@ cdef class GLPKBackend(GenericBackend):
 
         if self.simplex_or_intopt == simplex_only:
             return glp_get_row_dual(self.lp, variable+1)
-        else:
-            return 0.0
+        return 0.0
 
     cpdef double get_col_dual(self, int variable) except? -1:
         """
@@ -2687,8 +2686,7 @@ cdef class GLPKBackend(GenericBackend):
 
         if self.simplex_or_intopt == simplex_only:
             return glp_get_col_dual(self.lp, variable+1)
-        else:
-            return 0.0
+        return 0.0
 
     cpdef int get_row_stat(self, int i) except? -1:
         """

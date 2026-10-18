@@ -489,7 +489,7 @@ following libraries are currently supported:
 * `GLPK <http://www.gnu.org/software/glpk/>`_: A solver from `GNU
   <http://www.gnu.org/>`_
 
-  Licensed under the GPLv3. This solver is always installed, as the default one, in Sage.
+  Licensed under the GPLv3. This solver is always installed in Sage.
 
 * `Gurobi <https://www.gurobi.com/>`_:
   Proprietary, but available for free for researchers and students via Gurobi's
@@ -515,8 +515,26 @@ following libraries are currently supported:
 
     $ sage -i -c sage_numerical_backends_gurobi
 
+* `HiGHS <https://highs.dev/>`_: An open-source solver for large-scale linear
+  and mixed-integer programs, always installed in Sage.
+
+  Licensed under the MIT License.
+
 * `PPL <http://bugseng.com/products/ppl>`_: A solver from bugSeng.
 
   This solver provides exact (arbitrary precision) computation, always installed in Sage.
 
   Licensed under the GPLv3.
+
+* `SCIP <https://scipopt.org/>`_: A solver from Zuse Institute Berlin covering
+  linear, mixed-integer, and mixed-integer nonlinear programs. It is not
+  installed by default; install it with the optional ``pyscipopt`` package
+  (which also builds SCIP)::
+
+    $ sage -i pyscipopt
+
+  Licensed under the Apache 2.0 License.
+
+On a standard installation, HiGHS is the default backend, with GLPK as the next
+fallback. If an optional solver such as CPLEX, Gurobi, or CBC is installed, Sage
+uses that instead.

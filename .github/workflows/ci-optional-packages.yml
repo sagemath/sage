@@ -17,7 +17,7 @@ jobs:
        opt_targets_macos: ${{ steps.convert.outputs.opt_targets_macos }}
     steps:
      - name: Checkout
-       uses: actions/checkout@v4
+       uses: actions/checkout@v7
 
      - name: Convert input
        id: convert
@@ -45,19 +45,20 @@ jobs:
 
   macos:
     needs: prepare
-    name: Build and Test optional packages (macos-${{ matrix.version }})
-    runs-on: macos-${{ matrix.version }}
+    name: Build and Test optional packages (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        version:
-          - '15'
-          - '26'
+        runner:
+          - macos-15
+          - macos-26
+          - darwin-27
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
@@ -68,6 +69,18 @@ jobs:
       - name: Install dependencies
         run: |
           eval $(build/bin/sage-print-system-package-command homebrew update)
+          brew tap dimpase/tap
+          brew tap dimpase/gap
+          brew tap macaulay2/tap
+          brew tap apaffenholz/polymake
+          brew trust --tap dimpase/tap dimpase/gap macaulay2/tap apaffenholz/polymake
+          # Replace core PARI and data packages with the matching tap formulae.
+          for formula in pari pari-elldata pari-galdata pari-galpol pari-seadata; do
+            if brew list --formula --full-name | grep -x "$formula" > /dev/null; then
+              HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --force --ignore-dependencies "$formula"
+            fi
+          done
+          brew install dimpase/tap/pari
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
           brew install libomp Macaulay2/homebrew-tap/gfan Macaulay2/homebrew-tap/linbox
 

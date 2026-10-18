@@ -4,7 +4,7 @@ project(
   version: files('VERSION.txt'),
   license: 'GPL v3',
   default_options: ['c_std=c17', 'cpp_std=c++17', 'python.install_env=auto'],
-  meson_version: '>=1.5',
+  meson_version: '>=1.11.2',
 )
 
 # Python module
@@ -213,9 +213,6 @@ for path in file_paths:
   ''',
 ]
 run_command(create_files_command, check: true)
-
-root = meson.current_source_dir()
-root_build = meson.current_build_dir()
 
 subdir('src')
 

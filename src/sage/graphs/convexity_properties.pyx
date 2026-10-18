@@ -419,8 +419,7 @@ cdef class ConvexityProperties:
         if self._n <= 2:
             if value_only:
                 return self._n
-            else:
-                return self._list_integers_to_vertices
+            return self._list_integers_to_vertices
 
         cdef GenericBackend p = <GenericBackend> get_solver(constraint_generation=True)
 

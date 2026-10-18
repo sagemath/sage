@@ -541,8 +541,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             obs = IntList(obs)
         if scale:
             return self._forward_scale(obs)
-        else:
-            return self._forward(obs)
+        return self._forward(obs)
 
     def _forward(self, IntList obs):
         r"""
@@ -741,8 +740,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             # A special case
             if self._emission_symbols is None:
                 return states, obs
-            else:
-                return states, []
+            return states, []
 
         # Setup variables, including random state.
         cdef Py_ssize_t i, j
@@ -886,8 +884,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             obs = IntList(obs)
         if log_scale:
             return self._viterbi_scale(obs)
-        else:
-            return self._viterbi(obs)
+        return self._viterbi(obs)
 
     cpdef _viterbi(self, IntList obs):
         r"""

@@ -1245,7 +1245,7 @@ class NorthwestDiagrams(Diagrams):
     :meth:`from_partition`. This will return a Ferrer's diagram in the
     set of all northwest diagrams. For many use-cases it is probably better
     to get Ferrer's diagrams by the corresponding method on partitions, namely
-    :meth:`sage.combinat.partitions.Partitions.ferrers_diagram`::
+    :meth:`sage.combinat.partition.Partition.ferrers_diagram`::
 
         sage: mu = Partition([7,3,1,1])
         sage: mu.pp()
@@ -1516,7 +1516,7 @@ def RotheDiagram(w):
         . . . .
 
     Currently, only elements of the set of
-    :class:`sage.combinat.permutations.Permutations` are supported. In
+    :class:`sage.combinat.permutation.Permutations` are supported. In
     particular, elements of permutation groups are not supported::
 
         sage: w = SymmetricGroup(9).an_element()                                        # needs sage.groups

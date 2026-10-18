@@ -400,7 +400,7 @@ It is therefore the natural spot for the documentation of the axiom.
 
     During a Sage session, new axioms should only be added at the *end*
     of ``all_axioms``, as above, so as to not break the cache of
-    :func:`axioms_rank`. Otherwise, they can be inserted statically
+    ``axioms_rank``. Otherwise, they can be inserted statically
     anywhere in the tuple. For axioms defined within the Sage library,
     the name is best inserted by editing directly the definition of
     ``all_axioms`` in :mod:`sage.categories.category_with_axiom`.
@@ -775,7 +775,7 @@ Concretely, this is to be implemented by defining the new axiom in the
 (``SubcategoryMethods`` nested class of the) appropriate category with
 axiom. For example the axiom ``NoZeroDivisors`` would be naturally
 defined in
-:class:`.magmas_and_additive_magmas.MagmasAndAdditiveMagmas.Distributive.AdditiveUnital`.
+:class:`~sage.categories.distributive_magmas_and_additive_magmas.DistributiveMagmasAndAdditiveMagmas.AdditiveAssociative.AdditiveCommutative.AdditiveUnital`.
 
 .. NOTE::
 
@@ -801,7 +801,7 @@ division ring necessarily has no zero divisors::
     False
 
 This deduction rule is implemented by the method
-:meth:`Rings.Division.extra_super_categories`::
+:meth:`~sage.categories.division_rings.DivisionRings.extra_super_categories`::
 
     sage: Rings().Division().extra_super_categories()
     (Category of domains,)
@@ -812,7 +812,8 @@ preferably ``(Ds().B(),)`` where ``Ds`` is the category defining the
 axiom ``B``.
 
 This follows the same idiom as for deduction rules about functorial
-constructions (see :meth:`.covariant_functorial_construction.CovariantConstructionCategory.extra_super_categories`).
+constructions (see
+:meth:`~sage.categories.covariant_functorial_construction.CovariantConstructionCategory.extra_super_categories`).
 For example, the fact that a Cartesian product of associative magmas
 (i.e. of semigroups) is an associative magma is implemented in
 :meth:`Semigroups.CartesianProducts.extra_super_categories`::
@@ -841,7 +842,8 @@ Special case
 In the previous examples, the deduction rule only had an influence on
 the super categories of the category with axiom being constructed. For
 example, when constructing ``Rings().Division()``, the rule
-:meth:`Rings.Division.extra_super_categories` simply adds
+:meth:`~sage.categories.division_rings.DivisionRings.extra_super_categories`
+simply adds
 ``Rings().NoZeroDivisors()`` as a super category thereof.
 
 In some situations this idiom is inapplicable because a class for the
@@ -1269,7 +1271,7 @@ Specifications
 
       Nothing difficult to implement, but this will need to rework the
       current "no subclass of a concrete class" assertion test of
-      :meth:`Category_singleton.__classcall__`.
+      :meth:`~sage.categories.category_singleton.Category_singleton.__classcall__`.
 
     - Similarly, a covariant functorial construction category having a
       :class:`Category_over_base_ring` as base category should be a
@@ -1647,6 +1649,7 @@ TESTS:
         and Category of finite set algebras over Rational Field
     sage: FiniteGroups().Algebras(QQ)
     Category of finite group algebras over Rational Field
+
 """
 # ****************************************************************************
 #  Copyright (C) 2011-2014 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -1710,7 +1713,6 @@ def uncamelcase(s, separator=" "):
         'finite_dimensional_algebras'
     """
     return re.sub("(?!^)[A-Z]", lambda match: separator+match.group()[0], s).lower()
-
 
 def base_category_class_and_axiom(cls):
     """
@@ -2250,7 +2252,7 @@ class CategoryWithAxiom(Category):
         .. NOTE::
 
             The logic here is shared between :meth:`_repr_object_names`
-            and :meth:`.category.JoinCategory._repr_object_names`
+            and ``JoinCategory._repr_object_names``
 
         TESTS::
 

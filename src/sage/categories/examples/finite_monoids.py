@@ -109,7 +109,8 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         r"""
-        Return the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
+        Return the one of the monoid, as per
+        :meth:`sage.categories.magmas.Magmas.Unital.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -122,7 +123,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
     def product(self, x, y):
         r"""
         Return the product of two elements `x` and `y` of the monoid, as
-        per :meth:`Semigroups.ParentMethods.product`.
+        per :meth:`sage.categories.magmas.Magmas.ParentMethods.product`.
 
         EXAMPLES::
 
