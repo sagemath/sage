@@ -1,1 +1,1 @@
-numpy
+dimpase/tap/numpy-accelerate

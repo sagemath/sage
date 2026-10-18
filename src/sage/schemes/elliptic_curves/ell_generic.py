@@ -3681,7 +3681,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: e.type()
             't_VEC'
             sage: e.disc()
-            37.0000000000000
+            37.0000000000...
 
         Over a finite field::
 
@@ -3713,10 +3713,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
              ...-1..., ...-48..., Mod(-864*y, y^2 - 2),
              Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2),
              Vecsmall([5]),
-             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310; 1, 1.41421356237310],
-             [1, -1.41421356237310; 1, 1.41421356237310],
+             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237...; 1, 1.41421356237...],
+             [1, -1.41421356237...; 1, 1.41421356237...],
              [16, -23; 16, 23], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
-             [2, [0, 2; 1, 0]], [2]], [-1.41421356237310, 1.41421356237310],
+             [2, [0, 2; 1, 0]], [2]], [-1.41421356237..., 1.41421356237...],
              [1, y], [1, 0; 0, 1], [1, 0, 0, 2; 0, 1, 1, 0]]], [0, 0, 0, 0, 0]]
 
         PARI no longer requires that the `j`-invariant has negative `p`-adic valuation::
@@ -3745,7 +3745,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve('11a1')
             sage: pari(E)                                                               # needs sage.libs.pari
-            [0, -1, 1, -10, -20, -4, -20, -79, -21, 496, 20008, -161051, -122023936/161051, Vecsmall([1]), [Vecsmall([64, -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
+            [0, -1, 1, -10, -20, -4, -20, -79, -21, 496, 20008, -161051, -122023936/161051, Vecsmall([1]), [Vecsmall([..., -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
         Over a finite field::
 

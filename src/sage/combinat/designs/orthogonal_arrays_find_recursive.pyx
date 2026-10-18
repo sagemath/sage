@@ -36,11 +36,7 @@ obtain an `OA(k,n)`.
 
 REFERENCES:
 
-.. [AC07] Concerning eight mutually orthogonal latin squares
-  Julian R. Abel, Nicholas Cavenagh
-  Journal of Combinatorial Designs
-  Vol. 15, n.3, pp. 255-261
-  2007
+- [AC07]_
 
 Functions
 ---------

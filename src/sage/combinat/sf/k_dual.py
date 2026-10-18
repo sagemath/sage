@@ -1220,8 +1220,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [LLMSSZ] \T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki,
-        k-Schur functions and affine Schubert calculus.
+    - [LLMSSZ]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1339,8 +1338,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [Lam2006] \T. Lam, Schubert polynomials for the affine Grassmannian, J. Amer.
-        Math. Soc., 21 (2008), 259-281.
+    - [Lam2006]_
     """
 
     def __init__(self, kBoundedRing):
