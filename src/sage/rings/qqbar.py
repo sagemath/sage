@@ -6244,6 +6244,18 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: float(AA(-T))
             -inf
 
+        Ensure that signed zero is handled correctly even in the
+        adjacent-endpoints case::
+
+            sage: q = QQ(2)^(-1077)
+            sage: x = (AA(2).sqrt()^2 - 2) / 2^1012 + q
+            sage: x == q
+            True
+            sage: float(x).hex()
+            '0x0.0p+0'
+            sage: float(q).hex() == float(x).hex()
+            True
+
         """
         value = self._value
         if value.is_zero():
