@@ -3974,6 +3974,10 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (0, 1, {'w': 2})],
             ....:           multiedges=True)
+            sage: min(G.edge_labels())
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of 'dict' and 'dict'
             sage: G.allow_multiple_edges(False, keep_label='min', key=lambda e: e[2]['w'])
             sage: G.edges(sort=False)
             [(0, 1, {'w': 1})]
@@ -4013,8 +4017,8 @@ class GenericGraph(GenericGraph_pyx):
                 u, v, l = e
                 if (u, v) not in seen:
                     # This is the first time we see this edge
-                    seen[u, v] = l, key(e)
-                else:
+                    seen[u, v] = l, (key(e) if keep_min or keep_max else None)
+                elif keep_min or keep_max:
                     # This edge has already been seen: we have to remove
                     # something from the graph.
                     oldl, oldk = seen[u, v]
@@ -4026,6 +4030,10 @@ class GenericGraph(GenericGraph_pyx):
                     else:
                         # Delete the new edge
                         self.delete_edge(u, v, l)
+                else:
+                    # This edge has already been seen and any label can be
+                    # kept: delete the new edge
+                    self.delete_edge(u, v, l)
 
         self._backend.multiple_edges(new)
 
