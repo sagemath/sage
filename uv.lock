@@ -3081,7 +3081,6 @@ dependencies = [
     { name = "requests" },
     { name = "scipy" },
     { name = "six" },
-    { name = "sphinx" },
     { name = "sympy" },
     { name = "traitlets" },
 ]
@@ -3177,7 +3176,6 @@ requires-dist = [
     { name = "sage-numerical-backends-coin", marker = "extra == 'extra'" },
     { name = "scipy", specifier = ">=1.11" },
     { name = "six", specifier = ">=1.15.0" },
-    { name = "sphinx", specifier = ">=9.1,<10" },
     { name = "sympy", specifier = ">=1.6,<2.0" },
     { name = "traitlets" },
 ]
