@@ -18,6 +18,7 @@ lazy_import('sage.crypto.stream', ['LFSRCryptosystem',
 
 lazy_import('sage.crypto.ed25519', ['Ed25519',
                                     'Ed25519BasePoint',
+                                    'Ed25519SignatureScheme',
                                     'ED25519_A',
                                     'ED25519_BASE_X',
                                     'ED25519_BASE_Y',
