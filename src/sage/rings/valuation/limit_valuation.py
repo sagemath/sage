@@ -151,9 +151,13 @@ class LimitValuationFactory(UniqueFactory):
     - ``check`` -- boolean (default: ``True``); whether to validate and
       canonicalize the arguments; internal callers may set this to ``False``
       when ``G`` is monic, squarefree, and integral and ``base_valuation``
-      singles out a unique branch towards ``G``; unchecked calls use their
-      arguments as the factory key and therefore do not canonicalize
-      equivalent descriptions
+      singles out a unique branch towards ``G`` with final ramification and
+      residue-degree data, as provided by
+      :meth:`~sage.rings.valuation.valuation.DiscreteValuation.mac_lane_approximants`
+      with ``require_final_EF=True`` and ``require_incomparability=True``;
+      uniqueness of the branch alone is not sufficient for computing the
+      limit's value group and residue field; unchecked calls use their arguments
+      as the factory key and therefore do not canonicalize equivalent descriptions
 
     EXAMPLES::
 
@@ -568,6 +572,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         self._G = G
         self._next_coefficients = None
         self._next_valuations = None
+        self._residue_ring_cache = None
 
     def extensions(self, ring):
         r"""
@@ -639,6 +644,33 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         F = self.residue_ring().coerce(F)
         return self._approximation.lift(F)
+
+    def reduce(self, f, check=True):
+        r"""
+        Return the reduction of ``f`` in the residue field.
+
+        INPUT:
+
+        - ``f`` -- an element of the domain with nonnegative valuation
+
+        - ``check`` -- boolean (default: ``True``); whether to check that
+          ``f`` has nonnegative valuation
+
+        Elements of the support reduce to zero even when the current
+        approximation assigns them a nonpositive finite value::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: w = valuations.LimitValuation(v.augmentation(x - 1, oo), x - 1)
+            sage: w.reduce((x - 1) / 2)
+            0
+        """
+        f = self.domain().coerce(f)
+        self._improve_approximation_for_reduce(f)
+        if self._G.divides(f):
+            return self.residue_ring().zero()
+        F = self._approximation.reduce(f, check=check)
+        return self.residue_ring()(F)
 
     def uniformizer(self):
         r"""
@@ -896,6 +928,11 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u.residue_ring()
             Finite Field of size 2
         """
+        cache = self._residue_ring_cache
+        if (cache is not None and cache[0] is self._approximation
+                and (cache[1] is self._G or cache[1] == self._G)):
+            return cache[2]
+
         from sage.categories.fields import Fields
         from sage.rings.infinity import infinity
         if self._approximation.mu() is not infinity and self._approximation.is_key(self._G):
@@ -904,18 +941,18 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             if final_approximation.psi().degree() > 1:
                 self._approximation = final_approximation
 
-        if self._approximation.mu() is infinity:
-            R = self._approximation.residue_ring()
-            assert R in Fields()
-            return R
-
         R = self._approximation.residue_ring()
-        if R in Fields():
-            # the approximation ends in v(phi)=infty
-            return R
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
-        assert (isinstance(R, PolynomialRing_generic))
-        return R.base_ring()
+        if self._approximation.mu() is infinity:
+            assert R in Fields()
+        elif R not in Fields():
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            assert isinstance(R, PolynomialRing_generic)
+            R = R.base_ring()
+
+        # Refinement can change either the approximation or its defining
+        # polynomial. Cache only the current state, after any augmentation.
+        self._residue_ring_cache = (self._approximation, self._G, R)
+        return R
 
     def _ge_(self, other):
         r"""
@@ -1202,9 +1239,21 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             21/2
             sage: u(1024*t + 1024)
             21/2
+
+        A multiple of the support has infinite value even if the current
+        approximation is finite::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: w = valuations.LimitValuation(v.augmentation(x - 1, oo), x - 1)
+            sage: w.upper_bound(x - 1)
+            +Infinity
         """
         f = self.domain().coerce(f)
         self._improve_approximation_for_call(f)
+        if self._G.divides(f):
+            from sage.rings.infinity import infinity
+            return infinity
         return self._approximation.upper_bound(f)
 
     def is_negative_pseudo_valuation(self):
