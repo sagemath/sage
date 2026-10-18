@@ -506,7 +506,96 @@ AC_PROG_OBJCXX()
 AC_SUBST(OBJC)
 AC_SUBST(OBJCXX)
 
-AS_IF([test "x$CXX" = x], [AC_MSG_ERROR([a C++ compiler is missing])])
+AS_IF([test "x$CXX" = x], [AC_MSG_ERROR([a C++ compiler is missing. $SAGE_PREREQ_URL])])
+
+# Require suitable system compilers; Sage does not build its own toolchain.
+AC_LANG_PUSH([C])
+AX_COMPILER_VENDOR()
+AS_IF([test "x$ax_cv_c_compiler_vendor" = xgnu], [
+    AS_CASE([$host], [*-apple-darwin*], [
+        AC_MSG_ERROR([Cannot build Sage on macOS with GNU GCC. Use Apple's Clang compilers. SAGE_PREREQ_URL])
+    ])
+])
+AS_IF([test "x$ac_cv_prog_cc_c99" = xno || test "x$ac_cv_prog_cc_stdc" = xno], [
+    AC_MSG_ERROR([your C compiler cannot compile C99 code. SAGE_PREREQ_URL])
+])
+AC_LANG_POP([C])
+
+# Retain the compiler command without the C++ standard flag for packages
+# that select their own standard.
+AC_SUBST([SAGE_CXX_WITHOUT_STD], [$CXX])
+AX_CXX_COMPILE_STDCXX_11([], [mandatory])
+AC_SUBST([CXX])
+
+# GCC and G++ must be supported versions and agree with each other.
+# Clang also defines __GNUC__, so use AX_COMPILER_VENDOR to distinguish it.
+AS_IF([test "x$ax_cv_c_compiler_vendor" = xgnu], [
+    AC_MSG_CHECKING([the versions of $CC and $CXX])
+    GCC_VERSION=`$CC -dumpfullversion -dumpversion 2>/dev/null || $CC -dumpversion`
+    GXX_VERSION=`$CXX -dumpfullversion -dumpversion 2>/dev/null || $CXX -dumpversion`
+    AC_MSG_RESULT([$GCC_VERSION and $GXX_VERSION])
+    AS_VERSION_COMPARE([$GCC_VERSION], [10.3], [
+        AC_MSG_ERROR([$CC version $GCC_VERSION is too old; GCC >= 10.3 is required. SAGE_PREREQ_URL])
+    ])
+    AS_VERSION_COMPARE([$GCC_VERSION], [17], [], [
+        AC_MSG_ERROR([$CC version $GCC_VERSION is too recent for this version of Sage. SAGE_PREREQ_URL])
+    ], [
+        AC_MSG_ERROR([$CC version $GCC_VERSION is too recent for this version of Sage. SAGE_PREREQ_URL])
+    ])
+    AS_IF([test "$GCC_VERSION" != "$GXX_VERSION"], [
+        AC_MSG_ERROR([$CC ($GCC_VERSION) and $CXX ($GXX_VERSION) are not the same version. SAGE_PREREQ_URL])
+    ])
+])
+
+# Check that the assembler and linker selected by CXX match explicit AS/LD.
+for sage_tool in AS LD; do
+    AS_VAR_COPY([sage_tool_command], [$sage_tool])
+    AS_IF([test -n "$sage_tool_command"], [
+        AS_CASE([$sage_tool], [AS], [sage_tool_name=as], [LD], [sage_tool_name=ld])
+        sage_cxx_tool=`$CXX -print-prog-name=$sage_tool_name 2>/dev/null`
+        sage_cxx_tool=`command -v $sage_cxx_tool 2>/dev/null`
+        sage_configured_tool=`command -v $sage_tool_command`
+        AS_IF([test -n "$sage_cxx_tool" && ! test "$sage_cxx_tool" -ef "$sage_configured_tool"], [
+            AC_MSG_ERROR([unset $sage_tool or set it to match your compiler's $sage_tool_name])
+        ])
+    ])
+done
+
+# Free-form Fortran is required, but each package chooses its own FCFLAGS.
+AS_IF([test -z "$FC"], [
+    AC_MSG_ERROR([a Fortran compiler is missing. SAGE_PREREQ_URL])
+])
+sage_saved_fcflags="$FCFLAGS"
+AC_FC_FREEFORM([], [
+    AC_MSG_ERROR([your Fortran compiler does not accept free-form source code. SAGE_PREREQ_URL])
+])
+FCFLAGS="$sage_saved_fcflags"
+AS_CASE([$FC], [*gfortran*], [
+    AC_MSG_CHECKING([the version of $FC])
+    GFORTRAN_VERSION=`$FC -dumpfullversion -dumpversion 2>/dev/null || $FC -dumpversion`
+    AC_MSG_RESULT([$GFORTRAN_VERSION])
+    AS_VERSION_COMPARE([$GFORTRAN_VERSION], [10.3], [
+        AC_MSG_ERROR([$FC version $GFORTRAN_VERSION is too old; gfortran >= 10.3 is required. SAGE_PREREQ_URL])
+    ])
+    AS_VERSION_COMPARE([$GFORTRAN_VERSION], [17], [], [
+        AC_MSG_ERROR([$FC version $GFORTRAN_VERSION is too recent for this version of Sage. SAGE_PREREQ_URL])
+    ], [
+        AC_MSG_ERROR([$FC version $GFORTRAN_VERSION is too recent for this version of Sage. SAGE_PREREQ_URL])
+    ])
+])
+
+CFLAGS_MARCH=""
+AS_IF([test "x$sage_use_march_native" != xno && test "x$SAGE_FAT_BINARY" != xyes], [
+    AX_CHECK_COMPILE_FLAG([-march=native], [CFLAGS_MARCH="-march=native"])
+])
+AC_SUBST([CFLAGS_MARCH])
+
+AC_LANG_PUSH([C])
+AX_OPENMP([AC_SUBST([OPENMP_CFLAGS])])
+AC_LANG_POP([C])
+AC_LANG_PUSH([C++])
+AX_OPENMP([AC_SUBST([OPENMP_CXXFLAGS])])
+AC_LANG_POP([C++])
 
 
 ###############################################################################
@@ -541,7 +630,7 @@ AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
 ###############################################################################
 
 # $(TOOLCHAIN) variable containing prerequisites for the build
-SAGE_TOOLCHAIN=gcc
+SAGE_TOOLCHAIN=""
 if test "$SAGE_INSTALL_CCACHE" = yes ; then
     SAGE_TOOLCHAIN="$SAGE_TOOLCHAIN ccache"
 fi
@@ -669,10 +758,6 @@ AS_IF([test "$SAGE_ENABLE_r" = no -a "$SAGE_ENABLE_notebook" = no], [
     AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
   done
 ])
-
-dnl Packages that require a special override to use the SPKG
-dnl when the system package is not usable.
-AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 

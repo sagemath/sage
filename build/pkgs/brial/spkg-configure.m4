@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([brial], [
   dnl Issue #31624: Avoid C++ ABI issues
-  SAGE_SPKG_DEPCHECK([gcc m4ri], [
+  SAGE_SPKG_DEPCHECK([m4ri], [
     # If we're using the system m4ri, ensure that we can
     # compile and run an executable linked against both libbrial and
     # libbrial_groebner (both are used by SageMath).

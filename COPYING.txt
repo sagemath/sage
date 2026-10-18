@@ -51,7 +51,6 @@ flint                       GPLv2+
 fplll                       LGPLv2.1+
 freetype                    FreeType License (similar to BSD; see below)
 gap                         GPLv2+
-gcc                         GPLv3+
 gd                          Custom (BSD-ish)
 genus2reduction             GPLv2+
 gfan                        GPLv2 or GPLv3

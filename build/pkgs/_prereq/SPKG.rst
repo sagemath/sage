@@ -12,9 +12,12 @@ and the :wikipedia:`bash <Bash_(Unix_shell)>` shell,
 the following standard command-line development tools must be installed on your
 computer:
 
-- **C compiler** (**C/C++** - compiler required on macOS): a sufficently modern compiler.
-  Ideally these can be directly used to build Sage. The options are essentially GNU gcc/g++ on Linux,
-  and clang/clang++ on macOS (which conventionally misnames them gcc/g++), on BSDs, and also on Linux.
+- **C and C++ compilers**: GCC (GNU Compiler Collection) or Clang (LLVM).
+  C99 and C++11 support are required. Use matching compiler vendors and versions.
+  On macOS, use Apple's Clang compilers from the Xcode Command Line Tools.
+- **Fortran compiler**: a compiler accepting free-form source code.
+  Officially, we support GNU ``gfortran``; LLVM ``flang`` may also work.
+  Supported GCC and gfortran versions are 10.3 through 16.x.
 - **make**: GNU make, version 3.80 or later. Version 3.82 or later is recommended.
 - **m4**: GNU m4 1.4.2 or later (non-GNU or older versions might also work).
 - **perl**: version 5.8.0 or later.
@@ -74,3 +77,25 @@ or::
 on the command line. If it gives an error (or returns nothing), then
 either ``perl`` is not installed, or it is installed but not in your
 :wikipedia:`PATH <PATH_%28variable%29>`.
+
+Selecting compilers
+-------------------
+
+Sage uses system compilers and does not build or install GCC or gfortran.
+Select the C, C++, and Fortran compilers with the environment variables
+:envvar:`CC`, :envvar:`CXX`, and :envvar:`FC` when running ``./configure``.
+For example::
+
+    $ ./configure CC=clang CXX=clang++ FC=gfortran
+
+Users of older Linux distributions should upgrade before building Sage.
+In particular, use Ubuntu 22.04 (Jammy) or newer. To select a matching
+versioned GNU toolchain, for example::
+
+    $ sudo apt-get install gcc-15 g++-15 gfortran-15
+    $ ./configure CC=gcc-15 CXX=g++-15 FC=gfortran-15
+
+If these packages are unavailable in your release's repositories, install
+suitable compilers using your distribution's toolchain repositories or ask
+your system administrator. On macOS, Homebrew's ``gcc`` package provides
+``gfortran``; continue to use Apple's Clang for C and C++.

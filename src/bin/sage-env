@@ -124,33 +124,15 @@ fi
 # Set SAGE_ENV_SOURCED to the appropriate value at the end of this file, once
 # $SAGE_LOCAL, $SAGE_VENV, $SAGE_SRC have been set.
 
-# The compilers are set in order of priority by
-# 1) environment variables
-# 2) compiler installed by sage
-# 3) compiler set at configuration time
+# Use explicit environment variables, then the configured system compilers.
 if [ -z "$CC" ]; then
-    if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gcc" ]; then
-        CC=gcc
-    elif [ -n "$CONFIGURED_CC" ]; then
-        CC="$CONFIGURED_CC"
-    fi
-    export CC
+    export CC="$CONFIGURED_CC"
 fi
 if [ -z "$CXX" ]; then
-    if [  -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/g++" ]; then
-        CXX=g++
-    elif [ -n "$CONFIGURED_CXX" ]; then
-        CXX="$CONFIGURED_CXX"
-    fi
-    export CXX
+    export CXX="$CONFIGURED_CXX"
 fi
 if [ -z "$FC" ]; then
-    if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gfortran" ]; then
-        FC=gfortran
-    elif [ -n "$CONFIGURED_FC" ]; then
-        FC="$CONFIGURED_FC"
-    fi
-    export FC
+    export FC="$CONFIGURED_FC"
 fi
 if [ "$UNAME" = "Darwin" ]; then
     if [ -z "$OBJC" ]; then
