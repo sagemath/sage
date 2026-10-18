@@ -18,8 +18,73 @@ def no_pexpect_gap(monkeypatch):
 def test_function_help_uses_libgap(name, no_pexpect_gap):
     """Core and ambiguous help queries must not start pexpect GAP."""
     doc = getattr(libgap, name).__doc__
-    assert f'{name}( ' in doc
+    assert name in doc
     assert '\x1b' not in doc
+    assert f'{name}( ' in getattr(libgap, name).help(1, pager=False)
+
+
+@pytest.mark.parametrize('name', ['Size', 'HasSize', 'SetIsFinite'])
+def test_function_help_menu_matches_gap(name, no_pexpect_gap):
+    """Use the same menu entries, order and line widths as GAP itself."""
+    capture = libgap.eval('''function()
+        local lines;
+        lines := fail;
+        return rec(pager := function(data) lines := data.lines; end,
+                   result := function() return lines; end);
+        end''')()
+    screen = libgap.SizeScreen()
+    try:
+        libgap.SizeScreen([80, 24])
+        with libgap.global_context('Pager', capture['pager']), \
+             libgap.global_context('HELP_LAST', libgap.StructuralCopy(libgap.HELP_LAST)):
+            libgap.HELP_SHOW_MATCHES(libgap.HELP_KNOWN_BOOKS[0],
+                                    libgap.SIMPLE_STRING(name), True)
+        expected = [libgap.StripEscapeSequences(line).sage()
+                    for line in capture['result']()]
+    finally:
+        libgap.SizeScreen(screen)
+    menu = getattr(libgap, name).__doc__
+    assert 'several entries match' in menu
+    assert 'help(n)' in menu
+    assert menu.splitlines()[2:] == expected[1:]
+
+
+def test_function_help_menu_selection(monkeypatch, no_pexpect_gap):
+    """Selecting a menu entry must retrieve that entry, not always the first."""
+    matches = libgap.eval('''function()
+        local book;
+        book := rec(bookname := "Example", handler := "SageHelpTest",
+                    entries := [["First"], ["Second"], ["Third"]]);
+        return [[[book, 1], [book, 2]], [[book, 3]]];
+        end''')()
+    monkeypatch.setattr(libgap, 'HELP_GET_MATCHES', lambda *args: matches)
+    handler = {'SageHelpTest': {'HelpData': lambda book, entry, kind: libgap(f'Entry {entry}')}}
+    monkeypatch.setattr(libgap, 'HELP_BOOK_HANDLER', handler)
+    f = libgap.CyclicGroup
+    assert f.__doc__.splitlines()[2:] == ['[1] Example: First',
+                                         '[2] Example: Second',
+                                         '[3] Example: Third']
+    assert f.help(2, pager=False) == 'Entry 2'
+    assert f.help(3, pager=False) == 'Entry 3'
+    with pytest.raises(ValueError, match='help match number out of range'):
+        f.help(4, pager=False)
+
+    # GAP displays one exact match immediately, even with partial matches.
+    monkeypatch.setattr(libgap, 'HELP_GET_MATCHES',
+                        lambda *args: libgap([[matches[0][1]], matches[1]]))
+    assert f.__doc__ == 'Entry 2'
+
+
+def test_function_help_uses_sage_pager(monkeypatch, no_pexpect_gap):
+    """Display the menu and the selected documentation through Sage's pager."""
+    from IPython.core import page
+
+    shown = []
+    monkeypatch.setattr(page, 'page', shown.append)
+    assert libgap.HasSize.help() is None
+    assert 'several entries match' in shown.pop()
+    assert libgap.HasSize.help(1) is None
+    assert 'Size( ' in shown.pop()
 
 
 def test_function_help_missing(capfd, no_pexpect_gap):
@@ -56,8 +121,8 @@ def test_function_help_encoding(encoding, no_pexpect_gap):
         set_encoding(original)
 
 
-@pytest.mark.parametrize('fail', [False, True])
-def test_function_help_preserves_state(fail, monkeypatch, no_pexpect_gap):
+@pytest.mark.parametrize('mode', ['single', 'menu', 'selection', 'error'])
+def test_function_help_preserves_state(mode, monkeypatch, no_pexpect_gap):
     """Looking up documentation must preserve interactive help settings."""
     state = libgap.eval('''function()
         return rec(last := StructuralCopy(HELP_LAST), index := HELP_RING_IDX,
@@ -69,15 +134,19 @@ def test_function_help_preserves_state(fail, monkeypatch, no_pexpect_gap):
                    screen := SizeScreen(), encoding := GAPInfo.TermEncoding);
         end''')
     before = state()
-    if fail:
+    if mode == 'error':
         from sage.libs.gap.util import GAPError
 
         lookup_error = libgap.eval('function(a, b, c) Error("help lookup failed"); end')
         monkeypatch.setattr(libgap, 'HELP_GET_MATCHES', lookup_error)
         with pytest.raises(GAPError, match='help lookup failed'):
             libgap.CyclicGroup._instancedoc_()
-    else:
+    elif mode == 'single':
         assert libgap.CyclicGroup.__doc__
+    elif mode == 'menu':
+        assert 'several entries match' in libgap.HasSize.__doc__
+    else:
+        assert libgap.HasSize.help(1, pager=False)
     assert state() == before
 
 
