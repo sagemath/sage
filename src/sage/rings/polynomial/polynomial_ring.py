@@ -1253,7 +1253,7 @@ class PolynomialRing_generic(Ring):
         return self.gen()
 
     @cached_method
-    def is_exact(self):
+    def is_exact(self) -> bool:
         return self.base_ring().is_exact()
 
     def is_field(self, proof=True):

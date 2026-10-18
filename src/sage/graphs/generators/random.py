@@ -70,7 +70,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
 
     We plot a random graph on 12 nodes with probability `p = .71`::
 
-        sage: gnp = graphs.RandomGNP(12,.71)
+        sage: gnp = graphs.RandomGNP(12, .71)
         sage: gnp.show()                        # long time                             # needs sage.plot
 
     We view many random graphs using a graphics array::
@@ -78,7 +78,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.RandomGNP(i+3,.43)
+        ....:     k = graphs.RandomGNP(i + 3, .43)
         ....:     g.append(k)
         sage: for i in range(3):                                                        # needs sage.plot
         ....:     n = []
@@ -87,7 +87,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
         ....:     j.append(n)
         sage: G = graphics_array(j)                                                     # needs sage.plot
         sage: G.show()                          # long time                             # needs sage.plot
-        sage: graphs.RandomGNP(4,1)
+        sage: graphs.RandomGNP(4, 1)
         Complete graph: Graph on 4 vertices
 
     TESTS::
@@ -97,9 +97,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
         ...
         ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'
         sage: set_random_seed(0)
-        sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
+        sage: graphs.RandomGNP(50, .2, algorithm='Sage').size()
         243
-        sage: s = graphs.RandomGNP(50,.2, algorithm='networkx').size()                  # needs networkx
+        sage: s = graphs.RandomGNP(50, .2, algorithm='networkx').size()                 # needs networkx
         sage: s in [279, 209]  # 32 and 64 bit, needs networkx
         True
     """
@@ -153,7 +153,7 @@ def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
 
     We show the edge list of a random graph on 6 nodes with `m = 2`::
 
-        sage: G = graphs.RandomBarabasiAlbert(6,2)                                      # needs networkx
+        sage: G = graphs.RandomBarabasiAlbert(6, 2)                                     # needs networkx
         sage: G.order(), G.size()                                                       # needs networkx
         (6, 8)
         sage: G.degree_sequence()  # random                                             # needs networkx
@@ -161,7 +161,7 @@ def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
 
     We plot a random graph on 12 nodes with `m = 3`::
 
-        sage: ba = graphs.RandomBarabasiAlbert(12,3)                                    # needs networkx
+        sage: ba = graphs.RandomBarabasiAlbert(12, 3)                                   # needs networkx
         sage: ba.show()                         # long time                             # needs networkx sage.plot
 
     We view many random graphs using a graphics array::
@@ -169,8 +169,8 @@ def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
         sage: # needs networkx sage.plot
         sage: g = []
         sage: j = []
-        sage: for i in range(1,10):
-        ....:     k = graphs.RandomBarabasiAlbert(i+3, 3)
+        sage: for i in range(1, 10):
+        ....:     k = graphs.RandomBarabasiAlbert(i + 3, 3)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -507,7 +507,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None,
 
         sage: m, k = 6, 4
         sage: B = graphs.RandomBlockGraph(m, k)
-        sage: B.order() == m*(k-1)+1
+        sage: B.order() == m*(k - 1) + 1
         True
 
     Test recognition methods::
@@ -525,7 +525,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None,
         sage: from sage.combinat.designs.incidence_structures import IncidenceStructure
         sage: IncidenceStructure(IS)                                                    # needs sage.modules
         Incidence structure with 19 points and 6 blocks
-        sage: m*(k-1)+1
+        sage: m*(k - 1) + 1
         19
 
     TESTS:
@@ -712,7 +712,7 @@ def RandomGNM(n, m, dense=False, seed=None, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.RandomGNM(i+3, i^2-i)
+        ....:     k = graphs.RandomGNM(i + 3, i^2 - i)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -1536,7 +1536,7 @@ def RandomKTree(n, k, seed=None, immutable=False):
 
     TESTS::
 
-        sage: g=graphs.RandomKTree(50,5)
+        sage: g=graphs.RandomKTree(50, 5)
         sage: g.size()
         235
         sage: g.order()
@@ -1626,7 +1626,7 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
 
     TESTS::
 
-        sage: g=graphs.RandomPartialKTree(50,5,2)
+        sage: g=graphs.RandomPartialKTree(50, 5, 2)
         sage: g.order()
         50
         sage: g.size()
@@ -1670,7 +1670,7 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.RandomPartialKTree(50,5,2)
+        sage: G = graphs.RandomPartialKTree(50, 5, 2)
         sage: G.treewidth()
         5
         sage: G.show()  # not tested
@@ -1794,7 +1794,7 @@ def RandomShell(constructor, seed=None, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.RandomShell([(10,20,0.8),(20,40,0.8)])                         # needs networkx
+        sage: G = graphs.RandomShell([(10, 20, 0.8), (20, 40, 0.8)])                    # needs networkx
         sage: G.order(), G.size()                                                       # needs networkx
         (30, 52)
         sage: G.show()                          # long time                             # needs networkx sage.plot
@@ -1930,7 +1930,7 @@ def _auxiliary_random_forest_word(n, k):
         ....:         curr_sum += steps[x]
         ....:         yield curr_sum
 
-        sage: for k in range(3,6):
+        sage: for k in range(3, 6):
         ....:     for n in range(k, 10):
         ....:         w = _auxiliary_random_forest_word(n, k)
         ....:         assert len(w) == 4*n + 2*k - 4
@@ -2017,7 +2017,7 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
         Graph on 4 vertices
 
         sage: from sage.graphs.generators.random import _auxiliary_random_forest_word
-        sage: _, G = _contour_and_graph_from_words([0, 1, 0, 0, 1, 0], _auxiliary_random_forest_word(20, 5)) # random
+        sage: _, G = _contour_and_graph_from_words([0, 1, 0, 0, 1, 0], _auxiliary_random_forest_word(20, 5))  # random
         sage: len(G.faces())
         2
 
@@ -2191,10 +2191,10 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None, immutable=False):
         ValueError: The size 'k' of the outer face must be at least 3.
 
         sage: for i in range(10):
-        ....:     g = graphs.RandomTriangulation(30) # random
+        ....:     g = graphs.RandomTriangulation(30)  # random
         ....:     assert g.is_planar()
         sage: for k in range(3, 10):
-        ....:     g = graphs.RandomTriangulation(10, k=k) # random
+        ....:     g = graphs.RandomTriangulation(10, k=k)  # random
         ....:     assert g.is_planar(on_embedding=g.get_embedding())
     """
     if k < 3:

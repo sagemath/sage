@@ -446,7 +446,10 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 from copy import copy
+from typing import TYPE_CHECKING, Self
 
 from sage.features.igraph import python_igraph as igraph_feature
 from sage.graphs.dot2tex_utils import assert_have_dot2tex
@@ -464,6 +467,11 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
+
+
+if TYPE_CHECKING:
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -518,7 +526,7 @@ class GenericGraph(GenericGraph_pyx):
         for k, v in state.items():
             self.__dict__[k] = v
 
-    def __add__(self, other):
+    def __add__(self, other) -> Graph | DiGraph:
         """
         Return a graph isomorphic to disjoint union of this graph with ``other``.
 
@@ -769,7 +777,7 @@ class GenericGraph(GenericGraph_pyx):
         raise TypeError("This graph is mutable, and thus not hashable. "
                         "Create an immutable copy by `g.copy(immutable=True)`")
 
-    def __mul__(self, n):
+    def __mul__(self, n) -> Self:
         r"""
         Return the sum of a graph with itself `n` times.
 
@@ -10715,8 +10723,12 @@ class GenericGraph(GenericGraph_pyx):
         and setting it implies ``by_weight=True``::
 
             sage: D = DiGraph([(0, 1, {'cap': 3}), (1, 2, {'cap': 2})])
-            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'])                   # needs sage.numerical.mip
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='FF')
             2
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='LP')  # needs sage.numerical.mip
+            2.0
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='igraph')  # optional - python_igraph
+            2.0
 
         TESTS:
 
@@ -10724,7 +10736,7 @@ class GenericGraph(GenericGraph_pyx):
         ``by_weight``::
 
             sage: D = DiGraph([(0, 1, 3), (1, 2, 2)])
-            sage: D.flow(0, 2, use_edge_labels=True)                                    # needs sage.numerical.mip
+            sage: D.flow(0, 2, use_edge_labels=True, algorithm='FF')
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
             See https://github.com/sagemath/sage/issues/42772 for details.
@@ -10788,11 +10800,11 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 algorithm = "FF"
 
-        if (algorithm == "FF"):
+        if algorithm == "FF":
             return self._ford_fulkerson(x, y, value_only=value_only, integer=integer,
                                         by_weight=by_weight,
                                         weight_function=weight_function)
-        if (algorithm == 'igraph'):
+        if algorithm == 'igraph':
             vertices = list(self)
             x_int = vertices.index(x)
             y_int = vertices.index(y)
@@ -24091,9 +24103,7 @@ class GenericGraph(GenericGraph_pyx):
             M = self.kirchhoff_matrix(vertices=vertices)
         else:
             M = self.adjacency_matrix(vertices=vertices)
-        evals = M.eigenvalues()
-        evals.sort(reverse=True)
-        return evals
+        return sorted(M.eigenvalues(), reverse=True)
 
     def characteristic_polynomial(self, var='x', laplacian=False):
         r"""
