@@ -1,0 +1,63 @@
+From 9391c9422424d47d6b6d0c02a1af72fd2ee97a0f Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance9@gatech.edu>
+Date: Sat, 8 Aug 2026 17:52:09 -0400
+Subject: [PATCH] Link Givaro and BLAS directly into all precompiled libraries
+
+With --enable-precompilation, only libfflas listed $(GIVARO_LIBS); libffpack,
+libfflas_c and libffpack_c were given a bare libtool archive and relied on
+Givaro being reachable through it.  libtool does not propagate it: when
+linkmode is lib, ltmain.sh copies a dependency's dependency_libs into the
+.la file's record, but the only thing it adds to the actual link command is
+the -L search paths -- the matching -l flags are never passed on.
+
+On ELF this merely underlinks the three libraries (they resolve Givaro
+through libfflas.so's DT_NEEDED), but on Mach-O, where a symbol must come
+from a library named directly on the link line, it is fatal:
+
+  Undefined symbols for architecture x86_64:
+    "Givaro::Integer::operator%(unsigned long long) const", referenced from:
+        Givaro::Modular<double, double, void>::init(double&, Givaro::Integer const&) const in fflas_lvl1.o
+
+All four sources include givaro/modular.h and instantiate Givaro::Modular
+inline, and -DFFLAS_COMPILED is never set for these objects, so Givaro is a
+direct dependency of each of them, not a transitive one.  BLAS is listed for
+the same reason: configure restores LIBS after its BLAS probes, so
+$(BLAS_LIBS) only reaches these link lines by accident today.
+
+The underlinkage is reproducible on Linux by adding -Wl,--no-undefined to
+the pre-patch link command, which fails on the same symbol.
+
+Fixes #391
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+---
+ fflas-ffpack/interfaces/libs/Makefile.am | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fflas-ffpack/interfaces/libs/Makefile.am b/fflas-ffpack/interfaces/libs/Makefile.am
+index b15b8c8b..0f13224f 100644
+--- a/fflas-ffpack/interfaces/libs/Makefile.am
++++ b/fflas-ffpack/interfaces/libs/Makefile.am
+@@ -59,7 +59,7 @@ libfflas_la_LDFLAGS= -version-info 1:0:0 -no-undefined
+ 
+ libffpack_la_SOURCES= ffpack_inst.C \
+ 		      ffpack_inst_implem.inl
+-libffpack_la_LIBADD= libfflas.la
++libffpack_la_LIBADD= libfflas.la $(GIVARO_LIBS) $(BLAS_LIBS) $(PARLIBS)
+ libffpack_la_LDFLAGS= -version-info 1:0:0 -no-undefined
+ 
+ libfflas_c_la_SOURCES=fflas_lvl1.C \
+@@ -67,12 +67,12 @@ libfflas_c_la_SOURCES=fflas_lvl1.C \
+ 		    fflas_lvl3.C \
+ 		    fflas_sparse.C
+ #libfflas_c_la_CPPFLAGS=$(AM_CPPFLAGS) -DFFLAS_COMPILED -DFFPACK_COMPILED
+-libfflas_c_la_LIBADD= libfflas.la
++libfflas_c_la_LIBADD= libfflas.la $(GIVARO_LIBS) $(BLAS_LIBS) $(PARLIBS)
+ libfflas_c_la_LDFLAGS= -version-info 1:0:0 -no-undefined
+ 
+ libffpack_c_la_SOURCES=ffpack.C
+ #libffpack_c_la_CPPFLAGS=$(AM_CPPFLAGS) -DFFLAS_COMPILED -DFFPACK_COMPILED
+-libffpack_c_la_LIBADD= libffpack.la
++libffpack_c_la_LIBADD= libffpack.la $(GIVARO_LIBS) $(BLAS_LIBS) $(PARLIBS)
+ libffpack_c_la_LDFLAGS= -version-info 1:0:0 -no-undefined
+ 
+ EXTRA_DIST=c_libs.doxy
