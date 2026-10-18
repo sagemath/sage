@@ -56,3 +56,7 @@ lazy_import('sage.rings.polynomial.integer_valued_polynomials',
             'IntegerValuedPolynomialRing')
 lazy_import('sage.rings.polynomial.q_integer_valued_polynomials',
             'QuantumValuedPolynomialRing')
+
+# Small roots of multivariate polynomials (Coppersmith, Jochemsz--May)
+lazy_import('sage.rings.polynomial.multivariate_small_roots',
+            ['small_roots_modular', 'small_roots_integer'])
