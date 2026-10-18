@@ -275,11 +275,25 @@ class ProbabilitySpace_generic(RandomVariable_generic):
         """
         A generic probability space on given domain space and codomain
         ring.
+
+        EXAMPLES::
+
+            sage: P = {1: 1/6, 2: 1/6, 3: 1/6, 4: 1/6, 5: 1/6, 6: 1/6}
+            sage: X = DiscreteProbabilitySpace(P.keys(), P)
+            sage: X.domain()
+            (1, 2, 3, 4, 5, 6)
+
+        This also works with a generator::
+
+            sage: X = DiscreteProbabilitySpace((i for i in [1, 2]), P)
+            sage: X.domain()
+            (1, 2)
         """
-        if isinstance(domain, list):
-            domain = tuple(domain)
         if not isinstance(domain, tuple):
-            raise TypeError("Argument domain (= %s) must be a list, tuple, or set containing." % domain)
+            try:
+                domain = tuple(domain)
+            except TypeError:
+                raise TypeError("Argument domain (= %s) must be a list, tuple, set, or other iterable" % domain)
         self._domain = domain
         RandomVariable_generic.__init__(self, self, RR)
 
