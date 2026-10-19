@@ -992,7 +992,7 @@ class Sandpile(DiGraph):
             sage: '_out_degrees' in s.__dict__
             True
         """
-        self._out_degrees = {v: 0 for v in self.vertices(sort=False)}
+        self._out_degrees = dict.fromkeys(self.vertices(sort=False), 0)
         for v in self.vertices(sort=False):
             for e in self.edges_incident(v):
                 self._out_degrees[v] += e[2]
@@ -1030,7 +1030,7 @@ class Sandpile(DiGraph):
             sage: '_in_degrees' in s.__dict__
             True
         """
-        self._in_degrees = {v: 0 for v in self}
+        self._in_degrees = dict.fromkeys(self, 0)
         for e in self.edge_iterator():
             self._in_degrees[e[1]] += e[2]
 

@@ -888,8 +888,10 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         EXAMPLES::
 
             sage: k.<a> = GF(3^17)
-            sage: (a^3 - a - 1).sqrt()
+            sage: (a^3 - a - 1).sqrt() # random - depends on pari version
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
+            sage: _^2 == a^3 - a - 1
+            True
         """
         return self.square_root(extend=extend, all=all)
 

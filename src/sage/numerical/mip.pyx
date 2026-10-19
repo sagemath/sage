@@ -932,6 +932,57 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.ncols()
 
+    def backend_index(self, v):
+        r"""
+        Return the backend column index of a variable component.
+
+        This index is the coordinate of ``v`` in the polyhedron returned by
+        :meth:`polyhedron`.  It is assigned when the component is created and
+        does not depend on its key or name.  A solver may also create columns
+        that do not correspond to user-defined variable components.
+
+        INPUT:
+
+        - ``v`` -- a variable component belonging to this program, such as
+          ``x[i]`` for a :class:`MIPVariable` ``x``
+
+        An expression absent from the program's component mapping raises
+        ``KeyError``.
+
+        OUTPUT:
+
+        A nonnegative integer.
+
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(solver='Highs')
+            sage: x = p.new_variable()
+            sage: p.backend_index(x['first'])
+            0
+            sage: p.backend_index(x['second'])
+            1
+            sage: p.backend_index(x['first'])
+            0
+            sage: try:
+            ....:     p.backend_index(2*x['first'])
+            ....: except KeyError:
+            ....:     print('not a variable component')
+            not a variable component
+
+        A component of another program has no index in ``p``::
+
+            sage: q = MixedIntegerLinearProgram(solver='Highs')
+            sage: y = q.new_variable()
+            sage: try:
+            ....:     p.backend_index(y[0])
+            ....: except KeyError:
+            ....:     print('not a component of p')
+            not a component of p
+
+        See :issue:`38799`.
+        """
+        return self._variables[v]
+
     def constraints(self, indices=None):
         r"""
         Return a list of constraints, as 3-tuples.
@@ -1043,8 +1094,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         OUTPUT:
 
-        A :func:`Polyhedron` object whose `i`-th variable represents the `i`-th
-        variable of ``self``.
+        A :func:`Polyhedron` object whose `i`-th coordinate represents the
+        variable component with :meth:`backend_index` equal to `i`, if that
+        backend column belongs to a user-defined component.
 
         .. warning::
 
@@ -1133,6 +1185,21 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.add_constraint(18.5*x + 5.1*y <= 110.3)
             sage: p.polyhedron()
             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
+
+        The backend indices identify the coordinates of the polyhedron
+        (see :issue:`38799`)::
+
+            sage: p = MixedIntegerLinearProgram(solver='Highs')
+            sage: x = p.new_variable()
+            sage: y = p.new_variable()
+            sage: p.backend_index(x['a']), p.backend_index(y['b']), p.backend_index(x['c'])
+            (0, 1, 2)
+            sage: p.backend_index(x['a']), p.number_of_variables()
+            (0, 3)
+            sage: p.add_constraint(2*x['a'] + y['b'] <= 1)
+            sage: P = p.polyhedron()
+            sage: P.contains((0, 1, 0)), P.contains((1, 0, 0))
+            (True, False)
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         cdef GenericBackend b = self._backend
@@ -2239,12 +2306,36 @@ cdef class MixedIntegerLinearProgram(SageObject):
             True
             sage: mip._is_redundant_constraint((x[1]).dict(), 1, None)
             False
+
+        TESTS:
+
+        Zero coefficients do not prevent detection of equivalent constraints
+        (:issue:`34887`)::
+
+            sage: mip = MixedIntegerLinearProgram(check_redundant=True, solver='Highs')
+            sage: x = mip.new_variable()
+            sage: constraints = [x[0] <= x[0] + x[1],
+            ....:                0 <= x[1], 0 <= x[1] + 0*x[2]]
+            sage: [mip.add_constraint(c, return_indices=True) for c in constraints]
+            [[0], [], []]
+            sage: mip.number_of_constraints()
+            1
+
+        Different bounds and nonzero coefficients still give new constraints,
+        while negative scaling reverses the bounds as usual::
+
+            sage: mip.add_constraint(x[1], min=1, return_indices=True)
+            [1]
+            sage: mip.add_constraint(-2*x[1] + 0*x[2], max=-2, return_indices=True)
+            []
+            sage: mip.add_constraint(x[1] + x[2], min=0, return_indices=True)
+            [2]
         """
         assert self._constraints is not None, 'must be initialized with check_redundant=True'
         assert -1 not in constraint, 'no constant term allowed'
         i0 = min([i for i, c in constraint.items() if c != 0])
         rescale = constraint[i0]
-        constraint = tuple((i, c/rescale) for i, c in constraint.items())
+        constraint = tuple((i, c/rescale) for i, c in constraint.items() if c != 0)
         if rescale > 0:
             min_scaled = min_bound/rescale if min_bound is not None else None
             max_scaled = max_bound/rescale if max_bound is not None else None

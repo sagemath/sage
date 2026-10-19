@@ -716,7 +716,7 @@ def UstimenkoGraph(const int m, const int q, immutable=False):
         2295
         sage: G.is_distance_regular(True)
         ([310, 224, None], [None, 1, 35])
-        sage: G = graphs.UstimenkoGraph(4,3)
+        sage: G = graphs.UstimenkoGraph(4, 3)
         sage: G.is_distance_regular(True)
         ([390, 243, None], [None, 1, 130])
     """
@@ -763,7 +763,7 @@ def BilinearFormsGraph(const int d, const int e, const int q, immutable=False):
         sage: G = graphs.BilinearFormsGraph(3, 3, 2)
         sage: G.is_distance_regular(True)
         ([49, 36, 16, None], [None, 1, 6, 28])
-        sage: G = graphs.BilinearFormsGraph(3,3,3)      # not tested (20 s)             # needs sage.rings.finite_rings
+        sage: G = graphs.BilinearFormsGraph(3, 3, 3)    # not tested (20 s)             # needs sage.rings.finite_rings
         sage: G.order()                         # not tested (due to above)             # needs sage.rings.finite_rings
         19683
         sage: G = graphs.BilinearFormsGraph(3, 4, 2)    # long time                     # needs sage.rings.finite_rings
@@ -777,10 +777,10 @@ def BilinearFormsGraph(const int d, const int e, const int q, immutable=False):
 
     TESTS::
 
-        sage: G = graphs.BilinearFormsGraph(2,3,2)
+        sage: G = graphs.BilinearFormsGraph(2, 3, 2)
         sage: G.is_distance_regular(True)
         ([21, 12, None], [None, 1, 6])
-        sage: H = graphs.BilinearFormsGraph(3,2,2)
+        sage: H = graphs.BilinearFormsGraph(3, 2, 2)
         sage: H.is_isomorphic(G)
         True
         sage: G = graphs.BilinearFormsGraph(5, 1, 3)
@@ -865,7 +865,7 @@ def AlternatingFormsGraph(const int n, const int q, immutable=False):
 
     TESTS::
 
-         sage: G = graphs.AlternatingFormsGraph(6,2)    # not tested (2 min)            # needs sage.rings.finite_rings
+         sage: G = graphs.AlternatingFormsGraph(6, 2)   # not tested (2 min)            # needs sage.rings.finite_rings
          sage: G.order()                        # not tested (because of above)         # needs sage.rings.finite_rings
          32768
          sage: G.is_distance_regular(True)      # not tested (33 min)                   # needs sage.rings.finite_rings
@@ -1261,7 +1261,7 @@ def DoubleGrassmannGraph(const int q, const int e, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.DoubleGrassmannGraph(2,1)                                      # needs sage.modules
+        sage: G = graphs.DoubleGrassmannGraph(2, 1)                                     # needs sage.modules
         sage: G.diameter()                                                              # needs sage.modules
         3
         sage: G.is_distance_regular(True)                                               # needs sage.modules
@@ -1274,7 +1274,7 @@ def DoubleGrassmannGraph(const int q, const int e, immutable=False):
 
     TESTS::
 
-        sage: G = graphs.DoubleGrassmannGraph(5,1)
+        sage: G = graphs.DoubleGrassmannGraph(5, 1)
         sage: G.order()
         62
         sage: G.is_distance_regular(True)
@@ -2850,9 +2850,10 @@ def distance_regular_graph(list arr, existence=False, check=True,
 
     EXAMPLES::
 
-        sage: graphs.distance_regular_graph([21,20,16,1,2,12], existence=True)
+        sage: graphs.distance_regular_graph([21, 20, 16, 1, 2, 12], existence=True)
         True
-        sage: G = graphs.distance_regular_graph([12,11,10,7,1,2,5,12], check=False)     # needs sage.combinat sage.modules
+        sage: G = graphs.distance_regular_graph([12, 11, 10, 7, 1, 2, 5, 12],           # needs sage.combinat sage.modules
+        ....:                                   check=False)
         sage: G.is_distance_regular(True)                                               # needs sage.combinat sage.modules
         ([12, 11, 10, 7, None], [None, 1, 2, 5, 12])
 
@@ -2876,7 +2877,7 @@ def distance_regular_graph(list arr, existence=False, check=True,
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
         sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
         Graph on 1024 vertices
-        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])  # optional - database_graphs
+        sage: graphs.distance_regular_graph([6, 5, 5, 5, 1, 1, 1, 6])  # optional - database_graphs
         Generalised octagon of order (1, 5): Graph on 312 vertices
         sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices
