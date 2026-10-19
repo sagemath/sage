@@ -19,17 +19,6 @@ updated, and a replacement of this file is proposed
 for review.
 """
 ##
-## To execute doctests in these files, run
-##   $ $SAGE_ROOT/sage -t <directory-of-these-files>
-## or
-##   $ $SAGE_ROOT/sage -t <a-single-file>
-##
-## Replace -t by "-tp n" for parallel testing,
-##   "-tp 0" will use a sensible number of threads
-##
-## See: http://www.sagemath.org/doc/developer/doctesting.html
-##   or run  $ $SAGE_ROOT/sage --advanced  for brief help
-##
 ## Generated at 2017-08-26T21:16:30-07:00
 ## From "Abstract Algebra"
 ## At commit 26d3cac0b4047f4b8d6f737542be455606e2c4b4

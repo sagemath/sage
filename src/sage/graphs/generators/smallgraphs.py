@@ -895,7 +895,7 @@ def Balaban10Cage(embedding=1, immutable=False):
         6
         sage: g.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
-        sage: g.show(figsize=[10,10])           # long time                             # needs sage.plot
+        sage: g.show(figsize=[10, 10])           # long time                            # needs sage.plot
 
     TESTS::
 
@@ -990,9 +990,9 @@ def Balaban11Cage(embedding=1, immutable=False):
         sage: g1 = graphs.Balaban11Cage(embedding=1)
         sage: g2 = graphs.Balaban11Cage(embedding=2)
         sage: g3 = graphs.Balaban11Cage(embedding=3)
-        sage: g1.show(figsize=[10,10])          # long time                             # needs sage.plot
-        sage: g2.show(figsize=[10,10])          # long time                             # needs sage.plot
-        sage: g3.show(figsize=[10,10])          # long time                             # needs sage.plot
+        sage: g1.show(figsize=[10, 10])         # long time                             # needs sage.plot
+        sage: g2.show(figsize=[10, 10])         # long time                             # needs sage.plot
+        sage: g3.show(figsize=[10, 10])         # long time                             # needs sage.plot
 
     Proof that the embeddings are the same graph::
 
@@ -1532,7 +1532,7 @@ def BrouwerHaemersGraph(immutable=False):
 
     Its has as eigenvalues `20,2` and `-7`::
 
-        sage: set(g.spectrum()) == {20,2,-7}                                            # needs sage.modules sage.rings.finite_rings
+        sage: set(g.spectrum()) == {20, 2, -7}                                          # needs sage.modules sage.rings.finite_rings
         True
 
     TESTS:
@@ -2347,7 +2347,7 @@ def DesarguesGraph(immutable=False):
     EXAMPLES::
 
         sage: D = graphs.DesarguesGraph()
-        sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)
+        sage: L = graphs.LCFGraph(20, [5, -5, 9, -9], 5)
         sage: D.is_isomorphic(L)
         True
         sage: D.show()                          # long time                             # needs sage.plot
@@ -2689,7 +2689,7 @@ def EllinghamHorton78Graph(immutable=False):
 
     ... and it has a nice drawing ::
 
-        sage: g.show(figsize=[10,10])   # not tested (too long)
+        sage: g.show(figsize=[10, 10])  # not tested (too long)
 
     TESTS::
 
@@ -3158,7 +3158,7 @@ def GolombGraph(immutable=False):
         Golomb graph: Graph on 10 vertices
         sage: pos = G.get_pos()                                                         # needs sage.symbolic
         sage: def dist2(u, v):
-        ....:     return (u[0]-v[0])**2 + (u[1]-v[1])**2
+        ....:     return (u[0] - v[0])**2 + (u[1] - v[1])**2
         sage: all(dist2(pos[u], pos[v]) == 1 for u, v in G.edge_iterator(labels=None))  # needs sage.symbolic
         True
     """
@@ -3497,13 +3497,13 @@ def HigmanSimsGraph(relabel=True, immutable=False):
     obvious based on the construction used::
 
         sage: H = graphs.HigmanSimsGraph()
-        sage: A = H.subgraph(range(0,50))
-        sage: B = H.subgraph(range(50,100))
+        sage: A = H.subgraph(range(50))
+        sage: B = H.subgraph(range(50, 100))
         sage: K = graphs.HoffmanSingletonGraph()
         sage: K.is_isomorphic(A) and K.is_isomorphic(B)
         True
-        sage: C = H.subgraph(range(25,75))
-        sage: D = H.subgraph(list(range(0,25))+list(range(75,100)))
+        sage: C = H.subgraph(range(25, 75))
+        sage: D = H.subgraph(list(range(25)) + list(range(75, 100)))
         sage: K.is_isomorphic(C) and K.is_isomorphic(D)
         True
 
@@ -3612,7 +3612,7 @@ def HigmanSimsGraph(relabel=True, immutable=False):
     return HS
 
 
-def HoffmanSingletonGraph(immutable=False):
+def HoffmanSingletonGraph(immutable=False, seed=None):
     r"""
     Return the Hoffman-Singleton graph.
 
@@ -3636,6 +3636,9 @@ def HoffmanSingletonGraph(immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
@@ -3676,6 +3679,10 @@ def HoffmanSingletonGraph(immutable=False):
     H.name('Hoffman-Singleton graph')
     from sage.combinat.permutation import Permutations
     from sage.misc.prandom import randint
+    if seed is not None:
+        from sage.misc.randstate import set_random_seed
+        set_random_seed(seed)
+
     P = Permutations([1, 2, 3, 4])
     qpp = [0] + list(P[randint(0, 23)])
     ppp = [0] + list(P[randint(0, 23)])
@@ -3702,7 +3709,7 @@ def HoffmanSingletonGraph(immutable=False):
             s = int(v[0])
         l += 1
     if immutable:
-        H, mymap = H.relabel(inplace=False, immutable=True, return_map=True)
+        H, mymap = H.relabel(range(50), inplace=False, immutable=True, return_map=True)
     else:
         mymap = H.relabel(range(50), return_map=True)
     H._circle_embedding([mymap[d] for d in D], angle=pi/2)
@@ -4374,7 +4381,7 @@ def MoserSpindle(immutable=False):
     the dihedral group `D_4`::
 
         sage: pos = G.get_pos()
-        sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
+        sage: all(sum((ui - vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
         ....:         for u, v in G.edge_iterator(labels=None))
         True
         sage: G.chromatic_number()
@@ -4550,7 +4557,7 @@ def PappusGraph(immutable=False):
 
         sage: G = graphs.PappusGraph()
         sage: G.show()                          # long time                             # needs sage.plot
-        sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)
+        sage: L = graphs.LCFGraph(18, [5, 7, -7, 7, -7, -5], 3)
         sage: L.show()                          # long time                             # needs sage.plot
         sage: G.is_isomorphic(L)
         True
@@ -4622,10 +4629,10 @@ def PetersenGraph(immutable=False):
     EXAMPLES: We compare below the Petersen graph with the default spring-layout
     versus a planned position dictionary of `(x, y)` tuples::
 
-        sage: petersen_spring = Graph({0:[1,4,5], 1:[0,2,6], 2:[1,3,7],
-        ....:                          3:[2,4,8], 4:[0,3,9], 5:[0,7,8],
-        ....:                          6:[1,8,9], 7:[2,5,9], 8:[3,5,6],
-        ....:                          9:[4,6,7]})
+        sage: adj = {0: [1, 4, 5], 1: [0, 2, 6], 2: [1, 3, 7], 3: [2, 4, 8],
+        ....:        4: [0, 3, 9], 5: [0, 7, 8], 6: [1, 8, 9], 7: [2, 5, 9],
+        ....:        8: [3, 5, 6], 9: [4, 6, 7]}
+        sage: petersen_spring = Graph(adj)
         sage: petersen_spring.show()            # long time                             # needs sage.plot
         sage: petersen_database = graphs.PetersenGraph()
         sage: petersen_database.show()          # long time                             # needs sage.plot
@@ -4794,9 +4801,9 @@ def ShrikhandeGraph(immutable=False):
         48
         sage: G.is_regular(6)
         True
-        sage: set([ len([x for x in G.neighbors(i) if x in G.neighbors(j)])
-        ....:     for i in range(G.order())
-        ....:     for j in range(i) ])
+        sage: set([len([x for x in G.neighbors(i) if x in G.neighbors(j)])
+        ....:      for i in range(G.order())
+        ....:      for j in range(i)])
         {2}
 
     It is non-planar, and both Hamiltonian and Eulerian::
@@ -4863,7 +4870,7 @@ def ShrikhandeGraph(immutable=False):
                  name="Shrikhande graph", immutable=immutable)
 
 
-def SylvesterGraph(immutable=False):
+def SylvesterGraph(immutable=False, seed=None):
     """
     Return the Sylvester Graph.
 
@@ -4883,6 +4890,9 @@ def SylvesterGraph(immutable=False):
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
 
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
     EXAMPLES::
 
         sage: g = graphs.SylvesterGraph(); g
@@ -4894,14 +4904,14 @@ def SylvesterGraph(immutable=False):
         sage: g.is_regular(k=5)
         True
     """
-    g = HoffmanSingletonGraph()
+    g = HoffmanSingletonGraph(seed=seed)
     e = next(g.edge_iterator(labels=False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.name("Sylvester Graph")
     if immutable:
-        g = g.relabel(inplace=False, immutable=True)
+        g = g.relabel(range(g.order()), inplace=False, immutable=True)
     else:
-        g.relabel()
+        g.relabel(range(g.order()))
     ordering = [0, 1, 2, 4, 5, 9, 16, 35, 15, 18, 20, 30, 22, 6, 33, 32, 14,
                 10, 28, 29, 7, 24, 23, 26, 19, 12, 13, 21, 11, 31, 3, 27, 25,
                 17, 8, 34]
@@ -4939,7 +4949,7 @@ def SimsGewirtzGraph(immutable=False):
         56
         sage: g.size()
         280
-        sage: g.is_strongly_regular(parameters = True)
+        sage: g.is_strongly_regular(parameters=True)
         (56, 10, 0, 2)
     """
     g = HigmanSimsGraph()
@@ -4947,9 +4957,9 @@ def SimsGewirtzGraph(immutable=False):
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.name("Sims-Gewirtz Graph")
     if immutable:
-        g = g.relabel(inplace=False, immutable=True)
+        g = g.relabel(range(g.order()), inplace=False, immutable=True)
     else:
-        g.relabel()
+        g.relabel(range(g.order()))
     ordering = [0, 2, 3, 4, 6, 7, 8, 17, 1, 41, 49, 5, 22, 26, 11, 27, 15, 47,
                 53, 52, 38, 43, 44, 18, 20, 32, 19, 42, 54, 36, 51, 30, 33, 35,
                 37, 28, 34, 12, 29, 23, 55, 25, 40, 24, 9, 14, 48, 39, 45, 16,

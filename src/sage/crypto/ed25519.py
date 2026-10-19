@@ -41,8 +41,7 @@ REFERENCES:
 
 - [RFC8032]_
 
-.. [RFC8032] S. Josefsson and I. Liusvaara, *Edwards-Curve Digital Signature
-   Algorithm (EdDSA)*, RFC 8032, January 2017.
+- [RFC8032]_
 
 AUTHORS:
 

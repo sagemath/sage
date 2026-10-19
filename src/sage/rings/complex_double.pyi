@@ -6,7 +6,7 @@ from sage.structure.element import FieldElement
 class ComplexDoubleElement(FieldElement):
     _complex: gsl_complex
 
-    def _new_c(self, x: gsl_complex) -> 'ComplexDoubleElement':
+    def _new_c(self, x: gsl_complex) -> ComplexDoubleElement:
         ...
 
     def _add_(self, other: Any) -> Any:

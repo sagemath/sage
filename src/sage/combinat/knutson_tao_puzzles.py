@@ -883,9 +883,7 @@ def H_grassmannian_pieces():
 
     REFERENCES:
 
-    .. [KTW] Allen Knutson, Terence Tao, Christopher Woodward,
-       The honeycomb model of GL(n) tensor products II: Puzzles determine facets of the Littlewood-Richardson cone,
-       :arxiv:`math/0107011`
+    - [KTW]_
 
     EXAMPLES::
 
@@ -908,8 +906,7 @@ def HT_grassmannian_pieces():
 
     REFERENCES:
 
-    .. [KT2003] Allen Knutson, Terence Tao, Puzzles and (equivariant) cohomology of Grassmannians,
-       Duke Math. J. 119 (2003) 221
+    - [KT2003]_
 
     EXAMPLES::
 
@@ -929,7 +926,7 @@ def K_grassmannian_pieces():
 
     REFERENCES:
 
-    .. [Buch00] \A. Buch, A Littlewood-Richardson rule for the K-theory of Grassmannians, :arxiv:`math.AG/0004137`
+    - [Buch00]_
 
     EXAMPLES::
 
@@ -953,7 +950,7 @@ def H_two_step_pieces():
 
     REFERENCES:
 
-    .. [BuchKreschTamvakis03] \A. Buch, A. Kresch, H. Tamvakis, Gromov-Witten invariants on Grassmannian, :arxiv:`math/0306388`
+    - [BuchKreschTamvakis03]_
 
     EXAMPLES::
 
@@ -983,8 +980,7 @@ def HT_two_step_pieces():
 
     REFERENCES:
 
-    .. [CoskunVakil06] \I. Coskun, R. Vakil, Geometric positivity in the cohomology of homogeneous spaces
-       and generalized Schubert calculus, :arxiv:`math/0610538`
+    - [CoskunVakil06]_
 
     EXAMPLES::
 
@@ -1029,8 +1025,7 @@ def BK_pieces(max_letter):
 
     REFERENCES:
 
-    .. [KnutsonPurbhoo10] \A. Knutson, K. Purbhoo, Product and puzzle formulae
-       for `GL_n` Belkale-Kumar coefficients, :arxiv:`1008.4979`
+    - [KnutsonPurbhoo10]_
 
     EXAMPLES::
 
