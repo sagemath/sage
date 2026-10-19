@@ -3893,10 +3893,10 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: B = function('B')(*tuple(T))
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
-        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :issue:`35207`)
-        sage: sorted(DD)                                 # long time
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
+        sage: sorted(DD)
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
-        sage: DD[(0, 1, 2)].number_of_operands()         # long time
+        sage: DD[(0, 1, 2)].number_of_operands()
         246
     """
     from itertools import product
@@ -3912,6 +3912,8 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
             for l in range(2 * k + 1):
                 for s in combinations_with_replacement(V, 2 * (k + l)):
                     DF = diff(A[j] * B ** l, list(s)).subs(AB_derivs)
+                    if DF.parent() is SR and DF.is_trivial_zero():
+                        DF = ZZ.zero()
                     product_derivs[(j, k, l) + s] = DF
 
     # Second, compute DD^(k+l)(A[j]*B^l)(p) and store values in dictionary.
@@ -3931,7 +3933,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
                 diffo = ZZ.zero()
                 for t in P:
                     idx = (j, k, l) + diff_seq(V, t)
-                    if product_derivs[idx] != ZZ.zero():
+                    if product_derivs[idx] is not ZZ.zero():
                         MM = ZZ.one()
                         for a, b in t:
                             MM *= M[a][b]
