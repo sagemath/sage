@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Examples of simplicial sets.
 
@@ -109,7 +108,6 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: C3 = groups.misc.MultiplicativeAbelian([3])
             sage: C3.nerve() == C3.nerve()
             False
@@ -127,7 +125,6 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: C3 = groups.misc.MultiplicativeAbelian([3])
             sage: G3 = groups.permutation.Cyclic(3)
             sage: C3.nerve() != G3.nerve()
@@ -144,13 +141,12 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: G3 = groups.permutation.Cyclic(3)                                     # needs sage.groups
-            sage: hash(G3.nerve()) # random                                             # needs sage.groups
+            sage: G3 = groups.permutation.Cyclic(3)
+            sage: hash(G3.nerve()) # random
             17
 
         Different instances yield different base points, hence different hashes::
 
-            sage: # needs sage.groups
             sage: X = G3.nerve()
             sage: Y = G3.nerve()
             sage: X.base_point() != Y.base_point()
@@ -173,7 +169,6 @@ class Nerve(SimplicialSet_arbitrary):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: K4 = groups.misc.MultiplicativeAbelian([2,2])
             sage: BK4 = simplicial_sets.ClassifyingSpace(K4)
             sage: BK4.n_skeleton(3)
@@ -319,17 +314,16 @@ def ClassifyingSpace(group):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: C2 = groups.misc.MultiplicativeAbelian([2])
         sage: BC2 = simplicial_sets.ClassifyingSpace(C2)
-        sage: H = BC2.homology(range(9), base_ring=GF(2))                               # needs sage.modules
-        sage: [H[i].dimension() for i in range(9)]                                      # needs sage.modules
+        sage: H = BC2.homology(range(9), base_ring=GF(2))
+        sage: [H[i].dimension() for i in range(9)]
         [0, 1, 1, 1, 1, 1, 1, 1, 1]
 
-        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])                        # needs sage.groups
-        sage: BK = simplicial_sets.ClassifyingSpace(Klein4); BK                         # needs sage.groups
+        sage: Klein4 = groups.misc.MultiplicativeAbelian([2, 2])
+        sage: BK = simplicial_sets.ClassifyingSpace(Klein4); BK
         Classifying space of Multiplicative Abelian group isomorphic to C2 x C2
-        sage: BK.homology(range(5), base_ring=GF(2))    # long time (1 second)          # needs sage.groups sage.modules
+        sage: BK.homology(range(5), base_ring=GF(2))    # long time (1 second)
         {0: Vector space of dimension 0 over Finite Field of size 2,
          1: Vector space of dimension 2 over Finite Field of size 2,
          2: Vector space of dimension 3 over Finite Field of size 2,
@@ -351,7 +345,6 @@ def RealProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: simplicial_sets.RealProjectiveSpace(7)
         RP^7
         sage: RP5 = simplicial_sets.RealProjectiveSpace(5)
@@ -362,8 +355,8 @@ def RealProjectiveSpace(n):
         sage: latex(RP5)
         RP^{5}
 
-        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)                       # needs sage.groups
-        sage: latex(BC2)                                                                # needs sage.groups
+        sage: BC2 = simplicial_sets.RealProjectiveSpace(Infinity)
+        sage: latex(BC2)
         RP^{\infty}
     """
     if n == Infinity:
@@ -391,7 +384,7 @@ def KleinBottle():
         sage: K = simplicial_sets.KleinBottle()
         sage: K.f_vector()
         [1, 3, 2]
-        sage: K.homology(reduced=False)                                                 # needs sage.modules
+        sage: K.homology(reduced=False)
         {0: Z, 1: Z x C2, 2: 0}
         sage: K
         Klein bottle
@@ -416,7 +409,7 @@ def Torus():
         sage: T = simplicial_sets.Torus()
         sage: T.f_vector()
         [1, 3, 2]
-        sage: T.homology(reduced=False)                                                 # needs sage.modules
+        sage: T.homology(reduced=False)
         {0: Z, 1: Z x Z, 2: Z}
     """
     S1 = Sphere(1)
@@ -540,7 +533,7 @@ def ComplexProjectiveSpace(n):
 
     EXAMPLES::
 
-        sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)         # needs sage.modules
+        sage: simplicial_sets.ComplexProjectiveSpace(2).homology(reduced=False)
         {0: Z, 1: 0, 2: Z, 3: 0, 4: Z}
         sage: CP3 = simplicial_sets.ComplexProjectiveSpace(3); CP3                      # needs pyparsing
         CP^3
@@ -743,7 +736,7 @@ def HopfMap():
 
         sage: X = g.mapping_cone()
         sage: CP2 = simplicial_sets.ComplexProjectiveSpace(2)
-        sage: X.homology() == CP2.homology()                                            # needs sage.modules
+        sage: X.homology() == CP2.homology()
         True
 
         sage: X.f_vector()
@@ -820,7 +813,6 @@ def PresentationComplex(G):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: G = SymmetricGroup(2).as_finitely_presented_group(); G
         Finitely presented group < a | a^2 >
         sage: S = simplicial_sets.PresentationComplex(G); S
@@ -836,7 +828,6 @@ def PresentationComplex(G):
 
     TESTS::
 
-        sage: # needs sage.groups
         sage: S = simplicial_sets.PresentationComplex(FreeGroup(0) / [])
         sage: S
         Simplicial set with 1 non-degenerate simplex
