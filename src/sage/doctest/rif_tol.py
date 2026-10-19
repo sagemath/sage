@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from sage.doctest.marked_output import MarkedOutput
 
-_RIFtol: 'RealIntervalField | None' = None
+_RIFtol: RealIntervalField | None = None
 
 
 def RIFtol(*args) -> RealIntervalFieldElement:

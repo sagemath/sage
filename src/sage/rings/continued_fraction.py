@@ -200,6 +200,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import numbers
 
 import sage.rings.abc
@@ -207,9 +208,12 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational import Rational
 from sage.structure.richcmp import rich_to_bool, richcmp_method
 from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.rational import Rational
 
 lazy_import('sage.combinat.words.abstract_word', 'Word_class')
 lazy_import('sage.combinat.words.finite_word', 'FiniteWord_class')
