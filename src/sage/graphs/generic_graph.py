@@ -4021,11 +4021,12 @@ class GenericGraph(GenericGraph_pyx):
             if key is None:
                 def key(e):
                     return e[2]
+
             for e in self.multiple_edges(sort=False):
                 u, v, l = e
                 if (u, v) not in seen:
                     # This is the first time we see this edge
-                    seen[u, v] = l, (key(e) if keep_min or keep_max else None)
+                    seen[u, v] = l, key(e)
                 elif keep_min or keep_max:
                     # This edge has already been seen: we have to remove
                     # something from the graph.
