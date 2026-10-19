@@ -3,10 +3,6 @@ if [ "$SAGE_DARWIN_ACCELERATE" = yes ]; then
 fi
 
 cd src
-if [ "$UNAME" = Darwin ]; then
-    sdh_autoreconf
-fi
-
 if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
 else

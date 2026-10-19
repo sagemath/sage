@@ -3,7 +3,6 @@ AC_DEFUN([SAGE_CHECK_SYSTEM_LIBTOOL], [
   AS_CASE([$host_os], [darwin*], [
     AS_IF([{ test "$sage_spkg_install_m4ri" = yes ||
              test "$sage_spkg_install_m4rie" = yes ||
-             test "$sage_spkg_install_fflas_ffpack" = yes ||
              test "$sage_spkg_install_linbox" = yes; }], [
       AC_PATH_PROG([SAGE_AUTORECONF], [autoreconf])
       AC_PATH_PROG([SAGE_AUTOCONF], [autoconf])
@@ -13,7 +12,7 @@ AC_DEFUN([SAGE_CHECK_SYSTEM_LIBTOOL], [
       AS_IF([test -z "$SAGE_AUTORECONF" || test -z "$SAGE_AUTOCONF" ||
              test -z "$SAGE_AUTOMAKE" || test -z "$SAGE_ACLOCAL" ||
              test -z "$SAGE_LIBTOOLIZE"], [
-        AC_MSG_ERROR([Building M4RI, M4RIE, FFLAS-FFPACK or LinBox on macOS requires system autoconf, automake and GNU libtool >= 2.6.2. With Homebrew, run: brew install autoconf automake libtool])
+        AC_MSG_ERROR([Building M4RI, M4RIE or LinBox on macOS requires system autoconf, automake and GNU libtool >= 2.6.2. With Homebrew, run: brew install autoconf automake libtool])
       ])
       AC_MSG_CHECKING([for GNU libtool >= 2.6.2])
       sage_libtool_version=$("$SAGE_LIBTOOLIZE" --version | sed -n '1s/^.*(GNU libtool) //p')

@@ -33,11 +33,11 @@ computer:
 
 Other versions of these may work, but they are untested.
 
-On macOS, building Sage's bundled M4RI, M4RIE, FFLAS-FFPACK or LinBox also
+On macOS, building Sage's bundled M4RI, M4RIE or LinBox also
 requires system **autoconf**, **automake**, and **GNU libtool 2.6.2 or later**.
 Sage regenerates these packages' build machinery with the system tools so
 that OpenMP flags from external dependencies are handled correctly. These
-tools are not required when all four libraries are supplied externally.
+tools are not required when all three libraries are supplied externally.
 With Homebrew, install them using ``brew install autoconf automake libtool``.
 
 On macOS, suitable versions of most of these tools are provided
