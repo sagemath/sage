@@ -289,6 +289,7 @@ cdef class KhuriMakdisi_base(object):
         cdef Matrix w
         cdef int sign, b
         cdef list bits
+        cdef Py_ssize_t _i
 
         if n == 0:
             return self.w0
@@ -300,7 +301,7 @@ cdef class KhuriMakdisi_base(object):
         mwd = None
         w = wd
         sign = 1
-        for i in range(len(bits)):
+        for _i in range(len(bits)):
             w = self.addflip(w, w)
             sign = -sign
             b = bits.pop()

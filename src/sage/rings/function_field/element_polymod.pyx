@@ -386,19 +386,19 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         if not isinstance(self.base_ring(), RationalFunctionField):
             raise NotImplementedError("only implemented for simple extensions of function fields")
         # compute a representation of the generator y of the field in terms of powers of y^p
-        cdef Py_ssize_t i
+        cdef Py_ssize_t _i
         cdef list v = []
         char = self._parent.characteristic()
         cdef FunctionFieldElement_polymod yp = self._parent.gen() ** char
         val = self._parent.one()._x
         poly = self._parent.polynomial()
-        for i in range(deg):
+        for _i in range(deg):
             v += val.padded_list(deg)
             val = (val * yp._x) % poly
         from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(self._parent._base, deg)
         M = MS(v)
-        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0,1]+[0]*(deg-2))).list())
+        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0, 1]+[0]*(deg-2))).list())
 
         f = self._x(y).map_coefficients(lambda c: c.nth_root(char))
         return self._parent(f)

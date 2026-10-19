@@ -19,7 +19,6 @@ AUTHORS:
 
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
-from libcpp.list cimport list as linked_list
 
 from sage.arith.functions import lcm  # Should we use LCM_list or make lcm cpdef?
 from sage.matrix.constructor import matrix
@@ -62,6 +61,7 @@ cpdef _divisor_to_inverted_ideals(divisor):
 
     return I, J
 
+
 def _riemann_roch_divisor(divisor):
     r"""
     Wrapper around :func:`_riemann_roch_ideals` that first
@@ -71,6 +71,7 @@ def _riemann_roch_divisor(divisor):
     # the intersection of the ideals I and J.
     I, J = _divisor_to_inverted_ideals(divisor)
     return _riemann_roch_ideals(divisor.parent()._field, I, J)
+
 
 cpdef _riemann_roch_ideals(F, I, J):
     r"""
@@ -164,7 +165,6 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
     while not conflicts.empty():
         c = conflicts.back()
         conflicts.pop_back()
-        row = pivot_row[c]
 
         tmp = pivot_row[c].back()
         i, ideg = tmp.first, tmp.second
