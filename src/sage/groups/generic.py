@@ -123,6 +123,7 @@ from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 from sage.rings import integer_ring
 import sage.rings.integer
+from sage.rings.integer import Integer
 from sage.structure.element import parent
 
 #
@@ -507,7 +508,7 @@ class multiples:
         return self
 
 
-def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
+def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None) -> Integer:
     r"""
     Totally generic discrete baby-step giant-step function.
 
@@ -671,7 +672,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
-def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
+def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash) -> Integer:
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
     group of prime order.

@@ -1656,6 +1656,39 @@ class GraphPlot(SageObject):
 
             sage: Graph({0: [0]}, immutable=True).plot()
             Graphics object consisting of 3 graphics primitives
+
+        Nearly collinear positions must not clip the edge (:issue:`35905`).
+        Check the rendered midpoint, not just the presence of a primitive::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: from matplotlib.backends.backend_agg import FigureCanvasAgg
+            sage: positions = [((0., 0.), (6.123233995736766e-17, 1.)),
+            ....:              ((0., 0.), (1., 6.123233995736766e-17)),
+            ....:              ((-10., 10.), (-10. + 6e-14, 11.))]
+            sage: g = Graph([(0, 1)])
+            sage: for a, b in positions:
+            ....:     p = g.plot(pos={0: a, 1: b}, vertex_labels=False)
+            ....:     fig = p.matplotlib()
+            ....:     canvas = FigureCanvasAgg(fig)
+            ....:     canvas.draw()
+            ....:     ax = fig.axes[0]
+            ....:     x, y = ax.transData.transform(
+            ....:         ((a[0] + b[0])/2, (a[1] + b[1])/2))
+            ....:     pixels = np.asarray(canvas.buffer_rgba())
+            ....:     row, col = int(pixels.shape[0] - y), int(x)
+            ....:     assert (pixels[row-2:row+3, col-2:col+3, :3] < 128).all(axis=2).any()
+            ....:     edge = ax.lines[0]
+            ....:     assert list(map(tuple, edge.get_xydata())) == [a, b]
+
+        Explicit display limits still take precedence::
+
+            sage: # needs numpy
+            sage: p = g.plot(pos={0: positions[0][0], 1: positions[0][1]},
+            ....:            xmin=-2, xmax=2, axes_pad=0)
+            sage: fig = p.matplotlib(**p._extra_kwds)
+            sage: tuple(map(float, fig.axes[0].get_xlim()))
+            (-2.0, 2.0)
         """
         G = Graphics()
         options = self._options.copy()
@@ -1687,6 +1720,18 @@ class GraphPlot(SageObject):
             border.axes_range(xmin=(xmin - dx), xmax=(xmax + dx),
                               ymin=(ymin - dy), ymax=(ymax + dy))
             G += border
+        # An almost collinear layout can collapse the Matplotlib axes box
+        # to a subpixel strip, clipping its edges. Enlarge the default view
+        # instead of rounding the supplied positions.
+        bounds = G.get_minmax_data()
+        width = bounds['xmax'] - bounds['xmin']
+        height = bounds['ymax'] - bounds['ymin']
+        if width < 1e-12 * height:
+            center = (bounds['xmin'] + bounds['xmax']) / 2
+            G.set_axes_range(xmin=center - height, xmax=center + height)
+        elif height < 1e-12 * width:
+            center = (bounds['ymin'] + bounds['ymax']) / 2
+            G.set_axes_range(ymin=center - width, ymax=center + width)
         G.set_aspect_ratio(1)
         G.axes(False)
         return G

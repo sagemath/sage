@@ -578,7 +578,7 @@ class LFunction(SageObject):
         0.305999773834052
         sage: L.derivative(1, 2)
         0.373095594536324
-        sage: L.cost()
+        sage: L.cost()  # random
         205
         sage: L.taylor_series(1, 4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2
@@ -593,7 +593,7 @@ class LFunction(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
-        sage: L.cost()
+        sage: L.cost()  # random
         666
         sage: L.derivative(1, E.rank())
         1.51863300057685
@@ -609,7 +609,7 @@ class LFunction(SageObject):
         sage: L = K.zeta_function(algorithm='pari')
         sage: L.conductor
         400
-        sage: L.cost()
+        sage: L.cost()  # random
         5499
         sage: L(2)
         1.10398438736918
@@ -649,7 +649,7 @@ class LFunction(SageObject):
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.cost()
+            sage: L.cost()  # random
             8
         """
         if isinstance(lfun, lfun_generic):
@@ -746,18 +746,18 @@ class LFunction(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
+            sage: L.cost()  # random
             112
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
+            sage: L.cost()  # random
             2406
 
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1,
             ....:        poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.cost()
+            sage: L.cost()  # random
             8
         """
         # domain syntax :
@@ -977,7 +977,7 @@ class LFunction(SageObject):
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1,
             ....:          poles=[1], residues=[1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.check_functional_equation()
+            sage: L.check_functional_equation()  # abs tol 1e-18
             4.33680868994202e-19
 
         If we choose the sign in functional equation for the

@@ -207,6 +207,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational import Rational
 from sage.structure.richcmp import rich_to_bool, richcmp_method
 from sage.structure.sage_object import SageObject
 
@@ -827,7 +828,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.numerator(n) / self.denominator(n)
 
-    def convergents(self):
+    def convergents(self) -> list[Rational]:
         """
         Return the list of partial convergents of ``self``.
 
@@ -2508,7 +2509,7 @@ def continued_fraction_list(x, type='std', partial_convergents=False,
     return [cf.quotient(i) for i in range(limit)]
 
 
-def continued_fraction(x, value=None):
+def continued_fraction(x, value=None) -> ContinuedFraction_periodic | ContinuedFraction_real | ContinuedFraction_infinite:
     r"""
     Return the continued fraction of `x`.
 
@@ -2711,7 +2712,7 @@ def continued_fraction(x, value=None):
     return continued_fraction(continued_fraction_list(x))
 
 
-def convergents(x):
+def convergents(x) -> list[Rational]:
     r"""
     Return the (partial) convergents of the number ``x``.
 

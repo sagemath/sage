@@ -132,9 +132,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
         REFERENCES:
 
-        .. [ClSt03] Peter Clifford, Richard P. Stanley,
-           *Bottom Schur functions*.
-           :arxiv:`math/0311382v2`.
+        - [ClSt03]_
 
         EXAMPLES::
 

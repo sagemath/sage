@@ -3468,12 +3468,12 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: P = E([0,0])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: P.order()
             +Infinity
-            sage: E.regulator()
-            0.0511114082399688...
+            sage: E.regulator()  # abs tol 1e-15
+            0.0511114082399688
 
             sage: def naive_height(P):
             ....:     return log(RR(max(abs(P[0].numerator()), abs(P[0].denominator()))))
@@ -3541,9 +3541,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,0])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
-            sage: P.height(normalised=False)
+            sage: P.height(normalised=False)  # abs tol 1e-15
             0.0511114082399688
             sage: K.<z> = CyclotomicField(5)                                            # needs sage.rings.number_field
             sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
@@ -3577,7 +3577,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,-1])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: K.<a> = QuadraticField(-7)                                            # needs sage.rings.number_field
             sage: ED = E.quadratic_twist(-7)                                            # needs sage.rings.number_field

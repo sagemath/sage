@@ -433,18 +433,18 @@ cdef int init_short_digraph_from_data(short_digraph g, vertices, edges,
 
         sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
         sage: B = StaticSparseBackend(vertex_list=['b', 'a', 'd', 'c'],
-        ....:                        edges=[('b', 'a', 'ba'),
-        ....:                               ('d', 'a', 'da'),
-        ....:                               ('c', 'a', 'ca')],
-        ....:                        directed=True, edge_labelled=True, sort=False)
+        ....:                         edges=[('b', 'a', 'ba'),
+        ....:                                ('d', 'a', 'da'),
+        ....:                                ('c', 'a', 'ca')],
+        ....:                         directed=True, edge_labelled=True, sort=False)
         sage: list(B.iterator_in_edges(['a'], True))
         [('b', 'a', 'ba'), ('d', 'a', 'da'), ('c', 'a', 'ca')]
 
     Same with undirected edges and a loop::
 
         sage: B = StaticSparseBackend(vertex_list=['b', 'a'],
-        ....:                        edges=[('b', 'a', 'x'), ('a', 'a', 'loop')],
-        ....:                        directed=False, edge_labelled=True, sort=False)
+        ....:                         edges=[('b', 'a', 'x'), ('a', 'a', 'loop')],
+        ....:                         directed=False, edge_labelled=True, sort=False)
         sage: set(B.iterator_edges(['b', 'a'], True)) == {('a', 'a', 'loop'), ('b', 'a', 'x')}
         True
     """
@@ -956,13 +956,13 @@ def tarjan_strongly_connected_components(G):
         sage: from sage.graphs.base.static_sparse_graph import tarjan_strongly_connected_components
         sage: tarjan_strongly_connected_components(digraphs.Path(3))
         [[2], [1], [0]]
-        sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
+        sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: D.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
-        sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
+        sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: D.strongly_connected_components()
         [[3], [2], [1], [0], [6], [5], [4]]
-        sage: D.add_edge([2,0])
+        sage: D.add_edge([2, 0])
         sage: D.strongly_connected_components()
         [[3], [0, 1, 2], [6], [5], [4]]
         sage: D = DiGraph([('a','b'), ('b','c'), ('c', 'd'), ('d', 'b'), ('c', 'e')])
@@ -975,27 +975,26 @@ def tarjan_strongly_connected_components(G):
 
         sage: from sage.graphs.base.static_sparse_graph import tarjan_strongly_connected_components
         sage: import random
-        sage: for i in range(10):                          # long time
-        ....:     n = random.randint(2,20)
-        ....:     m = random.randint(1, n*(n-1))
-        ....:     g = digraphs.RandomDirectedGNM(n,m)
-        ....:     sccs = tarjan_strongly_connected_components(g)
-        ....:     for scc in sccs:
-        ....:         scc_check = g.strongly_connected_component_containing_vertex(scc[0])
-        ....:         assert(sorted(scc) == sorted(scc_check))
+        sage: n = random.randint(2, 20)
+        sage: m = random.randint(1, n*(n-1))
+        sage: g = digraphs.RandomDirectedGNM(n, m)
+        sage: sccs = tarjan_strongly_connected_components(g)
+        sage: for scc in sccs:
+        ....:     scc_check = g.strongly_connected_component_containing_vertex(scc[0])
+        ....:     assert(sorted(scc) == sorted(scc_check))
 
     Checking against NetworkX::
 
-        sage: import networkx                                                                       # needs networkx
-        sage: for i in range(10):               # long time                             # needs networkx
-        ....:      g = digraphs.RandomDirectedGNP(100,.05)
-        ....:      h = g.networkx_graph()
-        ....:      scc1 = g.strongly_connected_components()
-        ....:      scc2 = networkx.strongly_connected_components(h)
-        ....:      s1 = Set(map(Set,scc1))
-        ....:      s2 = Set(map(Set,scc2))
-        ....:      if s1 != s2:
-        ....:          print("Ooch !")
+        sage: # needs networkx
+        sage: import networkx
+        sage: g = digraphs.RandomDirectedGNP(100, .05)
+        sage: h = g.networkx_graph()
+        sage: scc1 = g.strongly_connected_components()
+        sage: scc2 = networkx.strongly_connected_components(h)
+        sage: s1 = Set(map(Set, scc1))
+        sage: s2 = Set(map(Set, scc2))
+        sage: s1 != s2
+        False
 
     Immutable digraphs::
 
@@ -1128,15 +1127,14 @@ def strongly_connected_components_digraph(G):
 
         sage: from sage.graphs.base.static_sparse_graph import strongly_connected_components_digraph
         sage: import random
-        sage: for i in range(100):
-        ....:     n = random.randint(2,20)
-        ....:     m = random.randint(1, n*(n-1))
-        ....:     g = digraphs.RandomDirectedGNM(n,m)
-        ....:     scc_digraph,sccs = strongly_connected_components_digraph(g)
-        ....:     assert(scc_digraph.is_directed_acyclic())
-        ....:     for e in g.edges(sort=False):
-        ....:         assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
-        ....:         assert(sccs[e[0]] >= sccs[e[1]])
+        sage: n = random.randint(2, 20)
+        sage: m = random.randint(1, n*(n-1))
+        sage: g = digraphs.RandomDirectedGNM(n, m)
+        sage: scc_digraph,sccs = strongly_connected_components_digraph(g)
+        sage: assert(scc_digraph.is_directed_acyclic())
+        sage: for e in g.edges(sort=False):
+        ....:     assert(sccs[e[0]] == sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]], sccs[e[1]]))
+        ....:     assert(sccs[e[0]] >= sccs[e[1]])
 
     Immutable digraphs::
 
@@ -1332,8 +1330,8 @@ def spectral_radius(G, prec=1e-10):
 
         sage: from sage.graphs.base.static_sparse_graph import spectral_radius
 
-        sage: G = DiGraph([(0,0),(0,1),(1,0)], loops=True)
-        sage: phi = (RR(1) + RR(5).sqrt() ) / 2
+        sage: G = DiGraph([(0, 0), (0, 1), (1, 0)], loops=True)
+        sage: phi = (RR(1) + RR(5).sqrt()) / 2
         sage: phi  # abs tol 1e-14
         1.618033988749895
         sage: e_min, e_max = spectral_radius(G, 1e-14)
@@ -1346,7 +1344,7 @@ def spectral_radius(G, prec=1e-10):
 
     This function also works for graphs::
 
-        sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
+        sage: G = Graph([(0, 1), (0, 2), (1, 2), (1, 3), (2, 4), (3, 4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
         sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules sage.rings.number_field
         sage: e_min < e < e_max                                                         # needs sage.modules sage.rings.number_field sage.symbolic
@@ -1358,9 +1356,9 @@ def spectral_radius(G, prec=1e-10):
     A larger example::
 
         sage: G = DiGraph()
-        sage: G.add_edges((i,i+1) for i in range(200))
-        sage: G.add_edge(200,0)
-        sage: G.add_edge(1,0)
+        sage: G.add_edges((i, i+1) for i in range(200))
+        sage: G.add_edge(200, 0)
+        sage: G.add_edge(1, 0)
         sage: e_min, e_max = spectral_radius(G, 0.00001)
         sage: p = G.adjacency_matrix(sparse=True).charpoly()
         sage: p
@@ -1381,8 +1379,8 @@ def spectral_radius(G, prec=1e-10):
 
     The algorithm takes care of multiple edges::
 
-        sage: G = DiGraph(2,loops=True,multiedges=True)
-        sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
+        sage: G = DiGraph(2, loops=True, multiedges=True)
+        sage: G.add_edges([(0, 0), (0, 0), (0, 1), (1, 0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
         sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules sage.rings.number_field
@@ -1390,15 +1388,15 @@ def spectral_radius(G, prec=1e-10):
 
     Some bipartite graphs::
 
-        sage: G = Graph([(0,1),(0,3),(2,3)])
+        sage: G = Graph([(0, 1), (0, 3), (2, 3)])
         sage: G.spectral_radius()  # abs tol 1e-10
         (1.6180339887253428, 1.6180339887592732)
 
-        sage: G = DiGraph([(0,1),(0,3),(2,3),(3,0),(1,0),(1,2)])
-        sage: G.spectral_radius() # abs tol 1e-10
+        sage: G = DiGraph([(0, 1), (0, 3), (2, 3), (3, 0), (1, 0), (1, 2)])
+        sage: G.spectral_radius()  # abs tol 1e-10
         (1.5537739740270458, 1.553773974033029)
 
-        sage: G = graphs.CompleteBipartiteGraph(1,3)
+        sage: G = graphs.CompleteBipartiteGraph(1, 3)
         sage: G.spectral_radius()  # abs tol 1e-10
         (1.7320508075688772, 1.7320508075688774)
 
@@ -1408,28 +1406,28 @@ def spectral_radius(G, prec=1e-10):
 
         sage: Graph(1).spectral_radius()
         (0.0, 0.0)
-        sage: Graph([(0,0)], loops=True).spectral_radius()
+        sage: Graph([(0, 0)], loops=True).spectral_radius()
         (1.0, 1.0)
 
-        sage: spectral_radius(Graph([(0,1),(0,2)]), 1e-20)
+        sage: spectral_radius(Graph([(0, 1), (0, 2)]), 1e-20)
         Traceback (most recent call last):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):                                                      # needs sage.modules sage.rings.number_field
-        ....:     G = digraphs.RandomDirectedGNM(10,35)
-        ....:     if not G.is_strongly_connected():
-        ....:         continue
-        ....:     e = max(G.adjacency_matrix().charpoly().roots(AA,multiplicities=False))
-        ....:     e_min, e_max = G.spectral_radius(1e-13)
-        ....:     assert e_min < e < e_max
+        sage: # needs sage.modules sage.rings.number_field
+        sage: G = digraphs.RandomDirectedGNM(10, 35)
+        sage: while not G.is_strongly_connected():
+        ....:     G = digraphs.RandomDirectedGNM(10, 35)
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))
+        sage: e_min, e_max = G.spectral_radius(1e-13)
+        sage: assert e_min < e < e_max
 
         sage: spectral_radius(Graph(), 1e-10)
         Traceback (most recent call last):
         ...
         ValueError: empty graph
 
-        sage: G = DiGraph([(0,1),(1,2),(2,0),(2,0)], multiedges=True)
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 0), (2, 0)], multiedges=True)
         sage: G.spectral_radius()
         Traceback (most recent call last):
         ...

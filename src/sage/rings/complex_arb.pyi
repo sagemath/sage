@@ -15,7 +15,7 @@ def acb_to_ComplexIntervalFieldElement(target: ComplexIntervalFieldElement, sour
 class ComplexBall(RingElement):
     value: acb_t
 
-    def _new(self) -> 'ComplexBall':
+    def _new(self) -> ComplexBall:
         ...
 
     def _add_(self, other: Any) -> Any:

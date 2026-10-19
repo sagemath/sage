@@ -6,6 +6,8 @@ AUTHORS:
 - Kevin Stueve (2010-01-17): in ``is_prime(n)``, delegated calculation to ``n.is_prime()``
 """
 
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -17,22 +19,22 @@ AUTHORS:
 # ****************************************************************************
 import math
 from collections.abc import Iterable, Iterator
+from collections.abc import Sequence as AbcSequence
+from typing import Any, Literal, overload
 
 from sage.misc.misc_c import prod
-
-from sage.structure.element import parent
-from sage.structure.coerce import py_scalar_to_element
-from sage.structure.sequence import Sequence
-
-from sage.rings.integer import Integer, GCD_list
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.rings.rational_field import QQ
-from sage.rings.abc import RealField, ComplexField
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.element import parent
 
-from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.arith.functions import LCM_list
-
+from sage.rings.abc import ComplexField, RealField
+from sage.rings.fast_arith import arith_int, arith_llong, prime_range
+from sage.rings.integer import GCD_list, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.factorization import Factorization
+from sage.structure.sequence import Sequence
 
 ##################################################################
 # Elementary Arithmetic
@@ -569,7 +571,7 @@ def is_prime(n) -> bool:
     return ret
 
 
-def is_pseudoprime(n):
+def is_pseudoprime(n) -> bool:
     r"""
     Test whether ``n`` is a pseudo-prime.
 
@@ -1287,7 +1289,7 @@ def next_probable_prime(n):
     return ZZ(n).next_probable_prime()
 
 
-def next_prime(n, proof=None):
+def next_prime(n, proof=None) -> Integer:
     """
     The next prime greater than the integer `n`. If `n` is prime, then this
     function does not return `n`, but the next prime after `n`. If the
@@ -1336,7 +1338,7 @@ def next_prime(n, proof=None):
     return ZZ(n).next_prime(proof)
 
 
-def previous_prime(n):
+def previous_prime(n) -> Integer:
     """
     The largest prime < n. The result is provably correct. If n <= 1,
     this function raises a :exc:`ValueError`.
@@ -1463,7 +1465,7 @@ def previous_prime_power(n):
     return ZZ(n).previous_prime_power()
 
 
-def random_prime(n, proof=None, lbound=2):
+def random_prime(n, proof=None, lbound=2) -> Integer:
     r"""
     Return a random prime `p` between ``lbound`` and `n`.
 
@@ -2025,6 +2027,12 @@ def xlcm(m, n):
     return (l, m, n)
 
 
+@overload
+def xgcd(a: int | Integer, b: int | Integer | None = ...) -> tuple[Integer, Integer, Integer]: ...
+
+@overload
+def xgcd(a, b=...) -> tuple[Any, Any, Any]: ...
+
 def xgcd(a, b=None):
     r"""
     Return the greatest common divisor and the Bézout coefficients of the input arguments.
@@ -2242,11 +2250,11 @@ def xkcd(n=""):
     """
     import contextlib
     import json
-    from sage.misc.html import html
     from ssl import create_default_context as default_context
-
-    from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
+
+    from sage.misc.html import html
 
     data = None
     if not n:
@@ -2280,6 +2288,12 @@ def xkcd(n=""):
     # it is produced by sage, see http://xkcd.com/1024/
     return html('<script> alert("Error: -41"); </script>')
 
+
+@overload
+def inverse_mod(a: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def inverse_mod(a, m) -> Any: ...
 
 def inverse_mod(a, m):
     """
@@ -2368,6 +2382,15 @@ def get_inverse_mod(order):
 #         raise "inverse_mod(a=%s,m=%s), error since GCD=%s"%(a,m,g)
 #     return s
 
+
+@overload
+def power_mod(a: int, n: int, m: int) -> int: ...
+
+@overload
+def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def power_mod(a, n, m) -> Any: ...
 
 def power_mod(a, n, m):
     """
@@ -2644,7 +2667,7 @@ def trial_division(n, bound=None):
     return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds) -> Factorization:
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2886,7 +2909,7 @@ def radical(n, *args, **kwds):
     return m(*args, **kwds)
 
 
-def prime_divisors(n):
+def prime_divisors(n) -> list:
     """
     Return the list of prime divisors (up to units) of this element
     of a unique factorization domain.
@@ -3011,6 +3034,15 @@ def prime_to_m_part(n, m):
     """
     return ZZ(n).prime_to_m_part(m)
 
+
+@overload
+def is_square(n: int | Integer, root: Literal[False] = ...) -> bool: ...
+
+@overload
+def is_square(n: int | Integer, *, root: Literal[True]) -> tuple[bool, Integer]: ...
+
+@overload
+def is_square(n, root: bool = ...) -> bool | tuple[bool, Any]: ...
 
 def is_square(n, root=False):
     """
@@ -3430,6 +3462,12 @@ def carmichael_lambda(n):
     return LCM_list(t)
 
 
+@overload
+def crt(a: int | Integer, b: int | Integer, m: int | Integer, n: int | Integer) -> Integer: ...
+
+@overload
+def crt(a, b, m=None, n=None) -> Any: ...
+
 def crt(a, b, m=None, n=None):
     r"""
     Return a solution to a Chinese Remainder Theorem problem.
@@ -3575,6 +3613,12 @@ def crt(a, b, m=None, n=None):
 
 CRT = crt
 
+
+@overload
+def CRT_list(values: AbcSequence[int] | AbcSequence[Integer], moduli: AbcSequence[int] | AbcSequence[Integer] | None = ...) -> Integer | int: ...
+
+@overload
+def CRT_list(values, moduli=None) -> Any: ...
 
 def CRT_list(values, moduli=None):
     r"""
@@ -4345,7 +4389,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x, y):
+def kronecker_symbol(x, y) -> Integer:
     """
     The Kronecker symbol `(x|y)`.
 
@@ -4393,7 +4437,7 @@ def kronecker_symbol(x, y):
 kronecker = kronecker_symbol
 
 
-def legendre_symbol(x, p):
+def legendre_symbol(x, p) -> int:
     r"""
     The Legendre symbol `(x|p)`, for `p` prime.
 
@@ -4445,7 +4489,7 @@ def legendre_symbol(x, p):
     return x.kronecker(p)
 
 
-def jacobi_symbol(a, b):
+def jacobi_symbol(a, b) -> Integer:
     r"""
     The Jacobi symbol of integers `a` and `b`, where `b` is odd.
 
@@ -4496,7 +4540,7 @@ def jacobi_symbol(a, b):
     return kronecker_symbol(a, b)
 
 
-def primitive_root(n, check=True):
+def primitive_root(n, check=True) -> Integer:
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a

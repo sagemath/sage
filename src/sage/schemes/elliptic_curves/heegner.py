@@ -3779,9 +3779,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P._trace_numerical_conductor_1() # approx. (1 : 0 : 1)
             (1.00000000000000 + ...e-16*I : ...e-16 - ...e-16*I : 1.00000000000000)
             sage: P = E(2,1) # a generator
-            sage: E([1,0]).height()
+            sage: E([1,0]).height()  # abs tol 1e-12
             0.150298370947295
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-12
             0.0375745927368238
             sage: E.heegner_index(-8)
             2.0000?

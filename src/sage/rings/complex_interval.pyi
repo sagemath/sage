@@ -11,7 +11,7 @@ class ComplexIntervalFieldElement(FieldElement):
     _prec: mpfr_prec_t
     _multiplicative_order: Any
 
-    def _new(self) -> 'ComplexIntervalFieldElement':
+    def _new(self) -> ComplexIntervalFieldElement:
         ...
 
     def _new_real(self) -> RealIntervalFieldElement:

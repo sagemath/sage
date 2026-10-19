@@ -1163,11 +1163,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             REFERENCES:
 
-            .. [ShaWach2014] John Shareshian, Michelle L. Wachs.
-               *Chromatic quasisymmetric functions*.
-               :arxiv:`1405.4629v2`.
+            - [ShaWach2014]_
 
-            .. [GriRei18]_
+            - [GriRei18]_
 
             INPUT:
 
@@ -3709,14 +3707,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         REFERENCES:
 
-        .. [King] King, R. Branching rules for `GL_m \supset \Sigma_n`
-           and the evaluation of inner plethysms.
-           J. Math. Phys. 15, 258 (1974) :doi:`10.1063/1.1666632`
+        - [King]_
 
-        .. [SchaThi1994] Thomas Scharf, Jean-Yves Thibon.
-           *A Hopf-algebra approach to inner plethysm*.
-           Advances in Mathematics 104 (1994), pp. 30-58.
-           ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz
+        - [SchaThi1994]_
 
         INPUT:
 
@@ -5993,9 +5986,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         REFERENCES:
 
-        .. [SZ2001] \M. Shimozono, M. Zabrocki,
-           Hall-Littlewood vertex operators and generalized Kostka polynomials.
-           Adv. Math. 158 (2001), no. 1, 66-85.
+        - [SZ2001]_
 
         EXAMPLES::
 

@@ -99,8 +99,16 @@ jobs:
           eval $(build/bin/sage-print-system-package-command homebrew update)
           brew tap dimpase/tap
           brew tap dimpase/gap
-          brew trust dimpase/tap
-          brew trust dimpase/gap
+          brew tap macaulay2/tap
+          brew tap apaffenholz/polymake
+          brew trust --tap dimpase/tap dimpase/gap macaulay2/tap apaffenholz/polymake
+          # Replace core PARI and data packages with the matching tap formulae.
+          for formula in pari pari-elldata pari-galdata pari-galpol pari-seadata; do
+            if brew list --formula --full-name | grep -x "$formula" > /dev/null; then
+              HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --force --ignore-dependencies "$formula"
+            fi
+          done
+          brew install dimpase/tap/pari
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
           brew install libomp Macaulay2/homebrew-tap/gfan Macaulay2/homebrew-tap/linbox
 

@@ -512,11 +512,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
     REFERENCES:
 
-    .. [Greig99] Designs from projective planes and PBD bases
-      Malcolm Greig
-      Journal of Combinatorial Designs
-      vol. 7, num. 5, pp. 341--374
-      1999
+    - [Greig99]_
     """
     from sage.combinat.designs.orthogonal_arrays import OA_from_PBD
     from sage.combinat.designs.orthogonal_arrays import incomplete_orthogonal_array
@@ -685,9 +681,7 @@ def thwart_lemma_3_5(k, n, m, a, b, c, d=0, complement=False, explain_constructi
 
     REFERENCE:
 
-    .. [Thwarts] Thwarts in transversal designs
-      Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas.
-      Designs, Codes and Cryptography 5, no. 3 (1995): 189-197.
+    - [Thwarts]_
     """
     from sage.arith.misc import is_prime_power
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -799,9 +793,7 @@ def thwart_lemma_4_1(k, n, m, explain_construction=False):
 
     REFERENCES:
 
-    .. [OS64] Finite projective planes with affine subplanes,
-      T. G. Ostrom and F. A. Sherk.
-      Canad. Math. Bull vol7 num.4 (1964)
+    - [OS64]_
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.arith.misc import is_prime_power
@@ -990,17 +982,11 @@ def three_factor_product(k, n1, n2, n3, check=False, explain_construction=False)
 
     REFERENCE:
 
-    .. [DukesLing14] A three-factor product construction for mutually orthogonal latin squares,
-      Peter J. Dukes, Alan C.H. Ling,
-      :arxiv:`1401.1466`
+    - [DukesLing14]_
 
-    .. [Rees00] Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
-      Rolf S. Rees,
-      Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
+    - [Rees00]_
 
-    .. [Rees93] Two new direct product-type constructions for resolvable group-divisible designs,
-      Rolf S. Rees,
-      Journal of Combinatorial Designs 1.1 (1993): 15-26.
+    - [Rees93]_
     """
     assert n1 <= n2 <= n3
 
@@ -1345,11 +1331,7 @@ def brouwer_separable_design(k, t, q, x, check=False, verbose=False, explain_con
 
     REFERENCES:
 
-    .. [Brouwer80] A Series of Separable Designs with Application to Pairwise Orthogonal Latin Squares,
-      Andries E. Brouwer,
-      Vol. 1, n. 1, pp. 39-41,
-      European Journal of Combinatorics, 1980
-      http://www.sciencedirect.com/science/article/pii/S0195669880800199
+    - [Brouwer80]_
 
     EXAMPLES:
 

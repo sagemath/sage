@@ -3,18 +3,11 @@ Common combinatorial tools
 
 REFERENCES:
 
-.. [NCSF] Gelfand, Krob, Lascoux, Leclerc, Retakh, Thibon,
-   *Noncommutative Symmetric Functions*, Adv. Math. 112 (1995), no. 2, 218-348.
+- [NCSF]_
 
-.. [QSCHUR] Haglund, Luoto, Mason, van Willigenburg,
-   *Quasisymmetric Schur functions*, J. Comb. Theory Ser. A 118 (2011), 463-490.
-   http://www.sciencedirect.com/science/article/pii/S0097316509001745 ,
-   :arxiv:`0810.2489v2`.
+- [QSCHUR]_
 
-.. [Tev2007] Lenny Tevlin,
-   *Noncommutative Analogs of Monomial Symmetric Functions,
-   Cauchy Identity, and Hall Scalar Product*,
-   :arxiv:`0712.2201v1`.
+- [Tev2007]_
 """
 from sage.misc.misc_c import prod
 from sage.arith.misc import factorial

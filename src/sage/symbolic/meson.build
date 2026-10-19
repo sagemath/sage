@@ -35,6 +35,7 @@ py.install_sources(
   'ring.pyi',
   'ring.pyx',
   'series_impl.pyi',
+  'rootsum.py',
   'subring.py',
   'symbols.py',
   'tests.py',
