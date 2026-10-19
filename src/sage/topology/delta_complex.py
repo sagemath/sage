@@ -151,7 +151,7 @@ class DeltaComplex(GenericCellComplex):
       first in the prescribed way.  The three edges each start and end
       at the single vertex, ``Simplex(0)``.
 
-      .. image:: ../../media\torus_labelled.png
+      .. image:: ../../media/torus_labelled.png
 
     - ``data`` may be nested lists or tuples.  The n-th entry in the
       list is a list of the n-simplices in the complex, and each
