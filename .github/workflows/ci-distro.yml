@@ -53,7 +53,7 @@ jobs:
       targets: build
       targets_optional: ptestlong
       tox_system_factors: >-
-          ["ubuntu-noble"]
+          ["ubuntu-resolute"]
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
