@@ -41,7 +41,7 @@ dependencies:
   - bzip2=1.0.8=h374f1ed_10
   - c-ares=1.34.8=had63097_2
   - c-compiler=2.0.0=h819f056_0
-  - ca-certificates=2026.7.22=hbd8a1cb_0
+  - ca-certificates=2026.10.18=hbd8a1cb_0
   - cachecontrol=0.14.4=pyha770c72_0
   - cachecontrol-with-filecache=0.14.4=pyhd8ed1ab_0
   - cached-property=2.0.1=pyhcf101f3_0
@@ -51,7 +51,7 @@ dependencies:
   - cctools_impl_osx-64=1030.6.3=llvm21_1_hd9d6719_6
   - cctools_osx-64=1030.6.3=llvm21_1_he201b2c_6
   - cddlib=1!0.94n=h670767c_0
-  - certifi=2026.7.22=pyhd8ed1ab_0
+  - certifi=2026.10.18=pyhd8ed1ab_1
   - cffi=2.1.1=py314h0656537_3
   - charset-normalizer=3.5.2=hd77389f_0
   - clang=21.1.8=default_cfg_he3ef750_7
@@ -85,7 +85,7 @@ dependencies:
   - conda-souschef=3.0.1=pyhd8ed1ab_0
   - contourpy=1.4.0=py314h0ba06c9_1
   - conway-polynomials=0.10=pyhd8ed1ab_1
-  - coverage=7.16.2=py314h9ae25e0_0
+  - coverage=7.16.2=py314h9ae25e0_1
   - cpp-expected=1.3.1=hebe015c_1
   - cpython=3.14.8=py314hd8ed1ab_102
   - crashtest=0.4.1=pyhd8ed1ab_1
@@ -94,19 +94,19 @@ dependencies:
   - cxx-compiler=2.0.0=h94bea0c_0
   - cycler=0.12.1=pyhcf101f3_2
   - cypari2=2.2.4=py314hb482800_2
-  - cysignals=1.12.6=py314h2dbdbb0_2
+  - cysignals=1.13.1=py314h8b73c47_0
   - cython=3.3.0=py314h56d56b3_0
   - debugpy=1.8.22=py314hb0342c8_0
   - defusedxml=0.7.1=pyhd8ed1ab_0
   - deprecated=3.0.0=pyhc364b38_0
-  - distlib=0.4.3=pyhcf101f3_0
+  - distlib=0.4.4=pyh5ded981_0
   - distro=1.9.0=pyhd8ed1ab_1
   - docutils=0.22.4=pyhd8ed1ab_0
   - dulwich=0.24.10=py314hc9c287a_1
   - ecl=26.5.5=h3b4fa63_1
   - eclib=20250627=hbc399e0_3
   - ecm=7.0.6=h5625669_0
-  - ensureconda=1.6.0=pyhcf101f3_0
+  - ensureconda=1.7.0=pyh5ded981_0
   - evalidate=2.0.5=pyhe01879c_0
   - exceptiongroup=1.3.1=pyhd8ed1ab_0
   - execnet=2.1.2=pyhd8ed1ab_0
@@ -277,7 +277,7 @@ dependencies:
   - menuinst=2.5.2=pyhba3e0a1_3
   - meson=1.12.1=pyh5ded981_0
   - meson-python=0.22.1=pyh3b9e9f2_0
-  - mistune=3.3.4=pyhcf101f3_0
+  - mistune=3.4.0=pyh5ded981_0
   - more-itertools=11.2.1=pyh5ded981_0
   - mpc=1.4.0=ha50206a_1
   - mpfi=1.5.4=h4160ff4_1001
@@ -314,14 +314,14 @@ dependencies:
   - pcre2=10.47=h31793e3_1
   - perl=5.44.0=1_hd115831_perl5
   - pexpect=4.9.0=pyhd8ed1ab_1
-  - pillow=12.3.0=py314h909093e_4
+  - pillow=13.0.0=py314h909093e_0
   - pip=26.2.1=pyh145f28c_0
   - pixman=0.46.4=h2fb4741_3
   - pkg-config=0.29.2=hbd237c1_1013
   - pkgconfig=1.6.0=pyhd8ed1ab_0
-  - pkginfo=1.12.1.2=pyhd8ed1ab_0
+  - pkginfo=1.13.3=pyhd8ed1ab_0
   - planarity=4.0.1.0=h8616949_0
-  - platformdirs=4.13.0=pyh5ded981_0
+  - platformdirs=4.13.5=pyh5ded981_0
   - pluggy=1.7.0=pyh5ded981_0
   - ppl=1.2=ha60d53e_1006
   - pplpy=0.9.0=py314h3337c5f_1
@@ -360,7 +360,7 @@ dependencies:
   - python-gil=3.14.8=h4df99d1_102
   - python-installer=1.1.0=pyhe730653_0
   - python-lrcalc=2.1=py314h2dbdbb0_8
-  - python-utils=4.1.2=pyhe730653_0
+  - python-utils=4.1.3=pyhe730653_0
   - python_abi=3.14=9_cp314
   - pyyaml=6.0.3=py314h10d0514_1
   - pyzmq=27.2.0=py312h4f3d509_2
@@ -378,11 +378,11 @@ dependencies:
   - restructuredtext_lint=2.0.2=pyhd8ed1ab_0
   - roman-numerals=4.1.0=pyhd8ed1ab_0
   - rpds-py=2026.9.1=py314h3cfb53e_0
-  - rpy2=3.6.8=py314r45h42d2b1b_0
+  - rpy2=3.6.9=py314r45h42d2b1b_0
   - ruamel.yaml=0.19.1=pyhcf101f3_0
   - ruamel.yaml.clib=0.2.15=py314h17af80e_5
   - ruamel.yaml.jinja2=0.2.7=pyhd8ed1ab_1
-  - ruff=0.17.0=he704061_0
+  - ruff=0.17.1=he704061_0
   - rw=0.7=1
   - sagemath-db-elliptic-curves=0.8.1=hecc5488_0
   - sagemath-db-graphs=20210214=hd8ed1ab_0
@@ -390,7 +390,7 @@ dependencies:
   - scipy=1.18.1=py314hefcf020_1
   - sdkroot_env_osx-64=26.0=h62b880e_7
   - semver=3.1.0=pyh5ded981_0
-  - setuptools=84.0.0=pyh332efcf_0
+  - setuptools=84.1.0=pyhe730653_0
   - shellingham=1.5.4=pyhd8ed1ab_2
   - sigtool-codesign=0.1.3=h8c25ef7_1
   - simdjson=4.6.11=h66869c8_0
@@ -425,13 +425,13 @@ dependencies:
   - tktable=2.10=had63097_11
   - tomli=2.5.0=pyh5ded981_0
   - tomli-w=1.2.0=pyhd8ed1ab_0
-  - tomlkit=0.15.1=pyhcf101f3_0
+  - tomlkit=0.15.2=pyh5ded981_0
   - tornado=6.5.10=py314hca6f81c_0
   - tqdm=4.70.1=pyhfa0c392_0
   - traitlets=5.16.1=pyhcf101f3_0
   - trove-classifiers=2026.9.21.13=pyh5ded981_0
   - truststore=0.10.5=pyh5ded981_0
-  - ty=0.0.88=hee1dffb_0
+  - ty=0.0.89=hee1dffb_0
   - typing-extensions=4.16.0=h69aa097_0
   - typing-inspection=0.4.4=pyhcf101f3_0
   - typing_extensions=4.16.0=pyhcf101f3_0
@@ -459,6 +459,3 @@ dependencies:
   - zlib-ng=2.3.3=h646e873_1
   - zstandard=0.25.0=py314h17af80e_4
   - zstd=1.5.7=hbc1a06c_7
-  # Use Sage's cysignals release while conda-forge catches up.
-  - pip:
-    - cysignals==1.13.1

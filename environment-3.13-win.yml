@@ -44,13 +44,13 @@ dependencies:
   - brotli-python=1.2.0=py313h3c654a2_4
   - bwidget=1.10.1=h11686cb_3
   - bzip2=1.0.8=h0ad9c76_10
-  - ca-certificates=2026.7.22=h4c7d964_0
+  - ca-certificates=2026.10.18=h4c7d964_0
   - cachecontrol=0.14.4=pyha770c72_0
   - cachecontrol-with-filecache=0.14.4=pyhd8ed1ab_0
   - cached-property=2.0.1=pyhcf101f3_0
   - cached_property=2.0.1=pyhcf101f3_0
   - cairo=1.18.6=h477c42c_0
-  - certifi=2026.7.22=pyhd8ed1ab_0
+  - certifi=2026.10.18=pyhd8ed1ab_1
   - cffi=2.1.1=py313h5ea7bf4_3
   - charset-normalizer=3.5.2=h308a848_0
   - clang=19.1.7=default_hac490eb_9
@@ -83,7 +83,7 @@ dependencies:
   - conda-souschef=3.0.1=pyhd8ed1ab_0
   - contourpy=1.4.0=py313h1a38498_1
   - conway-polynomials=0.10=pyhd8ed1ab_1
-  - coverage=7.16.2=py313h868807b_0
+  - coverage=7.16.2=py313h868807b_1
   - cpp-expected=1.3.1=h477610d_1
 <<<<<<< HEAD
   - cpython=3.13.15=py313hd8ed1ab_103
@@ -97,17 +97,17 @@ dependencies:
   - curl=8.23.0=hdb0ef4a_0
 >>>>>>> 1650240676e (Conda lock)
   - cycler=0.12.1=pyhcf101f3_2
-  - cysignals=1.12.6=py313hfe59770_2
+  - cysignals=1.13.1=py313hfe59770_0
   - cython=3.3.0=py313h560b0a0_0
   - debugpy=1.8.22=py313h927ade5_0
   - defusedxml=0.7.1=pyhd8ed1ab_0
   - deprecated=3.0.0=pyhc364b38_0
-  - distlib=0.4.3=pyhcf101f3_0
+  - distlib=0.4.4=pyh5ded981_0
   - distro=1.9.0=pyhd8ed1ab_1
   - docutils=0.22.4=pyhd8ed1ab_0
   - double-conversion=3.4.0=hac47afa_0
   - dulwich=0.24.10=py313hf61f64f_1
-  - ensureconda=1.6.0=pyhcf101f3_0
+  - ensureconda=1.7.0=pyh5ded981_0
   - evalidate=2.0.5=pyhe01879c_0
   - exceptiongroup=1.3.1=pyhd8ed1ab_0
   - execnet=2.1.2=pyhd8ed1ab_0
@@ -277,8 +277,12 @@ dependencies:
   - libraqm=0.11.0=h50d6d30_0
   - libsodium=1.0.22=h6a83c73_3
   - libsolv=0.7.40=h8883371_0
+<<<<<<< HEAD
   - libsqlite=3.54.0=hf5d6505_101
 >>>>>>> 1650240676e (Conda lock)
+=======
+  - libsqlite=3.54.1=hf5d6505_100
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - libssh2=1.11.1=h734d217_1
   - libstdcxx=16.2.0=hae5796f_7
   - libstdcxx-devel_win-64=16.2.0=h230208c_107
@@ -331,10 +335,14 @@ dependencies:
   - mingw-w64-ucrt-x86_64-headers-git=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10
   - mingw-w64-ucrt-x86_64-windows-default-manifest=6.4=he206cdd_7
   - mingw-w64-ucrt-x86_64-winpthreads-git=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10
+<<<<<<< HEAD
   - mistune=3.3.4=pyhcf101f3_0
 <<<<<<< HEAD
   - more-itertools=11.1.0=pyhcf101f3_0
 =======
+=======
+  - mistune=3.4.0=pyh5ded981_0
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - more-itertools=11.2.1=pyh5ded981_0
 >>>>>>> 1650240676e (Conda lock)
   - mpc=1.4.0=h4122dc6_1
@@ -383,18 +391,26 @@ dependencies:
   - pcre2=10.47=h8466c1e_1
   - perl=5.44.0=1_hfd05255_perl5
   - pexpect=4.9.0=pyhd8ed1ab_1
-  - pillow=12.3.0=py313h8a2f7de_4
+  - pillow=13.0.0=py313h8a2f7de_0
   - pip=26.2.1=pyh145f28c_0
   - pixman=0.46.4=h5112557_3
   - pkg-config=0.29.2=hffdb5b9_1013
   - pkgconfig=1.6.0=pyhd8ed1ab_0
-  - pkginfo=1.12.1.2=pyhd8ed1ab_0
+  - pkginfo=1.13.3=pyhd8ed1ab_0
   - planarity=4.0.1.0=hfd05255_0
+<<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD
   - platformdirs=4.12.2=pyh5ded981_0
   - pluggy=1.6.0=pyhf9edf01_1
 =======
   - platformdirs=4.13.0=pyh5ded981_0
+=======
+  - platformdirs=4.13.4=pyh5ded981_0
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
+=======
+  - platformdirs=4.13.5=pyh5ded981_0
+>>>>>>> 03d6dc3 (Update conda envs)
   - pluggy=1.7.0=pyh5ded981_0
 >>>>>>> 1650240676e (Conda lock)
   - primecount=8.4=hac47afa_0
@@ -454,8 +470,12 @@ dependencies:
   - python-fastjsonschema=2.22.2=pyhcf101f3_0
   - python-gil=3.13.16=h4df99d1_102
   - python-installer=1.1.0=pyhe730653_0
+<<<<<<< HEAD
   - python-utils=4.1.2=pyhe730653_0
 >>>>>>> 1650240676e (Conda lock)
+=======
+  - python-utils=4.1.3=pyhe730653_0
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - python_abi=3.13=9_cp313
   - pywin32=312=py313h26f5e95_2
   - pywin32-ctypes=0.2.3=py313hfa70ccb_4
@@ -466,8 +486,12 @@ dependencies:
   - qt6-main=6.11.2=pl5321hfcac499_0
 =======
   - qt6-main=6.11.2=pl5321hfcac499_1
+<<<<<<< HEAD
 >>>>>>> 1650240676e (Conda lock)
   - r-base=4.5.3=h91b09f7_3
+=======
+  - r-base=4.5.3=h91b09f7_4
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - r-lattice=0.23_1=r45ha31549c_0
   - rapidfuzz=3.14.6=py313h927ade5_3
   - referencing=0.37.0=pyhcf101f3_0
@@ -488,14 +512,18 @@ dependencies:
   - ruamel.yaml=0.19.1=pyhcf101f3_0
   - ruamel.yaml.clib=0.2.15=py313h5fd188c_5
   - ruamel.yaml.jinja2=0.2.7=pyhd8ed1ab_1
+<<<<<<< HEAD
   - ruff=0.17.0=h18a1a76_0
 >>>>>>> 1650240676e (Conda lock)
+=======
+  - ruff=0.17.1=h18a1a76_0
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - sagemath-db-elliptic-curves=0.8.1=hecc5488_0
   - sagemath-db-graphs=20210214=hd8ed1ab_0
   - sagemath-db-polytopes=20170220=1
   - scipy=1.18.1=py313hf327ce8_1
   - semver=3.1.0=pyh5ded981_0
-  - setuptools=84.0.0=pyh332efcf_0
+  - setuptools=84.1.0=pyhe730653_0
   - shellingham=1.5.4=pyhd8ed1ab_2
 <<<<<<< HEAD
   - simdjson=4.6.11=h477610d_0
@@ -523,10 +551,14 @@ dependencies:
   - sphinxcontrib-qthelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-serializinghtml=2.0.0=pyhd8ed1ab_0
 <<<<<<< HEAD
+<<<<<<< HEAD
   - sqlite=3.53.4=hdb435a2_1
 =======
   - sqlite=3.54.0=hdb435a2_101
 >>>>>>> 1650240676e (Conda lock)
+=======
+  - sqlite=3.54.1=hdb435a2_100
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - stack_data=0.6.3=pyhd8ed1ab_1
   - stdlib-list=0.12.0=pyhd8ed1ab_0
   - symmetrica=3.1.0=h1056bf2_0
@@ -540,7 +572,7 @@ dependencies:
   - tomli=2.5.0=pyh5ded981_0
 >>>>>>> 1650240676e (Conda lock)
   - tomli-w=1.2.0=pyhd8ed1ab_0
-  - tomlkit=0.15.1=pyhcf101f3_0
+  - tomlkit=0.15.2=pyh5ded981_0
   - tornado=6.5.10=py313h5ea7bf4_0
   - tqdm=4.70.1=pyh6be1c34_0
   - traitlets=5.16.1=pyhcf101f3_0
@@ -550,8 +582,12 @@ dependencies:
   - ty=0.0.84=h2852063_0
 =======
   - truststore=0.10.5=pyh5ded981_0
+<<<<<<< HEAD
   - ty=0.0.88=h2852063_0
 >>>>>>> 1650240676e (Conda lock)
+=======
+  - ty=0.0.89=h2852063_0
+>>>>>>> 8576e150643 (Update 3.13 and 3.14 conda lock files)
   - typing-extensions=4.16.0=h69aa097_0
   - typing-inspection=0.4.4=pyhcf101f3_0
   - typing_extensions=4.16.0=pyhcf101f3_0
@@ -608,8 +644,11 @@ dependencies:
   - zstandard=0.25.0=py313h5fd188c_4
   - zstd=1.5.7=h534d264_7
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   # Use Sage's cysignals release while conda-forge catches up.
   - pip:
     - cysignals==1.13.1
 >>>>>>> 1650240676e (Conda lock)
+=======
+>>>>>>> baf97967dda (Updates)

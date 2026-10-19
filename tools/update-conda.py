@@ -15,10 +15,10 @@ from packaging.requirements import Requirement
 
 platforms = {
     "linux-64": "linux",
-    "linux-aarch64": "linux-aarch64",
-    "osx-64": "macos-x86_64",
-    "osx-arm64": "macos",
-    "win-64": "win",
+    #    "linux-aarch64": "linux-aarch64",
+    #    "osx-64": "macos-x86_64",
+    #    "osx-arm64": "macos",
+    #    "win-64": "win",
 }
 
 # Get source directory from command line arguments
@@ -97,6 +97,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
         source_dir / "build/pkgs/cysignals/package-version.txt"
     ).read_text().strip()
 
+    cypari2_version = (
+            source_dir / "build/pkgs/cypari/package-version.txt"
+    ).read_text().strip()
+
     def process_platform_python(platform_key, platform_value, python):
         dependencies = get_dependencies(pyproject_toml, python, platform_key)
         for tag in tags:
@@ -145,6 +149,7 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                     "  # Use Sage's cysignals release while conda-forge catches up.\n"
                     "  - pip:\n"
                     f"    - cysignals=={cysignals_version}\n"
+                    f"    - cypari2=={cypari2_version}\n"
                 )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
