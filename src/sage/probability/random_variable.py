@@ -94,8 +94,6 @@ class DiscreteRandomVariable(RandomVariable_generic):
         else:
             RR = codomain
         if check and self is X:
-            # Called from DiscreteProbabilitySpace.__init__: ``f`` is
-            # the probability function and must sum to one.
             one = sum(f.values())
             if isinstance(RR, RationalField):
                 if not one == 1:
@@ -430,37 +428,37 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         r"""
         The entropy of the probability space.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            A fair coin has an entropy of 1::
+        A fair coin has an entropy of 1::
 
-                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
-                sage: X.entropy()
-                1
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: X.entropy()
+            1
 
-            Four equally likely outcomes have an entropy of 2::
+        Four equally likely outcomes have an entropy of 2::
 
-                sage: X = DiscreteProbabilitySpace([1, 2, 3, 4],
-                ....:     {1: 1/4, 2: 1/4, 3: 1/4, 4: 1/4})
-                sage: X.entropy()
-                2
+            sage: X = DiscreteProbabilitySpace([1, 2, 3, 4],
+            ....:     {1: 1/4, 2: 1/4, 3: 1/4, 4: 1/4})
+            sage: X.entropy()
+            2
 
-            A non-uniform distribution has less entropy::
+        A non-uniform distribution has less entropy::
 
-                sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
-                sage: X.entropy()
-                3/2
+            sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
+            sage: X.entropy()
+            3/2
 
-            An outcome with zero probability contributes nothing to the
-            entropy::
+        An outcome with zero probability contributes nothing to the
+        entropy::
 
-                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
-                sage: X.entropy()
-                1
-                sage: Xz = DiscreteProbabilitySpace([1, 2, 3],
-                ....:     {1: 1/2, 2: 1/2, 3: 0})
-                sage: Xz.entropy()
-                1
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: X.entropy()
+            1
+            sage: Xz = DiscreteProbabilitySpace([1, 2, 3],
+            ....:     {1: 1/2, 2: 1/2, 3: 0})
+            sage: Xz.entropy()
+            1
         """
         def neg_xlog2x(p):
             if p == 0:
