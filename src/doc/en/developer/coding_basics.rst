@@ -1196,7 +1196,7 @@ framework. Here is a comprehensive list:
   take more than about 30 seconds::
 
       sage: E = EllipticCurve([0, 0, 1, -1, 0])
-      sage: E.regulator()        # long time (1 second)
+      sage: E.regulator()        # long time (1 second) # abs tol 1e-15
       0.0511114082399688
 
 - **tol** or **tolerance:** The numerical values returned by the line are only

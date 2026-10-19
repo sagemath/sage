@@ -1,1 +1,1 @@
-scipy
+dimpase/tap/scipy-accelerate

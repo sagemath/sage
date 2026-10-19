@@ -2,17 +2,16 @@ r"""
 Incidence structures (i.e. hypergraphs, i.e. set systems)
 
 An incidence structure is specified by a list of points, blocks, or an incidence
-matrix ([1]_, [2]_). :class:`IncidenceStructure` instances have the following methods:
+matrix ([BlockIncidenceWikipedia]_, [AK1992]_).
+:class:`IncidenceStructure` instances have the following methods:
 
 {METHODS_OF_IncidenceStructure}
 
 REFERENCES:
 
-.. [1] Block designs and incidence structures from wikipedia,
-  :wikipedia:`Block_design`
-  :wikipedia:`Incidence_structure`
+- [BlockIncidenceWikipedia]_
 
-.. [2] \E. Assmus, J. Key, Designs and their codes, CUP, 1992.
+- [AK1992]_
 
 AUTHORS:
 
@@ -902,7 +901,7 @@ class IncidenceStructure(SageObject):
                     d[x] += 1
             return {p: d[i] for i, p in enumerate(self._points)}
         from itertools import combinations
-        d = {t: 0 for t in combinations(range(self.n_points()), size)}
+        d = dict.fromkeys(combinations(range(self.n_points()), size), 0)
         for b in self._blocks:
             for s in combinations(b, size):
                 d[s] += 1

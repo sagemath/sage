@@ -11,16 +11,16 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __repr__(self) -> str:
         ...
 
-    def merge(self, other: 'CallableSymbolicExpressionFunctor') -> 'CallableSymbolicExpressionFunctor':
+    def merge(self, other: CallableSymbolicExpressionFunctor) -> CallableSymbolicExpressionFunctor:
         ...
 
-    def __call__(self, R: SymbolicRing) -> 'CallableSymbolicExpressionRing':
+    def __call__(self, R: SymbolicRing) -> CallableSymbolicExpressionRing:
         ...
 
     def arguments(self) -> tuple:
         ...
 
-    def unify_arguments(self, x: 'CallableSymbolicExpressionFunctor') -> tuple:
+    def unify_arguments(self, x: CallableSymbolicExpressionFunctor) -> tuple:
         ...
 
 class CallableSymbolicExpressionRing_class(SymbolicRing):
@@ -59,7 +59,7 @@ class CallableSymbolicExpressionRingFactory(UniqueFactory):
     def create_key(self, args: Any, check: bool = True) -> tuple:
         ...
 
-    def create_object(self, version: int, key: tuple, **extra_args: Any) -> 'CallableSymbolicExpressionRing_class':
+    def create_object(self, version: int, key: tuple, **extra_args: Any) -> CallableSymbolicExpressionRing_class:
         ...
 
 CallableSymbolicExpressionRing = CallableSymbolicExpressionRingFactory('sage.symbolic.callable.CallableSymbolicExpressionRing')

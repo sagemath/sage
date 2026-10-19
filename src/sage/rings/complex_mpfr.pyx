@@ -1367,23 +1367,23 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: pari(a).type()
             't_COMPLEX'
             sage: type(pari(a))
             <class 'cypari2.gen.Gen'>
             sage: a.__pari__()
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: type(a.__pari__())
             <class 'cypari2.gen.Gen'>
             sage: a = CC(pi)                                                            # needs sage.symbolic
             sage: pari(a)                                                               # needs sage.symbolic
-            3.14159265358979
+            3.14159265358...
             sage: pari(a).type()                                                        # needs sage.symbolic
             't_REAL'
             sage: a = CC(-2).sqrt()
             sage: pari(a)
-            1.41421356237310*I
+            1.41421356237...*I
         """
         if self.is_real():
             return self.real().__pari__()

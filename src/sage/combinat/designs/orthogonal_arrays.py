@@ -536,9 +536,7 @@ def wilson_construction(OA, k, r, m, u, check=True, explain_construction=False):
 
     REFERENCE:
 
-    .. [HananiBIBD] Balanced incomplete block designs and related designs,
-      Haim Hanani,
-      Discrete Mathematics 11.3 (1975) pages 255-369.
+    - [HananiBIBD]_
 
     EXAMPLES::
 
