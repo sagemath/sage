@@ -143,7 +143,7 @@ def invalidate_all() -> None:
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari sage.symbolic
+        sage: # needs sage.libs.gap sage.libs.pari
         sage: a = gap(2); b = gp(3)
         sage: a, b
         (2, 3)
@@ -155,8 +155,9 @@ def invalidate_all() -> None:
 
     The GAP and GP sessions can be restarted, with their state reset::
 
-        sage: a = gap(2); b = gp(3)                                                     # needs sage.libs.pari sage.symbolic
-        sage: a, b                                                                      # needs sage.libs.pari sage.symbolic
+        sage: # needs sage.libs.gap sage.libs.pari
+        sage: a = gap(2); b = gp(3)
+        sage: a, b
         (2, 3)
     """
     for reference in expect_objects:
