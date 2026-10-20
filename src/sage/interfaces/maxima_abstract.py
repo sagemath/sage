@@ -126,7 +126,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         Seed Maxima's random number generator and return the seed.
 
         Maxima uses the integer seed modulo `2^{32}`.  If ``seed`` is
-        ``None``, choose a seed using :meth:`rand_seed`.
+        ``None``, choose a seed using
+        :meth:`~sage.interfaces.interface.Interface.rand_seed`.
 
         EXAMPLES::
 
