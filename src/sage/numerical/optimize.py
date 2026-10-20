@@ -12,9 +12,11 @@ Functions and Methods
 ----------------------
 """
 
+from collections.abc import Iterator
+from math import isnan
+
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
-from math import isnan
 
 
 def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
@@ -600,7 +602,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
       [x_{2,1}, x_{2,2}, \ldots, x_{2,k}, f_2],
       \ldots,
       [x_{n,1}, x_{n,2}, \ldots, x_{n,k}, f_n]]` given as either a list of
-      lists, matrix, or numpy array.
+      lists, matrix, numpy array, or iterator of rows.
 
     - ``model`` -- either a symbolic expression, symbolic function, or a
       Python function. ``model`` has to be a function of the variables
@@ -659,6 +661,14 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
         ....:          parameters=[a, b], variables=[x])
         [a == 1.11..., b == 1.24...]
 
+    An iterator of data points can also be used (see :issue:`33710`)::
+
+        sage: points = zip(range(4), [8, 5, 2, -1])
+        sage: fit = find_fit(points, lambda t, a, b: a*t + b,
+        ....:                parameters=['a', 'b'], variables=['t'], solution_dict=True)
+        sage: [int(round(fit['a'])), int(round(fit['b']))]
+        [-3, 8]
+
 
     ALGORITHM:
 
@@ -668,6 +678,9 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
     import numpy
     if int(numpy.version.short_version[0]) > 1:
         numpy.set_printoptions(legacy="1.25")
+
+    if isinstance(data, Iterator):
+        data = list(data)
 
     if not isinstance(data, numpy.ndarray):
         try:
