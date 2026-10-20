@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, assert_type, cast
+from typing import Any, assert_type, cast
 
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_dense import Matrix_dense
@@ -11,13 +11,8 @@ from sage.rings.ring import Ring
 from sage.structure.category_object import CategoryObject
 from sage.structure.parent import Parent
 
-if TYPE_CHECKING:
-    from sage.structure.parent_gens import ParentWithGens
-
-
 R: CategoryObject = QQ['x']
 P = cast("Parent", QQ)
-G = cast("ParentWithGens", QQ)
 
 assert_type(R.base_ring(), Ring)
 assert_type(R.variable_name(), str)
@@ -35,8 +30,6 @@ assert_type(R.objgens(), tuple[Any, Any])
 # stub but not callable here: registration is only legal on fresh parents.
 assert_type(P, Parent)
 
-assert_type(G.gens(), tuple[Any, ...])
-assert_type(G.ngens(), int)
 
 assert_type(crt_basis([ZZ(3), ZZ(5)]), list[Integer])
 
