@@ -951,7 +951,7 @@ def _normalize_2x2(G):
             B[1, :] = sol * B[0, :] + (-2 * sol + 1) * B[1, :]
             D = B * G * B.transpose()
         # check the result
-        assert D == Matrix(G.parent(), 2, 2, [2, 1, 1, 2]), "D1 \n %r" % D
+        assert D == G.parent()([2, 1, 1, 2]), "D1 \n %r" % D
     elif mod(D.det(), 8) == 7:
         # in this case we can transform D to
         #  0 1
@@ -971,7 +971,7 @@ def _normalize_2x2(G):
         B[0, :] *= D[1, 0].inverse_of_unit()
         D = B * G * B.transpose()
         # check the result
-        assert D == Matrix(G.parent(), 2, 2, [0, 1, 1, 0]), "D2 \n %r" % D
+        assert D == G.parent()([0, 1, 1, 0]), "D2 \n %r" % D
     return B
 
 
