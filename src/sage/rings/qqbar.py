@@ -5134,7 +5134,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def __complex__(self):
         r"""
-        Compute a good complex approximation to ``self``.
+        Compute a complex approximation to ``self``.
 
         EXAMPLES::
 
@@ -5159,16 +5159,16 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def _complex_double_(self, cdf):
         r"""
-        Compute a good approximation to ``self`` in CDF.
+        Compute an approximation to ``self`` in ``cdf``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(-5))._complex_double_(CDF)                                 # needs sage.symbolic
+            sage: QQbar(-5).sqrt()._complex_double_(CDF)
             2.23606797749979*I
             sage: CDF(QQbar.zeta(12))
             0.8660254037844386 + 0.5*I
         """
-        return cdf(CC(self))
+        return cdf(self.__complex__())
 
     def _interval_fast(self, prec):
         r"""
