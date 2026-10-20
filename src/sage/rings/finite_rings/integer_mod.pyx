@@ -1361,6 +1361,20 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           need to install an optional package to use this method, this can be
           done with the following command line: ``sage -i cunningham_tables``.
 
+        For a prime modulus, a known complete prime factorization of the
+        multiplicative group order can be installed in the parent cache.  For
+        sufficiently large ``n``, this can avoid factoring the part that
+        divides the group order.  The cache value is trusted and is not
+        validated::
+
+            sage: from sage.structure.factorization import Factorization
+            sage: R = IntegerModRing(11)
+            sage: R.factored_unit_order.set_cache(
+            ....:     [Factorization([(2, 1), (5, 1)])])
+            sage: R(9).nth_root(2)
+            3
+            sage: R.factored_unit_order.clear_cache()
+
         OUTPUT:
 
         If ``self`` has an `n`-th root, returns one (if ``all`` is ``False``) or a
@@ -1471,6 +1485,28 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a = Mod(9,11)
             sage: a.nth_root(2, False, True, 'Johnston', cunningham=True)   # optional - cunningham_tables
             [3, 8]
+
+        A cached factorization avoids factoring a large ``n`` for a prime
+        modulus::
+
+            sage: from sage.structure.factorization import Factorization
+            sage: from unittest.mock import patch
+            sage: r = ZZ(34359738421)
+            sage: s = ZZ(68719476767)
+            sage: p = ZZ(174727560214515900603119)  # p = 74*r*s + 1 is prime
+            sage: n = r*s
+            sage: R = Zmod(p)
+            sage: R.factored_order.set_cache(Factorization([(p, 1)]))
+            sage: R.factored_unit_order.set_cache(
+            ....:     [Factorization([(2, 1), (37, 1), (r, 1), (s, 1)])])
+            sage: y = R(3)^n
+            sage: with patch('sage.rings.factorint_pari.factor_using_pari',  # needs sage.libs.pari
+            ....:            side_effect=AssertionError("unexpected factorization")):
+            ....:     root = y.nth_root(n)
+            sage: root^n == y  # needs sage.libs.pari
+            True
+            sage: R.factored_unit_order.clear_cache()
+            sage: R.factored_order.clear_cache()
 
         ALGORITHM:
 
