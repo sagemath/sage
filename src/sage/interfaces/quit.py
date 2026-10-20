@@ -153,9 +153,9 @@ def invalidate_all() -> None:
         sage: b
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 
-    However the maxima and gp sessions should still work out, though with their state reset::
+    The GAP and GP sessions can be restarted, with their state reset::
 
-        sage: a = maxima(2); b = gp(3)                                                  # needs sage.libs.pari sage.symbolic
+        sage: a = gap(2); b = gp(3)                                                     # needs sage.libs.pari sage.symbolic
         sage: a, b                                                                      # needs sage.libs.pari sage.symbolic
         (2, 3)
     """
