@@ -900,6 +900,19 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return self(self._s(left) * self._s(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to the Schur basis once.
+
+        TESTS::
+
+            sage: Mac = SymmetricFunctions(QQ).macdonald(q=2, t=3)
+            sage: for B in [Mac.P(), Mac.Q(), Mac.J(), Mac.H(), Mac.Ht()]:
+            ....:     f = B[2] + B[1, 1]
+            ....:     assert f^3 == f._pow_naive(3)
+        """
+        return self._power_via(x, n, self._s)
+
     def macdonald_family(self):
         r"""
         Return the family of Macdonald bases associated to the basis ``self``.
@@ -1716,6 +1729,30 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         s_right = self._s._from_element(right)
         product = s_left * s_right
         return self._from_element(product)
+
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` using Schur structure constants.
+
+        The conversions here relabel coefficients with ``_from_element``;
+        they are deliberately not the parameter-dependent coercions between
+        the Macdonald `S` and Schur realizations.
+
+        TESTS::
+
+            sage: for q, t in [(1, 2), (2, 1), (1, 1)]:
+            ....:     S = SymmetricFunctions(QQ).macdonald(q=q, t=t).S()
+            ....:     f = S[2] + S[1, 1]
+            ....:     assert f^4 == f._pow_naive(4)
+        """
+        if n < 0:
+            return super()._power(x, n)
+        if n == 0:
+            return self.one()
+        if n == 1:
+            return x
+        y = self._s._from_element(x)
+        return self._from_element(self._s._power(y, n))
 
     def _to_s(self, part):
         r"""
