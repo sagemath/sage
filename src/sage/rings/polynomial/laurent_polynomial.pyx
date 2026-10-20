@@ -2222,11 +2222,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         r"""
         Return ``True`` if ``self`` divides ``other``.
 
-        .. NOTE::
-
-            This method is only implemented for Laurent polynomials over
-            integral domains. For rings with zero divisors, a
-            :exc:`NotImplementedError` is raised.
+        Over integral domains, this delegates to polynomial divisibility.
+        Otherwise, when supported by the polynomial backend, divisibility is
+        tested as ideal membership in the polynomial cover ring.
 
         EXAMPLES::
 
@@ -2256,16 +2254,67 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         Check that :issue:`40372` is fixed::
 
             sage: R.<y> = LaurentPolynomialRing(Zmod(4))
-            sage: a = 2+y
+            sage: a = 2 + y
             sage: a.divides(a)
+            True
+            sage: a.divides(2*a)
+            True
+            sage: (2 + y^-1).divides(1)
+            True
+
+        Negative powers and nilpotent coefficients are handled without a
+        degree bound::
+
+            sage: R.<y> = LaurentPolynomialRing(Zmod(8))
+            sage: (4*y^2 + y + 4).divides(2)
+            True
+            sage: R.<y> = LaurentPolynomialRing(Zmod(2^100))
+            sage: (y - 2).divides(y^100)
+            True
+            sage: R.<y> = LaurentPolynomialRing(Zmod(6))
+            sage: (2*y).divides(3*y)
+            False
+
+        Zero and monomial-unit cases do not require a Gröbner basis::
+
+            sage: z = R.zero()
+            sage: z.divides(z), z.divides(y), y.divides(z)
+            (True, False, True)
+            sage: (y^-100000).divides(1)
+            True
+            sage: a = y^-100000 * (2 + y)
+            sage: a.divides(a * (1 + y))
+            True
+            sage: (2 + y).divides((2 + y) * y^-100000)
+            True
+
+        Unsupported polynomial backends raise instead of silently returning
+        an incorrect result::
+
+            sage: A.<e> = QQ[]
+            sage: B.<ebar> = A.quotient(e^2)
+            sage: L.<x> = LaurentPolynomialRing(B)
+            sage: f = 1 + ebar*x
+            sage: f.divides(f * (x^-2 + ebar))
             Traceback (most recent call last):
             ...
-            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
+            NotImplementedError: ideal membership in the polynomial cover is not implemented over this base ring
         """
         if self.base_ring().is_integral_domain() is True:
             p = self.polynomial_construction()[0]
             q = other.polynomial_construction()[0]
             return p.divides(q)
-        else:
-            raise NotImplementedError("divisibility test not implemented for Laurent"
-                                      " polynomials over non-integral domains")
+        if not other:
+            return True
+        if not self:
+            return False
+        if self is other or self.is_unit():
+            return True
+        p, n = self.polynomial_construction()
+        q, m = other.polynomial_construction()
+        if n == m and p == q:
+            return True
+        P = self.parent()
+        I = P._ideal_in_extended_ring((self,))
+        target = P._extended_ring(q)
+        return I.reduce(target).is_zero()
