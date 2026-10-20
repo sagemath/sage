@@ -21884,7 +21884,8 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``layout_name`` -- string; the name of a NetworkX layout function,
           without its ``_layout`` suffix -- e.g. ``'kamada_kawai'`` for
-          :func:`networkx.kamada_kawai_layout`.
+          `networkx.kamada_kawai_layout
+          <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.kamada_kawai_layout.html>`_.
 
         - ``dim`` -- integer (default: 2); 2 or 3, ignored by NetworkX
           layouts that do not accept a ``dim`` parameter.
@@ -21941,8 +21942,9 @@ class GenericGraph(GenericGraph_pyx):
         even when a NetworkX layout function happens to accept a
         same-named parameter with an unrelated meaning (for example, Sage's
         ``dist`` is a float controlling multi-edge spacing, while
-        :func:`networkx.kamada_kawai_layout`'s ``dist`` parameter expects a
-        distance matrix)::
+        `networkx.kamada_kawai_layout
+        <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.kamada_kawai_layout.html>`_'s
+        ``dist`` parameter expects a distance matrix)::
 
             sage: g.plot(layout='kamada_kawai', vertex_size=300)                      # needs networkx sage.plot
             Graphics object consisting of ... graphics primitives
@@ -21956,13 +21958,14 @@ class GenericGraph(GenericGraph_pyx):
 
         .. WARNING::
 
-            Some NetworkX layouts require extra *mandatory* arguments that
-            are not valid Sage plotting options -- for example, ``nodes``
-            for :func:`networkx.bipartite_layout`. Such arguments cannot be
-            passed through :meth:`plot` directly: :meth:`plot` validates its
-            keyword arguments against a fixed list of recognized Sage
-            plotting options and raises ``ValueError: invalid input`` for
-            anything outside that list, regardless of whether
+            Some NetworkX layouts require extra *mandatory* arguments that are
+            not valid Sage plotting options -- for example, ``nodes`` for
+            `networkx.bipartite_layout
+            <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.bipartite_layout.html>`_.
+            Such arguments cannot be passed through :meth:`plot` directly:
+            :meth:`plot` validates its keyword arguments against a fixed list of
+            recognized Sage plotting options and raises ``ValueError: invalid
+            input`` for anything outside that list, regardless of whether
             :meth:`layout_networkx` would have accepted and used it
             correctly. Compute the position dictionary separately instead,
             and pass it to :meth:`plot` via ``pos=``::
