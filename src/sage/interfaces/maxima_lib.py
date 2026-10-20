@@ -95,7 +95,16 @@ existing subprocess cannot hide an unintended use of that interface::
 
     sage: import subprocess, sys
     sage: code = '''
+    ....: import importlib.abc
     ....: import sys
+    ....: blocked = []
+    ....: class RejectPexpectMaxima(importlib.abc.MetaPathFinder):
+    ....:     def find_spec(self, fullname, path=None, target=None):
+    ....:         if fullname == 'sage.interfaces.maxima':
+    ....:             blocked.append(fullname)
+    ....:             raise AssertionError('Pexpect Maxima must not be imported')
+    ....: assert 'sage.interfaces.maxima' not in sys.modules
+    ....: sys.meta_path.insert(0, RejectPexpectMaxima())
     ....: from unittest.mock import patch
     ....: from sage.all import *
     ....: from sage.interfaces.expect import Expect
@@ -106,9 +115,12 @@ existing subprocess cannot hide an unintended use of that interface::
     ....:     assert maxima(x).parent() is maxima_calculus(x).parent()
     ....:     assert loads(dumps(maxima(7))).sage() == 7
     ....:     assert (sin(x)**2 + cos(x)**2).maxima_methods().trigsimp() == 1
+    ....:     assert chebyshev_T(5, x, algorithm='maxima') == 16*x**5 - 20*x**3 + 5*x
+    ....:     assert maxima(harmonic_number(x, 2)).sage() == harmonic_number(x, 2)
     ....:     magic = InterfaceMagic.find('maxima')
     ....:     assert magic.line_magic_factory()('2+3').sage() == 5
     ....:     magic.cell_magic_factory()('', '1+1; 2+2$')
+    ....: assert not blocked, blocked
     ....: assert 'sage.interfaces.maxima' not in sys.modules
     ....: '''
     sage: result = subprocess.run([sys.executable, '-c', code],
