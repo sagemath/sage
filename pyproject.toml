@@ -50,7 +50,7 @@ dependencies = [
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
-  'ipython >=8.28.0',
+  'ipython >=8.32.0',
   'ipywidgets >=7.5.1',
   'jupyter-client',
   'matplotlib >=3.10.0',
