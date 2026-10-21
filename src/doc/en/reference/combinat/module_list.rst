@@ -266,6 +266,7 @@ Comprehensive module list
     sage/combinat/matrices/dancing_links
     sage/combinat/matrices/dlxcpp
     sage/combinat/matrices/hadamard_matrix
+    sage/combinat/matrices/hadamard_matrix_data
     sage/combinat/matrices/latin
 
 ``sage.combinat.ncsf_qsym``

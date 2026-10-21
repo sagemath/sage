@@ -37,6 +37,31 @@ def test_hadamard_matrix_from_turyn_type_sequences(n):
     assert hadamard_matrix(order, existence=True) is True
 
 
+@pytest.mark.parametrize("constructor", ["general", "specialized"])
+@pytest.mark.parametrize("n,construction", [
+    (668, "spence"), (716, "spence"),
+    (1676, "spence"), (1772, "spence"),
+])
+def test_hadamard_matrices_alpoge(n, construction, constructor):
+    """Check the four public Spence seeds through both matrix entry points."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_spence_construction,
+        is_hadamard_matrix,
+    )
+
+    specialized = {
+        "spence": hadamard_matrix_spence_construction,
+    }
+    build = hadamard_matrix if constructor == "general" else specialized[construction]
+    assert build(n, existence=True) is True
+    # Exercise the default check=True path in the specialized constructors.
+    H = build(n, check=constructor == "specialized")
+    assert H.dimensions() == (n, n)
+    if constructor == "general":
+        assert is_hadamard_matrix(H, normalized=True)
+
+
 @pytest.mark.longlong
 @pytest.mark.parametrize("constructor", ["general", "cooper_wallis"])
 def test_hadamard_matrix_2060(constructor):

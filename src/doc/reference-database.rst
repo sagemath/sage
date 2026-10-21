@@ -408,6 +408,13 @@
 .. [Ava2017] \R. Avanzi,
              *The QARMA block cipher family*; in ToSC, (2017.1), pp. 4-44.
 
+.. [AVR2026] Levent Alpöge, Philippe Voinov and Saul Reynolds-Haertle,
+             *Public Hadamard matrix data for twelve orders below 2000*
+             (announcement, 2026-08-12).
+             Sign payload: https://x.com/__alpoge__/status/2087504785952182273
+             Decoder: https://x.com/__alpoge__/status/2087504788938510427
+             Attribution: https://x.com/__alpoge__/status/2087504790435840207
+
 .. [AW2006] Adams, M.D. and Wise, D.S.,
             *Fast additions on masked integers*,
             ACM SIGPLAN Notices, 2006,
@@ -6097,6 +6104,15 @@
 .. [Red2001] Maria Julia Redondo. *Hochschild cohomology: some methods
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
+
+.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
+              (2026). Records the four length-166 sequences extracted from
+              Levent Alpöge's public payload and their bordered-array construction.
+              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
+              Seed data:
+              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
+              Original payload: https://x.com/__alpoge__/status/2087504785952182273
+              Decoder: https://x.com/__alpoge__/status/2087504788938510427
 
 .. [Reg09] Oded Regev. *On Lattices, Learning with Errors, Random
            Linear Codes, and Cryptography*. in Journal of the ACM

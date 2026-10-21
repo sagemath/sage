@@ -30,19 +30,19 @@ The Hadamard conjecture (possibly due to Paley) states that a Hadamard
 matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
-The module below implements constructions of Hadamard and skew Hadamard matrices
-for all known orders `\le 1200`, plus some more greater than `1200`. It also
-allows you to pull a Hadamard matrix from the database at [SloaHada]_.
+The module below constructs Hadamard matrices for many known orders, including
+the four Spence records of [AVR2026]_. It also implements many skew Hadamard constructions and allows you
+to pull a matrix from the database at [SloaHada]_.
 
-The following code will test that a construction for all known orders `\le 4k`
-is implemented. The assertion above can be verified by setting ``k=300``
-(note that it will take a long time to run)::
+The following code tests the ordinary and skew constructions up to order `4k`.
+The list of unavailable skew orders below covers ``k=300``
+(note that this will take a long time to run)::
 
     sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [668, 716, 892, 1132]
+    sage: unknown_hadamard = [892, 1132]
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
     ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
@@ -1532,6 +1532,12 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
     desired matrix.
 
+    For orders 668, 716, 1676 and 1772, the four sequences are taken from
+    the public payload of [AVR2026]_; see also [Reff2026]_ for order 668.
+    Their row sums are `2,0,0,0`, and their periodic autocorrelations sum to
+    `-4` at every nonzero shift. These identities suffice for the bordered
+    array below; no relative-difference-set origin is assumed for these seeds.
+
     INPUT:
 
     - ``n`` -- integer; the order of the matrix to be constructed
@@ -1556,6 +1562,8 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
         sage: hadamard_matrix_spence_construction(52, existence=True)
         True
+        sage: hadamard_matrix_spence_construction(668, existence=True)
+        True
 
     TESTS::
 
@@ -1578,24 +1586,33 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         AssertionError
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_SPENCE_DATA
 
     assert n % 4 == 0 and n > 0
 
     q = n//4
 
+    available = n in ALPOGE_SPENCE_DATA or supplementary_difference_set_from_rel_diff_set(q, existence=True)
     if existence:
-        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
+        return available
 
-    if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
+    if not available:
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
+    if n in ALPOGE_SPENCE_DATA:
+        rows = ALPOGE_SPENCE_DATA[n]
+        # This array's border requires row sums (0, 0, 0, 2).
+        # Move the first public sequence to A4.
+        A4, A1, A2, A3 = [matrix.circulant([1 if c == '+' else -1 for c in row])
+                          for row in rows]
+    else:
+        G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
-    Glist = list(G)
-    A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
-    A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
-    A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
-    A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
+        Glist = list(G)
+        A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
+        A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
+        A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
+        A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
 
     P = matrix(ZZ, [[1 if (i + j) % (q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
 
@@ -1764,8 +1781,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
     Try to construct a Hadamard matrix using the available methods.
 
-    Currently all orders `\le 1200` for which a construction is
-    known are implemented. For `n > 1200`, only some orders are available.
+    Some known orders are implemented, including the four Spence records
+    of [AVR2026]_.
 
     INPUT:
 
@@ -1843,7 +1860,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(12,existence=True)
         True
         sage: matrix.hadamard(668,existence=True)
-        Unknown
+        True
+        sage: matrix.hadamard(668, existence=True, construction_name=True)
+        'spence 668'
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
         ...
@@ -1859,6 +1878,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(2060, existence=True, construction_name=True)
         'cooper-wallis small cases: 2060'
     """
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_HADAMARD_ORDERS
+
     name = str(n)
     if construction_name:
         def report_name(nam):
@@ -1954,6 +1975,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
             return Unknown
         raise ValueError("The Hadamard matrix of order %s is not yet implemented." % n)
 
+    if n in ALPOGE_HADAMARD_ORDERS:
+        # Match this entry point's normalization convention while preserving
+        # the published border conventions in the specialized constructors.
+        M = normalise_hadamard(M)
     if check:
         assert is_hadamard_matrix(M)
 
