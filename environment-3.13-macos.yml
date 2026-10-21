@@ -38,9 +38,9 @@ dependencies:
   - brotli-python=1.2.0=py313h3c37e74_4
   - bwidget=1.10.1=h820172f_3
   - bzip2=1.0.8=h4e30115_10
-  - c-ares=1.34.8=h74c22ad_2
+  - c-ares=1.34.9=h74c22ad_0
   - c-compiler=2.0.0=h39478f8_0
-  - ca-certificates=2026.10.18=hbd8a1cb_0
+  - ca-certificates=2026.10.19=hbd8a1cb_0
   - cachecontrol=0.14.4=pyha770c72_0
   - cachecontrol-with-filecache=0.14.4=pyhd8ed1ab_0
   - cached-property=2.0.1=pyhcf101f3_0
@@ -50,7 +50,7 @@ dependencies:
   - cctools_impl_osx-arm64=1030.6.3=llvm21_1_h2e2604f_6
   - cctools_osx-arm64=1030.6.3=llvm21_1_h8e84c17_6
   - cddlib=1!0.94n=hd70dbc6_0
-  - certifi=2026.10.18=pyhd8ed1ab_1
+  - certifi=2026.10.19=pyhd8ed1ab_0
   - cffi=2.1.1=py313h056b358_3
   - charset-normalizer=3.5.1=pyhd8ed1ab_0
   - clang=21.1.8=default_cfg_h7f0254a_7
@@ -72,12 +72,12 @@ dependencies:
   - compiler-rt_osx-arm64=21.1.8=hce30654_2
   - conda=26.9.3=py313h6fa1262_0
   - conda-index=0.13.0=pyh5ded981_0
-  - conda-libmamba-solver=26.7.0=pyhcf101f3_0
+  - conda-libmamba-solver=26.7.0=pyh5ded981_1
   - conda-lock=4.0.3=pyhdba7688_0
   - conda-lockfiles=0.2.2=pyhd8ed1ab_0
   - conda-package-handling=2.6.0=pyh5ded981_0
   - conda-package-streaming=0.13.0=pyhd8ed1ab_0
-  - conda-pypi=0.13.0=pyh5ded981_0
+  - conda-pypi=0.13.0=pyh5ded981_1
   - conda-rattler-solver=0.2.0=pyh5ded981_0
   - conda-recipe-manager=0.10.6=pyhd8ed1ab_1
   - conda-self=0.3.0=pyhd8ed1ab_0
@@ -92,7 +92,7 @@ dependencies:
   - curl=8.21.0=hd5a2499_1
   - cxx-compiler=2.0.0=he3883d0_0
   - cycler=0.12.1=pyhcf101f3_2
-  - cypari2=2.2.4=py313h1c97aaa_2
+  - cypari2=2.2.4=py313h0434100_3
   - cysignals=1.13.1=py313hb6048c5_0
   - cython=3.3.0=py313hbbd9ce8_0
   - debugpy=1.8.22=py313h10a4758_0
@@ -126,7 +126,7 @@ dependencies:
   - fonttools=4.67.0=py313h8c536fb_0
   - fortran-compiler=1.11.0=h81a4f41_0
   - fplll=5.5.0=h2a2278a_0
-  - fpylll=0.6.4=py313hc02cab3_2
+  - fpylll=0.6.4=py313h62849b6_3
   - freetype=2.14.3=hce30654_2
   - fribidi=1.0.17=hb001647_0
   - frozendict=2.4.7=pyh851646a_2
@@ -206,7 +206,7 @@ dependencies:
   - libclang13=22.1.8=default_h8b20a8a_7
   - libcompiler-rt=21.1.8=hdb3d66b_2
   - libcurl=8.21.0=hd5a2499_1
-  - libcxx=23.1.3=h55c6f16_0
+  - libcxx=23.1.4=h55c6f16_0
   - libcxx-devel=21.1.8=h6dc3340_4
   - libcxx-headers=21.1.8=h707e725_4
   - libdeflate=1.25=he7e0567_1
@@ -255,7 +255,7 @@ dependencies:
   - libxml2-devel=2.15.1=h9329255_0
   - libzlib=1.3.2=h8088a28_3
   - linbox=1.7.1=hff54a3f_5
-  - llvm-openmp=23.1.3=hdb3d66b_1
+  - llvm-openmp=23.1.4=hdb3d66b_0
   - llvm-tools=21.1.8=h855ad52_0
   - llvm-tools-21=21.1.8=h91fd4e7_0
   - lrcalc=2.1=hec049ff_8
@@ -313,7 +313,7 @@ dependencies:
   - perl=5.44.0=1_hb001647_perl5
   - pexpect=4.9.0=pyhd8ed1ab_1
   - pillow=13.0.0=py313h4ede67f_0
-  - pip=26.2.1=pyh145f28c_0
+  - pip=26.2.2=pyh145f28c_0
   - pixman=0.46.4=h784d473_3
   - pkg-config=0.29.2=he0b766d_1013
   - pkgconfig=1.6.0=pyhd8ed1ab_0
@@ -322,10 +322,10 @@ dependencies:
   - platformdirs=4.13.5=pyh5ded981_0
   - pluggy=1.7.0=pyh5ded981_0
   - ppl=1.2=h8b147cf_1006
-  - pplpy=0.9.0=py313hf486410_1
-  - primecount=8.2=h7d79b52_0
-  - primecountpy=0.2.1=py313h6deaedc_0
-  - primesieve=12.13=h784d473_1
+  - pplpy=0.9.0=py313hc25809e_2
+  - primecount=8.4=h7d79b52_0
+  - primecountpy=0.2.1=py313hb6048c5_1
+  - primesieve=12.15=h784d473_0
   - progressbar2=4.6.0=pyhd8ed1ab_0
   - prompt-toolkit=3.0.53=pyha770c72_0
   - psutil=7.2.2=py313h2f871a8_3
@@ -358,7 +358,7 @@ dependencies:
   - python-gil=3.13.16=h4df99d1_102
   - python-installer=1.1.0=pyhe730653_0
   - python-lrcalc=2.1=py313hb4b7877_8
-  - python-utils=4.1.3=pyhe730653_0
+  - python-utils=4.1.4=pyhe730653_0
   - python_abi=3.13=9_cp313
   - pyyaml=6.0.3=py313h65a2061_1
   - pyzmq=27.2.0=py312hdfb5542_2
@@ -388,7 +388,7 @@ dependencies:
   - scipy=1.18.1=py313hccac1f9_1
   - sdkroot_env_osx-arm64=26.0=ha3f98da_7
   - semver=3.1.0=pyh5ded981_0
-  - setuptools=84.1.0=pyhe730653_0
+  - setuptools=84.2.1=pyhe730653_0
   - shellingham=1.5.4=pyhd8ed1ab_2
   - sigtool-codesign=0.1.3=h98dc951_1
   - simdjson=4.6.11=hfbe1efa_0
@@ -400,14 +400,14 @@ dependencies:
   - snowballstemmer=3.1.1=pyhd8ed1ab_0
   - soupsieve=3.0.3=pyhd8ed1ab_0
   - spdlog=1.17.0=h760df91_2
-  - sphinx=9.1.0=pyhd8ed1ab_0
+  - sphinx=9.2.0=pyhc364b38_0
   - sphinx-basic-ng=1.0.0b2=pyhd8ed1ab_3
   - sphinx-copybutton=0.5.2=pyhd8ed1ab_1
   - sphinx-inline-tabs=2025.12.21.14=pyhd8ed1ab_0
   - sphinxcontrib-applehelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-devhelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-htmlhelp=2.1.0=pyhd8ed1ab_1
-  - sphinxcontrib-jsmath=1.0.1=pyhd8ed1ab_1
+  - sphinxcontrib-jsmath=2.0.0=pyh5ded981_0
   - sphinxcontrib-qthelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-serializinghtml=2.0.0=pyhd8ed1ab_0
   - sqlite=3.53.4=hdb6324b_102
@@ -429,7 +429,7 @@ dependencies:
   - traitlets=5.16.1=pyhcf101f3_0
   - trove-classifiers=2026.9.21.13=pyh5ded981_0
   - truststore=0.10.5=pyh5ded981_0
-  - ty=0.0.89=h9d00c72_0
+  - ty=0.0.90=h9d00c72_0
   - typing-extensions=4.16.0=h69aa097_0
   - typing-inspection=0.4.4=pyhcf101f3_0
   - typing_extensions=4.16.0=pyhcf101f3_0
@@ -437,10 +437,10 @@ dependencies:
   - tzlocal=5.4.4=pyh8f84b5b_0
   - unearth=0.18.3=pyhd8ed1ab_0
   - urllib3=2.8.0=pyhd8ed1ab_0
-  - uv=0.13.1=hfc06f74_0
+  - uv=0.13.4=hfc06f74_0
   - virtualenv=20.39.0=pyhcf101f3_0
-  - wcwidth=0.9.2=py311h1f16292_0
-  - webencodings=0.5.1=pyhd8ed1ab_3
+  - wcwidth=0.9.3=py311h1f16292_0
+  - webencodings=0.6.1=pyh5ded981_0
   - widgetsnbextension=4.0.16=pyhd8ed1ab_0
   - wrapt=2.5.1=py313h2f871a8_0
   - xattr=1.3.0=py313hf5449f0_2
