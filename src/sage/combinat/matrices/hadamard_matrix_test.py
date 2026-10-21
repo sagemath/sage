@@ -1,6 +1,42 @@
 import pytest
 
 
+@pytest.mark.parametrize("n", [40, 42, 44])
+def test_hadamard_matrix_from_turyn_type_sequences(n):
+    """Construct matrices using each new TT sequence from London--Kotsireas."""
+    from sage.combinat.t_sequences import (
+        T_sequences_construction_from_base_sequences,
+        base_sequences_construction,
+        turyn_type_sequences_smallcases,
+    )
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_cooper_wallis_construction,
+        hadamard_matrix_cooper_wallis_smallcases,
+        is_hadamard_matrix,
+    )
+    from sage.matrix.constructor import matrix
+
+    seqs = turyn_type_sequences_smallcases(n)
+    assert list(map(len, seqs)) == [n, n, n, n-1]
+    # Check the TT identity directly, independently of the conversions below.
+    for shift in range(1, n):
+        assert sum(weight * seq[j] * seq[j + shift]
+                   for weight, seq in zip((1, 1, 2, 2), seqs)
+                   for j in range(len(seq) - shift)) == 0
+    base = base_sequences_construction(seqs)
+    tseqs = T_sequences_construction_from_base_sequences(base)
+    unit = matrix([[1]])
+    H = hadamard_matrix_cooper_wallis_construction(
+        *tseqs, unit, unit, unit, unit, check=False
+    )
+    order = 4 * (3*n - 1)
+    assert H.dimensions() == (order, order)
+    assert is_hadamard_matrix(H)
+    assert hadamard_matrix_cooper_wallis_smallcases(order, existence=True)
+    assert hadamard_matrix(order, existence=True) is True
+
+
 @pytest.mark.longlong
 @pytest.mark.parametrize("constructor", ["general", "cooper_wallis"])
 def test_hadamard_matrix_2060(constructor):

@@ -4771,6 +4771,11 @@
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LK2025] \S. London and I. Kotsireas,
+            *New Turyn-type sequences*.
+            Cryptography and Communications **17** (2025), 1601--1610.
+            :doi:`10.1007/s12095-025-00829-z`
+
 .. [LKOL2002] Hyeong-Ok Lee, Jong-Seok Kim, Eunseuk Oh and Hyeong-Seok Lim,
               *Hyper-Star Graph: A New Interconnection Network Improving the
               Network Cost of the Hypercube*, Eurasian Conference on Information
