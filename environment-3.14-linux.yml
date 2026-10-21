@@ -57,7 +57,7 @@ dependencies:
   - cliquer=1.23=hb03c661_0
   - colorama=0.4.6=pyhd8ed1ab_1
   - comm=0.2.3=pyhe01879c_0
-  - conda=26.9.3=py314h9e666f3_0
+  - conda=26.9.4=py314h9e666f3_0
   - conda-gcc-specs=15.3.0=h8846f6e_7
   - conda-index=0.13.0=pyh5ded981_0
   - conda-libmamba-solver=26.7.0=pyh5ded981_1
@@ -489,6 +489,3 @@ dependencies:
   - zlib-ng=2.3.3=hceb46e0_1
   - zstandard=0.25.0=py314hfe1a184_4
   - zstd=1.5.7=hb78ec9c_7
-  # Use Sage's cysignals release while conda-forge catches up.
-  - pip:
-    - cysignals==1.13.1

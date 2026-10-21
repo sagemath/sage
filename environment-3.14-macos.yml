@@ -70,7 +70,7 @@ dependencies:
   - compiler-rt21=21.1.8=hdb3d66b_2
   - compiler-rt21_osx-arm64=21.1.8=hb8825d9_2
   - compiler-rt_osx-arm64=21.1.8=hce30654_2
-  - conda=26.9.3=py314hcec6336_0
+  - conda=26.9.4=py314h7ed20b3_0
   - conda-index=0.13.0=pyh5ded981_0
   - conda-libmamba-solver=26.7.0=pyh5ded981_1
   - conda-lock=4.0.3=pyhdba7688_0
@@ -457,6 +457,3 @@ dependencies:
   - zlib-ng=2.3.3=hed4e4f5_1
   - zstandard=0.25.0=py314hd98292b_4
   - zstd=1.5.7=hf451053_7
-  # Use Sage's cysignals release while conda-forge catches up.
-  - pip:
-    - cysignals==1.13.1
