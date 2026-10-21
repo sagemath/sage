@@ -11,7 +11,7 @@ requires = [
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
-  'numpy >=2.2.4',
+  'numpy >=2.3.0',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -57,7 +57,7 @@ dependencies = [
   'memory_allocator',
   'mpmath >=1.1.0',
   'networkx >=3.5',
-  'numpy >=2.2.24',
+  'numpy >=2.3.0',
   'pexpect >=4.8.0',
   'pillow >=7.2.0',
   'platformdirs',
@@ -239,7 +239,7 @@ dev = [
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
   'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv
   'meson-python', # Duplicate build-system requirement to fix editable installs with uv
-  'numpy >=2.2.4', # Duplicate build-system requirement to fix editable installs with uv
+  'numpy >=2.3.0', # Duplicate build-system requirement to fix editable installs with uv
 ]
 docs = [
   "docutils",
