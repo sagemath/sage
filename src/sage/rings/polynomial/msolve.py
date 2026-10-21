@@ -442,7 +442,8 @@ def _grp_random_matrix(n, changevar=True):
 
     Function that generates a random (n x n) change of variables matrix, such
     that all partial inverses B_k exist, for 0 <= k <= n.
-    Under paper notation: such that it satisfies hypothesis (A2).
+    Under this [paper](https://arxiv.org/abs/2605.18110)'s notation: such that
+    it satisfies hypothesis (A2).
 
     INPUT:
 
@@ -525,7 +526,7 @@ def _derivative_order(poly):
     inv_perm = Word(new_var).standard_permutation() / Word(variables).standard_permutation()
     sigma = (SymmetricGroup(range(n)))([perm[i]-1 for i in range(n)])
     inv_sigma = (SymmetricGroup(range(n)))([inv_perm[i]-1 for i in range(n)])
-    return(inv_sigma, R(SR(poly(*sigma(R.gens())))))
+    return(inv_sigma, poly(*sigma(R.gens())))
 
 def _remove_absent_variable(P, x):
     r"""
