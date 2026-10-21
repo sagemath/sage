@@ -30,8 +30,9 @@ The Hadamard conjecture (possibly due to Paley) states that a Hadamard
 matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
-The module below constructs Hadamard matrices for many known orders, including
-the four Spence records of [AVR2026]_. It also implements many skew Hadamard constructions and allows you
+The module below constructs Hadamard matrices for all orders divisible by four
+up to `1200`, plus many larger orders, including nine public records of
+[AVR2026]_. It also implements many skew Hadamard constructions and allows you
 to pull a matrix from the database at [SloaHada]_.
 
 The following code tests the ordinary and skew constructions up to order `4k`.
@@ -42,7 +43,7 @@ The list of unavailable skew orders below covers ``k=300``
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [892, 1132]
+    sage: unknown_hadamard = []
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
     ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
@@ -1037,6 +1038,8 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
     The supplementary difference sets are taken from
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
+    For orders 892, 1132, 1244, 1948 and 1964, the four circulant seeds
+    are taken directly from the public data of [AVR2026]_.
 
     INPUT:
 
@@ -1084,19 +1087,24 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         ValueError: n must be a positive multiple of four
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_GOETHALS_SEIDEL_DATA
 
     if n <= 0 or n % 4 != 0:
         raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
-        return supplementary_difference_set_hadamard(t, existence=True)
+        return n in ALPOGE_GOETHALS_SEIDEL_DATA or supplementary_difference_set_hadamard(t, existence=True)
 
-    _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
-    a = [-1 if i in S1 else 1 for i in range(t)]
-    b = [-1 if i in S2 else 1 for i in range(t)]
-    c = [-1 if i in S3 else 1 for i in range(t)]
-    d = [-1 if i in S4 else 1 for i in range(t)]
+    if n in ALPOGE_GOETHALS_SEIDEL_DATA:
+        a, b, c, d = [[1 if sign == '+' else -1 for sign in row]
+                      for row in ALPOGE_GOETHALS_SEIDEL_DATA[n]]
+    else:
+        _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
+        a = [-1 if i in S1 else 1 for i in range(t)]
+        b = [-1 if i in S2 else 1 for i in range(t)]
+        c = [-1 if i in S3 else 1 for i in range(t)]
+        d = [-1 if i in S4 else 1 for i in range(t)]
 
     if n == 956:
         a, b, c, d = [-el for el in d], a, b, c
@@ -1781,8 +1789,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
     Try to construct a Hadamard matrix using the available methods.
 
-    Some known orders are implemented, including the four Spence records
-    of [AVR2026]_.
+    All orders divisible by four up to 1200 are implemented. For `n > 1200`,
+    only some orders are available, including nine records of [AVR2026]_.
 
     INPUT:
 
