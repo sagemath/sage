@@ -31,7 +31,7 @@ matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
 The module below constructs Hadamard matrices for all orders divisible by four
-up to `1200`, plus many larger orders, including nine public records of
+up to `1200`, plus many larger orders, including the twelve public records of
 [AVR2026]_. It also implements many skew Hadamard constructions and allows you
 to pull a matrix from the database at [SloaHada]_.
 
@@ -1641,6 +1641,124 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     return H
 
 
+def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
+    r"""
+    Construct a Hadamard matrix from the larger-border records of [AVR2026]_.
+
+    The available orders are 1388, 1436 and 1916, with borders of size
+    20, 28 and 12, respectively. Their four core matrices are developed over
+    the abelian groups `C_2 \times C_3 \times C_{57}`,
+    `C_2 \times C_2 \times C_8 \times C_{11}` and
+    `C_2 \times C_2 \times C_{119}`. Here `C_k` denotes the cyclic group
+    of order `k`.
+
+    For a sequence `a` indexed by the development group, set
+    `A_{x,y}=a_{y-x}`, and let `R` act by inversion in that group. The core is
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & BR & CR & DR \\
+        -BR & A & D^\top R & -C^\top R \\
+        -CR & -D^\top R & A & B^\top R \\
+        -DR & C^\top R & -B^\top R & A
+        \end{pmatrix}.
+
+    The top and left borders are expanded from the published sign records.
+    This reproduces the public decoder's matrices without executing that
+    decoder or assuming how its seeds were discovered.
+
+    INPUT:
+
+    - ``n`` -- integer; order of the desired matrix
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); check the resulting matrix
+
+    OUTPUT:
+
+    A matrix over the integers, or a boolean if ``existence=True``. If no
+    record is available and ``existence=False``, raise :exc:`ValueError`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_bordered_goethals_seidel
+        sage: [hadamard_matrix_bordered_goethals_seidel(n, existence=True)
+        ....:  for n in (1388, 1436, 1916)]
+        [True, True, True]
+        sage: matrix.hadamard(1388, existence=True, construction_name=True)
+        'bordered Goethals-Seidel 1388'
+        sage: hadamard_matrix_bordered_goethals_seidel(1388).dimensions()  # long time
+        (1388, 1388)
+
+    TESTS::
+
+        sage: hadamard_matrix_bordered_goethals_seidel(668, existence=True)
+        False
+        sage: hadamard_matrix_bordered_goethals_seidel(668)
+        Traceback (most recent call last):
+        ...
+        ValueError: No larger-border Goethals-Seidel data for order 668
+    """
+    from itertools import product
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_BORDERED_DATA
+
+    if existence:
+        return n in ALPOGE_BORDERED_DATA
+    if n not in ALPOGE_BORDERED_DATA:
+        raise ValueError(f'No larger-border Goethals-Seidel data for order {n}')
+
+    factors, border, top_pair_repetitions, data = ALPOGE_BORDERED_DATA[n]
+    size = len(data[0]) // 4
+    coordinates = list(product(*(range(f) for f in factors)))
+    strides = []
+    stride = 1
+    for factor in reversed(factors):
+        strides.insert(0, stride)
+        stride *= factor
+
+    # Row-major mixed-radix indices of y-x and -x in the development group.
+    differences = [[sum(((y-x) % f) * s
+                        for x, y, f, s in zip(row, col, factors, strides))
+                    for col in coordinates] for row in coordinates]
+    inverse = [sum((-x % f) * s for x, f, s in zip(row, factors, strides))
+               for row in coordinates]
+    seeds = [[1 if c == '+' else -1 for c in data[0][i*size:(i+1)*size]]
+             for i in range(4)]
+    A, B, C, D = [matrix(ZZ, [[seed[k] for k in row] for row in differences])
+                  for seed in seeds]
+
+    def reverse_columns(M):
+        return M.matrix_from_columns(inverse)
+
+    BR, CR, DR = map(reverse_columns, (B, C, D))
+    BTR, CTR, DTR = map(reverse_columns, (B.T, C.T, D.T))
+    core = block_matrix([[A, BR, CR, DR],
+                         [-BR, A, DTR, -CTR],
+                         [-CR, -DTR, A, BTR],
+                         [-DR, CTR, -BTR, A]])
+
+    # Each core orbit has length equal to the last cyclic factor.
+    orbit = factors[-1]
+    width = len(data[1]) // border
+    top_rows = []
+    for i in range(border):
+        row = data[1][i*width:(i+1)*width]
+        signs = row[border:]
+        signs = ''.join(signs[j:j+2] * top_pair_repetitions
+                        for j in range(0, len(signs), 2))
+        expanded = row[:border] + ''.join(c * orbit for c in signs)
+        top_rows.append([1 if c == '+' else -1 for c in expanded])
+    top = matrix(ZZ, top_rows)
+    left = matrix(ZZ, [[1 if c == '+' else -1 for c in part[i:i+border]]
+                       for part in data[2:]
+                       for i in range(0, len(part), border)
+                       for _ in range(orbit)])
+    H = top.stack(left.augment(core))
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+
 def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
     r"""
     Test if ``M`` is a Hadamard matrix.
@@ -1790,7 +1908,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     Try to construct a Hadamard matrix using the available methods.
 
     All orders divisible by four up to 1200 are implemented. For `n > 1200`,
-    only some orders are available, including nine records of [AVR2026]_.
+    only some orders are available, including all twelve records of [AVR2026]_.
 
     INPUT:
 
@@ -1963,6 +2081,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = hadamard_matrix_spence_construction(n, check=False)
+    elif hadamard_matrix_bordered_goethals_seidel(n, existence=True):
+        name = "bordered Goethals-Seidel " + name
+        if existence:
+            return report_name(name)
+        M = hadamard_matrix_bordered_goethals_seidel(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
         name = "skew " + name
         if existence:
