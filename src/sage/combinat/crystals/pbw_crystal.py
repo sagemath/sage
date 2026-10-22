@@ -283,7 +283,7 @@ class PBWCrystalElement(Element):
         """
         WLR = self.parent().weight_lattice_realization()
         al = WLR.simple_roots()
-        return WLR.sum(c*al[i] for i,c in self._pbw_datum.weight())
+        return WLR.sum(c * al[i] for i, c in self._pbw_datum.weight())
 
     def star(self):
         r"""
@@ -340,7 +340,7 @@ class PBWCrystalElement(Element):
         """
         starred_pbw_datum = self._pbw_datum.star()
         return type(self)(self.parent(), starred_pbw_datum.lusztig_datum,
-                             starred_pbw_datum.long_word)
+                          starred_pbw_datum.long_word)
 
 
 class PBWCrystal(Parent, UniqueRepresentation):
@@ -422,7 +422,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
         # There must be a better way to do the following
         i = self._cartan_type.index_set()[0]
         self._default_word = self._pbw_datum_parent._long_word_begin_with(i)
-        zero_lusztig_datum = [0]*len(self._default_word)
+        zero_lusztig_datum = [0] * len(self._default_word)
         self.module_generators = (self.element_class(self,
                                                      zero_lusztig_datum,
                                                      self._default_word),)
@@ -475,7 +475,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
         """
         W = self._pbw_datum_parent.weyl_group
         if (len(word) != len(self._default_word)
-            or W.from_reduced_word(word) != W.long_element()):
+                or W.from_reduced_word(word) != W.long_element()):
             raise ValueError("not a reduced word of the long element")
 
     def set_default_long_word(self, word):
