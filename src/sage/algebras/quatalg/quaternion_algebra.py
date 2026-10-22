@@ -29,6 +29,8 @@ AUTHORS:
 - Lorenz Panny (2026): :meth:`QuaternionOrder.commutator_ideal`,
   :meth:`QuaternionOrder.two_sided_prime_ideals`
 
+- Lorenz Panny (2026): :meth:`QuaternionFractionalIdeal_rational.minkowski_basis`
+
 TESTS:
 
 Pickling test::
@@ -3958,9 +3960,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def reduced_basis(self):
         r"""
         Let `I` = ``self`` be a fractional ideal in a (rational) definite
-        quaternion algebra. This function returns an LLL reduced basis of `I`.
+        quaternion algebra. This function returns an LLL-reduced basis of `I`.
 
-        OUTPUT: a tuple of four elements in `I` forming an LLL reduced basis of
+        OUTPUT: a tuple of four elements in `I` forming an LLL-reduced basis of
         `I` as a lattice
 
         EXAMPLES::
@@ -3985,6 +3987,70 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         U = self.gram_matrix().LLL_gram().transpose()
         return tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
+
+    @cached_method
+    def minkowski_basis(self):
+        r"""
+        Let `I` = ``self`` be a fractional ideal in a (rational) definite
+        quaternion algebra. This function returns a Minkowski-reduced basis
+        of `I`. In particular, the norms of the four basis elements achieve
+        the successive minima of `I`.
+
+        OUTPUT: a tuple of four elements in `I` forming a Minkowski-reduced
+        basis of `I` as a lattice
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -419)
+            sage: O = B.quaternion_order([1, 111+i, 222-333*i-j, 444-555*i-666*j+k])
+            sage: O.unit_ideal().minkowski_basis()
+            (1, i, -j, k)
+            sage: I = O.left_ideal([7, 7*i, 6+j, 6*i+k])
+            sage: I.minkowski_basis()
+            (7, 7*i, -1 + j, -i + k)
+
+        Sometimes a Minkowski basis is more strongly reduced than
+        the LLL basis computed by :meth:`reduced_basis`::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -419)
+            sage: I = B.fractional_ideal([7, 21*i, 3 + 16/3*i + 1/3*j, 2 + 12*i + k])
+            sage: Bl = I.reduced_basis(); Bl
+            (7, -3 - 16/3*i - 1/3*j, 3 - 47/3*i + 1/3*j, 2 + 11/3*i - 1/3*j - k)
+            sage: [elt.reduced_norm() for elt in Bl]
+            [49, 84, 301, 483]
+            sage: Bm = I.minkowski_basis(); Bm
+            (7, -3 - 16/3*i - 1/3*j, -1 - 31/3*i + 2/3*j, 2 + 11/3*i - 1/3*j - k)
+            sage: [elt.reduced_norm() for elt in Bm]
+            [49, 84, 294, 483]
+
+        TESTS:
+
+        We verify for a random quaternion ideal connecting two maximal orders
+        that this basis is *greedy-reduced*, which is equivalent to Minkowski
+        for dimensions `\leq 4`::
+
+            sage: import itertools
+            sage: p = random_prime(2**99)
+            sage: O = QuaternionAlgebra(p).maximal_order()
+            sage: O = O.random_ideal().right_order()
+            sage: I = O.random_ideal()
+            sage: B = I.minkowski_basis()
+            sage: for i in range(4):
+            ....:     for v in itertools.product(range(-2,3), repeat=i):
+            ....:         lhs = B[i]
+            ....:         rhs = sum(c*g for c,g in zip(v+(1,), B))
+            ....:         assert lhs.reduced_norm() <= rhs.reduced_norm()
+
+        Check that the shortest found vector matches :meth:`minimal_element`::
+
+            sage: B[0].reduced_norm() == I.minimal_element().reduced_norm()
+            True
+        """
+        if not self.quaternion_algebra().is_definite():
+            raise TypeError("The quaternion algebra must be definite")
+        G = self.gram_matrix()
+        B = minkowski_basis_gram(G)
+        return tuple(sum(c * b for c, b in zip(v, self.gens())) for v in B)
 
     def theta_series_vector(self, B):
         r"""
@@ -5330,3 +5396,140 @@ def maxord_solve_aux_eq(a, b, p):
            (R(3), R(3)): (1, 1, 1)}
 
     return lut[(R(a), R(b))]
+
+
+def minkowski_basis_gram(G):
+    r"""
+    Return a Minkowski-reduced basis for the lattice `\ZZ^d`
+    with inner product given by the Gram matrix `G`.
+
+    Only implemented for `d \leq 4`.
+
+    EXAMPLES:
+
+    Dimension 1::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
+        sage: L = matrix(ZZ, [[42]])
+        sage: G = L * L.transpose()  # Gram matrix
+        sage: B = minkowski_basis_gram(G); B
+        [(1)]
+        sage: [b * G * b for b in B]
+        [1764]
+
+    Dimension 2::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
+        sage: L = matrix(ZZ, [[2, 5], [-9, -1]])
+        sage: G = L * L.transpose()  # Gram matrix
+        sage: B = minkowski_basis_gram(G); B
+        [(1, 0), (1, 1)]
+        sage: [b * G * b for b in B]
+        [29, 65]
+
+    Dimension 3::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
+        sage: L = matrix(ZZ, [[-5, -6, -1], [2, -5, 2], [5, 15, 5]])
+        sage: G = L * L.transpose()  # Gram matrix
+        sage: Bl = G.LLL_gram().columns(); B
+        [(1, 0), (1, 1)]
+        sage: [b * G * b for b in Bl]
+        [33, 38, 59]
+        sage: Bm = minkowski_basis_gram(G); B
+        [(1, 0), (1, 1)]
+        sage: [b * G * b for b in Bm]
+        [33, 38, 56]
+
+    Dimension 4::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
+        sage: L = matrix(ZZ, [[-1,-4, 0,-5], [-1, 1, 1, 2], [ 0, 2,-3,-6], [-5, 1, 0,-1]])
+        sage: G = L * L.transpose()  # Gram matrix
+        sage: Bl = G.LLL_gram().columns(); B
+        [(1, 0), (1, 1)]
+        sage: [b * G * b for b in Bl]
+        [6, 7, 18, 18]
+        sage: Bm = minkowski_basis_gram(G); B
+        [(1, 0), (1, 1)]
+        sage: [b * G * b for b in Bm]
+        [6, 7, 17, 18]
+
+    Dimension 5 and up::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
+        sage: L = matrix(ZZ, 5, 5, [i**5 for i in range(25)])
+        sage: G = L * L.transpose()  # Gram matrix
+        sage: minkowski_basis_gram(G)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: only implemented up to dimension 4
+
+    ALGORITHM: [NS2009]_, §4–§5.
+    """
+    if G.nrows() != G.ncols():
+        raise ValueError("Gram matrix must be square")
+    if not G.is_symmetric():
+        raise ValueError("Gram matrix must be symmetric")
+    if not G.is_positive_definite():
+        raise ValueError("Gram matrix must be positive definite")
+    d = G.nrows()
+    if d > 4:
+        raise NotImplementedError("only implemented up to dimension 4")
+
+    norm = lambda v: v * G * v
+
+    U = G.LLL_gram()
+
+    def closest_vector_coeffs(B, t):
+        if not (k := B.ncols()):
+            return vector(ZZ, [])
+
+        S = B.transpose() * G
+        y = (S * B).solve_right(S * t)
+
+        if k == 1:
+            bounds = [QQ((1,2))]
+        elif k == 2:
+            bounds = [QQ((3,4)), QQ((2,3))]
+        elif k == 3:
+            bounds = [QQ((3,2)), QQ((4,3)), QQ.one()]
+        else:
+            assert False
+
+        ranges = []
+        for c, bnd in zip(y, bounds):
+            lo = (c - bnd).ceil()
+            hi = (c + bnd).floor()
+            ranges.append(range(lo, hi+1))
+
+        best = None
+        from itertools import product
+        for xx in product(*ranges):
+            x = vector(ZZ, xx)
+            v = t - B * x
+            n = v * G * v
+            if best is None or n < best[0]:
+                best = n, x
+        assert best is not None
+        return best[1]
+
+    k = 1
+    while k < d:
+        B = U[:, :k]
+        t = U.column(k)
+        x = closest_vector_coeffs(B, t)
+        U[:, k] = t - B * x
+
+        if norm(U.column(k)) >= norm(U.column(k-1)):
+            k += 1
+        else:
+            k_ = k
+            while k_ > 0 and norm(U.column(k_)) < norm(U.column(k_-1)):
+                U.swap_columns(k_-1, k_)
+                k_ -= 1
+            k = k_ + 1
+
+    assert U.base_ring() is ZZ
+    assert U.det() in (+1, -1)
+    return U.columns()
