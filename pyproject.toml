@@ -10,7 +10,7 @@ requires = [
   'cython >=3.1.0',
   'gmpy2 >=2.1.5',
   'jinja2',
-  'memory_allocator',
+  'memory_allocator >= 0.2.1',
   'numpy >=2.3.0',
 ]
 [tool.meson-python.args]
@@ -55,7 +55,7 @@ dependencies = [
   'ipywidgets >=7.5.1',
   'jupyter-client',
   'matplotlib >=3.10.0',
-  'memory_allocator',
+  'memory_allocator >= 0.2.1',
   'mpmath >=1.1.0',
   'networkx >=3.5',
   'numpy >=2.3.0',
@@ -231,14 +231,14 @@ dev = [
   "python-build",
   "ruff",
   "tqdm",
-  "ty >=0.0.12",
+  "ty >=0.0.90",
   "uv",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
   'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
   'gmpy2 >=2.1.5', # Duplicate build-system requirement to fix editable installs with uv
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
-  'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv
+  'memory_allocator >= 0.2.1', # Duplicate build-system requirement to fix editable installs with uv
   'meson-python', # Duplicate build-system requirement to fix editable installs with uv
   'numpy >=2.3.0', # Duplicate build-system requirement to fix editable installs with uv
 ]
