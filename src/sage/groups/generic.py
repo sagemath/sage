@@ -115,6 +115,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from copy import copy
 import operator
 
@@ -123,8 +124,11 @@ from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 from sage.rings import integer_ring
 import sage.rings.integer
-from sage.rings.integer import Integer
 from sage.structure.element import parent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 #
 # Lists of names (as strings) which the user may use to identify one

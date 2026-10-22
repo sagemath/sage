@@ -242,13 +242,17 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 from operator import itemgetter
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class Components(SageObject):

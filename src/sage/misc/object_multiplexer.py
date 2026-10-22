@@ -20,6 +20,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from typing import Any
 
 
@@ -28,7 +29,7 @@ class MultiplexFunction:
     A simple wrapper object for functions that are called on a list of
     objects.
     """
-    def __init__(self, multiplexer: 'Multiplex', name: str) -> None:
+    def __init__(self, multiplexer: Multiplex, name: str) -> None:
         """
         EXAMPLES::
 

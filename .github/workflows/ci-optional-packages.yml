@@ -36,7 +36,7 @@ jobs:
       targets: "${{ needs.prepare.outputs.opt_targets_docker }} ci-build-with-fallback ptest-nodoc"
       incremental: false
       tox_system_factors: >-
-        ["ubuntu-noble",
+        ["ubuntu-resolute",
          "debian-trixie",
          "fedora-42",]
       tox_packages_factors: >-

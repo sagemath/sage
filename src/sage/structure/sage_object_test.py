@@ -1,6 +1,10 @@
+from __future__ import annotations
 
 import pytest
-from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.structure.sage_object import SageObject
 
 
 class SageObjectTests:

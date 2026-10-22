@@ -42,12 +42,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Literal
+from __future__ import annotations
+from typing import Literal, TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.big_oh import O
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -57,6 +57,9 @@ from sage.schemes.weighted_projective.weighted_projective_space import (
     WeightedProjectiveSpace,
 )
 from sage.structure.category_object import normalize_names
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 lazy_import("sage.functions.all", "log")
 

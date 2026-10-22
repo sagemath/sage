@@ -48,5 +48,8 @@ assert_type(crt(2, 1, 3, 5), Integer)
 assert_type(CRT_list([2, 1], [3, 5]), Integer | int)
 assert_type(is_square(16), bool)
 assert_type(is_square(16, root=True), tuple[bool, Integer])
-assert_type(xgcd(x ** 2 + 1, x + 1), tuple[Any, Any, Any])
+# PolynomialRing.gen() is inferred as Unknown; use object to check the generic overload.
+poly_a: object = x ** 2 + 1
+poly_b: object = x + 1
+assert_type(xgcd(poly_a, poly_b), tuple[Any, Any, Any])
 assert_type(inverse_mod(x, x ** 2 + 1), Any)

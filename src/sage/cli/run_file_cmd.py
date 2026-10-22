@@ -1,11 +1,15 @@
-import argparse
+from __future__ import annotations
 import sys
 
-from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse_file_named
 from sage.repl.load import load_cython
 from sage.misc.temporary_file import tmp_filename
 from sage.all import sage_globals
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.cli.options import CliOptions
+    import argparse
 
 
 class RunFileCmd:

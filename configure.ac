@@ -675,6 +675,7 @@ dnl when the system package is not usable.
 AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
+SAGE_CHECK_SYSTEM_LIBTOOL()
 
 AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
 
