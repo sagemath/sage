@@ -424,7 +424,7 @@ Here are examples of all of these conversions::
     sage: convert_test_all(float)
     [42.0, 3.142857142857143, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(complex)
-    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951536j)]
+    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951535j)]
     sage: convert_test_all(RDF)
     [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(CDF)
@@ -5134,29 +5134,41 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def __complex__(self):
         r"""
-        Compute a good complex approximation to ``self``.
+        Compute a complex approximation to ``self``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(2)).__complex__()                                          # needs sage.symbolic
-            (1.414213562373095+0j)
+            sage: QQbar(2).sqrt().__complex__()
+            (1.4142135623730951+0j)
             sage: complex(QQbar.zeta(3))
             (-0.5+0.8660254037844386j)
+
+        TESTS:
+
+        Exact zero elements should not have non-zero complex
+        approximations::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = QQbar((a^2 - a*a).abs())
+            sage: complex(z)
+            0j
+
         """
-        return CC(self).__complex__()
+        return complex(self.real().__float__(),
+                       self.imag().__float__())
 
     def _complex_double_(self, cdf):
         r"""
-        Compute a good approximation to ``self`` in CDF.
+        Compute an approximation to ``self`` in ``cdf``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(-5))._complex_double_(CDF)                                 # needs sage.symbolic
+            sage: QQbar(-5).sqrt()._complex_double_(CDF)
             2.23606797749979*I
             sage: CDF(QQbar.zeta(12))
             0.8660254037844386 + 0.5*I
         """
-        return cdf(CC(self))
+        return cdf(self.__complex__())
 
     def _interval_fast(self, prec):
         r"""
