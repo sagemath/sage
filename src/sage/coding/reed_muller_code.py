@@ -758,8 +758,25 @@ class ReedMullerPolynomialEncoder(Encoder):
          Binary Reed-Muller Code of order 2 and number of variables 4
     """
 
-    def __init__(self, code, polynomial_ring=None):
+    def __init__(self, code, polynomial_ring=None, poly_implementation=None):
         r"""
+        INPUT:
+
+        - ``code`` -- a :class:`QAryReedMullerCode` or :class:`BinaryReedMullerCode`
+
+        - ``polynomial_ring`` -- (optional) a multivariate polynomial ring
+          over ``code.base_field()`` with ``code.number_of_variables()``
+          generators; if not given, one is constructed using
+          ``poly_implementation``
+
+        - ``poly_implementation`` -- (optional) the ``implementation``
+          keyword forwarded to
+          :func:`~sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing`
+          when building the default polynomial ring. For prime finite
+          fields, ``'flint'`` enables the FLINT backend, which is
+          typically faster for the polynomial arithmetic used in
+          interpolation. Ignored when ``polynomial_ring`` is supplied.
+
         TESTS:
 
         If ``code`` is not a Reed-Muller code, an error is raised::
@@ -779,13 +796,21 @@ class ReedMullerPolynomialEncoder(Encoder):
             Traceback (most recent call last):
             ...
             ValueError: The Polynomial ring should be on Finite Field of size 59 and should have 3 variables
+
+        The FLINT backend is selected via ``poly_implementation``::
+
+            sage: C = codes.ReedMullerCode(GF(5), 2, 3)
+            sage: E = codes.encoders.ReedMullerPolynomialEncoder(C, poly_implementation='flint')
+            sage: E.polynomial_ring()
+            Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 5 (using FLINT)
         """
         if not isinstance(code, (QAryReedMullerCode, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
         super().__init__(code)
         if polynomial_ring is None:
             self._polynomial_ring = PolynomialRing(code.base_field(),
-                    code.number_of_variables(), 'x')
+                    code.number_of_variables(), 'x',
+                    implementation=poly_implementation)
         else:
             if (polynomial_ring.base_ring() == code.base_field()) and (
                     len(polynomial_ring.variable_names()) == code.number_of_variables()):
