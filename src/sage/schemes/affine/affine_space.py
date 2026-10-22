@@ -86,7 +86,25 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         Traceback (most recent call last):
         ...
         NameError: variable names passed to AffineSpace conflict with names in ring
+
+    Creating a space from a ring with another term order does not change
+    an existing space (:issue:`42951`)::
+
+        sage: A.<x,y> = AffineSpace(QQ, 2)
+        sage: R = PolynomialRing(QQ, 'x,y', order='lex')
+        sage: B = AffineSpace(R)
+        sage: B.coordinate_ring() is R
+        True
+        sage: A.coordinate_ring().term_order()
+        Degree reverse lexicographic term order
+        sage: A is B
+        False
+        sage: AffineSpace(R) is B
+        True
+        sage: loads(dumps(B)) is B
+        True
     """
+    coordinate_ring = None
     if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         R = n
         if names is not None:
@@ -97,8 +115,13 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
                 # The provided name doesn't match the name of R's variables
                 raise NameError("variable names passed to AffineSpace conflict with names in ring")
         A = AffineSpace(R.ngens(), R.base_ring(), R.variable_names())
-        A._coordinate_ring = R
-        return A
+        if A.coordinate_ring() is R:
+            return A
+        # R is not the default ring, so make a new space instead of changing A
+        coordinate_ring = R
+        n = R.ngens()
+        names = R.variable_names()
+        R = R.base_ring()
     if names is None:
         if n == 0:
             names = ''
@@ -115,10 +138,13 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
     if R in _Fields:
         if isinstance(R, FiniteField):
             return AffineSpace_finite_field(n, R, names,
-                                            ambient_projective_space, default_embedding_index)
+                                            ambient_projective_space, default_embedding_index,
+                                            coordinate_ring)
         return AffineSpace_field(n, R, names,
-                                 ambient_projective_space, default_embedding_index)
-    return AffineSpace_generic(n, R, names, ambient_projective_space, default_embedding_index)
+                                 ambient_projective_space, default_embedding_index,
+                                 coordinate_ring)
+    return AffineSpace_generic(n, R, names, ambient_projective_space, default_embedding_index,
+                               coordinate_ring)
 
 
 class AffineSpace_generic(AmbientSpace, AffineScheme):
@@ -161,7 +187,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         sage: AffineSpace(0)
         Affine Space of dimension 0 over Integer Ring
     """
-    def __init__(self, n, R, names, ambient_projective_space, default_embedding_index):
+    def __init__(self, n, R, names, ambient_projective_space, default_embedding_index,
+                 coordinate_ring=None):
         """
         EXAMPLES::
 
@@ -170,6 +197,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         AmbientSpace.__init__(self, n, R)
         self._assign_names(names)
+        if coordinate_ring is not None:
+            self._coordinate_ring = coordinate_ring
         AffineScheme.__init__(self, self.coordinate_ring(), R)
 
         index = default_embedding_index
