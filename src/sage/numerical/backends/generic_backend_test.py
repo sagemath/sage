@@ -1,7 +1,11 @@
+from __future__ import annotations
 import pytest
-from sage.numerical.backends.generic_backend import GenericBackend
-from sage.structure.sage_object import SageObject
 from sage.structure.sage_object_test import SageObjectTests
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.structure.sage_object import SageObject
+    from sage.numerical.backends.generic_backend import GenericBackend
 
 
 class GenericBackendTests(SageObjectTests):
