@@ -132,6 +132,7 @@ TESTS::
     True
     sage: TestSuite(M).run()
 """
+from __future__ import annotations
 from sage.categories import commutative_rings
 from sage.misc import latex
 from sage.interfaces.abc import MagmaElement
@@ -177,7 +178,7 @@ lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
                     sparse=False, default_prec=None, order='negdeglex',
-                    num_gens=None, implementation=None) -> 'PowerSeriesRing_generic':
+                    num_gens=None, implementation=None) -> PowerSeriesRing_generic:
     r"""
     Create a univariate or multivariate power series ring over a given
     (commutative) base ring.

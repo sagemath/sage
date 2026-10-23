@@ -416,6 +416,10 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   undefined or empty. Variable names should be given without the '$'
   to prevent unwanted expansion.
 
+- ``sdh_autoreconf``: Regenerates autotools build machinery using the system
+  tools selected by Sage's configure script. This replaces bundled libtool
+  scripts and macros together.
+
 - ``sdh_configure [...]``: Runs ``./configure`` with arguments
   ``--prefix="$SAGE_LOCAL"``, ``--libdir="$SAGE_LOCAL/lib"``,
   ``--disable-static``, ``--disable-maintainer-mode``, and
