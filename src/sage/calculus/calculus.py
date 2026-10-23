@@ -881,7 +881,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         sage: symbolic_product(k, k, 1, n)
         factorial(n)
         sage: symbolic_product(x + i*(i+1)/2, i, 1, 4)
-        x^4 + 20*x^3 + 127*x^2 + 288*x + 180
+        (x + 10)*(x + 6)*(x + 3)*(x + 1)
         sage: symbolic_product(i^2, i, 1, 7)
         25401600
         sage: f = function('f')
@@ -894,6 +894,22 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         1/factorial(n + 1)
         sage: symbolic_product(f(i), i, 1, n).log().log_expand()
         sum(log(f(i)), i, 1, n)
+        sage: k, n = var('k n')
+        sage: symbolic_product((3*k + 1)*(3*k + 2), k, 0, n)
+        (1/3)^n*(3*n + 2)*(3*n + 1)*factorial(3*n)/factorial(n)
+        sage: symbolic_product(3*k + 1, k, 0, n)
+        3^n*(3*n + 1)*gamma(n + 1/3)/gamma(1/3)
+        sage: symbolic_product(2^k, k, 0, n)
+        2^(1/2*n^2 + 1/2*n)
+        sage: symbolic_product(factorial(k)/factorial(k + 2), k, 0, n)
+        1/((n + 2)*factorial(n + 1)^2)
+        sage: f = (18*k^3 + 27*k^2 + 13*k + 2)/(2*k^3 + 9*k^2 + 13*k + 6)*factorial(k)
+        sage: symbolic_product(f, k, 0, n)
+        (1/3)^n*(3*n + 2)*(3*n + 1)*factorial(3*n)*product(factorial(k), k, 0, n)/((2*n + 3)*(n + 2)*factorial(n + 1)^2*factorial(n))
+        sage: symbolic_product((k + 1)*cos(k), k, 0, n)
+        factorial(n + 1)*product(cos(k), k, 0, n)
+        sage: symbolic_product(1/factorial(k), k, 1, n)
+        1/product(factorial(k), k, 1, n)
 
     TESTS:
 
@@ -916,7 +932,19 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         return sprod(expression, v, a, b)
 
     if algorithm == 'maxima':
-        return maxima.sr_prod(expression,v,a,b)
+        # exact_product receives arbitrary input and signals "unsupported form"
+        # from different depths with different exception types: its own
+        # ValueError, failed conversions of symbolic expressions (TypeError,
+        # ValueError) or degenerate arithmetic such as poles (ArithmeticError).
+        # Catching all of them guarantees that this path can only improve on
+        # the traditional evaluation below.  A RuntimeError from a failed
+        # self-verification indicates a bug and is deliberately not caught.
+        try:
+            from sage.symbolic.gamma_products import exact_product
+            return exact_product(expression, v, a, b)
+        except (ValueError, TypeError, ArithmeticError):
+            pass
+        return maxima.sr_prod(expression, v, a, b)
 
     if algorithm == 'mathematica':
         try:

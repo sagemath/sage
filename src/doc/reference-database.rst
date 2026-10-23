@@ -3328,6 +3328,9 @@
              Journal of Combinatorial Theory, Series A,
              Volume 144 (2016), pp. 212–249. :doi:`10.1016/j.jcta.2016.06.018`
 
+.. [GG1999] Joachim von zur Gathen and Jürgen Gerhard,
+            *Modern Computer Algebra*. Cambridge University Press, 1999.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -3529,6 +3532,10 @@
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1978] \R. W. Gosper, Jr., *Decision procedure for indefinite
+             hypergeometric summation*, Proc. Natl. Acad. Sci. U.S.A. 75
+             (1978), 40--42.
 
 .. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
              1998.
@@ -6385,6 +6392,9 @@
              regular graphs of type* `L_{2n-1}(4n- 1)`,
              Acta Applicandaie Math. 29(1992), 129-138.
              :doi:`10.1007/BF00053382`.
+
+.. [Paule1995] Peter Paule, Greatest factorial factorization and symbolic
+               summation, J. Symbolic Comput. 20 (1995), 235--268.
 
 .. [Pau2006] Sebastian Pauli, *Constructing Class Fields over Local
              Fields*, Journal de Théorie des Nombres de Bordeaux,
