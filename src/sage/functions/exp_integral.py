@@ -209,6 +209,20 @@ class Function_exp_integral_e(BuiltinFunction):
 
         return None  # leaves the expression unevaluated
 
+    def _method_arguments(self, n, z):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: exp_integral_e(1/3, CBF(5/2))
+            [0.0297709461232 +/- 4.83e-14]
+            sage: RIF(exp_integral_e(1/3, 5/2))                                       # needs sage.symbolic
+            0.0297709461233?
+        """
+        return [z, n]
+
     def _evalf_(self, n, z, parent=None, algorithm=None):
         """
         EXAMPLES::
