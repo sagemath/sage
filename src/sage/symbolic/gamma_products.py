@@ -52,6 +52,13 @@ notation by :func:`hypergeometric_sum`::
     sage: hypergeometric_sum(rising_factorial(a, k)*x^k/factorial(k), k, 0, oo)
     hypergeometric((a,), (), x)
 
+The method :meth:`~sage.symbolic.expression.Expression.to_hypergeometric`
+applies this to every unevaluated sum in an expression::
+
+    sage: k = var('k')
+    sage: sum(1/factorial(k), k, 0, oo, hold=True).to_hypergeometric()
+    hypergeometric((), (), 1)
+
 ALGORITHM:
 
 The expression ``E`` is hypergeometric, so the ratio ``E(n+1)/E(n)``
@@ -1825,6 +1832,10 @@ def hypergeometric_sum(f, var, a, b):
     are eliminated, in particular the parameter `1` accounting for the
     implicit `1/k!` of the hypergeometric series.
 
+    See also
+    :meth:`~sage.symbolic.expression.Expression.to_hypergeometric`, which
+    rewrites every unevaluated symbolic sum in an expression in this form.
+
     A :exc:`ValueError` is raised if the term is not hypergeometric, if the
     term is not defined at some point of the range, or if the bounds are not
     of the required form.  In particular, a term which is zero at some point
@@ -2004,3 +2015,63 @@ def hypergeometric_sum(f, var, a, b):
 
     from sage.functions.hypergeometric import hypergeometric
     return g0 * hypergeometric(ap, bq, z)
+
+
+def _to_hypergeometric(ex):
+    r"""
+    Rewrite every unevaluated symbolic sum in ``ex`` in hypergeometric
+    notation.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    Every subexpression which is an unevaluated symbolic sum is replaced by
+    its hypergeometric form, see :func:`hypergeometric_sum`.  Sums which are
+    not hypergeometric, or whose bounds are not of the required form, raise
+    a :exc:`ValueError`.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _to_hypergeometric
+        sage: k, x = var('k x')
+        sage: _to_hypergeometric(sum(k^2*x^k/factorial(k), k, 1, oo, hold=True))
+        x*hypergeometric((2,), (1,), x)
+        sage: _to_hypergeometric(sum(k^2*x^k/factorial(k), k, 1, oo, hold=True)
+        ....:                      + 2*sum(k^3*x^k/factorial(k), k, 0, oo, hold=True))
+        2*x*hypergeometric((2, 2), (1, 1), x) + x*hypergeometric((2,), (1,), x)
+
+        Subexpressions which do not contain an unevaluated sum are kept, in
+        particular unevaluated products are not evaluated::
+
+            sage: from sage.calculus.calculus import symbolic_product
+            sage: _to_hypergeometric(symbolic_product(k, k, 1, oo, hold=True))
+            product(k, k, 1, +Infinity)
+            sage: _to_hypergeometric(sin(sum(1/factorial(k), k, 0, oo, hold=True)))
+            sin(hypergeometric((), (), 1))
+
+        A sum which is not hypergeometric is rejected::
+
+            sage: _to_hypergeometric(sum(sin(k)*x^k, k, 0, oo, hold=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: the term x^k*sin(k) is not hypergeometric in k
+    """
+    from sage.functions.other import Function_prod, Function_sum
+
+    def walk(ex):
+        op = ex.operator()
+        if op is None:
+            return ex
+        args = ex.operands()
+        new = [walk(a) for a in args]
+        if isinstance(op, Function_sum):
+            return hypergeometric_sum(*new)
+        if all(n is a for n, a in zip(new, args)):
+            return ex
+        if isinstance(op, Function_prod):
+            # keep unevaluated products unevaluated
+            return op(*new, hold=True)
+        return op(*new)
+
+    return walk(ex)
