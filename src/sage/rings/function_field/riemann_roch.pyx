@@ -140,6 +140,7 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
     # initialise pivot_row and conflicts list
     cdef vector[vector[ipair]] pivot_row = vector[vector[ipair]](n)
     cdef vector[ipair] row
+    cdef ipair tmp
     cdef vector[int] conflicts = vector[int](0)
     conflicts.reserve(n)
 
