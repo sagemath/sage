@@ -1,23 +1,34 @@
-"""
+r"""
 KEM base class
-
-.. WARNING::
-    This module is experimental. The API may change in future versions.
 """
+
+# Copyright (C) 2026 Vivek Kumar <viveksantoshkumardubey@gmail.com>
+#
+# Distributed under the terms of the GNU General Public License (GPL)
+# as published by the Free Software Foundation; either version 2 of
+# the License, or (at your option) any later version.
+# https://www.gnu.org/licenses/
 
 from abc import abstractmethod
 
+from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
+
+experimental_warning(
+    41218,
+    "SageMath's key encapsulation functionality is experimental and might change in the future.",
+)
 
 
 class KEMBase(SageObject):
-    """
+    r"""
     Abstract base class for Key Encapsulation Mechanisms.
 
     Subclasses must implement:
-    - keygen() -> (public_key, secret_key)
-    - encaps(public_key) -> (ciphertext, shared_secret)
-    - decaps(secret_key, ciphertext) -> shared_secret
+
+    - ``keygen()`` -- return a (public key, secret key) pair
+    - ``encaps(public_key)`` -- return a (ciphertext, shared secret) pair
+    - ``decaps(secret_key, ciphertext)`` -- return a shared secret
     """
 
     @abstractmethod
@@ -25,7 +36,7 @@ class KEMBase(SageObject):
         """
         Generate a public and secret key pair.
 
-        OUTPUT: tuple (public_key, secret_key)
+        OUTPUT: tuple ``(public_key, secret_key)``
         """
         raise NotImplementedError("Subclasses must implement keygen()")
 
@@ -35,9 +46,10 @@ class KEMBase(SageObject):
         Encapsulate a shared secret using a public key.
 
         INPUT:
+
         - ``public_key`` -- the recipient's public key
 
-        OUTPUT: tuple (ciphertext, shared_secret)
+        OUTPUT: tuple ``(ciphertext, shared_secret)``
         """
         raise NotImplementedError("Subclasses must implement encaps()")
 
@@ -47,10 +59,11 @@ class KEMBase(SageObject):
         Decapsulate a ciphertext to recover the shared secret.
 
         INPUT:
-        - ``secret_key`` -- the recipient's secret key
-        - ``ciphertext`` -- the ciphertext from encaps()
 
-        OUTPUT: shared_secret
+        - ``secret_key`` -- the recipient's secret key
+        - ``ciphertext`` -- the ciphertext from ``encaps()``
+
+        OUTPUT: shared secret
         """
         raise NotImplementedError("Subclasses must implement decaps()")
 
