@@ -2005,8 +2005,8 @@ class DifferentiableManifold(TopologicalManifold):
             sage: s = t(v1,v2) ; s
             Scalar field T(V_1,V_2) on the 2-dimensional differentiable
              manifold M
-            sage: s.expr()
-            x^3 + (3*x^2 + x)*y - y^2
+            sage: s.expr().expand()
+            x^3 + 3*x^2*y + x*y - y^2
             sage: s.expr() - t[0,0]*v1[0]*v2[0] - \
             ....: t[0,1]*(v1[0]*v2[1]+v1[1]*v2[0]) - t[1,1]*v1[1]*v2[1]
             0
