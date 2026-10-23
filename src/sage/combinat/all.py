@@ -18,6 +18,7 @@ Topics
   - :ref:`sage.combinat.root_system.all`
   - :ref:`sage.combinat.sf.all`
   - :ref:`sage.combinat.fully_commutative_elements`
+  - :ref:`sage.combinat.super_sf.all`
 
 - :ref:`sage.combinat.counting`
 - :ref:`sage.combinat.enumerated_sets`
