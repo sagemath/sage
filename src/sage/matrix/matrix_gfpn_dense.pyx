@@ -1677,6 +1677,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         NOTE:
 
         - For a matrix `M`, ``M.left_kernel_matrix()*M`` is a null matrix.
+        - The result is cached, hence immutable.
         - The command `M.left_kernel()` uses a generic implementation in Sage,
           that relies on computing the echelon form of the transposed
           matrix. This method however uses a MeatAxe function to compute
@@ -1702,6 +1703,18 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: M.left_kernel_matrix()
             [0 0 0 0 1 0 0 0 0 0]
             [0 0 0 0 0 0 0 1 0 0]
+
+        TESTS:
+
+        The cached kernel matrix cannot be modified::
+
+            sage: N = M.left_kernel_matrix()
+            sage: N.is_immutable()
+            True
+            sage: N[0, 0] = 1
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
         """
         cdef Matrix_gfpn_dense OUT = self.fetch("left_kernel_matrix")
         if OUT is not None:
@@ -1714,6 +1727,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         finally:
             sig_off()
         OUT = new_mtx(mat, self)
+        OUT.set_immutable()
         self.cache("left_kernel_matrix", OUT)
         return OUT
 

@@ -5,7 +5,11 @@ if [ "$SAGE_FAT_BINARY" = yes ]; then
 fi
 
 echo "Configuring primesieve."
+# On macOS, use an absolute install name instead of @rpath so that
+# dependents (e.g. ecm's configure tests) can load the library
 sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DCMAKE_INSTALL_NAME_DIR="$SAGE_LOCAL/lib" \
+          -DCMAKE_MACOSX_RPATH=OFF \
           -DBUILD_STATIC_LIBS=OFF \
           -DBUILD_SHARED_LIBS=ON \
           -DBUILD_TESTS=ON \

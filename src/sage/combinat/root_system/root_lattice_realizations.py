@@ -1128,10 +1128,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             REFERENCES:
 
-            .. [Reiner97] Victor Reiner. *Non-crossing partitions for
-               classical reflection groups*. Discrete Mathematics 177 (1997)
-            .. [Arm06] Drew Armstrong. *Generalized Noncrossing Partitions and
-               Combinatorics of Coxeter Groups*. :arxiv:`math/0611106`
+            - [Reiner97]_
+            - [Arm06]_
             """
             return self.root_poset(facade=facade).order_ideals_lattice(facade=facade)
 

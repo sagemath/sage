@@ -805,7 +805,7 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
 
-        sage: G = digraphs.DeBruijn(2,3)
+        sage: G = digraphs.DeBruijn(2, 3)
         sage: vs,L = vertex_separation(G, algorithm='BAB'); vs
         2
         sage: vs,L = vertex_separation(G, algorithm='exponential'); vs
@@ -813,7 +813,7 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
         sage: vs,L = vertex_separation(G, algorithm='MILP'); vs                         # needs sage.numerical.mip
         2
 
-        sage: G = graphs.Grid2dGraph(3,3)
+        sage: G = graphs.Grid2dGraph(3, 3)
         sage: vs,L = vertex_separation(G, algorithm='BAB'); vs
         3
         sage: vs,L = vertex_separation(G, algorithm='exponential'); vs
@@ -831,11 +831,11 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
         sage: vs,L = vertex_separation(D); vs
         0
         sage: K4 = DiGraph( graphs.CompleteGraph(4) )
-        sage: D = K4+K4
+        sage: D = K4 + K4
         sage: D.add_edge(0, 4)
         sage: print(vertex_separation(D))
         (3, [4, 5, 6, 7, 0, 1, 2, 3])
-        sage: D = K4+K4+K4
+        sage: D = K4 + K4 + K4
         sage: D.add_edge(0, 4)
         sage: D.add_edge(0, 8)
         sage: print(vertex_separation(D))
@@ -994,7 +994,7 @@ def vertex_separation_exp(G, verbose=False):
     Graphs with non-integer vertices::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation_exp
-        sage: D = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: D = digraphs.DeBruijn(2, 3)                                               # needs sage.combinat
         sage: vertex_separation_exp(D)                                                  # needs sage.combinat
         (2, ['000', '001', '100', '010', '101', '011', '110', '111'])
 
@@ -1165,7 +1165,7 @@ def is_valid_ordering(G, L):
         sage: L = G.vertices(sort=True)
         sage: vertex_separation.is_valid_ordering(G, L)
         True
-        sage: vertex_separation.is_valid_ordering(G, [1,2])
+        sage: vertex_separation.is_valid_ordering(G, [1, 2])
         False
 
     TESTS:
@@ -1248,7 +1248,7 @@ def width_of_path_decomposition(G, L):
 
         sage: # needs networkx
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: G = graphs.BalancedTree(3,2)
+        sage: G = graphs.BalancedTree(3, 2)
         sage: pw, L = vertex_separation.path_decomposition(G)
         sage: pw == vertex_separation.width_of_path_decomposition(G, L)
         True
@@ -1263,7 +1263,7 @@ def width_of_path_decomposition(G, L):
         sage: vs, L = vertex_separation.vertex_separation(G)
         sage: vs == vertex_separation.width_of_path_decomposition(G, L)
         True
-        sage: L = [0,4,6,3,1,5,2,7]
+        sage: L = [0, 4, 6, 3, 1, 5, 2, 7]
         sage: vs == vertex_separation.width_of_path_decomposition(G, L)
         False
 
@@ -1271,7 +1271,7 @@ def width_of_path_decomposition(G, L):
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = Graph()
-        sage: vertex_separation.width_of_path_decomposition(G, ['a','b'])
+        sage: vertex_separation.width_of_path_decomposition(G, ['a', 'b'])
         Traceback (most recent call last):
         ...
         ValueError: the input linear vertex ordering L is not valid for G
@@ -1340,7 +1340,7 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import _vertex_separation_MILP_formulation
-        sage: G = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2, 3)                                               # needs sage.combinat
         sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)                    # needs sage.combinat sage.numerical.mip
         sage: p                                                                         # needs sage.combinat sage.numerical.mip
         Mixed Integer Program (minimization, 193 variables, 449 constraints)
@@ -1454,7 +1454,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Vertex separation of a De Bruijn digraph::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: G = digraphs.DeBruijn(2,3)
+        sage: G = digraphs.DeBruijn(2, 3)
         sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip
         2
         sage: vs == vertex_separation.width_of_path_decomposition(G, L)                 # needs sage.numerical.mip
@@ -1591,7 +1591,7 @@ def vertex_separation_BAB(G,
     The vertex separation of a `N\times N` grid is `N`::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation as VS
-        sage: G = graphs.Grid2dGraph(4,4)
+        sage: G = graphs.Grid2dGraph(4, 4)
         sage: vs, seq = VS.vertex_separation_BAB(G); vs
         4
         sage: vs == VS.width_of_path_decomposition(G, seq)
@@ -1600,7 +1600,7 @@ def vertex_separation_BAB(G,
     The vertex separation of a `N\times M` grid with `N<M` is `N`::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation as VS
-        sage: G = graphs.Grid2dGraph(3,5)
+        sage: G = graphs.Grid2dGraph(3, 5)
         sage: vs, seq = VS.vertex_separation_BAB(G); vs
         3
         sage: vs == VS.width_of_path_decomposition(G, seq)

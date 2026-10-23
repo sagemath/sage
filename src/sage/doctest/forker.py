@@ -50,6 +50,7 @@ import doctest
 import errno
 import gc
 import hashlib
+import importlib.util
 import linecache
 import multiprocessing
 import os
@@ -175,6 +176,23 @@ def init_sage(controller: DocTestController | None = None) -> None:
         sage: {'a':23, 'b':34, 'au':56, 'bbf':234, 'aaa':234}
         {'a': 23, 'aaa': 234, 'au': 56, 'b': 34, 'bbf': 234}
     """
+    # ABI-only rpy2 installations otherwise log a failed API import before
+    # falling back to ABI mode, which changes the expected doctest output.
+    # Respect an explicit choice and installations without the ABI module.
+    if ("RPY2_CFFI_MODE" not in os.environ
+            and importlib.util.find_spec("_rinterface_cffi_abi") is not None):
+        os.environ["RPY2_CFFI_MODE"] = "ABI"
+
+    if sys.platform == 'darwin':
+        # Timer._quick_cputime uses psutil for pexpect processes on macOS.
+        # Import it before forking: its IOKit initialization can abort in a
+        # forked worker (https://github.com/giampaolo/psutil/issues/2713).
+        try:
+            import psutil  # noqa: F401
+        except ImportError:
+            # psutil is an optional dependency of the doctest timer.
+            pass
+
     try:
         # We need to ensure that the Matplotlib font cache is built to
         # avoid spurious warnings (see Issue #20222).
@@ -555,8 +573,6 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
-        if sys.version_info < (3,13):
-            self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
         """
@@ -838,10 +854,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        if sys.version_info < (3,13):
-            self._DocTestRunner__record_outcome(test, failures, tries)
-        else:
-            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
+        self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
         self.total_walltime_skips += walltime_skips
         self.total_performed_tests += tries
         return TestResults(failures, tries)
