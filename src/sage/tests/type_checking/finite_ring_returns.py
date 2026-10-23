@@ -1,11 +1,12 @@
-from typing import assert_type
+from typing import TYPE_CHECKING, assert_type
 
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
-from sage.rings.finite_rings.element_base import FinitePolyExtElement
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
-from sage.rings.integer import Integer
+if TYPE_CHECKING:
+    from sage.rings.finite_rings.element_base import FinitePolyExtElement
+    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 F = GF(3**3, 'a')
 
@@ -26,14 +27,14 @@ assert_type(F.embeddings(F), list)
 assert_type(F.some_elements(), list)
 assert_type(F.construction(), tuple)
 
-a: FinitePolyExtElement = F.gen()
+a: "FinitePolyExtElement" = F.gen()
 assert_type(a.additive_order(), Integer)
 assert_type(a.multiplicative_order(), Integer)
 assert_type(a.minimal_polynomial(), Polynomial)
 assert_type(a.is_square(), bool)
 
 Z11 = GF(11)
-e: IntegerMod_abstract = Z11(3)
+e: "IntegerMod_abstract" = Z11(3)
 assert_type(e.additive_order(), Integer)
 assert_type(e.is_square(), bool)
 assert_type(e.lift_centered(), Integer)
