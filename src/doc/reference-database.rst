@@ -6393,12 +6393,12 @@
              Acta Applicandaie Math. 29(1992), 129-138.
              :doi:`10.1007/BF00053382`.
 
-.. [Paule1995] Peter Paule, Greatest factorial factorization and symbolic
-               summation, J. Symbolic Comput. 20 (1995), 235--268.
-
 .. [Pau2006] Sebastian Pauli, *Constructing Class Fields over Local
              Fields*, Journal de Théorie des Nombres de Bordeaux,
              Vol. 18, No. 3 (2006), pp. 627-652.
+
+.. [Paule1995] Peter Paule, Greatest factorial factorization and symbolic
+               summation, J. Symbolic Comput. 20 (1995), 235--268.
 
 .. [PDynk1999] \R. A. Proctor. *Dynkin diagram classification of λ-minuscule
                Bruhat lattices and of d-complete posets*. J. Algebraic Combin.,
