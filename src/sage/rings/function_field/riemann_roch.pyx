@@ -19,7 +19,6 @@ AUTHORS:
 
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
-from libcpp.list cimport list as linked_list
 
 from sage.arith.functions import lcm  # Should we use LCM_list or make lcm cpdef?
 from sage.matrix.constructor import matrix
@@ -62,6 +61,7 @@ cpdef _divisor_to_inverted_ideals(divisor):
 
     return I, J
 
+
 def _riemann_roch_divisor(divisor):
     r"""
     Wrapper around :func:`_riemann_roch_ideals` that first
@@ -71,6 +71,7 @@ def _riemann_roch_divisor(divisor):
     # the intersection of the ideals I and J.
     I, J = _divisor_to_inverted_ideals(divisor)
     return _riemann_roch_ideals(divisor.parent()._field, I, J)
+
 
 cpdef _riemann_roch_ideals(F, I, J):
     r"""
@@ -138,6 +139,8 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
 
     # initialise pivot_row and conflicts list
     cdef vector[vector[ipair]] pivot_row = vector[vector[ipair]](n)
+    cdef vector[ipair] row
+    cdef ipair tmp
     cdef vector[int] conflicts = vector[int](0)
     conflicts.reserve(n)
 
@@ -166,13 +169,13 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
         conflicts.pop_back()
         row = pivot_row[c]
 
-        tmp = pivot_row[c].back()
+        tmp = row.back()
         i, ideg = tmp.first, tmp.second
-        pivot_row[c].pop_back()
+        row.pop_back()
 
-        tmp = pivot_row[c].back()
+        tmp = row.back()
         j, jdeg = tmp.first, tmp.second
-        pivot_row[c].pop_back()
+        row.pop_back()
 
         if jdeg > ideg:
             i, j = j, i
@@ -184,7 +187,7 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
         mat.add_multiple_of_row(i, j, s)
         gens[i] += s * gens[j]
 
-        pivot_row[c].push_back(ipair(j, jdeg))
+        row.push_back(ipair(j, jdeg))
 
         bestp = -1
         best = -1
