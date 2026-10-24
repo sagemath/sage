@@ -11,8 +11,7 @@ It additionally provides a function for computing sample points
 per connected components of semi-algebraic sets defined by a single inequality
 or inequation. Note that it does not guarantee uniqueness; in particular, there
 can be multiple points in the output belonging to the same connected component.
-See https://arxiv.org/abs/2605.18110 for a detailled explanation of the
-algorithm.
+See [BGS2026]_ for a detailed explanation of the algorithm.
 
 Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
@@ -442,8 +441,7 @@ def _grp_random_matrix(n, changevar=True):
 
     Function that generates a random (n x n) change of variables matrix, such
     that all partial inverses B_k exist, for 0 <= k <= n.
-    Under this [paper](https://arxiv.org/abs/2605.18110)'s notation: such that
-    it satisfies hypothesis (A2).
+    In the notation of [BGS2026]_, the matrix satisfies hypothesis (A2).
 
     INPUT:
 
