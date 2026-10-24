@@ -1,0 +1,85 @@
+% TikZ code with built-in styling for game trees
+% TikZ libraries required for game trees
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows.meta}
+
+% Style settings for game tree formatting
+\tikzset{
+    every node/.append style={font=\rmfamily},
+    every text node part/.append style={align=center},
+    node distance=1.5mm,
+    thick
+}
+
+% Built-in macro definitions for game tree drawing
+\newdimen\ndiam
+\ndiam1.5mm
+\newdimen\sqwidth
+\sqwidth1.6mm
+\newdimen\spx
+\spx.7mm
+\newdimen\spy
+\spy.5mm
+\newdimen\paydown
+\paydown2.5ex
+\newdimen\treethickn
+\treethickn1.0pt
+\definecolor{chancecolor}{RGB}{117,145,56}
+\definecolor{p1rgb}{RGB}{0,127,255}
+\definecolor{p2rgb}{RGB}{221,121,224}
+
+% Game tree content from Untitled extensive game.ef
+\begin{tikzpicture}[rotate=90, scale=0.8
+  , StealthFill/.tip={Stealth[line width=.7pt,inset=0pt,length=13pt,angle'=30]}]
+% \draw [help lines, color=green] (-5,0) grid (5,-6);
+\draw [line width=\treethickn,color=p2rgb,fill=p2rgb,fill opacity=0.2] (2,-2.375) arc(-90:90:0.375)
+  -- (-2,-1.625) arc(90:270:0.375) -- cycle;
+%% player 1 name Alice
+\def\playerone{Alice}
+%% player 2 name Bob
+\def\playertwo{Bob}
+%% level -2.0 node 1 player 1
+\draw [line width=\treethickn] (0,2)
+   ;
+%% level 2.0 node 2 xshift -2.0 from 1 move L
+\draw [line width=\treethickn,color=p1rgb] (2,-2)
+   -- (0,2);
+\draw (1,0) node[above,yshift=0.5mm,color=p1rgb] {L\strut};
+%% level 6.0 node 3 xshift -1.0 from 2 move l payoffs 3 1
+\draw [line width=\treethickn,color=p2rgb] (3,-6)
+   node[right=0.5\paydown] {$\textcolor{p1rgb}{3}, \textcolor{p2rgb}{1}\strut$}
+   -- (2,-2);
+\draw (2.5,-4) node[above,yshift=0.5mm,color=p2rgb] {l\strut};
+%% level 6.0 node 4 xshift 1.0 from 2 move r payoffs 0 0
+\draw [line width=\treethickn,color=p2rgb] (1,-6)
+   node[right=0.5\paydown] {$\textcolor{p1rgb}{0}, \textcolor{p2rgb}{0}\strut$}
+   -- (2,-2);
+\draw (1.5,-4) node[below,yshift=-0.5mm,color=p2rgb] {r\strut};
+%% level 2.0 node 5 xshift 2.0 from 1 move R
+\draw [line width=\treethickn,color=p1rgb] (-2,-2)
+   -- (0,2);
+\draw (-1,0) node[below,yshift=-0.5mm,color=p1rgb] {R\strut};
+%% level 6.0 node 6 xshift -1.0 from 5 move l payoffs 0 0
+\draw [line width=\treethickn,color=p2rgb] (-1,-6)
+   node[right=0.5\paydown] {$\textcolor{p1rgb}{0}, \textcolor{p2rgb}{0}\strut$}
+   -- (-2,-2);
+\draw (-1.5,-4) node[above,yshift=0.5mm,color=p2rgb] {l\strut};
+%% level 6.0 node 7 xshift 1.0 from 5 move r payoffs 1 3
+\draw [line width=\treethickn,color=p2rgb] (-3,-6)
+   node[right=0.5\paydown] {$\textcolor{p1rgb}{1}, \textcolor{p2rgb}{3}\strut$}
+   -- (-2,-2);
+\draw (-2.5,-4) node[below,yshift=-0.5mm,color=p2rgb] {r\strut};
+%% iset 2 5 player 2
+\node[inner sep=0pt,minimum size=\ndiam,draw=p1rgb,fill=p1rgb,shape=circle] at (0,2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=p2rgb,fill=p2rgb,shape=circle] at (2,-2) {};
+\node[inner sep=0pt,minimum size=\ndiam,draw=p2rgb,fill=p2rgb,shape=circle] at (-2,-2) {};
+
+% Player color legend
+\begin{scope}[scale=1,shift={(3.5,2.5)}, rotate=-90]
+\node[inner sep=0pt,minimum size=\ndiam,draw=p1rgb,fill=p1rgb,shape=circle] at (0,0) {};
+\node[anchor=west] at (0.3,0) {Alice};
+\node[inner sep=0pt,minimum size=\ndiam,draw=p2rgb,fill=p2rgb,shape=circle] at (0,-0.625) {};
+\node[anchor=west] at (0.3,-0.625) {Bob};
+\end{scope}
+
+\end{tikzpicture}
