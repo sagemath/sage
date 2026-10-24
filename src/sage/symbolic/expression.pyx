@@ -6228,6 +6228,20 @@ cdef class Expression(Expression_abc):
             limit(f(x, y), x, 0)
             sage: e.free_variables()
             (y,)
+
+        Binding is local to each root sum, including inside functions::
+
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: r, x = var('r x')
+            sage: rs = root_sum(r^5-r+1, r, log(x-r))
+            sage: rs.free_variables()
+            (x,)
+            sage: sin(rs).free_variables()
+            (x,)
+            sage: (r + rs).free_variables()
+            (r, x)
+            sage: rs.subs(x=r).free_variables()
+            (r,)
         """
         from sage.symbolic.ring import SR
         cdef GSymbolSet sym_set

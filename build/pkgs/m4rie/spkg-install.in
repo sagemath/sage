@@ -23,9 +23,13 @@ export LDFLAGS
 # build M4RIE
 
 cd $ROOT_DIR/src/
+if [ "$UNAME" = Darwin ]; then
+    sdh_autoreconf
+fi
 
 cp "$SAGE_ROOT"/config/config.* .
 
-sdh_configure --enable-shared --disable-static $ENABLE_DEBUG
+export OPENMP_CFLAGS="$OPENMP_CFLAGS $OPENMP_CLIB"
+sdh_configure --enable-openmp --enable-shared --disable-static $ENABLE_DEBUG
 sdh_make
 sdh_make_install

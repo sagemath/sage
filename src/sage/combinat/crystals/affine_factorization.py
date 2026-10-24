@@ -2,24 +2,24 @@
 r"""
 Affine factorization crystal of type `A`
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2014 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import lazy_import
-from sage.structure.parent import Parent
-from sage.structure.element_wrapper import ElementWrapper
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.rsk import RSK
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
@@ -113,7 +113,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         if k is not None:
             from sage.combinat.core import Core
             from sage.combinat.partition import Partition
-            W = WeylGroup(['A',k,1], prefix='s')
+            W = WeylGroup(['A', k, 1], prefix='s')
             if isinstance(w[0], Core):
                 w = [w[0].to_bounded_partition(), w[1].to_bounded_partition()]
             else:
@@ -123,7 +123,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             w = w0*(w1.inverse())
         return super().__classcall__(cls, w, n, x)
 
-    def __init__(self, w, n, x=None):
+    def __init__(self, w, n, x=None) -> None:
         r"""
         EXAMPLES::
 
@@ -153,28 +153,30 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         self.n = n
         self.k = w.parent().n-1
         self.w = w
-        cartan_type = CartanType(['A',n-1])
+        cartan_type = CartanType(['A', n-1])
         self._cartan_type = cartan_type
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.rings.rational_field import QQ
         Sym = SymmetricFunctions(QQ)
         s = Sym.schur()
         support = s(w.stanley_symmetric_function()).support()
-        support = [ [0]*(n-len(mu))+[mu[len(mu)-i-1] for i in range(len(mu))] for mu in support]
-        generators = [tuple(p) for mu in support for p in affine_factorizations(w,n,mu)]
-        #generators = [tuple(p) for p in affine_factorizations(w, n)]
+        support = [[0] * (n-len(mu)) + [mu[len(mu)-i-1] for i in range(len(mu))]
+                   for mu in support]
+        generators = [tuple(p) for mu in support
+                      for p in affine_factorizations(w, n, mu)]
+        # generators = [tuple(p) for p in affine_factorizations(w, n)]
         self.module_generators = [self(t) for t in generators]
         if x is None:
             if generators:
-                x = min( set(range(self.k+1)).difference(set(
-                            sum([i.reduced_word() for i in generators[0]],[]))))
+                x = min(set(range(self.k + 1)).difference(set(
+                    sum([i.reduced_word() for i in generators[0]], []))))
             else:
                 x = 0
         if x in set(w.reduced_word()):
-            raise ValueError("x cannot be in reduced word of {}".format(w))
+            raise ValueError(f"x cannot be in reduced word of {w}")
         self.x = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -253,13 +255,18 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             k = self.parent().k
             n = self.parent().n
             a = min(b[0])
-            left = [j for j in (self.value[n-i-1]).reduced_word() if j != (a+x) % (k+1)]
-            right = [(j-x) % (k+1) for j in (self.value[n-i]).reduced_word()]
-            m = max([j for j in range(a) if (j+x) % (k+1) not in left])
-            right += [m+1]
+            left = [j for j in (self.value[n - i - 1]).reduced_word()
+                    if j != (a + x) % (k + 1)]
+            right = [(j - x) % (k + 1)
+                     for j in (self.value[n - i]).reduced_word()]
+            m = max([j for j in range(a) if (j + x) % (k + 1) not in left])
+            right += [m + 1]
             right.sort(reverse=True)
-            right = [(j+x) % (k+1) for j in right]
-            t = [self.value[j] for j in range(n-i-1)] + [W.from_reduced_word(left)] + [W.from_reduced_word(right)] + [self.value[j] for j in range(n-i+1,n)]
+            right = [(j + x) % (k + 1) for j in right]
+            t = [self.value[j] for j in range(n - i - 1)]
+            t.append(W.from_reduced_word(left))
+            t.append(W.from_reduced_word(right))
+            t.extend(self.value[j] for j in range(n - i + 1, n))
             return self.parent()(tuple(t))
 
         def f(self, i):
@@ -287,18 +294,19 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             k = self.parent().k
             n = self.parent().n
             a = max(b[1])
-            right = [j for j in (self.value[n-i]).reduced_word() if j != (a+x) % (k+1)]
+            right = [j for j in (self.value[n-i]).reduced_word()
+                     if j != (a+x) % (k+1)]
             left = [(j-x) % (k+1) for j in (self.value[n-i-1]).reduced_word()]
-            m = min([j for j in range(a+1,k+2) if (j+x) % (k+1) not in right])
+            m = min([j for j in range(a+1, k+2) if (j+x) % (k+1) not in right])
             left += [m-1]
             left.sort(reverse=True)
             left = [(j+x) % (k+1) for j in left]
-            t = [self.value[j] for j in range(n-i-1)] + [W.from_reduced_word(left)] + [W.from_reduced_word(right)] + [self.value[j] for j in range(n-i+1,n)]
+            t = [self.value[j] for j in range(n-i-1)] + [W.from_reduced_word(left)] + [W.from_reduced_word(right)] + [self.value[j] for j in range(n-i+1, n)]
             return self.parent()(tuple(t))
 
         def bracketing(self, i):
             r"""
-            Removes all bracketed letters between `i`-th and `i+1`-th entry.
+            Remove all bracketed letters between `i`-th and `i+1`-th entry.
 
             EXAMPLES::
 
@@ -331,7 +339,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             """
             Return the tableau representation of ``self``.
 
-            Uses the recording tableau of a minor variation of
+            This uses the recording tableau of a minor variation of
             Edelman-Greene insertion. See Theorem 4.11 in [MS2015]_.
 
             EXAMPLES::
@@ -364,7 +372,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             return self.parent()._tableaux_isomorphism(self)
 
 
-def affine_factorizations(w, l, weight=None):
+def affine_factorizations(w, l, weight=None) -> list:
     r"""
     Return all factorizations of `w` into `l` factors or of weight ``weight``.
 
@@ -444,7 +452,8 @@ def affine_factorizations(w, l, weight=None):
         if w.is_one():
             return [[]]
         return []
-    return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
+    return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0])
+            if u.length() == weight[0]
             for p in affine_factorizations(v, l - 1, weight[1:])]
 
 #####################################################################

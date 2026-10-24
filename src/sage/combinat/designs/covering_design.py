@@ -20,13 +20,9 @@ design from this database, we include extra information:
 
 REFERENCES:
 
-.. [1] La Jolla Covering Repository,
-  https://dmgordon.org/cover
+- [LJCR]_
 
-.. [2] Daniel M. Gordon and Douglas R. Stinson, *Coverings*,
-  Chapter 1 in: Charles J. Colbourn and Jeffrey H. Dinitz,
-  *Handbook of Combinatorial Designs*, 2nd Edition, 2006.
-  https://www.dmgordon.org/papers/hcd.pdf
+- [GS2006]_
 
 AUTHORS:
 
