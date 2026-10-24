@@ -1,10 +1,14 @@
+from __future__ import annotations
 import pytest
 
 import sage.all
 from sage.manifolds.differentiable.examples.symplectic_space import (
     StandardSymplecticSpace,
 )
-from sage.manifolds.differentiable.symplectic_form import SymplecticForm
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
 
 class TestR2VectorSpace:

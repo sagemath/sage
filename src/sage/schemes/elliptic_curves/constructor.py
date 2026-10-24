@@ -7,6 +7,9 @@ AUTHORS:
 
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, overload
 
 # *****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -40,6 +43,15 @@ from sage.structure.sequence import Sequence
 from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
 from sage.misc.lazy_import import lazy_import
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence as AbcSequence
+    from sage.rings.integer import Integer
+    from sage.rings.ring import Field
+    from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+    from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+    from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+    from sage.schemes.elliptic_curves.ell_rational_field import EllipticCurve_rational_field
 
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
@@ -357,6 +369,33 @@ class EllipticCurveFactory(UniqueFactory):
         ...
         TypeError: invalid input to EllipticCurve constructor
     """
+
+    @overload
+    def __call__(self, x: AbcSequence[int] | AbcSequence[Integer], **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: str, **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, *, j: int | Integer, minimal_twist: bool = ..., **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: RationalField, y: AbcSequence, **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: FiniteField, y: AbcSequence, **kwds: Any) -> EllipticCurve_finite_field: ...
+
+    @overload
+    def __call__(self, x: Field, y: AbcSequence, **kwds: Any) -> EllipticCurve_field: ...
+
+    @overload
+    def __call__(self, x: AbcSequence, **kwds: Any) -> EllipticCurve_field: ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> EllipticCurve_generic:
+        # A pure forwarding override: the @overload declarations above give
+        # static checkers the concrete return classes; instances still
+        # dispatch to the inherited UniqueFactory.__call__ machinery.
+        return super().__call__(*args, **kwds)
 
     def create_key_and_extra_args(
         self, x=None, y=None, j=None, A=None, minimal_twist=True, **kwds
@@ -757,7 +796,7 @@ def EllipticCurve_from_c4c6(c4, c6):
     return EllipticCurve([-K(c4) / K(48), -K(c6) / K(864)])
 
 
-def EllipticCurve_from_j(j, minimal_twist=True):
+def EllipticCurve_from_j(j, minimal_twist: bool = True) -> EllipticCurve_generic:
     r"""
     Return an elliptic curve with given `j`-invariant.
 

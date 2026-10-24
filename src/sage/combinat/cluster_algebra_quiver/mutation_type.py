@@ -20,10 +20,10 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from copy import copy
 from pathlib import Path
 import pickle
-from collections.abc import Iterator
 
 
 from sage.misc.cachefunc import cached_function
@@ -31,6 +31,10 @@ from sage.misc.flatten import flatten
 from sage.graphs.digraph import DiGraph
 from sage.combinat.combination import Combinations
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def is_mutation_finite(M, nr_of_checks=None) -> tuple[bool, list[int] | None]:
