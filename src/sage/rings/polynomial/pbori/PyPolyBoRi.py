@@ -10,6 +10,7 @@ AUTHOR:
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.blocks import declare_ring
         sage: r=declare_ring(["x0","x1","x2","y0","y1","y2"], globals())
@@ -22,18 +23,21 @@ AUTHOR:
         sage: y0>y1*y2
         True
 
+        sage: # needs brial
         sage: r = r.clone(ordering=dlex)
         sage: r(x0) > r(x1)
         True
         sage: r(x0) > r(x1*x2)
         False
 
+        sage: # needs brial
         sage: r = r.clone(ordering=dp_asc)
         sage: r(x0) > r(x1)
         False
         sage: r(x0) > r(x1*x2)
         False
 
+        sage: # needs brial
         sage: r = r.clone(ordering=block_dlex, blocks=[3])
         sage: r(x0) > r(x1)
         True
@@ -42,6 +46,7 @@ AUTHOR:
         sage: r(x0) > r(y0*y1*y2)
         True
 
+        sage: # needs brial
         sage: r = r.clone(ordering=block_dp_asc)
         sage: r(x0) > r(x1)
         False
@@ -50,13 +55,16 @@ AUTHOR:
         sage: r(x0) > r(x1*x2)
         False
 
+        sage: # needs brial
         sage: r = r.clone(ordering=block_dp_asc, blocks=[3])
         sage: r(x0) > r(y0)
         True
 
+        sage: # needs brial
         sage: r(x0) > r(y0*y1)
         True
 
+        sage: # needs brial
         sage: r = r.clone(names=["z17", "z7"])
         sage: [r.variable(idx) for idx in range(3)]
         [z17, z7, x2]

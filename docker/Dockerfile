@@ -90,7 +90,7 @@ RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # We need gcc/g++ to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl libboost-dev \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl libboost-dev python3 python3-dev \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -232,7 +232,7 @@ ARG SAGE_ROOT=/home/sage/sage
 COPY --chown=sage:sage --from=make-release $SAGE_ROOT/ $SAGE_ROOT/
 # set path in bashrc to start gap, gp, maxima, ... this does not
 # affect Sage (see https://github.com/sagemath/sage/pull/38049)
-RUN echo "export PATH=$SAGE_ROOT/local/bin:$PATH" >> ~/.bashrc
+RUN echo 'export PATH='"$SAGE_ROOT"'/local/bin:$PATH' >> ~/.bashrc
 
 COPY ./docker/entrypoint.sh /usr/local/bin/sage-entrypoint
 WORKDIR $HOME

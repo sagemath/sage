@@ -224,7 +224,7 @@ cdef class SageObject:
         Return an ASCII art representation.
 
         To implement multi-line ASCII art output in a derived class
-        you must override this method. Unlike :meth:`_repr_`, which is
+        you must override this method. Unlike ``_repr_``, which is
         sometimes used for the hash key, the output of
         :meth:`_ascii_art_` may depend on settings and is allowed to
         change during runtime.
@@ -290,7 +290,7 @@ cdef class SageObject:
         Return a unicode art representation.
 
         To implement multi-line unicode art output in a derived class
-        you must override this method. Unlike :meth:`_repr_`, which is
+        you must override this method. Unlike ``_repr_``, which is
         sometimes used for the hash key, the output of
         :meth:`_unicode_art_` may depend on settings and is allowed to
         change during runtime.
@@ -591,7 +591,7 @@ cdef class SageObject:
             AssertionError: 1 != 0
 
         The available assertion testing facilities are the same as in
-        :class:`unittest.TestCase`, which see (actually, by a slight
+        :class:`TestCase <unittest.TestCase>`, which see (actually, by a slight
         abuse, tester is currently an instance of this class).
 
         TESTS::
@@ -1082,3 +1082,35 @@ cdef class SageObject:
         """
         from sage.interfaces.regina import regina
         return self._interface_init_(regina)
+
+    def _snappy_(self, G=None):
+        r"""
+        Convert ``self`` to an interface element for SnapPy.
+
+        EXAMPLES::
+
+            sage: type(1.2._snappy_()._inst)   # optional snappy
+            <class 'float'>
+        """
+        if G is None:
+            import sage.interfaces.snappy
+            G = sage.interfaces.snappy.snappy
+        return self._interface_(G)
+
+    def _snappy_init_(self):
+        r"""
+        Convert ``self`` to a string representation for the SnapPy.
+        interface.
+
+        EXAMPLES::
+
+            sage: # optional snappy
+            sage: (~7)._snappy_init_()
+            '1/7'
+            sage: t = snappy((~7)._snappy_init_()); t
+            0.14285714285714285
+            sage: type(t), type(t._inst)
+            (<class 'sage.interfaces.snappy.SnapPyElement'>, <class 'float'>)
+        """
+        from sage.interfaces.snappy import snappy
+        return self._interface_init_(snappy)

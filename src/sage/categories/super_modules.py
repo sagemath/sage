@@ -174,7 +174,8 @@ class SuperModules(SuperModulesCategory):
             .. NOTE::
 
                 The default implementation assumes that the even/odd is
-                determined by the parity of :meth:`degree`.
+                determined by the parity of
+                :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.degree`.
 
                 Overwrite this method if the even/odd behavior is desired
                 to be independent.

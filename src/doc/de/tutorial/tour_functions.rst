@@ -129,8 +129,7 @@ Hier sind ein paar häufige Probleme mit Erklärungen:
        sage: def h(x):
        ....:     if x<2:
        ....:         return 0
-       ....:     else:
-       ....:         return x-2
+       ....:     return x - 2
 
 Das Problem: ``plot(h(x), 0, 4)`` zeichnet die Linie `y=x-2` und nicht
 die mehrzeilige Funktion, welche durch ``h`` definiert wird.  Der

@@ -35,16 +35,11 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     - [Ka1990]_
 
-    .. [KMPS] Kass, Moody, Patera and Slansky, *Affine Lie algebras,
-       weight multiplicities, and branching rules*. Vols. 1, 2. University
-       of California Press, Berkeley, CA, 1990.
+    - [KMPS]_
 
-    .. [KacPeterson] Kac and Peterson. *Infinite-dimensional Lie algebras,
-       theta functions and modular forms*. Adv. in Math. 53 (1984),
-       no. 2, 125-264.
+    - [KacPeterson]_
 
-    .. [Carter] Carter, *Lie algebras of finite and affine type*. Cambridge
-       University Press, 2005
+    - [Carter]_
 
     If `\Lambda` is a dominant integral weight for an affine root system,
     there exists a unique integrable representation `V=V_\Lambda` of highest
@@ -1040,23 +1035,27 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         EXAMPLES::
 
+            sage: R = RootSystem(['A',1,1])
+            sage: chi = IntegrableRepresentation(
+            ....:     R.weight_lattice(extended=true).fundamental_weight(0)
+            ....: )
+            sage: chi.modular_characteristic()
+            -1/24
+
             sage: Lambda = RootSystem(['A',1,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(3*Lambda[0]+2*Lambda[1])
             sage: [V.modular_characteristic(x) for x in V.dominant_maximal_weights()]
             [11/56, -1/280, 111/280]
         """
-        if isinstance(mu, tuple):
-            n = mu
-        else:
-            n = self.from_weight(mu)
         k = self.level()
         hd = self.dual_coxeter_number()
         rho = self._P.rho()
         m_Lambda = self._inner_pp(self._Lam_rho, self._Lam_rho) / (2*(k+hd)) \
                    - self._inner_pp(rho, rho) / (2*hd)
-        if n is None:
+        if mu is None:
             return m_Lambda
-        mu = self.to_weight(n)
+        if isinstance(mu, tuple):
+            mu = self.to_weight(mu)
         return m_Lambda - self._inner_pp(mu,mu) / (2*k)
 
     def branch(self, i=None, weyl_character_ring=None, sequence=None, depth=5):

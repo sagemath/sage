@@ -1,7 +1,7 @@
 """
 Baxter permutations
 """
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.combinat.permutation import Permutations
 from sage.combinat.posets.lattices import LatticePoset
@@ -10,6 +10,10 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class BaxterPermutations(UniqueRepresentation, Parent):

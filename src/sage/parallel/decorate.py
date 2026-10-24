@@ -122,14 +122,14 @@ class ParallelFunction:
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
-    :meth:`Parallel.__call__`.
+    ``Parallel.__call__``.
     """
     def __init__(self, parallel, func):
         """
         .. NOTE::
 
             This is typically accessed indirectly through
-            :meth:`Parallel.__call__`.
+            ``Parallel.__call__``.
 
         INPUT:
 

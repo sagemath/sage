@@ -49,17 +49,14 @@ cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1')
 
 cdef bitset_string(fused_bitset_t bits):
     """
-    Return a python string representing the bitset.
+    Return a Python string representing the bitset.
     """
     return bytes_to_str(bitset_bytes(bits))
 
 cdef bitset_bytes(fused_bitset_t bits):
     """
-    Return a python bytes string representing the bitset.
-
-    On Python 2 this is equivalent to bitset_string.
+    Return a Python bytes object representing the bitset.
     """
-
     cdef char* s = bitset_chars(NULL, bits)
     cdef object py_s
     py_s = s

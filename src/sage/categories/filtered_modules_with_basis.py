@@ -83,7 +83,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
         indexing set `J` encoded as its ``_indices`` attribute,
         and ``_indices.subset(size=i)`` should yield the subset
         `J_i` (as an iterable). If the latter conditions are not
-        satisfied, then :meth:`basis` must be overridden.
+        satisfied, then
+        :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.basis`
+        must be overridden.
 
     .. NOTE::
 
@@ -272,8 +274,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             OUTPUT:
 
             If the precision is finite, then this returns an element in the
-            :class:`PowerSeriesRing` over ``ZZ``. Otherwise it returns an
-            element in the :class:`LazyPowerSeriesRing` over ``ZZ``.
+            :func:`~sage.rings.power_series_ring.PowerSeriesRing` over ``ZZ``.
+            Otherwise it returns an element in the
+            :class:`~sage.rings.lazy_series_ring.LazyPowerSeriesRing` over ``ZZ``.
 
             EXAMPLES::
 
@@ -358,7 +361,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             (where `A = ` ``self``).
 
             This is an isomorphism of `R`-modules. See
-            the class documentation :class:`AssociatedGradedAlgebra`.
+            the class documentation
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`.
 
             .. SEEALSO::
 
@@ -387,7 +391,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             `\operatorname{gr} A \to A`.
 
             This is an isomorphism of `R`-modules. See
-            the class documentation :class:`AssociatedGradedAlgebra`.
+            the class documentation
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`.
 
             .. SEEALSO::
 
@@ -414,7 +419,8 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             r"""
             Return the `i`-th projection `p_i : F_i \to G_i` (in the
             notations of the class documentation
-            :class:`AssociatedGradedAlgebra`, where `A = ` ``self``).
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`,
+            where `A = ` ``self``).
 
             This method actually does not return the map `p_i` itself,
             but an extension of `p_i` to the whole `R`-module `A`.
@@ -1141,7 +1147,9 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 to `F_i`. Hence, it does not depend on the basis of the
                 parent of ``self``.
 
-                .. SEEALSO:: :meth:`homogeneous_degree`
+                .. SEEALSO::
+
+                    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.homogeneous_degree`
 
                 EXAMPLES::
 

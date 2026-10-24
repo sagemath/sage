@@ -2,7 +2,7 @@
 The Sage pretty printer
 
 Any transformation to a string goes through here. In other words, the
-:class:`~sage.repl.displayhook.formatter.SagePlainTextFormatter` is
+:class:`~sage.repl.display.formatter.SagePlainTextFormatter` is
 entirely implemented via :class:`SagePrettyPrinter`. Other formatters
 may or may not use :class:`SagePrettyPrinter` to generate text output.
 

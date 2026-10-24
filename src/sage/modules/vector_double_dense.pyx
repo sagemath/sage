@@ -289,8 +289,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
             if direction == 'forward':
                 return Vector_complex_double_dense(V, fft(self._vector_numpy))
-            else:
-                return Vector_complex_double_dense(V, ifft(self._vector_numpy))
+            return Vector_complex_double_dense(V, ifft(self._vector_numpy))
 
     def complex_vector(self):
         """
@@ -513,8 +512,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         if population is True:
             return self._sage_dtype(numpy.var(self._vector_numpy, ddof=1))
-        else:
-            return self._sage_dtype(numpy.var(self._vector_numpy, ddof=0))
+        return self._sage_dtype(numpy.var(self._vector_numpy, ddof=0))
 
     def standard_deviation(self, population=True):
         """
@@ -540,8 +538,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         if population is True:
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=1))
-        else:
-            return self._sage_dtype(numpy.std(self._vector_numpy, ddof=0))
+        return self._sage_dtype(numpy.std(self._vector_numpy, ddof=0))
 
     def stats_kurtosis(self):
         """

@@ -1514,7 +1514,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         - ``n`` -- integer
         - further keyword arguments are passed on to
-          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+          :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
 
         OUTPUT: list `L` where ``L[k]`` is the list of vectors of lengths `k`
 
@@ -1528,7 +1528,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS:
 
-        Check that keyword arguments are passed to :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+        Check that keyword arguments are passed to :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
         (:issue:`39848`)::
 
             sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs
@@ -1555,12 +1555,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: L = IntegralLattice('A4')
             sage: t = vector([1.2, -3/11, 5.5, -9.1])
-            sage: short = L.enumerate_short_vectors()   # implicit doctest
+            sage: short = L.enumerate_short_vectors()   # indirect doctest
             sage: vecs = [next(short) for _ in range(10)]
             sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
             [(0, 0, 0, 1), (0, 0, 1, 0), (0, 0, 1, 1), (0, 1, 0, 0), (0, 1, 1, 0),
              (0, 1, 1, 1), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 1, 0), (1, 1, 1, 1)]
-            sage: close = L.enumerate_close_vectors(t)  # implicit doctest
+            sage: close = L.enumerate_close_vectors(t)  # indirect doctest
             sage: vecs = [next(close) for _ in range(10)]
             sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
             [(1, 0, 6, -8), (1, 0, 5, -9), (2, 0, 5, -9), (1, -1, 5, -9), (2, 1, 6, -9),

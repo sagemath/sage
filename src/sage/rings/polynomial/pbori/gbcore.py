@@ -308,6 +308,7 @@ def variety_size_from_gb(I):
     """
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import Ring, Monomial, Polynomial
         sage: from sage.rings.polynomial.pbori.gbcore import variety_size_from_gb
         sage: r = Ring(100)
@@ -360,6 +361,7 @@ def other_ordering_pre(I, option_set, kwds):
     """
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.blocks import declare_ring
         sage: r = declare_ring(['x0', 'x1', 'x2', 'x3', 'x4'], globals())
         sage: id = [x1*x3 + x1 + x2*x3 + x3 + x4, x0*x3 + x0 + x1*x2 + x2 + 1,  x1*x3 + x1*x4 + x3*x4 + x4 + 1, x0*x2 + x0*x4 + x1 + x3 + x4]

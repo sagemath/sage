@@ -340,8 +340,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() + other
-        else:
-            return self + (<_LazyString>other).val()
+        return self + (<_LazyString>other).val()
 
     def __mod__(self, other):
         """
@@ -360,8 +359,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() % other
-        else:
-            return self % (<_LazyString>other).val()
+        return self % (<_LazyString>other).val()
 
     def __mul__(self, other):
         """
@@ -377,8 +375,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() * other
-        else:
-            return self * (<_LazyString>other).val()
+        return self * (<_LazyString>other).val()
 
     def __richcmp__(_LazyString self, other, int op):
         """
@@ -519,7 +516,6 @@ cdef class _LazyString():
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.misc.lazy_string import lazy_string
             sage: def f(op, A, B):
             ....:     return "unsupported operand parent(s) for %s: '%s' and '%s'" % (op, A, B)
@@ -531,12 +527,12 @@ cdef class _LazyString():
 
         Apparently, the lazy string got changed in-place::
 
-            sage: D                                                                     # needs sage.rings.finite_rings
+            sage: D
             l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 
-            sage: D.update_lazy_string(None, None)                                      # needs sage.rings.finite_rings
+            sage: D.update_lazy_string(None, None)
             Traceback (most recent call last):
             ...
             TypeError: Expected tuple, got NoneType

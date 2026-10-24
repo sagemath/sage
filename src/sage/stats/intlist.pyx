@@ -445,8 +445,7 @@ cdef class IntList:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def max(self, bint index=False):
         """
@@ -481,8 +480,7 @@ cdef class IntList:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def time_series(self):
         """
@@ -516,9 +514,9 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([3,7,19,-2]).plot()                                     # needs sage.plot
+            sage: stats.IntList([3,7,19,-2]).plot()
             Graphics object consisting of 1 graphics primitive
-            sage: stats.IntList([3,7,19,-2]).plot(color='red',                          # needs sage.plot
+            sage: stats.IntList([3,7,19,-2]).plot(color='red',
             ....:                                 pointsize=50, points=True)
             Graphics object consisting of 1 graphics primitive
         """
@@ -534,7 +532,7 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([1..15]).plot_histogram()                               # needs sage.plot
+            sage: stats.IntList([1..15]).plot_histogram()
             Graphics object consisting of 50 graphics primitives
         """
         return self.time_series().plot_histogram(*args, **kwds)

@@ -53,8 +53,8 @@ def HyperellipticCurve_from_invariants(
       invariants: I2,I4,I6,I10.
     - ``reduced`` - Boolean (default = True) If True, tries to reduce the
       polynomial defining the hyperelliptic curve using the function
-      :func:`reduce_polynomial` (see the :func:`reduce_polynomial`
-      documentation for more details).
+      ``reduce_polynomial`` (see the ``reduce_polynomial`` documentation
+      for more details).
     - ``precision`` - integer (default = None) Which precision for real and
       complex numbers should the reduction use. This only affects the
       reduction, not the correctness. If None, the algorithm uses the default

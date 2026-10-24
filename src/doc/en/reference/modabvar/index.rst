@@ -8,6 +8,7 @@ Modular Abelian Varieties
    sage/modular/abvar/abvar
    sage/modular/abvar/abvar_ambient_jacobian
    sage/modular/abvar/finite_subgroup
+   sage/modular/abvar/torsion_point
    sage/modular/abvar/torsion_subgroup
    sage/modular/abvar/cuspidal_subgroup
    sage/modular/abvar/homology

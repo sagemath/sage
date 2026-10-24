@@ -23,7 +23,8 @@ class AffineWeylGroups(Category_singleton):
     .. SEEALSO::
 
         - :wikipedia:`Affine_weyl_group`
-        - :class:`WeylGroups`, :class:`WeylGroup`
+        - :class:`WeylGroups`,
+          :func:`~sage.combinat.root_system.weyl_group.WeylGroup`
 
     EXAMPLES::
 
@@ -63,7 +64,8 @@ class AffineWeylGroups(Category_singleton):
 
         .. SEEALSO:: :meth:`Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+           :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

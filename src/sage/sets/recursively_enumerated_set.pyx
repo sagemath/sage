@@ -407,26 +407,34 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     if structure is None:
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_generic(seeds, successors,
-                enumeration, max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_generic(
+            seeds, successors,
+            enumeration, max_depth, facade=facade, category=category
+        )
     if structure == 'symmetric':
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_symmetric(seeds, successors,
-                enumeration, max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_symmetric(
+            seeds, successors,
+            enumeration, max_depth, facade=facade, category=category
+        )
     if structure == 'forest':
         if enumeration is None:
             enumeration = 'depth'
-        return RecursivelyEnumeratedSet_forest(roots=seeds, children=successors,
-                algorithm=enumeration, post_process=post_process,
-                facade=facade, category=category)
+        return RecursivelyEnumeratedSet_forest(
+            roots=seeds, children=successors,
+            algorithm=enumeration, post_process=post_process,
+            facade=facade, category=category
+        )
     if structure == 'graded':
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_graded(seeds, successors, enumeration,
-                max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_graded(
+            seeds, successors, enumeration,
+            max_depth, facade=facade, category=category
+        )
 
-    raise ValueError("Unknown value for structure (={})".format(structure))
+    raise ValueError(f"Unknown value for structure (={structure})")
 
 
 cdef class RecursivelyEnumeratedSet_generic(Parent):
@@ -1576,6 +1584,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     - ``algorithm`` -- ``'depth'`` or ``'breadth'`` (default: ``'depth'``)
     - ``category`` -- a category (default: :class:`EnumeratedSets`)
 
+    .. automethod:: __init__
+
     The option ``post_process`` allows for customizing the nodes that
     are actually produced. Furthermore, if ``f(x)`` returns ``None``,
     then ``x`` won't be output at all.
@@ -1665,7 +1675,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     by zero.
 
     A first approach is to pass the ``roots`` and ``children``
-    functions as arguments to :meth:`RecursivelyEnumeratedSet_forest.__init__`::
+    functions as arguments to
+    :meth:`RecursivelyEnumeratedSet_forest.__init__ <sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest.__init__>`::
 
         sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
         sage: class A(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
@@ -1703,13 +1714,11 @@ class RecursivelyEnumeratedSet_forest(Parent):
         ....:     def children(self, x):
         ....:         if sum(x) < 3:
         ....:             return [x + (0,), x + (1,)]
-        ....:         else:
-        ....:             return []
+        ....:         return []
         ....:     def post_process(self, x):
         ....:         if sum(x) == 0 or x[-1] == 0:
         ....:             return None
-        ....:         else:
-        ....:             return sum(x[i]*2^i for i in range(len(x)))
+        ....:         return sum(x[i]*2^i for i in range(len(x)))
         sage: MyForest = A(); MyForest
         An enumerated set with a forest structure
         sage: MyForest.category()

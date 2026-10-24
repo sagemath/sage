@@ -13,6 +13,8 @@ Number Fields
 
    sage/rings/number_field/splitting_field
    sage/rings/number_field/galois_group
+   sage/groups/galois_group
+   sage/groups/galois_group_perm
 
 Elements
 --------
@@ -21,6 +23,7 @@ Elements
    :maxdepth: 1
 
    sage/rings/number_field/number_field_element
+   sage/rings/number_field/number_field_element_base
    sage/rings/number_field/number_field_element_quadratic
    sage/rings/number_field/bdd_height
 

@@ -209,7 +209,7 @@ def CircularLadderGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:    k = graphs.CircularLadderGraph(i+3)
+        ....:    k = graphs.CircularLadderGraph(i + 3)
         ....:    g.append(k)
         sage: for i in range(3):                                                        # needs sage.plot
         ....:    n = []
@@ -324,7 +324,7 @@ def CycleGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.CycleGraph(i+3)
+        ....:     k = graphs.CycleGraph(i + 3)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -340,7 +340,7 @@ def CycleGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     spr = networkx.cycle_graph(i+3)
+        ....:     spr = networkx.cycle_graph(i + 3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
         sage: for i in range(3):
@@ -415,7 +415,7 @@ def CompleteGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.CompleteGraph(i+3)
+        ....:     k = graphs.CompleteGraph(i + 3)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -432,7 +432,7 @@ def CompleteGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     spr = networkx.complete_graph(i+3)
+        ....:     spr = networkx.complete_graph(i + 3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
         sage: for i in range(3):
@@ -511,7 +511,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation, immutable=False):
 
         sage: # needs numpy
         sage: from sage.graphs.generators.basic import CorrelationGraph
-        sage: data = [[1,2,3], [4,5,6], [7,8,9999]]
+        sage: data = [[1, 2, 3], [4, 5, 6], [7, 8, 9999]]
         sage: CG1 = CorrelationGraph(data, 0.9, False)
         sage: CG2 = CorrelationGraph(data, 0.9, True)
         sage: CG3 = CorrelationGraph(data, 0.1, True)
@@ -625,7 +625,7 @@ def CompleteBipartiteGraph(p, q, set_position=True, immutable=False, name=None):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.CompleteBipartiteGraph(i+1,4)
+        ....:     k = graphs.CompleteBipartiteGraph(i + 1, 4)
         ....:     g.append(k)
         sage: for i in range(3):                                                        # needs sage.plot
         ....:     n = []
@@ -641,7 +641,7 @@ def CompleteBipartiteGraph(p, q, set_position=True, immutable=False, name=None):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     spr = networkx.complete_bipartite_graph(i+1,4)
+        ....:     spr = networkx.complete_bipartite_graph(i + 1, 4)
         ....:     k = Graph(spr)
         ....:     g.append(k)
         sage: for i in range(3):
@@ -654,18 +654,18 @@ def CompleteBipartiteGraph(p, q, set_position=True, immutable=False, name=None):
 
     :issue:`12155`::
 
-        sage: graphs.CompleteBipartiteGraph(5,6).complement()
+        sage: graphs.CompleteBipartiteGraph(5, 6).complement()
         complement(Complete bipartite graph of order 5+6): Graph on 11 vertices
 
     TESTS:
 
     Prevent negative dimensions (:issue:`18530`)::
 
-        sage: graphs.CompleteBipartiteGraph(-1,1)
+        sage: graphs.CompleteBipartiteGraph(-1, 1)
         Traceback (most recent call last):
         ...
         ValueError: the arguments p(=-1) and q(=1) must be positive integers
-        sage: graphs.CompleteBipartiteGraph(1,-1)
+        sage: graphs.CompleteBipartiteGraph(1, -1)
         Traceback (most recent call last):
         ...
         ValueError: the arguments p(=1) and q(=-1) must be positive integers
@@ -966,9 +966,9 @@ def EmptyGraph(immutable=False):
         3
         4
         sage: for i in range(3):
-        ....:     empty2.add_edge(i,i+1)  # add edges {[0:1],[1:2],[2:3]}
+        ....:     empty2.add_edge(i, i + 1)  # add edges {[0:1],[1:2],[2:3]}
         sage: for i in range(1, 4):
-        ....:     empty2.add_edge(4,i)  # add edges {[1:4],[2:4],[3:4]}
+        ....:     empty2.add_edge(4, i)  # add edges {[1:4],[2:4],[3:4]}
         sage: empty2.show()                     # long time                             # needs sage.plot
 
     TESTS:
@@ -1002,10 +1002,10 @@ def ToroidalGrid2dGraph(p, q, immutable=False):
     The toroidal 2-dimensional grid is a regular graph, while the usual
     2-dimensional grid is not ::
 
-        sage: tgrid = graphs.ToroidalGrid2dGraph(8,9)
+        sage: tgrid = graphs.ToroidalGrid2dGraph(8, 9)
         sage: print(tgrid)
         Toroidal 2D Grid Graph with parameters 8,9
-        sage: grid = graphs.Grid2dGraph(8,9)
+        sage: grid = graphs.Grid2dGraph(8, 9)
         sage: grid.is_regular()
         False
         sage: tgrid.is_regular()
@@ -1063,7 +1063,7 @@ def Toroidal6RegularGrid2dGraph(p, q, immutable=False):
 
     The toroidal 6-regular grid on `25` elements::
 
-        sage: g = graphs.Toroidal6RegularGrid2dGraph(5,5)
+        sage: g = graphs.Toroidal6RegularGrid2dGraph(5, 5)
         sage: g.is_regular(k=6)
         True
         sage: g.is_vertex_transitive()                                                  # needs sage.groups
@@ -1079,11 +1079,11 @@ def Toroidal6RegularGrid2dGraph(p, q, immutable=False):
 
     Senseless input::
 
-        sage: graphs.Toroidal6RegularGrid2dGraph(5,2)
+        sage: graphs.Toroidal6RegularGrid2dGraph(5, 2)
         Traceback (most recent call last):
         ...
         ValueError: parameters p and q must be integers larger than 3
-        sage: graphs.Toroidal6RegularGrid2dGraph(2,0)
+        sage: graphs.Toroidal6RegularGrid2dGraph(2, 0)
         Traceback (most recent call last):
         ...
         ValueError: parameters p and q must be integers larger than 3
@@ -1139,25 +1139,25 @@ def Grid2dGraph(p, q, set_positions=True, immutable=False, name=None):
 
     Construct and show a grid 2d graph Rows = `5`, Columns = `7`::
 
-        sage: g = graphs.Grid2dGraph(5,7)
+        sage: g = graphs.Grid2dGraph(5, 7)
         sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
     Senseless input::
 
-        sage: graphs.Grid2dGraph(5,0)
+        sage: graphs.Grid2dGraph(5, 0)
         Traceback (most recent call last):
         ...
         ValueError: parameters p and q must be positive integers
-        sage: graphs.Grid2dGraph(-1,0)
+        sage: graphs.Grid2dGraph(-1, 0)
         Traceback (most recent call last):
         ...
         ValueError: parameters p and q must be positive integers
 
     The graph name contains the dimension::
 
-        sage: g = graphs.Grid2dGraph(5,7)
+        sage: g = graphs.Grid2dGraph(5, 7)
         sage: g.name()
         '2D Grid Graph for [5, 7]'
 
@@ -1203,13 +1203,13 @@ def GridGraph(dim_list, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.GridGraph([2,3,4])
+        sage: G = graphs.GridGraph([2, 3, 4])
         sage: G.show()                          # long time                             # needs sage.plot
 
     ::
 
         sage: C = graphs.CubeGraph(4)
-        sage: G = graphs.GridGraph([2,2,2,2])
+        sage: G = graphs.GridGraph([2, 2, 2, 2])
         sage: C.show()                          # long time                             # needs sage.plot
         sage: G.show()                          # long time                             # needs sage.plot
 
@@ -1235,7 +1235,7 @@ def GridGraph(dim_list, immutable=False):
 
     The graph is correct::
 
-        sage: dim = [randint(1,4) for i in range(4)]
+        sage: dim = [randint(1, 4) for i in range(4)]
         sage: g = graphs.GridGraph(dim)
         sage: import networkx                                                           # needs networkx
         sage: h = Graph(networkx.grid_graph(list(dim)))                                 # needs networkx
@@ -1253,19 +1253,19 @@ def GridGraph(dim_list, immutable=False):
         sage: g = graphs.GridGraph([2]); g; g.vertices(sort=True)
         Grid Graph for [2]: Graph on 2 vertices
         [0, 1]
-        sage: g = graphs.GridGraph([1,1]); g; g.vertices(sort=False)
+        sage: g = graphs.GridGraph([1, 1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1]: Graph on 1 vertex
         [(0, 0)]
         sage: g = graphs.GridGraph([1, 1, 1]); g; g.vertices(sort=False)
         Grid Graph for [1, 1, 1]: Graph on 1 vertex
         [(0, 0, 0)]
-        sage: g = graphs.GridGraph([1,1,2]); g; g.vertices(sort=True)
+        sage: g = graphs.GridGraph([1, 1, 2]); g; g.vertices(sort=True)
         Grid Graph for [1, 1, 2]: Graph on 2 vertices
         [(0, 0, 0), (0, 0, 1)]
 
     All dimensions must be positive integers::
 
-        sage: g = graphs.GridGraph([2,-1,3])
+        sage: g = graphs.GridGraph([2, -1, 3])
         Traceback (most recent call last):
         ...
         ValueError: all dimensions must be positive integers
@@ -1426,7 +1426,7 @@ def LadderGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.LadderGraph(i+2)
+        ....:     k = graphs.LadderGraph(i + 2)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -1500,7 +1500,7 @@ def MoebiusLadderGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:    k = graphs.MoebiusLadderGraph(i+3)
+        ....:    k = graphs.MoebiusLadderGraph(i + 3)
         ....:    g.append(k)
         sage: for i in range(3):
         ....:    n = []
@@ -1719,7 +1719,7 @@ def StarGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     k = graphs.StarGraph(i+3)
+        ....:     k = graphs.StarGraph(i + 3)
         ....:     g.append(k)
         sage: for i in range(3):
         ....:     n = []
@@ -1737,7 +1737,7 @@ def StarGraph(n, immutable=False):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ....:     spr = networkx.star_graph(i+3)
+        ....:     spr = networkx.star_graph(i + 3)
         ....:     k = Graph(spr)
         ....:     g.append(k)
         sage: for i in range(3):

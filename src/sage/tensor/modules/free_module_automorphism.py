@@ -452,7 +452,8 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
              Rank-3 free module M over the Integer Ring}
 
         Of course, they can be computed from those in basis ``f`` by means of
-        a change-of-basis formula, via the method :meth:`comp` or
+        a change-of-basis formula, via the method
+        :meth:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor.comp` or
         :meth:`matrix`::
 
             sage: a.matrix(e)

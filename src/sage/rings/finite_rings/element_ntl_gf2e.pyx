@@ -286,47 +286,46 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         if isinstance(e, IntegerMod_abstract):
             e = e.lift()
+
         if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))
             return res
 
-        elif isinstance(e, float):
+        if isinstance(e, float):
             GF2E_conv_long(res.x,int(e))
             return res
 
-        elif isinstance(e, str):
+        if isinstance(e, str):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
-        elif isinstance(e, Vector):
+        if isinstance(e, Vector):
             if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)
             # Can't do the following since we can't cimport Integer because of circular imports.
-            #for i from 0 <= i < len(e):
-            #    if e[i]:
-            #        mpz_setbit(ztmp.value, i)
+            # for i from 0 <= i < len(e):
+            #     if e[i]:
+            #         mpz_setbit(ztmp.value, i)
             return self.fetch_int(ztmp)
 
-        elif isinstance(e, (list, tuple)):
+        if isinstance(e, (list, tuple)):
             if len(e) > self._degree:
                 # could reduce here...
                 raise ValueError("list is too long")
             ztmp = Integer(e,2)
             return self.fetch_int(ztmp)
 
-        elif isinstance(e, MPolynomial):
+        if isinstance(e, MPolynomial):
             if e.is_constant():
                 return self._parent(e.constant_coefficient())
-            else:
-                raise TypeError("no coercion defined")
+            raise TypeError("no coercion defined")
 
-        elif isinstance(e, Polynomial):
+        if isinstance(e, Polynomial):
             if e.is_constant():
                 return self._parent(e.constant_coefficient())
-            else:
-                return e(self._parent.gen())
+            return e(self._parent.gen())
 
-        elif isinstance(e, Rational):
+        if isinstance(e, Rational):
             num = e.numer()
             den = e.denom()
             if den % 2:
@@ -335,8 +334,8 @@ cdef class Cache_ntl_gf2e(Cache_base):
                 return self._zero_element
             raise ZeroDivisionError
 
-        elif isinstance(e, Gen):
-            pass # handle this in next if clause
+        if isinstance(e, Gen):
+            pass  # handle this in next if clause
 
         elif isinstance(e, FiniteFieldElement_pari_ffelt):
             # Require a field embedding GF(p^m) -> GF(p^n), i.e. m | n (same as Givaro).
@@ -620,8 +619,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         if not GF2E_IsZero(self.x):
             return True
-        else:
-            return False
+        return False
 
     def is_square(FiniteField_ntl_gf2eElement self):
         r"""
@@ -664,8 +662,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         a = self ** (self._cache._order // 2)
         if all:
             return [a]
-        else:
-            return a
+        return a
 
     cpdef _add_(self, right):
         """
@@ -1080,8 +1077,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         if GF2_IsOne(GF2E_trace(self.x)):
             return GF2_1
-        else:
-            return GF2_0
+        return GF2_0
 
     def weight(self):
         """

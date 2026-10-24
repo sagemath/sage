@@ -12,11 +12,10 @@ Feature for the rank-width graph decomposition
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.features import PythonModule
-from sage.features.join_feature import JoinFeature
+from sage.config import rankwidth_enabled
+from sage.features.build_feature import BuildModule
 
-
-class RankWidth(JoinFeature):
+class RankWidth(BuildModule):
     r"""
     A :class:`~sage.features.Feature` indicating whether or not the
     rank-width graph decomposition is available.
@@ -32,9 +31,20 @@ class RankWidth(JoinFeature):
         sage: RankWidth().is_present()  # needs rankwidth
         FeatureTestResult('rankwidth', True)
         sage: RankWidth().is_present()  # needs !rankwidth
-        FeatureTestResult('sage.graphs.graph_decompositions.rankwidth', False)
+        FeatureTestResult('rankwidth', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !rankwidth`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.rankwidth import RankWidth
+        sage: RankWidth().is_present_at_runtime()  # needs rankwidth
+        FeatureTestResult('rankwidth', True)
 
     """
+    _enabled_in_build = rankwidth_enabled
+
     def __init__(self):
         r"""
         EXAMPLES::
@@ -44,8 +54,11 @@ class RankWidth(JoinFeature):
             Feature('rankwidth')
 
         """
-        f = PythonModule("sage.graphs.graph_decompositions.rankwidth")
-        JoinFeature.__init__(self, "rankwidth", [f], spkg="rw", type="standard")
+        module_name = "sage.graphs.graph_decompositions.rankwidth"
+        super().__init__("rankwidth",
+                         module_name,
+                         spkg="rw",
+                         type="standard")
 
 
 def all_features():

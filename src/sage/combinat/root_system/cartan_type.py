@@ -204,12 +204,12 @@ and we get the desired Cartan matrix::
     [0 0 2]
 
 Oops, the Cartan matrix did not change! This is because it is cached
-for efficiency (see :class:`cached_method`). In general, a Dynkin
+for efficiency (see :func:`sage.misc.cachefunc.cached_method`). In general, a Dynkin
 diagram should not be modified after having been used.
 
 .. WARNING:: this is not checked currently
 
-.. TODO:: add a method :meth:`set_mutable` as, say, for matrices
+.. TODO:: add a method ``set_mutable`` as, say, for matrices
 
 Here, we can work around this by clearing the cache::
 
@@ -979,9 +979,9 @@ class CartanType_abstract:
 
     Subclasses should implement:
 
-    - :meth:`dynkin_diagram()`
+    - ``dynkin_diagram()``
 
-    - :meth:`cartan_matrix()`
+    - ``cartan_matrix()``
 
     - :meth:`is_finite()`
 
@@ -1319,7 +1319,8 @@ class CartanType_abstract:
 
         From a programming point of view its implementation is more
         similar to the irreducible types, and so the method
-        :meth:`is_atomic()` is supplied.
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`
+        is supplied.
 
         EXAMPLES::
 
@@ -1337,7 +1338,8 @@ class CartanType_abstract:
 
     def is_compound(self) -> bool:
         """
-        A short hand for not :meth:`is_atomic`.
+        A short hand for not
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`.
 
         TESTS::
 
@@ -1663,7 +1665,8 @@ class CartanType_crystallographic(CartanType_abstract):
 
     def is_crystallographic(self) -> bool:
         """
-        Implement :meth:`CartanType_abstract.is_crystallographic`
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_crystallographic`
         by returning ``True``.
 
         EXAMPLES::
@@ -2038,7 +2041,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         We check that :meth:`classical`,
         :meth:`sage.combinat.root_system.cartan_type.CartanType_crystallographic.dynkin_diagram`,
-        and :meth:`special_node` are consistent::
+        and :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`
+        are consistent::
 
             sage: for ct in CartanType.samples(affine=True):                            # needs sage.graphs
             ....:     g1 = ct.classical().dynkin_diagram()
@@ -2196,10 +2200,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        .. [FSS07] \G. Fourier, A. Schilling, and M. Shimozono,
-           *Demazure structure inside Kirillov-Reshetikhin crystals*,
-           J. Algebra, Vol. 309, (2007), p. 386-404
-           :arxiv:`math/0605451`
+        - [FSS07]_
         """
         a = self.a()
         acheck = self.acheck()
@@ -2370,10 +2371,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        .. [HST09] \F. Hivert, A. Schilling, and N. M. Thiéry,
-           *Hecke group algebras as quotients of affine Hecke
-           algebras at level 0*, JCT A, Vol. 116, (2009) p. 844-863
-           :arxiv:`0804.3781`
+        - [HST09]_
         """
         a = self.a()
         acheck = self.acheck()
@@ -2652,7 +2650,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
         for `w_0` the longest element of the Weyl group, and any
         simple root `\alpha_i`, one has `\alpha_{i^*} = -w_0(\alpha_i)`.
 
-        The automorphism is returned as a :class:`Family`.
+        The automorphism is returned as a :func:`sage.sets.family.Family`.
 
         EXAMPLES::
 
@@ -2823,7 +2821,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
 
     def special_node(self):
         r"""
-        Implement :meth:`CartanType_abstract.special_node`.
+        Implement :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`.
 
         With the standard labelling conventions, `0` is always a
         special node.

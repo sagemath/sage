@@ -67,7 +67,6 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
-
 class PlaneCurveArrangementElement(Element):
     """
     An ordered plane curve arrangement.
@@ -467,6 +466,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         self._meridians_simpl_nonvertical = None
         self._meridians_simpl_vertical = None
         self._vertical_lines_in_braid_mon = None
+        self._base_point = None
 
     def fundamental_group(self, simplified=True, vertical=True,
                           projective=False):
@@ -585,6 +585,37 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             self._meridians_nonsimpl_nonvertical = dic
         return G
 
+    def base_point(self):
+        r"""
+        Return the base point of the monodromy.
+
+        OUTPUT:
+
+        A Gauss rational.
+
+        .. NOTE::
+
+           This function requires the ``sirocco`` package to be installed and
+           :meth:`~sage.schemes.curves.plane_curve_arrangement.AffinePlaneCurveArrangementElement.fundamental_group`
+           with the same options, where some examples are shown.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: A = H(x-1, y, x, y^2 - x)
+            sage: A.fundamental_group()
+            Finitely presented group
+            < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1, x2*x0*x1*x0^-1*x2^-1*x1^-1,
+                               x3*x2*x0*x2^-1*x3^-1*x2*x0^-1*x2^-1,
+                               x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
+            sage: A.base_point()
+            -1/2*I + 1/2
+        """
+        if not self._base_point:
+            self.braid_monodromy()
+        return self._base_point
+
     def meridians(self, simplified=True, vertical=True) -> dict:
         r"""
         Return the meridians of each irreducible component.
@@ -597,7 +628,9 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         .. NOTE::
 
            This functionality requires the ``sirocco`` package to be installed
-           and :meth:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
+           and
+           :meth:`~sage.schemes.curves.plane_curve_arrangement.AffinePlaneCurveArrangementElement.fundamental_group`
+           with the same options,
            where some examples are shown.
 
         EXAMPLES::
@@ -677,8 +710,9 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
         L = self.defining_polynomials()
-        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L,
+        bm, dic, dv, d1, p1 = braid_monodromy(prod(L), arrangement=L,
                                           vertical=vertical)
+        self._base_point = p1
         if vertical:
             self._braid_monodromy_vertical = bm
             self._strands_vertical = dic
@@ -853,6 +887,16 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             Finitely presented group
             < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
                            x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
+
+        TESTS:
+
+        We check :issue:`42006` is fixed::
+
+            sage: # needs sirocco
+            sage: P.<u, v, w> = ProjectivePlaneCurveArrangements(QQ)
+            sage: C = P(u * v - w^2)
+            sage: C.fundamental_group()
+            Finitely presented group < x | x^2 >
         """
         if simplified:
             computed = self._fundamental_group_simpl
@@ -891,11 +935,14 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
                 C = H(C.curves()[:j] + (h, ) + C.curves()[j + 1:])
                 break
         affine = AffinePlaneCurveArrangements(K, names=('u', 'v'))
+        affine_ring = affine.coordinate_ring()
         u, v = affine.gens()
-        affines = [f.defining_polynomial().subs({x: u, y: v, z: 1}) for f in C]
+        dehom = R.hom(codomain=affine_ring, im_gens=[u, v, 1])
+        affines = [dehom(f.defining_polynomial()) for f in C]
         changes = any(g.degree(v) < g.degree() > 1 for g in affines)
+        turn = affine_ring.hom(codomain=affine_ring, im_gens=[u + v, v])
         while changes:
-            affines = [f.subs({u: u + v}) for f in affines]
+            affines = [turn(f) for f in affines]
             changes = any(g.degree(v) < g.degree() > 1 for g in affines)
         C_affine = affine(affines)
         proj = not (infinity_divides or infinity_in_C)
@@ -930,12 +977,12 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         A dictionary which associates the index of each curve with
         its meridians, including the line at infinity if it can be
-        computed
+        computed.
 
         .. NOTE::
 
            This function requires the ``sirocco`` package to be installed and
-           :func:`ProjectivePlaneCurveArrangements.fundamental_group`
+           :meth:`~sage.schemes.curves.plane_curve_arrangement.ProjectivePlaneCurveArrangementElement.fundamental_group`
            with the same options, where some examples are shown.
 
         EXAMPLES::

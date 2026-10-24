@@ -39,6 +39,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
+from sage.rings.finite_rings.element_base import FiniteRingElement
 from sage.rings.integer cimport Integer
 import sage.rings.abc
 
@@ -73,7 +74,7 @@ cdef class FiniteField(Field):
         """
         if category is None:
             category = FiniteFields()
-        Field.__init__(self, base, names, normalize, category)
+        Field.__init__(self, base, names, normalize, category=category)
 
     # The methods __hash__ and __richcmp__ below were copied from
     # sage.misc.fast_methods.WithEqualityById; we cannot inherit from
@@ -124,20 +125,17 @@ cdef class FiniteField(Field):
             False
         """
         if self is other:
-            if m == 2: # ==
+            if m == 2:  # ==
                 return True
-            elif m == 3: # !=
+            if m == 3:  # !=
                 return False
-            else:
-                # <= or >= or NotImplemented
-                return m==1 or m==5 or NotImplemented
-        else:
-            if m == 2:
-                return False
-            elif m == 3:
-                return True
-            else:
-                return NotImplemented
+            # <= or >= or NotImplemented
+            return m == 1 or m == 5 or NotImplemented
+        if m == 2:
+            return False
+        if m == 3:
+            return True
+        return NotImplemented
 
     def __repr__(self) -> str:
         """
@@ -451,7 +449,7 @@ cdef class FiniteField(Field):
         """
         return self.degree()
 
-    def from_integer(self, n, reverse=False):
+    def from_integer(self, n, reverse=False) -> FiniteRingElement:
         r"""
         Return the finite field element obtained by reinterpreting the base-`p`
         expansion of `n` as a polynomial and evaluating it at the generator of
@@ -493,6 +491,25 @@ cdef class FiniteField(Field):
             Traceback (most recent call last):
             ...
             ValueError: n must be between 0 and self.order()
+
+        The return annotation matches the runtime type for prime and extension
+        fields::
+
+            sage: from sage.rings.finite_rings.element_base import FiniteRingElement
+            sage: fields = (GF(29), GF(2**8, 'a'))
+            sage: all(isinstance(F.from_integer(0x57 % F.order()), FiniteRingElement)
+            ....:     for F in fields)
+            True
+            sage: all(isinstance(F.gen(), FiniteRingElement) for F in fields)
+            True
+            sage: all(isinstance(F.multiplicative_generator(), FiniteRingElement)
+            ....:     for F in fields)
+            True
+            sage: all(isinstance(F.random_element(), FiniteRingElement) for F in fields)
+            True
+            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+            sage: FiniteField.from_integer.__annotations__['return']
+            'FiniteRingElement'
         """
         n = Integer(n)
         if not 0 <= n < self.order():
@@ -687,7 +704,7 @@ cdef class FiniteField(Field):
 
         return Factorization(factors, unit=unit, sort=False)
 
-    def gen(self):
+    def gen(self) -> FiniteRingElement:
         r"""
         Return a generator of this field (over its prime field). As this is an
         abstract base class, this just raises a :exc:`NotImplementedError`.
@@ -703,7 +720,7 @@ cdef class FiniteField(Field):
         raise NotImplementedError
 
     @cached_method
-    def multiplicative_generator(self):
+    def multiplicative_generator(self) -> FiniteRingElement:
         """
         Return a primitive element of this finite field, i.e. a
         generator of the multiplicative group.
@@ -1006,7 +1023,7 @@ cdef class FiniteField(Field):
         .. SEEALSO::
 
             Except for the ``name`` argument, this is identical to the
-            :meth:`modulus` method.
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.modulus` method.
 
         EXAMPLES::
 
@@ -1053,7 +1070,7 @@ cdef class FiniteField(Field):
         """
         return self.order() - 1
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, *args, **kwds) -> FiniteRingElement:
         r"""
         A random element of the finite field.  Passes arguments to
         ``random_element()`` function of underlying vector space.
@@ -1479,7 +1496,7 @@ cdef class FiniteField(Field):
 
         Check the test above when `a=b=1`, see :issue:`40926`.
         While in general it doesn't make much sense to talk about the generator
-        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        of a prime finite field (:meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.gen` returns 1), generic code may find
         it convenient to always specify the variable name when it is not known
         in advance whether the exponent is 1.
 
@@ -1709,8 +1726,7 @@ cdef class FiniteField(Field):
                     pass
         if map:
             return K, inc
-        else:
-            return K
+        return K
 
     def subfields(self, degree=0, name=None):
         """
@@ -1905,7 +1921,7 @@ cdef class FiniteField(Field):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.ring.Field.an_embedding`
+            :meth:`~sage.categories.fields.Fields.ParentMethods.an_embedding`
 
         EXAMPLES::
 

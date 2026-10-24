@@ -283,8 +283,7 @@ Sage example in ./linsolve.tex, line 2124::
   sage: def eval(P, x):
   ....:     if len(P) == 0:
   ....:         return 0
-  ....:     else:
-  ....:         return P[0]+x*eval(P[1:],x)
+  ....:     return P[0]+x*eval(P[1:],x)
 
 Sage example in ./linsolve.tex, line 2133::
 

@@ -18,6 +18,7 @@ def w():
     return v.extensions(L)
 
 
+@pytest.mark.long
 @pytest.mark.parametrize("idx", [0,1])
 def test_finite_extension_from_limit_valuation_w(w, idx):
     r"""

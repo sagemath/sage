@@ -134,7 +134,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         r"""
-        Implement :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`sage.categories.magmas.Magmas.Unital.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -185,7 +185,8 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         def has_right_descent(self, i, positive=False, side='right') -> bool:
             r"""
-            Implement :meth:`SemiGroups.ElementMethods.has_right_descent`.
+            Implement
+            :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.has_right_descent`.
 
             EXAMPLES::
 
@@ -219,7 +220,8 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         def apply_simple_reflection_right(self, i):
             r"""
-            Implement :meth:`CoxeterGroups.ElementMethods.apply_simple_reflection`.
+            Implement
+            :meth:`sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflection`.
 
             EXAMPLES::
 

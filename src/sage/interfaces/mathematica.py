@@ -1010,8 +1010,9 @@ class MathematicaElement(ExpectElement):
 
         OUTPUT:
 
-        This method does not return anything. Use :meth:`save` if you
-        want to save the figure as an image.
+        This method does not return anything. Use
+        :meth:`~sage.interfaces.mathematica.MathematicaElement.save_image` if
+        you want to save the figure as an image.
 
         EXAMPLES::
 
@@ -1144,13 +1145,13 @@ def request_wolfram_alpha(input, verbose=False):
          'id',
          'inputstring',
          'numpods',
+         'parseidserver',
          'parsetimedout',
          'parsetiming',
          'pods',
          'recalculate',
          'related',
          'server',
-         'sponsorCategories',
          'success',
          'timedout',
          'timedoutpods',

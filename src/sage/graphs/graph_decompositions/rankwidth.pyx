@@ -64,9 +64,9 @@ from the smaller of the two and its complement.
     sage: rw, tree = g.rank_decomposition()
     sage: u = Set([8, 9, 3, 7])
     sage: v = Set([8, 9])
-    sage: tree.has_edge(u,v)
+    sage: tree.has_edge(u, v)
     True
-    sage: m = min(u,v)
+    sage: m = min(u, v)
     sage: bipartition = (m, Set(g.vertices(sort=False)) - m)
     sage: bipartition
     ({8, 9}, {0, 1, 2, 3, 4, 5, 6, 7})

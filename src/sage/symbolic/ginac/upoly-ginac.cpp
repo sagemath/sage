@@ -240,7 +240,7 @@ ex decomp_rational(const ex &a, const ex &x)
         try {
         	q = quo(numer, denom, x);
         }
-        catch (std::logic_error) {
+        catch (const std::logic_error&) {
 		return a;
         }
 	return q + rem(numer, denom, x) / denom;
@@ -536,7 +536,7 @@ ex parfrac(const ex & a, const ex & x)
         	// Convert N(x)/D(x) -> Q(x) + R(x)/D(x), so degree(R) < degree(D)
                 qr = quo_rem(numer, denom, x, true);
         }
-        catch (std::logic_error) {
+        catch (const std::logic_error&) {
                 return a;
         }
 	// Factorize denominator and compute cofactors

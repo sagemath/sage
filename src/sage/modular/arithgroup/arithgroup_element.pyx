@@ -379,8 +379,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         if isinstance(z, InfinityElement):
             if self.c() != 0:
                 return self.a() / self.c()
-            else:
-                return infinity
+            return infinity
         if hasattr(z, 'denominator') and hasattr(z, 'numerator'):
             p = z.numerator()
             q = z.denominator()
@@ -388,8 +387,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             Q = self.c() * p + self.d() * q
             if not Q and P:
                 return infinity
-            else:
-                return P / Q
+            return P / Q
         return (self.a() * z + self.b()) / (self.c() * z + self.d())
 
     def __getitem__(self, q):

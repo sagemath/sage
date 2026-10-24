@@ -28,6 +28,7 @@ Constructors and databases
    sage/graphs/graph_generators_pyx
    sage/graphs/graph_database
    sage/graphs/strongly_regular_db
+   sage/graphs/generators/luw_graphs
    sage/graphs/generators/basic
    sage/graphs/generators/chessboard
    sage/graphs/generators/classical_geometries

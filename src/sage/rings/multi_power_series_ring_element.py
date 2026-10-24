@@ -1603,7 +1603,7 @@ class MPowerSeries(PowerSeries):
 
         The variable sequence ``args`` can contain both variables and
         counts; for the syntax, see
-        :meth:`~sage.misc.derivative.derivative_parse`.
+        :func:`~sage.misc.derivative.derivative_parse`.
 
         EXAMPLES::
 

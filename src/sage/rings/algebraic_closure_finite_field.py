@@ -53,13 +53,17 @@ AUTHORS:
 
 - Vincent Delecroix (November 2013): additional methods
 """
+from __future__ import annotations
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
-from sage.sets.family import AbstractFamily
 from sage.structure.element import Element, FieldElement
 from sage.structure.richcmp import richcmp
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.sets.family import AbstractFamily
 
 
 class AlgebraicClosureFiniteFieldElement(FieldElement):
@@ -74,7 +78,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         sage: type(F.gen(2))
         <class 'sage.rings.algebraic_closure_finite_field.AlgebraicClosureFiniteField_pseudo_conway_with_category.element_class'>
     """
-    def __init__(self, parent, value):
+    def __init__(self, parent, value) -> None:
         """
         TESTS::
 
@@ -87,7 +91,8 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             there is no coercion map between the parents of ``x``
             and ``loads(dumps(x))``.
         """
-        if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
+        if isinstance(value, Element) and isinstance(value.parent(),
+                                                     FiniteField):
             n = value.parent().degree()
         else:
             from sage.rings.integer import Integer
@@ -96,7 +101,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         self._level = n
         FieldElement.__init__(self, parent)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -149,7 +154,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             return hash(x)
         return hash((x, F.degree()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -161,9 +166,9 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         return self._value._repr_()
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare ``self`` with ``right``.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -171,7 +176,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F.gen(2) == F.gen(3)
             False
         """
-        x, y = self.parent()._to_common_subfield(self, right)
+        x, y = self.parent()._to_common_subfield(self, other)
         return richcmp(x, y, op)
 
     def __pow__(self, exp):
@@ -554,7 +559,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F
             Algebraic closure of Finite Field of size 5
         """
-        Field.__init__(self, base_ring=base_ring, names=name,
+        Field.__init__(self, base_ring, names=name,
                        normalize=False, category=category)
 
     def __eq__(self, other):
@@ -834,7 +839,7 @@ class AlgebraicClosureFiniteField_generic(Field):
 
         OUTPUT:
 
-        - a :class:`~sage.sets.family.Family`, indexed by the positive
+        - a :func:`~sage.sets.family.Family`, indexed by the positive
           integers, whose `n`-th element is ``self.gen(n)``.
 
         EXAMPLES::

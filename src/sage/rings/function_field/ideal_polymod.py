@@ -23,6 +23,7 @@ from sage.arith.power import generic_power
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
 from sage.structure.richcmp import richcmp
 
@@ -795,10 +796,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: i2.norm() == y.norm()
             True
         """
-        n = 1
-        for e in self.basis_matrix().diagonal():
-            n *= e
-        return n
+        return prod(self.basis_matrix().diagonal())
 
     @cached_method
     def is_prime(self) -> bool:
@@ -1182,9 +1180,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         hnf = self._hnf
 
-        norm = 1
-        for e in hnf.diagonal():
-            norm *= e
+        norm = prod(hnf.diagonal())
 
         if norm.is_constant():  # unit ideal
             self._gens_two_vecs = (1,)

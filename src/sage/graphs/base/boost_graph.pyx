@@ -211,7 +211,7 @@ cpdef edge_connectivity(g):
     Vertex-labeled graphs::
 
         sage: from sage.graphs.base.boost_graph import edge_connectivity
-        sage: g = graphs.GridGraph([2,2])
+        sage: g = graphs.GridGraph([2, 2])
         sage: edge_connectivity(g)
         (2, [((0, 0), (0, 1)), ((0, 0), (1, 0))])
     """
@@ -304,13 +304,13 @@ cpdef clustering_coeff(g, vertices=None):
         sage: g = graphs.CompleteGraph(5)
         sage: clustering_coeff(g)
         (1.0, {0: 1.0, 1: 1.0, 2: 1.0, 3: 1.0, 4: 1.0})
-        sage: clustering_coeff(g, vertices = [0,1,2])
+        sage: clustering_coeff(g, vertices=[0, 1, 2])
         (1.0, {0: 1.0, 1: 1.0, 2: 1.0})
 
     Of a non-clique graph with triangles::
 
         sage: g = graphs.IcosahedralGraph()
-        sage: clustering_coeff(g, vertices=[1,2,3])
+        sage: clustering_coeff(g, vertices=[1, 2, 3])
         (0.5, {1: 0.5, 2: 0.5, 3: 0.5})
 
     With labels::
@@ -393,7 +393,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     An undirected grid is biconnected, and its dominator tree is a star
     (everyone's parent is the root)::
 
-        sage: g = graphs.GridGraph([2,2]).dominator_tree((0,0))
+        sage: g = graphs.GridGraph([2, 2]).dominator_tree((0, 0))
         sage: g.to_dictionary()
         {(0, 0): [(0, 1), (1, 0), (1, 1)], (0, 1): [(0, 0)], (1, 0): [(0, 0)], (1, 1): [(0, 0)]}
 
@@ -406,7 +406,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
          sage: G = 2 * graphs.CycleGraph(3)
          sage: v = 0
          sage: w = 3
-         sage: G.add_edge(v,w)
+         sage: G.add_edge(v, w)
          sage: G.dominator_tree(1, return_dict=True)
          {0: 1, 1: None, 2: 1, 3: 0, 4: 3, 5: 3}
 
@@ -421,7 +421,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
 
     If the output is a dictionary::
 
-        sage: graphs.GridGraph([2,2]).dominator_tree((0,0), return_dict=True)
+        sage: graphs.GridGraph([2, 2]).dominator_tree((0, 0), return_dict=True)
         {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 0)}
 
     TESTS:
@@ -440,7 +440,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
         Traceback (most recent call last):
         ...
         ValueError: the input root must be a vertex of the given graph
-        sage: graphs.GridGraph([2,2]).dominator_tree(0)
+        sage: graphs.GridGraph([2, 2]).dominator_tree(0)
         Traceback (most recent call last):
         ...
         ValueError: the input root must be a vertex of the given graph
@@ -540,11 +540,11 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(10))
         (1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]))
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]))
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='reverse_cuthill_mckee')
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]), algorithm='reverse_cuthill_mckee')
         (3, [(2, 2), (1, 2), (2, 1), (0, 2), (1, 1), (2, 0), (0, 1), (1, 0), (0, 0)])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='king')
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]), algorithm='king')
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
 
     TESTS:
@@ -574,7 +574,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
+        sage: bandwidth_heuristics(graphs.RandomGNM(10, 0))                             # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     """
     from sage.graphs.graph import Graph
@@ -663,7 +663,9 @@ cpdef min_spanning_tree(g,
         sage: min_spanning_tree(graphs.PathGraph(4))
         [(0, 1, None), (1, 2, None), (2, 3, None)]
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}), (0,2,{'name':'b','weight':3}), (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
+        ....:            (0, 2, {'name': 'b', 'weight': 3}),
+        ....:            (1, 2, {'name': 'b', 'weight': 1})])
         sage: min_spanning_tree(G, weight_function=lambda e: e[2]['weight'])
         [(0, 1, {'name': 'a', 'weight': 1}), (1, 2, {'name': 'b', 'weight': 1})]
 
@@ -685,13 +687,13 @@ cpdef min_spanning_tree(g,
 
     If the weight is not a number::
 
-        sage: g = Graph([(0,1,1), (1,2,'a')], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 'a')], weighted=True)
         sage: min_spanning_tree(g)
         Traceback (most recent call last):
         ...
         ValueError: could not convert string to float:...
 
-        sage: g = Graph([(0,1,1), (1,2,[1,2,3])], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, [1, 2, 3])], weighted=True)
         sage: min_spanning_tree(g)
         Traceback (most recent call last):
         ...
@@ -774,9 +776,9 @@ cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
         sage: blocks_and_cut_vertices(g)
         ([[8, 9], [7, 8], [0, 1, 2, 3, 5, 4, 6, 7]], [8, 7])
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}),
-        ....:            (0,2,{'name':'b','weight':3}),
-        ....:            (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
+        ....:            (0, 2, {'name': 'b', 'weight': 3}),
+        ....:            (1, 2, {'name': 'b', 'weight': 1})])
         sage: blocks_and_cut_vertices(G)
         ([[0, 1, 2]], [])
 
@@ -805,6 +807,20 @@ cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check that vertices that are not integers are handled correctly when the
+    graph has loops or multiple edges, or when ``forbidden_vertices`` is
+    given (see :issue:`42979`)::
+
+        sage: G = Graph([('a', 'b'), ('b', 'c'), ('b', 'c'), ('c', 'c')],
+        ....:           loops=True, multiedges=True)
+        sage: blocks_and_cut_vertices(G)
+        ([['b', 'c'], ['a', 'b']], ['b'])
+        sage: G = graphs.PathGraph(3).relabel(['a', 'b', 'c'], inplace=False)
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['a'])
+        ([['b', 'c']], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['b'])
+        ([['a'], ['c']], [])
     """
     from sage.graphs.generic_graph import GenericGraph
 
@@ -817,9 +833,9 @@ cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
             or g.is_directed() or forbidden):
         # Build the underlying undirected graph without loops or multiple edges,
         # and without the forbidden vertices
-        V = [v for v in g if v not in forbidden]
-        E = [(u, v) for u, v in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
-             if u != v and u not in forbidden and v not in forbidden]
+        V = [x for x in g if x not in forbidden]
+        E = [(x, y) for x, y in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
+             if x != y and x not in forbidden and y not in forbidden]
         from sage.graphs.graph import Graph
         g = Graph([V, E], format='vertices_and_edges')
 
@@ -922,17 +938,17 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         ({0: 1, 1: 0, 2: 2, 3: 3}, {0: 1, 1: None, 2: 1, 3: 2})
-        sage: g = graphs.GridGraph([2,2])
-        sage: shortest_paths(g,(0,0),weight_function=lambda e:2)
+        sage: g = graphs.GridGraph([2, 2])
+        sage: shortest_paths(g, (0, 0), weight_function=lambda e:2)
         ({(0, 0): 0, (0, 1): 2, (1, 0): 2, (1, 1): 4},
          {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 1)})
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         ({1: 0, 2: 2, 3: 3}, {1: None, 2: 1, 3: 2})
 
@@ -948,7 +964,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     If there is a negative cycle::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         Traceback (most recent call last):
         ...
@@ -957,7 +973,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     If Dijkstra is used with negative weights::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1, algorithm='Dijkstra')
         Traceback (most recent call last):
         ...
@@ -1092,7 +1108,7 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
     TESTS::
 
         sage: from sage.graphs.base.boost_graph import johnson_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: expected = {0: {0: None, 1: 0, 2: 1, 3: 2},
         ....:             1: {0: 1, 1: None, 2: 1, 3: 2},
         ....:             2: {0: 1, 1: 2, 2: None, 3: 2},
@@ -1165,7 +1181,7 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: 3, 3: 4},
          1: {0: 1, 1: 0, 2: 2, 3: 3},
@@ -1180,13 +1196,13 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: -1, 3: 0},
          1: {1: 0, 2: -2, 3: -1},
          2: {2: 0, 3: 1},
          3: {3: 0}}
-        sage: g = DiGraph([(1,2,3),(2,3,2),(1,4,1),(4,2,1)], weighted=True)
+        sage: g = DiGraph([(1, 2, 3), (2, 3, 2), (1, 4, 1), (4, 2, 1)], weighted=True)
         sage: johnson_shortest_paths(g, distances=False, predecessors=True)
         {1: {1: None, 2: 4, 3: 2, 4: 1},
          2: {2: None, 3: 2},
@@ -1204,7 +1220,7 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
 
     If there is a negative cycle::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         Traceback (most recent call last):
         ...
@@ -1321,7 +1337,7 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import floyd_warshall_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: 3, 3: 4},
          1: {0: 1, 1: 0, 2: 2, 3: 3},
@@ -1336,13 +1352,13 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: -1, 3: 0},
          1: {1: 0, 2: -2, 3: -1},
          2: {2: 0, 3: 1},
          3: {3: 0}}
-        sage: g = DiGraph([(1,2,3),(2,3,2),(1,4,1),(4,2,1)], weighted=True)
+        sage: g = DiGraph([(1, 2, 3), (2, 3, 2), (1, 4, 1), (4, 2, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g, distances=False, predecessors=True)
         {1: {1: None, 2: 4, 3: 2, 4: 1},
          2: {2: None, 3: 2},
@@ -1360,7 +1376,7 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
 
     If there is a negative cycle:
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         Traceback (most recent call last):
         ...
@@ -1461,14 +1477,14 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         {0: 0.375, 1: 0.5, 2: 0.5, 3: 0.375}
 
     Directed graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         {0: inf, 1: -0.4444444444444444, 2: 0.3333333333333333}
 
@@ -1485,7 +1501,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
     If there is a negative cycle::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         Traceback (most recent call last):
         ...
@@ -1705,7 +1721,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
         sage: G = graphs.RandomGNP(20, 0.7)
         sage: eccentricity_DHV(G) == G.eccentricity()
         True
-        sage: G = Graph([(0,1,-1)], weighted=True)
+        sage: G = Graph([(0, 1, -1)], weighted=True)
         sage: eccentricity_DHV(G)
         Traceback (most recent call last):
         ...
@@ -1869,7 +1885,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
     EXAMPLES::
 
         sage: from sage.graphs.base.boost_graph import radius_DHV
-        sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
+        sage: G = Graph([(0, 1, 1), (1, 2, 1), (0, 2, 3)])
         sage: radius_DHV(G)
         1.0
         sage: G = graphs.PathGraph(7)
@@ -2011,10 +2027,10 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
+        sage: G = graphs.RandomBarabasiAlbert(17, 6)                                    # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm='Dijkstra_Boost')                 # needs networkx
         True
-        sage: G = Graph([(0,1,-1)], weighted=True)
+        sage: G = Graph([(0, 1, -1)], weighted=True)
         sage: diameter_DHV(G)
         Traceback (most recent call last):
         ...
@@ -2574,7 +2590,7 @@ cpdef diameter(G, algorithm=None, source=None,
 
     DiGraph containing negative cycle::
 
-        sage: G = DiGraph([(0,1,-2), (1,0,1)])
+        sage: G = DiGraph([(0, 1, -2), (1, 0, 1)])
         sage: diameter(G, algorithm='2Dsweep', weight_function=lambda e:e[2])
         Traceback (most recent call last):
         ...
@@ -2714,17 +2730,17 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths_from_vertices
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,[1,2])
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, [1, 2])
         ({1: {0: 1.0, 1: 0.0, 2: 2.0, 3: 3.0}, 2: {0: 3.0, 1: 2.0, 2: 0.0, 3: 1.0}},
          {1: {0: 1, 1: None, 2: 1, 3: 2}, 2: {0: 1, 1: 2, 2: None, 3: 2}})
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-1),(2,0,2),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,1)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -1), (2, 0, 2), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, 1)
         ({1: {0: 1.0, 1: 0.0, 2: -1.0, 3: 0.0}}, {1: {0: 2, 1: None, 2: 1, 3: 2}})
-        sage: shortest_paths_from_vertices(g, 1, [0,1,2,3])
+        sage: shortest_paths_from_vertices(g, 1, [0, 1, 2, 3])
         ({1: [1.0, 0.0, -1.0, 0.0]}, {1: [2, None, 1, 2]})
 
     TESTS:
@@ -2738,7 +2754,7 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
 
     If there is a negative cycle::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: shortest_paths_from_vertices(g, 1)
         Traceback (most recent call last):
         ...
@@ -2746,15 +2762,15 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
 
     If the given ordering is not valid::
 
-        sage: g = DiGraph([(0,1,1),(1,2,2),(2,0,0.5),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,1,[0,1])
+        sage: g = DiGraph([(0, 1, 1), (1, 2, 2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, 1, [0, 1])
         Traceback (most recent call last):
         ...
         ValueError: Given ordering is not valid
 
     If Dijkstra is used with negative weights::
 
-        sage: g = Graph([(0,1,1),(1,2,-2),(1,3,4)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, -2), (1, 3, 4)], weighted=True)
         sage: shortest_paths_from_vertices(g, 1, algorithm='Dijkstra')
         Traceback (most recent call last):
         ...
@@ -2930,7 +2946,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
     EXAMPLES:
 
         sage: from sage.graphs.base.boost_graph import wiener_index
-        sage: g = Graph([(0,1,9), (1,2,7), (2,3,4), (3,0,3)])
+        sage: g = Graph([(0, 1, 9), (1, 2, 7), (2, 3, 4), (3, 0, 3)])
         sage: wiener_index(g)
         8.0
         sage: g.weighted(True)

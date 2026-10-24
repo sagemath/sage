@@ -35,8 +35,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from collections.abc import Callable
-from typing import Any
+from __future__ import annotations
+from typing import Any, TYPE_CHECKING
 
 from sage.arith.misc import factor
 from sage.arith.srange import srange
@@ -87,6 +87,9 @@ from sage.repl.ipython_kernel.all_jupyter import (
     slider,
     text_control,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def library_interact(

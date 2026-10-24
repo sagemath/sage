@@ -233,8 +233,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     if editable_install:
         # Editable install: Cython generates files in the source tree
         return src_dir
-    else:
-        return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
+    return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
 
 
 def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,

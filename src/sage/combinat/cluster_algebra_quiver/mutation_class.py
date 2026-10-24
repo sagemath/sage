@@ -51,10 +51,9 @@ def _principal_part(mat):
     n, m = mat.ncols(), mat.nrows() - mat.ncols()
     if m < 0:
         raise ValueError('the input matrix has more columns than rows')
-    elif m == 0:
+    if m == 0:
         return mat
-    else:
-        return mat.submatrix(0, 0, n, n)
+    return mat.submatrix(0, 0, n, n)
 
 
 def _digraph_mutate(dg, k, frozen=None):
@@ -414,7 +413,8 @@ def _dig6_to_digraph(dig6):
 
     INPUT:
 
-    - ``dig6`` -- a pair ``(dig6, edges)`` where ``dig6`` is a string encoding a digraph and ``edges`` is a dict or tuple encoding edges
+    - ``dig6`` -- a pair ``(dig6, edges)`` where ``dig6`` is a string encoding
+      a digraph and ``edges`` is a dict or tuple encoding edges
 
     EXAMPLES::
 

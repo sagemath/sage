@@ -145,9 +145,10 @@ class VectorSpaces(Category_module):
         structure: a bimodule morphism between two vector spaces is a
         vector space morphism.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

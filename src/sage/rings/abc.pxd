@@ -1,4 +1,4 @@
-from sage.rings.ring cimport CommutativeRing, Field
+from sage.rings.ring cimport Ring, Field
 
 cdef class RealField(Field):
 

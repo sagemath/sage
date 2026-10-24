@@ -422,9 +422,9 @@ Here are examples of all of these conversions::
     ....:             return None
     ....:     return [convert_test(_) for _ in all_vals]
     sage: convert_test_all(float)
-    [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
+    [42.0, 3.142857142857143, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(complex)
-    [(42+0j), (3.1428571428571432+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951536j)]
+    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951535j)]
     sage: convert_test_all(RDF)
     [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(CDF)
@@ -577,6 +577,7 @@ AUTHOR:
 """
 
 import itertools
+import math
 import operator
 
 import sage.rings.abc
@@ -691,8 +692,10 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         """
         Given a polynomial with algebraic coefficients, return a
         wrapper that caches high-precision calculations and
-        factorizations. This wrapper can be passed to :meth:`polynomial_root`
-        in place of the polynomial.
+        factorizations. This wrapper can be passed to
+        :meth:`~sage.rings.qqbar.AlgebraicField.polynomial_root` or
+        :meth:`~sage.rings.qqbar.AlgebraicRealField.polynomial_root` in
+        place of the polynomial.
 
         Using :meth:`common_polynomial` makes no semantic difference, but will
         improve efficiency if you are dealing with multiple roots
@@ -1061,40 +1064,6 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         True
     """
 
-    def __new__(cls):
-        r"""
-        This method is there to ensure that pickles created before this class
-        was made a :class:`~sage.misc.fast_methods.Singleton` still load.
-
-        TESTS::
-
-            sage: s = loads(b'x\x9cmQ\xcbR\x141\x14\xad\x11A\x083\xe2\x03T|'
-            ....: b'\x82l`\xd3\xff\xe0\x86\x8de/\xba*\xcb\xa9[\xe9\xf4'
-            ....: b'\xa5;e:=\'I+,\xa6J\x17B\xf9\xd7f\x08\xe2s\x95\xa4\xee9\xf7<'
-            ....: b'\xf2\xe5\x8e\x0e\xaa\xe5"D?\xea8z.\x9a\x0b\xa7z\xa3I[\x15'
-            ....: b'\x82\xf8\xf3\x85\xc9\xb1<xg[\xae\xbd2\xbabeO\r\xdb\x86>\x9b'
-            ....: b'\xd8\x91V\x91\xdb\xc1_\xe0f\xa57\xae\r\x05P+/\xfe\xe5\x08'
-            ....: b'\xaci\xa2z46\x1aG$Z\x8e*F/p\xf7oC\xa33\x18\x99</<\x07v\tf'
-            ....: b'\x06\'F\xe7\xb9\x195\x0b\xacg\xc2\x8d\xbc\xe1P\x9c\xad\x04'
-            ....: b'\x828\xcd\x076N\x96W\xb8WaSN\x17\xca\xa7\r9\r\xb6.+\x88Kl'
-            ....: b'\x97e\xb7\x16+LO\xbeb\xb6\xc4\xfdc)\x88\xfb\x9a\x9b&\x05'
-            ....: b'\xc0N)wI\x0f\xee\x13\xfbH=\xc7nh(U\xc2xP\xca\r\xd2\x8d'
-            ....: b'\x8a\n\x0fK\xb9\xf5+\xfe\xa3n3MV\x98\x80\xc7rr\xfe\r\xbbr'
-            ....: b'\x9bZv\xecU\x1c|\xc0\xde\x12O\xe4:\xd5*0\x9ev3\xb9C\x0b'
-            ....: b'\xa3?Z\xa6\xa4\x11R6<{?I\xa2l\xb9\xbf6;\xb8\\\xc6\xe0\xb1'
-            ....: b'\x9f\xb3\xf6&\xe8\xe2,\xb3R\x13\xf9\xf2\xe1\xda\x9c\xc0s'
-            ....: b'\xb9\xf7?.\xe1E7\xeb\xa6W\x15^&\x80q&\x1aeo\x93Y\x13"^\xcd'
-            ....: b'\xf1Z\xee\xdf\x92W\x18Z\xa4\xa6(\xd7\x867\xdf\x93\xad\x9fL'
-            ....: b'\xa5W\xff\x90\x89\x07s\x1c\xfe6\xd2\x03{\xcdy\xf4v\x8e\xa3'
-            ....: b'\xb1.~\x000\xc2\xe0\xa1')
-            sage: s is AA
-            True
-        """
-        try:
-            return AA
-        except BaseException:
-            return AlgebraicField_common.__new__(cls)
-
     def __init__(self):
         r"""
         Standard initialization function.
@@ -1112,9 +1081,15 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             True
             sage: AA.has_coerce_map_from(int)
             True
+
+        TESTS::
+
+            sage: AA.variable_names()
+            ()
+
         """
         from sage.categories.fields import Fields
-        AlgebraicField_common.__init__(self, self, ('x',), normalize=False, category=Fields().Infinite())
+        AlgebraicField_common.__init__(self, self, names=(), normalize=False, category=Fields().Infinite())
         self._populate_coercion_lists_([ZZ, QQ])
 
     def _element_constructor_(self, x):
@@ -1143,7 +1118,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             if x.imag().is_zero():
                 return x.real()
             raise ValueError("Cannot coerce algebraic number with nonzero imaginary part to algebraic real")
-        elif hasattr(x, '_algebraic_'):
+        if hasattr(x, '_algebraic_'):
             return x._algebraic_(AA)
         return AlgebraicReal(x)
 
@@ -2773,7 +2748,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
     Test ``embedded`` for quadratic and cyclotomic fields::
 
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], name='zeta6', embedded=False, minimal=True); v
         (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
@@ -2793,7 +2768,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
           From: Cyclotomic Field of order 6 and degree 2
           To:   Complex Lazy Field
           Defn: zeta6 -> 0.500000000000000? + 0.866025403784439?*I
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], name='I', embedded=False, minimal=True); v
         (Number Field in I with defining polynomial x^2 + 1,
          [I],
          Ring morphism:
@@ -2813,7 +2788,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
           From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
           To:   Complex Lazy Field
           Defn: I -> 1*I
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], name='zeta10', embedded=False, minimal=True); v
         (Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1,
          [zeta10],
          Ring morphism:
@@ -2852,7 +2827,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
         sage: AA((-1)^(2/3))
         1
-        sage: number_field_elements_from_algebraics([(-1)^(2/3)])
+        sage: number_field_elements_from_algebraics([(-1)^(2/3)], name='zeta6')
         (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
@@ -2918,7 +2893,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         # if the default embedding is different from what is expected then modify the field
         if embedded != (fld.coerce_embedding() is not None):
             # creates the modified field
-            modified_field = NumberField(fld.defining_polynomial(), fld.variable_name(),
+            modified_field = NumberField(fld.defining_polynomial(), name,
                                          embedding=exact_generator if embedded else None)
 
             # embeds the numbers
@@ -4679,8 +4654,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
     def interval_fast(self, field):
         r"""
-        Given a :class:`RealIntervalField` or
-        :class:`ComplexIntervalField`, compute the value of this number
+        Given a :class:`~sage.rings.abc.RealIntervalField` or
+        :class:`~sage.rings.abc.ComplexIntervalField`, compute the value of this number
         using interval arithmetic of at least the precision of the field,
         and return the value in that field. (More precision may be used
         in the computation.)  The returned interval may be arbitrarily
@@ -5147,9 +5122,9 @@ class AlgebraicNumber(AlgebraicNumber_base):
         EXAMPLES::
 
             sage: QQbar(sqrt(2)).__float__()                                            # needs sage.symbolic
-            1.414213562373095
+            1.4142135623730951
             sage: float(QQbar(-22/7))
-            -3.1428571428571432
+            -3.142857142857143
             sage: float(QQbar.zeta(3))
             Traceback (most recent call last):
             ...
@@ -5159,29 +5134,41 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def __complex__(self):
         r"""
-        Compute a good complex approximation to ``self``.
+        Compute a complex approximation to ``self``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(2)).__complex__()                                          # needs sage.symbolic
-            (1.414213562373095+0j)
+            sage: QQbar(2).sqrt().__complex__()
+            (1.4142135623730951+0j)
             sage: complex(QQbar.zeta(3))
             (-0.5+0.8660254037844386j)
+
+        TESTS:
+
+        Exact zero elements should not have non-zero complex
+        approximations::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = QQbar((a^2 - a*a).abs())
+            sage: complex(z)
+            0j
+
         """
-        return CC(self).__complex__()
+        return complex(self.real().__float__(),
+                       self.imag().__float__())
 
     def _complex_double_(self, cdf):
         r"""
-        Compute a good approximation to ``self`` in CDF.
+        Compute an approximation to ``self`` in ``cdf``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(-5))._complex_double_(CDF)                                 # needs sage.symbolic
+            sage: QQbar(-5).sqrt()._complex_double_(CDF)
             2.23606797749979*I
             sage: CDF(QQbar.zeta(12))
             0.8660254037844386 + 0.5*I
         """
-        return cdf(CC(self))
+        return cdf(self.__complex__())
 
     def _interval_fast(self, prec):
         r"""
@@ -5307,7 +5294,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def interval_exact(self, field):
         r"""
-        Given a :class:`ComplexIntervalField`, compute the best possible
+        Given a :class:`~sage.rings.abc.ComplexIntervalField`, compute the best possible
         approximation of this number in that field. Note that if
         either the real or imaginary parts of this number are
         sufficiently close to some floating-point number (and, in
@@ -5373,10 +5360,10 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def complex_exact(self, field):
         r"""
-        Given a :class:`ComplexField`, return the best possible approximation of
+        Given a :class:`~sage.rings.abc.ComplexField`, return the best possible approximation of
         this number in that field. Note that if either component is
         sufficiently close to the halfway point between two floating-point
-        numbers in the corresponding :class:`RealField`, then this will trigger
+        numbers in the corresponding :class:`~sage.rings.abc.RealField`, then this will trigger
         exact computation, which may be very slow.
 
         EXAMPLES::
@@ -5950,7 +5937,9 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        We avoid calling :meth:`exactify()` for trivial differences. The
+        We avoid calling
+        :meth:`~sage.rings.qqbar.AlgebraicNumber_base.exactify` for
+        trivial differences. The
         following example will take a long time (more than 5 seconds)
         when calling ``y.exactify()``::
 
@@ -6069,7 +6058,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def interval_exact(self, field):
         """
-        Given a :class:`RealIntervalField`, compute the best possible
+        Given a :class:`~sage.rings.abc.RealIntervalField`, compute the best possible
         approximation of this number in that field. Note that if this
         number is sufficiently close to some floating-point number
         (and, in particular, if this number is exactly representable in
@@ -6142,7 +6131,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_number(self, field):
         """
-        Given a :class:`RealField`, compute a good approximation to ``self`` in
+        Given a :class:`~sage.rings.abc.RealField`, compute a good approximation to ``self`` in
         that field. The approximation will be off by at most two
         ulp's, except for numbers which are very close to 0, which
         will have an absolute error at most
@@ -6195,14 +6184,134 @@ class AlgebraicReal(AlgebraicNumber_base):
         r"""
         Compute a good float approximation to ``self``.
 
+        The result is correctly rounded, including close to zero and the
+        overflow boundary, with one signed-zero convention: if a very small
+        interval still contains zero after both endpoints round to zero, the
+        result is canonicalized to positive zero.  This avoids an arbitrarily
+        expensive exact sign computation merely to determine the sign bit of
+        an underflowed result.
+
         EXAMPLES::
 
             sage: AA(golden_ratio).__float__()                                          # needs sage.symbolic
             1.618033988749895
             sage: float(AA(sqrt(11)))                                                   # needs sage.symbolic
             3.3166247903554
+
+        In particular, an interval containing an exact zero must not be
+        converted to a small nonzero floating-point number::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = (a^2 - a*a).abs()
+            sage: float(z)
+            0.0
+            sage: type(z._descr).__name__
+            'ANUnaryExpr'
+            sage: z = a^2 - a*a
+            sage: float(z)
+            0.0
+            sage: type(z._descr).__name__
+            'ANBinaryExpr'
+
+        Refining such an interval must not discard nonzero values that a
+        Python ``float`` can represent.  The last example below genuinely
+        starts with an interval containing zero::
+
+            sage: float(AA(2)^(-213))
+            7.596454196607839e-65
+            sage: float(AA(2)^(-1000))
+            9.332636185032189e-302
+            sage: float(AA(2)^(-1074))
+            5e-324
+            sage: float(QQbar(AA(2)^(-1000)))
+            9.332636185032189e-302
+            sage: x = AA(2)^(-1074) + a^2 - a*a
+            sage: x._value.contains_zero()
+            True
+            sage: float(x)
+            5e-324
+
+        Rounding on both sides of the smallest-subnormal midpoint and at
+        the overflow boundary agrees with direct rational conversion::
+
+            sage: h = QQ(1) / 2^1075
+            sage: q = h + QQ(1) / 2^1200
+            sage: float(AA(q)).hex() == float(q).hex()
+            True
+            sage: q = 3*h - QQ(1) / 2^1200
+            sage: float(AA(q)).hex() == float(q).hex()
+            True
+            sage: float(AA(-h)).hex() == float(-h).hex()
+            True
+            sage: m = QQ(1) + QQ(1) / 2^53
+            sage: float(AA(m)).hex() == float(m).hex()
+            True
+            sage: float(AA(-m)).hex() == float(-m).hex()
+            True
+            sage: T = QQ(2)^1024 - QQ(2)^970
+            sage: float(AA(T - 1)).hex() == float(T - 1).hex()
+            True
+            sage: float(AA(T))
+            inf
+            sage: float(AA(-T))
+            -inf
+
         """
-        return float(RR(self))
+        value = self._value
+        if value.is_zero():
+            return 0.0
+
+        while True:
+            # Converting an MPFI endpoint directly would preserve its
+            # directed rounding mode.  Convert its exact rational value
+            # instead, so that Python performs one round-to-nearest step.
+            lower = float(value.lower().exact_rational())
+            upper = float(value.upper().exact_rational())
+
+            # Float conversion is monotone, so equal endpoint results
+            # certify the result for every number in the interval.  Signed
+            # zero needs a little care because -0.0 == 0.0 in Python.
+            if lower == upper:
+                if lower != 0.0:
+                    return lower
+                if value.upper() < 0:
+                    return -0.0
+                return 0.0
+
+            # When one endpoint rounds to zero and the interval still
+            # contains zero, refine instead of asking an exact sign
+            # question.  Exact zero tests can otherwise dominate callers
+            # that only need a double approximation.
+            if value.contains_zero() and (lower == 0.0 or upper == 0.0):
+                self._more_precision()
+                value = self._value
+                continue
+
+            # If the endpoint results are adjacent, their exact midpoint
+            # is the only possible rounding boundary inside the interval.
+            # Overflow has a finite boundary but an infinite endpoint.
+            if math.nextafter(lower, math.inf) == upper:
+                if math.isinf(lower) or math.isinf(upper):
+                    midpoint = QQ(2)**1024 - QQ(2)**970
+                    if lower < 0:
+                        midpoint = -midpoint
+                else:
+                    lower_num, lower_den = lower.as_integer_ratio()
+                    upper_num, upper_den = upper.as_integer_ratio()
+                    midpoint = (QQ(lower_num) / lower_den +
+                                QQ(upper_num) / upper_den) / 2
+
+                if self < midpoint:
+                    return lower
+                if self > midpoint:
+                    return upper
+                return float(midpoint)
+
+            # The cached enclosure is too wide to determine a binary64
+            # rounding cell.  Algebraic-number intervals double their
+            # precision when refined.
+            self._more_precision()
+            value = self._value
 
     def _complex_mpfr_field_(self, field):
         r"""
@@ -6227,7 +6336,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_exact(self, field):
         r"""
-        Given a :class:`RealField`, compute the best possible approximation of
+        Given a :class:`~sage.rings.abc.RealField`, compute the best possible approximation of
         this number in that field. Note that if this number is
         sufficiently close to the halfway point between two
         floating-point numbers in the field (for the default
@@ -8839,7 +8948,7 @@ AA_golden_ratio = None
 def get_AA_golden_ratio():
     r"""
     Return the golden ratio as an element of the algebraic real field. Used by
-    :meth:`sage.symbolic.constants.golden_ratio._algebraic_`.
+    ``sage.symbolic.constants.GoldenRatio._algebraic_``.
 
     EXAMPLES::
 

@@ -48,10 +48,10 @@ Here is the list of options accepted by
 :class:`GraphPlot`. Those two functions also accept all options of
 :meth:`sage.plot.graphics.Graphics.show`.
 
-.. csv-table::
+.. list-table::
     :class: contentstable
-    :widths: 30, 70
-    :delim: |
+    :header-rows: 1
+    :widths: 25, 65, 10
 
 {PLOT_OPTIONS_TABLE}
 
@@ -134,19 +134,38 @@ lazy_import("sage.plot.all", [
 
 
 layout_options = {
-    'layout':
-        'A layout algorithm -- one of : "acyclic", "circular" (plots the '
-        'graph with vertices evenly distributed on a circle), "ranked", '
-        '"graphviz", "planar", "spring" (traditional spring layout, using '
-        'the graph\'s current positions as initial positions), or "tree" '
-        '(the tree will be plotted in levels, depending on minimum distance '
-        'for the root).',
+    'layout': '''A layout algorithm -- one of:
+
+        - :meth:`'circular' <sage.graphs.generic_graph.GenericGraph.layout_circular>` --
+          plots the graph with vertices evenly distributed on a circle
+        - :meth:`'spring' <sage.graphs.generic_graph.GenericGraph.layout_spring>` --
+          uses the traditional spring layout, using the
+          graph's current positions as initial positions
+        - :meth:`'ranked' <sage.graphs.generic_graph.GenericGraph.layout_ranked>` --
+          plots the graph randomly according to the specified
+          ``heights`` dictionary
+        - :meth:`'graphviz' <sage.graphs.generic_graph.GenericGraph.layout_graphviz>` --
+          plots the graph using graphviz
+        - :meth:`'planar' <sage.graphs.generic_graph.GenericGraph.layout_planar>` --
+          computes a planar layout using Schnyder's algorithm
+        - :meth:`'tutte' <sage.graphs.generic_graph.GenericGraph.layout_tutte>` --
+          uses the Tutte embedding algorithm. The graph must be
+          a 3-connected, planar graph.
+        - :meth:`'tree' <sage.graphs.generic_graph.GenericGraph.layout_tree>` --
+          the (di)graph must be a tree. One can specify the root of the tree
+          using the ``tree_root`` parameter and the growth direction
+          using the ``tree_orientation`` parameter.
+        - :meth:`'forest' <sage.graphs.generic_graph.GenericGraph.layout_forest>` --
+          plots each connected component using the 'tree' layout
+        - :meth:`'acyclic' <sage.graphs.digraph.DiGraph.layout_acyclic>` --
+          plots an acyclic digraph so that all edges point upward
+''',
     'iterations':
         'The number of times to execute the spring layout algorithm.',
     'heights':
         'A dictionary mapping heights to the list of vertices at this height.',
     'spring':
-        'Use spring layout to finalize the current layout.',
+        "Use spring layout to finalize the current 'ranked' layout.",
     'tree_root':
         'A vertex designation for drawing trees. A vertex of the tree to '
         'be used as the root for the ``layout=\'tree\'`` option. If no root '
@@ -161,11 +180,12 @@ layout_options = {
         'The direction of tree branches -- \'up\', \'down\', '
         '\'left\' or \'right\'.',
     'external_face':
-        'A list of the vertices of the external face of the graph, '
-        'used for Tutte embedding layout.',
+        'A list of the vertices of the external face of the graph '
+        'if used for Tutte embedding layout; or an edge on the external face '
+        "if used for the 'planar' layout.",
     'external_face_pos':
         'A dictionary specifying the positions of the external face of the '
-        'graph, used for Tutte embedding layout. If none specified, the'
+        'graph, used for Tutte embedding layout. If none specified, the '
         'external face is a regular polygon.',
     'save_pos':
         'Whether or not to save the computed position for the graph.',
@@ -181,7 +201,8 @@ graphplot_options = layout_options.copy()
 
 graphplot_options.update({
     'pos':
-        'The position dictionary of vertices.',
+        'The position dictionary of vertices. Ignored when ``layout`` is '
+        'specified.',
     'vertex_labels':
         'Vertex labels to draw. This can be ``True``/``False`` to indicate '
         'whether to print the vertex string representation of not, '
@@ -201,7 +222,9 @@ graphplot_options.update({
     'vertex_size':
         'The size to draw the vertices.',
     'vertex_shape':
-        'The shape to draw the vertices. '
+        "The shape to draw the vertices, for example ``'o'`` for circle or "
+        "``'s'`` for square. Whole list is available at "
+        'https://matplotlib.org/api/markers_api.html. '
         'Currently unavailable for Multi-edged DiGraphs.',
     'edge_labels':
         'Whether or not to draw edge labels.',
@@ -227,15 +250,16 @@ graphplot_options.update({
         'each key is a color recognized by matplotlib, '
         'and each corresponding value is a list of edges.',
     'color_by_label':
-        'Whether to color the edges according to their labels. This also '
-        'accepts a function or dictionary mapping labels to colors.',
+        'Whether to color the edges according to their labels (the colors are '
+        'chosen along a rainbow). This also accepts a function or dictionary '
+        'mapping labels to colors.',
     'partition':
         'A partition of the vertex set. If specified, plot will show each '
         'cell in a different color; vertex_colors takes precedence.',
     'loop_size':
         'The radius of the smallest loop.',
     'arrowsize':
-        'Size of arrows.',
+        'Size of arrow tips.',
     'dist':
         'The distance between multiedges.',
     'max_dist':
@@ -248,15 +272,6 @@ graphplot_options.update({
         'Whether or not to draw a frame around the graph.',
     'edge_labels_background':
         'The color of the background of the edge labels.'})
-
-_PLOT_OPTIONS_TABLE = ""
-
-for key, value in graphplot_options.items():
-    _PLOT_OPTIONS_TABLE += f"    ``{key}`` | {value}\n"
-
-__doc__ = __doc__.format(PLOT_OPTIONS_TABLE=_PLOT_OPTIONS_TABLE)
-
-DEFAULT_SHOW_OPTIONS = {'figsize': (4, 4)}
 
 DEFAULT_PLOT_OPTIONS = {
     'vertex_size'               : 200,
@@ -283,6 +298,20 @@ DEFAULT_PLOT_OPTIONS = {
     'loop_size'                 : .075,
     'edge_labels_background'    : 'white'}
 
+_PLOT_OPTIONS_TABLE = """
+    - * Parameter
+      * Description
+      * Default"""
+
+for key, value in graphplot_options.items():
+    _PLOT_OPTIONS_TABLE += f"""
+    - * ``{key}``
+      * {value}
+      * {DEFAULT_PLOT_OPTIONS.get(key, '')}"""
+
+__doc__ = __doc__.format(PLOT_OPTIONS_TABLE=_PLOT_OPTIONS_TABLE)
+
+DEFAULT_SHOW_OPTIONS = {'figsize': (4, 4)}
 
 class GraphPlot(SageObject):
     def __init__(self, graph, options):
@@ -1627,6 +1656,39 @@ class GraphPlot(SageObject):
 
             sage: Graph({0: [0]}, immutable=True).plot()
             Graphics object consisting of 3 graphics primitives
+
+        Nearly collinear positions must not clip the edge (:issue:`35905`).
+        Check the rendered midpoint, not just the presence of a primitive::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: from matplotlib.backends.backend_agg import FigureCanvasAgg
+            sage: positions = [((0., 0.), (6.123233995736766e-17, 1.)),
+            ....:              ((0., 0.), (1., 6.123233995736766e-17)),
+            ....:              ((-10., 10.), (-10. + 6e-14, 11.))]
+            sage: g = Graph([(0, 1)])
+            sage: for a, b in positions:
+            ....:     p = g.plot(pos={0: a, 1: b}, vertex_labels=False)
+            ....:     fig = p.matplotlib()
+            ....:     canvas = FigureCanvasAgg(fig)
+            ....:     canvas.draw()
+            ....:     ax = fig.axes[0]
+            ....:     x, y = ax.transData.transform(
+            ....:         ((a[0] + b[0])/2, (a[1] + b[1])/2))
+            ....:     pixels = np.asarray(canvas.buffer_rgba())
+            ....:     row, col = int(pixels.shape[0] - y), int(x)
+            ....:     assert (pixels[row-2:row+3, col-2:col+3, :3] < 128).all(axis=2).any()
+            ....:     edge = ax.lines[0]
+            ....:     assert list(map(tuple, edge.get_xydata())) == [a, b]
+
+        Explicit display limits still take precedence::
+
+            sage: # needs numpy
+            sage: p = g.plot(pos={0: positions[0][0], 1: positions[0][1]},
+            ....:            xmin=-2, xmax=2, axes_pad=0)
+            sage: fig = p.matplotlib(**p._extra_kwds)
+            sage: tuple(map(float, fig.axes[0].get_xlim()))
+            (-2.0, 2.0)
         """
         G = Graphics()
         options = self._options.copy()
@@ -1658,6 +1720,18 @@ class GraphPlot(SageObject):
             border.axes_range(xmin=(xmin - dx), xmax=(xmax + dx),
                               ymin=(ymin - dy), ymax=(ymax + dy))
             G += border
+        # An almost collinear layout can collapse the Matplotlib axes box
+        # to a subpixel strip, clipping its edges. Enlarge the default view
+        # instead of rounding the supplied positions.
+        bounds = G.get_minmax_data()
+        width = bounds['xmax'] - bounds['xmin']
+        height = bounds['ymax'] - bounds['ymin']
+        if width < 1e-12 * height:
+            center = (bounds['xmin'] + bounds['xmax']) / 2
+            G.set_axes_range(xmin=center - height, xmax=center + height)
+        elif height < 1e-12 * width:
+            center = (bounds['ymin'] + bounds['ymax']) / 2
+            G.set_axes_range(ymin=center - width, ymax=center + width)
         G.set_aspect_ratio(1)
         G.axes(False)
         return G
@@ -1695,7 +1769,7 @@ class GraphPlot(SageObject):
         # Always make a copy of the children because they get eaten
         stack = [list(children[root])]
         stick = [root]
-        parent = {u: root for u in children[root]}
+        parent = dict.fromkeys(children[root], root)
         pos = {}
         obstruction = [0.0] * T.n_vertices()
         if orientation == 'down':

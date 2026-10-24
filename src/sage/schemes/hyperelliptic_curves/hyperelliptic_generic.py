@@ -42,12 +42,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Literal
+from __future__ import annotations
+from typing import Literal, TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.big_oh import O
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -57,6 +57,9 @@ from sage.schemes.weighted_projective.weighted_projective_space import (
     WeightedProjectiveSpace,
 )
 from sage.structure.category_object import normalize_names
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 lazy_import("sage.functions.all", "log")
 
@@ -323,10 +326,23 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: for p in prime_range(3, 50):
             ....:     Hp = H_patch.change_ring(GF(p))
             ....:     assert Hp.is_smooth() == (H.discriminant() % p != 0)
+
+        The discriminant is invariant under this change of model::
+
+            sage: R.<x> = QQ[]
+            sage: C = HyperellipticCurve(2*x^5 + 1)
+            sage: C2 = HyperellipticCurve(x^6 + 2*x)
+            sage: C.discriminant() == C2.discriminant()
+            True
         """
         f, h = self._hyperelliptic_polynomials
-        return (4 * f + h**2).discriminant() / 16 ** (self.genus() + 1)
+        F = 4 * f + h**2
+        disc = F.discriminant() / 16**(self.genus() + 1)
 
+        if F.degree() % 2 == 1:
+            disc *= F.leading_coefficient()**2
+
+        return disc
     def polynomial_ring(self):
         r"""
         Return the parent ring of the defining polynomials `f, h`, of this hyperelliptic curve.
@@ -474,7 +490,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         .. SEEALSO::
 
-            :func:`~sage.schemes.hyperelliptic_curves.jacobian_homset_split.cantor_compose_at_infinity`
+            :meth:`~sage.schemes.hyperelliptic_curves.jacobian_homset_split.HyperellipticJacobianHomsetSplit.cantor_compose_at_infinity`
 
 
         EXAMPLES::
@@ -995,7 +1011,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         .. SEEALSO::
 
-            :func:`~sage.schemes.hyperelliptic_curves.hyperelliptic_generic.set_distinguished_point`
+            :meth:`~sage.schemes.hyperelliptic_curves.hyperelliptic_generic.HyperellipticCurve_generic.set_distinguished_point`
 
         EXAMPLE::
 
@@ -1244,12 +1260,14 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
     def rational_points(self, **kwds) -> list:
         r"""
         Find rational points on the hyperelliptic curve. Arguments are passed
-        on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
+        on to
+        :meth:`sage.schemes.generic.algebraic_scheme.AlgebraicScheme_subscheme.rational_points`.
 
         ALGORITHM:
 
         We use :meth:`points_at_infinity` to compute the points at infinity, and
-        :meth:`sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
+        :meth:`sage.schemes.generic.algebraic_scheme.AlgebraicScheme_subscheme.rational_points`
+        on this curve's
         :meth:`projective_curve` for the affine points.
 
         EXAMPLES:

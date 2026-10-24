@@ -96,7 +96,7 @@ gráfico, e com uma pequena ajuda, diferenciadas e integradas.
        <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
-       
+
 Por si só, ``sin`` não pode ser diferenciado, pelo menos não para
 produzir ``cos``.
 
@@ -113,11 +113,11 @@ usar ``f(x) = sin(x)`` para definir uma expressão simbólica que pode
 ser evocada.
 
 ::
-   
+
        sage: S(x) = sin(x)
        sage: S.derivative()
        x |--> cos(x)
-       
+
 Aqui estão alguns problemas comuns, com explicações:
 
 \4. Cálculo acidental.
@@ -127,8 +127,7 @@ Aqui estão alguns problemas comuns, com explicações:
        sage: def h(x):
        ....:     if x<2:
        ....:         return 0
-       ....:     else:
-       ....:         return x-2
+       ....:     return x - 2
 
 O problema: ``plot(h(x), 0, 4)`` cria o gráfico da reta `y=x-2`, não
 da função definida por ``h``. O motivo? No comando ``plot(h(x), 0,
@@ -161,7 +160,7 @@ A solução: não use ``plot(h(x), 0, 4)``; em vez disso, use
 ::
 
        sage: f = x
-       sage: g = f.derivative() 
+       sage: g = f.derivative()
        sage: g
        1
 
@@ -176,7 +175,7 @@ number of arguments must be less than or equal to 0."
        <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
        <class 'sage.symbolic.expression.Expression'>
-       
+
 ``g`` não é uma função, é uma constante, logo não possui variáveis
 associadas, e você não pode substituir nenhum valor em ``g``.
 
@@ -226,7 +225,7 @@ derivadas de ``f = x`` e ``f(x) = x``.
 
 ::
 
-       sage: f(x) = x 
+       sage: f(x) = x
        sage: g = f.derivative()
        sage: g.variables()  # the variables present in g
        ()
@@ -238,6 +237,6 @@ derivadas de ``f = x`` e ``f(x) = x``.
        ()
        sage: h.arguments()
        ()
-       
+
 Como esse exemplo procura ilustrar, ``h`` não aceita argumentos, e é
 por isso que ``h(3)`` retorna um erro.

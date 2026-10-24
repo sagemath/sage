@@ -159,7 +159,7 @@ AUTHORS:
 - Christian Stump (2013): initial Sage version (see :issue:`8327`)
 - Vincent Delecroix (2015): completed rewriting using libgap (see :issue:`18152`)
 - Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :issue:`25686`)
-- Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :issue:`28631`)
+- Sebastian Oehms (2019): added ``_factor_univariate_polynomial`` (see :issue:`28631`)
 """
 
 import sage.rings.abc

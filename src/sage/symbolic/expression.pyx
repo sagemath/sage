@@ -1,11 +1,3 @@
-# distutils: sources = sage/symbolic/ginac/add.cpp sage/symbolic/ginac/archive.cpp sage/symbolic/ginac/assume.cpp sage/symbolic/ginac/basic.cpp sage/symbolic/ginac/cmatcher.cpp sage/symbolic/ginac/constant.cpp sage/symbolic/ginac/context.cpp sage/symbolic/ginac/ex.cpp sage/symbolic/ginac/expair.cpp sage/symbolic/ginac/expairseq.cpp sage/symbolic/ginac/exprseq.cpp sage/symbolic/ginac/fderivative.cpp sage/symbolic/ginac/function.cpp sage/symbolic/ginac/function_info.cpp sage/symbolic/ginac/infinity.cpp sage/symbolic/ginac/infoflagbase.cpp sage/symbolic/ginac/inifcns.cpp sage/symbolic/ginac/inifcns_comb.cpp sage/symbolic/ginac/inifcns_gamma.cpp sage/symbolic/ginac/inifcns_hyperb.cpp sage/symbolic/ginac/inifcns_hyperg.cpp sage/symbolic/ginac/inifcns_nstdsums.cpp sage/symbolic/ginac/inifcns_orthopoly.cpp sage/symbolic/ginac/inifcns_trans.cpp sage/symbolic/ginac/inifcns_trig.cpp sage/symbolic/ginac/inifcns_zeta.cpp sage/symbolic/ginac/lst.cpp sage/symbolic/ginac/matrix.cpp sage/symbolic/ginac/mpoly-ginac.cpp sage/symbolic/ginac/mpoly-singular.cpp sage/symbolic/ginac/mpoly.cpp sage/symbolic/ginac/mul.cpp sage/symbolic/ginac/normal.cpp sage/symbolic/ginac/numeric.cpp sage/symbolic/ginac/operators.cpp sage/symbolic/ginac/order.cpp sage/symbolic/ginac/power.cpp sage/symbolic/ginac/print.cpp sage/symbolic/ginac/pseries.cpp sage/symbolic/ginac/py_funcs.cpp sage/symbolic/ginac/registrar.cpp sage/symbolic/ginac/relational.cpp sage/symbolic/ginac/remember.cpp sage/symbolic/ginac/sum.cpp sage/symbolic/ginac/symbol.cpp sage/symbolic/ginac/templates.cpp sage/symbolic/ginac/upoly-ginac.cpp sage/symbolic/ginac/useries.cpp sage/symbolic/ginac/utils.cpp sage/symbolic/ginac/wildcard.cpp
-# distutils: language = c++
-# distutils: libraries = flint gmp SINGULAR_LIBRARIES
-# distutils: extra_compile_args = -std=c++11 SINGULAR_CFLAGS
-# distutils: depends = ginac/add.h ginac/archive.h ginac/assertion.h ginac/assume.h ginac/basic.h ginac/class_info.h ginac/cmatcher.h ginac/compiler.h ginac/constant.h ginac/container.h ginac/context.h ginac/ex.h ginac/ex_utils.h ginac/expair.h ginac/expairseq.h ginac/exprseq.h ginac/extern_templates.h ginac/fderivative.h ginac/flags.h ginac/function.h ginac/ginac.h ginac/infinity.h ginac/infoflagbase.h ginac/inifcns.h ginac/lst.h ginac/matrix.h ginac/mpoly.h ginac/mul.h ginac/normal.h ginac/numeric.h ginac/operators.h ginac/order.h ginac/optional.hpp ginac/power.h ginac/print.h ginac/pseries.h ginac/ptr.h ginac/py_funcs.h ginac/pynac-config.h ginac/registrar.h ginac/relational.h ginac/remember.h ginac/sum.h ginac/symbol.h ginac/templates.h ginac/tostring.h ginac/upoly.h ginac/useries-flint.h ginac/useries.h ginac/utils.h ginac/wildcard.h
-# distutils: include_dirs = SINGULAR_INCDIR
-# pynac/basic.h includes
-#   factory/factory.h    so this ^ is needed to find it
 """
 Symbolic Expressions
 
@@ -674,6 +666,20 @@ cdef class Expression(Expression_abc):
             Traceback (most recent call last):
             ...
             TypeError: Python infinity cannot have complex phase.
+
+        An unarchived Python object is released with its symbolic wrapper::
+
+            sage: import gc, weakref
+            sage: wrapped = SR._force_pyobject({1, 2}, force=True)
+            sage: restored = loads(dumps(wrapped))
+            sage: restored_object = restored.pyobject()
+            sage: restored_object is wrapped.pyobject()
+            False
+            sage: reference = weakref.ref(restored_object)
+            sage: del restored_object, restored
+            sage: _ = gc.collect()
+            sage: reference() is None
+            True
         """
         if is_a_constant(self._gobj):
             from sage.symbolic.constants import constants_name_table
@@ -2014,6 +2020,14 @@ cdef class Expression(Expression_abc):
             ...
             RuntimeError: Python object not hashable
 
+        Copying an expression must preserve that state::
+
+            sage: wrapped = SR._force_pyobject([], force=True)
+            sage: hash(wrapped + 0)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Python object not hashable
+
         TESTS:
 
         Test if hashes for fderivatives with different parameters collide.
@@ -2191,8 +2205,8 @@ cdef class Expression(Expression_abc):
 
             if op == Py_EQ:
                 return e2
-            else:                       # op == Py_NE, checked earlier.
-                return not e2
+            # op == Py_NE, checked earlier.
+            return not e2
 
         elif is_a_relational(r._gobj):  # l isn't relational but r is.
             # things aren't <, >, <=, >=, or == to relations; they
@@ -3446,14 +3460,10 @@ cdef class Expression(Expression_abc):
             from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
             if self.variables():
                 return check_relation_maxima_neq_as_not_eq(self)
-            else:
-                return False
+            return False
 
         self_is_zero = self._gobj.is_zero()
-        if self_is_zero:
-            return False
-        else:
-            return not bool(self == self._parent.zero())
+        return not (self_is_zero or bool(self == self._parent.zero()))
 
     def test_relation(self, int ntests=20, domain=None, proof=True):
         """
@@ -3597,13 +3607,10 @@ cdef class Expression(Expression_abc):
             else:
                 if self.operator()(val, zero):
                     return True
-                elif falsify(val, zero):
+                if falsify(val, zero):
                     return False
                 if is_interval and not proof:
-                    if val.contains_zero():
-                        return equality_ok
-                    else:
-                        return not equality_ok
+                    return val.contains_zero() == equality_ok
         else:
             for k in range(ntests):
                 try:
@@ -3632,10 +3639,9 @@ cdef class Expression(Expression_abc):
         if not proof:
             if not equality_ok:
                 return eq_count == 0
-            elif op == equal and is_interval:
+            if op == equal and is_interval:
                 return eq_count == ntests
-            else:
-                return True
+            return True
         # Nothing failed, so it *may* be True, but this method doesn't wasn't
         # able to find anything.
         return NotImplemented
@@ -4812,6 +4818,41 @@ cdef class Expression(Expression_abc):
 
             sage: ((1 - x)^-x).series(x, 8)
             1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+
+        Differentiation also applies the product rule when a series
+        coefficient starts depending on the expansion variable after a
+        substitution::
+
+            sage: x, y = var('x y')
+            sage: series_with_variable_coefficients = (y/(1-x)).series(x, 5).subs(y=x)
+            sage: series_with_variable_coefficients.diff(x).coefficients(x)[:4]
+            [[1, 0], [2, 1], [3, 2], [4, 3]]
+
+        A coefficient with a pole can contribute below the order of the
+        remainder, even when its stored power reaches that order::
+
+            sage: f = y + x*y^2/2 + x^2
+            sage: f.series(x, 2).subs(y=-1/x).diff(x)
+            (1/2/x^2) + Order(x)
+            sage: f = y + (x-1)*y^2/2 + (x-1)^2
+            sage: f.series(x==1, 2).subs(y=-1/(x-1)).diff(x)
+            (1/2/(x - 1)^2) + Order(x - 1)
+
+        Differentiating logarithmic coefficients also retains these terms::
+
+            sage: s = (log(x)/(1-x)).series(x, 4).diff(x).series(x, 3)
+            sage: (s.truncate() - (1/x + log(x) + 1
+            ....:      + (2*log(x) + 1)*x + (3*log(x) + 1)*x^2)).expand()
+            0
+
+        Coefficients need not themselves have Laurent series expansions::
+
+            sage: s = (y*x + x^2).series(x, 2).subs(y=sin(1/x))
+            sage: (s.diff(x).series(x, 1).truncate() - (x*sin(1/x)).diff(x)).expand()
+            0
+            sage: s = (y*x + x^2).series(x, 2).subs(y=sqrt(x))
+            sage: (s.diff(x).series(x, 1).truncate() - (x*sqrt(x)).diff(x)).simplify_full()
+            0
 
         Try different algorithms::
 
@@ -6187,6 +6228,20 @@ cdef class Expression(Expression_abc):
             limit(f(x, y), x, 0)
             sage: e.free_variables()
             (y,)
+
+        Binding is local to each root sum, including inside functions::
+
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: r, x = var('r x')
+            sage: rs = root_sum(r^5-r+1, r, log(x-r))
+            sage: rs.free_variables()
+            (x,)
+            sage: sin(rs).free_variables()
+            (x,)
+            sage: (r + rs).free_variables()
+            (r, x)
+            sage: rs.subs(x=r).free_variables()
+            (r,)
         """
         from sage.symbolic.ring import SR
         cdef GSymbolSet sym_set
@@ -7657,8 +7712,7 @@ cdef class Expression(Expression_abc):
         if base_ring == SR:
             if isinstance(R, MPolynomialRing_base):
                 return R({tuple([0]*R.ngens()):self})
-            else:
-                return R([self])
+            return R([self])
         return self.polynomial(None, ring=R)
 
     def fraction(self, base_ring):
@@ -9574,11 +9628,10 @@ cdef class Expression(Expression_abc):
             +Infinity
         """
         res = new_Expression_from_GEx(self._parent,
-                g_hold_wrapper(g_log, self._gobj, hold))
+                                      g_hold_wrapper(g_log, self._gobj, hold))
         if b is None:
             return res
-        else:
-            return res/self.coerce_in(b).log(hold=hold)
+        return res / self.coerce_in(b).log(hold=hold)
 
     def zeta(self, bint hold=False):
         """
@@ -9835,7 +9888,7 @@ cdef class Expression(Expression_abc):
             log_gamma(5)
 
         To evaluate again, currently we must use numerical evaluation
-        via :meth:`n`::
+        via :meth:`n() <sage.symbolic.expression.Expression.numerical_approx>`::
 
             sage: a = SR(5).log_gamma(hold=True); a.n()
             3.17805383034795
@@ -9872,8 +9925,7 @@ cdef class Expression(Expression_abc):
         v = self.variables()
         if len(v) == 0:
             return self.parent().var('x')
-        else:
-            return v[0]
+        return v[0]
 
     def combine(self, bint deep=False):
         r"""
@@ -10228,7 +10280,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return (new_Expression_from_GEx(self._parent, ex.op(0)),
                     new_Expression_from_GEx(self._parent, ex.op(1)))
-        elif is_a_mul(self._gobj):
+        if is_a_mul(self._gobj):
             for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):   # oper = ex^power
@@ -10236,7 +10288,7 @@ cdef class Expression(Expression_abc):
                     power = oper.op(1)
                     if not is_a_numeric(power):
                         raise TypeError("self is not a rational expression")
-                    elif is_a_numeric(power):
+                    if is_a_numeric(power):
                         power_num = ex_to_numeric(power)
                         if power_num.is_positive():
                             vecnumer.push_back(oper)
@@ -10248,16 +10300,15 @@ cdef class Expression(Expression_abc):
                                             g_mul_construct(vecnumer, False)),
                     new_Expression_from_GEx(self._parent,
                                             g_mul_construct(vecdenom, False)))
-        elif is_a_power(self._gobj):
+        if is_a_power(self._gobj):
             power = self._gobj.op(1)
             if is_a_numeric(power) and ex_to_numeric(power).is_positive():
                 return (self, self._parent.one())
-            else:
-                return (self._parent.one(),
-                        new_Expression_from_GEx(self._parent,
-                               g_pow(self._gobj.op(0), g_abs(power))))
-        else:
-            return (self, self._parent.one())
+            return (self._parent.one(),
+                    new_Expression_from_GEx(self._parent,
+                                            g_pow(self._gobj.op(0),
+                                                  g_abs(power))))
+        return (self, self._parent.one())
 
     def partial_fraction(self, var=None):
         r"""
@@ -10807,14 +10858,11 @@ cdef class Expression(Expression_abc):
             True
         """
         simplified_expr = self.rectform()
-
         if complexity_measure is None:
             return simplified_expr
-
         if complexity_measure(simplified_expr) < complexity_measure(self):
             return simplified_expr
-        else:
-            return self
+        return self
 
     def simplify_real(self):
         r"""
@@ -10971,8 +11019,7 @@ cdef class Expression(Expression_abc):
         # right otherwise!
         if expand:
             return self.parent()(self._maxima_().trigexpand().trigsimp())
-        else:
-            return self.parent()(self._maxima_().trigsimp())
+        return self.parent()(self._maxima_().trigsimp())
 
     trig_simplify = simplify_trig
 
@@ -11871,8 +11918,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         if b:
             return new_Expression_from_GEx(self._parent, x)
-        else:
-            return self
+        return self
 
     def factor_list(self, dontfactor=None):
         """
@@ -11960,10 +12006,9 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.operators import mul_vararg
         if op is mul_vararg:
             return sum([f._factor_list() for f in self.operands()], [])
-        elif op is operator.pow:
+        if op is operator.pow:
             return [tuple(self.operands())]
-        else:
-            return [(self, 1)]
+        return [(self, 1)]
 
     ###################################################################
     # Units
@@ -12224,8 +12269,7 @@ cdef class Expression(Expression_abc):
             rt_muls = [(S[i].rhs(), mul[i]) for i in range(len(mul))]
         if multiplicities:
             return rt_muls
-        else:
-            return [rt for rt, mul in rt_muls]
+        return [rt for rt, mul in rt_muls]
 
     def solve(self, x, multiplicities=False, solution_dict=False, explicit_solutions=False, to_poly_solve=False, algorithm=None, domain=None):
         r"""
@@ -13025,21 +13069,21 @@ cdef class Expression(Expression_abc):
         Check that the sum in :issue:`10682` is done right::
 
             sage: sum(binomial(n,k)*k^2, k, 2, n)
-            1/4*(n^2 + n)*2^n - n
+            1/4*2^n*n^2 + 1/4*(2^n - 4)*n
 
         This sum used to give a wrong result (:issue:`9635`) but
         now gives correct results with all relevant assumptions::
 
             sage: (n,k,j)=var('n,k,j')
             sage: sum(binomial(n,k)*binomial(k-1,j)*(-1)**(k-1-j),k,j+1,n)
-            -(-1)^j*sum((-1)^k*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
+            -sum((-1)^(-j + k)*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
             sage: assume(j>-1)
             sage: sum(binomial(n,k)*binomial(k-1,j)*(-1)**(k-1-j),k,j+1,n)
             1
             sage: forget()
             sage: assume(n>=j)
             sage: sum(binomial(n,k)*binomial(k-1,j)*(-1)**(k-1-j),k,j+1,n)
-            -(-1)^j*sum((-1)^k*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
+            -sum((-1)^(-j + k)*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
             sage: forget()
             sage: assume(j==-1)
             sage: sum(binomial(n,k)*binomial(k-1,j)*(-1)**(k-1-j),k,j+1,n)
@@ -13047,7 +13091,7 @@ cdef class Expression(Expression_abc):
             sage: forget()
             sage: assume(j<-1)
             sage: sum(binomial(n,k)*binomial(k-1,j)*(-1)**(k-1-j),k,j+1,n)
-            -(-1)^j*sum((-1)^k*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
+            -sum((-1)^(-j + k)*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
             sage: forget()
 
         Check that :issue:`16176` is fixed::
@@ -14022,7 +14066,7 @@ cdef unsigned sage_domain_to_ginac_domain(object domain) except? 3474701533:
     else:
         raise ValueError(repr(domain)+": domain must be one of 'complex', 'real', 'positive' or 'integer'")
 
-cdef void send_sage_domain_to_maxima(Expression v, object domain) except +:
+cdef void send_sage_domain_to_maxima(Expression v, object domain) except *:
     from sage.symbolic.assumptions import assume
     # convert the domain argument to something easy to parse
     if domain is RR or domain == 'real':

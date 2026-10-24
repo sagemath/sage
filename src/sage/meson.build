@@ -2,12 +2,11 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
-conf_data.set('EDITABLE_SRC', root)
-conf_data.set('EDITABLE_BUILD', root_build)
+conf_data.set('MESON_SOURCE_ROOT', meson.global_source_root())
+conf_data.set('MESON_BUILD_ROOT', meson.global_build_root())
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
-conf_data.set('prefix', prefix)
 datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
@@ -17,22 +16,35 @@ if not fs.exists(datadir / 'cremona')
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify the correct path via the environment variable SAGE_SHARE during runtime.',
   )
 endif
-# Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
-conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
+sage_local = get_option('SAGE_LOCAL')
+if sage_local == ''
+  # Pure Meson builds rely on ECL's search path to find Kenzo.
+  kenzo_fas = ''
+  threejs_dir = prefix / 'share' / 'threejs-sage'
+else
+  # Sage-the-Distro installs non-Python artifacts below SAGE_LOCAL.
+  sage_local = fs.as_posix(sage_local)
+  kenzo_fas = sage_local / 'lib' / 'ecl' / 'kenzo.fas'
+  threejs_dir = sage_local / 'share' / 'threejs-sage'
+endif
+conf_data.set_quoted('SAGE_KENZO_FAS', kenzo_fas)
+conf_data.set_quoted('SAGE_THREEJS_DIR', threejs_dir)
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
-ecl_config = find_program('ecl-config', required: false)
-if ecl_config.found()
-  conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
-endif
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
-openmp = dependency('openmp', required: false, disabler: true)
+openmp = dependency('openmp', required: false)
 if openmp.found()
-  conf_data.set('OPENMP_CFLAGS', '-fopenmp')
-  conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+  if host_machine.system() == 'darwin'
+    conf_data.set('OPENMP_CFLAGS', '-Xpreprocessor -fopenmp')
+    conf_data.set('OPENMP_CXXFLAGS', '-Xpreprocessor -fopenmp')
+    conf_data.set('OPENMP_CLIB', '-lomp')
+  else
+    conf_data.set('OPENMP_CFLAGS', '-fopenmp')
+    conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+  endif
 endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
 ecm_bin = find_program(
@@ -97,7 +109,6 @@ py.install_sources(
   'all.py',
   'all_cmdline.py',
   'all_test.py',
-  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',
@@ -158,6 +169,12 @@ configure_file(
   install: true,
   configuration: kernel_data,
 )
+
+# Record what build-time features (e.g. external package support) were
+# enabled or disabled, and whether or not we should defer detection to
+# runtime.
+conf_data.set10('DEFER_FEATURE_CHECKS', get_option('defer_feature_checks'))
+conf_data.set10('ECLIB_ENABLED', ec.found())
 
 # Write config file
 # Should be last so that subdir calls can modify the config data

@@ -107,8 +107,8 @@ class FacadeSets(CategoryWithAxiom):
 
             This default implementation assumes that ``self`` has
             an attribute ``_facade_for``, typically initialized by
-            :meth:`Parent.__init__`. If the attribute is not present, the method
-            raises a :exc:`NotImplementedError`.
+            :class:`~sage.structure.parent.Parent`. If the attribute is not
+            present, the method raises a :exc:`NotImplementedError`.
 
             EXAMPLES::
 
@@ -154,7 +154,8 @@ class FacadeSets(CategoryWithAxiom):
                 sage: S.is_parent_of(1/2)
                 False
 
-            This method differs from :meth:`__contains__` in two
+            This method differs from
+            :meth:`~sage.structure.parent.Parent.__contains__` in two
             ways.  First, this does not take into account the fact
             that ``self`` may be a strict subset of the parent(s)
             it is a facade for::
@@ -188,7 +189,7 @@ class FacadeSets(CategoryWithAxiom):
             .. warning::
 
                 this default implementation is currently
-                overridden by :meth:`Parent.__contains__`.
+                overridden by :meth:`~sage.structure.parent.Parent.__contains__`.
 
             EXAMPLES::
 

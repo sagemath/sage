@@ -334,7 +334,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import builtins
+from __future__ import annotations
 import os
 import platform
 import re
@@ -358,6 +358,10 @@ from sage.misc.instancedoc import instancedoc
 from sage.misc.verbose import get_verbose
 from sage.structure.element import RingElement
 from sage.structure.sequence import Sequence_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import builtins
 
 
 class SingularError(RuntimeError):
@@ -815,7 +819,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: singular._coerce_map_from_(ZZ)
             True
             sage: singular.coerce_map_from(ZZ)
-            Call morphism:
+            Coercion map:
               From: Integer Ring
               To:   Singular
             sage: singular.coerce_map_from(float)

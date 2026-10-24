@@ -346,20 +346,18 @@ categories and their super categories::
     Integer Ring
 
     sage: ZZ.category()
-    Join of Category of Dedekind domains
-        and Category of euclidean domains
+    Join of Category of euclidean domains
         and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
 
     sage: ZZ.categories()
-    [Join of Category of Dedekind domains
-         and Category of euclidean domains
+    [Join of Category of euclidean domains
          and Category of noetherian rings
          and Category of infinite enumerated sets
          and Category of metric spaces,
-     Category of Dedekind domains,
      Category of euclidean domains, Category of principal ideal domains,
+     Category of Dedekind domains,
      Category of unique factorization domains, Category of gcd domains,
      Category of integral domains, Category of domains, ...
      Category of commutative rings, Category of rings, ...
@@ -1090,7 +1088,7 @@ from existing ones while carrying over as much as possible of their
 algebraic structure. This includes:
 
 - Cartesian products:
-  See :const:`~sage.categories.cartesian_product.cartesian_product`.
+  See :class:`~sage.categories.cartesian_product.CartesianProductFunctor`.
 
 - Tensor products:
   See :const:`~sage.categories.tensor.tensor`.
@@ -1562,8 +1560,8 @@ category. This determines the position of `C` in the category graph.
 A category *may* provide methods that can be used by all its objects,
 respectively by all elements of its objects.
 
-Each category *should* come with a good example, in
-:mod:`sage.categories.examples`.
+Each category *should* come with a good example in the
+``sage.categories.examples`` package.
 
 Inserting the new category into the category graph
 --------------------------------------------------

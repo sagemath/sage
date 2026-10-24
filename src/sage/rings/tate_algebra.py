@@ -24,12 +24,14 @@ then the logarithms of the radii of convergence of the series in the
 above Tate algebra; the will be called the log radii of convergence.
 
 We can create Tate algebras using the constructor
-:func:`sage.rings.tate_algebra.TateAlgebra`::
+:data:`~sage.rings.tate_algebra.TateAlgebra`::
 
     sage: K = Qp(2, 5, print_mode='digits')
     sage: A.<x,y> = TateAlgebra(K); A
     Tate Algebra in x (val >= 0), y (val >= 0)
      over 2-adic Field with capped relative precision 5
+
+.. autodata:: TateAlgebra
 
 As we observe, the default value for the log radii of convergence
 is `0` (the series then converge on the closed unit disc).
@@ -49,7 +51,7 @@ the same Tate algebra is returned::
     sage: A is A1
     True
 
-However the method :meth:`integer_ring` constructs the integer ring
+However the method :meth:`~sage.rings.tate_algebra.TateAlgebra_generic.integer_ring` constructs the integer ring
 of a Tate algebra, that is the subring consisting of series bounded
 by `1` on the domain of convergence::
 
@@ -207,7 +209,7 @@ class TateAlgebraFactory(UniqueFactory):
         True
 
     If we want to construct the ring of integers of the Tate algebra,
-    we must use the method :meth:`integer_ring`::
+    we must use the method :meth:`~sage.rings.tate_algebra.TateAlgebra_generic.integer_ring`::
 
         sage: Ao = A.integer_ring(); Ao
         Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0)
@@ -537,7 +539,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             True
 
         If we really want to create an integral Tate algebra,
-        we have to invoke the method :meth:`integer_ring`::
+        we have to invoke the method :meth:`~sage.rings.tate_algebra.TateAlgebra_generic.integer_ring`::
 
             sage: Ao = A.integer_ring(); Ao
             Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10

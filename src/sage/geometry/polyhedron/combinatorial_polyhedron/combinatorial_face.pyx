@@ -22,7 +22,7 @@ Obtain a face from a face lattice index::
 
     sage: P = polytopes.simplex(2)
     sage: C = CombinatorialPolyhedron(P)
-    sage: sorted(C.face_lattice()._elements)                                            # needs sage.combinat
+    sage: sorted(C.face_lattice()._elements)
     [0, 1, 2, 3, 4, 5, 6, 7]
     sage: face = C.face_by_face_lattice_index(0); face
     A -1-dimensional face of a 2-dimensional combinatorial polyhedron
@@ -97,8 +97,8 @@ cdef class CombinatorialFace(SageObject):
 
     Obtain a combinatorial face from an index of the face lattice::
 
-        sage: F = C.face_lattice()                                                      # needs sage.combinat
-        sage: F._elements[3]                                                            # needs sage.combinat
+        sage: F = C.face_lattice()
+        sage: F._elements[3]
         34
         sage: C.face_by_face_lattice_index(29)
         A 1-dimensional face of a 5-dimensional combinatorial polyhedron
@@ -325,8 +325,8 @@ cdef class CombinatorialFace(SageObject):
 
             sage: P = polytopes.cyclic_polytope(4,10)
             sage: C = CombinatorialPolyhedron(P)
-            sage: F = C.face_lattice()                                                  # needs sage.combinat
-            sage: G = F.relabel(C.face_by_face_lattice_index)                           # needs sage.combinat
+            sage: F = C.face_lattice()
+            sage: G = F.relabel(C.face_by_face_lattice_index)
         """
         return self._hash_index
 
@@ -459,8 +459,7 @@ cdef class CombinatorialFace(SageObject):
             if self.atoms is other.atoms:
                 if not self._dual:
                     return face_issubset(self.face, other.face)
-                else:
-                    return face_issubset(other.face, self.face)
+                return face_issubset(other.face, self.face)
             else:
                 raise NotImplementedError("is_subface only implemented for faces of the same polyhedron")
         else:
@@ -510,13 +509,12 @@ cdef class CombinatorialFace(SageObject):
 
         ``dim`` is an alias::
 
-            sage: face.dim()                                                            # needs sage.combinat
+            sage: face.dim()
             2
         """
         if self._dual:
             return smallInteger(self._ambient_dimension - self._dimension - 1)
-        else:
-            return smallInteger(self._dimension)
+        return smallInteger(self._dimension)
 
     dim = dimension
 
@@ -675,8 +673,7 @@ cdef class CombinatorialFace(SageObject):
         """
         if self._dual:
             return smallInteger(self.set_coatom_rep())
-        else:
-            return smallInteger(self.n_atom_rep())
+        return smallInteger(self.n_atom_rep())
 
     def ambient_Hrepresentation(self):
         r"""
@@ -760,9 +757,9 @@ cdef class CombinatorialFace(SageObject):
 
         Add the indices of the equation::
 
-            sage: face.ambient_H_indices(add_equations=True)                            # needs sage.combinat
+            sage: face.ambient_H_indices(add_equations=True)
             (28, 29, 30)
-            sage: face2.ambient_H_indices(add_equations=True)                           # needs sage.combinat
+            sage: face2.ambient_H_indices(add_equations=True)
             (25, 29, 30)
 
         Another example::
@@ -847,8 +844,7 @@ cdef class CombinatorialFace(SageObject):
         cdef size_t n_equations = self._n_equations if add_equations else 0
         if not self._dual:
             return smallInteger(self.set_coatom_rep() + n_equations)
-        else:
-            return smallInteger(self.n_atom_rep() + n_equations)
+        return smallInteger(self.n_atom_rep() + n_equations)
 
     def as_combinatorial_polyhedron(self, quotient=False):
         r"""
@@ -877,7 +873,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F.f_vector()
             (1, 5, 10, 10, 5, 1)
             sage: F_alt = polytopes.cyclic_polytope(4,5).combinatorial_polyhedron()
-            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())      # needs sage.graphs
+            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())
             True
 
         Obtaining the quotient::
@@ -982,7 +978,7 @@ cdef class CombinatorialFace(SageObject):
         .. NOTE::
 
             This method is tested in
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base._test_combinatorial_face_as_combinatorial_polyhedron`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3._test_combinatorial_face_as_combinatorial_polyhedron`.
         """
         if not self._ambient_bounded:
             raise NotImplementedError("only implemented for bounded polyhedra")

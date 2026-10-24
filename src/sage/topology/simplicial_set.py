@@ -1119,17 +1119,20 @@ class SimplicialSet_arbitrary(Parent):
     This class is not fully implemented and is not intended to be
     called directly by users. It is intended instead to be used by
     other classes which inherit from this one. See
-    :class:`SimplicialSet_finite` and :class:`Nerve` for two
+    :class:`SimplicialSet_finite` and
+    :class:`~sage.topology.simplicial_set_examples.Nerve` for two
     examples. In particular, any such class must implement a method
     ``n_skeleton`` -- without this, most computations will be
-    impossible. It must also implement an ``__init__`` method which
-    should also set the category, so that methods defined at the
-    category level, like ``is_pointed`` and ``is_finite``, work
-    correctly.
+    impossible. For concrete implementations, see
+    :meth:`~sage.topology.simplicial_set.SimplicialSet_finite.n_skeleton` and
+    :meth:`~sage.topology.simplicial_set_examples.Nerve.n_skeleton`.
+    It must also implement an ``__init__`` method which should also
+    set the category, so that methods defined at the category level,
+    like ``is_pointed`` and ``is_finite``, work correctly.
 
     Note that the method :meth:`subsimplicial_set` calls
-    :meth:`n_skeleton`, so to avoid circularity, the
-    :meth:`n_skeleton` method should call
+    :meth:`~sage.topology.simplicial_set.SimplicialSet_finite.n_skeleton`,
+    so to avoid circularity, the ``n_skeleton`` method should call
     :class:`.simplicial_set_constructions.SubSimplicialSet` directly,
     not :meth:`subsimplicial_set`.
     """
@@ -1603,7 +1606,8 @@ class SimplicialSet_arbitrary(Parent):
 
         - ``codomain`` -- (default: ``None``) if ``None``, the
           codomain is the standard one-point space constructed by
-          :func:`Point`. Otherwise, either the codomain must be a
+          :func:`~sage.topology.simplicial_set_examples.Point`.
+          Otherwise, either the codomain must be a
           pointed simplicial set, in which case the map is constant at
           the base point, or ``point`` must be specified.
         - ``point`` -- (default: ``None``) if specified, it
@@ -4047,7 +4051,7 @@ def shrink_simplicial_complex(K):
 
     First convert ``K`` naively, then mod out by a large contractible
     subcomplex, as found by
-    :meth:`.simplicial_complex.SimplicialComplex._contractible_subcomplex`.
+    :meth:`~sage.topology.simplicial_complex.SimplicialComplex._contractible_subcomplex`.
     This will produce a simplicial set no larger than, and sometimes
     much smaller than, the initial simplicial complex.
 

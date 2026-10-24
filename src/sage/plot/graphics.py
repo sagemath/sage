@@ -44,6 +44,10 @@ from sage.structure.sage_object import SageObject
 from sage.misc.decorators import suboptions
 from .colors import rgbcolor
 
+# Suppress matplotlib warnings
+import logging
+logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)
+
 ALLOWED_EXTENSIONS = ['.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg']
 DEFAULT_DPI = 100
 
@@ -951,7 +955,8 @@ class Graphics(WithEqualityById, SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See :class:`~sage.repl.rich_output.display_manager.DisplayManager`
+        for details.
 
         EXAMPLES::
 

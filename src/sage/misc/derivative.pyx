@@ -51,7 +51,8 @@ For example::
     F.derivative([None, x, z, z, z, y, y, None, None]):
         identical to previous example
 
-For the precise specification see documentation for derivative_parse().
+For the precise specification see the documentation of
+:func:`derivative_parse`.
 
 AUTHORS:
 
@@ -90,20 +91,20 @@ def derivative_parse(args):
 
     EXAMPLES::
 
-        sage: x = var("x")                                                              # needs sage.symbolic
-        sage: y = var("y")                                                              # needs sage.symbolic
+        sage: x = var("x")
+        sage: y = var("y")
         sage: from sage.misc.derivative import derivative_parse
 
     Differentiate twice with respect to x, then once with respect to y,
     then once with respect to x::
 
-        sage: derivative_parse([x, 2, y, x])                                            # needs sage.symbolic
+        sage: derivative_parse([x, 2, y, x])
         [x, x, y, x]
 
     Differentiate twice with respect to x, then twice with respect to
     the 'default variable'::
 
-        sage: derivative_parse([x, 2, 2])                                               # needs sage.symbolic
+        sage: derivative_parse([x, 2, 2])
         [x, x, None, None]
 
     Special case with empty input list::
@@ -118,7 +119,7 @@ def derivative_parse(args):
 
     Special case with single list argument provided::
 
-        sage: derivative_parse(([x, y], ))                                              # needs sage.symbolic
+        sage: derivative_parse(([x, y], ))
         [x, y]
 
     If only the count is supplied::
@@ -134,7 +135,6 @@ def derivative_parse(args):
 
     Various other cases::
 
-        sage: # needs sage.symbolic
         sage: derivative_parse([x])
         [x]
         sage: derivative_parse([x, x])

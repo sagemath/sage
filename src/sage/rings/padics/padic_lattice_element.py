@@ -327,7 +327,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         .. SEEALSO::
 
-            :class:`sage.rings.padics.lattice_precision.PrecisionLattice`
+            :class:`~sage.rings.padics.lattice_precision.PrecisionLattice`
         """
         return self._precision
 

@@ -344,6 +344,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                                       Parent):
     r"""
     The group of length zero elements in the extended affine Weyl group.
+
+    .. automethod:: __iter__
     """
     Element = FundamentalGroupElement
 
@@ -482,7 +484,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         r"""
         Return the special nodes of ``self``.
 
-        See :meth:`sage.combinat.root_system.cartan_type.special_nodes()`.
+        See
+        :meth:`sage.combinat.root_system.cartan_type.CartanType_affine.special_nodes`.
 
         EXAMPLES::
 
@@ -507,7 +510,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         .. WARNING::
 
             This returns the entire group, a necessary behavior because it
-            is used in :meth:`__iter__`.
+            is used in
+            :meth:`~sage.combinat.root_system.fundamental_group.FundamentalGroupOfExtendedAffineWeylGroup_Class.__iter__`.
 
         EXAMPLES::
 

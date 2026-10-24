@@ -866,8 +866,7 @@ cdef class ntl_ZZX():
         """
         if not (hi is None):
             return make_ZZX(ZZX_reverse_hi(&self.x, int(hi)))
-        else:
-            return make_ZZX(ZZX_reverse(&self.x))
+        return make_ZZX(ZZX_reverse(&self.x))
 
     def truncate(self, long m):
         """

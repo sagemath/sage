@@ -39,11 +39,6 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
 
-try:
-    from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
-except ImportError:
-    BooleanPolynomial = ()
-
 # for details about the implementation of hamming_weight (in .pxd),
 # walsh_hadamard transform, reed_muller transform, and a lot
 # more, see 'Matters computational' available on www.jjj.de.
@@ -189,7 +184,7 @@ cdef class BooleanFunction(SageObject):
         sage: BooleanFunction("111e")
         Boolean function with 4 variables
 
-    from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
+    from a :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`::
 
         sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs brial
         sage: P = x*y                                                                   # needs brial
@@ -258,7 +253,7 @@ cdef class BooleanFunction(SageObject):
             sage: [b for b in B]                                                        # needs sage.symbolic
             [False, True]
 
-        from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
+        from a :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`::
 
             sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs brial
             sage: P = x*y                                                               # needs brial
@@ -283,6 +278,12 @@ cdef class BooleanFunction(SageObject):
             ...
             ValueError: the length of the truth table must be a power of 2
         """
+        from sage.features.brial import Brial
+        if Brial().is_present():
+            from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
+        else:
+            BooleanPolynomial = ()
+
         cdef mp_bitcnt_t i
         if isinstance(x, str):
             L = ZZ(len(x))
@@ -489,7 +490,7 @@ cdef class BooleanFunction(SageObject):
 
     def algebraic_normal_form(self):
         """
-        Return the :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        Return the :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
         corresponding to the algebraic normal form.
 
         EXAMPLES::
@@ -506,8 +507,8 @@ cdef class BooleanFunction(SageObject):
         bitset_init(anf, <mp_bitcnt_t> (1<<self._nvariables))
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables, "x")
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         P = R(0)
 
@@ -851,12 +852,22 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.correlation_immunity()
             2
+
+        TESTS:
+
+        Check if :issue:`28001` is fixed::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = [False, False, True, False, False, True, False, False]
+            sage: f = BooleanFunction(f)
+            sage: f.correlation_immunity()
+            1
         """
         cdef long c, i
         if self._correlation_immunity is None:
             c = self._nvariables
             W = self.walsh_hadamard_transform()
-            for i in range(len(W)):
+            for i in range(1, len(W)):
                 sig_check()
                 if W[i]:
                     c = min(c, hamming_weight(i))
@@ -1082,8 +1093,7 @@ cdef class BooleanFunction(SageObject):
                 if A is not None:
                     if annihilator:
                         return i, A
-                    else:
-                        return i
+                    return i
         assert False, "you just found a bug!"
 
     def algebraic_degree(self):

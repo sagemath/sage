@@ -153,8 +153,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             try:
                 if self_on_left:
                     return self.matrix() * x
-                else:
-                    return x * self.matrix()
+                return x * self.matrix()
             except TypeError:
                 return None
 

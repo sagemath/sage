@@ -7,6 +7,8 @@
 r"""
 Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT
 
+This implementation uses internal coefficient access through ``get_unsafe()``.
+
 This module gives a fast implementation of `(\ZZ/n\ZZ)[x]` whenever `n` is at
 most ``sys.maxsize``. We use it by default in preference to NTL when the modulus
 is small, falling back to NTL if the modulus is too large, as in the example
@@ -166,7 +168,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         r._parent = P
         r._cparent = get_cparent(P)
         nmod_poly_init(&r.x, nmod_poly_modulus(&self.x))
-        celement_set_si(&r.x, int(x), (<Polynomial_template>self)._cparent)
+        celement_set_ui(&r.x, int(x), (<Polynomial_template>self)._cparent)
         return r
 
     cdef int _set_list(self, x) except -1:

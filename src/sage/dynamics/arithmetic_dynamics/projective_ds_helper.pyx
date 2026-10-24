@@ -149,8 +149,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     if not return_points:
         return sorted(periods)
-    else:
-        return points_periods
+    return points_periods
 
 
 def _enum_points(int prime, int dimension):
@@ -237,8 +236,7 @@ cdef inline int _mod_inv(int num, int prime) noexcept:
 
     if y < 0:
         return y + prime
-    else:
-        return y
+    return y
 
 cpdef _normalize_coordinates(list point, int prime, int len_points):
     """

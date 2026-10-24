@@ -57,14 +57,12 @@ from .place import FunctionFieldPlace
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from typing import Self, TypeAlias
+    from typing import Self
 
     from sage.rings.integer import Integer
 
     from .function_field import FunctionField
-    from .ideal import FunctionFieldIdeal
-    from .ideal import FunctionFieldIdealInfinite as InfiniteIdeal
-    FiniteIdeal: TypeAlias = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
+    from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -76,8 +74,8 @@ class JacobianPoint(JacobianPoint_base):
     of this class are hashable.
     """
 
-    def __init__(self, parent: JacobianGroup, finite_ideal: FiniteIdeal,
-                 infinite_ideal: InfiniteIdeal) -> None:
+    def __init__(self, parent: JacobianGroup, finite_ideal: FunctionFieldIdeal,
+                 infinite_ideal: FunctionFieldIdealInfinite) -> None:
         super().__init__(parent)
         # self._r is determined by the two ideals, but it is computed during
         # reduction and is useful in a few utility methods so we store it.
@@ -231,7 +229,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         else:
             self._multiply_pair_by_A = lambda I, J, A: (I * A, J)
 
-    def _reduce(self, I: FiniteIdeal, J: InfiniteIdeal) -> tuple[FiniteIdeal, InfiniteIdeal, int]:
+    def _reduce(
+        self, I: FunctionFieldIdeal, J: FunctionFieldIdealInfinite
+    ) -> tuple[FunctionFieldIdeal, FunctionFieldIdealInfinite, int]:
         r"""
         We use Algorithm 4.1 from [Mac2025]_ to find a unique reduced
         representative of the divisor class. This algorithm is optimized
@@ -371,7 +371,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         return matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
     @cached_method(key=lambda self, J1, J2: frozenset((J1, J2)))
-    def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):  # noqa: PLR6301 - this is a method so the cache is deleted when the Jacobian instance is
+    def _cached_ideal_mult(self, J1: FunctionFieldIdealInfinite, J2: FunctionFieldIdealInfinite):  # noqa: PLR6301 - this is a method so the cache is deleted when the Jacobian instance is
         r"""
         Cached wrapper around multiplication of infinite ideals.
         Because ideal multiplication is commutative, we use a frozenset as the

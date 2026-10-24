@@ -861,8 +861,9 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
         form
         (:meth:`~sage.algebras.clifford_algebra.ExteriorAlgebra.volume_form`)
         and `i_{\alpha}` denotes the antiderivation function with
-        respect to `\alpha` (see :meth:`interior_product` for the
-        definition of this).
+        respect to `\alpha` (see
+        :meth:`~sage.algebras.clifford_algebra_element.ExteriorAlgebraElement.interior_product`
+        for the definition of this).
 
         .. NOTE::
 
@@ -922,7 +923,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
         defined by `\langle x, y \rangle = \langle x^t y \rangle`, where
         `\langle a \rangle` denotes the degree-0 term of `a`, and where
         `x^t` denotes the transpose
-        (:meth:`~sage.algebras.clifford_algebra.CliffordAlgebraElement.transpose`)
+        (:meth:`~sage.algebras.clifford_algebra_element.CliffordAlgebraElement.transpose`)
         of `x`.
 
         .. TODO::
