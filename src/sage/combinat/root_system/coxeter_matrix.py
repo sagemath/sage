@@ -621,6 +621,18 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
             sage: M = loads(dumps(C))
             sage: M._index_set
             (1, 2, 3, 4)
+            sage: C = CoxeterMatrix([[1,-2],[-2,1]])
+            sage: loads(dumps(C)) == C
+            True
+            sage: loads(dumps(C)).coxeter_type()
+            [ 1 -2]
+            [-2  1]
+            sage: C = CoxeterMatrix([[1,-4/3],[-4/3,1]])
+            sage: loads(dumps(C)) == C
+            True
+            sage: loads(dumps(C)).coxeter_type()
+            [   1 -4/3]
+            [-4/3    1]
         """
         if self._coxeter_type:
             return (CoxeterMatrix, (self._coxeter_type,))
@@ -1130,8 +1142,15 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
                 ct = CoxeterType(['G', 2])
             elif e > 0 and e < float('inf'):  # Remaining non-affine types
                 ct = CoxeterType(['I', e])
-            else:  # Otherwise it is infinite dihedral group Z_2 \ast Z_2
+            elif e == -1:  # the standard infinite dihedral group Z_2 \ast Z_2
                 ct = CoxeterType(['A', 1, 1])
+            else:
+                # A generalized bond (an edge label ``<= -2`` or a
+                # non-integer negative label) does not correspond to a
+                # standard finite or affine Coxeter type, so the type is
+                # left undetermined (e.g. so that pickling preserves the
+                # actual matrix instead of collapsing the bond to ``-1``).
+                return None
             SV = S.vertices(sort=True)
             if not ct.is_affine():
                 types.append(ct.relabel({1: SV[0],
