@@ -1015,7 +1015,7 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
     return start, end + 1
 
 
-def parse_ellipsis(code, preparse_step=True):
+def parse_ellipsis(code, preparse_step=True, strict=True):
     """
     Preparses [0,2,..,n] notation.
 
@@ -1024,6 +1024,10 @@ def parse_ellipsis(code, preparse_step=True):
     - ``code`` -- string
 
     - ``preparse_step`` -- boolean (default: ``True``)
+
+    - ``strict`` -- boolean (default: ``True``); if ``False``, an ellipsis
+      that cannot be preparsed is left unchanged instead of raising a
+      :exc:`SyntaxError`, and the remaining ones are still preparsed
 
     OUTPUT: string
 
@@ -1043,40 +1047,80 @@ def parse_ellipsis(code, preparse_step=True):
 
         sage: preparse('[1,..,2,..,len([1..3])]')
         '(ellipsis_range(Integer(1),Ellipsis,Integer(2),Ellipsis,len((ellipsis_range(Integer(1),Ellipsis,Integer(3))))))'
+
+    With ``strict=False``, an ellipsis that cannot be preparsed is left
+    alone and the other ones are still preparsed (:issue:`38949`)::
+
+        sage: parse_ellipsis("[0..2] + 0..2")
+        Traceback (most recent call last):
+        ...
+        SyntaxError: unbalanced or missing delimiters
+        sage: parse_ellipsis("[0..2] + 0..2", strict=False)
+        '(ellipsis_range(0,Ellipsis,2)) + 0..2'
+        sage: parse_ellipsis("..2 + [0..2]", strict=False)
+        '..2 + (ellipsis_range(0,Ellipsis,2))'
     """
+    # every '..' before index ``skip`` could not be preparsed and is left as is
+    skip = 0
     ix = code.find('..')
     while ix != -1:
-        if ix == 0:
-            raise SyntaxError("cannot start line with ellipsis")
-        elif code[ix - 1] == '.':
-            # '...' be valid Python in index slices
-            code = code[:ix - 1] + "Ellipsis" + code[ix + 2:]
-        elif len(code) >= ix + 3 and code[ix + 2] == '.':
-            # '...' be valid Python in index slices
-            code = code[:ix] + "Ellipsis" + code[ix + 3:]
-        else:
-            start_list, end_list = containing_block(code, ix, ['()', '[]'])
-
-            # search the current containing block for other '..' occurrences that may
-            # be contained in proper subblocks. Those need to be processed before
-            # we can deal with the present level of ellipses.
-            ix = code.find('..', ix + 2, end_list)
-            while ix != -1:
-                if code[ix - 1] != '.' and code[ix + 2] != '.':
-                    start_list, end_list = containing_block(code, ix, ['()', '[]'])
-                ix = code.find('..', ix + 2, end_list)
-
-            arguments = code[start_list + 1:end_list - 1].replace('...', ',Ellipsis,').replace('..', ',Ellipsis,')
-            arguments = re.sub(r',\s*,', ',', arguments)
-            if preparse_step:
-                arguments = arguments.replace(';', ', step=')
-            range_or_iter = 'range' if code[start_list] == '[' else 'iter'
-            code = "%s(ellipsis_%s(%s))%s" % (code[:start_list],
-                                              range_or_iter,
-                                              arguments,
-                                              code[end_list:])
-        ix = code.find('..')
+        try:
+            code = _parse_one_ellipsis(code, ix, preparse_step)
+        except SyntaxError:
+            if strict:
+                raise
+            skip = ix + 2
+        ix = code.find('..', skip)
     return code
+
+
+def _parse_one_ellipsis(code, ix, preparse_step):
+    """
+    Preparse the ellipsis at index ``ix`` of ``code``, together with any
+    ellipses nested inside the same block.
+
+    This is a helper for :func:`parse_ellipsis`. It raises a
+    :exc:`SyntaxError` if this ellipsis cannot be preparsed.
+
+    TESTS::
+
+        sage: from sage.repl.preparse import _parse_one_ellipsis
+        sage: _parse_one_ellipsis("[1..3]", 2, True)
+        '(ellipsis_range(1,Ellipsis,3))'
+        sage: _parse_one_ellipsis("..3", 0, True)
+        Traceback (most recent call last):
+        ...
+        SyntaxError: cannot start line with ellipsis
+    """
+    if ix == 0:
+        raise SyntaxError("cannot start line with ellipsis")
+    elif code[ix - 1] == '.':
+        # '...' be valid Python in index slices
+        return code[:ix - 1] + "Ellipsis" + code[ix + 2:]
+    elif len(code) >= ix + 3 and code[ix + 2] == '.':
+        # '...' be valid Python in index slices
+        return code[:ix] + "Ellipsis" + code[ix + 3:]
+
+    start_list, end_list = containing_block(code, ix, ['()', '[]'])
+
+    # search the current containing block for other '..' occurrences that may
+    # be contained in proper subblocks. Those need to be processed before
+    # we can deal with the present level of ellipses.
+    ix = code.find('..', ix + 2, end_list)
+    while ix != -1:
+        if code[ix - 1] != '.' and code[ix + 2] != '.':
+            start_list, end_list = containing_block(code, ix, ['()', '[]'])
+        ix = code.find('..', ix + 2, end_list)
+
+    arguments = code[start_list + 1:end_list - 1].replace('...', ',Ellipsis,').replace('..', ',Ellipsis,')
+    arguments = re.sub(r',\s*,', ',', arguments)
+    if preparse_step:
+        arguments = arguments.replace(';', ', step=')
+    range_or_iter = 'range' if code[start_list] == '[' else 'iter'
+    return "%s(ellipsis_%s(%s))%s" % (code[:start_list],
+                                      range_or_iter,
+                                      arguments,
+                                      code[end_list:])
 
 
 def extract_numeric_literals(code):
@@ -1777,6 +1821,21 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         # some comment
         __tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)
 
+    Check that an ellipsis which cannot be preparsed does not stop the
+    other ones from being preparsed, so that the syntax error is reported
+    on the right line (:issue:`38949`)::
+
+        sage: code = "for a in [0..2]:\n    for b in 0..2:\n        pass"
+        sage: print(preparse(code))
+        for a in (ellipsis_range(Integer(0),Ellipsis,Integer(2))):
+            for b in Integer(0)..Integer(2):
+                pass
+        sage: try:
+        ....:     compile(preparse(code), '<string>', 'exec')
+        ....: except SyntaxError as e:
+        ....:     print(e.lineno)
+        2
+
     TESTS::
 
         sage: from sage.repl.preparse import preparse
@@ -1808,10 +1867,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     # Ellipsis Range
     # [1..n]
-    try:
-        L = parse_ellipsis(L, preparse_step=False)
-    except SyntaxError:
-        pass
+    L = parse_ellipsis(L, preparse_step=False, strict=False)
 
     if implicit_mul_level:
         # Implicit Multiplication
