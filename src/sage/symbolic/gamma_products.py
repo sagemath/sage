@@ -1827,6 +1827,12 @@ def hypergeometric_sum(f, var, a, b):
 
     - ``b`` -- the upper bound, ``oo`` or ``-oo``
 
+    As in Sage's symbolic sums, the summation variable runs over ``a``,
+    ``a + 1``, ``a + 2``, ..., also for non-integral lower bounds.  Since
+    a hypergeometric term is a product of gamma functions, it is defined
+    for non-integral arguments, unless one of the gamma functions has a
+    pole there.
+
     OUTPUT: the sum `\sum_{k=a}^{b} f(k)`, a constant times
     ``hypergeometric(A, B, z)``.  Identical parameters in ``A`` and ``B``
     are eliminated, in particular the parameter `1` accounting for the
@@ -1876,6 +1882,14 @@ def hypergeometric_sum(f, var, a, b):
 
             sage: hypergeometric_sum(gamma(k + a)/(gamma(a)*factorial(k))*x^k, k, 0, oo)
             hypergeometric((a,), (), x)
+
+        Non-integral lower bounds make the summation variable run over
+        ``a + Z``, exactly as in Sage's symbolic sums::
+
+            sage: hypergeometric_sum(x^k, k, 1/2, oo).simplify_hypergeometric()
+            -sqrt(x)/(x - 1)
+            sage: sum(x^k, k, 1/2, 5/2)
+            (x^2 + x + 1)*sqrt(x)
 
         Symbolic parameters may also occur in the denominator::
 
