@@ -183,6 +183,48 @@ def _generator_name(v, *exprs):
     return v, *exprs
 
 
+def _rational_atom(ex, n):
+    r"""
+    Return ``(c, a, b)`` if ``ex == c^(a*n + b)`` with positive rational
+    ``c`` and rational ``a`` and ``b``, else ``None``.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    - ``n`` -- the variable
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _rational_atom
+        sage: k = var('k')
+        sage: _rational_atom(4^(k + 1), k)
+        (4, 1, 1)
+        sage: _rational_atom((1/2)^k, k)
+        (1/2, 1, 0)
+        sage: _rational_atom((-4)^k, k) is None
+        True
+        sage: _rational_atom(2^(k^2), k) is None
+        True
+        sage: _rational_atom(k^2, k) is None
+        True
+    """
+    op = ex.operator()
+    if op != operator.pow:
+        return None
+    base, exp = ex.operands()
+    try:
+        c = QQ(base)
+    except TypeError:
+        return None
+    if c <= 0:
+        return None
+    lin = _linear_coeff(exp, n)
+    if lin is None:
+        return None
+    return c, lin[0], lin[1]
+
+
 def _strip_exponentials(E, n):
     r"""
     Replace each atom ``c^(a*n+b)`` with positive rational base by `1`.
@@ -195,6 +237,10 @@ def _strip_exponentials(E, n):
 
     OUTPUT: a pair ``(expression, counter)`` where ``counter`` records the
     constant contribution of the stripped atoms as prime exponents.
+
+    Only atoms which are factors of ``E`` are stripped: atoms occurring in a
+    non-multiplicative context, for example under an addition, are kept, so
+    that the conversion of ``E`` to a rational function fails, as it should.
 
     The stripped atoms are independent of the variable if and only if the
     total ``n``-slope vanishes for every prime occurring in the bases, in
@@ -211,6 +257,13 @@ def _strip_exponentials(E, n):
         (k + 1, Counter({2: 3}))
         sage: _strip_exponentials((k + 1)*4^k*(1/4)^(k + 1), k)
         (k + 1, Counter({2: -2}))
+        sage: _strip_exponentials(sqrt(4^(k + 1))/(k + 1)/sqrt(4^k), k)
+        (1/(k + 1), Counter({2: 1}))
+
+        Atoms which are not factors of the expression are kept::
+
+            sage: _strip_exponentials(2^k + 1, k)
+            (2^k + 1, Counter())
 
         The slopes of the bases must cancel prime by prime::
 
@@ -250,6 +303,20 @@ def _strip_exponentials(E, n):
                         slopes[p] += kp * a * mult
                         const[p] += kp * b * mult
                     return SR(1)
+            # a power of an atom with rational exponent is again an atom
+            if c is None:
+                atom = _rational_atom(base, n)
+                if atom is not None:
+                    try:
+                        r = QQ(exp)
+                    except TypeError:
+                        r = None
+                    if r is not None and r != 0:
+                        c0, a, b = atom
+                        for p, kp in factor(c0):
+                            slopes[p] += kp * a * r * mult
+                            const[p] += kp * b * r * mult
+                        return SR(1)
             # integer exponent: descend, tracking the multiplicity
             try:
                 k = QQ(args[1])
@@ -257,7 +324,11 @@ def _strip_exponentials(E, n):
                     return walk(args[0], mult * ZZ(k)) ** args[1]
             except TypeError:
                 pass
-        return op(*[walk(a, mult) for a in args])
+        if op in (mul_vararg, operator.mul):
+            return op(*[walk(a, mult) for a in args])
+        # atoms in a non-multiplicative context cannot be factored out, so
+        # they are kept and the conversion to a rational function must fail
+        return ex
 
     new = walk(E, 1)
     if any(slopes.values()):
@@ -291,7 +362,33 @@ def _factor_ratio(R, n, constp=None):
         sage: k = var('k')
         sage: _factor_ratio((k + 1)*(k + 2)/k, k)
         (1, [(1, 1, 1), (1, 2, 1), (1, 0, -1)])
+        sage: _factor_ratio(3/2, k)
+        (3/2, [])
+        sage: _factor_ratio(sqrt(2), k)
+        Traceback (most recent call last):
+        ...
+        ValueError: expression is not hypergeometric (irrational ratio unit sqrt(2))
     """
+    R = SR(R)
+    # a constant ratio contributes only to the unit; the conversion of a
+    # constant to a fraction field is not supported
+    if not R.has(n):
+        unitp = Counter(constp)
+        try:
+            c = QQ(R)
+        except (TypeError, ValueError):
+            raise ValueError("expression is not hypergeometric "
+                             "(irrational ratio unit %s)" % R) from None
+        if not c:
+            raise ValueError("expression is not hypergeometric (vanishing ratio)")
+        F = factor(c)
+        for p, kp in F:
+            unitp[p] += kp
+        for v in unitp.values():
+            if v not in ZZ:
+                raise ValueError("expression is not hypergeometric "
+                                 "(irrational ratio unit)")
+        return F.unit() * prod(p ** v for p, v in unitp.items() if v), []
     P = PolynomialRing(QQ, n)
     # any failure of the conversion means that the ratio is not a rational
     # function of the variable
@@ -355,7 +452,12 @@ def _linear_factors(E, n):
     """
     # to_gamma also converts Pochhammer symbols
     Eg = E.to_gamma()
-    R = (Eg.subs({n: n + 1}) / Eg).gamma_normalize()
+    try:
+        R = (Eg.subs({n: n + 1}) / Eg).gamma_normalize()
+    except ZeroDivisionError as exc:
+        # the term is zero or has a pole, so that the ratio cannot be formed
+        raise ValueError("the term is zero or undefined at var=0 or var=1"
+                         ) from exc
     # any gamma or factorial atoms surviving the normalization are caught by
     # the conversion of the ratio to a rational function in _factor_ratio
     R, constp = _strip_exponentials(R, n)
@@ -515,6 +617,15 @@ class _GammaSolver:
             Traceback (most recent call last):
             ...
             ValueError: gamma argument reaches a pole at -2 (term undefined at some n >= 0)
+
+        Constant classes whose members telescope across a pole are
+        rejected, since the term vanishes from some point on::
+
+            sage: s = _GammaSolver(k); s.feed([(1, -1, 1), (1, 11, -1)])
+            sage: s.normalize()
+            Traceback (most recent call last):
+            ...
+            ValueError: gamma argument reaches a pole at 0 (term undefined at some n >= 0)
         """
         # split the entries into the residue classes of their shifts modulo
         # the integers
@@ -543,7 +654,10 @@ class _GammaSolver:
                 for j, ej in exps.items():
                     if not ej:
                         continue
-                    if ej < 0 and not x0 + j:
+                    if not x0 + j:
+                        # the telescoping of the constant gamma ratio
+                        # crosses a pole: the term vanishes from some
+                        # point on, or has a pole
                         raise ValueError("gamma argument reaches a "
                                          "pole at %s (term undefined "
                                          "at some n >= 0)" % (x0 + j))
@@ -796,6 +910,22 @@ def simplify_gamma(expression, var):
         sage: simplify_gamma(factorial(n)*gamma(n + 1/2)/sqrt(pi), n)
         (1/4)^n*factorial(2*n)
 
+    Purely exponential terms are accepted, in particular those whose ratio
+    is constant::
+
+        sage: simplify_gamma(2^n, n)
+        2^n
+        sage: simplify_gamma((2/3)^n, n)
+        (2/3)^n
+
+    Exponential atoms which are not factors of the term are kept, so that
+    the conversion of the ratio to a rational function fails::
+
+        sage: simplify_gamma(2^n + 1, n)
+        Traceback (most recent call last):
+        ...
+        ValueError: expression is not hypergeometric (ratio (2*2^n + 1)/(2^n + 1))
+
     A lone gamma with fractional shift cannot be reduced::
 
         sage: simplify_gamma(gamma(n + 2/3)/gamma(2/3), n)
@@ -839,6 +969,14 @@ def simplify_gamma(expression, var):
         Traceback (most recent call last):
         ...
         ValueError: the term vanishes at the anchor var=0...
+        sage: simplify_gamma(gamma(n - 1)/gamma(-1), n)
+        Traceback (most recent call last):
+        ...
+        ValueError: the term is zero or undefined at var=0 or var=1
+        sage: simplify_gamma(rising_factorial(-1, n), n)
+        Traceback (most recent call last):
+        ...
+        ValueError: the term is zero or undefined at var=0 or var=1
     """
     n = SR(var) if not isinstance(var, str) else SR.var(var)
     if not (isinstance(n, Expression) and n.is_symbol()):
@@ -938,6 +1076,22 @@ def factorial_product(f, var, a, b):
         ...
         ValueError: k + x is not a rational function of k with rational coefficients
 
+        Products which vanish from some point on, or have a pole in the
+        range, are rejected::
+
+            sage: factorial_product((k - 7)/(k + 5), k, 2, n + 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the product vanishes from some point on: the body has a zero at 7
+            sage: factorial_product((k - 4)/(k - 3), k, 0, n + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the product is undefined from some point on: the body has a pole at 3
+            sage: factorial_product(1/(k - 3), k, 0, n + 3)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot evaluate the product at the anchor: the product has a pole or an irrational factor
+
         Converted FriCAS expressions may have variables with names like
         ``_B``, which are not valid polynomial ring generator names::
 
@@ -966,7 +1120,7 @@ def factorial_product(f, var, a, b):
     # rejection
     Pv = PolynomialRing(QQ, w)
     try:
-        Pv.fraction_field()(f)
+        fr = Pv.fraction_field()(f)
     except Exception as exc:
         raise ValueError("%s is not a rational function of %s with rational "
                          "coefficients" % (f, v)) from exc
@@ -1015,6 +1169,24 @@ def factorial_product(f, var, a, b):
     except (TypeError, ValueError):
         raise ValueError("the lower bound %s is not rational" % a)
 
+    # reject bodies with zeros or poles in the shifting part of the
+    # range, which grows without bound: the product vanishes or is
+    # undefined from some point on and has no normal form.  the anchor
+    # part of the range is checked by direct evaluation below.  the
+    # product variable runs over the lattice a + ZZ, so only roots in
+    # that lattice can be hit
+    for root, _ in fr.denominator().roots():
+        if (root - aq) in ZZ and root > aq + r0 - 1:
+            raise ValueError("the product is undefined from some point on: "
+                             "the body has a pole at %s" % root)
+    num = fr.numerator()
+    if num.is_zero():
+        raise ValueError("the product vanishes")
+    for root, _ in num.roots():
+        if (root - aq) in ZZ and root > aq + r0 - 1:
+            raise ValueError("the product vanishes from some point on: "
+                             "the body has a zero at %s" % root)
+
     # the term ratio is the product of the last q factors,
     # E(n+1)/E(n) = prod_{j=0}^{q-1} f(a + m(n) + j)
     R = prod(f.subs({w: aq + q*n + r0 + j}) for j in range(q))
@@ -1027,8 +1199,9 @@ def factorial_product(f, var, a, b):
     # anchor: E(0) is the product of the first r0 factors
     try:
         E0 = prod(QQ(f.subs({w: aq + p})) for p in range(r0))
-    except TypeError as ex:
-        raise ValueError("cannot evaluate the product at the anchor: %s" % ex)
+    except (TypeError, ValueError) as ex:
+        raise ValueError("cannot evaluate the product at the anchor: "
+                         "the product has a pole or an irrational factor")
     if not E0:
         raise ValueError("the product vanishes at the anchor")
     solver.unit *= E0
