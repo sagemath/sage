@@ -14,7 +14,7 @@ import pytest
 from sage.crypto.public_key.key_encapsulation_mechanisms.ml_kem import MLKEM
 
 
-@pytest.mark.parametrize("params", [512, 768, 1024])
+@pytest.mark.parametrize("params", ["512", "768", "1024"])
 def test_consistency(params):
     """Test that encapsulation and decapsulation produce matching shared secrets."""
     kem = MLKEM.from_parameter_set(params)
@@ -41,19 +41,19 @@ _ML_KEM_KAT_M = bytes.fromhex(
 )
 
 _ML_KEM_KAT_SS = {
-    512: bytes.fromhex(
+    "512": bytes.fromhex(
         "b4c8e3c4115f9511f2fddb288c4b78c5cd7c89d2d4d321f46b4edc54ddf0eb36"
     ),
-    768: bytes.fromhex(
+    "768": bytes.fromhex(
         "ac865f839fef1bf3d528dd7504bed2f64b5502b0fa81d1c32763658e4aac5037"
     ),
-    1024: bytes.fromhex(
+    "1024": bytes.fromhex(
         "ea636ce31b73f40229572146b97e590f1605fdadd1c3781861530effcf2b1e18"
     ),
 }
 
 
-@pytest.mark.parametrize("params", [512, 768, 1024])
+@pytest.mark.parametrize("params", ["512", "768", "1024"])
 def test_kat(params):
     """Known-answer test for the first record of each NIST KAT file."""
     kem = MLKEM.from_parameter_set(params)

@@ -57,7 +57,7 @@ class MLKEM(KEMBase):
 
         sage: import warnings; warnings.simplefilter('ignore')
         sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
-        sage: kem = MLKEM.from_parameter_set(512)
+        sage: kem = MLKEM.from_parameter_set("512")
         sage: pk, sk = kem.keygen()
         sage: ct, ss1 = kem.encaps(pk)
         sage: ss2 = kem.decaps(sk, ct)
@@ -69,16 +69,19 @@ class MLKEM(KEMBase):
     illustrate the algorithm::
 
         sage: import warnings; warnings.simplefilter('ignore')
-        sage: kem = MLKEM(n=16, q=3329, k=2, eta1=2, eta2=2, du=4, dv=4)
+        sage: kem = MLKEM.from_parameter_set("toy")
         sage: pk, sk = kem.keygen()
-        sage: len(pk[1])
-        2
+        sage: ct, ss1 = kem.encaps(pk)
+        sage: ss2 = kem.decaps(sk, ct)
+        sage: ss1 == ss2
+        True
     """
 
     PARAMETER_SETS = {
-        512:  {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2, 'du': 10, 'dv': 4},
-        768:  {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2, 'du': 10, 'dv': 4},
-        1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2, 'du': 11, 'dv': 5},
+        "512":  {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2, 'du': 10, 'dv': 4},
+        "768":  {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2, 'du': 10, 'dv': 4},
+        "1024": {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2, 'du': 11, 'dv': 5},
+        "toy":  {'n': 16, 'q': 3329, 'k': 2, 'eta1': 2, 'eta2': 2, 'du': 4, 'dv': 4},
     }
 
     # ------------------------------------------------------------------
@@ -92,19 +95,22 @@ class MLKEM(KEMBase):
 
         INPUT:
 
-        - ``parameter_set`` -- integer; one of ``512``, ``768``, or ``1024``
+        - ``parameter_set`` -- string; one of ``"512"``, ``"768"``,
+          ``"1024"``, or ``"toy"``
 
         EXAMPLES::
 
             sage: import warnings; warnings.simplefilter('ignore')
             sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
-            sage: kem = MLKEM.from_parameter_set(768)
+            sage: kem = MLKEM.from_parameter_set("768")
             sage: kem.k
             3
+            sage: MLKEM.from_parameter_set("toy").n
+            16
         """
         if parameter_set not in cls.PARAMETER_SETS:
             raise ValueError(
-                f"parameter_set must be one of {sorted(cls.PARAMETER_SETS)}, "
+                f"parameter_set must be one of {list(cls.PARAMETER_SETS)}, "
                 f"got {parameter_set!r}"
             )
         return cls(**cls.PARAMETER_SETS[parameter_set])
@@ -144,10 +150,12 @@ class MLKEM(KEMBase):
         Toy parameters are also accepted::
 
             sage: import warnings; warnings.simplefilter('ignore')
-            sage: kem = MLKEM(n=8, q=3329, k=2, eta1=2, eta2=2, du=4, dv=4)
+            sage: kem = MLKEM(n=32, q=3329, k=2, eta1=2, eta2=2, du=4, dv=4)
             sage: pk, sk = kem.keygen()
-            sage: len(pk[1])
-            2
+            sage: ct, ss1 = kem.encaps(pk)
+            sage: ss2 = kem.decaps(sk, ct)
+            sage: ss1 == ss2
+            True
 
         Invalid parameters are rejected::
 
@@ -600,7 +608,7 @@ class MLKEM(KEMBase):
 
             sage: import warnings; warnings.simplefilter('ignore')
             sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
-            sage: kem = MLKEM.from_parameter_set(512)
+            sage: kem = MLKEM.from_parameter_set("512")
             sage: pk, sk = kem.keygen()
             sage: rho, t = pk
             sage: len(rho)
@@ -639,7 +647,7 @@ class MLKEM(KEMBase):
 
             sage: import warnings; warnings.simplefilter('ignore')
             sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
-            sage: kem = MLKEM.from_parameter_set(512)
+            sage: kem = MLKEM.from_parameter_set("512")
             sage: pk, sk = kem.keygen()
             sage: ct, ss = kem.encaps(pk)
             sage: len(ss)
@@ -676,7 +684,7 @@ class MLKEM(KEMBase):
 
             sage: import warnings; warnings.simplefilter('ignore')
             sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
-            sage: kem = MLKEM.from_parameter_set(512)
+            sage: kem = MLKEM.from_parameter_set("512")
             sage: pk, sk = kem.keygen()
             sage: ct, ss1 = kem.encaps(pk)
             sage: ss2 = kem.decaps(sk, ct)
