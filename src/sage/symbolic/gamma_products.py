@@ -298,28 +298,24 @@ def _strip_exponentials(E, n):
                     integral = False
                 if not integral:
                     raise ValueError("negative base with non-integer exponent: %s" % ex)
-            if c is not None and c > 0:
-                lin = _linear_coeff(exp, n)
-                if lin is not None:
-                    a, b = lin
-                    for p, kp in factor(c):
-                        slopes[p] += kp * a * mult
-                        const[p] += kp * b * mult
-                    return SR(1)
-            # a power of an atom with rational exponent is again an atom
-            if c is None:
-                atom = _rational_atom(base, n)
-                if atom is not None:
-                    try:
-                        r = QQ(exp)
-                    except TypeError:
-                        r = None
-                    if r is not None and r != 0:
-                        c0, a, b = atom
-                        for p, kp in factor(c0):
-                            slopes[p] += kp * a * r * mult
-                            const[p] += kp * b * r * mult
-                        return SR(1)
+            # an atom, or a rational power of an atom, is again an atom
+            atom = _rational_atom(ex, n)
+            if atom is None:
+                try:
+                    r = QQ(exp)
+                except TypeError:
+                    r = None
+                if r is not None and r != 0:
+                    inner = _rational_atom(base, n)
+                    if inner is not None:
+                        c0, a, b = inner
+                        atom = (c0, a * r, b * r)
+            if atom is not None:
+                c0, a, b = atom
+                for p, kp in factor(c0):
+                    slopes[p] += kp * a * mult
+                    const[p] += kp * b * mult
+                return SR(1)
             # integer exponent: descend, tracking the multiplicity
             try:
                 k = QQ(args[1])
@@ -372,6 +368,15 @@ def _factor_ratio(R, n, constp=None):
         ...
         ValueError: expression is not hypergeometric (irrational ratio unit sqrt(2))
     """
+    def unit_from_primes(sign):
+        # assemble the unit from the prime exponents, rejecting irrational
+        # contributions such as sqrt(2)
+        for v in unitp.values():
+            if v not in ZZ:
+                raise ValueError("expression is not hypergeometric "
+                                 "(irrational ratio unit)")
+        return sign * prod(p ** v for p, v in unitp.items() if v)
+
     R = SR(R)
     # a constant ratio contributes only to the unit; the conversion of a
     # constant to a fraction field is not supported
@@ -387,11 +392,7 @@ def _factor_ratio(R, n, constp=None):
         F = factor(c)
         for p, kp in F:
             unitp[p] += kp
-        for v in unitp.values():
-            if v not in ZZ:
-                raise ValueError("expression is not hypergeometric "
-                                 "(irrational ratio unit)")
-        return F.unit() * prod(p ** v for p, v in unitp.items() if v), []
+        return unit_from_primes(F.unit()), []
     P = PolynomialRing(QQ, n)
     # any failure of the conversion means that the ratio is not a rational
     # function of the variable
@@ -418,11 +419,7 @@ def _factor_ratio(R, n, constp=None):
             if A < 0:
                 A, B = -A, -B
             factors.append((A, B, e * side))
-    for v in unitp.values():
-        if v not in ZZ:
-            raise ValueError("expression is not hypergeometric "
-                             "(irrational ratio unit)")
-    return sign * prod(p ** v for p, v in unitp.items() if v), factors
+    return unit_from_primes(sign), factors
 
 
 def _linear_factors(E, n):
@@ -703,7 +700,7 @@ class _GammaSolver:
                 state[(a, x0)] = tot
         self.state = state
 
-    def _circle_moves(self, q=None):
+    def _circle_moves(self):
         r"""
         Return all applicable Gauss circles of the current state.
 
@@ -715,11 +712,6 @@ class _GammaSolver:
 
         The circles are ordered by their smallest member, so that each is
         generated exactly once.
-
-        INPUT:
-
-        - ``q`` -- the common denominator of the shifts in the state,
-          computed if not given
 
         EXAMPLES::
 
@@ -733,8 +725,7 @@ class _GammaSolver:
         state = self.state
         if not state:
             return []
-        if q is None:
-            q = lcm(x.denominator() for _, x in state)
+        q = lcm(x.denominator() for _, x in state)
         # represent the shifts as integer multiples of 1/q, so that the
         # membership test in the circle enumeration is a set lookup
         ent = {}
@@ -784,47 +775,21 @@ class _GammaSolver:
                                    for e in range(sgn * mag, 0, -sgn))
         return out
 
-    def circles(self, key, q=None):
-        r"""
-        Return all Gauss circles through the state entry ``key``.
-
-        A circle is a tuple ``(m, b, e, consumed, introduced)``, meaning that
-        ``prod_{j=0}^{m-1} gamma(a*n + b + j/m)`` is replaced by
-        ``gamma(m*a*n + m*b)``, consuming the entries ``consumed`` with total
-        exponent ``e`` and introducing the factorials ``factorial(a*n + y - 1)``
-        for the integer members ``y``.
-
-        INPUT:
-
-        - ``key`` -- a key of ``self.state`` whose shifts are to be combined
-
-        - ``q`` -- the common denominator of the shifts in the state,
-          computed if not given
-
-        EXAMPLES::
-
-            sage: from sage.symbolic.gamma_products import _GammaSolver
-            sage: k = var('k')
-            sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
-            sage: s.circles((1, 1/3))
-            [(3, 1/3, 1, [(1, 1/3), (1, 2/3)], [1])]
-        """
-        return [mv for mv in self._circle_moves(q) if min(mv[3]) == key]
-
     def apply_circle(self, mv):
         r"""
         Apply the Gauss circle ``mv``, updating the corrections.
 
         INPUT:
 
-        - ``mv`` -- a circle, as returned by :meth:`circles`
+        - ``mv`` -- a circle, as returned by :meth:`_circle_moves`
 
         EXAMPLES::
 
             sage: from sage.symbolic.gamma_products import _GammaSolver
             sage: k = var('k')
             sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
-            sage: s.apply_circle(s.circles((1, 1/3))[0])
+            sage: mv = [mv for mv in s._circle_moves() if min(mv[3]) == (1, 1/3)][0]
+            sage: s.apply_circle(mv)
             sage: sorted(s.state.items()), sorted(s.fact.items()), s.d
             ([((0, 1/3), -1), ((0, 2/3), -1)], [((1, 0), -1), ((3, 0), 1)], 1/3)
         """
@@ -841,7 +806,7 @@ class _GammaSolver:
                 self.fact[(a, y - 1)] += -e
         mb = m * b
         if mb in ZZ:
-            self.fact[(m * a, mb.numerator() - 1)] += e
+            self.fact[(m * a, ZZ(mb) - 1)] += e
         else:
             self.state[(m * a, mb)] += e
         # corrections:  (2*pi)^((m-1)/2) * m^(1/2 - m*(a*n+b))
@@ -852,6 +817,41 @@ class _GammaSolver:
             self.primes[p] += k * (QQ((1, 2)) - m * b) * e
         if a:
             self.d *= m ** (-m * a * e)
+
+    def _snapshot(self):
+        r"""
+        Return a deep copy of the solver state, for later :meth:`_restore`.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.gamma_products import _GammaSolver
+            sage: k = var('k')
+            sage: s = _GammaSolver(k); s.feed([(3, 1, 1)])
+            sage: snap = s._snapshot()
+            sage: s.state[(1, 1/3)] += 1; s.d *= 2
+            sage: s._restore(snap)
+            sage: sorted(s.state.items()), s.d
+            ([((0, 1/3), -1), ((1, 1/3), 1)], 3)
+        """
+        return (Counter(self.state), Counter(self.fact), self.d, self.unit,
+                Counter(self.primes), self.pi_exp, list(self.polys))
+
+    def _restore(self, snap):
+        r"""
+        Restore a state returned by :meth:`_snapshot`.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.gamma_products import _GammaSolver
+            sage: k = var('k')
+            sage: s = _GammaSolver(k)
+            sage: s._restore(s._snapshot())
+            sage: sorted(s.state.items())
+            []
+        """
+        (self.state, self.fact, self.d, self.unit, self.primes,
+         self.pi_exp, polys) = snap
+        self.polys = polys
 
     def _search(self, budget):
         r"""
@@ -883,17 +883,12 @@ class _GammaSolver:
         key = tuple(sorted(self.state.items()))
         if key in self.memo:
             return False
-        q = lcm(x.denominator() for _, x in self.state)
-        for mv in self._circle_moves(q):
-            saved = (Counter(self.state), Counter(self.fact), self.d,
-                     self.unit, Counter(self.primes),
-                     self.pi_exp, len(self.polys))
+        for mv in self._circle_moves():
+            saved = self._snapshot()
             self.apply_circle(mv)
             if self._search(budget):
                 return True
-            (self.state, self.fact, self.d, self.unit, self.primes,
-             self.pi_exp, npolys) = saved
-            del self.polys[npolys:]
+            self._restore(saved)
         self.memo.add(key)
         return False
 
@@ -958,16 +953,17 @@ class _GammaSolver:
         self.normalize()
         if not self.state:
             return True
-        saved = (Counter(self.state), Counter(self.fact), self.d, self.unit,
-                 Counter(self.primes), self.pi_exp, list(self.polys))
+        saved = self._snapshot()
         self._nodes = 0
         try:
             if self._search(budget):
                 return True
         except _SearchBudget:
-            (self.state, self.fact, self.d, self.unit, self.primes,
-             self.pi_exp, polys) = saved
-            self.polys = polys
+            pass
+        # either the search failed after full backtracking, or it was cut
+        # short: restore the initial state in both cases and commit the
+        # progress of the greedy descent below
+        self._restore(saved)
         self._descend()
         return not self.state
 
@@ -1173,11 +1169,32 @@ def simplify_gamma(expression, var):
     u0, cts, rest = _parse_const_product(v)
     solver.unit *= u0
     for x, e in cts.items():
-        solver.state[(0, x)] = solver.state.get((0, x), 0) + e
+        solver.state[(0, x)] += e
 
     solver.solve()
     res = solver.expression(rest)
     return res if n is n0 else res.subs({n: n0})
+
+
+def _rational_range_product(f, w, a, count):
+    r"""
+    Evaluate ``prod_{j=0}^{count-1} f(a + j)`` exactly over the rationals.
+
+    A :exc:`TypeError` or :exc:`ValueError` is raised if some factor is
+    irrational or has a pole.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _rational_range_product
+        sage: k = var('k')
+        sage: _rational_range_product(k/(k + 1), k, 1, 4)
+        1/5
+        sage: _rational_range_product(sqrt(2)*k, k, 0, 3)
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert sqrt(2) to a rational
+    """
+    return prod(QQ(f.subs({w: a + j})) for j in range(count))
 
 
 def factorial_product(f, var, a, b):
@@ -1299,7 +1316,7 @@ def factorial_product(f, var, a, b):
         except (TypeError, ValueError):
             raise ValueError("the lower bound %s is not rational" % a)
         try:
-            res = prod(QQ(f.subs({w: aq + k})) for k in range(ZZ(count)))
+            res = _rational_range_product(f, w, aq, ZZ(count))
         except (TypeError, ValueError):
             raise ValueError("%s cannot be evaluated exactly over the given "
                              "range" % f)
@@ -1359,7 +1376,7 @@ def factorial_product(f, var, a, b):
 
     # anchor: E(0) is the product of the first r0 factors
     try:
-        E0 = prod(QQ(f.subs({w: aq + p})) for p in range(r0))
+        E0 = _rational_range_product(f, w, aq, r0)
     except (TypeError, ValueError):
         raise ValueError("cannot evaluate the product at the anchor: "
                          "the product has a pole or an irrational factor")
