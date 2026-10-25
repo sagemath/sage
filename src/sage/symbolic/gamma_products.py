@@ -9,7 +9,8 @@ gamma functions, factorials and binomials with rational-linear arguments
 
 where ``C`` is a constant (a rational times rational powers of primes and of
 ``pi``, times gamma values at rational points in irreducible position),
-``d`` is a nonzero rational, the factorial arguments are nonnegative
+``d`` is a nonzero rational, or a rational function of the parameters, the
+factorial arguments are nonnegative
 integers for all ``n >= 0``, and the ``p_k(n)`` are products of consecutive
 linear factors.  The remaining gamma factors, if any, are in *irreducible position*:
 their shifts have pairwise distinct fractional parts within each slope, are
@@ -51,7 +52,9 @@ parameters.  For example, the product with a symbolic shift
 The resulting identities hold for generic parameter values: specializations
 may introduce additional zeros or poles which are not detected, and the
 normal form may be undefined at parameter values for which the input is
-defined.
+defined.  In particular, if the shift of a gamma argument becomes a
+non-positive integer for a specialization, the normal form evaluates to zero
+or is undefined there, although the input may well be defined.
 
 ALGORITHM:
 
@@ -349,7 +352,8 @@ def _rational_atom(ex, n, K=QQ):
 
 def _strip_exponentials(E, n, K=QQ):
     r"""
-    Replace each atom ``c^(a*n+b)`` with positive rational base by `1`.
+    Replace each atom ``c^(a*n+b)`` with positive rational base by `1`, and
+    each atom with base free of ``n``, but not rational, by ``c^b``.
 
     INPUT:
 
@@ -381,6 +385,14 @@ def _strip_exponentials(E, n, K=QQ):
         (k + 1, Counter({2: -2}))
         sage: _strip_exponentials(sqrt(4^(k + 1))/(k + 1)/sqrt(4^k), k)
         (1/(k + 1), Counter({2: 1}))
+
+        Atoms with a base which is free of the variable, but not rational,
+        are stripped of their exponential part, and their constant part is
+        kept as a factor::
+
+            sage: x = var('x')
+            sage: _strip_exponentials(x^(k + 2)/x^k, k)
+            (x^2, Counter())
 
         Atoms which are not factors of the expression are kept::
 
@@ -435,6 +447,16 @@ def _strip_exponentials(E, n, K=QQ):
                     slopes[p] += kp * a * mult
                     const[p] += kp * b * mult
                 return SR(1)
+            # a base which is free of the variable, but not rational: the
+            # exponential part c^(a*n) is stripped, the constant c^b is kept
+            if n not in base.variables():
+                lin = _linear_coeff(exp, n, K)
+                if lin is not None:
+                    aq = _rational_value(lin[0])
+                    bq = _rational_value(lin[1])
+                    if aq is not None and bq is not None:
+                        slopes[base] += aq * mult
+                        return SR(base) ** SR(bq)
             # integer exponent: descend, tracking the multiplicity
             try:
                 k = QQ(args[1])
@@ -471,10 +493,12 @@ def _factor_ratio(R, n, K=QQ, constp=None):
 
     OUTPUT: a pair ``(unit, factors)`` with ``R = unit * prod (A*n + B)^e``,
     where ``unit`` is a symbolic constant and the entries of ``factors`` are
-    triples ``A > 0``, ``B`` and ``e`` with coefficients in ``K``.
+    triples ``A``, ``B`` and ``e`` with coefficients in ``K``, where ``A``
+    is positive whenever it is rational.
 
     A :exc:`ValueError` is raised if ``R`` does not split into linear factors
-    over ``K``, or if the unit is irrational.
+    over ``K``, or if the unit does not factor into powers of rational primes
+    and of elements free of the variable.
 
     EXAMPLES::
 
@@ -563,7 +587,8 @@ def _factor_ratio(R, n, K=QQ, constp=None):
         # carried by the unit
         for f, e in F:
             if f.degree() != 1:
-                raise ValueError("irrational factor %s in the ratio" % f)
+                raise ValueError("the factor %s of the ratio does not split "
+                                 "into linear factors" % f)
             A, B = f[1], f[0]
             Aq = _rational_value(A)
             if Aq is not None:
@@ -1265,7 +1290,8 @@ def simplify_gamma(expression, var):
         C d^n \prod_i (A_i n + B_i)!^{e_i} \prod_k p_k(n)^{\varepsilon_k}
         \prod_j \Gamma(a_j n + b_j)^{\delta_j}
 
-    where `C` is a constant, `d` a nonzero rational, whose sign absorbs the
+    where `C` is a constant, `d` a nonzero rational or rational function of
+    the parameters, whose sign absorbs the
     sign of negative linear factors, `A_i, B_i` are nonnegative integers,
     `p_k(n)` are products of consecutive linear factors, and the residual
     gamma factors, if there are any, are in irreducible position: all shifts
@@ -1342,6 +1368,14 @@ def simplify_gamma(expression, var):
             sqrt(pi)*(1/4)^n*factorial(2*n)*gamma(k + 1/2)/(factorial(n)*gamma(k + n + 1/2))
             sage: simplify_gamma(binomial(n + k, k), n)
             gamma(k + n + 1)/(factorial(n)*gamma(k + 1))
+
+            Exponential atoms with symbolic base are stripped of their
+            exponential part::
+
+            sage: simplify_gamma(x^n*gamma(n + 1/2), n)
+            sqrt(pi)*(1/4*x)^n*factorial(2*n)/factorial(n)
+            sage: simplify_gamma(x^n*(x + 1)^(-n)*factorial(n), n)
+            (x/(x + 1))^n*factorial(n)
 
     The following term arises in the enumeration of certain trees; the
     denominator stems from a conversion of a product and was left in an
@@ -1590,13 +1624,13 @@ def factorial_product(f, var, a, b):
         return SR(res)
 
     if len(mv) > 1:
-        raise ValueError("the number of factors %s is not linear in a single "
+        raise ValueError("the number of factors %s depends on more than one "
                          "variable" % m)
     n0 = mv[0]
     lin = _linear_coeff(m, n0)
     if lin is None:
-        raise ValueError("the number of factors %s is not linear in a single "
-                         "variable with rational coefficients" % m)
+        raise ValueError("the number of factors %s is not linear with "
+                         "rational coefficients in a single variable" % m)
     q, r0 = lin
     if q not in ZZ or q < 1:
         raise ValueError("the number of factors grows by %s per step" % q)
