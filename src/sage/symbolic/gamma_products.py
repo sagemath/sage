@@ -1176,6 +1176,75 @@ def simplify_gamma(expression, var):
     return res if n is n0 else res.subs({n: n0})
 
 
+def _factor_count(m):
+    r"""
+    Validate the number of factors of a finite product.
+
+    INPUT:
+
+    - ``m`` -- the expression ``b - a + 1`` for the bounds of the product
+
+    OUTPUT: the pair ``(count, lin)``.  If the number of factors is a
+    concrete constant, ``count`` is a nonnegative integer and ``lin`` is
+    ``None``.  Otherwise ``count`` is ``None`` and ``lin`` is the pair
+    ``((n, q, r0), n0)``, meaning that the number of factors equals
+    ``q*n0 + r0`` with a positive integer slope ``q`` and a nonnegative
+    integer ``r0``; the count variable ``n`` is a valid generator name,
+    renamed if necessary.
+
+    A :exc:`ValueError` is raised if the number of factors is neither of
+    these.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _factor_count
+        sage: n = var('n')
+        sage: _factor_count(3*n + 2)
+        (None, ((n, 3, 2), n))
+        sage: _factor_count(SR(5))
+        (5, None)
+        sage: _factor_count(n^2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the number of factors n^2 is not linear in a single variable with rational coefficients
+        sage: _factor_count(1/2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the number of factors 1/2 is not a nonnegative integer
+    """
+    m = SR(m)
+    m0 = m
+    mvars = m.variables()
+    if not mvars:
+        try:
+            count = QQ(m)
+        except (TypeError, ValueError):
+            raise ValueError("the number of factors %s is not rational" % m)
+        if count not in ZZ or count < 0:
+            raise ValueError("the number of factors %s is not a nonnegative "
+                             "integer" % count)
+        return ZZ(count), None
+    if len(mvars) > 1:
+        raise ValueError("the number of factors %s is not linear in a single "
+                         "variable" % m)
+    # the count variable is bound, so rename it if its name is not a
+    # valid polynomial ring generator name, as happens for converted
+    # FriCAS expressions, whose variables are called like ``_B``
+    n, m = _generator_name(mvars[0], m)
+    lin = _linear_coeff(m, n)
+    if lin is None:
+        # report the failure against the original expression, not the
+        # renamed one
+        raise ValueError("the number of factors %s is not linear in a single "
+                         "variable with rational coefficients" % m0)
+    q, r0 = lin
+    if q not in ZZ or q < 1:
+        raise ValueError("the number of factors grows by %s per step" % q)
+    if r0 not in ZZ or r0 < 0:
+        raise ValueError("the number of factors is %s at the anchor" % r0)
+    return None, ((n, ZZ(q), ZZ(r0)), mvars[0])
+
+
 def _rational_range_product(f, w, a, count):
     r"""
     Evaluate ``prod_{j=0}^{count-1} f(a + j)`` exactly over the rationals.
@@ -1276,6 +1345,13 @@ def factorial_product(f, var, a, b):
             sage: B = SR.var('_B')
             sage: factorial_product(k, k, 1, B)
             factorial(_B)
+
+        Infinite bounds are rejected::
+
+            sage: factorial_product(k, k, 1, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: product bounds must be finite
     """
     v = SR(var) if not isinstance(var, str) else SR.var(var)
     if not (isinstance(v, Expression) and v.is_symbol()):
@@ -1284,14 +1360,14 @@ def factorial_product(f, var, a, b):
     aS, bS = SR(a), SR(b)
     if v in aS.variables() or v in bS.variables():
         raise ValueError("product bounds must not depend on the product variable")
+    if aS.is_infinity() or bS.is_infinity():
+        raise ValueError("product bounds must be finite")
 
     # the product variable is bound, so rename it if its name is not a valid
     # polynomial ring generator name, as happens for converted FriCAS
     # expressions, whose variables are called like ``_B``
     w, f = _generator_name(v, f)
-
-    m = bS - aS + 1
-    mvars = m.variables()
+    f0 = f if w is v else f.subs({w: v})
 
     # check that f is a rational function of the product variable with
     # rational coefficients; any failure of the conversion counts as a
@@ -1301,22 +1377,16 @@ def factorial_product(f, var, a, b):
         fr = Pv.fraction_field()(f)
     except Exception as exc:
         raise ValueError("%s is not a rational function of %s with rational "
-                         "coefficients" % (f, v)) from exc
+                         "coefficients" % (f0, v)) from exc
 
-    if not mvars:
-        try:
-            count = QQ(m)
-        except TypeError:
-            raise ValueError("the number of factors %s is not rational" % m)
-        if count not in ZZ or count < 0:
-            raise ValueError("the number of factors %s is not a nonnegative "
-                             "integer" % count)
+    count, lin = _factor_count(bS - aS + 1)
+    if lin is None:
         try:
             aq = QQ(a)
         except (TypeError, ValueError):
             raise ValueError("the lower bound %s is not rational" % a)
         try:
-            res = _rational_range_product(f, w, aq, ZZ(count))
+            res = _rational_range_product(f, w, aq, count)
         except (TypeError, ValueError):
             raise ValueError("%s cannot be evaluated exactly over the given "
                              "range" % f)
@@ -1324,24 +1394,7 @@ def factorial_product(f, var, a, b):
             raise ValueError("the product vanishes")
         return SR(res)
 
-    if len(mvars) > 1:
-        raise ValueError("the number of factors %s is not linear in a single "
-                         "variable" % m)
-    # the count variable is bound, so rename it if its name is not a
-    # valid polynomial ring generator name, as happens for converted
-    # FriCAS expressions, whose variables are called like ``_B``
-    n0 = mvars[0]
-    n, m = _generator_name(n0, m)
-    lin = _linear_coeff(m, n)
-    if lin is None:
-        raise ValueError("the number of factors %s is not linear in a single "
-                         "variable with rational coefficients" % m)
-    q, r0 = lin
-    if q not in ZZ or q < 1:
-        raise ValueError("the number of factors grows by %s per step" % q)
-    if r0 not in ZZ or r0 < 0:
-        raise ValueError("the number of factors is %s at the anchor" % r0)
-    q, r0 = ZZ(q), ZZ(r0)
+    (n, q, r0), n0 = lin
     try:
         aq = QQ(a)
     except (TypeError, ValueError):
@@ -1491,7 +1544,10 @@ def exact_product(f, var, a, b):
     - linear factors ``A*var + B`` with rational slope ``A`` and ``B`` free of
       the product variable, which are evaluated in terms of gamma functions,
       for instance ``x + k`` over ``k = 0..n`` evaluates to
-      ``gamma(x+n+1)/gamma(x)``,
+      ``gamma(x+n+1)/gamma(x)``; over a concrete range the finite product is
+      evaluated directly, since the gamma quotient has removable poles at the
+      zeros of the factors, so that its size grows linearly with the number
+      of factors,
 
     - factors independent of the product variable, which are evaluated as
       ``c^(b - a + 1)``,
@@ -1499,8 +1555,12 @@ def exact_product(f, var, a, b):
     - a residual part, which is returned as an unevaluated product in the
       original variable and bounds.
 
-    A :exc:`ValueError` is raised if nothing can be evaluated; in that case
-    the caller may want to fall back to another method.
+    The number of factors ``b - a + 1`` must be a nonnegative integer, or an
+    integer-linear expression ``q*n + r`` in a single variable ``n`` with
+    ``q`` a positive integer and ``r`` a nonnegative integer; a
+    :exc:`ValueError` is raised otherwise, and also if nothing can be
+    evaluated.  In both cases the caller may want to fall back to another
+    method.
 
     EXAMPLES::
 
@@ -1521,6 +1581,44 @@ def exact_product(f, var, a, b):
             x^(1/2*n^2 + 1/2*n)*factorial(n + 1)
             sage: exact_product(sqrt(2)^k, k, 0, n)
             2^(1/4*n^2 + 1/4*n)
+
+        Parameter-linear factors over a concrete range are evaluated
+        directly, so that removable gamma poles do not become evaluation
+        errors::
+
+            sage: exact_product(x + k, k, 0, 1)
+            (x + 1)*x
+            sage: exact_product(x + k, k, 0, 1).subs(x = -2)
+            2
+
+        For a symbolic number of factors the gamma quotient is returned,
+        which then evaluates like any other gamma quotient, in particular
+        failing at the removable poles::
+
+            sage: exact_product(x + k, k, 0, n)
+            gamma(n + x + 1)/gamma(x)
+            sage: try:
+            ....:     exact_product(x + k, k, 0, n).subs(x = -2, n = 1)
+            ....: except RuntimeError as err:
+            ....:     print('RuntimeError: %s' % err)
+            RuntimeError: indeterminate expression: 0 * infinity encountered.
+
+        The empty product is 1, whatever the body is::
+
+            sage: exact_product(cos(k), k, 0, -1)
+            1
+
+        The number of factors must be a nonnegative integer, or an
+        integer-linear expression in a single variable::
+
+            sage: exact_product(x + k, k, 0, 1/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of factors 3/2 is not a nonnegative integer
+            sage: exact_product(x, k, 0, n^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of factors n^2 + 1 is not linear in a single variable with rational coefficients
 
         The residual part is returned as an unevaluated product::
 
@@ -1549,6 +1647,14 @@ def exact_product(f, var, a, b):
         raise ValueError("product bounds must not depend on the product variable")
     if aS.is_infinity() or bS.is_infinity():
         raise ValueError("product bounds must be finite")
+
+    # the formulas below are valid only if the number of factors is a
+    # nonnegative integer, or an integer-linear expression in a single
+    # variable with a positive slope; otherwise fall back to the caller
+    count, lin = _factor_count(bS - aS + 1)
+    if count == 0:
+        # the empty product
+        return SR(1)
 
     # the product variable is bound, so rename it if its name is not a valid
     # polynomial ring generator name, as happens for converted FriCAS
@@ -1620,7 +1726,13 @@ def exact_product(f, var, a, b):
         # because of symbolic bounds, falls back to the caller
         parts.append(factorial_product(R, w, a, b))
     for A, c, e in param:
-        parts.append(A**(e*(bS - aS + 1)) * (gamma(c + bS + 1)/gamma(c + aS))**e)
+        if count is not None:
+            # over a concrete range, evaluate the finite product directly:
+            # the gamma quotient has removable poles at the zeros of the
+            # factors
+            parts.append(A**(e*count) * prod(c + aS + j for j in range(count))**e)
+        else:
+            parts.append(A**(e*(bS - aS + 1)) * (gamma(c + bS + 1)/gamma(c + aS))**e)
     if expo:
         for c, p in expo:
             parts.append(c**symbolic_sum(p, w, a, b))
