@@ -56,10 +56,11 @@ Fractional shifts are then eliminated with the Gauss multiplication formula:
 a complete circle ``{gamma(a*n + b + j/m) : j = 0..m-1}`` collapses to
 ``gamma(m*a*n + m*b)``, where members with integer argument are factorials and
 may be introduced freely.  Every circle modulus divides the common denominator
-of the shifts present, and each move strictly decreases the number of
-fractional gammas, so the procedure terminates without any search bound.  A
-depth-first search with memoization explores all possible moves, so a
-factorial form is found whenever one exists.
+of the shifts present, and each move strictly decreases the total number of
+fractional gamma factors, counted with multiplicity, so the depth-first
+search with memoization terminates.  The search is bounded; when no factorial
+form is found within the bound, or none exists, a normal form is committed
+instead: a state to which no circle applies.
 
 The reduction of the term ratio to a rational function and its
 factorization into linear factors is the starting point of Gosper's
@@ -112,6 +113,8 @@ E_CONST = exp(Integer(1))
 # -----------------------------------------------------------------------
 # stage 1: rewrite to gammas and reduce the term ratio to linear factors
 # -----------------------------------------------------------------------
+
+
 def _linear_coeff(exp, n):
     r"""
     Return ``(a, b)`` if ``exp == a*n + b`` with ``a, b`` rational, else ``None``.
@@ -530,6 +533,19 @@ def _parse_const_product(expression):
 # -----------------------------------------------------------------------
 # stage 2: the solver
 # -----------------------------------------------------------------------
+
+# bound on the number of states explored in the search for a complete
+# elimination of the fractional shifts; when it is exceeded, a normal form is
+# committed instead of discarding the progress
+_SEARCH_BUDGET = 2000
+
+
+class _SearchBudget(Exception):
+    r"""
+    Raised when the search for a complete elimination exceeds its bound.
+    """
+
+
 class _GammaSolver:
     r"""
     Bookkeeping of the multiset of gammas ``gamma(a*n + x)^e`` occurring in a
@@ -565,6 +581,7 @@ class _GammaSolver:
         self.fact = Counter()      # (A, B) -> exponent of factorial(A*n + B)
         self.polys = []            # (a, x0, k, e): product of (a*n+x0+j), j<k
         self.memo = set()          # states known to have no solution
+        self._nodes = 0            # states explored by _search
 
     def feed(self, factors):
         r"""
@@ -686,7 +703,88 @@ class _GammaSolver:
                 state[(a, x0)] = tot
         self.state = state
 
-    def circles(self, key):
+    def _circle_moves(self, q=None):
+        r"""
+        Return all applicable Gauss circles of the current state.
+
+        A circle is a tuple ``(m, b, e, consumed, introduced)``, meaning that
+        ``prod_{j=0}^{m-1} gamma(a*n + b + j/m)`` is replaced by
+        ``gamma(m*a*n + m*b)``, consuming the entries ``consumed`` with total
+        exponent ``e`` and introducing the factorials ``factorial(a*n + y - 1)``
+        for the integer members ``y``.
+
+        The circles are ordered by their smallest member, so that each is
+        generated exactly once.
+
+        INPUT:
+
+        - ``q`` -- the common denominator of the shifts in the state,
+          computed if not given
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.gamma_products import _GammaSolver
+            sage: k = var('k')
+            sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
+            sage: s._circle_moves()
+            [(3, 1/3, -1, [(0, 1/3), (0, 2/3)], [1]),
+             (3, 1/3, 1, [(1, 1/3), (1, 2/3)], [1])]
+        """
+        state = self.state
+        if not state:
+            return []
+        if q is None:
+            q = lcm(x.denominator() for _, x in state)
+        # represent the shifts as integer multiples of 1/q, so that the
+        # membership test in the circle enumeration is a set lookup
+        ent = {}
+        for (a, x), e in state.items():
+            if e:
+                ent.setdefault(a, {})[x * q] = e
+        out = []
+        for a in sorted(ent):
+            ae = ent[a]
+            for x0u in sorted(ae):
+                # a circle of modulus m requires m members at this slope,
+                # of which the member 1 needs no state entry
+                for m in divisors(q):
+                    if m < 2 or m > len(ae) + 1:
+                        continue
+                    step = q // m
+                    r = x0u % step
+                    # the members are the residue class of the shift modulo
+                    # 1/m, as shifts in the interval (0, 1); the class
+                    # representative 0 is replaced by 1, which contributes a
+                    # factorial instead of a gamma
+                    window = ([r + t*step if r else (t + 1)*step
+                               for t in range(m)])
+                    consumed, introduced, ok = [], [], True
+                    for u in window:
+                        if u == q:
+                            introduced.append(ZZ(1))
+                        elif u in ae:
+                            consumed.append((a, QQ((u, q))))
+                        else:
+                            ok = False
+                            break
+                    if not ok or x0u != window[0]:
+                        continue      # generated from its smallest member
+                    b = QQ((r, q)) if r else QQ((1, m))
+                    mb = m * b
+                    if mb in ZZ and mb < 1:
+                        continue      # would land on a pole
+                    s0 = ae[x0u]
+                    if all(ae[u] * s0 > 0 for u in window if u != q):
+                        # the admissible multiplicities have the common sign
+                        # of the consumed entries, and magnitudes up to their
+                        # minimum
+                        sgn = 1 if s0 > 0 else -1
+                        mag = min(abs(ae[u]) for u in window if u != q)
+                        out.extend((m, b, e, consumed, introduced)
+                                   for e in range(sgn * mag, 0, -sgn))
+        return out
+
+    def circles(self, key, q=None):
         r"""
         Return all Gauss circles through the state entry ``key``.
 
@@ -700,6 +798,9 @@ class _GammaSolver:
 
         - ``key`` -- a key of ``self.state`` whose shifts are to be combined
 
+        - ``q`` -- the common denominator of the shifts in the state,
+          computed if not given
+
         EXAMPLES::
 
             sage: from sage.symbolic.gamma_products import _GammaSolver
@@ -708,43 +809,7 @@ class _GammaSolver:
             sage: s.circles((1, 1/3))
             [(3, 1/3, 1, [(1, 1/3), (1, 2/3)], [1])]
         """
-        a, x0 = key
-        q = lcm(x.denominator() for _, x in self.state)
-        out = []
-        for m in divisors(q):
-            if m < 2:
-                continue
-            for j0 in range(m):
-                b = x0 - QQ((j0, m))
-                members = [b + QQ((j, m)) for j in range(m)]
-                consumed, introduced, ok = [], [], True
-                for mem in members:
-                    if mem in ZZ:
-                        if mem < 1:
-                            ok = False
-                            break
-                        introduced.append(ZZ(mem))
-                    else:
-                        if not self.state[(a, mem)]:
-                            ok = False
-                            break
-                        consumed.append((a, mem))
-                if not ok:
-                    continue
-                if key != min(consumed):
-                    continue          # generated from its smallest member
-                mb = m * b
-                if mb in ZZ and mb < 1:
-                    continue          # would land on a pole
-                s0 = self.state[key]
-                if all(self.state[c] * s0 > 0 for c in consumed):
-                    # the admissible multiplicities have the common sign of
-                    # the consumed entries, and magnitudes up to their minimum
-                    sgn = 1 if s0 > 0 else -1
-                    mag = min(abs(self.state[c]) for c in consumed)
-                    out.extend((m, b, e, consumed, introduced)
-                               for e in range(sgn * mag, 0, -sgn))
-        return out
+        return [mv for mv in self._circle_moves(q) if min(mv[3]) == key]
 
     def apply_circle(self, mv):
         r"""
@@ -788,12 +853,85 @@ class _GammaSolver:
         if a:
             self.d *= m ** (-m * a * e)
 
-    def solve(self):
+    def _search(self, budget):
         r"""
-        Eliminate all fractional gamma shifts, if possible.
+        Depth-first search for a sequence of Gauss circles emptying the state.
 
-        Return ``True`` if the state is free of fractional shifts at return,
-        and ``False`` if no sequence of Gauss circles achieves this.
+        Raise :class:`_SearchBudget` when more than ``budget`` states have
+        been explored.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.gamma_products import _GammaSolver, _SearchBudget
+            sage: k = var('k')
+            sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
+            sage: s.normalize(); s._search(10)
+            True
+            sage: sorted(s.state.items())
+            []
+            sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
+            sage: s.normalize(); s._search(1)
+            Traceback (most recent call last):
+            ...
+            sage.symbolic.gamma_products._SearchBudget
+        """
+        self._nodes += 1
+        if self._nodes > budget:
+            raise _SearchBudget
+        if not self.state:
+            return True
+        key = tuple(sorted(self.state.items()))
+        if key in self.memo:
+            return False
+        q = lcm(x.denominator() for _, x in self.state)
+        for mv in self._circle_moves(q):
+            saved = (Counter(self.state), Counter(self.fact), self.d,
+                     self.unit, Counter(self.primes),
+                     self.pi_exp, len(self.polys))
+            self.apply_circle(mv)
+            if self._search(budget):
+                return True
+            (self.state, self.fact, self.d, self.unit, self.primes,
+             self.pi_exp, npolys) = saved
+            del self.polys[npolys:]
+        self.memo.add(key)
+        return False
+
+    def _descend(self):
+        r"""
+        Apply Gauss circles until the state is in normal form.
+
+        Every application strictly decreases the total number of fractional
+        gamma factors, counted with multiplicity, so this terminates; the
+        final state admits no circle.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.gamma_products import _GammaSolver
+            sage: k = var('k')
+            sage: s = _GammaSolver(k); s.feed([(6, 1, 1), (6, 5, 1)])
+            sage: s._descend(), sorted(s.state.items())
+            (None, [((0, 1/6), -1), ((0, 5/6), -1), ((1, 1/6), 1), ((1, 5/6), 1)])
+        """
+        while True:
+            moves = self._circle_moves()
+            if not moves:
+                return
+            self.apply_circle(moves[0])
+
+    def solve(self, budget=_SEARCH_BUDGET):
+        r"""
+        Eliminate all fractional gamma shifts, as far as possible.
+
+        Return ``True`` if the state could be emptied completely.  Otherwise
+        a normal form is installed: a state to which no Gauss circle applies,
+        so that no progress is discarded.
+
+        INPUT:
+
+        - ``budget`` -- the number of states explored in the search for a
+          complete elimination; when it is exceeded, the normal form is
+          committed without knowing whether the state can be emptied
 
         EXAMPLES::
 
@@ -802,28 +940,36 @@ class _GammaSolver:
             sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
             sage: s.solve(), sorted(s.state.items())
             (True, [])
+
+            A state which admits no circle is a normal form; the residual
+            gammas are irreducible::
+
+            sage: s = _GammaSolver(k); s.feed([(6, 1, 1), (6, 5, 1)])
+            sage: s.solve(), sorted(s.state.items())
+            (False, [((0, 1/6), -1), ((0, 5/6), -1), ((1, 1/6), 1), ((1, 5/6), 1)])
+
+            With a vanishing search budget, the normal form is found by
+            greedy descent alone; here it empties the state::
+
+            sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
+            sage: s.solve(budget=0), sorted(s.state.items())
+            (True, [])
         """
         self.normalize()
         if not self.state:
             return True
-        key = tuple(sorted(self.state.items()))
-        if key in self.memo:
-            return False
-        for key0 in sorted(self.state):
-            if key0[1] in ZZ:
-                continue
-            for mv in self.circles(key0):
-                saved = (Counter(self.state), Counter(self.fact), self.d,
-                         self.unit, Counter(self.primes),
-                         self.pi_exp, len(self.polys))
-                self.apply_circle(mv)
-                if self.solve():
-                    return True
-                (self.state, self.fact, self.d, self.unit, self.primes,
-                 self.pi_exp, npolys) = saved
-                del self.polys[npolys:]
-        self.memo.add(key)
-        return False
+        saved = (Counter(self.state), Counter(self.fact), self.d, self.unit,
+                 Counter(self.primes), self.pi_exp, list(self.polys))
+        self._nodes = 0
+        try:
+            if self._search(budget):
+                return True
+        except _SearchBudget:
+            (self.state, self.fact, self.d, self.unit, self.primes,
+             self.pi_exp, polys) = saved
+            self.polys = polys
+        self._descend()
+        return not self.state
 
     def expression(self, rest_const):
         r"""
@@ -865,6 +1011,8 @@ class _GammaSolver:
 # -----------------------------------------------------------------------
 # stage 3: public functions
 # -----------------------------------------------------------------------
+
+
 def simplify_gamma(expression, var):
     r"""
     Rewrite a hypergeometric term as a product of factorials, in normal form.
@@ -891,13 +1039,19 @@ def simplify_gamma(expression, var):
     where `C` is a constant, `d` a nonzero rational, whose sign absorbs the
     sign of negative linear factors, `A_i, B_i` are nonnegative integers,
     `p_k(n)` are products of consecutive linear factors, and the residual
-    gamma factors, if there are any, are in irreducible position: the shifts
-    with the same slope `a_j` are distinct modulo the integers, and all
-    shifts are normalized into the interval `[0, 1)`.
+    gamma factors, if there are any, are in irreducible position: all shifts
+    lie in the interval `[0, 1)`, shifts with the same slope `a_j` are
+    distinct modulo the integers, and no application of the Gauss
+    multiplication formula reduces the product further.
 
     A :exc:`ValueError` is raised if ``expression`` is not a hypergeometric
     term, does not split into linear factors over ``QQ``, or is zero or
     undefined at ``var = 0``.
+
+    The normal form is not canonical: in particular, constants may be
+    represented by gamma values at rational points or by evaluated powers
+    of ``pi``, and simplifying an already simplified expression again may
+    change the representation.
 
     EXAMPLES::
 
@@ -935,6 +1089,13 @@ def simplify_gamma(expression, var):
 
         sage: simplify_gamma(gamma(n + 1/3)*gamma(n + 2/3), n)
         2/3*sqrt(3)*pi*(1/27)^n*factorial(3*n)/factorial(n)
+
+        When a complete reduction is impossible, the progress is committed
+        and the residual gamma factors are in irreducible position; here the
+        constants gamma(1/6) and gamma(5/6) admit no multiplication formula::
+
+            sage: simplify_gamma(gamma(2*n + 1/3)*gamma(2*n + 2/3), n)
+            4/3*sqrt(3)*pi^2*(1/729)^n*factorial(6*n)/(factorial(2*n)*gamma(5/6)*gamma(1/6))
 
     The following term arises in the enumeration of certain trees; the
     denominator stems from a conversion of a product and was left in an
@@ -1139,7 +1300,7 @@ def factorial_product(f, var, a, b):
             raise ValueError("the lower bound %s is not rational" % a)
         try:
             res = prod(QQ(f.subs({w: aq + k})) for k in range(ZZ(count)))
-        except TypeError:
+        except (TypeError, ValueError):
             raise ValueError("%s cannot be evaluated exactly over the given "
                              "range" % f)
         if not res:
@@ -1199,7 +1360,7 @@ def factorial_product(f, var, a, b):
     # anchor: E(0) is the product of the first r0 factors
     try:
         E0 = prod(QQ(f.subs({w: aq + p})) for p in range(r0))
-    except (TypeError, ValueError) as ex:
+    except (TypeError, ValueError):
         raise ValueError("cannot evaluate the product at the anchor: "
                          "the product has a pole or an irrational factor")
     if not E0:
