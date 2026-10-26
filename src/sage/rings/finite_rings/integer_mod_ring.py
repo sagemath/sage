@@ -1012,17 +1012,33 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return factor(self.__order, int_=(self.__order < 2**31))
 
+    @cached_method
     def factored_unit_order(self):
         r"""
         Return a list of :class:`Factorization` objects, each the factorization
         of the order of the units in a `\ZZ / p^n \ZZ` component of this group
         (using the Chinese Remainder Theorem).
 
+        The result is cached.  In particular, known complete prime
+        factorizations can be installed with
+        :meth:`~sage.misc.cachefunc.CachedFunction.set_cache`.  Cache values
+        are trusted and are not validated.
+
         EXAMPLES::
 
             sage: R = Integers(8*9*25*17*29)
             sage: R.factored_unit_order()
             [2^2, 2 * 3, 2^2 * 5, 2^4, 2^2 * 7]
+
+        The cache has the same list-of-factorizations format::
+
+            sage: from sage.structure.factorization import Factorization
+            sage: R = Integers(11)
+            sage: R.factored_unit_order.set_cache(
+            ....:     [Factorization([(2, 1), (5, 1)])])
+            sage: R.factored_unit_order()
+            [2 * 5]
+            sage: R.factored_unit_order.clear_cache()
         """
         ans = []
         from sage.structure.factorization import Factorization
