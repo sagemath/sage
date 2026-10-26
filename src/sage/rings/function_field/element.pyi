@@ -9,7 +9,7 @@ class FunctionFieldElement(FieldElement):
     def __reduce__(self) -> Any:
         ...
 
-    def _new_c(self) -> 'FunctionFieldElement':
+    def _new_c(self) -> FunctionFieldElement:
         ...
 
     def __pari__(self) -> Any:
@@ -18,7 +18,7 @@ class FunctionFieldElement(FieldElement):
     def _latex_(self) -> str:
         ...
 
-    def subs(self, in_dict: dict | None = None, **kwds: Any) -> 'FunctionFieldElement':
+    def subs(self, in_dict: dict | None = None, **kwds: Any) -> FunctionFieldElement:
         ...
 
     def matrix(self, base: Any = None) -> Any:
@@ -75,5 +75,5 @@ class FunctionFieldElement(FieldElement):
     def is_nth_power(self, n: int) -> bool:
         ...
 
-    def nth_root(self, n: int) -> 'FunctionFieldElement':
+    def nth_root(self, n: int) -> FunctionFieldElement:
         ...
