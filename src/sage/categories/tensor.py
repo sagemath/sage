@@ -42,6 +42,33 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
     of ``Algebras(QQ)``. This nested class is itself a subclass of
     :class:`~sage.categories.tensor.TensorProductsCategory`.
 
+    A one-fold tensor product is deliberately kept distinct from its sole
+    factor.  In particular, its basis is indexed by singleton tuples.  This
+    lets code that constructs tensor products from lists treat every positive
+    arity uniformly::
+
+        sage: # needs sage.modules
+        sage: F = CombinatorialFreeModule(QQ, ['a', 'b'], prefix='F')
+        sage: F.rename('F')
+        sage: T = tensor([F]); T
+        tensor([F])
+        sage: T is F
+        False
+        sage: F.basis().keys().list()
+        ['a', 'b']
+        sage: T.basis().keys().list()
+        [('a',), ('b',)]
+
+    For modules with basis using the standard tensor product implementation,
+    there is a canonical coercion from a one-fold tensor product to its factor,
+    so elements can be used without manually removing the singleton tuples::
+
+        sage: # needs sage.modules
+        sage: x = F.monomial('a') + 2 * F.monomial('b')
+        sage: tx = tensor([x]); tx
+        tensor([F['a']]) + 2*tensor([F['b']])
+        sage: F(tx) == x
+        True
 
     TESTS::
 
