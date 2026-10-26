@@ -1943,6 +1943,15 @@ def hypergeometric_sum(f, var, a, b):
             ...
             ValueError: the term 1/(k - 2) is not defined in the range
 
+        A term whose evaluation at a lattice point is indeterminate, for
+        instance because a zero cancels a pole of a gamma factor, is
+        rejected as well::
+
+            sage: hypergeometric_sum(gamma(-k - 2)/gamma(-k - 3), k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term cannot be evaluated at the lower bound 0
+
         A term may be defined everywhere, but still fail to be
         hypergeometric, because its term ratio has a pole inside the range::
 
@@ -2021,7 +2030,7 @@ def hypergeometric_sum(f, var, a, b):
             skipped += 1
         g0 = g.subs({j: 0})
         undefined = g0.is_infinity() or not (g0 - g0).is_trivial_zero()
-    except (ValueError, ArithmeticError) as exc:
+    except (ValueError, ArithmeticError, RuntimeError) as exc:
         raise ValueError("the term cannot be evaluated at the "
                         "lower bound %s" % a) from exc
     if undefined:
