@@ -104,7 +104,7 @@ from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_lazy import RLF, LazyFieldElement
 from sage.sets.set import Set_add_sub_operators, Set_base, Set_boolean_operators
-from sage.structure.parent import Parent
+from sage.structure.parent import Parent, Set_generic
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.symbolic.ring import SR
@@ -1336,22 +1336,51 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         # unique form
         return richcmp(self._intervals, other._intervals, op)
 
-    def __iter__(self):
+    def intervals(self):
         r"""
-        Iterate over the component intervals is ascending order.
+        Return the component intervals in ascending order.
 
-        OUTPUT: an iterator over the intervals
+        OUTPUT: an immutable sequence of intervals
 
         EXAMPLES::
 
             sage: s = RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3))
-            sage: i = iter(s)
-            sage: next(i)
+            sage: intervals = s.intervals()
+            sage: intervals[0]
             (0, 1]
-            sage: next(i)
+            sage: intervals[1]
             [2, 3)
+            sage: type(intervals)
+            <class 'tuple'>
         """
-        return iter(self._intervals)
+        return self._intervals
+
+    def __iter__(self):
+        r"""
+        Iterate over the elements of this set.
+
+        OUTPUT: an iterator over the elements
+
+        EXAMPLES::
+
+            sage: s = RealSet.point(0).union(RealSet.point(2))
+            sage: list(s)
+            [0, 2]
+
+            sage: next(iter(RealSet(0, 1)))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: object does not support iteration
+
+        Use :meth:`intervals` to iterate over the component intervals::
+
+            sage: s = RealSet(RealSet.open_closed(0,1), RealSet.closed_open(2,3))
+            sage: list(s.intervals())
+            [(0, 1], [2, 3)]
+        """
+        if self.cardinality() == infinity:
+            raise NotImplementedError("object does not support iteration")
+        return (interval.lower() for interval in self._intervals)
 
     def n_components(self):
         r"""
@@ -2051,7 +2080,19 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             sage: RealSet().union((-oo, 0), x > 6, s[0],                                # needs sage.symbolic
             ....:                 RealSet.point(5.0), RealSet.closed_open(2, 4))
             (-oo, 0) ∪ [1, 4) ∪ {5} ∪ (6, +oo)
+
+        If the other operand is a Sage set that is not a :class:`RealSet`,
+        the result is a formal set-theoretic union::
+
+            sage: U = RealSet(1, 3).union(Set([4]))
+            sage: 2 in U, 4 in U, 0 in U
+            (True, True, False)
         """
+        if len(real_set_collection) == 1:
+            other = real_set_collection[0]
+            if isinstance(other, (Set_generic, Set_base)) and not isinstance(other, RealSet):
+                return Set_base.union(self, other)
+
         sets = [self]
         if len(real_set_collection) == 1 and isinstance(real_set_collection[0], RealSet):
             sets.append(real_set_collection[0])
@@ -2113,6 +2154,19 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             sage: s5.intersection(x != 2, (-oo, 3), RealSet.real_line()[0])             # needs sage.symbolic
             [1, 2) ∪ (2, 3)
 
+        Intersections with other Sage sets fall back to a formal
+        set-theoretic intersection::
+
+            sage: X = RealSet(1, 3).intersection(Set(QQ))
+            sage: 2 in X
+            True
+            sage: list(X)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: object does not support iteration
+            sage: list(RealSet(1, 3).intersection(Set([2])))
+            [2]
+
         TESTS::
 
             sage: s1 = RealSet([1, 2])
@@ -2131,6 +2185,11 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             sage: s4.intersection(s5)
             {}
         """
+        if len(real_set_collection) == 1:
+            other = real_set_collection[0]
+            if isinstance(other, (Set_generic, Set_base)) and not isinstance(other, RealSet):
+                return Set_base.intersection(self, other)
+
         sets = [self]
         if len(real_set_collection) == 1 and isinstance(real_set_collection[0], RealSet):
             sets.append(real_set_collection[0])
@@ -2256,7 +2315,19 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             (-oo, -10] ∪ [2, 3)
             sage: s1.difference(1,11)
             (0, 1] ∪ [11, +oo)
+
+        If ``other`` is a Sage set that is not a :class:`RealSet`, the
+        result is a formal set-theoretic difference::
+
+            sage: D = RealSet(1, 3).difference(Set([2]))
+            sage: 2 in D, 5/2 in D, 4 in D
+            (False, True, False)
         """
+        if len(other) == 1:
+            X = other[0]
+            if isinstance(X, (Set_generic, Set_base)) and not isinstance(X, RealSet):
+                return Set_base.difference(self, X)
+
         remove = [(pt, -delta) for (pt, delta) in RealSet(*other)._scan()]
         # Note: flip delta for boundary point in the removed set.
         # turn-on lower open becomes turn-off upper closed.
@@ -2286,7 +2357,19 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             (1, +oo)
             sage: s1.symmetric_difference(s2)
             (0, 1] ∪ [2, +oo)
+
+        If ``other`` is a Sage set that is not a :class:`RealSet`, the
+        result is a formal set-theoretic symmetric difference::
+
+            sage: S = RealSet(1, 3).symmetric_difference(Set([2, 4]))
+            sage: 2 in S, 5/2 in S, 4 in S
+            (False, True, True)
         """
+        if len(other) == 1:
+            X = other[0]
+            if isinstance(X, (Set_generic, Set_base)) and not isinstance(X, RealSet):
+                return Set_base.symmetric_difference(self, X)
+
         scan = merge(self._scan(), RealSet(*other)._scan())
         intervals = tuple(RealSet._scan_to_intervals(scan, lambda i: i == 1))
         return RealSet(*intervals, normalized=True)
@@ -2677,7 +2760,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         RIF = RealIntervalField()
         candidates = []
 
-        for interval in self:
+        for interval in self.intervals():
             lower, upper = interval.lower(), interval.upper()
             # handle one bound as infinity as RIF simplest_rational gives ValueError
             if interval.contains(0):
@@ -2748,7 +2831,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         if self.is_empty():
             return sib.name('RealSet')()
-        return sib.sum(interval_input(i) for i in self)
+        return sib.sum(interval_input(i) for i in self.intervals())
 
     def __mul__(self, right):
         r"""
@@ -2768,9 +2851,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             (-oo, -4) ∪ [-1, 0]
         """
         if not isinstance(right, RealSet):
-            return RealSet(*[e * right for e in self])
+            return RealSet(*[e * right for e in self.intervals()])
         if not isinstance(self, RealSet):
-            return RealSet(*[self * e for e in right])
+            return RealSet(*[self * e for e in right.intervals()])
         return NotImplemented
 
     def __rmul__(self, other):
