@@ -758,3 +758,11 @@ no-build-isolation-package = ["sagemath"]
 config-settings-package = { tree-sitter-sage = { editable_mode = "strict" }, sagemath = { build-dir = "build/meson-python" } }
 # Build these packages from source instead of installing pre-built wheels.
 no-binary-package = ["cypari2", "pplpy", "primecountpy"]
+
+# sage-numerical-backends-coin ships only an sdist whose build requires
+# sagemath-objects 10.7, which does not compile on Python 3.14. uv builds it
+# just to read its metadata, so `uv lock` fails; state that metadata here.
+[[tool.uv.dependency-metadata]]
+name = "sage-numerical-backends-coin"
+version = "10.4"
+requires-dist = ["sphinx"]
