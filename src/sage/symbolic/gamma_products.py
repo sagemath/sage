@@ -169,39 +169,6 @@ def _linear_coeff(exp, n, K=QQ):
     return p[1], p[0]
 
 
-def _generator_name(v, *exprs):
-    r"""
-    Return a valid polynomial ring generator name for the variable ``v``,
-    together with ``exprs`` with ``v`` substituted.
-
-    The name of ``v`` itself is returned if it is valid; otherwise a fresh
-    temporary variable is used, as happens for converted FriCAS expressions,
-    whose variables are called like ``_B``.
-
-    INPUT:
-
-    - ``v`` -- a symbolic variable
-
-    - ``*exprs`` -- symbolic expressions in ``v``
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.gamma_products import _generator_name
-        sage: k = var('k')
-        sage: _generator_name(k, k + 1)
-        (k, k + 1)
-        sage: w, e = _generator_name(var('_B'), var('_B') + 1)
-        sage: bool(w == var('_B')), bool(e == w + 1)
-        (False, True)
-    """
-    try:
-        PolynomialRing(QQ, v)
-    except ValueError:
-        w = SR.temp_var()
-        return w, *(e.subs({v: w}) for e in exprs)
-    return v, *exprs
-
-
 def _rational_value(x):
     r"""
     Return ``x`` as a rational, or ``None`` if it is not rational.
@@ -254,9 +221,9 @@ def _field_value(K, x):
         return None
 
 
-def _variable_field(mains, *exprs):
+def _parameter_field(mains, *exprs):
     r"""
-    Rename invalid variable names and construct the parameter field.
+    Construct the field of parameters.
 
     INPUT:
 
@@ -265,47 +232,27 @@ def _variable_field(mains, *exprs):
 
     - ``*exprs`` -- symbolic expressions
 
-    OUTPUT: a quadruple ``(mains, exprs, ren, K)``, where all variables
-    occurring in ``exprs`` and ``mains`` whose names are not valid polynomial
-    ring generator names, as happens for the variables of converted FriCAS
-    expressions, are renamed consistently, ``ren`` is the dictionary of the
-    renamings, and ``K`` is the fraction field of the polynomial ring over
-    ``QQ`` in the free symbols of ``exprs`` other than the renamed ``mains``.
+    OUTPUT: the fraction field of the polynomial ring over ``QQ`` in the
+    free symbols of ``exprs`` other than ``mains``.
 
     EXAMPLES::
 
-        sage: from sage.symbolic.gamma_products import _variable_field
+        sage: from sage.symbolic.gamma_products import _parameter_field
         sage: k, x = var('k x')
-        sage: _variable_field((k,), k + x)[2:]
-        ({}, Fraction Field of Univariate Polynomial Ring in x over Rational Field)
-        sage: mains, exprs, ren, K = _variable_field((var('_B'),), var('_B') + x)
-        sage: bool(mains[0] == var('_B')), len(ren), K
-        (False, 1, Fraction Field of Univariate Polynomial Ring in x over Rational Field)
-        sage: _variable_field((k,), k + 1)[2:]
-        ({}, Rational Field)
+        sage: _parameter_field((k,), k + x)
+        Fraction Field of Univariate Polynomial Ring in x over Rational Field
+        sage: _parameter_field((k,), k + 1)
+        Rational Field
     """
     mains = tuple(SR(m) for m in mains)
     exprs = tuple(SR(e) for e in exprs)
-    syms = set(mains)
-    for e in exprs:
-        syms.update(e.variables())
-    ren = {}
-    for s in syms:
-        try:
-            PolynomialRing(QQ, s)
-        except (ValueError, TypeError):
-            ren[s] = SR.temp_var()
-    if ren:
-        mains = tuple(ren.get(m, m) for m in mains)
-        exprs = tuple(e.subs(ren) for e in exprs)
     params = set()
     for e in exprs:
         params.update(e.variables())
     params.difference_update(mains)
     params = tuple(sorted(params, key=str))
-    K = (PolynomialRing(QQ, list(params)).fraction_field()
-         if params else QQ)
-    return mains, exprs, ren, K
+    return (PolynomialRing(QQ, list(params)).fraction_field()
+            if params else QQ)
 
 
 def _rational_atom(ex, n, K=QQ):
@@ -1393,9 +1340,6 @@ def simplify_gamma(expression, var):
         4^n*factorial(n)^2/factorial(2*n)
         sage: simplify_gamma(rising_factorial(2*n + 1, n), n)
         factorial(3*n)/factorial(2*n)
-        sage: B = SR.var('_B')
-        sage: simplify_gamma(binomial(2*B, B), B)
-        factorial(2*_B)/factorial(_B)^2
         sage: simplify_gamma(gamma(n - 1/2), n)
         2*sqrt(pi)*(1/4)^n*factorial(2*n)/((2*n - 1)*factorial(n))
         sage: simplify_gamma(factorial(n) + 1, n)
@@ -1424,13 +1368,8 @@ def simplify_gamma(expression, var):
         raise TypeError("the variable must be a symbol")
     E = SR(expression)
 
-    # the variable is bound, so rename it if its name is not a valid
-    # polynomial ring generator name, as happens for converted FriCAS
-    # expressions, whose variables are called like ``_B``
-    n0 = n
-    # rename variables whose names are not valid polynomial ring generator
-    # names, and collect the remaining free symbols as parameters
-    (n,), (E,), ren, K = _variable_field((n0,), E)
+    # collect the free symbols other than the variable as parameters
+    K = _parameter_field((n,), E)
 
     unit, factors = _linear_factors(E, n, K)
     solver = _GammaSolver(n)
@@ -1458,10 +1397,7 @@ def simplify_gamma(expression, var):
         solver.state[(0, x)] += e
 
     solver.solve()
-    res = solver.expression(rest)
-    if ren:
-        res = res.subs({temp: orig for orig, temp in ren.items()})
-    return res if n is n0 else res.subs({n: n0})
+    return solver.expression(rest)
 
 
 def _factor_count(m):
@@ -1475,10 +1411,8 @@ def _factor_count(m):
     OUTPUT: the pair ``(count, lin)``.  If the number of factors is a
     concrete constant, ``count`` is a nonnegative integer and ``lin`` is
     ``None``.  Otherwise ``count`` is ``None`` and ``lin`` is the pair
-    ``((n, q, r0), n0)``, meaning that the number of factors equals
-    ``q*n0 + r0`` with a positive integer slope ``q`` and a nonnegative
-    integer ``r0``; the count variable ``n`` is a valid generator name,
-    renamed if necessary.
+    ``(n, q, r0)``, meaning that the number of factors equals ``q*n + r0``
+    with a positive integer slope ``q`` and a nonnegative integer ``r0``.
 
     A :exc:`ValueError` is raised if the number of factors is neither of
     these.
@@ -1488,7 +1422,7 @@ def _factor_count(m):
         sage: from sage.symbolic.gamma_products import _factor_count
         sage: n = var('n')
         sage: _factor_count(3*n + 2)
-        (None, ((n, 3, 2), n))
+        (None, (n, 3, 2))
         sage: _factor_count(SR(5))
         (5, None)
         sage: _factor_count(n^2)
@@ -1515,14 +1449,9 @@ def _factor_count(m):
     if len(mvars) > 1:
         raise ValueError("the number of factors %s is not linear in a single "
                          "variable" % m)
-    # the count variable is bound, so rename it if its name is not a
-    # valid polynomial ring generator name, as happens for converted
-    # FriCAS expressions, whose variables are called like ``_B``
-    n, m = _generator_name(mvars[0], m)
+    n = mvars[0]
     lin = _linear_coeff(m, n)
     if lin is None:
-        # report the failure against the original expression, not the
-        # renamed one
         raise ValueError("the number of factors %s is not linear in a single "
                          "variable with rational coefficients" % m0)
     q, r0 = lin
@@ -1530,7 +1459,7 @@ def _factor_count(m):
         raise ValueError("the number of factors grows by %s per step" % q)
     if r0 not in ZZ or r0 < 0:
         raise ValueError("the number of factors is %s at the anchor" % r0)
-    return None, ((n, ZZ(q), ZZ(r0)), mvars[0])
+    return None, (n, ZZ(q), ZZ(r0))
 
 
 def _rational_range_product(f, w, a, count):
@@ -1633,13 +1562,6 @@ def factorial_product(f, var, a, b):
             ...
             ValueError: cannot evaluate the product at the anchor: the product has a pole or an irrational factor
 
-        Converted FriCAS expressions may have variables with names like
-        ``_B``, which are not valid polynomial ring generator names::
-
-            sage: B = SR.var('_B')
-            sage: factorial_product(k, k, 1, B)
-            factorial(_B)
-
         Infinite bounds are rejected::
 
             sage: factorial_product(k, k, 1, oo)
@@ -1657,15 +1579,13 @@ def factorial_product(f, var, a, b):
     if aS.is_infinity() or bS.is_infinity():
         raise ValueError("product bounds must be finite")
 
-    # rename variables whose names are not valid polynomial ring generator
-    # names, and collect the free symbols other than the product variable and
-    # the variable the number of factors depends on as parameters
     m = bS - aS + 1
     mvars = m.variables()
-    (w, *mv), (f, m, aS, bS), ren, K = _variable_field((v,) + mvars, f, m, aS, bS)
-    # report failures against the original variables, not the renamed ones
-    undo = {temp: orig for orig, temp in ren.items()}
-    f0, m0 = f.subs(undo), m.subs(undo)
+    # collect the free symbols other than the product variable and the
+    # variable the number of factors depends on as parameters
+    K = _parameter_field((v,) + mvars, f, m, aS, bS)
+    f0, m0 = f, m
+    w, mv = v, mvars
 
     # check that f is a rational function of the product variable with
     # coefficients rational in the parameters; any failure of the conversion
@@ -1700,8 +1620,6 @@ def factorial_product(f, var, a, b):
                                  "given range" % f) from exc
         if not res:
             raise ValueError("the product vanishes")
-        if ren:
-            res = res.subs({temp: orig for orig, temp in ren.items()})
         return SR(res)
 
     if len(mv) > 1:
@@ -1771,10 +1689,7 @@ def factorial_product(f, var, a, b):
     solver.unit *= E0
 
     solver.solve()
-    res = solver.expression(1)
-    if ren:
-        res = res.subs({temp: orig for orig, temp in ren.items()})
-    return res
+    return solver.expression(1)
 
 
 def _safe_roots(poly):
@@ -2017,10 +1932,9 @@ def exact_product(f, var, a, b):
         # the empty product
         return SR(1)
 
-    # the product variable is bound, so rename it if its name is not a valid
-    # polynomial ring generator name, as happens for converted FriCAS
-    # expressions, whose variables are called like ``_B``
-    (w,), (f, aS, bS), ren, K = _variable_field((v,), f, aS, bS)
+    # collect the free symbols other than the product variable as parameters
+    K = _parameter_field((v,), f, aS, bS)
+    w = v
 
     # normalize the body to expose hidden rationality
     conv = {}
@@ -2105,11 +2019,6 @@ def exact_product(f, var, a, b):
         return SR(1)
     if rest:
         h = prod(rest).subs(conv)
-        if w is not v:
-            h = h.subs({w: v})
         parts.append(symbolic_product(h, v, a, b))
 
-    res = prod(parts)
-    if ren:
-        res = res.subs({temp: orig for orig, temp in ren.items()})
-    return res
+    return prod(parts)
