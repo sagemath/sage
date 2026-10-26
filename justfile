@@ -30,7 +30,7 @@ research-environment-sync:
     # one present is reinstalled over the resolved copy. A machine without a
     # checkout -- a container, a CI runner -- simply has none of them and gets
     # the locked versions, which is the same environment.
-    for research_checkout in "${HOME}/research" "${HOME}/gitclones/sage-extensions" "${HOME}/gitclones/tree-sitter-sage" "${HOME}/gitclones/jupyter-assistant-api"; do
+    for research_checkout in "${HOME}/research" "${HOME}/gitclones/tree-sitter-sage" "${HOME}/gitclones/jupyter-assistant-api"; do
         if [ -d "${research_checkout}" ]; then
             uv pip install --python "${sage_environment}/bin/python" --no-deps -e "${research_checkout}"
         fi
