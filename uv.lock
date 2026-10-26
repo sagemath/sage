@@ -3985,7 +3985,7 @@ dependencies = [
 [[package]]
 name = "sage-extensions"
 version = "0.1.0"
-source = { git = "https://github.com/dzackgarza/sage-extensions#c15c0bd84f4af2b1bc108abad94ca5821f59b02d" }
+source = { git = "https://github.com/dzackgarza/sage-extensions#9f5831e29271fc9b394dde299d929a9134af17b0" }
 dependencies = [
     { name = "networkx" },
     { name = "sage-categories" },
