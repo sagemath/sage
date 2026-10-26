@@ -203,7 +203,7 @@ def lfsr_autocorrelation(L, p, k):
 
     - ``k`` -- integer between `0` and `p`
 
-    OUTPUT: autocorrelation sequence of `L`
+    OUTPUT: normalized periodic autocorrelation `C(k)` of `L`
 
     EXAMPLES::
 
@@ -213,18 +213,27 @@ def lfsr_autocorrelation(L, p, k):
         sage: key = [l,o,o,l]; fill = [l,l,o,l]; n = 20
         sage: s = lfsr_sequence(key,fill,n)
         sage: lfsr_autocorrelation(s,15,7)
-        4/15
+        -1/15
         sage: lfsr_autocorrelation(s,int(15),7)
-        4/15
+        -1/15
+        sage: lfsr_autocorrelation(s,15,0)
+        1
     """
     if not isinstance(L, list):
         raise TypeError("L (=%s) must be a list" % L)
     p = Integer(p)
     _p = int(p)
     k = int(k)
-    L0 = L[:_p]     # slices makes a copy
-    L0 = L0 + L0[:k]
-    return sum([int(L0[i]) * int(L0[i + k]) / p for i in range(_p)])
+    if _p <= 0:
+        raise ValueError("p must be a positive integer")
+    if len(L) < _p:
+        raise ValueError("L must have length at least p")
+    if not (0 <= k <= _p):
+        raise ValueError("k must be between 0 and p")
+
+    L0 = [int(x) % 2 for x in L[:_p]]
+    k %= _p
+    return sum(1 if L0[i] == L0[(i + k) % _p] else -1 for i in range(_p)) / p
 
 
 def lfsr_connection_polynomial(s):
