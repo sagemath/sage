@@ -216,6 +216,22 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             sage: H = HyperellipticCurve(x^3 + x^2 - x)
             sage: H(1, 1) == H(-1, 1), H(1, 1) != H(-1, 1)
             (False, True)
+
+        The same holds over finite fields, where `x`-coordinates differing by
+        a cube root of unity used to compare equal on genus `2` curves
+        (:issue:`42847`); ``in`` relies on ``==``::
+
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurve(x^6 + 3*x^3 + 2)
+            sage: P, Q = H(3, 0, 1), H(5, 0, 1)
+            sage: P == Q, P != Q, Q in [P]
+            (False, True, False)
+            sage: pts = H.points()
+            sage: len(pts), len(set(pts))
+            (7, 7)
+            sage: sum(1 for P in pts for Q in pts if P == Q)
+            7
         """
         space = self.codomain()
         if space is not other.codomain():
