@@ -1007,7 +1007,7 @@ wheels = [
 [[package]]
 name = "dzack-research"
 version = "0.1.1"
-source = { git = "https://github.com/dzackgarza/research#bf4c5bd9f8e6e7a0a212838c505daf77c4ce61b9" }
+source = { git = "https://github.com/dzackgarza/research#ea138dc50fc9a5ff1d81e0eeaabea803dd53c3e4" }
 dependencies = [
     { name = "haystack-ai" },
     { name = "pandoc-config" },
@@ -3985,7 +3985,7 @@ dependencies = [
 [[package]]
 name = "sage-extensions"
 version = "0.1.0"
-source = { git = "https://github.com/dzackgarza/sage-extensions#14b9cc16ec98b2608bf458f77013ba621f30c6f0" }
+source = { git = "https://github.com/dzackgarza/sage-extensions#c15c0bd84f4af2b1bc108abad94ca5821f59b02d" }
 dependencies = [
     { name = "networkx" },
     { name = "sage-categories" },
