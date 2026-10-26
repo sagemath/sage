@@ -985,6 +985,69 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A + 2*C + 1
             O(z^7)
 
+        Mutually dependent systems can be defined in separate calls::
+
+            sage: Lx.<x> = LazyPowerSeriesRing(QQ)
+            sage: Ly.<y> = LazyPowerSeriesRing(QQ)
+            sage: A = Lx.undefined()
+            sage: B = Ly.undefined()
+            sage: Lx.define_implicitly([A], [A - 1, B(x) - 2])
+            sage: Ly.define_implicitly([B], [B - 1 - A(y)])
+            sage: B[:4], A[:4]
+            ([2, 0, 0, 0], [1, 0, 0, 0])
+
+        Redundant equations in such systems do not prevent progress::
+
+            sage: A = Lx.undefined()
+            sage: B = Ly.undefined()
+            sage: Lx.define_implicitly([A], [A - 1, B(x) - 2])
+            sage: Ly.define_implicitly([B], [B - 2, A(y)^2 - 1])
+            sage: alarm(5)
+            sage: try:
+            ....:     result = A[:4], B[:4]
+            ....: finally:
+            ....:     cancel_alarm()
+            sage: result
+            ([1, 0, 0, 0], [2, 0, 0, 0])
+
+        A failed system can be queried again::
+
+            sage: A = Lx.undefined()
+            sage: B = Ly.undefined()
+            sage: Lx.define_implicitly([A], [A - 1, B(x) - 2])
+            sage: Ly.define_implicitly([B], [B - 3])
+            sage: for _ in range(2):
+            ....:     try:
+            ....:         A[0]
+            ....:     except ValueError:
+            ....:         print("no solution")
+            no solution
+            no solution
+
+        Acyclic dependencies retain their coefficient rings::
+
+            sage: LR.<x> = LazyPowerSeriesRing(RR)
+            sage: LQ.<y> = LazyPowerSeriesRing(QQ)
+            sage: A = LR.undefined()
+            sage: B = LQ.undefined()
+            sage: LR.define_implicitly([A], [A - B(x)])
+            sage: LQ.define_implicitly([B], [B - 1])
+            sage: A[0] == 1
+            True
+
+        A coupled system uses the largest lookahead of its parts::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: eq = A - B
+            sage: L.define_implicitly([A], [eq])
+            sage: L.define_implicitly([B], [B.derivative() + B.derivative(2),
+            ....:                            B + B.derivative() + B.derivative(2), eq],
+            ....:                         max_lookahead=2)
+            sage: A[1]
+            0
+
         The following system does not determine `B`, but the solver
         will inductively discover that each coefficient of `A` must
         be zero.  Therefore, asking for a coefficient of `B` will
