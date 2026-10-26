@@ -153,39 +153,6 @@ def _linear_coeff(exp, n):
     return p[1], p[0]
 
 
-def _generator_name(v, *exprs):
-    r"""
-    Return a valid polynomial ring generator name for the variable ``v``,
-    together with ``exprs`` with ``v`` substituted.
-
-    The name of ``v`` itself is returned if it is valid; otherwise a fresh
-    temporary variable is used, as happens for converted FriCAS expressions,
-    whose variables are called like ``_B``.
-
-    INPUT:
-
-    - ``v`` -- a symbolic variable
-
-    - ``*exprs`` -- symbolic expressions in ``v``
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.gamma_products import _generator_name
-        sage: k = var('k')
-        sage: _generator_name(k, k + 1)
-        (k, k + 1)
-        sage: w, e = _generator_name(var('_B'), var('_B') + 1)
-        sage: bool(w == var('_B')), bool(e == w + 1)
-        (False, True)
-    """
-    try:
-        PolynomialRing(QQ, v)
-    except ValueError:
-        w = SR.temp_var()
-        return w, *(e.subs({v: w}) for e in exprs)
-    return v, *exprs
-
-
 def _rational_atom(ex, n):
     r"""
     Return ``(c, a, b)`` if ``ex == c^(a*n + b)`` with positive rational
@@ -1109,9 +1076,6 @@ def simplify_gamma(expression, var):
         4^n*factorial(n)^2/factorial(2*n)
         sage: simplify_gamma(rising_factorial(2*n + 1, n), n)
         factorial(3*n)/factorial(2*n)
-        sage: B = SR.var('_B')
-        sage: simplify_gamma(binomial(2*B, B), B)
-        factorial(2*_B)/factorial(_B)^2
         sage: simplify_gamma(gamma(n - 1/2), n)
         2*sqrt(pi)*(1/4)^n*factorial(2*n)/((2*n - 1)*factorial(n))
         sage: simplify_gamma(factorial(n) + 1, n)
@@ -1140,11 +1104,6 @@ def simplify_gamma(expression, var):
         raise TypeError("the variable must be a symbol")
     E = SR(expression)
 
-    # the variable is bound, so rename it if its name is not a valid
-    # polynomial ring generator name, as happens for converted FriCAS
-    # expressions, whose variables are called like ``_B``
-    n0 = n
-    n, E = _generator_name(n0, E)
 
     unit, factors = _linear_factors(E, n)
     solver = _GammaSolver(n)
@@ -1173,7 +1132,7 @@ def simplify_gamma(expression, var):
 
     solver.solve()
     res = solver.expression(rest)
-    return res if n is n0 else res.subs({n: n0})
+    return res
 
 
 def _factor_count(m):
@@ -1227,10 +1186,7 @@ def _factor_count(m):
     if len(mvars) > 1:
         raise ValueError("the number of factors %s is not linear in a single "
                          "variable" % m)
-    # the count variable is bound, so rename it if its name is not a
-    # valid polynomial ring generator name, as happens for converted
-    # FriCAS expressions, whose variables are called like ``_B``
-    n, m = _generator_name(mvars[0], m)
+    n = mvars[0]
     lin = _linear_coeff(m, n)
     if lin is None:
         # report the failure against the original expression, not the
@@ -1339,13 +1295,6 @@ def factorial_product(f, var, a, b):
             ...
             ValueError: cannot evaluate the product at the anchor: the product has a pole or an irrational factor
 
-        Converted FriCAS expressions may have variables with names like
-        ``_B``, which are not valid polynomial ring generator names::
-
-            sage: B = SR.var('_B')
-            sage: factorial_product(k, k, 1, B)
-            factorial(_B)
-
         Infinite bounds are rejected::
 
             sage: factorial_product(k, k, 1, oo)
@@ -1363,11 +1312,8 @@ def factorial_product(f, var, a, b):
     if aS.is_infinity() or bS.is_infinity():
         raise ValueError("product bounds must be finite")
 
-    # the product variable is bound, so rename it if its name is not a valid
-    # polynomial ring generator name, as happens for converted FriCAS
-    # expressions, whose variables are called like ``_B``
-    w, f = _generator_name(v, f)
-    f0 = f if w is v else f.subs({w: v})
+    w = v
+    f0 = f
 
     # check that f is a rational function of the product variable with
     # rational coefficients; any failure of the conversion counts as a
@@ -1439,7 +1385,7 @@ def factorial_product(f, var, a, b):
 
     solver.solve()
     res = solver.expression(1)
-    return res if n is n0 else res.subs({n: n0})
+    return res
 
 
 def _factorials_to_gamma(E, conv=None):
@@ -1656,10 +1602,7 @@ def exact_product(f, var, a, b):
         # the empty product
         return SR(1)
 
-    # the product variable is bound, so rename it if its name is not a valid
-    # polynomial ring generator name, as happens for converted FriCAS
-    # expressions, whose variables are called like ``_B``
-    w, f = _generator_name(v, f)
+    w = v
 
     # normalize the body to expose hidden rationality
     conv = {}
@@ -1745,8 +1688,6 @@ def exact_product(f, var, a, b):
         return SR(1)
     if rest:
         h = prod(rest).subs(conv)
-        if w is not v:
-            h = h.subs({w: v})
         parts.append(symbolic_product(h, v, a, b))
 
     res = prod(parts)
