@@ -223,7 +223,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with a specific floating point solver::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
+            sage: lp, x = p.to_linear_program(return_variable=True, solver='Highs')
             sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-8
             1.3090169943749475

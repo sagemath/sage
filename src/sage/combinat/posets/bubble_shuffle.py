@@ -14,7 +14,7 @@ two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
     In the implementation here, the underlying set is the set of all shuffles
     of subsets of `\{-m,\ldots,-1\}` with subsets of `\{1,\ldots,n\}`.
 """
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset, FiniteLatticePoset
@@ -22,8 +22,12 @@ from sage.combinat.subset import subsets
 from sage.combinat.shuffle import ShuffleProduct
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
+    from collections.abc import Iterator
 
 
 def bubble_cardinality(m, n) -> Integer:

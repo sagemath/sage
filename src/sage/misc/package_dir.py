@@ -61,9 +61,9 @@ def is_package_or_sage_namespace_package_dir(path):
     Not a package::
 
         sage: # optional - !meson_editable
-        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # needs sage.symbolic
+        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory
         '.../sage/symbolic/ginac'
-        sage: is_package_or_sage_namespace_package_dir(directory)                       # needs sage.symbolic
+        sage: is_package_or_sage_namespace_package_dir(directory)
         False
 
     TESTS::

@@ -1101,13 +1101,13 @@ cdef class ComplexDoubleElement(FieldElement):
         EXAMPLES::
 
             sage: CDF(1,2).__pari__()
-            1.00000000000000 + 2.00000000000000*I
+            1.00000000000... + 2.00000000000...*I
             sage: pari(CDF(1,2))
-            1.00000000000000 + 2.00000000000000*I
+            1.00000000000... + 2.00000000000...*I
             sage: pari(CDF(2.0))
-            2.00000000000000
+            2.00000000000...
             sage: pari(CDF(I))
-            1.00000000000000*I
+            1.00000000000...*I
         """
         global new_gen_from_complex_double_element
         if new_gen_from_complex_double_element is None:

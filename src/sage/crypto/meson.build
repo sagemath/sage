@@ -7,6 +7,7 @@ py.install_sources(
   'classical.py',
   'classical_cipher.py',
   'cryptosystem.py',
+  'ed25519.py',
   'lattice.py',
   'lfsr.py',
   'lwe.py',

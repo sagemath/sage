@@ -1044,6 +1044,23 @@ class Graph(GenericGraph):
             {0: 'foo'}
             sage: Graph(g).get_vertices()
             {0: 'foo'}
+
+        Check that vertex attributes are properly set (:issue:`42841`)::
+
+            sage: G = Graph(2)
+            sage: G.get_vertices()
+            {0: None, 1: None}
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = Graph(G)
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: G.get_vertices()
+            {0: 'abc', 1: None}
+            sage: H = Graph(G)
+            sage: H.get_vertices()
+            {0: 'abc', 1: None}
         """
         GenericGraph.__init__(self)
 
@@ -1211,7 +1228,8 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
 
         elif format == 'NX':
@@ -1543,7 +1561,11 @@ class Graph(GenericGraph):
     # Properties
 
     @doc_index("Graph properties")
-    def is_tree(self, certificate=False, output='vertex'):
+    def is_tree(
+        self,
+        certificate=False,
+        output='vertex'
+    ) -> bool | tuple[bool, list | None]:
         r"""
         Test if the graph is a tree.
 
@@ -1703,7 +1725,7 @@ class Graph(GenericGraph):
         return self.order() == self.size() + 1
 
     @doc_index("Graph properties")
-    def is_forest(self, certificate=False, output='vertex'):
+    def is_forest(self, certificate: bool = False, output='vertex'):
         """
         Test if the graph is a forest, i.e. a disjoint union of trees.
 
@@ -1753,7 +1775,7 @@ class Graph(GenericGraph):
                 return (False, cycle)
 
     @doc_index("Graph properties")
-    def is_cactus(self):
+    def is_cactus(self) -> bool:
         """
         Check whether the graph is cactus graph.
 
@@ -1824,7 +1846,7 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_block_graph(self):
+    def is_block_graph(self) -> bool:
         r"""
         Return whether this graph is a block graph.
 
@@ -1865,7 +1887,7 @@ class Graph(GenericGraph):
         return all(self.is_clique(vertices=block) for block in B)
 
     @doc_index("Graph properties")
-    def is_cograph(self):
+    def is_cograph(self) -> bool:
         """
         Check whether the graph is cograph.
 
@@ -1909,7 +1931,7 @@ class Graph(GenericGraph):
         return self.subgraph_search(P4, induced=True) is None
 
     @doc_index("Graph properties")
-    def is_apex(self):
+    def is_apex(self) -> bool:
         r"""
         Test if the graph is apex.
 
@@ -2167,7 +2189,7 @@ class Graph(GenericGraph):
         return list(apex)
 
     @doc_index("Graph properties")
-    def is_overfull(self):
+    def is_overfull(self) -> bool:
         r"""
         Test whether the current graph is overfull.
 
@@ -2265,7 +2287,7 @@ class Graph(GenericGraph):
             2 * self.size() > max(self.degree()) * (self.order() - 1))
 
     @doc_index("Graph properties")
-    def is_even_hole_free(self, certificate=False):
+    def is_even_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced even hole.
 
@@ -2300,13 +2322,13 @@ class Graph(GenericGraph):
         It is clear, though, that a random Bipartite Graph which is not a forest
         has an even hole::
 
-            sage: g = graphs.RandomBipartite(10, 10, .5)                                # needs numpy
-            sage: g.is_even_hole_free() and not g.is_forest()                           # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(10, 10, .5)
+            sage: g.is_even_hole_free() and not g.is_forest()                           # needs sage.modules
             False
 
         We can check the certificate returned is indeed an even cycle::
 
-            sage: if not g.is_forest():                                                 # needs numpy sage.modules
+            sage: if not g.is_forest():                                                 # needs sage.modules
             ....:    cycle = g.is_even_hole_free(certificate=True)
             ....:    if cycle.order() % 2 == 1:
             ....:        print("Error !")
@@ -2332,7 +2354,7 @@ class Graph(GenericGraph):
 
             sage: t = lambda x: (Graph(x).is_forest() or
             ....:       isinstance(Graph(x).is_even_hole_free(certificate=True), Graph))
-            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs numpy sage.modules
+            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs sage.modules
             True
         """
         girth = self.girth()
@@ -2364,7 +2386,7 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_odd_hole_free(self, certificate=False):
+    def is_odd_hole_free(self, certificate: bool = False):
         r"""
         Test whether ``self`` contains an induced odd hole.
 
@@ -2435,7 +2457,11 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_triangle_free(self, algorithm='dense_graph', certificate=False):
+    def is_triangle_free(
+        self,
+        algorithm: str = 'dense_graph',
+        certificate: bool = False
+    ) -> bool | tuple[bool, list]:
         r"""
         Check whether ``self`` is triangle-free.
 
@@ -2557,7 +2583,7 @@ class Graph(GenericGraph):
         raise ValueError("Algorithm '%s' not yet implemented. Please contribute." % (algorithm))
 
     @doc_index("Graph properties")
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if the graph is a Split graph, ``False`` otherwise.
 
@@ -2655,14 +2681,14 @@ class Graph(GenericGraph):
 
         A Bipartite Graph is always perfect ::
 
-            sage: g = graphs.RandomBipartite(8,4,.5)                                    # needs numpy
-            sage: g.is_perfect()                                                        # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(8,4,.5)
+            sage: g.is_perfect()                                                        # needs sage.modules
             True
 
         So is the line graph of a bipartite graph::
 
-            sage: g = graphs.RandomBipartite(4,3,0.7)                                   # needs numpy
-            sage: g.line_graph().is_perfect()   # long time                             # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(4,3,0.7)
+            sage: g.line_graph().is_perfect()   # long time                             # needs sage.modules
             True
 
         As well as the Cartesian product of two complete graphs::
@@ -2744,7 +2770,7 @@ class Graph(GenericGraph):
         return self_complement.is_odd_hole_free(certificate=certificate)
 
     @doc_index("Graph properties")
-    def is_edge_transitive(self):
+    def is_edge_transitive(self) -> bool:
         r"""
         Check if ``self`` is an edge transitive graph.
 
@@ -2789,7 +2815,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnSets) == self.size()
 
     @doc_index("Graph properties")
-    def is_arc_transitive(self):
+    def is_arc_transitive(self) -> bool:
         r"""
         Check if ``self`` is an arc-transitive graph.
 
@@ -2829,7 +2855,7 @@ class Graph(GenericGraph):
         return libgap(A).OrbitLength(e, libgap.OnTuples) == 2*self.size()
 
     @doc_index("Graph properties")
-    def is_half_transitive(self):
+    def is_half_transitive(self) -> bool:
         """
         Check if ``self`` is a half-transitive graph.
 
@@ -2866,7 +2892,7 @@ class Graph(GenericGraph):
                 not self.is_arc_transitive())
 
     @doc_index("Graph properties")
-    def is_semi_symmetric(self):
+    def is_semi_symmetric(self) -> bool:
         """
         Check if ``self`` is semi-symmetric.
 
@@ -2909,7 +2935,7 @@ class Graph(GenericGraph):
                 self.is_vertex_transitive())
 
     @doc_index("Graph properties")
-    def is_path(self):
+    def is_path(self) -> bool:
         r"""
         Check whether ``self`` is a path.
 
@@ -2962,7 +2988,7 @@ class Graph(GenericGraph):
         return deg_one_counter == 2 and seen_counter == order
 
     @doc_index("Graph properties")
-    def is_chordal_bipartite(self, certificate=False):
+    def is_chordal_bipartite(self, certificate=False) -> bool | tuple:
         r"""
         Check whether the given graph is chordal bipartite.
 
@@ -3530,7 +3556,7 @@ class Graph(GenericGraph):
 
         A bipartite graph has (by definition) chromatic number 2::
 
-            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()                  # needs numpy
+            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()
             2
 
         A complete multipartite graph with `k` parts has chromatic number `k`::
@@ -3802,11 +3828,11 @@ class Graph(GenericGraph):
 
         # Dict to store parent of each vertex in disjoint-set forest
         # representing components of current induced subgraph.
-        dsf = {v: None for v in self.vertices()}
+        dsf = dict.fromkeys(self.vertices())
 
         # Dict to store size of tree rooted at each vertex.
         if weights is None:
-            sizes = {v: 1 for v in self.vertices()}
+            sizes = dict.fromkeys(self.vertices(), 1)
         else:
             sizes = dict(weights)
 
@@ -7454,7 +7480,7 @@ class Graph(GenericGraph):
             if k is not None:
                 return ([], list(self)) if not k else (list(self), [])
             if with_labels:
-                return {u: 0 for u in self}
+                return dict.fromkeys(self, 0)
             return [0]*self.order()
 
         # Compute the degrees of each vertex and set up initial guesses for core
@@ -7542,7 +7568,7 @@ class Graph(GenericGraph):
         return list(core.values())
 
     @doc_index("Modules")
-    def is_module(self, vertices):
+    def is_module(self, vertices) -> bool:
         r"""
         Check whether ``vertices`` is a module of ``self``.
 
@@ -8347,7 +8373,7 @@ class Graph(GenericGraph):
             # Compute a uv min-edge-cut.
             #
             # The graph is split into U,V with u \in U and v\in V.
-            flow, edges, [U, V] = G.edge_cut(u, v, use_edge_labels=True,
+            flow, edges, [U, V] = G.edge_cut(u, v, by_weight=True,
                                              vertices=True, algorithm=algorithm,
                                              solver=solver, verbose=verbose,
                                              integrality_tolerance=integrality_tolerance)
@@ -8633,8 +8659,7 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        .. [Lein] Tom Leinster, *The magnitude of metric spaces*.
-           Doc. Math. 18 (2013), 857-905.
+        - [Lein]_
         """
         from sage.matrix.constructor import matrix
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -9729,6 +9754,7 @@ class Graph(GenericGraph):
         minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
         dictionary from :meth:`~Graph.minor`::
 
+            sage: # long time
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
             sage: is_planar, minor_map = K44.is_projective_planar(return_map=True)
             sage: is_planar

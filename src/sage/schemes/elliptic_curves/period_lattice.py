@@ -1130,7 +1130,7 @@ class PeriodLattice_ell(PeriodLattice):
         EXAMPLES::
 
             sage: EllipticCurve('389a1').period_lattice().sigma(CC(2,1))
-            2.60912163570108 - 0.200865080824587*I
+            2.60912163570... - 0.200865080824...*I
         """
         if prec is None:
             prec = self._compute_default_prec()
@@ -1955,7 +1955,7 @@ class PeriodLattice_ell(PeriodLattice):
             (0.0000142854026029 - 49.9960001066650*I
              : 249.520141250950 + 250.019855549131*I : 1.00000000000000)
             sage: L.elliptic_exponential(CDF(.1,.1), to_curve=False)
-            (0.0000142854026029447 - 49.9960001066650*I,
+            (0.00001428540260294... - 49.9960001066650*I,
              500.040282501900 + 500.039711098263*I)
 
         `z=0` is treated as a special case::

@@ -83,4 +83,5 @@ def all_features():
             GapPackage("polenta", spkg='gap_packages'),
             GapPackage("polycyclic", spkg='gap_packages'),
             GapPackage("qpa", spkg='gap_packages'),
-            GapPackage("quagroup", spkg='gap_packages')]
+            GapPackage("quagroup", spkg='gap_packages'),
+            GapPackage("tomlib", spkg='gap_packages')]

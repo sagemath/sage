@@ -30,6 +30,7 @@
 #include <iosfwd>
 #include <iterator>
 #include <functional>
+#include <memory>
 #include <stack>
 #include <unordered_set>
 
@@ -351,12 +352,18 @@ ex::ex(const std::string &s, const ex &l) : bp(construct_from_string_and_lst(s, 
 
 // Iterators
 
-class const_iterator : public std::iterator<std::random_access_iterator_tag, ex, ptrdiff_t, const ex *, const ex &> {
+class const_iterator {
 	friend class ex;
 	friend class const_preorder_iterator;
 	friend class const_postorder_iterator;
 
 public:
+	using iterator_category = std::random_access_iterator_tag;
+	using value_type = ex;
+	using difference_type = ptrdiff_t;
+	using pointer = const ex *;
+	using reference = const ex &;
+
 	const_iterator() throw() {}
 
 private:
@@ -497,8 +504,14 @@ struct _iter_rep {
 
 } // namespace internal
 
-class const_preorder_iterator : public std::iterator<std::forward_iterator_tag, ex, ptrdiff_t, const ex *, const ex &> {
+class const_preorder_iterator {
 public:
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = ex;
+	using difference_type = ptrdiff_t;
+	using pointer = const ex *;
+	using reference = const ex &;
+
 	const_preorder_iterator() throw() {}
 
 	const_preorder_iterator(const ex &e, size_t n)
@@ -561,8 +574,14 @@ private:
 	}
 };
 
-class const_postorder_iterator : public std::iterator<std::forward_iterator_tag, ex, ptrdiff_t, const ex *, const ex &> {
+class const_postorder_iterator {
 public:
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = ex;
+	using difference_type = ptrdiff_t;
+	using pointer = const ex *;
+	using reference = const ex &;
+
 	const_postorder_iterator() throw() {}
 
 	const_postorder_iterator(const ex &e, size_t n)
