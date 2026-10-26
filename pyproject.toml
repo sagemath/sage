@@ -11,7 +11,7 @@ requires = [
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
-  'numpy >=2.2.4',
+  'numpy >=2.3.0',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -50,14 +50,14 @@ dependencies = [
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
-  'ipython >=8.9.0',
+  'ipython >=8.32.0',
   'ipywidgets >=7.5.1',
   'jupyter-client',
-  'matplotlib >=3.7.0',
+  'matplotlib >=3.10.0',
   'memory_allocator',
   'mpmath >=1.1.0',
   'networkx >=3.5',
-  'numpy >=1.25',
+  'numpy >=2.3.0',
   'pexpect >=4.8.0',
   'pillow >=7.2.0',
   'platformdirs',
@@ -66,7 +66,7 @@ dependencies = [
   'primecountpy; sys_platform != "win32"',
   'ptyprocess > 0.5',
   'requests >=2.13.0',
-  'scipy >=1.11',
+  'scipy >=1.15',
   'sphinx >=9.1, <10',
   'sympy >=1.6, <2.0',
   # TODO: Remove this once the migration to meson is complete
@@ -89,7 +89,7 @@ extra = [
   #'p_group_cohomology >=3.3', # Only used in tests, not available on PyPI
   'pycosat >=0.6.3',
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
-  'sage_numerical_backends_coin',
+  #'sage_numerical_backends_coin', # uv fails to generate a lock file with this, disabled until there is a new release
 ]
 test = ["pytest-xdist"]
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
@@ -239,7 +239,7 @@ dev = [
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
   'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv
   'meson-python', # Duplicate build-system requirement to fix editable installs with uv
-  'numpy >=2.2.4', # Duplicate build-system requirement to fix editable installs with uv
+  'numpy >=2.3.0', # Duplicate build-system requirement to fix editable installs with uv
 ]
 docs = [
   "docutils",
@@ -259,40 +259,37 @@ test = ["coverage", "pytest"]
 # TODO: Fix those, and then remove the "ignore" rules below.
 # Obtained via ty check --output-format=concise 2>&1 | tee /tmp/ty-check.log; awk 'match($0,/(error)\[([^]]+)\]/,m){c[m[2]]++} END{for (k in c) printf "%7d %s\n", c[k], k}' /tmp/ty-check.log | sort -nr
 
-# 5187 unresolved-import
-# 3821 unresolved-attribute
-# 2394 unresolved-reference
-# 2312 call-non-callable
-# 2296 missing-argument
-# 699 invalid-method-override
-# 454 invalid-argument-type
-# 450 invalid-assignment
-# 397 not-subscriptable
-# 376 unsupported-operator
-# 254 no-matching-overload
-# 239 unknown-argument
-# 182 not-iterable
-# 100 possibly-missing-submodule
-# 155 too-many-positional-arguments
-# 84 invalid-return-type
-# 65 unused-type-ignore-comment
-# 43 parameter-already-assigned
-# 32 inconsistent-mro
-# 21 possibly-missing-submodule
-# 12 invalid-type-form
-# 7 index-out-of-bounds
-# 7 empty-body
-# 5 invalid-attribute-access
-# 4 invalid-type-arguments
-# 4 deprecated
-# 4 mismatched-type-name
-# 2 invalid-super-argument
-# 2 call-top-callable
-# 1 invalid-total-ordering
-# 1 invalid-raise
-# 1 invalid-parameter-default
-# 1 invalid-overload
-# 1 conflicting-declarations
+# 5665 unresolved-import
+# 4296 unresolved-attribute
+# 2354 unresolved-reference
+# 2336 missing-argument
+# 1058 invalid-method-override
+#  456 invalid-argument-type
+#  455 not-subscriptable
+#  392 unsupported-operator
+#  323 call-non-callable
+#  246 unknown-argument
+#  212 invalid-assignment
+#  179 not-iterable
+#  161 too-many-positional-arguments
+#  106 no-matching-overload
+#   89 invalid-attribute-override
+#   71 invalid-return-type
+#   29 inconsistent-mro
+#   17 invalid-type-form
+#   15 index-out-of-bounds
+#    9 parameter-already-assigned
+#    7 empty-body
+#    6 invalid-attribute-access
+#    4 invalid-type-arguments
+#    3 invalid-mutable-override
+#    2 invalid-super-argument
+#    1 type-assertion-failure
+#    1 invalid-total-ordering
+#    1 invalid-raise
+#    1 invalid-parameter-default
+#    1 invalid-overload
+
 "call-non-callable" = "ignore"
 "call-top-callable" = "ignore"
 "conflicting-declarations" = "ignore"
@@ -303,9 +300,12 @@ test = ["coverage", "pytest"]
 "invalid-argument-type" = "ignore"
 "invalid-assignment" = "ignore"
 "invalid-attribute-access" = "ignore"
+"invalid-attribute-override" = "ignore"
 "invalid-method-override" = "ignore"
+"invalid-mutable-override" = "ignore"
 "invalid-overload" = "ignore"
 "invalid-parameter-default" = "ignore"
+"invalid-property-type-override" = "ignore"
 "invalid-raise" = "ignore"
 "invalid-return-type" = "ignore"
 "invalid-super-argument" = "ignore"
@@ -319,12 +319,15 @@ test = ["coverage", "pytest"]
 "not-subscriptable" = "ignore"
 "parameter-already-assigned" = "ignore"
 "possibly-missing-submodule" = "ignore"
+"redundant-condition" = "ignore"
 "too-many-positional-arguments" = "ignore"
+"type-assertion-failure" = "warn"
 "unknown-argument" = "ignore"
 "unresolved-attribute" = "ignore"
 "unresolved-global" = "ignore"
 "unresolved-import" = "ignore"
 "unresolved-reference" = "ignore"
+"unsupported-base" = "ignore"
 "unsupported-operator" = "ignore"
 "unused-type-ignore-comment" = "ignore"
 
@@ -348,6 +351,9 @@ exclude = [
 quote-style = "preserve"
 
 [tool.ruff.lint]
+
+# Enable `from __future__ import annotations` imports
+future-annotations = true
 
 # Rules that we deliberately do not attempt to follow,  either because we
 # disagree with them or because following them is not currently practical.

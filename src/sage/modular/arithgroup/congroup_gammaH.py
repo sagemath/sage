@@ -19,7 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 # #############################################################################
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.arith.functions import lcm
 from sage.arith.misc import (
@@ -40,6 +40,10 @@ from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp import richcmp, richcmp_method
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 _gammaH_cache = {}
 
