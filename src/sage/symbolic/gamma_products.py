@@ -1916,6 +1916,14 @@ def hypergeometric_sum(f, var, a, b):
             sage: hypergeometric_sum(1/gamma(k - 2), k, 0, oo).simplify_hypergeometric()
             e
 
+        A term which vanishes on the whole summation lattice sums to
+        zero::
+
+            sage: hypergeometric_sum(1/gamma(-k), k, 0, oo)
+            0
+            sage: hypergeometric_sum(sin(pi*k), k, 0, oo)
+            0
+
         Terms whose term ratio does not factor into linear factors are
         rejected::
 
@@ -1972,9 +1980,45 @@ def hypergeometric_sum(f, var, a, b):
     g = f.subs({var: aq + j})
     if g.is_trivial_zero():
         return SR(0)
+
+    # the term is hypergeometric iff its term ratio, reduced by the
+    # recurrence of the gamma function, factors into linear polynomials;
+    # compute the ratio before skipping leading zeros, since its poles at
+    # nonnegative integers are the only positions at which a vanishing
+    # term can be followed by a nonzero one, and therefore bound the number
+    # of leading zeros
+    h0, _ = _split_envelope(g.to_gamma(), j)
+    Rf0 = (h0.subs({j: j + 1}) / h0).gamma_normalize().factor()
+    bound = 0
+    for ex, side in ((Rf0.numerator(), 1), (Rf0.denominator(), -1)):
+        for base, e in _mult_split(ex):
+            lin = _linear_symbolic(base, j)
+            if lin is None:
+                raise ValueError("the term %s is not hypergeometric in %s"
+                                 % (f, var))
+            if side < 0:
+                A, B = lin
+                if A.is_trivial_zero():
+                    # a constant factor has no zeros
+                    continue
+                try:
+                    pole = ZZ(-B/A)
+                except (TypeError, ValueError, ArithmeticError):
+                    # the position of the pole depends on symbolic parameters
+                    continue
+                if pole >= 0:
+                    bound = max(bound, pole + 1)
+
     try:
+        skipped = 0
         while g.subs({j: 0}).is_trivial_zero():
+            if skipped == bound:
+                # beyond the last pole of the term ratio, a vanishing term
+                # is followed by a vanishing one: every term on the
+                # summation lattice vanishes
+                return SR(0)
             g = g.subs({j: j + 1})
+            skipped += 1
         g0 = g.subs({j: 0})
         undefined = g0.is_infinity() or not (g0 - g0).is_trivial_zero()
     except (ValueError, ArithmeticError) as exc:
