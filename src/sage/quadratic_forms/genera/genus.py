@@ -2637,6 +2637,19 @@ class GenusSymbol_global_ring:
             sage: gen = Genus(g)
             sage: gen.spinor_generators(False)
             [5]
+
+        Check that independent spinor classes generate the whole quotient, and
+        that the definite genus enumeration recovers the published twelve classes
+        for the lattice $B^1$ of Benham--Hsia, §2.3::
+
+            sage: G = Genus(matrix.diagonal(ZZ, [1, 20, 400]))
+            sage: A, K = G._improper_spinor_kernel()
+            sage: Q = A.quotient(K)
+            sage: primes = G.spinor_generators(False)
+            sage: Q.subgroup([Q(A.delta(p)) for p in primes]).order() == Q.order() == 4
+            True
+            sage: len(G.representatives())
+            12
         """
         from sage.sets.primes import Primes
         if proper:
@@ -2659,7 +2672,7 @@ class GenusSymbol_global_ring:
                 continue
             else:
                 spinor_gens.append(p)
-                U = Q.subgroup((g,) + Q.gens())
+                U = Q.subgroup((g,) + U.gens())
         return spinor_gens
 
     def _proper_is_improper(self):
