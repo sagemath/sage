@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from html import unescape
+from pathlib import Path
 
 import pytest
 
@@ -38,7 +39,11 @@ def manual(tmp_path, request):
                 A note, \url{https://example.org/a_b}.}
 }
 ''')
-    (source / 'conf.py').write_text('''
+    # pytest can import the source package without installing sage-docbuild.
+    # Give Sphinx's separate interpreter the same package location, so these
+    # tests exercise this checkout rather than another installed version.
+    (source / 'conf.py').write_text(
+        f'import sys\nsys.path.insert(0, {str(Path(__file__).resolve().parent.parent)!r})\n' + '''
 extensions = ['sage_docbuild.ext.bibtex']
 bibtex_bibfiles = ['refs.bib']
 bibtex_default_style = 'sage'
