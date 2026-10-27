@@ -81,7 +81,7 @@ class MLKEM(KEMBase):
         "512":  {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2, 'du': 10, 'dv': 4},
         "768":  {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2, 'du': 10, 'dv': 4},
         "1024": {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2, 'du': 11, 'dv': 5},
-        "toy":  {'n': 16, 'q': 3329, 'k': 2, 'eta1': 2, 'eta2': 2, 'du': 4, 'dv': 4},
+        "toy":  {'n': 32, 'q': 3329, 'k': 2, 'eta1': 2, 'eta2': 2, 'du': 10, 'dv': 4},
     }
 
     # ------------------------------------------------------------------
@@ -106,7 +106,7 @@ class MLKEM(KEMBase):
             sage: kem.k
             3
             sage: MLKEM.from_parameter_set("toy").n
-            16
+            32
         """
         if parameter_set not in cls.PARAMETER_SETS:
             raise ValueError(
@@ -132,8 +132,11 @@ class MLKEM(KEMBase):
         - ``dv`` -- integer (default: 4), compression parameter for ``v``
 
         The parameters must satisfy the arithmetic requirements of the
-        scheme: ``n`` must be a power of 2, ``q`` must be prime, and
-        ``n`` must divide ``q - 1`` so that the negacyclic NTT is
+        scheme: ``n`` must be a power of 2 and at least 8 (so the
+        message length ``n / 8`` is positive), ``q`` must be prime and
+        strictly less than 4096 (so that coefficients fit in 12 bits
+        as required by :meth:`_encode_ek` and by the rejection sampler),
+        and ``n`` must divide ``q - 1`` so that the negacyclic NTT is
         defined.
 
         EXAMPLES::
@@ -150,7 +153,7 @@ class MLKEM(KEMBase):
         Toy parameters are also accepted::
 
             sage: import warnings; warnings.simplefilter('ignore')
-            sage: kem = MLKEM(n=32, q=3329, k=2, eta1=2, eta2=2, du=4, dv=4)
+            sage: kem = MLKEM.from_parameter_set("toy")
             sage: pk, sk = kem.keygen()
             sage: ct, ss1 = kem.encaps(pk)
             sage: ss2 = kem.decaps(sk, ct)
@@ -168,12 +171,14 @@ class MLKEM(KEMBase):
             ...
             ValueError: q must be prime
         """
-        if n < 4:
-            raise ValueError("n must be at least 4")
+        if n < 8:
+            raise ValueError("n must be at least 8")
         if (n & (n - 1)) != 0:
             raise ValueError("n must be a power of 2")
         if not is_prime(q):
             raise ValueError("q must be prime")
+        if q >= 4096:
+            raise ValueError("q must be less than 4096 (12-bit coefficient encoding)")
         if (q - 1) % n != 0:
             raise ValueError("n must divide q - 1 (required for the NTT)")
         if eta1 not in (2, 3) or eta2 not in (2, 3):
@@ -393,6 +398,32 @@ class MLKEM(KEMBase):
         v_compressed = [self._compress(x, self.dv) for x in v_coeffs]
         c2 = self._encode(v_compressed, self.dv)
         return b"".join(c1_parts) + c2
+
+    def _compress_ct(self, u, v):
+        r"""
+        Apply Compress followed by Decompress to the ciphertext
+        polynomials ``(u, v)``.
+
+        FIPS 203 transmits the ciphertext in compressed form, i.e.
+        ``ByteEncode_du(Compress_du(u)) || ByteEncode_dv(Compress_dv(v))``.
+        We model this by applying ``Decompress(Compress(-, du))`` to
+        each coefficient of ``u`` and ``Decompress(Compress(-, dv))``
+        to each coefficient of ``v``, so that decapsulation operates
+        on the same data as a real recipient would receive.  This
+        exposes any decryption failure caused by the compression loss.
+        """
+        u_compressed = [
+            self._from_list([
+                self._decompress(self._compress(x, self.du), self.du)
+                for x in self._coeffs(ui)
+            ])
+            for ui in u
+        ]
+        v_compressed = self._from_list([
+            self._decompress(self._compress(x, self.dv), self.dv)
+            for x in self._coeffs(v)
+        ])
+        return u_compressed, v_compressed
 
     # ------------------------------------------------------------------
     # Symmetric primitives (FIPS 203, Section 4.1)
@@ -643,6 +674,10 @@ class MLKEM(KEMBase):
         ciphertext (a list of ``k`` elements of ``R`` followed by an
         element of ``R``) and ``K`` is the 32-byte shared secret.
 
+        The ciphertext polynomials are returned in their compressed
+        (and then decompressed) form, matching what a real recipient
+        would receive.
+
         EXAMPLES::
 
             sage: import warnings; warnings.simplefilter('ignore')
@@ -664,6 +699,7 @@ class MLKEM(KEMBase):
         kr = self._hash_g(m + self._hash_h(ek))
         K, r = kr[:32], kr[32:]
         u, v = self._kpke_encrypt(rho, t, m, r)
+        u, v = self._compress_ct(u, v)
         return (u, v), K
 
     def decaps(self, secret_key, ciphertext):

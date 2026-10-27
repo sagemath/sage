@@ -67,3 +67,46 @@ def test_kat(params):
     assert kem.decaps(sk, ct) == _ML_KEM_KAT_SS[params], (
         f"ML-KEM-{params}: decapsulated shared secret does not match KAT"
     )
+
+# ----------------------------------------------------------------------
+# Regression tests for toy / custom-parameter paths.
+# ----------------------------------------------------------------------
+
+def test_compression_round_trip():
+    """Same serialized ciphertext must give the same decapsulated result.
+
+    Encapsulation now returns compressed-then-decompressed ciphertext
+    polynomials, so decapsulation operates on the same data a recipient
+    would receive.  This test checks that re-applying the compression
+    (as if the ciphertext had been transmitted and decoded) yields the
+    same shared secret.
+    """
+    kem = MLKEM.from_parameter_set("toy")
+    d = bytes(32)
+    z = bytes(range(32))
+    m = bytes(kem.n // 8)
+    pk, sk = kem.keygen(d=d, z=z)
+    ct, K = kem.encaps(pk, m=m)
+
+    # Simulate transport: Compress followed by Decompress.
+    ct_compressed = kem._compress_ct(*ct)
+
+    # The serialized bytes should be identical.
+    assert kem._encode_ct(*ct) == kem._encode_ct(*ct_compressed)
+
+    # Decapsulating either form must recover the original K.
+    assert kem.decaps(sk, ct) == K
+    assert kem.decaps(sk, ct_compressed) == K
+
+
+def test_reject_small_n():
+    """n < 8 would give a zero-length message; reject it."""
+    with pytest.raises(ValueError, match="at least 8"):
+        MLKEM(n=4, q=3329)
+
+
+def test_reject_large_q():
+    """q >= 4096 breaks 12-bit coefficient encoding; reject it."""
+    with pytest.raises(ValueError, match="less than 4096"):
+        MLKEM(n=256, q=7681)
+
