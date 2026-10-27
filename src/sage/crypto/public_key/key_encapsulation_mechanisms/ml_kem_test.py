@@ -109,4 +109,3 @@ def test_reject_large_q():
     """q >= 4096 breaks 12-bit coefficient encoding; reject it."""
     with pytest.raises(ValueError, match="less than 4096"):
         MLKEM(n=256, q=7681)
-
