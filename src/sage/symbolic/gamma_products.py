@@ -2073,7 +2073,10 @@ def hypergeometric_sum(f, var, a, b):
                 values = (g.subs({j: m}), g.subs({j: m + 1}))
                 undefined = any(v.is_infinity() or not (v - v).is_trivial_zero()
                                for v in values)
-            except (ValueError, ArithmeticError, TypeError):
+            except (ValueError, ArithmeticError, TypeError, RuntimeError):
+                # RuntimeError covers indeterminate evaluations such as
+                # 0 * infinity at a zero of the term cancelling a pole of
+                # a gamma factor
                 undefined = True
             if undefined:
                 raise ValueError("the term %s is not defined in the range" % f)
