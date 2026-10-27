@@ -69,7 +69,6 @@ from queue import Empty
 
 import IPython.lib.pretty
 
-from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
 from sage.doctest.parsing import (
     OriginalSource,
@@ -2653,15 +2652,13 @@ class DocTestTask:
             results = DictAsObject({'walltime': [], 'cputime': [],
                                     'err': None, 'walltime_skips': 0})
 
-            # multiprocessing.Process instances don't run exit
-            # functions, so we run the functions added by doctests
-            # when exiting this context.
-            with restore_atexit(run=True):
-                for it in range(N):
-                    doctests, extras = self._run(runner, options, results)
-                    runner.summarize(options.verbose)
-                    if runner.update_results(results):
-                        break
+            # Python 3.13+ runs atexit callbacks when multiprocessing
+            # workers exit. In serial mode, they run at interpreter exit.
+            for it in range(N):
+                doctests, extras = self._run(runner, options, results)
+                runner.summarize(options.verbose)
+                if runner.update_results(results):
+                    break
 
             if extras['tab']:
                 results.err = 'tab'
