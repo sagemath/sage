@@ -907,6 +907,11 @@
              Cartier-Manin operator*, SIAM Journal on Computing 36 (2007), no. 6,
              1777-1806
 
+.. [BGS2026] Jérémy Berthomieu, Edern Gillot, and Mohab Safey El Din.
+            *Computing points in connected components defined by a real
+            inequation: algorithms, complexity and implementations, Part I*.
+            Preprint, :arxiv:`2605.18110` (2026).
+
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
             Bulletin of the American Mathematical Society 71(1):169-170, 1965.
