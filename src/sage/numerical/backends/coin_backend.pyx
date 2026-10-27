@@ -1,3 +1,4 @@
+# sage.doctest: optional - cbc
 """
 COIN Backend
 """

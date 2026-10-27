@@ -7,6 +7,7 @@ py.install_sources(
   'all.py',
   'coin_backend.pxd',
   'coin_backend.pyx',
+  'coin_backend_test.py',
   'cvxopt_backend.pyx',
   'cvxopt_backend_test.py',
   'cvxopt_sdp_backend.pyx',
@@ -76,11 +77,18 @@ foreach name, pyx : extension_data
 endforeach
 
 extension_data_cpp = {
-  'coin_backend' : files('coin_backend.pyx'),
+  'coin_backend': files('coin_backend.pyx'),
   'scip_backend': files('scip_backend.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals]
+  if name == 'coin_backend'
+    deps += [cbc]
+  else
+    deps += [gmp]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
@@ -88,6 +96,6 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gmp, cbc],
+    dependencies: deps,
   )
 endforeach
