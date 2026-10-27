@@ -3795,6 +3795,8 @@ cdef class Matrix(Matrix1):
         the Hessenberg form will (in general) only be defined over the
         fraction field of the base ring.
 
+        The result is cached, hence immutable.
+
         EXAMPLES::
 
             sage: A = matrix(ZZ, 4, [2, 1, 1, -2, 2, 2, -1, -1, -1,1,2,3,4,5,6,7])
@@ -3809,6 +3811,21 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: Hessenbergize only possible for matrices over a field
+
+        TESTS:
+
+        The cached Hessenberg form cannot be modified::
+
+            sage: A = matrix(QQ, [[2, 1, 0], [1, 3, 1], [0, 1, 4]])
+            sage: H = A.hessenberg_form()
+            sage: H.is_immutable()
+            True
+            sage: H[0, 0] = 1000
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.hessenberg_form() is H
+            True
         """
         X = self.fetch('hessenberg_form')
         if X is not None:
@@ -3825,6 +3842,7 @@ cdef class Matrix(Matrix1):
             H = self.__copy__()
             H.hessenbergize()
         # end if
+        H.set_immutable()
         self.cache('hessenberg_form', H)
         return H
 
@@ -6764,6 +6782,20 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_left(algebraic_multiplicity=True)
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: len(A.eigenspaces_left())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -6828,6 +6860,7 @@ cdef class Matrix(Matrix1):
                         evec_list = [(space)([m(v_j) for v_j in v]) for v in WB]
                         V.append((ev, space.span_of_basis(evec_list, already_echelonized=True), e))
         V = Sequence(V, cr=True, check=False)
+        V.set_immutable()
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
@@ -7011,6 +7044,20 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: algebraic_multiplicity keyword must be True or False
+
+        With ``algebraic_multiplicity=True`` the result is cached, hence
+        immutable::
+
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: E = A.eigenspaces_right(algebraic_multiplicity=True)
+            sage: E.is_immutable()
+            True
+            sage: E.pop()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: len(A.eigenspaces_right())
+            3
         """
         if algebraic_multiplicity not in [True, False]:
             msg = 'algebraic_multiplicity keyword must be True or False'
@@ -7058,6 +7105,10 @@ cdef class Matrix(Matrix1):
 
         If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
+
+        With the ``'sage'`` algorithm and ``extend=True`` the result is cached,
+        hence immutable. Use ``list`` or ``sorted`` to get a copy that can be
+        modified.
 
         EXAMPLES::
 
@@ -7174,7 +7225,7 @@ cdef class Matrix(Matrix1):
             sage: m.eigenvalues(algorithm="pari_charpoly")  # abs tol 1e-14
             [-1.41421356237309505*I, 1.41421356237309505*I]
             sage: m.eigenvalues()
-            [-1.41421356237309505*I, 1.41421356237309505*I]
+            [-1.41421356237...*I, 1.41421356237...*I]
             sage: type(m.eigenvalues())
             <class 'sage.structure.sequence.Sequence_generic'>
         """
@@ -7219,7 +7270,7 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert ... to an element of Real Field with 53 bits of precision
-            sage: A.singular_values()  # abs tol 1e-13
+            sage: sorted(A.singular_values())  # abs tol 1e-13
             [0.317896596475411, 1.25232496300299, 1.48403213017074, 2.08062167993720, 2.59091978815526]
 
         Ensure all returned values are real::
@@ -7281,11 +7332,31 @@ cdef class Matrix(Matrix1):
             [-0.3722813232690144?, 5.372281323269015?]
             sage: A._eigenvalues_sage()
             [-0.3722813232690144?, 5.372281323269015?]
+
+        The cached eigenvalues cannot be modified::
+
+            sage: # needs sage.rings.number_field
+            sage: A = matrix(QQ, [[2, 0, 0], [0, 3, 0], [0, 0, 5]])
+            sage: ev = A.eigenvalues()
+            sage: ev.is_immutable()
+            True
+            sage: ev.remove(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+            sage: ev = list(ev)
+            sage: ev.remove(5)
+            sage: ev
+            [3, 2]
+            sage: A.eigenvalues()
+            [5, 3, 2]
+            sage: A.eigenvalues(extend=False)
+            [5, 3, 2]
         """
         x = self.fetch('eigenvalues')
         if x is not None:
             if not extend:
-                x = Sequence(i for i in x if i in self.base_ring())
+                return Sequence(i for i in x if i in self.base_ring())
             return x
 
         if not self.base_ring().is_exact():
@@ -7317,6 +7388,7 @@ cdef class Matrix(Matrix1):
                     res.extend([r]*(e*ee))
 
         eigenvalues = Sequence(res)
+        eigenvalues.set_immutable()
         self.cache('eigenvalues', eigenvalues)
         return eigenvalues
 
@@ -9647,8 +9719,9 @@ cdef class Matrix(Matrix1):
         Divide ``self`` into logical submatrices which can then be queried
         and extracted.
 
-        If a subdivision already exists, this method forgets the
-        previous subdivision and flushes the cache.
+        If a subdivision already exists and if it differs from the
+        requested one, we overwrite the previous subdivision and
+        clear the cache.
 
         INPUT:
 
@@ -9750,8 +9823,35 @@ cdef class Matrix(Matrix1):
             sage: A.subdivide(([], []))  # now reset
             sage: A._subdivisions is None
             True
+
+        Nothing is modified if we request a pre-existing
+        subdivision::
+
+            sage: A = matrix(QQ, 2, [[1,2],
+            ....:                    [3,4]])
+            sage: A.subdivisions()
+            ([], [])
+            sage: B = A.adjugate()     # cached
+            sage: A.subdivide([], [])
+            sage: A.adjugate() is B    # still cached after no-op
+            True
+            sage: A.subdivide([1],[1])
+            sage: A.adjugate() is B    # cache was clobbered
+            False
+            sage: A
+            [1|2]
+            [-+-]
+            [3|4]
+            sage: A.subdivisions()
+            ([1], [1])
+            sage: A.set_immutable()
+            sage: A.subdivide([1],[1])  # no-op, ok
+            sage: A.subdivide([],[])    # new subdivision, not ok
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable...
+
         """
-        self.check_mutability()
         if col_lines is None and row_lines is not None and isinstance(row_lines, tuple):
             tmp = row_lines
             row_lines, col_lines = tmp
@@ -9763,16 +9863,29 @@ cdef class Matrix(Matrix1):
             col_lines = []
         elif not isinstance(col_lines, list):
             col_lines = [col_lines]
-        if self._subdivisions is not None:
-            self.clear_cache()
-        if (not row_lines) and (not col_lines):
-            self._subdivisions = None
-        else:
-            l_row = sorted(row_lines)
-            l_col = sorted(col_lines)
-            l_row = [0] + [int(ZZ(x)) for x in l_row] + [self._nrows]
-            l_col = [0] + [int(ZZ(x)) for x in l_col] + [self._ncols]
-            self._subdivisions = (l_row, l_col)
+
+        if not row_lines and not col_lines:
+            # Special handling for ([], []) <--> None
+            if self._subdivisions is None:
+                return
+            else:
+                self.check_mutability()
+                self.clear_cache()
+                self._subdivisions = None
+                return
+
+        l_row = sorted(row_lines)
+        l_col = sorted(col_lines)
+        l_row = [0] + [int(ZZ(x)) for x in l_row] + [self._nrows]
+        l_col = [0] + [int(ZZ(x)) for x in l_col] + [self._ncols]
+
+        new_subdivisions = (l_row, l_col)
+        if self._subdivisions == new_subdivisions:
+            return
+
+        self.check_mutability()
+        self.clear_cache()
+        self._subdivisions = new_subdivisions
 
     def subdivision(self, i, j):
         """
@@ -10925,7 +11038,23 @@ cdef class Matrix(Matrix1):
         an inheriting class. Otherwise, use a generic division-free algorithm
         that computes the adjugate matrix from the characteristic polynomial.
 
-        The result is cached.
+        The result is cached, hence immutable.
+
+        TESTS:
+
+        The cached adjugate cannot be modified::
+
+            sage: M = Matrix(ZZ, 2, 2, [5, 2, 3, 4])
+            sage: N = M.adjugate()
+            sage: N.is_immutable()
+            True
+            sage: N[0, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: M.adjugate()
+            [ 4 -2]
+            [-3  5]
         """
         if self._nrows != self._ncols:
             raise ValueError("must be a square matrix")
@@ -10935,6 +11064,7 @@ cdef class Matrix(Matrix1):
             return X
 
         X = self._adjugate()
+        X.set_immutable()
         self.cache('adjugate', X)
         return X
 
@@ -13966,17 +14096,15 @@ cdef class Matrix(Matrix1):
                 C = L.change_ring(AA)
             except ValueError:  # cannot coerce...
                 C = L.change_ring(F_ac)
-        else:
+        if C is None or C is L:
+            # Either we did not extend, or change_ring() returned the
+            # cached (immutable) "L" itself because the ring did not
+            # change. We are about to modify "C", so we need a copy.
             C = L.__copy__()
 
-        # Overwrite the (strict) upper-triangular part of "C", since a
-        # priori it contains junk after _block_ldlt().
-        zero = C.base_ring().zero()
-        cdef Py_ssize_t i, j  # loop indices
+        cdef Py_ssize_t i  # loop index
         for i in range(n):
             C.rescale_col_c(i, splits[i], 0)
-            for j in range(i+1, n):
-                C.set_unsafe(i, j, zero)
         C.set_immutable()
         self.cache('cholesky', C)
         return C
@@ -14101,6 +14229,18 @@ cdef class Matrix(Matrix1):
 
         # Take A = PLDL^{*}P^{T} and simply invert.
         return P*L_inv.conjugate_transpose()*D.inverse()*L_inv*P.transpose()
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a backend-specific compact LU decomposition, if available.
+
+        Subclasses can override this method to return ``(perm, M)`` in the
+        same format as ``self.LU(pivot='nonzero', format='compact')``.  The
+        public :meth:`LU` method handles validation, caching, immutability,
+        and conversion to ``(P, L, U)``.  Returning ``None`` selects the
+        generic implementation.
+        """
+        return None
 
     def LU(self, pivot=None, format='plu'):
         r"""
@@ -14485,6 +14625,24 @@ cdef class Matrix(Matrix1):
             sage: P, L, U = M.LU()
             sage: P.base_ring()
             Finite Field of size 11
+
+        Splitting the compact factors preserves the cache and works for
+        sparse matrices and rectangular, rank-deficient matrices::
+
+            sage: for R in (QQ, GF(2), GF(9, 'a'), GF(101)):
+            ....:     for sparse in (False, True):
+            ....:         A = matrix(R, [[0, 1, 0, 1], [0, 0, 0, 1],
+            ....:                        [0, 1, 0, 1]], sparse=sparse)
+            ....:         compact = A.LU(format='compact')
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
+            ....:         assert all(B.is_mutable() for B in (P, L, U))
+            ....:         assert compact[1].is_immutable()
+            ....:         L[2, 0] += 1
+            ....:         U[0, 1] += 1
+            ....:         assert A.LU(format='compact') is compact
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
         """
         if pivot not in [None, 'partial', 'nonzero']:
             msg = "pivot strategy must be None, 'partial' or 'nonzero', not {0}"
@@ -14522,49 +14680,54 @@ cdef class Matrix(Matrix1):
         partial = (pivot == 'partial')
 
         cdef Py_ssize_t m, n, d, i, j, k, p, max_location
-        cdef Matrix M
+        cdef Matrix M, L
 
         # can now access cache, else compute
         #   the compact version of LU decomposition
         key = 'LU_' + pivot
         compact = self.fetch(key)
         if compact is None:
-            if F == R:
-                M = self.__copy__()
-            else:
-                M = self.change_ring(F)
-            m, n = M._nrows, M._ncols
-            d = min(m, n)
-            perm = list(range(m))
-            zero = F(0)
-            for k in range(d):
-                max_location = -1
-                if partial:
-                    # abs() necessary to convert zero to the
-                    # correct type for comparisons (Issue #12208)
-                    max_entry = abs(zero)
-                    for i in range(k, m):
-                        entry = abs(M.get_unsafe(i, k))
-                        if entry > max_entry:
-                            max_location = i
-                            max_entry = entry
+            if not partial and F == R:
+                compact = self._lu_nonzero_compact()
+            if compact is None:
+                if F == R:
+                    M = self.__copy__()
                 else:
-                    for i in range(k, m):
-                        if M.get_unsafe(i, k) != zero:
-                            max_location = i
-                            break
-                if max_location != -1:
-                    perm[k], perm[max_location] = perm[max_location], perm[k]
-                    M.swap_rows(k, max_location)
-                    inv = M.get_unsafe(k, k).inverse()
-                    for j in range(k+1, m):
-                        scale = -M.get_unsafe(j, k) * inv
-                        M.set_unsafe(j, k, -scale)
-                        for p in range(k+1, n):
-                            M.set_unsafe(j, p, M.get_unsafe(j, p) + scale*M.get_unsafe(k, p))
-            perm = tuple(perm)
+                    M = self.change_ring(F)
+                m, n = M._nrows, M._ncols
+                d = min(m, n)
+                perm = list(range(m))
+                zero = F(0)
+                for k in range(d):
+                    max_location = -1
+                    if partial:
+                        # abs() necessary to convert zero to the
+                        # correct type for comparisons (Issue #12208)
+                        max_entry = abs(zero)
+                        for i in range(k, m):
+                            entry = abs(M.get_unsafe(i, k))
+                            if entry > max_entry:
+                                max_location = i
+                                max_entry = entry
+                    else:
+                        for i in range(k, m):
+                            if M.get_unsafe(i, k) != zero:
+                                max_location = i
+                                break
+                    if max_location != -1:
+                        perm[k], perm[max_location] = perm[max_location], perm[k]
+                        M.swap_rows(k, max_location)
+                        inv = M.get_unsafe(k, k).inverse()
+                        for j in range(k+1, m):
+                            scale = -M.get_unsafe(j, k) * inv
+                            M.set_unsafe(j, k, -scale)
+                            for p in range(k+1, n):
+                                M.set_unsafe(j, p, M.get_unsafe(j, p) + scale*M.get_unsafe(k, p))
+                compact = (tuple(perm), M)
+            else:
+                perm, M = compact
+                compact = (tuple(perm), M)
             M.set_immutable()
-            compact = (perm, M)
             self.cache(key, compact)
 
         if format == 'compact':
@@ -14582,9 +14745,10 @@ cdef class Matrix(Matrix1):
             P = P.change_ring(F)
             L = M.matrix_space(m, m).identity_matrix().__copy__()
             for i in range(1, m):
+                sig_check()
                 for k in range(min(i, d)):
-                    L[i, k] = M[i, k]
-                    M[i, k] = zero
+                    L.set_unsafe(i, k, M.get_unsafe(i, k))
+                    M.set_unsafe(i, k, zero)
             return P, L, M
 
     def _indefinite_factorization(self, algorithm, check=True):
@@ -15025,9 +15189,9 @@ cdef class Matrix(Matrix1):
           * An array ``p`` of the first `n` natural numbers, permuted
             in a way that represents the `n`-by-`n` permutation matrix
             `P`,
-          * A matrix whose lower-triangular portion is ``L``, but whose
-            (strict) upper-triangular portion is junk,
-          * A list of the block-diagonal entries of ``D``.
+          * The matrix ``L``, which is cached and hence immutable,
+          * A list of the block-diagonal entries of ``D``, which are
+            cached and hence immutable.
 
         This is mainly useful to avoid having to "undo" the
         construction of the matrix `D` when we don't need it. For
@@ -15072,6 +15236,8 @@ cdef class Matrix(Matrix1):
         ring = self.base_ring().fraction_field()
 
         cdef Matrix A  # A copy of the input matrix
+        cdef Matrix E  # Top-left diagonal block
+
         if self.base_ring() == ring:
             A = self.__copy__()
         else:
@@ -15116,6 +15282,7 @@ cdef class Matrix(Matrix1):
         # matrix in "d" to let block_diagonal_matrix() know what its
         # base ring should be.
         if n == 0:
+            A.set_immutable()
             d.append(A)
 
         k = 0
@@ -15133,7 +15300,9 @@ cdef class Matrix(Matrix1):
                 # meaningless. The corresponding entry of "L" will be
                 # fixed later (since it's an on-diagonal element, it gets
                 # set to one eventually).
-                d.append(one_by_one_space(A_kk))
+                E = one_by_one_space(A_kk)
+                E.set_immutable()
+                d.append(E)
                 k += 1
                 continue
 
@@ -15143,7 +15312,9 @@ cdef class Matrix(Matrix1):
                     # It's a back door that lets us escape with only the standard non-block
                     # non-pivoting LDL^T factorization. This allows us to implement e.g.
                     # indefinite_factorization() in terms of this method.
-                    d.append(one_by_one_space(A_kk))
+                    E = one_by_one_space(A_kk)
+                    E.set_immutable()
+                    d.append(E)
                     _block_ldlt_pivot1x1(A, k)
                     k += 1
                     continue
@@ -15180,7 +15351,9 @@ cdef class Matrix(Matrix1):
                 # the 1x1 pivot "a" in the top-left position. The entry "a"
                 # will be adjusted to "1" later on to ensure that "L" is
                 # (block) unit-lower-triangular.
-                d.append(one_by_one_space(A_kk))
+                E = one_by_one_space(A_kk)
+                E.set_immutable()
+                d.append(E)
                 k += 1
                 continue
 
@@ -15192,29 +15365,35 @@ cdef class Matrix(Matrix1):
                 # otherwise. We are performing a 1x1 pivot, but the
                 # rows/columns are already where we want them, so nothing
                 # needs to be permuted.
-                d.append(one_by_one_space(A_kk))
+                E = one_by_one_space(A_kk)
+                E.set_immutable()
+                d.append(E)
                 _block_ldlt_pivot1x1(A, k)
                 k += 1
                 continue
 
             # Continuing the "else" branch of Higham's Step (1), and
             # onto B&K's Step (3) where we find the largest
-            # off-diagonal entry (in magnitude) in column "r". Since
-            # the matrix is Hermitian, we need only look at the
-            # above-diagonal entries to find the off-diagonal of
-            # maximal magnitude.
+            # off-diagonal entry (in magnitude) in column "r" of the
+            # active submatrix. Since the matrix is Hermitian, we search
+            # row "r", whose corresponding entries have the same
+            # magnitudes.
             #
             # Note: omega_r is defined as a C double, but the abs()
             # below would make a complex number approximate anyway.
             omega_r = 0
-            for j in range(k, r):
+            for j in range(k, n):
+                if j == r:
+                    continue
                 a_rj_abs = A.get_unsafe(r, j).abs()
                 if a_rj_abs > omega_r:
                     omega_r = a_rj_abs
 
             if A_kk.abs()*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
-                d.append(one_by_one_space(A_kk))
+                E = one_by_one_space(A_kk)
+                E.set_immutable()
+                d.append(E)
                 _block_ldlt_pivot1x1(A, k)
                 k += 1
                 continue
@@ -15224,7 +15403,9 @@ cdef class Matrix(Matrix1):
                 # This is Step (3) in Higham or Step (5) in B&K. Still
                 # a 1x1 pivot, but this time we need to swap
                 # rows/columns k and r.
-                d.append(one_by_one_space(A_rr))
+                E = one_by_one_space(A_rr)
+                E.set_immutable()
+                d.append(E)
                 A.swap_columns_c(k, r)
                 A.swap_rows_c(k, r)
                 p_k = p[k]
@@ -15247,6 +15428,7 @@ cdef class Matrix(Matrix1):
             # The top-left 2x2 submatrix (starting at position k,k) is
             # now our pivot.
             E = A[k:k+2, k:k+2]
+            E.set_immutable()
             d.append(E)
 
             C = A[k+2:n, k:k+2]
@@ -15289,6 +15471,12 @@ cdef class Matrix(Matrix1):
             # We skipped this during the main loop, but it's necessary for
             # correctness.
             A.set_unsafe(i, i, one)
+            # The (strict) upper-triangular part of "A" still holds
+            # junk from the Schur complements, so clear it before "A"
+            # is cached as "L".
+            for j in range(i+1, n):
+                A.set_unsafe(i, j, zero)
+        A.set_immutable()
 
         result = (p, A, d)
         self.cache(cache_string, result)
@@ -15344,6 +15532,9 @@ cdef class Matrix(Matrix1):
           * `D` is a block-diagonal matrix whose blocks are of size
             one or two.
 
+        The matrix `L` is cached, hence immutable. So is `D` when it
+        consists of a single block.
+
         With ``classical=True``, the permutation matrix `P` is always
         an identity matrix and the diagonal blocks are always
         one-by-one. A :exc:`ValueError` is raised if the matrix has no
@@ -15375,20 +15566,32 @@ cdef class Matrix(Matrix1):
             ....:                  [0, 2, 0]])
             sage: P,L,D = A.block_ldlt()
             sage: P
-            [0 0 1]
             [1 0 0]
             [0 1 0]
+            [0 0 1]
             sage: L
-            [  1   0   0]
-            [  2   1   0]
-            [  1 1/2   1]
+            [1 0 0]
+            [0 1 0]
+            [2 0 1]
             sage: D
-            [ 1| 0| 0]
-            [--+--+--]
-            [ 0|-4| 0]
-            [--+--+--]
-            [ 0| 0| 0]
+            [0 1|0]
+            [1 1|0]
+            [---+-]
+            [0 0|0]
             sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+        The complete pivot row must be searched.  Ignoring entries after
+        its diagonal can select an unstable one-by-one pivot and overflow
+        the following Schur-complement update::
+
+            sage: # needs scipy
+            sage: H = RDF(1e200)
+            sage: A = matrix(RDF, [[0, 1, 0], [1, 1, H], [0, H, 1]])
+            sage: P, L, D = A.block_ldlt()
+            sage: any(x.is_infinity() or x.is_NaN() for x in L.list() + D.list())
+            False
+            sage: P.T * A * P == L * D * L.T
             True
 
         This two-by-two matrix has no classical factorization, but it
@@ -15590,9 +15793,39 @@ cdef class Matrix(Matrix1):
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
             True
+
+        The cached factorization, which :meth:`cholesky` also uses,
+        cannot be modified::
+
+            sage: A = matrix(QQ, [[4, 2], [2, 5]])
+            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: L.is_immutable()
+            True
+            sage: L[1, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.block_ldlt(classical=True)[1] is L
+            True
+            sage: A.cholesky()
+            [2 0]
+            [1 2]
+
+        With only one diagonal block, `D` is that cached block::
+
+            sage: A = matrix(QQ, [[3]])
+            sage: P,L,D = A.block_ldlt()
+            sage: D.is_immutable()
+            True
+            sage: D[0, 0] = -100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
+            sage: A.is_positive_definite()
+            True
+            sage: matrix(QQ, 0, 0).block_ldlt()
+            ([], [], [])
         """
-        cdef Py_ssize_t n     # size of the matrices
-        cdef Py_ssize_t i, j  # loop indices
         cdef Matrix P, L, D   # output matrices
 
         p, L, d = self._block_ldlt(classical)
@@ -15604,14 +15837,6 @@ cdef class Matrix(Matrix1):
         # the base ring of P and L. Problematic? Who knows.
         from sage.matrix.constructor import block_diagonal_matrix
         D = block_diagonal_matrix(d)
-
-        # Overwrite the (strict) upper-triangular part of "L", since a
-        # priori it contains the same entries as "A" did after _block_ldlt().
-        n = L._nrows
-        zero = MS.base_ring().zero()
-        for i in range(n):
-            for j in range(i+1, n):
-                L.set_unsafe(i, j, zero)
 
         return (P, L, D)
 
@@ -16539,8 +16764,8 @@ cdef class Matrix(Matrix1):
 
             sage: a = matrix([[1,2], [3,4]])
             sage: a.exp()
-            [-1/22*((sqrt(33) - 11)*e^sqrt(33) - sqrt(33) - 11)*e^(-1/2*sqrt(33) + 5/2)              2/33*(sqrt(33)*e^sqrt(33) - sqrt(33))*e^(-1/2*sqrt(33) + 5/2)]
-            [             1/11*(sqrt(33)*e^sqrt(33) - sqrt(33))*e^(-1/2*sqrt(33) + 5/2)  1/22*((sqrt(33) + 11)*e^sqrt(33) - sqrt(33) + 11)*e^(-1/2*sqrt(33) + 5/2)]
+            [ 1/22*((sqrt(33) + 11)*e^2 - (sqrt(33) - 11)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)               -2/33*(sqrt(33)*e^2 - sqrt(33)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)]
+            [              -1/11*(sqrt(33)*e^2 - sqrt(33)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2) -1/22*((sqrt(33) - 11)*e^2 - (sqrt(33) + 11)*e^(sqrt(33) + 2))*e^(-1/2*sqrt(33) + 1/2)]
 
             sage: type(a.exp())                                                         # needs sage.symbolic
             <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>

@@ -118,9 +118,9 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 import os
 import re
-from collections.abc import Iterator
 
 import sage.interfaces.abc
 from sage.interfaces.expect import (
@@ -134,6 +134,10 @@ from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 from sage.misc.multireplace import multiple_replace
 from sage.structure.global_options import GlobalOptions
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def remove_output_labels(s) -> str:

@@ -23,7 +23,7 @@ AUTHORS:
 # ****************************************************************************
 
 
-from collections.abc import Iterator
+from __future__ import annotations
 from itertools import product
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
@@ -50,6 +50,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def fast_char_p_power(x, n, p=None):

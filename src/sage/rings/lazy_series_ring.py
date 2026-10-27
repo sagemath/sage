@@ -1890,8 +1890,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
 
             sage: L = LazyLaurentSeriesRing(QQ, 't')
@@ -1906,11 +1905,11 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
              (unique factorization domains and algebras with basis over
-              (Dedekind domains and euclidean domains
+              (euclidean domains
                and noetherian rings
                and infinite enumerated sets and metric spaces)
               and commutative algebras over
-               (Dedekind domains and euclidean domains
+               (euclidean domains
                 and noetherian rings
                 and infinite enumerated sets and metric spaces)
               and infinite sets)
@@ -1982,6 +1981,25 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         """
         from sage.misc.latex import latex
         return latex(self.base_ring()) + r"(\!({})\!)".format(self.variable_name())
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LazyLaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -2913,6 +2931,25 @@ class LazyPowerSeriesRing(LazySeriesRing):
             return [R.one()]
         return [m.change_ring(R)
                 for m in self._internal_poly_ring.base_ring().monomials_of_degree(n)]
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['q']
+            sage: L = LazyPowerSeriesRing(R, 'x, y')
+            sage: L.variable_names_recursive()
+            ('q', 'x', 'y')
+            sage: L.variable_names_recursive(2)
+            ('x', 'y')
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):

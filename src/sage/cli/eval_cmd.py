@@ -1,8 +1,12 @@
-import argparse
+from __future__ import annotations
 
-from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse
 from sage.all import sage_globals
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
+    from sage.cli.options import CliOptions
 
 
 class EvalCmd:

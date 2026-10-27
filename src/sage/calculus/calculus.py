@@ -133,8 +133,8 @@ including exponentiation::
     [x^2 + x   2*x^3]
     [      2 x^2 + x]
     sage: e^M
-    [          1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*(x*e^(2*sqrt(x)) - x)*sqrt(x)*e^(x - sqrt(x))]
-    [  1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)           1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
+    [        1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*x^(3/2)*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))]
+    [1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)         1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
 
 Complex exponentiation works, but may require a patched version of
 maxima (:issue:`32898`) for now::
@@ -621,6 +621,23 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        Maple and Mathematica, so even if the chosen backend can perform
        the summation the result might not be convertible into a Sage
        expression.
+
+    TESTS:
+
+    Check that :issue:`42894` is fixed::
+
+        sage: k = var('k')
+        sage: n = 4
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        42
+        sage: n = 11
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        12630
+
+    The failures are due to a bug in Maxima's ``simplify_sum`` that
+    returns a wrong value for sums with finite-support binomials.  The
+    upstream bug report is https://sourceforge.net/p/maxima/bugs/5688/.
+    Once Maxima is fixed, the ``# known bug`` annotations can be removed.
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -1249,7 +1266,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
 
         sage: limit(sin(x)/x, x, 0, algorithm='sympy')
         1
-        sage: limit(sin(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac
+        sage: limit(sin(x)/x, x, 0, algorithm='giac')                                   # needs sage.libs.giac
         1
         sage: limit(x^x, x, 0, dir='+', algorithm='fricas') # optional - fricas
         1

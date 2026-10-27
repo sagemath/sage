@@ -5381,10 +5381,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [Feig1986] Joan Feigenbaum, *Directed Cartesian-Product Graphs
-           have Unique Factorizations that can be computed in Polynomial Time*,
-           Discrete Applied Mathematics 15 (1986) 105-110
-           :doi:`10.1016/0166-218X(86)90023-5`
+        - [Feig1986]_
         """
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
@@ -7656,18 +7653,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         q = polygen(ZZ, 'q')
         ring = q.parent()
-        hasse = self._hasse_diagram
-        if len(hasse) == 1:
-            return q.parent().one()
-        maxi = hasse.top()
-        mini = hasse.bottom()
-        if (mini is None) or (maxi is None):
-            raise ValueError("the poset is not bounded")
-        f = ring.sum(ring.monomial(len(ch))
-                     for ch in hasse.chains(exclude=[mini, maxi]))
-        d = f.degree()
-        f = (1 - q)**d * q * f(q=q / (1 - q))
-        return ring(f)
+        f = self.f_polynomial()
+        h = (1-q)**f.degree() * f(q/(1-q))
+        return ring(h)
 
     def flag_f_polynomial(self):
         r"""
@@ -8588,7 +8576,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
         G = DiGraph(pdict, format='dict_of_lists')
-        a = {e: 0 for e in G.edge_iterator(labels=False)}
+        a = dict.fromkeys(G.edge_iterator(labels=False), 0)
         for i in self:
             a[((0, i), (1, i))] = 1
         return (G, a)

@@ -51,7 +51,7 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
     The following line creates the sequence of intervals
     `(i, i+2)` for i in `[0, ..., 8]`::
 
-        sage: intervals = [(i,i+2) for i in range(9)]
+        sage: intervals = [(i, i + 2) for i in range(9)]
 
     In the corresponding graph ::
 
@@ -59,11 +59,8 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
         sage: g.get_vertex(3)
         (3, 5)
         sage: neigh = g.neighbors(3)
-        sage: for v in neigh: print(g.get_vertex(v))
-        (1, 3)
-        (2, 4)
-        (4, 6)
-        (5, 7)
+        sage: [g.get_vertex(v) for v in neigh]
+        [(1, 3), (2, 4), (4, 6), (5, 7)]
 
     The is_interval() method verifies that this graph is an interval graph. ::
 
@@ -72,8 +69,8 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
 
     The intervals in the list need not be distinct. ::
 
-        sage: intervals = [ (1,2), (1,2), (1,2), (2,3), (3,4) ]
-        sage: g = graphs.IntervalGraph(intervals,True)
+        sage: intervals = [(1, 2), (1, 2), (1, 2), (2, 3), (3, 4)]
+        sage: g = graphs.IntervalGraph(intervals, True)
         sage: g.clique_maximum()
         [0, 1, 2, 3]
         sage: g.get_vertices()
@@ -82,8 +79,8 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
     The endpoints of the intervals are not ordered we get the same graph
     (except for the vertex labels). ::
 
-        sage: rev_intervals = [ (2,1), (2,1), (2,1), (3,2), (4,3) ]
-        sage: h = graphs.IntervalGraph(rev_intervals,False)
+        sage: rev_intervals = [(2, 1), (2, 1), (2, 1), (3, 2), (4, 3)]
+        sage: h = graphs.IntervalGraph(rev_intervals, False)
         sage: h.get_vertices()
         {0: (2, 1), 1: (2, 1), 2: (2, 1), 3: (3, 2), 4: (4, 3)}
         sage: g.edges(sort=True) == h.edges(sort=True)
@@ -203,7 +200,7 @@ def PermutationGraph(second_permutation, first_permutation=None,
         sage: set(edges) == set(p.inverse().inversions())
         True
 
-        sage: PG = graphs.PermutationGraph([3,4,5,1,2])
+        sage: PG = graphs.PermutationGraph([3, 4, 5, 1, 2])
         sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
@@ -211,7 +208,7 @@ def PermutationGraph(second_permutation, first_permutation=None,
          (2, 3, None),
          (2, 4, None),
          (2, 5, None)]
-        sage: PG = graphs.PermutationGraph([3,4,5,1,2], [1,4,2,5,3])
+        sage: PG = graphs.PermutationGraph([3, 4, 5, 1, 2], [1, 4, 2, 5, 3])
         sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
@@ -220,7 +217,7 @@ def PermutationGraph(second_permutation, first_permutation=None,
          (2, 5, None),
          (3, 4, None),
          (3, 5, None)]
-        sage: PG = graphs.PermutationGraph([1,4,2,5,3], [3,4,5,1,2])
+        sage: PG = graphs.PermutationGraph([1, 4, 2, 5, 3], [3, 4, 5, 1, 2])
         sage: sorted(PG.edges(sort=True))
         [(1, 3, None),
          (1, 4, None),
@@ -230,7 +227,7 @@ def PermutationGraph(second_permutation, first_permutation=None,
          (3, 4, None),
          (3, 5, None)]
 
-        sage: PG = graphs.PermutationGraph(Permutation([1,3,2]), Permutation([1,2,3]))
+        sage: PG = graphs.PermutationGraph(Permutation([1, 3, 2]), Permutation([1, 2, 3]))
         sage: sorted(PG.edges(sort=True))
         [(2, 3, None)]
 
@@ -315,14 +312,13 @@ def ToleranceGraph(tolrep, immutable=False, name=None):
     The following code creates a tolerance representation ``tolrep``, generates
     its tolerance graph ``g``, and applies some checks::
 
-        sage: tolrep = [(1,4,3),(1,2,1),(2,3,1),(0,3,3)]
+        sage: tolrep = [(1, 4, 3), (1, 2, 1), (2, 3, 1), (0, 3, 3)]
         sage: g = graphs.ToleranceGraph(tolrep)
         sage: g.get_vertex(3)
         (0, 3, 3)
         sage: neigh = g.neighbors(3)
-        sage: for v in neigh: print(g.get_vertex(v))
-        (1, 2, 1)
-        (2, 3, 1)
+        sage: [g.get_vertex(v) for v in neigh]
+        [(1, 2, 1), (2, 3, 1)]
         sage: g.is_interval()
         False
         sage: g.is_weakly_chordal()
@@ -330,7 +326,7 @@ def ToleranceGraph(tolrep, immutable=False, name=None):
 
     The intervals in the list need not be distinct ::
 
-        sage: tolrep2 = [(0,4,5),(1,2,1),(2,3,1),(0,4,5)]
+        sage: tolrep2 = [(0, 4, 5), (1, 2, 1), (2, 3, 1), (0, 4, 5)]
         sage: g2 = graphs.ToleranceGraph(tolrep2)
         sage: g2.get_vertices()
         {0: (0, 4, 5), 1: (1, 2, 1), 2: (2, 3, 1), 3: (0, 4, 5)}
@@ -339,7 +335,7 @@ def ToleranceGraph(tolrep, immutable=False, name=None):
 
     Real values are also allowed ::
 
-        sage: tolrep = [(0.1,3.3,4.4),(1.1,2.5,1.1),(1.4,4.4,3.3)]
+        sage: tolrep = [(0.1, 3.3, 4.4), (1.1, 2.5, 1.1), (1.4, 4.4, 3.3)]
         sage: g = graphs.ToleranceGraph(tolrep)
         sage: g.is_isomorphic(graphs.PathGraph(3))
         True
@@ -348,7 +344,7 @@ def ToleranceGraph(tolrep, immutable=False, name=None):
 
     Giving negative third value::
 
-        sage: tolrep = [(0.1,3.3,-4.4),(1.1,2.5,1.1),(1.4,4.4,3.3)]
+        sage: tolrep = [(0.1, 3.3, -4.4), (1.1, 2.5, 1.1), (1.4, 4.4, 3.3)]
         sage: g = graphs.ToleranceGraph(tolrep)
         Traceback (most recent call last):
         ...
@@ -432,11 +428,11 @@ def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G                              # needs sage.schemes
+        sage: G = graphs.OrthogonalArrayBlockGraph(5, 5); G                             # needs sage.schemes
         OA(5,5): Graph on 25 vertices
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.schemes
         (25, 20, 15, 20)
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,10); G
+        sage: G = graphs.OrthogonalArrayBlockGraph(4, 10); G
         OA(4,10): Graph on 100 vertices
         sage: G.is_strongly_regular(parameters=True)
         (100, 36, 14, 12)
@@ -444,9 +440,9 @@ def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
     Two graphs built from different orthogonal arrays are also different::
 
         sage: k = 4; n = 10
-        sage: OAa = designs.orthogonal_arrays.build(k,n)
-        sage: OAb = [[(x+1)%n for x in R] for R in OAa]
-        sage: set(map(tuple,OAa)) == set(map(tuple,OAb))
+        sage: OAa = designs.orthogonal_arrays.build(k, n)
+        sage: OAb = [[(x + 1) % n for x in R] for R in OAa]
+        sage: set(map(tuple, OAa)) == set(map(tuple, OAb))
         False
         sage: Ga = graphs.OrthogonalArrayBlockGraph(k, n, OAa)
         sage: Gb = graphs.OrthogonalArrayBlockGraph(k, n, OAb)
@@ -485,16 +481,16 @@ def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
     Note that the graph ``g0`` is actually isomorphic to the affine polar graph
     `VO^+(4,2)`::
 
-        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # needs sage.libs.gap sage.modules
+        sage: graphs.AffineOrthogonalPolarGraph(4, 2, '+').is_isomorphic(g0)            # needs sage.libs.gap sage.modules
         True
 
     TESTS::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # needs sage.modules sage.schemes
+        sage: G = graphs.OrthogonalArrayBlockGraph(4, 6)                                # needs sage.modules sage.schemes
         Traceback (most recent call last):
         ...
         NotImplementedError: I don't know how to build an OA(4,6)!
-        sage: G = graphs.OrthogonalArrayBlockGraph(8,2)                                 # needs sage.modules
+        sage: G = graphs.OrthogonalArrayBlockGraph(8, 2)                                # needs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: There is no OA(8,2). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !
@@ -545,12 +541,12 @@ def IntersectionGraph(S, immutable=False):
 
     EXAMPLES::
 
-        sage: graphs.IntersectionGraph([(1,2,3),(3,4,5),(5,6,7)])
+        sage: graphs.IntersectionGraph([(1, 2, 3), (3, 4, 5), (5, 6, 7)])
         Intersection Graph: Graph on 3 vertices
 
     TESTS::
 
-        sage: graphs.IntersectionGraph([(1,2,[1])])
+        sage: graphs.IntersectionGraph([(1, 2, [1])])
         Traceback (most recent call last):
         ...
         TypeError: The elements of S must be hashable, and this one is not: (1, 2, [1])
