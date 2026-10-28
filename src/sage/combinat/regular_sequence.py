@@ -2433,6 +2433,29 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             ....:                      6: UB.subsequence(4, 2) + UB.subsequence(4, 3)})
             sage: (UB2 - Seq2(UB)).is_trivial_zero()
             True
+
+        We can reuse the same dictionary for different regularities::
+
+            sage: d = {1: 1}
+            sage: Seq2ZZ = RegularSequenceRing(2, ZZ)
+            sage: Seq2ZZ.from_recurrence(M=1, m=0,
+            ....:     coeffs={(0, 0): 1, (1, 0): 1},
+            ....:     initial_values={0: 0, 1: 1},
+            ....:     inhomogeneities=d)
+            2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
+            sage: d
+            {1: 1}
+
+        ::
+
+            sage: Seq3 = RegularSequenceRing(3, ZZ)
+            sage: Seq3.from_recurrence(M=1, m=0,
+            ....:     coeffs={(0, 0): 1, (1, 0): 1},
+            ....:     initial_values={0: 0, 1: 1},
+            ....:     inhomogeneities=d)
+            3-regular sequence 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, ...
+            sage: d
+            {1: 1}
         """
         RP = RecurrenceParser(self.k, self.coefficient_ring())
         mu, left, right = RP(*args, **kwds)
@@ -3375,6 +3398,9 @@ class RecurrenceParser:
         uu = max([ceil((u*k**(M-m) + k**M - k**m)/(k**(M-m) - 1)) - 1, k**m - 1])
         n1 = offset - floor(ll/k**M)
         dim = (k**M - 1)/(k - 1) + (M - m)*(uu - ll - k**m + 1) + n1
+
+        # Avoid modifying the dictionary passed by the caller.
+        inhomogeneities = dict(inhomogeneities)
 
         if inhomogeneities:
             invalid_indices = [i for i in inhomogeneities
