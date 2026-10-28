@@ -70,7 +70,8 @@ cdef class MPolynomialRing_base(Ring):
             sage: Foo(QQ, 2, ['x','y'], 'degrevlex')                                                                    # needs sage.libs.singular
             Multivariate Polynomial Ring in x, y over Rational Field
 
-        Check that :meth:`basis` works correctly::
+        Check that :meth:`basis <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis>`
+        works correctly::
 
             sage: R = PolynomialRing(QQ, [])
             sage: R.basis()
@@ -199,8 +200,10 @@ cdef class MPolynomialRing_base(Ring):
           the default is all variables of ``self``
         - ``prec`` -- default precision of resulting power series ring,
           possibly infinite
-        - ``extras`` -- passed as keywords to :class:`PowerSeriesRing`
-          or :class:`LazyPowerSeriesRing`; can also be keyword arguments
+        - ``extras`` -- passed as keywords to
+          :func:`~sage.rings.power_series_ring.PowerSeriesRing`
+          or :class:`~sage.rings.lazy_series_ring.LazyPowerSeriesRing`;
+          can also be keyword arguments
 
         EXAMPLES::
 
@@ -1457,8 +1460,10 @@ cdef class MPolynomialRing_base(Ring):
 
         TESTS:
 
-        Check that :class:`.ETuple`s and :class:`.IntegerVector` also work
-        (:class:`.IntegerVector` is used for :meth:`basis`)::
+        Check that :class:`~sage.rings.polynomial.polydict.ETuple` objects and
+        :class:`~sage.combinat.integer_vector.IntegerVector` also work
+        (the latter is used for
+        :meth:`basis <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis>`)::
 
             sage: from sage.combinat.integer_vector import IntegerVector, IntegerVectors
             sage: from sage.rings.polynomial.polydict import ETuple

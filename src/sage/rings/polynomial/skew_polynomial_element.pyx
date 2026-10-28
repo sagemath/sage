@@ -3,14 +3,14 @@ r"""
 Univariate skew polynomials
 
 This module provides the
-:class:`~sage.rings.polynomial.skew_polynomial_element.SkewPolynomial`.
+:class:`~sage.rings.polynomial.skew_polynomial_element.SkewPolynomial_generic_dense`.
 In the class hierarchy in Sage, the locution *Skew Polynomial* is used
 for a Ore polynomial without twisting derivation.
 
 .. WARNING::
 
     The current semantics of
-    :meth:`~sage.rings.polynomial.skew_polynomial_element.SkewPolynomial.__call__`
+    ``SkewPolynomial_generic_dense.__call__``
     are experimental, so a warning is thrown when a skew polynomial is evaluated
     for the first time in a session. See the method documentation for details.
 

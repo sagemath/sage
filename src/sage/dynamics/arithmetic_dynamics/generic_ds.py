@@ -313,13 +313,14 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         Given a family of maps defined over a polynomial ring. A
         specialization is a particular member of that family. The
         specialization can be specified either by a dictionary or
-        a :class:`SpecializationMorphism`.
+        a :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
         - ``D`` -- (optional) dictionary
 
-        - ``phi`` -- (optional) SpecializationMorphism
+        - ``phi`` -- (optional)
+          :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`
 
         - ``homset`` -- (optional) homset of specialized map
 

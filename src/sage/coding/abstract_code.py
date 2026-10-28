@@ -76,6 +76,8 @@ A new decoder must have the following methods:
 
 For more information about the Decoder class, see
 :class:`~sage.coding.decoder.Decoder`
+
+.. automethod:: AbstractCode.__call__
 """
 
 from sage.structure.parent import Parent
@@ -385,7 +387,8 @@ class AbstractCode(Parent):
         r"""
         Return an error stating ``ambient_space`` of ``self`` is not implemented.
 
-        This method is required by :meth:`__call__`.
+        This method is required by
+        :meth:`~sage.coding.abstract_code.AbstractCode.__call__`.
 
         EXAMPLES::
 

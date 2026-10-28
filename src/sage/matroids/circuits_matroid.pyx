@@ -478,7 +478,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -500,7 +500,7 @@ cdef class CircuitsMatroid(Matroid):
 
         .. SEEALSO::
 
-            :meth:`M.bases() <sage.matroids.circuits_matroid.bases>`
+            :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
         """
         if k == -1:  # all independent sets
             return self._independent_sets()
@@ -524,7 +524,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- integer
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- integer (optional); the length of the circuits
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -636,7 +636,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the nonspanning circuits of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -684,7 +684,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``ordering`` -- list (optional); a total ordering of the groundset
         - ``reduced`` -- boolean (default: ``False``)
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -750,7 +750,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``ordering`` -- list (optional); a total ordering of the groundset
         - ``reduced`` -- boolean (default: ``False``)
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 

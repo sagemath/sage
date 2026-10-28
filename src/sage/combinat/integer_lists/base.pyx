@@ -38,7 +38,9 @@ cdef class IntegerListsBackend():
     integers with specified constraints.
 
     This base implements the basic operations, including checking for
-    containment using :meth:`_contains`, but not iteration. For
+    containment using
+    :meth:`_contains <sage.combinat.integer_lists.base.IntegerListsBackend._contains>`,
+    but not iteration. For
     iteration, subclass this class and implement an ``_iter()`` method.
 
     EXAMPLES::
@@ -47,6 +49,8 @@ cdef class IntegerListsBackend():
         sage: L = IntegerListsBackend(6, max_slope=-1)
         sage: L._contains([3,2,1])
         True
+
+    .. automethod:: _contains
     """
     def __init__(self,
                  n=None, length=None, *,
@@ -70,6 +74,10 @@ cdef class IntegerListsBackend():
             Traceback (most recent call last):
             ...
             TypeError: unable to coerce <class 'sage.rings.infinity.PlusInfinity'> to an integer
+
+            sage: L = IntegerListsBackend(0, length=0, min_length=1)
+            sage: L.max_sum
+            -1
         """
         if n is not None:
             min_sum = n
@@ -77,11 +85,22 @@ cdef class IntegerListsBackend():
         self.min_sum = Integer(min_sum) if min_sum != -Infinity else -Infinity
         self.max_sum = Integer(max_sum) if max_sum != Infinity else Infinity
 
+        # Save original min/max length before `length` overwrites them
+        original_min_length = min_length
+        original_max_length = max_length
+
         if length is not None:
             min_length = length
             max_length = length
         self.min_length = Integer(max(min_length, 0))
         self.max_length = Integer(max_length) if max_length != Infinity else Infinity
+
+        # If exact length conflicts with min/max length, signal empty set
+        if length is not None:
+            if original_min_length > length or original_max_length < length:
+                self.max_sum = -1
+        elif min_length > max_length:
+            self.max_sum = -1
 
         self.min_slope = Integer(min_slope) if min_slope != -Infinity else -Infinity
         self.max_slope = Integer(max_slope) if max_slope != Infinity else Infinity
@@ -386,6 +405,8 @@ cdef class Envelope():
         sage: f = Envelope(3, sign=-1, max_slope=-1, min_length=4)
         sage: [f(i) for i in range(10)]
         [6, 5, 4, 3, 3, 3, 3, 3, 3, 3]
+
+    .. automethod:: __init__
     """
     def __init__(self, f, *,
                  min_part=0, max_part=Infinity,

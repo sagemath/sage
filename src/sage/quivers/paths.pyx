@@ -554,7 +554,7 @@ cdef class QuiverPath(MonoidElement):
 
         OUTPUT:
 
-        - :class:`QuiverPath`s ``(C1,G,C2)`` such that ``self = C1*G`` and ``P = G*C2``, or
+        - :class:`~sage.quivers.paths.QuiverPath` objects ``(C1, G, C2)`` such that ``self = C1*G`` and ``P = G*C2``, or
         - ``(None, None, None)``, if the paths do not overlap (or belong to different quivers).
 
         EXAMPLES::

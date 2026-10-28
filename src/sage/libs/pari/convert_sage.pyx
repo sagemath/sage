@@ -102,7 +102,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - a `p`-adic element (type ``t_PADIC``)
 
-    - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
+    - a :class:`~sage.rings.infinity.PlusInfinity` if ``z`` is an infinity
       (type ``t_INF``)
 
     EXAMPLES::
@@ -139,8 +139,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     Converting a real number::
 
-        sage: pari.set_real_precision(70)
-        15
+        sage: _ = pari.set_real_precision(70)
         sage: z = pari('1.234'); z
         1.234000000000000000000000000000000000000000000000000000000000000000000
         sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr

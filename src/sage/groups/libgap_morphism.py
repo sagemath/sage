@@ -15,7 +15,9 @@ AUTHORS:
 
 - Simon Brandhorst (2018-02-08): initial version
 - Sebastian Oehms  (2018-11-15): have this functionality work for permutation groups (:issue:`26750`)
-  and implement :meth:`section` and :meth:`natural_map`
+  and implement
+  :meth:`~sage.groups.libgap_morphism.GroupMorphism_libgap.section` and
+  :meth:`~sage.groups.libgap_morphism.GroupHomset_libgap.natural_map`
 """
 
 # ****************************************************************************

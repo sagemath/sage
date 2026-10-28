@@ -31,6 +31,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 from sage.groups import generic
 
 from sage.arith.functions import lcm
@@ -40,6 +42,11 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
+    from sage.structure.sequence import Sequence_generic
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -192,7 +199,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         H2 = __multiples(gens[1])
         return [P + Q for P in H1 for Q in H2]
 
-    def points(self):
+    def points(self) -> Sequence_generic:
         r"""
         Return all rational points on this elliptic curve. The list of points is cached
         so subsequent calls are free.
@@ -238,7 +245,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
     rational_points = points
 
-    def count_points(self, n=1):
+    def count_points(self, n: int = 1) -> Integer | list[Integer]:
         """
         Return the cardinality of this elliptic curve over the base field or extensions.
 
@@ -289,7 +296,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
-    def trace_of_frobenius(self):
+    def trace_of_frobenius(self) -> Integer:
         r"""
         Return the trace of Frobenius acting on this elliptic curve.
 
@@ -315,7 +322,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         """
         return 1 + self.base_field().order() - self.cardinality()
 
-    def cardinality(self, algorithm=None, extension_degree=1):
+    def cardinality(self, algorithm: str | None = None, extension_degree: int = 1) -> Integer:
         r"""
         Return the number of points on this elliptic curve.
 
@@ -525,7 +532,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field`
+          into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
           :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.extension`
 
@@ -553,14 +561,14 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         .. SEEALSO::
 
-            :meth:`EllipticCurve_field.division_field()`
+            :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field()`
 
         ALGORITHM: For supersingular elliptic curves, this method uses a
         combination of [MPSW25]_, Lemma 2.2, and [EPSV2023]_, Theorem 2.
         For ordinary elliptic curves, it uses the algorithm of [VT2001]_.
         In some cases (in particular: for ordinary curves in the case that
         `\ell` divides the discriminant), we defer to the general implementation
-        :meth:`EllipticCurve_field.division_field`.
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`.
 
         TESTS:
 
@@ -607,7 +615,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             ....:     assert (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
             ....:     check(E, l, K)  # long time
 
-        Also check that it matches the generic implementation from :class:`EllipticCurve_field`::
+        Also check that it matches the generic implementation from
+        :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`::
 
             sage: # needs sage.rings.finite_rings
             sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
@@ -873,7 +882,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self) -> tuple:
+    def gens(self) -> tuple[EllipticCurvePoint_finite_field, ...]:
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.
@@ -1016,7 +1025,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         return self.points()[n]
 
     @cached_method
-    def abelian_group(self):
+    def abelian_group(self) -> AdditiveAbelianGroupWrapper:
         r"""
         Return the abelian group structure of the group of points on this
         elliptic curve.
@@ -1537,7 +1546,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 oc = other.cardinality(extension_degree=f_deg // o_deg)
                 return sc == oc
 
-    def is_supersingular(self, proof=True):
+    def is_supersingular(self, proof: bool = True) -> bool:
         r"""
         Return ``True`` if this elliptic curve is supersingular, else ``False``.
 
@@ -3334,6 +3343,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
 
         maps = [E.identity_morphism(), endo, E.frobenius_isogeny(), endo * E.frobenius_isogeny()]
+
         def matrix_of_quat(quat, PQ):
             denom = quat.denominator()
             numer = sum(ZZ(c) * phi for c, phi in zip(quat * denom, maps))

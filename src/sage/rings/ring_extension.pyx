@@ -24,8 +24,9 @@ the user can customize them by passing in appropriate arguments::
     sage: K.<a> = k.over(F, gen=1-z4); K
     Field in a with defining polynomial x^2 + z2*x + 4 over its base
 
-The base of the extension is available via the method :meth:`base` (or
-equivalently :meth:`base_ring`)::
+The base of the extension is available via the method
+:meth:`~sage.rings.ring_extension.RingExtension_generic.base` (or equivalently
+``base_ring``)::
 
     sage: K.base()
     Finite Field in z2 of size 5^2
@@ -40,7 +41,8 @@ obtaining this way a tower of extensions::
     sage: L.base().base()
     Finite Field in z2 of size 5^2
 
-The method :meth:`bases` gives access to the complete list of rings in
+The method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases` gives
+access to the complete list of rings in
 a tower::
 
     sage: L.bases()
@@ -62,7 +64,7 @@ When the base is omitted, the default is the natural base of the extension::
     sage: L.basis_over()
     [1, b]
 
-The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasis.vector`
+The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasisElement.vector`
 computes the coordinates of an element according to the above basis::
 
     sage: u = a + 2*b + 3*a*b
@@ -1077,7 +1079,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`bases`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self._base
 
@@ -1107,7 +1109,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         L = [self]
         base = self
@@ -1137,7 +1139,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self.bases()[-1]
 
@@ -1178,7 +1180,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`absolute_base`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`
         """
         cdef Parent b
         b = self
@@ -1200,7 +1202,7 @@ cdef class RingExtension_generic(Parent):
         OUTPUT:
 
         The base ``base`` normalized as a parent appearing in the
-        list of bases of this extension as returned by :meth:`bases`.
+        list of bases of this extension as returned by :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`.
 
         EXAMPLES::
 
@@ -1263,7 +1265,7 @@ cdef class RingExtension_generic(Parent):
               Defn: z4 |--> z4
 
         One can also pass in a base over which the extension is explicitly
-        defined (see also :meth:`is_defined_over`)::
+        defined (see also :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`)::
 
             sage: L.defining_morphism(F)
             Ring morphism:
@@ -1417,7 +1419,7 @@ cdef class RingExtension_generic(Parent):
             3
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: K.degree_over(GF(5))
             Traceback (most recent call last):
@@ -1473,7 +1475,7 @@ cdef class RingExtension_generic(Parent):
             6
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: A.degree(GF(5))
             Traceback (most recent call last):
@@ -2248,7 +2250,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             [1, b]
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: L.degree_over(GF(5^6))
             Traceback (most recent call last):
@@ -2300,7 +2302,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above
@@ -2358,7 +2360,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
              Field in a with defining polynomial x^2 + 7*x + 2 over its base
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: L.degree(GF(11^3))
             Traceback (most recent call last):
@@ -2387,7 +2389,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above

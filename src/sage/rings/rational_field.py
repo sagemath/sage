@@ -11,7 +11,7 @@ Interactively, an instance of :class:`RationalField` is available as ``QQ``::
     Rational Field
 
 Values of various types can be converted to rational numbers by using the
-:meth:`__call__` method of :class:`RationalField` (that is, by treating ``QQ`` as a
+``__call__`` method of :class:`RationalField` (that is, by treating ``QQ`` as a
 function).
 
 ::
@@ -92,31 +92,30 @@ class RationalField(Singleton, number_field_base.NumberField):
         ...
         TypeError: unable to convert 'sage' to a rational
 
-    Conversion from the reals to the rationals is done by default using
-    continued fractions.
-
-    ::
+    By default, conversion from approximate real numbers to the
+    rationals is done using continued fractions::
 
         sage: QQ(RR(3929329/32))
         3929329/32
         sage: QQ(-RR(3929329/32))
         -3929329/32
-        sage: QQ(RR(1/7)) - 1/7                                                         # needs sage.rings.real_mpfr
+        sage: QQ(RR(1/7)) - 1/7
         0
 
-    If you specify the optional second argument ``base``, then the string
-    representation of the float is used.
+    If you specify the optional second argument ``base``, then the
+    string representation of an (approximate) real number is used. But
+    note that this only works for instances of
+    :class:`~sage.rings.real_mpfr.RealNumber`, such as elements of
+    ``RR``::
 
-    ::
-
-        sage: QQ(23.2, 2)
-        6530219459687219/281474976710656
-        sage: 6530219459687219.0/281474976710656
-        23.20000000000000
-        sage: a = 23.2; a
+        sage: a = RR(23.2); a
         23.2000000000000
         sage: QQ(a, 10)
         116/5
+        sage: QQ(a, 2)
+        6530219459687219/281474976710656
+        sage: RR(QQ(a, 2))
+        23.2000000000000
 
     Here's a nice example involving elliptic curves::
 
@@ -129,6 +128,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         0.200000000000000
         sage: QQ(RealField(45)(t))
         1/5
+
+    .. automethod:: __iter__
     """
     def __new__(cls):
         """
@@ -459,7 +460,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         heights in ``range(start, end)``. Follows the same
         convention as Python :func:`range`, type ``range?`` for details.
 
-        See also :meth:`__iter__`.
+        See also :meth:`~sage.rings.rational_field.RationalField.__iter__`.
 
         EXAMPLES:
 
@@ -1126,7 +1127,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return some elements of `\QQ`.
 
-        See :func:`TestSuite` for a typical use case.
+        See :class:`~sage.misc.sage_unittest.TestSuite` for a typical use case.
 
         OUTPUT: an iterator over 100 elements of `\QQ`
 

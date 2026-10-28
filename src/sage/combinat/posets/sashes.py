@@ -22,9 +22,9 @@ REFERENCES:
 
 - [Law2014]_
 """
+from __future__ import annotations
 
 from itertools import pairwise
-from collections.abc import Iterator
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset
@@ -35,6 +35,10 @@ from sage.misc.cachefunc import cached_function
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 B, N, BB = "□", "▨", "■■"
 

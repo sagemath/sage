@@ -19,7 +19,7 @@ from sage.features.build_feature import BuildModule
 class Sirocco(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
-    :mod:`sage.libs.sirocco` module is available in this installation
+    ``sage.libs.sirocco`` module is available in this installation
     of Sage.
 
     EXAMPLES::

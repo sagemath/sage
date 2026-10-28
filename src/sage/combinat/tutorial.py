@@ -1839,10 +1839,7 @@ etc. This can be applied to generate:
 
 REFERENCES:
 
-.. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry
-   Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba,
-   Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann *Calcul Mathématique avec
-   Sage* https://www.sagemath.org/sagebook/french.html
+- [CMS2012]_
 
 .. [1]
    Or at least that should be the case; there are still many corners to

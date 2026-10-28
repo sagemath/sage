@@ -122,7 +122,7 @@ cdef class Graphics3d(SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See ``sage.repl.rich_output`` for details.
 
         EXAMPLES::
 

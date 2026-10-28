@@ -137,17 +137,17 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
       (where all vector spaces are isomorphic).
 
     - Dimension and maximal degree, see
-      :func:`constructor_from_dim_degree` for arguments. Construct a
+      ``constructor_from_dim_degree`` for arguments. Construct a
       filtration with only one non-trivial step `V\supset 0` at the
       given cutoff degree.
 
     - A dictionary containing the degrees as keys and a list of vector
       space generators as values, see
-      :func:`FilteredVectorSpace_from_generators`
+      ``FilteredVectorSpace_from_generators``
 
     - Generators and a dictionary containing the degrees as keys and
       the indices of vector space generators as values, see
-      :func:`FilteredVectorSpace_from_generators_indices`
+      ``FilteredVectorSpace_from_generators_indices``
 
     In addition, the following keyword arguments are supported:
 

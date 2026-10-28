@@ -49,7 +49,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     .. SEEALSO::
 
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
+        - ``RootLatticeRealizations.ParentMethods._plot_projection``
 
     TESTS::
 

@@ -5,7 +5,8 @@ This module provides :class:`BoundedIntegerSequence`, which implements
 sequences of bounded integers and is for many (but not all) operations faster
 than representing the same sequence as a Python :class:`tuple`.
 
-The underlying data structure is similar to :class:`~sage.misc.bitset.Bitset`,
+The underlying data structure is similar to
+:class:`~sage.data_structures.bitset.Bitset`,
 which means that certain operations are implemented by using fast shift
 operations from MPIR.  The following boilerplate functions can be
 cimported in Cython modules:

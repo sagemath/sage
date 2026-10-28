@@ -190,7 +190,7 @@ class SageMagics(Magics):
         .. NOTE::
 
             Currently, this cannot be completely doctested as it
-            relies on :func:`raw_input`.
+            relies on ``raw_input``.
 
         EXAMPLES::
 
@@ -518,7 +518,7 @@ class SageMagics(Magics):
         Fortran cell magic.
 
         This is syntactic sugar on the
-        :func:`~sage.misc.inline_fortran.fortran` function.
+        :class:`~sage.misc.inline_fortran.InlineFortran` callable.
 
         INPUT:
 

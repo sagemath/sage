@@ -28,9 +28,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 from math import acos, cos, pi, sin
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.binary_tree import BinaryTree, from_tamari_sorting_tuple
@@ -57,6 +57,9 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class TamariBlossomingTree(Element, UniqueRepresentation,
@@ -1619,9 +1622,10 @@ class _RandomPath:
         # check list size
         if len(cardlist) != size + 1:
             raise ValueError("invalid parameter: l does not have correct size.")
-        cutting: list[tuple[float, int]] = []
-        for i in range(size + 1):
-            cutting.append((cardlist[i] * cardlist[size - i], i))
+        cutting: list[tuple[float, int]] = [
+            (cardlist[i] * cardlist[size - i], i)
+            for i in range(size + 1)
+        ]
         # sort with decreasing probability for efficient random generation
         cutting.sort(key=lambda x: x[0], reverse=True)
         return cutting
@@ -2460,7 +2464,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
             idx += 1
             lasttree = genA(OrderedTree(dtree[:idx]))
             treelist = [lasttree]
-            treelist.extend([genB(dtree[i]) for i in range(idx, len(dtree))])
+            treelist.extend(genB(dtree[i]) for i in range(idx, len(dtree)))
             return treelist
 
         def genB(dtree: OrderedTree) -> OrderedTree:

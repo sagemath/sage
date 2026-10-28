@@ -176,10 +176,11 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         (see :meth:`sage.groups.braid.Braid.burau_matrix()` for details.)
 
         More precisely, let `(m_{ij})_{i,j \in I}` be the
-        :meth:`Coxeter matrix<coxeter_matrix>`. Then the action is
+        :meth:`Coxeter matrix<sage.groups.artin.ArtinGroup.coxeter_matrix>`.
+        Then the action is
         given on the basis `(\alpha_1, \ldots \alpha_n)` (corresponding
         to the reflection representation of the corresponding
-        :meth:`Coxeter group<coxeter_group>`) by
+        :meth:`Coxeter group<sage.groups.artin.ArtinGroup.coxeter_group>`) by
 
         .. MATH::
 

@@ -418,6 +418,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     r"""
     Multivariate polynomials implemented in pure python using
     polydicts.
+
+    .. automethod:: _derivative
     """
     def __init__(self, parent, x):
         """
@@ -1024,7 +1026,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -1151,7 +1153,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -1864,7 +1866,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         .. SEEALSO::
 
-            :meth:`derivative`
+            :meth:`~sage.rings.polynomial.multi_polynomial.MPolynomial.derivative`
 
         EXAMPLES::
 
@@ -2476,7 +2478,8 @@ def degree_lowest_rational_function(r, x):
     .. NOTE::
 
         This function should be made a method of the
-        :class:`FractionFieldElement` class.
+        :class:`~sage.rings.fraction_field_element.FractionFieldElement`
+        class.
 
     EXAMPLES::
 

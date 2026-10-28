@@ -36,8 +36,9 @@ from sage.structure.parent import Parent
 
 class SymmetryType(Enum):
     r"""
-    Specify the symmetry type of a knot. See also :meth:`symmetry_type`
-    and :meth:`~sage.knots.knotinfo.symmetry_type`.
+    Specify the symmetry type of a knot. See also
+    :meth:`~sage.knots.knot.Knot.symmetry_type`
+    and :meth:`~sage.knots.knotinfo.KnotInfoBase.symmetry_type`.
     """
     chiral = 'chiral'
     reversible = 'reversible'
@@ -451,7 +452,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         Observe that both knots have according ``dowker_notation`` (showing that
         the constructing from DT-code may not be unique for non prime knots, see
-        :meth:`from_dowker_code`)::
+        :meth:`~sage.knots.knot.Knots.from_dowker_code`)::
 
             sage: K.dowker_notation()
             [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
@@ -498,7 +499,8 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     @cached_method
     def symmetry_type(self):
         r"""
-        Return the symmetry type of ``self`` according to :meth:`~sage.knots.knotinfo.symmetry_type`.
+        Return the symmetry type of ``self`` according to
+        :meth:`~sage.knots.knotinfo.KnotInfoBase.symmetry_type`.
 
         OUTPUT: an element of enum :class:`SymmetryType`
 
@@ -679,7 +681,7 @@ class Knots(Singleton, Parent):
             mix up non prime knots. For example ``[4, 6, 2, 10, 12, 8]`` describes
             the connected sum of two trefoil knots, as well as the connected sum
             of a trefoil with its mirror (see the corresponding example in the
-            documentation of :meth:`connected_sum`).
+            documentation of :meth:`~sage.knots.knot.Knot.connected_sum`).
 
         EXAMPLES::
 
@@ -699,7 +701,7 @@ class Knots(Singleton, Parent):
             sage: K3.dowker_notation()
             [(5, 2), (4, 9), (1, 6), (7, 8), (10, 11), (12, 3)]
 
-        .. SEEALSO:: :meth:`~sage.knots.knot.Knot.dowker_notation`
+        .. SEEALSO:: :meth:`~sage.knots.link.Link.dowker_notation`
 
         REFERENCES:
 

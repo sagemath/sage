@@ -46,15 +46,15 @@ class Polyhedron_field(Polyhedron_base):
 
     EXAMPLES::
 
-        sage: p = Polyhedron(vertices=[(0,0),(AA(2).sqrt(),0),(0,AA(3).sqrt())],        # needs sage.rings.number_field
+        sage: p = Polyhedron(vertices=[(0,0),(AA(2).sqrt(),0),(0,AA(3).sqrt())],
         ....:                rays=[(1,1)], lines=[], backend='field', base_ring=AA)
-        sage: TestSuite(p).run()                                                        # needs sage.rings.number_field
+        sage: TestSuite(p).run()
 
     TESTS::
 
-        sage: K.<sqrt3> = QuadraticField(3)                                             # needs sage.rings.number_field
-        sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])                            # needs sage.rings.number_field
-        sage: TestSuite(p).run()                                                        # needs sage.rings.number_field
+        sage: K.<sqrt3> = QuadraticField(3)
+        sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])
+        sage: TestSuite(p).run()
 
     Check that :issue:`19013` is fixed::
 
@@ -83,10 +83,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
-            sage: p._is_zero(0)                                                         # needs sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)
+            sage: p._is_zero(0)
             True
-            sage: p._is_zero(1/100000)                                                  # needs sage.rings.number_field sage.symbolic
+            sage: p._is_zero(1/100000)
             False
         """
         return x == 0
@@ -103,10 +103,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
-            sage: p._is_nonneg(1)                                                       # needs sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)
+            sage: p._is_nonneg(1)
             True
-            sage: p._is_nonneg(-1/100000)                                               # needs sage.rings.number_field sage.symbolic
+            sage: p._is_nonneg(-1/100000)
             False
         """
         return x >= 0
@@ -123,10 +123,10 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
-            sage: p._is_positive(1)                                                     # needs sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)
+            sage: p._is_positive(1)
             True
-            sage: p._is_positive(0)                                                     # needs sage.rings.number_field sage.symbolic
+            sage: p._is_positive(0)
             False
         """
         return x > 0
@@ -146,12 +146,12 @@ class Polyhedron_field(Polyhedron_base):
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra_field
             sage: from sage.geometry.polyhedron.backend_field import Polyhedron_field
-            sage: parent = Polyhedra_field(AA, 1, 'field')                              # needs sage.rings.number_field
+            sage: parent = Polyhedra_field(AA, 1, 'field')
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest          # needs sage.rings.number_field
+            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest
             ....:                      Vrep_minimal=True, Hrep_minimal=True)
-            sage: p                                                                     # needs sage.rings.number_field
+            sage: p
             A 1-dimensional polyhedron in AA^1 defined as the convex hull of 2 vertices
         """
         self._init_Vrepresentation(*Vrep)
@@ -240,13 +240,13 @@ class Polyhedron_field(Polyhedron_base):
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra_field
             sage: from sage.geometry.polyhedron.backend_field import Polyhedron_field
-            sage: parent = Polyhedra_field(AA, 1, 'field')                              # needs sage.rings.number_field
+            sage: parent = Polyhedra_field(AA, 1, 'field')
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest          # needs sage.rings.number_field
+            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest
             ....:                      Vrep_minimal=True,
             ....:                      Hrep_minimal=True)
-            sage: p.vertices_list()                                                     # needs sage.rings.number_field
+            sage: p.vertices_list()
             [[0], [1]]
         """
         self._Vrepresentation = []
@@ -265,15 +265,15 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest          # needs sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest
             ....:                          (sqrt(2), 0),
             ....:                          (4, sqrt(5)/6)],
             ....:                base_ring=AA, backend='field')
-            sage: p.Hrepresentation()                                                   # needs sage.rings.number_field sage.symbolic
+            sage: p.Hrepresentation()
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
              An inequality (0.3001973109753594?, 0.600394621950719?) x - 0.4245431085692869? >= 0)
-            sage: p.Vrepresentation()                                                   # needs sage.rings.number_field sage.symbolic
+            sage: p.Vrepresentation()
             (A vertex at (0.?e-16, 0.7071067811865475?),
              A vertex at (1.414213562373095?, 0),
              A vertex at (4.000000000000000?, 0.372677996249965?))
@@ -288,12 +288,12 @@ class Polyhedron_field(Polyhedron_base):
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra_field
             sage: from sage.geometry.polyhedron.backend_field import Polyhedron_field
-            sage: parent = Polyhedra_field(AA, 1, 'field')                              # needs sage.rings.number_field
+            sage: parent = Polyhedra_field(AA, 1, 'field')
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest          # needs sage.rings.number_field
+            sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest
             ....:                      Vrep_minimal=True, Hrep_minimal=True)
-            sage: p.inequalities_list()                                                 # needs sage.rings.number_field
+            sage: p.inequalities_list()
             [[0, 1], [1, -1]]
         """
         self._Hrepresentation = []
@@ -310,15 +310,15 @@ class Polyhedron_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest          # needs sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron(vertices=[(0, 1/sqrt(2)),  # indirect doctest
             ....:                          (sqrt(2), 0),
             ....:                          (4, sqrt(5)/6)],
             ....:                base_ring=AA, backend='field')
-            sage: p.Hrepresentation()                                                   # needs sage.rings.number_field sage.symbolic
+            sage: p.Hrepresentation()
             (An inequality (-0.1582178750233332?, 1.097777812326429?) x + 0.2237538646678492? >= 0,
              An inequality (-0.1419794359520263?, -1.698172434277148?) x + 1.200789243901438? >= 0,
              An inequality (0.3001973109753594?, 0.600394621950719?) x - 0.4245431085692869? >= 0)
-            sage: p.Vrepresentation()                                                   # needs sage.rings.number_field sage.symbolic
+            sage: p.Vrepresentation()
             (A vertex at (0.?e-16, 0.7071067811865475?),
              A vertex at (1.414213562373095?, 0),
              A vertex at (4.000000000000000?, 0.372677996249965?))
@@ -331,11 +331,11 @@ class Polyhedron_field(Polyhedron_base):
 
         TESTS::
 
-            sage: empty = Polyhedron(backend='field', base_ring=AA); empty              # needs sage.rings.number_field
+            sage: empty = Polyhedron(backend='field', base_ring=AA); empty
             The empty polyhedron in AA^0
-            sage: empty.Vrepresentation()                                               # needs sage.rings.number_field
+            sage: empty.Vrepresentation()
             ()
-            sage: empty.Hrepresentation()                                               # needs sage.rings.number_field
+            sage: empty.Hrepresentation()
             (An equation -1 == 0,)
             sage: Polyhedron(vertices=[], backend='field')
             The empty polyhedron in QQ^0

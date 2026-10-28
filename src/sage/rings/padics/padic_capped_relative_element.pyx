@@ -325,7 +325,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         cdef Integer selfvalue, modulus
         cdef long aprec

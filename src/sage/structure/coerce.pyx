@@ -61,7 +61,7 @@ always explicitly invoked, and never used by the coercion model to resolve
 binary operations.
 
 For more information on how to specify coercions, conversions, and actions,
-see the documentation for :class:`Parent`.
+see the documentation for :class:`~sage.structure.parent.Parent`.
 """
 
 # ****************************************************************************
@@ -767,7 +767,7 @@ cdef class CoercionModel:
 
         If all went well, this should be the empty list. If things aren't
         happening as you expect, this is a good place to check. See also
-        :func:`coercion_traceback`.
+        :func:`~sage.structure.element.coercion_traceback`.
 
         EXAMPLES::
 
@@ -794,7 +794,8 @@ cdef class CoercionModel:
             TypeError: no common canonical parent for objects with parents:
             'Rational Field' and 'Finite Field of size 3'
 
-        This is typically accessed via the :func:`coercion_traceback` function.
+        This is typically accessed via the
+        :func:`~sage.structure.element.coercion_traceback` function.
 
         ::
 
@@ -1053,8 +1054,9 @@ cdef class CoercionModel:
 
         OUTPUT:
 
-        A :class:`Parent` into which each input should coerce, or raises a
-        :exc:`TypeError` if no such :class:`Parent` can be found.
+        A :class:`~sage.structure.parent.Parent` into which each input should
+        coerce, or raises a :exc:`TypeError` if no such
+        :class:`~sage.structure.parent.Parent` can be found.
 
         EXAMPLES::
 
@@ -1837,8 +1839,8 @@ cdef class CoercionModel:
         """
         INPUT:
 
-        - ``R`` -- the left :class:`Parent` (or type)
-        - ``S`` -- the right :class:`Parent` (or type)
+        - ``R`` -- the left :class:`~sage.structure.parent.Parent` (or type)
+        - ``S`` -- the right :class:`~sage.structure.parent.Parent` (or type)
         - ``op`` -- the operand, typically an element of the :mod:`operator` module
         - ``r`` -- (optional) element of `R`
         - ``s`` -- (optional) element of `S`
@@ -1857,7 +1859,8 @@ cdef class CoercionModel:
             True
             sage: cm = sage.structure.element.get_coercion_model()
 
-        If `R` or `S` is a :class:`Parent`, ask it for an action by/on `R`::
+        If `R` or `S` is a :class:`~sage.structure.parent.Parent`, ask it
+        for an action by/on `R`::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
             Left scalar multiplication by Integer Ring on

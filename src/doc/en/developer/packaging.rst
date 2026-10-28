@@ -289,8 +289,11 @@ something like the following to install it:
         sdh_install doc/ "$SAGE_SHARE"/doc/PACKAGE_NAME
     fi
 
-At build time :envvar:`CFLAGS`, :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`,
-and :envvar:`F77FLAGS` are usually set to ``-g -O2 -march=native``
+At build time :envvar:`CFLAGS <installation:CFLAGS>`,
+:envvar:`CXXFLAGS <installation:CXXFLAGS>`,
+:envvar:`FCFLAGS <installation:FCFLAGS>`, and
+:envvar:`F77FLAGS <installation:F77FLAGS>` are usually set to
+``-g -O2 -march=native``
 (according to `debugging options <../installation/source.html#sage-debug>`_
 and whether building
 `fat binaries <../installation/source.html#sage-fat-binary>`_).
@@ -308,7 +311,9 @@ Slightly modified versions are available:
     # Use flags as set by the user, possibly empty.
     export CFLAGS=$ORIGINAL_CFLAGS
 
-Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
+Likewise for :envvar:`CXXFLAGS <installation:CXXFLAGS>`,
+:envvar:`FCFLAGS <installation:FCFLAGS>`, and
+:envvar:`F77FLAGS <installation:F77FLAGS>`.
 
 .. note::
 
@@ -410,6 +415,10 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   are defined and non-empty, and exit with an error if any are
   undefined or empty. Variable names should be given without the '$'
   to prevent unwanted expansion.
+
+- ``sdh_autoreconf``: Regenerates autotools build machinery using the system
+  tools selected by Sage's configure script. This replaces bundled libtool
+  scripts and macros together.
 
 - ``sdh_configure [...]``: Runs ``./configure`` with arguments
   ``--prefix="$SAGE_LOCAL"``, ``--libdir="$SAGE_LOCAL/lib"``,

@@ -444,7 +444,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     E (which is a machine integer).  These represent the coefficients
     A*2^n <= c < (A+E)*2^n.
 
-    (Note that :func:`mk_ibpi is a simple helper` function for creating
+    (Note that :func:`mk_ibpi` is a simple helper function for creating
     elements of :class:`interval_bernstein_polynomial_integer` in doctests.)
 
     EXAMPLES::
@@ -4147,7 +4147,8 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
 
             cur_roots = [oc.mapping.from_ocean(r) for r in rel_roots]
 
-            all_roots.extend([(cur_roots[j], factor, exp, oc, j) for j in range(len(cur_roots))])
+            all_roots.extend((cur_roots[j], factor, exp, oc, j)
+                             for j in range(len(cur_roots)))
 
         all_roots.sort()
 

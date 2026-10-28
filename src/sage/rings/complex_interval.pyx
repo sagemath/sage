@@ -220,7 +220,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         .. SEEALSO::
 
-            - :meth:`RealIntervalFieldElement.str`
+            - :meth:`~sage.rings.real_mpfi.RealIntervalFieldElement.str`
         """
         s = ""
         if not self.real().is_zero():

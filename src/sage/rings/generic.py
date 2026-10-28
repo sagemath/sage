@@ -264,7 +264,7 @@ class ProductTree:
         ``xs`` modulo the `i`\th leaf, for all `i`.
 
         This is an explicit version of the Chinese remainder theorem;
-        see also :meth:`CRT`. Using this product tree is faster for
+        see also :func:`~sage.arith.misc.CRT`. Using this product tree is faster for
         repeated calls since the required CRT bases are cached after
         the first run.
 

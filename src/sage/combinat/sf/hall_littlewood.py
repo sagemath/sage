@@ -396,7 +396,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a
-        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        :class:`~sage.combinat.sf.sfa.SymmetricFunctionsFunctor` and `R` is a ring, such
         that ``F(R)`` returns ``self``.
 
         EXAMPLES::
@@ -914,7 +914,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
     def __init__(self, hall_littlewood):
         r"""
         The Hall-Littlewood `Qp` basis is calculated through the symmetrica
-        library (see the function :meth:`HallLittlewood_qp._to_s`).
+        library (see the function ``HallLittlewood_qp._to_s``).
 
         INPUT:
 

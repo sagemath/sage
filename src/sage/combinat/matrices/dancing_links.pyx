@@ -663,8 +663,8 @@ cdef class dancing_linksWrapper:
                 return dlx.get_solution()
             return None
 
-        indices = [i for (i, row) in enumerate(self._rows) if column in row]
-        for (args_kwds, val) in first_solution(indices):
+        indices = [i for i, row in enumerate(self._rows) if column in row]
+        for _, val in first_solution(indices):
             if val is not None:
                 return val
 
@@ -780,7 +780,7 @@ cdef class dancing_linksWrapper:
 
         indices = [i for i, row in enumerate(self._rows) if column in row]
         L = []
-        for (args_kwds, val) in all_solutions(indices):
+        for _, val in all_solutions(indices):
             L.extend(val)
         return L
 
@@ -877,7 +877,7 @@ cdef class dancing_linksWrapper:
             return N
 
         indices = [i for i, row in enumerate(self._rows) if column in row]
-        return sum(val for (args_kwds, val) in nb_sol(indices))
+        return sum(val for _, val in nb_sol(indices))
 
     @cached_method
     def to_sat_solver(self, solver=None):
@@ -987,7 +987,7 @@ cdef class dancing_linksWrapper:
         Return the mixed integer linear program (MILP) representing an
         equivalent problem.
 
-        See also :mod:`sage.numerical.mip.MixedIntegerLinearProgram`.
+        See also :class:`sage.numerical.mip.MixedIntegerLinearProgram`.
 
         INPUT:
 

@@ -802,7 +802,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f.number_of_terms()
             101
 
-        The method :meth:`hamming_weight` is an alias::
+        The method :meth:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial.hamming_weight`
+        is an alias::
 
             sage: f.hamming_weight()
             101
@@ -1924,7 +1925,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           ``_derivative()``
 
         EXAMPLES::
 

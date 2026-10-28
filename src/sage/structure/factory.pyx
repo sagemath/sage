@@ -537,8 +537,8 @@ cdef class UniqueFactory(SageObject):
     cpdef reduce_data(self, obj):
         """
         The results of this function can be returned from
-        :meth:`__reduce__`. This is here so the factory internals can
-        change without having to re-write :meth:`__reduce__` methods
+        ``__reduce__``. This is here so the factory internals can
+        change without having to re-write ``__reduce__`` methods
         that use it.
 
         EXAMPLES::

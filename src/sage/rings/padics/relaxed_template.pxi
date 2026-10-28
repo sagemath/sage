@@ -460,7 +460,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         .. SEEALSO::
 
-            :meth:`digit`, :meth:`slice`
+            ``digit``, ``slice``
 
         TESTS::
 

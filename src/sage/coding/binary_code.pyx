@@ -156,35 +156,75 @@ def weight_dist(M):
 
 def test_word_perms(t_limit=5.0):
     r"""
-    Test the :class:`WordPermutation` structs for at least ``t_limit`` seconds.
+    Test the :c:struct:`WordPermutation` structs for at least ``t_limit``
+    seconds.
 
     These are structures written in pure C for speed, and are tested from this
     function, which performs the following tests:
 
-    1.  Tests :func:`create_word_perm`, which creates a :class:`WordPermutation`
-        from a Python list `L` representing a permutation `i \mapsto
+    1.  Tests :c:func:`create_word_perm`, which creates a
+        :c:struct:`WordPermutation` from a Python list `L` representing
+        a permutation `i \mapsto
         L[i]`. Takes a random word and permutes it by a random list permutation,
         and tests that the result agrees with doing it the slow way.
 
-    1b. Tests :func:`create_array_word_perm`, which creates a
-        :class:`WordPermutation` from a C array. Does the same as above.
+    1b. Tests :c:func:`create_array_word_perm`, which creates a
+        :c:struct:`WordPermutation` from a C array. Does the same as above.
 
-    2.  Tests :func:`create_comp_word_perm`, which creates a
-        :class:`WordPermutation` as a composition of two
-        :class:`WordPermutation` objects. Takes a random word and two random
-        permutations, and tests that the result of permuting by the composition
-        is correct.
+    2.  Tests :c:func:`create_comp_word_perm`, which creates a
+        :c:struct:`WordPermutation` as a composition of two
+        :c:struct:`WordPermutation` objects. Takes a random word and two
+        random permutations, and tests that the result of permuting by the
+        composition is correct.
 
-    3.  Tests :func:`create_inv_word_perm` and :func:`create_id_word_perm`,
-        which create a :class:`WordPermutation` as the inverse and identity
+    3.  Tests :c:func:`create_inv_word_perm` and
+        :c:func:`create_id_word_perm`, which create a
+        :c:struct:`WordPermutation` as the inverse and identity
         permutations, resp.  Takes a random word and a random permutation, and
         tests that the result permuting by the permutation and its inverse in
         either order, and permuting by the identity both return the original
         word.
 
+    .. c:type:: codeword
+
+       Machine-word type used to store a binary word.
+
+    .. c:struct:: WordPermutation
+
+       Internal structure representing a word permutation.
+
+    .. c:function:: WordPermutation *create_word_perm(void *list_perm)
+
+       Create a word permutation from a Python list permutation.
+
+    .. c:function:: WordPermutation *create_array_word_perm(int *array, int start, int degree)
+
+       Create a word permutation from a C array.
+
+    .. c:function:: WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h)
+
+       Create a composition of two word permutations.
+
+    .. c:function:: WordPermutation *create_inv_word_perm(WordPermutation *g)
+
+       Create the inverse of a word permutation.
+
+    .. c:function:: WordPermutation *create_id_word_perm(int degree)
+
+       Create the identity word permutation.
+
+    .. c:function:: int dealloc_word_perm(WordPermutation *wp)
+
+       Free the memory used by a word permutation.
+
+    .. c:function:: codeword permute_word_by_wp(WordPermutation *wp, codeword word)
+
+       Apply the word permutation to a word.
+
     .. NOTE::
 
-        The functions :func:`permute_word_by_wp` and :func:`dealloc_word_perm`
+        The functions :c:func:`permute_word_by_wp` and
+        :c:func:`dealloc_word_perm`
         are implicitly involved in each of the above tests.
 
     TESTS::

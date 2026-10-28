@@ -19,7 +19,7 @@ from sage.features.build_feature import BuildModule
 class Coxeter3(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
-    :mod:`sage.libs.coxeter3` module is available in this installation
+    ``sage.libs.coxeter3`` module is available in this installation
     of Sage.
 
     EXAMPLES::

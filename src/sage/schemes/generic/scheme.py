@@ -762,7 +762,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
     .. SEEALSO::
 
         For affine spaces over a base ring and subschemes thereof, see
-        :class:`sage.schemes.generic.algebraic_scheme.AffineSpace`.
+        :func:`~sage.schemes.affine.affine_space.AffineSpace`.
     """
     def __init__(self, R, S=None, category=None):
         """

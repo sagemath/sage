@@ -1873,7 +1873,7 @@ def AffinePermutationGroup(cartan_type):
 
     We find the value `p(1)`, considering `p` as a bijection on the integers.
     This is the same as calling the
-    :meth:`~sage.combinat.affine_permutation.AffinePermutation.value` method::
+    :meth:`~sage.combinat.affine_permutation.AffinePermutationTypeA.value` method::
 
         sage: p.value(1)
         3
@@ -2173,7 +2173,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         words!
 
         For the actual code, see
-        :meth:`sage.categories.coxeter_group.random_element_of_length`.
+        :meth:`sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.random_element_of_length`.
 
         EXAMPLES::
 

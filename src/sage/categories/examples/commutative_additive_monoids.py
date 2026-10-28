@@ -99,7 +99,8 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
     @cached_method
     def zero(self):
         r"""
-        Return the zero of this additive monoid, as per :meth:`CommutativeAdditiveMonoids.ParentMethods.zero`.
+        Return the zero of this additive monoid, as per
+        :meth:`~sage.categories.additive_magmas.AdditiveMagmas.AdditiveUnital.ParentMethods.zero`.
 
         EXAMPLES::
 

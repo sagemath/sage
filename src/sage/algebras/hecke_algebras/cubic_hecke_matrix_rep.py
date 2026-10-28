@@ -422,7 +422,8 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         INPUT:
 
         - ``ind`` -- integer specifying the list index according to
-          :meth:`internal_index` respectively :meth:`gap_index`
+          :meth:`~AbsIrreducibleRep.internal_index` respectively
+          :meth:`~AbsIrreducibleRep.gap_index`
 
         OUTPUT:
 
@@ -495,7 +496,8 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         - ``item`` -- an :class:`AbsIrreducibleRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index
-          (see :meth:`internal_index` respectively :meth:`gap_index`)
+          (see :meth:`~AbsIrreducibleRep.internal_index` respectively
+          :meth:`~AbsIrreducibleRep.gap_index`)
 
         OUTPUT:
 
@@ -551,7 +553,8 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         - ``irr`` -- an :class:`AbsIrreducibleRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index (see
-          :meth:`internal_index` respectively :meth:`gap_index`)
+          :meth:`~AbsIrreducibleRep.internal_index` respectively
+          :meth:`~AbsIrreducibleRep.gap_index`)
 
         OUTPUT:
 

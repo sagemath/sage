@@ -2269,7 +2269,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             All three versions of Eulerian quasisymmetric functions
             (`Q_{n,j}`, `Q_{\lambda,j}` and `Q_{n,j,k}`) are actually
             symmetric functions. See
-            :meth:`~sage.combinat.sf.SymmetricFunctionsBases.ParentMethods.Eulerian`.
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionsBases.ParentMethods.Eulerian`.
 
             INPUT:
 

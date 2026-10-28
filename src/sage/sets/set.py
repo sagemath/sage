@@ -776,7 +776,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     def subsets(self, size=None):
         """
-        Return the :class:`Subsets` object representing the subsets of a set.
+        Return the :func:`~sage.combinat.subset.Subsets` object representing the subsets of a set.
         If size is specified, return the subsets of that size.
 
         EXAMPLES::
@@ -1024,7 +1024,7 @@ class Set_object_enumerated(Set_object):
 
             FIXME: What should be the order of the result?
             That of ``self.object()``? Or the order given by
-            ``set(self.object())``? Note that :meth:`__getitem__` is
+            ``set(self.object())``? Note that ``__getitem__`` is
             currently implemented in term of this list method, which
             is really inefficient ...
         """

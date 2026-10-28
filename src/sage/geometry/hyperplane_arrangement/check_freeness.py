@@ -1,10 +1,9 @@
-# sage.doctest: needs sage.libs.singular
 r"""
 Helper Functions For Freeness Of Hyperplane Arrangements
 
 This contains the algorithms to check for freeness of a hyperplane
 arrangement. See
-:meth:`sage.geometry.hyperplane_arrangement.HyperplaneArrangementElement.is_free`
+:meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.is_free`
 for details.
 
 .. NOTE::

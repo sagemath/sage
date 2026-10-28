@@ -1450,7 +1450,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         `w` by `1, 2, \ldots, k_1` from left to right, all `2`'s in `w` by
         `k_1 + 1, k_1 + 2, \ldots, k_2`, and repeating for all letters which
         appear in `w`.
-        See also :meth:`Word.standard_permutation()`.
+        See also :meth:`sage.combinat.words.finite_word.FiniteWord_class.standard_permutation`.
 
         INPUT:
 
@@ -3938,7 +3938,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         The ``multicharge`` is a list of length 1 which gives an offset for
         all of the contents. It is included mainly for compatibility with
-        :meth:`~sage.combinat.tableau_tuples.TableauTuple.residue`.
+        :meth:`~sage.combinat.tableau_tuple.TableauTuple.residue`.
 
         OUTPUT: the residue in `\ZZ / e\ZZ`
 
@@ -3979,12 +3979,12 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         The `multicharge` is a list of length 1 which gives an offset for
         all of the contents. It is included mainly for compatibility with
-        :meth:`~sage.combinat.tableau_tuples.StandardTableauTuple.residue`.
+        :meth:`~sage.combinat.tableau_tuple.TableauTuple.residue`.
 
         OUTPUT:
 
         The corresponding residue sequence of the tableau;
-        see :class:`ResidueSequence`.
+        see :class:`~sage.combinat.tableau_residues.ResidueSequence`.
 
         EXAMPLES::
 
@@ -4149,7 +4149,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     def reduced_row_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the :meth:`initial_tableau` to ``self``.
+        permutation that maps the :meth:`~sage.combinat.partition.Partition.initial_tableau`
+        to ``self``.
 
         This reduced expression is a minimal length coset representative for the
         corresponding Young subgroup.  In one line notation, the permutation is
@@ -4174,7 +4175,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     def reduced_column_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the conjugate of the :meth:`initial_tableau`
+        permutation that maps the conjugate of the
+        :meth:`~sage.combinat.partition.Partition.initial_tableau`
         to ``self``.
 
         This reduced expression is a minimal length coset representative for
@@ -4289,7 +4291,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         `\xi_\lambda^{-1}` from [Pak2002]_ Section 5.
         It is denoted by `\mathcal{RSK}` in [Hopkins2017]_.
         It is the inverse of the Pak correspondence
-        (:meth:`pak_correspondence`).
+        (:func:`~sage.combinat.hillman_grassl.pak_correspondence`).
         The following description of the Sulzgruber correspondence
         follows [Hopkins2017]_ (which denotes it by `\mathcal{RSK}`):
 
@@ -4977,7 +4979,8 @@ class StandardTableau(SemistandardTableau):
         [Sag2011]_ (p. 23) and in [Stan2009]_, and is the inverse of the map
         called "promotion" in [Hai1992]_ (p. 90).
 
-        See the :meth:`~sage.combinat.tableau.promotion_inverse` method for a
+        See the :meth:`~sage.combinat.tableau.Tableau.promotion_inverse`
+        method for a
         more general operator.
 
         EXAMPLES::
@@ -5020,7 +5023,8 @@ class StandardTableau(SemistandardTableau):
         (p. 90). It is the inverse of the maps called "promotion" in [Sag2011]_
         (p. 23) and in [Stan2009]_.
 
-        See the :meth:`~sage.combinat.tableau.promotion` method for a
+        See the :meth:`~sage.combinat.tableau.Tableau.promotion`
+        method for a
         more general operator.
 
         EXAMPLES::

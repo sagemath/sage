@@ -60,7 +60,7 @@ the variable indices occurring in ``c``.
 
 If you want to substitute variables you can use the standard polynomial
 methods, such as
-:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse.subs`::
+:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial.subs`::
 
     sage: R.<x,y> = InfinitePolynomialRing(QQ)
     sage: f = x[1] + x[1]*x[2]*x[3]
@@ -2234,7 +2234,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             blocklength = sh
             nM = sh + 1
             for i in range(P.ngens()):
-                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
+                newVars.extend(PPgens[sh - p(j)] for j in range(blocklength, -1, -1))
                 sh += nM
             mapR = PP.hom(newVars, PP)
             return InfinitePolynomial_dense(P, mapR(self._p))

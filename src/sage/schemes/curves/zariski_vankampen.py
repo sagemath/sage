@@ -55,7 +55,6 @@ from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
-from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
@@ -63,7 +62,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
@@ -750,7 +749,7 @@ def roots_interval(f, x0) -> dict:
 
 def roots_interval_cached(f, x0) -> dict:
     r"""
-    Cached version of :func:`roots_interval`.
+    Cached version of ``roots_interval``.
 
     TESTS::
 
@@ -779,8 +778,8 @@ def roots_interval_cached(f, x0) -> dict:
 
 def populate_roots_interval_cache(inputs) -> None:
     r"""
-    Call :func:`roots_interval` to the inputs that have not been
-    computed previously, and cache them.
+    Call ``roots_interval`` to the inputs that have not been computed
+    previously, and cache them.
 
     INPUT:
 
@@ -877,7 +876,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
     x, y = g.parent().gens()
     intervals = {}
     if not precision1:
-        precision1 = {f: 53 for f in glist1}
+        precision1 = dict.fromkeys(glist1, 53)
     y0s = []
     for f in glist1:
         if f.variables() == (y,):
@@ -1287,7 +1286,8 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
         sage: braid_monodromy(prod(L), arrangement=L, vertical=True)
         ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2, -1/2*I + 1/2)
     """
-    F = fieldI(f.base_ring())
+    F0 = f.base_ring()
+    F = fieldI(F0)
     I1 = F(QQbar.gen())
     if not arrangement:
         arrangement1 = (f,)
@@ -1306,7 +1306,7 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     g = f.parent()(prod(glist))
     d = g.degree(y)
     if not arrangement_v:  # change of coordinates only if indices_v is empty
-        while g.coefficient(y**d) not in F:
+        while g.coefficient(y**d) not in F0:
             g = g.subs({x: x + y})
             d = g.degree(y)
             arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)

@@ -1584,6 +1584,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     - ``algorithm`` -- ``'depth'`` or ``'breadth'`` (default: ``'depth'``)
     - ``category`` -- a category (default: :class:`EnumeratedSets`)
 
+    .. automethod:: __init__
+
     The option ``post_process`` allows for customizing the nodes that
     are actually produced. Furthermore, if ``f(x)`` returns ``None``,
     then ``x`` won't be output at all.
@@ -1673,7 +1675,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     by zero.
 
     A first approach is to pass the ``roots`` and ``children``
-    functions as arguments to :meth:`RecursivelyEnumeratedSet_forest.__init__`::
+    functions as arguments to
+    :meth:`RecursivelyEnumeratedSet_forest.__init__ <sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest.__init__>`::
 
         sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
         sage: class A(UniqueRepresentation, RecursivelyEnumeratedSet_forest):

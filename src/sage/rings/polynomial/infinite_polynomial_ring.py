@@ -1638,8 +1638,8 @@ class InfinitePolynomialRing_sparse(Ring):
 class InfinitePolynomialGen(SageObject):
     """
     This class provides the object which is responsible for returning
-    variables in an infinite polynomial ring (implemented in
-    :meth:`.__getitem__`).
+    variables in an infinite polynomial ring (implemented by
+    ``__getitem__``).
 
     EXAMPLES::
 

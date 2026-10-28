@@ -1034,7 +1034,7 @@ cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 
@@ -1119,7 +1119,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 

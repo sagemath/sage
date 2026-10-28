@@ -164,8 +164,9 @@ cdef class Function(SageObject):
     Base class for symbolic functions defined through Pynac in Sage.
 
     This is an abstract base class, with generic code for the interfaces
-    and a :meth:`__call__` method. Subclasses should implement the
-    :meth:`_is_registered` and :meth:`_register_function` methods.
+    and a ``__call__`` method.
+    Subclasses should implement the ``_is_registered`` and
+    ``_register_function`` methods.
 
     This class is not intended for direct use, instead use one of the
     subclasses :class:`BuiltinFunction` or :class:`SymbolicFunction`.

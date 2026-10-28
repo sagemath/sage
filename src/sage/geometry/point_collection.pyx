@@ -480,7 +480,7 @@ cdef class PointCollection(SageObject):
         - ``ring`` -- a base ring for the returned matrix (default: base ring of
           :meth:`module` of ``self``)
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -625,7 +625,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose columns are points of ``self``.
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -663,7 +663,7 @@ cdef class PointCollection(SageObject):
 
         OUTPUT:
 
-        - a :class:`module <FreeModule_generic>`. If possible (that is, if the
+        - a :class:`module <sage.modules.free_module.FreeModule_generic>`. If possible (that is, if the
           ambient :meth:`module` `M` of ``self`` has a ``dual()`` method), the
           dual module is returned. Otherwise, `R^n` is returned, where `n` is
           the dimension of `M` and `R` is its base ring.
@@ -722,7 +722,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose rows are points of ``self``.
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -744,7 +744,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the ambient module of ``self``.
 
-        OUTPUT: a :class:`module <FreeModule_generic>`
+        OUTPUT: a :class:`module <sage.modules.free_module.FreeModule_generic>`
 
         EXAMPLES::
 

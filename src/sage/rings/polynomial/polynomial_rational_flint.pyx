@@ -2094,19 +2094,19 @@ cdef class Polynomial_rational_flint(Polynomial):
           return the Galois group as a PARI group.  This has a useful label
           in it, and may be slightly faster since it doesn't require looking
           up a group in GAP.  To get a permutation group from a PARI
-          group ``P``, type ``PermutationGroup(P)``.
+          group ``P``, type ``PermutationGroup(P)``.  This option requires
+          ``algorithm='pari'``, which is only supported through degree 11.
 
-        - ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'`` (default:
-          ``'pari'``, for degrees is at most 11;
-          ``'gap'``, for degrees from 12 to 15;
-          ``'kash'``, for degrees from 16 or more).
+        - ``algorithm`` -- ``'pari'``, ``'gap'``, or ``'magma'`` (default:
+          ``'pari'``; for degrees greater than 11, ``'gap'`` is attempted
+          instead)
 
         OUTPUT: Galois group
 
         ALGORITHM:
 
-        The Galois group is computed using PARI in C library mode, or possibly
-        GAP, KASH, or MAGMA.
+        The Galois group is computed using PARI in C library mode, GAP, or
+        MAGMA.
 
         .. NOTE::
 
@@ -2118,6 +2118,19 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             GAP uses the "Transitive Groups Libraries" from the "TransGrp"
             GAP package which comes installed with the "gap" Sage package.
+            The library provides transitive groups through degree 48, but the
+            data for degrees 32 and 48 must be downloaded separately because
+            of their size.  Sage checks at runtime whether the data for the
+            requested degree are installed.
+
+            GAP documents its Galois group computation for degrees up to 15,
+            but it can compute some examples of higher degree.  Such
+            computations may be expensive or fail even when GAP's transitive
+            groups database contains the required degree.
+
+            Sage's MAGMA interface identifies the result using MAGMA's
+            ``TransitiveGroupIdentification``, which is supported only
+            through degree 30.
 
             MAGMA does not return a provably correct result.  Please see the
             MAGMA documentation for how to obtain a provably correct result.
@@ -2146,18 +2159,11 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: PermutationGroup(G)
             Transitive group number 5 of degree 4
 
-        You can use KASH or GAP to compute Galois groups as well.  The advantage is
-        that KASH (resp. GAP) can compute Galois groups of fields up to
-        degree 23 (resp. 15), whereas PARI only goes to degree 11.
-        (In my not-so-thorough experiments PARI is faster than KASH.)
+        You can also select GAP explicitly.
 
         ::
 
             sage: R.<x> = QQ[]
-            sage: f = x^4 - 17*x^3 - 2*x + 1
-            sage: f.galois_group(algorithm='kash')   # optional - kash
-            Transitive group number 5 of degree 4
-
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 5 of degree 4
@@ -2171,6 +2177,12 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.galois_group(algorithm='magma')  # optional - magma
             Transitive group number 183 of degree 12
 
+        The default fallback to GAP is tested here in degree 16 (see
+        :issue:`42520`)::
+
+            sage: (x^16 - x - 1).galois_group()
+            Transitive group number 1954 of degree 16
+
         TESTS:
 
         We illustrate the behaviour in the case of reducible polynomials::
@@ -2181,6 +2193,41 @@ cdef class Polynomial_rational_flint(Polynomial):
             Traceback (most recent call last):
             ...
             ValueError: The polynomial must be irreducible
+
+        Sage handles the degree 1 case directly::
+
+            sage: (t - 1).galois_group(algorithm='gap')
+            Transitive group number 1 of degree 1
+
+        The data for degrees 32 and 48 are supplemental downloads.  Degrees
+        outside the range of GAP's transitive groups library give a useful
+        error::
+
+            sage: (t^49 - t - 1).galois_group(algorithm='gap')
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: GAP's transitive groups database only covers degrees through 48; Sage's Magma interface can only identify transitive groups through degree 30
+
+        The MAGMA interface has the latter limitation even though MAGMA can
+        compute Galois groups in higher degrees::
+
+            sage: (t^31 - t - 1).galois_group(algorithm='magma')
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Sage's Magma interface can only identify transitive groups through degree 30
+
+        A request for a PARI group is never silently handled by another
+        algorithm::
+
+            sage: (t^12 - t - 1).galois_group(pari_group=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: PARI only supports Galois group computations through degree 11; use pari_group=False to allow GAP
+
+            sage: (t^4 - t - 1).galois_group(pari_group=True, algorithm='gap')
+            Traceback (most recent call last):
+            ...
+            ValueError: pari_group=True requires algorithm='pari'
 
         Variable names that are reserved in PARI, such as ``zeta``,
         are supported (see :issue:`20631`)::
@@ -2196,17 +2243,15 @@ cdef class Polynomial_rational_flint(Polynomial):
         if not self.is_irreducible():
             raise ValueError("The polynomial must be irreducible")
 
-        if self.degree() > 11 and algorithm == 'pari':
-            if self.degree() < 16:
-                algorithm = 'gap'
-            else:
-                algorithm = 'kash'
+        if pari_group and algorithm != 'pari':
+            raise ValueError("pari_group=True requires algorithm='pari'")
 
-        if self.degree() > 21 and algorithm == 'kash':
-            raise NotImplementedError("Galois group computation is "
-                "supported for degrees up to 11 using PARI, or up to 21 "
-                "if KASH is installed.  Try "
-                "algorithm='magma' if you have magma.")
+        if self.degree() > 11 and algorithm == 'pari':
+            if pari_group:
+                raise NotImplementedError(
+                    "PARI only supports Galois group computations through "
+                    "degree 11; use pari_group=False to allow GAP")
+            algorithm = 'gap'
 
         if algorithm == 'pari':
             G = self._pari_with_name().Polrev().polgalois()
@@ -2215,33 +2260,36 @@ cdef class Polynomial_rational_flint(Polynomial):
                 return H
             return PermutationGroup(H)
 
-        if algorithm == 'kash':
-            try:
-                from sage.interfaces.kash import kash
-                kash.eval('X := PolynomialRing(RationalField()).1')
-                s = self._repr(name='X')
-                G = kash('Galois(%s)' % s)
-                d = int(kash.eval('%s.ext1' % G.name()))
-                n = int(kash.eval('%s.ext2' % G.name()))
-                return TransitiveGroup(d, n)
-            except RuntimeError as msg:
-                raise NotImplementedError(str(msg) + "\nSorry, " +
-                    "computation of Galois groups of fields of degree " +
-                    "bigger than 11 is not yet implemented.  Try installing " +
-                    "the optional free (closed source) KASH software, which " +
-                    "supports degrees up to 21, or use algorithm='magma' if " +
-                    "you have magma.")
-
         if algorithm == 'gap':
-            if self.degree() > 15:
-                raise NotImplementedError("Galois group computation is " +
-                    "supported for degrees up to 15 using GAP. Try " +
-                    "algorithm='kash'.")
             from sage.libs.gap.libgap import libgap
+            n = self.degree()
+            if n == 1:
+                return TransitiveGroup(1, 1)
+            if not libgap.TransitiveGroupsAvailable(n):
+                if n in (32, 48):
+                    raise NotImplementedError(
+                        f"GAP's transitive groups data for degree {n} are not "
+                        "installed; they are available as a supplemental "
+                        "download from the GAP TransGrp package; Sage's Magma "
+                        "interface can only identify transitive groups through "
+                        "degree 30")
+                if n > 48:
+                    raise NotImplementedError(
+                        "GAP's transitive groups database only covers degrees "
+                        "through 48; Sage's Magma interface can only identify "
+                        "transitive groups through degree 30")
+                raise NotImplementedError(
+                    f"GAP's transitive groups data for degree {n} are not "
+                    "available; Sage's Magma interface can only identify "
+                    "transitive groups through degree 30")
             fgap = libgap(self)
-            return TransitiveGroup(self.degree(), fgap.GaloisType())
+            return TransitiveGroup(n, fgap.GaloisType())
 
         if algorithm == 'magma':
+            if self.degree() > 30:
+                raise NotImplementedError(
+                    "Sage's Magma interface can only identify transitive "
+                    "groups through degree 30")
             from sage.interfaces.magma import magma
             X = magma(self).GaloisGroup()
             try:

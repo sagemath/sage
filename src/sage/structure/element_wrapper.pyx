@@ -86,6 +86,8 @@ cdef class ElementWrapper(Element):
 
         Versions before :issue:`14519` had parent as the second argument and
         the value as the first.
+
+    .. automethod:: __copy__
     """
     def __init__(self, parent, value):
         """
@@ -455,8 +457,9 @@ class DummyParent(UniqueRepresentation, Parent):
 
 class ElementWrapperTester(ElementWrapper):
     """
-    Test class for the default :meth:`.__copy` method of subclasses of
-    :class:`ElementWrapper`.
+    Test class for the default
+    :meth:`~sage.structure.element_wrapper.ElementWrapper.__copy__` method of
+    subclasses of :class:`ElementWrapper`.
 
     TESTS::
 

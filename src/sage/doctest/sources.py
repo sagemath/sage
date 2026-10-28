@@ -139,6 +139,8 @@ class DocTestSource:
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent
+
+    .. automethod:: _process_doc
     """
     def __init__(self, options):
         """
@@ -680,7 +682,7 @@ class FileDocTestSource(DocTestSource):
 
         Such files aren't loaded before running tests.
 
-        This uses :func:`~sage.misc.package_dir.is_package_or_sage_namespace_package_dir`
+        This uses ``sage.misc.package_dir.is_package_or_sage_namespace_package_dir``
         but can be overridden via :class:`~sage.doctest.control.DocTestDefaults`.
 
         EXAMPLES::
@@ -893,7 +895,8 @@ class SourceLanguage:
         """
         Return a list of doctest defined in this docstring.
 
-        This function is called by :meth:`DocTestSource._process_doc`.
+        This function is called by
+        :meth:`~sage.doctest.sources.DocTestSource._process_doc`.
         The default implementation, defined here, is to use the
         :class:`sage.doctest.parsing.SageDocTestParser` attached to
         this source to get doctests from the docstring.

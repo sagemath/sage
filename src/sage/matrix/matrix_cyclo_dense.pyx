@@ -60,6 +60,7 @@ from sage.matrix.args cimport MatrixArgs_init
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace, get_matrix_class
 from sage.matrix.matrix cimport Matrix
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.matrix import matrix_dense
 from sage.matrix.matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
@@ -772,35 +773,86 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: (-m)*n
             [-23250]
         """
-        A, denom_self = self._matrix._clear_denom()
-        B, denom_right = (<Matrix_cyclo_dense>right)._matrix._clear_denom()
+        cdef Matrix_cyclo_dense C = Matrix_cyclo_dense.__new__(
+            Matrix_cyclo_dense,
+            MatrixSpace(self._base_ring, self._nrows, right.ncols()),
+            None, None, None)
+        C._set_to_product(<Matrix0>self, <Matrix0>right)
+        return C
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right``.
+
+        ALGORITHM:
+
+        Use a multimodular algorithm that involves multiplying the two matrices
+        modulo split primes, as for ordinary multiplication.  A cyclotomic
+        matrix stores its entries in a single rational matrix ``_matrix``, so
+        the destination is reused by rebinding that matrix to the lifted
+        result.
+
+        INPUT:
+
+        - ``left`` -- a cyclotomic dense matrix over the base ring of ``self``
+        - ``right`` -- a cyclotomic dense matrix over the base ring of ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: W.<z> = CyclotomicField(5)
+            sage: A = matrix(3, 3, [1,z,z^2,z^3,z^4,2/3*z,-3*z,z,2+z])
+            sage: B = matrix(3, 3, [-1,2*z,3*z^2,5*z+1,z^4,1/3*z,2-z,3-z,5-z])
+            sage: C = matrix(W, 3, 3, 1)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        The destination can be reused::
+
+            sage: C.set_to_product(B, A)
+            sage: C == B * A
+            True
+
+        TESTS:
+
+        A degenerate inner dimension gives the zero matrix; compare
+        :issue:`5974`::
+
+            sage: C = matrix(W, 2, 2, 1)
+            sage: C.set_to_product(matrix(W, 2, 0), matrix(W, 0, 2))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_cyclo_dense _left = <Matrix_cyclo_dense>left
+        cdef Matrix_cyclo_dense _right = <Matrix_cyclo_dense>right
+
+        A, denom_left = _left._matrix._clear_denom()
+        B, denom_right = _right._matrix._clear_denom()
 
         # conservative but correct estimate: 2 is there to account for the
         # sign of the entries
-        K = self._base_ring
-        bound = 1 + 2 * A.height() * B.height() * self._ncols
-        exclude = [denom_self, denom_right]
+        K = _left._base_ring
+        bound = 1 + 2 * A.height() * B.height() * _left._ncols
+        exclude = [denom_left, denom_right]
         err = "we ran out of primes in matrix multiplication."
 
         v = []
-        for p in self._split_primes(bound, exclude, err):
-            Amodp, _ = self._reductions(p)
-            Bmodp, _ = right._reductions(p)
+        for p in _left._split_primes(bound, exclude, err):
+            Amodp, _ = _left._reductions(p)
+            Bmodp, _ = _right._reductions(p)
             _,     S = K._reduction_matrix(p)
             X = Amodp[0]._matrix_from_rows_of_matrices([Amodp[i] * Bmodp[i] for i in range(len(Amodp))])
             v.append(S*X)
-        M = matrix(ZZ, self._base_ring.degree(), self._nrows*right.ncols())
+        M = matrix(ZZ, K.degree(), _left._nrows * _right._ncols)
         _lift_crt(M, v)
-        d = denom_self * denom_right
+        d = denom_left * denom_right
         if d == 1:
             M = M.change_ring(QQ)
         else:
             M = (1/d)*M
-        cdef Matrix_cyclo_dense C = Matrix_cyclo_dense.__new__(Matrix_cyclo_dense,
-                    MatrixSpace(self._base_ring, self._nrows, right.ncols()),
-                                                               None, None, None)
-        C._matrix = M
-        return C
+        self._matrix = M
 
     cdef Py_hash_t _hash_(self) except -1:
         """

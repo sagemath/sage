@@ -9,7 +9,7 @@ from sage.features.build_feature import BuildModule
 class Libhomfly(BuildModule):
     r"""
     A :class:`sage.features.Feature` describing the presence of
-    :mod:`sage.libs.homfly`, the interface to libhomfly.
+    ``sage.libs.homfly``, the interface to libhomfly.
 
     EXAMPLES::
 

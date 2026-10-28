@@ -43,14 +43,16 @@ class BuildFeature(Feature):
     you should set the member variable ``_enabled_in_build`` to the
     value of that config variable.
 
-    The :meth:`_is_present` method for this class will return the
+    The ``_is_present`` method for this class will return the
     value of that config variable unless ``defer_feature_checks`` is
     set to ``True`` in ``sage.config``. If checks are deferred, the
-    :meth:`_is_present` method will try to return the value of
-    :meth:`is_present_at_runtime` instead. If your feature can be
-    detected at run-time, you should implement that check in
-    :meth:`is_present_at_runtime`. Otherwise, leave it unimplemented;
-    and :meth:`_is_present` will return ``False``.
+    ``_is_present`` method will try to return the value of
+    :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`
+    instead. If your feature can be detected at run-time, you should
+    implement that check in
+    :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`.
+    Otherwise, leave it unimplemented; and ``_is_present`` will return
+    ``False``.
 
     EXAMPLES::
 
@@ -82,13 +84,13 @@ class BuildFeature(Feature):
         - Deferred feature checks have been enabled globally by
           passing ``-Ddefer_feature_checks=true`` to ``meson setup``.
 
-        - An ``is_present_at_runtime`` method has been implemented for
-          the feature.
+        - An :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`
+          method has been implemented for the feature.
 
         EXAMPLES:
 
         The method returns ``False`` if you have not implemented
-        ``is_present_at_runtime``::
+        :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`::
 
             sage: from sage.features.build_feature import BuildFeature
             sage: bf = BuildFeature("example")

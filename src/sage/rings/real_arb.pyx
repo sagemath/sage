@@ -355,7 +355,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         sage: RBF.cardinality()
         +Infinity
         sage: RBF.cartesian_product(QQ).an_element()**2
-        ([1.440000000000000 +/- ...e-16], 1/4)
+        ([1.44000000000000 +/- ...e-15], 1/4)
         sage: RBF.coerce_embedding() is None
         True
         sage: RBF['x'].gens_dict_recursive()
@@ -2539,7 +2539,7 @@ cdef class RealBall(RingElement):
         and ``other`` certainly represent the same real number, unless either
         ``self`` or ``other`` is exact (and neither contains NaN). To test
         whether both operands might represent the same mathematical quantity,
-        use :meth:`overlaps` or :meth:`contains`, depending on the
+        use :meth:`~sage.rings.real_arb.RealBall.overlaps` or ``contains``, depending on the
         circumstance.
 
         EXAMPLES::

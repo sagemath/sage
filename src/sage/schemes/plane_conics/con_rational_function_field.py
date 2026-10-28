@@ -20,7 +20,8 @@ Create a conic::
     Polynomial Ring in t over Rational Field defined by
     X^2 + Y^2 - Z^2
 
-Points can be found using :meth:`has_rational_point`::
+Points can be found using
+:meth:`~sage.schemes.plane_conics.con_rational_function_field.ProjectiveConic_rational_function_field.has_rational_point`::
 
     sage: K.<t> = FractionField(QQ['t'])
     sage: C = Conic([1, -t, t])
@@ -424,7 +425,9 @@ for function field of characteristic 2.")
         definition).
 
         If you don't have a solubility certificate and just want to find a
-        point, use the function :meth:`has_rational_point` instead.
+        point, use the function
+        :meth:`~sage.schemes.plane_conics.con_rational_function_field.ProjectiveConic_rational_function_field.has_rational_point`
+        instead.
 
         INPUT:
 

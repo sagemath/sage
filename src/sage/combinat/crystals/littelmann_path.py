@@ -650,7 +650,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
     When ``weight`` is just a single fundamental weight `\Lambda_r`, this
     crystal is isomorphic to a Kirillov-Reshetikhin (KR) crystal, see also
-    :meth:`sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinFromLSPaths`.
+    :func:`sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinCrystalFromLSPaths`.
     For general weights, it is isomorphic to a tensor product of
     single-column KR crystals.
 
@@ -1327,7 +1327,9 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: x.e_string([3,2,1,0]) == mg
                 True
 
-            We check that :meth:`epsilon` works::
+            We check that
+            :meth:`~sage.categories.crystals.Crystals.ElementMethods.epsilon`
+            works::
 
                 sage: B = crystals.infinity.LSPaths(['D',4])
                 sage: mg = B.highest_weight_vector()

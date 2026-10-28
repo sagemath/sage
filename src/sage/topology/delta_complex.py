@@ -13,7 +13,7 @@ As Hatcher points out, `\Delta`-complexes were first introduced by Eilenberg
 and Zilber [EZ1950]_, although they called them "semi-simplicial complexes".
 
 A `\Delta`-complex is a generalization of a :mod:`simplicial complex
-<sage.homology.simplicial_complex>`; a `\Delta`-complex `X` consists
+<sage.topology.simplicial_complex>`; a `\Delta`-complex `X` consists
 of sets `X_n` for each nonnegative integer `n`, the elements of which
 are called *n-simplices*, along with *face maps* between these sets of
 simplices: for each `n` and for all `0 \leq i \leq n`, there are
@@ -43,9 +43,9 @@ vertex.
 .. NOTE::
 
    This class derives from
-   :class:`~sage.homology.cell_complex.GenericCellComplex`, and so
+   :class:`~sage.topology.cell_complex.GenericCellComplex`, and so
    inherits its methods.  Some of those methods are not listed here;
-   see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
+   see the :mod:`Generic Cell Complex <sage.topology.cell_complex>`
    page instead.
 """
 
@@ -65,6 +65,9 @@ lazy_import('sage.matrix.constructor', 'matrix')
 class DeltaComplex(GenericCellComplex):
     r"""
     Define a `\Delta`-complex.
+
+    .. automethod:: _epi_from_standard_simplex
+    .. automethod:: _is_glued
 
     INPUT:
 
@@ -1118,7 +1121,8 @@ class DeltaComplex(GenericCellComplex):
 
         Pick a top-dimensional simplex from each complex.  Check to
         see if there are any identifications on either simplex, using
-        the :meth:`_is_glued` method.  If there are no
+        the :meth:`~sage.topology.delta_complex.DeltaComplex._is_glued`
+        method.  If there are no
         identifications, remove the simplices and glue the remaining
         parts of complexes along their boundary.  If there are
         identifications on a simplex, subdivide it repeatedly (using
@@ -1221,7 +1225,8 @@ class DeltaComplex(GenericCellComplex):
           along the boundary of `S`
 
         The algorithm for achieving this uses
-        :meth:`_epi_from_standard_simplex` to keep track of simplices
+        :meth:`~sage.topology.delta_complex.DeltaComplex._epi_from_standard_simplex`
+        to keep track of simplices
         (with multiplicity) and what their faces are: this method
         defines a surjection `\pi` from the standard `d`-simplex to
         `S`.  So first remove `S` and add a new vertex `w`, say at the

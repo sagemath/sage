@@ -1914,7 +1914,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     def _isomorphic_ring(self):
         """
         Return a ring isomorphic to this ring which is not a
-        :class:`PolynomialQuotientRing` but of a type which offers more
+        :class:`PolynomialQuotientRing_generic` but of a type which offers more
         functionality.
 
         OUTPUT:
@@ -2104,8 +2104,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
     r"""
-    A coercion map from a :class:`PolynomialQuotientRing` to a
-    :class:`PolynomialQuotientRing` that restricts to the coercion map on the
+    A coercion map from a :class:`PolynomialQuotientRing_generic` to a
+    :class:`PolynomialQuotientRing_generic` that restricts to the coercion map on the
     underlying ring of constants.
 
     EXAMPLES::
@@ -2256,8 +2256,10 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, Ring):
     def field_extension(self, names):
         r"""
         Take a polynomial quotient ring, and return a tuple with three
-        elements: the :class:`NumberField` defined by the same polynomial quotient
-        ring, a homomorphism from its parent to the :class:`NumberField` sending the
+        elements: the :func:`~sage.rings.number_field.number_field.NumberField`
+        defined by the same polynomial quotient
+        ring, a homomorphism from its parent to the
+        :func:`~sage.rings.number_field.number_field.NumberField` sending the
         generators to one another, and the inverse isomorphism.
 
         OUTPUT:
@@ -2418,7 +2420,9 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
 
     def base_field(self):
         r"""
-        Alias for :meth:`base_ring`, when we're defined over a field.
+        Alias for
+        :meth:`~sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic.base_ring`,
+        when we're defined over a field.
         """
         return self.base_ring()
 

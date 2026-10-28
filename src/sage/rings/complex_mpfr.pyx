@@ -142,7 +142,7 @@ def ComplexField(prec=53, names=None):
     .. SEEALSO::
 
         - :class:`~sage.rings.complex_mpfr.ComplexField_class`
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
     """
     global cache
@@ -221,8 +221,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         0
         sage: CC.precision()
         200
-        sage: CC.variable_name()
-        'I'
+        sage: CC.variable_names()
+        ()
         sage: CC == ComplexField(200)
         True
         sage: CC == ComplexField(53)
@@ -233,7 +233,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
     .. SEEALSO::
 
         - :func:`~sage.rings.complex_mpfr.ComplexField` (constructor)
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
         - :mod:`~sage.rings.real_mpfr`
     """
@@ -256,7 +256,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        Parent.__init__(self, self._real_field(), names=('I',),
+        Parent.__init__(self, self._real_field(), names=(),
                         normalize=False,
                         category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)],
@@ -1367,23 +1367,23 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: pari(a).type()
             't_COMPLEX'
             sage: type(pari(a))
             <class 'cypari2.gen.Gen'>
             sage: a.__pari__()
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: type(a.__pari__())
             <class 'cypari2.gen.Gen'>
             sage: a = CC(pi)                                                            # needs sage.symbolic
             sage: pari(a)                                                               # needs sage.symbolic
-            3.14159265358979
+            3.14159265358...
             sage: pari(a).type()                                                        # needs sage.symbolic
             't_REAL'
             sage: a = CC(-2).sqrt()
             sage: pari(a)
-            1.41421356237310*I
+            1.41421356237...*I
         """
         if self.is_real():
             return self.real().__pari__()
@@ -2030,7 +2030,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         Plots this complex number as a point in the plane.
 
-        The accepted options are the ones of :meth:`~sage.plot.point.point2d`.
+        The accepted options are the ones of :func:`~sage.plot.point.point2d`.
         Type ``point2d.options`` to see all options.
 
         .. NOTE::

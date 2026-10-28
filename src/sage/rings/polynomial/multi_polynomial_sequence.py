@@ -1062,13 +1062,17 @@ class PolynomialSequence_generic(Sequence_generic):
     def subs(self, *args, **kwargs):
         """
         Substitute variables for every polynomial in this system and
-        return a new system. See :meth:`MPolynomial.subs` for calling
-        convention.
+        return a new system. See, for example,
+        :meth:`~sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict.subs`
+        and
+        :meth:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular.subs`
+        for the calling convention.
 
         INPUT:
 
-        - ``args`` -- arguments to be passed to :meth:`MPolynomial.subs`
-        - ``kwargs`` -- keyword arguments to be passed to :meth:`MPolynomial.subs`
+        - ``args`` -- arguments to be passed to the polynomial ``subs`` method
+        - ``kwargs`` -- keyword arguments to be passed to the polynomial
+          ``subs`` method
 
         EXAMPLES::
 

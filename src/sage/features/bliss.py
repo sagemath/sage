@@ -19,7 +19,7 @@ from sage.features.build_feature import BuildModule
 class Bliss(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
-    :mod:`sage.graphs.bliss` module is available in this installation
+    ``sage.graphs.bliss`` module is available in this installation
     of Sage.
 
     EXAMPLES::

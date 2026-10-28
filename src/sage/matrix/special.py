@@ -34,14 +34,14 @@ The following constructions are available:
     :meth:`~sage.matrix.special.jordan_block`
     :meth:`~sage.matrix.special.lehmer`
     :meth:`~sage.matrix.special.ones_matrix`
-    :meth:`~sage.matrix.special.random_matrix`
-    :meth:`~sage.matrix.special.random_diagonalizable_matrix`
-    :meth:`~sage.matrix.special.random_echelonizable_matrix`
-    :meth:`~sage.matrix.special.random_rref_matrix`
-    :meth:`~sage.matrix.special.random_subspaces_matrix`
-    :meth:`~sage.matrix.special.random_unimodular_matrix`
-    :meth:`~sage.matrix.special.random_unitary_matrix`
-    :meth:`~sage.matrix.special.random_bistochastic_matrix`
+    :func:`~sage.matrix.special.random_matrix`
+    :func:`~sage.matrix.special.random_diagonalizable_matrix`
+    :func:`~sage.matrix.special.random_echelonizable_matrix`
+    :func:`~sage.matrix.special.random_rref_matrix`
+    :func:`~sage.matrix.special.random_subspaces_matrix`
+    :func:`~sage.matrix.special.random_unimodular_matrix`
+    :func:`~sage.matrix.special.random_unitary_matrix`
+    :func:`~sage.matrix.special.random_bistochastic_matrix`
     :meth:`~sage.matrix.special.toeplitz`
     :meth:`~sage.matrix.special.vandermonde`
     :meth:`~sage.matrix.special.vector_on_axis_rotation_matrix`
@@ -250,7 +250,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
       - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
         base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
         if computed by hand, will have only integer entries. See the
-        documentation of :meth:`~sage.matrix.special.random_diagonalizable_matrix`
+        documentation of :func:`~sage.matrix.special.random_diagonalizable_matrix`
         for more information
 
     - ``implementation`` -- (``None`` or string or a matrix class) a possible
@@ -461,7 +461,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
         search_def('randomize')
 
-    The default implementation of :meth:`~sage.matrix.matrix2.randomize` relies
+    The default implementation of :meth:`~sage.matrix.matrix2.Matrix.randomize` relies
     on the ``random_element()`` method for the base ring.  The ``density`` and
     ``sparse`` keywords behave as described above. Since we have a different
     randomisation when using the optional meataxe package, we have to make sure
@@ -508,7 +508,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: A == A.rref()
         True
 
-    For more, see the documentation of the :func:`~sage.matrix.constructor.random_rref_matrix`
+    For more, see the documentation of the :func:`~sage.matrix.special.random_rref_matrix`
     function.  In the notebook or at the Sage command-line, first execute the following to make
     this further documentation available::
 
@@ -538,7 +538,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: A.rref() in sage.matrix.matrix_space.MatrixSpace(ZZ, 4, 8)
         True
 
-    For more, see the documentation of the :func:`~sage.matrix.constructor.random_echelonizable_matrix`
+    For more, see the documentation of the :func:`~sage.matrix.special.random_echelonizable_matrix`
     function.  In the notebook or at the Sage command-line, first execute the following to make
     this further documentation available::
 
@@ -570,7 +570,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         [--+--+--+--+--]
         [ 0| 0| 0| 0|-1]
 
-    For more, see the documentation of the :func:`~sage.matrix.constructor.random_diagonalizable_matrix`
+    For more, see the documentation of the :func:`~sage.matrix.special.random_diagonalizable_matrix`
     function.  In the notebook or at the Sage command-line, first execute the following to make
     this further documentation available::
 
@@ -579,7 +579,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     Random matrices with predictable subspaces.  The ``algorithm='subspaces'``
     keyword, along with an optional rank (``rank``) will return
     a matrix whose natural basis vectors for its four fundamental subspaces, if computed as
-    described in the documentation of the :func:`~sage.matrix.constructor.random_subspaces_matrix`
+    described in the documentation of the :func:`~sage.matrix.special.random_subspaces_matrix`
     contain only integer entries.  If ``rank``, is not set, the
     rank of the matrix will be generated randomly. ::
 
@@ -600,7 +600,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: B.left_kernel() == L.row_space()
         True
 
-    For more, see the documentation of the :func:`~sage.matrix.constructor.random_subspaces_matrix`
+    For more, see the documentation of the :func:`~sage.matrix.special.random_subspaces_matrix`
     function.  In the notebook or at the Sage command-line, first execute the following to make
     this further documentation available::
 
@@ -622,7 +622,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: all(abs(x)<70 for x in C.list())
         True
 
-    For more, see the documentation of the :func:`~sage.matrix.constructor.random_unimodular_matrix`
+    For more, see the documentation of the :func:`~sage.matrix.special.random_unimodular_matrix`
     function.  In the notebook or at the Sage command-line, first execute the following to make
     this further documentation available::
 
@@ -2521,7 +2521,7 @@ def random_rref_matrix(parent, num_pivots):
     .. NOTE::
 
         It is easiest to use this function via a call to the
-        :func:`~sage.matrix.constructor.random_matrix`
+        :func:`~sage.matrix.special.random_matrix`
         function with the ``algorithm='echelon_form'`` keyword.  We provide
         one example accessing this function directly, while the remainder will
         use this more general function.
@@ -2706,7 +2706,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     .. NOTE::
 
         It is easiest to use this function via a call to the
-        :func:`~sage.matrix.constructor.random_matrix`
+        :func:`~sage.matrix.special.random_matrix`
         function with the ``algorithm='echelonizable'`` keyword.  We provide
         one example accessing this function directly, while the remainder will
         use this more general function.
@@ -2906,7 +2906,7 @@ def random_subspaces_matrix(parent, rank=None):
     .. NOTE::
 
         It is easiest to use this function via a call to the
-        :func:`~sage.matrix.constructor.random_matrix`
+        :func:`~sage.matrix.special.random_matrix`
         function with the ``algorithm='subspaces'`` keyword.  We provide
         one example accessing this function directly, while the remainder will
         use this more general function.
@@ -3066,7 +3066,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     .. NOTE::
 
         It is easiest to use this function via a call to the
-        :func:`~sage.matrix.constructor.random_matrix`
+        :func:`~sage.matrix.special.random_matrix`
         function with the ``algorithm='unimodular'`` keyword.  We provide
         one example accessing this function directly, while the remainder will
         use this more general function.
@@ -3439,7 +3439,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     .. NOTE::
 
         It is easiest to use this function via a call to the
-        :func:`~sage.matrix.constructor.random_matrix`
+        :func:`~sage.matrix.special.random_matrix`
         function with the ``algorithm='diagonalizable'`` keyword.  We provide
         one example accessing this function directly, while the remainder will
         use this more general function.

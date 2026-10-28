@@ -211,12 +211,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. RUBRIC:: The base field of a Drinfeld module
 
     The base field of the Drinfeld module is retrieved using
-    :meth:`base`::
+    :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base`::
 
         sage: phi.base()
         Finite Field in z of size 3^12
 
-    The base morphism is retrieved using :meth:`base_morphism`::
+    The base morphism is retrieved using
+    :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base_morphism`::
 
         sage: phi.base_morphism()
         Ring morphism:
@@ -1987,7 +1988,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isinstance(phi.morphism(), RingHomomorphism)
             True
 
-        Actually, the ``DrinfeldModule`` method :meth:`__call__` simply
+        Actually, the ``DrinfeldModule`` method ``__call__`` simply
         class the ``__call__`` method of this morphism::
 
             sage: phi.morphism()(T) == phi(T)

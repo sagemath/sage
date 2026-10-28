@@ -1589,7 +1589,10 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
     EXAMPLES:
 
     Since this is an embedded vector subspace with echelonized basis,
-    the methods :meth:`echelon_coordinates` and :meth:`coordinates` return the same
+    the methods
+    :meth:`~sage.modules.free_module.FreeModule_submodule_field.echelon_coordinates`
+    and :meth:`~sage.modules.free_module.FreeModule_generic.coordinates`
+    return the same
     coordinates::
 
         sage: V = QQ^3

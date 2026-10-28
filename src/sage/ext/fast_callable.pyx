@@ -26,7 +26,8 @@ quickly::
 By default, :func:`fast_callable` only removes some interpretive
 overhead from the evaluation, but all of the individual arithmetic
 operations are done using standard Sage arithmetic.  This is still a
-huge win over :mod:`sage.calculus`, which evidently has a lot of overhead.
+huge win over :mod:`sage.calculus.calculus`, which evidently has a lot of
+overhead.
 Compare the cost of evaluating Wilkinson's polynomial (in unexpanded
 form) at `x = 30`::
 
@@ -148,17 +149,21 @@ Internally, :func:`fast_callable` works in two stages: it constructs
 an expression tree from its argument, and then it builds a
 fast evaluator from that expression tree.  You can bypass the first phase
 by building your own expression tree and passing that directly to
-:func:`fast_callable`, using an :class:`ExpressionTreeBuilder`. ::
+:func:`fast_callable`, using an
+:class:`~sage.ext.fast_callable.ExpressionTreeBuilder`. ::
 
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder(vars=('x','y','z'))
 
-An :class:`ExpressionTreeBuilder` has three interesting methods:
-:meth:`constant`, :meth:`var`, and :meth:`call`.
-All of these methods return :class:`ExpressionTree` objects.
+An :class:`~sage.ext.fast_callable.ExpressionTreeBuilder` has three interesting
+methods: :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.constant`,
+:meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.var`, and
+:meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.call`.
+All of these methods return :class:`~sage.ext.fast_callable.Expression`
+objects.
 
-The :meth:`var` method takes a string, and returns an expression tree
-for the corresponding variable. ::
+The :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.var` method takes a
+string, and returns an expression tree for the corresponding variable. ::
 
     sage: x = etb.var('x')
     sage: y = etb.var('y')
@@ -169,14 +174,14 @@ build expression trees representing arithmetic expressions. ::
 
     sage: v1 = (x+y)*(y+z) + (y//z)
 
-The :meth:`constant` method takes a Sage value, and returns an
-expression tree representing that value. ::
+The :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.constant` method takes
+a Sage value, and returns an expression tree representing that value. ::
 
     sage: v2 = etb.constant(3.14159) * x + etb.constant(1729) * y
 
-The :meth:`call` method takes a sage/Python function and zero or more
-expression trees, and returns an expression tree representing
-the function call. ::
+The :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.call` method takes a
+Sage/Python function and zero or more expression trees, and returns an
+expression tree representing the function call. ::
 
     sage: v3 = etb.call(sin, v1+v2)
     sage: v3                                                                            # needs sage.symbolic
@@ -184,8 +189,9 @@ the function call. ::
             add(mul(3.14159000000000, v_0), mul(1729, v_1))))
 
 Many sage/Python built-in functions are specially handled; for instance,
-when evaluating an expression involving :func:`sin` over ``RDF``,
-the C math library function :func:`sin` is called.  Arbitrary functions
+when evaluating an expression involving
+:class:`sin <sage.functions.trig.Function_sin>` over ``RDF``,
+the C math library function :func:`math.sin` is called.  Arbitrary functions
 are allowed, but will be much slower since they will call back to
 Python code on every call; for example, the following will work. ::
 
@@ -198,7 +204,8 @@ Python code on every call; for example, the following will work. ::
 To provide :func:`fast_callable` for your own class (so that
 ``fast_callable(x)`` works when ``x`` is an instance of your
 class), implement a method ``_fast_callable_(self, etb)`` for your class.
-This method takes an :class:`ExpressionTreeBuilder`, and returns an
+This method takes an
+:class:`~sage.ext.fast_callable.ExpressionTreeBuilder`, and returns an
 expression tree built up using the methods described above.
 
 EXAMPLES::
@@ -216,10 +223,12 @@ EXAMPLES::
 
 To interpret that last line, we load argument 0 (``x`` in this case) onto
 the stack, push the constant `7.0` onto the stack, call the :func:`pow`
-functionn(which takes 2 arguments from the stack), push the constant `1.0`,
-add the top two arguments of the stack, and then call :func:`sqrt`.
+function (which takes 2 arguments from the stack), push the constant `1.0`,
+add the top two arguments of the stack, and then call
+:class:`sqrt <sage.functions.other.Function_sqrt>`.
 
-Here we take :func:`sin` of the first argument and add it to ``f``::
+Here we take :class:`sin <sage.functions.trig.Function_sin>` of the first
+argument and add it to ``f``::
 
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder('x')
@@ -243,8 +252,10 @@ AUTHOR:
     They are not true yet, but I hope they will be true someday, at
     which point I will move them into the main text.
 
-    The final interesting method of :class:`ExpressionTreeBuilder` is
-    :meth:`choice`.  This produces conditional expressions, like the C
+    The final interesting method of
+    :class:`~sage.ext.fast_callable.ExpressionTreeBuilder` is
+    :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.choice`.  This produces
+    conditional expressions, like the C
     ``COND ? T : F`` expression or the Python ``T if COND else F``.
     This lets you define piecewise functions using :func:`fast_callable`. ::
 
@@ -529,7 +540,7 @@ def _builder_and_stream(vars, domain):
     - ``domain`` -- a Sage parent or Python type or ``None``; if non-``None``,
       all arithmetic is done in that domain
 
-    OUTPUT: a :class:`Wrapper`, an class:`InstructionStream`
+    OUTPUT: a :class:`Wrapper`, a :class:`InstructionStream`
 
     EXAMPLES::
 
@@ -597,8 +608,9 @@ def function_name(fn):
     Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
-    function (so :func:`operator.add` becomes ``'add'``, and
-    :func:`sage.functions.trig.sin` becomes ``'sin'``).
+    function (so :func:`operator.add` becomes ``'add'``, and the
+    :class:`~sage.functions.trig.Function_sin` instance ``sin`` becomes
+    ``'sin'``).
 
     For functions we don't recognize, we try to come up with a name,
     but the name will be wrapped in braces; this is a signal that
@@ -634,9 +646,11 @@ cdef class ExpressionTreeBuilder:
     r"""
     A class with helper methods for building Expressions.
 
-    An instance of this class is passed to :meth:`_fast_callable_` methods;
+    An instance of this class is passed to ``_fast_callable_`` methods;
     you can also instantiate it yourself to create your own expressions
-    for :func:`fast_callable`, bypassing :meth:`_fast_callable_`.
+    for :func:`fast_callable`, bypassing ``_fast_callable_``.
+
+    .. automethod:: __call__
 
     EXAMPLES::
 
@@ -656,8 +670,10 @@ cdef class ExpressionTreeBuilder:
 
         Takes a list or tuple of variable names to use, and also an optional
         ``domain``.  If a ``domain`` is given, then creating an
-        :class:`ExpressionConstant` node with the :meth:`__call__`, make, or
-        constant methods will convert the value into the given domain.
+        :class:`ExpressionConstant` node with
+        :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.__call__` or
+        :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.constant` will
+        convert the value into the given domain.
 
         Note that this is the only effect of the domain parameter.  It
         is quite possible to use different domains for
@@ -691,8 +707,10 @@ cdef class ExpressionTreeBuilder:
         Try to convert the given value to an :class:`Expression`.
 
         If it is already an Expression, just return it.  If it has a
-        :meth:`_fast_callable_` method, then call the method with ``self`` as
-        an argument.  Otherwise, use ``self.constant()`` to turn it into a constant.
+        ``_fast_callable_`` method, then call the method with ``self`` as
+        an argument.  Otherwise, use
+        :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.constant` to turn
+        it into a constant.
 
         EXAMPLES::
 
@@ -815,7 +833,7 @@ cdef class ExpressionTreeBuilder:
         Construct a call node, given a function and a list of arguments.
 
         The arguments will be converted to Expressions using
-        :meth:`ExpressionTreeBuilder.__call__`.
+        :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.__call__`.
 
         As a special case, notice if the function is :func:`operator.pow` and
         the second argument is integral, and construct an :class:`ExpressionIPow`
@@ -888,7 +906,8 @@ cdef class Expression:
     Supports the standard Python arithmetic operators; if arithmetic
     is attempted between an Expression and a non-Expression, the
     non-Expression is converted to an expression (using the
-    :meth:`__call__` method of the Expression's :class:`ExpressionTreeBuilder`).
+    :meth:`~sage.ext.fast_callable.ExpressionTreeBuilder.__call__` method of the
+    Expression's :class:`~sage.ext.fast_callable.ExpressionTreeBuilder`).
 
     EXAMPLES::
 
@@ -1804,7 +1823,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
     :class:`InstructionStream`.
 
     In :func:`fast_callable`, first we create an :class:`Expression`, either directly
-    with an :class:`ExpressionTreeBuilder` or with :meth:`_fast_callable_` methods.
+    with an :class:`ExpressionTreeBuilder` or with ``_fast_callable_`` methods.
     Then we optimize the :class:`Expression` in tree form.  (Unfortunately,
     this step is currently missing -- we do no optimizations.)
 
@@ -2066,8 +2085,9 @@ cdef class InstructionStream:
     a description of the memory chunks involved and the instruction stream
     can handle any interpreter.
 
-    Once you're done adding instructions, you call :meth:`get_current` to retrieve
-    the information needed by the interpreter (as a Python dictionary).
+    Once you're done adding instructions, you call
+    :meth:`~sage.ext.fast_callable.InstructionStream.get_current` to retrieve the
+    information needed by the interpreter (as a Python dictionary).
     """
 
     cdef InterpreterMetadata _metadata
@@ -2462,10 +2482,11 @@ class CompilerInstrSpec():
 
 def op_list(args, metadata):
     r"""
-    Given a dictionary with the result of calling :meth:`get_current` on an
+    Given a dictionary with the result of calling
+    :meth:`~sage.ext.fast_callable.InstructionStream.get_current` on an
     :class:`InstructionStream`, and the corresponding interpreter metadata,
-    return a list of the instructions, in a simple somewhat
-    human-readable format.
+    return a list of the instructions, in a simple somewhat human-readable
+    format.
 
     For debugging only.  (That is, it's probably not a good idea to
     try to programmatically manipulate the result of this function;
@@ -2474,7 +2495,8 @@ def op_list(args, metadata):
 
     There's probably no reason to call this directly; if you
     have a wrapper object, call :func:`op_list` on it; if you have an
-    :class:`InstructionStream` object, call :meth:`current_op_list` on it.
+    :class:`InstructionStream` object, call
+    :meth:`~sage.ext.fast_callable.InstructionStream.current_op_list` on it.
 
     EXAMPLES::
 
@@ -2623,8 +2645,10 @@ class FastCallableFloatWrapper:
         to avoid if calling ``real()`` on everything is infeasible.
 
       * :class:`complex` has essentially the same problem as :class:`float`.
-        There are several symbolic functions like :func:`min_symbolic`,
-        :func:`max_symbolic`, and :func:`floor` that are unable to
+        There are several symbolic functions like
+        :class:`min_symbolic <sage.functions.min_max.MinSymbolic>`,
+        :class:`max_symbolic <sage.functions.min_max.MaxSymbolic>`, and
+        :class:`floor <sage.functions.other.Function_floor>` that are unable to
         operate on complex numbers.
 
       * ``None`` leaves the types of the inputs/outputs alone, but due
@@ -2633,7 +2657,8 @@ class FastCallableFloatWrapper:
 
       * ``CDF`` has none of the other issues, because ``CDF`` has its
         own specialized interpreter, a lexicographic ordering (for
-        min/max), and supports :func:`floor`. However, most numerical
+        min/max), and supports
+        :class:`floor <sage.functions.other.Function_floor>`. However, most numerical
         functions cannot handle complex numbers, so using ``CDF``
         would require us to wrap every evaluation in a
         ``CDF``-to-:class:`float` conversion routine. That would slow
@@ -2644,7 +2669,7 @@ class FastCallableFloatWrapper:
     Creating a new fast-callable interpreter that has different input
     and output types solves most of the problems with a ``CDF``
     domain, but :func:`fast_callable` and the interpreter classes in
-    :mod:`sage.ext.interpreters` are not really written with that in
+    ``sage.ext.interpreters`` are not really written with that in
     mind. The ``domain`` parameter to :func:`fast_callable`, for
     example, is expecting a single Sage ring that corresponds to one
     interpreter. You can make it accept, for example, a string like
@@ -2655,9 +2680,13 @@ class FastCallableFloatWrapper:
     :func:`fast_callable`. Whenever we need to support intermediate
     complex terms in a numerical routine, we can set ``domain=CDF``
     while creating its fast-callable incarnation, and then wrap the
-    result in this class. The :meth:`__call__` method of this class then
+    result in this class. The
+    :meth:`~sage.ext.fast_callable.FastCallableFloatWrapper.__call__` method of
+    this class then
     ensures that the ``CDF`` output is converted to a :class:`float` if
     its imaginary part is within an acceptable tolerance.
+
+    .. automethod:: __call__
 
     EXAMPLES:
 
@@ -2683,8 +2712,8 @@ class FastCallableFloatWrapper:
         INPUT:
 
           - ``ff`` -- a fast-callable wrapper over ``CDF``; an instance of
-            :class:`sage.ext.interpreters.Wrapper_cdf`, usually constructed
-            with :func:`fast_callable`.
+            ``sage.ext.interpreters.wrapper_cdf.Wrapper_cdf``, usually
+            constructed with :func:`fast_callable`.
 
           - ``imag_tol`` -- float; how big of an imaginary part we're willing
             to ignore before raising an error

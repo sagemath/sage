@@ -110,7 +110,7 @@ ask the category (TODO: find a slicker idiom for this)::
 
     The result above is not yet necessarily complete; many required
     methods in the categories are not yet marked as
-    :func:`abstract_methods`. We also recommend browsing the
+    :func:`~sage.misc.abstract_method.abstract_method`. We also recommend browsing the
     documentation of this category: :class:`AlgebrasWithBasis`.
 
 Adding these methods, here is the minimal implementation of the group algebra::
@@ -147,7 +147,7 @@ Some notes about this implementation:
   present as in ``E``.
 
 * The purpose of ``**keywords`` is to pass down options like
-  ``prefix`` to :class:`CombinatorialFreeModules`.
+  ``prefix`` to :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
 
 Let us do some calculations::
@@ -398,7 +398,7 @@ Triangular module_morphisms are also invertible, even if ``X`` and
 
 For details, see
 :meth:`ModulesWithBasis.ParentMethods.module_morphism` (and also
-:class:`sage.categories.modules_with_basis.TriangularModuleMorphism`)::
+:class:`sage.modules.with_basis.morphism.TriangularModuleMorphism`)::
 
     sage: A.module_morphism?                      # not tested
 
@@ -682,11 +682,11 @@ particular, this construction says that they are:
 
 .. NOTE::
 
-    Inheriting from :class:`BindableCass` just provides syntactic
+    Inheriting from :class:`~sage.misc.bindable_class.BindableClass` just provides syntactic
     sugar: it makes ``MyAlgebras().FirstBasis()`` a shorthand for
     ``MyAlgebras.FirstBasis(MyAlgebras().FirstBasis())`` (binding
     behavior). The class ``Bases`` inherits this binding behavior from
-    :class:`Category_realization_of_parent` , which is why we can
+    :class:`~sage.categories.realizations.Category_realization_of_parent` , which is why we can
     write ``MyAlgebras().Bases`` instead of
     ``MyAlgebras.Bases(MyAlgebras())``
 

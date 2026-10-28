@@ -25,7 +25,7 @@ class GapPackage(Feature):
 
     .. SEEALSO::
 
-        :class:`Feature sage.libs.gap <~sage.features.sagemath.sage__libs__gap>`
+        :class:`Feature sage.libs.gap <sage.features.sagemath.sage__libs__gap>`
 
     EXAMPLES::
 
@@ -83,4 +83,5 @@ def all_features():
             GapPackage("polenta", spkg='gap_packages'),
             GapPackage("polycyclic", spkg='gap_packages'),
             GapPackage("qpa", spkg='gap_packages'),
-            GapPackage("quagroup", spkg='gap_packages')]
+            GapPackage("quagroup", spkg='gap_packages'),
+            GapPackage("tomlib", spkg='gap_packages')]

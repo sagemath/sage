@@ -512,7 +512,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
           - when a sequence, it should be an ordering of the groundset
             elements, and the columns (and, in case of a reduced
             representation, rows) will be presented in the given order,
-          - when ``None``, use the same ordering that :meth:`groundset_list`
+          - when ``None``, use the same ordering that
+            :meth:`~sage.matroids.basis_exchange_matroid.BasisExchangeMatroid.groundset_list`
             uses,
           - when ``True``, return a morphism of free modules instead of a matrix.
 
@@ -1123,7 +1124,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.matroids.linear_matroid.LinearMatroid'
-            object has no attribute '_invariant'
+            object has no attribute '_invariant'...
             sage: M1._fast_isom_test(M3) is None
             True
             sage: Matroid(graphs.WheelGraph(6), regular=True)._fast_isom_test(          # needs sage.graphs

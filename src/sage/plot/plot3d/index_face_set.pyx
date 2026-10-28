@@ -1645,7 +1645,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         dual.realloc(self.fcount, self.vcount, self.icount)
 
         # is using dicts overly-heavy?
-        dual_faces = [{} for i in range(self.vcount)]
+        dual_faces = [{} for _ in range(self.vcount)]
 
         for i in range(self.fcount):
             sig_check()

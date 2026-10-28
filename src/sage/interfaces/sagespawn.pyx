@@ -136,7 +136,7 @@ class SageSpawn(spawn):
 
     def expect_peek(self, *args, **kwds):
         r"""
-        Like :meth:`expect` but restore the read buffer such that it
+        Like :meth:`~pexpect.spawn.expect` but restore the read buffer such that it
         looks like nothing was actually read. The next reading will
         continue at the current position.
 
@@ -155,7 +155,7 @@ class SageSpawn(spawn):
 
     def expect_upto(self, *args, **kwds):
         r"""
-        Like :meth:`expect` but restore the read buffer starting from
+        Like :meth:`~pexpect.spawn.expect` but restore the read buffer starting from
         the matched string. The next reading will continue starting
         with the matched string.
 

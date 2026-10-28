@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # needs sage.symbolic
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
@@ -48,7 +48,7 @@ value in a Python or Cython source file.::
     int(5)
 
 Adding :func:`sage_input` support to your own classes is
-straightforward.  You need to add a :func:`_sage_input_` method which
+straightforward.  You need to add a ``_sage_input_`` method which
 returns a :class:`SageInputExpression` (henceforth abbreviated as SIE)
 which will reconstruct this instance of your class.
 
@@ -56,7 +56,7 @@ A ``_sage_input_`` method takes two parameters, conventionally named
 ``sib`` and ``coerced``.  The first argument is a
 :class:`SageInputBuilder`; it has methods to build SIEs.  The second
 argument, ``coerced``, is a boolean.  This is only useful if your class
-is a subclass of :class:`Element` (although it is always present).  If
+is a subclass of :class:`~sage.structure.element.Element` (although it is always present).  If
 ``coerced`` is ``False``, then your method must generate an expression
 which will evaluate to a value of the correct type with the correct
 parent.  If ``coerced`` is ``True``, then your method may generate an
@@ -129,7 +129,7 @@ constant or function.::
     [-ZZ(5)/7, -ZZ(5)/7, -5/7, -5/7, QQ(3), 3, QQ(3), 3]
 
 This is the prettiest output we're going to get, but let's make one
-further refinement.  Other :class:`_sage_input_` methods, like the one
+further refinement.  Other ``_sage_input_`` methods, like the one
 for polynomials, analyze the structure of SIEs; they work better (give
 prettier output) if negations are at the outside.  If the above code
 were used for rationals, then ``sage_input(polygen(QQ) - 2/3)`` would
@@ -228,7 +228,6 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     The result of :func:`sage_input` is actually a pair of strings with a
     special ``__repr__`` method to print nicely.::
 
-        sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: r = sage_input(RealField(20)(pi), verify=True)
         sage: r
         # Verified
@@ -378,9 +377,9 @@ class SageInputBuilder:
             sage: sib = SageInputBuilder()
             sage: sib.result(sib(GF(17)(5), True))
             5
-            sage: sib.result(sib(RealField(200)(1.5), True))                            # needs sage.rings.real_mpfr
+            sage: sib.result(sib(RealField(200)(1.5), True))
             1.5000000000000000000000000000000000000000000000000000000000000
-            sage: sib.result(sib(RealField(200)(1.5), 2))                               # needs sage.rings.real_mpfr
+            sage: sib.result(sib(RealField(200)(1.5), 2))
             1.5
 
         Since :func:`sage_input` directly calls this method, all
@@ -400,13 +399,13 @@ class SageInputBuilder:
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
-            sage: sage_input(float(NaN), preparse=True, verify=True)                    # needs sage.symbolic
+            sage: sage_input(float(NaN), preparse=True, verify=True)
             # Verified
             float(NaN)
-            sage: sage_input(float(-pi), preparse=True, verify=True)                    # needs sage.symbolic
+            sage: sage_input(float(-pi), preparse=True, verify=True)
             # Verified
             float(-RR(3.1415926535897931))
-            sage: sage_input(float(42), preparse=True, verify=True)                     # needs sage.rings.real_mpfr
+            sage: sage_input(float(42), preparse=True, verify=True)
             # Verified
             float(42)
             sage: sage_input("Hello, world\n", verify=True)
@@ -427,7 +426,7 @@ class SageInputBuilder:
             sage: sage_input('unicode with spectral: \u1234\U00012345', verify=True)
             # Verified
             'unicode with spectral: \u1234\U00012345'
-            sage: sage_input((2, 3.5, 'Hi'), verify=True)                               # needs sage.rings.real_mpfr
+            sage: sage_input((2, 3.5, 'Hi'), verify=True)
             # Verified
             (2, 3.5, 'Hi')
             sage: sage_input(lambda x: x)
@@ -580,7 +579,7 @@ class SageInputBuilder:
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib.float_str(repr(RR(e))))                                # needs sage.symbolic
+            sage: sib.result(sib.float_str(repr(RR(e))))
             2.71828182845905
         """
         return SIE_literal_stringrep(self, n)
@@ -1744,7 +1743,7 @@ class SIE_literal_stringrep(SIE_literal):
         sage: sib = SageInputBuilder()
         sage: isinstance(sib(3), SIE_literal_stringrep)
         True
-        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)                     # needs sage.rings.real_mpfr
+        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)
         True
         sage: isinstance(sib.name('pi'), SIE_literal_stringrep)
         True
@@ -2150,7 +2149,7 @@ class SIE_tuple(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib((3.5, -2))                                                        # needs sage.rings.real_mpfr
+            sage: sib((3.5, -2))
             {tuple: ({atomic:3.5}, {unop:- {atomic:2}})}
             sage: sib(["Hello", "world"])
             {list: ({atomic:'Hello'}, {atomic:'world'})}
@@ -2233,7 +2232,7 @@ class SIE_dict(SageInputExpression):
         sage: from sage.misc.sage_input import SageInputBuilder
 
         sage: sib = SageInputBuilder()
-        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])                          # needs sage.symbolic
+        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])
         {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})},
                 {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
         sage: sib.dict({-40:-40, 0:32, 100:212})

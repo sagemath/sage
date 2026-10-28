@@ -53,6 +53,7 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.derivative import derivative_parse, multi_derivative
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod
@@ -80,6 +81,8 @@ GAP_FAIL = libgap.eval('fail')
 # TODO: most likely, it would be better to store the groups as GAP groups
 _dis_cache = dict()
 
+# normalizer of each canonical representative in the full symmetric group
+_normalizer_cache = dict()
 
 def _SymmetricGroup(n):
     r"""
@@ -221,6 +224,14 @@ class AtomicSpeciesElement(WithEqualityById,
             False
             sage: a is c
             True
+
+        Check that :issue:`42821` is fixed::
+
+            sage: G = PermutationGroup([[(2,3),(4,5)], [(1,2),(4,6)]])
+            sage: a = A(G, {0: [1,2,3], 1: [4,5,6]})
+            sage: b = A(G, {0: [4,5,6], 1: [1,2,3]})
+            sage: a == b
+            True
         """
         # a directly indecomposable group has no fixed points, so we
         # can use the gap group without worrying about the domain
@@ -271,15 +282,26 @@ class AtomicSpeciesElement(WithEqualityById,
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
-            domain = list(chain(*map(sorted, dompart)))
+
             dis_gap = dis.gap()
-            dis_gens = dis_gap.GeneratorsOfGroup()
+            norm_gap = _normalizer_cache.get(dis)
+            if norm_gap is None:
+                norm_gap = libgap.Normalizer(S_gap, dis_gap)
+                _normalizer_cache[dis] = norm_gap
+
+            dompart_gap = libgap([sorted(b) for b in dompart])
+
             for elm in lookup:
                 # check whether the assignment to sorts given by
                 # dompart and by elm._dompart are the same
-                elm_domain = list(chain(*map(sorted, elm._dompart)))
-                mp = libgap.MappingPermListList(elm_domain, domain)
-                if all(g ** mp in dis_gap for g in dis_gens):
+                elm_dompart_gap = libgap([sorted(b) for b in elm._dompart])
+                mp = libgap.RepresentativeAction(
+                    norm_gap,
+                    elm_dompart_gap,
+                    dompart_gap,
+                    libgap.OnTuplesSets
+                )
+                if mp != GAP_FAIL:
                     return elm
         else:
             lookup = parent._cache[key] = []
@@ -537,7 +559,7 @@ class AtomicSpeciesElement(WithEqualityById,
         for start, M in zip(starts, Mlist):
             K, K_dompart = M.permutation_group()
             for i, v in enumerate(K_dompart):
-                pi[i].extend([start + k for k in v])
+                pi[i].extend(start + k for k in v)
             gens.extend([tuple([start + k for k in cyc])
                          for cyc in gen.cycle_tuples()]
                         for gen in K.gens())
@@ -804,6 +826,23 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             Eo_4(X)
             sage: A(AlternatingGroup(4), {1: range(1, 5)})
             Eo_4(Y)
+
+        The species of bicoloured polygons `P^{bic}_{2n}`, polygons
+        with `2n` vertices whose edges are alternately coloured with
+        two colours, is defined in Example 2.6.28 of [BLL1998]_ (see
+        :issue:`42858`)::
+
+            sage: A = AtomicSpecies("X")
+            sage: G = graphs.CycleGraph(6)
+            sage: len([G.set_edge_label(2*i, 2*i+1, "x") for i in range(3)])
+            3
+            sage: A(G.automorphism_group(edge_labels=True))
+            Pb_6
+            sage: G = graphs.CycleGraph(8)
+            sage: len([G.set_edge_label(2*i, 2*i+1, "x") for i in range(4)])
+            4
+            sage: A(G.automorphism_group(edge_labels=True))
+            Pb_8
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
         from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
@@ -835,7 +874,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             if n >= 4 and not n % 2:
                 gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
-                        [(i, i+1) for i in range(1, n, 2)]]
+                        [(1, 2)] + [(i, n - i + 3) for i in range(3, n//2 + 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
 
     def __contains__(self, x) -> bool:
@@ -1670,6 +1709,19 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: A.cycle_index()
                 1/4*p[1, 1] # p[1, 1, 1, 1] + 1/4*p[1, 1] # p[2, 2] + 1/4*p[2] # p[1, 1, 1, 1] + 1/4*p[2] # p[2, 2]
 
+            For multisort species, the result is a tensor product of
+            symmetric functions::
+
+                sage: h = SymmetricFunctions(QQ).h()
+                sage: tensor([h, h])(A.cycle_index())
+                h[2] # h[1, 1, 1, 1] - 2*h[2] # h[2, 1, 1] + 2*h[2] # h[2, 2]
+
+            For unisort species, the result is a symmetric function:
+
+                sage: M = MolecularSpecies("X")
+                sage: h(M(SymmetricGroup(3)).cycle_index())
+                h[3]
+
             Find two molecular species with the same cycle index::
 
                 sage: M = MolecularSpecies("X")
@@ -1717,22 +1769,29 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             k = self.parent()._arity
             if parent is None:
                 p = SymmetricFunctions(QQ).powersum()
-                parent = tensor([p]*k)
+                if k == 1:
+                    parent = p
+                else:
+                    parent = tensor([p]*k)
             elif parent not in Modules.WithBasis:
                 raise ValueError("`parent` should be a module with basis indexed by partitions")
             base_ring = parent.base_ring()
             G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
-                pi.update({e: i for e in s})
+                pi.update(dict.fromkeys(s, i))
+
 
             def cycle_type(g):
                 tuples = g.cycle_tuples(singletons=True)
                 cycle_type = [[] for _ in range(k)]
                 for c in tuples:
                     cycle_type[pi[c[0]]].append(len(c))
-                return tuple([_Partitions(sorted(c, reverse=True))
-                              for c in cycle_type])
+                parts = [_Partitions(sorted(c, reverse=True))
+                         for c in cycle_type]
+                if k == 1:
+                    return parts[0]
+                return tuple(parts)
 
             return (parent.sum_of_terms([cycle_type(C.an_element()),
                                          base_ring(C.cardinality())]
@@ -1785,6 +1844,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             TESTS::
 
+                sage: M0 = MolecularSpecies([])
+                sage: M0.one()()
+                1
+
                 sage: M = MolecularSpecies("X")
                 sage: M.one()()
                 Traceback (most recent call last):
@@ -1812,6 +1875,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
 
+            if not args:
+                # the parent has arity zero, so self is the unit
+                return self
+
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
             # section 4.3 of [ALL2002]_
@@ -1826,7 +1893,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                         atoms[B] += e * f
             return M(atoms, check=False)
 
-        def derivative(self):
+        def derivative(self, *args):
             r"""
             Return the derivative of ``self``.
 
@@ -1834,7 +1901,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             Section 2.6 in [BLL1998]_.
 
             Note that the result is a polynomial species rather than
-            a molecular species.
+            a molecular species. The arguments follow Sage's standard derivative
+            syntax (see :func:`sage.misc.derivative.derivative_parse`). The sort
+            generator may be omitted if the parent is unisort. It
+            must be specified if the parent is Multisort.
 
             EXAMPLES::
 
@@ -1849,20 +1919,96 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: (X*E2).derivative().is_molecular()
                 False
 
+            Partial derivatives of multisort species are obtained by specifying
+            a sort generator::
+
+                sage: M = MolecularSpecies("X, Y")
+                sage: X = M(SymmetricGroup(1), {0: [1]})
+                sage: Y = M(SymmetricGroup(1), {1: [1]})
+                sage: G = PermutationGroup([[(1,2), (3,4)]])
+                sage: F = M(G, {0: [1,2], 1: [3,4]})
+                sage: F
+                E_2(X*Y)
+                sage: F.derivative(X)
+                X*Y^2
+                sage: F.derivative(Y)
+                X^2*Y
+                sage: X.derivative(Y)
+                0
+                sage: F.derivative(X, 2)
+                Y^2
+                sage: F.derivative(X, Y)
+                2*X*Y
+                sage: F.derivative([X, Y])
+                2*X*Y
+                sage: F.derivative(0) == F
+                True
+
             TESTS::
 
+                sage: F.derivative()
+                Traceback (most recent call last):
+                ...
+                ValueError: the derivative variable must be specified for multisort species
+                sage: F.derivative(X*Y)
+                Traceback (most recent call last):
+                ...
+                ValueError: the derivative variable must be a sort generator of the parent
                 sage: M = MolecularSpecies("X")
                 sage: [sum(1 for m in M.subset(n) if m.derivative().is_molecular()) for n in range(1, 7)]
                 [1, 1, 2, 5, 5, 16]
                 sage: oeis(_) # optional - internet
                 0: A002106: Number of transitive permutation groups of degree n.
             """
+            return multi_derivative(self, args)
+
+        def _derivative(self, variable=None):
+            r"""
+            Return the derivative of ``self`` with respect to one variable.
+
+            TESTS::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: X = M(SymmetricGroup(1))
+                sage: (X^2)._derivative(X)
+                2*X
+            """
+            M = self.parent()
+            if variable is None:
+                if M._arity != 1:
+                    raise ValueError("the derivative variable must be specified for multisort species")
+                sort = 0
+            else:
+                variables = tuple(M(_SymmetricGroup(1), {i: [1]}) for i in range(M._arity))
+                if parent(variable) is not M or variable not in variables:
+                    raise ValueError("the derivative variable must be a sort generator of the parent")
+                sort = variables.index(variable)
+            return self._derivative_with_respect_to_sort(sort)
+
+        def _derivative_with_respect_to_sort(self, sort):
+            r"""
+            Return the derivative with respect to the sort indexed by ``sort``.
+
+            This method assumes that ``sort`` is a valid zero-based sort index.
+
+            TESTS::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X, Y")
+                sage: G = PermutationGroup([[(1,2), (3,4)]])
+                sage: F = M(G, {0: [1,2], 1: [3,4]})
+                sage: F._derivative_with_respect_to_sort(0)
+                X*Y^2
+                sage: F._derivative_with_respect_to_sort(1)
+                X^2*Y
+            """
             def delete_point_from_permutation(g, r, m):
                 r"""
-                Delete the fixed point `r` from a permutation of `\{1,\dots, m\}`.
+                Delete the fixed point `r` from a permutation of `\{1,\dots,m\}`.
 
                 The permutation `g` is assumed to fix `r`. The remaining points are
-                relabelled increasingly in `{1,\dots, m - 1}`.
+                relabelled increasingly in `\{1,\dots,m-1\}`.
                 """
                 relabel = {i: i if i < r else i - 1 for i in range(1, m + 1) if i != r}
                 cycles = []
@@ -1875,18 +2021,19 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 return tuple(cycles)
 
             M = self.parent()
-            if M._arity != 1:
-                raise NotImplementedError("derivative is not yet implemented for multisort species")
             P = PolynomialSpecies(ZZ, M._indices._names)
             m = sum(self.grade())
-            if m == 0:
+            if self.grade()[sort] == 0:
                 return P.zero()
             if m == 1:
                 return P.one()
-            H, _ = self.permutation_group()
-            ans = P.zero()
+
+            H, dompart = self.permutation_group()
+            result = P.zero()
             for orbit in H.orbits():
                 r = min(orbit)
+                if r not in dompart[sort]:
+                    continue
                 H_r = libgap.Stabilizer(H.gap(), r)
                 gens = []
                 for g in H_r.GeneratorsOfGroup().sage():
@@ -1894,8 +2041,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     if cycles:
                         gens.append(cycles)
                 H_r_star = PermutationGroup(gens, domain=range(1, m))
-                ans += P(M(H_r_star))
-            return ans
+
+                new_dompart = {i: [point if point < r else point - 1
+                                   for point in block if point != r]
+                               for i, block in enumerate(dompart)}
+                result += P(M(H_r_star, new_dompart, check=False))
+            return result
 
         def structures(self, *labels):
             r"""
@@ -2051,6 +2202,25 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return self.is_molecular() and len(self.support()[0]) == 1
 
+    def is_singleton(self) -> bool:
+        r"""
+        Return whether this is one of the singleton species of the parent.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, ["X", "Y"])
+            sage: X, Y = P._first_ngens(P._arity)
+            sage: Y.is_singleton()
+            True
+            sage: (X + Y).is_singleton()
+            False
+            sage: (2*X).is_singleton()
+            False
+        """
+        P = self.parent()
+        return self in P._first_ngens(P._arity)
+
     def tilde(self):
         r"""
         Return the tilde species of ``self``.
@@ -2076,7 +2246,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2^2      4*E_2^2
             Pb_4       4*Pb_4
             X*E_3      X*E_3 + X^2*E_2 + X*C_3
-            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
+            Eo_4       Eo_4 + Pb_4 + 2*X*C_3
             E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
             E_4        E_4 + E_2(E_2) + E_2^2 + X*C_3 + C_4
 
@@ -2098,7 +2268,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             result += c * result_m
         return result
 
-    def derivative(self):
+    def derivative(self, *args):
         r"""
         Return the derivative of ``self``.
 
@@ -2114,12 +2284,66 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             1 + 2*X*E_2
             sage: E2(E2).derivative()
             X*E_2
+            sage: (X^3).derivative(2)
+            6*X
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: F = X^2 + 2*Y
+            sage: F.derivative(X)
+            2*X
+            sage: F.derivative(Y)
+            2
+            sage: G = X^2*Y^2
+            sage: G.derivative(X, 2)
+            2*Y^2
+            sage: G.derivative(X, Y)
+            4*X*Y
+            sage: G.derivative([X, Y])
+            4*X*Y
+            sage: G.derivative(0) == G
+            True
+        """
+        return multi_derivative(self, args)
+
+    def _derivative(self, variable=None):
+        r"""
+        Return the derivative of ``self`` with respect to one variable.
+
+        TESTS::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, ["X"])
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: (X^3).derivative()
+            3*X^2
+            sage: (E2^2 + X).derivative()
+            1 + 2*X*E_2
+            sage: E2(E2).derivative()
+            X*E_2
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: F = X^2 + 2*Y
+            sage: F.derivative(X)
+            2*X
+            sage: F.derivative(Y)
+            2
         """
         P = self.parent()
-        if P._arity != 1:
-            raise NotImplementedError("derivative is not yet implemented for multisort species")
-        return sum((c * P(M.derivative()) for M, c in self.monomial_coefficients().items()),
-                    P.zero())
+        if variable is None:
+            if P._arity != 1:
+                raise ValueError("the derivative variable must be specified for multisort species")
+            sort = 0
+        else:
+            if parent(variable) is not P:
+                variable = P(variable, check=True)
+            variables = P._first_ngens(P._arity)
+            try:
+                sort = variables.index(variable)
+            except ValueError:
+                raise ValueError("the derivative variable must be a sort generator of the parent")
+        return sum((c * P(M._derivative_with_respect_to_sort(sort))
+                    for M, c in self.monomial_coefficients().items()),
+                   P.zero())
 
     def hadamard_product(self, other):
         r"""
@@ -2298,11 +2522,41 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         The `k`-sort species ``self`` should be homogeneous.
 
+        The entries of ``multiplicities`` are elements of the base ring.  They
+        are weights, not necessarily integer multiplicities.  The unweighted
+        composition with the corresponding singleton species is computed first;
+        the result is then combined by a Hadamard product with the exponential
+        species
+
+        .. MATH::
+
+            \prod_i E\left(\sum_j m_{i,j} X_{i,j}\right).
+
+        Thus the usual lambda-ring structure of the base ring is used.  In
+        particular, if `q` has lambda degree one, then
+
+        .. MATH::
+
+            \psi_n(q) = q^n.
+
+        Consequently, for example,
+
+        .. MATH::
+
+            E((1+q)X)
+              = 1 + (1+q)X
+                + (1+q^2)E_2
+                + (q+q^2)XE_2
+                + \cdots
+
         INPUT:
 
         - ``names`` -- the (flat) list of names of the result
-        - ``multiplicities`` -- a (flat) list of constants, of the
-          same length as ``names``
+
+        - ``multiplicities`` -- a (flat) list of elements of the base
+          ring, of the same length as ``names``; these are the weights
+          of the singleton species
+
         - ``degrees`` -- a `k`-tuple of compositions `c_1, \ldots,
           c_k`, such that the size of `c_i` is the degree of ``self``
           in sort `i`, and the total length of the compositions is
@@ -2348,9 +2602,16 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: F._compose_with_weighted_singletons(["X0", "X1", "Y0"], [1, 1, 1], [[1, 1], [2]])
             X0*X1*E_2(Y0) + 2*X0*X1*Y0^2
 
-            sage: Q.<X0, X1, Y0> = PolynomialSpecies(QQ)
-            sage: F(X0 + X1, Y0)
-            E_2(X0)*E_2(Y0) + X0^2*Y0^2 + X0*X1*E_2(Y0) + 2*X0*X1*Y0^2 + E_2(X1)*E_2(Y0) + X1^2*Y0^2
+        The weights may be indeterminates in the base ring::
+
+            sage: R.<q> = QQ[]
+            sage: P = PolynomialSpecies(R, ["X"])
+            sage: E3 = P(SymmetricGroup(3))
+            sage: E3._compose_with_weighted_singletons(["X"], [1+q], [[3]])
+            (q^3+1)*E_3 + (q^2+q)*X*E_2
+
+        This is the lambda-ring interpretation of the weight `1+q`,
+        treating `q` as a degree one element.
 
         TESTS::
 
@@ -2470,8 +2731,34 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             ...
             ValueError: all args must have the same parent
 
+        Substitution reduces to relabelling the sorts if every
+        argument is either zero or a singleton::
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: Q.<A, B, C> = PolynomialSpecies(QQ)
+            sage: Z = Q.zero()
+            sage: E2 = P(SymmetricGroup(2), {0: [1, 2]})
+            sage: (X + Y + E2)(A, B)
+            A + B + E_2(A)
+            sage: (X + Y + E2)(A, A)
+            2*A + E_2(A)
+            sage: (X + Y + E2)(A, Z)
+            A + E_2(A)
+            sage: (X + Y + E2)(Z, A)
+            A
+            sage: (X + Y + E2)(Z, Z)
+            0
+
             sage: P.zero()(X, X)
             0
+
+        Check the case of arity zero::
+
+            sage: P = PolynomialSpecies(QQ, [])
+            sage: P.one()()
+            1
+            sage: (5*P.one())()
+            5
         """
         P = self.parent()
         if len(args) != P._arity:
@@ -2479,11 +2766,46 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         if len(set(arg.parent() for arg in args)) > 1:
             raise ValueError("all args must have the same parent")
 
-        P0 = args[0].parent()
+        P0 = args[0].parent() if args else P
         if not isinstance(P0, PolynomialSpecies):
             raise ValueError("the args must be PolynomialSpecies")
         if not self.support():
             return P0.zero()
+
+        # composition with zero and singleton species only relabels
+        # the sorts.  Atomic species supported on a sort that is
+        # substituted by zero vanish.
+        if args and all(g.is_zero() or g.is_singleton() for g in args):
+            target_singletons = P0._first_ngens(P0._arity)
+            sorts = [None if g.is_zero() else target_singletons.index(g)
+                     for g in args]
+            M = P0._indices
+            A = M._indices
+            R = P0.base_ring()
+
+            def relabel_atomic(a):
+                pi = {}
+                for s, block in zip(sorts, a._dompart):
+                    if block:
+                        if s is None:
+                            return None
+                        pi.setdefault(s, []).extend(block)
+                return A(a._dis, pi, check=False)
+
+            result = {}
+            for mol, c in self.monomial_coefficients().items():
+                factors = {}
+                for a, e in mol._monomial.items():
+                    a_new = relabel_atomic(a)
+                    if a_new is None:
+                        factors = None
+                        break
+                    factors[a_new] = factors.get(a_new, ZZ.zero()) + e
+                if factors is None:
+                    continue
+                mol_new = M(factors, check=False)
+                result[mol_new] = result.get(mol_new, R.zero()) + c
+            return P0._from_dict(result)
 
         args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
         multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
@@ -2757,7 +3079,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         Atomic and molecular species are accepted as arguments::
 
-            sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
+            sage: from sage.rings.species import AtomicSpecies, MolecularSpecies
             sage: P = PolynomialSpecies(ZZ, "X, Y")
             sage: A = AtomicSpecies("X, Y")
             sage: P(A(SymmetricGroup(3), {1: [1,2,3]}))
@@ -2768,6 +3090,16 @@ class PolynomialSpecies(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             ValueError: all keys of the dict {E_3: 1} must be Atomic species in X, Y
+
+            sage: M = MolecularSpecies("X, Y")
+            sage: P(M(SymmetricGroup(3), {1: [1,2,3]}))
+            E_3(Y)
+
+            sage: M = MolecularSpecies("X, Z")
+            sage: P(M(SymmetricGroup(3), {0: [1,2,3]}))
+            Traceback (most recent call last):
+            ...
+            ValueError: E_3(X) must be a Molecular species in X, Y
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -2777,6 +3109,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             G = self._indices({G: ZZ.one()})
 
         if isinstance(G, MolecularSpecies.Element):
+            if check and not G.parent() == self._indices:
+                raise ValueError(f"{G} must be a {self._indices}")
             return self._from_dict({G: self.base_ring().one()})
 
         if isinstance(G, dict):
@@ -2814,6 +3148,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
+    @cached_method
     def _first_ngens(self, n):
         r"""
         Used by the preparser for ``F.<x> = ...``.
@@ -2828,10 +3163,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P.<X, Y> = PolynomialSpecies(QQ)  # indirect doctest
             sage: X + 2*Y
             X + 2*Y
+
+        Only the first ``n`` singletons are returned::
+
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: P._first_ngens(1)
+            (X,)
+            sage: P._first_ngens(2)
+            (X, Y)
         """
         B = self.basis()
-        return tuple([B[i] for grade in IntegerVectors(1, length=self._arity)
-                      for i in self._indices.graded_component(grade)])
+        singletons = [B[i] for grade in IntegerVectors(1, length=self._arity)
+                      for i in self._indices.graded_component(grade)]
+        return tuple(singletons[:n])
 
     def change_ring(self, R):
         r"""

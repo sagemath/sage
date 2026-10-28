@@ -1558,7 +1558,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         Note that if the base ring of `C` is `GF(2)` then this is the full
         automorphism group. Otherwise, you could use
-        :meth:`~sage.coding.linear_code.LinearCode.automorphism_group_gens`
+        :meth:`~sage.coding.linear_code.AbstractLinearCode.automorphism_group_gens`
         to compute generators of the full automorphism group.
 
         INPUT:
@@ -1572,7 +1572,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           Finally, if ``'codecan'`` then the partition refinement algorithm
           of Thomas Feulner is used, which also computes a canonical
           representative of ``self`` (call
-          :meth:`~sage.coding.linear_code.LinearCode.canonical_representative`
+          :meth:`~sage.coding.linear_code.AbstractLinearCode.canonical_representative`
           to access it).
 
         OUTPUT: permutation automorphism group
@@ -2944,13 +2944,13 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``word`` and return a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 
@@ -3103,13 +3103,13 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 

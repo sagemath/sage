@@ -5,7 +5,7 @@ The ``codes.decoders`` object may be used to access the decoders that Sage can b
 
 It is usually not necessary to access these directly: rather, the ``decoder``
 method directly on a code allows you to construct all compatible decoders for
-that code (:meth:`sage.coding.linear_code.AbstractLinearCode.decoder`).
+that code (:meth:`sage.coding.abstract_code.AbstractCode.decoder`).
 
 **Extended code decoder**
 

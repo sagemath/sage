@@ -519,7 +519,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_find`.
+            use ``OP_find``.
         """
         card = self._nodes.degree
         if i < 0 or i >= card:
@@ -561,7 +561,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_join`.
+            use ``OP_join``.
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:

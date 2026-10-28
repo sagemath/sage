@@ -23,7 +23,7 @@ demonstration purposes.
 
 Furthermore, this module contains the class :class:`CubicHeckeFileCache`
 that enables
-:class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+:class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
 to keep intermediate results of calculations in the file system.
 
 The enum :class:`MarkovTraceModuleBasis` serves as basis for the submodule
@@ -158,7 +158,7 @@ class CubicHeckeDataSection(Enum):
 class CubicHeckeDataBase(SageObject):
     r"""
     Database interface for
-    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
 
     The original data are obtained from `Ivan Marin's web page
     <http://www.lamfa.u-picardie.fr/marin/representationH4-en.html>`__
@@ -647,7 +647,7 @@ links_gould = {
 class CubicHeckeFileCache(SageObject):
     """
     A class to cache calculations of
-    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
     in the local file system.
     """
 

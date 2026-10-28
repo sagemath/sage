@@ -44,7 +44,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
     To describe the embedding, a weight lattice realization must
     implement a method
-    :meth:`~RootLatticeRealizations.ParentMethods.fundamental_weight`(i)
+    :meth:`fundamental_weight(i) <sage.combinat.root_system.weight_lattice_realizations.WeightLatticeRealizations.ParentMethods.fundamental_weight>`
     returning for each `i` in the index set the image of the fundamental
     weight `\Lambda_i` under the embedding.
 
@@ -651,7 +651,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: R.reduced_word_of_translation((Lambda[2]-Lambda[0]) * c[2])       # needs sage.graphs
                 [0, 1, 0]
 
-            See also :meth:`_test_reduced_word_of_translation`.
+            See also ``_test_reduced_word_of_translation``.
 
             .. TODO::
 

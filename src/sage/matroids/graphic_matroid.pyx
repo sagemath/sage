@@ -13,7 +13,7 @@ The recommended way to create a graphic matroid is by using the
 :func:`Matroid() <sage.matroids.constructor.Matroid>` function, with a
 graph `G` as input. This function can accept many different kinds of input
 to get a graphic matroid if the ``graph`` keyword is used, similar to the
-:func:`Graph() <sage.graphs.graph.Graph>` constructor. However,
+:class:`Graph() <sage.graphs.graph.Graph>` constructor. However,
 invoking the class directly is possible too. To get access to it, type::
 
     sage: from sage.matroids.advanced import *
@@ -24,8 +24,9 @@ Graphic matroids do not have a representation matrix or any of the
 functionality of regular matroids. It is possible to get an instance of the
 :class:`~sage.matroids.linear_matroid.RegularMatroid` class by using the
 ``regular`` keyword when constructing the matroid. It is also possible to cast
-a :class:`GraphicMatroid` as a :class:`RegularMatroid` with the
-:meth:`~sage.matroids.graphic_matroids.GraphicMatroid.regular_matroid`
+a :class:`~sage.matroids.graphic_matroid.GraphicMatroid` as a
+:class:`~sage.matroids.linear_matroid.RegularMatroid` with the
+:meth:`~sage.matroids.graphic_matroid.GraphicMatroid.regular_matroid`
 method::
 
     sage: M1 = Matroid(graphs.DiamondGraph(), regular=True)
@@ -1949,8 +1950,9 @@ cdef class GraphicMatroid(Matroid):
 
     cpdef regular_matroid(self):
         """
-        Return an instance of :class:`RegularMatroid` isomorphic to this
-        :class:`GraphicMatroid`.
+        Return an instance of
+        :class:`~sage.matroids.linear_matroid.RegularMatroid` isomorphic to
+        this :class:`~sage.matroids.graphic_matroid.GraphicMatroid`.
 
         EXAMPLES::
 

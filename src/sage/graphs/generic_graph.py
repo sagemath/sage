@@ -296,8 +296,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.layout_tree` | Return an ordered tree layout for this graph
     :meth:`~GenericGraph.layout_forest` | Return an ordered forest layout for this graph
     :meth:`~GenericGraph.layout_graphviz` | Call ``graphviz`` to compute a layout of the vertices of this graph.
-    :meth:`~GenericGraph._circle_embedding` | Set some vertices on a circle in the embedding of this graph.
-    :meth:`~GenericGraph._line_embedding` | Set some vertices on a line in the embedding of this graph.
+    :meth:`GenericGraph._circle_embedding <sage.graphs.generic_graph.GenericGraph._circle_embedding>` | Set some vertices on a circle in the embedding of this graph.
+    :meth:`GenericGraph._line_embedding <sage.graphs.generic_graph.GenericGraph._line_embedding>` | Set some vertices on a line in the embedding of this graph.
     :meth:`~GenericGraph.graphplot` | Return a :class:`~sage.graphs.graph_plot.GraphPlot` object.
     :meth:`~GenericGraph.plot` | Return a :class:`~sage.plot.graphics.Graphics` object representing the (di)graph.
     :meth:`~GenericGraph.show` | Show the (di)graph.
@@ -305,7 +305,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.show3d` | Plot the graph using :class:`~sage.plot.plot3d.tachyon.Tachyon`, and shows the resulting plot.
     :meth:`~GenericGraph.graphviz_string` | Return a representation in the ``dot`` language.
     :meth:`~GenericGraph.graphviz_to_file_named` | Write a representation in the ``dot`` language in a file.
-    :meth:`~GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
 
 **Algorithmically hard stuff:**
 
@@ -446,7 +446,10 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 from copy import copy
+from typing import TYPE_CHECKING, Self
 
 from sage.features.igraph import python_igraph as igraph_feature
 from sage.graphs.dot2tex_utils import assert_have_dot2tex
@@ -457,13 +460,18 @@ from sage.graphs.generic_graph_pyx import (
 )
 from sage.graphs.views import EdgesView
 from sage.misc.cachefunc import cached_method
-from sage.misc.decorators import options
+from sage.misc.decorators import options, rename_keyword
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.prandom import random
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
+
+
+if TYPE_CHECKING:
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -475,6 +483,9 @@ class GenericGraph(GenericGraph_pyx):
     Base class for graphs and digraphs.
 
     .. automethod:: __eq__
+    .. automethod:: _circle_embedding
+    .. automethod:: _get_weight_function
+    .. automethod:: _line_embedding
     """
 
     # Nice defaults for plotting arrays of graphs (see sage.misc.functional.show)
@@ -515,7 +526,7 @@ class GenericGraph(GenericGraph_pyx):
         for k, v in state.items():
             self.__dict__[k] = v
 
-    def __add__(self, other):
+    def __add__(self, other) -> Graph | DiGraph:
         """
         Return a graph isomorphic to disjoint union of this graph with ``other``.
 
@@ -766,7 +777,7 @@ class GenericGraph(GenericGraph_pyx):
         raise TypeError("This graph is mutable, and thus not hashable. "
                         "Create an immutable copy by `g.copy(immutable=True)`")
 
-    def __mul__(self, n):
+    def __mul__(self, n) -> Self:
         r"""
         Return the sum of a graph with itself `n` times.
 
@@ -979,7 +990,7 @@ class GenericGraph(GenericGraph_pyx):
              usetikzlibrary=None, macros=None,
              use_sage_preamble=None, **kwds):
         r"""
-        Return a TikzPicture of the graph.
+        Return a :class:`~sage.misc.latex_standalone.TikzPicture` of the graph.
 
         If graphviz and dot2tex are available, it uses these packages for
         placements of vertices and edges.
@@ -1029,7 +1040,7 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT:
 
-        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+        An instance of :class:`~sage.misc.latex_standalone.TikzPicture`.
 
         .. NOTE::
 
@@ -1631,7 +1642,7 @@ class GenericGraph(GenericGraph_pyx):
         .. NOTE::
 
             This functions uses the ``write_*`` functions defined in NetworkX
-            (see :mod:`networkx.readwrite`).
+            (see ``networkx.readwrite``).
 
         EXAMPLES::
 
@@ -2998,6 +3009,12 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             TypeError: Cannot convert NoneType to sage.structure.parent.Parent
+
+        Check that :issue:`42406` is fixed::
+
+            sage: Graph([('a', 'b', 0.5)]).weighted_adjacency_matrix(vertices=True)
+            Generic endomorphism of Free module generated by {'a', 'b'}
+             over Real Field with 53 bits of precision
         """
         if self.has_multiple_edges():
             raise NotImplementedError("don't know how to represent weights for a multigraph")
@@ -3006,6 +3023,8 @@ class GenericGraph(GenericGraph_pyx):
         if row_column_keys is not None:
             kwds = copy(kwds)
             kwds['row_keys'] = kwds['column_keys'] = row_column_keys
+            # Free module morphisms require a dense underlying matrix
+            sparse = False
 
         # Method for checking edge weights and setting default weight
         if default_weight is None:
@@ -3035,11 +3054,10 @@ class GenericGraph(GenericGraph_pyx):
                 D[j, i] = label
 
         from sage.matrix.constructor import matrix
+        n = self.n_vertices()
         if base_ring is None:
-            M = matrix(self.n_vertices(), D, sparse=sparse, **kwds)
-        else:
-            M = matrix(base_ring, self.n_vertices(), D, sparse=sparse, **kwds)
-        return M
+            return matrix(n, n, D, sparse=sparse, **kwds)
+        return matrix(base_ring, n, n, D, sparse=sparse, **kwds)
 
     def kirchhoff_matrix(self, weighted=None, indegree=True, normalized=False, signless=False, **kwds):
         r"""
@@ -3893,7 +3911,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return self._backend.multiple_edges(None)
 
-    def allow_multiple_edges(self, new, check=True, keep_label='any'):
+    def allow_multiple_edges(self, new, check=True, keep_label='any', key=None):
         """
         Change whether multiple edges are permitted in the (di)graph.
 
@@ -3913,11 +3931,16 @@ class GenericGraph(GenericGraph_pyx):
           - ``'min'`` -- the smallest label
           - ``'max'`` -- the largest label
 
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge ``(u, v, l)`` as its one argument and returns the value used to
+          compare multiple edges when ``keep_label`` is ``'min'`` or ``'max'``.
+          By default, the labels themselves are compared.
+
         .. WARNING::
 
-            ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :exc:`TypeError` might be raised when working with non-comparable
-            objects.
+            ``'min'`` and ``'max'`` only works if the labels (or the values
+            returned by ``key``) can be compared. A :exc:`TypeError` might be
+            raised when working with non-comparable objects.
 
         EXAMPLES:
 
@@ -3955,6 +3978,18 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edges(sort=True)
             [(0, 1, 3)]
 
+        Labels that cannot be compared can be handled with a ``key``::
+
+            sage: G = Graph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (0, 1, {'w': 2})],
+            ....:           multiedges=True)
+            sage: min(G.edge_labels())
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of 'dict' and 'dict'
+            sage: G.allow_multiple_edges(False, keep_label='min', key=lambda e: e[2]['w'])
+            sage: G.edges(sort=False)
+            [(0, 1, {'w': 1})]
+
         The standard behavior with digraphs::
 
             sage: D = DiGraph(multiedges=True, sparse=True); D
@@ -3983,21 +4018,31 @@ class GenericGraph(GenericGraph_pyx):
             seen = dict()
             keep_min = keep_label == 'min'
             keep_max = keep_label == 'max'
-            for u, v, l in self.multiple_edges(sort=False):
+            if key is None:
+                def key(e):
+                    return e[2]
+
+            for e in self.multiple_edges(sort=False):
+                u, v, l = e
                 if (u, v) not in seen:
                     # This is the first time we see this edge
-                    seen[u, v] = l
-                else:
+                    seen[u, v] = l, key(e)
+                elif keep_min or keep_max:
                     # This edge has already been seen: we have to remove
                     # something from the graph.
-                    oldl = seen[u, v]
-                    if (keep_min and l < oldl) or (keep_max and l > oldl):
+                    oldl, oldk = seen[u, v]
+                    k = key(e)
+                    if (keep_min and k < oldk) or (keep_max and k > oldk):
                         # Keep the new edge, delete the old one
                         self.delete_edge(u, v, oldl)
-                        seen[u, v] = l
+                        seen[u, v] = l, k
                     else:
                         # Delete the new edge
                         self.delete_edge(u, v, l)
+                else:
+                    # This edge has already been seen and any label can be
+                    # kept: delete the new edge
+                    self.delete_edge(u, v, l)
 
         self._backend.multiple_edges(new)
 
@@ -4580,7 +4625,7 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: graphs.CycleGraph(5).is_bipartite()
             False
-            sage: graphs.RandomBipartite(10, 10, 0.7).is_bipartite()                    # needs numpy
+            sage: graphs.RandomBipartite(10, 10, 0.7).is_bipartite()
             True
 
         A random graph is very rarely bipartite::
@@ -6230,7 +6275,7 @@ class GenericGraph(GenericGraph_pyx):
         combinatorial embedding is used for the layout. Otherwise: if a
         combinatorial embedding is set to the instance field variable of the
         graph (e.g. using
-        :meth:`~sage/graphs/generic_graph.GenericGraph.set_embedding`), then
+        :meth:`~sage.graphs.generic_graph.GenericGraph.set_embedding`), then
         that one is used, and if no combinatorial embedding is set, then one is
         computed.
 
@@ -6241,7 +6286,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``set_embedding`` -- boolean (default: ``False``); whether to set the
           instance field variable that contains a combinatorial embedding to the
           combinatorial embedding used for the planar layout (see
-          :meth:`~sage/graphs/generic_graph.GenericGraph.get_embedding`)
+          :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
 
         - ``on_embedding`` -- dictionary (default: ``None``); provide a
           combinatorial embedding
@@ -7367,15 +7412,20 @@ class GenericGraph(GenericGraph_pyx):
         st.delete_vertices(v for v in g if not st.degree(v))
         return st
 
-    def edge_disjoint_spanning_trees(self, k, algorithm=None, root=None, solver=None, verbose=0,
-                                     *, integrality_tolerance=1e-3):
+    def edge_disjoint_spanning_trees(self, k=None, algorithm=None, root=None, solver=None, verbose=0,
+                                     *, integrality_tolerance=1e-3, labels=False):
         r"""
         Return the desired number of edge-disjoint spanning trees/arborescences.
 
         INPUT:
 
-        - ``k`` -- integer; the required number of edge-disjoint spanning
-          trees/arborescences
+        - ``k`` -- integer or ``None`` (default: ``None``); the required
+          number of edge-disjoint spanning trees/arborescences. If ``None``:
+          for directed graphs, return as many arborescences as the edge
+          connectivity of the digraph (such a packing always exists by
+          Edmonds' theorem); for undirected graphs with
+          ``'Roskind-Tarjan'``, return a maximum packing of edge-disjoint
+          spanning trees.
 
         - ``algorithm`` -- string (default: ``None``); specify the
           algorithm to use among:
@@ -7385,14 +7435,18 @@ class GenericGraph(GenericGraph_pyx):
             undirected simple graphs in time `O(m\log{m} + k^2n^2)`.
 
           * ``'MILP'`` -- use a mixed integer linear programming
-            formulation. This is the default method for directed graphs.
+            formulation. Graphs with loops and multiple edges are supported:
+            loops are ignored and each parallel copy counts as a distinct
+            edge.
 
           * ``'Gabow'`` -- use the combinatorial algorithm of Gabow
             [Gabow1995]_ for packing edge-disjoint spanning arborescences.
-            Only available for directed simple graphs.
+            This is the default method for directed graphs. Only available
+            for directed graphs; digraphs with loops and multiple edges are
+            supported.
 
           * ``None`` -- use ``'Roskind-Tarjan'`` for undirected graphs and
-            ``'MILP'`` for directed graphs.
+            ``'Gabow'`` for directed graphs.
 
         - ``root`` -- vertex (default: ``None``); root of the disjoint
           arborescences when the graph is directed.  If set to ``None``, the
@@ -7412,6 +7466,12 @@ class GenericGraph(GenericGraph_pyx):
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
+
+        - ``labels`` -- boolean (default: ``False``); whether the edges of the
+          returned trees carry the labels of the corresponding input edges, so
+          that parallel edges of a graph with multiple edges remain
+          distinguishable in the output. Only supported by the ``'Gabow'`` and
+          ``'MILP'`` algorithms.
 
         ALGORITHM:
 
@@ -7560,12 +7620,76 @@ class GenericGraph(GenericGraph_pyx):
             sage: all_edges = sum((t.edges(labels=False, sort=False) for t in trees), [])
             sage: len(all_edges) == len(set(all_edges))
             True
+
+        A directed graph need not be strongly connected, as long as every
+        vertex is reachable from the root, and the number of arborescences can
+        exceed its edge connectivity::
+
+            sage: DiGraph([(0, 1), (1, 2)]).edge_disjoint_spanning_trees(1, root=0)
+            [Digraph on 3 vertices]
+            sage: D = digraphs.Complete(5)
+            sage: D.add_edges([(i, 5) for i in range(4)] + [(5, 0)])
+            sage: D.edge_connectivity()
+            1
+            sage: len(D.edge_disjoint_spanning_trees(4, root=0))
+            4
+
+        With ``k=None``, a directed graph yields as many arborescences as its
+        edge connectivity, and an undirected graph a maximum packing of
+        spanning trees. By Nash-Williams, a graph with edge connectivity
+        `\lambda` has at least `\lfloor \lambda / 2 \rfloor` edge-disjoint
+        spanning trees and at most `m / (n - 1)`; for instance `K_4` has
+        `\lambda = 3` and packs 2 trees::
+
+            sage: len(digraphs.Complete(4).edge_disjoint_spanning_trees(algorithm='Gabow'))
+            3
+            sage: len(digraphs.Complete(4).edge_disjoint_spanning_trees())              # needs sage.numerical.mip
+            3
+            sage: len(graphs.CompleteGraph(4).edge_disjoint_spanning_trees())
+            2
+            sage: graphs.PathGraph(3).edge_disjoint_spanning_trees()
+            [Graph on 3 vertices]
+            sage: DiGraph().edge_disjoint_spanning_trees(algorithm='Gabow')
+            []
+
+        The ``'Gabow'`` and ``'MILP'`` algorithms support multiple edges, each
+        parallel copy counting as a distinct edge. With ``labels=True``, both
+        keep the copies distinguishable in the output::
+
+            sage: D = DiGraph([(0, 1, 'a'), (0, 1, 'b'), (1, 0, 'c'), (1, 0, 'd')],
+            ....:             multiedges=True)
+            sage: trees = D.edge_disjoint_spanning_trees(2, root=0, labels=True)
+            sage: sorted(e[2] for T in trees for e in T.edge_iterator())
+            ['a', 'b']
+            sage: trees = D.edge_disjoint_spanning_trees(2, root=0, algorithm='MILP',
+            ....:                                        labels=True)
+            sage: sorted(e[2] for T in trees for e in T.edge_iterator())
+            ['a', 'b']
+            sage: G = Graph([(0, 1, 'a'), (0, 1, 'b'), (1, 2, 'c'), (1, 2, 'd'),
+            ....:            (0, 2, 'e'), (0, 2, 'f')], multiedges=True)
+            sage: trees = G.edge_disjoint_spanning_trees(2, algorithm='MILP', labels=True)
+            sage: len(set(e[2] for T in trees for e in T.edge_iterator()))
+            4
+            sage: graphs.CompleteGraph(4).edge_disjoint_spanning_trees(labels=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: labels is only supported with the "Gabow" and "MILP" algorithms
         """
-        self._scream_if_not_simple()
+        if self.is_directed() and algorithm is None:
+            algorithm = "Gabow"
+
+        if algorithm == "Roskind-Tarjan" or algorithm is None:
+            # the Roskind-Tarjan implementation requires a simple graph, while
+            # the Gabow and MILP backends support loops and multiple edges
+            self._scream_if_not_simple()
         from sage.categories.sets_cat import EmptySetError
         from sage.graphs.digraph import DiGraph
         from sage.graphs.graph import Graph
         from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
+
+        if labels and algorithm not in ("Gabow", "MILP"):
+            raise ValueError('labels is only supported with the "Gabow" and '
+                             '"MILP" algorithms')
 
         if self.is_directed():
             if algorithm is not None and algorithm not in ("MILP", "Gabow"):
@@ -7573,10 +7697,44 @@ class GenericGraph(GenericGraph_pyx):
                                  'for directed graphs')
         elif algorithm is None or algorithm == "Roskind-Tarjan":
             from sage.graphs.spanning_tree import edge_disjoint_spanning_trees
+            if k is None:
+                # Return a maximum packing. Feasibility is monotone in k, so
+                # we binary search with the Roskind-Tarjan algorithm between a
+                # lower and an upper bound. By Nash-Williams a graph with edge
+                # connectivity ``lambda`` has at least ``lambda // 2`` disjoint
+                # spanning trees, and at most ``m // (n - 1)``.
+                n = self.order()
+                if n <= 1:
+                    return []
+                lo = int(self.edge_connectivity()) // 2
+                hi = self.size() // (n - 1)
+                while lo < hi:
+                    mid = (lo + hi + 1) // 2
+                    try:
+                        edge_disjoint_spanning_trees(self, mid)
+                        lo = mid
+                    except EmptySetError:
+                        hi = mid - 1
+                k = lo
+                if not k:
+                    return []
             return edge_disjoint_spanning_trees(self, k)
         elif algorithm != "MILP":
             raise ValueError('algorithm must be None, "Roskind-Tarjan" or "MILP" '
                              'for undirected graphs')
+
+        if self.is_directed() and algorithm == "Gabow":
+            from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            # the backend resolves k=None to the edge connectivity
+            return GabowEdgeConnectivity(self).edge_disjoint_spanning_trees(
+                k, root=root, labels=labels)
+
+        if k is None:
+            if not self.is_directed():
+                raise ValueError('k=None is not supported with algorithm '
+                                 '"MILP" for undirected graphs')
+            # By Edmonds' theorem, a packing of this size always exists
+            k = int(self.edge_connectivity())
 
         G = self
         n = G.order()
@@ -7584,28 +7742,52 @@ class GenericGraph(GenericGraph_pyx):
         if not n or not k:
             return []
 
-        if self.is_directed() and algorithm == "Gabow":
-            from sage.graphs.edge_connectivity import GabowEdgeConnectivity
-            return GabowEdgeConnectivity(self).edge_disjoint_spanning_trees(k, root=root)
-
         if root is None:
             root = next(G.vertex_iterator())
 
         if k == 1:
+            if G.is_directed():
+                # min_spanning_tree ignores the orientation of the edges, so we
+                # ask for an out-branching rooted at ``root`` instead. It spans
+                # the digraph if and only if it has n-1 edges.
+                T = next(G.out_branchings(root, spanning=False))
+                if T.num_edges() != n - 1:
+                    raise EmptySetError("this graph does not contain the "
+                                        "required number of trees/arborescences")
+                return [T]
             E = G.min_spanning_tree(starting_vertex=root)
             if not E:
                 raise EmptySetError("this graph does not contain the required "
                                     "number of trees/arborescences")
-            return [DiGraph(E) if G.is_directed() else Graph(E)]
-
-        D = G if G.is_directed() else DiGraph(G)
+            return [Graph(E)]
 
         # The colors we can use (one color per tree)
         colors = list(range(k))
 
+        # Give each edge of G a distinct identifier, so that parallel edges are
+        # distinguishable. Loops are discarded, as they cannot belong to a
+        # spanning tree. In the undirected case, the edge with identifier i
+        # yields the two arcs (u, v, i) and (v, u, i).
+        id_to_edge = [e for e in G.edge_iterator(labels=labels) if e[0] != e[1]]
+        if G.is_directed():
+            arcs = [(e[0], e[1], i) for i, e in enumerate(id_to_edge)]
+        else:
+            arcs = [a for i, e in enumerate(id_to_edge)
+                    for a in ((e[0], e[1], i), (e[1], e[0], i))]
+
+        # Arcs entering and leaving each vertex, and the parallel arcs of each
+        # ordered pair of vertices
+        arcs_in = {u: [] for u in G}
+        arcs_out = {u: [] for u in G}
+        arcs_between = {}
+        for a in arcs:
+            arcs_out[a[0]].append(a)
+            arcs_in[a[1]].append(a)
+            arcs_between.setdefault((a[0], a[1]), []).append(a)
+
         p = MixedIntegerLinearProgram(solver=solver)
 
-        # edges[e, c] is equal to one if and only if edge e has color c
+        # edge[a, c] is equal to one if and only if arc a has color c
         edge = p.new_variable(binary=True)
 
         # Define partial ordering of the vertices in each tree to avoid cycles
@@ -7613,65 +7795,53 @@ class GenericGraph(GenericGraph_pyx):
 
         # An edge belongs to a single tree
         if G.is_directed():
-            for e in D.edge_iterator(labels=False):
-                p.add_constraint(p.sum(edge[e, c] for c in colors) <= 1)
+            for a in arcs:
+                p.add_constraint(p.sum(edge[a, c] for c in colors) <= 1)
         else:
-            for u, v in G.edge_iterator(labels=False):
-                p.add_constraint(p.sum(edge[(u, v), c] + edge[(v, u), c] for c in colors) <= 1)
+            for i, e in enumerate(id_to_edge):
+                p.add_constraint(p.sum(edge[(e[0], e[1], i), c] + edge[(e[1], e[0], i), c]
+                                       for c in colors) <= 1)
 
-        # Constraints defining a spanning tree in D for each color c
+        # Constraints defining a spanning tree in G for each color c
         for c in colors:
             # A tree has n-1 edges
-            p.add_constraint(p.sum(edge[e, c] for e in D.edge_iterator(labels=False)) == n - 1)
+            p.add_constraint(p.sum(edge[a, c] for a in arcs) == n - 1)
 
             # Each vertex has 1 incoming edge, except the root which has none
-            for u in D:
-                if u == root:
-                    p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(root, labels=False)) == 0)
-                else:
-                    p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(u, labels=False)) == 1)
+            for u in G:
+                p.add_constraint(p.sum(edge[a, c] for a in arcs_in[u])
+                                 == (0 if u == root else 1))
 
             # A vertex has at least one incident edge
-            for u in D:
-                p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(u, labels=False))
-                                 + p.sum(edge[e, c] for e in D.outgoing_edge_iterator(u, labels=False))
-                                 >= 1)
+            for u in G:
+                p.add_constraint(p.sum(edge[a, c] for a in arcs_in[u])
+                                 + p.sum(edge[a, c] for a in arcs_out[u]) >= 1)
 
             # We use the Miller-Tucker-Zemlin subtour elimination constraints
             # combined with the Desrosiers-Langevin strengthening constraints
-            # (only when n is large enough to avoid corner cases).
-            for u, v in D.edge_iterator(labels=False):
-                if n > 3 and D.has_edge(v, u):
+            # (only when n is large enough to avoid corner cases). A tree uses
+            # at most one of the parallel arcs from u to v, so the sum of their
+            # variables plays the role of the variable of a simple graph.
+            for (u, v), parallel in arcs_between.items():
+                uv = p.sum(edge[a, c] for a in parallel)
+                back = arcs_between.get((v, u))
+                if n > 3 and back:
                     # DL
-                    p.add_constraint(pos[u, c] + (n - 1)*edge[(u, v), c] + (n - 3)*edge[(v, u), c]
+                    vu = p.sum(edge[a, c] for a in back)
+                    p.add_constraint(pos[u, c] + (n - 1)*uv + (n - 3)*vu
                                      <= pos[v, c] + n - 2)
                 else:
-                    # MTZ: If edge uv is selected, v is after u in the partial ordering
-                    p.add_constraint(pos[u, c] + 1 - n * (1 - edge[(u, v), c]) <= pos[v, c])
+                    # MTZ: If an edge uv is selected, v is after u in the
+                    # partial ordering
+                    p.add_constraint(pos[u, c] + 1 - n * (1 - uv) <= pos[v, c])
 
             # and extra strengthening constraints on the minimum distance
             # between the root of the spanning tree and any vertex
-            BFS = dict(D.breadth_first_search(root, report_distance=True))
-            for u in D:
+            BFS = dict(G.breadth_first_search(root, report_distance=True))
+            for u in G:
                 p.add_constraint(pos[root, c] + BFS[u] <= pos[u, c])
 
         # We now solve this program and extract the solution
-
-        from sage.numerical.backends.glpk_backend import GLPKBackend
-        if isinstance(p.get_backend(), GLPKBackend):
-            # The MIP approach with GLPK is prone to compiler and
-            # optimization-level weirdness on some hardware:
-            #
-            #   * https://github.com/sagemath/sage/issues/34575
-            #   * https://github.com/sagemath/sage/issues/38831
-            #
-            # Disabling the presolver manages to perturb reality just
-            # enough in the one scenario that we doctest explicitly to
-            # "fix" the problem. It's also limited enough in scope
-            # that it probably hasn't badly broken some other use
-            # case.
-            p.solver_parameter("presolve_intopt", False)
-
         try:
             p.solve(log=verbose)
         except MIPSolverException:
@@ -7683,13 +7853,16 @@ class GenericGraph(GenericGraph_pyx):
         classes = [H.copy() for c in colors]
 
         edges = p.get_values(edge, convert=bool, tolerance=integrality_tolerance)
-        for (e, c), b in edges.items():
+        for (a, c), b in edges.items():
             if b:
-                classes[c].add_edge(e)
+                # the identifier of the arc tells which edge of G it comes from
+                classes[c].add_edge(id_to_edge[a[2]])
 
         return classes
 
-    def edge_cut(self, s, t, value_only=True, use_edge_labels=False, vertices=False,
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
+    def edge_cut(self, s, t, value_only=True, by_weight=False,
+                 weight_function=None, check_weight=True, vertices=False,
                  algorithm='FF', solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a minimum edge cut between vertices `s` and `t`.
@@ -7709,10 +7882,19 @@ class GenericGraph(GenericGraph_pyx):
           the weight of a minimum cut (``True``) or a list of edges of a minimum
           cut (``False``)
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a weighted minimum edge cut where the weight of an edge is
-          defined by its label (if an edge has no label, `1` is assumed), or to
-          compute a cut of minimum cardinality (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          weighted minimum edge cut where the weight of an edge is defined by
+          its label. Otherwise, compute a cut of minimum cardinality (i.e., edge
+          weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``vertices`` -- boolean (default: ``False``); whether set to ``True``,
           return a list of edges in the edge cut and the two sets of vertices
@@ -7784,15 +7966,15 @@ class GenericGraph(GenericGraph_pyx):
         The edge cut between the two ends is the edge of minimum weight::
 
            sage: minimum = min(g.edge_labels())
-           sage: minimum == g.edge_cut(0, 14, use_edge_labels=True)
+           sage: minimum == g.edge_cut(0, 14, by_weight=True)
            True
-           sage: [value, [e]] = g.edge_cut(0, 14, use_edge_labels=True, value_only=False)
+           sage: [value, [e]] = g.edge_cut(0, 14, by_weight=True, value_only=False)
            sage: g.edge_label(e[0], e[1]) == minimum
            True
 
         The two sides of the edge cut are obviously shorter paths::
 
-           sage: value, edges, [set1, set2] = g.edge_cut(0, 14, use_edge_labels=True,
+           sage: value, edges, [set1, set2] = g.edge_cut(0, 14, by_weight=True,
            ....:                                         vertices=True)
            sage: g.subgraph(set1).is_isomorphic(graphs.PathGraph(len(set1)))
            True
@@ -7830,38 +8012,60 @@ class GenericGraph(GenericGraph_pyx):
         Check that :issue:`12797` and :issue:`38713` are fixed::
 
             sage: G = Graph([(0, 3, 1), (0, 4, 1), (1, 2, 1), (2, 3, 1), (2, 4, 1)])
-            sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True)
+            sage: G.edge_cut(0, 1, value_only=False, by_weight=True)
             [1, [(1, 2, 1)]]
             sage: G = DiGraph([(0, 3, 1), (0, 4, 1), (2, 1, 1), (3, 2, 1), (4, 2, 1)])
-            sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True)
+            sage: G.edge_cut(0, 1, value_only=False, by_weight=True)
             [1, [(2, 1, 1)]]
-            sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True, algorithm='LP')          # needs sage.numerical.mip
+            sage: G.edge_cut(0, 1, value_only=False, by_weight=True, algorithm='LP')                # needs sage.numerical.mip
             (1, [(2, 1, 1)])
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, {'w': 3}), (1, 2, {'w': 1}), (0, 2, {'w': 5})])
+            sage: G.edge_cut(0, 2, weight_function=lambda e: e[2]['w'])
+            6
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 2), (1, 2, 3)])
+            sage: G.edge_cut(0, 2, use_edge_labels=True)
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42839 for details.
+            2
         """
         self._scream_if_not_simple(allow_loops=True)
         if vertices:
             value_only = False
 
-        if use_edge_labels:
-            def weight(x):
-                return x if (x != {} and x is not None) else 1
-        else:
-            def weight(x):
-                return 1
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
         if algorithm in ["FF", "igraph", None]:
             if value_only:
-                return self.flow(s, t, value_only=value_only, use_edge_labels=use_edge_labels, algorithm=algorithm)
+                return self.flow(s, t, value_only=value_only, by_weight=by_weight,
+                                 weight_function=weight_function, check_weight=False,
+                                 algorithm=algorithm)
 
             from sage.graphs.digraph import DiGraph
             g = DiGraph(self)
 
-            flow_value, flow_graph = self.flow(s, t, value_only=value_only, use_edge_labels=use_edge_labels, algorithm=algorithm)
+            flow_value, flow_graph = self.flow(s, t, value_only=value_only,
+                                               by_weight=by_weight,
+                                               weight_function=weight_function,
+                                               check_weight=False,
+                                               algorithm=algorithm)
 
             for u, v, l in flow_graph.edge_iterator():
                 g.add_edge(v, u)
-                if (not use_edge_labels or
-                        weight(g.edge_label(u, v)) == weight(l)):
+                # The arc (u, v) is saturated when the flow it carries is equal
+                # to its capacity. The labels of flow_graph are flow values, so
+                # the weight function applies to the arc of g, not to l.
+                if (not by_weight or
+                        weight_function((u, v, g.edge_label(u, v))) == l):
                     g.delete_edge(u, v)
 
             return_value = [flow_value]
@@ -7901,7 +8105,8 @@ class GenericGraph(GenericGraph_pyx):
         if g.is_directed():
 
             # we minimize the number of edges
-            p.set_objective(p.sum(weight(w) * b[good_edge((x, y))] for x, y, w in g.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * b[good_edge((e[0], e[1]))]
+                                  for e in g.edge_iterator()))
 
             # Adjacent vertices can belong to different parts only if the
             # edge that connects them is part of the cut
@@ -7910,7 +8115,8 @@ class GenericGraph(GenericGraph_pyx):
 
         else:
             # we minimize the number of edges
-            p.set_objective(p.sum(weight(w) * b[good_edge((x, y))] for x, y, w in g.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * b[good_edge((e[0], e[1]))]
+                                  for e in g.edge_iterator()))
             # Adjacent vertices can belong to different parts only if the
             # edge that connects them is part of the cut
             for x, y in g.edge_iterator(labels=False):
@@ -7919,8 +8125,9 @@ class GenericGraph(GenericGraph_pyx):
 
         p.solve(log=verbose)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-        if use_edge_labels:
-            obj = sum(weight(w) for x, y, w in g.edge_iterator() if b[good_edge((x, y))])
+        if by_weight:
+            obj = sum(weight_function(e) for e in g.edge_iterator()
+                      if b[good_edge((e[0], e[1]))])
         else:
             obj = Integer(sum(1 for e in g.edge_iterator(labels=False) if b[good_edge(e)]))
 
@@ -8066,7 +8273,9 @@ class GenericGraph(GenericGraph_pyx):
             answer.append([l0, l1])
         return tuple(answer)
 
-    def multiway_cut(self, vertices, value_only=False, use_edge_labels=False,
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
+    def multiway_cut(self, vertices, value_only=False, by_weight=False,
+                     weight_function=None, check_weight=True,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a minimum edge multiway cut.
@@ -8087,10 +8296,19 @@ class GenericGraph(GenericGraph_pyx):
           the size of the minimum multiway cut, or to return the list of edges
           of the multiway cut
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a weighted minimum multiway cut where the weight of an edge is
-          defined by its label (if an edge has no label, `1` is assumed), or to
-          compute a cut of minimum cardinality (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          weighted minimum multiway cut where the weight of an edge is defined
+          by its label. Otherwise, compute a cut of minimum cardinality (i.e.,
+          edge weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -8143,11 +8361,32 @@ class GenericGraph(GenericGraph_pyx):
             sage: C = g.multiway_cut(g.vertices(sort=False))                            # needs sage.numerical.mip
             sage: set(C) == set(g.edges(sort=False))                                    # needs sage.numerical.mip
             True
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: g = Graph([(0, 1, {'w': 2}), (1, 2, {'w': 3})])
+            sage: g.multiway_cut([0, 2], value_only=True,                               # needs sage.numerical.mip
+            ....:                weight_function=lambda e: e[2]['w'])
+            2
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: g = Graph([(0, 1, 2), (1, 2, 3)])
+            sage: g.multiway_cut([0, 2], value_only=True, use_edge_labels=True)         # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42839 for details.
+            2
         """
         self._scream_if_not_simple(allow_loops=True)
         from itertools import chain, combinations
 
         from sage.numerical.mip import MixedIntegerLinearProgram
+
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
         p = MixedIntegerLinearProgram(maximization=False, solver=solver)
 
@@ -8164,15 +8403,8 @@ class GenericGraph(GenericGraph_pyx):
         else:
             good_edge = frozenset
 
-        # Weight function
-        if use_edge_labels:
-            def weight(l):
-                return l if l is not None else 1
-        else:
-            def weight(l):
-                return 1
-
-        p.set_objective(p.sum(weight(l) * cut[good_edge((u, v))] for u, v, l in self.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * cut[good_edge((e[0], e[1]))]
+                              for e in self.edge_iterator()))
 
         if self.is_directed():
             for s, t in chain(combinations(vertices, 2), [(y, x) for x, y in combinations(vertices, 2)]):
@@ -8203,13 +8435,16 @@ class GenericGraph(GenericGraph_pyx):
         cut = p.get_values(cut, convert=bool, tolerance=integrality_tolerance)
 
         if value_only:
-            if use_edge_labels:
-                return sum(weight(l) for u, v, l in self.edge_iterator() if cut[good_edge((u, v))])
+            if by_weight:
+                return sum(weight_function(e) for e in self.edge_iterator()
+                           if cut[good_edge((e[0], e[1]))])
             return Integer(sum(1 for e in self.edge_iterator(labels=False) if cut[good_edge(e)]))
 
         return [e for e in self.edge_iterator() if cut[good_edge((e[0], e[1]))]]
 
-    def max_cut(self, value_only=True, use_edge_labels=False, vertices=False,
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
+    def max_cut(self, value_only=True, by_weight=False, weight_function=None,
+                check_weight=True, vertices=False,
                 solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a maximum edge cut of the graph.
@@ -8222,10 +8457,19 @@ class GenericGraph(GenericGraph_pyx):
           the size of the maximum edge cut, or to also return the list of edges
           of the maximum edge cut
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a weighted maximum cut where the weight of an edge is defined
-          by its label (if an edge has no label, `1` is assumed), or to compute
-          a cut of maximum cardinality (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          weighted maximum cut where the weight of an edge is defined by its
+          label. Otherwise, compute a cut of maximum cardinality (i.e., edge
+          weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``vertices`` -- boolean (default: ``False``); whether to return the
           two sets of vertices that are disconnected by the cut. This implies
@@ -8272,6 +8516,22 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: max cut is not defined for the empty graph
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: g = Graph([(0, 1, {'w': 1}), (1, 2, {'w': 2}), (0, 2, {'w': 4})])
+            sage: g.max_cut(weight_function=lambda e: e[2]['w'])                        # needs sage.numerical.mip
+            6
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: g = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: g.max_cut(use_edge_labels=True)                                       # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42839 for details.
+            6
         """
         self._scream_if_not_simple(allow_loops=True)
         g = self
@@ -8282,14 +8542,9 @@ class GenericGraph(GenericGraph_pyx):
         if vertices:
             value_only = False
 
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def weight(x):
-                return x if x in RR else 1
-        else:
-            def weight(x):
-                return 1
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
         if g.is_directed():
             def good_edge(e):
@@ -8331,13 +8586,15 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(in_set[0, u] + in_set[0, v] + in_cut[fuv], max=2)
                 p.add_constraint(in_set[1, u] + in_set[1, v] + in_cut[fuv], max=2)
 
-        p.set_objective(p.sum(weight(l) * in_cut[good_edge((u, v))] for u, v, l in g.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * in_cut[good_edge((e[0], e[1]))]
+                              for e in g.edge_iterator()))
 
         p.solve(log=verbose)
 
         in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
-        if use_edge_labels:
-            obj = sum(weight(l) for u, v, l in g.edge_iterator() if in_cut[good_edge((u, v))])
+        if by_weight:
+            obj = sum(weight_function(e) for e in g.edge_iterator()
+                      if in_cut[good_edge((e[0], e[1]))])
         else:
             obj = Integer(sum(1 for e in g.edge_iterator(labels=False) if in_cut[good_edge(e)]))
 
@@ -8360,7 +8617,9 @@ class GenericGraph(GenericGraph_pyx):
 
         return val
 
-    def longest_cycle(self, induced=False, use_edge_labels=False,
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
+    def longest_cycle(self, induced=False, by_weight=False,
+                      weight_function=None, check_weight=True,
                       immutable=None,
                       solver=None, verbose=0, *, integrality_tolerance=0.001):
         r"""
@@ -8387,11 +8646,19 @@ class GenericGraph(GenericGraph_pyx):
         - ``induced`` -- boolean (default: ``False``); whether to return the
           longest induced cycle or the longest cycle
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a cycle with maximum weight where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or to compute a cycle with the largest
-          possible number of edges (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          cycle with maximum weight where the weight of an edge is defined by
+          its label. Otherwise, compute a cycle with the largest possible
+          number of edges (i.e., edge weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable (di)graph. ``immutable=None`` (default) means that
@@ -8415,8 +8682,8 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT:
 
         A subgraph of ``self`` corresponding to a (directed if ``self`` is
-        directed) longest (induced) cycle. If ``use_edge_labels == True``, a
-        pair ``weight, cycle`` is returned.
+        directed) longest (induced) cycle. If ``by_weight == True``, a pair
+        ``weight, cycle`` is returned.
 
         EXAMPLES:
 
@@ -8455,13 +8722,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_edge(0, 10, 50)
             sage: D.add_edge(11, 1, 1)
             sage: D.add_edge(13, 0, 1)
-            sage: D.longest_cycle(induced=False, use_edge_labels=False)
+            sage: D.longest_cycle(induced=False, by_weight=False)
             longest cycle from Circuit: Digraph on 15 vertices
-            sage: D.longest_cycle(induced=False, use_edge_labels=True)
+            sage: D.longest_cycle(induced=False, by_weight=True)
             (55, longest cycle from Circuit: Digraph on 6 vertices)
-            sage: D.longest_cycle(induced=True, use_edge_labels=False)
+            sage: D.longest_cycle(induced=True, by_weight=False)
             longest induced cycle from Circuit: Digraph on 11 vertices
-            sage: D.longest_cycle(induced=True, use_edge_labels=True)
+            sage: D.longest_cycle(induced=True, by_weight=True)
             (54, longest induced cycle from Circuit: Digraph on 5 vertices)
 
         TESTS:
@@ -8524,35 +8791,49 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_edge(0, 10, 50)
             sage: D.add_edge(11, 1, 1)
             sage: D.add_edge(13, 0, 1)
-            sage: D.longest_cycle(induced=False, use_edge_labels=False, immutable=True).is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=False, immutable=True).is_immutable()
             True
-            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=True)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True, immutable=True)[1].is_immutable()
             True
             sage: D = DiGraph(D, immutable=True)
-            sage: D.longest_cycle(induced=False, use_edge_labels=True)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True)[1].is_immutable()
             True
-            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
+            sage: D.longest_cycle(induced=False, by_weight=True, immutable=False)[1].is_immutable()
             False
             sage: # check that https://houseofgraphs.org/graphs/752 has circumference 6:
             sage: Graph('EJ~w', immutable=True).longest_cycle().order()
             6
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, {'w': 1}), (1, 2, {'w': 2}), (0, 2, {'w': 4})])
+            sage: G.longest_cycle(weight_function=lambda e: e[2]['w'])[0]           # needs sage.numerical.mip
+            7
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_cycle(use_edge_labels=True)[0]                          # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42905 for details.
+            7
         """
         self._scream_if_not_simple()
         G = self
         st = f" from {G.name()}" if G.name() else ""
         name = f"longest{' induced' if induced else ''} cycle{st}"
 
-        # Helper functions to manipulate weights
-        if use_edge_labels:
-            def weight(e):
-                return 1 if (len(e) < 3 or e[2] is None) else e[2]
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
+        # Helper function to weigh a subgraph
+        if by_weight:
             def total_weight(gg):
-                return sum(weight(e) for e in gg.edge_iterator())
+                return sum(weight_function(e) for e in gg.edge_iterator())
         else:
-            def weight(e):
-                return 1
-
             def total_weight(gg):
                 return gg.order()
 
@@ -8574,15 +8855,20 @@ class GenericGraph(GenericGraph_pyx):
                 if induced and len(block) < 4:
                     continue
                 h = G.subgraph(vertices=block)
+                # Pass the resolved weight function only when it is used: a
+                # non-None weight_function would turn by_weight on in the
+                # recursive call, which also decides the shape of its result.
                 C = h.longest_cycle(induced=induced,
-                                    use_edge_labels=use_edge_labels,
+                                    by_weight=by_weight,
+                                    weight_function=weight_function if by_weight else None,
+                                    check_weight=False,
                                     immutable=immutable,
                                     solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
                 if total_weight(C) > best_w:
                     best = C
                     best_w = total_weight(C)
-            return (best_w, best) if use_edge_labels else best
+            return (best_w, best) if by_weight else best
 
         # We now know that the graph is biconnected or that the digraph is
         # strongly connected.
@@ -8590,13 +8876,13 @@ class GenericGraph(GenericGraph_pyx):
         if ((induced and G.order() < 4) or
             (not induced and ((directed and G.order() < 2) or
                               (not directed and G.order() < 3)))):
-            if use_edge_labels:
+            if by_weight:
                 return 0, MyGraph(name=name, immutable=immutable)
             return MyGraph(name=name, immutable=immutable)
         if (not induced and ((directed and G.order() == 2) or
                              (not directed and G.order() == 3))):
             answer = MyGraph(G, immutable=immutable, name=name)
-            if use_edge_labels:
+            if by_weight:
                 return total_weight(answer), answer
             return answer
 
@@ -8619,7 +8905,8 @@ class GenericGraph(GenericGraph_pyx):
         edge = p.new_variable(binary=True, name='edge')
 
         # Objective function: maximize the size of the cycle
-        p.set_objective(p.sum(weight(e) * edge[F(e)] for e in G.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * edge[F(e)]
+                              for e in G.edge_iterator()))
 
         # We select as many vertices as edges
         p.add_constraint(p.sum(edge[F(e)] for e in G.edge_iterator())
@@ -8711,9 +8998,11 @@ class GenericGraph(GenericGraph_pyx):
         # We finally set the positions of the vertices and return the result
         if G.get_pos():
             best.set_pos({u: pp for u, pp in G.get_pos().items() if u in best})
-        return (best_w, best) if use_edge_labels else best
+        return (best_w, best) if by_weight else best
 
-    def longest_path(self, s=None, t=None, use_edge_labels=False,
+    @rename_keyword(deprecation=42905, use_edge_labels='by_weight')
+    def longest_path(self, s=None, t=None, by_weight=False,
+                     weight_function=None, check_weight=True,
                      algorithm='MILP', immutable=None,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -8735,11 +9024,19 @@ class GenericGraph(GenericGraph_pyx):
 
           This parameter can only be used when ``algorithm`` is ``'MILP'``.
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a path with maximum weight where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or to compute a path with the longest
-          possible number of edges (i.e., edge weights are set to 1)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          path with maximum weight where the weight of an edge is defined by
+          its label. Otherwise, compute a path with the longest possible number
+          of edges (i.e., edge weights are set to 1)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
           This parameter can only be used when ``algorithm`` is ``'MILP'``.
 
@@ -8750,7 +9047,7 @@ class GenericGraph(GenericGraph_pyx):
 
           * ``'heuristic'`` is a randomized heuristic for finding a long path in
             an unweighted (di)graph. This heuristic does not take into account
-            parameters ``s``, ``t`` and ``use_edge_labels``. An error is raised
+            parameters ``s``, ``t`` and ``by_weight``. An error is raised
             if these parameters are set.
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
@@ -8775,12 +9072,12 @@ class GenericGraph(GenericGraph_pyx):
         .. NOTE::
 
             The length of a path is assumed to be the number of its edges, or
-            the sum of their labels (when ``use_edge_labels == True``).
+            the sum of their labels (when ``by_weight == True``).
 
         OUTPUT:
 
         A subgraph of ``self`` corresponding to a (directed if ``self`` is
-        directed) longest path. If ``use_edge_labels == True``, a pair ``weight,
+        directed) longest path. If ``by_weight == True``, a pair ``weight,
         path`` is returned.
 
         ALGORITHM:
@@ -8845,8 +9142,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u,v in g.edge_iterator(labels=False):
             ....:     g.set_edge_label(u, v, random())
             sage: g2 = 2 * g1
-            sage: lp1 = g1.longest_path(use_edge_labels=True)                           # needs sage.numerical.mip
-            sage: lp2 = g2.longest_path(use_edge_labels=True)                           # needs sage.numerical.mip
+            sage: lp1 = g1.longest_path(by_weight=True)                           # needs sage.numerical.mip
+            sage: lp2 = g2.longest_path(by_weight=True)                           # needs sage.numerical.mip
             sage: lp1[0] == lp2[0]                                                      # needs sage.numerical.mip
             True
 
@@ -8854,11 +9151,11 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: Graph().longest_path()
             Graph on 0 vertices
-            sage: Graph().longest_path(use_edge_labels=True)
+            sage: Graph().longest_path(by_weight=True)
             [0, Graph on 0 vertices]
             sage: graphs.EmptyGraph().longest_path()
             Graph on 0 vertices
-            sage: graphs.EmptyGraph().longest_path(use_edge_labels=True)
+            sage: graphs.EmptyGraph().longest_path(by_weight=True)
             [0, Graph on 0 vertices]
 
         Trivial graphs::
@@ -8867,11 +9164,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_vertex(0)
             sage: G.longest_path()
             Graph on 0 vertices
-            sage: G.longest_path(use_edge_labels=True)
+            sage: G.longest_path(by_weight=True)
             [0, Graph on 0 vertices]
             sage: graphs.CompleteGraph(1).longest_path()
             Graph on 0 vertices
-            sage: graphs.CompleteGraph(1).longest_path(use_edge_labels=True)
+            sage: graphs.CompleteGraph(1).longest_path(by_weight=True)
             [0, Graph on 0 vertices]
 
         Random test for digraphs::
@@ -8906,17 +9203,17 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.longest_path(algorithm='heuristic', s=0)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
             sage: G.longest_path(algorithm='heuristic', t=2)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
-            sage: G.longest_path(algorithm='heuristic', use_edge_labels=True)
+            sage: G.longest_path(algorithm='heuristic', by_weight=True)
             Traceback (most recent call last):
             ...
-            ValueError: parameters s, t, and use_edge_labels can not be used in
+            ValueError: parameters s, t, and by_weight can not be used in
                         combination with algorithm 'heuristic'
 
         Check the behavior of parameter ``immutable``::
@@ -8925,40 +9222,64 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u,v in g.edge_iterator(labels=False):
             ....:     g.set_edge_label(u, v, random())
             sage: g2 = DiGraph(2 * g1, immutable=True)
-            sage: lp1 = g1.longest_path(use_edge_labels=True)
-            sage: lp2 = g2.longest_path(use_edge_labels=True)
+            sage: lp1 = g1.longest_path(by_weight=True)
+            sage: lp2 = g2.longest_path(by_weight=True)
             sage: lp1[0] == lp2[0]
             True
             sage: not lp1[1].is_immutable() and lp2[1].is_immutable()
             True
-            sage: lp1 = g1.longest_path(use_edge_labels=True, immutable=True)
-            sage: lp2 = g2.longest_path(use_edge_labels=True, immutable=False)
+            sage: lp1 = g1.longest_path(by_weight=True, immutable=True)
+            sage: lp2 = g2.longest_path(by_weight=True, immutable=False)
             sage: lp1[1].is_immutable() and not lp2[1].is_immutable()
             True
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_path(weight_function=lambda e: 2 * e[2])[0]             # needs sage.numerical.mip
+            12
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (1, 2, 2), (0, 2, 4)])
+            sage: G.longest_path(use_edge_labels=True)[0]                           # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42905 for details.
+            6
         """
         self._scream_if_not_simple()
 
         if algorithm not in ("heuristic", "MILP"):
             raise ValueError("algorithm must be either 'heuristic' or 'MILP'")
         if algorithm == 'heuristic':
-            if s is not None or t is not None or use_edge_labels:
-                raise ValueError("parameters s, t, and use_edge_labels can not "
+            if s is not None or t is not None or by_weight or weight_function is not None:
+                raise ValueError("parameters s, t, and by_weight can not "
                                  "be used in combination with algorithm 'heuristic'")
 
         if immutable is None:
             immutable = self.is_immutable()
 
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
+
         # Quick improvement
         if not self.is_connected():
-            if use_edge_labels:
+            # Pass the resolved weight function only when it is used: a
+            # non-None weight_function would turn by_weight on in the
+            # recursive call, which also decides the shape of its result.
+            if by_weight:
                 return max((g.longest_path(s=s, t=t, immutable=immutable,
-                                           use_edge_labels=use_edge_labels,
+                                           by_weight=True,
+                                           weight_function=weight_function,
+                                           check_weight=False,
                                            algorithm=algorithm)
                             for g in self.connected_components_subgraphs()),
                            key=lambda x: x[0])
 
             return max((g.longest_path(s=s, t=t, immutable=immutable,
-                                       use_edge_labels=use_edge_labels,
                                        algorithm=algorithm)
                         for g in self.connected_components_subgraphs()),
                        key=lambda x: x.order())
@@ -8990,7 +9311,7 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 from sage.graphs.graph import Graph as MyGraph
             GG = MyGraph(immutable=immutable)
-            return [0, GG] if use_edge_labels else GG
+            return [0, GG] if by_weight else GG
 
         # Calling the heuristic if asked
         if algorithm == "heuristic":
@@ -9006,14 +9327,6 @@ class GenericGraph(GenericGraph_pyx):
         # Epsilon... Must be less than 1/(n+1), but we want to avoid
         # numerical problems...
         epsilon = 1 / (2 * float(self.order()))
-
-        # Associating a weight to a label
-        if use_edge_labels:
-            def weight(x):
-                return x if (x is not None and x != {}) else 1
-        else:
-            def weight(x):
-                return 1
 
         from sage.numerical.mip import MixedIntegerLinearProgram
         p = MixedIntegerLinearProgram(solver=solver)
@@ -9079,8 +9392,8 @@ class GenericGraph(GenericGraph_pyx):
                                  max=0, min=0)
 
             # Defining the objective
-            p.set_objective(p.sum(weight(l) * edge_used[u, v]
-                                  for u, v, l in self.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * edge_used[e[0], e[1]]
+                                  for e in self.edge_iterator()))
         else:
             # We use edge_used[frozenset((u, v))] to avoid having two different
             # variables for edge (u, v)
@@ -9117,8 +9430,8 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(p.sum(edge_used[frozenset((t, u))] for u in self.neighbor_iterator(t)),
                                  max=1, min=1)
             # Defining the objective
-            p.set_objective(p.sum(weight(l) * edge_used[frozenset((u, v))]
-                                  for u, v, l in self.edge_iterator()))
+            p.set_objective(p.sum(weight_function(e) * edge_used[frozenset((e[0], e[1]))]
+                                  for e in self.edge_iterator()))
 
         # Computing the result. No exception has to be raised, as this
         # problem always has a solution (there is at least one edge,
@@ -9134,11 +9447,13 @@ class GenericGraph(GenericGraph_pyx):
                      if edge_used[frozenset((u, v))])
         g = self.subgraph(vertices=(v for v in self if vertex_used[v]),
                           edges=edges, immutable=immutable)
-        if use_edge_labels:
-            return sum(map(weight, g.edge_labels())), g
+        if by_weight:
+            return sum(weight_function(e) for e in g.edge_iterator()), g
         return g
 
-    def hamiltonian_path(self, s=None, t=None, use_edge_labels=False,
+    @rename_keyword(deprecation=42983, use_edge_labels='by_weight')
+    def hamiltonian_path(self, s=None, t=None, by_weight=False,
+                         weight_function=None, check_weight=True,
                          maximize=False, algorithm='MILP', immutable=None,
                          solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -9148,7 +9463,7 @@ class GenericGraph(GenericGraph_pyx):
         once. Computing a Hamiltonian path being NP-Complete, this
         algorithm could run for some time depending on the instance.
 
-        When ``use_edge_labels == True``, this method returns either a minimum
+        When ``by_weight == True``, this method returns either a minimum
         weight hamiltonian path or a maximum weight Hamiltonian path (if
         ``maximize == True``).
 
@@ -9167,15 +9482,23 @@ class GenericGraph(GenericGraph_pyx):
           destination of the path (the method then returns a Hamiltonian path
           ending at ``t``)
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a weighted hamiltonian path where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or a non-weighted hamiltonian path
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, compute a
+          weighted hamiltonian path where the weight of an edge is defined by
+          its label. Otherwise, compute a non-weighted hamiltonian path
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``maximize`` -- boolean (default: ``False``); whether to compute a
           minimum (default) or a maximum (when ``maximize == True``) weight
           hamiltonian path. This parameter is considered only if
-          ``use_edge_labels == True``.
+          ``by_weight == True``.
 
         - ``algorithm`` -- string (default: ``'MILP'``); the algorithm the use
           among ``'MILP'`` and ``'backtrack'``; two remarks on this respect:
@@ -9184,7 +9507,7 @@ class GenericGraph(GenericGraph_pyx):
             algorithm is a randomized heuristic.
 
           * The backtrack algorithm does not support edge weighting, so setting
-            ``use_edge_labels=True`` will force the use of the MILP algorithm.
+            ``by_weight=True`` will force the use of the MILP algorithm.
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable (di)graph. ``immutable=None`` (default) means that
@@ -9209,7 +9532,7 @@ class GenericGraph(GenericGraph_pyx):
 
         A subgraph of ``self`` corresponding to a (directed if ``self`` is
         directed) hamiltonian path. If no hamiltonian path is found, return
-        ``None``. If ``use_edge_labels == True``, a pair ``weight, path`` is
+        ``None``. If ``by_weight == True``, a pair ``weight, path`` is
         returned.
 
         EXAMPLES:
@@ -9223,12 +9546,21 @@ class GenericGraph(GenericGraph_pyx):
             Hamiltonian path from 2D Grid Graph for [3, 3]: Graph on 9 vertices
             sage: g.hamiltonian_path(s=(0, 0), t=(2, 2))
             Hamiltonian path from 2D Grid Graph for [3, 3]: Graph on 9 vertices
-            sage: g.hamiltonian_path(s=(0, 0), t=(2, 2), use_edge_labels=True)
+            sage: g.hamiltonian_path(s=(0, 0), t=(2, 2), by_weight=True)
             (8, Hamiltonian path from 2D Grid Graph for [3, 3]: Graph on 9 vertices)
             sage: g.hamiltonian_path(s=(0, 0), t=(0, 1)) is None
             True
-            sage: g.hamiltonian_path(s=(0, 0), t=(0, 1), use_edge_labels=True)
+            sage: g.hamiltonian_path(s=(0, 0), t=(0, 1), by_weight=True)
             (0, None)
+
+        The weight of an edge can also be set by a ``weight_function``. It is
+        only called on the edges of the graph, not on the virtual edges added
+        to turn the path into a cycle::
+
+            sage: G = Graph([(0, 1, {'w': 1}), (0, 2, {'w': 2}), (0, 3, {'w': 1}),
+            ....:            (1, 2, {'w': 1}), (1, 3, {'w': 2}), (2, 3, {'w': 1})])
+            sage: G.hamiltonian_path(weight_function=lambda e: e[2]['w'])[0]            # needs sage.numerical.mip
+            3
 
         TESTS:
 
@@ -9252,7 +9584,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph(2)
             sage: g.hamiltonian_path() is None                                          # needs sage.numerical.mip
             True
-            sage: g.hamiltonian_path(use_edge_labels=True)                              # needs sage.numerical.mip
+            sage: g.hamiltonian_path(by_weight=True)                                    # needs sage.numerical.mip
             (0, None)
             sage: g = DiGraph(2)
             sage: g.hamiltonian_path() is None                                          # needs sage.numerical.mip
@@ -9261,12 +9593,33 @@ class GenericGraph(GenericGraph_pyx):
         Asking for a minimum (resp., maximum) weight Hamiltonian path::
 
             sage: G = Graph([(0, 1, 1), (0, 2, 2), (0, 3, 1), (1, 2, 1), (1, 3, 2), (2, 3, 1)])
-            sage: print(G.hamiltonian_path(s=0, t=1, use_edge_labels=True,              # needs sage.numerical.mip
+            sage: print(G.hamiltonian_path(s=0, t=1, by_weight=True,                    # needs sage.numerical.mip
             ....:                          maximize=False)[0])
             3
-            sage: print(G.hamiltonian_path(s=0, t=1, use_edge_labels=True,              # needs sage.numerical.mip
+            sage: print(G.hamiltonian_path(s=0, t=1, by_weight=True,                    # needs sage.numerical.mip
             ....:                          maximize=True)[0])
             5
+
+        Among parallel edges, the weight function decides which one can be
+        used, even when the labels cannot be compared::
+
+            sage: G = Graph([(0, 1, {'w': 5}), (0, 1, {'w': 1}), (1, 2, {'w': 1})],
+            ....:           multiedges=True)
+            sage: G.hamiltonian_path(weight_function=lambda e: e[2]['w'])[0]            # needs sage.numerical.mip
+            2
+            sage: G.hamiltonian_path(weight_function=lambda e: e[2]['w'],               # needs sage.numerical.mip
+            ....:                    maximize=True)[0]
+            6
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (0, 2, 2), (0, 3, 1), (1, 2, 1), (1, 3, 2), (2, 3, 1)])
+            sage: G.hamiltonian_path(s=0, t=1, use_edge_labels=True)[0]                 # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42983 for details.
+            3
 
         Parameter ``algorithm`` must be either ``'backtrack'`` or ``'MILP'``::
 
@@ -9285,10 +9638,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph(g, immutable=True)
             sage: g.hamiltonian_path().is_immutable()
             True
-            sage: g.hamiltonian_path(use_edge_labels=True)[1].is_immutable()
+            sage: g.hamiltonian_path(by_weight=True)[1].is_immutable()
             True
         """
-        if use_edge_labels or algorithm is None:
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
+        if by_weight or algorithm is None:
             # We force the algorithm to 'MILP'
             algorithm = 'MILP'
         elif algorithm not in ['MILP', 'backtrack']:
@@ -9299,7 +9655,7 @@ class GenericGraph(GenericGraph_pyx):
                              'defined for empty and one-element (di)graphs')
 
         if not self.is_connected():
-            return (0, None) if use_edge_labels else None
+            return (0, None) if by_weight else None
 
         if immutable is None:
             immutable = self.is_immutable()
@@ -9307,8 +9663,9 @@ class GenericGraph(GenericGraph_pyx):
         # Deal with loops and multiple edges
         #
         if self.has_loops() or self.has_multiple_edges():
-            keep_label = 'max' if (use_edge_labels and maximize) else 'min'
-            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False)
+            keep_label = 'max' if (by_weight and maximize) else 'min'
+            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False,
+                               key=weight_function if by_weight else None)
         else:
             g = self.copy(immutable=False)
 
@@ -9319,21 +9676,21 @@ class GenericGraph(GenericGraph_pyx):
             #
             zeros = [u for u in g if not g.in_degree(u)]
             if len(zeros) > 1:
-                return (0, None) if use_edge_labels else None
+                return (0, None) if by_weight else None
             if len(zeros) == 1:
                 if new_s is None:
                     new_s = zeros.pop()
                 elif new_s not in zeros:
-                    return (0, None) if use_edge_labels else None
+                    return (0, None) if by_weight else None
 
             zeros = [u for u in g if not g.out_degree(u)]
             if len(zeros) > 1:
-                return (0, None) if use_edge_labels else None
+                return (0, None) if by_weight else None
             if len(zeros) == 1:
                 if new_t is None:
                     new_t = zeros.pop()
                 elif new_t not in zeros:
-                    return (0, None) if use_edge_labels else None
+                    return (0, None) if by_weight else None
 
         else:
             #
@@ -9341,13 +9698,13 @@ class GenericGraph(GenericGraph_pyx):
             #
             ones = [u for u in g if g.degree(u) == 1]
             if len(ones) > 2:
-                return (0, None) if use_edge_labels else None
+                return (0, None) if by_weight else None
 
             if len(ones) == 2:
                 if new_s is not None and new_s not in ones:
-                    return (0, None) if use_edge_labels else None
+                    return (0, None) if by_weight else None
                 if new_t is not None and new_t not in ones:
-                    return (0, None) if use_edge_labels else None
+                    return (0, None) if by_weight else None
 
                 # Set new_s and new_t if possible
                 if new_s is None and new_t is None:
@@ -9359,13 +9716,13 @@ class GenericGraph(GenericGraph_pyx):
 
             elif len(ones) == 1:
                 if new_s is not None and new_t is not None and not (new_s in ones or new_t in ones):
-                    return (0, None) if use_edge_labels else None
+                    return (0, None) if by_weight else None
                 if new_s is None and (new_t is None or (new_t is not None and new_t not in ones)):
                     new_s = ones.pop()
                 elif new_t is None and new_s is not None and new_s not in ones:
                     new_t = ones.pop()
 
-        if not use_edge_labels and algorithm == "backtrack":
+        if not by_weight and algorithm == "backtrack":
             path = g.longest_path(s=new_s, t=new_t, algorithm='backtrack',
                                   immutable=immutable)
             return path if path.order() == g.order() else None
@@ -9403,25 +9760,41 @@ class GenericGraph(GenericGraph_pyx):
         #
         # We now search for a Hamiltonian Cycle in g
         #
+        if by_weight:
+            # The virtual edges weigh nothing. They are labelled 0, which a
+            # weight_function written for the labels of self may not accept.
+            virtual = set(extra_vertices)
+
+            def tsp_weight(e):
+                if e[0] in virtual or e[1] in virtual:
+                    return 0
+                return weight_function(e)
+        else:
+            tsp_weight = None
+
         from sage.categories.sets_cat import EmptySetError
         try:
-            tsp = g.traveling_salesman_problem(use_edge_labels=use_edge_labels,
+            tsp = g.traveling_salesman_problem(by_weight=by_weight,
+                                               weight_function=tsp_weight,
+                                               check_weight=False,
                                                maximize=maximize,
                                                solver=solver, verbose=verbose,
                                                integrality_tolerance=integrality_tolerance)
         except EmptySetError:
-            return (0, None) if use_edge_labels else None
+            return (0, None) if by_weight else None
 
         tsp.delete_vertices(extra_vertices)
         tsp._name = "Hamiltonian path from {}".format(self.name())
         if immutable:
             tsp = tsp.copy(immutable=True)
 
-        def weight(label):
-            return 1 if label is None else label
-        return (sum(map(weight, tsp.edge_labels())), tsp) if use_edge_labels else tsp
+        if by_weight:
+            return sum(weight_function(e) for e in tsp.edge_iterator()), tsp
+        return tsp
 
-    def traveling_salesman_problem(self, use_edge_labels=False, maximize=False,
+    @rename_keyword(deprecation=42983, use_edge_labels='by_weight')
+    def traveling_salesman_problem(self, by_weight=False, weight_function=None,
+                                   check_weight=True, maximize=False,
                                    solver=None, constraint_generation=None,
                                    verbose=0, verbose_constraints=False,
                                    *, integrality_tolerance=1e-3):
@@ -9437,16 +9810,24 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to solve
-          the weighted traveling salesman problem where the weight of an edge is
-          defined by its label (a label set to ``None`` or ``{}`` being
-          considered as a weight of `1`), or the non-weighted version (i.e., the
-          Hamiltonian cycle problem)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, solve the
+          weighted traveling salesman problem where the weight of an edge is
+          defined by its label. Otherwise, solve the non-weighted version
+          (i.e., the Hamiltonian cycle problem)
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
 
         - ``maximize`` -- boolean (default: ``False``); whether to compute a
           minimum (default) or a maximum (when ``maximize == True``) weight tour
           (or Hamiltonian cycle). This parameter is considered only if
-          ``use_edge_labels == True``.
+          ``by_weight == True``.
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -9533,7 +9914,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:        g.add_edge(u, v)
             ....:    g.set_edge_label(u, v, 2)
 
-            sage: tsp = g.traveling_salesman_problem(use_edge_labels=True)              # needs sage.numerical.mip
+            sage: tsp = g.traveling_salesman_problem(by_weight=True)                    # needs sage.numerical.mip
             sage: sum( tsp.edge_labels() ) < 2 * 10                                     # needs sage.numerical.mip
             True
 
@@ -9543,18 +9924,18 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u, v in cycle.edges(labels=None, sort=False):
             ....:    g.set_edge_label(u,v,1/2)
 
-            sage: tsp = g.traveling_salesman_problem(use_edge_labels=True)              # needs sage.numerical.mip
+            sage: tsp = g.traveling_salesman_problem(by_weight=True)                    # needs sage.numerical.mip
             sage: sum(tsp.edge_labels()) == (1/2) * 10                                  # needs sage.numerical.mip
             True
 
         Search for a minimum and a maximum weight Hamiltonian cycle::
 
             sage: G = Graph([(0, 1, 1), (0, 2, 2), (0, 3, 1), (1, 2, 1), (1, 3, 2), (2, 3, 1)])
-            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True,
+            sage: tsp = G.traveling_salesman_problem(by_weight=True,
             ....:                                    maximize=False)
             sage: print(sum(tsp.edge_labels()))
             4
-            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True,
+            sage: tsp = G.traveling_salesman_problem(by_weight=True,
             ....:                                    maximize=True)
             sage: print(sum(tsp.edge_labels()))
             6
@@ -9574,8 +9955,8 @@ class GenericGraph(GenericGraph_pyx):
             ....:      if not g.has_edge(u, v):
             ....:          g.add_edge(u, v, ZZ.random_element(1,100000))
             sage: v1 = g.traveling_salesman_problem(constraint_generation=False,        # needs sage.numerical.mip
-            ....:                                   use_edge_labels=True)
-            sage: v2 = g.traveling_salesman_problem(use_edge_labels=True)               # needs sage.numerical.mip
+            ....:                                   by_weight=True)
+            sage: v2 = g.traveling_salesman_problem(by_weight=True)                     # needs sage.numerical.mip
             sage: sum(v1.edge_labels()) == sum(v2.edge_labels())                        # needs sage.numerical.mip
             True
 
@@ -9590,9 +9971,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: for u, v in digraphs.Circuit(n).edges(labels=False, sort=False):
             ....:      if not g.has_edge(u, v):
             ....:          g.add_edge(u, v, ZZ.random_element(1,100000))
-            sage: v2 = g.traveling_salesman_problem(use_edge_labels=True)               # needs sage.numerical.mip
+            sage: v2 = g.traveling_salesman_problem(by_weight=True)                     # needs sage.numerical.mip
             sage: v1 = g.traveling_salesman_problem(constraint_generation=False,        # needs sage.numerical.mip
-            ....:                                   use_edge_labels=True)
+            ....:                                   by_weight=True)
             sage: sum(v1.edge_labels()) == sum(v2.edge_labels())                        # needs sage.numerical.mip
             True
 
@@ -9606,7 +9987,7 @@ class GenericGraph(GenericGraph_pyx):
             False
             sage: G.add_edge(0, 0, 1)
             sage: G.add_edge(0, 0, 2)
-            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True)
+            sage: tsp = G.traveling_salesman_problem(by_weight=True)
             Traceback (most recent call last):
             ...
             EmptySetError: the given graph is not Hamiltonian
@@ -9619,7 +10000,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_edge(1, 0, 2)
             sage: G.is_hamiltonian()
             True
-            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True)
+            sage: tsp = G.traveling_salesman_problem(by_weight=True)
             sage: sum(tsp.edge_labels())
             4
 
@@ -9644,19 +10025,57 @@ class GenericGraph(GenericGraph_pyx):
         Check that weight 0 edges are handled correctly (see :issue:`16214`)::
 
             sage: G = Graph([(0, 1, 1), (0, 2, 0), (0, 3, 1), (1, 2, 1), (1, 3, 0), (2, 3, 1)])
-            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True)              # needs sage.numerical.mip
+            sage: tsp = G.traveling_salesman_problem(by_weight=True)                    # needs sage.numerical.mip
             sage: sum(tsp.edge_labels())                                                # needs sage.numerical.mip
             2
+
+        The weight of an edge can also be set by a ``weight_function``::
+
+            sage: G = Graph([(0, 1, {'w': 1}), (0, 2, {'w': 2}), (0, 3, {'w': 1}),
+            ....:            (1, 2, {'w': 1}), (1, 3, {'w': 2}), (2, 3, {'w': 1})])
+            sage: tsp = G.traveling_salesman_problem(weight_function=lambda e: e[2]['w'])  # needs sage.numerical.mip
+            sage: sum(l['w'] for l in tsp.edge_labels())                                # needs sage.numerical.mip
+            4
+
+        Among parallel edges, the weight function decides which one can be
+        used, even when the labels cannot be compared::
+
+            sage: G = Graph([(0, 1, {'w': 5}), (0, 1, {'w': 1}), (1, 2, {'w': 1}),
+            ....:            (0, 2, {'w': 1})], multiedges=True)
+            sage: tsp = G.traveling_salesman_problem(weight_function=lambda e: e[2]['w'])  # needs sage.numerical.mip
+            sage: sorted(l['w'] for l in tsp.edge_labels())                             # needs sage.numerical.mip
+            [1, 1, 1]
+            sage: tsp = G.traveling_salesman_problem(weight_function=lambda e: e[2]['w'],  # needs sage.numerical.mip
+            ....:                                    maximize=True)
+            sage: sorted(l['w'] for l in tsp.edge_labels())                             # needs sage.numerical.mip
+            [1, 1, 5]
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: G = Graph([(0, 1, 1), (0, 2, 2), (0, 3, 1), (1, 2, 1), (1, 3, 2), (2, 3, 1)])
+            sage: tsp = G.traveling_salesman_problem(use_edge_labels=True)              # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42983 for details.
+            sage: sum(tsp.edge_labels())                                                # needs sage.numerical.mip
+            4
         """
         from sage.categories.sets_cat import EmptySetError
 
-        # Associating a weight to a label
-        if use_edge_labels:
-            def weight(label):
-                return 1 if label is None else label
-        else:
-            def weight(label):
-                return 1
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
+
+        def tsp_from_edges(edges):
+            # Not self.subgraph(edges=edges): it hashes the edges, which fails
+            # on unhashable labels (e.g., dictionaries read by weight_function)
+            answer = self.subgraph(edge_property=lambda e: False, immutable=False)
+            answer.add_edges(edges)
+            answer._name = "TSP from " + self.name()
+            if self.is_immutable():
+                answer = answer.copy(immutable=True)
+            return answer
 
         ########################
         # 0 or 1 vertex graphs #
@@ -9674,28 +10093,20 @@ class GenericGraph(GenericGraph_pyx):
             if self.is_directed():
                 if self.has_edge(uu, vv) and self.has_edge(vv, uu):
                     if self.allows_multiple_edges():
-                        if maximize:
-                            edges = [(uu, vv, max(self.edge_label(uu, vv), key=weight)),
-                                     (vv, uu, max(self.edge_label(vv, uu), key=weight))]
-                        else:
-                            edges = [(uu, vv, min(self.edge_label(uu, vv), key=weight)),
-                                     (vv, uu, min(self.edge_label(vv, uu), key=weight))]
+                        extreme = max if maximize else min
+                        edges = [extreme(((uu, vv, l) for l in self.edge_label(uu, vv)),
+                                         key=weight_function),
+                                 extreme(((vv, uu, l) for l in self.edge_label(vv, uu)),
+                                         key=weight_function)]
                     else:
                         edges = [(uu, vv, self.edge_label(uu, vv)),
                                  (vv, uu, self.edge_label(vv, uu))]
-                    answer = self.subgraph(edges=edges, immutable=self.is_immutable())
-                    answer.set_pos(self.get_pos())
-                    answer._name = "TSP from " + self.name()
-                    return answer
+                    return tsp_from_edges(edges)
             elif self.allows_multiple_edges() and len(self.edge_label(uu, vv)) > 1:
-                if maximize:
-                    edges = self.edges(sort=True, key=weight)[-2:]
-                else:
-                    edges = self.edges(sort=True, key=weight)[:2]
-                answer = self.subgraph(edges=edges, immutable=self.is_immutable())
-                answer.set_pos(self.get_pos())
-                answer._name = "TSP from " + self.name()
-                return answer
+                edges = sorted(((uu, vv, l) for l in self.edge_label(uu, vv)),
+                               key=weight_function)
+                edges = edges[-2:] if maximize else edges[:2]
+                return tsp_from_edges(edges)
 
             raise EmptySetError("the given graph is not Hamiltonian")
 
@@ -9721,8 +10132,9 @@ class GenericGraph(GenericGraph_pyx):
         ######################################
 
         if self.has_loops() or self.has_multiple_edges():
-            keep_label = 'max' if (use_edge_labels and maximize) else 'min'
-            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False)
+            keep_label = 'max' if (by_weight and maximize) else 'min'
+            g = self.to_simple(to_undirected=False, keep_label=keep_label, immutable=False,
+                               key=weight_function if by_weight else None)
         else:
             g = self
 
@@ -9752,8 +10164,9 @@ class GenericGraph(GenericGraph_pyx):
                 b = p.new_variable(binary=True)
 
                 # Objective function
-                if use_edge_labels:
-                    p.set_objective(p.sum(weight(l) * b[u, v] for u, v, l in g.edge_iterator()))
+                if by_weight:
+                    p.set_objective(p.sum(weight_function(e) * b[e[0], e[1]]
+                                          for e in g.edge_iterator()))
 
                 # All the vertices have in-degree 1 and out-degree 1
                 for v in g:
@@ -9801,8 +10214,9 @@ class GenericGraph(GenericGraph_pyx):
                 b = p.new_variable(binary=True)
 
                 # Objective function
-                if use_edge_labels:
-                    p.set_objective(p.sum(weight(l) * b[frozenset((u, v))] for u, v, l in g.edge_iterator()))
+                if by_weight:
+                    p.set_objective(p.sum(weight_function(e) * b[frozenset(e[:2])]
+                                          for e in g.edge_iterator()))
 
                 # All the vertices have degree 2
                 for v in g:
@@ -9839,10 +10253,7 @@ class GenericGraph(GenericGraph_pyx):
                         raise EmptySetError("the given graph is not Hamiltonian")
 
             # We can now return the TSP !
-            answer = self.subgraph(edges=h.edges(sort=False), immutable=self.is_immutable())
-            answer.set_pos(self.get_pos())
-            answer._name = "TSP from "+g.name()
-            return answer
+            return tsp_from_edges(h.edge_iterator())
 
         #################################################
         # ILP formulation without constraint generation #
@@ -9878,8 +10289,9 @@ class GenericGraph(GenericGraph_pyx):
                 else:
                     p.add_constraint(r[u, v] + r[v, u] - f[u, v], min=0)
 
-            if use_edge_labels:
-                p.set_objective(p.sum(weight(l) * f[u, v] for u, v, l in g.edge_iterator()))
+            if by_weight:
+                p.set_objective(p.sum(weight_function(e) * f[e[0], e[1]]
+                                      for e in g.edge_iterator()))
 
             # defining the answer when g is directed
             from sage.graphs.digraph import DiGraph
@@ -9895,8 +10307,9 @@ class GenericGraph(GenericGraph_pyx):
             for u, v in g.edge_iterator(labels=None):
                 p.add_constraint(r[u, v] + r[v, u] - f[frozenset((u, v))], min=0)
 
-            if use_edge_labels:
-                p.set_objective(p.sum(weight(l) * f[frozenset((u, v))] for u, v, l in g.edge_iterator()))
+            if by_weight:
+                p.set_objective(p.sum(weight_function(e) * f[frozenset(e[:2])]
+                                      for e in g.edge_iterator()))
 
             from sage.graphs.graph import Graph
 
@@ -10042,7 +10455,7 @@ class GenericGraph(GenericGraph_pyx):
         if algorithm == 'tsp':
             from sage.numerical.mip import MIPSolverException
             try:
-                return self.traveling_salesman_problem(use_edge_labels=False, solver=solver,
+                return self.traveling_salesman_problem(by_weight=False, solver=solver,
                                                        constraint_generation=constraint_generation,
                                                        verbose=verbose, verbose_constraints=verbose_constraints,
                                                        integrality_tolerance=integrality_tolerance)
@@ -10292,7 +10705,9 @@ class GenericGraph(GenericGraph_pyx):
                 return Integer(sum(1 for v in self if b_sol[v]))
             return [v for v in self if b_sol[v]]
 
-    def flow(self, x, y, value_only=True, integer=False, use_edge_labels=True,
+    @rename_keyword(deprecation=42772, use_edge_labels='by_weight')
+    def flow(self, x, y, value_only=True, integer=False, by_weight=True,
+             weight_function=None, check_weight=True,
              vertex_bound=False, algorithm=None, solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
         r"""
@@ -10327,10 +10742,19 @@ class GenericGraph(GenericGraph_pyx):
           optimal solution under the constraint that the flow going through an
           edge has to be an integer, or without this constraint
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a maximum flow where each edge has a capacity defined by its
-          label (if an edge has no label, capacity `1` is assumed), or to use
-          default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``True``); if ``True``, computes a
+          maximum flow where the capacity of an edge is given by
+          ``weight_function``, or by its label if ``weight_function`` is
+          ``None``. If ``False``, every edge has capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else `1` as a capacity.
+
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
 
         - ``vertex_bound`` -- boolean (default: ``False``); when set to
           ``True``, sets the maximum flow leaving a vertex different from `x` to
@@ -10422,7 +10846,28 @@ class GenericGraph(GenericGraph_pyx):
             sage: flow_graph.size()
             4
 
+        A ``weight_function`` can read the capacity from anywhere in the edge,
+        and setting it implies ``by_weight=True``::
+
+            sage: D = DiGraph([(0, 1, {'cap': 3}), (1, 2, {'cap': 2})])
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='FF')
+            2
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='LP')  # needs sage.numerical.mip
+            2.0
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'], algorithm='igraph')  # optional - python_igraph
+            2.0
+
         TESTS:
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: D = DiGraph([(0, 1, 3), (1, 2, 2)])
+            sage: D.flow(0, 2, use_edge_labels=True, algorithm='FF')
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/42772 for details.
+            2
 
         An exception if raised when forcing "FF" or "igraph" with ``vertex_bound
         = True``::
@@ -10462,19 +10907,17 @@ class GenericGraph(GenericGraph_pyx):
         if vertex_bound and algorithm in ["FF", "igraph"]:
             raise ValueError("this method does not support both "
                              "vertex_bound=True and algorithm='" + algorithm + "'")
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-            if integer:
-                from math import floor
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
-                def capacity(z):
-                    return floor(z) if z in RR else 1
-            else:
-                def capacity(z):
-                    return z if z in RR else 1
+        if by_weight and integer:
+            from sage.arith.misc import integer_floor as floor
+
+            def capacity(e):
+                return floor(weight_function(e))
         else:
-            def capacity(z):
-                return 1
+            capacity = weight_function
 
         if algorithm is None:
             if vertex_bound:
@@ -10484,15 +10927,17 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 algorithm = "FF"
 
-        if (algorithm == "FF"):
-            return self._ford_fulkerson(x, y, value_only=value_only, integer=integer, use_edge_labels=use_edge_labels)
-        if (algorithm == 'igraph'):
+        if algorithm == "FF":
+            return self._ford_fulkerson(x, y, value_only=value_only, integer=integer,
+                                        by_weight=by_weight,
+                                        weight_function=weight_function)
+        if algorithm == 'igraph':
             vertices = list(self)
             x_int = vertices.index(x)
             y_int = vertices.index(y)
-            if use_edge_labels:
+            if by_weight:
                 g_igraph = self.igraph_graph(vertex_list=vertices,
-                                             edge_attrs={'capacity': [float(capacity(e[2]))
+                                             edge_attrs={'capacity': [float(capacity(e))
                                                                       for e in self.edge_iterator()]})
                 maxflow = g_igraph.maxflow(x_int, y_int, 'capacity')
             else:
@@ -10569,8 +11014,8 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(flow_sum(v), min=0, max=0)
 
         # Capacity constraints
-        for u, v, w in g.edge_iterator():
-            p.add_constraint(capacity_sum(u, v), max=capacity(w))
+        for e in g.edge_iterator():
+            p.add_constraint(capacity_sum(e[0], e[1]), max=capacity(e))
 
         # No vertex except the sources can send more than 1
         if vertex_bound:
@@ -10584,7 +11029,7 @@ class GenericGraph(GenericGraph_pyx):
         # Otherwise, the base ring of the MILP solver is used
         flow = p.get_values(flow, convert=True, tolerance=integrality_tolerance)
 
-        if not integer and use_edge_labels is False:
+        if not integer and not by_weight:
             obj = p.get_values(obj[0], convert=ZZ, tolerance=integrality_tolerance)
         else:
             obj = p.get_values(obj[0], convert=True, tolerance=integrality_tolerance)
@@ -10827,7 +11272,8 @@ class GenericGraph(GenericGraph_pyx):
 
         return solution
 
-    def _ford_fulkerson(self, s, t, use_edge_labels=False, integer=False, value_only=True):
+    def _ford_fulkerson(self, s, t, by_weight=False, weight_function=None,
+                        integer=False, value_only=True):
         r"""
         Python implementation of the Ford-Fulkerson algorithm.
 
@@ -10849,10 +11295,15 @@ class GenericGraph(GenericGraph_pyx):
           optimal solution under the constraint that the flow going through an
           edge has to be an integer, or without this constraint
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a maximum flow where each edge has a capacity defined by its
-          label (if an edge has no label, capacity `1` is assumed), or to use
-          default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the
+          capacity of an edge is given by ``weight_function``, or by its label
+          if ``weight_function`` is ``None``. If ``False``, every edge has
+          capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. When
+          called from :meth:`flow` this is already resolved, and it is used as
+          given.
 
         EXAMPLES:
 
@@ -10898,12 +11349,14 @@ class GenericGraph(GenericGraph_pyx):
         from sage.graphs.digraph import DiGraph
 
         # Whether we should consider the edges labeled
-        if use_edge_labels:
-            def l_capacity(x):
-                return 1 if (x is None or x == {}) else (floor(x) if integer else x)
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function)
+
+        if by_weight and integer:
+            def l_capacity(e):
+                return floor(weight_function(e))
         else:
-            def l_capacity(x):
-                return 1
+            l_capacity = weight_function
 
         directed = self.is_directed()
 
@@ -10922,18 +11375,22 @@ class GenericGraph(GenericGraph_pyx):
 
         # Initializing the variables
         if directed:
-            for u, v, l in self.edge_iterator():
-                if l_capacity(l) > 0:
-                    capacity[u, v] = l_capacity(l) + capacity.get((u, v), 0)
+            for e in self.edge_iterator():
+                u, v = e[0], e[1]
+                c = l_capacity(e)
+                if c > 0:
+                    capacity[u, v] = c + capacity.get((u, v), 0)
                     capacity[v, u] = capacity.get((v, u), 0)
                     residual.add_edge(u, v)
                     flow[u, v] = 0
                     flow[v, u] = 0
         else:
-            for u, v, l in self.edge_iterator():
-                if l_capacity(l) > 0:
-                    capacity[u, v] = l_capacity(l) + capacity.get((u, v), 0)
-                    capacity[v, u] = l_capacity(l) + capacity.get((v, u), 0)
+            for e in self.edge_iterator():
+                u, v = e[0], e[1]
+                c = l_capacity(e)
+                if c > 0:
+                    capacity[u, v] = c + capacity.get((u, v), 0)
+                    capacity[v, u] = c + capacity.get((v, u), 0)
                     residual.add_edge(u, v)
                     residual.add_edge(v, u)
                     flow[u, v] = 0
@@ -10997,7 +11454,9 @@ class GenericGraph(GenericGraph_pyx):
 
         return flow_intensity, g
 
-    def multicommodity_flow(self, terminals, integer=True, use_edge_labels=False,
+    @rename_keyword(deprecation=42772, use_edge_labels='by_weight')
+    def multicommodity_flow(self, terminals, integer=True, by_weight=False,
+                            weight_function=None, check_weight=True,
                             vertex_bound=False, solver=None, verbose=0,
                             *, integrality_tolerance=1e-3):
         r"""
@@ -11022,10 +11481,19 @@ class GenericGraph(GenericGraph_pyx):
         - ``integer`` -- boolean (default: ``True``); whether to require an integer
           multicommodity flow
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a multicommodity flow where each edge has a capacity defined
-          by its label (if an edge has no label, capacity `1` is assumed), or to
-          use default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the
+          capacity of an edge is given by ``weight_function``, or by its label
+          if ``weight_function`` is ``None``. If ``False``, every edge has
+          capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else `1` as a capacity.
+
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
 
         - ``vertex_bound`` -- boolean (default: ``False``); whether to require
           that a vertex can stand at most `1` commodity of flow through it of
@@ -11098,14 +11566,9 @@ class GenericGraph(GenericGraph_pyx):
         flow = p.new_variable(nonnegative=True, integer=integer)
 
         # Whether to use edge labels
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def capacity(x):
-                return x if x in RR else 1
-        else:
-            def capacity(x):
-                return 1
+        by_weight, capacity = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
         if g.is_directed():
             # This function return the balance of flow at X
@@ -11145,8 +11608,10 @@ class GenericGraph(GenericGraph_pyx):
                     p.add_constraint(flow_sum(i, v), min=0, max=0)
 
         # Capacity constraints
-        for u, v, w in g.edge_iterator():
-            p.add_constraint(p.sum(capacity_sum(i, u, v) for i in range(len(terminals))), max=capacity(w))
+        for e in g.edge_iterator():
+            p.add_constraint(p.sum(capacity_sum(i, e[0], e[1])
+                                   for i in range(len(terminals))),
+                             max=capacity(e))
 
         if vertex_bound:
 
@@ -11381,12 +11846,23 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.CompleteBipartiteGraph(2, 3)
             sage: g.edge_disjoint_paths(0, 1)
             [[0, 2, 1], [0, 3, 1], [0, 4, 1]]
+
+        TESTS:
+
+        There is no path when ``t`` is not reachable from ``s``::
+
+            sage: DiGraph([(0, 1)]).edge_disjoint_paths(1, 0)
+            []
+            sage: Graph([(0, 1), (2, 3)]).edge_disjoint_paths(0, 2)
+            []
         """
-        [obj, flow_graph] = self.flow(s, t, value_only=False, integer=True, use_edge_labels=False,
-                                      algorithm=algorithm, solver=solver, verbose=verbose,
-                                      integrality_tolerance=integrality_tolerance)
+        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, by_weight=False,
+                                    algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance)
 
         paths = []
+        if not obj:
+            return paths
 
         while True:
             path = flow_graph.shortest_path(s, t)
@@ -11447,7 +11923,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.vertex_disjoint_paths(1, 0)                                         # needs sage.numerical.mip
             []
         """
-        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, use_edge_labels=False,
+        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, by_weight=False,
                                     vertex_bound=True, solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
 
@@ -16850,19 +17326,25 @@ class GenericGraph(GenericGraph_pyx):
             sage: PG = G.power(3)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
-        """
-        from sage.graphs.digraph import DiGraph
-        from sage.graphs.graph import Graph
 
-        power_of_graph = DiGraph() if self.is_directed() else Graph()
+        Testing on graph with isolated vertices::
+
+            sage: BipartiteGraph(7).power(1).order()
+            7
+        """
+        if self.is_directed():
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        if name := self.name():
+            name = f'power({name})'
+        power_of_graph = GT([self, []], format='vertices_and_edges', name=name)
 
         for u in self:
             for v in self.breadth_first_search(u, distance=k):
                 if u != v:
                     power_of_graph.add_edge(u, v)
-
-        if self.name():
-            power_of_graph.name("power({})".format(self.name()))
 
         return power_of_graph
 
@@ -17021,8 +17503,8 @@ class GenericGraph(GenericGraph_pyx):
         Bipartite graphs have no odd cycle and consequently have
         infinite odd girth::
 
-            sage: G = graphs.RandomBipartite(6, 6, .5)                                  # needs numpy
-            sage: G.odd_girth()                                                         # needs numpy
+            sage: G = graphs.RandomBipartite(6, 6, .5)
+            sage: G.odd_girth()
             +Infinity
             sage: G = graphs.Grid2dGraph(3, 4)
             sage: G.odd_girth()
@@ -19961,7 +20443,7 @@ class GenericGraph(GenericGraph_pyx):
             return G.copy(immutable=True)
         return G
 
-    def to_simple(self, to_undirected=True, keep_label='any', immutable=None):
+    def to_simple(self, to_undirected=True, keep_label='any', immutable=None, key=None):
         """
         Return a simple version of the ``self``.
 
@@ -19983,13 +20465,18 @@ class GenericGraph(GenericGraph_pyx):
 
         .. WARNING::
 
-            ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            :exc:`TypeError` might be raised when working with non-comparable
-            objects.
+            ``'min'`` and ``'max'`` only works if the labels (or the values
+            returned by ``key``) can be compared. A :exc:`TypeError` might be
+            raised when working with non-comparable objects.
 
-        - ``immutable`` -- boolean (default: ``Non``); whether to create a
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable copy. ``immutable=None`` (default) means that the
           graph and its copy will behave the same way.
+
+        - ``key`` -- a function (default: ``None``); a function that takes an
+          edge ``(u, v, l)`` as its one argument and returns the value used to
+          compare multiple edges when ``keep_label`` is ``'min'`` or ``'max'``.
+          By default, the labels themselves are compared.
 
         EXAMPLES::
 
@@ -20011,6 +20498,19 @@ class GenericGraph(GenericGraph_pyx):
             [(2, 3, 1), (3, 2, None)]
             sage: G.to_simple(to_undirected=False, keep_label='max').edges(sort=True)
             [(2, 3, 2), (3, 2, None)]
+
+        Labels that cannot be compared can be handled with a ``key``::
+
+            sage: G = DiGraph([(0, 1, {'w': 3}), (0, 1, {'w': 1}), (1, 1, {'w': 0})],
+            ....:             multiedges=True, loops=True)
+            sage: H = G.to_simple(to_undirected=False, keep_label='min',
+            ....:                 key=lambda e: e[2]['w'])
+            sage: H.edges(sort=False)
+            [(0, 1, {'w': 1})]
+            sage: H = G.to_simple(to_undirected=False, keep_label='max',
+            ....:                 key=lambda e: e[2]['w'])
+            sage: H.edges(sort=False)
+            [(0, 1, {'w': 3})]
 
         TESTS:
 
@@ -20037,7 +20537,7 @@ class GenericGraph(GenericGraph_pyx):
         else:
             g = self.copy(immutable=False)
         g.allow_loops(False)
-        g.allow_multiple_edges(False, keep_label=keep_label)
+        g.allow_multiple_edges(False, keep_label=keep_label, key=key)
         if immutable is None:
             immutable = self.is_immutable()
         if immutable:
@@ -21232,7 +21732,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``layout`` -- string (default: ``None``); specifies a layout algorithm
           among ``'acyclic'``, ``'acyclic_dummy'``, ``'circular'``,
-          ``'ranked'``, ``'graphviz'``, ``'planar'``, ``'spring'``,
+          ``'ranked'``, ``'graphviz'``, ``'planar'``, ``'tutte'``, ``'spring'``,
           ``'forest'`` or ``'tree'``
 
         - ``pos`` -- dictionary (default: ``None``); a dictionary of positions
@@ -21300,15 +21800,15 @@ class GenericGraph(GenericGraph_pyx):
             ....:     print("option {} : {}".format(key, value))
             option by_component : Whether to do the spring layout by connected component -- boolean.
             option dim : The dimension of the layout -- 2 or 3.
-            option external_face : A list of the vertices of the external face of the graph, used for Tutte embedding layout.
-            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, theexternal face is a regular polygon.
+            option external_face : A list of the vertices of the external face of the graph if used for Tutte embedding layout; or an edge on the external face if used for the 'planar' layout.
+            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, the external face is a regular polygon.
             option forest_roots : An iterable specifying which vertices to use as roots for the ``layout='forest'`` option. If no root is specified for a tree, then one is chosen close to the center of the tree. Ignored unless ``layout='forest'``.
             option heights : A dictionary mapping heights to the list of vertices at this height.
             option iterations : The number of times to execute the spring layout algorithm.
-            option layout : A layout algorithm -- one of : "acyclic", "circular" (plots the graph with vertices evenly distributed on a circle), "ranked", "graphviz", "planar", "spring" (traditional spring layout, using the graph's current positions as initial positions), or "tree" (the tree will be plotted in levels, depending on minimum distance for the root).
+            option layout : A layout algorithm -- one of: ...
             option prog : Which graphviz layout program to use -- one of "circo", "dot", "fdp", "neato", or "twopi".
             option save_pos : Whether or not to save the computed position for the graph.
-            option spring : Use spring layout to finalize the current layout.
+            option spring : Use spring layout to finalize the current 'ranked' layout.
             option tree_orientation : The direction of tree branches -- 'up', 'down', 'left' or 'right'.
             option tree_root : A vertex designation for drawing trees. A vertex of the tree to be used as the root for the ``layout='tree'`` option. If no root is specified, then one is chosen close to the center of the tree. Ignored unless ``layout='tree'``.
 
@@ -21747,7 +22247,7 @@ class GenericGraph(GenericGraph_pyx):
             children = {root: self.neighbors(root)}
         else:
             children = {root: emb[root]}
-        parent = {u: root for u in children[root]}
+        parent = dict.fromkeys(children[root], root)
 
         # stack[i] is the list of children of stick[i] which have not been given
         # a position yet.
@@ -22322,109 +22822,11 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``pos`` -- an optional positioning dictionary
-
-        - ``layout`` -- string (default: ``None``); specifies a kind of layout
-          to use, takes precedence over pos
-
-          - ``'circular'`` -- plots the graph with vertices evenly distributed
-            on a circle
-
-          - ``'spring'`` -- uses the traditional spring layout, using the
-            graph's current positions as initial positions
-
-          - ``'tree'`` -- the (di)graph must be a tree. One can specify the root
-            of the tree using the keyword tree_root, otherwise a root will be
-            selected at random. Then the tree will be plotted in levels,
-            depending on minimum distance for the root.
-
-          - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
-            a 3-connected, planar graph.
-
-        - ``vertex_labels`` -- boolean (default: ``True``); whether to print
-          vertex labels
-
-        - ``edge_labels`` -- boolean (default: ``False``); whether to print edge
-          labels. If ``True``, the result of ``str(l)`` is printed on the edge
-          for each label `l`. Labels equal to ``None`` are not printed (to set
-          edge labels, see :meth:`set_edge_label`).
-
-        - ``edge_labels_background`` -- the color of the edge labels
-          background. The default is "white". To achieve a transparent
-          background use "transparent".
-
-        - ``vertex_size`` -- size of vertices displayed
-
-        - ``vertex_shape`` -- the shape to draw the vertices, for example
-          ``'o'`` for circle or ``'s'`` for square. Whole list is available at
-          https://matplotlib.org/api/markers_api.html.
-          (Not available for multiedge digraphs.)
-
-        - ``graph_border`` -- boolean (default: ``False``); whether to include a
-          box around the graph
-
-        - ``vertex_colors`` -- dictionary (default: ``None``); optional
-          dictionary to specify vertex colors: each key is a color recognizable
-          by matplotlib, and each corresponding entry is a list of vertices. If
-          a vertex is not listed, it looks invisible on the resulting plot (it
-          doesn't get drawn).
-
-        - ``edge_colors`` -- dictionary (default: ``None``); a dictionary
-          specifying edge colors: each key is a color recognized by matplotlib,
-          and each entry is a list of edges.
-
-        - ``partition`` -- a partition of the vertex set (default: ``None``); if
-          specified, plot will show each cell in a different color.
-          ``vertex_colors`` takes precedence.
-
-        - ``talk`` -- boolean (default: ``False``); if ``True``, prints large
-          vertices with white backgrounds so that labels are legible on slides
-
-        - ``iterations`` -- integer; how many iterations of the spring layout
-          algorithm to go through, if applicable
-
-        - ``color_by_label`` -- boolean or dictionary or function (default:
-          ``False``); whether to color each edge with a different color
-          according to its label; the colors are chosen along a rainbow, unless
-          they are specified by a function or dictionary mapping labels to
-          colors; this option is incompatible with ``edge_color`` and
-          ``edge_colors``.
-
-        - ``heights`` -- dictionary (default: ``None``); if specified, this is a
-          dictionary from a set of floating point heights to a set of vertices
-
-        - ``edge_style`` -- keyword arguments passed into the edge-drawing
-          routine.  This currently only works for directed graphs, since we pass
-          off the undirected graph to networkx
-
-        - ``tree_root`` -- a vertex (default: ``None``); if specified, this
-          vertex is used as the root for the ``layout="tree"`` option.
-          Otherwise, then one is chosen at random. Ignored unless
-          ``layout='tree'``.
-
-        - ``tree_orientation`` -- string (default: ``'down'``); one of "up" or
-          "down".  If "up" (resp., "down"), then the root of the tree will
-          appear on the bottom (resp., top) and the tree will grow upwards
-          (resp. downwards). Ignored unless ``layout='tree'``.
-
-        - ``external_face`` -- list of vertices (default: ``None``); the external face to be made a
-          in the Tutte layout. Ignored unless ``layout='tutte''``.
-
-        - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
-          used as the positions for the external face in the Tutte layout.
-          Ignored unless ``layout='tutte'``.
-
-        - ``save_pos`` -- boolean (default: ``False``); save position computed
-          during plotting
+        See the documentation of the :mod:`sage.graphs.graph_plot` module
+        for supported parameters. In addition, this method supports all
+        parameters of :meth:`sage.plot.graphics.Graphics.show`.
 
         .. NOTE::
-
-            - This method supports any parameter accepted by
-              :meth:`sage.plot.graphics.Graphics.show`.
-
-            - See the documentation of the :mod:`sage.graphs.graph_plot` module
-              for information and examples of how to define parameters that will
-              be applied to **all** graph plots.
 
             - Default parameters for this method *and a specific graph* can also
               be set through the :class:`~sage.misc.decorators.options`
@@ -23846,9 +24248,7 @@ class GenericGraph(GenericGraph_pyx):
             M = self.kirchhoff_matrix(vertices=vertices)
         else:
             M = self.adjacency_matrix(vertices=vertices)
-        evals = M.eigenvalues()
-        evals.sort(reverse=True)
-        return evals
+        return sorted(M.eigenvalues(), reverse=True)
 
     def characteristic_polynomial(self, var='x', laplacian=False):
         r"""
@@ -25141,7 +25541,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from sage.categories.sets_cat import EmptySetError
         try:
-            self.traveling_salesman_problem(use_edge_labels=False, solver=solver,
+            self.traveling_salesman_problem(by_weight=False, solver=solver,
                                             constraint_generation=constraint_generation,
                                             verbose=verbose, verbose_constraints=verbose_constraints,
                                             integrality_tolerance=integrality_tolerance)
@@ -26322,7 +26722,8 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         EXAMPLES:
 
@@ -26408,7 +26809,8 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         EXAMPLES:
 

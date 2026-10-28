@@ -464,7 +464,7 @@ class TensorOperation(VectorCollection):
 
         OUTPUT:
 
-        The index (in :meth:`vectors`) of the image of the tensor
+        The index (in :meth:`~sage.modules.tensor_operations.VectorCollection.vectors`) of the image of the tensor
         product/operation acting on the domain vectors indexed by `i`.
 
         ``None`` is returned if the tensor operation maps the

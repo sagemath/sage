@@ -9,7 +9,7 @@ from sage.features.build_feature import BuildModule
 class Libbraiding(BuildModule):
     r"""
     A :class:`sage.features.Feature` describing the presence of
-    :mod:`sage.libs.braiding`, the interface to libbraiding.
+    ``sage.libs.braiding``, the interface to libbraiding.
 
     EXAMPLES::
 

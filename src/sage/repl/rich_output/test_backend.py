@@ -89,7 +89,7 @@ class TestOutputPlainText(OutputPlainText):
 
 class TestObject(SageObject):
     """
-    Test object with both :meth:`_repr_` and :meth:`_rich_repr_`
+    Test object with both ``_repr_`` and ``_rich_repr_``
     """
 
     def _repr_(self):
@@ -152,7 +152,7 @@ class BackendTest(BackendBase):
         OUTPUT:
 
         Iterable of output container classes. Only the
-        :class:`~sage.repl.rich_repr.test_backend.TestOutputPlainText`
+        :class:`~sage.repl.rich_output.test_backend.TestOutputPlainText`
         output container is supported by the test backend.
 
         EXAMPLES::
@@ -176,7 +176,7 @@ class BackendTest(BackendBase):
 
         INPUT:
 
-        Same as :meth:`displayhook`.
+        Same as :meth:`~sage.repl.rich_output.backend_base.BackendBase.displayhook`.
 
         OUTPUT:
 

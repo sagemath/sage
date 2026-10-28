@@ -123,7 +123,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     All classical crystals of letters should be instances of this class
     or of subclasses. To define a new crystal of letters, one only
     needs to implement a class for the elements (which subclasses
-    :class:`~sage.combinat.crystals.Letter`), with appropriate
+    :class:`~sage.combinat.crystals.letters.Letter`), with appropriate
     `e_i` and `f_i` operations. If the module generator is not `1`, one also
     needs to define the subclass
     :class:`~sage.combinat.crystals.letters.ClassicalCrystalOfLetters` for the

@@ -1,9 +1,18 @@
 r"""
 Elliptic curves over a general field
 
-This module defines the class :class:`EllipticCurve_field`, based on
-:class:`EllipticCurve_generic`, for elliptic curves over general fields.
+This module defines the class
+:class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`, based on
+:class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`, for
+elliptic curves over general fields.
+
+AUTHORS:
+
+- Travis Morrison, Lorenz Panny (2026): :func:`rational_kernel_polynomials`
 """
+
+from __future__ import annotations
+
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -25,7 +34,7 @@ from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from .constructor import EllipticCurve
-from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from .ell_curve_isogeny import EllipticCurveIsogeny, _construct_isogeny, isogeny_codomain_from_kernel
 from . import ell_generic
 
 
@@ -97,7 +106,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
     but are not implemented.
     """
 
-    def quadratic_twist(self, D=None):
+    def quadratic_twist(self, D=None) -> EllipticCurve_field:
         r"""
         Return the quadratic twist of this curve by ``D``.
 
@@ -864,9 +873,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field` into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
-          :func:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
+          :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
 
         OUTPUT:
 
@@ -1034,7 +1043,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
-            :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+            :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_basis`.
 
         AUTHORS:
 
@@ -1304,7 +1313,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         factors of `n`.
 
         If ``algorithm`` is ``"structure"``, this method calls
-        :meth:`torsion_subgroup` and
+        :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
+        and
         :meth:`sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         if algorithm is None:
@@ -1422,7 +1432,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Return a (minimal) set of generators for the `n`-torsion
         subgroup of this elliptic curve.
 
-        This is a thin convenience wrapper around :meth:`torsion_subgroup`;
+        This is a thin convenience wrapper around
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup`;
         all extra arguments ``args`` and keyword arguments ``kwds`` are
         passed on to that method.
 
@@ -1478,7 +1489,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           to be passed on to one of the following methods:
           - :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_subgroup()`
           - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup()`
-          - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_field.torsion_subgroup()`
+          - :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup()`
 
         EXAMPLES::
 
@@ -1697,7 +1708,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``velu_sqrt_bound`` -- integer (default: ``None``); establish the highest
           (prime) degree for which the ``'traditional'`` algorithm should be selected
           instead of ``'velusqrt'``. If ``None``, the default value from
-          :class:`~sage.schemes.elliptic_curves.hom_velusqrt._VeluBoundObj` is used.
+          ``_VeluBoundObj`` is used.
           This value is initially set to 1000, but can be modified by the user.
           If an integer is supplied and the isogeny computation goes through the
           ``'factored'`` algorithm, the same integer is supplied to each factor.
@@ -1895,19 +1906,33 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
         if algorithm == "velusqrt":
             from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
-            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
+            phi = EllipticCurveHom_velusqrt(self, kernel)
+            if model is not None:
+                if codomain is not None:
+                    raise ValueError("cannot specify a codomain curve and model name simultaneously")
+                from sage.schemes.elliptic_curves.ell_field import compute_model
+                codomain = compute_model(phi.codomain(), model)
+            if codomain is not None:
+                phi = phi.codomain().isomorphism_to(codomain) * phi
+            return phi
         if algorithm == "factored":
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            if len(phi.factors()) == 1:
+                phi = phi.factors()[0]
+            return phi
         if algorithm == "traditional":
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
+            return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
         if kernel is not None:
             # Check for multiple points or point of known order
             kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                if len(phi.factors()) == 1:
+                    phi = phi.factors()[0]
+                return phi
 
             if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
                 # Single point on the curve; unpack the list for compatibility with velusqrt
@@ -1927,22 +1952,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # Otherwise fall back to the standard case
                 elif known_order:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                    return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
-        try:
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except NotImplementedError as err:
-            if kernel is None:
-                raise err
-            try:
-                from .ell_curve_isogeny import _factored_isogeny_from_kernel_polynomial
-                return _factored_isogeny_from_kernel_polynomial(self, kernel,
-                                                               codomain=codomain,
-                                                               model=model,
-                                                               check=check)
-            except NotImplementedError:
-                raise err
-        except AttributeError as e:
-            raise RuntimeError("Unable to construct isogeny: %s" % e)
+                    phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                    if len(phi.factors()) == 1:
+                        phi = phi.factors()[0]
+                    return phi
+
+        return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
     def isogeny_codomain(self, kernel):
         r"""
@@ -3159,12 +3174,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :const:`~sage.rings.infinity.Infinity`;
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
           alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `[2]P`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `[2]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::
@@ -3287,12 +3302,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         INPUT:
 
         - ``xP``, ``xQ``, ``xPQ`` -- `x`-coordinates of points `P`, `Q`, and `P-Q` on this curve,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, each of these values should
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, each of these values should
           be a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `P + Q`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `P + Q`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::
@@ -3466,12 +3481,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``n`` -- integer
 
-        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :const:`~sage.rings.infinity.Infinity`;
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
           alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `[n]P`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `[n]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::
@@ -3616,6 +3631,78 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
+
+def rational_kernel_polynomials(E, l):
+    r"""
+    Returns an iterator over all kernel polynomials
+    of `E` that define an `\ell`-isogeny.
+
+    The `j`-invariant of `E` must not equal `0` or `1728`.
+
+    INPUT:
+
+    - ``E`` -- elliptic curve
+    - ``l`` -- prime integer
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve('26b1')
+        sage: next(rational_kernel_polynomials(E, 7))
+        x^3 - 3*x^2 - x + 3
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve(GF(419), [1, 280])
+        sage: next(rational_kernel_polynomials(E, 13))
+        x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337
+        sage: next(rational_kernel_polynomials(E, 11))
+        Traceback (most recent call last):
+        ...
+        StopIteration
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: list(rational_kernel_polynomials(E, 13))
+        [x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337,
+         x^6 + 151*x^5 + 140*x^4 + 392*x^3 + 12*x^2 + 100*x + 333]
+        sage: list(rational_kernel_polynomials(E, 11))
+        []
+
+    ALGORITHM: Adapted from the implementation
+    https://github.com/travismo/beyond-the-SEA/blob/edd845a/isogenies.sage
+    of [MPSW25]_.
+    """
+    if E.j_invariant() in (0, 1728):
+        raise NotImplementedError('the case j(E) ∈ {0, 1728} is currently not supported')
+
+    if any(E.a_invariants()[:-2]):
+        Ew = E.short_weierstrass_model()
+        iso = E.isomorphism_to(Ew)
+    else:
+        Ew = E
+        iso = None
+
+    from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+    j = E.j_invariant()
+    F = classical_modular_polynomial(l, j)
+    x = F.parent().gen()
+    F //= x**F.valuation(x)
+    F //= (x - 1728)**F.valuation(x - 1728)
+
+    from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model, compute_isogeny_kernel_polynomial
+
+    def compute(Etilde):
+        if iso:
+            return (Ew.isogeny(None, Etilde, l) * iso).kernel_polynomial()
+        return compute_isogeny_kernel_polynomial(E, Etilde, l)
+
+    for j in F.roots(multiplicities=False):
+        for Etilde in normalized_model(Ew, j, l, all=True):
+            yield compute(Etilde)
 
 
 def point_of_order(E, n):

@@ -57,7 +57,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.categories.morphism import Morphism
 from sage.structure.unique_representation import CachedRepresentation
 from sage.schemes.generic.homset import SchemeHomset_generic
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
@@ -255,7 +254,8 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
         Assuming this homset is an endomorphism ring, check whether
         it is a commutative ring.
 
-        ALGORITHM: :meth:`EllipticCurve_field.endomorphism_ring_is_commutative`
+        ALGORITHM:
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.endomorphism_ring_is_commutative`
 
         EXAMPLES::
 

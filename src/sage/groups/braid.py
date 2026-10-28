@@ -54,7 +54,8 @@ AUTHORS:
 - Sebastian Oehms (July and Nov 2018): add other versions for
   burau_matrix (unitary + simple, see :issue:`25760` and :issue:`26657`)
 - Moritz Firsching (Sept 2021): Colored Jones polynomial
-- Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
+- Sebastian Oehms (May 2022): add
+  :meth:`~sage.groups.braid.Braid.links_gould_polynomial`
 """
 
 ##############################################################################
@@ -513,11 +514,11 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``color`` -- (default: ``'rainbow'``) the color of the
           strands. Possible values are:
 
-            * ``'rainbow'``, uses :meth:`~sage.plot.colors.rainbow`
+            * ``'rainbow'``, uses :func:`~sage.plot.colors.rainbow`
               according to the number of strands.
 
-            * a valid color name for :meth:`~sage.plot.bezier_path`
-              and :meth:`~sage.plot.line`. Used for all strands.
+            * a valid color name for :func:`~sage.plot.bezier_path.bezier_path`
+              and :func:`~sage.plot.line.line`. Used for all strands.
 
             * a list or a tuple of colors for each individual strand.
 
@@ -537,7 +538,8 @@ class Braid(FiniteTypeArtinGroupElement):
           ``1``); the aspect ratio
 
         - ``**kwds`` -- other keyword options that are passed to
-          :meth:`~sage.plot.bezier_path` and :meth:`~sage.plot.line`
+          :func:`~sage.plot.bezier_path.bezier_path` and
+          :func:`~sage.plot.line.line`
 
         EXAMPLES::
 
@@ -644,10 +646,11 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``color`` -- (default: ``'rainbow'``) the color of the
           strands. Possible values are:
 
-            * ``'rainbow'``, uses :meth:`~sage.plot.colors.rainbow`
+            * ``'rainbow'``, uses :func:`~sage.plot.colors.rainbow`
               according to the number of strands.
 
-            * a valid color name for :meth:`~sage.plot.plot3d.bezier3d`.
+            * a valid color name for
+              :func:`~sage.plot.plot3d.shapes2.bezier3d`.
               Used for all strands.
 
             * a list or a tuple of colors for each individual strand.
@@ -1026,7 +1029,7 @@ class Braid(FiniteTypeArtinGroupElement):
             R = LaurentPolynomialRing(ZZ, 'A')
             A = R.gens()[0]
             one = ZZ.one()
-            quantum_integer = lambda d: R({i: one for i in range(-2*d, 2*d+1, 4)})
+            quantum_integer = lambda d: R(dict.fromkeys(range(-2 * d, 2 * d + 1, 4), one))
         else:
             A = variab
             quantum_integer = lambda d: (A**(2*(d+1))-A**(-2*(d+1))) // (A**2-A**(-2))

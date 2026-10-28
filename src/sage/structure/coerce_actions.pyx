@@ -682,7 +682,7 @@ cdef class IntegerAction(Action):
 
     - ``Z`` -- a type or parent representing integers
 
-    For the other arguments, see :class:`Action`.
+    For the other arguments, see :class:`~sage.categories.action.Action`.
 
     .. NOTE::
 

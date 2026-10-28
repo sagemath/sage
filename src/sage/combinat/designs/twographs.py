@@ -97,7 +97,9 @@ class TwoGraph(IncidenceStructure):
         r"""
         Test if the :class:`TwoGraph` is regular, i.e. is a 2-design.
 
-        Namely, each pair of elements of :meth:`ground_set` is contained in
+        Namely, each pair of elements of
+        :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
+        is contained in
         exactly ``alpha`` triples.
 
         INPUT:
@@ -135,7 +137,8 @@ class TwoGraph(IncidenceStructure):
 
         INPUT:
 
-        - ``v`` -- an element of :meth:`ground_set`
+        - ``v`` -- an element of
+          :meth:`~sage.combinat.designs.incidence_structures.IncidenceStructure.ground_set`
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
           immutable or a mutable graph
@@ -219,7 +222,8 @@ def is_twograph(T) -> bool:
 
     INPUT:
 
-    - ``T`` -- an :class:`incidence structure <sage.combinat.designs.IncidenceStructure>`
+    - ``T`` -- an :class:`incidence structure
+      <sage.combinat.designs.incidence_structures.IncidenceStructure>`
 
     EXAMPLES:
 
