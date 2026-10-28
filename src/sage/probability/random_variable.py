@@ -66,11 +66,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
           is the discrete function on ``X``
         - ``codomain`` -- (default: the real field) the codomain of the
           random variable
-        - ``check`` -- boolean (default: ``False``); if ``True`` and
-          ``self is X`` (that is, we are initializing a
-          :class:`DiscreteProbabilitySpace` through its inherited
-          :class:`DiscreteRandomVariable` interface), verify that the
-          values of ``f`` sum to one.
+        - ``check`` -- boolean (default: ``False``); if ``True``, verify
+          that the values of ``f`` sum to one
 
         EXAMPLES::
 
@@ -79,12 +76,16 @@ class DiscreteRandomVariable(RandomVariable_generic):
             sage: F.function()
             {1: 1, 2: 2}
 
-        The ``check`` flag has no effect for a normal random variable,
-        since its values need not sum to one::
+        With ``check=True``, the values of ``f`` must sum to one::
 
-            sage: F = DiscreteRandomVariable(X, {1: 1, 2: 2}, check=True)
+            sage: F = DiscreteRandomVariable(X, {1: 1/2, 2: 1/2}, check=True)
             sage: F.function()
-            {1: 1, 2: 2}
+            {1: 1/2, 2: 1/2}
+
+            sage: DiscreteRandomVariable(X, {1: 1, 2: 2}, check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: argument P (= {1: 1, 2: 2}) does not define a probability function
         """
         if not isinstance(X, DiscreteProbabilitySpace):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)
@@ -93,14 +94,13 @@ class DiscreteRandomVariable(RandomVariable_generic):
             RR = RealField()
         else:
             RR = codomain
-        if check and self is X:
+        if check:
             one = sum(f.values())
             if isinstance(RR, RationalField):
-                if not one == 1:
+                if one != 1:
                     raise TypeError("argument P (= %s) does not define a probability function" % f)
-            else:
-                if not abs(one - 1) < 2 ** (-RR.precision() + 1):
-                    raise TypeError("argument P (= %s) does not define a probability function" % f)
+            elif not abs(one - 1) < 2 ** (-RR.precision() + 1):
+                raise TypeError("argument P (= %s) does not define a probability function" % f)
         RandomVariable_generic.__init__(self, X, RR)
         self._function = f
 
