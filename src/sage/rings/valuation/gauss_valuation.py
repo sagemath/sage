@@ -732,6 +732,15 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: f = x^10/2 + 1
             sage: v.simplify(f)
             (2^-1 + O(2^4))*x^10 + 1 + O(2^5)
+
+        TESTS::
+
+            sage: R.<u> = Qq(4, 5)
+            sage: S.<x> = R[]
+            sage: v = GaussValuation(S)
+            sage: f = x^10/2 + 1
+            sage: v.simplify(f, size_heuristic_bound=1)
+            (2^-1 + O(2^4))*x^10
         """
         f = self.domain().coerce(f)
 
