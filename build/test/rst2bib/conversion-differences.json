@@ -1,0 +1,2955 @@
+{
+  "Ack2016": {
+    "text": {
+      "before": "Lennart Ackermans, Oplosbaarheid van Kegelsneden. http://www.math.leidenuniv.nl/nl/theses/Bachelor/ .",
+      "after": "Lennart Ackermans, Oplosbaarheid van Kegelsneden. https://math.leidenuniv.nl/scripties/BachAckermans.pdf ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.leidenuniv.nl/nl/theses/Bachelor/",
+          "http://www.math.leidenuniv.nl/nl/theses/Bachelor/"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.leidenuniv.nl/scripties/BachAckermans.pdf",
+          "https://math.leidenuniv.nl/scripties/BachAckermans.pdf"
+        ]
+      ]
+    }
+  },
+  "AKMMMP2002": {
+    "text": {
+      "before": "Sang Yook An, Seog Young Kim, David C. Marshall, Susan H. Marshall, William G. McCallum, Alexander R. Perlis, Jacobians of Genus One Curves , Journal of Number Theory 90 (2002), pp.304–315, http://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf",
+      "after": "Sang Yook An, Seog Young Kim, David C. Marshall, Susan H. Marshall, William G. McCallum, Alexander R. Perlis, Jacobians of Genus One Curves , Journal of Number Theory 90 (2002), pp.304–315, https://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf",
+          "http://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf",
+          "https://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf"
+        ]
+      ]
+    }
+  },
+  "AndHonk97": {
+    "text": {
+      "before": "Ian Anderson and Iiro Honkala, A short course in Combinatorial Designs , Internet Editions, Spring 1997. http://www.utu.fi/~honkala/designs.ps",
+      "after": "Ian Anderson and Iiro Honkala, A short course in Combinatorial Designs , Internet Editions, Spring 1997. https://apachepersonal.miun.se/~tomnil/designs/designsShortC.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.utu.fi/~honkala/designs.ps",
+          "http://www.utu.fi/~honkala/designs.ps"
+        ]
+      ],
+      "after": [
+        [
+          "https://apachepersonal.miun.se/~tomnil/designs/designsShortC.pdf",
+          "https://apachepersonal.miun.se/~tomnil/designs/designsShortC.pdf"
+        ]
+      ]
+    }
+  },
+  "At1992": {
+    "text": {
+      "before": "M. D. Atkinson. Solomon’s descent algebra revisited. Bull. London Math. Soc. 24 (1992) 545-551. http://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf",
+      "after": "M. D. Atkinson. Solomon’s descent algebra revisited. Bull. London Math. Soc. 24 (1992) 545-551. https://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf",
+          "http://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf",
+          "https://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf"
+        ]
+      ]
+    }
+  },
+  "Atk1992": {
+    "text": {
+      "before": "A. Oliver L. Atkin. Probabilistic primality testing (Chapter 30, Section 4) In Ph. Flajolet and P. Zimmermann, editors, Algorithms Seminar, 1991-1992. INRIA Research Report 1779, 1992, http://www.inria.fr/rrrt/rr-1779.html . Summary by F. Morain. https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf",
+      "after": "A. Oliver L. Atkin. Probabilistic primality testing (Chapter 30, Section 4) In Ph. Flajolet and P. Zimmermann, editors, Algorithms Seminar, 1991-1992. INRIA Research Report 1779, 1992, https://inria.hal.science/inria-00077019 . Summary by F. Morain. https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.inria.fr/rrrt/rr-1779.html",
+          "http://www.inria.fr/rrrt/rr-1779.html"
+        ],
+        [
+          "https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf",
+          "https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://inria.hal.science/inria-00077019",
+          "https://inria.hal.science/inria-00077019"
+        ],
+        [
+          "https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf",
+          "https://inria.hal.science/inria-00077019v1/file/RR-1779.pdf"
+        ]
+      ]
+    }
+  },
+  "BCJ2007": {
+    "text": {
+      "before": "Gregory V. Bard, and Nicolas T. Courtois, and Chris Jefferson. Efficient Methods for Conversion and Solution of Sparse Systems of Low-Degree Multivariate Polynomials over GF(2) via SAT-Solvers . Cryptology ePrint Archive: Report 2007/024. available at http://eprint.iacr.org/2007/024",
+      "after": "Gregory V. Bard, and Nicolas T. Courtois, and Chris Jefferson. Efficient Methods for Conversion and Solution of Sparse Systems of Low-Degree Multivariate Polynomials over GF(2) via SAT-Solvers . Cryptology ePrint Archive: Report 2007/024. available at https://eprint.iacr.org/2007/024"
+    },
+    "links": {
+      "before": [
+        [
+          "http://eprint.iacr.org/2007/024",
+          "http://eprint.iacr.org/2007/024"
+        ]
+      ],
+      "after": [
+        [
+          "https://eprint.iacr.org/2007/024",
+          "https://eprint.iacr.org/2007/024"
+        ]
+      ]
+    }
+  },
+  "Bee": {
+    "text": {
+      "before": "Robert A. Beezer, A First Course in Linear Algebra , http://linear.ups.edu/ . Accessed 15 July 2010.",
+      "after": "Robert A. Beezer, A First Course in Linear Algebra , https://linear.pugetsound.edu/ . Accessed 15 July 2010."
+    },
+    "links": {
+      "before": [
+        [
+          "http://linear.ups.edu/",
+          "http://linear.ups.edu/"
+        ]
+      ],
+      "after": [
+        [
+          "https://linear.pugetsound.edu/",
+          "https://linear.pugetsound.edu/"
+        ]
+      ]
+    }
+  },
+  "BH2012": {
+    "text": {
+      "before": "A. Brouwer and W. Haemers, Spectra of graphs , Springer, 2012, http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf https://doi.org/10.1007/978-1-4614-1939-6",
+      "after": "A. Brouwer and W. Haemers, Spectra of graphs , Springer, 2012, https://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf https://doi.org/10.1007/978-1-4614-1939-6"
+    },
+    "links": {
+      "before": [
+        [
+          "http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf",
+          "http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf"
+        ],
+        [
+          "https://doi.org/10.1007/978-1-4614-1939-6",
+          "https://doi.org/10.1007/978-1-4614-1939-6"
+        ]
+      ],
+      "after": [
+        [
+          "https://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf",
+          "https://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf"
+        ],
+        [
+          "https://doi.org/10.1007/978-1-4614-1939-6",
+          "https://doi.org/10.1007/978-1-4614-1939-6"
+        ]
+      ]
+    }
+  },
+  "BHS2008": {
+    "text": {
+      "before": "Robert Bradshaw, David Harvey and William Stein. strassen_window_multiply_c. strassen.pyx, Sage 3.0, 2008. http://www.sagemath.org",
+      "after": "Robert Bradshaw, David Harvey and William Stein. strassen_window_multiply_c. strassen.pyx, Sage 3.0, 2008. https://www.sagemath.org"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.sagemath.org",
+          "http://www.sagemath.org"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.sagemath.org",
+          "https://www.sagemath.org"
+        ]
+      ]
+    }
+  },
+  "BIP": {
+    "text": {
+      "before": "Rene Birkner, Nathan Owen Ilten, and Lars Petersen: Computations with equivariant toric vector bundles , The Journal of Software for Algebra and Geometry: Macaulay2. http://msp.org/jsag/2010/2-1/p03.xhtml https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/",
+      "after": "Rene Birkner, Nathan Owen Ilten, and Lars Petersen: Computations with equivariant toric vector bundles , The Journal of Software for Algebra and Geometry: Macaulay2. https://msp.org/jsag/2010/2-1/p03.xhtml https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://msp.org/jsag/2010/2-1/p03.xhtml",
+          "http://msp.org/jsag/2010/2-1/p03.xhtml"
+        ],
+        [
+          "https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/",
+          "https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/"
+        ]
+      ],
+      "after": [
+        [
+          "https://msp.org/jsag/2010/2-1/p03.xhtml",
+          "https://msp.org/jsag/2010/2-1/p03.xhtml"
+        ],
+        [
+          "https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/",
+          "https://web.archive.org/web/20150915112020/http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/ToricVectorBundles/html/"
+        ]
+      ]
+    }
+  },
+  "BL1984": {
+    "text": {
+      "before": "A. Brouwer, J. van Lint, Strongly regular graphs and partial geometries , Enumeration and design, (Waterloo, Ont., 1982) (1984): 85-122. https://web.archive.org/web/20130423123100/http://oai.cwi.nl/oai/asset/1817/1817A.pdf",
+      "after": "A. Brouwer, J. van Lint, Strongly regular graphs and partial geometries , Enumeration and design, (Waterloo, Ont., 1982) (1984): 85-122. https://ir.cwi.nl/pub/1817"
+    },
+    "links": {
+      "before": [
+        [
+          "https://web.archive.org/web/20130423123100/http://oai.cwi.nl/oai/asset/1817/1817A.pdf",
+          "https://web.archive.org/web/20130423123100/http://oai.cwi.nl/oai/asset/1817/1817A.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://ir.cwi.nl/pub/1817",
+          "https://ir.cwi.nl/pub/1817"
+        ]
+      ]
+    }
+  },
+  "BM2016": {
+    "text": {
+      "before": "Gunnar Brinkmann, Brendan McKay, Guide to using plantri , version 5.0, 2016. http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt",
+      "after": "Gunnar Brinkmann, Brendan McKay, Guide to using plantri , version 5.0, 2016. https://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt"
+    },
+    "links": {
+      "before": [
+        [
+          "http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt",
+          "http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt"
+        ]
+      ],
+      "after": [
+        [
+          "https://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt",
+          "https://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt"
+        ]
+      ]
+    }
+  },
+  "Bob2013": {
+    "text": {
+      "before": "J.W. Bober. Conditionally bounding analytic ranks of elliptic curves . ANTS 10, 2013. http://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf",
+      "after": "J.W. Bober. Conditionally bounding analytic ranks of elliptic curves . ANTS 10, 2013. https://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf",
+          "http://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf",
+          "https://msp.org/obs/2013/1-1/obs-v1-n1-p07-s.pdf"
+        ]
+      ]
+    }
+  },
+  "BPW2006": {
+    "text": {
+      "before": "J. Buchmann, A. Pychkine, R.-P. Weinmann Block Ciphers Sensitive to Groebner Basis Attacks in Topics in Cryptology – CT RSA’06; LNCS 3860; pp. 313–331; Springer Verlag 2006; pre-print available at http://eprint.iacr.org/2005/200",
+      "after": "J. Buchmann, A. Pychkine, R.-P. Weinmann Block Ciphers Sensitive to Groebner Basis Attacks in Topics in Cryptology – CT RSA’06; LNCS 3860; pp. 313–331; Springer Verlag 2006; pre-print available at https://eprint.iacr.org/2005/200"
+    },
+    "links": {
+      "before": [
+        [
+          "http://eprint.iacr.org/2005/200",
+          "http://eprint.iacr.org/2005/200"
+        ]
+      ],
+      "after": [
+        [
+          "https://eprint.iacr.org/2005/200",
+          "https://eprint.iacr.org/2005/200"
+        ]
+      ]
+    }
+  },
+  "Br2016": {
+    "text": {
+      "before": "Bresenham’s Line Algorithm , Python, 26 December 2016. http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm",
+      "after": "Bresenham’s Line Algorithm , Python, 26 December 2016. https://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm",
+          "http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm",
+          "https://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm"
+        ]
+      ]
+    }
+  },
+  "Bre1993": {
+    "text": {
+      "before": "Richard P. Brent. On computing factors of cyclotomic polynomials . Mathematics of Computation. 61 (1993). No. 203. pp 131–149. https://arxiv.org/abs/1004.5466v1 . http://www.jstor.org/stable/2152941",
+      "after": "Richard P. Brent. On computing factors of cyclotomic polynomials . Mathematics of Computation. 61 (1993). No. 203. pp 131–149. https://arxiv.org/abs/1004.5466v1 . https://www.jstor.org/stable/2152941"
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/1004.5466v1",
+          "https://arxiv.org/abs/1004.5466v1"
+        ],
+        [
+          "http://www.jstor.org/stable/2152941",
+          "http://www.jstor.org/stable/2152941"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/1004.5466v1",
+          "https://arxiv.org/abs/1004.5466v1"
+        ],
+        [
+          "https://www.jstor.org/stable/2152941",
+          "https://www.jstor.org/stable/2152941"
+        ]
+      ]
+    }
+  },
+  "Bro1989": {
+    "text": {
+      "before": "A. Broder, Generating random spanning trees , Proceedings of the 30th IEEE Symposium on Foundations of Computer Science, 1989, pp. 442-447. https://doi.org/10.1109/SFCS.1989.63516 , < http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf >_",
+      "after": "A. Broder, Generating random spanning trees , Proceedings of the 30th IEEE Symposium on Foundations of Computer Science, 1989, pp. 442-447. https://doi.org/10.1109/SFCS.1989.63516 , < https://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf >_"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1109/SFCS.1989.63516",
+          "https://doi.org/10.1109/SFCS.1989.63516"
+        ],
+        [
+          "http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf",
+          "http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1109/SFCS.1989.63516",
+          "https://doi.org/10.1109/SFCS.1989.63516"
+        ],
+        [
+          "https://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf",
+          "https://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf"
+        ]
+      ]
+    }
+  },
+  "BS2003": {
+    "text": {
+      "before": "I. Bouyukliev and J. Simonis, Some new results on optimal codes over \\(F_5\\) , Designs, Codes and Cryptography 30, no. 1 (2003): 97-111, http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf .",
+      "after": "I. Bouyukliev and J. Simonis, Some new results on optimal codes over \\(F_5\\) , Designs, Codes and Cryptography 30, no. 1 (2003): 97-111, https://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf",
+          "http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf",
+          "https://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf"
+        ]
+      ]
+    }
+  },
+  "BV2004": {
+    "text": {
+      "before": "Jean-Luc Baril, Vincent Vajnovszki. Gray code for derangements . Discrete Applied Math. 140 (2004) https://doi.org/10.1016/j.dam.2003.06.002 http://jl.baril.u-bourgogne.fr/derange.pdf",
+      "after": "Jean-Luc Baril, Vincent Vajnovszki. Gray code for derangements . Discrete Applied Math. 140 (2004) https://doi.org/10.1016/j.dam.2003.06.002 https://jl.baril.u-bourgogne.fr/derange.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1016/j.dam.2003.06.002",
+          "https://doi.org/10.1016/j.dam.2003.06.002"
+        ],
+        [
+          "http://jl.baril.u-bourgogne.fr/derange.pdf",
+          "http://jl.baril.u-bourgogne.fr/derange.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1016/j.dam.2003.06.002",
+          "https://doi.org/10.1016/j.dam.2003.06.002"
+        ],
+        [
+          "https://jl.baril.u-bourgogne.fr/derange.pdf",
+          "https://jl.baril.u-bourgogne.fr/derange.pdf"
+        ]
+      ]
+    }
+  },
+  "BvR1982": {
+    "text": {
+      "before": "Andries Brouwer and John van Rees, More mutually orthogonal Latin squares , Discrete Mathematics, vol.39, num.3, pages 263-281, 1982 https://web.archive.org/web/20130423122429/http://oai.cwi.nl/oai/asset/304/0304A.pdf",
+      "after": "Andries Brouwer and John van Rees, More mutually orthogonal Latin squares , Discrete Mathematics, vol.39, num.3, pages 263-281, 1982 https://ir.cwi.nl/pub/304"
+    },
+    "links": {
+      "before": [
+        [
+          "https://web.archive.org/web/20130423122429/http://oai.cwi.nl/oai/asset/304/0304A.pdf",
+          "https://web.archive.org/web/20130423122429/http://oai.cwi.nl/oai/asset/304/0304A.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://ir.cwi.nl/pub/304",
+          "https://ir.cwi.nl/pub/304"
+        ]
+      ]
+    }
+  },
+  "BW1994": {
+    "text": {
+      "before": "M. Burrows, D.J. Wheeler, A block-sorting lossless data compression algorithm , HP Lab Technical Report, 1994, available at http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html",
+      "after": "M. Burrows, D.J. Wheeler, A block-sorting lossless data compression algorithm , HP Lab Technical Report, 1994, available at https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html",
+          "http://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html",
+          "https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html"
+        ]
+      ]
+    }
+  },
+  "CB2007": {
+    "text": {
+      "before": "Nicolas Courtois, Gregory V. Bard: Algebraic Cryptanalysis of the Data Encryption Standard, In 11-th IMA Conference, Cirencester, UK, 18-20 December 2007, Springer LNCS 4887. See also http://eprint.iacr.org/2006/402/ .",
+      "after": "Nicolas Courtois, Gregory V. Bard: Algebraic Cryptanalysis of the Data Encryption Standard, In 11-th IMA Conference, Cirencester, UK, 18-20 December 2007, Springer LNCS 4887. See also https://eprint.iacr.org/2006/402/ ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://eprint.iacr.org/2006/402/",
+          "http://eprint.iacr.org/2006/402/"
+        ]
+      ],
+      "after": [
+        [
+          "https://eprint.iacr.org/2006/402/",
+          "https://eprint.iacr.org/2006/402/"
+        ]
+      ]
+    }
+  },
+  "CE2001": {
+    "text": {
+      "before": "Raul Cordovil and Gwihen Etienne. A note on the Orlik-Solomon algebra . Europ. J. Combinatorics. 22 (2001). pp. 165-170. http://www.math.ist.utl.pt/~rcordov/Ce.pdf",
+      "after": "Raul Cordovil and Gwihen Etienne. A note on the Orlik-Solomon algebra . Europ. J. Combinatorics. 22 (2001). pp. 165-170. https://www.math.ist.utl.pt/~rcordov/Ce.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.ist.utl.pt/~rcordov/Ce.pdf",
+          "http://www.math.ist.utl.pt/~rcordov/Ce.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.ist.utl.pt/~rcordov/Ce.pdf",
+          "https://www.math.ist.utl.pt/~rcordov/Ce.pdf"
+        ]
+      ]
+    }
+  },
+  "CGW2013": {
+    "text": {
+      "before": "Daniel Cabarcas, Florian Göpfert, and Patrick Weiden. Provably Secure LWE-Encryption with Uniform Secret. Cryptology ePrint Archive, Report 2013/164. 2013. 2013/164. http://eprint.iacr.org/2013/164",
+      "after": "Daniel Cabarcas, Florian Göpfert, and Patrick Weiden. Provably Secure LWE-Encryption with Uniform Secret. Cryptology ePrint Archive, Report 2013/164. 2013. 2013/164. https://eprint.iacr.org/2013/164"
+    },
+    "links": {
+      "before": [
+        [
+          "http://eprint.iacr.org/2013/164",
+          "http://eprint.iacr.org/2013/164"
+        ]
+      ],
+      "after": [
+        [
+          "https://eprint.iacr.org/2013/164",
+          "https://eprint.iacr.org/2013/164"
+        ]
+      ]
+    }
+  },
+  "Cha2006": {
+    "text": {
+      "before": "Ruth Charney. An introduction to right-angled Artin groups . http://people.brandeis.edu/~charney/papers/RAAGfinal.pdf , https://arxiv.org/abs/math/0610668 .",
+      "after": "Ruth Charney. An introduction to right-angled Artin groups . https://people.brandeis.edu/~charney/papers/RAAGfinal.pdf , https://arxiv.org/abs/math/0610668 ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://people.brandeis.edu/~charney/papers/RAAGfinal.pdf",
+          "http://people.brandeis.edu/~charney/papers/RAAGfinal.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/math/0610668",
+          "https://arxiv.org/abs/math/0610668"
+        ]
+      ],
+      "after": [
+        [
+          "https://people.brandeis.edu/~charney/papers/RAAGfinal.pdf",
+          "https://people.brandeis.edu/~charney/papers/RAAGfinal.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/math/0610668",
+          "https://arxiv.org/abs/math/0610668"
+        ]
+      ]
+    }
+  },
+  "ClaytonSmith": {
+    "text": {
+      "before": "Clayton Smith, On the existence of \\((v,5,1)\\) - BIBD . http://www.argilo.net/files/bibd.pdf",
+      "after": "Clayton Smith, On the existence of \\((v,5,1)\\) - BIBD . https://www.argilo.net/files/bibd.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.argilo.net/files/bibd.pdf",
+          "http://www.argilo.net/files/bibd.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.argilo.net/files/bibd.pdf",
+          "https://www.argilo.net/files/bibd.pdf"
+        ]
+      ]
+    }
+  },
+  "Coh1981": {
+    "text": {
+      "before": "A. M. Cohen, A synopsis of known distance-regular graphs with large diameters , Stichting Mathematisch Centrum, 1981. http://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775",
+      "after": "A. M. Cohen, A synopsis of known distance-regular graphs with large diameters , Stichting Mathematisch Centrum, 1981. https://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775"
+    },
+    "links": {
+      "before": [
+        [
+          "http://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775",
+          "http://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775"
+        ]
+      ],
+      "after": [
+        [
+          "https://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775",
+          "https://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775"
+        ]
+      ]
+    }
+  },
+  "Cohen1": {
+    "id": {
+      "before": "cohen1",
+      "after": "coh2000"
+    },
+    "text": {
+      "before": "H. Cohen, Advanced topics in computational number theory, Springer, 2000.",
+      "after": "Henri Cohen, Advanced topics in computational number theory, Graduate Texts in Mathematics, vol. 193, Springer-Verlag, New York, 2000."
+    }
+  },
+  "Con": {
+    "text": {
+      "before": "Keith Conrad, Groups of order 12 , http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf , accessed 21 October 2009.",
+      "after": "Keith Conrad, Groups of order 12 , https://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf , accessed 21 October 2009."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf",
+          "http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf",
+          "https://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf"
+        ]
+      ]
+    }
+  },
+  "Con2013": {
+    "text": {
+      "before": "Keith Conrad: Exterior powers , http://www.math.uconn.edu/~kconrad/blurbs/",
+      "after": "Keith Conrad: Exterior powers , https://www.math.uconn.edu/~kconrad/blurbs/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.uconn.edu/~kconrad/blurbs/",
+          "http://www.math.uconn.edu/~kconrad/blurbs/"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.uconn.edu/~kconrad/blurbs/",
+          "https://www.math.uconn.edu/~kconrad/blurbs/"
+        ]
+      ]
+    }
+  },
+  "Con2015": {
+    "text": {
+      "before": "Keith Conrad: Tensor products , http://www.math.uconn.edu/~kconrad/blurbs/",
+      "after": "Keith Conrad: Tensor products , https://www.math.uconn.edu/~kconrad/blurbs/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.uconn.edu/~kconrad/blurbs/",
+          "http://www.math.uconn.edu/~kconrad/blurbs/"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.uconn.edu/~kconrad/blurbs/",
+          "https://www.math.uconn.edu/~kconrad/blurbs/"
+        ]
+      ]
+    }
+  },
+  "Con2018": {
+    "text": {
+      "before": "Anthony Conway, Notes On The Levine-Tristram Signature Function , July 2018 http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf",
+      "after": "Anthony Conway, Notes On The Levine-Tristram Signature Function , July 2018 https://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf",
+          "http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf",
+          "https://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf"
+        ]
+      ]
+    }
+  },
+  "Conr": {
+    "text": {
+      "before": "Keith Conrad, Artin-Hasse-Type Series and Roots of Unity , http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf",
+      "after": "Keith Conrad, Artin-Hasse-Type Series and Roots of Unity , https://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf",
+          "http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf",
+          "https://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf"
+        ]
+      ]
+    }
+  },
+  "Deli2012": {
+    "text": {
+      "before": "Pierre Deligne, Multizêtas, d’après Francis Brown , Séminaire Bourbaki, janvier 2012. http://www.bourbaki.ens.fr/TEXTES/1048.pdf",
+      "after": "Pierre Deligne, Multizêtas, d’après Francis Brown , Séminaire Bourbaki, janvier 2012. https://www.bourbaki.fr/TEXTES/1048.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.bourbaki.ens.fr/TEXTES/1048.pdf",
+          "http://www.bourbaki.ens.fr/TEXTES/1048.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.bourbaki.fr/TEXTES/1048.pdf",
+          "https://www.bourbaki.fr/TEXTES/1048.pdf"
+        ]
+      ]
+    }
+  },
+  "Delsarte48": {
+    "text": {
+      "before": "S. Delsarte, Fonctions de Möbius Sur Les Groupes Abéliens Finis , Annals of Mathematics, second series, Vol. 45, No. 3, (Jul 1948), pp. 600-609. http://www.jstor.org/stable/1969047",
+      "after": "S. Delsarte, Fonctions de Möbius Sur Les Groupes Abéliens Finis , Annals of Mathematics, second series, Vol. 49, No. 3, (Jul 1948), pp. 600-609. https://www.jstor.org/stable/1969047"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.jstor.org/stable/1969047",
+          "http://www.jstor.org/stable/1969047"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.jstor.org/stable/1969047",
+          "https://www.jstor.org/stable/1969047"
+        ]
+      ]
+    }
+  },
+  "Do2009": {
+    "text": {
+      "before": "P. Dobcsanyi et al. DesignTheory.org. http://designtheory.org/database/",
+      "after": "P. Dobcsanyi et al. DesignTheory.org. https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://designtheory.org/database/",
+          "http://designtheory.org/database/"
+        ]
+      ],
+      "after": [
+        [
+          "https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/",
+          "https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/"
+        ]
+      ]
+    }
+  },
+  "dotspec": {
+    "text": {
+      "before": "http://www.graphviz.org/doc/info/lang.html",
+      "after": "https://www.graphviz.org/doc/info/lang.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.graphviz.org/doc/info/lang.html",
+          "http://www.graphviz.org/doc/info/lang.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.graphviz.org/doc/info/lang.html",
+          "https://www.graphviz.org/doc/info/lang.html"
+        ]
+      ]
+    }
+  },
+  "Dro1987": {
+    "text": {
+      "before": "Carl Droms. Isomorphisms of graph groups . Proc. of the Amer. Math. Soc. 100 (1987). No 3. http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf",
+      "after": "Carl Droms. Isomorphisms of graph groups . Proc. of the Amer. Math. Soc. 100 (1987). No 3. https://doi.org/10.2307/2046419"
+    },
+    "links": {
+      "before": [
+        [
+          "http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf",
+          "http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.2307/2046419",
+          "https://doi.org/10.2307/2046419"
+        ]
+      ]
+    }
+  },
+  "Eb1989": {
+    "text": {
+      "before": "W. Eberly, Computations for algebras and group representations , Ph.D. Thesis, University of Toronto, 1989. http://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf",
+      "after": "W. Eberly, Computations for algebras and group representations , Ph.D. Thesis, University of Toronto, 1989. https://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf",
+          "http://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf",
+          "https://www.cpsc.ucalgary.ca/~eberly/Research/Papers/phdthesis.pdf"
+        ]
+      ]
+    }
+  },
+  "EM2001": {
+    "text": {
+      "before": "Pavel Etingof and Xiaoguang Ma. Lecture notes on Cherednik algebras . http://www-math.mit.edu/~etingof/73509.pdf https://arxiv.org/abs/1001.0432 .",
+      "after": "Pavel Etingof and Xiaoguang Ma. Lecture notes on Cherednik algebras . https://math.mit.edu/~etingof/73509.pdf https://arxiv.org/abs/1001.0432 ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www-math.mit.edu/~etingof/73509.pdf",
+          "http://www-math.mit.edu/~etingof/73509.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/1001.0432",
+          "https://arxiv.org/abs/1001.0432"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.mit.edu/~etingof/73509.pdf",
+          "https://math.mit.edu/~etingof/73509.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/1001.0432",
+          "https://arxiv.org/abs/1001.0432"
+        ]
+      ]
+    }
+  },
+  "EnumComb1": {
+    "text": {
+      "before": "Stanley, Richard P. Enumerative Combinatorics, volume 1 , Second Edition, Cambridge University Press (2011). http://math.mit.edu/~rstan/ec/ec1/",
+      "after": "Stanley, Richard P. Enumerative Combinatorics, volume 1 , Second Edition, Cambridge University Press (2011). https://math.mit.edu/~rstan/ec/ec1/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://math.mit.edu/~rstan/ec/ec1/",
+          "http://math.mit.edu/~rstan/ec/ec1/"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/ec1/",
+          "https://math.mit.edu/~rstan/ec/ec1/"
+        ]
+      ]
+    }
+  },
+  "EnumComb2": {
+    "text": {
+      "before": "Stanley, Richard P. Enumerative Combinatorics, volume 2 . Cambridge University Press (1999). http://math.mit.edu/~rstan/ec/",
+      "after": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7. Paperback printing, 2001. https://math.mit.edu/~rstan/ec/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://math.mit.edu/~rstan/ec/",
+          "http://math.mit.edu/~rstan/ec/"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/",
+          "https://math.mit.edu/~rstan/ec/"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Enumerative Combinatorics, volume 2"
+      ],
+      "after": []
+    }
+  },
+  "EP2013b": {
+    "text": {
+      "before": "David Einstein, James Propp. Piecewise-linear and birational toggling . Extended abstract for FPSAC 2014. http://faculty.uml.edu/jpropp/fpsac14.pdf",
+      "after": "David Einstein, James Propp. Piecewise-linear and birational toggling . Extended abstract for FPSAC 2014. https://faculty.uml.edu/jpropp/fpsac14.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://faculty.uml.edu/jpropp/fpsac14.pdf",
+          "http://faculty.uml.edu/jpropp/fpsac14.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://faculty.uml.edu/jpropp/fpsac14.pdf",
+          "https://faculty.uml.edu/jpropp/fpsac14.pdf"
+        ]
+      ]
+    }
+  },
+  "Fe1997": {
+    "text": {
+      "before": "Stefan Felsner, On the Number of Arrangements of Pseudolines , Proceedings SoCG 96, 30-37. Discrete & Computational Geometry 18 (1997), 257-267. http://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf",
+      "after": "Stefan Felsner, On the Number of Arrangements of Pseudolines , Proceedings SoCG 96, 30-37. Discrete & Computational Geometry 18 (1997), 257-267. https://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf",
+          "http://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf",
+          "https://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf"
+        ]
+      ]
+    }
+  },
+  "FRV2019": {
+    "id": {
+      "before": "frv2019",
+      "after": "rv2019"
+    },
+    "text": {
+      "before": "Fernando Rodriguez Villegas, Mixed Hodge numbers and factorial ratios , arXiv 1907.02722",
+      "after": "Fernando Rodriguez Villegas. Mixed Hodge numbers and factorial ratios . https://arxiv.org/abs/1907.02722 , 2019."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 1907.02722",
+          "https://arxiv.org/abs/1907.02722"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/1907.02722",
+          "https://arxiv.org/abs/1907.02722"
+        ]
+      ]
+    }
+  },
+  "FS1978": {
+    "text": {
+      "before": "Dominique Foata, Marcel-Paul Schuetzenberger. Major Index and Inversion Number of Permutations . Mathematische Nachrichten, volume 83, Issue 1, pages 143-159, 1978. http://igm.univ-mlv.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf",
+      "after": "Dominique Foata, Marcel-Paul Schuetzenberger. Major Index and Inversion Number of Permutations . Mathematische Nachrichten, volume 83, Issue 1, pages 143-159, 1978. https://www-igm.univ-eiffel.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://igm.univ-mlv.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf",
+          "http://igm.univ-mlv.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www-igm.univ-eiffel.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf",
+          "https://www-igm.univ-eiffel.fr/~berstel/Mps/Travaux/A/1978-3MajorIndexMathNachr.pdf"
+        ]
+      ]
+    }
+  },
+  "FS2009": {
+    "links": {
+      "before": [
+        [
+          "Analytic combinatorics",
+          "https://web.archive.org/web/20111206133426/http://algo.inria.fr/flajolet/Publications/AnaCombi/book.pdf"
+        ],
+        [
+          "Errata list",
+          "http://ac.cs.princeton.edu/errata/"
+        ]
+      ],
+      "after": [
+        [
+          "Analytic combinatorics",
+          "https://web.archive.org/web/20111206133426/http://algo.inria.fr/flajolet/Publications/AnaCombi/book.pdf"
+        ],
+        [
+          "Errata list",
+          "https://ac.cs.princeton.edu/errata/"
+        ]
+      ]
+    }
+  },
+  "Gambit": {
+    "text": {
+      "before": "Richard D. McKelvey, Andrew M. McLennan, and Theodore L. Turocy, Gambit: Software Tools for Game Theory, Version 13.1.2. . http://www.gambit-project.org (2014).",
+      "after": "Richard D. McKelvey, Andrew M. McLennan, and Theodore L. Turocy, Gambit: Software Tools for Game Theory, Version 13.1.2. . https://www.gambit-project.org (2014)."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.gambit-project.org",
+          "http://www.gambit-project.org"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.gambit-project.org",
+          "https://www.gambit-project.org"
+        ]
+      ]
+    }
+  },
+  "Ge2005": {
+    "text": {
+      "before": "Loukas Georgiadis, Linear-Time Algorithms for Dominators and Related Problems , Ph.D. thesis, Princetown University, TR-737-05, (2005). ftp://ftp.cs.princeton.edu/reports/2005/737.pdf",
+      "after": "Loukas Georgiadis, Linear-Time Algorithms for Dominators and Related Problems , Ph.D. thesis, Princetown University, TR-737-05, (2005). https://www.cs.princeton.edu/techreports/2005/737.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "ftp://ftp.cs.princeton.edu/reports/2005/737.pdf",
+          "ftp://ftp.cs.princeton.edu/reports/2005/737.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.cs.princeton.edu/techreports/2005/737.pdf",
+          "https://www.cs.princeton.edu/techreports/2005/737.pdf"
+        ]
+      ]
+    }
+  },
+  "Ges": {
+    "text": {
+      "before": "I. Gessel, Multipartite P-partitions and inner products of skew Schur functions , Contemp. Math. 34 (1984), 289-301. http://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf",
+      "after": "I. Gessel, Multipartite P-partitions and inner products of skew Schur functions , Contemp. Math. 34 (1984), 289-301. https://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf",
+          "http://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf",
+          "https://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf"
+        ]
+      ]
+    }
+  },
+  "GiTr1996": {
+    "id": {
+      "before": "gitr1996",
+      "after": "gt1996"
+    },
+    "text": {
+      "before": "P. Gianni and B. Trager. Square-Free Algorithms in Positive Characteristic . Applicable Algebra In Engineering, Communication And Computing, 7(1), p. 1-14.",
+      "after": "P. Gianni and B. Trager. Square-free algorithms in positive characteristic . Applicable Algebra in Engineering, Communication and Computing, 7(1), 1-14 (1996)"
+    },
+    "emphasis": {
+      "before": [
+        "Square-Free Algorithms in Positive Characteristic"
+      ],
+      "after": [
+        "Square-free algorithms in positive characteristic"
+      ]
+    }
+  },
+  "GM1987": {
+    "text": {
+      "before": "Peter B. Gibbons and Rudolf Mathon. Construction methods for Bhaskar Rao and related designs . J. Austral. Math. Soc. Ser. A 42 (1987), no. 1, 5–30. http://journals.cambridge.org/article_S1446788700033929",
+      "after": "Peter B. Gibbons and Rudolf Mathon. Construction methods for Bhaskar Rao and related designs . J. Austral. Math. Soc. Ser. A 42 (1987), no. 1, 5–30. https://journals.cambridge.org/article_S1446788700033929"
+    },
+    "links": {
+      "before": [
+        [
+          "http://journals.cambridge.org/article_S1446788700033929",
+          "http://journals.cambridge.org/article_S1446788700033929"
+        ]
+      ],
+      "after": [
+        [
+          "https://journals.cambridge.org/article_S1446788700033929",
+          "https://journals.cambridge.org/article_S1446788700033929"
+        ]
+      ]
+    }
+  },
+  "GR2013": {
+    "text": {
+      "before": "Darij Grinberg, Tom Roby. Iterative properties of birational rowmotion . http://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf",
+      "after": "Darij Grinberg, Tom Roby. Iterative properties of birational rowmotion . https://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf",
+          "http://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf",
+          "https://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf"
+        ]
+      ]
+    }
+  },
+  "Hac2016": {
+    "text": {
+      "before": "M. Hachimori. http://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html",
+      "after": "M. Hachimori. https://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html",
+          "http://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html",
+          "https://infoshako.sk.tsukuba.ac.jp/~hachi/math/library/dunce_hat_eng.html"
+        ]
+      ]
+    }
+  },
+  "Haf2004": {
+    "text": {
+      "before": "Paul R. Hafner. On the Graphs of Hoffman-Singleton and Higman-Sims . The Electronic Journal of Combinatorics 11 (2004), #R77. http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf",
+      "after": "Paul R. Hafner. On the Graphs of Hoffman-Singleton and Higman-Sims . The Electronic Journal of Combinatorics 11 (2004), #R77. https://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf",
+          "http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf",
+          "https://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf"
+        ]
+      ]
+    }
+  },
+  "Hag08": {
+    "id": {
+      "before": "hag08",
+      "after": "hag2008"
+    },
+    "text": {
+      "before": "The \\(q,t\\) – Catalan Numbers and the Space of Diagonal Harmonics: With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund, University of Pennsylvania, Philadelphia – AMS, 2008, 167 pp.",
+      "after": "James Haglund. The \\(q,t\\) – Catalan Numbers and the Space of Diagonal Harmonics: With an Appendix on the Combinatorics of Macdonald Polynomials . University of Pennsylvania, Philadelphia – AMS, 2008, 167 pp."
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "The",
+        "Catalan Numbers and the Space of Diagonal Harmonics: With an Appendix on the Combinatorics of Macdonald Polynomials"
+      ]
+    }
+  },
+  "Haiman06": {
+    "id": {
+      "before": "haiman06",
+      "after": "haimanicm"
+    },
+    "text": {
+      "before": "M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.",
+      "after": "M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, Proceedings of the International Congress of Mathematicians, Madrid 2006, Vol. III, 843-872."
+    }
+  },
+  "HananiBIBD": {
+    "id": {
+      "before": "hananibibd",
+      "after": "hanani75"
+    },
+    "text": {
+      "before": "Balanced incomplete block designs and related designs, Haim Hanani, Discrete Mathematics 11.3 (1975) pages 255-369.",
+      "after": "Haim Hanani, Balanced incomplete block designs and related designs, doi:10.1016/0012-365X(75)90040-0 , Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "doi:10.1016/0012-365X(75)90040-0",
+          "https://doi.org/10.1016/0012-365X(75)90040-0"
+        ]
+      ]
+    }
+  },
+  "He2002": {
+    "text": {
+      "before": "H. Heys A Tutorial on Linear and Differential Cryptanalysis ; 2002’ available at http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf",
+      "after": "H. Heys A Tutorial on Linear and Differential Cryptanalysis ; 2002’ available at https://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf",
+          "http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf",
+          "https://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf"
+        ]
+      ]
+    }
+  },
+  "HKP2010": {
+    "text": {
+      "before": "T. J. Haines, R. E. Kottwitz, A. Prasad, Iwahori-Hecke Algebras, J. Ramanujan Math. Soc., 25 (2010), 113–145. https://arxiv.org/abs/0309168v3 https://www.ams.org/mathscinet-getitem?mr=MR2642451",
+      "after": "T. J. Haines, R. E. Kottwitz, A. Prasad, Iwahori-Hecke Algebras, J. Ramanujan Math. Soc., 25 (2010), 113–145. https://arxiv.org/abs/math/0309168v3 https://www.ams.org/mathscinet-getitem?mr=MR2642451"
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/0309168v3",
+          "https://arxiv.org/abs/0309168v3"
+        ],
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR2642451",
+          "https://www.ams.org/mathscinet-getitem?mr=MR2642451"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/math/0309168v3",
+          "https://arxiv.org/abs/math/0309168v3"
+        ],
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR2642451",
+          "https://www.ams.org/mathscinet-getitem?mr=MR2642451"
+        ]
+      ]
+    }
+  },
+  "HKP2015": {
+    "links": {
+      "before": [
+        [
+          "Electron. J. Combin. 22 (2015), #P2.19",
+          "http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19"
+        ]
+      ],
+      "after": [
+        [
+          "Electron. J. Combin. 22 (2015), #P2.19",
+          "https://doi.org/10.37236/5026"
+        ]
+      ]
+    }
+  },
+  "HLNT09": {
+    "text": {
+      "before": "F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon, The (1-E)-transform in combinatorial Hopf algebras . https://arxiv.org/abs/math/0912.0184v2",
+      "after": "F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon, The (1-E)-transform in combinatorial Hopf algebras . https://arxiv.org/abs/0912.0184v2"
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/math/0912.0184v2",
+          "https://arxiv.org/abs/math/0912.0184v2"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0912.0184v2",
+          "https://arxiv.org/abs/0912.0184v2"
+        ]
+      ]
+    }
+  },
+  "HNT06": {
+    "text": {
+      "before": "F. Hivert, J.-C. Novelli, J.-Y. Thibon. Commutative combinatorial Hopf algebras . (2006). arXiv 0605262v1 .",
+      "after": "F. Hivert, J.-C. Novelli, J.-Y. Thibon. Commutative combinatorial Hopf algebras . (2006). arXiv math/0605262v1 ."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 0605262v1",
+          "https://arxiv.org/abs/0605262v1"
+        ]
+      ],
+      "after": [
+        [
+          "arXiv math/0605262v1",
+          "https://arxiv.org/abs/math/0605262v1"
+        ]
+      ]
+    }
+  },
+  "HOLM2016": {
+    "text": {
+      "before": "Tristan Holmes and J. B. Nation, Inflation of finite lattices along all-or-nothing sets . http://www.math.hawaii.edu/~jb/inflation.pdf",
+      "after": "Tristan Holmes and J. B. Nation, Inflation of finite lattices along all-or-nothing sets . https://www.math.hawaii.edu/~jb/inflation.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.hawaii.edu/~jb/inflation.pdf",
+          "http://www.math.hawaii.edu/~jb/inflation.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.hawaii.edu/~jb/inflation.pdf",
+          "https://www.math.hawaii.edu/~jb/inflation.pdf"
+        ]
+      ]
+    }
+  },
+  "HRT2000": {
+    "text": {
+      "before": "R.B. Howlett, L.J. Rylands, and D.E. Taylor. Matrix generators for exceptional groups of Lie type . J. Symbolic Computation. 11 (2000). http://www.maths.usyd.edu.au/u/bobh/hrt.pdf",
+      "after": "R.B. Howlett, L.J. Rylands, and D.E. Taylor. Matrix generators for exceptional groups of Lie type . J. Symbolic Computation. 11 (2000). https://www.maths.usyd.edu.au/u/bobh/hrt.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.maths.usyd.edu.au/u/bobh/hrt.pdf",
+          "http://www.maths.usyd.edu.au/u/bobh/hrt.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.maths.usyd.edu.au/u/bobh/hrt.pdf",
+          "https://www.maths.usyd.edu.au/u/bobh/hrt.pdf"
+        ]
+      ]
+    }
+  },
+  "HSS": {
+    "text": {
+      "before": "Aric Hagberg, Dan Schult and Pieter Swart. NetworkX documentation . [Online] Available: http://networkx.github.io/documentation/latest/reference/index.html",
+      "after": "Aric Hagberg, Dan Schult and Pieter Swart. NetworkX documentation . [Online] Available: https://networkx.github.io/documentation/latest/reference/index.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://networkx.github.io/documentation/latest/reference/index.html",
+          "http://networkx.github.io/documentation/latest/reference/index.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://networkx.github.io/documentation/latest/reference/index.html",
+          "https://networkx.github.io/documentation/latest/reference/index.html"
+        ]
+      ]
+    }
+  },
+  "HST09": {
+    "id": {
+      "before": "hst09",
+      "after": "hst2008"
+    },
+    "text": {
+      "before": "F. Hivert, A. Schilling, and N. M. Thiéry, Hecke group algebras as quotients of affine Hecke algebras at level 0 , JCT A, Vol. 116, (2009) p. 844-863 arXiv 0804.3781",
+      "after": "F. Hivert, A. Schilling, N. Thiery, Hecke group algebras as quotients of affine Hecke algebras at level 0 , Journal of Combinatorial Theory, Series A 116 (2009) 844-863 ( https://arxiv.org/abs/0804.3781 )"
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 0804.3781",
+          "https://arxiv.org/abs/0804.3781"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0804.3781",
+          "https://arxiv.org/abs/0804.3781"
+        ]
+      ]
+    }
+  },
+  "HT04": {
+    "text": {
+      "before": "Florent Hivert and Nicolas M. Thiery, MuPAD-Combinat, an open-source package for research in algebraic combinatorics. Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004. http://mupad-combinat.sf.net/ .",
+      "after": "Florent Hivert and Nicolas M. Thiery, MuPAD-Combinat, an open-source package for research in algebraic combinatorics. Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004. https://mupad-combinat.sf.net/ ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://mupad-combinat.sf.net/",
+          "http://mupad-combinat.sf.net/"
+        ]
+      ],
+      "after": [
+        [
+          "https://mupad-combinat.sf.net/",
+          "https://mupad-combinat.sf.net/"
+        ]
+      ]
+    }
+  },
+  "Hu57": {
+    "text": {
+      "before": "Daniel R. Hughes, “A class of non-Desarguesian projective planes”, The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378",
+      "after": "Daniel R. Hughes, “A class of non-Desarguesian projective planes”, The Canadian Journal of Mathematics (1957), https://doi.org/10.4153/cjm-1957-045-0"
+    },
+    "links": {
+      "before": [
+        [
+          "http://cms.math.ca/cjm/v9/p378",
+          "http://cms.math.ca/cjm/v9/p378"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.4153/cjm-1957-045-0",
+          "https://doi.org/10.4153/cjm-1957-045-0"
+        ]
+      ]
+    }
+  },
+  "JNC2010": {
+    "text": {
+      "before": "David Joyner, Minh Van Nguyen, and Nathann Cohen. Algorithmic Graph Theory . 2010, http://code.google.com/p/graph-theory-algorithms-book/",
+      "after": "David Joyner, Minh Van Nguyen, and Nathann Cohen. Algorithmic Graph Theory . 2010, https://code.google.com/p/graph-theory-algorithms-book/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://code.google.com/p/graph-theory-algorithms-book/",
+          "http://code.google.com/p/graph-theory-algorithms-book/"
+        ]
+      ],
+      "after": [
+        [
+          "https://code.google.com/p/graph-theory-algorithms-book/",
+          "https://code.google.com/p/graph-theory-algorithms-book/"
+        ]
+      ]
+    }
+  },
+  "Kauf1999": {
+    "text": {
+      "before": "Louis H. Kauffman, Virtual Knot Theory , Europ. J. Combinatorics (1999) 20, 663-691 ; http://homepages.math.uic.edu/~kauffman/VKT.pdf",
+      "after": "Louis H. Kauffman, Virtual Knot Theory , Europ. J. Combinatorics (1999) 20, 663-691 ; https://homepages.math.uic.edu/~kauffman/VKT.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://homepages.math.uic.edu/~kauffman/VKT.pdf",
+          "http://homepages.math.uic.edu/~kauffman/VKT.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://homepages.math.uic.edu/~kauffman/VKT.pdf",
+          "https://homepages.math.uic.edu/~kauffman/VKT.pdf"
+        ]
+      ]
+    }
+  },
+  "KeSm1998": {
+    "text": {
+      "before": "S. Keller and M. Smid, Modes of Operation Validation System (MOVS): Requirements and Procedures NIST Special Publication 800-17, 1998 https://doi.org/10.6028/NIST.SP.800-17",
+      "after": "S. Keller and M. Smid, Modes of Operation Validation System (MOVS): Requirements and Procedures NIST Special Publication 800-17, 1998 https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-17.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.6028/NIST.SP.800-17",
+          "https://doi.org/10.6028/NIST.SP.800-17"
+        ]
+      ],
+      "after": [
+        [
+          "https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-17.pdf",
+          "https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-17.pdf"
+        ]
+      ]
+    }
+  },
+  "Kir2016": {
+    "text": {
+      "before": "M. Kirschmer, Definite quadratic and hermitian forms with small class number , Habilitationsschrift, RWTH Aachen University, 2016. http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf",
+      "after": "M. Kirschmer, Definite quadratic and hermitian forms with small class number , Habilitationsschrift, RWTH Aachen University, 2016. https://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf",
+          "http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf",
+          "https://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf"
+        ]
+      ]
+    }
+  },
+  "Kly1990": {
+    "text": {
+      "before": "Klyachko, Aleksandr Anatolevich. Equivariant Bundles on Toral Varieties, Math USSR Izv. 35 (1990), 337-375. http://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf",
+      "after": "Klyachko, Aleksandr Anatolevich. Equivariant Bundles on Toral Varieties, Math USSR Izv. 35 (1990), 337-375. https://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf",
+          "http://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf",
+          "https://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf"
+        ]
+      ]
+    }
+  },
+  "KnotAtlas": {
+    "text": {
+      "before": "The Knot atlas. http://katlas.org/wiki/Main_Page",
+      "after": "The Knot atlas. https://katlas.org/wiki/Main_Page"
+    },
+    "links": {
+      "before": [
+        [
+          "http://katlas.org/wiki/Main_Page",
+          "http://katlas.org/wiki/Main_Page"
+        ]
+      ],
+      "after": [
+        [
+          "https://katlas.org/wiki/Main_Page",
+          "https://katlas.org/wiki/Main_Page"
+        ]
+      ]
+    }
+  },
+  "Knu1970": {
+    "text": {
+      "before": "Donald E. Knuth. Permutations, matrices, and generalized Young tableaux . Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727. http://projecteuclid.org/euclid.pjm/1102971948",
+      "after": "Donald E. Knuth. Permutations, matrices, and generalized Young tableaux . Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727. https://projecteuclid.org/euclid.pjm/1102971948"
+    },
+    "links": {
+      "before": [
+        [
+          "http://projecteuclid.org/euclid.pjm/1102971948",
+          "http://projecteuclid.org/euclid.pjm/1102971948"
+        ]
+      ],
+      "after": [
+        [
+          "https://projecteuclid.org/euclid.pjm/1102971948",
+          "https://projecteuclid.org/euclid.pjm/1102971948"
+        ]
+      ]
+    }
+  },
+  "KPRWZ2010": {
+    "text": {
+      "before": "M. H. Klin, C. Pech, S. Reichard, A. Woldar, M. Zvi-Av, Examples of computer experimentation in algebraic combinatorics , ARS MATHEMATICA CONTEMPORANEA 3 (2010) 237-258. https://doi.org/10.26493/1855-3974.119.60b . http://amc-journal.eu/index.php/amc/article/viewFile/119/118",
+      "after": "M. H. Klin, C. Pech, S. Reichard, A. Woldar, M. Zvi-Av, Examples of computer experimentation in algebraic combinatorics , ARS MATHEMATICA CONTEMPORANEA 3 (2010) 237-258. https://doi.org/10.26493/1855-3974.119.60b . https://amc-journal.eu/index.php/amc/article/viewFile/119/118"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.26493/1855-3974.119.60b",
+          "https://doi.org/10.26493/1855-3974.119.60b"
+        ],
+        [
+          "http://amc-journal.eu/index.php/amc/article/viewFile/119/118",
+          "http://amc-journal.eu/index.php/amc/article/viewFile/119/118"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.26493/1855-3974.119.60b",
+          "https://doi.org/10.26493/1855-3974.119.60b"
+        ],
+        [
+          "https://amc-journal.eu/index.php/amc/article/viewFile/119/118",
+          "https://amc-journal.eu/index.php/amc/article/viewFile/119/118"
+        ]
+      ]
+    }
+  },
+  "KR2001": {
+    "text": {
+      "before": "J. Kahane and A. Ryba. The hexad game , Electronic Journal of Combinatorics, 8 (2001). http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html",
+      "after": "J. Kahane and A. Ryba. The hexad game , Electronic Journal of Combinatorics, 8 (2001). https://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html",
+          "http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html",
+          "https://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html"
+        ]
+      ]
+    }
+  },
+  "KT97": {
+    "id": {
+      "before": "kt97",
+      "after": "kt1997"
+    },
+    "text": {
+      "before": "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at \\(q = 0\\) . Krob and Thibon. Journal of Algebraic Combinatorics 6 (1997), 339-376.",
+      "after": "Daniel Krob and Jean-Yves Thibon. Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at q = 0 , Journal of Algebraic Combinatorics 6 (1997), no. 4, 339–376."
+    },
+    "math": {
+      "before": [
+        "\\(q = 0\\)"
+      ],
+      "after": []
+    },
+    "emphasis": {
+      "before": [
+        "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at"
+      ],
+      "after": [
+        "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at q = 0"
+      ]
+    }
+  },
+  "Kur2008": {
+    "text": {
+      "before": "Chris Kurth, K Farey package for Sage , http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html",
+      "after": "Chris Kurth, K Farey package for Sage , https://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html",
+          "http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html",
+          "https://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html"
+        ]
+      ]
+    }
+  },
+  "KV2010": {
+    "text": {
+      "before": "M. Kirschmer, J. Voight: Algorithmic enumeration of ideal classes for quaternion orders . SIAM J. Comput. 39(5): 1714-1747 (2010) https://math.dartmouth.edu/~jvoight/articles/73446.pdf",
+      "after": "M. Kirschmer, J. Voight: Algorithmic enumeration of ideal classes for quaternion orders . SIAM J. Comput. 39(5): 1714-1747 (2010) https://arxiv.org/abs/0808.3833"
+    },
+    "links": {
+      "before": [
+        [
+          "https://math.dartmouth.edu/~jvoight/articles/73446.pdf",
+          "https://math.dartmouth.edu/~jvoight/articles/73446.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0808.3833",
+          "https://arxiv.org/abs/0808.3833"
+        ]
+      ]
+    }
+  },
+  "KY04": {
+    "text": {
+      "before": "S. Klee and L. Yates, Tight Subdesigns of the Higman-Sims Design, Rose-Hulman Undergraduate Math. J 5.2 (2004). https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf",
+      "after": "S. Klee and L. Yates, Tight Subdesigns of the Higman-Sims Design, Rose-Hulman Undergraduate Math. J 5.2 (2004). https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/"
+    },
+    "links": {
+      "before": [
+        [
+          "https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf",
+          "https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/",
+          "https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/"
+        ]
+      ]
+    }
+  },
+  "Lam2006": {
+    "id": {
+      "before": "lam2006",
+      "after": "lam2008"
+    }
+  },
+  "Lam2008": {
+    "text": {
+      "before": "T. Lam. Schubert polynomials for the affine Grassmannian . J. Amer. Math. Soc., 2008.",
+      "after": "T. Lam, Schubert polynomials for the affine Grassmannian, J. Amer. Math. Soc., 21 (2008), 259-281."
+    },
+    "emphasis": {
+      "before": [
+        "Schubert polynomials for the affine Grassmannian"
+      ],
+      "after": []
+    }
+  },
+  "LamSchillingShimozono10": {
+    "id": {
+      "before": "lamschillingshimozono10",
+      "after": "lamschillingshimozono2010"
+    }
+  },
+  "Las": {
+    "text": {
+      "before": "Alain Lascoux, ‘Young representations of the symmetric group.’ http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz",
+      "after": "Alain Lascoux, Youngs’s Representations of the Symmetric Group , September 2000. https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz",
+          "http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz"
+        ]
+      ],
+      "after": [
+        [
+          "https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf",
+          "https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Youngs’s Representations of the Symmetric Group"
+      ]
+    }
+  },
+  "Lein": {
+    "id": {
+      "before": "lein",
+      "after": "lei2013"
+    }
+  },
+  "LJCR": {
+    "text": {
+      "before": "La Jolla Covering Repository, https://dmgordon.org/cover",
+      "after": "La Jolla Covering Repository, https://ljcr.dmgordon.org/cover.html"
+    },
+    "links": {
+      "before": [
+        [
+          "https://dmgordon.org/cover",
+          "https://dmgordon.org/cover"
+        ]
+      ],
+      "after": [
+        [
+          "https://ljcr.dmgordon.org/cover.html",
+          "https://ljcr.dmgordon.org/cover.html"
+        ]
+      ]
+    }
+  },
+  "LLMSSZ": {
+    "id": {
+      "before": "llmssz",
+      "after": "llmssz2013"
+    },
+    "text": {
+      "before": "T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki, k-Schur functions and affine Schubert calculus.",
+      "after": "Thomas Lam, Luc Lapointe, Jennifer Morse, Anne Schilling, Mark Shimozono and Mike Zabrocki. k-Schur functions and affine Schubert calculus , 2013. https://arxiv.org/abs/1301.3569 ."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://arxiv.org/abs/1301.3569",
+          "https://arxiv.org/abs/1301.3569"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "k-Schur functions and affine Schubert calculus"
+      ]
+    }
+  },
+  "LLT": {
+    "text": {
+      "before": "A. Lascoux, B. Leclerc, and J.Y. Thibon. The Plactic Monoid . Survey article available at [ http://www-igm.univ-mlv.fr/~jyt/ARTICLES/plactic.ps ]",
+      "after": "A. Lascoux, B. Leclerc, and J.Y. Thibon. The Plactic Monoid . Survey article available at [ https://alain-lascoux.github.io/files/lascoux_leclerc_thibon__plactic_(PRELIMINARY_VERSION).pdf ]"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www-igm.univ-mlv.fr/~jyt/ARTICLES/plactic.ps",
+          "http://www-igm.univ-mlv.fr/~jyt/ARTICLES/plactic.ps"
+        ]
+      ],
+      "after": [
+        [
+          "https://alain-lascoux.github.io/files/lascoux_leclerc_thibon__plactic_(PRELIMINARY_VERSION).pdf",
+          "https://alain-lascoux.github.io/files/lascoux_leclerc_thibon__plactic_(PRELIMINARY_VERSION).pdf"
+        ]
+      ]
+    }
+  },
+  "LMvW13": {
+    "text": {
+      "before": "Kurt Luoto, Stefan Mykytiuk and Stephanie van Willigenburg, An introduction to quasisymmetric Schur functions – Hopf algebras, quasisymmetric functions, and Young composition tableaux , May 23, 2013, Springer. http://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf",
+      "after": "Kurt Luoto, Stefan Mykytiuk and Stephanie van Willigenburg, An introduction to quasisymmetric Schur functions – Hopf algebras, quasisymmetric functions, and Young composition tableaux , May 23, 2013, Springer. https://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf",
+          "http://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf",
+          "https://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf"
+        ]
+      ]
+    }
+  },
+  "Loth02": {
+    "id": {
+      "before": "loth02",
+      "after": "lot2002"
+    },
+    "text": {
+      "before": "M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of Encyclopedia of Mathematics and its Applications, Cambridge University Press, U.K., 2002.",
+      "after": "M. Lothaire, Algebraic combinatorics on words . Cambridge University Press (2002)."
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Algebraic combinatorics on words"
+      ]
+    }
+  },
+  "LR2004": {
+    "text": {
+      "before": "Dingjun Lou and Dongning Rao. Characterizing factor critical graphs and an algorithm , The Australasian Journal of Combinatorics, 30: 51-56, 2004. http://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf",
+      "after": "Dingjun Lou and Dongning Rao. Characterizing factor critical graphs and an algorithm , The Australasian Journal of Combinatorics, 30: 51-56, 2004. https://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf",
+          "http://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf",
+          "https://ajc.maths.uq.edu.au/pdf/30/ajc_v30_p051.pdf"
+        ]
+      ]
+    }
+  },
+  "LT1998": {
+    "text": {
+      "before": "B. Leclerc, J.-Y. Thibon, Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials, http://front.math.ucdavis.edu/9809.5122",
+      "after": "B. Leclerc, J.-Y. Thibon, Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials, https://arxiv.org/abs/math/9809122"
+    },
+    "links": {
+      "before": [
+        [
+          "http://front.math.ucdavis.edu/9809.5122",
+          "http://front.math.ucdavis.edu/9809.5122"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/math/9809122",
+          "https://arxiv.org/abs/math/9809122"
+        ]
+      ]
+    }
+  },
+  "MAC": {
+    "id": {
+      "before": "mac",
+      "after": "mac1995"
+    }
+  },
+  "Mac1995": {
+    "text": {
+      "before": "I. G. Macdonald, Symmetric functions and Hall polynomials, second ed., The Clarendon Press, Oxford University Press, New York, 1995, With contributions by A. Zelevinsky, Oxford Science Publications.",
+      "after": "Ian Macdonald, Symmetric Functions and Hall Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2"
+    }
+  },
+  "MagmaHGM": {
+    "text": {
+      "before": "Hypergeometric motives in Magma, http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf",
+      "after": "Hypergeometric motives in Magma, https://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf",
+          "http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf",
+          "https://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf"
+        ]
+      ]
+    }
+  },
+  "Mar2009a": {
+    "text": {
+      "before": "Matilde Marcolli, Feynman Motives, Chapter 3, Feynman integrals and algebraic varieties, http://www.its.caltech.edu/~matilde/LectureN3.pdf",
+      "after": "Matilde Marcolli, Feynman Motives, Chapter 3, Feynman integrals and algebraic varieties, https://www.its.caltech.edu/~matilde/LectureN3.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.its.caltech.edu/~matilde/LectureN3.pdf",
+          "http://www.its.caltech.edu/~matilde/LectureN3.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.its.caltech.edu/~matilde/LectureN3.pdf",
+          "https://www.its.caltech.edu/~matilde/LectureN3.pdf"
+        ]
+      ]
+    }
+  },
+  "Mar2018": {
+    "text": {
+      "before": "I. Marin, A Maximal cubic quotient of the braid algebra I. , preprint, 2018. available at http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf https://arxiv.org/abs/1811.04964 , https://doi.org/10.1016/j.jalgebra.2020.09.045",
+      "after": "I. Marin, A Maximal cubic quotient of the braid algebra I. , preprint, 2018. available at https://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf https://arxiv.org/abs/1811.04964 , https://doi.org/10.1016/j.jalgebra.2020.09.045"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf",
+          "http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/1811.04964",
+          "https://arxiv.org/abs/1811.04964"
+        ],
+        [
+          "https://doi.org/10.1016/j.jalgebra.2020.09.045",
+          "https://doi.org/10.1016/j.jalgebra.2020.09.045"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf",
+          "https://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf"
+        ],
+        [
+          "https://arxiv.org/abs/1811.04964",
+          "https://arxiv.org/abs/1811.04964"
+        ],
+        [
+          "https://doi.org/10.1016/j.jalgebra.2020.09.045",
+          "https://doi.org/10.1016/j.jalgebra.2020.09.045"
+        ]
+      ]
+    }
+  },
+  "Mc1995": {
+    "id": {
+      "before": "mc1995",
+      "after": "mac1995"
+    },
+    "text": {
+      "before": "I. G. Macdonald, Symmetric functions and Hall polynomials, second ed., The Clarendon Press, Oxford University Press, New York, 1995, With contributions by A. Zelevinsky, Oxford Science Publications.",
+      "after": "Ian Macdonald, Symmetric Functions and Hall Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2"
+    }
+  },
+  "McK2015": {
+    "text": {
+      "before": "McKay, Brendan. Description of graph6 and sparse6 encodings. , updated Jun 2015. http://cs.anu.edu.au/~bdm/data/formats.txt (2019-08-25)",
+      "after": "McKay, Brendan. Description of graph6 and sparse6 encodings. , updated Jun 2015. https://cs.anu.edu.au/~bdm/data/formats.txt (2019-08-25)"
+    },
+    "links": {
+      "before": [
+        [
+          "http://cs.anu.edu.au/~bdm/data/formats.txt",
+          "http://cs.anu.edu.au/~bdm/data/formats.txt"
+        ]
+      ],
+      "after": [
+        [
+          "https://cs.anu.edu.au/~bdm/data/formats.txt",
+          "https://cs.anu.edu.au/~bdm/data/formats.txt"
+        ]
+      ]
+    }
+  },
+  "MirMor2009": {
+    "text": {
+      "before": "R. Miranda, D.R. Morrison, “Embeddings of Integral Quadratic Forms” http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf .",
+      "after": "R. Miranda, D.R. Morrison, “Embeddings of Integral Quadratic Forms” https://web.math.ucsb.edu/~drm/manuscripts/eiqf.pdf ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf",
+          "http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://web.math.ucsb.edu/~drm/manuscripts/eiqf.pdf",
+          "https://web.math.ucsb.edu/~drm/manuscripts/eiqf.pdf"
+        ]
+      ]
+    }
+  },
+  "Morris1981": {
+    "text": {
+      "before": "A. O. Morris. Representations of Weyl groups over an arbitrary field . Astérisque. 87-88 (1981) pp. 267-287. http://www.numdam.org/article/AST_1981__87-88__267_0.pdf",
+      "after": "A. O. Morris. Representations of Weyl groups over an arbitrary field . Astérisque. 87-88 (1981) pp. 267-287. https://www.numdam.org/article/AST_1981__87-88__267_0.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.numdam.org/article/AST_1981__87-88__267_0.pdf",
+          "http://www.numdam.org/article/AST_1981__87-88__267_0.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.numdam.org/article/AST_1981__87-88__267_0.pdf",
+          "https://www.numdam.org/article/AST_1981__87-88__267_0.pdf"
+        ]
+      ]
+    }
+  },
+  "Morse11": {
+    "id": {
+      "before": "morse11",
+      "after": "morse2011"
+    }
+  },
+  "MR": {
+    "id": {
+      "before": "mr",
+      "after": "mr1995"
+    },
+    "text": {
+      "before": "C. Malvenuto and C. Reutenauer, Duality between quasi-symmetric functions and the Solomon descent algebra , J. Algebra 177 (1995), no. 3, 967-982. http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf",
+      "after": "C. Malvenuto, C. Reutenauer, Duality between quasi-symmetric functions and the Solomon descent algebra , Journal of Algebra 177 (1995), no. 3, 967-982. https://doi.org/10.1006/jabr.1995.1336"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf",
+          "http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1006/jabr.1995.1336",
+          "https://doi.org/10.1006/jabr.1995.1336"
+        ]
+      ]
+    },
+    "strong": {
+      "before": [
+        "177"
+      ],
+      "after": []
+    }
+  },
+  "MR1995": {
+    "text": {
+      "before": "C. Malvenuto, C. Reutenauer, Duality between quasi-symmetric functions and the Solomon descent algebra , Journal of Algebra 177 (1995), no. 3, 967-982. https://web.archive.org/web/20210829143748/http://lacim-membre.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf",
+      "after": "C. Malvenuto, C. Reutenauer, Duality between quasi-symmetric functions and the Solomon descent algebra , Journal of Algebra 177 (1995), no. 3, 967-982. https://doi.org/10.1006/jabr.1995.1336"
+    },
+    "links": {
+      "before": [
+        [
+          "https://web.archive.org/web/20210829143748/http://lacim-membre.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf",
+          "https://web.archive.org/web/20210829143748/http://lacim-membre.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1006/jabr.1995.1336",
+          "https://doi.org/10.1006/jabr.1995.1336"
+        ]
+      ]
+    }
+  },
+  "Neu2018": {
+    "text": {
+      "before": "Christian Neurohr, Efficient Integration on Riemann Surfaces & Applications , Ph.D. Thesis, Carl von Ossietzky Universität Oldenburg http://oops.uni-oldenburg.de/3607 .",
+      "after": "Christian Neurohr, Efficient Integration on Riemann Surfaces & Applications , Ph.D. Thesis, Carl von Ossietzky Universität Oldenburg https://oops.uni-oldenburg.de/3607 ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://oops.uni-oldenburg.de/3607",
+          "http://oops.uni-oldenburg.de/3607"
+        ]
+      ],
+      "after": [
+        [
+          "https://oops.uni-oldenburg.de/3607",
+          "https://oops.uni-oldenburg.de/3607"
+        ]
+      ]
+    }
+  },
+  "Normaliz": {
+    "text": {
+      "before": "Winfried Bruns, Bogdan Ichim, and Christof Soeger, Normaliz, http://www.mathematik.uni-osnabrueck.de/normaliz/",
+      "after": "Winfried Bruns, Bogdan Ichim, and Christof Soeger, Normaliz, https://www.mathematik.uni-osnabrueck.de/normaliz/"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.mathematik.uni-osnabrueck.de/normaliz/",
+          "http://www.mathematik.uni-osnabrueck.de/normaliz/"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.mathematik.uni-osnabrueck.de/normaliz/",
+          "https://www.mathematik.uni-osnabrueck.de/normaliz/"
+        ]
+      ]
+    }
+  },
+  "NP2007": {
+    "text": {
+      "before": "Nikolopoulos, S.D. and Palios, L., Detecting holes and antiholes in graphs , Algorithmica, 2007, Vol. 47, number 2, pages 119–138, https://doi.org/10.1007/s00453-006-1225-y , http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf",
+      "after": "Nikolopoulos, S.D. and Palios, L., Detecting holes and antiholes in graphs , Algorithmica, 2007, Vol. 47, number 2, pages 119–138, https://doi.org/10.1007/s00453-006-1225-y , https://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/s00453-006-1225-y",
+          "https://doi.org/10.1007/s00453-006-1225-y"
+        ],
+        [
+          "http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf",
+          "http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/s00453-006-1225-y",
+          "https://doi.org/10.1007/s00453-006-1225-y"
+        ],
+        [
+          "https://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf",
+          "https://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf"
+        ]
+      ]
+    }
+  },
+  "OSS13": {
+    "id": {
+      "before": "oss13",
+      "after": "oss2011"
+    },
+    "text": {
+      "before": "Masato Okado, Reiho Sakamoto, and Anne Schilling. Affine crystal structure on rigged configurations of type \\(D_n^{(1)}\\) . J. Algebraic Combinatorics, 37 (2013). 571-599. arXiv 1109.3523 .",
+      "after": "Masato Okado, Reiho Sakamoto, Anne Schilling, Affine crystal structure on rigged configurations of type \\(D_n^{(1)}\\) , J. Algebraic Combinatorics 37(3) (2013) 571-599 ( arXiv 1109.3523 [math.QA])"
+    },
+    "emphasis": {
+      "before": [
+        "Affine crystal structure on rigged configurations of type"
+      ],
+      "after": []
+    },
+    "strong": {
+      "before": [
+        "37"
+      ],
+      "after": []
+    }
+  },
+  "OSS2003": {
+    "text": {
+      "before": "Masato Okado, Anne Schilling, and Mark Shimozono. Virtual crystals and fermionic formulas of type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) . Representation Theory. 7 (2003) arXiv math.QA/0105017 .",
+      "after": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1090/S1088-4165-03-00155-9 , arXiv math/0105017 ."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv math.QA/0105017",
+          "https://arxiv.org/abs/math.QA/0105017"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1090/S1088-4165-03-00155-9",
+          "https://doi.org/10.1090/S1088-4165-03-00155-9"
+        ],
+        [
+          "arXiv math/0105017",
+          "https://arxiv.org/abs/math/0105017"
+        ]
+      ]
+    }
+  },
+  "OSShimo03": {
+    "id": {
+      "before": "osshimo03",
+      "after": "oss2003"
+    }
+  },
+  "Oum2009": {
+    "text": {
+      "before": "Sang-il Oum, Computing rank-width exactly , Information Processing Letters, 2009, vol. 109, n. 13, p. 745–748, Elsevier. https://doi.org/10.1016/j.ipl.2009.03.018 . http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf",
+      "after": "Sang-il Oum, Computing rank-width exactly , Information Processing Letters, 2009, vol. 109, n. 13, p. 745–748, Elsevier. https://doi.org/10.1016/j.ipl.2009.03.018 . https://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1016/j.ipl.2009.03.018",
+          "https://doi.org/10.1016/j.ipl.2009.03.018"
+        ],
+        [
+          "http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf",
+          "http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1016/j.ipl.2009.03.018",
+          "https://doi.org/10.1016/j.ipl.2009.03.018"
+        ],
+        [
+          "https://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf",
+          "https://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf"
+        ]
+      ]
+    }
+  },
+  "Propp1997": {
+    "text": {
+      "before": "James Propp, Generating Random Elements of Finite Distributive Lattices , Electron. J. Combin. 4 (1997), no. 2, The Wilf Festschrift volume, Research Paper 15. http://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15",
+      "after": "James Propp, Generating Random Elements of Finite Distributive Lattices , Electron. J. Combin. 4 (1997), no. 2, The Wilf Festschrift volume, Research Paper 15. https://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15",
+          "http://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15",
+          "https://www.combinatorics.org/ojs/index.php/eljc/article/view/v4i2r15"
+        ]
+      ]
+    }
+  },
+  "PS2006": {
+    "text": {
+      "before": "Dominique Poulalhon and Gilles Schaeffer, Optimal coding and sampling of triangulations , Algorithmica 46 (2006), no. 3-4, 505-527, https://doi.org/10.1007/s00453-006-0114-8 , http://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf",
+      "after": "Dominique Poulalhon and Gilles Schaeffer, Optimal coding and sampling of triangulations , Algorithmica 46 (2006), no. 3-4, 505-527, https://doi.org/10.1007/s00453-006-0114-8 , https://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/s00453-006-0114-8",
+          "https://doi.org/10.1007/s00453-006-0114-8"
+        ],
+        [
+          "http://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf",
+          "http://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/s00453-006-0114-8",
+          "https://doi.org/10.1007/s00453-006-0114-8"
+        ],
+        [
+          "https://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf",
+          "https://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf"
+        ]
+      ]
+    }
+  },
+  "PSW1996": {
+    "text": {
+      "before": "Boris Pittel, Joel Spencer and Nicholas Wormald. Sudden Emergence of a Giant k-Core in a Random Graph . (1996). J. Combinatorial Theory. Ser B 67. pages 111-151. https://doi.org/10.1006/jctb.1996.0036 . [Online] Available: http://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf",
+      "after": "Boris Pittel, Joel Spencer and Nicholas Wormald. Sudden Emergence of a Giant k-Core in a Random Graph . (1996). J. Combinatorial Theory. Ser B 67. pages 111-151. https://doi.org/10.1006/jctb.1996.0036 . [Online] Available: https://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1006/jctb.1996.0036",
+          "https://doi.org/10.1006/jctb.1996.0036"
+        ],
+        [
+          "http://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf",
+          "http://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1006/jctb.1996.0036",
+          "https://doi.org/10.1006/jctb.1996.0036"
+        ],
+        [
+          "https://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf",
+          "https://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf"
+        ]
+      ]
+    }
+  },
+  "PUNTOS": {
+    "text": {
+      "before": "Jesus A. De Loera http://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000",
+      "after": "Jesus A. De Loera https://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000",
+          "http://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000",
+          "https://www.math.ucdavis.edu/~deloera/RECENT_WORK/puntos2000"
+        ]
+      ]
+    }
+  },
+  "QSCHUR": {
+    "id": {
+      "before": "qschur",
+      "after": "hlmvw2011"
+    },
+    "text": {
+      "before": "Haglund, Luoto, Mason, van Willigenburg, Quasisymmetric Schur functions , J. Comb. Theory Ser. A 118 (2011), 463-490. http://www.sciencedirect.com/science/article/pii/S0097316509001745 , arXiv 0810.2489v2 .",
+      "after": "James Haglund, Kurt Luoto, Sarah Mason, and Stephanie van Willigenburg. Quasisymmetric Schur functions. Journal of Combinatorial Theory, Series A 118, no. 2 (2011): 463-490. https://arxiv.org/abs/0810.2489"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.sciencedirect.com/science/article/pii/S0097316509001745",
+          "http://www.sciencedirect.com/science/article/pii/S0097316509001745"
+        ],
+        [
+          "arXiv 0810.2489v2",
+          "https://arxiv.org/abs/0810.2489v2"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0810.2489",
+          "https://arxiv.org/abs/0810.2489"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Quasisymmetric Schur functions"
+      ],
+      "after": [
+        "Quasisymmetric Schur functions."
+      ]
+    }
+  },
+  "Rot2001": {
+    "text": {
+      "before": "Gunter Rote, Division-Free Algorithms for the Determinant and the Pfaffian: Algebraic and Combinatorial Approaches , H. Alt (Ed.): Computational Discrete Mathematics, LNCS 2122, pp. 119-135, 2001. http://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf",
+      "after": "Gunter Rote, Division-Free Algorithms for the Determinant and the Pfaffian: Algebraic and Combinatorial Approaches , H. Alt (Ed.): Computational Discrete Mathematics, LNCS 2122, pp. 119-135, 2001. https://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf",
+          "http://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf",
+          "https://page.mi.fu-berlin.de/rote/Papers/pdf/Division-free+algorithms.pdf"
+        ]
+      ]
+    }
+  },
+  "RW2012": {
+    "text": {
+      "before": "Alexander Raichev and Mark C. Wilson. Asymptotics of coefficients of multivariate generating functions: improvements for smooth points . Online Journal of Analytic Combinatorics. Issue 6, (2011). https://arxiv.org/abs/1009.5715 .",
+      "after": "Alexander Raichev and Mark C. Wilson. Asymptotics of coefficients of multivariate generating functions: improvements for multiple points . Online Journal of Analytic Combinatorics. Issue 6, (2011). https://arxiv.org/abs/1009.5715 ."
+    },
+    "emphasis": {
+      "before": [
+        "Asymptotics of coefficients of multivariate generating functions: improvements for smooth points"
+      ],
+      "after": [
+        "Asymptotics of coefficients of multivariate generating functions: improvements for multiple points"
+      ]
+    }
+  },
+  "Sch2006": {
+    "text": {
+      "before": "Oliver Schiffmann. Lectures on Hall algebras , preprint, 2006. https://arxiv.org/abs/0611617v2 .",
+      "after": "Oliver Schiffmann. Lectures on Hall algebras , preprint, 2006. https://arxiv.org/abs/math/0611617v2 ."
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/0611617v2",
+          "https://arxiv.org/abs/0611617v2"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/math/0611617v2",
+          "https://arxiv.org/abs/math/0611617v2"
+        ]
+      ]
+    }
+  },
+  "SchaThi1994": {
+    "id": {
+      "before": "schathi1994",
+      "after": "st94"
+    },
+    "text": {
+      "before": "Thomas Scharf, Jean-Yves Thibon. A Hopf-algebra approach to inner plethysm . Advances in Mathematics 104 (1994), pp. 30-58. ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz",
+      "after": "Scharf, Thomas, Thibon, Jean-Yves, A Hopf-algebra approach to inner plethysm. Adv. Math. 104 (1994), no. 1, 30-58. doi:10.1006/aima.1994.1019"
+    },
+    "links": {
+      "before": [
+        [
+          "ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz",
+          "ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1006/aima.1994.1019",
+          "https://doi.org/10.1006/aima.1994.1019"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "A Hopf-algebra approach to inner plethysm"
+      ],
+      "after": []
+    }
+  },
+  "Sha1997": {
+    "text": {
+      "before": "Ron Shamir, Advanced Topics in Graph Algorithms , Course material, 1997, http://www.cs.tau.ac.il/~rshamir/atga/atga.html",
+      "after": "Ron Shamir, Advanced Topics in Graph Algorithms , Course material, 1997, https://www.cs.tau.ac.il/~rshamir/atga/atga.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.cs.tau.ac.il/~rshamir/atga/atga.html",
+          "http://www.cs.tau.ac.il/~rshamir/atga/atga.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.cs.tau.ac.il/~rshamir/atga/atga.html",
+          "https://www.cs.tau.ac.il/~rshamir/atga/atga.html"
+        ]
+      ]
+    }
+  },
+  "Shin": {
+    "text": {
+      "before": "H. Shin, Forests and Parking Functions, slides from talk September 24, 2008, http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf",
+      "after": "H. Shin, Forests and Parking Functions, slides from talk September 24, 2008, https://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf",
+          "http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf",
+          "https://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf"
+        ]
+      ]
+    }
+  },
+  "SS2008": {
+    "text": {
+      "before": "Geoffrey Scott and Christopher Storm, The coefficients of the Ihara zeta function , Involve, Vol. 1 (2008), No. 2, 217-233, https://doi.org/10.2140/involve.2008.1.217 ( http://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf )",
+      "after": "Geoffrey Scott and Christopher Storm, The coefficients of the Ihara zeta function , Involve, Vol. 1 (2008), No. 2, 217-233, https://doi.org/10.2140/involve.2008.1.217 ( https://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf )"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.2140/involve.2008.1.217",
+          "https://doi.org/10.2140/involve.2008.1.217"
+        ],
+        [
+          "http://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf",
+          "http://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.2140/involve.2008.1.217",
+          "https://doi.org/10.2140/involve.2008.1.217"
+        ],
+        [
+          "https://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf",
+          "https://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf"
+        ]
+      ]
+    }
+  },
+  "ST1994": {
+    "text": {
+      "before": "Simon, K. and Trunz, P., A cleanup on transitive orientation , Orders, Algorithms, and Applications, 1994, https://doi.org/10.1007/BFb0019427 , ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz",
+      "after": "Simon, K. and Trunz, P., A cleanup on transitive orientation , Orders, Algorithms, and Applications, 1994, https://doi.org/10.1007/BFb0019427"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/BFb0019427",
+          "https://doi.org/10.1007/BFb0019427"
+        ],
+        [
+          "ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz",
+          "ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/BFb0019427",
+          "https://doi.org/10.1007/BFb0019427"
+        ]
+      ]
+    }
+  },
+  "STA": {
+    "id": {
+      "before": "sta",
+      "after": "enumcomb2"
+    },
+    "text": {
+      "before": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7",
+      "after": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7. Paperback printing, 2001. https://math.mit.edu/~rstan/ec/"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/",
+          "https://math.mit.edu/~rstan/ec/"
+        ]
+      ]
+    }
+  },
+  "Sta-EC2": {
+    "id": {
+      "before": "sta-ec2",
+      "after": "enumcomb2"
+    },
+    "text": {
+      "before": "Richard P. Stanley. Enumerative Combinatorics , Volume 2. Cambridge University Press, 2001.",
+      "after": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7. Paperback printing, 2001. https://math.mit.edu/~rstan/ec/"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/",
+          "https://math.mit.edu/~rstan/ec/"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Enumerative Combinatorics"
+      ],
+      "after": []
+    }
+  },
+  "StaCat98": {
+    "text": {
+      "before": "Richard Stanley. Exercises on Catalan and Related Numbers excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999) , version of 23 June 1998. http://www-math.mit.edu/~rstan/ec/catalan.pdf",
+      "after": "Richard Stanley. Exercises on Catalan and Related Numbers excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999) , version of 23 June 1998. https://math.mit.edu/~rstan/ec/catalan.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www-math.mit.edu/~rstan/ec/catalan.pdf",
+          "http://www-math.mit.edu/~rstan/ec/catalan.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/catalan.pdf",
+          "https://math.mit.edu/~rstan/ec/catalan.pdf"
+        ]
+      ]
+    }
+  },
+  "sudoku:escargot": {
+    "text": {
+      "before": "Al Escargot , due to Arto Inkala, http://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html",
+      "after": "Al Escargot , due to Arto Inkala, https://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html",
+          "http://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html",
+          "https://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html"
+        ]
+      ]
+    }
+  },
+  "sudoku:norvig": {
+    "text": {
+      "before": "Perter Norvig, Solving Every Sudoku Puzzle , http://norvig.com/sudoku.html",
+      "after": "Perter Norvig, Solving Every Sudoku Puzzle , https://norvig.com/sudoku.html"
+    },
+    "links": {
+      "before": [
+        [
+          "http://norvig.com/sudoku.html",
+          "http://norvig.com/sudoku.html"
+        ]
+      ],
+      "after": [
+        [
+          "https://norvig.com/sudoku.html",
+          "https://norvig.com/sudoku.html"
+        ]
+      ]
+    }
+  },
+  "sudoku:royle": {
+    "text": {
+      "before": "Gordon Royle, Minimum Sudoku , https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php/sudokumin.php",
+      "after": "Gordon Royle, Minimum Sudoku , https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php"
+    },
+    "links": {
+      "before": [
+        [
+          "https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php/sudokumin.php",
+          "https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php/sudokumin.php"
+        ]
+      ],
+      "after": [
+        [
+          "https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php",
+          "https://web.archive.org/web/20081019022329/http://people.csse.uwa.edu.au/gordon/sudokumin.php"
+        ]
+      ]
+    }
+  },
+  "sudoku:top95": {
+    "text": {
+      "before": "95 Hard Puzzles , http://magictour.free.fr/top95 , or http://norvig.com/top95.txt",
+      "after": "95 Hard Puzzles , http://magictour.free.fr/top95 , or https://norvig.com/top95.txt"
+    },
+    "links": {
+      "before": [
+        [
+          "http://magictour.free.fr/top95",
+          "http://magictour.free.fr/top95"
+        ],
+        [
+          "http://norvig.com/top95.txt",
+          "http://norvig.com/top95.txt"
+        ]
+      ],
+      "after": [
+        [
+          "http://magictour.free.fr/top95",
+          "http://magictour.free.fr/top95"
+        ],
+        [
+          "https://norvig.com/top95.txt",
+          "https://norvig.com/top95.txt"
+        ]
+      ]
+    }
+  },
+  "Sun2010": {
+    "text": {
+      "before": "Yi Sun. The McKay correspondence . http://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf 2010",
+      "after": "Yi Sun. The McKay correspondence . https://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf 2010"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf",
+          "http://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf",
+          "https://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf"
+        ]
+      ]
+    }
+  },
+  "SW2012": {
+    "text": {
+      "before": "John Shareshian and Michelle Wachs. Chromatic quasisymmetric functions and Hessenberg varieties . Configuration Spaces. CRM Series. Scuola Normale Superiore. (2012) pp. 433-460. https://doi.org/10.1007/978-88-7642-431-1_20 . http://www.math.miami.edu/~wachs/papers/chrom.pdf",
+      "after": "John Shareshian and Michelle Wachs. Chromatic quasisymmetric functions and Hessenberg varieties . Configuration Spaces. CRM Series. Scuola Normale Superiore. (2012) pp. 433-460. https://doi.org/10.1007/978-88-7642-431-1_20 . https://www.math.miami.edu/~wachs/papers/chrom.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "https://doi.org/10.1007/978-88-7642-431-1_20",
+          "https://doi.org/10.1007/978-88-7642-431-1_20"
+        ],
+        [
+          "http://www.math.miami.edu/~wachs/papers/chrom.pdf",
+          "http://www.math.miami.edu/~wachs/papers/chrom.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.1007/978-88-7642-431-1_20",
+          "https://doi.org/10.1007/978-88-7642-431-1_20"
+        ],
+        [
+          "https://www.math.miami.edu/~wachs/papers/chrom.pdf",
+          "https://www.math.miami.edu/~wachs/papers/chrom.pdf"
+        ]
+      ]
+    }
+  },
+  "TIDES": {
+    "id": {
+      "before": "tides",
+      "after": "abbr2011"
+    },
+    "text": {
+      "before": "A. Abad, R. Barrio, F. Blesa, M. Rodriguez. TIDES tutorial: Integrating ODEs by using the Taylor Series Method ( https://web.archive.org/web/20120206041615/http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm )",
+      "after": "A. Abad, R. Barrio, F. Blesa, M. Rodriguez. “TIDES tutorial: Integrating ODEs by using the Taylor Series Method.” https://web.archive.org/web/20120206041615/http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm"
+    }
+  },
+  "Tingley2007": {
+    "text": {
+      "before": "Peter Tingley. Three combinatorial models for \\(\\widehat{\\mathfrak{sl}}_n\\) crystals, with applications to cylindric plane partitions . International Mathematics Research Notices. (2007). https://arxiv.org/abs/0702062v3 .",
+      "after": "Peter Tingley. Three combinatorial models for \\(\\widehat{\\mathfrak{sl}}_n\\) crystals, with applications to cylindric plane partitions . International Mathematics Research Notices. (2007). https://arxiv.org/abs/math/0702062v3 ."
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/0702062v3",
+          "https://arxiv.org/abs/0702062v3"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/math/0702062v3",
+          "https://arxiv.org/abs/math/0702062v3"
+        ]
+      ]
+    }
+  },
+  "TingleyLN": {
+    "text": {
+      "before": "Peter Tingley. Explicit \\(\\widehat{\\mathfrak{sl}}_n\\) crystal maps between cylindric plane partitions, multi-partitions, and multi-segments . Lecture notes. http://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf",
+      "after": "Peter Tingley. Explicit \\(\\widehat{\\mathfrak{sl}}_n\\) crystal maps between cylindric plane partitions, multi-partitions, and multi-segments . Lecture notes. https://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf",
+          "http://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf",
+          "https://webpages.math.luc.edu/~ptingley/lecturenotes/explicit_bijections.pdf"
+        ]
+      ]
+    }
+  },
+  "Vazirani2002": {
+    "text": {
+      "before": "Monica Vazirani. Parameterizing Hecek algebra modules: Bernstein-Zelevinsky multisegments, Kleshchev multipartitions, and crystal graphs . Transform. Groups 7 (2002). pp. 267-303. https://arxiv.org/abs/0107052v1 , https://doi.org/10.1007/s00031-002-0014-1 .",
+      "after": "Monica Vazirani. Parameterizing Hecek algebra modules: Bernstein-Zelevinsky multisegments, Kleshchev multipartitions, and crystal graphs . Transform. Groups 7 (2002). pp. 267-303. https://arxiv.org/abs/math/0107052v1 , https://doi.org/10.1007/s00031-002-0014-1 ."
+    },
+    "links": {
+      "before": [
+        [
+          "https://arxiv.org/abs/0107052v1",
+          "https://arxiv.org/abs/0107052v1"
+        ],
+        [
+          "https://doi.org/10.1007/s00031-002-0014-1",
+          "https://doi.org/10.1007/s00031-002-0014-1"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/math/0107052v1",
+          "https://arxiv.org/abs/math/0107052v1"
+        ],
+        [
+          "https://doi.org/10.1007/s00031-002-0014-1",
+          "https://doi.org/10.1007/s00031-002-0014-1"
+        ]
+      ]
+    }
+  },
+  "VT2001": {
+    "text": {
+      "before": "Adam Van Tuyl: Computing the degree of the field of 𝑛‑torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf",
+      "after": "Adam Van Tuyl: Computing the degree of the field of \\(n\\) ‑torsion points (2001). https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf"
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)"
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Computing the degree of the field of 𝑛‑torsion points"
+      ],
+      "after": [
+        "Computing the degree of the field of \\(n\\) ‑torsion points"
+      ]
+    }
+  },
+  "Watkins": {
+    "text": {
+      "before": "Mark Watkins, Hypergeometric motives over Q and their L-functions , http://magma.maths.usyd.edu.au/~watkins/papers/known.pdf",
+      "after": "Mark Watkins, Hypergeometric motives over Q and their L-functions , https://magma.maths.usyd.edu.au/~watkins/papers/known.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://magma.maths.usyd.edu.au/~watkins/papers/known.pdf",
+          "http://magma.maths.usyd.edu.au/~watkins/papers/known.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://magma.maths.usyd.edu.au/~watkins/papers/known.pdf",
+          "https://magma.maths.usyd.edu.au/~watkins/papers/known.pdf"
+        ]
+      ]
+    }
+  },
+  "Whi1932": {
+    "links": {
+      "before": [
+        [
+          "available on JSTOR",
+          "http://www.jstor.org/stable/2371086"
+        ]
+      ],
+      "after": [
+        [
+          "available on JSTOR",
+          "https://www.jstor.org/stable/2371086"
+        ]
+      ]
+    }
+  },
+  "WPNBBAtl": {
+    "text": {
+      "before": "R. A. Wilson, R. A. Parker, S. Nickerson, J. N. Bray, T. Breuer, AtlasRep, a GAP interface to the atlas of group representations . http://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep",
+      "after": "R. A. Wilson, R. A. Parker, S. Nickerson, J. N. Bray, T. Breuer, AtlasRep, a GAP interface to the atlas of group representations . https://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep",
+          "http://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep",
+          "https://www.math.rwth-aachen.de/~Thomas.Breuer/atlasrep"
+        ]
+      ]
+    }
+  },
+  "Wu2009": {
+    "text": {
+      "before": "Hongjun Wu, The Hash Function JH ; submitted to NIST, (2008), available at http://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf",
+      "after": "Hongjun Wu, The Hash Function JH ; submitted to NIST, (2008), available at https://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf",
+          "http://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf",
+          "https://www3.ntu.edu.sg/home/wuhj/research/jh/jh_round3.pdf"
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+ latexcodec pyyaml | $(PYTHON_TOOLCHAIN) $(PYTHON)

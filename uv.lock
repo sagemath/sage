@@ -1132,6 +1132,15 @@ wheels = [
 ]
 
 [[package]]
+name = "latexcodec"
+version = "3.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/dd/4270b2c5e2ee49316c3859e62293bd2ea8e382339d63ab7bbe9f39c0ec3b/latexcodec-3.0.1.tar.gz", hash = "sha256:e78a6911cd72f9dec35031c6ec23584de6842bfbc4610a9678868d14cdfb0357", size = 31222, upload-time = "2025-06-17T18:47:34.051Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/40/23569737873cc9637fd488606347e9dd92b9fa37ba4fcda1f98ee5219a97/latexcodec-3.0.1-py3-none-any.whl", hash = "sha256:a9eb8200bff693f0437a69581f7579eb6bca25c4193515c09900ce76451e452e", size = 18532, upload-time = "2025-06-17T18:47:30.726Z" },
+]
+
+[[package]]
 name = "lrcalc"
 version = "2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1769,6 +1778,32 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/da/9f/abfd2959e9261dd5217ca8551d4de211ca6ab26fe9b72cf44731ff6c4442/pure_eval-0.2.4.tar.gz", hash = "sha256:260c2774686e651b79f8b8e7fc9d80b3599ea6a66334b47d5f4abb69fc2c0ea1", size = 20563, upload-time = "2026-09-10T21:41:22.836Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6d/18/83376915176eb058cb86470eb7396388a13350b09a8f233a79303bbcbc5b/pure_eval-0.2.4-py3-none-any.whl", hash = "sha256:96cae060a313cfaad51bb761278bfb0e62dc0248d9315a81173752dc546cd37a", size = 11893, upload-time = "2026-09-10T21:41:21.532Z" },
+]
+
+[[package]]
+name = "pybtex"
+version = "0.26.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "latexcodec" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4d/f5/f30da9c93f0fa6d619332b2f69597219b625f35780473a05164a9981fd9a/pybtex-0.26.1.tar.gz", hash = "sha256:2e5543bea424e60e9e42eef70bff597be48649d8f68ba061a7a092b2477d5464", size = 692991, upload-time = "2026-04-03T13:05:39.014Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/44/f6/775eb92e865b28cdb4ad1f2bed7a5446197516f76b58a950faa3be3fd08d/pybtex-0.26.1-py3-none-any.whl", hash = "sha256:e26c0412cc54f5f21b2a6d9d175762a2d2af9ccf3a8f651cdb89ec035db77aa1", size = 126134, upload-time = "2026-04-03T13:05:40.623Z" },
+]
+
+[[package]]
+name = "pybtex-docutils"
+version = "1.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docutils" },
+    { name = "pybtex" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/84/796ea94d26188a853660f81bded39f8de4cfe595130aef0dea1088705a11/pybtex-docutils-1.0.3.tar.gz", hash = "sha256:3a7ebdf92b593e00e8c1c538aa9a20bca5d92d84231124715acc964d51d93c6b", size = 18348, upload-time = "2023-08-22T18:47:54.833Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/11/b1/ce1f4596211efb5410e178a803f08e59b20bedb66837dcf41e21c54f9ec1/pybtex_docutils-1.0.3-py3-none-any.whl", hash = "sha256:8fd290d2ae48e32fcb54d86b0efb8d573198653c7e2447d5bec5847095f430b9", size = 6385, upload-time = "2023-08-22T06:43:20.513Z" },
 ]
 
 [[package]]
@@ -2451,10 +2486,14 @@ docs = [
     { name = "docutils" },
     { name = "furo" },
     { name = "jupyter-sphinx" },
+    { name = "latexcodec" },
+    { name = "pybtex" },
+    { name = "pybtex-docutils" },
     { name = "python-dateutil" },
     { name = "sphinx" },
     { name = "sphinx-copybutton" },
     { name = "sphinx-inline-tabs" },
+    { name = "sphinxcontrib-bibtex" },
 ]
 lint = [
     { name = "flake8-rst-docstrings" },
@@ -2534,10 +2573,14 @@ docs = [
     { name = "docutils" },
     { name = "furo" },
     { name = "jupyter-sphinx" },
+    { name = "latexcodec" },
+    { name = "pybtex", specifier = ">=0.25" },
+    { name = "pybtex-docutils", specifier = ">=1.0.2" },
     { name = "python-dateutil" },
     { name = "sphinx", specifier = ">=9.1,<10" },
     { name = "sphinx-copybutton" },
     { name = "sphinx-inline-tabs" },
+    { name = "sphinxcontrib-bibtex", specifier = ">=2.7,<3" },
 ]
 lint = [
     { name = "flake8-rst-docstrings" },
@@ -2698,6 +2741,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ba/6e/b837e84a1a704953c62ef8776d45c3e8d759876b4a84fe14eba2859106fe/sphinxcontrib_applehelp-2.0.0.tar.gz", hash = "sha256:2f29ef331735ce958efa4734873f084941970894c6090408b079c61b2e1c06d1", size = 20053, upload-time = "2024-07-29T01:09:00.465Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5d/85/9ebeae2f76e9e77b952f4b274c27238156eae7979c5421fba91a28f4970d/sphinxcontrib_applehelp-2.0.0-py3-none-any.whl", hash = "sha256:4cd3f0ec4ac5dd9c17ec65e9ab272c9b867ea77425228e68ecf08d6b28ddbdb5", size = 119300, upload-time = "2024-07-29T01:08:58.99Z" },
+]
+
+[[package]]
+name = "sphinxcontrib-bibtex"
+version = "2.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docutils" },
+    { name = "pybtex" },
+    { name = "pybtex-docutils" },
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/15/6a/8e0b2c2420286389e7fed78ff361ec30e2f1d58c8560af8d64df5e7b61e0/sphinxcontrib_bibtex-2.7.0.tar.gz", hash = "sha256:fee700f7aae29bb8f654c62913f00d34ac44fc0b8ca0fa67ac922ff4453addee", size = 120669, upload-time = "2026-05-06T09:29:24.935Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/52/c0/d28e62407f4733bbe0169287bc012f0ac3b4a2021066b285570654119c8b/sphinxcontrib_bibtex-2.7.0-py3-none-any.whl", hash = "sha256:28cf0ec7a957d1c7548d5749317ed472ce877e1b629f430f88e3789aa51f87b1", size = 40287, upload-time = "2026-05-06T09:29:23.253Z" },
 ]
 
 [[package]]

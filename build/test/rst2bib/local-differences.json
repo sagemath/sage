@@ -1,0 +1,598 @@
+{
+  "LocalRef001": {
+    "text": {
+      "before": "Daniel R. Hughes, “A class of non-Desarguesian projective planes”, The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378",
+      "after": "Daniel R. Hughes, “A class of non-Desarguesian projective planes”, The Canadian Journal of Mathematics (1957), https://doi.org/10.4153/cjm-1957-045-0"
+    },
+    "links": {
+      "before": [
+        [
+          "http://cms.math.ca/cjm/v9/p378",
+          "http://cms.math.ca/cjm/v9/p378"
+        ]
+      ],
+      "after": [
+        [
+          "https://doi.org/10.4153/cjm-1957-045-0",
+          "https://doi.org/10.4153/cjm-1957-045-0"
+        ]
+      ]
+    }
+  },
+  "LocalRef011": {
+    "text": {
+      "before": "S. Klee and L. Yates, Tight Subdesigns of the Higman-Sims Design, Rose-Hulman Undergraduate Math. J 5.2 (2004). https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf",
+      "after": "S. Klee and L. Yates, Tight Subdesigns of the Higman-Sims Design, Rose-Hulman Undergraduate Math. J 5.2 (2004). https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/"
+    },
+    "links": {
+      "before": [
+        [
+          "https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf",
+          "https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/",
+          "https://scholar.rose-hulman.edu/rhumj/vol5/iss2/9/"
+        ]
+      ]
+    }
+  },
+  "LocalRef022": {
+    "text": {
+      "before": "Balanced incomplete block designs and related designs, Haim Hanani, Discrete Mathematics 11.3 (1975) pages 255-369.",
+      "after": "Haim Hanani, Balanced incomplete block designs and related designs, doi:10.1016/0012-365X(75)90040-0 , Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "doi:10.1016/0012-365X(75)90040-0",
+          "https://doi.org/10.1016/0012-365X(75)90040-0"
+        ]
+      ]
+    }
+  },
+  "LocalRef027": {
+    "text": {
+      "before": "Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side, Rolf S. Rees, Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.",
+      "after": "Rolf S. Rees, Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side \\(n\\) , Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266."
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)"
+      ]
+    }
+  },
+  "LocalRef028": {
+    "text": {
+      "before": "Two new direct product-type constructions for resolvable group-divisible designs, Rolf S. Rees, Journal of Combinatorial Designs 1.1 (1993): 15-26.",
+      "after": "Rolf S. Rees, Two new direct product-type constructions for resolvable group-divisible designs, Journal of Combinatorial Designs 1.1 (1993): 15-26."
+    }
+  },
+  "LocalRef034": {
+    "text": {
+      "before": "J.J. Graham and G.I. Lehrer, Cellular algebras. Inventiones mathematicae 123 (1996), 1–34.",
+      "after": "J.J. Graham and G.I. Lehrer Cellular algebras . Invent. Math. 123 (1996), 1-34. https://www.ams.org/mathscinet-getitem?mr=MR1376244 https://doi.org/10.1007/BF01232365"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244",
+          "https://www.ams.org/mathscinet-getitem?mr=MR1376244"
+        ],
+        [
+          "https://doi.org/10.1007/BF01232365",
+          "https://doi.org/10.1007/BF01232365"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Cellular algebras"
+      ]
+    }
+  },
+  "LocalRef036": {
+    "text": {
+      "before": "Richard P. Stanley. Enumerative Combinatorics , Volume 2. Cambridge University Press, 2001.",
+      "after": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7. Paperback printing, 2001. https://math.mit.edu/~rstan/ec/"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/",
+          "https://math.mit.edu/~rstan/ec/"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Enumerative Combinatorics"
+      ],
+      "after": []
+    }
+  },
+  "LocalRef037": {
+    "text": {
+      "before": "Richard Stanley. Exercises on Catalan and Related Numbers excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999) , version of 23 June 1998. http://www-math.mit.edu/~rstan/ec/catalan.pdf",
+      "after": "Richard Stanley. Exercises on Catalan and Related Numbers excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999) , version of 23 June 1998. https://math.mit.edu/~rstan/ec/catalan.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www-math.mit.edu/~rstan/ec/catalan.pdf",
+          "http://www-math.mit.edu/~rstan/ec/catalan.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/catalan.pdf",
+          "https://math.mit.edu/~rstan/ec/catalan.pdf"
+        ]
+      ]
+    }
+  },
+  "LocalRef039": {
+    "text": {
+      "before": "J. Bandlow, K. Killpatrick – An area-to_inv bijection between Dyck paths and 312-avoiding permutations , Electronic Journal of Combinatorics, Volume 8, Issue 1 (2001).",
+      "after": "J. Bandlow, K. Killpatrick – An area-to_inv bijection between Dyck paths and 312-avoiding permutations , Electronic Journal of Combinatorics, Volume 8, Issue 1 (2001). doi:10.37236/1584 ."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "doi:10.37236/1584",
+          "https://doi.org/10.37236/1584"
+        ]
+      ]
+    }
+  },
+  "LocalRef047": {
+    "links": {
+      "before": [
+        [
+          "Electron. J. Combin. 22 (2015), #P2.19",
+          "http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19"
+        ]
+      ],
+      "after": [
+        [
+          "Electron. J. Combin. 22 (2015), #P2.19",
+          "https://doi.org/10.37236/5026"
+        ]
+      ]
+    }
+  },
+  "LocalRef065": {
+    "text": {
+      "before": "Haglund, Luoto, Mason, van Willigenburg, Quasisymmetric Schur functions , J. Comb. Theory Ser. A 118 (2011), 463-490. http://www.sciencedirect.com/science/article/pii/S0097316509001745 , arXiv 0810.2489v2 .",
+      "after": "James Haglund, Kurt Luoto, Sarah Mason, and Stephanie van Willigenburg. Quasisymmetric Schur functions. Journal of Combinatorial Theory, Series A 118, no. 2 (2011): 463-490. https://arxiv.org/abs/0810.2489"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.sciencedirect.com/science/article/pii/S0097316509001745",
+          "http://www.sciencedirect.com/science/article/pii/S0097316509001745"
+        ],
+        [
+          "arXiv 0810.2489v2",
+          "https://arxiv.org/abs/0810.2489v2"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0810.2489",
+          "https://arxiv.org/abs/0810.2489"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Quasisymmetric Schur functions"
+      ],
+      "after": [
+        "Quasisymmetric Schur functions."
+      ]
+    }
+  },
+  "LocalRef069": {
+    "text": {
+      "before": "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at \\(q = 0\\) . Krob and Thibon. Journal of Algebraic Combinatorics 6 (1997), 339-376.",
+      "after": "Daniel Krob and Jean-Yves Thibon. Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at q = 0 , Journal of Algebraic Combinatorics 6 (1997), no. 4, 339–376."
+    },
+    "math": {
+      "before": [
+        "\\(q = 0\\)"
+      ],
+      "after": []
+    },
+    "emphasis": {
+      "before": [
+        "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at"
+      ],
+      "after": [
+        "Noncommutative symmetric functions IV: Quantum linear groups and Hecke algebras at q = 0"
+      ]
+    }
+  },
+  "LocalRef070": {
+    "text": {
+      "before": "F. Hivert, J.-C. Novelli, J.-Y. Thibon. Commutative combinatorial Hopf algebras . (2006). arXiv 0605262v1 .",
+      "after": "F. Hivert, J.-C. Novelli, J.-Y. Thibon. Commutative combinatorial Hopf algebras . (2006). arXiv math/0605262v1 ."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 0605262v1",
+          "https://arxiv.org/abs/0605262v1"
+        ]
+      ],
+      "after": [
+        [
+          "arXiv math/0605262v1",
+          "https://arxiv.org/abs/math/0605262v1"
+        ]
+      ]
+    }
+  },
+  "LocalRef084": {
+    "text": {
+      "before": "S. Delsarte, Fonctions de Möbius Sur Les Groupes Abéliens Finis , Annals of Mathematics, second series, Vol. 45, No. 3, (Jul 1948), pp. 600-609. http://www.jstor.org/stable/1969047",
+      "after": "S. Delsarte, Fonctions de Möbius Sur Les Groupes Abéliens Finis , Annals of Mathematics, second series, Vol. 49, No. 3, (Jul 1948), pp. 600-609. https://www.jstor.org/stable/1969047"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.jstor.org/stable/1969047",
+          "http://www.jstor.org/stable/1969047"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.jstor.org/stable/1969047",
+          "https://www.jstor.org/stable/1969047"
+        ]
+      ]
+    }
+  },
+  "LocalRef091": {
+    "text": {
+      "before": "Masato Okado, Reiho Sakamoto, and Anne Schilling. Affine crystal structure on rigged configurations of type \\(D_n^{(1)}\\) . J. Algebraic Combinatorics, 37 (2013). 571-599. arXiv 1109.3523 .",
+      "after": "Masato Okado, Reiho Sakamoto, Anne Schilling, Affine crystal structure on rigged configurations of type \\(D_n^{(1)}\\) , J. Algebraic Combinatorics 37(3) (2013) 571-599 ( arXiv 1109.3523 [math.QA])"
+    },
+    "emphasis": {
+      "before": [
+        "Affine crystal structure on rigged configurations of type"
+      ],
+      "after": []
+    },
+    "strong": {
+      "before": [
+        "37"
+      ],
+      "after": []
+    }
+  },
+  "LocalRef097": {
+    "text": {
+      "before": "Masato Okado, Anne Schilling, and Mark Shimozono. Virtual crystals and fermionic formulas of type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) . Representation Theory. 7 (2003) arXiv math.QA/0105017 .",
+      "after": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1090/S1088-4165-03-00155-9 , arXiv math/0105017 ."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv math.QA/0105017",
+          "https://arxiv.org/abs/math.QA/0105017"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1090/S1088-4165-03-00155-9",
+          "https://doi.org/10.1090/S1088-4165-03-00155-9"
+        ],
+        [
+          "arXiv math/0105017",
+          "https://arxiv.org/abs/math/0105017"
+        ]
+      ]
+    }
+  },
+  "LocalRef101": {
+    "text": {
+      "before": "F. Hivert, A. Schilling, and N. M. Thiéry, Hecke group algebras as quotients of affine Hecke algebras at level 0 , JCT A, Vol. 116, (2009) p. 844-863 arXiv 0804.3781",
+      "after": "F. Hivert, A. Schilling, N. Thiery, Hecke group algebras as quotients of affine Hecke algebras at level 0 , Journal of Combinatorial Theory, Series A 116 (2009) 844-863 ( https://arxiv.org/abs/0804.3781 )"
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 0804.3781",
+          "https://arxiv.org/abs/0804.3781"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/0804.3781",
+          "https://arxiv.org/abs/0804.3781"
+        ]
+      ]
+    }
+  },
+  "LocalRef114": {
+    "text": {
+      "before": "M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.",
+      "after": "M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, Proceedings of the International Congress of Mathematicians, Madrid 2006, Vol. III, 843-872."
+    }
+  },
+  "LocalRef117": {
+    "text": {
+      "before": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1.1.192.2095 , arXiv 0810.5067 .",
+      "after": "M. Okado, A. Schilling, M. Shimozono. “Virtual crystals and fermionic formulas for type \\(D_{n+1}^{(2)}\\) , \\(A_{2n}^{(2)}\\) , and \\(C_n^{(1)}\\) ”. Representation Theory. 7 (2003). 101-163. doi:10.1090/S1088-4165-03-00155-9 , arXiv math/0105017 ."
+    },
+    "links": {
+      "before": [
+        [
+          "doi:10.1.1.192.2095",
+          "https://doi.org/10.1.1.192.2095"
+        ],
+        [
+          "arXiv 0810.5067",
+          "https://arxiv.org/abs/0810.5067"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1090/S1088-4165-03-00155-9",
+          "https://doi.org/10.1090/S1088-4165-03-00155-9"
+        ],
+        [
+          "arXiv math/0105017",
+          "https://arxiv.org/abs/math/0105017"
+        ]
+      ]
+    }
+  },
+  "LocalRef119": {
+    "text": {
+      "before": "I. G. Macdonald, Symmetric functions and Hall polynomials, second ed., The Clarendon Press, Oxford University Press, New York, 1995, With contributions by A. Zelevinsky, Oxford Science Publications.",
+      "after": "Ian Macdonald, Symmetric Functions and Hall Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2"
+    }
+  },
+  "LocalRef120": {
+    "text": {
+      "before": "T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki, k-Schur functions and affine Schubert calculus.",
+      "after": "Thomas Lam, Luc Lapointe, Jennifer Morse, Anne Schilling, Mark Shimozono and Mike Zabrocki. k-Schur functions and affine Schubert calculus , 2013. https://arxiv.org/abs/1301.3569 ."
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://arxiv.org/abs/1301.3569",
+          "https://arxiv.org/abs/1301.3569"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "k-Schur functions and affine Schubert calculus"
+      ]
+    }
+  },
+  "LocalRef128": {
+    "text": {
+      "before": "Florent Hivert and Nicolas M. Thiery, MuPAD-Combinat, an open-source package for research in algebraic combinatorics. Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004. http://mupad-combinat.sf.net/ .",
+      "after": "Florent Hivert and Nicolas M. Thiery, MuPAD-Combinat, an open-source package for research in algebraic combinatorics. Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004. https://mupad-combinat.sf.net/ ."
+    },
+    "links": {
+      "before": [
+        [
+          "http://mupad-combinat.sf.net/",
+          "http://mupad-combinat.sf.net/"
+        ]
+      ],
+      "after": [
+        [
+          "https://mupad-combinat.sf.net/",
+          "https://mupad-combinat.sf.net/"
+        ]
+      ]
+    }
+  },
+  "LocalRef129": {
+    "text": {
+      "before": "Ian Macdonald, Symmetric Functions and Orthogonal Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2",
+      "after": "Ian Macdonald, Symmetric Functions and Hall Polynomials, Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs. Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp. ISBN: 0-19-853489-2"
+    }
+  },
+  "LocalRef130": {
+    "text": {
+      "before": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7",
+      "after": "Richard Stanley, Enumerative combinatorics. Vol. 2. With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin. Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp. ISBN: 0-521-56069-1; 0-521-78987-7. Paperback printing, 2001. https://math.mit.edu/~rstan/ec/"
+    },
+    "links": {
+      "before": [],
+      "after": [
+        [
+          "https://math.mit.edu/~rstan/ec/",
+          "https://math.mit.edu/~rstan/ec/"
+        ]
+      ]
+    }
+  },
+  "LocalRef134": {
+    "text": {
+      "before": "Thomas Scharf, Jean-Yves Thibon. A Hopf-algebra approach to inner plethysm . Advances in Mathematics 104 (1994), pp. 30-58. ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz",
+      "after": "Scharf, Thomas, Thibon, Jean-Yves, A Hopf-algebra approach to inner plethysm. Adv. Math. 104 (1994), no. 1, 30-58. doi:10.1006/aima.1994.1019"
+    },
+    "links": {
+      "before": [
+        [
+          "ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz",
+          "ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz"
+        ]
+      ],
+      "after": [
+        [
+          "doi:10.1006/aima.1994.1019",
+          "https://doi.org/10.1006/aima.1994.1019"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "A Hopf-algebra approach to inner plethysm"
+      ],
+      "after": []
+    }
+  },
+  "LocalRef147": {
+    "text": {
+      "before": "Alain Lascoux, ‘Young representations of the symmetric group.’ http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz",
+      "after": "Alain Lascoux, Youngs’s Representations of the Symmetric Group , September 2000. https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz",
+          "http://phalanstere.univ-mlv.fr/~al/ARTICLES/ProcCrac.ps.gz"
+        ]
+      ],
+      "after": [
+        [
+          "https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf",
+          "https://alain-lascoux.github.io/files/lascoux__ProcCrac.pdf"
+        ]
+      ]
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Youngs’s Representations of the Symmetric Group"
+      ]
+    }
+  },
+  "LocalRef152": {
+    "text": {
+      "before": "M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of Encyclopedia of Mathematics and its Applications, Cambridge University Press, U.K., 2002.",
+      "after": "M. Lothaire, Algebraic combinatorics on words . Cambridge University Press (2002)."
+    },
+    "emphasis": {
+      "before": [],
+      "after": [
+        "Algebraic combinatorics on words"
+      ]
+    }
+  },
+  "LocalRef159": {
+    "text": {
+      "before": "H. Cohen, Advanced topics in computational number theory, Springer, 2000.",
+      "after": "Henri Cohen, Advanced topics in computational number theory, Graduate Texts in Mathematics, vol. 193, Springer-Verlag, New York, 2000."
+    }
+  },
+  "LocalRef162": {
+    "text": {
+      "before": "Louis H. Kauffman, Virtual Knot Theory , Europ. J. Combinatorics (1999) 20, 663-691 ; http://homepages.math.uic.edu/~kauffman/VKT.pdf",
+      "after": "Louis H. Kauffman, Virtual Knot Theory , Europ. J. Combinatorics (1999) 20, 663-691 ; https://homepages.math.uic.edu/~kauffman/VKT.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://homepages.math.uic.edu/~kauffman/VKT.pdf",
+          "http://homepages.math.uic.edu/~kauffman/VKT.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://homepages.math.uic.edu/~kauffman/VKT.pdf",
+          "https://homepages.math.uic.edu/~kauffman/VKT.pdf"
+        ]
+      ]
+    }
+  },
+  "LocalRef164": {
+    "text": {
+      "before": "Fernando Rodriguez Villegas, Mixed Hodge numbers and factorial ratios , arXiv 1907.02722",
+      "after": "Fernando Rodriguez Villegas. Mixed Hodge numbers and factorial ratios . https://arxiv.org/abs/1907.02722 , 2019."
+    },
+    "links": {
+      "before": [
+        [
+          "arXiv 1907.02722",
+          "https://arxiv.org/abs/1907.02722"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/1907.02722",
+          "https://arxiv.org/abs/1907.02722"
+        ]
+      ]
+    }
+  },
+  "LocalRef167": {
+    "text": {
+      "before": "Pierre Deligne, Multizêtas, d’après Francis Brown , Séminaire Bourbaki, janvier 2012. http://www.bourbaki.ens.fr/TEXTES/1048.pdf",
+      "after": "Pierre Deligne, Multizêtas, d’après Francis Brown , Séminaire Bourbaki, janvier 2012. https://www.bourbaki.fr/TEXTES/1048.pdf"
+    },
+    "links": {
+      "before": [
+        [
+          "http://www.bourbaki.ens.fr/TEXTES/1048.pdf",
+          "http://www.bourbaki.ens.fr/TEXTES/1048.pdf"
+        ]
+      ],
+      "after": [
+        [
+          "https://www.bourbaki.fr/TEXTES/1048.pdf",
+          "https://www.bourbaki.fr/TEXTES/1048.pdf"
+        ]
+      ]
+    }
+  },
+  "LocalRef172": {
+    "text": {
+      "before": "La Jolla Covering Repository, https://dmgordon.org/cover",
+      "after": "La Jolla Covering Repository, https://ljcr.dmgordon.org/cover.html"
+    },
+    "links": {
+      "before": [
+        [
+          "https://dmgordon.org/cover",
+          "https://dmgordon.org/cover"
+        ]
+      ],
+      "after": [
+        [
+          "https://ljcr.dmgordon.org/cover.html",
+          "https://ljcr.dmgordon.org/cover.html"
+        ]
+      ]
+    }
+  },
+  "LocalRef174": {
+    "text": {
+      "before": "La Jolla Covering Repository, https://dmgordon.org/cover",
+      "after": "La Jolla Covering Repository, https://ljcr.dmgordon.org/cover.html"
+    },
+    "links": {
+      "before": [
+        [
+          "https://dmgordon.org/cover",
+          "https://dmgordon.org/cover"
+        ]
+      ],
+      "after": [
+        [
+          "https://ljcr.dmgordon.org/cover.html",
+          "https://ljcr.dmgordon.org/cover.html"
+        ]
+      ]
+    }
+  }
+}
