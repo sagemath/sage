@@ -115,7 +115,7 @@ def reversed_hermite_form(Matrix mat, bint transformation=False):
                 if transformation:
                     U.swap_rows_c(i, k)
             k -= 1
-            # put the row with the smalllest degree to the ith row
+            # put the row with the smallest degree to the ith row
             di = A.get_unsafe(i, j).degree()
             while k >= 0 and A.get_unsafe(k, j):
                 dk = A.get_unsafe(k, j).degree()

@@ -150,7 +150,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, v):
+    def __init__(self, parent, v) -> None:
         """
         TESTS::
 
@@ -744,7 +744,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         if error is None:
             # if the caller was sure that we should simplify, then we should try to do the best simplification possible
-            error = self(f) if force else self.uppper_bound(f)
+            error = self(f) if force else self.upper_bound(f)
 
         return f.map_coefficients(lambda c: self._base_valuation.simplify(c, error=error, force=force))
 
