@@ -1952,12 +1952,24 @@ def hypergeometric_sum(f, var, a, b):
             e
 
         A term which vanishes on the whole summation lattice sums to
-        zero::
+        zero.  The vanishing may be caused by a factor whose term ratio is
+        not rational in the summation variable, as long as a factor
+        ``1/gamma(A*k + B)`` with ``A`` a negative integer and ``B`` a
+        nonpositive integer forces every term to zero; other factors are
+        assumed to be defined at every lattice point, as everywhere else
+        in this module::
 
             sage: hypergeometric_sum(1/gamma(-k), k, 0, oo)
             0
             sage: hypergeometric_sum(sin(pi*k), k, 0, oo)
             0
+            sage: hypergeometric_sum(sin(k)/gamma(-k), k, 0, oo)
+            0
+            sage: try:
+            ....:     hypergeometric_sum(1/((k - 2)*gamma(-k)), k, 0, oo)
+            ....: except ValueError as err:
+            ....:     print('ValueError: %s' % err)
+            ValueError: the term 1/((k - 2)*gamma(-k)) is not defined in the range
 
         Terms whose term ratio does not factor into linear factors are
         rejected::
@@ -2024,6 +2036,60 @@ def hypergeometric_sum(f, var, a, b):
     g = f.subs({var: aq + j})
     if g.is_trivial_zero():
         return SR(0)
+
+    # a factor gamma(A*j + B)^(-1), where A is a negative integer and B a
+    # nonpositive integer, vanishes on the whole summation lattice, so that
+    # every term of the sum is zero, unless another factor has a pole on
+    # the lattice; the positions of the poles of gamma factors with
+    # positive slope, and of the zeros of polynomial factors, are bounded
+    # above, and the term is scanned up to that bound, while other factors
+    # are assumed to be defined generically, as everywhere else in this
+    # module.  Recognizing this before validating the term ratio is
+    # necessary, because the ratio of such a term need not be rational
+    # in the summation variable
+    annihilates = undecidable = False
+    bound = 0
+    for base, e in _mult_split(g.to_gamma()):
+        if base.operator() == GAMMA_OP:
+            try:
+                A, B = _linear_symbolic(base.operands()[0], j)
+                A, B = QQ(A), QQ(B)
+            except (TypeError, ValueError, ArithmeticError):
+                # symbolic slope or constant term: defined generically
+                continue
+            if e < 0:
+                if A in ZZ and A <= -1 and B in ZZ and B <= 0:
+                    annihilates = True
+            elif A < 0:
+                # poles without a bound above
+                undecidable = True
+            elif A > 0 and -B/A >= 0:
+                bound = max(bound, (-B/A).floor())
+        elif e < 0 and base.is_polynomial(j):
+            try:
+                zeros = PolynomialRing(QQ, str(j))(base).roots()
+            except (TypeError, ValueError, ArithmeticError, NotImplementedError):
+                # symbolic coefficients: defined generically
+                zeros = []
+            bound = max([bound] + [ZZ(r) for r, m in zeros
+                                   if r in ZZ and r >= 0])
+    if annihilates and not undecidable:
+        try:
+            for m in range(bound + 1):
+                t = g.subs({j: m})
+                if t.is_infinity() or not (t - t).is_trivial_zero():
+                    raise ValueError("the term %s is not defined in the "
+                                     "range" % f)
+                if not t.is_trivial_zero():
+                    # contradicts the vanishing factor: fall back to the
+                    # term ratio
+                    undecidable = True
+                    break
+        except (ValueError, ArithmeticError, RuntimeError) as exc:
+            raise ValueError("the term %s is not defined in the "
+                             "range" % f) from exc
+        if not undecidable:
+            return SR(0)
 
     # the term is hypergeometric iff its term ratio, reduced by the
     # recurrence of the gamma function, factors into linear polynomials;
