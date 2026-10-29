@@ -3299,6 +3299,44 @@ class QuaternionOrder(Parent):
         # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
         raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
 
+    @cached_method
+    def _short_orthogonal_elements(self):
+        r"""
+        Return orthogonal trace-zero elements `i`, `j` of this order such
+        that `i` has minimal norm among all trace-zero elements and `j`
+        has minimal norm among all trace-zero elements orthogonal to `i`.
+
+        Only implemented for definite quaternion algebras.
+
+        EXAMPLES::
+
+            sage: O = QuaternionAlgebra(419).maximal_order().random_ideal().right_order()
+            sage: ii, jj = O._short_orthogonal_elements()
+            sage: ii.reduced_trace()
+            0
+            sage: jj.reduced_trace()
+            0
+            sage: ii.pair(jj)
+            0
+            sage: ii.reduced_norm() <= jj.reduced_norm()
+            True
+        """
+        basis = self.basis()
+        G = self.unit_ideal().gram_matrix()
+
+        def _shortest_orthogonal(elts):
+            # shortest nonzero element of this order orthogonal to all given elements
+            M = matrix([[b.pair(e) for e in elts] for b in basis])
+            K = matrix(ZZ, M * M.denominator()).left_kernel().basis_matrix()
+            _, _, V = (K * G * K.transpose()).__pari__().qfminim(m=1, flag=2)
+            v, = matrix(V).columns()
+            return sum(ZZ(c) * b for c, b in zip(v * K, basis))
+
+        ii = _shortest_orthogonal([self.one()])
+        jj = _shortest_orthogonal([self.one(), ii])
+
+        return ii, jj
+
     def represent_integer(self, n, smooth_bound=None, *, full=True):
         r"""
         Given a positive integer `n`, compute a quaternion in this order whose
@@ -3339,10 +3377,10 @@ class QuaternionOrder(Parent):
             Order of Quaternion Algebra (-1, -419) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
             sage: O.represent_integer(5)
             2 - i
-            sage: O.represent_integer(1019)
-            -8 - 7/2*i - 3/2*k
-            sage: O.represent_integer(1019, full=False)  # random
-            10 + 9*i + j + k
+            sage: O.represent_integer(420)
+            35/2 + 3*i + 1/2*j
+            sage: O.represent_integer(420, full=False)  # random
+            1 + j
 
         ::
 
@@ -3352,7 +3390,7 @@ class QuaternionOrder(Parent):
             ....:                         15503/23944*i + 3487/11972*j + 13203/23944*k,
             ....:                         -12989/23944*i + 11639/11972*j + 3175/23944*k])
             sage: O.represent_integer(7)
-            5/2 + 11911/23944*i + 33/11972*j - 45/23944*k
+            5/2 - 11911/23944*i - 33/11972*j + 45/23944*k
 
         ::
 
@@ -3360,26 +3398,37 @@ class QuaternionOrder(Parent):
             sage: B.<i,j,k> = QuaternionAlgebra(-1, -p)
             sage: O = B.quaternion_order([1, i, (i+j)/2, (1+k)/2])
             sage: print(O.represent_integer(2^127 + 100))
-            10 + i + k
+            10 + i - k
             sage: print(O.represent_integer(2^127 + 101))
             9247344907038065505 + 9199336695150709798*i
             sage: print(O.represent_integer(2^127 + 102))
             None
             sage: print(O.represent_integer(2^127 + 103))
-            18007179761979493019/2 - 6822115276825140697*i + 1/2*k
+            18007179761979493019/2 - 6822115276825140697*i - 1/2*k
             sage: print(O.represent_integer(2^127 + 103, full=False))
-            -10 - 2*i + k
+            -10 - 2*i - k
             sage: print(O.represent_integer(2^127 + 103, smooth_bound=1))
             None
             sage: print(O.represent_integer(2^127 + 103, smooth_bound=100))
-            -10 - 2*i + k
+            -10 - 2*i - k
             sage: print(O.represent_integer(2^127 + 303))
-            17652745271232707461/2 + 7049896005799996563*i + 1/2*k
+            17652745271232707461/2 + 7049896005799996563*i - 1/2*k
             sage: print(O.represent_integer(2^127 + 303, full=False))
             None
 
         ALGORITHM: Generalized variant of [KLPT2014]_, §3.2, with ideas taken
         from the ``FullRepresentInteger`` algorithm of [DFLLW2023]_.
+
+        Verify that :issue:`43066` is fixed::
+
+            sage: for p in primes(30):
+            ....:     O = QuaternionAlgebra(p).maximal_order()
+            ....:     for T in range(1, 30):
+            ....:         try:
+            ....:             _ = O.represent_integer(T)
+            ....:         except Exception as e:
+            ....:             print(f'{p = } | {T = } | {e}')
+            ....:             break
         """
         n = ZZ(n)
         if n < 0:
@@ -3389,17 +3438,7 @@ class QuaternionOrder(Parent):
         if n.is_one():
             return self.one()
 
-        basis = self.unit_ideal().reduced_basis()
-        _, ii, jj, __ = basis
-        assert _ in (self.one(), -self.one()), 'reduced basis of unit ideal does not start with 1; this is a bug'
-
-        # find orthogonal elements ii, jj with norm(ii) minimal
-        # these do not necessarily generate the full order!
-        ii -= ii.reduced_trace() / 2
-        ii *= self.basis_matrix().solve_left(vector(ii)).denominator()
-        jj -= jj.reduced_trace() / 2
-        jj -= jj.pair(ii) / 2 * ii
-        jj *= self.basis_matrix().solve_left(vector(jj)).denominator()
+        ii, jj = self._short_orthogonal_elements()
         kk = ii * jj
         assert ii in self and jj in self and kk in self, 'orthogonal basis of sublattice not contained in this order; this is a bug'
 
