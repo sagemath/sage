@@ -117,9 +117,10 @@ AUTHORS:
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.structure.element import AdditiveGroupElement
+from sage.structure.element import AdditiveGroupElement, Element
 from sage.structure.parent import Parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
@@ -460,9 +461,13 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         default of the coercion model.  The computation uses the complete
         extended-coordinate addition law, performs a single field inversion
         at the very end, and over prime fields caches a fixed-base comb
-        table on points that are multiplied repeatedly.  Scalars that are
-        not integers return ``None`` so that the coercion model can look
-        for another action.
+        table on points that are multiplied repeatedly.
+
+        Scalars must coerce canonically into ``ZZ``: Python and Sage
+        integers are accepted, while rational or finite-field elements are
+        rejected with a :exc:`TypeError` rather than silently truncated to
+        an integer (a rational action cached by the coercion model must not
+        turn later fractional scalars into a silent ``None`` result)::
 
         EXAMPLES::
 
@@ -511,11 +516,36 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             True
             sage: (12345 * P25).to_elliptic_curve() == 12345 * P25.to_elliptic_curve()
             True
+
+        A relative extension of prime degree is *not* a prime field; its
+        points take the field-element path and still agree with the
+        Weierstrass model::
+
+            sage: K = F25.extension(PolynomialRing(F25, 't').gen() + 1, 'b')
+            sage: CK = TwistedEdwardsCurve(K, 1, z + 2)
+            sage: PK = CK(z + 3, 2)
+            sage: (3 * PK).to_elliptic_curve() == 3 * PK.to_elliptic_curve()
+            True
+
+        Non-integer scalars are rejected::
+
+            sage: QQ(1/2) * P
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar multiplication of a twisted Edwards point requires an integer scalar, got an element of Rational Field
+            sage: GF(3)(2) * P
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar multiplication of a twisted Edwards point requires an integer scalar, got an element of Finite Field of size 3
         """
         try:
-            k = ZZ(other)
-        except (TypeError, ValueError):
-            return None
+            k = ZZ.coerce(other)
+        except TypeError:
+            if not isinstance(other, Element):
+                return None
+            raise TypeError(
+                "scalar multiplication of a twisted Edwards point requires "
+                "an integer scalar, got an element of %s" % other.parent())
         if k == 1:
             return self
         if k == 0:
@@ -525,7 +555,7 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         else:
             Q = self._edwards_mul(k)
         n = getattr(self, "_order", None)
-        if n is not None:
+        if n is not None and n != infinity:
             Q._order = n // n.gcd(k)
         return Q
 
@@ -540,7 +570,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         directly without touching the Weierstrass model, and scalar
         multiplications propagate a cached order to their result using
         Lagrange's theorem, mirroring the behaviour of Weierstrass
-        points.
+        points.  Infinite-order points over non-finite fields keep
+        infinite order under nonzero multiplication.
 
         EXAMPLES::
 
@@ -551,6 +582,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             4
             sage: P.order()
             4
+            sage: P.order() is P.order()
+            True
             sage: C.zero().order()
             1
             sage: C(0, -1).order()
@@ -562,6 +595,16 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             ....:     for Q in C.some_elements())
             True
 
+        Over non-finite fields, points of infinite order stay of infinite
+        order::
+
+            sage: Cq = TwistedEdwardsCurve(QQ, 1, QQ(1/3))
+            sage: Pq = Cq(2, 3)
+            sage: Pq.order()
+            +Infinity
+            sage: (2 * Pq).order()
+            +Infinity
+
         The Ed25519 base point has prime order ``L``::
 
             sage: from sage.crypto.ed25519 import ED25519_SUBGROUP_ORDER, Ed25519BasePoint
@@ -572,18 +615,26 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: C25(0, -1).order()
             2
         """
+        o = self.__dict__.get("_order")
+        if o is not None:
+            return o
+
         if not self:
-            return ZZ.one()
-        R = self + self
-        if R.is_zero():
-            return ZZ(2)
-        R = R + R
-        if R.is_zero():
-            return ZZ(4)
-        R = R + R
-        if R.is_zero():
-            return ZZ(8)
-        o = self.to_elliptic_curve().additive_order()
+            o = ZZ.one()
+        else:
+            R = self + self
+            if R.is_zero():
+                o = ZZ(2)
+            else:
+                R = R + R
+                if R.is_zero():
+                    o = ZZ(4)
+                else:
+                    R = R + R
+                    if R.is_zero():
+                        o = ZZ(8)
+                    else:
+                        o = self.to_elliptic_curve().additive_order()
         self._order = o
         return o
 
@@ -593,6 +644,13 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         Dispatches between the generic field-element implementation and the
         Python-integer fast path for prime base fields, and manages the
         per-point fixed-base comb table.
+
+        The comb table is built the second time the same point is
+        multiplied, as a one-time cost: for a 255-bit scalar it takes on
+        the order of 50 ms and a few megabytes of memory.  It pays off
+        after roughly a hundred multiplications of the same point; one-shot
+        multiplications of many different points stay on the windowed path,
+        which costs about a millisecond per multiplication.
         """
         C = self.parent()
         p = C._edwards_prime_modulus()
@@ -780,14 +838,22 @@ class TwistedEdwardsCurve(UniqueRepresentation, Parent):
             19
             sage: TwistedEdwardsCurve(QQ, 1, 2)._edwards_prime_modulus() is None
             True
+
+            sage: F25 = GF(25, 'z')
+            sage: K = F25.extension(PolynomialRing(F25, 't').gen() + 1, 'b')
+            sage: TwistedEdwardsCurve(K, 1, F25.gen() + 2)._edwards_prime_modulus() is None
+            True
         """
         F = self.base_ring()
         try:
-            if not F.is_finite() or F.degree() != 1:
+            # The integer fast path serves exactly the prime fields: the
+            # cardinality must equal the characteristic.  A relative
+            # extension of prime degree has degree() == 1 but is not
+            # GF(p), so degree() alone is not enough here.
+            p = F.characteristic()
+            if F.cardinality() != p:
                 return None
-            # A finite field of degree 1 is GF(p) for the prime p =
-            # characteristic, so no primality proof is needed here.
-            return int(F.characteristic())
+            return int(p)
         except (AttributeError, NotImplementedError, TypeError, ValueError):
             return None
 
