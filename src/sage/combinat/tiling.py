@@ -959,8 +959,10 @@ class Polyomino(SageObject):
             L = ncube_isometry_group_cosets(self._dimension, orientation_preserving)
             P_cosets = {frozenset((m * self).canonical() for m in coset)
                         for coset in L}
-            P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
-            return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
+            P_cosets_representatives = [min(s, key=lambda a: a.sorted_list())
+                                        for s in P_cosets]
+            return sorted(P_cosets_representatives,
+                          key=lambda a: a.sorted_list())
         L = ncube_isometry_group(self._dimension, orientation_preserving)
         P_images = {(m * self).canonical() for m in L}
         return sorted(P_images, key=lambda a: a.sorted_list())

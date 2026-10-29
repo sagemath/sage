@@ -2853,7 +2853,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [1 5 1]
             [1 5 1]
 
-        Recaling need not include the entire row.::
+        Rescaling need not include the entire row.::
 
             sage: B.rescale_col(0,2,1); B
             [1 5 1]

@@ -727,7 +727,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
                         minv = v
                         minu = u
             if i != -1:
-                # i is the first row below m with an entry in colunmn m-1 with minimal valuation
+                # i is the first row below m with an entry in column m-1 with minimal valuation
                 q = n_pow(p, e-minv)
                 if minv == 0:
                     preq = prepe
