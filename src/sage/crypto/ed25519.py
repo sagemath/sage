@@ -9,8 +9,11 @@ separate is important: a generic twisted Edwards curve has an equation and a
 group law, while Ed25519 additionally fixes the field, parameters, base point,
 cofactor, hash function, scalar pruning, and byte encoding.
 
-The public functions implement deterministic Ed25519 signing and verification
-using the 32-byte private-key seed format from RFC 8032::
+The public functions implement deterministic Ed25519, Ed25519ctx, and
+Ed25519ph signing and verification using the 32-byte private-key seed format
+from RFC 8032.  Ed25519ctx separates signatures by a caller-supplied context;
+Ed25519ph hashes the message before signing and can also use a context.  The
+three variants have different signature domains and are not interchangeable::
 
     sage: seed = bytes.fromhex("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60")
     sage: public_key = ed25519_public_key(seed)
@@ -21,6 +24,11 @@ using the 32-byte private-key seed format from RFC 8032::
     'e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e065224901555fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b'
     sage: ed25519_verify(public_key, b"", signature)
     True
+
+For an object-oriented interface that bundles the variant and context into a
+single scheme object with the ``secret_key`` / ``public_key`` / ``sign`` /
+``verify`` operation shape of the digital-signature framework proposed in
+:issue:`42856`, use :class:`Ed25519SignatureScheme`.
 
 The curve constructor and base point are cached, so ordinary Sage additive
 group operations can be used directly without a second hand-written scalar
@@ -225,6 +233,14 @@ def _secret_scalar(seed):
     return int.from_bytes(scalar, "little"), digest[32:]
 
 
+def _dom2(phflag, context):
+    """Return the RFC 8032 Ed25519ctx/Ed25519ph domain separator."""
+    context = _as_bytes(context, "context")
+    if len(context) > 255:
+        raise ValueError("context must be at most 255 bytes")
+    return b"SigEd25519 no Ed25519 collisions" + bytes((phflag, len(context))) + context
+
+
 def ed25519_public_key(seed):
     r"""Derive the 32-byte Ed25519 public key from a 32-byte seed.
 
@@ -238,8 +254,29 @@ def ed25519_public_key(seed):
     return ed25519_encode(scalar * Ed25519BasePoint())
 
 
+def _sign(seed, message, domain=b"", prehash=False):
+    """Sign using the selected RFC 8032 Ed25519 message and domain."""
+    message = _as_bytes(message, "message")
+    if prehash:
+        message = hashlib.sha512(message).digest()
+    scalar, prefix = _secret_scalar(seed)
+    public_key = ed25519_encode(scalar * Ed25519BasePoint())
+
+    nonce = int.from_bytes(hashlib.sha512(domain + prefix + message).digest(), "little")
+    nonce %= ED25519_SUBGROUP_ORDER
+    R = nonce * Ed25519BasePoint()
+    encoded_R = ed25519_encode(R)
+
+    challenge = int.from_bytes(
+        hashlib.sha512(domain + encoded_R + public_key + message).digest(), "little"
+    )
+    challenge %= ED25519_SUBGROUP_ORDER
+    response = (nonce + challenge * scalar) % ED25519_SUBGROUP_ORDER
+    return encoded_R + response.to_bytes(32, "little")
+
+
 def ed25519_sign(seed, message):
-    r"""Create a deterministic Ed25519 signature.
+    r"""Create a deterministic pure Ed25519 signature.
 
     ``seed`` is the 32-byte private-key seed and ``message`` is a bytes-like
     message.  The result is the 64-byte concatenation ``ENC(R) || ENC(S)``.
@@ -250,21 +287,88 @@ def ed25519_sign(seed, message):
         sage: ed25519_sign(seed, b'').hex()
         'e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e065224901555fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b'
     """
-    message = _as_bytes(message, "message")
-    scalar, prefix = _secret_scalar(seed)
-    public_key = ed25519_encode(scalar * Ed25519BasePoint())
+    return _sign(seed, message)
 
-    nonce = int.from_bytes(hashlib.sha512(prefix + message).digest(), "little")
-    nonce %= ED25519_SUBGROUP_ORDER
-    R = nonce * Ed25519BasePoint()
-    encoded_R = ed25519_encode(R)
 
-    challenge = int.from_bytes(
-        hashlib.sha512(encoded_R + public_key + message).digest(), "little"
-    )
-    challenge %= ED25519_SUBGROUP_ORDER
-    response = (nonce + challenge * scalar) % ED25519_SUBGROUP_ORDER
-    return encoded_R + response.to_bytes(32, "little")
+def ed25519ctx_sign(seed, message, context):
+    r"""Create an Ed25519ctx signature with a context of at most 255 bytes.
+
+    An empty context is permitted, but still uses the Ed25519ctx domain and
+    does not produce a pure Ed25519 signature.  The context is bytes-like and
+    must match exactly when verifying.
+
+    EXAMPLES::
+
+        sage: seed = bytes.fromhex('0305334e381af78f141cb666f6199f57bc3495335a256a95bd2a55bf546663f6')
+        sage: message = bytes.fromhex('f726936d19c800494e3fdaff20b276a8')
+        sage: ed25519ctx_sign(seed, message, b'foo').hex()  # RFC 8032, Section 7.2
+        '55a4cc2f70a54e04288c5f4cd1e45a7bb520b36292911876cada7323198dd87a8b36950b95130022907a7fb7c4e9b2d5f6cca685a587b4b21f4b888e4e7edb0d'
+        sage: ed25519ctx_sign(seed, message, b'bar').hex()
+        'fc60d5872fc46b3aa69f8b5b4351d5808f92bcc044606db097abab6dbcb1aee3216c48e8b3b66431b5b186d1d28f8ee15a5ca2df6668346291c2043d4eb3e90d'
+
+    TESTS::
+
+        sage: ed25519ctx_sign(seed, bytes.fromhex('508e9e6882b979fea900f62adceaca35'), b'foo').hex()
+        '8b70c1cc8310e1de20ac53ce28ae6e7207f33c3295e03bb5c0732a1d20dc64908922a8b052cf99b7c4fe107a5abb5b2c4085ae75890d02df26269d8945f84b0b'
+        sage: other_seed = bytes.fromhex('ab9c2853ce297ddab85c993b3ae14bcad39b2c682beabc27d6d4eb20711d6560')
+        sage: ed25519ctx_sign(other_seed, message, b'foo').hex()
+        '21655b5f1aa965996b3f97b3c849eafba922a0a62992f73b3d1b73106a84ad85e9b86a7b6005ea868337ff2d20a7f5fbd4cd10b0be49a68da2b2e0dc0ad8960f'
+        sage: ed25519ctx_sign(seed, message, b'x' * 256)
+        Traceback (most recent call last):
+        ...
+        ValueError: context must be at most 255 bytes
+    """
+    return _sign(seed, message, _dom2(0, context))
+
+
+def ed25519ph_sign(seed, message, context=b""):
+    r"""Create an Ed25519ph signature of a raw message.
+
+    The message is hashed once with SHA-512 before the Ed25519ph nonce and
+    challenge hashes.  Do not prehash it before calling this function.
+    ``context`` is bytes-like, defaults to empty, and is limited to 255 bytes.
+
+    EXAMPLES::
+
+        sage: seed = bytes.fromhex('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42')
+        sage: ed25519ph_sign(seed, b'abc').hex()  # RFC 8032, Section 7.3
+        '98a70222f0b8121aa9d30f813d683f809e462b469c7ff87639499bb94e6dae4131f85042463c2a355a2003d062adf5aaa10b8c61e636062aaad11c2a26083406'
+        sage: import hashlib
+        sage: ed25519ph_sign(seed, b'abc') != ed25519_sign(seed, hashlib.sha512(b'abc').digest())
+        True
+    """
+    return _sign(seed, message, _dom2(1, context), prehash=True)
+
+
+def _verify(public_key, message, signature, domain=b"", prehash=False):
+    """Verify using the selected RFC 8032 Ed25519 message and domain."""
+    try:
+        public_key = _as_bytes(public_key, "public_key")
+        message = _as_bytes(message, "message")
+        signature = _as_bytes(signature, "signature")
+        _require_length(public_key, 32, "public key")
+        _require_length(signature, 64, "signature")
+        if prehash:
+            message = hashlib.sha512(message).digest()
+
+        A = ed25519_decode(public_key)
+        encoded_R = signature[:32]
+        R = ed25519_decode(encoded_R)
+        response = int.from_bytes(signature[32:], "little")
+        if response >= ED25519_SUBGROUP_ORDER:
+            return False
+
+        challenge = int.from_bytes(
+            hashlib.sha512(domain + encoded_R + public_key + message).digest(), "little"
+        )
+        challenge %= ED25519_SUBGROUP_ORDER
+
+        B = Ed25519BasePoint()
+        return ED25519_COFACTOR * (response * B) == ED25519_COFACTOR * (
+            R + challenge * A
+        )
+    except (TypeError, ValueError, ZeroDivisionError):
+        return False
 
 
 def ed25519_verify(public_key, message, signature):
@@ -292,31 +396,237 @@ def ed25519_verify(public_key, message, signature):
         sage: ed25519_verify(public_key, b'', signature[:-1] + bytes([operator.xor(signature[-1], 1)]))
         False
     """
+    return _verify(public_key, message, signature)
+
+
+def ed25519ctx_verify(public_key, message, signature, context):
+    r"""Verify an Ed25519ctx signature under the given context.
+
+    Return ``False`` for malformed input or a context longer than 255 bytes.
+
+    EXAMPLES::
+
+        sage: seed = bytes.fromhex('0305334e381af78f141cb666f6199f57bc3495335a256a95bd2a55bf546663f6')
+        sage: public_key = ed25519_public_key(seed)
+        sage: message = bytes.fromhex('f726936d19c800494e3fdaff20b276a8')
+        sage: signature = ed25519ctx_sign(seed, message, b'foo')
+        sage: ed25519ctx_verify(public_key, message, signature, b'foo')
+        True
+        sage: ed25519ctx_verify(public_key, message, signature, b'bar')
+        False
+        sage: ed25519_verify(public_key, message, signature)
+        False
+        sage: ed25519ctx_verify(public_key, message, signature, b'x' * 256)
+        False
+    """
     try:
-        public_key = _as_bytes(public_key, "public_key")
-        message = _as_bytes(message, "message")
-        signature = _as_bytes(signature, "signature")
-        _require_length(public_key, 32, "public key")
-        _require_length(signature, 64, "signature")
-
-        A = ed25519_decode(public_key)
-        encoded_R = signature[:32]
-        R = ed25519_decode(encoded_R)
-        response = int.from_bytes(signature[32:], "little")
-        if response >= ED25519_SUBGROUP_ORDER:
-            return False
-
-        challenge = int.from_bytes(
-            hashlib.sha512(encoded_R + public_key + message).digest(), "little"
-        )
-        challenge %= ED25519_SUBGROUP_ORDER
-
-        B = Ed25519BasePoint()
-        return ED25519_COFACTOR * (response * B) == ED25519_COFACTOR * (
-            R + challenge * A
-        )
-    except (TypeError, ValueError, ZeroDivisionError):
+        domain = _dom2(0, context)
+    except (TypeError, ValueError):
         return False
+    return _verify(public_key, message, signature, domain)
+
+
+def ed25519ph_verify(public_key, message, signature, context=b""):
+    r"""Verify an Ed25519ph signature of a raw message.
+
+    ``context`` defaults to empty and must contain at most 255 bytes.
+    Return ``False`` for malformed input.
+
+    EXAMPLES::
+
+        sage: seed = bytes.fromhex('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42')
+        sage: public_key = ed25519_public_key(seed)
+        sage: signature = ed25519ph_sign(seed, b'abc')
+        sage: ed25519ph_verify(public_key, b'abc', signature)
+        True
+        sage: ed25519ph_verify(public_key, b'abd', signature)
+        False
+        sage: ed25519ph_verify(public_key, b'abc', signature, b'foo')
+        False
+        sage: ed25519_verify(public_key, b'abc', signature)
+        False
+
+    TESTS::
+
+        sage: signature = ed25519ph_sign(seed, b'abc', b'foo')
+        sage: ed25519ph_verify(public_key, b'abc', signature, b'foo')
+        True
+        sage: ed25519ph_verify(public_key, b'abc', signature)
+        False
+    """
+    try:
+        domain = _dom2(1, context)
+    except (TypeError, ValueError):
+        return False
+    return _verify(public_key, message, signature, domain, prehash=True)
+
+
+# The digital-signature framework of gh-42856 (sage.crypto.public_key.
+# digital_signature.DigitalSignatureBase) is still under review.  Import it
+# opportunistically so that this class already provides the framework's four
+# operations (secret_key, public_key, sign, verify) and automatically becomes
+# a DigitalSignatureBase subclass once that framework is merged.
+try:
+    from sage.crypto.public_key.digital_signature.digital_signature_base import (
+        DigitalSignatureBase,
+    )
+except ImportError:
+    DigitalSignatureBase = object
+
+
+class Ed25519SignatureScheme(DigitalSignatureBase):
+    r"""Ed25519, Ed25519ctx and Ed25519ph as a digital-signature scheme object.
+
+    This is the object-oriented counterpart of the module-level functions:
+    one instance bundles the RFC 8032 variant and (for ctx/ph) the context
+    string, which removes the risk of signing and verifying with mismatched
+    domain parameters.  When the digital-signature framework of :issue:`42856`
+    is available, this class is a
+    :class:`~sage.crypto.public_key.digital_signature.digital_signature_base.DigitalSignatureBase`
+    subclass and can be used uniformly with the other schemes of that
+    framework.
+
+    INPUT:
+
+    - ``variant`` -- one of ``'ed25519'``, ``'ed25519ctx'``, ``'ed25519ph'``
+
+    - ``context`` -- bytes-like application context (at most 255 bytes),
+      only used by the ``'ed25519ctx'`` and ``'ed25519ph'`` variants;
+      ignored for pure Ed25519
+
+    Keys are the RFC 8032 32-byte seed (secret) and 32-byte encoded point
+    (public).  Messages are bytes-like; Ed25519ph hashes them with SHA-512
+    internally, so pass the raw message, not its prehash.
+
+    EXAMPLES::
+
+        sage: from sage.crypto.ed25519 import Ed25519SignatureScheme
+        sage: ed = Ed25519SignatureScheme('ed25519ph', b'foo')
+        sage: secret = ed.secret_key()
+        sage: public = ed.public_key(secret)
+        sage: signature, signed_message = ed.sign(b'attack at dawn', secret)
+        sage: ed.verify(public, signature, signed_message)
+        True
+
+    A signature made under one context does not verify under another::
+
+        sage: other = Ed25519SignatureScheme('ed25519ph', b'bar')
+        sage: other.verify(public, signature, signed_message)
+        False
+
+    The pure variant reproduces the RFC 8032 section 7.1 test vector::
+
+        sage: pure = Ed25519SignatureScheme('ed25519')
+        sage: seed = bytes.fromhex('9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60')
+        sage: signature, _ = pure.sign(b'', seed)
+        sage: signature.hex()
+        'e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e065224901555fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b'
+
+    TESTS::
+
+        sage: Ed25519SignatureScheme('ed448')
+        Traceback (most recent call last):
+        ...
+        ValueError: variant must be one of 'ed25519', 'ed25519ctx', 'ed25519ph'
+        sage: Ed25519SignatureScheme('ed25519ctx', b'x' * 256)
+        Traceback (most recent call last):
+        ...
+        ValueError: context must be at most 255 bytes
+    """
+
+    def __init__(self, variant='ed25519', context=b''):
+        if variant not in ('ed25519', 'ed25519ctx', 'ed25519ph'):
+            raise ValueError(
+                "variant must be one of 'ed25519', 'ed25519ctx', 'ed25519ph'"
+            )
+        self._variant = variant
+        self._context = _as_bytes(context, "context")
+        self._domain = (
+            b""
+            if variant == 'ed25519'
+            else _dom2(variant == 'ed25519ph', self._context)
+        )
+        self._prehash = variant == 'ed25519ph'
+
+    def _repr_(self):
+        if self._variant == 'ed25519':
+            return "Ed25519 signature scheme"
+        return "Ed25519%s signature scheme with context %r" % (
+            self._variant[6:], bytes(self._context)
+        )
+
+    def variant(self):
+        r"""Return the RFC 8032 variant of this scheme."""
+        return self._variant
+
+    def context(self):
+        r"""Return the context string (empty for pure Ed25519)."""
+        return bytes(self._context)
+
+    def secret_key(self):
+        r"""Return a fresh random 32-byte Ed25519 seed.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.ed25519 import Ed25519SignatureScheme
+            sage: ed = Ed25519SignatureScheme()
+            sage: sk = ed.secret_key()
+            sage: len(sk)
+            32
+        """
+        import secrets
+        return secrets.token_bytes(32)
+
+    def public_key(self, secret_key):
+        r"""Return the 32-byte public key of a 32-byte seed.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.ed25519 import Ed25519SignatureScheme
+            sage: ed = Ed25519SignatureScheme()
+            sage: seed = bytes.fromhex('9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60')
+            sage: ed.public_key(seed).hex()
+            'd75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a'
+        """
+        return ed25519_public_key(secret_key)
+
+    def sign(self, message, secret_key, nonce=None):
+        r"""Sign ``message`` with a 32-byte seed and return ``(signature, message)``.
+
+        Ed25519 nonces are derived deterministically from the secret key and
+        the message, so an explicit ``nonce`` is not supported; the parameter
+        is accepted and ignored to keep the signature-shape of the framework.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.ed25519 import Ed25519SignatureScheme
+            sage: ed = Ed25519SignatureScheme('ed25519ctx', b'foo')
+            sage: seed = bytes.fromhex('0305334e381af78f141cb666f6199f57bc3495335a256a95bd2a55bf546663f6')
+            sage: message = bytes.fromhex('f726936d19c800494e3fdaff20b276a8')
+            sage: signature, signed = ed.sign(message, seed)
+            sage: signature.hex() == ed25519ctx_sign(seed, message, b'foo').hex()
+            True
+        """
+        return _sign(secret_key, message, self._domain, self._prehash), message
+
+    def verify(self, public_key, signature, message):
+        r"""Return whether ``signature`` is a valid signature of ``message``.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.ed25519 import Ed25519SignatureScheme
+            sage: ed = Ed25519SignatureScheme('ed25519ph')
+            sage: seed = bytes.fromhex('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42')
+            sage: public = ed.public_key(seed)
+            sage: signature, message = ed.sign(b'abc', seed)
+            sage: ed.verify(public, signature, message)
+            True
+            sage: ed.verify(public, signature, b'abd')
+            False
+        """
+        return _verify(
+            public_key, message, signature, self._domain, self._prehash
+        )
 
 
 __all__ = [
@@ -330,9 +640,14 @@ __all__ = [
     "ED25519_SUBGROUP_ORDER",
     "Ed25519",
     "Ed25519BasePoint",
+    "Ed25519SignatureScheme",
     "ed25519_decode",
     "ed25519_encode",
     "ed25519_public_key",
     "ed25519_sign",
     "ed25519_verify",
+    "ed25519ctx_sign",
+    "ed25519ctx_verify",
+    "ed25519ph_sign",
+    "ed25519ph_verify",
 ]

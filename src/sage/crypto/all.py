@@ -18,6 +18,7 @@ lazy_import('sage.crypto.stream', ['LFSRCryptosystem',
 
 lazy_import('sage.crypto.ed25519', ['Ed25519',
                                     'Ed25519BasePoint',
+                                    'Ed25519SignatureScheme',
                                     'ED25519_A',
                                     'ED25519_BASE_X',
                                     'ED25519_BASE_Y',
@@ -31,6 +32,10 @@ lazy_import('sage.crypto.ed25519', ['Ed25519',
                                     'ed25519_public_key',
                                     'ed25519_sign',
                                     'ed25519_verify',
+                                    'ed25519ctx_sign',
+                                    'ed25519ctx_verify',
+                                    'ed25519ph_sign',
+                                    'ed25519ph_verify',
                                     ])
 
 lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
