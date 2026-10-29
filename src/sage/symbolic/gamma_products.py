@@ -890,7 +890,10 @@ class _GammaSolver:
 
     def _circle_moves(self):
         r"""
-        Return all applicable Gauss circles of the current state.
+        Generate all applicable Gauss circles of the current state.
+
+        The moves are generated lazily, since a compact state may admit a
+        huge number of multiplicities for a single circle.
 
         A circle is a tuple ``(m, b, e, consumed, introduced)``, meaning that
         ``prod_{j=0}^{m-1} gamma(a*n + b + j/m)`` is replaced by
@@ -906,13 +909,13 @@ class _GammaSolver:
             sage: from sage.symbolic.gamma_products import _GammaSolver
             sage: k = var('k')
             sage: s = _GammaSolver(k); s.feed([(3, 1, 1), (3, 2, 1)])
-            sage: s._circle_moves()
+            sage: list(s._circle_moves())
             [(3, 1/3, -1, [(0, 1/3), (0, 2/3)], [1]),
              (3, 1/3, 1, [(1, 1/3), (1, 2/3)], [1])]
         """
         state = self.state
         if not state:
-            return []
+            return
         # only rational shifts participate in circles: the residue of a
         # symbolic shift modulo the integers depends on the parameters, so
         # symbolic shifts are in irreducible position
@@ -926,13 +929,12 @@ class _GammaSolver:
                 entries.append((a, xq, e))
                 q = lcm(q, xq.denominator())
         if not entries:
-            return []
+            return
         # represent the shifts as integer multiples of 1/q, so that the
         # membership test in the circle enumeration is a set lookup
         ent = {}
         for a, xq, e in entries:
             ent.setdefault(a, {})[xq * q] = e
-        out = []
         for a in sorted(ent):
             ae = ent[a]
             for x0u in sorted(ae):
@@ -971,9 +973,8 @@ class _GammaSolver:
                         # minimum
                         sgn = 1 if s0 > 0 else -1
                         mag = min(abs(ae[u]) for u in window if u != q)
-                        out.extend((m, b, e, consumed, introduced)
-                                   for e in range(sgn * mag, 0, -sgn))
-        return out
+                        yield from ((m, b, e, consumed, introduced)
+                                    for e in range(sgn * mag, 0, -sgn))
 
     def apply_circle(self, mv):
         r"""
@@ -1110,10 +1111,10 @@ class _GammaSolver:
             (None, [((0, 1/6), -1), ((0, 5/6), -1), ((1, 1/6), 1), ((1, 5/6), 1)])
         """
         while True:
-            moves = self._circle_moves()
-            if not moves:
+            mv = next(self._circle_moves(), None)
+            if mv is None:
                 return
-            self.apply_circle(moves[0])
+            self.apply_circle(mv)
 
     def solve(self, budget=_SEARCH_BUDGET):
         r"""
