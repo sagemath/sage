@@ -81,6 +81,7 @@ py.install_sources(
   'independent_sets.pxd',
   'independent_sets.pyx',
   'isgci.py',
+  'isgci_test.py',
   'isoperimetric_inequalities.pyx',
   'line_graph.pyx',
   'lovasz_theta.py',
