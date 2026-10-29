@@ -2000,12 +2000,16 @@ def hypergeometric_sum(f, var, a, b):
             ValueError: the term cannot be evaluated at the lower bound 0
 
         A term may be defined everywhere, but still fail to be
-        hypergeometric, because its term ratio has a pole inside the range::
+        hypergeometric, because its term ratio has a pole inside the range;
+        however, a numerator parameter which terminates the series before
+        the pole makes the pole immaterial::
 
             sage: hypergeometric_sum((k - 3)*x^k/factorial(k), k, 0, oo)
             Traceback (most recent call last):
             ...
             ValueError: the term (k - 3)*x^k/factorial(k) is not hypergeometric in k
+            sage: hypergeometric_sum((k - 4)/gamma(3 - k), k, 0, oo).simplify_hypergeometric()
+            -7
 
         The bounds must have the required form::
 
@@ -2166,7 +2170,12 @@ def hypergeometric_sum(f, var, a, b):
 
     # a nonpositive integer denominator parameter is a pole of the term
     # ratio inside the range: either the term is undefined there, or the
-    # term vanishes and the recurrence of the ratio breaks
+    # term vanishes and the recurrence of the ratio breaks.  However, a
+    # numerator parameter which is a nonpositive integer terminates the
+    # series, and a pole at or beyond the termination is immaterial as long
+    # as the term does not resume after it
+    terminate = min((-ZZ(q) for q in ap if q in ZZ and q <= 0),
+                    default=None)
     for q in bq:
         if q in ZZ and q <= 0:
             m = ZZ(-q)
@@ -2181,6 +2190,11 @@ def hypergeometric_sum(f, var, a, b):
                 undefined = True
             if undefined:
                 raise ValueError("the term %s is not defined in the range" % f)
+            if (terminate is not None and m >= terminate
+                    and values[1].is_trivial_zero()):
+                # the series has terminated before the pole, and the term
+                # does not resume after it
+                continue
             raise ValueError("the term %s is not hypergeometric in %s"
                              % (f, var))
 
