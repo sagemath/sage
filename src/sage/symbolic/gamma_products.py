@@ -1566,6 +1566,11 @@ def exact_product(f, var, a, b):
             ...
             ValueError: the number of factors n^2 + 1 is not linear in a single variable with rational coefficients
 
+        The residual part over a concrete range is evaluated directly::
+
+            sage: exact_product((k + 1)*cos(k), k, 0, 1)
+            2*cos(1)
+
         The residual part is returned as an unevaluated product::
 
             sage: exact_product((k + 1)/(k + 2)*cos(k), k, 0, n)
@@ -1688,7 +1693,22 @@ def exact_product(f, var, a, b):
         return SR(1)
     if rest:
         h = prod(rest).subs(conv)
-        parts.append(symbolic_product(h, v, a, b))
+        if count is None:
+            parts.append(symbolic_product(h, v, a, b))
+        else:
+            # over a concrete range, evaluate the residual directly rather
+            # than returning a held product
+            try:
+                factors = [h.subs({v: aS + j}) for j in range(count)]
+                undefined = any(t.is_infinity() or not (t - t).is_trivial_zero()
+                                for t in factors)
+            except (ArithmeticError, RuntimeError, ValueError) as exc:
+                raise ValueError("the product %s is not defined in the "
+                                 "range" % f) from exc
+            if undefined:
+                raise ValueError("the product %s is not defined in the "
+                                 "range" % f)
+            parts.append(prod(factors))
 
     res = prod(parts)
     return res
