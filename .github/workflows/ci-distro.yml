@@ -15,17 +15,7 @@ name: CI (Distro)
 ## tar files of all logs are made available as "build artifacts".
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/ci-distro.yml'
-      - 'build/pkgs/**'
-      - 'build/make/**'
-      - 'configure.ac'
-  push:
-    tags:
-      - '*'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_call:
 
 env:
   TARGETS_PRE: all-sage-local
@@ -33,22 +23,12 @@ env:
   TARGETS_OPTIONAL: ptestlong
 
 permissions:
+  contents: read
+  pull-requests: read
   packages: write
 
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   linux-minimal:
-    needs: lint
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -65,7 +45,6 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   linux:
-    needs: lint
     uses: ./.github/workflows/docker.yml
     with:
       free_disk_space: true
@@ -79,7 +58,6 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   macos:
-    needs: lint
     name: Build and Test (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:

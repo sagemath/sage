@@ -1,22 +1,10 @@
 name: Test Optional Packages
 
 on:
-  workflow_dispatch:
-    inputs:
-      packages:
-        description: 'List (comma separated, no whitespaces) of optional packages'
-        required: true
-        type: string
+  workflow_call:
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   prepare:
-    needs: lint
     name: Build and Test Sage with given optional packages
     runs-on: ubuntu-latest
     outputs:
@@ -36,7 +24,7 @@ jobs:
          echo "opt_targets_macos=${opt_targets_macos}" >> "$GITHUB_OUTPUT"
 
   run_tests_on_docker:
-    needs: [lint, prepare]
+    needs: prepare
     name: Call reusable workflow docker.yml
     uses: ./.github/workflows/docker.yml
     with:
@@ -51,7 +39,7 @@ jobs:
       max_parallel: 4
 
   macos:
-    needs: [lint, prepare]
+    needs: prepare
     name: Build and Test optional packages (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:

@@ -1,31 +1,192 @@
-name: Release distributions and wheels
+# The single entry point for builds, tests, documentation and releases.
+# Keep this filename and the publishing jobs here: PyPI Trusted Publishing
+# identifies release.yml and does not support configuring reusable workflows.
+# Keep event/path selection in select-workflows.cjs; lint runs once per Python.
+name: Sage CI
 
 on:
-  push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   pull_request:
-    paths:
-      - '.github/workflows/release.yml'
+  merge_group:
+  push:
+    branches: [master, develop]
+    tags: ['*']
+  schedule:
+    # Recover failed Docker Hub builds on Tuesday and Thursday.
+    - cron: '0 1 * * 2,4'
   workflow_dispatch:
-    # Allow to run manually
+    inputs:
+      target:
+        description: CI workflow to run after lint
+        type: choice
+        default: standard
+        options:
+          - standard
+          - build
+          - distro
+          - meson
+          - minimal
+          - optional
+          - uv
+          - doc_html
+          - doc_pdf
+          - livedoc
+          - homebrew
+          - docker
+          - release
+          - types
+      platform:
+        description: Platform for build
+        type: string
+        default: ubuntu-resolute-standard
+      docker_tag:
+        description: Docker tag for build
+        type: string
+        default: dev
+      packages:
+        description: Comma-separated package list (required for optional)
+        type: string
+      sage_repository:
+        description: Optional Sage repository for homebrew
+        type: string
+      sage_ref:
+        description: Optional branch, tag, commit or PR ref for homebrew
+        type: string
+      suite:
+        description: Homebrew doctest suite (pytest tests always run)
+        type: choice
+        default: smoke
+        options: [smoke, all]
+      doctest_paths:
+        description: Optional space-separated src/sage paths for homebrew
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+concurrency:
+  # Separate manual targets and events; a scheduled build must not cancel CI.
+  group: sage-ci-${{ github.event_name }}-${{ github.ref }}-${{ inputs.target || 'automatic' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || (github.event_name == 'push' && github.ref_type == 'branch') }}
 
 jobs:
   lint:
     uses: ./.github/workflows/lint.yml
+    with:
+      sage_repository: ${{ inputs.target == 'homebrew' && inputs.sage_repository || '' }}
+      sage_ref: ${{ inputs.target == 'homebrew' && inputs.sage_ref || '' }}
+
+  select:
+    name: Select CI workflows
+    needs: lint
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.select.outputs.build }}
+      distro: ${{ steps.select.outputs.distro }}
+      meson: ${{ steps.select.outputs.meson }}
+      minimal: ${{ steps.select.outputs.minimal }}
+      optional: ${{ steps.select.outputs.optional }}
+      uv: ${{ steps.select.outputs.uv }}
+      doc_html: ${{ steps.select.outputs.doc_html }}
+      doc_pdf: ${{ steps.select.outputs.doc_pdf }}
+      livedoc: ${{ steps.select.outputs.livedoc }}
+      homebrew: ${{ steps.select.outputs.homebrew }}
+      docker: ${{ steps.select.outputs.docker }}
+      release: ${{ steps.select.outputs.release }}
+      types: ${{ steps.select.outputs.types }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test workflow selection
+        run: node --test build/test/ci/select-workflows.test.cjs
+      - name: Select workflows for this event
+        id: select
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const select = require('./.github/workflows/select-workflows.cjs');
+            await select({github, context, core});
+
+  build:
+    needs: [lint, select]
+    if: needs.select.outputs.build == 'true'
+    uses: ./.github/workflows/build.yml
+
+  distro:
+    needs: [lint, select]
+    if: needs.select.outputs.distro == 'true'
+    uses: ./.github/workflows/ci-distro.yml
     permissions:
       contents: read
       pull-requests: read
+      actions: read
+      packages: write
+
+  meson:
+    needs: [lint, select]
+    if: needs.select.outputs.meson == 'true'
+    uses: ./.github/workflows/ci-meson.yml
+
+  minimal:
+    needs: [lint, select]
+    if: needs.select.outputs.minimal == 'true'
+    uses: ./.github/workflows/ci-minimal.yml
+
+  optional:
+    needs: [lint, select]
+    if: needs.select.outputs.optional == 'true'
+    uses: ./.github/workflows/ci-optional-packages.yml
+
+  uv:
+    needs: [lint, select]
+    if: needs.select.outputs.uv == 'true'
+    uses: ./.github/workflows/ci.yml
+
+  doc_html:
+    needs: [lint, select]
+    if: needs.select.outputs.doc_html == 'true'
+    uses: ./.github/workflows/doc-build.yml
+
+  doc_pdf:
+    needs: [lint, select]
+    if: needs.select.outputs.doc_pdf == 'true'
+    uses: ./.github/workflows/doc-build-pdf.yml
+
+  livedoc:
+    needs: [lint, select]
+    if: needs.select.outputs.livedoc == 'true'
+    uses: ./.github/workflows/doc-build-livedoc.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: read
+      actions: read
+
+  homebrew:
+    needs: [lint, select]
+    if: needs.select.outputs.homebrew == 'true'
+    uses: ./.github/workflows/homebrew-bottles.yml
+    with:
+      sage_repository: ${{ inputs.sage_repository || '' }}
+      sage_ref: ${{ inputs.sage_ref || '' }}
+      suite: ${{ inputs.suite || 'smoke' }}
+      doctest_paths: ${{ inputs.doctest_paths || '' }}
+
+  docker:
+    needs: [lint, select]
+    if: needs.select.outputs.docker == 'true'
+    uses: ./.github/workflows/push_to_docker_hub.yml
+    secrets: inherit
+
+  types:
+    needs: [lint, select]
+    if: needs.select.outputs.types == 'true'
+    uses: ./.github/workflows/types.yml
 
 
   release_dist:
-    needs: lint
+    needs: [lint, select]
+    if: needs.select.outputs.release == 'true'
 
     # This job first checks whether "configure --enable-download-from-upstream-url"
     # (the default since #32390) is needed.
@@ -80,7 +241,8 @@ jobs:
           name: release_dist
 
   sdists:
-    needs: lint
+    needs: [lint, select]
+    if: needs.select.outputs.release == 'true'
 
     runs-on: ubuntu-latest
     permissions:
@@ -121,9 +283,9 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   release:
-    needs: [lint, release_dist, sdists]
+    needs: [lint, select, release_dist, sdists]
     runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
+    if: needs.select.outputs.release == 'true' && github.ref_type == 'tag'
     permissions:
       contents: write
     steps:
@@ -170,7 +332,7 @@ jobs:
     if: false
     name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
-    needs: [lint, sdists]
+    needs: [lint, select, sdists]
     strategy:
       fail-fast: false
       matrix:
@@ -257,7 +419,8 @@ jobs:
 
   upload_wheels:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
-    needs: [lint, build_wheels]
+    needs: [lint, select, build_wheels]
+    if: needs.select.outputs.release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

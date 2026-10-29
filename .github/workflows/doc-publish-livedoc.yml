@@ -2,11 +2,12 @@ name: Publish live documentation
 
 on:
   workflow_run:
-    workflows: "Build live documentation"
+    workflows: ["Sage CI", "Build live documentation"]
     types:
       - completed
 
 permissions:
+  actions: read
   statuses: write
   checks: write
   pull-requests: write
@@ -27,10 +28,23 @@ permissions:
 jobs:
   publish-live-doc:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion != 'cancelled'
     env:
       CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
+      # Another CI job may fail after documentation builds successfully.
+      # Only deploy if this run actually produced the documentation artifact.
+      - name: Check for documentation artifact
+        id: artifact
+        uses: actions/github-script@v9
+        if: env.CAN_DEPLOY == 'true'
+        with:
+          script: |
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              ...context.repo, run_id: context.payload.workflow_run.id, per_page: 100,
+            });
+            core.setOutput('available', artifacts.some(a => a.name === 'livedoc' && !a.expired));
+
       - name: Get information about workflow origin
         uses: actions/github-script@v9
         id: source-run-info
@@ -47,7 +61,7 @@ jobs:
 
             core.setOutput('sourceEvent', event);
             core.setOutput('branchName', branchName);
-        if: env.CAN_DEPLOY == 'true'
+        if: steps.artifact.outputs.available == 'true'
 
       - name: Download live doc
         id: download-doc

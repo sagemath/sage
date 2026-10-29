@@ -2,11 +2,12 @@ name: Publish documentation
 
 on:
   workflow_run:
-    workflows: "Build documentation"
+    workflows: ["Sage CI", "Build documentation"]
     types:
       - completed
 
 permissions:
+  actions: read
   statuses: write
   checks: write
   pull-requests: write
@@ -27,17 +28,30 @@ permissions:
 jobs:
   publish-doc:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion != 'cancelled'
     env:
       CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
+      # Another CI job may fail after documentation builds successfully.
+      # Only deploy if this run actually produced the documentation artifact.
+      - name: Check for documentation artifact
+        id: artifact
+        uses: actions/github-script@v9
+        if: env.CAN_DEPLOY == 'true'
+        with:
+          script: |
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              ...context.repo, run_id: context.payload.workflow_run.id, per_page: 100,
+            });
+            core.setOutput('available', artifacts.some(a => a.name === 'doc' && !a.expired));
+
       - name: Get information about workflow origin
         uses: potiuk/get-workflow-origin@v1_5
         id: source-run-info
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sourceRunId: ${{ github.event.workflow_run.id }}
-        if: env.CAN_DEPLOY == 'true'
+        if: steps.artifact.outputs.available == 'true'
 
       - name: Download doc
         id: download-doc

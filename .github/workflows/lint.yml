@@ -1,36 +1,45 @@
 name: Lint
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  merge_group:
   workflow_call:
+    inputs:
+      sage_repository:
+        type: string
+      sage_ref:
+        type: string
 
-concurrency:
-  # Reusable workflows inherit github.workflow from their caller. Keep the
-  # lint group distinct so starting lint cannot cancel the calling workflow.
-  group: lint-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   lint:
-    name: Lint
-    permissions:
-      contents: read
-      pull-requests: read
+    name: Lint (Python ${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.13', '3.14']
+    env:
+      # Override .python-version so uv uses the selected supported Python.
+      UV_PYTHON: ${{ matrix.python }}
     steps:
     - name: Checkout
       uses: actions/checkout@v7
+      with:
+        repository: ${{ inputs.sage_repository || github.repository }}
+        ref: ${{ inputs.sage_ref || github.sha }}
 
     - name: Merge CI fixes from sagemath/sage
       run: |
         .github/workflows/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: ${{ matrix.python }}
 
     - name: Install prerequisites
       id: deps
@@ -49,8 +58,8 @@ jobs:
     - name: Validate docstring markup as RST
       if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
-    
+
     - name: TOML format check with taplo
       uses: docker://tamasfe/taplo:0.10.0
       with:
-        args: format --check --diff pyproject.toml .taplo.toml 
+        args: format --check --diff pyproject.toml .taplo.toml

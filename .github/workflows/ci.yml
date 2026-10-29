@@ -1,28 +1,10 @@
 name: CI
 
 on:
-  push:
-    tags:
-      - '*'
-  pull_request:
-    paths:
-      - '**.build'
-      - 'uv.lock'
-      - 'subprojects/**'
-      - '.github/workflows/ci.yml'
-      - 'build/pkgs/*/distros/*.txt'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_call:
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   linux:
-    needs: lint
     name: Build and Test
     runs-on: ubuntu-latest
     strategy:
@@ -128,7 +110,6 @@ jobs:
             build/cp313/meson-info/
 
   macos:
-    needs: lint
     name: Build and Test (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:

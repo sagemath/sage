@@ -1,29 +1,10 @@
 name: Static type check
 
 on:
-  merge_group:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   types:
-    needs: lint
     name: Type check
     runs-on: ubuntu-latest
     steps:

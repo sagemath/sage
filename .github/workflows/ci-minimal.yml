@@ -7,31 +7,13 @@ name: Build & Test with all meson features disabled
 #   * -Dauto_features=disabled (when all others are working)
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 permissions:
   contents: read
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   test:
-    needs: lint
     name: Conda minimal (${{ matrix.os }}, Python ${{ matrix.python }}, all)
     runs-on: ${{ matrix.os }}-latest
 

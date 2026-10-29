@@ -1,16 +1,7 @@
 name: Build live documentation
 
 on:
-  push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
@@ -22,14 +13,7 @@ env:
   SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   livedoc:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

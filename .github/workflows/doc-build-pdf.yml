@@ -1,31 +1,13 @@
 name: Build documentation (PDF)
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
   PYTHON_VERSION: 3.13
 
 jobs:
-  lint:
-    uses: ./.github/workflows/lint.yml
-    permissions:
-      contents: read
-      pull-requests: read
-
   doc-pdf:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
