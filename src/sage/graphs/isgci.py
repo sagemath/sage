@@ -382,7 +382,6 @@ from urllib.request import urlopen
 
 from sage.features.databases import DatabaseGraphs
 from sage.misc.cachefunc import cached_method
-from sage.misc.unknown import Unknown
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import (
     CachedRepresentation,
@@ -491,6 +490,7 @@ class GraphClass(SageObject, CachedRepresentation):
         inclusion_digraph = GraphClasses().inclusion_digraph()
         if inclusion_digraph.shortest_path(self._gc_id, other._gc_id):
             return True
+        from sage.misc.unknown import Unknown
         return Unknown
 
     def __eq__(self, other):
