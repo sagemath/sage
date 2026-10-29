@@ -35,8 +35,6 @@ from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
-from . import permutation
-
 
 class RibbonTableau(SkewTableau):
     r"""
@@ -616,10 +614,23 @@ def spin_rec(t, nexts, current, part, weight, length):
     return [sum(t**val for val in tmp)]
 
 
-def spin_polynomial_square(part, weight, length):
+def spin_polynomial_square(part, weight, length, cache=None):
     r"""
     Return the spin polynomial associated with ``part``, ``weight``, and
     ``length``, with the substitution `t \to t^2` made.
+
+    INPUT:
+
+    - ``part`` -- partition or skew partition
+
+    - ``weight`` -- list of nonnegative integers
+
+    - ``length`` -- integer; the length of the ribbons
+
+    - ``cache`` -- dictionary or ``None`` (default); passed to
+      :func:`graph_implementation_rec`. Several calls can share one dictionary
+      to reuse the subshapes they have in common, for example every weight of
+      one degree. If ``None``, a new dictionary is used for this call only.
 
     EXAMPLES::
 
@@ -649,15 +660,19 @@ def spin_polynomial_square(part, weight, length):
     if part == [[], []] and not weight:
         return R.one()
 
+    if cache is None:
+        cache = {}
     t = R.gen()
     return R(graph_implementation_rec(part, weight, length,
-                                      functools.partial(spin_rec, t))[0])
+                                      functools.partial(spin_rec, t), cache)[0])
 
 
-def spin_polynomial(part, weight, length):
+def spin_polynomial(part, weight, length, cache=None):
     """
     Return the spin polynomial associated to ``part``, ``weight``, and
     ``length``.
+
+    See :func:`spin_polynomial_square` for ``cache``.
 
     EXAMPLES::
 
@@ -679,16 +694,18 @@ def spin_polynomial(part, weight, length):
         3*t^9 + 5*t^8 + 9*t^7 + 6*t^6 + 3*t^5
     """
     from sage.symbolic.ring import SR
-    sp = spin_polynomial_square(part, weight, length)
+    sp = spin_polynomial_square(part, weight, length, cache)
     t = SR.var('t')
     coeffs = sp.list()
     return sum(c * t**(ZZ(i) / 2) for i, c in enumerate(coeffs))
 
 
-def cospin_polynomial(part, weight, length):
+def cospin_polynomial(part, weight, length, cache=None):
     """
     Return the cospin polynomial associated to ``part``, ``weight``, and
     ``length``.
+
+    See :func:`spin_polynomial_square` for ``cache``.
 
     EXAMPLES::
 
@@ -713,7 +730,7 @@ def cospin_polynomial(part, weight, length):
     # The power in the spin polynomial are all half integers
     # or all integers.  Manipulation of expressions need to
     # separate cases
-    sp = spin_polynomial_square(part, weight, length)
+    sp = spin_polynomial_square(part, weight, length, cache)
     if sp == 0:
         return R.zero()
 
@@ -735,8 +752,111 @@ def cospin_polynomial(part, weight, length):
 #   /////////////////////////////////////////////////////////////////////////////////////////
 
 
-def graph_implementation_rec(skp, weight, length, function):
+def _ribbon_strip_moves(partp, w, length):
+    r"""
+    Return the ways to remove ``w`` ribbons of length ``length`` at once from
+    the partition whose conjugate is ``partp``, as the vectors
+    :func:`graph_implementation_rec` works with.
+
+    Each vector has an entry ``length`` at the positions `i` whose
+    `\beta`-number `\beta_i = partp_i + \ell - i - 1` is lowered by ``length``,
+    and `0` elsewhere, where `\ell` is the length of ``partp``. The result is a
+    partition exactly when the lowered values stay distinct and nonnegative.
+    Among the `\beta`-numbers congruent modulo ``length``, group them into
+    maximal runs `b, b + length, b + 2 \cdot length, \ldots`. A valid move
+    lowers the bottom `j` entries of each run for some `j`, and cannot move a
+    run whose bottom entry `b` is smaller than ``length``. The moves are
+    therefore one choice of `j` per run, so they are listed directly instead
+    of filtering all `\binom{\ell}{w}` arrangements.
+
+    The vectors are returned in lexicographic order.
+
+    EXAMPLES:
+
+    Removing two 3-ribbons from the one-row shape `(6)` can be done in one
+    way, where filtering would have examined `\binom{6}{2} = 15` vectors::
+
+        sage: from sage.combinat.ribbon_tableau import _ribbon_strip_moves
+        sage: _ribbon_strip_moves(Partition([6]).conjugate(), 2, 3)
+        [[3, 0, 0, 3, 0, 0]]
+
+    TESTS:
+
+    The same vectors, in the same order, as filtering every arrangement::
+
+        sage: def filtered(partp, w, length):
+        ....:     ell = len(partp)
+        ....:     out = []
+        ....:     for p in Permutations([0] * (ell - w) + [length] * w):
+        ....:         beta = [v + ell - (i + 1) - p[i] for i, v in enumerate(partp)]
+        ....:         if min(beta) >= 0 and len(set(beta)) == ell:
+        ....:             out.append(list(p))
+        ....:     return out
+        sage: all(_ribbon_strip_moves(la.conjugate(), w, k)
+        ....:     == filtered(la.conjugate(), w, k)
+        ....:     for k in [1, 2, 3, 4] for n in range(1, 11)
+        ....:     for la in Partitions(n) for w in range(la[0] + 1))
+        True
     """
+    ell = len(partp)
+    beta = [v + ell - (i + 1) for i, v in enumerate(partp)]
+    position = {b: i for i, b in enumerate(beta)}
+    runs = []
+    for b in beta:
+        if b < length or b - length in position:
+            continue
+        run = []
+        c = b
+        while c in position:
+            run.append(position[c])
+            c += length
+        runs.append(run)
+
+    # room[r] is how many entries the runs r, r + 1, ... can lower in total
+    room = [0] * (len(runs) + 1)
+    for r in reversed(range(len(runs))):
+        room[r] = room[r + 1] + len(runs[r])
+
+    moves = []
+    chosen = []
+
+    def rec(r, remaining):
+        if remaining > room[r]:
+            return
+        if r == len(runs):
+            move = [0] * ell
+            for i in chosen:
+                move[i] = length
+            moves.append(move)
+            return
+        for j in range(min(len(runs[r]), remaining) + 1):
+            chosen.extend(runs[r][:j])
+            rec(r + 1, remaining - j)
+            del chosen[len(chosen) - j:]
+
+    rec(0, w)
+    moves.sort()
+    return moves
+
+
+def graph_implementation_rec(skp, weight, length, function, cache=None):
+    """
+    INPUT:
+
+    - ``skp`` -- skew partition
+
+    - ``weight`` -- list of nonnegative integers
+
+    - ``length`` -- integer; the length of the ribbons
+
+    - ``function`` -- the function combining the results at each node, such
+      as :func:`list_rec`, :func:`count_rec` or :func:`spin_rec`
+
+    - ``cache`` -- dictionary or ``None`` (default); if a dictionary, the
+      result for each skew partition and weight is stored in it and reused,
+      so a subshape reached along several paths is computed once. Every call
+      sharing one ``cache`` must pass the same ``function``.
+
     TESTS::
 
         sage: from sage.combinat.ribbon_tableau import graph_implementation_rec, list_rec
@@ -747,6 +867,11 @@ def graph_implementation_rec(skp, weight, length, function):
         sage: graph_implementation_rec(SkewPartition([[], []]), [0], 1, list_rec)
         [[[], []]]
     """
+    if cache is not None:
+        key = (tuple(skp[0]), tuple(skp[1]), tuple(weight), length)
+        if key in cache:
+            return cache[key]
+
     if sum(weight) == 0:
         weight = []
 
@@ -756,40 +881,44 @@ def graph_implementation_rec(skp, weight, length, function):
     outer_len = len(outer)
 
     # Some tests in order to know if the shape and the weight are compatible.
-    if weight and weight[-1] <= len(partp):
-        perms = permutation.Permutations([0] * (len(partp) - weight[-1]) + [length] * (weight[-1])).list()
-    else:
-        return function([], [], skp, weight, length)
+    if not weight or weight[-1] > ell:
+        result = function([], [], skp, weight, length)
+        if cache is not None:
+            cache[key] = result
+        return result
 
     selection = []
 
-    for j in range(len(perms)):
-        retire = [(val + ell - (i + 1) - perms[j][i]) for i, val in enumerate(partp)]
+    for perm in _ribbon_strip_moves(partp, weight[-1], length):
+        retire = [(val + ell - (i + 1) - perm[i]) for i, val in enumerate(partp)]
         retire.sort(reverse=True)
         retire = [val - ell + (i + 1) for i, val in enumerate(retire)]
+        retire = Partition(retire).conjugate()
 
-        if retire[-1] >= 0 and retire == sorted(retire, reverse=True):
-            retire = Partition(retire).conjugate()
-
-            # Cutting branches if the retired partition has a line strictly included into the inner one
-            if len(retire) >= outer_len:
-                append = True
-                for k in range(outer_len):
-                    if retire[k] - outer[k] < 0:
-                        append = False
-                        break
-                if append:
-                    selection.append([retire, perms[j]])
+        # Cutting branches if the retired partition has a line strictly included into the inner one
+        if len(retire) >= outer_len:
+            append = True
+            for k in range(outer_len):
+                if retire[k] - outer[k] < 0:
+                    append = False
+                    break
+            if append:
+                selection.append([retire, perm])
 
     # selection contains the list of current nodes
 
     if len(weight) == 1:
-        return function([], selection, skp, weight, length)
-    # The recursive calls permit us to construct the list of the sons
-    # of all current nodes in selection
-    a = [graph_implementation_rec([p[0], outer], weight[:-1], length, function)
-         for p in selection]
-    return function(a, selection, skp, weight, length)
+        result = function([], selection, skp, weight, length)
+    else:
+        # The recursive calls permit us to construct the list of the sons
+        # of all current nodes in selection
+        a = [graph_implementation_rec([p[0], outer], weight[:-1], length,
+                                      function, cache)
+             for p in selection]
+        result = function(a, selection, skp, weight, length)
+    if cache is not None:
+        cache[key] = result
+    return result
 
 
 class MultiSkewTableau(CombinatorialElement):
