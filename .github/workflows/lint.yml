@@ -14,15 +14,11 @@ permissions:
 
 jobs:
   lint:
-    name: Lint (Python ${{ matrix.python }})
+    name: Lint (Python 3.14)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python: ['3.13', '3.14']
     env:
-      # Override .python-version so uv uses the selected supported Python.
-      UV_PYTHON: ${{ matrix.python }}
+      # Override .python-version so uv uses Python 3.14 for lint.
+      UV_PYTHON: "3.14"
     steps:
     - name: Checkout
       uses: actions/checkout@v7
@@ -39,7 +35,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
-        python-version: ${{ matrix.python }}
+        python-version: "3.14"
 
     - name: Install prerequisites
       id: deps

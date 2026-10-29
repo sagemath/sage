@@ -1,7 +1,7 @@
 # The single entry point for builds, tests, documentation and releases.
 # Keep this filename and the publishing jobs here: PyPI Trusted Publishing
 # identifies release.yml and does not support configuring reusable workflows.
-# Keep event/path selection in select-workflows.cjs; lint runs once per Python.
+# Keep event/path selection in select-workflows.cjs; lint runs once on Python 3.14.
 name: Sage CI
 
 on:
