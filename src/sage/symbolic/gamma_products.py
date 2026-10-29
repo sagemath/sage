@@ -1847,13 +1847,22 @@ def exact_product(f, var, a, b):
         (1/3)^n*(3*n + 2)*(3*n + 1)*factorial(3*n)*product(factorial(k), k, 0, n)/factorial(n)
 
         Powers with symbolic base and polynomial exponent, as well as
-        factors independent of the product variable, are evaluated::
+        factors independent of the product variable, are evaluated; a zero
+        base is not aggregated, but evaluated at every position of a
+        concrete range, since it may have factors that are not defined::
 
             sage: x = var('x')
             sage: exact_product(x^k*(k + 1), k, 0, n)
             x^(1/2*n^2 + 1/2*n)*factorial(n + 1)
             sage: exact_product(sqrt(2)^k, k, 0, n)
             2^(1/4*n^2 + 1/4*n)
+            sage: exact_product(0^k, k, 0, 3)
+            0
+            sage: try:
+            ....:     exact_product(0^(k - 1), k, 0, 3)
+            ....: except ValueError as err:
+            ....:     print('ValueError: %s' % err)
+            ValueError: the product 0^(k - 1) is not defined in the range
 
         Parameter-linear factors over a concrete range are evaluated
         directly, so that removable gamma poles do not become evaluation
@@ -1971,7 +1980,11 @@ def exact_product(f, var, a, b):
         if op is operator.pow:
             c, p = g.operands()
             if (w not in c.variables() and w in p.variables()
-                    and p.is_polynomial(w)):
+                    and p.is_polynomial(w) and not c.is_trivial_zero()):
+                # a zero base is excluded: summing its exponents is invalid
+                # if one of them is negative, and the factor goes to the
+                # residual part instead, where it is evaluated at every
+                # position of a concrete range
                 expo.append((c, p * e))
                 continue
         elif op == EXP_OP:
@@ -2018,14 +2031,13 @@ def exact_product(f, var, a, b):
             parts.append(c**symbolic_sum(p, w, a, b))
     if C != 1:
         parts.append(C**(bS - aS + 1))
-    if not parts:
-        if rest:
-            raise ValueError("the product cannot be evaluated")
-        # everything cancelled: the body is multiplicatively trivial
-        return SR(1)
     if rest:
         h = prod(rest).subs(conv)
         if count is None:
+            # over symbolic bounds, the residual is returned as an
+            # unevaluated product
+            if not parts:
+                raise ValueError("the product cannot be evaluated")
             parts.append(symbolic_product(h, v, a, b))
         else:
             # over a concrete range, evaluate the residual directly rather
@@ -2041,5 +2053,8 @@ def exact_product(f, var, a, b):
                 raise ValueError("the product %s is not defined in the "
                                  "range" % f)
             parts.append(prod(factors))
+    if not parts:
+        # everything cancelled: the body is multiplicatively trivial
+        return SR(1)
 
     return prod(parts)
