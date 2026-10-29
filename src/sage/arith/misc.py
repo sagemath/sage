@@ -20,7 +20,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Iterator
 from collections.abc import Sequence as AbcSequence
-from typing import TYPE_CHECKING, Any, Literal, overload
+from typing import Any, Literal, overload, TYPE_CHECKING
 
 from sage.misc.misc_c import prod
 from sage.rings.rational import Rational
@@ -2385,11 +2385,12 @@ def get_inverse_mod(order):
 #     return s
 
 
-@overload
-def power_mod(a: int, n: int, m: int) -> int: ...
-
+# Put the Integer case first: type checkers can otherwise select the int case.
 @overload
 def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def power_mod(a: int, n: int, m: int) -> int: ...
 
 @overload
 def power_mod(a, n, m) -> Any: ...

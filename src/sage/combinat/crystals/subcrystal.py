@@ -9,7 +9,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-10-16): Initial implementation
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,22 +21,22 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 import collections.abc
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.categories.supercrystals import SuperCrystals
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.rings.integer import Integer
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class Subcrystal(UniqueRepresentation, Parent):
@@ -131,7 +131,7 @@ class Subcrystal(UniqueRepresentation, Parent):
         """
         if isinstance(contained, (collections.abc.Sequence, collections.abc.Set)):
             contained = frozenset(contained)
-        #elif contained in Sets():
+        # elif contained in Sets():
 
         if cartan_type is None:
             cartan_type = ambient.cartan_type()
@@ -156,7 +156,7 @@ class Subcrystal(UniqueRepresentation, Parent):
                                   generators, cartan_type, index_set, category)
         if scaling_factors is not None:
             # virtualization must be None
-            virtualization = {i:(i,) for i in index_set}
+            virtualization = {i: (i,) for i in index_set}
             from sage.combinat.crystals.virtual_crystal import VirtualCrystal
             return VirtualCrystal(ambient, virtualization, scaling_factors, contained,
                                   generators, cartan_type, index_set, category)
@@ -180,7 +180,7 @@ class Subcrystal(UniqueRepresentation, Parent):
         """
         self._ambient = ambient
         self._contained = contained
-        self._cardinality = None # ``None`` means currently unknown
+        self._cardinality = None  # ``None`` means currently unknown
         self._cartan_type = cartan_type
         self._index_set = tuple(index_set)
         Parent.__init__(self, category=category)
@@ -221,9 +221,9 @@ class Subcrystal(UniqueRepresentation, Parent):
             return lambda x: True
         if isinstance(self._contained, frozenset):
             return self._contained.__contains__
-        return self._contained # Otherwise it should be a function
+        return self._contained  # Otherwise it should be a function
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 

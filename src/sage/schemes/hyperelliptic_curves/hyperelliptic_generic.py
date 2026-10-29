@@ -42,12 +42,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Literal
+from __future__ import annotations
+from typing import Literal, TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.big_oh import O
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -57,6 +57,9 @@ from sage.schemes.weighted_projective.weighted_projective_space import (
     WeightedProjectiveSpace,
 )
 from sage.structure.category_object import normalize_names
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 lazy_import("sage.functions.all", "log")
 
@@ -1004,13 +1007,14 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
     def distinguished_point(self):
         r"""
         Return the distinguished point of the hyperelliptic curve.
+
         By default, this is one of the points at infinity if possible.
 
         .. SEEALSO::
 
             :meth:`~sage.schemes.hyperelliptic_curves.hyperelliptic_generic.HyperellipticCurve_generic.set_distinguished_point`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x> = GF(11)[]
             sage: H1 = HyperellipticCurve(x^2 + x, x^5 - 3*x + 4)
@@ -1026,11 +1030,11 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             return self._distinguished_point
 
         if not self.is_inert():
-            # For the the split and ramified case, a point at infinity is chosen,
+            # For the split and ramified case, a point at infinity is chosen
             self._distinguished_point = self.points_at_infinity()[0]
             return self._distinguished_point
 
-        if self.base_ring().characteristic() == 0:
+        if not self.base_ring().characteristic():
             raise ValueError(
                 "in characteristic 0, a distinguished_point needs to be specified with `set_distinguished_point`"
             )

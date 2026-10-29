@@ -1,1 +1,1 @@
-packaging >=24.2
+packaging >=26.3
