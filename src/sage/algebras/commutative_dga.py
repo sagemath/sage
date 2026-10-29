@@ -2566,8 +2566,8 @@ class DifferentialGCAlgebra(GCAlgebra):
         - ``max_iterations`` -- integer (default: `3`); the number of
           iterations of the method at each degree. If the algorithm does not
           finish in this many iterations at each degree, an error is raised,
-          or the partial result computed up to that point is returned, deppending
-          on the ``partial_result`` flag.
+          or the partial result computed up to that point is returned,
+          depending on the ``partial_result`` flag.
 
         - ``partial_result`` -- boolean (default: ``False``); whether to return
           the partial result if the ``max_iterations`` limit is reached

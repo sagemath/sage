@@ -1,0 +1,151 @@
+name: Homebrew bottles
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      sage_repository:
+        description: Optional repository containing the Sage changes (defaults to this repository)
+        type: string
+      sage_ref:
+        description: Optional branch, tag, commit, or refs/pull/NUMBER/head (defaults to the workflow commit)
+        type: string
+      suite:
+        description: Doctest suite (pytest tests always run)
+        default: smoke
+        type: choice
+        options:
+          - smoke
+          - all
+      doctest_paths:
+        description: Optional space-separated paths under src/sage; overrides suite
+        type: string
+
+permissions:
+  contents: read
+
+# The dependency installation is shared by jobs on this persistent runner.
+concurrency:
+  group: homebrew-bottles-darwin-27
+  cancel-in-progress: false
+
+jobs:
+  sagelib:
+    name: sagelib / darwin-27 / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'smoke' }}
+    runs-on: [self-hosted, macOS, ARM64, darwin-27]
+    timeout-minutes: 240
+    defaults:
+      run:
+        shell: bash
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      HOMEBREW_NO_ANALYTICS: 1
+      PYTHONNOUSERSITE: 1
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+      MPLBACKEND: Agg
+      SAGE_NUM_THREADS: 4
+      # Avoid multiplying the four workers by a BLAS/OpenMP thread pool.
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      VECLIB_MAXIMUM_THREADS: 1
+      MAKE: make -j4
+      CI_JOBS: 4
+      CI_SUITE: ${{ inputs.suite || 'smoke' }}
+      CI_DOCTEST_PATHS: ${{ inputs.doctest_paths }}
+
+    steps:
+      # Keep the harness separate so it can test commits without this workflow.
+      - name: Checkout CI harness
+        uses: actions/checkout@v7
+        with:
+          path: pipeline
+          sparse-checkout: .github/homebrew-ci
+          persist-credentials: false
+
+      - name: Checkout Sage changes
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ inputs.sage_repository || github.repository }}
+          ref: ${{ inputs.sage_ref || github.sha }}
+          path: sage
+          persist-credentials: false
+
+      - name: Merge CI fixes from sagemath/sage
+        working-directory: sage
+        run: .github/workflows/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
+
+      - name: Prepare run directories
+        run: |
+          results="$GITHUB_WORKSPACE/results/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$results"
+          run_dir=$(mktemp -d "$RUNNER_TEMP/sage-homebrew.XXXXXX")
+          {
+            echo "CI_RUN_DIR=$run_dir"
+            echo "CI_SOURCE=$GITHUB_WORKSPACE/sage"
+            echo "CI_RESULTS=$results"
+            echo "CI_HELPERS=$GITHUB_WORKSPACE/pipeline/.github/homebrew-ci"
+          } >> "$GITHUB_ENV"
+
+      - name: Install dependency bottles
+        run: bash "$CI_HELPERS/run.sh" dependencies 2>&1 | tee "$CI_RESULTS/dependencies.log"
+
+      - name: Create development venv
+        run: bash "$CI_HELPERS/run.sh" venv 2>&1 | tee "$CI_RESULTS/venv.log"
+
+      - name: Build checked-out sagelib
+        run: bash "$CI_HELPERS/run.sh" build 2>&1 | tee "$CI_RESULTS/build.log"
+
+      - name: Verify imports and dependencies
+        id: verify
+        run: bash "$CI_HELPERS/run.sh" verify 2>&1 | tee "$CI_RESULTS/verify.log"
+
+      - name: Run pytest tests
+        if: ${{ !cancelled() && steps.verify.outcome == 'success' }}
+        run: bash "$CI_HELPERS/run.sh" pytest 2>&1 | tee "$CI_RESULTS/pytest.log"
+
+      - name: Run Sage doctests
+        if: ${{ !cancelled() && steps.verify.outcome == 'success' }}
+        run: bash "$CI_HELPERS/run.sh" doctest 2>&1 | tee "$CI_RESULTS/doctest.log"
+
+      - name: Save build diagnostics
+        if: ${{ always() && env.CI_RUN_DIR != '' }}
+        run: |
+          for directory in meson-logs meson-info; do
+            if [[ -d "$CI_RUN_DIR/build/$directory" ]]; then
+              cp -R "$CI_RUN_DIR/build/$directory" "$CI_RESULTS/"
+            fi
+          done
+          git -C "$CI_SOURCE" status --short > "$CI_RESULTS/source-status.txt"
+          git -C "$CI_SOURCE" diff > "$CI_RESULTS/source.diff"
+          df -h > "$CI_RESULTS/disk.txt"
+          {
+            echo '### Homebrew sagelib build'
+            echo "Sage commit: $(git -C "$CI_SOURCE" rev-parse HEAD)"
+            echo
+            echo 'Runner: darwin-27; Python: 3.14; workers: 4.'
+            echo "Doctest selection: ${CI_DOCTEST_PATHS:-$CI_SUITE}."
+            echo 'The artifact contains dependency versions, import provenance, and build/test logs.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: homebrew-darwin-27-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.CI_RESULTS }}
+          retention-days: 14
+
+      - name: Remove this run's venv and build directory
+        if: ${{ always() && env.CI_RUN_DIR != '' }}
+        run: |
+          # mktemp created this directory specifically for this run.
+          [[ "$CI_RUN_DIR" == "$RUNNER_TEMP"/sage-homebrew.* ]]
+          rm -rf -- "$CI_RUN_DIR"

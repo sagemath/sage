@@ -1045,16 +1045,15 @@ class SimilarityClassType(CombinatorialElement):
         r"""
         Return the invariant subspace generating function of ``self``.
 
-        The invariant subspace generating function is the function is the
-        polynomial
+        The invariant subspace generating function is the polynomial
 
         .. MATH::
 
             \sum_{j\geq 0} a_j(q) t^j,
 
-        where `a_j(q)` denotes the number of `j`-dimensional invariant subspaces
-        of dimensiona `j` for any matrix with the similarity class type ``self``
-        with entries in a field of order `q`.
+        where `a_j(q)` denotes the number of `j`-dimensional invariant
+        subspaces for any matrix with the similarity class type
+        ``self`` with entries in a field of order `q`.
 
         EXAMPLES::
 
