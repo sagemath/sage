@@ -2186,10 +2186,10 @@ def sage_getsource(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsource
-        sage: sage_getsource(identity_matrix)[19:60]
-        'identity_matrix(ring, n=0, sparse=False):'
-        sage: sage_getsource(identity_matrix)[19:60]
-        'identity_matrix(ring, n=0, sparse=False):'
+        sage: sage_getsource(identity_matrix)[19:62]
+        'identity_matrix(ring, n=0, sparse=False) ->'
+        sage: sage_getsource(identity_matrix)[19:62]
+        'identity_matrix(ring, n=0, sparse=False) ->'
     """
     # First we should check if the object has a _sage_src_
     # method.  If it does, we just return the output from

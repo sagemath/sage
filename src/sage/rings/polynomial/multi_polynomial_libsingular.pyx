@@ -797,6 +797,15 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: R.<x,y,z> = F[]
             sage: R('d*z+x^2*y')
             x^2*y + d*z
+
+        A variable with the same name as a generator of the base ring
+        stays a variable (:issue:`34100`)::
+
+            sage: K.<z> = GF(9)
+            sage: S.<x,y,z> = K[]
+            sage: T.<y,z> = K[]
+            sage: T(S.gen(2)).is_constant()
+            False
         """
         cdef poly *_p
         cdef poly *mon
@@ -989,9 +998,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if self.base_ring().gen() != 1:
                 if hasattr(self.base_ring(), 'gens'):
                     for gen in self.base_ring().gens():
-                        d[str(gen)] = gen
+                        d.setdefault(str(gen), gen)
                 else:
-                    d[str(self.base_ring().gen())] = self.base_ring_gen()
+                    d.setdefault(str(self.base_ring().gen()), self.base_ring_gen())
             try:
                 if '/' in element:
                     element = sage_eval(element,d)

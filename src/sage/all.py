@@ -5,7 +5,7 @@ all.py -- much of sage is imported into this module, so you don't
 WARNING:
 
 Do not import from this module into other modules. Instead, import
-from the orginal location. The tool `import_statements` helps in
+from the original location. The tool `import_statements` helps in
 figuring out where that location is. For instance::
 
     sage: import_statements("TensorAlgebra")

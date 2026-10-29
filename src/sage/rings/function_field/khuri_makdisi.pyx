@@ -289,6 +289,7 @@ cdef class KhuriMakdisi_base(object):
         cdef Matrix w
         cdef int sign, b
         cdef list bits
+        cdef Py_ssize_t i
 
         if n == 0:
             return self.w0

@@ -395,6 +395,45 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6
         ....:          algorithm='bfgs')
         (1.0, 1.0, 1.0)
+
+    TESTS:
+
+    If ``func`` is symbolic, its minimizer should be in the same order as
+    its arguments, even when they are not in alphabetical order
+    (:issue:`43048`; the same problem was fixed for
+    :func:`minimize_constrained` in :issue:`32511`)::
+
+        sage: # needs sage.symbolic
+        sage: x, y, z = SR.var('x, y, z')
+        sage: f(y, x) = (x - 1)^2 + 10*(y - 2)^2
+        sage: minimize(f, [0, 0])  # abs tol 1e-4
+        (2.0, 1.0)
+        sage: minimize(f, [0, 0], algorithm='simplex')  # abs tol 1e-4
+        (2.0, 1.0)
+        sage: minimize(f, [0, 0], algorithm='ncg')  # abs tol 1e-6
+        (2.0, 1.0)
+
+    This holds for every algorithm::
+
+        sage: # needs sage.symbolic
+        sage: h(z, x, y) = (x - 1)^2 + (y - 2)^2 + (z - 3)^2
+        sage: algorithms = ['default', 'simplex', 'bfgs', 'cg', 'powell', 'ncg']
+        sage: for algorithm in algorithms:
+        ....:     m = minimize(h, [0, 0, 0], algorithm=algorithm)
+        ....:     print(algorithm, (m - vector([3, 1, 2])).norm() < 1e-3)
+        default True
+        simplex True
+        bfgs True
+        cg True
+        powell True
+        ncg True
+
+    Arguments that do not appear in ``func`` are allowed::
+
+        sage: # needs sage.symbolic
+        sage: g(x, y) = (x - 3)^2
+        sage: minimize(g, [0, 0])  # abs tol 1e-6
+        (3.0, 0.0)
     """
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
@@ -404,7 +443,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
 
     from scipy import optimize
     if isinstance(func, Expression):
-        var_list = func.variables()
+        var_list = func.arguments()
         var_names = [str(_) for _ in var_list]
         fast_f = fast_callable(func, vars=var_names, domain=float)
         f = lambda p: fast_f(*p)
