@@ -312,20 +312,17 @@ Simplifying expressions involving scientific notation::
     sage: sqrt(c^3)
     sqrt(((2.00000000000000e-6)*k + 12)^3)
 
-The symbolic calculus package uses its own copy of Maxima for
-simplification, etc., which is separate from the default
-system-wide version::
+The symbolic calculus package shares the library interface with ``maxima``.
+Sage symbolic variables are translated to names prefixed with
+``_SAGE_VAR_``, so they are distinct from variables entered as Maxima
+strings::
 
     sage: maxima.eval('[x,y]: [1,2]')
     '[1,2]'
     sage: maxima.eval('expand((x+y)^3)')
     '27'
 
-If the copy of Maxima used by the symbolic calculus package were
-the same as the default one, then the following would return 27,
-which would be very confusing indeed!
-
-::
+Thus these assignments do not change the Sage symbolic variables::
 
     sage: x, y = var('x,y')
     sage: expand((x+y)^3)
@@ -348,9 +345,8 @@ But this still uses Maxima::
     sage: (x + x + pi).simplify()
     pi + 2*x
 
-Note that ``x`` is still ``x``, since the
-maxima used by the calculus package is different than the one in
-the interactive interpreter.
+Note that ``x`` is still ``x`` because of the variable-name translation.
+Maxima settings such as ``domain`` are shared with the calculus package.
 Clear the maxima variables to avoid interference with other tests::
 
     sage: maxima('kill(x,y)')

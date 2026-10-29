@@ -34,11 +34,21 @@ as a C library in Sage. Translations between Sage and Maxima objects
 directly, but falls back to the string based conversion in case no new implementation
 has been made.
 
-This interface is the one used for calculus by Sage
-and is accessible as ``maxima_calculus``::
+This is the default ``maxima`` interface and the one used for calculus by
+Sage.  It is also accessible as ``maxima_calculus``::
 
+    sage: maxima(2).parent() is maxima_calculus(2).parent()
+    True
     sage: maxima_calculus
     Maxima
+
+Maxima settings, loaded packages, and assumptions are shared with Sage's
+calculus engine.  Sage symbolic variables are translated to names prefixed
+with ``_SAGE_VAR_``, so assigning a value to ``x`` in Maxima does not assign
+a value to the Sage symbolic variable ``x``.
+
+For a separate Maxima process, explicitly import the Pexpect interface from
+:mod:`sage.interfaces.maxima`.
 
 Only one instance of this interface can be instantiated,
 so the user should not try to instantiate another one,
@@ -78,6 +88,46 @@ The output is parseable (i. e. :issue:`31796` is fixed)::
     True
 
 TESTS:
+
+The public interface, symbolic method wrapper, and Maxima magics work
+without starting a Pexpect session.  Check this in a fresh process so an
+existing subprocess cannot hide an unintended use of that interface::
+
+    sage: import subprocess, sys
+    sage: code = '''
+    ....: import importlib.abc
+    ....: import sys
+    ....: blocked = []
+    ....: class RejectPexpectMaxima(importlib.abc.MetaPathFinder):
+    ....:     def find_spec(self, fullname, path=None, target=None):
+    ....:         if fullname == 'sage.interfaces.maxima':
+    ....:             blocked.append(fullname)
+    ....:             raise AssertionError('Pexpect Maxima must not be imported')
+    ....: assert 'sage.interfaces.maxima' not in sys.modules
+    ....: sys.meta_path.insert(0, RejectPexpectMaxima())
+    ....: from unittest.mock import patch
+    ....: from sage.all import *
+    ....: from sage.interfaces.expect import Expect
+    ....: from sage.repl.interface_magic import InterfaceMagic
+    ....: x = var('x')
+    ....: with patch.object(Expect, '_start', side_effect=AssertionError('Pexpect started')):
+    ....:     assert maxima('diff(x^3,x)').sage() == 3*x**2
+    ....:     assert maxima(x).parent() is maxima_calculus(x).parent()
+    ....:     assert loads(dumps(maxima(7))).sage() == 7
+    ....:     assert (sin(x)**2 + cos(x)**2).maxima_methods().trigsimp() == 1
+    ....:     assert chebyshev_T(5, x, algorithm='maxima') == 16*x**5 - 20*x**3 + 5*x
+    ....:     assert maxima(harmonic_number(x, 2)).sage() == harmonic_number(x, 2)
+    ....:     magic = InterfaceMagic.find('maxima')
+    ....:     assert magic.line_magic_factory()('2+3').sage() == 5
+    ....:     magic.cell_magic_factory()('', '1+1; 2+2$')
+    ....: assert not blocked, blocked
+    ....: assert 'sage.interfaces.maxima' not in sys.modules
+    ....: '''
+    sage: result = subprocess.run([sys.executable, '-c', code],
+    ....:                         capture_output=True, text=True, timeout=60)
+    sage: assert result.returncode == 0, result.stdout + result.stderr
+    sage: result.stdout.strip()
+    '2'
 
 Check that concurrent Maxima initialization is not affected by ECL races,
 see :issue:`26968`.  The subprocesses share an empty ``MAXIMA_USERDIR`` and
@@ -137,6 +187,7 @@ subprocess return code so that a failure cannot go unnoticed::
 # ****************************************************************************
 import errno
 import os
+import re
 import time
 from contextlib import contextmanager
 
@@ -442,7 +493,9 @@ def max_to_string(s):
         sage: max_to_string(ecl)
         'cos(_SAGE_VAR_x)'
     """
-    return maxprint(s).python()[1:-1]
+    # EclObject.python() returns a printed Lisp string, including its quotes
+    # and escapes.  Undo that quoting, preserving Maxima's own escapes.
+    return re.sub(r'\\(.)', r'\1', maxprint(s).python()[1:-1], flags=re.DOTALL)
 
 
 my_mread = ecl_eval("""
@@ -467,7 +520,61 @@ def parse_max_string(s):
         sage: parse_max_string('1+1')
         <ECL: ((MPLUS) 1 1)>
     """
-    return my_mread('"%s;"' % s)
+    return my_mread(EclObject(s + ';', False))
+
+
+def _maxima_statements(line):
+    r"""
+    Split Maxima input into statements and their ``;`` or ``$`` terminators.
+
+    Only recognize statement boundaries here; Maxima parses each statement.
+    Strings and backslash escapes protect terminators, and Maxima permits
+    nested ``/* ... */`` comments.  A final unterminated statement has the
+    empty string as its terminator.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_statements
+        sage: list(_maxima_statements('1+1; "a;b"$ 3'))
+        [('1+1', ';'), (' "a;b"', '$'), (' 3', '')]
+    """
+    start = i = 0
+    comment_depth = 0
+    quoted = has_code = False
+    while i < len(line):
+        char = line[i]
+        pair = line[i:i + 2]
+        if comment_depth:
+            if pair == '/*':
+                comment_depth += 1
+                i += 2
+                continue
+            if pair == '*/':
+                comment_depth -= 1
+                i += 2
+                continue
+        elif char == '\\':
+            has_code = True
+            i += 2
+            continue
+        elif char == '"':
+            quoted = not quoted
+            has_code = True
+        elif not quoted:
+            if pair == '/*':
+                comment_depth = 1
+                i += 2
+                continue
+            if char in ';$':
+                if has_code:
+                    yield line[start:i], char
+                start = i + 1
+                has_code = False
+            elif not char.isspace():
+                has_code = True
+        i += 1
+    if has_code or comment_depth:
+        yield line[start:], ''
 
 
 class MaximaLib(MaximaAbstract):
@@ -588,25 +695,34 @@ class MaximaLib(MaximaAbstract):
             ''
             sage: maxima_lib._eval_line('randvar')
             'sin(y)+cos(x)'
+
+        Terminators inside strings, escaped identifiers, and nested comments
+        do not end a statement::
+
+            sage: maxima.eval('"a;b$c"; 2+2$')
+            '"a;b$c"'
+            sage: maxima.eval(r'"a\";b$c"')
+            '"a\\";b$c"'
+            sage: maxima.eval(r'a\;b')
+            'a\\;b'
+            sage: maxima.eval('/* ; /* $ */ ; */ 1+1; /* $ */')
+            '2'
+            sage: maxima.eval(' /* a comment */ ')
+            ''
+
+        Statements terminated by ``$`` are evaluated without returning
+        their values::
+
+            sage: maxima.eval('sage_eval_test: 3$ sage_eval_test + 4;')
+            '7'
+            sage: maxima.eval('kill(sage_eval_test)$')
+            ''
         """
         result = ''
-        while line:
-            ind_dollar = line.find("$")
-            ind_semi = line.find(";")
-            if ind_dollar == -1 or (ind_semi >= 0 and ind_dollar > ind_semi):
-                if ind_semi == -1:
-                    statement = line
-                    line = ''
-                else:
-                    statement = line[:ind_semi]
-                    line = line[ind_semi + 1:]
-                if statement:
-                    result = ((result + '\n') if result else '') + max_to_string(maxima_eval("#$%s$" % statement))
-            else:
-                statement = line[:ind_dollar]
-                line = line[ind_dollar + 1:]
-                if statement:
-                    maxima_eval("#$%s$" % statement)
+        for statement, terminator in _maxima_statements(line):
+            value = maxima_eval(parse_max_string(statement))
+            if terminator != '$':
+                result = ((result + '\n') if result else '') + max_to_string(value)
         if not reformat:
             return result
         return ' '.join(x.strip() for x in result.split())

@@ -568,31 +568,23 @@ Test an invalid value for ``--optional``::
     ValueError: invalid optional tag 'bad-option'
     1
 
-Test ``atexit`` support in the doctesting framework::
+Test ``atexit`` support with both serial execution and multiprocessing
+workers. The callback must remove the file exactly once: a second call
+would report an exception on stderr::
 
-    sage: F = tmp_filename()
-    sage: os.path.isfile(F)
-    True
-    sage: from copy import deepcopy
-    sage: kwds2 = deepcopy(kwds)
-    sage: kwds2['env']['DOCTEST_DELETE_FILE'] = F
-    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
-    ....:      "--random-seed=0", "--optional=sage", "atexit.rst"], **kwds2)
-    Running doctests...
-    Doctesting 1 file.
-    ... --warn-long 0.0 --random-seed=0 atexit.rst
-        [3 tests, ...s wall]
-    ----------------------------------------------------------------------
-    All tests passed!
-    ----------------------------------------------------------------------
-    ...
-    0
-    sage: os.path.isfile(F)  # long time
-    False
-    sage: try:
-    ....:     os.unlink(F)
-    ....: except OSError:
-    ....:     pass
+    sage: for mode in ("--serial", "--nthreads=2"):  # long time
+    ....:     F = tmp_filename()
+    ....:     env = dict(tests_env, DOCTEST_DELETE_FILE=F)
+    ....:     result = subprocess.run(
+    ....:         ["python3", "-m", "sage.doctest", mode, "--warn-long", "0",
+    ....:          "--random-seed=0", "--optional=sage", "atexit.rst"],
+    ....:         cwd=tests_dir, env=env, capture_output=True, text=True)
+    ....:     assert result.returncode == 0, result.stdout + result.stderr
+    ....:     assert "All tests passed!" in result.stdout, result.stdout
+    ....:     assert "Exception ignored in atexit callback" not in result.stderr, result.stderr
+    ....:     print(mode, os.path.isfile(F))
+    --serial False
+    --nthreads=2 False
 
 Test that random tests are reproducible::
 
