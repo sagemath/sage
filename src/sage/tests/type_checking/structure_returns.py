@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, assert_type, cast
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
-from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ, crt_basis
 from sage.rings.rational_field import QQ
