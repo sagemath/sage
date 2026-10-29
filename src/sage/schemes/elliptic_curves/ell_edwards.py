@@ -467,7 +467,7 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         integers are accepted, while rational or finite-field elements are
         rejected with a :exc:`TypeError` rather than silently truncated to
         an integer (a rational action cached by the coercion model must not
-        turn later fractional scalars into a silent ``None`` result)::
+        turn later fractional scalars into a silent ``None`` result).
 
         EXAMPLES::
 
