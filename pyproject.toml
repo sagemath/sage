@@ -220,7 +220,6 @@ extra = [
 [dependency-groups]
 dev = [
   "cibuildwheel",
-  "conda-lock",
   "grayskull",
   "meson >=1.11.2", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
@@ -232,6 +231,7 @@ dev = [
   "tqdm",
   "ty >=0.0.12",
   "uv",
+  "virtualenv >=21.14.13",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
   'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
