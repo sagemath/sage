@@ -7,7 +7,7 @@ AUTHORS:
 - Dinakar Muthiah, Travis Scrimshaw (2015-05-11): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Dinakar Muthiah <muthiah at ualberta.ca>
 #                     2015 Travis Scrimshaw <tscrimsh at umn.edu>
 #
@@ -15,9 +15,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from sage.combinat.crystals.pbw_crystal import PBWCrystalElement, PBWCrystal
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
+from sage.combinat.crystals.pbw_crystal import PBWCrystal, PBWCrystalElement
 
 
 class MVPolytope(PBWCrystalElement):
@@ -115,11 +115,11 @@ class MVPolytope(PBWCrystalElement):
         for red in sorted(w0.reduced_words()):
             ret += "\\draw "
             cur = proj(P.zero())
-            red = tuple(red)
+            tred = tuple(red)
             ret += str(cur)
-            roots = [proj(P.sum(c*al[a] for a,c in root))
-                     for root in pbw_data._root_list_from(red)]
-            datum = pbw_data.convert_to_new_long_word(self._pbw_datum, red)
+            roots = [proj(P.sum(c * al[a] for a, c in root))
+                     for root in pbw_data._root_list_from(tred)]
+            datum = pbw_data.convert_to_new_long_word(self._pbw_datum, tred)
             for i in reversed(range(len(datum.lusztig_datum))):
                 cur -= roots[i] * datum.lusztig_datum[i]
                 ret += " -- " + str(cur)
@@ -160,14 +160,14 @@ class MVPolytope(PBWCrystalElement):
         w0 = W.long_element()
         al = P.simple_roots()
 
-        vertices = set([P.zero()])
+        vertices = {P.zero()}
         for red in sorted(w0.reduced_words()):
             cur = P.zero()
-            red = tuple(red)
-            roots = [P.sum(c*al[a] for a,c in root)
-                     for root in pbw_data._root_list_from(red)]
-            datum = pbw_data.convert_to_new_long_word(self._pbw_datum, red)
-            for i,c in enumerate(datum.lusztig_datum):
+            tred = tuple(red)
+            roots = [P.sum(c * al[a] for a, c in root)
+                     for root in pbw_data._root_list_from(tred)]
+            datum = pbw_data.convert_to_new_long_word(self._pbw_datum, tred)
+            for i, c in enumerate(datum.lusztig_datum):
                 cur = cur + roots[i] * c
                 vertices.add(cur)
         return list(vertices)
