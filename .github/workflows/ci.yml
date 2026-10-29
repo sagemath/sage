@@ -15,7 +15,14 @@ on:
     # Allow to run manually
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   linux:
+    needs: lint
     name: Build and Test
     runs-on: ubuntu-latest
     strategy:
@@ -121,6 +128,7 @@ jobs:
             build/cp313/meson-info/
 
   macos:
+    needs: lint
     name: Build and Test (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:

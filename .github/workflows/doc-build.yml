@@ -18,7 +18,14 @@ env:
   PYTHON_VERSION: 3.13
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   doc-html:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -22,7 +22,14 @@ on:
     - cron: '0 1 * * 2,4'
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   sagemath-dev:
+    needs: lint
     uses: ./.github/workflows/docker_hub.yml
     with:
       # Build from scratch
@@ -31,7 +38,7 @@ jobs:
     secrets: inherit
 
   sagemath:
-    needs: sagemath-dev
+    needs: [lint, sagemath-dev]
     uses: ./.github/workflows/docker_hub.yml
     with:
       # Build from sagemath-dev

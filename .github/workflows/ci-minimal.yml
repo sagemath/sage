@@ -24,7 +24,14 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   test:
+    needs: lint
     name: Conda minimal (${{ matrix.os }}, Python ${{ matrix.python }}, all)
     runs-on: ${{ matrix.os }}-latest
 

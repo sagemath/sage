@@ -9,7 +9,14 @@ on:
         type: string
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   prepare:
+    needs: lint
     name: Build and Test Sage with given optional packages
     runs-on: ubuntu-latest
     outputs:
@@ -29,7 +36,7 @@ jobs:
          echo "opt_targets_macos=${opt_targets_macos}" >> "$GITHUB_OUTPUT"
 
   run_tests_on_docker:
-    needs: prepare
+    needs: [lint, prepare]
     name: Call reusable workflow docker.yml
     uses: ./.github/workflows/docker.yml
     with:
@@ -44,7 +51,7 @@ jobs:
       max_parallel: 4
 
   macos:
-    needs: prepare
+    needs: [lint, prepare]
     name: Build and Test optional packages (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:

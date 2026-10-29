@@ -16,7 +16,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   types:
+    needs: lint
     name: Type check
     runs-on: ubuntu-latest
     steps:

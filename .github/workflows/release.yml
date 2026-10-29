@@ -17,8 +17,15 @@ on:
     # Allow to run manually
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
 
   release_dist:
+    needs: lint
 
     # This job first checks whether "configure --enable-download-from-upstream-url"
     # (the default since #32390) is needed.
@@ -73,6 +80,7 @@ jobs:
           name: release_dist
 
   sdists:
+    needs: lint
 
     runs-on: ubuntu-latest
     permissions:
@@ -113,7 +121,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   release:
-    needs: [release_dist, sdists]
+    needs: [lint, release_dist, sdists]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:
@@ -162,7 +170,7 @@ jobs:
     if: false
     name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
-    needs: sdists
+    needs: [lint, sdists]
     strategy:
       fail-fast: false
       matrix:
@@ -249,7 +257,7 @@ jobs:
 
   upload_wheels:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
-    needs: build_wheels
+    needs: [lint, build_wheels]
     runs-on: ubuntu-latest
     permissions:
       contents: read

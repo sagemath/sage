@@ -34,7 +34,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   sagelib:
+    needs: lint
     name: sagelib / darwin-27 / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'smoke' }}
     runs-on: [self-hosted, macOS, ARM64, darwin-27]
     timeout-minutes: 240

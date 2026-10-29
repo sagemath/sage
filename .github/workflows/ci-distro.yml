@@ -41,8 +41,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   linux-minimal:
-    if: ${{ success() || failure() }}
+    needs: lint
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -59,6 +65,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   linux:
+    needs: lint
     uses: ./.github/workflows/docker.yml
     with:
       free_disk_space: true
@@ -72,6 +79,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   macos:
+    needs: lint
     name: Build and Test (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     strategy:
