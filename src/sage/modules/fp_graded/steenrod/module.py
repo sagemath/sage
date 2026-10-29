@@ -92,10 +92,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.infinity import infinity
 from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra_generic
 from sage.modules.fp_graded.module import FPModule
 from sage.modules.fp_graded.free_module import FreeGradedModule
+from sage.rings.infinity import infinity
 from .profile import enveloping_profile_elements
 
 
@@ -133,9 +133,9 @@ class SteenrodModuleMixin:
             sage: X.profile()
             (0,)
         """
-        elements = [coeffifient for value in self.relations()
-                    for coeffifient in value.dense_coefficient_list()]
-        elements = [a for a in elements if a not in (0, 1)]
+        elements = [coeff for value in self.relations()
+                    for coeff in value.dense_coefficient_list()
+                    if coeff not in (0, 1)]
 
         return enveloping_profile_elements(elements,
                                            char=self.base_ring().characteristic())

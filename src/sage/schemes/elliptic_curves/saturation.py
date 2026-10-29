@@ -576,7 +576,7 @@ class EllipticCurveSaturator(SageObject):
                                 v = vecs[jj]
                                 # The v-linear combination of Rlist
                                 # really is p*R.  Now to enlarge the
-                                # span, we may replce the j'th point
+                                # span, we may replace the j'th point
                                 # in Plist with R, where v[j] is
                                 # nonzero.
                                 if verbose:
