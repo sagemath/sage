@@ -54,7 +54,7 @@ env:
 
 jobs:
   test-long:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
@@ -180,7 +180,7 @@ jobs:
           include-hidden-files: true
 
   coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [test-long]
     if: (success() || failure())
     services:

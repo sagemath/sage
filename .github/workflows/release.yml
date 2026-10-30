@@ -80,7 +80,7 @@ jobs:
   select:
     name: Select CI workflows
     needs: lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       build: ${{ steps.select.outputs.build }}
       distro: ${{ steps.select.outputs.distro }}
@@ -244,7 +244,7 @@ jobs:
     needs: [lint, select]
     if: needs.select.outputs.release == 'true'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
@@ -284,7 +284,7 @@ jobs:
 
   release:
     needs: [lint, select, release_dist, sdists]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: needs.select.outputs.release == 'true' && github.ref_type == 'tag'
     permissions:
       contents: write
@@ -336,7 +336,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:      [ubuntu-latest]
+        os:      [ubuntu-26.04]
         arch:    [x86_64, i686, aarch64]
         build:   [manylinux, musllinux]
         include:
@@ -421,7 +421,7 @@ jobs:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     needs: [lint, select, build_wheels]
     if: needs.select.outputs.release == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write

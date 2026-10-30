@@ -100,7 +100,7 @@ on:
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       max-parallel: ${{ inputs.max_parallel }}

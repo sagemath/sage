@@ -15,7 +15,7 @@ permissions:
 jobs:
   test:
     name: Conda minimal (${{ matrix.os }}, Python ${{ matrix.python }}, all)
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os == 'ubuntu' && 'ubuntu-26.04' || format('{0}-latest', matrix.os) }}
 
     strategy:
       fail-fast: false
