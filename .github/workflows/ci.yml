@@ -93,14 +93,20 @@ jobs:
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(uv run --no-project build/bin/sage-package list :standard:)))
 
       - name: Build
+        shell: bash
         run: |
-          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project -v
-          uv sync --frozen --inexact --no-build-isolation -v
+          {
+            # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+            uv sync --frozen --inexact --no-install-project -v
+            # Checkout removes the build tree, but uv may retain a cached editable wheel.
+            # Rebuild Sage even when its version and package metadata are unchanged.
+            uv sync --frozen --inexact --no-build-isolation --reinstall-package sagemath -v
+          } 2>&1 | tee ci-build.log
 
       - name: Test
+        shell: bash
         run: |
-          uv run --frozen ./sage -t --all -p4 || true
+          uv run --frozen --no-sync ./sage -t --all -p4 2>&1 | tee ci-test.log
 
       - name: Clear container name
         id: clear-container-name
@@ -117,8 +123,10 @@ jobs:
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
-            build/cp313/meson-logs/
-            build/cp313/meson-info/
+            ci-build.log
+            ci-test.log
+            build/*/meson-logs/
+            build/*/meson-info/
 
   macos:
     name: Build and Test (${{ matrix.runner }})
@@ -162,23 +170,29 @@ jobs:
           brew install dimpase/tap/cypari2
 
       - name: Build
+        shell: bash
         run: |
-          source ./.homebrew-build-env
-          # Reuse Homebrew's PARI-compatible binding instead of building the PyPI version.
-          uv venv --python 3.13 --allow-existing
-          python_version=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-          cypari2_site="$(brew --prefix dimpase/tap/cypari2)/lib/python${python_version}/site-packages"
-          test -d "$cypari2_site/cypari2"
-          venv_site=$(.venv/bin/python -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
-          printf '%s\n' "$cypari2_site" > "$venv_site/homebrew-cypari2.pth"
-          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project --no-install-package cypari2 -v
-          .venv/bin/python -c 'import cypari2, sys; from pathlib import Path; assert Path(cypari2.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve()); print(cypari2.__file__)' "$cypari2_site"
-          uv sync --frozen --inexact --no-build-isolation --no-install-package cypari2 -v
+          {
+            source ./.homebrew-build-env
+            # Reuse Homebrew's PARI-compatible binding instead of building the PyPI version.
+            uv venv --python 3.13 --allow-existing
+            python_version=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+            cypari2_site="$(brew --prefix dimpase/tap/cypari2)/lib/python${python_version}/site-packages"
+            test -d "$cypari2_site/cypari2"
+            venv_site=$(.venv/bin/python -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
+            printf '%s\n' "$cypari2_site" > "$venv_site/homebrew-cypari2.pth"
+            # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+            uv sync --frozen --inexact --no-install-project --no-install-package cypari2 -v
+            .venv/bin/python -c 'import cypari2, sys; from pathlib import Path; assert Path(cypari2.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve()); print(cypari2.__file__)' "$cypari2_site"
+            # Checkout removes the build tree, but uv may retain a cached editable wheel.
+            # Rebuild Sage even when its version and package metadata are unchanged.
+            uv sync --frozen --inexact --no-build-isolation --no-install-package cypari2 --reinstall-package sagemath -v
+          } 2>&1 | tee ci-build.log
 
       - name: Test
+        shell: bash
         run: |
-          uv run --frozen --no-sync ./sage -t --all -p4 || true
+          uv run --frozen --no-sync ./sage -t --all -p4 2>&1 | tee ci-test.log
 
       - name: Upload log
         uses: actions/upload-artifact@v7
@@ -186,5 +200,7 @@ jobs:
         with:
           name: ${{ matrix.runner }}-log
           path: |
-            build/cp312/meson-logs/
-            build/cp312/meson-info/
+            ci-build.log
+            ci-test.log
+            build/*/meson-logs/
+            build/*/meson-info/
