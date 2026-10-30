@@ -18,7 +18,8 @@ import os
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 from sage.misc.temporary_file import tmp_filename
-from .graphics import Graphics, ALLOWED_EXTENSIONS, _parse_figsize
+from .graphics import (Graphics, ALLOWED_EXTENSIONS, _parse_figsize,
+                       _bbox_extra_artists)
 
 
 class MultiGraphics(WithEqualityById, SageObject):
@@ -483,6 +484,9 @@ class MultiGraphics(WithEqualityById, SageObject):
             opts = {"dpi": dpi, "transparent": transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
+            bbox_extra_artists = _bbox_extra_artists(figure)
+            if bbox_extra_artists:
+                opts['bbox_extra_artists'] = bbox_extra_artists
             figure.savefig(filename, **opts)
             # Restore the rcParams to the original, possibly user-set values
             (rcParams['ps.useafm'], rcParams['pdf.use14corefonts'],

@@ -106,6 +106,82 @@ def _parse_figsize(figsize):
     return figsize
 
 
+def _bbox_extra_artists(figure, artists=()):
+    r"""
+    Return the artists to pass as ``bbox_extra_artists`` when saving
+    ``figure`` with a tight bounding box.
+
+    Matplotlib uses the given artists instead of its default ones, so
+    the default ones are added as well. The axes labels are added
+    because matplotlib before version 3.11.1 only takes their center
+    into account, which cuts off the labels that Sage draws at the end
+    of the axes.
+
+    INPUT:
+
+    - ``figure`` -- a matplotlib figure
+
+    - ``artists`` -- (default: ``()``) further artists to include
+
+    OUTPUT: list of matplotlib artists; it is empty if the default
+    bounding box of matplotlib can be used
+
+    TESTS:
+
+    The axes labels are not cut off (:issue:`35971`)::
+
+        sage: # needs sage.symbolic
+        sage: from matplotlib.backends.backend_agg import FigureCanvasAgg
+        sage: from sage.plot.graphics import _bbox_extra_artists
+        sage: def inside_tight_bbox(fig, artists, extra=()):
+        ....:     renderer = FigureCanvasAgg(fig).get_renderer()
+        ....:     extra = _bbox_extra_artists(fig, extra)
+        ....:     bbox = fig.get_tightbbox(renderer, bbox_extra_artists=extra)
+        ....:     bbox = bbox.padded(0.01)  # allow for rounding errors
+        ....:     inches = fig.dpi_scale_trans.inverted()
+        ....:     boxes = [a.get_window_extent(renderer).transformed(inches)
+        ....:              for a in artists]
+        ....:     return all(bbox.contains(*b.min) and bbox.contains(*b.max)
+        ....:                for b in boxes)
+        sage: def axes_labels(fig):
+        ....:     return [label for ax in fig.axes
+        ....:             for label in (ax.xaxis.label, ax.yaxis.label)]
+        sage: p = plot(x^2, (x, -2, 2))
+        sage: p.axes_labels(['BAR', 'FOO'])
+        sage: fig = p.matplotlib()
+        sage: inside_tight_bbox(fig, axes_labels(fig))
+        True
+        sage: fig = graphics_array([p, p]).matplotlib()
+        sage: inside_tight_bbox(fig, axes_labels(fig))
+        True
+
+    A legend outside of the axes is not cut off when there are other
+    extra artists, like a text that is not clipped::
+
+        sage: # needs sage.symbolic
+        sage: q = plot(x^2, (x, -2, 2), legend_label='parabola')
+        sage: q += text('note', (0, 3), clip=False)
+        sage: q.set_legend_options(loc=(1.3, 0.5))
+        sage: fig = q.matplotlib()
+        sage: legend = fig.axes[0].get_legend()
+        sage: inside_tight_bbox(fig, [legend], q._bbox_extra_artists)
+        True
+
+    Nothing is returned if the default of matplotlib can be used::
+
+        sage: # needs sage.symbolic
+        sage: _bbox_extra_artists(plot(x^2).matplotlib())
+        []
+    """
+    labels = [label for ax in figure.axes
+              for label in (ax.xaxis.label, ax.yaxis.label)
+              if label.get_visible() and label.get_text()]
+    artists = list(artists) + labels
+    if not artists:
+        return []
+    return figure.get_default_bbox_extra_artists() + artists
+
+
 class Graphics(WithEqualityById, SageObject):
     """
     The Graphics object is an empty list of graphics objects. It is
@@ -2728,6 +2804,17 @@ class Graphics(WithEqualityById, SageObject):
             sage: ymin, ymax = sub.get_ylim()
             sage: xmin > xmax, ymin > ymax
             (...True..., ...True...)
+
+        The artists of a previous figure are not kept, since they would
+        enlarge the bounding box of the image saved later::
+
+            sage: # needs sage.symbolic
+            sage: g = plot(sin(x), (x, 0, 6))
+            sage: g += text('note', (6.5, 0), clip=False)
+            sage: _ = g.matplotlib(figsize=8)
+            sage: fig = g.matplotlib(figsize=3)
+            sage: [a.get_figure() is fig for a in g._bbox_extra_artists]
+            [True]
         """
         if not isinstance(ticks, (list, tuple)):
             ticks = (ticks, None)
@@ -2786,6 +2873,7 @@ class Graphics(WithEqualityById, SageObject):
         if not subplot:
             subplot = figure.add_subplot(111)
         # Add all the primitives to the subplot
+        self._bbox_extra_artists = []
         old_opts = {}
         for g in self._objects:
             opts, old_opts[g] = g.options(), g.options()
@@ -3388,8 +3476,10 @@ class Graphics(WithEqualityById, SageObject):
             opts = {'dpi': dpi, 'transparent': transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
-            if self._bbox_extra_artists:
-                opts['bbox_extra_artists'] = self._bbox_extra_artists
+            bbox_extra_artists = _bbox_extra_artists(figure,
+                                                     self._bbox_extra_artists)
+            if bbox_extra_artists:
+                opts['bbox_extra_artists'] = bbox_extra_artists
 
             figure.savefig(filename, **opts)
 
