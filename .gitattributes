@@ -4,3 +4,6 @@
 *.{cmd,[cC][mM][dD]} text eol=crlf
 *.{bat,[bB][aA][tT]} text eol=crlf
 *.diff_bin binary
+
+# Don't export these files in the source distribution
+{.devcontainer,.github,.vscode,build,config,docker,m4,pkgs}/** export-ignore
