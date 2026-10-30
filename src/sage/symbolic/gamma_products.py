@@ -102,7 +102,7 @@ import operator
 from collections import Counter
 
 from sage.arith.functions import lcm
-from sage.arith.misc import divisors, factor
+from sage.arith.misc import divisors, factor, inverse_mod
 from sage.calculus.calculus import symbolic_sum
 from sage.functions.gamma import gamma
 from sage.functions.log import exp
@@ -1955,9 +1955,10 @@ def hypergeometric_sum(f, var, a, b):
         zero.  The vanishing may be caused by a factor whose term ratio is
         not rational in the summation variable, as long as a factor
         ``1/gamma(A*k + B)`` with ``A`` a negative integer and ``B`` a
-        nonpositive integer forces every term to zero; other factors are
-        assumed to be defined at every lattice point, as everywhere else
-        in this module::
+        nonpositive integer forces every term to zero; the term is then
+        verified at the poles of the remaining factors and at the first
+        few lattice points, and other factors are assumed to be defined
+        generically beyond those, as everywhere else in this module::
 
             sage: hypergeometric_sum(1/gamma(-k), k, 0, oo)
             0
@@ -2044,16 +2045,18 @@ def hypergeometric_sum(f, var, a, b):
     # a factor gamma(A*j + B)^(-1), where A is a negative integer and B a
     # nonpositive integer, vanishes on the whole summation lattice, so that
     # every term of the sum is zero, unless another factor has a pole on
-    # the lattice; the positions of the poles of gamma factors with
-    # positive slope, and of the zeros of polynomial factors, are bounded
-    # above, and the term is scanned up to that bound, while other factors
-    # are assumed to be defined generically, as everywhere else in this
-    # module.  Recognizing this before validating the term ratio is
-    # necessary, because the ratio of such a term need not be rational
-    # in the summation variable
+    # the lattice, where the vanishing becomes indeterminate.  The poles of
+    # gamma factors with positive slope, and the zeros of polynomial
+    # factors, are at computable lattice positions, and the term is
+    # checked there, as well as at the first few lattice points; beyond
+    # those, other factors are assumed to be defined generically, as
+    # everywhere else in this module.  Recognizing this before validating
+    # the term ratio is necessary, because the ratio of such a term need
+    # not be rational in the summation variable
     annihilates = undecidable = False
-    bound = 0
-    for base, e in _mult_split(g.to_gamma()):
+    positions = [range(8)]
+    gt = g.to_gamma()
+    for base, e in _mult_split(gt):
         if base.operator() == GAMMA_OP:
             try:
                 A, B = _linear_symbolic(base.operands()[0], j)
@@ -2064,32 +2067,57 @@ def hypergeometric_sum(f, var, a, b):
             if e < 0:
                 if A in ZZ and A <= -1 and B in ZZ and B <= 0:
                     annihilates = True
-            elif A < 0:
-                # poles without a bound above
+            elif A > 0:
+                # the argument A*j + B of a gamma factor in the denominator
+                # is an integer at the lattice points j congruent to j0
+                # modulo q, where A = p/q in lowest terms, provided that the
+                # denominator of B divides q, and it is nonpositive for
+                # j <= -B/A; these are exactly its poles on the lattice
+                p_, q_ = A.numerator(), A.denominator()
+                s, t = B.numerator(), B.denominator()
+                if q_ % t == 0:
+                    j0 = (-s * (q_ // t) * inverse_mod(p_, q_)) % q_
+                    last = (-B/A).floor()
+                    if j0 <= last:
+                        positions.append(range(j0, last + 1, q_))
+            elif A < 0 and A.denominator() % B.denominator() == 0:
+                # a negative slope has poles without a bound above, provided
+                # that its argument is an integer somewhere on the lattice
                 undecidable = True
-            elif A > 0 and -B/A >= 0:
-                bound = max(bound, (-B/A).floor())
         elif e < 0 and base.is_polynomial(j):
             try:
-                zeros = PolynomialRing(QQ, str(j))(base).roots()
+                zeros = [(ZZ(r), m) for r, m in
+                         PolynomialRing(QQ, str(j))(base).roots()
+                         if r in ZZ and r >= 0]
             except (TypeError, ValueError, ArithmeticError, NotImplementedError):
-                # symbolic coefficients: defined generically
+                # nonrational coefficients: still find the root of a
+                # linear factor exactly
                 zeros = []
-            bound = max([bound] + [ZZ(r) for r, m in zeros
-                                   if r in ZZ and r >= 0])
+                lin = _linear_symbolic(base, j)
+                if lin is not None:
+                    root = -lin[1]/lin[0]
+                    if root in ZZ and root >= 0:
+                        zeros.append((ZZ(root), 1))
+            positions.extend(range(r, r + 1) for r, m in zeros)
     if annihilates and not undecidable:
+        # the annihilating factor forces every term to zero; a failure of
+        # the evaluation, or a nonfinite value, at one of the checked
+        # positions marks a pole of the remaining factors
         try:
-            for m in range(bound + 1):
-                t = g.subs({j: m})
-                if t.is_infinity() or not (t - t).is_trivial_zero():
-                    raise ValueError("the term %s is not defined in the "
-                                     "range" % f)
-                if not t.is_trivial_zero():
-                    # contradicts the vanishing factor: fall back to the
-                    # term ratio
-                    undecidable = True
+            for rng in positions:
+                for pos in rng:
+                    t = gt.subs({j: pos})
+                    if t.is_infinity() or not (t - t).is_trivial_zero():
+                        raise ValueError("the term %s is not defined in the "
+                                         "range" % f)
+                    if not t.is_trivial_zero():
+                        # contradicts the annihilating factor: fall back to
+                        # the term ratio
+                        undecidable = True
+                        break
+                if undecidable:
                     break
-        except (ValueError, ArithmeticError, RuntimeError) as exc:
+        except (ValueError, ArithmeticError, TypeError, RuntimeError) as exc:
             raise ValueError("the term %s is not defined in the "
                              "range" % f) from exc
         if not undecidable:
