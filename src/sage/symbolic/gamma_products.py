@@ -1546,6 +1546,21 @@ def exact_product(f, var, a, b):
             sage: exact_product(x + k, k, 0, 1).subs(x = -2)
             2
 
+        A vanishing product is an admissible value over a concrete range,
+        provided every factor is defined::
+
+            sage: exact_product(k - 1, k, 0, 2)
+            0
+            sage: exact_product(0, k, 0, 3)
+            0
+            sage: exact_product((k - 1)*cos(k), k, 0, 2)
+            0
+            sage: try:
+            ....:     exact_product(1/(k - 5), k, 0, 10)
+            ....: except ValueError as err:
+            ....:     print('ValueError: %s' % err)
+            ValueError: the product 1/(k - 5) is not defined in the range
+
         For a symbolic number of factors the gamma quotient is returned,
         which then evaluates like any other gamma quotient, in particular
         failing at the removable poles::
@@ -1683,9 +1698,25 @@ def exact_product(f, var, a, b):
 
     parts = []
     if R != 1:
-        # a failure of the exact evaluation of the rational part, for instance
-        # because of symbolic bounds, falls back to the caller
-        parts.append(factorial_product(R, w, a, b))
+        if count is None:
+            # a failure of the exact evaluation of the rational part, for
+            # instance because of symbolic bounds, falls back to the caller
+            parts.append(factorial_product(R, w, a, b))
+        else:
+            # over a concrete range, the rational part is evaluated directly;
+            # in contrast to the factorial normal form, a vanishing product
+            # is an admissible value, provided every factor is defined
+            try:
+                factors = [R.subs({w: aS + j}) for j in range(count)]
+                undefined = any(t.is_infinity() or not (t - t).is_trivial_zero()
+                                for t in factors)
+            except (ArithmeticError, RuntimeError, TypeError, ValueError) as exc:
+                raise ValueError("the product %s is not defined in the "
+                                 "range" % f) from exc
+            if undefined:
+                raise ValueError("the product %s is not defined in the "
+                                 "range" % f)
+            parts.append(prod(factors))
     for A, c, e in param:
         if count is not None:
             # over a concrete range, evaluate the finite product directly:
