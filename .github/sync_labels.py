@@ -181,18 +181,18 @@ class GhLabelSynchronizer:
         self._commits = None
         self._commit_date = None
 
-    def rest_api(self, path_args, method=None, query=''):
+    def rest_api(self, path_args, method=None, query=None):
         r"""
         Return data obtained from ``gh`` command ``api``.
         """
-        meth = '-X GET'
+        cmd = ['gh', 'api', '-X', method or 'GET', '-H',
+               'Accept: application/vnd.github+json', path_args]
+        for key, value in (query or {}).items():
+            cmd.extend(['-f', '%s=%s' % (key, value)])
+        debug('Execute command: %r' % cmd)
         if method:
-            meth = '-X %s' % method
-        cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" %s %s' % (meth, path_args, query)
-        debug('Execute command: %s' % cmd)
-        if method:
-            return check_output(cmd, shell=True)
-        return loads(check_output(cmd, shell=True))
+            return check_output(cmd)
+        return loads(check_output(cmd))
 
     def view(self, key):
         r"""
@@ -201,9 +201,9 @@ class GhLabelSynchronizer:
         issue = 'issue'
         if self._pr:
             issue = 'pr'
-        cmd = 'gh %s view %s --json %s' % (issue, self._url, key)
-        debug('Execute command: %s' % cmd)
-        return loads(check_output(cmd, shell=True))[key]
+        cmd = ['gh', issue, 'view', self._url, '--json', key]
+        debug('Execute command: %r' % cmd)
+        return loads(check_output(cmd))[key]
 
     def is_open(self):
         r"""
@@ -238,12 +238,12 @@ class GhLabelSynchronizer:
         if self._bot_login:
             return self._bot_login
         from subprocess import run
-        cmd = 'gh version'
-        capt = run(cmd, shell=True, capture_output=True, check=False)
+        cmd = ['gh', 'version']
+        capt = run(cmd, capture_output=True, check=False)
         self._gh_version = str(capt.stdout).split('\\n')[0]
         info('version: %s' % self._gh_version)
-        cmd = 'gh auth status'
-        capt = run(cmd, shell=True, capture_output=True, check=False)
+        cmd = ['gh', 'auth', 'status']
+        capt = run(cmd, capture_output=True, check=False)
         errtxt = str(capt.stderr)
         outtxt = str(capt.stdout)
         debug('auth status err: %s' % errtxt)
@@ -322,14 +322,14 @@ class GhLabelSynchronizer:
         Query data from REST api from multiple pages.
         """
         per_page = 100
+        query = {'per_page': per_page}
         if since:
-            query = '-f per_page=%s -f page={} -f since=%s' % (per_page, since.strftime(datetime_format))
-        else:
-            query = '-f per_page=%s -f page={}' % per_page
+            query['since'] = since.strftime(datetime_format)
         page = 1
         results = []
         while True:
-            results_page = self.rest_api(path_args, query=query.format(page))
+            query['page'] = page
+            results_page = self.rest_api(path_args, query=query)
             results += results_page
             if len(results_page) < per_page:
                 break
@@ -634,44 +634,39 @@ class GhLabelSynchronizer:
     # -------------------------------------------------------------------------
     # methods to change the issue
     # -------------------------------------------------------------------------
-    def gh_cmd(self, cmd, arg, option):
+    def gh_cmd(self, cmd, *args):
         r"""
-        Perform a system call to ``gh`` for ``cmd`` to an isuue resp. PR.
+        Run ``gh`` for an issue or PR, passing text as literal arguments.
         """
         issue = 'issue'
         if self._pr:
             issue = 'pr'
         # workaround for gh bug https://github.com/cli/cli/issues/11055, it cannot deduce repo from url automatically
         repo = '/'.join(self._url.split('/')[:5])
-        if arg:
-            cmd_str = 'gh --repo %s %s %s %s %s "%s"' % (repo, issue, cmd, self._url, option, arg)
-        else:
-            cmd_str = 'gh --repo %s %s %s %s %s' % (repo, issue, cmd, self._url, option)
-        debug('Execute command: %s' % cmd_str)
-        ex_code = os.system(cmd_str)
-        if ex_code:
-            raise RuntimeError('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
+        command = ['gh', '--repo', repo, issue, cmd, self._url, *args]
+        debug('Execute command: %r' % command)
+        subprocess.run(command, check=True)
 
     def edit(self, arg, option):
         r"""
         Perform a system call to ``gh`` to edit an issue resp. PR.
         """
-        self.gh_cmd('edit', arg, option)
+        self.gh_cmd('edit', option, arg)
 
     def mark_as_ready(self):
         r"""
         Perform a system call to ``gh`` to mark a PR as ready for review.
         """
-        self.gh_cmd('ready', '', '')
+        self.gh_cmd('ready')
 
     def review(self, arg, text=None):
         r"""
         Perform a system call to ``gh`` to review a PR.
         """
         if text:
-            self.gh_cmd('review', arg, '-b \"%s\"' % text)
+            self.gh_cmd('review', arg, '-b', text)
         else:
-            self.gh_cmd('review', arg, '')
+            self.gh_cmd('review', arg)
 
     def approve(self):
         r"""
@@ -698,7 +693,7 @@ class GhLabelSynchronizer:
             self._reviews_from_rest_api = self.query_multi_pages(path_args)
         reviews = self._reviews_from_rest_api
 
-        options = '-f message=\"%s\" -f event=\"DISMISS\"' % message
+        options = {'message': message, 'event': 'DISMISS'}
         for rev in reviews:
             rev_login = rev['user']['login']
             rev_id = rev['id']
@@ -739,7 +734,7 @@ class GhLabelSynchronizer:
         r"""
         Perform a system call to ``gh`` to add a comment to an issue or PR.
         """
-        self.gh_cmd('comment', text, '-b')
+        self.gh_cmd('comment', '-b', text)
         info('Add comment to %s: %s' % (self._issue, text))
 
     def add_warning(self, text):
@@ -1051,7 +1046,7 @@ class GhLabelSynchronizer:
             ...
             DEBUG:root:call is_auth_team_member with args () and kwds {'login': 'soehms'}
             DEBUG:root:================================================================================
-            DEBUG:root:Execute command: gh api -X GET -H "Accept: application/vnd.github+json" /orgs/sagemath/teams/triage/memberships/soehms
+            DEBUG:root:Execute command: ['gh', 'api', '-X', 'GET', '-H', 'Accept: application/vnd.github+json', '/orgs/sagemath/teams/triage/memberships/soehms']
             INFO:root:User soehms is a member of triage
             INFO:root:result of is_auth_team_member with args () and kwds {'login': 'soehms'} is True
             INFO:root:================================================================================
@@ -1073,80 +1068,85 @@ class GhLabelSynchronizer:
 ###############################################################################
 # Main
 ###############################################################################
-last_arg = None
-run_tests = False
-default_actor = 'sagetrac-github-bot'
-cmdline_args = sys.argv[1:]
-num_args = len(cmdline_args)
+def main():
+    last_arg = None
+    run_tests = False
+    default_actor = 'sagetrac-github-bot'
+    cmdline_args = sys.argv[1:]
+    num_args = len(cmdline_args)
 
-if num_args:
-    last_arg = cmdline_args[num_args-1]
+    if num_args:
+        last_arg = cmdline_args[num_args-1]
 
-if last_arg in ('-t', '--test'):
-    getLogger().setLevel(DEBUG)
-    cmdline_args.pop()
-    run_tests = True
-elif last_arg in ('-d', '--debug'):
-    getLogger().setLevel(DEBUG)
-    cmdline_args.pop()
-elif last_arg in ('-i', '--info'):
-    getLogger().setLevel(INFO)
-    cmdline_args.pop()
-elif last_arg in ('-w', '--warning'):
-    getLogger().setLevel(INFO)
+    if last_arg in ('-t', '--test'):
+        getLogger().setLevel(DEBUG)
+        cmdline_args.pop()
+        run_tests = True
+    elif last_arg in ('-d', '--debug'):
+        getLogger().setLevel(DEBUG)
+        cmdline_args.pop()
+    elif last_arg in ('-i', '--info'):
+        getLogger().setLevel(INFO)
+        cmdline_args.pop()
+    elif last_arg in ('-w', '--warning'):
+        getLogger().setLevel(INFO)
+        info('cmdline_args (%s) %s' % (num_args, cmdline_args))
+        getLogger().setLevel(WARNING)
+        cmdline_args.pop()
+    else:
+        getLogger().setLevel(DEBUG)
+
+    num_args = len(cmdline_args)
     info('cmdline_args (%s) %s' % (num_args, cmdline_args))
-    getLogger().setLevel(WARNING)
-    cmdline_args.pop()
-else:
-    getLogger().setLevel(DEBUG)
 
-num_args = len(cmdline_args)
-info('cmdline_args (%s) %s' % (num_args, cmdline_args))
+    if run_tests:
+        if num_args == 4:
+            url, actor, method, args = cmdline_args
+        elif num_args == 2:
+            url, actor = cmdline_args
+        else:
+            url, = cmdline_args
+            actor = default_actor
 
-if run_tests:
-    if num_args == 4:
-        url, actor, method, args = cmdline_args
-    elif num_args == 2:
-        url, actor = cmdline_args
-    else:
+        info('url: %s' % url)
+        info('actor: %s' % actor)
+
+        gh = GhLabelSynchronizer(url, actor)
+        if num_args == 4:
+            gh.test_method(method, **eval(args))
+        else:
+            gh.run_tests()
+
+    elif num_args == 5:
+        action, url, actor, label, rev_state = cmdline_args
+        action = Action(action)
+
+        info('action: %s' % action)
+        info('url: %s' % url)
+        info('actor: %s' % actor)
+        info('label: %s' % label)
+        info('rev_state: %s' % rev_state)
+
+        gh = GhLabelSynchronizer(url, actor)
+        gh.run(action, label=label, rev_state=rev_state)
+
+    elif num_args == 1:
         url, = cmdline_args
-        actor = default_actor
 
-    info('url: %s' % url)
-    info('actor: %s' % actor)
+        info('url: %s' % url)
 
-    gh = GhLabelSynchronizer(url, actor)
-    if num_args == 4:
-        gh.test_method(method, **eval(args))
+        gh = GhLabelSynchronizer(url, default_actor)
+
     else:
-        gh.run_tests()
+        print('Need 5 arguments to synchronize: action, url, actor, label, rev_state')
+        print('Need 1 argument to clean warning comments: url')
+        print('Need 1 argument to run tests: url')
+        print('The following options may be appended:')
+        print('    -t --test to run the test suite')
+        print('    -i --info to set the log-level to INFO')
+        print('    -d --debug to set the log-level to DEBUG (default)')
+        print('    -w --warning to set the log-level to WARNING')
 
-elif num_args == 5:
-    action, url, actor, label, rev_state = cmdline_args
-    action = Action(action)
 
-    info('action: %s' % action)
-    info('url: %s' % url)
-    info('actor: %s' % actor)
-    info('label: %s' % label)
-    info('rev_state: %s' % rev_state)
-
-    gh = GhLabelSynchronizer(url, actor)
-    gh.run(action, label=label, rev_state=rev_state)
-
-elif num_args == 1:
-    url, = cmdline_args
-
-    info('url: %s' % url)
-
-    gh = GhLabelSynchronizer(url, default_actor)
-
-else:
-    print('Need 5 arguments to synchronize: action, url, actor, label, rev_state')
-    print('Need 1 argument to clean warning comments: url')
-    print('Need 1 argument to run tests: url')
-    print('The following options may be appended:')
-    print('    -t --test to run the test suite')
-    print('    -i --info to set the log-level to INFO')
-    print('    -d --debug to set the log-level to DEBUG (default)')
-    print('    -w --warning to set the log-level to WARNING')
+if __name__ == "__main__":
+    main()
