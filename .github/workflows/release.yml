@@ -2,7 +2,7 @@
 # Keep this filename and the publishing jobs here: PyPI Trusted Publishing
 # identifies release.yml and does not support configuring reusable workflows.
 # Keep event/path selection in select-workflows.cjs; lint runs once for all jobs.
-name: Sage CI
+name: CI
 
 on:
   pull_request:

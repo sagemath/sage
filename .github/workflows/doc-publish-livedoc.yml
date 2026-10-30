@@ -2,7 +2,7 @@ name: Publish live documentation
 
 on:
   workflow_run:
-    workflows: ["Sage CI", "Build live documentation"]
+    workflows: ["CI", "Sage CI", "Build live documentation"]
     types:
       - completed
 

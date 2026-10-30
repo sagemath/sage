@@ -68,13 +68,13 @@ jobs:
         with:
           script: |
             // Accept the old standalone workflow during migration. A failed
-            // test in Sage CI must not hide a successfully built doc baseline.
+            // test in CI must not hide a successfully built doc baseline.
             const pages = github.paginate.iterator(github.rest.actions.listWorkflowRunsForRepo, {
               ...context.repo, event: 'push', branch: 'develop', status: 'completed', per_page: 100,
             });
             for await (const {data: runs} of pages) {
               for (const run of runs) {
-                if (!['Sage CI', 'Build documentation'].includes(run.name)) continue;
+                if (!['CI', 'Sage CI', 'Build documentation'].includes(run.name)) continue;
                 const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
                   ...context.repo, run_id: run.id, per_page: 100,
                 });
