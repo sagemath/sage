@@ -14,10 +14,10 @@ permissions:
 
 jobs:
   lint:
-    name: Lint (Python 3.14)
+    name: Lint
     runs-on: ubuntu-latest
     env:
-      # Override .python-version so uv uses Python 3.14 for lint.
+      # Use the same Python for setup-python and uv, overriding .python-version.
       UV_PYTHON: "3.14"
     steps:
     - name: Checkout
@@ -35,7 +35,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
-        python-version: "3.14"
+        python-version: ${{ env.UV_PYTHON }}
 
     - name: Install prerequisites
       id: deps
