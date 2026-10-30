@@ -38,6 +38,8 @@ jobs:
       targets_pre: all-sage-local
       targets: build
       targets_optional: ptestlong
+      # #43045's OpenMP interrupt fix requires Sage's patched M4RI until an upstream release.
+      extra_configure_args: --without-system-m4ri
       tox_system_factors: >-
           ["ubuntu-resolute"]
       tox_packages_factors: >-
@@ -53,6 +55,8 @@ jobs:
       targets_pre: all-sage-local
       targets: build
       targets_optional: ptestlong
+      # #43045's OpenMP interrupt fix requires Sage's patched M4RI until an upstream release.
+      extra_configure_args: --without-system-m4ri
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
