@@ -1,0 +1,984 @@
+diff -ruN a/m4ri/brilliantrussian.c b/m4ri/brilliantrussian.c
+--- a/m4ri/brilliantrussian.c	2026-10-24 23:42:15.311995293 +0200
++++ b/m4ri/brilliantrussian.c	2026-10-24 23:42:15.323657100 +0200
+@@ -28,6 +28,7 @@
+ #include "graycode.h"
+ #include "ple_russian.h"
+ #include "xor.h"
++#include "interrupt.h"
+ 
+ /**
+  * \brief Perform Gaussian reduction to reduced row echelon form on a
+@@ -362,10 +363,11 @@
+   word const kb_bm = __M4RI_LEFT_BITMASK(kb);
+ 
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for private(r) shared(startrow, stoprow)                                      \
+-    schedule(static, 512)  // MAX((__M4RI_CPU_L1_CACHE >> 3) / wide,
++#pragma omp parallel private(r) shared(startrow, stoprow)
++#pragma omp for schedule(static, 512)  // MAX((__M4RI_CPU_L1_CACHE >> 3) / wide,
+ #endif
+   for (r = startrow; r < stoprow; ++r) {
++    __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+     word bits      = mzd_read_bits(M, r, startcol, k);
+     rci_t const x0 = L0[bits & ka_bm];
+     bits >>= ka;
+@@ -380,6 +382,7 @@
+     _mzd_combine_2(m0, t, wide);
+   }
+ 
++  m4ri_check_interrupt();
+   __M4RI_DD_MZD(M);
+ }
+ 
+@@ -403,10 +406,11 @@
+   word const kc_bm = __M4RI_LEFT_BITMASK(kc);
+ 
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for private(r) shared(startrow, stoprow)                                      \
+-    schedule(static, 512)  // if(stoprow-startrow > 128)
++#pragma omp parallel private(r) shared(startrow, stoprow)
++#pragma omp for schedule(static, 512)  // if(stoprow-startrow > 128)
+ #endif
+   for (r = startrow; r < stoprow; ++r) {
++    __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+     word bits      = mzd_read_bits(M, r, startcol, k);
+     rci_t const x0 = L0[bits & ka_bm];
+     bits >>= ka;
+@@ -425,6 +429,7 @@
+     _mzd_combine_3(m0, t, wide);
+   }
+ 
++  m4ri_check_interrupt();
+   __M4RI_DD_MZD(M);
+ }
+ 
+@@ -450,10 +455,11 @@
+   word const kd_bm = __M4RI_LEFT_BITMASK(kd);
+ 
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for private(r) shared(startrow, stoprow)                                      \
+-    schedule(static, 512)  // if(stoprow-startrow > 128)
++#pragma omp parallel private(r) shared(startrow, stoprow)
++#pragma omp for schedule(static, 512)  // if(stoprow-startrow > 128)
+ #endif
+   for (r = startrow; r < stoprow; ++r) {
++    __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+     word bits      = mzd_read_bits(M, r, startcol, k);
+     rci_t const x0 = L0[bits & ka_bm];
+     bits >>= ka;
+@@ -475,6 +481,7 @@
+     _mzd_combine_4(m0, t, wide);
+   }
+ 
++  m4ri_check_interrupt();
+   __M4RI_DD_MZD(M);
+ }
+ 
+@@ -502,10 +509,11 @@
+   word const ke_bm = __M4RI_LEFT_BITMASK(ke);
+ 
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for private(r) shared(startrow, stoprow)                                      \
+-    schedule(static, 512)  // if(stoprow-startrow > 128)
++#pragma omp parallel private(r) shared(startrow, stoprow)
++#pragma omp for schedule(static, 512)  // if(stoprow-startrow > 128)
+ #endif
+   for (r = startrow; r < stoprow; ++r) {
++    __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+     word bits      = mzd_read_bits(M, r, startcol, k);
+     rci_t const x0 = L0[bits & ka_bm];
+     bits >>= ka;
+@@ -531,6 +539,7 @@
+     _mzd_combine_5(m0, t, wide);
+   }
+ 
++  m4ri_check_interrupt();
+   __M4RI_DD_MZD(M);
+ }
+ 
+@@ -562,10 +571,11 @@
+   word const kf_bm = __M4RI_LEFT_BITMASK(kf);
+ 
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for private(r) shared(startrow, stoprow)                                      \
+-    schedule(static, 512)  // if(stoprow-startrow > 128)
++#pragma omp parallel private(r) shared(startrow, stoprow)
++#pragma omp for schedule(static, 512)  // if(stoprow-startrow > 128)
+ #endif
+   for (r = startrow; r < stoprow; ++r) {
++    __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+     word bits      = mzd_read_bits(M, r, startcol, k);
+     rci_t const x0 = L0[bits & ka_bm];
+     bits >>= ka;
+@@ -597,6 +607,7 @@
+     _mzd_combine_6(m0, t, wide);
+   }
+ 
++  m4ri_check_interrupt();
+   __M4RI_DD_MZD(M);
+ }
+ 
+@@ -692,6 +703,7 @@
+   }
+ 
+   while (c < ncols) {
++    m4ri_check_interrupt();
+     if (heuristic && c > (last_check + 256)) {
+       last_check = c;
+       if (c < ncols && r < A->nrows && _mzd_density(A, 32, r, c) >= threshold) {
+@@ -869,6 +881,7 @@
+   rci_t *L5 = (rci_t *)m4ri_mm_calloc(__M4RI_TWOPOW(k), sizeof(rci_t));
+ 
+   while (c < ncols) {
++    m4ri_check_interrupt();
+     if (c + kk > A->ncols) { kk = ncols - c; }
+     kbar = _mzd_gauss_submatrix_full(A, r, c, MIN(A->nrows, r + kk), kk);
+ 
+@@ -1110,6 +1123,7 @@
+ 
+   for (rci_t giantstep = 0; giantstep < a_nr; giantstep += blocksize) {
+     for (rci_t i = 0; i < end; ++i) {
++      m4ri_check_interrupt();
+ #if __M4RI_HAVE_OPENMP
+ #pragma omp parallel for schedule(static, 1)
+ #endif
+@@ -1119,9 +1133,11 @@
+ 
+       const rci_t blockend = MIN(giantstep + blocksize, a_nr);
+ #if __M4RI_HAVE_OPENMP
+-#pragma omp parallel for schedule(static, 512) private(x, t)
++#pragma omp parallel private(x, t)
++#pragma omp for schedule(static, 512)
+ #endif
+       for (rci_t j = giantstep; j < blockend; j++) {
++        __M4RI_CANCEL_FOR_IF_INTERRUPTED();
+         const word a = mzd_read_bits(A, j, kk * i, kk);
+ 
+         switch (__M4RI_M4RM_NTABLES) {
+@@ -1150,6 +1166,7 @@
+         default: m4ri_die("__M4RI_M4RM_NTABLES must be <= 8 but got %d", __M4RI_M4RM_NTABLES);
+         }
+       }
++      m4ri_check_interrupt();
+     }
+   }
+ 
+diff -ruN a/m4ri/interrupt.c b/m4ri/interrupt.c
+--- a/m4ri/interrupt.c	1970-01-01 01:00:00.000000000 +0100
++++ b/m4ri/interrupt.c	2026-10-24 23:42:15.323732221 +0200
+@@ -0,0 +1,49 @@
++/******************************************************************************
++ *
++ *                 M4RI: Linear Algebra over GF(2)
++ *
++ *  Distributed under the terms of the GNU General Public License (GPL)
++ *  version 2 or higher.
++ *
++ *    This code is distributed in the hope that it will be useful,
++ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *    General Public License for more details.
++ *
++ *  The full text of the GPL is available at:
++ *
++ *                  http://www.gnu.org/licenses/
++ ******************************************************************************/
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include "interrupt.h"
++#include "misc.h"
++
++#if __M4RI_HAVE_OPENMP
++#include <omp.h>
++#endif
++
++static m4ri_interrupt_check_t m4ri_interrupt_check = NULL;
++m4ri_interrupt_pending_t m4ri_interrupt_pending_query = NULL;
++
++void m4ri_set_interrupt_check(m4ri_interrupt_check_t check, m4ri_interrupt_pending_t pending) {
++  m4ri_interrupt_check         = check;
++  m4ri_interrupt_pending_query = check ? pending : NULL;
++}
++
++void m4ri_check_interrupt(void) {
++  m4ri_interrupt_check_t f = m4ri_interrupt_check;
++  if (f == NULL) return;
++#if __M4RI_HAVE_OPENMP
++  /* omp_get_level() also counts inactive (e.g. single-threaded)
++     parallel regions, which must not be left via longjmp() either. */
++  if (omp_get_level() != 0) return;
++#endif
++  int const pending = m4ri_interrupt_pending();
++  f();
++  /* parallel loops may have been cancelled, so we cannot continue */
++  if (pending) m4ri_die("m4ri_check_interrupt: check returned while an interrupt is pending\n");
++}
+diff -ruN a/m4ri/interrupt.h b/m4ri/interrupt.h
+--- a/m4ri/interrupt.h	1970-01-01 01:00:00.000000000 +0100
++++ b/m4ri/interrupt.h	2026-10-24 23:42:15.323745222 +0200
+@@ -0,0 +1,111 @@
++/**
++ * \file interrupt.h
++ *
++ * \brief Interrupting long computations.
++ *
++ * Callers may install functions with m4ri_set_interrupt_check() which
++ * M4RI calls at points where it is safe to leave a computation, e.g.
++ * by longjmp(), and which let it cancel OpenMP parallel loops early.
++ */
++
++#ifndef M4RI_INTERRUPT_H
++#define M4RI_INTERRUPT_H
++
++#include <m4ri/m4ri_config.h>
++#include <stddef.h>
++
++/**
++ * \brief Defined if m4ri_set_interrupt_check() is available.
++ */
++
++#define __M4RI_HAVE_INTERRUPT_CHECK 1
++
++/**
++ * \brief Type of a user supplied interrupt check.
++ */
++
++typedef void (*m4ri_interrupt_check_t)(void);
++
++/**
++ * \brief Type of a user supplied query whether an interrupt is pending.
++ */
++
++typedef int (*m4ri_interrupt_pending_t)(void);
++
++/**
++ * \brief Install functions to interrupt long computations.
++ *
++ * check is called periodically. It is only ever called from the
++ * thread which called into M4RI, outside of any OpenMP parallel region
++ * and while M4RI holds no locks. It is therefore safe for it to not
++ * return, e.g. to longjmp() out of the computation in order to
++ * interrupt it. This is not true for asynchronous signal handlers,
++ * which may fire while OpenMP worker threads are still running or
++ * while a lock in malloc() is held.
++ *
++ * pending is optional. It is polled by all threads inside OpenMP
++ * parallel loops, so it must be cheap and thread-safe. Once it
++ * returns nonzero, it must keep doing so until check is called. These
++ * loops are then cancelled (if cancellation is enabled, see
++ * omp_get_cancellation() and OMP_CANCELLATION) and their results are
++ * incomplete, so the next call of check must not return. M4RI calls
++ * m4ri_die() if it does.
++ *
++ * If the computation is left, memory allocated by it is leaked and the
++ * matrices it operated on are left in an unspecified state.
++ *
++ * \param check The function to call or NULL to remove both functions.
++ * \param pending The query or NULL.
++ */
++
++void m4ri_set_interrupt_check(m4ri_interrupt_check_t check, m4ri_interrupt_pending_t pending);
++
++/**
++ * \brief Call the check function installed by
++ * m4ri_set_interrupt_check(), if any, unless we are inside an OpenMP
++ * parallel region.
++ *
++ * Only call this where it is safe to never return, see
++ * m4ri_set_interrupt_check().
++ */
++
++void m4ri_check_interrupt(void);
++
++/**
++ * \brief The query installed by m4ri_set_interrupt_check(); do not use
++ * directly.
++ */
++
++extern m4ri_interrupt_pending_t m4ri_interrupt_pending_query;
++
++/**
++ * \brief Return whether an interrupt is pending, see
++ * m4ri_set_interrupt_check(). May be called from any thread.
++ */
++
++static inline int m4ri_interrupt_pending(void) {
++  m4ri_interrupt_pending_t const f = m4ri_interrupt_pending_query;
++  return f != NULL && f();
++}
++
++/**
++ * \brief Cancel the enclosing OpenMP parallel for loop if an interrupt
++ * is pending, see m4ri_set_interrupt_check().
++ *
++ * Use at the start of the loop body and call m4ri_check_interrupt()
++ * after the loop.
++ */
++
++#if __M4RI_HAVE_OPENMP
++#define __M4RI_CANCEL_FOR_IF_INTERRUPTED()                                                         \
++  do {                                                                                             \
++    if (m4ri_interrupt_pending()) { _Pragma("omp cancel for") }                                    \
++    _Pragma("omp cancellation point for")                                                          \
++  } while (0)
++#else
++#define __M4RI_CANCEL_FOR_IF_INTERRUPTED() \
++  do {                                     \
++  } while (0)
++#endif
++
++#endif  // M4RI_INTERRUPT_H
+diff -ruN a/m4ri/m4ri.h b/m4ri/m4ri.h
+--- a/m4ri/m4ri.h	2026-10-24 23:42:15.312030804 +0200
++++ b/m4ri/m4ri.h	2026-10-24 23:42:15.323769622 +0200
+@@ -58,6 +58,7 @@
+ #include <m4ri/djb.h>
+ #include <m4ri/echelonform.h>
+ #include <m4ri/graycode.h>
++#include <m4ri/interrupt.h>
+ #include <m4ri/io.h>
+ #include <m4ri/mp.h>
+ #include <m4ri/mzd.h>
+diff -ruN a/m4ri/ple.c b/m4ri/ple.c
+--- a/m4ri/ple.c	2026-10-24 23:42:15.312036234 +0200
++++ b/m4ri/ple.c	2026-10-24 23:42:15.323786272 +0200
+@@ -28,6 +28,7 @@
+ #include "ple_russian.h"
+ #include "strassen.h"
+ #include "triangular.h"
++#include "interrupt.h"
+ #include <stdio.h>
+ 
+ rci_t mzd_ple(mzd_t *A, mzp_t *P, mzp_t *Q, int const cutoff) {
+@@ -60,6 +61,7 @@
+ }
+ 
+ rci_t _mzd_ple(mzd_t *A, mzp_t *P, mzp_t *Q, int const cutoff) {
++  m4ri_check_interrupt();
+   rci_t ncols = A->ncols;
+ 
+ #if 1
+diff -ruN a/m4ri/ple_russian.c b/m4ri/ple_russian.c
+--- a/m4ri/ple_russian.c	2026-10-24 23:42:15.312022633 +0200
++++ b/m4ri/ple_russian.c	2026-10-24 23:42:15.323809693 +0200
+@@ -320,6 +320,7 @@
+ 
+ #define N 8
+ #include "ple_russian_template.h"
++#include "interrupt.h"
+ #undef N
+ 
+ void _mzd_ple_a10(mzd_t *A, mzp_t const *P, rci_t const start_row, rci_t const start_col,
+@@ -425,6 +426,7 @@
+    */
+ 
+   while (curr_col < ncols && curr_row < nrows) {
++    m4ri_check_interrupt();
+     if (curr_col + kk > ncols) kk = ncols - curr_col;
+ 
+     /**
+diff -ruN a/m4ri/strassen.c b/m4ri/strassen.c
+--- a/m4ri/strassen.c	2026-10-24 23:42:15.312190357 +0200
++++ b/m4ri/strassen.c	2026-10-24 23:42:15.323841083 +0200
+@@ -27,6 +27,7 @@
+ #include "graycode.h"
+ #include "parity.h"
+ #include "strassen.h"
++#include "interrupt.h"
+ #ifndef MIN
+ #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+ #endif
+@@ -39,6 +40,7 @@
+ static inline int closer(rci_t a, int cutoff) { return 3 * a < 4 * cutoff; }
+ 
+ mzd_t *_mzd_mul_even(mzd_t *C, mzd_t const *A, mzd_t const *B, int cutoff) {
++  m4ri_check_interrupt();
+   rci_t mmm, kkk, nnn;
+ 
+   if (C->nrows == 0 || C->ncols == 0) return C;
+@@ -208,6 +210,7 @@
+ }
+ 
+ mzd_t *_mzd_sqr_even(mzd_t *C, mzd_t const *A, int cutoff) {
++  m4ri_check_interrupt();
+   rci_t m;
+ 
+   m = A->nrows;
+@@ -365,6 +368,7 @@
+ }
+ 
+ mzd_t *_mzd_addmul_even(mzd_t *C, mzd_t const *A, mzd_t const *B, int cutoff) {
++  m4ri_check_interrupt();
+   /**
+    * \todo make sure not to overwrite crap after ncols and before width * m4ri_radix
+    */
+@@ -526,6 +530,7 @@
+ }
+ 
+ mzd_t *_mzd_addsqr_even(mzd_t *C, mzd_t const *A, int cutoff) {
++  m4ri_check_interrupt();
+   /**
+    * \todo make sure not to overwrite crap after ncols and before width * m4ri_radix
+    */
+diff -ruN a/m4ri/triangular.c b/m4ri/triangular.c
+--- a/m4ri/triangular.c	2026-10-24 23:42:15.311967632 +0200
++++ b/m4ri/triangular.c	2026-10-24 23:42:15.323871874 +0200
+@@ -28,6 +28,7 @@
+ #include "strassen.h"
+ #include "triangular.h"
+ #include "triangular_russian.h"
++#include "interrupt.h"
+ 
+ /*****************
+  * UPPER RIGHT
+@@ -59,6 +60,7 @@
+ }
+ 
+ void _mzd_trsm_upper_right(mzd_t const *U, mzd_t *B, const int cutoff) {
++  m4ri_check_interrupt();
+   rci_t const mb = B->nrows;
+   rci_t const nb = B->ncols;
+ 
+@@ -310,6 +312,7 @@
+ }
+ 
+ void _mzd_trsm_lower_right(mzd_t const *L, mzd_t *B, const int cutoff) {
++  m4ri_check_interrupt();
+   rci_t const mb = B->nrows;
+   rci_t const nb = B->ncols;
+ 
+@@ -404,6 +407,7 @@
+ }
+ 
+ void _mzd_trsm_lower_left(mzd_t const *L, mzd_t *B, const int cutoff) {
++  m4ri_check_interrupt();
+   rci_t const mb   = B->nrows;
+   rci_t const nb   = B->ncols;
+   int const nbrest = nb % m4ri_radix;
+@@ -465,6 +469,7 @@
+ }
+ 
+ void _mzd_trsm_upper_left(mzd_t const *U, mzd_t *B, const int cutoff) {
++  m4ri_check_interrupt();
+   rci_t const mb = B->nrows;
+   rci_t const nb = B->ncols;
+ 
+diff -ruN a/m4ri/triangular_russian.c b/m4ri/triangular_russian.c
+--- a/m4ri/triangular_russian.c	2026-10-24 23:42:15.311947982 +0200
++++ b/m4ri/triangular_russian.c	2026-10-24 23:42:15.323900605 +0200
+@@ -7,6 +7,7 @@
+ #include "ple_russian.h"
+ #include "triangular_russian.h"
+ #include "xor.h"
++#include "interrupt.h"
+ 
+ /** the number of tables used in TRSM decomposition **/
+ #define __M4RI_TRSM_NTABLES 8
+@@ -90,6 +91,7 @@
+ 
+   rci_t i = 0;
+   for (; i < B->nrows - kk; i += kk) {
++    m4ri_check_interrupt();
+ 
+     _mzd_trsm_upper_left_submatrix(U, B, B->nrows - i - kk, kk, mask_end);
+ 
+@@ -244,6 +246,7 @@
+   const word mask = __M4RI_LEFT_BITMASK(k);
+   rci_t i         = 0;
+   for (; i < B->nrows - kk; i += kk) {
++    m4ri_check_interrupt();
+ 
+     _mzd_trsm_lower_left_submatrix(L, B, i, kk, B->high_bitmask);
+ 
+@@ -408,6 +411,7 @@
+ 
+   rci_t r = 0;
+   while (r + kk <= A->nrows) {
++    m4ri_check_interrupt();
+ 
+     /***
+      * ----------------------------
+diff -ruN a/Makefile.am b/Makefile.am
+--- a/Makefile.am	2026-10-24 23:42:15.312223257 +0200
++++ b/Makefile.am	2026-10-24 23:46:49.146850487 +0200
+@@ -9,6 +9,7 @@
+ libm4ri_la_SOURCES = \
+ 	m4ri/brilliantrussian.c \
+ 	m4ri/misc.c \
++	m4ri/interrupt.c \
+ 	m4ri/mzd.c \
+ 	m4ri/graycode.c \
+ 	m4ri/strassen.c \
+@@ -31,6 +32,7 @@
+ pkgincludesub_HEADERS = m4ri/m4ri.h \
+ 	m4ri/brilliantrussian.h \
+ 	m4ri/misc.h \
++	m4ri/interrupt.h \
+ 	m4ri/mzd.h \
+ 	m4ri/graycode.h \
+ 	m4ri/strassen.h \
+diff -ruN a/Makefile.in b/Makefile.in
+--- a/Makefile.in	2026-10-24 23:42:15.311741338 +0200
++++ b/Makefile.in	2026-10-24 23:42:15.320272404 +0200
+@@ -150,6 +150,7 @@
+ libm4ri_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+ am__dirstamp = $(am__leading_dot)dirstamp
+ am_libm4ri_la_OBJECTS = m4ri/brilliantrussian.lo m4ri/misc.lo \
++	m4ri/interrupt.lo \
+ 	m4ri/mzd.lo m4ri/graycode.lo m4ri/strassen.lo m4ri/mzp.lo \
+ 	m4ri/triangular.lo m4ri/triangular_russian.lo m4ri/ple.lo \
+ 	m4ri/ple_russian.lo m4ri/solve.lo m4ri/echelonform.lo \
+@@ -182,6 +183,7 @@
+ 	m4ri/$(DEPDIR)/debug_dump.Plo m4ri/$(DEPDIR)/djb.Plo \
+ 	m4ri/$(DEPDIR)/echelonform.Plo m4ri/$(DEPDIR)/graycode.Plo \
+ 	m4ri/$(DEPDIR)/io.Plo m4ri/$(DEPDIR)/misc.Plo \
++	m4ri/$(DEPDIR)/interrupt.Plo \
+ 	m4ri/$(DEPDIR)/mmc.Plo m4ri/$(DEPDIR)/mp.Plo \
+ 	m4ri/$(DEPDIR)/mzd.Plo m4ri/$(DEPDIR)/mzp.Plo \
+ 	m4ri/$(DEPDIR)/ple.Plo m4ri/$(DEPDIR)/ple_russian.Plo \
+@@ -457,6 +459,7 @@
+ libm4ri_la_SOURCES = \
+ 	m4ri/brilliantrussian.c \
+ 	m4ri/misc.c \
++	m4ri/interrupt.c \
+ 	m4ri/mzd.c \
+ 	m4ri/graycode.c \
+ 	m4ri/strassen.c \
+@@ -478,6 +481,7 @@
+ pkgincludesub_HEADERS = m4ri/m4ri.h \
+ 	m4ri/brilliantrussian.h \
+ 	m4ri/misc.h \
++	m4ri/interrupt.h \
+ 	m4ri/mzd.h \
+ 	m4ri/graycode.h \
+ 	m4ri/strassen.h \
+@@ -607,6 +611,7 @@
+ m4ri/brilliantrussian.lo: m4ri/$(am__dirstamp) \
+ 	m4ri/$(DEPDIR)/$(am__dirstamp)
+ m4ri/misc.lo: m4ri/$(am__dirstamp) m4ri/$(DEPDIR)/$(am__dirstamp)
++m4ri/interrupt.lo: m4ri/$(am__dirstamp) m4ri/$(DEPDIR)/$(am__dirstamp)
+ m4ri/mzd.lo: m4ri/$(am__dirstamp) m4ri/$(DEPDIR)/$(am__dirstamp)
+ m4ri/graycode.lo: m4ri/$(am__dirstamp) m4ri/$(DEPDIR)/$(am__dirstamp)
+ m4ri/strassen.lo: m4ri/$(am__dirstamp) m4ri/$(DEPDIR)/$(am__dirstamp)
+@@ -646,6 +651,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/graycode.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/io.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/misc.Plo@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/interrupt.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/mmc.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/mp.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@m4ri/$(DEPDIR)/mzd.Plo@am__quote@ # am--include-marker
+@@ -1120,6 +1126,7 @@
+ 	-rm -f m4ri/$(DEPDIR)/graycode.Plo
+ 	-rm -f m4ri/$(DEPDIR)/io.Plo
+ 	-rm -f m4ri/$(DEPDIR)/misc.Plo
++	-rm -f m4ri/$(DEPDIR)/interrupt.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mmc.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mp.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mzd.Plo
+@@ -1185,6 +1192,7 @@
+ 	-rm -f m4ri/$(DEPDIR)/graycode.Plo
+ 	-rm -f m4ri/$(DEPDIR)/io.Plo
+ 	-rm -f m4ri/$(DEPDIR)/misc.Plo
++	-rm -f m4ri/$(DEPDIR)/interrupt.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mmc.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mp.Plo
+ 	-rm -f m4ri/$(DEPDIR)/mzd.Plo
+diff -ruN a/tests/Makefile.am b/tests/Makefile.am
+--- a/tests/Makefile.am	2026-10-24 23:42:15.311877281 +0200
++++ b/tests/Makefile.am	2026-10-24 23:46:49.147149409 +0200
+@@ -35,7 +35,8 @@
+ 	test_misc \
+ 	test_invert \
+ 	test_alignment \
+-	test_djb
++	test_djb \
++	test_interrupt
+ 
+ check_PROGRAMS = $(TESTS)
+ 
+diff -ruN a/tests/Makefile.in b/tests/Makefile.in
+--- a/tests/Makefile.in	2026-10-24 23:42:15.311838480 +0200
++++ b/tests/Makefile.in	2026-10-24 23:46:49.155233155 +0200
+@@ -101,7 +101,8 @@
+ 	test_solve$(EXEEXT) test_kernel$(EXEEXT) test_random$(EXEEXT) \
+ 	test_smallops$(EXEEXT) test_transpose$(EXEEXT) \
+ 	test_colswap$(EXEEXT) test_misc$(EXEEXT) test_invert$(EXEEXT) \
+-	test_alignment$(EXEEXT) test_djb$(EXEEXT)
++	test_alignment$(EXEEXT) test_djb$(EXEEXT) \
++	test_interrupt$(EXEEXT)
+ check_PROGRAMS = $(am__EXEEXT_1)
+ subdir = tests
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+@@ -129,7 +130,8 @@
+ 	test_solve$(EXEEXT) test_kernel$(EXEEXT) test_random$(EXEEXT) \
+ 	test_smallops$(EXEEXT) test_transpose$(EXEEXT) \
+ 	test_colswap$(EXEEXT) test_misc$(EXEEXT) test_invert$(EXEEXT) \
+-	test_alignment$(EXEEXT) test_djb$(EXEEXT)
++	test_alignment$(EXEEXT) test_djb$(EXEEXT) \
++	test_interrupt$(EXEEXT)
+ test_alignment_SOURCES = test_alignment.c
+ test_alignment_OBJECTS = test_alignment.$(OBJEXT)
+ test_alignment_LDADD = $(LDADD)
+@@ -146,6 +148,10 @@
+ test_djb_OBJECTS = test_djb.$(OBJEXT)
+ test_djb_LDADD = $(LDADD)
+ test_djb_DEPENDENCIES = $(TOPBUILDDIR)/libm4ri.la
++test_interrupt_SOURCES = test_interrupt.c
++test_interrupt_OBJECTS = test_interrupt.$(OBJEXT)
++test_interrupt_LDADD = $(LDADD)
++test_interrupt_DEPENDENCIES = $(TOPBUILDDIR)/libm4ri.la
+ test_elimination_SOURCES = test_elimination.c
+ test_elimination_OBJECTS = test_elimination.$(OBJEXT)
+ test_elimination_LDADD = $(LDADD)
+@@ -211,6 +217,7 @@
+ am__maybe_remake_depfiles = depfiles
+ am__depfiles_remade = ./$(DEPDIR)/test_alignment.Po \
+ 	./$(DEPDIR)/test_colswap.Po ./$(DEPDIR)/test_djb.Po \
++	./$(DEPDIR)/test_interrupt.Po \
+ 	./$(DEPDIR)/test_elimination.Po ./$(DEPDIR)/test_invert.Po \
+ 	./$(DEPDIR)/test_kernel.Po ./$(DEPDIR)/test_misc.Po \
+ 	./$(DEPDIR)/test_multiplication.Po ./$(DEPDIR)/test_ple.Po \
+@@ -238,11 +245,13 @@
+ am__v_CCLD_0 = @echo "  CCLD    " $@;
+ am__v_CCLD_1 = 
+ SOURCES = test_alignment.c test_colswap.c test_djb.c \
++	test_interrupt.c \
+ 	test_elimination.c test_invert.c test_kernel.c test_misc.c \
+ 	test_multiplication.c test_ple.c test_pluq.c test_random.c \
+ 	$(test_smallops_SOURCES) test_solve.c test_transpose.c \
+ 	test_trsm.c
+ DIST_SOURCES = test_alignment.c test_colswap.c test_djb.c \
++	test_interrupt.c \
+ 	test_elimination.c test_invert.c test_kernel.c test_misc.c \
+ 	test_multiplication.c test_ple.c test_pluq.c test_random.c \
+ 	$(test_smallops_SOURCES) test_solve.c test_transpose.c \
+@@ -693,6 +702,10 @@
+ 	@rm -f test_djb$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(test_djb_OBJECTS) $(test_djb_LDADD) $(LIBS)
+ 
++test_interrupt$(EXEEXT): $(test_interrupt_OBJECTS) $(test_interrupt_DEPENDENCIES) $(EXTRA_test_interrupt_DEPENDENCIES) 
++	@rm -f test_interrupt$(EXEEXT)
++	$(AM_V_CCLD)$(LINK) $(test_interrupt_OBJECTS) $(test_interrupt_LDADD) $(LIBS)
++
+ test_elimination$(EXEEXT): $(test_elimination_OBJECTS) $(test_elimination_DEPENDENCIES) $(EXTRA_test_elimination_DEPENDENCIES) 
+ 	@rm -f test_elimination$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(test_elimination_OBJECTS) $(test_elimination_LDADD) $(LIBS)
+@@ -750,6 +763,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_alignment.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_colswap.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_djb.Po@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_interrupt.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_elimination.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_invert.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_kernel.Po@am__quote@ # am--include-marker
+@@ -1095,6 +1109,13 @@
+ 	--log-file $$b.log --trs-file $$b.trs \
+ 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+ 	"$$tst" $(AM_TESTS_FD_REDIRECT)
++test_interrupt.log: test_interrupt$(EXEEXT)
++	@p='test_interrupt$(EXEEXT)'; \
++	b='test_interrupt'; \
++	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
++	--log-file $$b.log --trs-file $$b.trs \
++	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
++	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ .test.log:
+ 	@p='$<'; \
+ 	$(am__set_b); \
+@@ -1190,6 +1211,7 @@
+ 		-rm -f ./$(DEPDIR)/test_alignment.Po
+ 	-rm -f ./$(DEPDIR)/test_colswap.Po
+ 	-rm -f ./$(DEPDIR)/test_djb.Po
++	-rm -f ./$(DEPDIR)/test_interrupt.Po
+ 	-rm -f ./$(DEPDIR)/test_elimination.Po
+ 	-rm -f ./$(DEPDIR)/test_invert.Po
+ 	-rm -f ./$(DEPDIR)/test_kernel.Po
+@@ -1251,6 +1273,7 @@
+ 		-rm -f ./$(DEPDIR)/test_alignment.Po
+ 	-rm -f ./$(DEPDIR)/test_colswap.Po
+ 	-rm -f ./$(DEPDIR)/test_djb.Po
++	-rm -f ./$(DEPDIR)/test_interrupt.Po
+ 	-rm -f ./$(DEPDIR)/test_elimination.Po
+ 	-rm -f ./$(DEPDIR)/test_invert.Po
+ 	-rm -f ./$(DEPDIR)/test_kernel.Po
+diff -ruN a/tests/test_interrupt.c b/tests/test_interrupt.c
+--- a/tests/test_interrupt.c	1970-01-01 01:00:00.000000000 +0100
++++ b/tests/test_interrupt.c	2026-10-24 23:46:49.147189480 +0200
+@@ -0,0 +1,272 @@
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE
++#endif
++#include "testing.h"
++#include <m4ri/m4ri_config.h>
++#include <m4ri/m4ri.h>
++#include <setjmp.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#if __M4RI_HAVE_OPENMP
++#include <omp.h>
++#endif
++
++static unsigned long ncalls;
++static unsigned long jump_after;
++static int bad_context;
++static jmp_buf env;
++static unsigned long npolls;
++static unsigned long pending_after;
++
++static void count_calls(void) {
++#if __M4RI_HAVE_OPENMP
++  if (omp_get_level() != 0) bad_context = 1;
++#endif
++  ++ncalls;
++}
++
++static void jump_out(void) {
++  count_calls();
++  if (ncalls >= jump_after) longjmp(env, 1);
++}
++
++/* pending after a number of polls; stays pending */
++static int pending(void) {
++  return __atomic_add_fetch(&npolls, 1, __ATOMIC_RELAXED) > pending_after;
++}
++
++static void jump_if_pending(void) {
++  count_calls();
++  if (__atomic_load_n(&npolls, __ATOMIC_RELAXED) > pending_after) longjmp(env, 1);
++}
++
++/* reference results are computed without any interrupt check installed */
++static mzd_t *solve(mzd_t const *A, mzd_t const *B) {
++  mzd_t *Acopy = mzd_copy(NULL, A);
++  mzd_t *X     = mzd_copy(NULL, B);
++  mzd_solve_left(Acopy, X, 0, 0);
++  mzd_free(Acopy);
++  return X;
++}
++
++static int check_called(char const *what, unsigned long before) {
++  printf("interrupt check %-12s calls: %6lu ", what, ncalls - before);
++  if (ncalls == before || bad_context) {
++    printf("FAILED\n");
++    return 1;
++  }
++  printf("passed\n");
++  return 0;
++}
++
++int test_interrupt_check_called(rci_t n) {
++  int status = 0;
++  mzd_t *A   = mzd_init(n, n);
++  mzd_t *B   = mzd_init(n, n);
++  mzd_randomize(A);
++  mzd_randomize(B);
++  for (rci_t i = 0; i < n; ++i) mzd_write_bit(A, i, i, 1);
++
++  mzd_t *C0 = mzd_mul_m4rm(NULL, A, B, 0);
++  mzd_t *X0 = solve(A, B);
++
++  ncalls      = 0;
++  bad_context = 0;
++  m4ri_set_interrupt_check(count_calls, NULL);
++
++  unsigned long before = ncalls;
++  mzd_t *E             = mzd_copy(NULL, A);
++  mzd_echelonize_m4ri(E, 1, 0);
++  status += check_called("echelonize", before);
++
++  before    = ncalls;
++  mzd_t *C1 = mzd_mul_m4rm(NULL, A, B, 0);
++  status += check_called("mul_m4rm", before);
++
++  before    = ncalls;
++  mzd_t *C2 = mzd_mul(NULL, A, B, 512);
++  status += check_called("mul", before);
++
++  before    = ncalls;
++  mzp_t *P  = mzp_init(n);
++  mzp_t *Q  = mzp_init(n);
++  mzd_t *LU = mzd_copy(NULL, A);
++  mzd_pluq(LU, P, Q, 0);
++  status += check_called("pluq", before);
++
++  before    = ncalls;
++  mzd_t *X1 = solve(A, B);
++  status += check_called("solve_left", before);
++
++  m4ri_set_interrupt_check(NULL, NULL);
++
++  /* a check which returns must not change the results */
++  printf("interrupt check results unchanged ");
++  if (!mzd_equal(C0, C1) || !mzd_equal(C0, C2) || !mzd_equal(X0, X1)) {
++    printf("FAILED\n");
++    status += 1;
++  } else {
++    printf("passed\n");
++  }
++
++  mzd_free(E);
++  mzd_free(C0);
++  mzd_free(C1);
++  mzd_free(C2);
++  mzd_free(LU);
++  mzd_free(X0);
++  mzd_free(X1);
++  mzp_free(P);
++  mzp_free(Q);
++  mzd_free(A);
++  mzd_free(B);
++  return status;
++}
++
++int test_interrupt_longjmp(rci_t n, unsigned long after) {
++  mzd_t *A = mzd_init(n, n);
++  mzd_t *B = mzd_init(n, n);
++  mzd_randomize(A);
++  mzd_randomize(B);
++  for (rci_t i = 0; i < n; ++i) mzd_write_bit(A, i, i, 1);
++  mzd_t *X0 = solve(A, B);
++
++  ncalls      = 0;
++  jump_after  = after;
++  bad_context = 0;
++  int jumped  = 0;
++  /* leaked when we jump out, as documented */
++  mzd_t *volatile Acopy = mzd_copy(NULL, A);
++  mzd_t *volatile X     = mzd_copy(NULL, B);
++
++  m4ri_set_interrupt_check(jump_out, NULL);
++  if (setjmp(env) == 0) {
++    mzd_solve_left(Acopy, X, 0, 0);
++  } else {
++    jumped = 1;
++  }
++  m4ri_set_interrupt_check(NULL, NULL);
++
++  /* computations after the jump, including OpenMP parallel ones, must
++     work as before */
++  mzd_t *X1 = solve(A, B);
++
++  printf("interrupt longjmp n: %5d after: %3lu ", n, after);
++  int status = 0;
++  if (!jumped || bad_context || !mzd_equal(X0, X1)) {
++    printf("FAILED\n");
++    status = 1;
++  } else {
++    printf("passed\n");
++  }
++  mzd_free(X0);
++  mzd_free(X1);
++  mzd_free(A);
++  mzd_free(B);
++  return status;
++}
++
++int test_interrupt_set(void) {
++  int status = 0;
++  printf("interrupt set/remove ");
++
++  /* no check installed: nothing is called */
++  m4ri_set_interrupt_check(count_calls, pending);
++  m4ri_set_interrupt_check(NULL, pending);
++  ncalls   = 0;
++  npolls   = 0;
++  mzd_t *A = mzd_init(512, 512);
++  mzd_randomize(A);
++  mzd_echelonize_m4ri(A, 1, 0);
++  mzd_free(A);
++  if (ncalls != 0 || npolls != 0 || m4ri_interrupt_pending()) status = 1;
++
++  printf(status ? "FAILED\n" : "passed\n");
++  return status;
++}
++
++#if __M4RI_HAVE_OPENMP
++/* an interrupt becoming pending inside a parallel loop cancels it */
++int test_interrupt_cancel(rci_t n, unsigned long after) {
++  mzd_t *A = mzd_init(n, n);
++  mzd_t *B = mzd_init(n, n);
++  mzd_randomize(A);
++  mzd_randomize(B);
++  mzd_t *C0 = mzd_mul_m4rm(NULL, A, B, 0);
++
++  ncalls        = 0;
++  npolls        = 0;
++  pending_after = after;
++  bad_context   = 0;
++  int jumped    = 0;
++
++  m4ri_set_interrupt_check(jump_if_pending, pending);
++  if (setjmp(env) == 0) {
++    mzd_free(mzd_mul_m4rm(NULL, A, B, 0));
++  } else {
++    jumped = 1;
++  }
++  unsigned long const polls = npolls;
++  m4ri_set_interrupt_check(NULL, NULL);
++
++  /* computations after the jump must work as before */
++  mzd_t *C1 = mzd_mul_m4rm(NULL, A, B, 0);
++
++  /* every row of every column block is polled once without
++     cancellation; with it, each thread stops after at most one more
++     poll per row once the interrupt is pending */
++  int cancel_ok = 1;
++  if (omp_get_cancellation())
++    cancel_ok = polls <= after + 2 * (unsigned long)omp_get_max_threads();
++
++  printf("interrupt cancel n: %5d after: %6lu polls: %8lu ", n, after, polls);
++  int status = 0;
++  if (!jumped || bad_context || !cancel_ok || !mzd_equal(C0, C1)) {
++    printf("FAILED\n");
++    status = 1;
++  } else {
++    printf("passed\n");
++  }
++  mzd_free(C0);
++  mzd_free(C1);
++  mzd_free(A);
++  mzd_free(B);
++  return status;
++}
++#endif
++
++int main(int argc, char **argv) {
++  int status = 0;
++
++#if __M4RI_HAVE_OPENMP
++  /* OMP_CANCELLATION is only read at startup */
++  if (!omp_get_cancellation() && getenv("M4RI_TEST_INTERRUPT_REEXEC") == NULL) {
++    setenv("OMP_CANCELLATION", "true", 1);
++    setenv("M4RI_TEST_INTERRUPT_REEXEC", "1", 1);
++    execv(argv[0], argv);
++  }
++  printf("OpenMP cancellation: %s\n", omp_get_cancellation() ? "enabled" : "disabled");
++#endif
++
++  srandom(17);
++
++  status += test_interrupt_set();
++  status += test_interrupt_check_called(1024);
++  status += test_interrupt_check_called(2500);
++  status += test_interrupt_longjmp(2500, 1);
++  status += test_interrupt_longjmp(2500, 7);
++  status += test_interrupt_longjmp(2500, 40);
++#if __M4RI_HAVE_OPENMP
++  status += test_interrupt_cancel(4000, 1);
++  status += test_interrupt_cancel(4000, 3000);
++#endif
++
++  if (!status) {
++    printf("All tests passed.\n");
++  } else {
++    return 1;
++  }
++
++  return 0;
++}

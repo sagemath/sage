@@ -43,15 +43,16 @@ TODO List
 
 ### Invariants
 
-There seems to be massive redundancy in having these methods and the ones imported into
-invariants. I think we should fix this by putting the methods themseleves into this class.
+There seems to be massive redundancy in having these methods and the
+ones imported into invariants. I think we should fix this by putting
+the methods themselves into this class.
 """
 
 
 class HyperellipticCurve_g2(
     hyperelliptic_generic.HyperellipticCurve_generic
 ):
-    def is_odd_degree(self):
+    def is_odd_degree(self) -> bool:
         r"""
         Return ``True`` if the curve is an odd degree model.
 

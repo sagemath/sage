@@ -4391,7 +4391,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 
     .. WARNING::
 
-        For technical reaasons, we implement the ring of pseudo-differential
+        For technical reasons, we implement the ring of pseudo-differential
         operators as a Laurent polynomial ring in `\partial^{-1}`. So for
         an element ``P``, the coefficient ``P[k]`` is the coefficient of
         `\partial^{-k}`.
