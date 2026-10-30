@@ -58,7 +58,7 @@ def _recursive_rbibd_prime_power(p, r):
     for depth in range(2, r + 1):
         q = p ** (depth - 1)
 
-        new = [
+        next_classes = [
             [[x + k*q for x in B]
              for k in range(p) for B in cl]
             for cl in classes
@@ -70,7 +70,7 @@ def _recursive_rbibd_prime_power(p, r):
                 for j in range(q)
             ])
 
-        classes = new
+        classes = next_classes
 
     blocks = [B for cl in classes for B in cl]
 
@@ -79,6 +79,8 @@ def _recursive_rbibd_prime_power(p, r):
     )
     D._classes = classes
     return D
+
+
 def resolvable_balanced_incomplete_block_design(v, k, existence=False):
     r"""
     Return a resolvable BIBD of parameters `v,k`.
@@ -162,15 +164,15 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         return v_4_1_rbibd(v, existence=existence)
 
     if k >= 5 and is_prime(k) and v > 0:
-    n = v
-    r = 0
-    while n % k == 0:
-        n //= k
-        r += 1
-    if n == 1 and r >= 2:
-        if existence:
-            return True
-        return _recursive_rbibd_prime_power(k, r)
+        n = v
+        r = 0
+        while n % k == 0:
+            n //= k
+            r += 1
+        if n == 1 and r >= 2:
+            if existence:
+                return True
+            return _recursive_rbibd_prime_power(k, r)
         
     if existence:
         return Unknown
