@@ -1714,7 +1714,7 @@ def exact_product(f, var, a, b):
                 factors = [h.subs({v: aS + j}) for j in range(count)]
                 undefined = any(t.is_infinity() or not (t - t).is_trivial_zero()
                                 for t in factors)
-            except (ArithmeticError, RuntimeError, ValueError) as exc:
+            except (ArithmeticError, RuntimeError, TypeError, ValueError) as exc:
                 raise ValueError("the product %s is not defined in the "
                                  "range" % f) from exc
             if undefined:
