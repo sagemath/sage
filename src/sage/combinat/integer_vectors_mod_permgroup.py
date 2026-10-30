@@ -173,20 +173,56 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         [[]]
 
 
-    .. WARNING::
-
-        Because of :issue:`36527`, permutation groups that have
-        different domains but similar generators can be erroneously
-        treated as the same group.  This will silently produce
-        erroneous results.  To avoid this issue, compute a strong
-        generating system for the group as::
-
-            sgs = tuple(tuple(s) for s in G.strong_generating_system())
-
-        and provide it as the optional ``sgs`` argument to the
-        constructor.
-
     TESTS:
+
+    Groups with different domains must give different parents, even if
+    the groups compare equal (:issue:`36527`)::
+
+        sage: A = PermutationGroup([(1, 2)], domain=[1, 2])
+        sage: B = PermutationGroup([(1, 2)], domain=[1, 2, 3])
+        sage: VA = IntegerVectorsModPermutationGroup(A, 3)
+        sage: VB = IntegerVectorsModPermutationGroup(B, 3)
+        sage: VA is VB
+        False
+        sage: VA.list()
+        [[3, 0], [2, 1]]
+        sage: VB.list()
+        [[3, 0, 0], [2, 1, 0], [2, 0, 1], [1, 1, 1], [1, 0, 2], [0, 0, 3]]
+        sage: VA is IntegerVectorsModPermutationGroup(A, 3)
+        True
+        sage: loads(dumps(VA)) is VA, loads(dumps(VB)) is VB
+        (True, True)
+        sage: TestSuite(VA).run()
+        sage: TestSuite(VB).run()
+
+    The same holds without constraints and for subsets::
+
+        sage: WA = IntegerVectorsModPermutationGroup(A)
+        sage: WB = IntegerVectorsModPermutationGroup(B)
+        sage: WA.first(), WB.first()
+        ([0, 0], [0, 0, 0])
+        sage: WA.subset(3) is VA, WB.subset(3) is VB
+        (True, True)
+        sage: loads(dumps(WA)) is WA, loads(dumps(WB)) is WB
+        (True, True)
+
+    Constructing the larger domain first must also work::
+
+        sage: VB4 = IntegerVectorsModPermutationGroup(B, 4)
+        sage: VA4 = IntegerVectorsModPermutationGroup(A, 4)
+        sage: VA4.cardinality(), VB4.cardinality()
+        (3, 9)
+        sage: all(len(v) == 2 for v in VA4), all(len(v) == 3 for v in VB4)
+        (True, True)
+
+    Empty domains and trivial actions remain distinct::
+
+        sage: groups = [PermutationGroup([], domain=range(n)) for n in range(3)]
+        sage: parents = [IntegerVectorsModPermutationGroup(G, 0) for G in groups]
+        sage: [V.list() for V in parents]
+        [[[]], [[0]], [[0, 0]]]
+        sage: all(loads(dumps(V)) is V for V in parents)
+        True
 
     Let us check that canonical integer vectors of the symmetric group
     are just nonincreasing lists of integers::
@@ -312,7 +348,25 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
         sage: TestSuite(I).run()
     """
 
-    def __init__(self, G, sgs=None):
+    @staticmethod
+    def __classcall_private__(cls, G, sgs=None, *, _domain=None):
+        """
+        Include the ordered domain in the cache key.
+
+        The internal ``_domain`` argument is supplied when unpickling.
+        Always recompute it from ``G`` so callers cannot override it.
+
+        TESTS::
+
+            sage: from sage.combinat.integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup_All
+            sage: A = PermutationGroup([(1, 2)], domain=[1, 2])
+            sage: B = PermutationGroup([(1, 2)], domain=[1, 2, 3])
+            sage: IntegerVectorsModPermutationGroup_All(A) is IntegerVectorsModPermutationGroup_All(B)
+            False
+        """
+        return super().__classcall__(cls, G, sgs=sgs, _domain=tuple(G.domain()))
+
+    def __init__(self, G, sgs=None, *, _domain=None):
         """
         TESTS::
 
@@ -644,7 +698,26 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         sage: TestSuite(I).run()
     """
 
-    def __init__(self, G, d, max_part, sgs=None):
+    @staticmethod
+    def __classcall_private__(cls, G, d, max_part, sgs=None, *, _domain=None):
+        """
+        Include the ordered domain in the cache key.
+
+        The internal ``_domain`` argument is supplied when unpickling.
+        Always recompute it from ``G`` so callers cannot override it.
+
+        TESTS::
+
+            sage: from sage.combinat.integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup_with_constraints
+            sage: A = PermutationGroup([(1, 2)], domain=[1, 2])
+            sage: B = PermutationGroup([(1, 2)], domain=[1, 2, 3])
+            sage: IntegerVectorsModPermutationGroup_with_constraints(A, 3, None) is IntegerVectorsModPermutationGroup_with_constraints(B, 3, None)
+            False
+        """
+        return super().__classcall__(cls, G, d, max_part, sgs=sgs,
+                                     _domain=tuple(G.domain()))
+
+    def __init__(self, G, d, max_part, sgs=None, *, _domain=None):
         r"""
         TESTS::
 
