@@ -15,17 +15,7 @@ name: CI (Distro)
 ## tar files of all logs are made available as "build artifacts".
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/ci-distro.yml'
-      - 'build/pkgs/**'
-      - 'build/make/**'
-      - 'configure.ac'
-  push:
-    tags:
-      - '*'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_call:
 
 env:
   TARGETS_PRE: all-sage-local
@@ -33,16 +23,12 @@ env:
   TARGETS_OPTIONAL: ptestlong
 
 permissions:
+  contents: read
+  pull-requests: read
   packages: write
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   linux-minimal:
-    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -52,6 +38,8 @@ jobs:
       targets_pre: all-sage-local
       targets: build
       targets_optional: ptestlong
+      # #43045's OpenMP interrupt fix requires Sage's patched M4RI until an upstream release.
+      extra_configure_args: --without-system-m4ri
       tox_system_factors: >-
           ["ubuntu-resolute"]
       tox_packages_factors: >-
@@ -67,6 +55,8 @@ jobs:
       targets_pre: all-sage-local
       targets: build
       targets_optional: ptestlong
+      # #43045's OpenMP interrupt fix requires Sage's patched M4RI until an upstream release.
+      extra_configure_args: --without-system-m4ri
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

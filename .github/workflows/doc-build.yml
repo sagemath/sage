@@ -1,25 +1,14 @@
 name: Build documentation
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
   PYTHON_VERSION: 3.13
 
 jobs:
   doc-html:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -75,14 +64,27 @@ jobs:
 
       - name: Get workflow run-id
         if: github.event_name == 'pull_request'
-        run: |
-          RESPONSE=$(curl -s -L \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=push&branch=develop&status=completed")
-          RUN_ID=$(echo "$RESPONSE" | jq -r --arg name "${{ github.workflow }}" --arg conclusion "success" \
-            '.workflow_runs[] | select(.name == $name and .conclusion == $conclusion) | .id' | head -n 1)
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // Accept the old standalone workflow during migration. A failed
+            // test in CI must not hide a successfully built doc baseline.
+            const pages = github.paginate.iterator(github.rest.actions.listWorkflowRunsForRepo, {
+              ...context.repo, event: 'push', branch: 'develop', status: 'completed', per_page: 100,
+            });
+            for await (const {data: runs} of pages) {
+              for (const run of runs) {
+                if (!['CI', 'Sage CI', 'Build documentation'].includes(run.name)) continue;
+                const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+                  ...context.repo, run_id: run.id, per_page: 100,
+                });
+                if (artifacts.some(a => a.name === 'doc-develop' && !a.expired)) {
+                  core.exportVariable('RUN_ID', run.id);
+                  return;
+                }
+              }
+            }
+            core.setFailed('No develop documentation artifact is available');
 
       - name: Download old doc
         if: github.event_name == 'pull_request'

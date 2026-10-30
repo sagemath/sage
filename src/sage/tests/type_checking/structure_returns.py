@@ -1,4 +1,6 @@
-from typing import Any, assert_type, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, assert_type, cast
 
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_dense import Matrix_dense
@@ -8,8 +10,10 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ, crt_basis
 from sage.rings.rational_field import QQ
 from sage.rings.ring import Ring
-from sage.structure.category_object import CategoryObject
 from sage.structure.parent import Parent
+
+if TYPE_CHECKING:
+    from sage.structure.category_object import CategoryObject
 
 R: CategoryObject = QQ['x']
 P = cast("Parent", QQ)

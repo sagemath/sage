@@ -1,30 +1,7 @@
 name: Build & Test
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    branches:
-      - master
-      - develop
-    # Ignore pushes on tags to prevent two uploads of codecov reports
-    tags-ignore: ['**']
-  workflow_dispatch:
-    # Allow to run manually
-    inputs:
-      platform:
-        description: 'Platform'
-        required: true
-        default: 'ubuntu-resolute-standard'
-      docker_tag:
-        description: 'Docker tag'
-        required: true
-        default: 'dev'
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 #
 # The three workflows:
@@ -77,7 +54,7 @@ env:
 
 jobs:
   test-long:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
@@ -203,7 +180,7 @@ jobs:
           include-hidden-files: true
 
   coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [test-long]
     if: (success() || failure())
     services:
