@@ -2058,9 +2058,14 @@ def hypergeometric_sum(f, var, a, b):
     gt = g.to_gamma()
     for base, e in _mult_split(gt):
         if base.operator() == GAMMA_OP:
+            lin = _linear_symbolic(base.operands()[0], j)
+            if lin is None:
+                # a nonlinear argument: its poles cannot be tracked
+                if e > 0:
+                    undecidable = True
+                continue
             try:
-                A, B = _linear_symbolic(base.operands()[0], j)
-                A, B = QQ(A), QQ(B)
+                A, B = QQ(lin[0]), QQ(lin[1])
             except (TypeError, ValueError, ArithmeticError):
                 # symbolic slope or constant term: defined generically
                 continue
@@ -2068,11 +2073,11 @@ def hypergeometric_sum(f, var, a, b):
                 if A in ZZ and A <= -1 and B in ZZ and B <= 0:
                     annihilates = True
             elif A > 0:
-                # the argument A*j + B of a gamma factor in the denominator
-                # is an integer at the lattice points j congruent to j0
-                # modulo q, where A = p/q in lowest terms, provided that the
-                # denominator of B divides q, and it is nonpositive for
-                # j <= -B/A; these are exactly its poles on the lattice
+                # the argument A*j + B of a gamma factor with positive
+                # exponent is an integer at the lattice points j congruent
+                # to j0 modulo q, where A = p/q in lowest terms, provided
+                # that the denominator of B divides q, and it is nonpositive
+                # for j <= -B/A; these are exactly its poles on the lattice
                 p_, q_ = A.numerator(), A.denominator()
                 s, t = B.numerator(), B.denominator()
                 if q_ % t == 0:
@@ -2094,7 +2099,7 @@ def hypergeometric_sum(f, var, a, b):
                 # linear factor exactly
                 zeros = []
                 lin = _linear_symbolic(base, j)
-                if lin is not None:
+                if lin is not None and not lin[0].is_trivial_zero():
                     root = -lin[1]/lin[0]
                     if root in ZZ and root >= 0:
                         zeros.append((ZZ(root), 1))
