@@ -481,10 +481,8 @@ class Ed25519SignatureScheme(DigitalSignatureBase):
     one instance bundles the RFC 8032 variant and (for ctx/ph) the context
     string, which removes the risk of signing and verifying with mismatched
     domain parameters.  When the digital-signature framework of :issue:`42856`
-    is available, this class is a
-    :class:`~sage.crypto.public_key.digital_signature.digital_signature_base.DigitalSignatureBase`
-    subclass and can be used uniformly with the other schemes of that
-    framework.
+    is available, this class is a ``DigitalSignatureBase`` subclass and can
+    be used uniformly with the other schemes of that framework.
 
     INPUT:
 
