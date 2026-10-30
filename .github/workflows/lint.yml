@@ -15,7 +15,7 @@ permissions:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       # Use the same Python for setup-python and uv, overriding .python-version.
       UV_PYTHON: "3.14"
