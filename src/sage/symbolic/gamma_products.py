@@ -23,9 +23,13 @@ For example::
     (1/27)^n*factorial(3*n)/factorial(n)
 
 A term can be written without gamma functions if and only if its fractional
-gamma shifts decompose into complete circles; this is decided by the algorithm
-(see :func:`simplify_gamma`), and otherwise the irreducible gamma factors are
-returned.
+gamma shifts decompose into complete circles; the algorithm (see
+:func:`simplify_gamma`) searches for such a decomposition, and returns the
+remaining gamma factors in irreducible position otherwise.  The search is
+subject to a budget; if it is exhausted, the returned normal form is
+irreducible only in the sense that no further circle applies, and it is
+not established that no other sequence of circle moves could eliminate the
+remaining gamma factors.
 
 The same machinery evaluates finite products with a symbolic number of
 factors exactly, see :func:`factorial_product`::
