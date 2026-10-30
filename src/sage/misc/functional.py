@@ -661,7 +661,7 @@ def symbolic_prod(expression, *args, **kwds):
         sage: product(k, k, 1, n)
         factorial(n)
         sage: product(x + i*(i+1)/2, i, 1, 4)
-        x^4 + 20*x^3 + 127*x^2 + 288*x + 180
+        (x + 10)*(x + 6)*(x + 3)*(x + 1)
         sage: product(i^2, i, 1, 7)
         25401600
         sage: f = function('f')

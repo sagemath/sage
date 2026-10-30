@@ -1159,12 +1159,20 @@ class MaximaLib(MaximaAbstract):
             factorial(n)
             sage: symbolic_product(2*x,x,1,n)
             2^n*factorial(n)
+
+        The result is not passed through ``ratsimp``, so products that
+        cannot be evaluated in terms of factorials stay fully factored::
+
+            sage: from sage.interfaces.maxima_lib import maxima_lib
+            sage: k, n = var('k n')
+            sage: f = (18*k^3 + 27*k^2 + 13*k + 2)/(2*k^3 + 9*k^2 + 13*k + 6)
+            sage: maxima_lib.sr_prod(f, k, 0, n)
+            3^(2*n + 2)*gamma(n + 5/3)*gamma(n + 4/3)/((2*n + 3)*factorial(n + 2)*factorial(n + 1)*gamma(2/3)*gamma(1/3))
         """
         try:
-            return max_to_sr(maxima_eval([[max_ratsimp],
-                                          [[max_simplify_prod],
-                                           ([max_prod],
-                                            [sr_to_max(SR(a)) for a in args])]]))
+            return max_to_sr(maxima_eval([[max_simplify_prod],
+                                          ([max_prod],
+                                           [sr_to_max(SR(a)) for a in args])]))
         except RuntimeError as error:
             s = str(error)
             if "divergent" in s:
