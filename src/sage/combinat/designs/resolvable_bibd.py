@@ -58,21 +58,22 @@ def _recursive_rbibd_prime_power(p, r):
 
     EXAMPLES::
 
-    We construct a resolvable `2-(25, 5, 1)` design:
-        sage: from sage.combinat.designs.resolvable_bibd import _recursive_rbibd_prime_power
-        sage: D = _recursive_rbibd_prime_power(5, 2)
-        sage: D.is_resolvable()
-        True
-        sage: D.is_t_design(return_parameters=True)
-        (True, (2, 25, 5, 1))
+        We construct a resolvable `2-(25, 5, 1)` design:
+        
+            sage: from sage.combinat.designs.resolvable_bibd import _recursive_rbibd_prime_power
+            sage: D = _recursive_rbibd_prime_power(5, 2)
+            sage: D.is_resolvable()
+            True
+            sage: D.is_t_design(return_parameters=True)
+            (True, (2, 25, 5, 1))
 
-    We construct a resolvable `2-(125, 5, 1)` design:
+        We construct a resolvable `2-(125, 5, 1)` design:
 
-        sage: D = _recursive_rbibd_prime_power(5, 3)
-        sage: D.is_resolvable()
-        True
-        sage: D.is_t_design(return_parameters=True)
-        (True, (2, 125, 5, 1))
+            sage: D = _recursive_rbibd_prime_power(5, 3)
+            sage: D.is_resolvable()
+            True
+            sage: D.is_t_design(return_parameters=True)
+            (True, (2, 125, 5, 1))
     """
     classes = [[list(range(p))]]
 
@@ -125,6 +126,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         (15,3,1)-Balanced Incomplete Block Design
         sage: KTS15.is_resolvable()
         True
+
         We construct a resolvable `2-(25, 5, 1)` design:
 
             sage: D = designs.resolvable_balanced_incomplete_block_design(25, 5)
