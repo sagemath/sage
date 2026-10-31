@@ -197,4 +197,3 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         res = p_sym(s_sym[part])
         p = self.realization_of().p()
         return p._from_dict(res.monomial_coefficients())
-
