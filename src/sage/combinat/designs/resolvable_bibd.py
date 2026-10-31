@@ -142,6 +142,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
             True
             sage: D.is_t_design(return_parameters=True)
             (True, (2, 125, 5, 1))
+            
     TESTS::
 
         sage: bibd = designs.resolvable_balanced_incomplete_block_design
