@@ -65,7 +65,7 @@ def _recursive_rbibd_prime_power(p, r):
         ]
 
         for l in range(q):
-            new.append([
+            next_classes.append([
                 [i*q + (j + i*l) % q for i in range(p)]
                 for j in range(q)
             ])
