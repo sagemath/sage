@@ -5893,9 +5893,6 @@
 .. [Mol2015] \A. Molnar, Fractional Linear Minimal Models of Rational Functions,
              M.Sc. Thesis.
 
-.. [Moe07] Moens, Els. Supersymmetric Schur functions and Lie superalgebra representa-
-tions. PhD thesis, Ghent University, 2007.
-
 .. [Mon1998] \K. G. Monks, "Change of basis, monomial relations, and
              `P^s_t` bases for the Steenrod algebra," J. Pure
              Appl. Algebra 125 (1998), no. 1-3, 235-260.
