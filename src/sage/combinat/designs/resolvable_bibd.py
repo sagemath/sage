@@ -56,13 +56,21 @@ def _recursive_rbibd_prime_power(p, r):
 
     EXAMPLES::
 
-        sage: D = designs.resolvable_balanced_incomplete_block_design(25, 5)
+        We construct a resolvable `2-(25, 5, 1)` design:
+
+        sage: D = _recursive_rbibd_prime_power(5, 2)
         sage: D.is_resolvable()
         True
         sage: D.is_t_design(return_parameters=True)
         (True, (2, 25, 5, 1))
-        sage: designs.resolvable_balanced_incomplete_block_design(125, 5, existence=True)
+
+        We construct a resolvable `2-(125, 5, 1)` design:
+
+        sage: D = _recursive_rbibd_prime_power(5, 3)
+        sage: D.is_resolvable()
         True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 125, 5, 1))
     """
     classes = [[list(range(p))]]
 
