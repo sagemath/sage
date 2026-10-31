@@ -46,37 +46,39 @@ from .bibd import balanced_incomplete_block_design
 from sage.misc.unknown import Unknown
 
 def _recursive_rbibd_prime_power(p, r):
-    """
-    Construct a resolvable 2-(p^r, p, 1) design.
+    r"""
+    Construct a resolvable `2-(p^r, p, 1)` design.
 
     INPUT:
+
     - ``p`` -- a prime number
     - ``r`` -- an integer greater than or equal to 2
+
+    EXAMPLES::
+
+        sage: D = designs.resolvable_balanced_incomplete_block_design(25, 5)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 25, 5, 1))
+        sage: designs.resolvable_balanced_incomplete_block_design(125, 5, existence=True)
+        True
     """
     classes = [[list(range(p))]]
 
     for depth in range(2, r + 1):
         q = p ** (depth - 1)
 
-        next_classes = [
-            [[x + k*q for x in B]
-             for k in range(p) for B in cl]
-            for cl in classes
-        ]
+        classes = [[[x + k*q for x in B] for k in range(p) for B in cl]
+                   for cl in classes]
 
         for l in range(q):
-            next_classes.append([
-                [i*q + (j + i*l) % q for i in range(p)]
-                for j in range(q)
-            ])
-
-        classes = next_classes
+            classes.append([[i*q + (j + i*l) % q for i in range(p)]
+                            for j in range(q)])
 
     blocks = [B for cl in classes for B in cl]
 
-    D = BalancedIncompleteBlockDesign(
-        p**r, blocks, k=p, lambd=1, copy=False
-    )
+    D = BalancedIncompleteBlockDesign(p**r, blocks, k=p, lambd=1, copy=False)
     D._classes = classes
     return D
 
@@ -163,7 +165,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
     if k == 4:
         return v_4_1_rbibd(v, existence=existence)
 
-    if k >= 5 and is_prime(k) and v > 0:
+    if k >= 5 and is_prime(k) and v >= 25:
         n = v
         r = 0
         while n % k == 0:
