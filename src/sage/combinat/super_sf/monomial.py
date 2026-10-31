@@ -6,11 +6,6 @@ AUTHORS:
 - Shriya M
 """
 from . import super_sfa
-from sage.data_structures.blas_dict import convert_remove_zeroes
-from sage.libs.lrcalc import lrcalc
-from sage.matrix.constructor import matrix
-from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.partition import Partitions
 from sage.categories.tensor import tensor
 
 class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
@@ -42,7 +37,7 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
         sage: s = SuperSymmetricFunctions(QQ)
         sage: m = s.m()
         sage: m
-        Supersymmetric functions over Rational Field in the Schur basis
+        Supersymmetric functions over Rational Field in the monomial basis
     """
     def __init__(self, SuperSym):
         r"""
@@ -76,7 +71,7 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
         return self.tensor_square().sum(coeff * tensor([self(p[x]), self(p[y])])
                                         for (x, y), coeff in p(elt).coproduct())
 
-    def antipode_by_coercion(self, part):
+    def antipode_by_coercion(self, el):
         r"""
         Return the antipode of ``part`` by coercing into powersum
         supersymmetric basis and back.
@@ -86,11 +81,13 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
             sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
             sage: Sym = SuperSymmetricFunctions(QQ)
             sage: m = Sym.m()
-            sage: m.antipode_by_coercion([2,1])
-            m[2, 1] + m[3]
+            sage: elt = m[2,1]
+            sage: m.antipode_by_coercion(elt)
+            m[2, 1] + 2*m[3]
         """
         p = self.realization_of().p()
-        pow_el = p.antipode_on_basis(part)
+        elt = p(el)
+        pow_el = p.antipode(elt)
         return self(pow_el)
 
     def lift_on_basis(self, el):
@@ -106,7 +103,7 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
             sage: m.lift_on_basis(el)
             -1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] - 1/3*p[] # p[3] +
             1/2*p[1] # p[1, 1] - 1/2*p[1] # p[2] - 1/2*p[1, 1] # p[1] +
-            1/6*p[1, 1, 1] # p[] +1/2*p[2] # p[1] - 1/2*p[2, 1] # p[] +
+            1/6*p[1, 1, 1] # p[] + 1/2*p[2] # p[1] - 1/2*p[2, 1] # p[] +
             1/3*p[3] # p[]
         """
         p = self.realization_of().p()

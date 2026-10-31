@@ -85,7 +85,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
                                                          self.base_ring()))
 
-    def coproduct_by_coercion(self, n):
+    def coproduct_by_coercion(self, el):
         r"""
         Return the coproduct of ``self(n)``.
 
@@ -98,13 +98,15 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
             sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
             sage: Sym = SuperSymmetricFunctions(QQ)
             sage: s = Sym.schur()
-            sage: s.coproduct_by_coercion([2])
-            s[] # s[2] + s[1] # s[1] + s[2] # s[]
+            sage: elt = s[2,1]
+            sage: s.coproduct_by_coercion(elt)
+            s[] # s[2, 1] + s[1] # s[1, 1] + s[1] # s[2] + s[1, 1] # s[1] +
+            s[2] # s[1] + s[2, 1] # s[]
         """
         Sym = self.realization_of()
         h = Sym.h()
-        el = h.coproduct_on_generators(n)
-        return self(el)
+        return self.tensor_square().sum(coeff * tensor([self(h[x]), self(h[y])])
+                                                for (x, y), coeff in h(el).coproduct())
 
     def _to_hom_el_on_basis(self, part, basis_name='homogeneous'):
         r"""
@@ -196,5 +198,3 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         p = self.realization_of().p()
         return p._from_dict(res.monomial_coefficients())
 
-# Unsure about Schur coproduct
-# Schur to homogeneous, coproduct and back
