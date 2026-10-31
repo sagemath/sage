@@ -49,6 +49,8 @@ def _recursive_rbibd_prime_power(p, r):
     r"""
     Construct a resolvable `2-(p^r, p, 1)` design.
 
+    For details of this construction, see [Nak2026]_.
+
     INPUT:
 
     - ``p`` -- a prime number
