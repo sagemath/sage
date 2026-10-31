@@ -1568,7 +1568,7 @@ def modular_width(G):
         sage: G = graphs.RandomGNP(randint(2, 20), random())
         sage: mw = G.modular_width()
         sage: is_cograph = G.is_cograph()
-        sage: (is_cograph and mw == 2) or (not is_cograph and mv > 2)
+        sage: (is_cograph and mw == 2) or (not is_cograph and mw > 2)
         True
 
     Graph from the :wikipedia:`Modular_decomposition`::
