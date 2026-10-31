@@ -1,6 +1,10 @@
-import argparse
+from __future__ import annotations
 
-from sage.cli.options import CliOptions
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
+    from sage.cli.options import CliOptions
 
 
 class JupyterNotebookCmd:

@@ -43,7 +43,6 @@ py.install_sources(
   'parent.pxd',
   'parent.pyi',
   'parent.pyx',
-  'parent_gens.pyi',
   'parent_gens.pyx',
   'richcmp.pxd',
   'richcmp.pyx',

@@ -240,7 +240,7 @@ class Sha(SageObject):
 
             sage: EllipticCurve('11a').sha().an_numerical()
             1.00000000000000
-            sage: EllipticCurve('37a').sha().an_numerical()
+            sage: EllipticCurve('37a').sha().an_numerical() # abs tol 1e-12
             1.00000000000000
             sage: EllipticCurve('389a').sha().an_numerical()
             1.00000000000000
@@ -256,13 +256,13 @@ class Sha(SageObject):
 
         A rank 5 curve::
 
-            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)  # long time (22s on sage.math, 2011)
+            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(proof=False)  # long time (22s on sage.math, 2011) # abs tol 1e-12
             1.0
 
         See :issue:`1115`::
 
             sage: sha = EllipticCurve('37a1').sha()
-            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013)
+            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013) # abs tol 1e-12
             [1.0000000000,
              1.0000000000000,
              1.0000000000000000,

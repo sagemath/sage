@@ -1220,8 +1220,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [LLMSSZ] \T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki,
-        k-Schur functions and affine Schubert calculus.
+    - [LLMSSZ]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1281,7 +1280,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
             sage: dks3._dks_to_khlp_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=self.t)
@@ -1339,8 +1338,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [Lam2006] \T. Lam, Schubert polynomials for the affine Grassmannian, J. Amer.
-        Math. Soc., 21 (2008), 259-281.
+    - [Lam2006]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1430,7 +1428,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
             sage: F._m_to_F_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=1)

@@ -444,9 +444,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
                 REFERENCES:
 
-                .. [HNT06] \F. Hivert, J.-C. Novelli, J.-Y. Thibon.
-                   *Commutative combinatorial Hopf algebras*. (2006).
-                   :arxiv:`0605262v1`.
+                - [HNT06]_
 
                 EXAMPLES::
 

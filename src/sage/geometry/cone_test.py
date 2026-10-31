@@ -306,7 +306,7 @@ def test_solid_restriction_is_solid(K):
 def test_solid_restriction_has_same_properties_as_original(K):
     r"""
     The solid restriction of a cone has the same dimension,
-    number of rays, etc. as the the original cone. (The restriction
+    number of rays, etc. as the original cone. (The restriction
     changes only its representation and ambient space.)
     """
     sr = K.solid_restriction()

@@ -1263,7 +1263,7 @@ class BipartiteGraph(Graph):
             False
         """
         # Map each vertex of the graph to a side
-        vertex_in_left = {v: True for v in self.left}
+        vertex_in_left = dict.fromkeys(self.left, True)
         for v in self.right:
             vertex_in_left[v] = False
 
@@ -1562,10 +1562,10 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))                  # needs numpy
-            sage: g.is_bipartite()                                                      # needs numpy
+            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))
+            sage: g.is_bipartite()
             True
-            sage: g.is_bipartite(certificate=True)  # random                            # needs numpy
+            sage: g.is_bipartite(certificate=True)  # random
             (True, {(0, 0): 0, (0, 1): 0, (0, 2): 0, (1, 0): 1, (1, 1): 1, (1, 2): 1})
 
         TESTS::
@@ -1576,8 +1576,8 @@ class BipartiteGraph(Graph):
             (True, {})
         """
         if certificate:
-            color = {u: 0 for u in self.left}
-            color.update({u: 1 for u in self.right})
+            color = dict.fromkeys(self.left, 0)
+            color.update(dict.fromkeys(self.right, 1))
             return True, color
         return True
 
@@ -2646,7 +2646,6 @@ class BipartiteGraph(Graph):
 
         The two algorithms should return the same result::
 
-           sage: # needs networkx numpy
            sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
            sage: vc1 = g.vertex_cover(algorithm='Konig')
            sage: vc2 = g.vertex_cover(algorithm='Cliquer')

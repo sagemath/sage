@@ -1001,7 +1001,7 @@ def _sage_getargspec_from_ast(source):
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from_ast(s) == inspect.getfullargspec(context['f'])
         True
-        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])
+        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x)._replace(annotations={}) for x in [factor, identity_matrix, Graph.__init__])
         {True}
     """
     ast_args = ast.parse(source.lstrip()).body[0].args
@@ -2186,10 +2186,10 @@ def sage_getsource(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsource
-        sage: sage_getsource(identity_matrix)[19:60]
-        'identity_matrix(ring, n=0, sparse=False):'
-        sage: sage_getsource(identity_matrix)[19:60]
-        'identity_matrix(ring, n=0, sparse=False):'
+        sage: sage_getsource(identity_matrix)[19:62]
+        'identity_matrix(ring, n=0, sparse=False) ->'
+        sage: sage_getsource(identity_matrix)[19:62]
+        'identity_matrix(ring, n=0, sparse=False) ->'
     """
     # First we should check if the object has a _sage_src_
     # method.  If it does, we just return the output from

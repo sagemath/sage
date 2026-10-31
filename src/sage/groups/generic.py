@@ -115,6 +115,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from copy import copy
 import operator
 
@@ -124,6 +125,10 @@ from sage.misc.misc_c import prod
 from sage.rings import integer_ring
 import sage.rings.integer
 from sage.structure.element import parent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -507,7 +512,7 @@ class multiples:
         return self
 
 
-def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
+def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None) -> Integer:
     r"""
     Totally generic discrete baby-step giant-step function.
 
@@ -671,7 +676,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
-def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
+def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash) -> Integer:
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
     group of prime order.

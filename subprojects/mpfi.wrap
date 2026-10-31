@@ -1,5 +1,6 @@
-[wrap-git]
-url = https://gitlab.inria.fr/mpfi/mpfi.git
-revision = head
-depth = 1
+[wrap-file]
+directory = mpfi-1.5.4
+source_url = https://perso.ens-lyon.fr/nathalie.revol/softwares/mpfi-1.5.4.tar.xz
+source_filename = mpfi-1.5.4.tar.xz
+source_hash = 819e98bc7dad7cf7e67c9ddb592f44545c300de143fe30bc29ca1b422b55306a
 patch_directory = mpfi

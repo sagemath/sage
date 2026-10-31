@@ -2164,8 +2164,7 @@ class ClusterQuiver(SageObject):
 
         REFERENCES:
 
-        .. [Rei2002] Markus Reineke, *The Harder-Narasimhan system in quantum
-           groups and cohomology of quiver moduli*, :arxiv:`math/0204059`
+        - [Rei2002]_
         """
         if gcd([x for x in d if x]) != 1:
             raise ValueError("dimension vector d is not coprime")

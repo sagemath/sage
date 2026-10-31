@@ -312,20 +312,17 @@ Simplifying expressions involving scientific notation::
     sage: sqrt(c^3)
     sqrt(((2.00000000000000e-6)*k + 12)^3)
 
-The symbolic calculus package uses its own copy of Maxima for
-simplification, etc., which is separate from the default
-system-wide version::
+The symbolic calculus package shares the library interface with ``maxima``.
+Sage symbolic variables are translated to names prefixed with
+``_SAGE_VAR_``, so they are distinct from variables entered as Maxima
+strings::
 
     sage: maxima.eval('[x,y]: [1,2]')
     '[1,2]'
     sage: maxima.eval('expand((x+y)^3)')
     '27'
 
-If the copy of Maxima used by the symbolic calculus package were
-the same as the default one, then the following would return 27,
-which would be very confusing indeed!
-
-::
+Thus these assignments do not change the Sage symbolic variables::
 
     sage: x, y = var('x,y')
     sage: expand((x+y)^3)
@@ -348,9 +345,8 @@ But this still uses Maxima::
     sage: (x + x + pi).simplify()
     pi + 2*x
 
-Note that ``x`` is still ``x``, since the
-maxima used by the calculus package is different than the one in
-the interactive interpreter.
+Note that ``x`` is still ``x`` because of the variable-name translation.
+Maxima settings such as ``domain`` are shared with the calculus package.
 Clear the maxima variables to avoid interference with other tests::
 
     sage: maxima('kill(x,y)')
@@ -621,6 +617,23 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        Maple and Mathematica, so even if the chosen backend can perform
        the summation the result might not be convertible into a Sage
        expression.
+
+    TESTS:
+
+    Check that :issue:`42894` is fixed::
+
+        sage: k = var('k')
+        sage: n = 4
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        42
+        sage: n = 11
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        12630
+
+    The failures are due to a bug in Maxima's ``simplify_sum`` that
+    returns a wrong value for sums with finite-support binomials.  The
+    upstream bug report is https://sourceforge.net/p/maxima/bugs/5688/.
+    Once Maxima is fixed, the ``# known bug`` annotations can be removed.
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
