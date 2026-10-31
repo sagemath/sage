@@ -963,6 +963,9 @@
              *The primitive Eulerian polynomial*.
              Preprint, (2023) :arxiv:`2306.15556`.
 
+.. [BHS25] Daniel Bump, Andrew Hardt, and Travis Scrimshaw. *On the boson-fermion
+           correspondence for factorial Schur functions*. Preprint, (2025) :arxiv:`2502.02841`.
+
 .. [BHZ2005] \N. Bergeron, C. Hohlweg, and M. Zabrocki, *Posets
              related to the Connectivity Set of Coxeter Groups*.
              :arxiv:`math/0509271v3`
