@@ -6109,6 +6109,11 @@
                 categories*. Algebr. Represent. Theory 14 (2011), no. 5, 837-855.
                 :arxiv:`0903.4157`.
 
+.. [Nak2026] T. Nakano, *A Recursive Construction of Resolvable
+             2-(p^r,p,1) Designs with Free Row Permutations, and Anti-Pasch*,
+             Zenodo (2026).
+             :doi:`10.5281/zenodo.23757682`.
+
 .. [NAR2018] Jamie R. Nunez, Christopher R. Anderson, Ryan S. Renslow
              *Optimizing colormaps with consideration for color vision
              deficiency to enable accurate interpretation of scientific data*.

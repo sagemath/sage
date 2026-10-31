@@ -39,11 +39,58 @@ Functions
 ---------
 """
 from itertools import repeat
-from sage.arith.misc import is_prime_power
+from sage.arith.misc import is_prime, is_prime_power
 from sage.combinat.designs.bibd import BalancedIncompleteBlockDesign
 from sage.categories.sets_cat import EmptySetError
 from .bibd import balanced_incomplete_block_design
 from sage.misc.unknown import Unknown
+
+def _recursive_rbibd_prime_power(p, r):
+    r"""
+    Construct a resolvable `2-(p^r, p, 1)` design.
+
+    For details of this construction, see [Nak2026]_.
+
+    INPUT:
+
+    - ``p`` -- a prime number
+    - ``r`` -- an integer greater than or equal to 2
+
+    EXAMPLES::
+
+        We construct a resolvable `2-(25, 5, 1)` design:
+
+        sage: D = _recursive_rbibd_prime_power(5, 2)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 25, 5, 1))
+
+        We construct a resolvable `2-(125, 5, 1)` design:
+
+        sage: D = _recursive_rbibd_prime_power(5, 3)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 125, 5, 1))
+    """
+    classes = [[list(range(p))]]
+
+    for depth in range(2, r + 1):
+        q = p ** (depth - 1)
+
+        classes = [[[x + k*q for x in B] for k in range(p) for B in cl]
+                   for cl in classes]
+
+        for l in range(q):
+            classes.append([[i*q + (j + i*l) % q for i in range(p)]
+                            for j in range(q)])
+
+    blocks = [B for cl in classes for B in cl]
+
+    D = BalancedIncompleteBlockDesign(p**r, blocks, k=p, lambd=1, copy=False)
+    D._classes = classes
+    return D
 
 
 def resolvable_balanced_incomplete_block_design(v, k, existence=False):
@@ -78,7 +125,21 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         (15,3,1)-Balanced Incomplete Block Design
         sage: KTS15.is_resolvable()
         True
+        We construct a resolvable `2-(25, 5, 1)` design:
 
+        sage: D = designs.resolvable_balanced_incomplete_block_design(25, 5)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 25, 5, 1))
+
+        We construct a resolvable `2-(125, 5, 1)` design:
+
+        sage: D = designs.resolvable_balanced_incomplete_block_design(125, 5)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 125, 5, 1))
     TESTS::
 
         sage: bibd = designs.resolvable_balanced_incomplete_block_design
@@ -128,6 +189,17 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
     if k == 4:
         return v_4_1_rbibd(v, existence=existence)
 
+    if k >= 5 and is_prime(k) and v >= 25:
+        n = v
+        r = 0
+        while n % k == 0:
+            n //= k
+            r += 1
+        if n == 1 and r >= 2:
+            if existence:
+                return True
+            return _recursive_rbibd_prime_power(k, r)
+        
     if existence:
         return Unknown
     raise NotImplementedError(f"I don't know how to build a ({v},3,1)-RBIBD!")
