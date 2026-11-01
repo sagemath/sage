@@ -27,6 +27,7 @@ Using calculus
 - :doc:`Assumptions about symbols and functions <sage/symbolic/assumptions>`
 - :doc:`sage/symbolic/relation`
 - :doc:`sage/symbolic/integration/integral`
+- :doc:`sage/symbolic/rootsum`
 - :doc:`sage/calculus/desolvers`
 - :doc:`sage/calculus/ode`
 - :doc:`sage/calculus/integration`
@@ -76,6 +77,7 @@ Internal functionality supporting calculus
    sage/symbolic/function_factory
    sage/calculus/functional
    sage/symbolic/integration/integral
+   sage/symbolic/rootsum
    sage/symbolic/integration/external
    sage/calculus/test_sympy
    sage/calculus/tests

@@ -2775,7 +2775,10 @@ cdef class GapElement_Function(GapElement):
 
     def _instancedoc_(self):
         r"""
-        Return the help string.
+        Return the help string from the current libgap session.
+
+        If several entries match, return GAP's numbered list of matches.
+        Return ``None`` if no entry or no text documentation is available.
 
         EXAMPLES::
 
@@ -2784,10 +2787,135 @@ cdef class GapElement_Function(GapElement):
             True
 
         You would get the full help by typing ``f?`` in the command line.
+
+        For an ambiguous topic, select an entry with :meth:`help`::
+
+            sage: 'several entries match' in libgap.HasSize.__doc__
+            True
+            sage: 'Size( ' in libgap.HasSize.help(1, pager=False)
+            True
+
+        Undocumented and anonymous functions have no help string::
+
+            sage: f = libgap.eval('x -> x')
+            sage: f.__doc__ is None
+            True
         """
+        return self.help(pager=False)
+
+    def help(self, match=None, pager=True):
+        r"""
+        Show documentation or a numbered menu of matching GAP help entries.
+
+        Use GAP's search rules and ordering, including its expansion of
+        attribute testers and setters such as ``HasSize`` and ``SetSize``.
+        If several entries match, choose one by calling this method again
+        with its number. The selection is specific to this function and
+        does not depend on GAP's interactive help history.
+
+        INPUT:
+
+        - ``match`` -- positive integer (optional); the number of an entry
+          in this function's help menu, starting at 1
+
+        - ``pager`` -- boolean (default: ``True``); display the result in
+          Sage's pager. If ``False``, return the text instead.
+
+        OUTPUT:
+
+        With ``pager=False``, a string containing the documentation or menu.
+        Return ``None`` if no entry or no text documentation is available.
+
+        EXAMPLES::
+
+            sage: f = libgap.HasSize
+            sage: menu = f.help(pager=False)
+            sage: menu.splitlines()[:2]
+            ['Help: several entries match this topic.', "Call this function's help(n) method to view match [n]."]
+            sage: '[1] Reference: Size' in menu
+            True
+            sage: 'Size( ' in f.help(1, pager=False)
+            True
+
+        Calling ``f.help()`` displays the menu; ``f.help(1)`` displays the
+        first entry. For an unambiguous topic, the documentation is shown
+        directly::
+
+            sage: 'constructs  the  cyclic  group' in libgap.CyclicGroup.help(pager=False)
+            True
+
+        TESTS::
+
+            sage: f.help(0, pager=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: help match number out of range
+            sage: f.help('1', pager=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'str' object cannot be interpreted as an integer
+        """
+        if match is not None:
+            from operator import index
+            match = index(match)
+            if match < 1:
+                raise ValueError('help match number out of range')
         libgap = self.parent()
-        from sage.interfaces.gap import gap
-        return gap.help(libgap.NameFunction(self).sage(), pager=False)
+        name = libgap.NameFunction(self).sage()
+        if name == 'unknown':
+            return None
+        # libgap uses a very wide screen to prevent wrapping printed objects.
+        # Help text should instead be formatted for reading in a pager.
+        screen = libgap.SizeScreen()
+        try:
+            libgap.SizeScreen([80, 24])
+            topic = libgap.SIMPLE_STRING(name)
+            exact, partial = libgap.HELP_GET_MATCHES(libgap.HELP_KNOWN_BOOKS[0], topic, True)
+            # Follow HELP_SHOW_MATCHES: one exact match is shown directly;
+            # otherwise list exact matches followed by partial matches.
+            matches = exact if len(exact) == 1 else libgap.Concatenation(exact, partial)
+            if not matches:
+                return None
+            if match is None and len(matches) > 1:
+                lines = ['Help: several entries match this topic.',
+                         "Call this function's help(n) method to view match [n]."]
+                for number, (book, entry) in enumerate(matches, 1):
+                    title = book['entries'][int(entry) - 1][0]
+                    line = libgap.Concatenation(book['bookname'], ': ', title)
+                    line = libgap.Concatenation(f'[{number}] ', line)
+                    line = libgap.InitialSubstringUTF8Text(line, 80)
+                    lines.append(libgap.StripEscapeSequences(line).sage())
+                text = '\n'.join(lines)
+            else:
+                if match is None:
+                    match = 1
+                if match > len(matches):
+                    raise ValueError('help match number out of range')
+                book, entry = matches[match - 1]
+                handler = libgap.HELP_BOOK_HANDLER[book['handler'].sage()]
+                data = handler['HelpData'](book, entry, 'text')
+                if data == libgap.fail:
+                    return None
+                start = 1
+                if isinstance(data, GapElement_Record):
+                    data = dict(data)
+                    start = int(data.get('start', 1))
+                    data = data['lines']
+                if not isinstance(data, GapElement_String):
+                    data = libgap.JoinStringsWithSeparator(data, '\n')
+                data = libgap.StripEscapeSequences(data)
+                # GAPDoc returns text in GAP's terminal encoding, which need
+                # not be UTF-8 (the default for conversion of libgap strings).
+                encoding = libgap.GAPInfo['TermEncoding'].sage()
+                text = char_to_str(GAP_CSTR_STRING((<GapElement>data).value), encoding)
+                text = '\n'.join(text.split('\n')[start - 1:])
+        finally:
+            libgap.SizeScreen(screen)
+        if pager:
+            from IPython.core.page import page
+            page(text)
+        else:
+            return text
 
 
 ############################################################################

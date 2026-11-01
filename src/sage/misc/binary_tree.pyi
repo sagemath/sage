@@ -2,8 +2,8 @@ from typing import Optional
 
 class binary_tree_node:
     key: int
-    left: Optional['binary_tree_node']
-    right: Optional['binary_tree_node']
+    left: Optional[binary_tree_node]
+    right: Optional[binary_tree_node]
     value: object
 
 def BinaryTreeNode(key: int, value: object) -> binary_tree_node:

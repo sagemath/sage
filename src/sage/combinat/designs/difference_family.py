@@ -12,28 +12,19 @@ It defines the following functions:
 
 REFERENCES:
 
-.. [BJL99-1] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. I."
-   Second edition. Encyclopedia of Mathematics and its Applications, 69. Cambridge
-   University Press, (1999).
+- [BJL99-1]_
 
-.. [BLJ99-2] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. II."
-   Second edition. Encyclopedia of Mathematics and its Applications, 78. Cambridge
-   University Press, (1999).
+- [BLJ99-2]_
 
-.. [Bo39] \R. C. Bose, "On the construction of balanced incomplete block
-   designs", Ann. Eugenics, 9 (1939), 353--399.
+- [Bo39]_
 
-.. [Bu95] \M. Buratti "On simple radical difference families", J.
-   Combinatorial Designs, 3 (1995) 161--168.
+- [Bu95]_
 
-.. [Tu1965] \R. J. Turyn "Character sum and difference sets"
-   Pacific J. Math. 15 (1965) 319--346.
+- [Tu1965]_
 
-.. [Tu1984] \R. J. Turyn "A special class of Williamson matrices and
-   difference sets" J. Combinatorial Theory (A) 36 (1984) 111--115.
+- [Tu1984]_
 
-.. [Wi72] \R. M. Wilson "Cyclotomy and difference families in elementary Abelian
-   groups", J. Number Theory, 4 (1972) 17--47.
+- [Wi72]_
 
 Functions
 ---------
@@ -1090,10 +1081,7 @@ def mcfarland_1973_construction(q, s):
 
     REFERENCES:
 
-    .. [McF1973] Robert L. McFarland
-       "A family of difference sets in non-cyclic groups"
-       J. Combinatorial Theory (A) 15 (1973) 1--10.
-       :doi:`10.1016/0097-3165(73)90031-9`
+    - [McF1973]_
 
     EXAMPLES::
 

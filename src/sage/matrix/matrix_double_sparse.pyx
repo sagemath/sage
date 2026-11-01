@@ -173,6 +173,17 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: B = A.dense_matrix()
             sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
+
+        The result is cached, hence immutable::
+
+            sage: A = matrix(RDF, [[4, 2], [2, 5]], sparse=True)
+            sage: L = A.cholesky()
+            sage: L.is_immutable()
+            True
+            sage: L[0, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
         """
         cdef Matrix L  # output matrix
 
@@ -240,6 +251,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           (cvx_L.I[k], cvx_L.J[k]): cvx_L.V[k]
           for k in range(len(cvx_L.V))
         })
+        L.set_immutable()
 
         self.cache('cholesky', L)
         return L

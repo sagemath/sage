@@ -2,7 +2,7 @@ r"""
 Congruence subgroups `\Gamma_0(N)` of `\mathrm{GL}_{2}(\mathbb{F}_{q}[T])`.
 
 By definition, it is the subgroup of matrices whose bottom left coefficient
-is divislble by `N`.
+is divisible by `N`.
 
 AUTHORS:
 
@@ -40,7 +40,7 @@ class Gamma0Element(MultiplicativeGroupElement):
     r"""
     An element in a congruence subgroup.
     """
-    def __init__(self, parent, elt):
+    def __init__(self, parent, elt) -> None:
         r"""
         Initialize this element of the congruence subgroup.
 
@@ -84,7 +84,7 @@ class Gamma0Element(MultiplicativeGroupElement):
             raise ValueError("not in Gamma0(%s)" % level)
         self._mat = mat
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of the element this element.
 
@@ -98,7 +98,7 @@ class Gamma0Element(MultiplicativeGroupElement):
         """
         return self._mat.__repr__()
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare this element with ``other`` for the operator ``op``.
 
@@ -128,7 +128,7 @@ class Gamma0Element(MultiplicativeGroupElement):
         """
         return Gamma0Element, (self.parent(), self._mat)
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return whether this matrix is the identity matrix.
 
@@ -240,7 +240,7 @@ class Gamma0_drinfeld(Group, UniqueRepresentation):
         level = level.monic()
         return super().__classcall__(cls, base, level)
 
-    def __init__(self, base, level):
+    def __init__(self, base, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 
@@ -282,7 +282,7 @@ class Gamma0_drinfeld(Group, UniqueRepresentation):
         """
         return Gamma0_drinfeld, (self._level,)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this congruence subgroup.
 
@@ -535,7 +535,7 @@ class InclusionIntoMatrixSpace(Map):
     r"""
     Inclusion of a congruence subgroup into the corresponding matrix space.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Initialize this morphism.
 

@@ -29,21 +29,11 @@ The main function of this module is
 
 References:
 
-.. [Stinson91] \D.R. Stinson,
-   A survey of Kirkman triple systems and related designs,
-   Volume 92, Issues 1-3, 17 November 1991, Pages 371-393,
-   Discrete Mathematics,
-   :doi:`10.1016/0012-365X(91)90294-C`
+- [Stinson91]_
 
-.. [RCW71] \D. K. Ray-Chaudhuri, R. M. Wilson,
-   Solution of Kirkman's schoolgirl problem,
-   Volume 19, Pages 187-203,
-   Proceedings of Symposia in Pure Mathematics
+- [RCW71]_
 
-.. [BJL99] \T. Beth, D. Jungnickel, H. Lenz,
-   Design Theory 2ed.
-   Cambridge University Press
-   1999
+- [BJL99]_
 
 Functions
 ---------
