@@ -1,14 +1,13 @@
-from __future__ import annotations
 
 from collections.abc import Iterator
 from typing import Any, NoReturn
 
-from sage.rings.infinity import PlusInfinity
-from sage.rings.integer import Integer
 from sage.categories.category import Category
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.structure.category_object import NameSpec
 from sage.structure.parent import Parent
 
@@ -52,7 +51,7 @@ class PrincipalIdealDomain(Ring):
 def _is_Field(x: object) -> bool: ...
 
 class Field(Ring):
-    pass
+    ...
 
 class Algebra(Ring):
     def __init__(

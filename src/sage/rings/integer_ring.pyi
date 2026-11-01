@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 from sage.libs.gmp.types import mpz_t
 
@@ -30,22 +30,22 @@ class IntegerRing_class(Ring):
     def __getitem__(self, x: Any) -> Any:
         ...
 
-    def range(self, start: Any, end: Optional[Any] = None, step: Optional[Any] = None) -> list[Integer]:
+    def range(self, start: Any, end: Any | None = None, step: Any | None = None) -> list[Integer]:
         ...
 
     def __iter__(self) -> Any:
         ...
 
-    def _coerce_map_from_(self, S: Any) -> Optional[Any]:
+    def _coerce_map_from_(self, S: Any) -> Any | None:
         ...
 
-    def random_element(self, x: Optional[Any] = None, y: Optional[Any] = None, distribution: Optional[str] = None) -> Integer:
+    def random_element(self, x: Any | None = None, y: Any | None = None, distribution: str | None = None) -> Integer:
         ...
 
-    def _randomize_mpz(self, value: mpz_t, x: Optional[Any], y: Optional[Any], distribution: Optional[str]) -> int:
+    def _randomize_mpz(self, value: mpz_t, x: Any | None, y: Any | None, distribution: str | None) -> int:
         ...
 
-    def _is_valid_homomorphism_(self, codomain: Any, im_gens: list[Any], base_map: Optional[Any] = None) -> bool:
+    def _is_valid_homomorphism_(self, codomain: Any, im_gens: list[Any], base_map: Any | None = None) -> bool:
         ...
 
     def _repr_option(self, key: str) -> Any:
@@ -60,10 +60,10 @@ class IntegerRing_class(Ring):
     def extension(self, poly: Any, names: Any, **kwds: Any) -> Any:
         ...
 
-    def quotient(self, I: Any, names: Optional[Any] = None, **kwds: Any) -> Any:
+    def quotient(self, I: Any, names: Any | None = None, **kwds: Any) -> Any:
         ...
 
-    def residue_field(self, prime: Any, check: bool = True, names: Optional[Any] = None) -> Any:
+    def residue_field(self, prime: Any, check: bool = True, names: Any | None = None) -> Any:
         ...
 
     def gens(self) -> tuple[Integer]:
@@ -87,7 +87,7 @@ class IntegerRing_class(Ring):
     def krull_dimension(self) -> int:
         ...
 
-    def completion(self, p: Any, prec: int, extras: Optional[dict] = {}) -> Any:
+    def completion(self, p: Any, prec: int, extras: dict | None = {}) -> Any:
         ...
 
     def zeta(self, n: int = 2) -> Integer:
@@ -96,7 +96,7 @@ class IntegerRing_class(Ring):
     def parameter(self) -> Integer:
         ...
 
-    def _roots_univariate_polynomial(self, p: Any, ring: Optional[Any] = None, multiplicities: bool = True, algorithm: Optional[str] = None) -> list[Union[tuple[Integer, int], Integer]]:
+    def _roots_univariate_polynomial(self, p: Any, ring: Any | None = None, multiplicities: bool = True, algorithm: str | None = None) -> list[tuple[Integer, int] | Integer]:
         ...
 
     def _gap_init_(self) -> str:
@@ -108,7 +108,7 @@ class IntegerRing_class(Ring):
     def _magma_init_(self, magma: Any) -> str:
         ...
 
-    def _macaulay2_init_(self, macaulay2: Optional[Any] = None) -> str:
+    def _macaulay2_init_(self, macaulay2: Any | None = None) -> str:
         ...
 
     def _polymake_init_(self) -> str:
@@ -132,5 +132,5 @@ Z = ZZ
 def IntegerRing() -> IntegerRing_class:
     ...
 
-def crt_basis(X: list[Integer], xgcd: Optional[Any] = None) -> list[Integer]:
+def crt_basis(X: list[Integer], xgcd: Any | None = None) -> list[Integer]:
     ...
