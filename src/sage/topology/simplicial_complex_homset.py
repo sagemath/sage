@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Homsets between simplicial complexes
 
