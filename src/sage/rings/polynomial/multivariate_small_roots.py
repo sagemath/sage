@@ -451,9 +451,9 @@ def small_roots_modular(f, N, bounds, m=2, t=0):
     last-resort; keep `X_1` moderate in that case).
 
     For a single variable, the call is delegated to Sage's optimized
-    univariate :meth:`~sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ_fc.small_roots` (the ``m`` and ``t``
-parameters are then ignored); the generic lattice path runs as a
-fallback if that fails.
+    univariate :meth:`~sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ_fc.small_roots`
+    (the ``m`` and ``t`` parameters are then ignored); the generic lattice
+    path runs as a fallback if that fails.
 
     EXAMPLES::
 
