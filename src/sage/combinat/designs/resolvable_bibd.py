@@ -56,23 +56,23 @@ def _recursive_rbibd_prime_power(p, r):
     - ``p`` -- a prime number
     - ``r`` -- an integer greater than or equal to 2
 
-    EXAMPLES::
+    EXAMPLES:
 
-        We construct a resolvable `2-(25, 5, 1)` design:
-            sage: from sage.combinat.designs.resolvable_bibd import _recursive_rbibd_prime_power
-            sage: D = _recursive_rbibd_prime_power(5, 2)
-            sage: D.is_resolvable()
-            True
-            sage: D.is_t_design(return_parameters=True)
-            (True, (2, 25, 5, 1))
+    We construct a resolvable `2-(25, 5, 1)` design::
+        sage: from sage.combinat.designs.resolvable_bibd import _recursive_rbibd_prime_power
+        sage: D = _recursive_rbibd_prime_power(5, 2)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 25, 5, 1))
 
-        We construct a resolvable `2-(125, 5, 1)` design:
+    We construct a resolvable `2-(125, 5, 1)` design::
 
-            sage: D = _recursive_rbibd_prime_power(5, 3)
-            sage: D.is_resolvable()
-            True
-            sage: D.is_t_design(return_parameters=True)
-            (True, (2, 125, 5, 1))
+        sage: D = _recursive_rbibd_prime_power(5, 3)
+        sage: D.is_resolvable()
+        True
+        sage: D.is_t_design(return_parameters=True)
+        (True, (2, 125, 5, 1))
     """
     classes = [[list(range(p))]]
 
@@ -118,7 +118,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         - :meth:`IncidenceStructure.is_resolvable`
         - :func:`~sage.combinat.designs.bibd.balanced_incomplete_block_design`
 
-    EXAMPLES::
+    EXAMPLES:
 
         sage: KTS15 = designs.resolvable_balanced_incomplete_block_design(15,3)
         sage: KTS15
@@ -126,7 +126,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         sage: KTS15.is_resolvable()
         True
 
-        We construct a resolvable `2-(25, 5, 1)` design:
+        We construct a resolvable `2-(25, 5, 1)` design::
 
             sage: D = designs.resolvable_balanced_incomplete_block_design(25, 5)
             sage: D.is_resolvable()
@@ -134,13 +134,14 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
             sage: D.is_t_design(return_parameters=True)
             (True, (2, 25, 5, 1))
 
-        We construct a resolvable `2-(125, 5, 1)` design:
+        We construct a resolvable `2-(125, 5, 1)` design::
 
             sage: D = designs.resolvable_balanced_incomplete_block_design(125, 5)
             sage: D.is_resolvable()
             True
             sage: D.is_t_design(return_parameters=True)
             (True, (2, 125, 5, 1))
+            
     TESTS::
 
         sage: bibd = designs.resolvable_balanced_incomplete_block_design
@@ -197,7 +198,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         return _recursive_rbibd_prime_power(k, r)
     if existence:
         return Unknown
-    raise NotImplementedError(f"I don't know how to build a ({v},3,1)-RBIBD!")
+    raise NotImplementedError(f"I don't know how to build a ({v},{k},1)-RBIBD!")
 
 
 def kirkman_triple_system(v, existence=False):
