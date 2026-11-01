@@ -379,6 +379,20 @@ cdef inline int celement_truncate(nmod_poly_t res, nmod_poly_t a, long len, unsi
     nmod_poly_set(res, a)
     nmod_poly_truncate(res, len)
 
+cdef inline int _check_leading_coefficient_invertible(nmod_poly_t b) except -1:
+    """
+    Raise a :exc:`ValueError` if the leading coefficient of ``b`` is not
+    invertible modulo the modulus of ``b``.
+
+    Division by ``b`` with remainder needs the inverse of its leading
+    coefficient; FLINT aborts the process if it does not exist.
+    """
+    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
+    cdef unsigned long modulus = nmod_poly_modulus(b)
+    if leadcoeff > 1 and n_gcd(modulus, leadcoeff) != 1:
+        raise ValueError("Leading coefficient of a must be invertible.")
+    return 0
+
 cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
     EXAMPLES::
@@ -420,13 +434,7 @@ cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b,
         sage: (x^2 + 1) // (5*x + 1)
         5*x + 5
     """
-    cdef unsigned long leadcoeff, modulus
-
-    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
-    modulus = nmod_poly_modulus(b)
-    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
-        raise ValueError("Leading coefficient of a must be invertible.")
-
+    _check_leading_coefficient_invertible(b)
     nmod_poly_div(res, a, b)
 
 cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
@@ -462,14 +470,9 @@ cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         ZeroDivisionError
     """
     cdef nmod_poly_t q
-    cdef unsigned long leadcoeff, modulus
 
+    _check_leading_coefficient_invertible(b)
     nmod_poly_init(q, n)
-    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
-    modulus = nmod_poly_modulus(b)
-    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
-        raise ValueError("Leading coefficient of a must be invertible.")
-
     nmod_poly_divrem(q, res, a, b)
     nmod_poly_clear(q)
 
@@ -497,13 +500,7 @@ cdef inline int celement_quorem(nmod_poly_t q, nmod_poly_t r, nmod_poly_t a, nmo
         ...
         ZeroDivisionError
     """
-    cdef unsigned long leadcoeff, modulus
-
-    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
-    modulus = nmod_poly_modulus(b)
-    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
-        raise ValueError("Leading coefficient of a must be invertible.")
-
+    _check_leading_coefficient_invertible(b)
     nmod_poly_divrem(q, r, a, b)
 
 cdef inline int celement_inv(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
