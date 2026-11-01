@@ -195,7 +195,6 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         if existence:
             return True
         return _recursive_rbibd_prime_power(k, r)
-        
     if existence:
         return Unknown
     raise NotImplementedError(f"I don't know how to build a ({v},3,1)-RBIBD!")
