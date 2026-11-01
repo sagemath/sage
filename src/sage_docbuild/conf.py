@@ -29,7 +29,7 @@ from sage.env import MATHJAX_DIR, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
-from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
+from sage.misc.sagedoc_conf import *  # Load configuration shared with sage_docbuild.sphinxify
 
 logger = sphinx_logging.getLogger(__name__)
 

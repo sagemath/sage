@@ -1,5 +1,5 @@
 r"""
-Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
+Sphinx configuration shared by sage_docbuild.sphinxify and sage_docbuild.conf
 
 AUTHORS:
 
@@ -190,7 +190,7 @@ class SagemathTransform(SphinxTransform):
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
 
-# This is only used by sage.misc.sphinxify
+# This is only used by sage_docbuild.sphinxify
 
 
 def setup(app):

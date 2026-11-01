@@ -48,7 +48,7 @@ def sphinxify(docstring, format='html'):
 
     EXAMPLES::
 
-        sage: from sage.misc.sphinxify import sphinxify
+        sage: from sage_docbuild.sphinxify import sphinxify
         sage: sphinxify('A test')
         '<div class="docstring">\n    \n  <p>A test</p>\n\n\n</div>'
         sage: sphinxify('**Testing**\n`monospace`')
