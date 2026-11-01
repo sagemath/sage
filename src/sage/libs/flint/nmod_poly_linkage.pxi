@@ -402,7 +402,31 @@ cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b,
         x + 2
         sage: (x^2 + 3*x + 2)//(x + 2)
         x + 1
+
+    TESTS:
+
+    Ensure that a non-invertible leading coefficient does not crash Sage
+    (:issue:`38591`)::
+
+        sage: R.<x> = Zmod(6)[]
+        sage: x // 2
+        Traceback (most recent call last):
+        ...
+        ValueError: Leading coefficient of a must be invertible.
+        sage: (x^2 + 1) // (3*x + 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Leading coefficient of a must be invertible.
+        sage: (x^2 + 1) // (5*x + 1)
+        5*x + 5
     """
+    cdef unsigned long leadcoeff, modulus
+
+    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
+    modulus = nmod_poly_modulus(b)
+    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
+        raise ValueError("Leading coefficient of a must be invertible.")
+
     nmod_poly_div(res, a, b)
 
 cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
