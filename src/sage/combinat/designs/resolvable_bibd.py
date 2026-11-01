@@ -59,6 +59,7 @@ def _recursive_rbibd_prime_power(p, r):
     EXAMPLES:
 
     We construct a resolvable `2-(25, 5, 1)` design::
+    
         sage: from sage.combinat.designs.resolvable_bibd import _recursive_rbibd_prime_power
         sage: D = _recursive_rbibd_prime_power(5, 2)
         sage: D.is_resolvable()
