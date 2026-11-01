@@ -44,7 +44,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 
-
 # ---------------------------------------------------------------------------
 # monomial helpers (a monomial is a plain exponent tuple; index = variable)
 # ---------------------------------------------------------------------------
@@ -77,11 +76,7 @@ def _closure(base, m):
     n = len(base[0])
     levels = [{tuple([0] * n)}]
     for _ in range(m):
-        nxt = set()
-        for u in levels[-1]:
-            for b in base:
-                nxt.add(_tadd(u, b))
-        levels.append(nxt)
+        levels.append({_tadd(u, b) for u in levels[-1] for b in base})
     return levels
 
 
@@ -172,13 +167,13 @@ def _integer_points(polys, ring, bounds, verify):
             J = QQring.ideal([QQring(p) for p in polys_])
             V = J.variety(ring=QQ)
             pts = [tuple(pt[v] for v in gens) for pt in V]
-        except Exception:
+        except (ArithmeticError, IndexError, TypeError, ValueError):
             if ring.ngens() == 1:
                 for p in polys_:
                     for r0, _ in p.roots(ring=ZZ):
                         pts.append((r0,))
             elif ring.ngens() == 2:
-                xx, yy = ring.gens()
+                xx = ring.gen(0)
                 for i in range(len(polys_)):
                     for j in range(i + 1, len(polys_)):
                         res = polys_[i].resultant(polys_[j], xx)
@@ -254,7 +249,7 @@ def _integer_points(polys, ring, bounds, verify):
     points = []
     try:
         points = extract(nz)
-    except Exception:
+    except (ArithmeticError, IndexError, TypeError, ValueError):
         pass
     g = reduce(gcd, nz)
     qs = [p // g for p in nz if p // g != 0] if g.degree() > 0 else []
@@ -274,8 +269,9 @@ def _integer_points(polys, ring, bounds, verify):
         for system in systems:
             try:
                 points += extract(system)
-            except Exception:
-                pass
+            except (ArithmeticError, IndexError, TypeError, ValueError):
+                # not a lattice / reduction failed: skip this shift system
+                continue
     out = []
     for pt in points:
         if any(v.denominator() != 1 for v in pt):
@@ -396,10 +392,7 @@ def _integer_lattice_plan(f, bounds, m, t):
     S = set(levels[m - 1])
     if t:
         S = {tuple([u[0] + j] + list(u[1:])) for u in S for j in range(t + 1)}
-    M = set()
-    for u in S:
-        for b in base:
-            M.add(_tadd(u, b))
+    M = {_tadd(u, b) for u in S for b in base}
     l = [max(u[j] for u in S) for j in range(n)]
     det = ZZ(1)
     for u in S:
@@ -514,7 +507,9 @@ fallback if that fails.
                             Rz(f).small_roots(X=ZZ(bounds[0]), beta=1.0)})
             if roots:
                 return roots
-        except Exception:
+        except (ArithmeticError, IndexError, TypeError, ValueError):
+            # the univariate fallback is not applicable for this input;
+            # fall through to the lattice construction below
             pass
     if m is None:
         # Analytic auto-tuning: run the lattice for the smallest (m, t)
@@ -546,14 +541,13 @@ def _small_roots_modular_lattice(f, N, bounds, m, t):
     """
 
     ring = f.parent()
-    n = ring.ngens()
     N = ZZ(N)
     bounds = [ZZ(b) for b in bounds]
     l = _leading_monomial(f)
     al = _coeff(f, l)
     if gcd(al, N) != 1:
         raise ValueError("leading coefficient shares a factor with N; "
-                         "a factor of N is %s" % gcd(al, N))
+                         f"a factor of N is {gcd(al, N)}")
     inv = al.inverse_mod(N)
     fp = _reduce_mod(_from_dict(ring, {e: inv * c
                                        for e, c in _terms(f)}), N)
@@ -689,10 +683,7 @@ def small_roots_integer(f, bounds, m=2, t=0):
     S = set(levels[m - 1])
     if t:
         S = {tuple([u[0] + j] + list(u[1:])) for u in S for j in range(t + 1)}
-    M = set()
-    for u in S:
-        for b in base:
-            M.add(_tadd(u, b))
+    M = {_tadd(u, b) for u in S for b in base}
     l = [max(u[j] for u in S) for j in range(n)]
 
     shifts = []
