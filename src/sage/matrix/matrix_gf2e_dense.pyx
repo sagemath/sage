@@ -2,6 +2,7 @@
 # distutils: library_dirs = M4RI_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR
 # distutils: extra_compile_args = M4RI_CFLAGS
+# sage.doctest: needs m4rie
 r"""
 Dense matrices over `\GF{2^e}` for `2 \leq e \leq 16` using the M4RIE library
 
