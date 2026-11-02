@@ -142,6 +142,23 @@ from sage.rings.polynomial.polydict cimport ETuple
 
 SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
+cdef inline _freeze_coefficients(list coeffs):
+    """
+    Make each coefficient immutable (if it supports set_immutable).
+    If a coefficient is mutable, copy it first to avoid side effects
+    on the original object, then freeze the copy.
+    """
+    cdef Py_ssize_t i
+    for i in range(len(coeffs)):
+        c = coeffs[i]
+        try:
+            if not c.is_immutable():
+                import copy
+                c = copy.copy(c)
+                c.set_immutable()
+                coeffs[i] = c
+        except AttributeError:
+            pass
 
 cdef class Polynomial(CommutativePolynomial):
     """
@@ -214,6 +231,7 @@ cdef class Polynomial(CommutativePolynomial):
         while n >= 0 and not coeffs[n]:
             del coeffs[n]
             n -= 1
+        _freeze_coefficients(coeffs)
         return type(self)(self._parent, coeffs, check=False)
 
     cpdef _add_(self, right):
@@ -12052,12 +12070,14 @@ cdef class Polynomial_generic_dense(Polynomial):
             self._normalize()
         else:
             self._coeffs = x
+        _freeze_coefficients(self._coeffs)
 
     cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P):
         cdef type t = type(self)
         cdef Polynomial_generic_dense f = <Polynomial_generic_dense>t.__new__(t)
         f._parent = P
         f._coeffs = coeffs
+        _freeze_coefficients(f._coeffs)
         return f
 
     cpdef Polynomial _new_constant_poly(self, a, Parent P):
