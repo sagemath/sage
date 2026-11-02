@@ -158,11 +158,12 @@ We can also make mutable copies of an immutable simplicial complex
 #  should + have any meaning?
 #  cohomology: compute cup products (and Massey products?)
 
+from collections import defaultdict
 from copy import copy
-from itertools import combinations, chain
 from functools import total_ordering
+from heapq import heapify, heappop, heappush
+from itertools import chain, combinations
 
-from .cell_complex import GenericCellComplex
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
 from sage.misc.decorators import rename_keyword
@@ -178,8 +179,49 @@ from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 
+from .cell_complex import GenericCellComplex
+
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
 lazy_import('sage.matrix.constructor', 'matrix')
+
+
+def _add_maximal_face(faces, face):
+    """
+    Add ``face`` to a set of inclusion-maximal faces.
+
+    Return whether the represented simplicial complex changed.
+    """
+    if not face:
+        return False
+    subfaces = []
+    for old in faces:
+        if face.issubset(old):
+            return False
+        if old.issubset(face):
+            subfaces.append(old)
+    faces.difference_update(subfaces)
+    faces.add(face)
+    return True
+
+
+def _facets_are_connected(facets):
+    """Return whether the facet-intersection graph is connected."""
+    first = next(iter(facets))
+    by_vertex = defaultdict(list)
+    for facet in facets:
+        for vertex in facet:
+            by_vertex[vertex].append(facet)
+
+    seen = {first}
+    pending = [first]
+    while pending:
+        facet = pending.pop()
+        for vertex in facet:
+            for other in by_vertex.pop(vertex, ()):  # Process each posting once.
+                if other not in seen:
+                    seen.add(other)
+                    pending.append(other)
+    return len(seen) == len(facets)
 
 
 def lattice_paths(t1, t2, length=None):
@@ -3923,6 +3965,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         This is recursive: testing for contractibility calls this
         routine again, via ``_contractible_subcomplex``.
 
+        Intersections are maintained incrementally.  A failed facet is
+        reconsidered only when its intersection changes, in the same order
+        as the original full scans.
+
         EXAMPLES::
 
             sage: T = simplicial_complexes.Torus(); T
@@ -3940,6 +3986,29 @@ class SimplicialComplex(Parent, GenericCellComplex):
             [(0, 1), (0, 1, 5), (0, 2), (0, 2, 6), (0, 3, 4), (0, 3, 5), (0, 4, 6), (1, 2)]
             sage: L.homology()[1]                                                       # needs sage.modules
             Z
+
+        A facet must be reconsidered when adding another facet changes
+        their intersection::
+
+            sage: K = SimplicialComplex([[0,1], [1,2]])
+            sage: S = SimplicialComplex([[2]], immutable=True)
+            sage: sorted(K._enlarge_subcomplex(S).facets())
+            [(0, 1), (1, 2), (2,)]
+
+        Eligible facets are still added in the original deterministic order::
+
+            sage: K = SimplicialComplex([[0,2], [1,2]])
+            sage: S = SimplicialComplex([[0], [1]], immutable=True)
+            sage: sorted(K._enlarge_subcomplex(S).facets())
+            [(0,), (0, 2), (1,)]
+
+        A later facet dirtied by the current facet is retried in the same
+        pass, preserving that order across rounds::
+
+            sage: K = SimplicialComplex([[0,1], [0,2], [1,2], [1,3]])
+            sage: S = SimplicialComplex([[3]], immutable=True)
+            sage: sorted(K._enlarge_subcomplex(S).facets())
+            [(0, 1), (0, 2), (1, 3), (3,)]
         """
         # Make the subcomplex immutable if not
         if subcomplex is not None and not subcomplex._is_immutable:
@@ -3947,63 +4016,119 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                            maximality_check=False,
                                            immutable=True)
 
-        if subcomplex in self.__enlarged:
+        try:
             return self.__enlarged[subcomplex]
-        faces = [x for x in list(self._facets) if x not in subcomplex._facets]
-        # For consistency when using different Python versions, for example, sort 'faces'.
-        faces = sorted(faces, key=str)
-        done = False
+        except KeyError:
+            pass
+
+        subcomplex_facets = set(subcomplex._facets)
+        faces = sorted(set(self._facets).difference(subcomplex_facets), key=str)
+        rank = {f: i for i, f in enumerate(faces)}
         new_facets = sorted(subcomplex._facets, key=str)
-        new_facet_sets = [f.set() for f in new_facets]
+        new_facet_sets = [f.set() for f in subcomplex_facets]
         face_sets = {f: f.set() for f in faces}
-        # Track nonempty intersections incrementally to avoid recomputing all
-        # intersections from scratch in every pass.
-        intersections = {
-            f: {
-                inter
-                for a_set in new_facet_sets
-                if (inter := a_set.intersection(face_sets[f]))
-            }
-            for f in faces
-        }
-        # Cache contractibility tests for repeated intersection complexes.
+
+        # Track only the maximal faces of each intersection.  This both
+        # canonicalizes the memoization keys below and makes it cheap to
+        # determine whether adding a facet changes an intersection.
+        intersections = {}
+        # Use vertex incidence to update only facets which actually meet a
+        # newly-added facet.
+        by_vertex = defaultdict(set)
+        for f, f_set in face_sets.items():
+            int_facets = set()
+            for new_facet in new_facet_sets:
+                _add_maximal_face(int_facets,
+                                  new_facet.intersection(f_set))
+            intersections[f] = int_facets
+            for vertex in f_set:
+                by_vertex[vertex].add(f)
+
         contractible_intersections = {}
-        while not done:
-            done = True
-            remove_these = []
+        # Failed candidates wait until their intersection changes; queued
+        # candidates are never in ``waiting``.  Ranks preserve full-scan order.
+        waiting = set()
+        current = list(enumerate(faces))
+        while current:
             if verbose:
-                print(f"  looping through {len(faces)} facets")
-            for f in faces:
+                print(f"  looping through {len(face_sets)} facets")
+            next_dirty = set()
+            added_count = 0
+            while current:
+                current_rank, f = heappop(current)
                 int_facets = intersections[f]
-                if int_facets:
-                    if len(int_facets) == 1:
-                        is_contractible = True
-                    else:
-                        key = frozenset(int_facets)
-                        is_contractible = contractible_intersections.get(key)
-                        if is_contractible is None:
-                            intersection = SimplicialComplex(int_facets)
-                            is_contractible = (intersection == intersection._contractible_subcomplex())
-                            contractible_intersections[key] = is_contractible
-                    if is_contractible:
-                        new_facets.append(f)
-                        f_set = face_sets[f]
-                        new_facet_sets.append(f_set)
-                        remove_these.append(f)
-                        done = False
-                        for g in faces:
-                            if g != f:
-                                inter = face_sets[g].intersection(f_set)
-                                if inter:
-                                    intersections[g].add(inter)
-            if verbose and not done:
-                print("    added %s facets" % len(remove_these))
-            if remove_these:
-                remove_set = set(remove_these)
-                faces = [f for f in faces if f not in remove_set]
-                for f in remove_set:
-                    intersections.pop(f, None)
-                    face_sets.pop(f, None)
+                if not int_facets:
+                    is_contractible = False
+                elif len(int_facets) == 1:
+                    is_contractible = True
+                else:
+                    key = frozenset(int_facets)
+                    try:
+                        is_contractible = contractible_intersections[key]
+                    except KeyError:
+                        n_facets = len(int_facets)
+                        if n_facets == 2:
+                            first, second = int_facets
+                            is_contractible = not first.isdisjoint(second)
+                        elif all(len(facet) == 1 for facet in int_facets):
+                            is_contractible = False
+                        else:
+                            facet_iter = iter(int_facets)
+                            first_facet = next(facet_iter)
+                            vertices = set(first_facet)
+                            common_vertices = set(first_facet)
+                            n_incidents = len(first_facet)
+                            for facet in facet_iter:
+                                vertices.update(facet)
+                                n_incidents += len(facet)
+                                common_vertices.intersection_update(facet)
+
+                            if common_vertices:
+                                # The complex is a cone on any common vertex.
+                                is_contractible = True
+                            elif n_incidents - len(vertices) < n_facets - 1:
+                                # A connected facet-intersection graph needs
+                                # at least n_facets - 1 repeated incidences.
+                                is_contractible = False
+                            elif not _facets_are_connected(int_facets):
+                                is_contractible = False
+                            else:
+                                intersection = SimplicialComplex(
+                                    int_facets, maximality_check=False)
+                                is_contractible = (
+                                    intersection
+                                    == intersection._contractible_subcomplex())
+                        contractible_intersections[key] = is_contractible
+
+                if not is_contractible:
+                    waiting.add(f)
+                    continue
+
+                new_facets.append(f)
+                added_count += 1
+                f_set = face_sets[f]
+                affected = set()
+                for vertex in f_set:
+                    by_vertex[vertex].discard(f)
+                    affected.update(by_vertex[vertex])
+
+                for g in affected:
+                    changed = _add_maximal_face(
+                        intersections[g], face_sets[g].intersection(f_set))
+                    if changed and g in waiting:
+                        waiting.remove(g)
+                        if rank[g] > current_rank:
+                            heappush(current, (rank[g], g))
+                        else:
+                            next_dirty.add(g)
+
+                intersections.pop(f)
+                face_sets.pop(f)
+
+            if verbose and added_count:
+                print(f"    added {added_count} facets")
+            current = [(rank[f], f) for f in next_dirty]
+            heapify(current)
         if verbose:
             print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,
@@ -4820,6 +4945,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Calculate the intersection of two simplicial complexes.
 
+        Nonempty facet intersections are generated using a vertex-to-facet
+        index, while nonmaximal intersections are discarded immediately.
+
         EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2,3], [1,2,4]])
@@ -4833,11 +4961,65 @@ class SimplicialComplex(Parent, GenericCellComplex):
             False
             sage: X.intersection(Z) == Z
             True
+
+        Intersections in dimensions zero and one retain isolated common
+        vertices::
+
+            sage: P = SimplicialComplex([[0,1], [1,2], [3]])
+            sage: Q = SimplicialComplex([[0,1], [0,2], [3]])
+            sage: sorted(P.intersection(Q).facets())
+            [(0, 1), (2,), (3,)]
+            sage: points = SimplicialComplex([[0], [2], ['a']])
+            sage: mixed = SimplicialComplex([[0,1,2], ['a','b']])
+            sage: {f.set() for f in points.intersection(mixed).facets()} == {
+            ....:     frozenset({0}), frozenset({2}), frozenset({'a'})}
+            True
+
+        The intersection need not be pure::
+
+            sage: X = SimplicialComplex([[0,1,2,3], [4,5], [6]])
+            sage: Y = SimplicialComplex([[0,1,2,7], [4,5,8], [6,9]])
+            sage: sorted(X.intersection(Y).facets())
+            [(0, 1, 2), (4, 5), (6,)]
+
+        Disjoint complexes have empty intersection::
+
+            sage: SimplicialComplex([[0,1]]).intersection(
+            ....:     SimplicialComplex([[2,3]])).dimension()
+            -1
         """
-        F = []
-        for k in range(1 + min(self.dimension(), other.dimension())):
-            F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
-        return SimplicialComplex(F)
+        common_vertices = (self._vertex_to_index.keys()
+                           & other._vertex_to_index.keys())
+        if not common_vertices:
+            return SimplicialComplex()
+
+        if self.dimension() == 0 or other.dimension() == 0:
+            return SimplicialComplex(((v,) for v in common_vertices),
+                                     maximality_check=False)
+
+        left_facets = self._facets
+        right_facets = other._facets
+        if len(left_facets) > len(right_facets):
+            left_facets, right_facets = right_facets, left_facets
+
+        right_sets = [f.set() for f in right_facets]
+        by_vertex = defaultdict(list)
+        for i, facet in enumerate(right_sets):
+            for vertex in facet:
+                if vertex in common_vertices:
+                    by_vertex[vertex].append(i)
+
+        facets = set()
+        for facet in left_facets:
+            facet_set = facet.set()
+            candidates = set()
+            for vertex in facet_set:
+                candidates.update(by_vertex.get(vertex, ()))
+            for i in candidates:
+                _add_maximal_face(facets,
+                                  facet_set.intersection(right_sets[i]))
+
+        return SimplicialComplex(facets, maximality_check=False)
 
     def bigraded_betti_numbers(self, base_ring=ZZ, verbose=False):
         r"""
