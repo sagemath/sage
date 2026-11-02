@@ -61,6 +61,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     def product_on_basis(self, left, right):  # add reference
         r"""
         Return the product of ``left`` and ``right``.
+
         The product of two supersymmetric Schur functions is the same as
         that of the symmetric versions.
 
