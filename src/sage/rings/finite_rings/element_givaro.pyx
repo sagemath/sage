@@ -1094,11 +1094,30 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: K.<a> = FiniteField(9)
             sage: a.sqrt(extend = False, all = True)
             []
+
+        Check that :issue:`42719` is fixed, i.e. that ``extend=True``
+        together with ``all=True`` raises :exc:`NotImplementedError`
+        for a non-square element, instead of silently returning an
+        empty list::
+
+            sage: K.<a> = GF(3^2)
+            sage: a.is_square()
+            False
+            sage: a.sqrt(extend=True, all=False)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: a.sqrt(extend=True, all=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
         if all:
             if self.is_square():
                 a = self.sqrt()
                 return [a, -a] if -a != a else [a]
+            if extend:
+                raise NotImplementedError
             return []
         cdef Cache_givaro cache = <Cache_givaro>self._cache
         if self.element == cache.objectptr.one:
