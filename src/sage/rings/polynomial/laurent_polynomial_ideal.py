@@ -94,6 +94,10 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
         self._poly_ring = ring.polynomial_ring()
         self._poly_ideal = None  # Create only as needed
+        self._extended_ideal = None  # Create only as needed
+        self._use_polynomial_cover = (
+            isinstance(ring, LaurentPolynomialRing_univariate)
+            and ring.base_ring().is_integral_domain() is not True)
         self._saturated = False
         if hint is None:
             self._hint = self._poly_ring.zero_ideal()
@@ -200,15 +204,76 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2 + 3*x])
             sage: 1 + 3*x^-1 in I
             True
+
+        For univariate Laurent polynomials over non-integral base rings,
+        membership is computed in the polynomial cover ring when supported::
+
+            sage: P.<x> = LaurentPolynomialRing(Zmod(8))
+            sage: 2 in P.ideal(4*x^2 + x + 4)
+            True
+            sage: 1 in P.ideal(x^-1)
+            True
+            sage: 2 + x in P.ideal(2*x^-1 + 1)
+            True
+            sage: 2 + x in P.ideal((2 + x)*x^-100000)
+            True
+            sage: 2*x^-3 in P.ideal(2*x)
+            True
+            sage: 3*x in P.ideal(2*x)
+            False
+            sage: 1 in P.ideal(x^-100000)
+            True
+
+        The zero ideal and zero ring are handled without a Gröbner basis::
+
+            sage: I = P.ideal([])
+            sage: 0 in I, 1 in I
+            (True, False)
+            sage: Z.<z> = LaurentPolynomialRing(Zmod(1))
+            sage: Z.zero() in Z.ideal([])
+            True
+
+        Unsupported polynomial backends raise instead of silently returning
+        an incorrect result::
+
+            sage: A.<e> = QQ[]
+            sage: B.<ebar> = A.quotient(e^2)
+            sage: L.<x> = LaurentPolynomialRing(B)
+            sage: f = 1 + ebar*x
+            sage: f * (x^-2 + ebar) in L.ideal(f)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: ideal membership in the polynomial cover is not implemented over this base ring
         """
-        if not f or f in self.gens():
+        R = self.ring()
+        if not self._use_polynomial_cover:
+            if not f or f in self.gens():
+                return True
+            f = R(f)
+            if isinstance(R, LaurentPolynomialRing_univariate):
+                g = f.__reduce__()[1][1]
+            else:
+                g = f.__reduce__()[1][0]
+            return g in self.polynomial_ideal()
+
+        f = R(f)
+        generators = self.gens()
+        if not f or any(f is g for g in generators):
             return True
-        f = self.ring()(f)
-        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
-            g = f.__reduce__()[1][1]
-        else:
-            g = f.__reduce__()[1][0]
-        return (g in self.polynomial_ideal())
+        f_polynomial, f_shift = f.polynomial_construction()
+        for g in generators:
+            g_polynomial, g_shift = g.polynomial_construction()
+            if f_shift == g_shift and f_polynomial == g_polynomial:
+                return True
+        if not any(generators):
+            return False
+        if self._extended_ideal is None:
+            if any(g.is_unit() for g in generators):
+                self._extended_ideal = R._extended_ring.unit_ideal()
+            else:
+                self._extended_ideal = R._ideal_in_extended_ring(generators)
+        target = R._extended_ring(f_polynomial)
+        return self._extended_ideal.reduce(target).is_zero()
 
     def gens_reduced(self) -> tuple:
         """
