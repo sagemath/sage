@@ -352,7 +352,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
             sage: N = ToricLattice(3)
             sage: n = N(1,2,3)
-            sage: n.plot()                                                              # needs sage.plot
+            sage: n.plot()
             Graphics3d Object
         """
         from sage.geometry.toric_plotter import ToricPlotter

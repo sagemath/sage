@@ -11,3 +11,6 @@
 pkgconfig
 zlib
 boost
+autoconf
+automake
+libtool

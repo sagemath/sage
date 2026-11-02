@@ -523,14 +523,14 @@ if( DEBUGLEVEL_ell >= 5, print("     starting polrealrootsisolate with pol = ",p
   st = polsturm(pol);
   if( !st, return([]));
   a = 1;
-  while( polsturm(pol,-a,a) < st, a <<= 1);
+  while( polsturm(pol,[-a,a]) < st, a <<= 1);
   res = [[-a,a,st]];
   ind = 1;
   while( #res < st,
     while( res[ind][3] == 1, ind++);
     a = res[ind][1]; b = res[ind][2]; stab = res[ind][3];
     c = (a+b)/2;
-    stac = polsturm(pol,a,c);
+    stac = polsturm(pol,[a,c]);
     if( stac == 0, res[ind][1] = c; next);
     if( stac == stab, res[ind][2] = c; next);
     res[ind] = [a,c,stac];
@@ -1193,7 +1193,7 @@ if( DEBUGLEVEL_ell >= 5, print("     Computing the sign of elt = ",elt));
     st = 1;
     compt = 0;
     while( st,
-      st = polsturm(elt2,rootapprox[1],rootapprox[2]);
+      st = polsturm(elt2,[rootapprox[1],rootapprox[2]]);
       if( st,
         rootapprox = polrealrootsimprove(component(gen[i],1),rootapprox);
 \\        rootapprox = polrealrootsimprove(gen[i].mod,rootapprox);

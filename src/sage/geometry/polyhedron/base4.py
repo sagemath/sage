@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Base class for polyhedra: Graph-theoretic methods
 
@@ -111,18 +110,18 @@ class Polyhedron_base4(Polyhedron_base3):
              An inequality (0, 0, 1) x + 1 >= 0,
              An inequality (0, 1, 0) x + 1 >= 0,
              An inequality (1, 0, 0) x + 1 >= 0]
-            sage: G.automorphism_group().is_isomorphic(P.hasse_diagram().automorphism_group())      # needs sage.groups
+            sage: G.automorphism_group().is_isomorphic(P.hasse_diagram().automorphism_group())
             True
             sage: O = polytopes.octahedron(); O
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
             sage: O.vertex_facet_graph()
             Digraph on 14 vertices
             sage: H = O.vertex_facet_graph()
-            sage: G.is_isomorphic(H)                                                                # needs sage.groups
+            sage: G.is_isomorphic(H)
             False
             sage: G2 = copy(G)
             sage: G2.reverse_edges(G2.edges(sort=True))
-            sage: G2.is_isomorphic(H)                                                               # needs sage.groups
+            sage: G2.is_isomorphic(H)
             True
 
         TESTS:
@@ -170,7 +169,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
             sage: g3 = polytopes.hypercube(3).vertex_graph(); g3
             Graph on 8 vertices
-            sage: g3.automorphism_group().cardinality()                                             # needs sage.groups
+            sage: g3.automorphism_group().cardinality()
             48
             sage: s4 = polytopes.simplex(4).vertex_graph(); s4
             Graph on 5 vertices
@@ -354,7 +353,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: c5_20_fl = c5_20.face_lattice() # long time
             sage: [len(x) for x in c5_20_fl.level_sets()] # long time
             [1, 20, 190, 580, 680, 272, 1]
-            sage: polytopes.hypercube(2).face_lattice().plot()                          # needs sage.plot
+            sage: polytopes.hypercube(2).face_lattice().plot()
             Graphics object consisting of 27 graphics primitives
             sage: level_sets = polytopes.cross_polytope(2).face_lattice().level_sets()
             sage: level_sets[0][0].ambient_V_indices(), level_sets[-1][0].ambient_V_indices()
@@ -641,16 +640,16 @@ class Polyhedron_base4(Polyhedron_base3):
         EXAMPLES::
 
             sage: quadrangle = Polyhedron(vertices=[(0,0),(1,0),(0,1),(2,3)])
-            sage: quadrangle.combinatorial_automorphism_group().is_isomorphic(          # needs sage.groups
+            sage: quadrangle.combinatorial_automorphism_group().is_isomorphic(
             ....:     groups.permutation.Dihedral(4))
             True
-            sage: quadrangle.restricted_automorphism_group()                            # needs sage.groups
+            sage: quadrangle.restricted_automorphism_group()
             Permutation Group with generators [()]
 
         Permutations of the vertex graph only exchange vertices with vertices::
 
             sage: P = Polyhedron(vertices=[(1,0), (1,1)], rays=[(1,0)])
-            sage: P.combinatorial_automorphism_group(vertex_graph_only=True)            # needs sage.groups
+            sage: P.combinatorial_automorphism_group(vertex_graph_only=True)
             Permutation Group with generators [(A vertex at (1,0),A vertex at (1,1))]
 
         This shows an example of two polytopes whose vertex-edge graphs are isomorphic,
@@ -896,7 +895,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
             sage: P = Polyhedron(vertices=[(1/3,0,0,1),(0,1/4,0,1),(0,0,1/5,1)],
             ....:                base_ring=RDF)
-            sage: P.restricted_automorphism_group()                                     # needs sage.groups
+            sage: P.restricted_automorphism_group()
             Permutation Group with generators [(2,3), (1,2)]
             sage: len(P.restricted_automorphism_group(output='matrixlist'))
             6
@@ -904,7 +903,7 @@ class Polyhedron_base4(Polyhedron_base3):
         TESTS::
 
             sage: P = Polyhedron(vertices=[(1,0), (1,1)], rays=[(1,0)])
-            sage: P.restricted_automorphism_group(output='permutation')                 # needs sage.groups
+            sage: P.restricted_automorphism_group(output='permutation')
             Permutation Group with generators [(1,2)]
             sage: P.restricted_automorphism_group(output='matrix')
             Matrix group over Rational Field with 1 generators (
@@ -1084,10 +1083,10 @@ class Polyhedron_base4(Polyhedron_base3):
         All the faces of the 3-dimensional permutahedron are either
         combinatorially isomorphic to a square or a hexagon::
 
-            sage: H = polytopes.regular_polygon(6)                                      # needs sage.rings.number_field
+            sage: H = polytopes.regular_polygon(6)
             sage: S = polytopes.hypercube(2)
             sage: P = polytopes.permutahedron(4)
-            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)                # needs sage.rings.number_field
+            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)
             ....:       or F.as_polyhedron().is_combinatorially_isomorphic(H)
             ....:     for F in P.faces(2))
             True
@@ -1106,7 +1105,7 @@ class Polyhedron_base4(Polyhedron_base3):
             ....:    return C.intersection(H)
             sage: [simplex_intersection(k).is_combinatorially_isomorphic(cube_intersection(k)) for k in range(2,5)]
             [True, True, True]
-            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))                   # needs sage.rings.number_field
+            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))
             True
             sage: simplex_intersection(3).is_combinatorially_isomorphic(polytopes.octahedron())
             True
@@ -1227,7 +1226,7 @@ class Polyhedron_base4(Polyhedron_base3):
             True
             sage: polytopes.cube().is_self_dual()
             False
-            sage: polytopes.hypersimplex(5,2).is_self_dual()                            # needs sage.combinat
+            sage: polytopes.hypersimplex(5,2).is_self_dual()
             False
             sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]]).is_self_dual()
             Traceback (most recent call last):

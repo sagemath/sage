@@ -1216,7 +1216,10 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                 return self.parent().module_generators[0]
 
             n = self.parent()._cartan_type.rank()
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             shift = self._shift
             while y.is_admissible():
                 # The only element with a shift of 0 is the highest weight element.
@@ -1255,7 +1258,9 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                  (alpha[0] + alpha[1] + alpha[3], -1),
                  (alpha[1] + alpha[3] + alpha[4] + alpha[5], -1))
             """
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             y = self.projection().f(i)
             if y is not None:
                 return type(self)(self.parent(),
@@ -1384,7 +1389,10 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                 k = self._shift
             elif k < self._shift:
                 return None
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             n = self.parent()._cartan_type.rank()
             A = CrystalOfAlcovePaths(self.parent()._cartan_type, [k] * n)
             return A(tuple([A._R(rt, h + k*s(rt)) for rt, h in self.value]))

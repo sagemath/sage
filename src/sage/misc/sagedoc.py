@@ -24,7 +24,7 @@ see :issue:`12849`::
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
-    <span class="sig-name descname"><span class="pre">numerical_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span>...
+    ...<span class="sig-name descname"><span class="pre">numerical_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span>...
 
 Check that sphinx is not imported at Sage start-up::
 
@@ -400,107 +400,6 @@ def skip_TESTS_block(docstring):
     return s[1:]  # Remove empty line from the beginning.
 
 
-def process_dollars(s):
-    r"""nodetex
-    Replace dollar signs with backticks.
-
-    More precisely, do a regular expression search.  Replace a plain
-    dollar sign ($) by a backtick (`).  Replace an escaped dollar sign
-    (\\$) by a dollar sign ($).  Don't change a dollar sign preceded or
-    followed by a backtick (\`$ or \$`), because of strings like
-    "``$HOME``".  Don't make any changes on lines starting with more
-    spaces than the first nonempty line in ``s``, because those are
-    indented and hence part of a block of code or examples.
-
-    This also doesn't replaces dollar signs enclosed in curly braces,
-    to avoid nested math environments.
-
-    EXAMPLES::
-
-        sage: from sage.misc.sagedoc import process_dollars
-        sage: process_dollars('hello')
-        'hello'
-        sage: process_dollars('some math: $x=y$')
-        doctest:warning...
-        DeprecationWarning: using dollar signs to mark up math in Sage docstrings
-        is deprecated; use backticks instead
-        See https://github.com/sagemath/sage/issues/33973 for details.
-        'some math: `x=y`'
-
-    Replace \\$ with $, and don't do anything when backticks are involved::
-
-        sage: process_dollars(r'a ``$REAL`` dollar sign: \$')
-        'a ``$REAL`` dollar sign: $'
-
-    Don't make any changes on lines indented more than the first
-    nonempty line::
-
-        sage: s = '\n first line\n     indented $x=y$'
-        sage: s == process_dollars(s)
-        True
-
-    Don't replace dollar signs enclosed in curly braces::
-
-        sage: process_dollars(r'f(n) = 0 \text{ if $n$ is prime}')
-        'f(n) = 0 \\text{ if $n$ is prime}'
-
-    This is not perfect::
-
-        sage: process_dollars(r'$f(n) = 0 \text{ if $n$ is prime}$')
-        '`f(n) = 0 \\text{ if $n$ is prime}$'
-
-    The regular expression search doesn't find the last $.
-    Fortunately, there don't seem to be any instances of this kind of
-    expression in the Sage library, as of this writing.
-    """
-    if s.find("$") == -1:
-        return s
-    from sage.misc.superseded import deprecation
-    # find how much leading whitespace s has, for later comparison:
-    # ignore all $ on lines which start with more whitespace.
-    whitespace = re.match(r'\s*\S', s.lstrip('\n'))
-    whitespace = ' ' * (whitespace.end() - 1)  # leading whitespace
-    # Indices will be a list of pairs of positions in s, to search between.
-    # If the following search has no matches, then indices will be (0, len(s)).
-    indices = [0]
-    # This searches for "$blah$" inside a pair of curly braces --
-    # don't change these, since they're probably coming from a nested
-    # math environment.  So for each match, search to the left of its
-    # start and to the right of its end, but not in between.
-    for m in re.finditer(r"{[^{}$]*\$([^{}$]*)\$[^{}$]*}", s):
-        indices[-1] = (indices[-1], m.start())
-        indices.append(m.end())
-    indices[-1] = (indices[-1], len(s))
-    # regular expression for $ (not \$, `$, $`, and only on a line
-    # with no extra leading whitespace).
-    #
-    # in detail:
-    #   re.compile("^" # beginning of line
-    #               + "(%s%)?" % whitespace
-    #               + r"""(\S # non whitespace
-    #                     .*?)? # non-greedy match any non-newline characters
-    #                     (?<!`|\\)\$(?!`) # $ with negative lookbehind and lookahead
-    #                  """, re.M | re.X)
-    #
-    # except that this doesn't work, so use the equivalent regular
-    # expression without the 're.X' option.  Maybe 'whitespace' gets
-    # eaten up by re.X?
-    regexp = "^" + "(%s)?" % whitespace + r"(\S.*?)?(?<!`|\\)\$(?!`)"
-    dollar = re.compile(regexp, re.M)
-    # regular expression for \$
-    slashdollar = re.compile(r"\\\$")
-    for start, end in indices:
-        while dollar.search(s, start, end):
-            m = dollar.search(s, start, end)
-            s = s[:m.end() - 1] + "`" + s[m.end():]
-            deprecation(33973,
-                        "using dollar signs to mark up math in Sage docstrings "
-                        "is deprecated; use backticks instead")
-        while slashdollar.search(s, start, end):
-            m = slashdollar.search(s, start, end)
-            s = s[:m.start()] + "$" + s[m.end():]
-    return s
-
 
 # When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
 # and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
@@ -685,7 +584,7 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')                                           # needs sage.modules
+        sage: format('<<<identity_matrix>>>')
         '...Definition: identity_matrix(...'
         sage: format('<<<identity_matrix>>>')[:28]                                      # needs sphinx
         'Definition: identity_matrix('
@@ -708,9 +607,9 @@ def format(s, embedded=False):
         ....: "    `x \\geq y`",
         ....: "    '''",
         ....: "    return -x"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: print(sage_getdoc(testfunc))                                              # needs sage.misc.cython
+        sage: print(sage_getdoc(testfunc))
         <BLANKLINE>
             This is a doc string with raw latex
         <BLANKLINE>
@@ -806,7 +705,6 @@ def format(s, embedded=False):
             i_0 += i
 
     if 'nodetex' not in directives:
-        s = process_dollars(s)
         s = skip_TESTS_block(s)
         if not embedded:
             s = process_mathtt(s)
@@ -837,7 +735,7 @@ def format_src(s):
         sage: from sage.misc.sagedoc import format_src
         sage: format_src('unladen swallow')
         'unladen swallow'
-        sage: format_src('<<<Sq>>>')[5:15]                                              # needs sage.combinat sage.modules
+        sage: format_src('<<<Sq>>>')[5:15]
         'Sq(*nums):'
     """
     if not isinstance(s, str):
@@ -1124,7 +1022,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     Note that you can do tab completion on the ``module`` string.
     Another way to accomplish a similar search::
 
-        sage: len(search_src("matrix", path_re="calc",                                  # needs sage.modules
+        sage: len(search_src("matrix", path_re="calc",
         ....:                interact=False).splitlines()) > 15
         True
 
@@ -1412,8 +1310,8 @@ def my_getsource(obj, oname=''):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import my_getsource
-        sage: s = my_getsource(identity_matrix)                                         # needs sage.modules
-        sage: s[15:34]                                                                  # needs sage.modules
+        sage: s = my_getsource(identity_matrix)
+        sage: s[15:34]
         'def identity_matrix'
     """
     try:
@@ -1451,7 +1349,7 @@ class _sage_doc:
 
         sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-374:-215]                        # needs sage.modules
+        sage: browse_sage_doc(identity_matrix, 'rst')[-374:-215]
         '...Full MatrixSpace of 3 by 3 sparse matrices...'
     """
     def __init__(self):
@@ -1479,9 +1377,9 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc(identity_matrix, 'rst')                               # needs sage.modules
+            sage: browse_sage_doc(identity_matrix, 'rst')
             "...**File:**...**Type:**...**Definition:** identity_matrix..."
-            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')    # needs sage.modules
+            sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')
             True
             sage: browse_sage_doc(identity_matrix, 'html', False)                       # needs sagemath_doc_html sphinx
             '...div...File:...Type:...Definition:...identity_matrix...'
@@ -1489,7 +1387,7 @@ class _sage_doc:
         In the 'text' version, double colons have been replaced with
         single ones (among other things)::
 
-            sage: '::' in browse_sage_doc(identity_matrix, 'rst')                       # needs sage.modules
+            sage: '::' in browse_sage_doc(identity_matrix, 'rst')
             True
             sage: '::' in browse_sage_doc(identity_matrix, 'text')                      # needs sphinx
             False
@@ -1629,8 +1527,17 @@ class _sage_doc:
         url = self._base_url + os.path.join(name, "index.html")
         path = os.path.join(self._base_path, name, "index.html")
         if not os.path.exists(path):
-            raise OSError("""The document '{0}' does not exist.  Please build it
-with 'sage -docbuild {0} html' and try again.""".format(name))
+            if name == "reference":
+                target = "doc-html-reference-reference_top"
+            else:
+                target = f"doc-html-other-en-{name}"
+            raise OSError(
+                f"The document '{name}' does not exist. To build it from a Sage source checkout, run\n"
+                f"'meson compile -C builddir {target}', replacing 'builddir' with your Meson build directory.\n"
+                f"Then open 'builddir/src/doc/html/en/{name}/index.html' in your web browser.\n"
+                "See https://doc.sagemath.org/html/en/developer/sage_manuals.html#building-the-manuals\n"
+                f"for build instructions, or read the document at https://doc.sagemath.org/html/en/{name}/."
+            )
 
         if testing:
             return (url, path)

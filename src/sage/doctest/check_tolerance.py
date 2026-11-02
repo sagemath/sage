@@ -23,9 +23,13 @@ Check tolerance when parsing docstrings
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import re
 from sage.doctest.rif_tol import RIFtol, add_tolerance
-from sage.doctest.marked_output import MarkedOutput
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.doctest.marked_output import MarkedOutput
 
 
 # Regex pattern for float without the (optional) leading sign

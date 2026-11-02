@@ -29,13 +29,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -43,6 +43,10 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.rings.real_mpfr import RR
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_generic):
@@ -314,14 +318,14 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def residue_disc(self, P):
         r"""
-        Gives the residue disc of `P`
+        Return the residue disc of `P`.
 
         TODO: Really, this gives the reduction over the residue field. Isn't the residue disc a disc over the p-adics?
         Maybe rename to residue_point or reduction ?
 
         EXAMPLES:
 
-        We compute the residue discs for diffferent points on the elliptic curve
+        We compute the residue discs for different points on the elliptic curve
         `y^2 = x^3 = 10*x + 9` over the `5`-adics::
 
             sage: R.<x> = QQ['x']
@@ -363,7 +367,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         - Jennifer Balakrishnan
         """
-
         F = self.base_ring().residue_field()
         HF = self.change_ring(F)
 
@@ -402,7 +405,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def is_same_disc(self, P, Q) -> bool:
         r"""
-        Checks if `P,Q` are in same residue disc
+        Check if `P,Q` are in same residue disc
 
         EXAMPLES::
 
@@ -578,7 +581,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integrals_on_basis(self, P, Q, algorithm=None):
         r"""
-        Computes the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Compute the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
 
         INPUT:
 
@@ -986,7 +989,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def frobenius(self, P=None):
         r"""
-        Returns the `p`-th power lift of Frobenius of `P`
+        Return the `p`-th power lift of Frobenius of `P`
 
         EXAMPLES::
 
@@ -1083,7 +1086,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def newton_sqrt(self, f, x0, prec):
         r"""
-        Takes the square root of the power series `f` by Newton's method
+        Return the square root of the power series `f` by Newton's method.
 
         NOTE:
 
@@ -1168,7 +1171,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def get_boundary_point(self, curve_over_extn, P):
         r"""
-        Given self over an extension field, find a point in the disc of `P` near the boundary
+        Given self over an extension field, find a point in the disc of `P` near the boundary.
 
         INPUT:
 
@@ -1383,7 +1386,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integral_S_to_Q(self, w, S, Q):
         r"""
-        Compute the Coleman integral `\int_S^Q w`
+        Compute the Coleman integral `\int_S^Q w`.
 
         **one should be able to feed ``S,Q`` into coleman_integral,
         but currently that segfaults**
@@ -1439,8 +1442,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integral_from_weierstrass_via_boundary(self, w, P, Q, d):
         r"""
-        Computes the Coleman integral `\int_P^Q w` via a boundary point
-        in the disc of ``P``, defined over a degree ``d`` extension
+        Compute the Coleman integral `\int_P^Q w` via a boundary point
+        in the disc of ``P``, defined over a degree ``d`` extension.
 
         INPUT:
 

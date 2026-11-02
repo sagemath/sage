@@ -1,4 +1,8 @@
-from sage.cli.options import CliOptions
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.cli.options import CliOptions
 
 
 class InteractiveShellCmd:

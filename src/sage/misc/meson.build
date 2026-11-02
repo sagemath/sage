@@ -32,6 +32,7 @@ py.install_sources(
   'converting_dict.py',
   'copying.py',
   'cython.py',
+  'cython_test.py',
   'decorators.py',
   'defaults.py',
   'derivative.pyx',

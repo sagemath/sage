@@ -388,11 +388,11 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: poly_test.ambient_vector_space() is poly_test.ambient()
             True
 
-            sage: poly_test.ambient_vector_space(AA)                                    # needs sage.rings.number_field
+            sage: poly_test.ambient_vector_space(AA)
             Vector space of dimension 4 over Algebraic Real Field
             sage: poly_test.ambient_vector_space(RDF)
             Vector space of dimension 4 over Real Double Field
-            sage: poly_test.ambient_vector_space(SR)                                    # needs sage.symbolic
+            sage: poly_test.ambient_vector_space(SR)
             Vector space of dimension 4 over Symbolic Ring
         """
         return self.Vrepresentation_space().vector_space(base_field=base_field)

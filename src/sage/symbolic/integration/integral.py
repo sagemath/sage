@@ -109,8 +109,10 @@ class IndefiniteIntegral(BuiltinFunction):
 
         Check that :issue:`28842` is fixed::
 
-            sage: integrate(1/(x^4 + x^3 + 1), x)
-            integrate(1/(x^4 + x^3 + 1), x)
+            sage: R = integrate(1/(x^4 + x^3 + 1), x)
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: R.operator() is root_sum
+            True
 
         Check that :issue:`32002` is fixed. This needs giac since only
         giac can integrate it in any case::
@@ -612,10 +614,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
                  x y  + Sqrt[--] FresnelS[Sqrt[--] x]
                              2                 Pi
         sage: print(f.integral(x))
-        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x)
-                                + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x)
-                                - (I - 1)*sqrt(2)*erf(sqrt(-I)*x)
-                                + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
+        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) - 2*sqrt(2)*imag_part(erf((-1)^(1/4)*x)) + 2*sqrt(2)*real_part(erf((-1)^(1/4)*x)))
 
     Alternatively, just use algorithm='mathematica_free' to integrate via Mathematica
     over the internet (does NOT require a Mathematica license!)::
@@ -644,12 +643,15 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no closed form integral. Notice
-    that the answer comes back as an expression that contains an
-    integral itself. ::
+    A rational function can have a compact antiderivative represented
+    using a :class:`~sage.symbolic.rootsum.RootSumFunction` over a resolvent
+    polynomial.  Expanding it into individual logarithmic terms is not
+    necessary. ::
 
-        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x); A
-        integrate(1/((x^4 + x + 1)*(x - 4)), x)
+        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x)
+        sage: from sage.symbolic.rootsum import root_sum
+        sage: any(op.operator() is root_sum for op in A.operands())
+        True
 
     Sometimes, in this situation, using the algorithm "maxima"
     gives instead a partially integrated answer::
@@ -1011,8 +1013,8 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: f = log(sin(x))*sin(x)^2
         sage: g = integrate(f, x) ; g
         1/4*I*x^2
+        - 1/2*I*x*arctan2(-sin(x), -cos(x) + 1)
         - 1/2*I*x*arctan2(sin(x), cos(x) + 1)
-        + 1/2*I*x*arctan2(sin(x), -cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 - 2*cos(x) + 1)
         + 1/4*(2*x - sin(2*x))*log(sin(x))
@@ -1036,7 +1038,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: assume(a > 0)
         sage: assume(a < 1)
         sage: integrate(x*log(1/(a*x+(1-x)^2)), x, 0, 1, algorithm='maxima')
-        1/4*a^2*log(a) + 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)*(a - 2)/(a^2 - 4*a)) - 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - a*log(a) - sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)*(a - 2)/(a^2 - 4*a)) + sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - 1/2*a + 3/2
+        1/4*a^2*log(a) - 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)/(a - 4)) + 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)*(a - 2)/((a - 4)*a)) - a*log(a) + sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)*(a - 2)/((a - 4)*a)) - 1/2*a + 3/2
 
     Check that :issue:`25905` is fixed::
 

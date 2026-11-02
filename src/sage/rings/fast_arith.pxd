@@ -1,7 +1,6 @@
 cimport cython
 
-
-cpdef prime_range(start, stop=*, algorithm=*, bint py_ints=*)
+cpdef prime_range(start, stop=*, step=*, algorithm=*, bint py_ints=*)
 
 # Declaring these helper classes final avoids vtable lookups in generated code;
 # it is a performance optimization, not an object-oriented design decision.
