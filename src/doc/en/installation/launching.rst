@@ -50,8 +50,8 @@ Sage uses the following environment variables when it runs:
   write access, where Sage stores a number of files.
   The default location is :file:`$HOME/.sage/`.
 
-- :envvar:`SAGE_STARTUP_FILE` - a file including commands to be executed every
-  time Sage starts.
+- :envvar:`SAGE_STARTUP_FILE` - a file including commands to be executed when
+  an interactive Sage session starts, including a Sage Jupyter kernel.
   The default value is :file:`$DOT_SAGE/init.sage`.
 
 - :envvar:`BROWSER` - on most platforms, Sage will detect the command to
