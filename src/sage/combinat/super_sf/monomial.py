@@ -18,7 +18,7 @@ class SupersymFunctionAlgebra_monomial(super_sfa.SuperSymAlgebra_generic):
 
     .. MATH::
 
-       m_\lambda(\mathbf{x} \mid \mathbf{y}) = \sum_{\mu \cup \nu = \lambda} m_\mu(\mathbf{x}) f_\nu(\mathbf{y})
+       m_\lambda(\mathbf{x} \mid \mathbf{y}) = \sum_{\mu \cup \nu = \lambda} m_\mu(\mathbf{x}) f_\nu(\mathbf{y}).
 
     These form a non-graded multiplicative basis for the ring of supersymmetric
     functions.
