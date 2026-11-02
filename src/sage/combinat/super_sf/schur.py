@@ -148,7 +148,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     def lift_on_basis(self, part):
         r"""
         Return the Schur basis in terms of Schur symmetric basis
-        for a given partition, ``part``.
+        for a given partition ``part``.
 
         INPUT:
 
