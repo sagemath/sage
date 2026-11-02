@@ -24,7 +24,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
 
         s_\lambda(\mathbf{x} \mid \mathbf{y}) = \text{det}([h_{\lambda_i - i + j}(\mathbf{x} \mid \mathbf{y})]_{i,j=1}^{l})
 
-    where, `\lambda = (\lambda_1, \lambda_2, \ldots, \lambda_l)` is a partition, and `l = \mid \lambda \mid`.
+    where `\lambda = (\lambda_1, \lambda_2, \ldots, \lambda_l)` is a partition and `l = \mid \lambda \mid`.
 
     These form a non-graded multiplicative basis for the ring of supersymmetric
     functions.
