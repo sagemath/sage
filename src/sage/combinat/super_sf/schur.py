@@ -174,11 +174,11 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     def _to_powersum_on_basis(self, part):
         r"""
         Return the Schur basis in terms of Schur symmetric basis
-        for a given partition, ``part``.
+        for a given partition ``part``.
 
         INPUT:
 
-        - ``part`` -- a partition
+        - ``part`` -- partition
 
         EXAMPLES::
 
