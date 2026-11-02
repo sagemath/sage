@@ -1768,7 +1768,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
       - When set to ``True``, after solving the ``MixedIntegerLinearProgram``,
         it is possible to add a constraint, and then solve it again.
         The effect is that solvers that do not support this feature will not be
-        used.  (Coin and SCIP are such solvers.)
+        used.  (SCIP is such a solver.)
 
       - Defaults to ``False``.
 
@@ -1850,9 +1850,8 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
             elif base_ring is not RDF:
                 solver = "Interactivelp"
 
-        # We do not want to use Coin for constraint_generation. It just does not
-        # work
-        if solver in ("Coin", "SCIP") and constraint_generation:
+        # SCIP does not support constraint generation.
+        if solver == "SCIP" and constraint_generation:
             solver = "Glpk"
 
     if callable(solver):

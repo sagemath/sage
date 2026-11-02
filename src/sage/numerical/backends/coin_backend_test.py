@@ -26,6 +26,38 @@ class TestCoinBackend(GenericBackendTests):
         program = MixedIntegerLinearProgram(solver='Coin')
         assert isinstance(program.get_backend(), CoinBackend)
 
+    @pytest.mark.parametrize('integer', [False, True])
+    def test_constraint_generation_with_default_solver(self, integer):
+        from sage.numerical.backends.generic_backend import default_mip_solver
+        from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
+
+        former_solver = default_mip_solver()
+        try:
+            default_mip_solver('Coin')
+            p = MixedIntegerLinearProgram(constraint_generation=True)
+            assert isinstance(p.get_backend(), CoinBackend)
+            x = p.new_variable(integer=integer, nonnegative=True)
+            p.set_objective(x[0] + 2*x[1])
+            p.add_constraint(x[0], max=2)
+            p.add_constraint(x[1], max=2)
+            assert p.solve() == pytest.approx(6)
+
+            # Each solve must include constraints added since the previous solve.
+            p.add_constraint(x[0] + x[1], max=2.5)
+            assert p.solve() == pytest.approx(4 if integer else 4.5)
+            p.add_constraint(x[1], max=0)
+            assert p.solve() == pytest.approx(2)
+
+            # Infeasibility and later recovery must also use the current model.
+            p.add_constraint(x[0], min=3)
+            with pytest.raises(MIPSolverException, match='proven infeasible'):
+                p.solve()
+            p.remove_constraint(p.number_of_constraints()-1)
+            assert p.solve() == pytest.approx(2)
+            assert default_mip_solver() == 'Coin'
+        finally:
+            default_mip_solver(former_solver)
+
     def test_feature(self):
         from sage.features.mip_backends import COIN
 
