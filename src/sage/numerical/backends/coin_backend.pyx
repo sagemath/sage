@@ -795,20 +795,19 @@ cdef class CoinBackend(GenericBackend):
 
         model.branchAndBound()
 
-        if model.solver().isAbandoned():
+        # The LP relaxation may be optimal even when the integer problem
+        # is infeasible. Check the branch-and-bound model, not its LP solver.
+        if model.isAbandoned():
             raise MIPSolverException("CBC : The solver has abandoned!")
 
-        elif model.solver().isProvenPrimalInfeasible() or model.solver().isProvenDualInfeasible():
-            raise MIPSolverException("CBC : The problem or its dual has been proven infeasible!")
+        elif model.isContinuousUnbounded():
+            raise MIPSolverException("CBC : The linear relaxation is unbounded!")
 
-        elif (model.solver().isPrimalObjectiveLimitReached() or model.solver().isDualObjectiveLimitReached()):
-            raise MIPSolverException("CBC : The objective limit has been reached for the problem or its dual!")
+        elif model.isProvenInfeasible():
+            raise MIPSolverException("CBC : The problem has been proven infeasible!")
 
-        elif model.solver().isIterationLimitReached():
-            raise MIPSolverException("CBC : The iteration limit has been reached!")
-
-        elif not model.solver().isProvenOptimal():
-            raise MIPSolverException("CBC : Unknown error")
+        elif not model.isProvenOptimal():
+            raise MIPSolverException("CBC : The solver did not find an optimal solution!")
 
         return 0
 
@@ -837,7 +836,11 @@ cdef class CoinBackend(GenericBackend):
             sage: p.get_variable_value(1)
             1.5
         """
-        return self.model.solver().getObjValue() + <double>self.obj_constant_term
+        # set_basis_status() creates a model without running branch-and-bound;
+        # in that case, report the value of the explicitly selected LP basis.
+        if self.model.status() == -1:
+            return self.model.solver().getObjValue() + <double>self.obj_constant_term
+        return self.model.getObjValue() + <double>self.obj_constant_term
 
     cpdef get_variable_value(self, int variable) noexcept:
         r"""
@@ -872,7 +875,11 @@ cdef class CoinBackend(GenericBackend):
 
         cdef double * solution
         cdef double v
-        solution = <double*> self.model.solver().getColSolution()
+        if self.model.status() == -1:
+            # Before solve(), or after set_basis_status(), use the LP solution.
+            solution = <double*> self.model.solver().getColSolution()
+        else:
+            solution = self.model.bestSolution()
         if solution == NULL:
             v = 0.0
         else:

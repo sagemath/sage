@@ -172,6 +172,13 @@ cdef extern from "CbcModel.hpp":
          int getSolutionCount()
          # solve
          void branchAndBound()
+         bool isAbandoned()
+         bool isProvenOptimal()
+         bool isProvenInfeasible()
+         bool isContinuousUnbounded()
+         int status()
+         double getObjValue()
+         double * bestSolution()
          # not sure we need this but it can't hurt
          CoinMessageHandler * messageHandler ()
      void CbcMain0(CbcModel m)

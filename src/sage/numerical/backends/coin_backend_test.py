@@ -32,3 +32,60 @@ class TestCoinBackend(GenericBackendTests):
         assert COIN().name == 'cbc'
         assert COIN().spkg == 'cbc'
         assert COIN().is_present()
+
+    def test_integer_infeasible_with_feasible_relaxation(self, backend):
+        from sage.numerical.mip import MIPSolverException
+
+        backend.add_variables(4, binary=True)
+        # The LP relaxation is feasible, but a sum of binary variables
+        # cannot equal 11/7. Checking the LP solver's status used to accept
+        # its fractional solution and round it to an invalid assignment.
+        backend.add_linear_constraint([(i, 7) for i in range(4)], 11, 11)
+        with pytest.raises(MIPSolverException, match='proven infeasible'):
+            backend.solve()
+
+        # Solving again must use the new model and its integer solution.
+        backend.remove_constraint(0)
+        backend.add_linear_constraint([(i, 7) for i in range(4)], 14, 14)
+        backend.solve()
+        values = [backend.get_variable_value(i) for i in range(4)]
+        assert all(v in (0, 1) for v in values)
+        assert sum(values) == 2
+
+    @pytest.mark.parametrize('maximization', [False, True])
+    def test_integer_solution_and_objective(self, maximization):
+        backend = CoinBackend(maximization=maximization)
+        backend.add_variables(3, binary=True)
+        backend.add_linear_constraint([(0, 3), (1, 4), (2, 5)], None, 7)
+        sign = 1 if maximization else -1
+        backend.set_objective([sign * c for c in (5, 6, 7)], 13)
+        backend.solve()
+        assert [backend.get_variable_value(i) for i in range(3)] == [1, 1, 0]
+        assert backend.get_objective_value() == pytest.approx(13 + sign * 11)
+
+    @pytest.mark.parametrize('integer', [False, True])
+    def test_unbounded(self, backend, integer):
+        from sage.numerical.mip import MIPSolverException
+
+        backend.add_variable(integer=integer, obj=1)
+        with pytest.raises(MIPSolverException, match='unbounded'):
+            backend.solve()
+
+    def test_basis_solution_after_solve(self, backend):
+        backend.add_variables(2)
+        backend.add_linear_constraint([(0, 2), (1, -3)], None, 6)
+        backend.add_linear_constraint([(0, 3), (1, 2)], None, 6)
+        backend.set_objective([1, 1], 7)
+        backend.solve()
+        assert backend.get_objective_value() == pytest.approx(10)
+
+        # An explicitly selected basis need not be optimal. Its values
+        # must take precedence over the previous branch-and-bound result.
+        assert backend.set_basis_status([3, 3], [1, 1]) == 0
+        assert [backend.get_variable_value(i) for i in range(2)] == [0, 0]
+        assert backend.get_objective_value() == pytest.approx(7)
+        assert backend.set_basis_status([1, 3], [1, 3]) == 0
+        assert [backend.get_variable_value(i) for i in range(2)] == [2, 0]
+        assert backend.get_objective_value() == pytest.approx(9)
+        backend.solve()
+        assert backend.get_objective_value() == pytest.approx(10)
