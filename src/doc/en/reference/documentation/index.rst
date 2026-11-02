@@ -11,7 +11,6 @@ Sage Doc Builders
    sage_docbuild/builders
    sage_docbuild/build_options
    sage_docbuild/sphinxbuild
-   sage_docbuild/sphinxify
    sage_docbuild/conf
    sage_docbuild/utils
 

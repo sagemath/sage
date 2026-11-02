@@ -1,5 +1,5 @@
 r"""
-Sphinx configuration shared by sage_docbuild.sphinxify and sage_docbuild.conf
+Sphinx configuration helpers for Sage documentation
 
 AUTHORS:
 
@@ -189,15 +189,3 @@ class SagemathTransform(SphinxTransform):
                 source = blankline_re.sub('', source)
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
-
-# This is only used by sage_docbuild.sphinxify
-
-
-def setup(app):
-    app.connect('autodoc-process-docstring', process_docstring_cython)
-    app.connect('autodoc-process-docstring', process_directives)
-    app.connect('autodoc-process-docstring', process_docstring_module_title)
-    app.connect('autodoc-process-docstring', process_inherited)
-    app.connect('autodoc-process-docstring', skip_TESTS_block)
-
-    app.add_transform(SagemathTransform)
