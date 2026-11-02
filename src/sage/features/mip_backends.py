@@ -79,12 +79,13 @@ class COIN(JoinFeature):
         TESTS::
 
             sage: from sage.features.mip_backends import COIN
-            sage: COIN()._is_present()  # optional - sage_numerical_backends_coin
-            FeatureTestResult('sage_numerical_backends_coin', True)
+            sage: COIN()._is_present()  # optional - cbc
+            FeatureTestResult('cbc', True)
         """
-        JoinFeature.__init__(self, 'sage_numerical_backends_coin',
+        JoinFeature.__init__(self, 'cbc',
                              [MIPBackend('coin')],
-                             spkg='sage_numerical_backends_coin')
+                             spkg='cbc',
+                             type='optional')
 
 
 class CVXOPT(JoinFeature):
