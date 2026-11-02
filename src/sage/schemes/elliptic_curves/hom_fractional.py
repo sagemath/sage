@@ -348,20 +348,21 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         E = self._domain
 
         ker = []
-        insep = 0
+        p = E.base_field().characteristic()
         for l, e in self._phi.degree().factor():
-            pts = E.torsion_gens(l**e, extend=True)
+            if l == p:
+                # In characteristic p, geometric p-power torsion only
+                # detects the separable part.  Construct just the kernel
+                # needed by the quotient rather than the (potentially much
+                # larger) kernel of the numerator.
+                sep_exp = self._degree.valuation(p) - self.inseparable_degree().valuation(p)
+                if sep_exp:
+                    pts = E.torsion_gens(p**sep_exp, extend=True)
+                    assert len(pts) == 1
+                    ker.append(pts[0])
+                continue
 
-            assert len(pts) == 2 or l == E.base_field().characteristic()
-            if not pts:
-                # supersingular, hence [p] is the only p^2-isogeny up to isomorphism
-                insep += 2*self._d.valuation(l)
-                continue
-            if len(pts) == 1:
-                # ordinary, hence [p] is Frobenius times its dual
-                insep += self._d.valuation(l)
-                ker.append(self._d.p_primary_part(l) * pts[0])
-                continue
+            pts = E.torsion_gens(l**e, extend=True)
 
             P, Q = pts
             if self.is_endomorphism():
@@ -377,7 +378,16 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
                 ker.append(K)
 
         from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-        chain = EllipticCurveHom_composite(E, [])
+        insep = self.inseparable_degree()
+        if insep > 1:
+            insep_exp = insep.valuation(p)
+            frob = E.frobenius_isogeny(insep_exp)
+            chain = EllipticCurveHom_composite.from_factors([frob])
+            # The remaining separable factor starts on the Frobenius twist.
+            ker = [frob._eval(P) for P in ker]
+            E = chain.codomain()
+        else:
+            chain = EllipticCurveHom_composite(E, [])
         ker = ker[::-1]
         while ker:
             if not (P := ker.pop()):
@@ -392,11 +402,15 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             ker = [step._eval(T) for T in ker]
             E = chain.codomain()
 
-        for iso in E.isomorphisms(self._codomain):
-            if self.scaling_factor() == iso.scaling_factor() * chain.scaling_factor():
-                break
+        if p.divides(self._d):
+            from sage.schemes.elliptic_curves.hom import find_post_isomorphism
+            iso = find_post_isomorphism(self._d * chain, self._phi)
         else:
-            assert False, 'bug in converting fractional isogeny to isogeny chain'
+            for iso in E.isomorphisms(self._codomain):
+                if self.scaling_factor() == iso.scaling_factor() * chain.scaling_factor():
+                    break
+            else:
+                assert False, 'bug in converting fractional isogeny to isogeny chain'
 
         return iso * chain
 
@@ -552,8 +566,42 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: pi = E.frobenius_isogeny()
             sage: ((1 + pi) / 2).scaling_factor()
             210
+
+        The denominator may be divisible by the characteristic
+        (:issue:`42576`)::
+
+            sage: p = 5
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: phi = E.isogeny(E(0,0))
+            sage: psi = (p * phi) / p
+            sage: psi.scaling_factor() == phi.scaling_factor()
+            True
+            sage: psi.to_isogeny_chain() == phi
+            True
+
+        The scalar quotient `[p]/p` also works on a supersingular curve::
+
+            sage: E = EllipticCurve(GF(p), [0,1])
+            sage: E.is_supersingular()
+            True
+            sage: nu = E.scalar_multiplication(p) / p
+            sage: nu.scaling_factor()
+            1
+            sage: nu.to_isogeny_chain() == E.scalar_multiplication(1)
+            True
+
+        This also works when the quotient remains inseparable::
+
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: mu = E.scalar_multiplication(p^2) / p
+            sage: mu.scaling_factor()
+            0
+            sage: mu.to_isogeny_chain() == E.scalar_multiplication(p)
+            True
         """
-        # FIXME this can crash when p | d
+        p = self.base_ring().characteristic()
+        if p.divides(self._d):
+            return self.to_isogeny_chain().scaling_factor()
         return self._phi.scaling_factor() / self._d
 
     def inseparable_degree(self):
