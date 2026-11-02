@@ -22,7 +22,7 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
 
     .. MATH::
 
-        p_i(\mathbb{x} \mid \mathbb{y}) = \sum_{k=1}^\infty x_k^i - y_k^i
+        p_i(\mathbb{x} \mid \mathbb{y}) = \sum_{k=1}^\infty x_k^i - y_k^i.
 
     These form a non-graded multiplicative basis for the ring of supersymmetric
     functions.
