@@ -7352,12 +7352,22 @@ cdef class Matrix(Matrix1):
             [5, 3, 2]
             sage: A.eigenvalues(extend=False)
             [5, 3, 2]
+
+        The cached eigenvalues do not change the result for
+        ``extend=False`` (:issue:`32787`)::
+
+            sage: A = matrix(GF(11), [[2, 0, 0], [0, 1, 1], [0, 1, -1]])
+            sage: A.eigenvalues(extend=False)
+            [2]
+            sage: A.eigenvalues()
+            [2, z2 + 9, 10*z2 + 2]
+            sage: A.eigenvalues(extend=False)
+            [2]
         """
-        x = self.fetch('eigenvalues')
-        if x is not None:
-            if not extend:
-                return Sequence(i for i in x if i in self.base_ring())
-            return x
+        if extend:
+            x = self.fetch('eigenvalues')
+            if x is not None:
+                return x
 
         if not self.base_ring().is_exact():
             from warnings import warn
