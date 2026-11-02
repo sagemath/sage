@@ -1618,7 +1618,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs')  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp')
+            sage: gg.obtain_nash(algorithm='lp', solver='HiGHS')
             [[(0.0, 1.0), (0.0, 1.0)]]
             sage: gg.obtain_nash(algorithm='LCP')  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
@@ -1626,7 +1626,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs', maximization=False)  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', maximization=False)
+            sage: gg.obtain_nash(algorithm='lp', maximization=False, solver='HiGHS')
             [[(0.0, 1.0), (0.0, 1.0)]]
             sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
