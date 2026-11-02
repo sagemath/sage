@@ -1610,7 +1610,8 @@ class NormalFormGame(SageObject, MutableMapping):
         constant sum games only ever finds one Nash equilibrium. Although it
         is possible for the ``'LCP'`` solver to find all Nash equilibria
         in some instances, there are instances where it will not be able to
-        find all Nash equilibria.::
+        find all Nash equilibria. In the zero-payoff game below, any pair of
+        probability distributions is a Nash equilibrium::
 
             sage: A = matrix(2, 2)
             sage: gg = NormalFormGame([A])
@@ -1618,16 +1619,18 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs')  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', solver='HiGHS')
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: [(p, q)] = gg.obtain_nash(algorithm='lp')
+            sage: all(len(s) == 2 and min(s) >= 0 and abs(sum(s) - 1) < 1e-10 for s in (p, q))
+            True
             sage: gg.obtain_nash(algorithm='LCP')  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
             sage: gg.obtain_nash(algorithm='enumeration', maximization=False)
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs', maximization=False)  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', maximization=False, solver='HiGHS')
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: [(p, q)] = gg.obtain_nash(algorithm='lp', maximization=False)
+            sage: all(len(s) == 2 and min(s) >= 0 and abs(sum(s) - 1) < 1e-10 for s in (p, q))
+            True
             sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
 
