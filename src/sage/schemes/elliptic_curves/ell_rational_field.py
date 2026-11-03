@@ -4739,7 +4739,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise ValueError("second argument is not an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
- 
+
         N = self.conductor()._lcm(other.conductor())
         N_pdiv = N.prime_divisors()
         a = N*prod(q+1 for q in N_pdiv)
@@ -4803,23 +4803,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise ValueError("second argument is not an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
-
+        
         if self.is_isomorphic(other):
             return True
 
         E1 = self.minimal_model()
         E2 = other.minimal_model()
-        maxp = E1.sturm_bound(E2)
 
-        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, maxp)):
+        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
             return False
-# go up to 20 first, then compute full ap list to see if they match
-        if E1.conductor() != E2.conductor():
-            return False
+
+        # if E1.conductor() != E2.conductor():
+        #     return False do i still need this?
 
         if not proof:
             return True
-        return E2 in E1.isogeny_class().curves
+
+        maxp = self.sturm_bound(other)
+        # return E2 in E1.isogeny_class().curves
+        return E1.aplist(maxp, python_ints=True) == E2.aplist(maxp, python_ints=True)
 
     def isogeny_degree(self, other):
         r"""
