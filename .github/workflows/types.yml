@@ -15,6 +15,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHON_VERSION: 3.14
+
 jobs:
   types:
     name: Type check
@@ -34,18 +37,18 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.13-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v4
         with:
-          python-version: 3.13
+          python-version: ${{ env.PYTHON_VERSION }}
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
           activate-environment: sage-dev
-          environment-file: environment-3.13-linux.yml
+          environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
 
         # No need to build sagelib; pyright only needs the libraries from which sagelib imports
 

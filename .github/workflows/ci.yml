@@ -22,9 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - fedora:41
-          - fedora:42
           - fedora:43
+          - fedora:44
+          - fedora:45
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
@@ -117,8 +117,8 @@ jobs:
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
-            build/cp313/meson-logs/
-            build/cp313/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/
 
   macos:
     name: Build and Test (${{ matrix.runner }})
@@ -141,7 +141,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13'
+          python-version: '3.15'
 
       - name: Install dependencies
         run: |
@@ -165,7 +165,7 @@ jobs:
         run: |
           source ./.homebrew-build-env
           # Reuse Homebrew's PARI-compatible binding instead of building the PyPI version.
-          uv venv --python 3.13 --allow-existing
+          uv venv --python 3.15 --allow-existing
           python_version=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
           cypari2_site="$(brew --prefix dimpase/tap/cypari2)/lib/python${python_version}/site-packages"
           test -d "$cypari2_site/cypari2"
@@ -186,5 +186,5 @@ jobs:
         with:
           name: ${{ matrix.runner }}-log
           path: |
-            build/cp312/meson-logs/
-            build/cp312/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/
