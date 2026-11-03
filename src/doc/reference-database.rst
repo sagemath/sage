@@ -1610,6 +1610,10 @@
              Springer, 1989.
              :doi:`10.1007/978-1-4612-4542-1`
 
+.. [Bush1952] K. A. Bush. *Orthogonal arrays of index unity*.
+              The Annals of Mathematical Statistics, 23(3) (1952), 426--434.
+              :doi:`10.1214/aoms/1177729387`
+
 .. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
              Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010).
 
