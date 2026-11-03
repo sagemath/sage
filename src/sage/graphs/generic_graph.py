@@ -10069,8 +10069,8 @@ class GenericGraph(GenericGraph_pyx):
             check_weight=check_weight)
 
         def tsp_from_edges(edges):
-            # Not self.subgraph(edges=edges): it hashes the edges, which fails
-            # on unhashable labels (e.g., dictionaries read by weight_function)
+            # Not self.subgraph(edges=edges): with multiple edges, it would also
+            # keep the other edges with the same endpoints and label
             answer = self.subgraph(edge_property=lambda e: False, immutable=False)
             answer.add_edges(edges)
             answer._name = "TSP from " + self.name()
@@ -14903,6 +14903,20 @@ class GenericGraph(GenericGraph_pyx):
             [3, 4, 5]
             sage: h.get_vertices()
             {3: 'v3', 4: 'v4', 5: 'v5'}
+
+        The edge labels need not be hashable::
+
+            sage: G = Graph([(0, 1, {'w': 1}), (0, 1, {'w': 2}), (1, 2, {'w': 3})],
+            ....:           multiedges=True)
+            sage: D = DiGraph([(0, 1, {'w': 1}), (1, 0, {'w': 2}), (1, 2, {'w': 3})])
+            sage: for H in [G, D]:
+            ....:     for algorithm in ['add', 'delete']:
+            ....:         S = H.subgraph(edges=[(1, 2), (1, 0, {'w': 2})], algorithm=algorithm)
+            ....:         print(sorted(S.edges(sort=False), key=str))
+            [(0, 1, {'w': 2}), (1, 2, {'w': 3})]
+            [(0, 1, {'w': 2}), (1, 2, {'w': 3})]
+            [(1, 0, {'w': 2}), (1, 2, {'w': 3})]
+            [(1, 0, {'w': 2}), (1, 2, {'w': 3})]
         """
         if vertices is None:
             vertices = self
@@ -15042,27 +15056,29 @@ class GenericGraph(GenericGraph_pyx):
             G.add_vertices(self if vertices is None else vertices)
 
             if edges is not None:
-                edges_to_keep_labeled = set()
+                # The labels are compared by equality, not hashed, as they
+                # may be unhashable (e.g., dictionaries)
+                labels_to_keep = {}
                 edges_to_keep_unlabeled = set()
                 for e in edges:
                     if len(e) == 3:
-                        edges_to_keep_labeled.add(e)
+                        labels_to_keep.setdefault((e[0], e[1]), []).append(e[2])
                     elif len(e) == 2:
                         edges_to_keep_unlabeled.add(e)
 
                 edges_to_keep = []
                 if self._directed:
                     for u, v, l in self.edges(vertices=vertices, sort=False):
-                        if (v in G and ((u, v, l) in edges_to_keep_labeled
-                                        or (u, v) in edges_to_keep_unlabeled)):
+                        if (v in G and ((u, v) in edges_to_keep_unlabeled
+                                        or l in labels_to_keep.get((u, v), ()))):
                             edges_to_keep.append((u, v, l))
                 else:
                     for u, v, l in self.edges(vertices=vertices, sort=False):
                         if (u in G and v in G
-                            and ((u, v, l) in edges_to_keep_labeled
-                                 or (v, u, l) in edges_to_keep_labeled
-                                 or (u, v) in edges_to_keep_unlabeled
-                                 or (v, u) in edges_to_keep_unlabeled)):
+                            and ((u, v) in edges_to_keep_unlabeled
+                                 or (v, u) in edges_to_keep_unlabeled
+                                 or l in labels_to_keep.get((u, v), ())
+                                 or l in labels_to_keep.get((v, u), ()))):
                             edges_to_keep.append((u, v, l))
             else:
                 s_vertices = set(G.vertices()) if vertices is None else set(vertices)
@@ -15229,25 +15245,27 @@ class GenericGraph(GenericGraph_pyx):
 
         edges_to_delete = []
         if edges is not None:
-            edges_to_keep_labeled = set()
+            # The labels are compared by equality, not hashed, as they may be
+            # unhashable (e.g., dictionaries)
+            labels_to_keep = {}
             edges_to_keep_unlabeled = set()
             for e in edges:
                 if len(e) == 3:
-                    edges_to_keep_labeled.add(e)
+                    labels_to_keep.setdefault((e[0], e[1]), []).append(e[2])
                 elif len(e) == 2:
                     edges_to_keep_unlabeled.add(e)
             edges_to_delete = []
             if G._directed:
-                for e in G.edge_iterator():
-                    if (e not in edges_to_keep_labeled
-                            and e[:2] not in edges_to_keep_unlabeled):
-                        edges_to_delete.append(e)
+                for u, v, l in G.edge_iterator():
+                    if ((u, v) not in edges_to_keep_unlabeled
+                            and l not in labels_to_keep.get((u, v), ())):
+                        edges_to_delete.append((u, v, l))
             else:
                 for u, v, l in G.edge_iterator():
-                    if ((u, v, l) not in edges_to_keep_labeled
-                            and (v, u, l) not in edges_to_keep_labeled
-                            and (u, v) not in edges_to_keep_unlabeled
-                            and (v, u) not in edges_to_keep_unlabeled):
+                    if ((u, v) not in edges_to_keep_unlabeled
+                            and (v, u) not in edges_to_keep_unlabeled
+                            and l not in labels_to_keep.get((u, v), ())
+                            and l not in labels_to_keep.get((v, u), ())):
                         edges_to_delete.append((u, v, l))
         if edge_property is not None:
             # We might get duplicate edges, but this does handle the case of
