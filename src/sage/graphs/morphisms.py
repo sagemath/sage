@@ -14,6 +14,9 @@ isomorphisms, etc. in (di)graphs.
     :meth:`~is_homeomorphic` | Check whether ``G`` and ``H`` are homeomorphic.
     :meth:`~reduced_homeomorphic_graph` | Return the smallest graph homeomorphic to ``G``.
     :meth:`~has_homomorphism_to` | Check whether there is a homomorphism between two graphs.
+    :meth:`~is_homomorphism` | Check whether a mapping is a valid graph homomorphism.
+    :meth:`~homomorphisms` | Return an iterator that lazily yields homomorphisms from ``G`` to ``H``.
+    :meth:`~homomorphism_count` | Return the total number of homomorphisms from ``G`` to ``H``.
 
 .. TODO::
 
@@ -416,7 +419,7 @@ def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
         return False
     undirected = not G.is_directed()
 
-    from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
+    from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
     p = MixedIntegerLinearProgram(solver=solver, maximization=False)
     b = p.new_variable(binary=True)
 
@@ -458,3 +461,744 @@ def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
 
     b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     return dict(x[0] for x in b.items() if x[1])
+
+
+def is_homomorphism(G, H, mapping):
+    r"""
+    Check whether ``mapping`` is a valid graph homomorphism from ``G`` to ``H``.
+
+    Let `G` and `H` be simple undirected graphs. A homomorphism from `G` to `H`
+    is a vertex mapping `\phi: V(G) \to V(H)` such that for every edge
+    `\{u, v\} \in E(G)`, the image `\{\phi(u), \phi(v)\}` is an edge in `H`.
+
+    Every vertex of `G` must have an assigned image in ``mapping``, and each
+    such image must be a vertex of `H`. Extra keys in ``mapping`` that do not
+    belong to `V(G)` are ignored. Mappings are not required to be injective:
+    non-injective mappings are valid homomorphisms as long as edge preservation
+    holds.
+
+    INPUT:
+
+    - ``G`` -- a simple undirected graph (domain)
+
+    - ``H`` -- a simple undirected graph (codomain)
+
+    - ``mapping`` -- a mapping (e.g. :class:`dict`) from vertices of ``G`` to
+      vertices of ``H``
+
+    OUTPUT: boolean
+
+    EXAMPLES:
+
+    A valid 3-coloring of a 5-cycle `C_5` is a homomorphism to `K_3`::
+
+        sage: from sage.graphs.morphisms import is_homomorphism
+        sage: C5 = graphs.CycleGraph(5)
+        sage: K3 = graphs.CompleteGraph(3)
+        sage: phi = {0: 0, 1: 1, 2: 0, 3: 1, 4: 2}
+        sage: is_homomorphism(C5, K3, phi)
+        True
+
+    Adjacent vertices in `G` cannot be mapped to non-adjacent vertices in `H`::
+
+        sage: P3 = graphs.PathGraph(3)
+        sage: H = Graph([(0, 1), (1, 2)])
+        sage: is_homomorphism(P3, H, {0: 0, 1: 1, 2: 0})
+        True
+        sage: is_homomorphism(P3, H, {0: 0, 1: 2, 2: 1})
+        False
+
+    Adjacent vertices cannot be mapped to the same vertex in a simple graph::
+
+        sage: is_homomorphism(C5, K3, {0: 0, 1: 0, 2: 1, 3: 2, 4: 1})
+        False
+
+    Non-injective homomorphisms are valid::
+
+        sage: C4 = graphs.CycleGraph(4)
+        sage: K2 = graphs.CompleteGraph(2)
+        sage: is_homomorphism(C4, K2, {0: 0, 1: 1, 2: 0, 3: 1})
+        True
+
+    Extra mapping keys not in `V(G)` are accepted and ignored::
+
+        sage: is_homomorphism(C4, K2, {0: 0, 1: 1, 2: 0, 3: 1, 'extra': 99})
+        True
+
+    Missing vertices of `G` or target values not in `V(H)` return ``False``::
+
+        sage: is_homomorphism(C4, K2, {0: 0, 1: 1, 2: 0})
+        False
+        sage: is_homomorphism(C4, K2, {0: 0, 1: 1, 2: 0, 3: 99})
+        False
+
+    Empty source graph has exactly one homomorphism (the empty mapping)::
+
+        sage: is_homomorphism(Graph(), K3, {})
+        True
+        sage: is_homomorphism(Graph(), Graph(), {})
+        True
+        sage: is_homomorphism(Graph(), Graph(), {'irrelevant': 42, 'extra': 'ignored'})
+        True
+
+    A non-empty source graph to an empty target has no homomorphisms::
+
+        sage: is_homomorphism(K3, Graph(), {0: 0, 1: 1, 2: 2})
+        False
+
+    Edgeless source graphs with isolated vertices::
+
+        sage: E3 = Graph(3)
+        sage: is_homomorphism(E3, K3, {0: 0, 1: 0, 2: 0})
+        True
+
+    Non-mapping inputs raise :class:`TypeError`::
+
+        sage: is_homomorphism(C5, K3, [0, 1, 0, 1, 2])
+        Traceback (most recent call last):
+        ...
+        TypeError: mapping must be a Mapping, got list
+        sage: is_homomorphism(C5, K3, 42)
+        Traceback (most recent call last):
+        ...
+        TypeError: mapping must be a Mapping, got Integer
+        sage: is_homomorphism(C5, K3, int(42))
+        Traceback (most recent call last):
+        ...
+        TypeError: mapping must be a Mapping, got int
+
+    Directed graphs and non-simple graphs are rejected::
+
+        sage: is_homomorphism(DiGraph(1), Graph(1), {0: 0})
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: is_homomorphism(Graph(1), DiGraph(1), {0: 0})
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: is_homomorphism(Graph([(0, 0)], loops=True), Graph(1), {0: 0})
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with loops...
+        sage: is_homomorphism(Graph([(0, 1), (0, 1)], multiedges=True), Graph(2), {0: 0, 1: 1})
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with multiedges...
+    """
+    from collections.abc import Mapping
+
+    if not isinstance(mapping, Mapping):
+        raise TypeError(f"mapping must be a Mapping, got {type(mapping).__name__}")
+
+    if G.is_directed() or H.is_directed():
+        raise ValueError("directed graphs are not supported")
+
+    G._scream_if_not_simple()
+    H._scream_if_not_simple()
+
+    # Every vertex of G must be in mapping and map to a vertex of H
+    for u in G:
+        if u not in mapping:
+            return False
+        if mapping[u] not in H:
+            return False
+
+    # Every edge of G must map to an edge in H
+    for u, v in G.edges(sort=False, labels=False):
+        if not H.has_edge(mapping[u], mapping[v]):
+            return False
+
+    return True
+
+
+def _vertex_ordering(C):
+    r"""
+    Return a vertex ordering of connected graph ``C`` for backtracking search.
+
+    The ordering ensures that each vertex after the first has at least one
+    neighbor among earlier vertices in the ordering.
+
+    TESTS:
+
+    Verify ordering property on a connected cycle::
+
+        sage: from sage.graphs.morphisms import _vertex_ordering
+        sage: C = graphs.CycleGraph(5)
+        sage: order = _vertex_ordering(C)
+        sage: len(order) == 5 and set(order) == set(C)
+        True
+        sage: all(any(C.has_edge(order[i], order[j]) for j in range(i))
+        ....:     for i in range(1, len(order)))
+        True
+        sage: _vertex_ordering(Graph())
+        Traceback (most recent call last):
+        ...
+        ValueError: graph must be non-empty and connected
+        sage: _vertex_ordering(graphs.PathGraph(2) + graphs.PathGraph(2))
+        Traceback (most recent call last):
+        ...
+        ValueError: graph must be non-empty and connected
+    """
+    if C.order() == 0 or not C.is_connected():
+        raise ValueError("graph must be non-empty and connected")
+
+    n = C.order()
+    if n == 1:
+        return list(C)
+
+    u0 = max(C, key=lambda v: (C.degree(v), str(v)))
+    order = [u0]
+    visited = {u0}
+    frontier = set(C.neighbors(u0))
+
+    while len(order) < n:
+        v = max(frontier, key=lambda u: (sum(1 for w in C.neighbors(u) if w in visited), C.degree(u), str(u)))
+        order.append(v)
+        visited.add(v)
+        frontier.remove(v)
+        for w in C.neighbors(v):
+            if w not in visited:
+                frontier.add(w)
+
+    return order
+
+
+def _homomorphisms_connected(C, H, max_count=None):
+    r"""
+    Yield homomorphisms from connected graph ``C`` to ``H``.
+    """
+    n = C.order()
+    if n == 0:
+        yield {}
+        return
+    if H.order() == 0:
+        return
+    if n == 1:
+        u = next(iter(C))
+        count = 0
+        for v in H:
+            if max_count is not None and count >= max_count:
+                return
+            yield {u: v}
+            count += 1
+        return
+
+    order = _vertex_ordering(C)
+    pos = {u: i for i, u in enumerate(order)}
+    pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
+
+    adj_H = {v: set(H.neighbors(v)) for v in H}
+
+    u0_deg = C.degree(order[0])
+    if u0_deg > 0:
+        init_cand = [v for v in H if H.degree(v) > 0]
+    else:
+        init_cand = list(H)
+
+    current_phi = [None] * n
+    count = 0
+
+    def backtrack(idx):
+        nonlocal count
+        if max_count is not None and count >= max_count:
+            return
+        if idx == n:
+            yield {order[i]: current_phi[i] for i in range(n)}
+            count += 1
+            return
+
+        if idx == 0:
+            candidates = init_cand
+        else:
+            p_list = pred[idx]
+            candidates = adj_H[current_phi[pos[p_list[0]]]]
+            if len(p_list) > 1:
+                candidates = candidates.intersection(*(adj_H[current_phi[pos[p]]] for p in p_list[1:]))
+
+        for v in candidates:
+            current_phi[idx] = v
+            yield from backtrack(idx + 1)
+            if max_count is not None and count >= max_count:
+                return
+
+    yield from backtrack(0)
+
+
+def _homomorphisms_generator(G, H, max_count=None):
+    r"""
+    Internal generator yielding homomorphisms from ``G`` to ``H``.
+    """
+    if max_count == 0:
+        return
+
+    if G.order() == 0:
+        yield {}
+        return
+
+    if H.order() == 0:
+        return
+
+    components = G.connected_components(sort=False)
+    if len(components) == 1:
+        yield from _homomorphisms_connected(G, H, max_count=max_count)
+        return
+
+    subgraphs = [G.subgraph(c) for c in components]
+    count = 0
+
+    def combine(comp_idx, current_mapping):
+        nonlocal count
+        if max_count is not None and count >= max_count:
+            return
+        if comp_idx == len(subgraphs):
+            yield dict(current_mapping)
+            count += 1
+            return
+
+        for phi in _homomorphisms_connected(subgraphs[comp_idx], H):
+            current_mapping.update(phi)
+            yield from combine(comp_idx + 1, current_mapping)
+            for k in phi:
+                del current_mapping[k]
+            if max_count is not None and count >= max_count:
+                return
+
+    current_mapping = {}
+    yield from combine(0, current_mapping)
+
+
+def homomorphisms(G, H, max_count=None):
+    r"""
+    Return an iterator that lazily yields homomorphisms from ``G`` to ``H``.
+
+    Let `G` and `H` be simple undirected graphs. A homomorphism from `G` to `H`
+    is a vertex mapping `\phi: V(G) \to V(H)` such that for every edge
+    `\{u, v\} \in E(G)`, `\{\phi(u), \phi(v)\} \in E(H)`.
+
+    This function returns an iterator that searches for homomorphisms
+    using depth-first backtracking with degree-ordered connected vertex
+    traversal and connected component factorization. Mappings are yielded
+    lazily as they are found. The enumeration order is unspecified and
+    depends on internal vertex orderings.
+
+    ALGORITHMIC COMPLEXITY:
+
+    For a fixed simple undirected target graph `H`, deciding whether there exists
+    a homomorphism from `G` to `H` is solvable in polynomial time if `H` is
+    bipartite, and is NP-complete otherwise. Counting the number of homomorphisms
+    is #P-complete even for `H = K_3`.
+
+    In the worst case, the total number of candidate vertex mappings is
+    `|V(H)|^{|V(G)|}`. Backtracking can explore exponentially many partial
+    mappings before finding a solution or certifying non-existence. Actual
+    running time depends heavily on the structure of `G` and `H`, pruning
+    efficiency from degree-ordered neighbor constraints, and the total size of
+    the output. While counting can exploit component factorization without
+    materializing product combinations, enumeration runtime is necessarily
+    lower-bounded by the number of homomorphisms yielded.
+
+    INPUT:
+
+    - ``G`` -- a simple undirected graph (domain)
+
+    - ``H`` -- a simple undirected graph (codomain)
+
+    - ``max_count`` -- integer or ``None`` (default: ``None``); maximum number
+      of homomorphisms to yield. If ``None``, all homomorphisms are yielded.
+
+    OUTPUT: an iterator yielding dictionaries representing valid homomorphisms
+
+    EXAMPLES:
+
+    Homomorphisms from `C_5` to `K_3` correspond to proper 3-colorings::
+
+        sage: from sage.graphs.morphisms import homomorphisms, is_homomorphism
+        sage: C5 = graphs.CycleGraph(5)
+        sage: K3 = graphs.CompleteGraph(3)
+        sage: h_list = list(homomorphisms(C5, K3))
+        sage: len(h_list)
+        30
+
+    There are no homomorphisms from an odd cycle to a bipartite graph::
+
+        sage: K2 = graphs.CompleteGraph(2)
+        sage: list(homomorphisms(K3, K2))
+        []
+
+    Homomorphisms from `K_2` to `K_3` (directed edges / ordered pairs)::
+
+        sage: len(list(homomorphisms(K2, K3)))
+        6
+
+    Homomorphisms from bipartite `C_4` to `K_2` (2 proper 2-colorings)::
+
+        sage: len(list(homomorphisms(graphs.CycleGraph(4), K2)))
+        2
+
+    Using ``max_count`` to limit the number of yielded homomorphisms::
+
+        sage: len(list(homomorphisms(C5, K3, max_count=1)))
+        1
+        sage: res1 = list(homomorphisms(C5, K3, max_count=1))[0]
+        sage: is_homomorphism(C5, K3, res1)
+        True
+        sage: len(list(homomorphisms(C5, K3, max_count=5)))
+        5
+        sage: list(homomorphisms(C5, K3, max_count=0))
+        []
+        sage: len(list(homomorphisms(C5, K3, max_count=100)))
+        30
+        sage: len(list(homomorphisms(C5, K3, max_count=Integer(5))))
+        5
+
+    Validation of ``max_count`` parameter::
+
+        sage: list(homomorphisms(C5, K3, max_count=-1))
+        Traceback (most recent call last):
+        ...
+        ValueError: max_count must be a non-negative integer or None
+        sage: list(homomorphisms(C5, K3, max_count=True))
+        Traceback (most recent call last):
+        ...
+        TypeError: max_count must be a non-negative integer or None
+        sage: list(homomorphisms(C5, K3, max_count=2.5))
+        Traceback (most recent call last):
+        ...
+        TypeError: max_count must be a non-negative integer or None
+        sage: list(homomorphisms(C5, K3, max_count="5"))
+        Traceback (most recent call last):
+        ...
+        TypeError: max_count must be a non-negative integer or None
+
+    Degenerate boundary cases::
+
+        sage: list(homomorphisms(Graph(), K3))
+        [{}]
+        sage: list(homomorphisms(Graph(), Graph()))
+        [{}]
+        sage: list(homomorphisms(Graph(), K3, max_count=0))
+        []
+        sage: list(homomorphisms(K3, Graph()))
+        []
+        sage: list(homomorphisms(Graph(1), Graph()))
+        []
+
+    Edgeless source graphs with isolated vertices::
+
+        sage: E3 = Graph(3)
+        sage: len(list(homomorphisms(E3, K3)))
+        27
+        sage: len(list(homomorphisms(E3, K3, max_count=4)))
+        4
+
+    Disconnected graphs factor across connected components and obey ``max_count``::
+
+        sage: G = graphs.PathGraph(2) + graphs.PathGraph(2)
+        sage: len(list(homomorphisms(G, K3)))
+        36
+        sage: len(list(homomorphisms(G, K3, max_count=5)))
+        5
+        sage: all(is_homomorphism(G, K3, phi) for phi in homomorphisms(G, K3, max_count=5))
+        True
+        sage: list(homomorphisms(G, K3, max_count=0))
+        []
+
+    Laziness verification: halting on demand without computing all solutions::
+
+        sage: it = homomorphisms(C5, K3)
+        sage: is_homomorphism(C5, K3, next(it))
+        True
+
+    Directed and non-simple graphs are rejected::
+
+        sage: list(homomorphisms(DiGraph(1), Graph(1)))
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: list(homomorphisms(Graph(1), DiGraph(1)))
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: list(homomorphisms(Graph([(0, 0)], loops=True), Graph(1)))
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with loops...
+        sage: list(homomorphisms(Graph([(0, 1), (0, 1)], multiedges=True), Graph(2)))
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with multiedges...
+    """
+    from sage.rings.integer import Integer
+
+    if G.is_directed() or H.is_directed():
+        raise ValueError("directed graphs are not supported")
+
+    G._scream_if_not_simple()
+    H._scream_if_not_simple()
+
+    if max_count is not None:
+        if isinstance(max_count, bool) or not isinstance(max_count, (int, Integer)):
+            raise TypeError("max_count must be a non-negative integer or None")
+        if max_count < 0:
+            raise ValueError("max_count must be a non-negative integer or None")
+
+    return _homomorphisms_generator(G, H, max_count=max_count)
+
+
+def _homomorphism_count_connected(C, H):
+    r"""
+    Return the number of homomorphisms from connected graph ``C`` to ``H``.
+    """
+    from sage.rings.integer import Integer
+
+    n = C.order()
+    if n == 0:
+        return Integer(1)
+    if H.order() == 0:
+        return Integer(0)
+    if n == 1:
+        return Integer(H.order())
+
+    order = _vertex_ordering(C)
+    pos = {u: i for i, u in enumerate(order)}
+    pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
+
+    adj_H = {v: set(H.neighbors(v)) for v in H}
+
+    u0_deg = C.degree(order[0])
+    if u0_deg > 0:
+        init_cand = [v for v in H if H.degree(v) > 0]
+    else:
+        init_cand = list(H)
+
+    current_phi = [None] * n
+    total = 0
+
+    def backtrack(idx):
+        nonlocal total
+        if idx == n:
+            total += 1
+            return
+
+        if idx == 0:
+            candidates = init_cand
+        else:
+            p_list = pred[idx]
+            candidates = adj_H[current_phi[pos[p_list[0]]]]
+            if len(p_list) > 1:
+                candidates = candidates.intersection(*(adj_H[current_phi[pos[p]]] for p in p_list[1:]))
+
+        for v in candidates:
+            current_phi[idx] = v
+            backtrack(idx + 1)
+
+    backtrack(0)
+    return Integer(total)
+
+
+def homomorphism_count(G, H):
+    r"""
+    Return the total number of homomorphisms from ``G`` to ``H``.
+
+    Let `G` and `H` be simple undirected graphs. A homomorphism from `G` to `H`
+    is a vertex mapping `\phi: V(G) \to V(H)` such that for every edge
+    `\{u, v\} \in E(G)`, `\{\phi(u), \phi(v)\} \in E(H)`.
+
+    Homomorphism counting is multiplicative across connected components of
+    undirected graphs:
+
+    .. MATH::
+
+        |\mathrm{Hom}(G_1 \sqcup G_2, H)| = |\mathrm{Hom}(G_1, H)| \times |\mathrm{Hom}(G_2, H)|
+
+    For an edgeless graph `E_n` on `n` isolated vertices into `H` with `m`
+    vertices, edge constraints are vacuously satisfied, yielding exactly `m^n`
+    homomorphisms.
+
+    ALGORITHMIC COMPLEXITY:
+
+    For a fixed simple undirected target graph `H`, deciding whether there exists
+    a homomorphism from `G` to `H` is solvable in polynomial time if `H` is
+    bipartite, and is NP-complete otherwise. Counting homomorphisms is
+    #P-complete even for `H = K_3`.
+
+    In the worst case, the total number of candidate vertex mappings is
+    `|V(H)|^{|V(G)|}`, and backtracking can explore an exponential search
+    space. Connected component factorization allows counting disconnected
+    graphs by multiplying component counts directly without materializing the
+    Cartesian product of assignments across components. However, on large or
+    dense connected components, worst-case exponential complexity remains
+    unavoidable.
+
+    INPUT:
+
+    - ``G`` -- a simple undirected graph (domain)
+
+    - ``H`` -- a simple undirected graph (codomain)
+
+    OUTPUT: an :class:`Integer` representing the exact number of homomorphisms
+
+    EXAMPLES:
+
+    Counting homomorphisms from the Petersen graph to `K_3` (3-colorings)::
+
+        sage: from sage.graphs.morphisms import homomorphism_count
+        sage: P = graphs.PetersenGraph()
+        sage: K3 = graphs.CompleteGraph(3)
+        sage: homomorphism_count(P, K3)
+        120
+
+    Multiplicative component factorization on disconnected graphs::
+
+        sage: homomorphism_count(P + P, K3)
+        14400
+        sage: 120 * 120
+        14400
+
+    If any component admits zero homomorphisms, the total count is zero::
+
+        sage: K2 = graphs.CompleteGraph(2)
+        sage: homomorphism_count(P + graphs.CompleteGraph(3), K2)
+        0
+
+    Edgeless source graphs with isolated vertices follow the `m^n` rule::
+
+        sage: E3 = Graph(3)
+        sage: K4 = graphs.CompleteGraph(4)
+        sage: homomorphism_count(E3, K4)
+        64
+        sage: 4^3
+        64
+
+    Boundary cases::
+
+        sage: homomorphism_count(Graph(), K3)
+        1
+        sage: homomorphism_count(K3, Graph())
+        0
+        sage: homomorphism_count(Graph(), Graph())
+        1
+
+    Endomorphisms of complete graphs (`K_q \to K_q` is `q!`)::
+
+        sage: factorial(4)
+        24
+        sage: homomorphism_count(K4, K4)
+        24
+
+    Directed and non-simple graphs are rejected::
+
+        sage: homomorphism_count(DiGraph(1), Graph(1))
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: homomorphism_count(Graph(1), DiGraph(1))
+        Traceback (most recent call last):
+        ...
+        ValueError: directed graphs are not supported
+        sage: homomorphism_count(Graph([(0, 0)], loops=True), Graph(1))
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with loops...
+        sage: homomorphism_count(Graph([(0, 1), (0, 1)], multiedges=True), Graph(2))
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with multiedges...
+
+    TESTS:
+
+    Cross-verification across a finite graph corpus::
+
+        sage: from sage.graphs.morphisms import (has_homomorphism_to,
+        ....:                                    homomorphisms, homomorphism_count,
+        ....:                                    is_homomorphism)
+        sage: corpus = [
+        ....:     graphs.CompleteGraph(1),
+        ....:     graphs.CompleteGraph(2),
+        ....:     graphs.CompleteGraph(3),
+        ....:     graphs.CycleGraph(4),
+        ....:     graphs.CycleGraph(5),
+        ....:     graphs.PathGraph(3),
+        ....:     graphs.PathGraph(4),
+        ....:     graphs.CompleteBipartiteGraph(2, 2),
+        ....: ]
+        sage: for g in corpus:
+        ....:     for h in corpus[:4]:
+        ....:         c = homomorphism_count(g, h)
+        ....:         h_list = list(homomorphisms(g, h))
+        ....:         assert c == len(h_list)
+        ....:         assert all(is_homomorphism(g, h, phi) for phi in h_list)
+
+    Cross-verification with chromatic polynomials::
+
+        sage: P = graphs.PetersenGraph()
+        sage: P_poly = P.chromatic_polynomial()
+        sage: all(homomorphism_count(P, graphs.CompleteGraph(q)) == P_poly(q)
+        ....:     for q in [3, 4, 5])
+        True
+
+        sage: C5 = graphs.CycleGraph(5)
+        sage: C5_poly = C5.chromatic_polynomial()
+        sage: all(homomorphism_count(C5, graphs.CompleteGraph(q)) == C5_poly(q)
+        ....:     for q in [2, 3, 4])
+        True
+
+        sage: T = graphs.PathGraph(6)
+        sage: q = 3
+        sage: homomorphism_count(T, graphs.CompleteGraph(q)) == q * (q - 1)^5
+        True
+
+    Agreement with :func:`has_homomorphism_to`::
+
+        sage: has_homomorphism_to(graphs.CompleteGraph(3), graphs.CompleteGraph(2)) is False  # needs sage.numerical.mip
+        True
+        sage: homomorphism_count(graphs.CompleteGraph(3), graphs.CompleteGraph(2)) == 0
+        True
+        sage: has_homomorphism_to(graphs.CycleGraph(4), graphs.CompleteGraph(2)) is not False  # needs sage.numerical.mip
+        True
+        sage: homomorphism_count(graphs.CycleGraph(4), graphs.CompleteGraph(2)) > 0
+        True
+
+    Arbitrary non-integer vertex labels::
+
+        sage: G_str = Graph([('a', 'b'), ('b', 'c')])
+        sage: H_str = Graph([('x', 'y'), ('y', 'z')])
+        sage: homomorphism_count(G_str, H_str) == len(list(homomorphisms(G_str, H_str)))
+        True
+        sage: all(is_homomorphism(G_str, H_str, phi) for phi in homomorphisms(G_str, H_str))
+        True
+    """
+    from sage.rings.integer import Integer
+
+    if G.is_directed() or H.is_directed():
+        raise ValueError("directed graphs are not supported")
+
+    G._scream_if_not_simple()
+    H._scream_if_not_simple()
+
+    if G.order() == 0:
+        return Integer(1)
+    if H.order() == 0:
+        return Integer(0)
+
+    m = Integer(H.order())
+    components = G.connected_components(sort=False)
+
+    num_isolated = 0
+    total_count = Integer(1)
+
+    for c in components:
+        if len(c) == 1:
+            num_isolated += 1
+        else:
+            subG = G.subgraph(c)
+            c_count = _homomorphism_count_connected(subG, H)
+            if c_count == 0:
+                return Integer(0)
+            total_count *= c_count
+
+    if num_isolated > 0:
+        total_count *= m ** num_isolated
+
+    return total_count
