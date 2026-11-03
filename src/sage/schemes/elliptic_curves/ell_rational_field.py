@@ -4719,13 +4719,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     def sturm_bound(self, other: EllipticCurve_generic) -> Integer:
         r"""
-        Return the Sturm bound of two elliptic curves.
+        Return the sturm bound of two elliptic curves.
 
         INPUT:
 
-        -``other`` -- an elliptic curve over `\QQ`
+        -``other`` -- another elliptic curve `\QQ`
 
-        EXAMPLES::
+        OUTPUT:
+        Sage integer?
+
+        EXAMPLE::
 
             sage: E1 = EllipticCurve('14a1')
             sage: E2 = EllipticCurve('14a6')
@@ -4733,12 +4736,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             4
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("second argument is not an elliptic curve")
+            raise ValueError("second argument is not an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
+ 
         N = self.conductor()._lcm(other.conductor())
+        N_pdiv = N.prime_divisors()
+        a = N*prod(q+1 for q in N_pdiv)
+        b = prod(q for q in N_pdiv)
 
-        return (N/6)*prod(1+1/q for q in N.prime_divisors())
+        return a.divide_knowing_divisible_by(b) // 6
 
     def is_isogenous(self, other, proof=True):
         r"""
@@ -4793,9 +4800,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             False
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("Second argument is not an Elliptic Curve.")
+            raise ValueError("second argument is not an elliptic curve.")
         if other.base_field() is not QQ:
-            raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
+            raise ValueError("the base field of the second elliptic curve must be the rationals")
 
         if self.is_isomorphic(other):
             return True
@@ -4804,9 +4811,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         E2 = other.minimal_model()
         maxp = E1.sturm_bound(E2)
 
-        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
+        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, maxp)):
             return False
-
+# go up to 20 first, then compute full ap list to see if they match
         if E1.conductor() != E2.conductor():
             return False
 
