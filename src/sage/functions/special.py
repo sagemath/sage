@@ -317,6 +317,18 @@ class SphericalHarmonic(BuiltinFunction):
             res = res.substitute({sqrt(sin(theta)**2): sin(theta)})
             return res
 
+    def _method_arguments(self, n, m, theta, phi):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: spherical_harmonic(2, 1, CBF(1/3), 1/5)
+            [-0.234098998994561 +/- 7.19e-16] + [-0.047454216398732 +/- 1.31e-16]*I
+        """
+        return [theta, phi, n, m]
+
     def _evalf_(self, n, m, theta, phi, parent, **kwds):
         r"""
         TESTS::
