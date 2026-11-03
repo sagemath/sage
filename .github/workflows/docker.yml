@@ -21,8 +21,9 @@ on:
           [
            "ubuntu-resolute",
            "debian-trixie",
-           "fedora-42",
            "fedora-43",
+           "fedora-44",
+           "fedora-45",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
