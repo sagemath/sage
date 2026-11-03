@@ -4803,13 +4803,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             raise ValueError("second argument is not an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
-      
+
         if self.is_isomorphic(other):
             return True
 
         E1 = self.minimal_model()
         E2 = other.minimal_model()
-        
+
         if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
             return False
 
