@@ -44,12 +44,9 @@ def write_env_file(env_file: Path, dependencies: list[str]) -> None:
     env_file.write_text(
         """name: sage
 channels:
-  - conda-forge/label/python_rc
   - conda-forge
   - nodefaults
 dependencies:
-  - _python_rc
-  - _numpy_rc
 """
         + "".join(f"  - {req}" + "\n" for req in dependencies)
     )
