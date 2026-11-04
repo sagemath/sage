@@ -1,4 +1,4 @@
-from sage.config import get_include_dirs
+from sage.misc.cython import get_include_dirs
 
 
 def test_cython_metaclass_header_found():

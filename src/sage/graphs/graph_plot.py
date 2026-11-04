@@ -1724,7 +1724,7 @@ class GraphPlot(SageObject):
         # Always make a copy of the children because they get eaten
         stack = [list(children[root])]
         stick = [root]
-        parent = {u: root for u in children[root]}
+        parent = dict.fromkeys(children[root], root)
         pos = {}
         obstruction = [0.0] * T.n_vertices()
         if orientation == 'down':

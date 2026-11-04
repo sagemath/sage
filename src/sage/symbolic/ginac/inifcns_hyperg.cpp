@@ -37,19 +37,25 @@
 #include "symbol.h"
 #include "pseries.h"
 #include "utils.h"
+#include "pyobject_ptr.h"
 
 #include <utility>
 #include <vector>
 #include <stdexcept>
 #include <sstream>
 #include <string>
-#include <memory>
 
 #if PY_MAJOR_VERSION > 2
 #define PyString_FromString PyUnicode_FromString
 #endif
 
 namespace GiNaC {
+
+namespace {
+
+using internal::pyobject_ptr;
+
+} // namespace
 
 inline void py_error(const char* errmsg) {
         throw std::runtime_error((PyErr_Occurred() != nullptr) ? errmsg:
@@ -63,31 +69,36 @@ ex _2F1(const ex& a, const ex& b, const ex& c, ex x)
         avec.push_back(a);
         avec.push_back(b);
         bvec.push_back(c);
-        PyObject *lista = py_funcs.exvector_to_PyTuple(avec);
-        PyObject *listb = py_funcs.exvector_to_PyTuple(bvec);
-        PyObject *z = py_funcs.ex_to_pyExpression(std::move(x));
+        pyobject_ptr lista(py_funcs.exvector_to_PyTuple(avec));
+        if (!lista)
+                py_error("Error converting hypergeometric numerator parameters");
+        pyobject_ptr listb(py_funcs.exvector_to_PyTuple(bvec));
+        if (!listb)
+                py_error("Error converting hypergeometric denominator parameters");
+        pyobject_ptr z(py_funcs.ex_to_pyExpression(std::move(x)));
+        if (!z)
+                py_error("Error converting hypergeometric argument");
 
-        PyObject* m = PyImport_ImportModule("sage.functions.hypergeometric");
-        if (m == nullptr)
+        pyobject_ptr m(PyImport_ImportModule("sage.functions.hypergeometric"));
+        if (!m)
                 py_error("Error importing hypergeometric");
-        PyObject* hypfunc = PyObject_GetAttrString(m, "hypergeometric");
-        if (hypfunc == nullptr)
+        pyobject_ptr hypfunc(PyObject_GetAttrString(m.get(), "hypergeometric"));
+        if (!hypfunc)
                 py_error("Error getting hypergeometric attribute");
 
-        PyObject* name = PyString_FromString(const_cast<char*>("__call__"));
-        PyObject* pyresult = PyObject_CallMethodObjArgs(hypfunc, name, lista, listb, z, NULL);
-        Py_DECREF(m);
-        Py_DECREF(name);
-        Py_DECREF(hypfunc);
-        if (pyresult == nullptr) {
+        pyobject_ptr name(PyString_FromString("__call__"));
+        if (!name)
+                py_error("Error creating hypergeometric method name");
+        pyobject_ptr pyresult(PyObject_CallMethodObjArgs(
+                hypfunc.get(), name.get(), lista.get(), listb.get(), z.get(), nullptr));
+        if (!pyresult) {
                 throw(std::runtime_error("numeric::hypergeometric_pFq(): python function hypergeometric::__call__ raised exception"));
         }
-        if ( pyresult == Py_None ) {
+        if (pyresult.get() == Py_None) {
                 throw(std::runtime_error("numeric::hypergeometric_pFq(): python function hypergeometric::__call__ returned None"));
         }
         // convert output Expression to an ex
-        ex eval_result = py_funcs.pyExpression_to_ex(pyresult);
-        Py_DECREF(pyresult);
+        ex eval_result = py_funcs.pyExpression_to_ex(pyresult.get());
         if (PyErr_Occurred() != nullptr) {
                 throw(std::runtime_error("numeric::hypergeometric_pFq(): python function (Expression_to_ex) raised exception"));
         }
@@ -99,7 +110,7 @@ ex _2F1(const ex& a, const ex& b, const ex& c, ex x)
 // Appell F1 function
 //////////
 
-static ex appellf1_evalf(const ex& a, const ex& b1, const ex& b2, const ex& c, const ex& x, const ex& y, PyObject* parent)
+static ex appellf1_evalf(const ex& a, const ex& b1, const ex& b2, const ex& c, const ex& x, const ex& y, PyObject*)
 {
 	/*if (is_exactly_a<numeric>(a) and is_exactly_a<numeric>(b1)
             and is_exactly_a<numeric>(b2) and is_exactly_a<numeric>(c)

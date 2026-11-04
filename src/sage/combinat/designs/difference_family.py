@@ -270,7 +270,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False) -> bool:
             return False
 
     # Check that every x \in G-{0},occurs exactly l times as a difference
-    counter = {g: 0 for g in Glist}
+    counter = dict.fromkeys(Glist, 0)
     where = {g: set() for g in Glist}
     del counter[identity]
 
@@ -1710,7 +1710,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
             print(f'G has order {G.order()}, but it should be {v}')
         return False
 
-    differences_counter = {el: 0 for el in G}
+    differences_counter = dict.fromkeys(G, 0)
     for K in Ks:
         for el1 in K:
             for el2 in K:

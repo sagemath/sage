@@ -1619,9 +1619,10 @@ class _RandomPath:
         # check list size
         if len(cardlist) != size + 1:
             raise ValueError("invalid parameter: l does not have correct size.")
-        cutting: list[tuple[float, int]] = []
-        for i in range(size + 1):
-            cutting.append((cardlist[i] * cardlist[size - i], i))
+        cutting: list[tuple[float, int]] = [
+            (cardlist[i] * cardlist[size - i], i)
+            for i in range(size + 1)
+        ]
         # sort with decreasing probability for efficient random generation
         cutting.sort(key=lambda x: x[0], reverse=True)
         return cutting

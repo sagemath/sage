@@ -211,7 +211,7 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
 
         sage: explain_pickle(dumps({('a', 'b'): [1r, 2r]}))
         {('a', 'b'):[1r, 2r]}
-        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)                       # needs sage.symbolic
+        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)
         from sage.rings.real_mpfr import __create__RealNumber_version0
         from sage.rings.real_mpfr import __create__RealField_version0
         __create__RealNumber_version0(__create__RealField_version0(53r, False, 'RNDN'), '3.4gvml245kc0@0', 32r)
@@ -861,7 +861,7 @@ class PickleExplainer:
         TESTS::
 
             sage: from sage.misc.explain_pickle import *
-            sage: check_pickle(float(pi))                                                # needs sage.symbolic
+            sage: check_pickle(float(pi))
                 0: \x80 PROTO      2
                 2: G    BINFLOAT   3.141592653589793
                11: .    STOP

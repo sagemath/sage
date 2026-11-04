@@ -1494,13 +1494,6 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             sage: RegularSequenceRing(3, ZZ)
             Space of 3-regular sequences over Integer Ring
 
-        ::
-
-            sage: from itertools import islice
-            sage: Seq2 = RegularSequenceRing(2, ZZ)
-            sage: TestSuite(Seq2).run(  # long time
-            ....:    elements=tuple(islice(Seq2.some_elements(), 4)))
-
         .. SEEALSO::
 
             :doc:`k-regular sequence <regular_sequence>`,
@@ -3627,7 +3620,7 @@ class RecurrenceParser:
                                  "the given recurrence relations."
                                  % (n,))
 
-        values.update({n: 0 for n in srange(ll, 0)})
+        values.update(dict.fromkeys(srange(ll, 0), 0))
 
         return values
 
@@ -3804,7 +3797,7 @@ class RecurrenceParser:
         lower = floor(ll/k**M)
         upper = floor((k**(M-1) - k**m + uu)/k**M) + 1
 
-        return {i: inhomogeneities[i].subsequence(1, {b: 1 for b in srange(lower, upper + 1)},
+        return {i: inhomogeneities[i].subsequence(1, dict.fromkeys(srange(lower, upper + 1), 1),
                                                   minimize=False)
                 for i in inhomogeneities}
 

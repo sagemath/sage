@@ -1290,7 +1290,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
                                                             ).along(self.immersion())
                 v[frame, :] = list(eigen_vector) + [0]
                 res.append((TangentTensor(v, self.immersion()), self.scalar_field(
-                  {chart: eigen_space[0] for chart in self.top_charts()})))
+                  dict.fromkeys(self.top_charts(), eigen_space[0]))))
                 #res[-1][0].set_name("e_{}".format(next(counter)))
         self._principal_directions[screen._name] = res
         return res

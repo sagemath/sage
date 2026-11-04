@@ -153,7 +153,7 @@ def recover_orientations(gauss):
     # third step, determine the local orientations
     # this is done by following the knot
 
-    signs_local = {d: 1 for d in range(1, n + 1)}
+    signs_local = dict.fromkeys(range(1, n + 1), 1)
     for x, _ in negative:
         signs_local[changed[x]] *= -1
 

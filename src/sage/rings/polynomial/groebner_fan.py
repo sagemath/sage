@@ -1676,7 +1676,7 @@ class GroebnerFan(SageObject):
                                       ",".join(str(q) for q in truevars))
             old_polys = self.ideal().gens()
             new_polys = []
-            sub = {v: 1 for v in parameters}
+            sub = dict.fromkeys(parameters, 1)
             for apoly in old_polys:
                 mons = apoly.monomials()
                 mons = [m.subs(sub) for m in mons]
