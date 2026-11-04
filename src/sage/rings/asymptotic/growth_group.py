@@ -488,7 +488,7 @@ class Variable(CachedRepresentation, SageObject):
         """
         return self.var_bases
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         r"""
         Return whether this is a monomial variable.
 
@@ -741,7 +741,7 @@ class PartialConversionElement(SageObject):
         other = PartialConversionElement(self.growth_group, raw_other)
         return here, other
 
-    def is_compatible(self, other):
+    def is_compatible(self, other) -> bool:
         r"""
         Wrapper to :meth:`GenericGrowthGroup.is_compatible`.
 
@@ -2184,7 +2184,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         """
         pass
 
-    def is_compatible(self, other):
+    def is_compatible(self, other) -> bool:
         r"""
         Return whether this growth group is compatible with ``other`` meaning
         that both are of the same type and have the same variables, but

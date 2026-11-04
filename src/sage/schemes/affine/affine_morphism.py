@@ -1521,7 +1521,7 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
 
         return locus.affine_patch(0, self.domain().ambient_space()).reduce()
 
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         """
         Return ``True`` if the map is defined everywhere on the domain.
 
