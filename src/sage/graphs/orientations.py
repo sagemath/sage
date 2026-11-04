@@ -551,7 +551,7 @@ def acyclic_orientations(G):
         n = G.order()
         ko = n
         G_copy = G.copy()
-        vertex_labels = {v: None for v in G_copy.vertices()}
+        vertex_labels = dict.fromkeys(G_copy.vertices())
 
         while G_copy.size() > 0:
             min_val = float('inf')
@@ -692,7 +692,7 @@ def acyclic_orientations(G):
     edge_labels = order_edges(G, vertex_labels)
 
     # Create globO array
-    globO = {uv: 0 for uv in edge_labels}
+    globO = dict.fromkeys(edge_labels, 0)
 
     m = len(edge_labels)
     k = len(vertex_labels)
@@ -1394,7 +1394,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
 
     # Solving the maximum flow
     value, flow = d.flow('s', 't', value_only=False, integer=True,
-                         use_edge_labels=True, solver=solver, verbose=verbose,
+                         by_weight=True, solver=solver, verbose=verbose,
                          integrality_tolerance=integrality_tolerance)
 
     if value != G.size():

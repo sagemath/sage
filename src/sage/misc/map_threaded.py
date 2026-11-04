@@ -2,15 +2,21 @@
 Threaded map function
 """
 
+from __future__ import annotations
 
-def map_threaded(function, sequence):
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+
+def map_threaded(function: Callable[[Any], Any], sequence: Any) -> Any:
     """
     Apply the function to the elements in the sequence by threading
     recursively through all sub-sequences in the sequence.
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: map_threaded(log, [[1,2], [3,e]])
         [[0, log(2)], [log(3), 1]]
         sage: map_threaded(log, [(1,2), (3,e)])
@@ -23,7 +29,7 @@ def map_threaded(function, sequence):
     map_threaded also works on any object with an apply_map method, e.g.,
     on matrices::
 
-        sage: map_threaded(lambda x: x^2, matrix([[1,2], [3,4]]))                       # needs sage.modules
+        sage: map_threaded(lambda x: x^2, matrix([[1,2], [3,4]]))
         [ 1  4]
         [ 9 16]
 

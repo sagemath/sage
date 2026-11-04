@@ -221,7 +221,7 @@ in the Installation Guide.
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
-    - Python 3.12 or newer with a full standard library installation.
+    - Python 3.13 or newer with a full standard library installation.
       Sage no longer builds its own copy of Python; you must provide a
       system Python or another external Python installation.
       Sage's `./configure` currently requires Python `>= 3.12` and `< 3.15`,

@@ -1,8 +1,9 @@
 from typing import Any, Optional, Union
 
-from sage.rings.ring import Ring
-from sage.rings.integer import Integer
 from sage.libs.gmp.types import mpz_t
+
+from sage.rings.integer import Integer
+from sage.rings.ring import Ring
 
 def is_IntegerRing(x: Any) -> bool:
     ...

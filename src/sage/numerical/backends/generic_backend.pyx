@@ -1266,7 +1266,7 @@ cdef class GenericBackend:
         Test, with an actual working backend, that comparing a problem with itself works::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver='GLPK')
+            sage: p = get_solver(solver='Highs')
             sage: tester = p._tester()
             sage: p._do_test_problem_data(tester, p)
         """
@@ -1609,9 +1609,9 @@ def default_mip_solver(solver=None):
     EXAMPLES::
 
         sage: former_solver = default_mip_solver()
-        sage: default_mip_solver("GLPK")
+        sage: default_mip_solver("Highs")
         sage: default_mip_solver()
-        'Glpk'
+        'Highs'
         sage: default_mip_solver("PPL")
         sage: default_mip_solver()
         'Ppl'
@@ -1735,7 +1735,7 @@ def default_mip_solver(solver=None):
             raise ValueError("SCIP is not available. Please refer to the documentation to install it.")
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'HiGHS', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
+        raise ValueError("'solver' should be set to 'HiGHS', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
 
 cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
@@ -1807,30 +1807,32 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     Passing a callable as the ``solver``::
 
-        sage: from sage.numerical.backends.glpk_backend import GLPKBackend
-        sage: p = get_solver(solver=GLPKBackend); p
-        <...sage.numerical.backends.glpk_backend.GLPKBackend...>
+        sage: from sage.numerical.backends.highs_backend import HiGHSBackend
+        sage: p = get_solver(solver=HiGHSBackend); p
+        <...sage.numerical.backends.highs_backend.HiGHSBackend...>
 
     Passing a callable that customizes a backend::
 
-        sage: def glpk_exact_solver():
+        sage: def highs_with_timelimit():
         ....:     from sage.numerical.backends.generic_backend import get_solver
-        ....:     b = get_solver(solver='GLPK')
-        ....:     b.solver_parameter('simplex_or_intopt', 'exact_simplex_only')
+        ....:     b = get_solver(solver="Highs")
+        ....:     b.solver_parameter('timelimit', 60)
         ....:     return b
-        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=glpk_exact_solver) # long time
-        8
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = graphs.CompleteGraph(5)
+        sage: cutwidth(G, algorithm='MILP', solver=highs_with_timelimit)[0]
+        6
 
     TESTS:
 
     Test that it works when the default solver is a callable, see :issue:`28914`::
 
         sage: old_default = default_mip_solver()
-        sage: from sage.numerical.backends.glpk_backend import GLPKBackend
-        sage: default_mip_solver(GLPKBackend)
+        sage: from sage.numerical.backends.highs_backend import HiGHSBackend
+        sage: default_mip_solver(HiGHSBackend)
         sage: M = MixedIntegerLinearProgram()   # indirect doctest
         sage: M.get_backend()
-        <...GLPKBackend...>
+        <...HiGHSBackend...>
         sage: default_mip_solver(old_default)
     """
     if solver is None:
@@ -1910,4 +1912,4 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         return SCIPBackend()
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'GLPK/exact', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'HiGHS', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")
+        raise ValueError("'solver' should be set to 'HiGHS', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', None (in which case the default one is used), or a callable.")

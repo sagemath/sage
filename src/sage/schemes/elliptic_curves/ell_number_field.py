@@ -330,7 +330,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         EXAMPLES::
 
             sage: E = EllipticCurve([0, 0, 1, -1, 0])
-            sage: E.height_pairing_matrix()
+            sage: E.height_pairing_matrix() # abs tol 1e-15
             [0.0511114082399688]
 
         For rank 0 curves, the result is a valid 0x0 matrix::
@@ -423,7 +423,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve('37a1')
             sage: P = E(0,0)
             sage: Q = E(1,0)
-            sage: E.regulator_of_points([P,Q])
+            sage: E.regulator_of_points([P,Q])  # abs tol 1e-15
             0.000000000000000
             sage: 2*P == Q
             True
@@ -432,7 +432,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             sage: E = EllipticCurve('5077a1')
             sage: points = [E.lift_x(x) for x in [-2,-7/4,1]]
-            sage: E.regulator_of_points(points)
+            sage: E.regulator_of_points(points)  # abs tol 1e-15
             0.417143558758384
             sage: E.regulator_of_points(points, precision=100)
             0.41714355875838396981711954462

@@ -472,7 +472,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if isinstance(tags, collections.abc.Mapping):
         new_tags = dict(tags)
     elif tags is not None:
-        new_tags = {tag: None for tag in tags}
+        new_tags = dict.fromkeys(tags)
     else:
         new_tags = dict(current_tags)
 
@@ -480,7 +480,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         if isinstance(add_tags, collections.abc.Mapping):
             new_tags.update(add_tags)
         else:
-            new_tags.update({tag: None for tag in add_tags})
+            new_tags.update(dict.fromkeys(add_tags))
 
     if remove_tags is not None:
         for tag in remove_tags:

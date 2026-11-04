@@ -7,9 +7,9 @@
 #
 #   Determine if the system copy of a python package can be used by sage.
 #
-#   This macro uses setuptools.version's pkg_resources to check that the
+#   This macro uses importlib.metadata and packaging to check that the
 #   "version_requirements.txt" file (or entry in "pyproject.toml") for
-#   the named package is satisfied, and it can typically fail in four ways:
+#   the named package and its dependencies are satisfied. It can fail when:
 #
 #     1. If --enable-system-site-packages was not passed to ./configure,
 #
@@ -17,7 +17,7 @@
 #
 #     3. If we are unable to create a venv with the system python,
 #
-#     4. If setuptools is not available to the system python,
+#     4. If packaging is not available to the system python,
 #
 #     5. If the contents of version_requirements.txt (or entry in
 #        "pyproject.toml") are not met (wrong version, no version,
@@ -64,8 +64,33 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
       WITH_SAGE_PYTHONUSERBASE([dnl
         AS_IF(
           [config.venv/bin/python3 -c dnl
-             "import pkg_resources; dnl
-              pkg_resources.require((${SAGE_PKG_VERSPEC}))" dnl
+             "from importlib.metadata import distribution
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
+
+pending = list((Requirement(text), ()) for text in (${SAGE_PKG_VERSPEC}))
+visited = set()
+while pending:
+    requirement, parent_extras = pending.pop()
+    if requirement.marker is not None and not any(
+        requirement.marker.evaluate(dict(extra=extra))
+        for extra in ('', *parent_extras)
+    ):
+        continue
+    installed = distribution(requirement.name)
+    # Like pkg_resources.require, accept installed prereleases.
+    if not requirement.specifier.contains(installed.version, prereleases=True):
+        raise RuntimeError(f'{requirement}: installed version is {installed.version}')
+    extras = frozenset(map(canonicalize_name, requirement.extras))
+    provided_extras = set(map(canonicalize_name,
+                             installed.metadata.get_all('Provides-Extra') or ()))
+    if not extras.issubset(provided_extras):
+        raise RuntimeError(f'{requirement}: unknown extras {extras - provided_extras}')
+    key = (canonicalize_name(requirement.name), extras)
+    if key in visited:
+        continue
+    visited.add(key)
+    pending.extend((Requirement(text), extras) for text in installed.requires or ())" dnl
            2>&AS_MESSAGE_LOG_FD],
           [AC_MSG_RESULT(yes)],
           [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]

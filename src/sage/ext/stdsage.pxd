@@ -18,8 +18,44 @@ cdef inline PY_NEW(type t):
     Return ``t.__new__(t)``.  This works even for types like
     :class:`Integer` where we change ``tp_new`` at runtime (Cython
     optimizations assume that ``tp_new`` doesn't change).
+
+    TESTS:
+
+    ``tp_new`` must be called with a real (empty) argument tuple, not with
+    ``NULL``.  Cython's ``__cinit__`` wrapper reads the tuple's size whenever
+    ``__cinit__`` takes arguments, and Cython 3.3 also reads it in the
+    vectorcall adapter it installs as ``tp_new``; either way a ``NULL``
+    argument tuple segfaults.  Check both a base extension type and a
+    derived one, which reaches the base ``tp_new`` through the inheritance
+    chain::
+
+        sage: # needs sage.misc.cython
+        sage: cython(
+        ....: '''
+        ....: from sage.ext.stdsage cimport PY_NEW
+        ....:
+        ....: cdef class Base:
+        ....:     cdef public tuple stored
+        ....:     def __cinit__(self, *args):
+        ....:         self.stored = args
+        ....:
+        ....: cdef class Derived(Base):
+        ....:     pass
+        ....:
+        ....: def new_base():
+        ....:     return PY_NEW(Base)
+        ....:
+        ....: def new_derived():
+        ....:     return PY_NEW(Derived)
+        ....: ''')
+        sage: new_base().stored
+        ()
+        sage: new_derived().stored
+        ()
     """
-    return (<PyTypeObject*>t).tp_new(t, <PyObject*>NULL, <PyObject*>NULL)
+    # tp_new requires a tuple for positional arguments.  In particular,
+    # Cython 3.3's vectorcall wrapper reads its size unconditionally.
+    return (<PyTypeObject*>t).tp_new(t, <PyObject*>(), <PyObject*>NULL)
 
 
 cdef inline void PY_SET_TP_NEW(type dst, type src) noexcept:

@@ -13,7 +13,7 @@ Usage Introduction
 
 Sparse graphs are initialized as follows::
 
-    sage: S = SparseGraph(nverts = 10, expected_degree = 3, extra_vertices = 10)
+    sage: S = SparseGraph(nverts=10, expected_degree=3, extra_vertices=10)
 
 This example initializes a sparse graph with room for twenty vertices, the first
 ten of which are in the graph. In general, the first ``nverts`` are "active."
@@ -35,24 +35,24 @@ But 10 is not, until we add it::
 
 You can begin working with unlabeled arcs right away as follows::
 
-    sage: S.add_arc(0,1)
-    sage: S.add_arc(1,2)
-    sage: S.add_arc(1,0)
-    sage: S.has_arc(7,3)
+    sage: S.add_arc(0, 1)
+    sage: S.add_arc(1, 2)
+    sage: S.add_arc(1, 0)
+    sage: S.has_arc(7, 3)
     False
-    sage: S.has_arc(0,1)
+    sage: S.has_arc(0, 1)
     True
     sage: S.in_neighbors(1)
     [0]
     sage: S.out_neighbors(1)
     [0, 2]
-    sage: S.del_all_arcs(0,1)
-    sage: S.all_arcs(0,1)
+    sage: S.del_all_arcs(0, 1)
+    sage: S.all_arcs(0, 1)
     []
-    sage: S.all_arcs(1,2)
+    sage: S.all_arcs(1, 2)
     [0]
     sage: S.del_vertex(7)
-    sage: S.all_arcs(7,3)
+    sage: S.all_arcs(7, 3)
     Traceback (most recent call last):
     ...
     LookupError: vertex (7) is not a vertex of the graph
@@ -62,57 +62,58 @@ labels be positive integers (the case label = 0 is treated as no label).
 
 ::
 
-    sage: S.add_arc_label(0,1,-1)
+    sage: S.add_arc_label(0, 1, -1)
     Traceback (most recent call last):
     ...
     ValueError: Label (-1) must be a nonnegative integer.
-    sage: S.add_arc(0,1)
-    sage: S.arc_label(0,1)
+    sage: S.add_arc(0, 1)
+    sage: S.arc_label(0, 1)
     0
 
 Note that ``arc_label`` only returns the first edge label found in the specified
 place, and this can be in any order (if you want all arc labels, use
 ``all_arcs``)::
 
-    sage: S.add_arc_label(0,1,1)
-    sage: S.arc_label(0,1)
+    sage: S.add_arc_label(0, 1, 1)
+    sage: S.arc_label(0, 1)
     1
-    sage: S.all_arcs(0,1)
+    sage: S.all_arcs(0, 1)
     [0, 1]
 
 Zero specifies only that there is no labeled arc::
 
-    sage: S.arc_label(1,2)
+    sage: S.arc_label(1, 2)
     0
 
 So do not be fooled::
 
-    sage: S.all_arcs(1,2)
+    sage: S.all_arcs(1, 2)
     [0]
-    sage: S.add_arc(1,2)
-    sage: S.arc_label(1,2)
+    sage: S.add_arc(1, 2)
+    sage: S.arc_label(1, 2)
     0
 
 Instead, if you work with unlabeled edges, be sure to use the right functions::
 
-    sage: T = SparseGraph(nverts = 3, expected_degree = 2)
-    sage: T.add_arc(0,1)
-    sage: T.add_arc(1,2)
-    sage: T.add_arc(2,0)
-    sage: T.has_arc(0,1)
+    sage: T = SparseGraph(nverts=3, expected_degree=2)
+    sage: T.add_arc(0, 1)
+    sage: T.add_arc(1, 2)
+    sage: T.add_arc(2, 0)
+    sage: T.has_arc(0, 1)
     True
 
 Sparse graphs are by their nature directed. As of this writing, you need to do
 operations in pairs to treat the undirected case (or use a backend or a Sage
 graph)::
 
-    sage: T.has_arc(1,0)
+    sage: T.has_arc(1, 0)
     False
 
 Multiple unlabeled edges are also possible::
 
-    sage: for _ in range(10): S.add_arc(5,4)
-    sage: S.all_arcs(5,4)
+    sage: for _ in range(10):
+    ....:     S.add_arc(5, 4)
+    sage: S.all_arcs(5, 4)
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 The curious developer is encouraged to check out the ``unsafe`` functions,
@@ -231,7 +232,7 @@ cdef class SparseGraph(CGraph):
 
     Sparse graphs are initialized as follows::
 
-        sage: S = SparseGraph(nverts = 10, expected_degree = 3, extra_vertices = 10)
+        sage: S = SparseGraph(nverts=10, expected_degree=3, extra_vertices=10)
 
     INPUT:
 
@@ -265,7 +266,7 @@ cdef class SparseGraph(CGraph):
         EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
-            sage: S = SparseGraph(nverts = 10, expected_degree = 3, extra_vertices = 10)
+            sage: S = SparseGraph(nverts=10, expected_degree=3, extra_vertices=10)
 
         TESTS::
 
@@ -730,9 +731,9 @@ cdef class SparseGraph(CGraph):
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
             sage: G.out_degree(0)
             1
             sage: G.out_degree(1)
@@ -800,9 +801,9 @@ cdef class SparseGraph(CGraph):
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
             sage: G.in_degree(0)
             0
             sage: G.in_degree(1)
@@ -896,17 +897,17 @@ cdef class SparseGraph(CGraph):
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
-            sage: G.add_arc_label(0,1)
-            sage: G.add_arc_label(4,7)
+            sage: G.add_arc_label(0, 1)
+            sage: G.add_arc_label(4, 7)
             Traceback (most recent call last):
             ...
             LookupError: vertex (7) is not a vertex of the graph
-            sage: G.has_arc(1,0)
+            sage: G.has_arc(1, 0)
             False
-            sage: G.has_arc(0,1)
+            sage: G.has_arc(0, 1)
             True
-            sage: G.add_arc_label(1,2,2)
-            sage: G.arc_label(1,2)
+            sage: G.add_arc_label(1, 2, 2)
+            sage: G.arc_label(1, 2)
             2
         """
         self.check_vertex(u)
@@ -1222,7 +1223,7 @@ cdef class SparseGraphBackend(CGraphBackend):
     which wraps a SparseGraph object::
 
         sage: G = Graph(30, sparse=True)
-        sage: G.add_edges([(0,1), (0,3), (4,5), (9, 23)])
+        sage: G.add_edges([(0, 1), (0, 3), (4, 5), (9, 23)])
         sage: G.edges(sort=True, labels=False)
         [(0, 1), (0, 3), (4, 5), (9, 23)]
 
@@ -1230,7 +1231,7 @@ cdef class SparseGraphBackend(CGraphBackend):
     themselves. This is because SparseGraphs (by design) do not deal with Python
     objects::
 
-        sage: G.add_vertex((0,1,2))
+        sage: G.add_vertex((0, 1, 2))
         sage: sorted(list(G),
         ....:        key=lambda x: (isinstance(x, tuple), x))
         [0,
@@ -1239,7 +1240,7 @@ cdef class SparseGraphBackend(CGraphBackend):
          (0, 1, 2)]
         sage: from sage.graphs.base.sparse_graph import SparseGraph
         sage: SG = SparseGraph(30)
-        sage: SG.add_vertex((0,1,2))
+        sage: SG.add_vertex((0, 1, 2))
         Traceback (most recent call last):
         ...
         TypeError: an integer is required
@@ -1252,7 +1253,7 @@ cdef class SparseGraphBackend(CGraphBackend):
         EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: D.add_edge(0,1,None,False)
+            sage: D.add_edge(0, 1, None, False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None)]
         """
@@ -1302,10 +1303,10 @@ cdef class SparseGraphBackend(CGraphBackend):
         EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: D.add_edges([(0,1,1), (2,3,2), (4,5,3), (5,6,2)], False)
+            sage: D.add_edges([(0, 1, 1), (2, 3, 2), (4, 5, 3), (5, 6, 2)], False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, 1), (2, 3, 2), (4, 5, 3), (5, 6, 2)]
-            sage: D.get_edge_label(3,2)
+            sage: D.get_edge_label(3, 2)
             2
         """
         cdef int l_int
@@ -1338,8 +1339,8 @@ cdef class SparseGraphBackend(CGraphBackend):
         EXAMPLES::
 
             sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
-            sage: D.has_edge(0,1,None)
+            sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
+            sage: D.has_edge(0, 1, None)
             True
         """
         cdef int u_int = self.get_vertex_checked(u)
@@ -1380,8 +1381,8 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: G.multiple_edges(False)
             sage: G.multiple_edges(None)
             False
-            sage: G.add_edge(0,1,0,True)
-            sage: G.add_edge(0,1,0,True)
+            sage: G.add_edge(0, 1, 0, True)
+            sage: G.add_edge(0, 1, 0, True)
             sage: list(G.iterator_out_edges(range(9), True))
             [(0, 1, 0)]
         """
@@ -1404,14 +1405,14 @@ cdef class SparseGraphBackend(CGraphBackend):
         EXAMPLES::
 
             sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: G.add_edge(1,2,None,True)
-            sage: G.set_edge_label(1,2,'a',True)
+            sage: G.add_edge(1, 2, None, True)
+            sage: G.set_edge_label(1, 2, 'a', True)
             sage: list(G.iterator_out_edges(range(9), True))
             [(1, 2, 'a')]
 
         Note that it fails silently if there is no edge there::
 
-            sage: G.set_edge_label(2,1,'b',True)
+            sage: G.set_edge_label(2, 1, 'b', True)
             sage: list(G.iterator_out_edges(range(9), True))
             [(1, 2, 'a')]
         """

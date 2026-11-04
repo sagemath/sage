@@ -337,7 +337,8 @@ class PseudoRiemannianMetric(TensorField):
         True
     """
     _derived_objects = ('_connection', '_ricci_scalar', '_weyl',
-                       '_schouten', '_cotton', '_cotton_york')
+                       '_schouten', '_cotton', '_cotton_york',
+                       '_kretschmann_scalar')
 
     def __init__(self, vector_field_module, name, signature=None,
                  latex_name=None):
@@ -484,8 +485,8 @@ class PseudoRiemannianMetric(TensorField):
         TensorField._del_derived(self)
         # The inverse metric is cleared:
         self._del_inverse()
-        # The connection, Ricci scalar and Weyl tensor are reset to None:
-        # The Schouten, Cotton and Cotton-York tensors are reset to None:
+        # The connection, Ricci and Kretschmann scalars, and Weyl,
+        # Schouten, Cotton, Cotton-York tensors are reset to None:
         for attr in self._derived_objects:
             self.__setattr__(attr, None)
         # The dictionary of determinants over the various frames is cleared:
@@ -1162,6 +1163,77 @@ class PseudoRiemannianMetric(TensorField):
             resu._latex_name = latex_name
             self._ricci_scalar = resu
         return self._ricci_scalar
+
+    def kretschmann_scalar(self, name=None, latex_name=None):
+        r"""
+        Return the Kretschmann scalar associated with the metric.
+
+        The Kretschmann scalar is the scalar field `K` defined from the
+        Riemann curvature tensor `R` (see :meth:`riemann`) by
+
+        .. MATH::
+
+            K = R_{abcd} R^{abcd}
+
+        It is a curvature invariant frequently used in general relativity,
+        in particular for detecting curvature singularities of a spacetime
+        that are not merely artifacts of the coordinate system used (as
+        opposed to, e.g., the vanishing of some metric component in a
+        particular chart).
+
+        INPUT:
+
+        - ``name`` -- (default: ``None``) name given to the Kretschmann
+          scalar; if none, it is set to "K(g)", where "g" is the metric's
+          name
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
+          Kretschmann scalar; if none, it is set to "K(g)", where "g" is
+          the metric's name
+
+        OUTPUT:
+
+        - the Kretschmann scalar `K`, as an instance of
+          :class:`~sage.manifolds.differentiable.scalarfield.DiffScalarField`
+
+        EXAMPLES:
+
+        Kretschmann scalar of the standard metric on the 2-sphere::
+
+            sage: M = Manifold(2, 'S^2', start_index=1)
+            sage: U = M.open_subset('U') # the complement of a meridian (domain of spherical coordinates)
+            sage: c_spher.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
+            sage: a = var('a') # the sphere radius
+            sage: g = U.metric('g')
+            sage: g[1,1], g[2,2] = a^2, a^2*sin(th)^2
+            sage: g.display() # standard metric on the 2-sphere of radius a:
+            g = a^2 dth⊗dth + a^2*sin(th)^2 dph⊗dph
+            sage: g.kretschmann_scalar()
+            Scalar field K(g) on the Open subset U of the 2-dimensional
+             differentiable manifold S^2
+            sage: g.kretschmann_scalar().display() # constant, as expected for a maximally symmetric space:
+            K(g): U → ℝ
+               (th, ph) ↦ 4/a^4
+
+        For a maximally symmetric 2-dimensional space, the Kretschmann
+        scalar equals the square of the Ricci scalar, since the Riemann
+        tensor is entirely determined by the Ricci scalar in dimension 2::
+
+            sage: g.kretschmann_scalar() == g.ricci_scalar()^2
+            True
+        """
+        if self._kretschmann_scalar is None:
+            riem = self.riemann()
+            riem_down = riem.down(self, 0)  # R_{abcd}, all indices down
+            riem_up = riem.up(self)  # R^{abcd}, all indices up
+            resu = riem_up.contract(0, 1, 2, 3, riem_down, 0, 1, 2, 3)
+            if name is None:
+                name = "K(" + self._name + ")"
+            if latex_name is None:
+                latex_name = "K(" + self._latex_name + ")"
+            resu._name = name
+            resu._latex_name = latex_name
+            self._kretschmann_scalar = resu
+        return self._kretschmann_scalar
 
     def weyl(self, name=None, latex_name=None):
         r"""

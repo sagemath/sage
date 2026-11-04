@@ -259,15 +259,14 @@ def save(obj, filename, compress=True, **kwargs):
 
         sage: import tempfile
         sage: d = tempfile.TemporaryDirectory()
-        sage: a = matrix(2, [1,2, 3,-5/2])                                              # needs sage.modules
+        sage: a = matrix(2, [1,2, 3,-5/2])
         sage: objfile = os.path.join(d.name, 'test.sobj')
         sage: objfile_short = os.path.join(d.name, 'test')
-        sage: save(a, objfile)                                                          # needs sage.modules
-        sage: load(objfile_short)                                                       # needs sage.modules
+        sage: save(a, objfile)
+        sage: load(objfile_short)
         [   1    2]
         [   3 -5/2]
 
-        sage: # needs sage.plot sage.schemes
         sage: E = EllipticCurve([-1,0])
         sage: P = plot(E)
         sage: save(P, objfile_short)   # saves the plot to "test.sobj"
@@ -476,7 +475,7 @@ def register_unpickle_override(module, name, callable, call_name=None):
         ....:             self.__dict__ = D
         sage: __main__.SweeterPickle = SweeterPickle
         sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)
-        sage: loads(gherkin)                                                            # needs sage.combinat
+        sage: loads(gherkin)
         [1, 2, 3]
         sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle
         [1, 2, 3]
@@ -614,7 +613,7 @@ def unpickle_global(module, name):
     Test that :func:`register_unpickle_override` calls in lazily imported modules
     are respected::
 
-        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')      # needs sage.modules
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')
         <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
@@ -952,9 +951,9 @@ def loads(s, compress=True, **kwargs):
 
     EXAMPLES::
 
-        sage: a = matrix(2, [1,2, 3,-4/3])                                              # needs sage.modules
-        sage: s = dumps(a)                                                              # needs sage.modules
-        sage: loads(s)                                                                  # needs sage.modules
+        sage: a = matrix(2, [1,2, 3,-4/3])
+        sage: s = dumps(a)
+        sage: loads(s)
         [   1    2]
         [   3 -4/3]
 
@@ -1232,7 +1231,7 @@ def make_None(*args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.persist import make_None
-        sage: print(make_None(42, pi, foo='bar'))                                       # needs sage.symbolic
+        sage: print(make_None(42, pi, foo='bar'))
         None
     """
     return None

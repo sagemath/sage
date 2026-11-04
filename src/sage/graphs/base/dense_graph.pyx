@@ -69,7 +69,7 @@ Dense graphs do not support multiple or labeled edges.
 ::
 
     sage: for _ in range(10): D.add_arc(5, 4)
-    sage: D.has_arc(5,4 )
+    sage: D.has_arc(5, 4)
     True
 
 Dense graphs are by their nature directed. As of this writing, you need to do
@@ -464,9 +464,9 @@ cdef class DenseGraph(CGraph):
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
             sage: G.out_degree(0)
             1
             sage: G.out_degree(1)
@@ -486,9 +486,9 @@ cdef class DenseGraph(CGraph):
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
             sage: G.in_degree(0)
             0
             sage: G.in_degree(1)

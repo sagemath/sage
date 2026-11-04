@@ -23,6 +23,8 @@ from sage.schemes.elliptic_curves.constructor import (EllipticCurve,
                                                       EllipticCurve_from_montgomery,
                                                       EllipticCurve_from_cubic,
                                                       EllipticCurves_with_good_reduction_outside_S)
+from sage.schemes.elliptic_curves.ell_edwards import (TwistedEdwardsCurve,
+                                                      TwistedEdwardsPoint)
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.schemes.elliptic_curves.jacobian', 'Jacobian')

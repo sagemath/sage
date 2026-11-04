@@ -96,7 +96,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()                    # needs sage.rings.number_field
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()
             False
         """
         if not self.is_compact():
@@ -296,8 +296,8 @@ class Polyhedron_base2(Polyhedron_base1):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes
 
-            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])                      # needs sage.rings.number_field sage.symbolic
-            sage: t2.h_star_vector()                                                    # needs sage.rings.number_field sage.symbolic
+            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))], [1/2]])
+            sage: t2.h_star_vector()
             Traceback (most recent call last):
             ...
             TypeError: The h_star vector is only defined for lattice polytopes

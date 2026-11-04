@@ -99,12 +99,11 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, 0, 1)]
         """
         res = []
-        for i in range(self.n-1):
+        for i in range(self.n - 1):
             for j in range(i + 1, self.n):
                 res.append(self.monomial(i) - self.monomial(j))
                 res.append(self.monomial(i) + self.monomial(j))
-        for i in range(self.n):
-            res.append(self.monomial(i))
+        res.extend(self.monomial(i) for i in range(self.n))
         return res
 
     def fundamental_weight(self, i):

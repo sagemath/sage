@@ -225,8 +225,8 @@ ex relational::map(map_function & f) const
 	if (!are_ex_trivially_equal(lh, mapped_lh)
 	 || !are_ex_trivially_equal(rh, mapped_rh))
 		return (new relational(mapped_lh, mapped_rh, o))->setflag(status_flags::dynallocated);
-	
-		return *this;
+
+	return *this;
 }
 
 ex relational::eval(int level) const
@@ -247,8 +247,8 @@ ex relational::subs(const exmap & m, unsigned options) const
 
 	if (!are_ex_trivially_equal(lh, subsed_lh) || !are_ex_trivially_equal(rh, subsed_rh))
 		return relational(subsed_lh, subsed_rh, o).subs_one_level(m, options);
-	
-		return subs_one_level(m, options);
+
+	return subs_one_level(m, options);
 }
 
 // protected
@@ -444,14 +444,16 @@ relational::result relational::decide() const
                 else {
                         inf = ex_to<infinity>(lh);
                 }
-                if (inf.is_unsigned_infinity() and o!=equal and o!=not_equal)
-                        return result::undecidable;
-                if (has_symbol(other))
-                        return result::notimplemented;
-                if (inf.compare_other_type(other, oper))
-                        return result::True;
-                
-                        return result::False;
+	                if (inf.is_unsigned_infinity() and o!=equal and o!=not_equal) {
+	                        return result::undecidable;
+	                }
+	                if (has_symbol(other)) {
+	                        return result::notimplemented;
+	                }
+	                if (inf.compare_other_type(other, oper))
+	                        return result::True;
+
+	                return result::False;
         }
 
 	const ex df = lh-rh;

@@ -2836,12 +2836,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             pass
 
         from sage.rings.infinity import infinity
-        for x in ['_an_element_', 'pi', 1.2, 2, 1, 0, infinity]:
+        global _Integer
+        if _Integer is None:
+            from sage.rings.integer import Integer as _Integer
+        for x in ['_an_element_', 'pi', _Integer(6)/_Integer(5), 2, 1, 0, infinity]:
             # This weird looking list is to try to get an element
             # which does not coerce other places.
             try:
                 return self(x)
-            except (TypeError, NameError, NotImplementedError, AttributeError, ValueError):
+            except (TypeError, NameError, NotImplementedError, AttributeError, ValueError, ZeroDivisionError):
                 _record_exception()
 
         raise NotImplementedError(_LazyString("please implement _an_element_ for %s", (self,), {}))

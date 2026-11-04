@@ -1,5 +1,3 @@
-import os
-
 from . import StaticFile
 
 
@@ -14,8 +12,7 @@ class JmolDataJar(StaticFile):
         sage: bool(JmolDataJar().is_present())  # needs jmol
         True
     """
-
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -36,5 +33,5 @@ class JmolDataJar(StaticFile):
             description="Java viewer for chemical structures in 3D")
 
 
-def all_features():
+def all_features() -> list:
     return [JmolDataJar()]
