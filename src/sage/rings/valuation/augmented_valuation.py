@@ -743,7 +743,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         return self._base_valuation._relative_size(f)
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains `-\infty`.
 

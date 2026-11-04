@@ -348,7 +348,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                         return True
         return False
 
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         r"""
         Return ``True`` if this mapping is a morphism of products of projective spaces.
 
