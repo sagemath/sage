@@ -4725,9 +4725,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         -``other`` -- another elliptic curve `\QQ`
 
-        OUTPUT:
-        Sage integer?
-
         EXAMPLE::
 
             sage: E1 = EllipticCurve('14a1')
@@ -4813,14 +4810,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
             return False
 
-        # if E1.conductor() != E2.conductor():
-        #     return False do i still need this?
+        if E1.conductor() != E2.conductor():
+            return False
 
         if not proof:
             return True
 
         maxp = self.sturm_bound(other)
-        # return E2 in E1.isogeny_class().curves
+
         return E1.aplist(maxp, python_ints=True) == E2.aplist(maxp, python_ints=True)
 
     def isogeny_degree(self, other):
