@@ -956,7 +956,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return Set(self._facets)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return ``True`` if the set of maximal cells is the same for
         ``self`` and ``other``.
@@ -979,7 +979,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return self.maximal_cells() == other.maximal_cells()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -1001,7 +1001,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 

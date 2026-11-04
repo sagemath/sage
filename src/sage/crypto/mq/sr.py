@@ -1021,7 +1021,7 @@ class SR_generic(MPolynomialSystemGenerator):
         if isinstance(d, tuple([list, tuple])):
             return matrix(k, c, r, d).transpose()
 
-    def is_state_array(self, d):
+    def is_state_array(self, d) -> bool:
         """
         Return ``True`` if ``d`` is a state array, i.e. has the correct
         dimensions and base field.
@@ -2129,7 +2129,7 @@ class SR_gf2n(SR_generic):
         if d.ncols() == c and d.nrows() == r and d.base_ring() == k:
             return matrix(k, r*c*e, 1, self.phi(d).transpose().list())
 
-    def is_vector(self, d):
+    def is_vector(self, d) -> bool:
         """
         Return ``True`` if ``d`` can be used as a vector for ``self``.
 
@@ -2495,7 +2495,7 @@ class SR_gf2(SR_generic):
         else:
             raise TypeError
 
-    def is_vector(self, d):
+    def is_vector(self, d) -> bool:
         """
         Return ``True`` if the given matrix satisfies the conditions
         for a vector as it appears in the algebraic expression of

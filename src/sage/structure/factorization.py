@@ -1435,7 +1435,7 @@ class Factorization(SageObject):
         from sage.misc.misc_c import prod
         return prod([p for p, _ in self.__x])
 
-    def is_complete_factorization(self):
+    def is_complete_factorization(self) -> bool:
         """
         Return whether this factorization is a complete rather than
         a partial factorization, i.e., whether all the bases

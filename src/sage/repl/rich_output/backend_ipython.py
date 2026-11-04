@@ -376,7 +376,7 @@ class BackendIPythonCommandline(BackendIPython):
                       .format(jmol_cmd, launch_script))
         return 'Launched jmol viewer for {0}'.format(plain_text)
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 
