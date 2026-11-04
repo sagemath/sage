@@ -81,7 +81,7 @@ class SequencePrettyPrinter(SageObject):
         assert len(self.args) >= 2
         self.kwds = kwds
 
-    def is_homogeneous(self, common_type):
+    def is_homogeneous(self, common_type) -> bool:
         """
         Return whether the pretty print items are homogeneous.
 
