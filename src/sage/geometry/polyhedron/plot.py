@@ -5,6 +5,7 @@ Functions for plotting polyhedra
 ########################################################################
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2026 Yaroslav Kucherinenko <yar.kuch@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -1970,3 +1971,207 @@ class Projection(SageObject):
                     back_vertices.append(v)
 
         return front_facets, back_facets, front_vertices, back_vertices
+
+#########################################################################
+
+
+def _normalize_reparameterization(value):
+    r"""
+    Return a pair ``(edge_f, face_f)`` of reparameterization functions.
+
+    INPUT:
+
+    - ``value`` -- ``None``, ``True``, ``False``, ``'sin2sin'``, or a pair
+      whose entries are ``True``, ``False`` or callables.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.polyhedron.plot import (
+        ....:     _normalize_reparameterization)
+        sage: edge_f, face_f = _normalize_reparameterization(False)
+        sage: edge_f(0.5) == 0.5
+        True
+
+    TESTS::
+
+        sage: from sage.geometry.polyhedron.plot import (
+        ....:     _normalize_reparameterization)
+        sage: _normalize_reparameterization('bad')
+        Traceback (most recent call last):
+        ...
+        TypeError: reparameterization must be None, True, False, 'sin2sin', or a pair of callables
+    """
+    from sage.functions.trig import sin
+    from sage.symbolic.constants import pi
+    _REPARAM_MODES = {
+        True:  (lambda t: 3*t**2 - 2*t**3, lambda t: 2*t - t**2),
+        False: (lambda t: t, lambda t: t),
+        'sin2sin': (lambda t: sin(t * pi/2)**2, lambda t: sin(t * pi/2) ),
+    }
+    if value is None:
+        value = True
+    if isinstance(value, (tuple, list)) and len(value) == 2:
+        resolved = []
+        for i, v in enumerate(value):
+            if v is True:
+                resolved.append(_REPARAM_MODES[True][i])
+            elif v is False:
+                resolved.append(_REPARAM_MODES[False][i])
+            elif callable(v):
+                resolved.append(v)
+            else:
+                raise TypeError("Reparameterization element must be "
+                                "True, False, or callable")
+        return tuple(resolved)
+    try:
+        return _REPARAM_MODES[value]
+    except (KeyError, TypeError):
+        raise TypeError("reparameterization must be None, True, "
+                        "False, 'sin2sin', or a pair of callables") from None
+
+
+def _plot_transformed_polyhedron_2d(poly, nonlinear_transformation,
+                                    plot_points, *,
+                                    point_kwds=None,
+                                    line_kwds=None,
+                                    polygon_kwds=None,
+                                    edge_reparameterization):
+    r"""
+    Return a 2D graphics object of ``poly``
+    after applying ``nonlinear_transformation``.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.polyhedron.plot import (
+        ....:     _plot_transformed_polyhedron_2d)
+        sage: p = polytopes.hypercube(2)
+        sage: f = lambda v: vector(v)
+        sage: _plot_transformed_polyhedron_2d(p, f, 10,
+        ....:     edge_reparameterization=lambda t: t)
+        Graphics object consisting of 9 graphics primitives
+    """
+    def _ensure_2d(v):
+        w = [0, 0]
+        for i in range(min(len(v), 2)):
+            w[i] = v[i]
+        return vector(w)
+
+    if isinstance(plot_points, (list, tuple)):
+        plot_points = plot_points[0]
+    all_objects = []
+    f1 = edge_reparameterization
+    def tf(w):
+        return _ensure_2d(nonlinear_transformation(w))
+
+    if point_kwds is not False:
+        from sage.plot.point import point
+        for v in poly.vertices():
+            all_objects.append(point(tf(vector(v)), **(point_kwds or {})))
+    from sage.symbolic.ring import SR
+    t = SR.var('t')
+    draw_lines = (line_kwds is not False)
+    line_kwds = dict(line_kwds or {})
+    edge_plot_points = line_kwds.pop('plot_points', plot_points)
+    D = {}
+    from sage.plot.plot import parametric_plot
+    for edge in poly.faces(1):
+        v1, v2 = [v for v in edge.vertices()]
+        curve = tf(
+            vector(v1) * f1(t) + vector(v2) * (1 - f1(t))
+            )
+        curve = parametric_plot(
+            curve, (t, 0, 1),
+            plot_points=edge_plot_points,
+            randomize=0.001,
+            adaptive_recursion=4,
+            adaptive_tolerance=0.0002)[0]
+        line_pnts = list(zip(curve.xdata, curve.ydata))
+        line_pnts1 = line_pnts.copy()
+        line_pnts1.reverse()
+        D[(v1,v2)] = line_pnts
+        D[(v2,v1)] = line_pnts1
+
+    if draw_lines:
+        from sage.plot.line import line2d
+        for edge in poly.faces(1):
+            v1, v2 = [v for v in edge.vertices()]
+            all_objects.append(line2d(D[(v1,v2)], **(line_kwds or {})))
+
+    if polygon_kwds is not False:
+        from sage.plot.polygon import polygon2d
+        for face in poly.faces(2):
+            vertex_list = list(face.as_polyhedron().vertex_generator())
+            sorted_verts = cyclic_sort_vertices_2d(vertex_list)
+            boundary = []
+            n = len(sorted_verts)
+            for i in range(n):
+                v1, v2 = sorted_verts[i], sorted_verts[(i+1) % n]
+                boundary += D[(v1,v2)]
+            if len(boundary) >= 3:
+                all_objects.append(polygon2d(boundary, **(polygon_kwds or {})))
+    if not all_objects:
+        from sage.plot.graphics import Graphics
+        return Graphics()
+    return sum(all_objects)
+
+
+def _plot_transformed_polyhedron_3d(poly, nonlinear_transformation,
+                                    plot_points, *,
+                                    point_kwds=None, line_kwds=None,
+                                    polygon_kwds=None,
+                                    edge_reparameterization,
+                                    face_reparameterization):
+    r"""
+    Return a 3D graphics object of ``poly``
+    after applying ``nonlinear_transformation``.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.polyhedron.plot import (
+        ....:     _plot_transformed_polyhedron_3d)
+        sage: p = polytopes.hypercube(3)
+        sage: _plot_transformed_polyhedron_3d(p, lambda v: vector(v), 5,
+        ....:     edge_reparameterization=lambda t: t,
+        ....:     face_reparameterization=lambda t: t)
+        Graphics3d Object
+    """
+    if isinstance(plot_points, (list, tuple)):
+        edge_plot_points = plot_points[0]
+    else:
+        edge_plot_points = plot_points
+
+    all_objects = []
+    if point_kwds is not False:
+        from sage.plot.point import point
+        for vert in poly.vertices():
+            vec = nonlinear_transformation(vector(vert))
+            all_objects.append(point(vec, **(point_kwds or {})))
+
+    f1, f2 = edge_reparameterization, face_reparameterization
+    from sage.symbolic.ring import SR
+    from sage.plot.plot3d.all import parametric_plot3d
+    t, u, v = SR.var('t u v')
+    if line_kwds is not False:
+        for e in poly.faces(1):
+            v1, v2 = [vector(vert) for vert in e.vertices()]
+            curve = nonlinear_transformation(v1 * f1(t) + v2 * (1 - f1(t)))
+            all_objects.append(parametric_plot3d(curve, (t, 0, 1),
+                               plot_points=edge_plot_points,
+                               **(line_kwds or {})))
+    if polygon_kwds is not False:
+        for face in poly.faces(2):
+            f_poly = face.as_polyhedron()
+            center = vector(f_poly.center())
+            for edge in f_poly.faces(1):
+                v1, v2 = [vector(vert) for vert in edge.vertices()]
+                edge_pt = v1 * f1(u) + v2 * (1 - f1(u))
+                w = 1 - f2(v)
+                surf = nonlinear_transformation(edge_pt * f2(v) + center * w)
+                all_objects.append(parametric_plot3d(surf,
+                                   (u, 0, 1), (v, 0, 1),
+                                   plot_points=plot_points,
+                                   **(polygon_kwds or {})))
+    if not all_objects:
+        from sage.plot.plot3d.base import Graphics3d
+        return Graphics3d()
+    return sum(all_objects)
