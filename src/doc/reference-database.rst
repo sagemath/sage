@@ -4208,6 +4208,10 @@
              Disc. Math. 13(1975), pp 357--381.
              :doi:`10.1016/0012-365X(75)90057-6`.
 
+.. [Hub1996] \K. Huber. *Note on decoding binary Goppa codes*.
+             Electronics Letters 32 (1996), no. 2, pp 102--103.
+             :doi:`10.1049/el:19960072`.
+
 .. [Humphreys08] James E. Humphreys. *Representations of Semisimple Lie
                  Algebras in the BGG Category* `\mathcal{O}`.
                  Graduate Studies in Mathematics. Amer. Math. Soc., 2008.
@@ -6385,6 +6389,10 @@
              regular graphs of type* `L_{2n-1}(4n- 1)`,
              Acta Applicandaie Math. 29(1992), 129-138.
              :doi:`10.1007/BF00053382`.
+
+.. [Pat1975] \N. J. Patterson. *The algebraic decoding of Goppa codes*.
+             IEEE Trans. Inform. Theory 21 (1975), no. 2, pp 203--207.
+             :doi:`10.1109/TIT.1975.1055350`.
 
 .. [Pau2006] Sebastian Pauli, *Constructing Class Fields over Local
              Fields*, Journal de Théorie des Nombres de Bordeaux,
