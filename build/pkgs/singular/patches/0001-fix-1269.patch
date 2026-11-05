@@ -1,0 +1,287 @@
+From f319ccff8d39114cd1404cb7631f4399678c7269 Mon Sep 17 00:00:00 2001
+From: Hans Schoenemann <hannes@mathematik.uni-kl.de>
+Date: Fri, 2 May 2025 11:35:37 +0200
+Subject: [PATCH] fix #1269
+
+---
+ kernel/ideals.cc |  83 ++++++++++++++++----------------
+ kernel/polys.cc  | 120 ++++++++++++++++++++++++++++-------------------
+ 2 files changed, 116 insertions(+), 87 deletions(-)
+
+diff --git a/kernel/ideals.cc b/kernel/ideals.cc
+index 148f4878b..cfc523c8a 100644
+--- a/kernel/ideals.cc
++++ b/kernel/ideals.cc
+@@ -3487,54 +3487,57 @@ ideal idSaturate_intern(ideal I, ideal J, int &k, BOOLEAN isIdeal, BOOLEAN isSB)
+   //  return id_Sat_principal(I,J,currRing);
+   //}
+   //---------------------------------------------------
+-  BOOLEAN only_vars=TRUE; // enabled for I:x_i
+-  if (idElem(J)==1)
++  if (!rField_is_Ring(currRing))
+   {
+-    for(int j=IDELEMS(J)-1;j>=0;j--)
++    BOOLEAN only_vars=TRUE; // enabled for I:x_i
++    if (idElem(J)==1)
+     {
+-      poly p=J->m[j];
+-      if (p!=NULL)
++      for(int j=IDELEMS(J)-1;j>=0;j--)
+       {
+-        if (pVar(p)==0)
++        poly p=J->m[j];
++        if (p!=NULL)
+         {
+-          only_vars=FALSE;
+-          break;
++          if (pVar(p)==0)
++          {
++            only_vars=FALSE;
++            break;
++          }
+         }
+       }
+     }
+-  }
+-  if (only_vars && isIdeal && rOrd_is_Totaldegree_Ordering(currRing)
+-  && (idElem(J)==1))
+-  {
+-    ideal Iquot,Istd;
+-    intvec *w=NULL;
+-    Istd=id_Satstd(I,J,currRing);
+-    si_opt_2|=Sy_bit(V_PURE_GB);
+-    k=0;
+-    loop
++    if (only_vars && isIdeal && rOrd_is_Totaldegree_Ordering(currRing)
++    && (idElem(J)==1))
+     {
+-      k++;
+-      Iquot=idQuot(Istd,J,TRUE,isIdeal);
+-      ideal tmp=kNF(Istd,currRing->qideal,Iquot,5);
+-      int  elem=idElem(tmp);
+-      id_Delete(&tmp,currRing);
+-      id_Delete(&Istd,currRing);
+-      Istd=Iquot;
+-      w=NULL;
+-      Istd=kStd2(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
+-      if (w!=NULL) delete w;
+-      id_Delete(&Iquot,currRing);
+-      if (elem==0) break;
+-    }
+-    k--;
+-    idSkipZeroes(Istd);
+-  //PrintS("\nSatstd:\n");
+-  //iiWriteMatrix((matrix)I,"I",1,currRing,0); PrintLn();
+-  //iiWriteMatrix((matrix)J,"J",1,currRing,0); PrintLn();
+-  //iiWriteMatrix((matrix)Istd,"res",1,currRing,0);PrintLn();
+-  //id_Delete(&Istd,currRing);
+-    SI_RESTORE_OPT2(save_opt);
+-    return Istd;
++      ideal Iquot,Istd;
++      intvec *w=NULL;
++      Istd=id_Satstd(I,J,currRing);
++      si_opt_2|=Sy_bit(V_PURE_GB);
++      k=0;
++      loop
++      {
++        k++;
++        Iquot=idQuot(Istd,J,TRUE,isIdeal);
++        ideal tmp=kNF(Istd,currRing->qideal,Iquot,5);
++        int  elem=idElem(tmp);
++        id_Delete(&tmp,currRing);
++        id_Delete(&Istd,currRing);
++        Istd=Iquot;
++        w=NULL;
++        Istd=kStd2(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
++        if (w!=NULL) delete w;
++        id_Delete(&Iquot,currRing);
++        if (elem==0) break;
++      }
++      k--;
++      idSkipZeroes(Istd);
++    //PrintS("\nSatstd:\n");
++    //iiWriteMatrix((matrix)I,"I",1,currRing,0); PrintLn();
++    //iiWriteMatrix((matrix)J,"J",1,currRing,0); PrintLn();
++    //iiWriteMatrix((matrix)Istd,"res",1,currRing,0);PrintLn();
++    //id_Delete(&Istd,currRing);
++      SI_RESTORE_OPT2(save_opt);
++      return Istd;
++    }
+   }
+   //--------------------------------------------------
+   ideal Iquot,Istd;
+diff --git a/kernel/polys.cc b/kernel/polys.cc
+index 841a02cfa..9417bf7c9 100644
+--- a/kernel/polys.cc
++++ b/kernel/polys.cc
+@@ -48,26 +48,27 @@ poly p_Divide(poly p, poly q, const ring r)
+   { /* This means that q != 0 consists of at least two terms*/
+     if(p_GetComp(p,r)==0)
+     {
+-      if((rFieldType(r)==n_transExt)
+-      &&(convSingTrP(p,r))
+-      &&(convSingTrP(q,r))
+-      &&(!rIsNCRing(r)))
++      if (!rIsNCRing(r))
+       {
+-        poly res=singclap_pdivide(p, q, r);
+-        p_Delete(&p,r);
+-        p_Delete(&q,r);
+-        return res;
+-      }
+-      else if ((r->cf->convSingNFactoryN!=ndConvSingNFactoryN)
+-      &&(!rField_is_Ring(r))
+-      &&(!rIsNCRing(r)))
+-      {
+-        poly res=singclap_pdivide(p, q, r);
+-        p_Delete(&p,r);
+-        p_Delete(&q,r);
+-        return res;
++        if((rFieldType(r)==n_transExt)
++        &&(convSingTrP(p,r))
++        &&(convSingTrP(q,r)))
++        {
++          poly res=singclap_pdivide(p, q, r);
++	  p_Delete(&p,r);
++	  p_Delete(&q,r);
++          return res;
++        }
++        if ((rFieldType(r)==n_Q)
++        ||(rFieldType(r)==n_Zp))
++        {
++          poly res=singclap_pdivide(p, q, r);
++	  p_Delete(&p,r);
++	  p_Delete(&q,r);
++          return res;
++        }
+       }
+-      else
++      // generic division for poly
+       {
+         ideal vi=idInit(1,1); vi->m[0]=q;
+         ideal ui=idInit(1,1); ui->m[0]=p;
+@@ -80,9 +81,9 @@ poly p_Divide(poly p, poly q, const ring r)
+         ideal m = idLift(vi,ui,&R, FALSE,TRUE,TRUE,&U);
+         SI_RESTORE_OPT1(save_opt);
+         if (r!=save_ring) rChangeCurrRing(save_ring);
+-        p=m->m[0]; m->m[0]=NULL;
+-        id_Delete(&m,r);
+-        p_SetCompP(p,0,r);
++        matrix T = id_Module2formatedMatrix(m,1,1,r);
++        p=MATELEM(T,1,1); MATELEM(T,1,1)=NULL;
++        id_Delete((ideal *)&T,r);
+         id_Delete((ideal *)&U,r);
+         id_Delete(&R,r);
+         //vi->m[0]=NULL; ui->m[0]=NULL;
+@@ -121,8 +122,7 @@ poly p_Divide(poly p, poly q, const ring r)
+           {
+             h=singclap_pdivide(I->m[i],q,r);
+           }
+-          else if ((r->cf->convSingNFactoryN!=ndConvSingNFactoryN)
+-          &&(!rField_is_Ring(r))
++          else if (((rFieldType(r)==n_Q)||(rFieldType(r)==n_Zp))
+           &&(!rIsNCRing(r)))
+             h=singclap_pdivide(I->m[i],q,r);
+           else
+@@ -189,22 +189,23 @@ poly pp_Divide(poly p, poly q, const ring r)
+   { /* This means that q != 0 consists of at least two terms*/
+     if(p_GetComp(p,r)==0)
+     {
+-      if((rFieldType(r)==n_transExt)
+-      &&(convSingTrP(p,r))
+-      &&(convSingTrP(q,r))
+-      &&(!rIsNCRing(r)))
+-      {
+-        poly res=singclap_pdivide(p, q, r);
+-        return res;
+-      }
+-      else if ((r->cf->convSingNFactoryN!=ndConvSingNFactoryN)
+-      &&(!rField_is_Ring(r))
+-      &&(!rIsNCRing(r)))
++      if (!rIsNCRing(r))
+       {
+-        poly res=singclap_pdivide(p, q, r);
+-        return res;
++        if((rFieldType(r)==n_transExt)
++        &&(convSingTrP(p,r))
++        &&(convSingTrP(q,r)))
++        {
++          poly res=singclap_pdivide(p, q, r);
++          return res;
++        }
++        if ((rFieldType(r)==n_Q)
++        ||(rFieldType(r)==n_Zp))
++        {
++          poly res=singclap_pdivide(p, q, r);
++          return res;
++        }
+       }
+-      else
++      // generic division for poly
+       {
+         ideal vi=idInit(1,1); vi->m[0]=p_Copy(q,r);
+         ideal ui=idInit(1,1); ui->m[0]=p_Copy(p,r);
+@@ -253,17 +254,43 @@ poly pp_Divide(poly p, poly q, const ring r)
+       {
+         if (I->m[i]!=NULL)
+         {
+-          if((rFieldType(r)==n_transExt)
+-          &&(convSingTrP(I->m[i],r))
+-          &&(convSingTrP(q,r))
+-          &&(!rIsNCRing(r)))
++          if(!rIsNCRing(r))
+           {
+-            h=singclap_pdivide(I->m[i],q,r);
++            if((rFieldType(r)==n_transExt)
++            &&(convSingTrP(I->m[i],r))
++            &&(convSingTrP(q,r)))
++            {
++              h=singclap_pdivide(I->m[i],q,r);
++            }
++            else if ((rFieldType(r)==n_Q)
++            ||(rFieldType(r)==n_Zp))
++              h=singclap_pdivide(I->m[i],q,r);
++            else
++            {
++              ideal vi=idInit(1,1); vi->m[0]=q;
++              ideal ui=idInit(1,1); ui->m[0]=I->m[i];
++              ideal R; matrix U;
++              ring save_ring=currRing;
++              if (r!=currRing) rChangeCurrRing(r);
++              BITSET save_opt;
++              SI_SAVE_OPT1(save_opt);
++              si_opt_1 &= ~(Sy_bit(OPT_PROT));
++              ideal m = idLift(vi,ui,&R, FALSE,TRUE,TRUE,&U);
++              SI_RESTORE_OPT1(save_opt);
++              if (r!=save_ring) rChangeCurrRing(save_ring);
++              if (idIs0(R))
++              {
++                matrix T = id_Module2formatedMatrix(m,1,1,r);
++                p=MATELEM(T,1,1); MATELEM(T,1,1)=NULL;
++                id_Delete((ideal *)&T,r);
++              }
++              id_Delete((ideal*)&U,r);
++              id_Delete(&R,r);
++              vi->m[0]=NULL; ui->m[0]=NULL;
++              id_Delete(&vi,r);
++              id_Delete(&ui,r);
++            }
+           }
+-          else if ((r->cf->convSingNFactoryN!=ndConvSingNFactoryN)
+-          &&(!rField_is_Ring(r))
+-          &&(!rIsNCRing(r)))
+-            h=singclap_pdivide(I->m[i],q,r);
+           else
+           {
+             ideal vi=idInit(1,1); vi->m[0]=q;
+@@ -283,7 +310,6 @@ poly pp_Divide(poly p, poly q, const ring r)
+               p=MATELEM(T,1,1); MATELEM(T,1,1)=NULL;
+               id_Delete((ideal *)&T,r);
+             }
+-            else p=NULL;
+             id_Delete((ideal*)&U,r);
+             id_Delete(&R,r);
+             vi->m[0]=NULL; ui->m[0]=NULL;
+-- 
+2.39.5
+
