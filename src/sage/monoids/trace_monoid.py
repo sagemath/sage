@@ -864,7 +864,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: M.number_of_words(3)                                                  # needs sage.graphs
             48
         """
-        psr = PowerSeriesRing(ZZ, default_prec=length + 1)
+        psr = PowerSeriesRing(ZZ, 'x', default_prec=length + 1)
         return psr(self.dependence_polynomial()).coefficients()[length]
 
     @cached_method
