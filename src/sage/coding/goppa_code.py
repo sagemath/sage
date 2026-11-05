@@ -525,8 +525,8 @@ class GoppaCodePattersonDecoder(Decoder):
     - ``check`` -- boolean (default: ``True``); if ``False``, don't refuse a
       squarefree generating polynomial because of its factor degrees. Some
       words with at most `t` errors can then raise
-      :exc:`~sage.coding.decoder.DecodingError`, whose message still says the
-      word has more than `t` errors. So ``decoding_radius`` and the decoder type
+      :exc:`~sage.coding.decoder.DecodingError`, whose message still says there
+      are more than `t` errors. So ``decoding_radius`` and the decoder type
       ``"always-succeed"`` are not guarantees for such a code.
 
     EXAMPLES::
@@ -563,13 +563,13 @@ class GoppaCodePattersonDecoder(Decoder):
         sage: C = codes.GoppaCode(g, L)
         sage: D = C.decoder("Patterson", check=False)
         sage: def word_with_errors(positions):
-        ....:     return vector(GF(2), [int(i in positions) for i in range(C.length())])
+        ....:     return vector(GF(2), [i in positions for i in range(len(L))])
         sage: D.decode_to_code(word_with_errors([0, 1, 2, 3, 4])).is_zero()
         True
         sage: D.decode_to_code(word_with_errors([0, 1, 6, 26, 29]))
         Traceback (most recent call last):
         ...
-        DecodingError: Patterson decoding failed, the word has more than 5 errors
+        DecodingError: Patterson decoding failed, more than 5 errors
 
     A generating polynomial that isn't squarefree is still refused::
 
@@ -581,7 +581,7 @@ class GoppaCodePattersonDecoder(Decoder):
         sage: codes.decoders.GoppaCodePattersonDecoder(C, check=False)
         Traceback (most recent call last):
         ...
-        ValueError: Patterson decoding needs a squarefree generating polynomial
+        ValueError: generating polynomial must be squarefree
     """
     def __init__(self, code: GoppaCode, check: bool = True) -> None:
         r"""
@@ -603,7 +603,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a Goppa code
+            ValueError: code must be a Goppa code
 
         An error is also raised if ``code`` is not binary::
 
@@ -617,7 +617,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a binary Goppa code, not one over Finite Field of size 3
+            ValueError: code must be binary, not over Finite Field of size 3
 
         A squarefree polynomial with large enough factors is accepted::
 
@@ -640,7 +640,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a squarefree generating polynomial with every factor of degree above 1
+            ValueError: polynomial must be squarefree, all factor degrees > 1
 
         It's also raised if a factor has degree at most `(t - 1)/2`::
 
@@ -654,7 +654,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a squarefree generating polynomial with every factor of degree above 2
+            ValueError: polynomial must be squarefree, all factor degrees > 2
 
         So the code in this module's first example is refused, since `x^9 + 1`
         splits into linear factors::
@@ -667,7 +667,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a squarefree generating polynomial with every factor of degree above 4
+            ValueError: polynomial must be squarefree, all factor degrees > 4
 
         A constant polynomial is refused too::
 
@@ -677,37 +677,33 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: codes.decoders.GoppaCodePattersonDecoder(C)
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a nonconstant generating polynomial
+            ValueError: generating polynomial must be nonconstant
         """
         # Refuse every code Patterson can't decode correctly
         if not isinstance(code, GoppaCode):
-            raise ValueError("Patterson decoding needs a Goppa code")
+            raise ValueError("code must be a Goppa code")
 
         # Binary only
         # The square root step needs characteristic 2
         field = code.base_field()
         if field.cardinality() != 2:
-            raise ValueError("Patterson decoding needs a binary Goppa code, "
-                             f"not one over {field}")
+            raise ValueError(f"code must be binary, not over {field}")
 
-        # factor() of a constant is empty, so the check below wouldn't refuse it
+        # factor() of a constant is empty, so the check below can't refuse it
         t = code._generating_pol.degree()
         if t < 1:
-            raise ValueError("Patterson decoding needs a nonconstant "
-                             "generating polynomial")
+            raise ValueError("generating polynomial must be nonconstant")
 
         # Squarefree always, since square roots mod g need it
         if not check:
             if not code._generating_pol.is_squarefree():
-                raise ValueError("Patterson decoding needs a squarefree "
-                                 "generating polynomial")
+                raise ValueError("generating polynomial must be squarefree")
         # No factor small enough to divide b in sigma = a^2 + x b^2,
         # otherwise a correctable word's syndrome can have no inverse
         elif any(multiplicity > 1 or factor.degree() <= (t - 1) // 2
                  for factor, multiplicity in code._generating_pol.factor()):
-            raise ValueError("Patterson decoding needs a squarefree generating "
-                             "polynomial with every factor of degree above "
-                             f"{(t - 1) // 2}")
+            raise ValueError("polynomial must be squarefree, all factor "
+                             f"degrees > {(t - 1) // 2}")
 
         super().__init__(code, code.ambient_space(), "GoppaEncoder")
 
@@ -927,7 +923,7 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: D.decode_to_code(vector(GF(2), (0, 0, 0, 0, 1, 0, 1, 1)))
             Traceback (most recent call last):
             ...
-            DecodingError: Patterson decoding failed, the word has more than 2 errors
+            DecodingError: Patterson decoding failed, more than 2 errors
 
         One error at the point 0 of the defining set is corrected, wherever 0
         sits in the defining set::
@@ -972,11 +968,11 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: D.decode_to_code(vector(GF(2), 5))
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a word in Vector space of dimension 8 over Finite Field of size 2
+            ValueError: word must be a vector of length 8 over GF(2)
             sage: D.decode_to_code(vector(GF(3), 8))
             Traceback (most recent call last):
             ...
-            ValueError: Patterson decoding needs a word in Vector space of dimension 8 over Finite Field of size 2
+            ValueError: word must be a vector of length 8 over GF(2)
 
         A word past `t` errors whose syndrome has no inverse is refused too,
         which only happens for a reducible `g`::
@@ -990,12 +986,12 @@ class GoppaCodePattersonDecoder(Decoder):
             sage: D.decode_to_code(vector(GF(2), [1]*7 + [0]*7))
             Traceback (most recent call last):
             ...
-            DecodingError: Patterson decoding failed, the word has more than 2 errors
+            DecodingError: Patterson decoding failed, more than 2 errors
         """
         # Refuse a word of the wrong length or over the wrong field
         if word not in self.input_space():
-            raise ValueError("Patterson decoding needs a word in "
-                             f"{self.input_space()}")
+            raise ValueError("word must be a vector of length "
+                             f"{self.code().length()} over GF(2)")
         # Work on the word as a vector over GF(2)
         # (a ZZ or GF(4) word can pass the check, and a 2 there is a 0)
         word = self.input_space()(word)
@@ -1010,15 +1006,15 @@ class GoppaCodePattersonDecoder(Decoder):
             return copy(word)
 
         # Build tau = sqrt(1/S + x) mod g
-        # (with at most t errors, a nonzero syndrome always has an inverse mod g)
+        # (with at most t errors, a nonzero syndrome has an inverse mod g)
         try:
             syndrome_inverse = syndrome.inverse_mod(generating_pol)
         except ArithmeticError:
-            raise DecodingError("Patterson decoding failed, the word has more "
-                                f"than {t} errors")
+            raise DecodingError("Patterson decoding failed, more than "
+                                f"{t} errors")
         tau = self._square_root(syndrome_inverse + x)
 
-        # Solve the key equation a = b tau mod g, deg a <= t/2, deg b <= (t-1)/2
+        # Solve key equation a = b tau mod g, deg a <= t/2, deg b <= (t-1)/2
         # Run Euclid on g and tau, stopping once the remainder is small enough
         # (remainder = coefficient * tau mod g holds the whole way)
         remainder_before, remainder = generating_pol, tau
@@ -1041,8 +1037,8 @@ class GoppaCodePattersonDecoder(Decoder):
         # With more it can still be true, then a different codeword is returned
         # It's still within t of the word, since S sigma = sigma' = b^2 mod g
         if len(positions) != error_locator.degree() or None in positions:
-            raise DecodingError("Patterson decoding failed, the word has more "
-                                f"than {t} errors")
+            raise DecodingError("Patterson decoding failed, more than "
+                                f"{t} errors")
 
         # Flip the bits at the error positions
         corrected = copy(word)
