@@ -1,22 +1,23 @@
 """Checks shared by the Homebrew dependency bottle workflow phases."""
 
 import importlib
-from importlib import metadata
-from importlib.resources import files
 import json
 import os
-from pathlib import Path
 import shlex
 import subprocess
 import sys
 import tomllib
+from importlib import metadata
+from importlib.resources import files
+from pathlib import Path
 
 
 def requirements():
-    """Use the candidate's locked versions for the two pytest entry points."""
+    """Use the candidate's locked versions for tests and renamed data packages."""
     with open("uv.lock", "rb") as stream:
         packages = tomllib.load(stream)["package"]
-    for name in ("pytest", "pytest-xdist"):
+    for name in ("pytest", "pytest-xdist", "elliptic-curve-databases",
+                 "graph-databases", "polytope-databases"):
         versions = {p["version"] for p in packages if p["name"] == name}
         if len(versions) != 1:
             raise RuntimeError(f"Expected one locked version of {name}: {versions}")
@@ -28,10 +29,10 @@ def data():
     root = Path(os.environ["SAGE_DATA_PATH"])
     root.mkdir()
     directories = {
-        "cremona": files("sage_data_elliptic_curves.data") / "cremona",
-        "ellcurves": files("sage_data_elliptic_curves.data") / "ellcurves",
-        "graphs": files("sage_data_graphs.data"),
-        "reflexive_polytopes": files("sage_data_polytopes") / "data",
+        "cremona": files("elliptic_curve_databases.data") / "cremona",
+        "ellcurves": files("elliptic_curve_databases.data") / "ellcurves",
+        "graphs": files("graph_databases.data"),
+        "reflexive_polytopes": files("polytope_databases") / "data",
     }
     for name, path in directories.items():
         if not path.is_dir():

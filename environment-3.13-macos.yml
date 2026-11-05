@@ -454,6 +454,6 @@ dependencies:
   - zstandard=0.25.0=py313h2f871a8_4
   - zstd=1.5.7=hf451053_7
   - pip:
-    - sagemath-data-elliptic-curves==0.8.2
-    - sagemath-data-graphs==20210214.1
-    - sagemath-data-polytopes==20170220.1
+    - elliptic-curve-databases==0.8.3
+    - graph-databases==20210214.2
+    - polytope-databases==20170220.2

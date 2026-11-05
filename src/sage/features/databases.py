@@ -99,7 +99,7 @@ class DatabaseCremona(StaticFile):
             spkg_type = "standard"
             if not CREMONA_DATA_DIRS:
                 search_path = _data_search_path(
-                    "cremona", None, "sage_data_elliptic_curves.data", "cremona"
+                    "cremona", None, "elliptic_curve_databases.data", "cremona"
                 )
 
         StaticFile.__init__(
@@ -137,7 +137,7 @@ class DatabaseEllcurves(StaticFile):
         from sage.env import ELLCURVE_DATA_DIR
 
         search_path = _data_search_path(
-            "ellcurves", ELLCURVE_DATA_DIR, "sage_data_elliptic_curves.data", "ellcurves"
+            "ellcurves", ELLCURVE_DATA_DIR, "elliptic_curve_databases.data", "ellcurves"
         )
 
         StaticFile.__init__(
@@ -174,7 +174,7 @@ class DatabaseGraphs(StaticFile):
         from sage.env import GRAPHS_DATA_DIR
 
         search_path = _data_search_path(
-            "graphs", GRAPHS_DATA_DIR, "sage_data_graphs.data"
+            "graphs", GRAPHS_DATA_DIR, "graph_databases.data"
         )
 
         StaticFile.__init__(
@@ -335,7 +335,7 @@ class DatabaseReflexivePolytopes(StaticFile):
             dirname = "Hodge4d"
         else:
             search_path = _data_search_path(
-                "reflexive_polytopes", POLYTOPE_DATA_DIR, "sage_data_polytopes", "data"
+                "reflexive_polytopes", POLYTOPE_DATA_DIR, "polytope_databases", "data"
             )
 
         StaticFile.__init__(self, name, filename=dirname, search_path=search_path)
