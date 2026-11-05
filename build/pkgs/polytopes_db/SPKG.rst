@@ -23,7 +23,7 @@ GPL
 Python Package
 --------------
 
-Installed from https://pypi.org/project/sagemath-data-polytopes/.
+Installed from https://pypi.org/project/polytope-databases/.
 Source: https://github.com/sagemath/data-polytopes/
 
 The Python distribution includes the data and provides an
