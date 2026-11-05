@@ -6,10 +6,10 @@ import pytest
 @pytest.mark.parametrize(
     ("name", "package", "subdirectory", "filename"),
     [
-        ("graphs", "sage_data_graphs.data", "", "graphs.db"),
-        ("cremona", "sage_data_elliptic_curves.data", "cremona", "cremona_mini.db"),
-        ("ellcurves", "sage_data_elliptic_curves.data", "ellcurves", "rank0"),
-        ("reflexive_polytopes", "sage_data_polytopes", "data", "Full3d"),
+        ("graphs", "graph_databases.data", "", "graphs.db"),
+        ("cremona", "elliptic_curve_databases.data", "cremona", "cremona_mini.db"),
+        ("ellcurves", "elliptic_curve_databases.data", "ellcurves", "rank0"),
+        ("reflexive_polytopes", "polytope_databases", "data", "Full3d"),
     ],
 )
 def test_packaged_data_without_legacy_install(monkeypatch, name, package,
@@ -26,7 +26,7 @@ def test_legacy_data_precedes_package(monkeypatch, tmp_path):
     from sage.features import databases
 
     monkeypatch.setattr(databases, "sage_data_paths", lambda name: {str(tmp_path)})
-    paths = databases._data_search_path("graphs", None, "sage_data_graphs.data")
+    paths = databases._data_search_path("graphs", None, "graph_databases.data")
     assert paths[0] == str(tmp_path)
     assert Path(paths[1], "graphs.db").is_file()
 
@@ -38,7 +38,7 @@ def test_explicit_data_directory(monkeypatch, tmp_path):
         pytest.fail("an explicit data directory must bypass packaged resources")
 
     monkeypatch.setattr(databases, "_packaged_data_path", unexpected_lookup)
-    assert databases._data_search_path("graphs", str(tmp_path), "sage_data_graphs.data") == str(tmp_path)
+    assert databases._data_search_path("graphs", str(tmp_path), "graph_databases.data") == str(tmp_path)
 
 
 def test_missing_data_package_keeps_legacy_paths(monkeypatch, tmp_path):
