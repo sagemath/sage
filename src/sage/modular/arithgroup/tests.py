@@ -422,3 +422,26 @@ class Test:
             for j in range(i + 1, len(reps)):
                 assert reps[i] * ~reps[j] not in G
                 assert reps[j] * ~reps[i] not in G
+
+    def test_ross_dim_formula(self, N_ub=30, k_ub=8):
+        r"""
+        Test Ross' dimension formula for newspaces with character
+        `S_k^\text{new}(N, \chi)` from Theorem 1.4 of :arxiv:`2407.08881`.
+
+        EXAMPLES::
+
+            sage: from sage.modular.arithgroup.tests import Test
+            sage: Test().test_ross_dim_formula(30, 8)
+            True
+        """
+        from sage.modular.dirichlet import DirichletGroup
+        failure = False
+        for N in range(3,N_ub+1):
+            Gamma1_N = Gamma1(N)
+            for eps in DirichletGroup(N):
+                for k in range(2,k_ub+1):
+                    Ross_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="Ross")
+                    CO_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="CohenOesterle")
+                    if Ross_dim != CO_dim:
+                        failure = True
+        return not failure
