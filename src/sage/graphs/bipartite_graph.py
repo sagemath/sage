@@ -2797,21 +2797,28 @@ class BipartiteGraph(Graph):
             edges_to_keep = self.edge_boundary(B.left, B.right, sort=False)
         else:
             # The edges are read once, as they may be given by an iterator,
-            # and the labels are compared by equality, not hashed, as they may
-            # be unhashable (e.g., dictionaries)
-            labels_to_keep = {}
+            # and the labels that are not hashable (e.g., dictionaries) are
+            # compared by equality
+            edges_to_keep_labeled = set()
+            unhashable_labels = {}
             edges_to_keep_unlabeled = set()
             for e in edges:
                 if len(e) == 3:
-                    labels_to_keep.setdefault((e[0], e[1]), []).append(e[2])
+                    uv = frozenset((e[0], e[1]))
+                    try:
+                        edges_to_keep_labeled.add((uv, e[2]))
+                    except TypeError:
+                        unhashable_labels.setdefault(uv, []).append(e[2])
                 elif len(e) == 2:
-                    edges_to_keep_unlabeled.add(e)
+                    edges_to_keep_unlabeled.add(frozenset(e))
             edges_to_keep = []
             for u, v, l in self.edge_boundary(B.left, B.right, sort=False):
-                if ((u, v) in edges_to_keep_unlabeled
-                        or (v, u) in edges_to_keep_unlabeled
-                        or l in labels_to_keep.get((u, v), ())
-                        or l in labels_to_keep.get((v, u), ())):
+                uv = frozenset((u, v))
+                try:
+                    keep = (uv, l) in edges_to_keep_labeled
+                except TypeError:
+                    keep = l in unhashable_labels.get(uv, ())
+                if keep or uv in edges_to_keep_unlabeled:
                     edges_to_keep.append((u, v, l))
 
         if edge_property is not None:
@@ -2889,20 +2896,27 @@ class BipartiteGraph(Graph):
         edges_to_delete = []
         if edges is not None:
             # The edges are read once, as they may be given by an iterator,
-            # and the labels are compared by equality, not hashed, as they may
-            # be unhashable (e.g., dictionaries)
-            labels_to_keep = {}
+            # and the labels that are not hashable (e.g., dictionaries) are
+            # compared by equality
+            edges_to_keep_labeled = set()
+            unhashable_labels = {}
             edges_to_keep_unlabeled = set()
             for e in edges:
                 if len(e) == 3:
-                    labels_to_keep.setdefault((e[0], e[1]), []).append(e[2])
+                    uv = frozenset((e[0], e[1]))
+                    try:
+                        edges_to_keep_labeled.add((uv, e[2]))
+                    except TypeError:
+                        unhashable_labels.setdefault(uv, []).append(e[2])
                 elif len(e) == 2:
-                    edges_to_keep_unlabeled.add(e)
+                    edges_to_keep_unlabeled.add(frozenset(e))
             for u, v, l in B.edge_iterator():
-                if ((u, v) not in edges_to_keep_unlabeled
-                        and (v, u) not in edges_to_keep_unlabeled
-                        and l not in labels_to_keep.get((u, v), ())
-                        and l not in labels_to_keep.get((v, u), ())):
+                uv = frozenset((u, v))
+                try:
+                    keep = (uv, l) in edges_to_keep_labeled
+                except TypeError:
+                    keep = l in unhashable_labels.get(uv, ())
+                if not keep and uv not in edges_to_keep_unlabeled:
                     edges_to_delete.append((u, v, l))
         if edge_property is not None:
             # We might get duplicate edges, but this does handle the case of
