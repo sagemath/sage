@@ -156,6 +156,22 @@ class MPolynomial_element(MPolynomial):
             sage: a(()).parent()
             Rational Field
 
+        The parent of the result only depends on the values of the
+        variables that occur in the polynomial (:issue:`39080`)::
+
+            sage: R.<a,b> = PolynomialRing(QQ, implementation='generic')
+            sage: S.<c,d> = PolynomialRing(QQ, implementation='generic')
+            sage: b(a, d)
+            d
+            sage: b.subs(b=d)
+            d
+            sage: (b^2 + 1).subs(b=d)
+            d^2 + 1
+            sage: _.parent() is S
+            True
+            sage: a.subs(a=c)
+            c
+
         AUTHORS:
 
         - David Kohel (2005-09-27)
@@ -172,8 +188,14 @@ class MPolynomial_element(MPolynomial):
             raise TypeError("x must be of correct length")
         if n == 0:
             return self.constant_coefficient()
+        # Take the parent from a value that is substituted for a variable
+        # occurring in self, so that the values of the other variables, like
+        # the generators that subs() passes for the variables it keeps, do not
+        # decide the parent of the result.
+        monomials = self.element().dict()
+        used = [i for i in range(n) if any(m[i] for m in monomials)]
         try:
-            K = x[0].parent()
+            K = x[used[0] if used else 0].parent()
         except AttributeError:
             K = self.parent().base_ring()
         try:
