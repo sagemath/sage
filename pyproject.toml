@@ -10,7 +10,7 @@ requires = [
   'cython >=3.1.0',
   'gmpy2 >=2.1.5',
   'jinja2',
-  'memory_allocator',
+  'memory_allocator >= 0.2.0',
   'numpy >=2.3.0',
 ]
 [tool.meson-python.args]
@@ -37,6 +37,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
@@ -54,7 +55,7 @@ dependencies = [
   'ipywidgets >=7.5.1',
   'jupyter-client',
   'matplotlib >=3.10.0',
-  'memory_allocator',
+  'memory_allocator >= 0.2.0',
   'mpmath >=1.1.0',
   'networkx >=3.5',
   'numpy >=2.3.0',
@@ -63,7 +64,7 @@ dependencies = [
   'platformdirs',
   # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
   'pplpy >=0.8.6; sys_platform != "win32"',
-  'primecountpy; sys_platform != "win32"',
+  'primecountpy >= 0.2.1; sys_platform != "win32"',
   'ptyprocess > 0.5',
   'requests >=2.13.0',
   'scipy >=1.15',
@@ -78,7 +79,7 @@ dynamic = ["version"]
 license = "GPL-2.0-or-later"
 license-files = ["COPYING.txt"]
 name = "sagemath"
-requires-python = ">=3.13, <3.15"
+requires-python = ">=3.13, <3.16"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
@@ -229,7 +230,7 @@ dev = [
   "python-build",
   "ruff",
   "tqdm",
-  "ty >=0.0.12",
+  "ty >=0.0.90",
   "uv",
   "virtualenv >=21.14.13",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
@@ -237,7 +238,7 @@ dev = [
   'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
   'gmpy2 >=2.1.5', # Duplicate build-system requirement to fix editable installs with uv
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
-  'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv
+  'memory_allocator >= 0.2.0', # Duplicate build-system requirement to fix editable installs with uv
   'meson-python', # Duplicate build-system requirement to fix editable installs with uv
   'numpy >=2.3.0', # Duplicate build-system requirement to fix editable installs with uv
 ]

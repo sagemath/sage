@@ -9,3 +9,6 @@ subdirs:
       __unix: "0"
       __archspec: "1 arm64"
       __osx: "13.3"
+  linux-64:
+    packages:
+      __glibc: "2.28"
