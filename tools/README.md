@@ -12,11 +12,15 @@ This command is used to update the Conda environment files in the project. It au
 - `external.host-requires`: External dependencies required for running
 
 
-Within an active virtual environment where `grayskull` and `conda-lock` are installed, run the following command:
+Within an active virtual environment where `grayskull` and `uv` are installed, run the following command:
 
 ```bash
 tools/update-conda.py
 ```
+
+The script runs `conda-lock` using `uv tool run` in an isolated tool environment.
+This keeps its `virtualenv <21` requirement separate from Sage's development
+environment, which uses virtualenv 21.
 
 ## Update Meson Build Files
 

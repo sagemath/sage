@@ -24,6 +24,10 @@ TESTS::
     [0 0]
 """
 
+from __future__ import annotations
+
+import operator
+
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,32 +35,30 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 # System imports
 import sys
-import operator
-
-# Sage matrix imports see :issue:`34283`
-
-# Sage imports
-import sage.structure.coerce_actions
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings import integer
-from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.misc import latex
-import sage.modules.free_module
-
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.persist import register_unpickle_override
-from sage.categories.monoids import Monoids
-from sage.categories.semirings import Semirings
-from sage.categories.rings import Rings
-from sage.categories.fields import Fields
-from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
+
+import sage.modules.free_module
+
+# Sage matrix imports see :issue:`34283`
+# Sage imports
+import sage.structure.coerce_actions
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.fields import Fields
+from sage.categories.monoids import Monoids
+from sage.categories.rings import Rings
+from sage.categories.semirings import Semirings
 from sage.features.meataxe import Meataxe
+from sage.misc import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.rings import integer
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
@@ -280,7 +282,12 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 # Could not find cutoff where LinBox is better for inverses
 
                 try:
-                    from . import matrix_modn_dense_double, matrix_modn_dense_float, matrix_modn_dense_flint, matrix_mod2_dense
+                    from . import (
+                        matrix_mod2_dense,
+                        matrix_modn_dense_double,
+                        matrix_modn_dense_flint,
+                        matrix_modn_dense_float,
+                    )
                 except ImportError:
                     pass
                 if R.order() < matrix_modn_dense_flint.MAX_MODULUS:
@@ -331,7 +338,10 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     return matrix_complex_ball_dense.Matrix_complex_ball_dense
 
             try:
-                from sage.rings.polynomial import polynomial_ring, multi_polynomial_ring_base
+                from sage.rings.polynomial import (
+                    multi_polynomial_ring_base,
+                    polynomial_ring,
+                )
             except ImportError:
                 pass
             else:
@@ -949,8 +959,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.modules import Modules
         from sage.categories.algebras import Algebras
+        from sage.categories.modules import Modules
         if base_ring in Rings():
             if nrows == ncols:
                 category = Algebras(base_ring.category())
@@ -1290,8 +1300,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         try:
             try:
-                from sage.schemes.generic.homset import SchemeHomset_generic
-                from sage.schemes.generic.homset import SchemeHomset_points
+                from sage.schemes.generic.homset import (
+                    SchemeHomset_generic,
+                    SchemeHomset_points,
+                )
             except ImportError:
                 SchemeHomset_generic = SchemeHomset_points = None
             if op is operator.mul:
@@ -1488,7 +1500,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 return self.has_coerce_map_from(MS)
 
             try:
-                from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
+                from sage.modular.arithgroup.arithgroup_generic import (
+                    ArithmeticSubgroup,
+                )
             except ImportError:
                 pass
             else:
@@ -2373,7 +2387,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self(x, **kwds)
 
-    def matrix_space(self, nrows=None, ncols=None, sparse=False):
+    def matrix_space(self, nrows=None, ncols=None, sparse=False) -> MatrixSpace:
         """
         Return the matrix space with given number of rows, columns and
         sparsity over the same base ring as self, and defaults the same as

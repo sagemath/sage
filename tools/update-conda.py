@@ -3,6 +3,7 @@
 
 import argparse
 import subprocess
+import sys
 import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -111,7 +112,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             )
             subprocess.run(
                 [
-                    "conda-lock",
+                    # conda-lock requires virtualenv <21, unlike Sage's
+                    # development environment. Run it in its own environment.
+                    "uv", "tool", "run", "--python", sys.executable,
+                    "--from", "conda-lock", "conda-lock",
                     "--mamba",
                     "--channel",
                     "conda-forge",

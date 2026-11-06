@@ -1007,13 +1007,14 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
     def distinguished_point(self):
         r"""
         Return the distinguished point of the hyperelliptic curve.
+
         By default, this is one of the points at infinity if possible.
 
         .. SEEALSO::
 
             :meth:`~sage.schemes.hyperelliptic_curves.hyperelliptic_generic.HyperellipticCurve_generic.set_distinguished_point`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x> = GF(11)[]
             sage: H1 = HyperellipticCurve(x^2 + x, x^5 - 3*x + 4)
@@ -1029,11 +1030,11 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             return self._distinguished_point
 
         if not self.is_inert():
-            # For the the split and ramified case, a point at infinity is chosen,
+            # For the split and ramified case, a point at infinity is chosen
             self._distinguished_point = self.points_at_infinity()[0]
             return self._distinguished_point
 
-        if self.base_ring().characteristic() == 0:
+        if not self.base_ring().characteristic():
             raise ValueError(
                 "in characteristic 0, a distinguished_point needs to be specified with `set_distinguished_point`"
             )

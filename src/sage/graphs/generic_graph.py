@@ -305,7 +305,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.show3d` | Plot the graph using :class:`~sage.plot.plot3d.tachyon.Tachyon`, and shows the resulting plot.
     :meth:`~GenericGraph.graphviz_string` | Return a representation in the ``dot`` language.
     :meth:`~GenericGraph.graphviz_to_file_named` | Write a representation in the ``dot`` language in a file.
-    :meth:`~sage.graphs.generic_graph.GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
+    :meth:`~GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
+    :meth:`~GenericGraph.layout_networkx` | Compute the node layout using any NetworkX layout algorithm.
 
 **Algorithmically hard stuff:**
 
@@ -15261,7 +15262,7 @@ class GenericGraph(GenericGraph_pyx):
                 G = G.copy(immutable=True)
             return G
 
-    def subgraph_search(self, G, induced=False):
+    def subgraph_search(self, G, induced=False, algorithm='sage', immutable=None):
         r"""
         Return a copy of ``G`` in ``self``.
 
@@ -15271,6 +15272,21 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``induced`` -- boolean (default: ``False``); whether or not to search
           for an induced copy of ``G`` in ``self``
+
+        - ``algorithm`` -- string (default: ``'sage'``); one of the following
+          algorithms:
+
+          - ``'sage'``: use the exhaustive search algorithm implemented in
+            Sagemath. It can be used to search for both induced and not induced
+            subgraphs.
+
+          - ``'networkx'``: use the VF2++ algorithm from networkx to search for
+            induced subgraphs.  It can be faster than ``'sage'`` on large
+            graphs.  It requires ``induced == True``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable subgraph. ``immutable=None`` (default) means that
+          the graph and its subgraph will behave the same way.
 
         OUTPUT:
 
@@ -15374,6 +15390,22 @@ class GenericGraph(GenericGraph_pyx):
             sage: c.get_vertices()                                                      # needs sage.modules
             {0: 'foo', 1: None, 2: None, 3: None, 4: None}
 
+        Choice of the algorithm::
+
+            sage: # needs networkx sage.modules
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: H.subgraph_search(P4, induced=True, algorithm='sage')
+            Subgraph of (House Graph): Graph on 4 vertices
+            sage: H.subgraph_search(P4, induced=True, algorithm='networkx')
+            Subgraph of (House Graph): Graph on 4 vertices
+            sage: H.subgraph_search(P4, induced=False, algorithm='sage')
+            Subgraph of (House Graph): Graph on 4 vertices
+            sage: H.subgraph_search(P4, induced=False, algorithm='networkx')
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'networkx' algorithm can only be used to find induced subgraphs
+
         TESTS:
 
         Inside of a small graph (:issue:`13906`)::
@@ -15398,10 +15430,12 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 1, 0), (0, 3, 0), (1, 2, 1), (2, 3, 2)]
         """
         # return the first graph found by method subgraph_search_iterator
-        for g in self.subgraph_search_iterator(G, induced=induced, return_graphs=True):
+        it = self.subgraph_search_iterator(G, induced=induced, return_graphs=True,
+                                           algorithm=algorithm, immutable=immutable)
+        for g in it:
             return g
 
-    def subgraph_search_count(self, G, induced=False):
+    def subgraph_search_count(self, G, induced=False, algorithm='sage'):
         r"""
         Return the number of labelled occurrences of ``G`` in ``self``.
 
@@ -15411,6 +15445,17 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``induced`` -- boolean (default: ``False``); whether or not to count
           induced copies of ``G`` in ``self``
+
+        - ``algorithm`` -- string (default: ``'sage'``); one of the following
+          algorithms:
+
+          - ``'sage'``: use the exhaustive search algorithm implemented in
+            Sagemath. It can be used to search for both induced and not induced
+            subgraphs.
+
+          - ``'networkx'``: use the VF2++ algorithm from networkx to search for
+            induced subgraphs.  It can be faster than ``'sage'`` on large
+            graphs.  It requires ``induced == True``.
 
         .. NOTE::
 
@@ -15473,6 +15518,22 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.subgraph_search_count(graphs.PathGraph(5))                          # needs sage.modules
             240
 
+        Choice of the algorithm::
+
+            sage: # needs networkx sage.modules
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: H.subgraph_search_count(P4, induced=True, algorithm='sage')
+            4
+            sage: H.subgraph_search_count(P4, induced=True, algorithm='networkx')
+            4
+            sage: H.subgraph_search_count(P4, induced=False, algorithm='sage')
+            20
+            sage: H.subgraph_search_count(P4, induced=False, algorithm='networkx')
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'networkx' algorithm can only be used to find induced subgraphs
+
         TESTS:
 
         Inside of a small graph (:issue:`13906`)::
@@ -15491,11 +15552,21 @@ class GenericGraph(GenericGraph_pyx):
         if G.order() == 1:
             return self.order()
 
-        S = SubgraphSearch(self, G, induced=induced)
+        if algorithm == 'sage':
+            S = SubgraphSearch(self, G, induced=induced)
+            return S.cardinality()
 
-        return S.cardinality()
+        S = self.subgraph_search_iterator(G, induced=induced, return_graphs=False,
+                                          algorithm=algorithm)
+        i = 0
+        for _ in S:
+            i += 1
 
-    def subgraph_search_iterator(self, G, induced=False, return_graphs=True):
+        from sage.rings.integer import Integer
+        return Integer(i)
+
+    def subgraph_search_iterator(self, G, induced=False, return_graphs=True,
+                                 algorithm='sage', immutable=None):
         r"""
         Return an iterator over the labelled copies of ``G`` in ``self``.
 
@@ -15508,6 +15579,21 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``return_graphs`` -- boolean (default: ``True``); whether to return
           (di)graphs or only the list of vertices of the found (di)graphs
+
+        - ``algorithm`` -- string (default: ``'sage'``); one of the following
+          algorithms:
+
+          - ``'sage'``: use the exhaustive search algorithm implemented in
+            Sagemath. It can be used to search for both induced and not induced
+            subgraphs.
+
+          - ``'networkx'``: use the VF2++ algorithm from networkx to search for
+            induced subgraphs.  It can be faster than ``'sage'`` on large
+            graphs.  It requires ``induced == True``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable subgraph. ``immutable=None`` (default) means that
+          the graph and its subgraph will behave the same way.
 
         .. NOTE::
 
@@ -15603,6 +15689,24 @@ class GenericGraph(GenericGraph_pyx):
             sage: sum(1 for _ in K33.subgraph_search_iterator(K22))                     # needs sage.modules
             72
 
+        Choice of the algorithm::
+
+            sage: # needs networkx sage.modules
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: A = list(H.subgraph_search_iterator(P4, induced=True, return_graphs=False, algorithm='sage'))
+            sage: B = list(H.subgraph_search_iterator(P4, induced=True, return_graphs=False, algorithm='networkx'))
+            sage: len(A) == len(B)
+            True
+            sage: set(frozenset(a) for a in A) == set(frozenset(b) for b in B)
+            True
+            sage: sum(1 for _ in H.subgraph_search_iterator(P4, induced=False))
+            20
+            sage: sum(1 for _ in H.subgraph_search_iterator(P4, induced=False, algorithm='networkx'))
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'networkx' algorithm can only be used to find induced subgraphs
+
         TESTS:
 
         Inside of a small graph (:issue:`13906`)::
@@ -15663,6 +15767,36 @@ class GenericGraph(GenericGraph_pyx):
             ....:     print(type(b))
             ....:     break
             <class 'sage.graphs.graph.Graph'>
+
+        Choice of the algorithm::
+
+            sage: H = graphs.HouseGraph()
+            sage: P4 = graphs.PathGraph(4)
+            sage: next(H.subgraph_search_iterator(P4, algorithm='foo'))
+            Traceback (most recent call last):
+            ...
+            ValueError: parameter algorithm must be 'networkx' or 'sage'
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs networkx sage.modules
+            sage: C = graphs.CycleGraph(4)
+            sage: P = graphs.PathGraph(3)
+            sage: len(list(C.subgraph_search_iterator(P)))
+            8
+            sage: any(g.is_immutable() for g in C.subgraph_search_iterator(P))
+            False
+            sage: all(g.is_immutable() for g in C.subgraph_search_iterator(P, immutable=True))
+            True
+            sage: C = graphs.CycleGraph(4, immutable=True)
+            sage: all(g.is_immutable() for g in C.subgraph_search_iterator(P))
+            True
+            sage: any(g.is_immutable() for g in C.subgraph_search_iterator(P, immutable=False))
+            False
+            sage: len(list(C.subgraph_search_iterator(P, induced=True, algorithm='networkx')))
+            8
+            sage: all(g.is_immutable() for g in C.subgraph_search_iterator(P, induced=True, algorithm='networkx'))
+            True
         """
         self._scream_if_not_simple()
         G._scream_if_not_simple()
@@ -15670,30 +15804,51 @@ class GenericGraph(GenericGraph_pyx):
             raise ValueError("cannot search for a graph in a digraph")
         if not self.is_directed() and G.is_directed():
             raise ValueError("cannot search for a digraph in a graph")
+        if not induced and algorithm == 'networkx':
+            raise ValueError("the 'networkx' algorithm can only be used to find induced subgraphs")
+        if algorithm not in ('networkx', 'sage'):
+            raise ValueError("parameter algorithm must be 'networkx' or 'sage'")
+        if immutable is None:
+            immutable = self.is_immutable()
         DoG = self.__class__
         if not G.order():
-            yield DoG() if return_graphs else []
+            yield DoG(immutable=immutable) if return_graphs else []
         elif self.order() < G.order() or self.size() < G.size():
             return
         elif G.order() == 1:
             for v in self:
                 if return_graphs:
-                    yield DoG([[v], []], format='vertices_and_edges')
+                    yield DoG([[v], []], format='vertices_and_edges',
+                              immutable=immutable)
                 else:
                     yield [v]
-        else:
+        elif algorithm == 'networkx':
+            from networkx.algorithms import vf2pp_all_subgraph_isomorphisms as vf2pp
+            for g in vf2pp(self.networkx_graph(), G.networkx_graph()):
+                # g is a mapping from vertices of self to vertices of G
+                if not return_graphs:
+                    yield list(g)
+                elif induced:
+                    yield self.subgraph(list(g), immutable=immutable)
+                else:
+                    G_to_g = {v: u for u, v in g.items()}
+                    yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
+                                                  for u, v in G.edge_iterator(labels=False)],
+                                        immutable=immutable)
+        else:  # algorithm == 'sage'
             from sage.graphs.generic_graph_pyx import SubgraphSearch
             for g in SubgraphSearch(self, G, induced=induced):
                 if not return_graphs:
                     yield g
                 elif induced:
-                    yield self.subgraph(g)
+                    yield self.subgraph(g, immutable=immutable)
                 else:
                     G_to_g = dict(zip(G, g))
                     yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
-                                                  for u, v in G.edge_iterator(labels=False)])
+                                                  for u, v in G.edge_iterator(labels=False)],
+                                        immutable=immutable)
 
-    def subgraph_decompositions(self, H, induced=False):
+    def subgraph_decompositions(self, H, induced=False, algorithm='sage'):
         r"""
         Return an iterator over the `H`-decompositions of a graph.
 
@@ -15708,9 +15863,21 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``H`` -- the graph whose copies we are looking for in ``self``
+
         - ``induced`` -- boolean (default: ``False``); whether or not to
           consider only the isometric copies of ``H`` which are induced
           subgraphs of the graph ``self``
+
+        - ``algorithm`` -- string (default: ``'sage'``); one of the following
+          algorithms:
+
+          - ``'sage'``: use the exhaustive search algorithm implemented in
+            Sagemath. It can be used to search for both induced and not induced
+            subgraphs.
+
+          - ``'networkx'``: use the VF2++ algorithm from networkx to search for
+            induced subgraphs.  It can be faster than ``'sage'`` on large
+            graphs.  It requires ``induced == True``.
 
         OUTPUT:
 
@@ -15770,6 +15937,22 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
             [[[(0, 1), (1, 2)], [(1, 0), (2, 1)]]]
 
+        Choice of the algorithm::
+
+            sage: # needs networkx sage.modules
+            sage: G = DiGraph([(0,1), (1,2), (2,3), (3,4)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: len(list(G.subgraph_decompositions(H, induced=True, algorithm='sage')))
+            1
+            sage: len(list(G.subgraph_decompositions(H, induced=True, algorithm='networkx')))
+            1
+            sage: len(list(G.subgraph_decompositions(H, induced=False, algorithm='sage')))
+            1
+            sage: len(list(G.subgraph_decompositions(H, induced=False, algorithm='networkx')))
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'networkx' algorithm can only be used to find induced subgraphs
+
         TESTS:
 
         The graph ``G`` needs to be a simple graph::
@@ -15795,7 +15978,9 @@ class GenericGraph(GenericGraph_pyx):
         edge_to_column_id = {edge: i for i, edge in enumerate(edges)}
 
         rows = set()
-        for h in self.subgraph_search_iterator(H, induced=induced, return_graphs=True):
+        S = self.subgraph_search_iterator(H, induced=induced, return_graphs=True,
+                                          algorithm=algorithm)
+        for h in S:
             h_edges = h.edges(labels=False)
             L = sorted(edge_to_column_id[edge] for edge in h_edges)
             rows.add(tuple(L))
@@ -21733,7 +21918,8 @@ class GenericGraph(GenericGraph_pyx):
         - ``layout`` -- string (default: ``None``); specifies a layout algorithm
           among ``'acyclic'``, ``'acyclic_dummy'``, ``'circular'``,
           ``'ranked'``, ``'graphviz'``, ``'planar'``, ``'tutte'``, ``'spring'``,
-          ``'forest'`` or ``'tree'``
+          ``'forest'``, ``'tree'`` or the name of any NetworkX layout
+          algorithm (see :meth:`layout_networkx`)
 
         - ``pos`` -- dictionary (default: ``None``); a dictionary of positions
 
@@ -21841,6 +22027,11 @@ class GenericGraph(GenericGraph_pyx):
             ....:     for G in [Graph([(1, 2)]), Graph([(1, 2), (2, 3), (3, 4)])]:
             ....:         pos = G.layout(style, save_pos=True)
             ....:         assert G._pos is not None
+
+        .. SEEALSO::
+
+            :meth:`layout_networkx` for using any NetworkX layout algorithm not
+            natively implemented on this class.
         """
         if layout is None:
             if pos is None:
@@ -21851,7 +22042,7 @@ class GenericGraph(GenericGraph_pyx):
         if hasattr(self, "layout_%s" % layout):
             pos = getattr(self, "layout_%s" % layout)(dim=dim, **options)
         elif layout is not None:
-            raise ValueError("unknown layout algorithm: %s" % layout)
+            pos = self.layout_networkx(layout, dim=dim, **options)
 
         if len(pos) < self.order():
             pos = self.layout_extend_randomly(pos, dim=dim)
@@ -21859,6 +22050,149 @@ class GenericGraph(GenericGraph_pyx):
         if save_pos:
             self.set_pos(pos, dim=dim)
         return pos
+
+    def layout_networkx(self, layout_name, dim=2, **options):
+        r"""
+        Compute a layout using one of NetworkX's layout algorithms.
+
+        This is the fallback used by :meth:`layout` whenever ``layout_name``
+        does not match a ``layout_<name>`` method defined natively on this
+        class. It looks up ``networkx.<layout_name>_layout`` and calls it on
+        a NetworkX copy of ``self``, translating the result back into a
+        position dictionary keyed by the vertices of ``self``.
+        See the
+        `NetworkX layout documentation
+        <https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.layout>`_.
+
+        INPUT:
+
+        - ``layout_name`` -- string; the name of a NetworkX layout function,
+          without its ``_layout`` suffix -- e.g. ``'kamada_kawai'`` for
+          `networkx.kamada_kawai_layout
+          <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.kamada_kawai_layout.html>`_.
+
+        - ``dim`` -- integer (default: 2); 2 or 3, ignored by NetworkX
+          layouts that do not accept a ``dim`` parameter.
+
+        - ``**options`` -- extra keyword arguments forwarded unchanged to the
+          underlying NetworkX layout function.
+
+        OUTPUT:
+
+        A dictionary mapping each vertex of ``self`` to a tuple of ``dim``
+        floats.
+
+        EXAMPLES:
+
+        Layouts with no extra required arguments work directly through
+        :meth:`plot`::
+
+            sage: g = graphs.PetersenGraph()
+            sage: g.plot(layout='kamada_kawai')                                       # needs networkx sage.plot
+            Graphics object consisting of ... graphics primitives
+            sage: g.plot(layout='spectral')                                           # needs networkx sage.plot
+            Graphics object consisting of ... graphics primitives
+            sage: g.plot(layout='shell')                                              # needs networkx sage.plot
+            Graphics object consisting of ... graphics primitives
+            sage: g.plot(layout='circular')                                           # needs networkx sage.plot
+            Graphics object consisting of ... graphics primitives
+
+        Calling :meth:`layout_networkx` directly returns the raw position
+        dictionary, keyed by the vertices of ``self``::
+
+            sage: pos = g.layout_networkx('kamada_kawai')                             # needs networkx
+            sage: sorted(pos) == sorted(g)                                            # needs networkx
+            True
+            sage: all(len(p) == 2 for p in pos.values())                              # needs networkx
+            True
+
+        Three-dimensional layouts are supported for algorithms that accept a
+        ``dim`` parameter::
+
+            sage: pos3d = g.layout_networkx('kamada_kawai', dim=3)                    # needs networkx
+            sage: all(len(p) == 3 for p in pos3d.values())                            # needs networkx
+            True
+
+        Layout-specific keyword arguments recognized by the target NetworkX
+        function are forwarded when calling :meth:`layout_networkx`
+        directly::
+
+            sage: pos = g.layout_networkx('spring', k=2, iterations=100)              # needs networkx
+            sage: sorted(pos) == sorted(g)                                            # needs networkx
+            True
+
+        Sage-specific plotting options passed through :meth:`plot`, such as
+        ``vertex_size``, are safely ignored rather than raising an error,
+        even when a NetworkX layout function happens to accept a
+        same-named parameter with an unrelated meaning (for example, Sage's
+        ``dist`` is a float controlling multi-edge spacing, while
+        `networkx.kamada_kawai_layout
+        <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.kamada_kawai_layout.html>`_'s
+        ``dist`` parameter expects a distance matrix)::
+
+            sage: g.plot(layout='kamada_kawai', vertex_size=300)                      # needs networkx sage.plot
+            Graphics object consisting of ... graphics primitives
+
+        An unknown layout name raises a clear error::
+
+            sage: g.layout('this_is_not_a_layout')                                    # needs networkx
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown layout algorithm: this_is_not_a_layout
+
+        .. WARNING::
+
+            Some NetworkX layouts require extra *mandatory* arguments that are
+            not valid Sage plotting options -- for example, ``nodes`` for
+            `networkx.bipartite_layout
+            <https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.bipartite_layout.html>`_.
+            Such arguments cannot be passed through :meth:`plot` directly:
+            :meth:`plot` validates its keyword arguments against a fixed list of
+            recognized Sage plotting options and raises ``ValueError: invalid
+            input`` for anything outside that list, regardless of whether
+            :meth:`layout_networkx` would have accepted and used it
+            correctly. Compute the position dictionary separately instead,
+            and pass it to :meth:`plot` via ``pos=``::
+
+                sage: # needs networkx sage.plot
+                sage: B = graphs.CompleteBipartiteGraph(3, 4)
+                sage: pos = B.layout_networkx('bipartite', nodes=list(range(3)))
+                sage: B.plot(pos=pos)
+                Graphics object consisting of ... graphics primitives
+
+        .. SEEALSO::
+
+            The `NetworkX layout documentation
+            <https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.layout>`_
+            for the full list of available layout functions and their
+            algorithm-specific keyword arguments.
+        """
+        import inspect
+        import networkx
+        from sage.graphs.graph_plot import graphplot_options
+
+        funcname = "%s_layout" % layout_name
+        func = getattr(networkx, funcname, None)
+        if func is None or not callable(func):
+            raise ValueError("unknown layout algorithm: %s" % layout_name)
+
+        G = self.networkx_graph()
+
+        sage_option_names = set(graphplot_options)
+
+        sig = inspect.signature(func)
+        accepted = set(sig.parameters)
+
+        filtered_options = {k: v
+                            for k, v in options.items()
+                            if k in accepted and k not in sage_option_names}
+
+        if 'dim' in accepted:
+            raw_pos = func(G, dim=dim, **filtered_options)
+        else:
+            raw_pos = func(G, **filtered_options)
+
+        return {v: tuple(float(c) for c in p) for v, p in raw_pos.items()}
 
     def layout_spring(self, by_component=True, **options):
         """
