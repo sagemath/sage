@@ -22,6 +22,7 @@ Base class for polyhedra: Methods for plotting and affine hull projection
 #       Copyright (C) 2019-2020 Laith Rastanawi
 #       Copyright (C) 2019-2020 Sophia Elia
 #       Copyright (C) 2019-2021 Jonathan Kliem <jonathan.kliem@gmail.com>
+#       Copyright (C) 2026      Yaroslav Kucherinenko <yar.kuch@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,14 +142,132 @@ class Polyhedron_base6(Polyhedron_base5):
         sage: Polyhedron_base6.affine_hull_projection(R)
         A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 6 vertices
     """
+    def _plot_with_nonlinear_transformation(self, nonlinear_transformation,
+                                            plot_points, reparameterization, *,
+                                            point_kwds, line_kwds,
+                                            polygon_kwds):
+        r"""
+        Internal method for plotting polyhedra after
+        nonlinear coordinate transformations.
+
+        This method handles all rendering specific to transformed polyhedra.
+        All options have already been merged by the parent :meth:`plot` method.
+
+        INPUT:
+
+        - ``nonlinear_transformation`` -- callable mapping vertices
+          to at most 3D space.
+        - ``plot_points`` -- sample point count for edge and radial
+          discretization.
+
+        - ``reparameterization`` -- ``None``, ``True``, ``False``,
+          ``'sin2sin'``, or a pair of callables; normalized internally by
+          :func:`sage.geometry.polyhedron.plot._normalize_reparameterization`.
+
+        - ``point_kwds``, ``line_kwds``, ``polygon_kwds`` -- pre-merged
+          keyword dictionaries for vertices, edges, and 2-faces respectively.
+
+        .. NOTE::
+
+            - Clamps ``plot_points`` to a minimum value of 2.
+            - Removes ``thickness`` from ``polygon_kwds`` to avoid interference
+              with mesh lines in 3D rendering.
+
+        OUTPUT:
+
+        A :class:`~sage.plot.graphics.Graphics` (2D) or
+        :class:`~sage.plot.plot3d.base.Graphics3d` (3D) object.
+
+        EXAMPLES::
+
+            sage: polytopes.hypercube(3)._plot_with_nonlinear_transformation(
+            ....:  nonlinear_transformation=lambda v:v/v.norm(),plot_points=15,
+            ....:  reparameterization=True,point_kwds=False,
+            ....:  line_kwds={'color':'blue','thickness':4},
+            ....:  polygon_kwds={'color':'green'})
+            Graphics3d Object
+
+        TESTS::
+
+            sage: polytopes.hypercube(4)._plot_with_nonlinear_transformation(
+            ....:  nonlinear_transformation=lambda v:vector(v),
+            ....:  plot_points=15,reparameterization=True,
+            ....:  point_kwds={'color':'red'},
+            ....:  line_kwds=False, polygon_kwds=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: nonlinear_transformation must return at most 3D points
+        """
+        auto_flag = (plot_points == 'automatic')
+        if isinstance(plot_points, (list, tuple)):
+            auto_flag = any(x == 'automatic' for x in plot_points)
+
+        sample_v = nonlinear_transformation(vector(self.vertices()[0]))
+        try:
+            dim_out = len(sample_v)
+        except TypeError:
+            raise TypeError(
+                "nonlinear_transformation must return a vector-like object "
+                f"(list, tuple, or vector), not {type(sample_v).__name__}"
+            ) from None
+
+        if dim_out > 3:
+            raise ValueError("nonlinear_transformation "
+                             "must return at most 3D points")
+
+        if auto_flag and dim_out < 3:
+            raise ValueError("plot_points='automatic' is not supported for 2D "
+                             "plots with nonlinear_transformation; use "
+                             "an integer or a pair instead")
+
+        if not auto_flag:
+            if not isinstance(plot_points, (list, tuple)):
+                plot_points = max(2, plot_points)
+            else:
+                plot_points = [max(2, x) for x in plot_points]
+
+        if isinstance(polygon_kwds, dict):
+            polygon_kwds.pop('thickness', None)
+
+        from sage.geometry.polyhedron.plot import _normalize_reparameterization
+        edge_f, face_f = _normalize_reparameterization(reparameterization)
+        if dim_out < 3:
+            if point_kwds is not False:
+                point_kwds.setdefault('zorder', 2)
+            if line_kwds is not False:
+                line_kwds.setdefault('zorder', 1)
+            if polygon_kwds is not False:
+                polygon_kwds.setdefault('zorder', 0)
+            from sage.geometry.polyhedron.plot import (
+                _plot_transformed_polyhedron_2d)
+            return _plot_transformed_polyhedron_2d(self,
+                nonlinear_transformation, plot_points,
+                point_kwds=point_kwds, line_kwds=line_kwds,
+                polygon_kwds=polygon_kwds, edge_reparameterization=edge_f)
+        if dim_out == 3:
+            from sage.geometry.polyhedron.plot import (
+                _plot_transformed_polyhedron_3d)
+            return _plot_transformed_polyhedron_3d(self,
+                nonlinear_transformation, plot_points,
+                point_kwds=point_kwds, line_kwds=line_kwds,
+                polygon_kwds=polygon_kwds,
+                edge_reparameterization=edge_f,
+                face_reparameterization=face_f)
+
     def plot(self,
              point=None, line=None, polygon=None,  # None means unspecified by the user
              wireframe='blue', fill='green',
              position=None,
              orthonormal=True,  # whether to use orthonormal projections
+             nonlinear_transformation=None,
+             plot_points=20, reparameterization=None,
              **kwds):
         r"""
         Return a graphical representation.
+
+        This method supports both standard plotting and nonlinear coordinate
+        transformations (e.g., spherical projections, stereographic
+        projections, hyperbolic model conversions etc.)
 
         INPUT:
 
@@ -177,6 +296,22 @@ class Polyhedron_base6(Polyhedron_base5):
 
         - ``orthonormal`` -- boolean (default: ``True``); whether to use
           orthonormal projections
+
+        - ``nonlinear_transformation`` -- (default: ``None``) optional callable
+          mapping vertices to at most 3-dimensional space; when provided, the
+          polyhedron is drawn after this deformation, with edges and faces
+          interpolated as curves and surfaces. Set to ``False`` for standard
+          rendering.
+
+        - ``plot_points`` -- (default: ``20``) initial number of sample points
+          in each parameter; an integer for an edge, a pair of integers for a
+          triangular patch of a face (center to edge). Only the first value is
+          used in 2D plots; see :func:`~sage.plot.plot3d.all.parametric_plot3d`
+
+        - ``reparameterization`` -- (optional) parametric smoothing for edges
+          and faces. Details on when to disable for severe deformations in
+          NOTE. Accepted values: ``None``, ``True``, ``False``, ``'sin2sin'``,
+          or a pair ``(edge_func, face_func)`` of callables.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
           all graphics objects
@@ -275,6 +410,108 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:            polygon='rainbow')
             Graphics3d Object
 
+        Examples for nonlinear_transformation::
+
+            sage: # needs sage.plot
+            sage: p = polytopes.hypercube(3)
+            sage: # Standard plot (no nonlinear_transformation)
+            sage: p.plot(thickness=3)
+            Graphics3d Object
+            sage: # Define a spherical projection
+            sage: def spherical_projection(v):
+            ....:     s2 = sum(x**2 for x in v)
+            ....:     return vector(v)/s2**0.5
+            sage: p.plot(nonlinear_transformation=spherical_projection,
+            ....:  thickness=3)
+            Graphics3d Object
+
+            sage: # Hyperbolic dodecahedron with Klein-to-Poincaré conversion
+            sage: from sage.rings.real_double import RDF
+            sage: from sage.plot.plot3d.shapes import Sphere
+            sage: def klein_to_poincare(v):
+            ....:     s2 = sum(x**2 for x in v)
+            ....:     return vector(v) * (1 - (1 - s2)**0.5) / s2
+            sage: # Scale factor to place dodecahedron fully inside unit sphere
+            sage: # (Klein model, dihedral angles 2*pi/5)
+            sage: p_scaled = polytopes.dodecahedron() * RDF(0.72287100228)
+            sage: absolute = Sphere(1,color='white',opacity=0.15)
+            sage: poincare_model = p_scaled.plot(
+            ....:  nonlinear_transformation=klein_to_poincare, fill='skyblue')
+            sage: poincare_model + absolute
+            Graphics3d Object
+
+            sage: # Tesseract in 3D (4D -> 3D)
+            sage: # Comparison of the Schlegel diagram
+            sage: # and stereographic projection (Dimensions style)
+            sage: p = polytopes.hypercube(4)
+            sage: # Plotting of the tesseract as a Schlegel diagram
+            sage: p.plot()
+            Graphics3d Object
+            sage: def stereographic_projection(v):
+            ....:     s2 = sum(x**2 for x in v)
+            ....:     v1 = vector(v)/s2**0.5
+            ....:     n1 = len(v1)-1
+            ....:     return vector([v1[i] for i in range(n1)])/(v1[n1]+1)
+            sage: p.plot(nonlinear_transformation=stereographic_projection,
+            ....:  polygon={'opacity':0.5})
+            Graphics3d Object
+
+            sage: # Custom resolution and reparameterization
+            sage: facet3 = p.facets()[4].as_polyhedron()
+            sage: facet3.plot(thickness=2)
+            Graphics3d Object
+            sage: facet3.plot(
+            ....:  nonlinear_transformation=stereographic_projection,
+            ....:  thickness=2, plot_points=[8,6], mesh=True,
+            ....:  reparameterization=False)
+            Graphics3d Object
+            sage: facet3.plot(
+            ....:  nonlinear_transformation=stereographic_projection,
+            ....:  thickness=2, plot_points=[8,6], mesh=True,
+            ....:  reparameterization=[False, lambda t: t**0.5])
+            Graphics3d Object
+
+            sage: # Flat drawings (2D)
+            sage: cube = polytopes.hypercube(3)
+            sage: cube.schlegel_projection().plot(point_opts={'color':'red',
+            ....:  'pointsize':40},polygon_opts={'color':'darkgreen'})
+            Graphics object consisting of 19 graphics primitives
+            sage: cube.plot(nonlinear_transformation=stereographic_projection,
+            ....:  point={'color':'red','pointsize':40},
+            ....:  polygon={'color':'darkgreen'})
+            Graphics object consisting of 26 graphics primitives
+
+        .. NOTE::
+
+            - When nonlinear_transformation is provided, edges and faces become
+              curved via interpolation. Each face is split into triangular
+              patches (face center to edge); adjacent patches shade
+              independently, so faint seams may appear. Reparameterization
+              concentrates samples near boundaries for moderate deformations;
+              disable it (set False) for severe ones. Remaining options behave
+              as in standard plot. The parameters ``position`` and
+              ``orthonormal`` are not used with ``nonlinear_transformation``;
+              they apply only to native 4D input.
+
+            - For purely numeric transformations, use symbolic functions
+              (e.g., ``sqrt`` instead of ``math.sqrt`` or ``numpy.sqrt``).
+
+            - For unbounded polyhedra (those with rays or lines), a warning is
+              issued when ``nonlinear_transformation`` is used, and standard
+              rendering is applied.
+
+        .. SEEALSO::
+
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
+              linear_transformation`
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
+              dilation`
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
+              translation`
+            - :meth:`~sage.plot.plot3d.base.Graphics3d.transform`
+            - :func:`~sage.plot.plot3d.plot3d.plot3d` (``transformation``)
+            - :ref:`thematic_tutorials_geometry_tips`
+
         TESTS::
 
             sage: for p in square.plot():
@@ -353,6 +590,56 @@ class Polyhedron_base6(Polyhedron_base5):
             ...
             NotImplementedError: plotting of 5-dimensional polyhedra not implemented
 
+            sage: # needs sage.plot
+            sage: p = polytopes.hypercube(4)
+            sage: p.plot(nonlinear_transformation=lambda v: vector(v))
+            Traceback (most recent call last):
+            ...
+            ValueError: nonlinear_transformation must return at most 3D points
+
+        Plotting of 1D objects (1D -> 2D)
+
+            sage: p = Polyhedron(vertices=[[0],[1]])
+            sage: type(p.plot())
+            <class 'sage.plot.graphics.Graphics'>
+            sage: def trans_1d(v): return vector([sum(v)])
+            sage: p_cube = polytopes.hypercube(3)
+            sage: type(p_cube.plot(nonlinear_transformation=trans_1d))
+            <class 'sage.plot.graphics.Graphics'>
+
+        point/line/polygon options work with nonlinear_transformation
+
+            sage: p = polytopes.hypercube(2)
+            sage: f = lambda v: vector(v)
+            sage: type(p.plot(nonlinear_transformation=f, point=False))
+            <class 'sage.plot.graphics.Graphics'>
+            sage: type(p.plot(nonlinear_transformation=f, line=False))
+            <class 'sage.plot.graphics.Graphics'>
+            sage: type(p.plot(nonlinear_transformation=f, polygon=False))
+            <class 'sage.plot.graphics.Graphics'>
+
+        Unbounded polyhedron (rays):
+        nonlinear_transformation ignored with warning
+
+            sage: # needs sage.plot
+            sage: import warnings
+            sage: p = Polyhedron(rays=[[1,0],[0,1]]) # unbounded polyhedron
+            sage: with warnings.catch_warnings():
+            ....:     warnings.simplefilter("ignore")
+            ....:     type(p.plot(nonlinear_transformation=lambda v:vector(v)))
+            <class 'sage.plot.graphics.Graphics'>
+
+        plot_points='automatic' is supported for 3D plots but not for 2D plots
+
+            sage: # needs sage.plot
+            sage: q = polytopes.hypercube(2)
+            sage: q.plot(
+            ....:  nonlinear_transformation=lambda v: vector(v),
+            ....:  plot_points='automatic')
+            Traceback (most recent call last):
+            ...
+            ValueError: plot_points='automatic' is not supported for 2D plots with nonlinear_transformation; use an integer or a pair instead
+
         If the polyhedron is not full-dimensional, the :meth:`affine_hull_projection` is used if necessary::
 
             sage: type(Polyhedron([(0,), (1,)]).plot())
@@ -423,6 +710,20 @@ class Polyhedron_base6(Polyhedron_base5):
 
         d = min(self.dim(), 2)
         opts = [wireframe] * d + [fill] + [False] * (2-d)
+
+        if nonlinear_transformation is False:
+            nonlinear_transformation = None
+        if nonlinear_transformation is not None and self.vertices():
+            if self.is_compact():
+                return self._plot_with_nonlinear_transformation(
+                    nonlinear_transformation, plot_points, reparameterization,
+                    point_kwds=merge_options(opts[0], point, kwds),
+                    line_kwds=merge_options(opts[1], line, kwds),
+                    polygon_kwds=merge_options(opts[2], polygon, kwds))
+            import warnings
+            warnings.warn("nonlinear_transformation is ignored for "
+                          "unbounded polyhedra; using standard rendering")
+
         # The point/line/polygon options take precedence over wireframe/fill
         opts = [merge_options(opt1, opt2, kwds)
                 for opt1, opt2 in zip(opts, [point, line, polygon])]
