@@ -4675,6 +4675,17 @@ cdef class Polynomial(CommutativePolynomial):
             NotImplementedError: factorization of polynomials over
             rings with composite characteristic is not implemented
 
+        However, factoring `x^n - 1` over arbitrary prime-power residue rings
+        `\ZZ / p^e \ZZ` (including large moduli) is supported via the Dickson
+        Engine (see :issue:`43116`)::
+
+            sage: R.<x> = Zmod(101^10)[]
+            sage: F = (x^102 - 1).factor()
+            sage: len(F)
+            52
+            sage: F.expand() == x^102 - 1
+            True
+
         Factoring polynomials over the algebraic numbers (see
         :issue:`8544`)::
 
@@ -5004,6 +5015,16 @@ cdef class Polynomial(CommutativePolynomial):
         G = None
         ch = R.characteristic()
         if not (ch == 0 or is_prime(ch)):
+            if isinstance(R, sage.rings.abc.IntegerModRing):
+                deg = self.degree()
+                if deg >= 1:
+                    lc = self[deg]
+                    if self[0] == -lc and lc.is_unit():
+                        p, e = ch.is_prime_power(get_data=True)
+                        if e and all(self[i].is_zero() for i in range(1, deg)):
+                            from sage.rings.polynomial.cyclotomic import dickson_cyclotomic_factors
+                            return dickson_cyclotomic_factors(deg, p, e, full=True,
+                                                              ring=self._parent, unit=lc)
             raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
 
         from sage.rings.finite_rings.finite_field_base import FiniteField
