@@ -4748,7 +4748,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     def is_isogenous(self, other: EllipticCurve_generic, *args, **kwds) -> bool:
         r"""
-        Return whether or not ``self`` is isogenous to other.
+        Return whether or not ``self`` is isogenous to ``other``.
 
         INPUT:
 
