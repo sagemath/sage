@@ -88,6 +88,9 @@ Use the same ``-e`` option for the build and subsequent commands.
 The build task starts a fresh build when the installed Conda packages change.
 To request a clean rebuild manually, use ``pixi run build --clean``. This
 clears only the selected environment's Sage build directory.
+Maxima's compiled cache also lives in this directory, so it cannot mix native
+code from different environments or a separate Sage installation. Your Maxima
+user configuration remains unchanged.
 
 Updating dependencies
 ---------------------

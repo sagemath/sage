@@ -251,4 +251,3 @@ def get_optional_dependencies(pyproject: dict) -> list[str]:
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
-

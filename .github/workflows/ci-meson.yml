@@ -94,7 +94,8 @@ jobs:
         with:
           pixi-version: v0.84.1
           environments: ${{ env.PIXI_ENVIRONMENT }}
-          activate-environment: true
+          # Run commands through Pixi so Windows activation can replace PATH.
+          activate-environment: false
           locked: true
           # Cache only downloads above; keep the local Sage build out of the cache.
           cache: false
@@ -108,9 +109,9 @@ jobs:
       - name: Check generated dependencies
         shell: bash
         run: |
-          pixi run --locked -e "$PIXI_ENVIRONMENT" check-dependencies
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- check-dependencies
           # These tooling tests run before Sage is built and need no Sage conftest.
-          python -m pytest --noconftest -q tools/pixi_dependencies_test.py tools/pixi_build_test.py
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pytest --noconftest -q tools/pixi_dependencies_test.py tools/pixi_build_test.py
 
       - name: Build
         shell: bash
@@ -121,7 +122,7 @@ jobs:
           fi
 
           # The build task uses --no-deps; pip check below verifies the locked dependencies.
-          pixi run --locked -e "$PIXI_ENVIRONMENT" build ${{ !matrix.editable && '--wheel' || '' }} -- -v
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- build --verbose ${{ !matrix.editable && '--wheel' || '' }}
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
@@ -129,7 +130,7 @@ jobs:
         shell: bash
         if: matrix.tests == 'all' && matrix.python == '3.13'
         run: |
-          python tools/update-meson.py
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
             git add --intent-to-add .  # also show newly created files in git diff
             git status
@@ -139,7 +140,7 @@ jobs:
 
       - name: Verify dependencies
         shell: bash
-        run: python -m pip check
+        run: pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pip check
 
       - name: Test
         shell: bash
@@ -150,10 +151,10 @@ jobs:
           ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             # Ignore errors on Windows, for now
-            pytest -n 4 --doctest-ignore-import-errors --doctest -rfEs -s src || true
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pytest -n 4 --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
-            pytest -n 4 -rfEs -s src
-            ./sage -t ${{
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pytest -n 4 -rfEs -s src
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- ./sage -t ${{
               matrix.tests == 'all' &&
               '--all-except="$SEPARATELY_TESTED_FLAKY_FILES"' ||
               '--new --long' }} -p4 --format github
@@ -166,7 +167,7 @@ jobs:
         shell: bash
         run: |
           for i in {1..5}; do
-            ./sage -t -p4 --format github $SEPARATELY_TESTED_FLAKY_FILES && break
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- ./sage -t -p4 --format github $SEPARATELY_TESTED_FLAKY_FILES && break
           done
 
       - name: Check that all modules can be imported
@@ -178,15 +179,15 @@ jobs:
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
           if [[ "${{ matrix.os }}" == "windows" ]]; then
-            pytest -n 4 -qq --doctest --collect-only || true
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pytest -n 4 -qq --doctest --collect-only || true
           else
-            pytest -n 4 -qq --doctest --collect-only
+            pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m pytest -n 4 -qq --doctest --collect-only
           fi
 
       - name: Check for cyclic imports
         shell: bash
         run: |
-          python tools/find_cyclic_imports.py --check --verbose
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- python tools/find_cyclic_imports.py --check --verbose
 
       - name: Upload log
         uses: actions/upload-artifact@v7
