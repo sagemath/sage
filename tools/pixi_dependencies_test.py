@@ -37,13 +37,17 @@ def test_combines_constraints_and_keeps_build():
         pixi.parse_requirement("conda-forge::numpy[build=py313_0]")
 
 
-def environment_dependencies(manifest, python, platform):
+def environment_dependencies(manifest, python, platform, full=True):
     """Combine the actual TOML tables the way Pixi selects a feature/target."""
     dependencies = dict(manifest.get("dependencies", {}))
     dependencies.update(manifest.get("target", {}).get(platform, {}).get("dependencies", {}))
     feature = manifest.get("feature", {}).get("py" + python.replace(".", ""), {})
     dependencies.update(feature.get("dependencies", {}))
     dependencies.update(feature.get("target", {}).get(platform, {}).get("dependencies", {}))
+    if full:
+        feature = manifest.get("feature", {}).get("full", {})
+        dependencies.update(feature.get("dependencies", {}))
+        dependencies.update(feature.get("target", {}).get(platform, {}).get("dependencies", {}))
     return {name: {"version": value} if isinstance(value, str) else value
             for name, value in dependencies.items()}
 
@@ -85,6 +89,23 @@ def test_python_dependent_requirements_are_kept_separate(monkeypatch):
             assert actual["numpy"] == {"version": "==1" if python == "3.13" else "==2"}
             assert ("windows-only" in actual) == (platform == "win-64")
             assert ("linux-py314" in actual) == (python == "3.14" and platform == "linux-64")
+
+
+def test_minimal_excludes_only_disabled_libraries():
+    source = TOOLS.parent / "pyproject.toml"
+    manifest = tomllib.loads(pixi.render_dependencies(pixi.dependency_tables(source)))
+    expected = pixi.merge_requirements(pixi.get_dependencies(source, "3.14", "linux-64"))
+    assert pixi.FULL_ONLY <= expected.keys()
+    for name in pixi.FULL_ONLY:
+        del expected[name]
+    assert environment_dependencies(manifest, "3.14", "linux-64", full=False) == expected
+
+
+def test_full_feature_rejects_lost_python_constraints(monkeypatch):
+    monkeypatch.setattr(pixi, "get_dependencies", lambda source, python, platform: {
+        "shared", f"bliss=={1 if python == '3.13' else 2}"})
+    with pytest.raises(ValueError, match="Full feature needs Python-specific dependencies"):
+        pixi.dependency_tables(Path("unused"))
 
 
 def test_check_detects_drift_without_writing_and_preserves_prefix(tmp_path, monkeypatch):

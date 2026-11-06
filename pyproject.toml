@@ -229,7 +229,7 @@ dev = [
   "python-build",
   "ruff",
   "tqdm",
-  "ty >=0.0.12",
+  "ty >=0.0.97",
   "uv",
   "virtualenv >=21.14.13",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
@@ -295,6 +295,7 @@ test = ["coverage", "pytest"]
 "conflicting-declarations" = "ignore"
 "deprecated" = "ignore"
 "empty-body" = "ignore"
+"import-not-found" = "ignore"
 "inconsistent-mro" = "ignore"
 "index-out-of-bounds" = "ignore"
 "invalid-argument-type" = "ignore"
@@ -325,7 +326,6 @@ test = ["coverage", "pytest"]
 "unknown-argument" = "ignore"
 "unresolved-attribute" = "ignore"
 "unresolved-global" = "ignore"
-"unresolved-import" = "ignore"
 "unresolved-reference" = "ignore"
 "unsupported-base" = "ignore"
 "unsupported-operator" = "ignore"

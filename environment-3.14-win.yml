@@ -376,7 +376,7 @@ dependencies:
   - traitlets=5.16.1=pyhcf101f3_0
   - trove-classifiers=2026.9.21.13=pyh5ded981_0
   - truststore=0.10.5=pyh5ded981_0
-  - ty=0.0.90=h2852063_0
+  - ty=0.0.98=h2852063_0
   - typing-extensions=4.16.0=h69aa097_0
   - typing-inspection=0.4.4=pyhcf101f3_0
   - typing_extensions=4.16.0=pyhcf101f3_0
