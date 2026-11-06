@@ -31,6 +31,8 @@ AUTHORS:
   numbers of higher level
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
+
+- Maya Lin (2026): Added sturm_bound and optimized is_isogenous
 """
 
 ##############################################################################
@@ -4761,7 +4763,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         First the ap values are compared one by one for primes up to 20.
         If any ap value does not match, ``False`` is returned. If they all
         match up to 20, the Sturm bound is computed and the ap values are
-        compared for all primes up to the Sturm bound. 
+        compared for all primes up to the Sturm bound.
 
         EXAMPLES::
 
