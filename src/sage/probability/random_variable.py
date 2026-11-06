@@ -293,7 +293,7 @@ class ProbabilitySpace_generic(RandomVariable_generic):
             try:
                 domain = tuple(domain)
             except TypeError:
-                raise TypeError("Argument domain (= %s) must be a list, tuple, set, or other iterable" % domain)
+                raise TypeError("argument domain (= %s) must be a list, tuple, set, or other iterable" % domain)
         self._domain = domain
         RandomVariable_generic.__init__(self, self, RR)
 
