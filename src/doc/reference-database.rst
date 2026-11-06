@@ -7924,6 +7924,17 @@
              Constructions and Existence*. J. Math. Crypt. 1 (2007),
              pp.125-150
 
+.. [WDYH2026a] Yongchao Wang, Yang Ding, Jiansheng Yang, and Zhiqiu Huang,
+               *Explicit Factorization of* `x^{p+1}-1` *over* `\ZZ_{p^e}`:
+               *A Structural Approach via Dickson Polynomials*,
+               Proceedings of the 2026 IEEE International Symposium on
+               Information Theory (ISIT), 2026. :arxiv:`2604.19038`.
+
+.. [WDYH2026b] Yongchao Wang, Yang Ding, Jiansheng Yang, and Zhiqiu Huang,
+               *Explicit Factorization of* `X^n-1` *over* `\ZZ_{p^e}`
+               *via Cofactor-Free Single-Seed Hensel Lifting*,
+               2026. :arxiv:`2606.20633`.
+
 .. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
    the AMS, vol. 54 num. 10, pages 1294--1303
 
@@ -8176,3 +8187,7 @@
             and invariant subalgebras*.
             Lett. Math. Phys. **73** (2005), pp. 165-181.
             :arxiv:`math/0509651`, :doi:`10.1007/s11005-005-0015-9`
+
+.. [ZZLW2025] Li Zhu, Juncheng Zhou, Jinle Liu, and Hongfeng Wu,
+              *The Multiple Equal-Difference Structure of Cyclotomic Cosets*,
+              2025. :arxiv:`2501.03516`.
