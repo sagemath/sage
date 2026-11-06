@@ -22,10 +22,14 @@ python = "3.13.*"
 [feature.py314.dependencies]
 python = "3.14.*"
 
+[feature.minimal]
+platforms = ["linux-64"]
+
 [environments]
-default = { features = ["py313"], solve-group = "py313" }
-py313 = { features = ["py313"], solve-group = "py313" }
-py314 = { features = ["py314"], solve-group = "py314" }
+default = { features = ["full", "py313"], solve-group = "py313" }
+minimal-py314 = { features = ["minimal", "py314"], solve-group = "py314" }
+py313 = { features = ["full", "py313"], solve-group = "py313" }
+py314 = { features = ["full", "py314"], solve-group = "py314" }
 
 [tasks]
 build = { cmd = "python tools/pixi-build.py", description = "Build and install this checkout for development" }
@@ -113,7 +117,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "sympy" = "<2.0,>=1.6"
 "tqdm" = "*"
 "traitlets" = "*"
-"ty" = ">=0.0.12"
+"ty" = ">=0.0.97"
 "uv" = "*"
 "virtualenv" = ">=21.14.13"
 
@@ -121,7 +125,6 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "4ti2" = "*"
 "autoconf" = "*"
 "automake" = "*"
-"bliss" = "*"
 "c-compiler" = "*"
 "cddlib" = "*"
 "cliquer" = "*"
@@ -139,9 +142,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "lcalc" = "*"
 "libatomic_ops" = "*"
 "libblas" = { build = "*_openblas", version = "*" }
-"libbraiding" = "*"
 "libbrial" = "*"
-"libhomfly" = "*"
 "linbox" = "*"
 "lrslib" = "*"
 "m4" = "*"
@@ -155,16 +156,13 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "primecountpy" = "*"
 "python-lrcalc" = "~=2.1"
 "rpy2" = ">=3.3"
-"rw" = "*"
 "singular" = "==4.4.1.p5"
-"sirocco" = "*"
 "sympow" = "*"
 "tachyon" = "*"
 
 [target.linux-aarch64.dependencies]
 "autoconf" = "*"
 "automake" = "*"
-"bliss" = "*"
 "c-compiler" = "*"
 "cddlib" = "*"
 "cliquer" = "*"
@@ -182,9 +180,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "lcalc" = "*"
 "libatomic_ops" = "*"
 "libblas" = { build = "*_openblas", version = "*" }
-"libbraiding" = "*"
 "libbrial" = "*"
-"libhomfly" = "*"
 "linbox" = "*"
 "m4" = "*"
 "m4rie" = "*"
@@ -197,9 +193,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "primecountpy" = "*"
 "python-lrcalc" = "~=2.1"
 "rpy2" = ">=3.3"
-"rw" = "*"
 "singular" = "==4.4.1.p5"
-"sirocco" = "*"
 "sympow" = "*"
 "tachyon" = "*"
 
@@ -207,7 +201,6 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "4ti2" = "*"
 "autoconf" = "*"
 "automake" = "*"
-"bliss" = "*"
 "c-compiler" = "*"
 "cddlib" = "*"
 "cliquer" = "*"
@@ -227,9 +220,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "ld64" = ">=956.6"
 "libatomic_ops" = "*"
 "libblas" = { build = "*_newaccelerate", version = "*" }
-"libbraiding" = "*"
 "libbrial" = "*"
-"libhomfly" = "*"
 "linbox" = "*"
 "lrslib" = "*"
 "m4" = "*"
@@ -242,16 +233,13 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "primecountpy" = "*"
 "python-lrcalc" = "~=2.1"
 "rpy2" = ">=3.3"
-"rw" = "*"
 "singular" = "==4.4.1.p5"
-"sirocco" = "*"
 "sympow" = "*"
 "tachyon" = "*"
 
 [target.osx-arm64.dependencies]
 "autoconf" = "*"
 "automake" = "*"
-"bliss" = "*"
 "c-compiler" = "*"
 "cddlib" = "*"
 "cliquer" = "*"
@@ -271,9 +259,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "ld64" = ">=956.6"
 "libatomic_ops" = "*"
 "libblas" = { build = "*_newaccelerate", version = "*" }
-"libbraiding" = "*"
 "libbrial" = "*"
-"libhomfly" = "*"
 "linbox" = "*"
 "m4" = "*"
 "m4rie" = "*"
@@ -285,9 +271,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "primecountpy" = "*"
 "python-lrcalc" = "~=2.1"
 "rpy2" = ">=3.3"
-"rw" = "*"
 "singular" = "==4.4.1.p5"
-"sirocco" = "*"
 "sympow" = "*"
 "tachyon" = "*"
 
@@ -298,3 +282,31 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "vs2022_win-64" = "*"
 "winpthreads-devel" = "*"
 "zlib" = "*"
+
+[feature.full.target.linux-64.dependencies]
+"bliss" = "*"
+"libbraiding" = "*"
+"libhomfly" = "*"
+"rw" = "*"
+"sirocco" = "*"
+
+[feature.full.target.linux-aarch64.dependencies]
+"bliss" = "*"
+"libbraiding" = "*"
+"libhomfly" = "*"
+"rw" = "*"
+"sirocco" = "*"
+
+[feature.full.target.osx-64.dependencies]
+"bliss" = "*"
+"libbraiding" = "*"
+"libhomfly" = "*"
+"rw" = "*"
+"sirocco" = "*"
+
+[feature.full.target.osx-arm64.dependencies]
+"bliss" = "*"
+"libbraiding" = "*"
+"libhomfly" = "*"
+"rw" = "*"
+"sirocco" = "*"

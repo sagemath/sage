@@ -11,6 +11,9 @@ from pathlib import Path
 from environment_dependencies import PLATFORMS, PYTHONS, get_dependencies
 
 MARKER = "# BEGIN GENERATED DEPENDENCIES"
+# Minimal CI must exercise Sage with these libraries absent, as well as with
+# their Meson features disabled. Keep them in a feature omitted by that job.
+FULL_ONLY = frozenset({"bliss", "libbraiding", "libhomfly", "rw", "sirocco"})
 
 
 def parse_requirement(requirement: str) -> tuple[str, dict[str, str]]:
@@ -76,12 +79,27 @@ def common_dependencies(dependencies: list[dict]) -> dict:
 
 
 def dependency_tables(pyproject: Path) -> dict[str, dict]:
-    """Factor the ten environments into shared and platform/Python tables."""
+    """Factor dependencies into shared, full, and platform/Python tables."""
     environments = {
         (python, platform): merge_requirements(get_dependencies(pyproject, python, platform))
         for python in PYTHONS
         for platform in PLATFORMS
     }
+    full_tables = {}
+    for platform in PLATFORMS:
+        optional = [
+            {name: spec for name, spec in environments[python, platform].items()
+             if name in FULL_ONLY}
+            for python in PYTHONS
+        ]
+        if any(dependencies != optional[0] for dependencies in optional[1:]):
+            raise ValueError(f"Full feature needs Python-specific dependencies on {platform}")
+        if optional[0]:
+            full_tables[f"feature.full.target.{platform}.dependencies"] = optional[0]
+        for python in PYTHONS:
+            for name in optional[0]:
+                del environments[python, platform][name]
+
     shared = common_dependencies(list(environments.values()))
     tables = {"dependencies": shared}
     for dependencies in environments.values():
@@ -99,6 +117,7 @@ def dependency_tables(pyproject: Path) -> dict[str, dict]:
             if dependencies:
                 feature = "py" + python.replace(".", "")
                 tables[f"feature.{feature}.target.{platform}.dependencies"] = dependencies
+    tables.update(full_tables)
     return tables
 
 

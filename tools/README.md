@@ -25,6 +25,13 @@ pixi run python tools/update-pixi.py --check
 Use `pixi update PACKAGE` when updating a selected locked package within the
 existing constraints. Rebuild and test Sage after updating dependencies.
 
+The `default`, `py313`, and `py314` environments include the generated `full`
+feature. The Linux `minimal-py314` CI environment omits it so that `bliss`,
+`libbraiding`, `libhomfly`, `rw`, and `sirocco` are absent. It shares a solve group
+with `py314` to keep common package versions identical. Minimal CI also checks
+the installed package records, catching any transitive dependency that would
+reintroduce an excluded library.
+
 ## Update Conda Environment Files
 
 This command is used to update the Conda environment files in the project. It automatically adds new dependencies to the Conda files, removes deleted dependencies, and updates the version of existing dependencies. The source of the dependencies is the `pyproject.toml` file, which specifies the following dependencies:

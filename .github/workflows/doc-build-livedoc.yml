@@ -16,7 +16,8 @@ permissions:
   contents: write
 
 env:
-  PYTHON_VERSION: 3.13
+  PIXI_ENVIRONMENT: py313
+  PIXI_CACHE_DIR: ${{ github.workspace }}/.pixi/cache
   SAGE_USE_CDNS: "yes"
   SAGE_LIVE_DOC: "yes"
   SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
@@ -35,63 +36,59 @@ jobs:
           # We only keep the basic essentials (like compilers, etc.)
           preinstalled-runtimes: true
 
-      - name: Cache conda packages
+      - name: Cache dependency downloads
         uses: actions/cache@v6
         with:
-          path: ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
+          path: ${{ env.PIXI_CACHE_DIR }}
+          key: ${{ runner.os }}-${{ runner.arch }}-pixi-${{ env.PIXI_ENVIRONMENT }}-${{ hashFiles('pixi.lock') }}
 
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
+          key: ${{ runner.os }}-${{ runner.arch }}-meson-${{ env.PIXI_ENVIRONMENT }}
 
-      - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v4
+      - name: Setup Pixi environment
+        uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          # Disabled for now due to
-          # https://github.com/conda-incubator/setup-miniconda/issues/379
-          # miniforge-version: latest
-          use-mamba: true
-          channels: conda-forge
-          channel-priority: true
-          activate-environment: sage-dev
-          environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
+          pixi-version: v0.84.1
+          environments: ${{ env.PIXI_ENVIRONMENT }}
+          activate-environment: false
+          locked: true
+          # Cache only downloads above, not the patched jupyter-sphinx installation.
+          cache: false
 
       - name: Patch jupyter-sphinx for live doc
-        shell: bash -l {0}
+        shell: bash
         run: |
-          JUPYTER_SPHINX_DIR=$(python -c "import jupyter_sphinx; print(jupyter_sphinx.__path__[0])")
-          patch -p2 -d "$JUPYTER_SPHINX_DIR" < build/pkgs/jupyter_sphinx/patches/0001-Patch-for-sage-live-doc.patch
+          JUPYTER_SPHINX_DIR=$(pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -c "import jupyter_sphinx; print(jupyter_sphinx.__path__[0])")
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- patch -p2 -d "$JUPYTER_SPHINX_DIR" < build/pkgs/jupyter_sphinx/patches/0001-Patch-for-sage-live-doc.patch
 
       - name: Build Sage
-        shell: bash -l {0}
+        shell: bash
         run: |
           # Let Meson discover the compiler through the ccache wrappers.
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          pip install --no-build-isolation --config-settings=builddir=builddir . -v
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- build --wheel --verbose
 
       - name: Build live doc
-        shell: bash -l {0}
+        shell: bash
         run: |
-          meson compile -C builddir doc-html -j2
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- meson compile -C ".pixi/envs/$PIXI_ENVIRONMENT/sage-build" doc-html -j2
 
       - name: Build pdf doc
-        shell: bash -l {0}
+        shell: bash
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
-          meson compile -C builddir doc-pdf
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- meson compile -C ".pixi/envs/$PIXI_ENVIRONMENT/sage-build" doc-pdf
 
       - name: Copy doc
         id: copy
         run: |
           mkdir -p ./doc
-          cp -r builddir/src/doc/pdf doc/
-          cp -rL builddir/src/doc/html doc/
-          cp builddir/src/doc/index.html doc/
+          cp -r ".pixi/envs/$PIXI_ENVIRONMENT/sage-build/src/doc/pdf" doc/
+          cp -rL ".pixi/envs/$PIXI_ENVIRONMENT/sage-build/src/doc/html" doc/
+          cp ".pixi/envs/$PIXI_ENVIRONMENT/sage-build/src/doc/index.html" doc/
           zip -r livedoc.zip doc
 
       - name: Upload livedoc
