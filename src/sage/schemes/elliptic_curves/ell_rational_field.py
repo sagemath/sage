@@ -4744,7 +4744,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return a.divide_knowing_divisible_by(b) // 6
 
-    def is_isogenous(self, other, proof=True):
+    def is_isogenous(self, other, *args, **kwds):
         r"""
         Return whether or not ``self`` is isogenous to other.
 
@@ -4752,15 +4752,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``other`` -- another elliptic curve
 
-        - ``proof`` -- boolean (default: ``True``); if ``False``, the function
-          will return ``True`` whenever the two curves have the same
-          conductor and are isogenous modulo `p` for `p` up to ``maxp``;
-          otherwise this test is followed by a rigorous test (which
-          may be more time-consuming)
+        - ``*args`` -- does nothing (only for bakcwards compatibility, will be removed in the future)
 
-        - ``maxp`` -- (default: 200) the maximum prime `p` for
-          which isogeny modulo `p` will be checked
-
+        - ``**kwds`` -- does nothing (only for bakcwards compatibility, will be removed in the future)
+        
         OUTPUT:
 
         boolean; ``True`` if there is an isogeny from curve ``self`` to
@@ -4768,12 +4763,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         ALGORITHM:
 
-        First the conductors are compared as well as the Traces of
-        Frobenius for good primes up to ``maxp``.  If any of these
-        tests fail, ``False`` is returned.  If they all pass and
-        ``proof`` is ``False`` then ``True`` is returned, otherwise a
-        complete set of curves isogenous to ``self`` is computed and
-        ``other`` is checked for isomorphism with any of these,
+        First the ap values are compared one by one for primes up to 20.
+        If any ap value does not match, ``False`` is returned. If they all
+        match up to 20, the Sturm bound is computed and the ap values are
+        compared for all primes up to the Sturm bound. 
 
         EXAMPLES::
 
