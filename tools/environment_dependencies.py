@@ -186,6 +186,9 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         # Older ld64 can strip libSystem from executables on recent macOS.
         # https://github.com/conda-forge/cctools-and-ld64-feedstock/pull/90
         all_requirements.add("ld64 >=956.6")
+        # GFortran 12 omits the stdin argument when piping to the current
+        # cctools assembler, causing inline Fortran/f2py compilation to fail.
+        all_requirements.add("gfortran >=14.4")
     else:
         all_requirements.add("openblas")
         all_requirements.add("libblas=*=*_openblas")
