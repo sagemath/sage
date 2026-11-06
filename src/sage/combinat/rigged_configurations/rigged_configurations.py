@@ -153,30 +153,15 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [HKOTT2002] \G. Hatayama, A. Kuniba, M. Okado, T. Takagi, Z. Tsuboi.
-       Paths, Crystals and Fermionic Formulae.
-       Prog. Math. Phys. **23** (2002) Pages 205-272.
+    - [HKOTT2002]_
 
-    .. [CrysStructSchilling06] Anne Schilling.
-       Crystal structure on rigged configurations.
-       International Mathematics Research Notices.
-       Volume 2006. (2006) Article ID 97376. Pages 1-27.
+    - [CrysStructSchilling06]_
 
-    .. [RigConBijection] Masato Okado, Anne Schilling, Mark Shimozono.
-       A crystal to rigged configuration bijection for non-exceptional affine
-       algebras.
-       Algebraic Combinatorics and Quantum Groups.
-       Edited by N. Jing. World Scientific. (2003) Pages 85-124.
+    - [RigConBijection]_
 
-    .. [BijectionDn] Anne Schilling.
-       A bijection between type `D_n^{(1)}` crystals and rigged configurations.
-       J. Algebra. **285** (2005) 292-334
+    - [BijectionDn]_
 
-    .. [BijectionLRT] Anatol N. Kirillov, Anne Schilling, Mark Shimozono.
-       A bijection between Littlewood-Richardson tableaux and rigged
-       configurations.
-       Selecta Mathematica (N.S.). **8** (2002) Pages 67-135.
-       (:mathscinet:`MR1890195`).
+    - [BijectionLRT]_
 
     EXAMPLES::
 
@@ -915,14 +900,9 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [OSS2003] Masato Okado, Anne Schilling, and Mark Shimozono.
-           Virtual crystals and fermionic formulas of type `D_{n+1}^{(2)}`,
-           `A_{2n}^{(2)}`, and `C_n^{(1)}`. Representation Theory. **7** (2003)
-           :arxiv:`math.QA/0105017`.
+        - [OSS2003]_
 
-        .. [Sakamoto13] Reiho Sakamoto.
-           Rigged configurations and Kashiwara operators.
-           (2013) :arxiv:`1302.4562v1`.
+        - [Sakamoto13]_
 
         EXAMPLES::
 

@@ -844,7 +844,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # If the critical points of f depend on c, we must compute the different
     # critical points for each c.
     else:
-        # Solve for critical points symbollically.
+        # Solve for critical points symbolically.
         with SR.temp_var() as w:
             df = f.derivative(z).polynomial(z).subs({z: w})
             critical_pts = solve(symbolic_expression(df) == 0, w)

@@ -853,7 +853,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             try:
                 nmod_mat_init(H, n, n, 1)
                 nmod_mat_init(c, n+1, n+1, N)
-                # Now we use N cummulatively as we work through the factorization
+                # Now we use N cumulatively as we work through the factorization
                 N = 1
                 for pz, ez in F:
                     pe = n_pow(pz, ez)

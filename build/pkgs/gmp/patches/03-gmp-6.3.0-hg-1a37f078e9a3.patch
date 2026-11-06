@@ -1,0 +1,38 @@
+
+# HG changeset patch
+# User Marc Glisse <marc.glisse@inria.fr>
+# Date 1788714900 -7200
+# Node ID 1a37f078e9a35e3f73bb3002b1176c38b4182814
+# Parent  ab4a7408e2ce64f9a5c7cb8c5186d1bb4918d8ef
+Modernize K&R declaration
+
+diff -r ab4a7408e2ce -r 1a37f078e9a3 acinclude.m4
+--- a/acinclude.m4	Mon Aug 31 20:21:46 2026 +0200
++++ b/acinclude.m4	Sun Sep 06 19:15:00 2026 +0200
+@@ -643,11 +643,7 @@
+ 
+ #if ! defined (__cplusplus)
+ unsigned long
+-lshift_com (rp, up, n, cnt)
+-  unsigned long *rp;
+-  unsigned long *up;
+-  long n;
+-  unsigned cnt;
++lshift_com (unsigned long *rp, unsigned long *up, long n, unsigned cnt)
+ {
+   unsigned long retval, high_limb, low_limb;
+   unsigned tnc;
+@@ -694,11 +690,7 @@
+ #if ! defined (__cplusplus)
+ #include <stdlib.h>
+ void
+-lshift_com (rp, up, n, cnt)
+-  unsigned long *rp;
+-  unsigned long *up;
+-  long n;
+-  unsigned cnt;
++lshift_com (unsigned long *rp, unsigned long *up, long n, unsigned cnt)
+ {
+   unsigned long high_limb, low_limb;
+   unsigned tnc;
+

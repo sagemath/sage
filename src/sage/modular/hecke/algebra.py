@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
@@ -42,6 +42,10 @@ from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def _heckebasis(M) -> list:

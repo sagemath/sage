@@ -316,16 +316,16 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         sage: K = graphs.CompleteGraph(6)
         sage: cw,L = cutwidth(K); cw
         9
-        sage: cw,L = cutwidth(K+K); cw
+        sage: cw,L = cutwidth(K + K); cw
         9
 
     The cutwidth of a `p\times q` Grid Graph with `p\leq q` is `p+1`::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
-        sage: G = graphs.Grid2dGraph(3,3)
+        sage: G = graphs.Grid2dGraph(3, 3)
         sage: cw,L = cutwidth(G); cw
         4
-        sage: G = graphs.Grid2dGraph(3,5)
+        sage: G = graphs.Grid2dGraph(3, 5)
         sage: cw,L = cutwidth(G); cw
         4
 
@@ -682,7 +682,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth_MILP
         sage: G = graphs.CycleGraph(3)
-        sage: cutwidth_MILP(G, lower_bound=G.size()+1)                                  # needs sage.numerical.mip
+        sage: cutwidth_MILP(G, lower_bound=G.size() + 1)                                # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         MIPSolverException: ...

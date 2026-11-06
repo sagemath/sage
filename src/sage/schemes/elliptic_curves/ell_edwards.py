@@ -80,12 +80,9 @@ REFERENCES:
 - [Edwards2007]_
 - [Hisil2008]_
 
-.. [Edwards2007] H. M. Edwards, *A normal form for elliptic curves*,
-   Bulletin of the American Mathematical Society 44 (2007), 393--422.
+- [Edwards2007]_
 
-.. [Hisil2008] H. Hisil, K. K.-H. Wong, G. Carter, and E. Dawson,
-   *Twisted Edwards Curves Revisited*, ASIACRYPT 2008, Lecture Notes in
-   Computer Science 5350, 326--343.
+- [Hisil2008]_
 
 AUTHORS:
 

@@ -94,9 +94,9 @@ jobs:
           - "src/doc src/sage_docbuild src/sage_setup build/pkgs/sagelib/tests"
     steps:
       - name: Maximize build disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
-          tool-cache: false
+          preinstalled-runtimes: false
           android: true
           dotnet: true
           haskell: true
@@ -214,9 +214,9 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
-          tool-cache: false
+          preinstalled-runtimes: false
           android: true
           dotnet: true
           haskell: true

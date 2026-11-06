@@ -83,14 +83,15 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
 
     A `(2,2)`-King Graph is isomorphic to the complete graph on 4 vertices::
 
-        sage: G, _ = graphs.ChessboardGraphGenerator( [2,2] )
-        sage: G.is_isomorphic( graphs.CompleteGraph(4) )
+        sage: G, _ = graphs.ChessboardGraphGenerator([2, 2])
+        sage: G.is_isomorphic(graphs.CompleteGraph(4))
         True
 
     A Rook's Graph in 2 dimensions is isomorphic to the Cartesian product of 2
     complete graphs::
 
-        sage: G, _ = graphs.ChessboardGraphGenerator([3,4], rook=True, rook_radius=None, bishop=False, knight=False)
+        sage: G, _ = graphs.ChessboardGraphGenerator([3, 4],
+        ....:           rook=True, rook_radius=None, bishop=False, knight=False)
         sage: H = (graphs.CompleteGraph(3)).cartesian_product(graphs.CompleteGraph(4))
         sage: G.is_isomorphic(H)
         True
@@ -134,7 +135,8 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
 
     Giving wrong values for knights movements::
 
-        sage: graphs.ChessboardGraphGenerator([2, 3], rook=False, bishop=False, knight=True, knight_x=1, knight_y=-1)
+        sage: graphs.ChessboardGraphGenerator([2, 3],
+        ....:     rook=False, bishop=False, knight=True, knight_x=1, knight_y=-1)
         Traceback (most recent call last):
         ...
         ValueError: the knight_x and knight_y values must be integers of value >= 1
@@ -308,11 +310,11 @@ def QueenGraph(dim_list, radius=None, relabel=False, immutable=False):
 
     The Queen Graph can be obtained from the Rook Graph and the Bishop Graph::
 
-        sage: for d in range(3,12):   # long time
-        ....:     for r in range(1,d+1):
-        ....:         G = graphs.QueenGraph([d,d],radius=r)
-        ....:         H = graphs.RookGraph([d,d],radius=r)
-        ....:         B = graphs.BishopGraph([d,d],radius=r)
+        sage: for d in range(3, 12):   # long time
+        ....:     for r in range(1, d + 1):
+        ....:         G = graphs.QueenGraph([d, d], radius=r)
+        ....:         H = graphs.RookGraph([d, d], radius=r)
+        ....:         B = graphs.BishopGraph([d, d], radius=r)
         ....:         H.add_edges(B.edges(sort=False))
         ....:         if not G.is_isomorphic(H):
         ....:             print("that's not good!")
@@ -365,22 +367,22 @@ def KingGraph(dim_list, radius=None, relabel=False, immutable=False):
 
     The `(2,2)`-King Graph is isomorphic to the complete graph on 4 vertices::
 
-        sage: G = graphs.QueenGraph( [2, 2] )
-        sage: G.is_isomorphic( graphs.CompleteGraph(4) )
+        sage: G = graphs.QueenGraph([2, 2])
+        sage: G.is_isomorphic(graphs.CompleteGraph(4))
         True
 
     The King Graph with large enough radius is isomorphic to a Queen Graph::
 
-        sage: G = graphs.KingGraph( [5, 4], radius=5 )
-        sage: H = graphs.QueenGraph( [4, 5] )
-        sage: G.is_isomorphic( H )
+        sage: G = graphs.KingGraph([5, 4], radius=5)
+        sage: H = graphs.QueenGraph([4, 5])
+        sage: G.is_isomorphic(H)
         True
 
     Also ``True`` in higher dimensions::
 
-        sage: G = graphs.KingGraph( [2, 5, 4], radius=5 )
-        sage: H = graphs.QueenGraph( [4, 5, 2] )
-        sage: G.is_isomorphic( H )
+        sage: G = graphs.KingGraph([2, 5, 4], radius=5)
+        sage: H = graphs.QueenGraph([4, 5, 2])
+        sage: G.is_isomorphic(H)
         True
     """
     rook_radius = 1 if radius is None else radius
@@ -433,20 +435,20 @@ def KnightGraph(dim_list, one=1, two=2, relabel=False, immutable=False):
 
     The `(3,3)`-Knight Graph has an isolated vertex::
 
-        sage: G = graphs.KnightGraph( [3, 3] )
-        sage: G.degree( (1,1) )
+        sage: G = graphs.KnightGraph([3, 3])
+        sage: G.degree((1, 1))
         0
 
     The `(3,3)`-Knight Graph minus vertex (1,1) is a cycle of order 8::
 
-        sage: G = graphs.KnightGraph( [3, 3] )
-        sage: G.delete_vertex( (1,1) )
-        sage: G.is_isomorphic( graphs.CycleGraph(8) )
+        sage: G = graphs.KnightGraph([3, 3])
+        sage: G.delete_vertex((1, 1))
+        sage: G.is_isomorphic(graphs.CycleGraph(8))
         True
 
     The `(6,6)`-Knight Graph is Hamiltonian::
 
-        sage: G = graphs.KnightGraph( [6, 6] )
+        sage: G = graphs.KnightGraph([6, 6])
         sage: G.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
     """
@@ -497,16 +499,16 @@ def RookGraph(dim_list, radius=None, relabel=False, immutable=False):
     The `(n,m)`-Rook's Graph is isomorphic to the Cartesian product of two
     complete graphs::
 
-        sage: G = graphs.RookGraph( [3, 4] )
-        sage: H = ( graphs.CompleteGraph(3) ).cartesian_product( graphs.CompleteGraph(4) )
-        sage: G.is_isomorphic( H )
+        sage: G = graphs.RookGraph([3, 4])
+        sage: H = (graphs.CompleteGraph(3)).cartesian_product(graphs.CompleteGraph(4))
+        sage: G.is_isomorphic(H)
         True
 
     When the radius is 1, the Rook's Graph is a grid::
 
-        sage: G = graphs.RookGraph( [3, 3, 4], radius=1 )
-        sage: H = graphs.GridGraph( [3, 4, 3] )
-        sage: G.is_isomorphic( H )
+        sage: G = graphs.RookGraph([3, 3, 4], radius=1)
+        sage: H = graphs.GridGraph([3, 4, 3])
+        sage: G.is_isomorphic(H)
         True
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,
@@ -553,17 +555,17 @@ def BishopGraph(dim_list, radius=None, relabel=False, immutable=False):
 
     The (n,m)-Bishop Graph is not connected::
 
-        sage: G = graphs.BishopGraph( [3, 4] )
+        sage: G = graphs.BishopGraph([3, 4])
         sage: G.is_connected()
         False
 
     The Bishop Graph can be obtained from Knight Graphs::
 
-        sage: for d in range(3,12):   # long time
+        sage: for d in range(3, 12):   # long time
         ....:     H = Graph()
-        ....:     for r in range(1,d+1):
-        ....:         B = graphs.BishopGraph([d,d],radius=r)
-        ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges(sort=False) )
+        ....:     for r in range(1, d + 1):
+        ....:         B = graphs.BishopGraph([d, d], radius=r)
+        ....:         H.add_edges(graphs.KnightGraph([d, d], one=r, two=r).edges(sort=False))
         ....:         if not B.is_isomorphic(H):
         ....:            print("that's not good!")
     """

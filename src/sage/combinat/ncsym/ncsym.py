@@ -193,27 +193,15 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [BZ05] \N. Bergeron, M. Zabrocki. *The Hopf algebra of symmetric
-       functions and quasisymmetric functions in non-commutative variables
-       are free and cofree*. (2005). :arxiv:`math/0509265v3`.
+    - [BZ05]_
 
-    .. [BHRZ06] \N. Bergeron, C. Hohlweg, M. Rosas, M. Zabrocki.
-       *Grothendieck bialgebras, partition lattices, and symmetric
-       functions in noncommutative variables*. Electronic Journal of
-       Combinatorics. **13** (2006).
+    - [BHRZ06]_
 
-    .. [RS06] \M. Rosas, B. Sagan. *Symmetric functions in noncommuting
-       variables*. Trans. Amer. Math. Soc. **358** (2006). no. 1, 215-232.
-       :arxiv:`math/0208168`.
+    - [RS06]_
 
-    .. [BRRZ08] \N. Bergeron, C. Reutenauer, M. Rosas, M. Zabrocki.
-       *Invariants and coinvariants of the symmetric group in noncommuting
-       variables*. Canad. J. Math. **60** (2008). 266-296.
-       :arxiv:`math/0502082`
+    - [BRRZ08]_
 
-    .. [BT13] \N. Bergeron, N. Thiem. *A supercharacter table decomposition
-       via power-sum symmetric functions*. Int. J. Algebra Comput. **23**,
-       763 (2013). :doi:`10.1142/S0218196713400171`. :arxiv:`1112.4901`.
+    - [BT13]_
 
     EXAMPLES:
 
@@ -1275,7 +1263,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             m = self.realization_of().m()
             one = self.base_ring().one()
-            return m._from_dict({B: one for B in A.coarsenings()}, remove_zeros=False)
+            return m._from_dict(dict.fromkeys(A.coarsenings(), one), remove_zeros=False)
 
         @cached_method
         def _p_to_e_on_basis(self, A):
@@ -1350,7 +1338,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             x = self.realization_of().x()
             one = self.base_ring().one()
-            return x._from_dict({B: one for B in A.refinements()}, remove_zeros=False)
+            return x._from_dict(dict.fromkeys(A.refinements(), one), remove_zeros=False)
 
         # Note that this is the same as the monomial coproduct_on_basis
         def coproduct_on_basis(self, A):
@@ -1667,7 +1655,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             m = self.realization_of().m()
             one = self.base_ring().one()
-            return m._from_dict({B: one for B in A.strict_coarsenings()},
+            return m._from_dict(dict.fromkeys(A.strict_coarsenings(), one),
                                 remove_zeros=False)
 
     cp = coarse_powersum

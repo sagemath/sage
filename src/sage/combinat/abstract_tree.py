@@ -277,9 +277,8 @@ class AbstractTree:
         while stack:
             node = stack.pop()
             action(node)
-            for subtree in reversed(node):
-                if not subtree.is_empty():
-                    stack.append(subtree)
+            stack.extend(subtree for subtree in reversed(node)
+                         if not subtree.is_empty())
 
     def pre_order_traversal(self, action=None):
         r"""
@@ -639,9 +638,8 @@ class AbstractTree:
                 # subtrees, and should not be exploded again, but instead
                 # should be manipulated and removed from the stack.
                 stack.append(None)
-                for subtree in reversed(node):
-                    if not subtree.is_empty():
-                        stack.append(subtree)
+                stack.extend(subtree for subtree in reversed(node)
+                             if not subtree.is_empty())
             else:
                 stack.pop()
                 node = stack.pop()

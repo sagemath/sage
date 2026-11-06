@@ -31,9 +31,7 @@ classes.
 
 REFERENCES:
 
-.. [CO1977] \H. Cohen, J. Oesterlé, *Dimensions des espaces de formes
-   modulaires*, p. 69-78 in Modular functions in one variable VI.
-   Lecture Notes in Math. 627, Springer-Verlag, NewYork, 1977.
+- [CO1977]_
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2008 William Stein <wstein@gmail.com>

@@ -71,26 +71,6 @@ class NotebookJupyterlab():
         main(argv)
 
 
-class SageNBExport(NotebookJupyter):
-
-    def print_banner(self):
-        print('Please wait while the SageNB export server starts...')
-
-    @classmethod
-    def print_help(cls):
-        cls(['--help'])
-
-    def __init__(self, argv):
-        if argv:
-            SAGENB_EXPORT = 'sagenb-export'
-            os.execvp(SAGENB_EXPORT, [SAGENB_EXPORT] + argv)
-        argv += [
-            "--NotebookApp.nbserver_extensions={'sagenb_export.nbextension':True}",
-            "--NotebookApp.default_url='/sagenb'",
-        ]
-        super(SageNBExport, self).__init__(argv)
-
-
 description = \
 """
 The Sage notebook launcher is used to start the notebook, and allows
@@ -116,14 +96,6 @@ EXAMPLES:
 * Run Jupyter notebook in custom directory:
 
       sage --notebook=jupyter --notebook-dir=/home/foo/bar
-
-* List available legacy Sage notebooks:
-
-      sage --notebook=export --list
-
-* Export a legacy Sage notebook as a Jupyter notebook:
-
-      sage --notebook=export --ipynb=Output.ipynb admin:10
 """
 
 notebook_launcher = {
@@ -131,7 +103,6 @@ notebook_launcher = {
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
     'jupyterlab': NotebookJupyterlab,
-    'export': SageNBExport,
 }
 
 notebook_names = ', '.join(notebook_launcher.keys())
@@ -220,15 +191,6 @@ if __name__ == '__main__':
         logger.setLevel(level=level)
     logger.info('Main parser got arguments %s', args)
     logger.info('Passing on to notebook implementation: %s', unknown)
-
-    if args.notebook == "sagenb":
-        logger.critical('cannot use the legacy notebook SageNB with Python 3')
-        print('The legacy notebook does not work under Python 3; '
-              'use the Jupyter notebook.')
-        print('See https://wiki.sagemath.org/Python3-Switch')
-        print('Use \"sage --notebook=export\" to export SageNB notebooks '
-              'to Jupyter')
-        sys.exit(1)
 
     from sage.repl.ipython_kernel.install import SageKernelSpec
     SageKernelSpec.check()

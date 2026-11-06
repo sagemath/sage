@@ -2306,12 +2306,36 @@ cdef class MixedIntegerLinearProgram(SageObject):
             True
             sage: mip._is_redundant_constraint((x[1]).dict(), 1, None)
             False
+
+        TESTS:
+
+        Zero coefficients do not prevent detection of equivalent constraints
+        (:issue:`34887`)::
+
+            sage: mip = MixedIntegerLinearProgram(check_redundant=True, solver='Highs')
+            sage: x = mip.new_variable()
+            sage: constraints = [x[0] <= x[0] + x[1],
+            ....:                0 <= x[1], 0 <= x[1] + 0*x[2]]
+            sage: [mip.add_constraint(c, return_indices=True) for c in constraints]
+            [[0], [], []]
+            sage: mip.number_of_constraints()
+            1
+
+        Different bounds and nonzero coefficients still give new constraints,
+        while negative scaling reverses the bounds as usual::
+
+            sage: mip.add_constraint(x[1], min=1, return_indices=True)
+            [1]
+            sage: mip.add_constraint(-2*x[1] + 0*x[2], max=-2, return_indices=True)
+            []
+            sage: mip.add_constraint(x[1] + x[2], min=0, return_indices=True)
+            [2]
         """
         assert self._constraints is not None, 'must be initialized with check_redundant=True'
         assert -1 not in constraint, 'no constant term allowed'
         i0 = min([i for i, c in constraint.items() if c != 0])
         rescale = constraint[i0]
-        constraint = tuple((i, c/rescale) for i, c in constraint.items())
+        constraint = tuple((i, c/rescale) for i, c in constraint.items() if c != 0)
         if rescale > 0:
             min_scaled = min_bound/rescale if min_bound is not None else None
             max_scaled = max_bound/rescale if max_bound is not None else None

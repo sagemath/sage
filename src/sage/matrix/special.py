@@ -124,7 +124,7 @@ def matrix_method(func=None, name=None):
 
 
 @matrix_method
-def column_matrix(*args, **kwds):
+def column_matrix(*args, **kwds) -> Matrix:
     r"""
     Construct a matrix, and then swap rows for columns and columns for rows.
 
@@ -211,7 +211,7 @@ def column_matrix(*args, **kwds):
 
 
 @matrix_method
-def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation=None, *args, **kwds):
+def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation=None, *args, **kwds) -> Matrix:
     r"""
     Return a random matrix with entries in a specified ring, and possibly with additional properties.
 
@@ -675,7 +675,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
 
 @matrix_method
-def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
+def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True) -> Matrix:
     r"""
     Return a square matrix with specified diagonal entries, and zeros elsewhere.
 
@@ -906,7 +906,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
 
 @matrix_method
-def identity_matrix(ring, n=0, sparse=False):
+def identity_matrix(ring, n=0, sparse=False) -> Matrix:
     r"""
     Return the `n \times n` identity matrix over the given
     ring.
@@ -978,7 +978,7 @@ def lehmer(ring, n=0):
 
 
 @matrix_method
-def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
+def zero_matrix(ring, nrows=None, ncols=None, sparse=False) -> Matrix:
     r"""
     Return the `nrows \times ncols` zero matrix over the given
     ring.
