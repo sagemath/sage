@@ -9,6 +9,12 @@
 #
 # 'make clean' removes build artifacts; the "sage" script is not needed for this to work.
 
+# Documentation build parallelism:
+# PDF builds are memory-intensive, so limit them to 2 jobs by default.
+SAGE_DOC_JOBS ?=
+SAGE_DOC_HTML_JOBS ?= $(SAGE_DOC_JOBS)
+SAGE_DOC_PDF_JOBS ?= $(if $(SAGE_DOC_JOBS),$(SAGE_DOC_JOBS),2)
+
 all: doc-html
 
 clean:
@@ -20,10 +26,10 @@ clean:
 	rm -f common/*.pyc
 
 doc-html:
-	meson compile -C ../../build/sage-distro doc-html
+	$(if $(SAGE_DOC_NUM_THREADS),SAGE_NUM_THREADS=$(SAGE_DOC_NUM_THREADS) )meson compile -C ../../build/sage-distro $(if $(SAGE_DOC_HTML_JOBS),-j $(SAGE_DOC_HTML_JOBS) )doc-html
 
 doc-pdf:
-	meson compile -C ../../build/sage-distro doc-pdf
+	SAGE_NUM_THREADS=$(SAGE_DOC_PDF_THREADS) meson compile -C ../../build/sage-distro $(if $(SAGE_DOC_PDF_JOBS),-j $(SAGE_DOC_PDF_JOBS) )doc-pdf
 
 .PHONY: all clean \
 	doc-src \

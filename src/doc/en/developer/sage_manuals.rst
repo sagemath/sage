@@ -334,11 +334,17 @@ HTML or PDF manuals, use
 .. code-block:: console
 
     $ meson compile -C builddir doc-html
-    $ meson compile -C builddir doc-pdf
+    $ meson compile -C builddir -j 2 doc-pdf
 
 Building PDF manuals requires a working LaTeX installation.  The generated
 manuals are written below :file:`builddir/src/doc/html` and
 :file:`builddir/src/doc/pdf`, respectively.
+
+.. note::
+
+    PDF documentation builds are memory-intensive. Limit parallel
+    Meson jobs using ``-j N`` to avoid exhausting RAM. ``make doc-pdf``
+    defaults to 2 jobs, configurable via ``SAGE_DOC_PDF_JOBS``.
 
 Meson also provides targets for individual manuals.  To list all configured
 targets, use
