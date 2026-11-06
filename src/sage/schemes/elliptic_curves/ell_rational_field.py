@@ -4760,9 +4760,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         ALGORITHM:
 
-        First the ap values are compared one by one for primes up to 20.
-        If any ap value does not match, ``False`` is returned. If they all
-        match up to 20, the Sturm bound is computed and the ap values are
+        First the `a_p` values are compared one by one for primes up to 20.
+        If any `a_p` value does not match, ``False`` is returned. If they all
+        match up to 20, the Sturm bound is computed and the `a_p` values are
         compared for all primes up to the Sturm bound.
 
         EXAMPLES::
