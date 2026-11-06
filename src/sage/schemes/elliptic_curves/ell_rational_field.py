@@ -4723,7 +4723,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         INPUT:
 
-        -``other`` -- another elliptic curve `\QQ`
+        -``other`` -- another elliptic curve over `\QQ`
 
         EXAMPLE::
 
@@ -4733,7 +4733,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             4
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("second argument is not an elliptic curve.")
+            raise ValueError("second argument must be an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
 
@@ -4744,7 +4744,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return a.divide_knowing_divisible_by(b) // 6
 
-    def is_isogenous(self, other, *args, **kwds):
+    def is_isogenous(self, other: EllipticCurve_generic, *args, **kwds) -> bool:
         r"""
         Return whether or not ``self`` is isogenous to other.
 
@@ -4752,14 +4752,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``other`` -- another elliptic curve
 
-        - ``*args`` -- does nothing (only for bakcwards compatibility, will be removed in the future)
+        - ``*args`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
-        - ``**kwds`` -- does nothing (only for bakcwards compatibility, will be removed in the future)
-        
-        OUTPUT:
-
-        boolean; ``True`` if there is an isogeny from curve ``self`` to
-        curve ``other``.
+        - ``**kwds`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
         ALGORITHM:
 
@@ -4790,7 +4785,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             False
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("second argument is not an elliptic curve.")
+            raise ValueError("second argument must be an elliptic curve.")
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
 
