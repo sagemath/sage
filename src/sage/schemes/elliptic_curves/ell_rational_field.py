@@ -4719,7 +4719,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     def sturm_bound(self, other: EllipticCurve_generic) -> Integer:
         r"""
-        Return the sturm bound of two elliptic curves.
+        Return the Sturm bound of two elliptic curves.
 
         INPUT:
 
@@ -4804,21 +4804,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if self.is_isomorphic(other):
             return True
 
-        E1 = self.minimal_model()
-        E2 = other.minimal_model()
-
-        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
+        if any(self.ap(p) != other.ap(p) for p in prime_range(2, 20)):
             return False
-
-        if E1.conductor() != E2.conductor():
-            return False
-
-        if not proof:
-            return True
 
         maxp = self.sturm_bound(other)
 
-        return E1.aplist(maxp, python_ints=True) == E2.aplist(maxp, python_ints=True)
+        return self.aplist(maxp, python_ints=True) == other.aplist(maxp, python_ints=True)
 
     def isogeny_degree(self, other):
         r"""
