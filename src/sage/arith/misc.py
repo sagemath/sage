@@ -3771,16 +3771,21 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
     Moduli that are not pairwise coprime, but where the first one is
     coprime to the others::
 
-        sage: b, coprime = CRT_basis([14, 33, 9], require_coprime_moduli=False)
+        sage: mods = [14, 33, 9]
+        sage: b, coprime = CRT_basis(mods, require_coprime_moduli=False)
         sage: len(b), coprime
         (3, False)
-        sage: CRT_vectors([[5], [15], [3]], [14, 33, 9])
-        [1335]
+        sage: x = sum(r * bi for r, bi in zip([5, 15, 3], b))
+        sage: [x % m for m in mods]
+        [5, 15, 3]
 
     Python integers as moduli::
 
-        sage: CRT_vectors([[1, 2], [7, 2]], [int(10), int(4)])
-        [11, 2]
+        sage: mods = [int(10), int(4)]
+        sage: b, coprime = CRT_basis(mods, require_coprime_moduli=False)
+        sage: x = sum(r * bi for r, bi in zip([1, 3], b))
+        sage: [x % m for m in mods]
+        [1, 3]
     """
     n = len(moduli)
     if n == 0:
