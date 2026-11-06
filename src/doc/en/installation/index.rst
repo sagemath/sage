@@ -193,6 +193,7 @@ More information
    :maxdepth: 2
 
    conda
+   pixi
    source
    source-distro
    launching
