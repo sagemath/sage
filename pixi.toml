@@ -52,7 +52,7 @@ test = { cmd = "python -m sage.doctest", description = "Run Sage doctests (appen
 "glpk" = "*"
 "gmp" = "*"
 "gmpy2" = ">=2.1.5"
-"grayskull" = "*"
+"grayskull" = ">=2.9.2"
 "gsl" = "*"
 "highs" = "*"
 "igraph" = "*"
