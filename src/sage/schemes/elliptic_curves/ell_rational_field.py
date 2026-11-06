@@ -4723,7 +4723,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         INPUT:
 
-        -``other`` -- another elliptic curve over `\QQ`
+        - ``other`` -- another elliptic curve over `\QQ`
 
         EXAMPLE::
 
