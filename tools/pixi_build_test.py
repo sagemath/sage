@@ -112,11 +112,12 @@ def test_clean_only_removes_the_owned_build_directory(environment, monkeypatch):
     state.write_text(pixi_build.environment_fingerprint(prefix) + "\n")
     neighbour = prefix / "keep-this-file"
     neighbour.touch()
-    monkeypatch.setattr(pixi_build.sys, "argv", ["pixi-build.py", "--clean", "--wheel"])
+    monkeypatch.setattr(pixi_build.sys, "argv", ["pixi-build.py", "--clean", "--wheel", "--verbose"])
 
     def install(command, **kwargs):
         assert not build.exists()
         assert "--editable" not in command
+        assert "-v" in command
         native = prefix / "sage-build-native.ini"
         assert f"--config-settings=setup-args=--native-file={native}" in command
         assert native.read_text() == pixi_build.native_file_contents(prefix)

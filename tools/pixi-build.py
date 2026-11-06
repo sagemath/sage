@@ -73,6 +73,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wheel", action="store_true",
                         help="install a regular wheel instead of an editable installation")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="show detailed pip and compiler output")
     parser.add_argument("--jobs", type=int, help="maximum number of parallel build jobs")
     parser.add_argument("--clean", action="store_true",
                         help="discard this environment's Sage build directory before building")
@@ -98,6 +100,8 @@ def main():
     if not args.wheel:
         command.append("--editable")
     command.append(".")
+    if args.verbose:
+        command.append("-v")
     if args.jobs is not None:
         command.append(f"--config-settings=compile-args=-j{args.jobs}")
     command.extend(args.pip_args[1:] if args.pip_args[:1] == ["--"] else args.pip_args)

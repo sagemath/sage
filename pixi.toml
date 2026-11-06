@@ -12,6 +12,10 @@ platforms = [
 ]
 requires-pixi = ">=0.84.1"
 
+[target.unix.activation.env]
+# Maxima's default cache key cannot distinguish different builds of ECL.
+MAXIMA_OBJDIR = "$CONDA_PREFIX/sage-build/maxima-cache"
+
 [feature.py313.dependencies]
 python = "3.13.*"
 
