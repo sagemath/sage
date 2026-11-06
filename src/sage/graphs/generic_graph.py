@@ -25783,13 +25783,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: P.is_vertex_transitive(partition=[list(P), []])                       # needs sage.groups
             True
 
-        An empty partition of a graph with vertices doesn't cover them, so it
-        is not accepted::
+        A partition without any vertex doesn't cover the vertices of a graph
+        that has some, so the answer is ``False``::
 
-            sage: graphs.PathGraph(3).is_vertex_transitive(partition=[])                # needs sage.groups
-            Traceback (most recent call last):
-            ...
-            KeyError: 0
+            sage: graphs.PathGraph(3).is_vertex_transitive(partition=[])
+            False
+            sage: graphs.CompleteGraph(3).is_vertex_transitive(partition=[[]])
+            False
         """
         if not self.n_vertices():
             return True
@@ -25800,6 +25800,8 @@ class GenericGraph(GenericGraph_pyx):
         # An empty cell has no orbit, so it is left out of the comparison
         # with the orbits below. It is trivially transitive.
         partition = [p for p in partition if p]
+        if not partition:
+            return False
 
         for p in partition:
             d = self.degree(p[0])
