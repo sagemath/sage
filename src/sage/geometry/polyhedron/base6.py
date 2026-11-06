@@ -244,7 +244,7 @@ class Polyhedron_base6(Polyhedron_base5):
                 nonlinear_transformation, plot_points,
                 point_kwds=point_kwds, line_kwds=line_kwds,
                 polygon_kwds=polygon_kwds, edge_reparameterization=edge_f)
-        elif dim_out == 3:
+        if dim_out == 3:
             from sage.geometry.polyhedron.plot import (
                 _plot_transformed_polyhedron_3d)
             return _plot_transformed_polyhedron_3d(self,

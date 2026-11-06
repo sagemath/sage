@@ -2075,7 +2075,7 @@ def _plot_transformed_polyhedron_2d(poly, nonlinear_transformation,
     D = {}
     from sage.plot.plot import parametric_plot
     for edge in poly.faces(1):
-        v1, v2 = [v for v in edge.vertices()]
+        v1, v2 = list(edge.vertices())
         curve = tf(
             vector(v1) * f1(t) + vector(v2) * (1 - f1(t))
             )
@@ -2094,7 +2094,7 @@ def _plot_transformed_polyhedron_2d(poly, nonlinear_transformation,
     if draw_lines:
         from sage.plot.line import line2d
         for edge in poly.faces(1):
-            v1, v2 = [v for v in edge.vertices()]
+            v1, v2 = list(edge.vertices())
             all_objects.append(line2d(D[(v1,v2)], **(line_kwds or {})))
 
     if polygon_kwds is not False:
