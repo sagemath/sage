@@ -50,6 +50,11 @@ that will work best for you. This includes building from source,
 obtaining Sage from a package manager, using a container image, or using
 Sage in the cloud.
 
+For development, we recommend [Pixi](https://pixi.prefix.dev/latest/installation/).
+From a Sage checkout, run `pixi install --locked`, `pixi run build`, and
+`pixi run sage`. See the [development walk-through](https://doc.sagemath.org/html/en/developer/walkthrough.html)
+for platform prerequisites, testing, and contributing changes.
+
 **This README contains self-contained instructions for building Sage from source.**
 This requires you to clone the git repository (as described in this README) or download the
 [sources](https://www.sagemath.org/download-source.html) in the form
