@@ -172,6 +172,7 @@ src/*.egg-info/
 /src/bin/sage-src-env-config
 
 # Virtual environments
+/.pixi/
 /venv
 src/.env
 src/.venv
