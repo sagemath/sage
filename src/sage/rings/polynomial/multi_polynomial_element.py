@@ -156,8 +156,9 @@ class MPolynomial_element(MPolynomial):
             sage: a(()).parent()
             Rational Field
 
-        The parent of the result only depends on the values of the
-        variables that occur in the polynomial (:issue:`39080`)::
+        A value for a variable that does not occur in the polynomial does
+        not get in the way when it cannot be combined with the other values
+        (:issue:`39080`)::
 
             sage: R.<a,b> = PolynomialRing(QQ, implementation='generic')
             sage: S.<c,d> = PolynomialRing(QQ, implementation='generic')
@@ -171,6 +172,14 @@ class MPolynomial_element(MPolynomial):
             True
             sage: a.subs(a=c)
             c
+
+        Otherwise the first value still decides the parent of the result, so
+        substituting a constant gives a polynomial::
+
+            sage: b.subs(b=1).parent() is R
+            True
+            sage: b(c, 1).parent() is S
+            True
 
         AUTHORS:
 
@@ -188,25 +197,34 @@ class MPolynomial_element(MPolynomial):
             raise TypeError("x must be of correct length")
         if n == 0:
             return self.constant_coefficient()
-        # Take the parent from a value that is substituted for a variable
-        # occurring in self, so that the values of the other variables, like
-        # the generators that subs() passes for the variables it keeps, do not
-        # decide the parent of the result.
         monomials = self.element().dict()
-        used = [i for i in range(n) if any(m[i] for m in monomials)]
+
+        def evaluate(K):
+            try:
+                y = K.zero()
+                one = K.one()
+            except (AttributeError, RuntimeError):
+                y = K(0)
+                one = K(1)
+            for m, c in monomials.items():
+                y += c * prod((v ** e for v, e in zip(x, m) if e), one)
+            return y
+
         try:
-            K = x[used[0] if used else 0].parent()
+            K = x[0].parent()
         except AttributeError:
             K = self.parent().base_ring()
         try:
-            y = K.zero()
-            one = K.one()
-        except (AttributeError, RuntimeError):
-            y = K(0)
-            one = K(1)
-        for m, c in self.element().dict().items():
-            y += c * prod((v ** e for v, e in zip(x, m) if e), one)
-        return y
+            return evaluate(K)
+        except TypeError:
+            # The first value can belong to a variable that does not occur in
+            # self, like the generators that subs() passes for the variables
+            # it keeps. If it cannot be combined with the other values, take
+            # the parent from the value of the first variable that does occur.
+            used = next((i for i in range(n) if any(m[i] for m in monomials)), 0)
+            if not used or not hasattr(x[used], "parent"):
+                raise
+        return evaluate(x[used].parent())
 
     def _richcmp_(self, other, op) -> bool:
         """
