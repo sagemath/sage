@@ -84,6 +84,26 @@ _dis_cache = dict()
 # normalizer of each canonical representative in the full symmetric group
 _normalizer_cache = dict()
 
+# the full symmetric group of degree n, as a GAP group
+_symmetric_group_gap_cache = dict()
+
+
+def _symmetric_group_gap(n):
+    r"""
+    Return the full symmetric group of degree ``n``, as a GAP group.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _symmetric_group_gap
+        sage: _symmetric_group_gap(3)
+        Sym( [ 1 .. 3 ] )
+    """
+    S = _symmetric_group_gap_cache.get(n)
+    if S is None:
+        S = _symmetric_group_gap_cache[n] = _SymmetricGroup(n).gap()
+    return S
+
+
 def _SymmetricGroup(n):
     r"""
     Return a symmetric group quickly.
@@ -1175,6 +1195,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         IndexedFreeAbelianMonoid.__init__(self, indices, prefix='',
                                           bracket=False, category=category)
         self._arity = indices._arity
+        # caches for the construction from permutation groups
+        self._singleton_terms = {}
+        self._group_cache = {}
 
     def _repr_(self):
         r"""
@@ -1360,31 +1383,123 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
                 raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
 
-            components = G.disjoint_direct_product_decomposition()
-            if len(components) == 1:
-                return self.gen(self._indices(G, pi, check=check))
+            if (self._arity == 1 and domain
+                    and set(domain) == set(G.domain())):
+                return self._element_from_group_single_sort(G)
 
-            elm = self.one()
-            for component in components:
-                if len(component) == 1:
-                    H = _SymmetricGroup(1)
-                    c = set(component).pop()
-                    pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
-                else:
-                    # the following appears to be slower
-                    # H_gap = libgap.Action(G, [G._domain_to_gap[i] for i in component], libgap.OnPoints)
-                    # H = PermutationGroup(gap_group=H_gap, domain=component)
-                    gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
-                            for gen in G.gens()]
-                    H = PermutationGroup([gen for gen in gens if gen],
-                                         domain=component)
-                    pi_H = {k: [e for e in v if e in component]
-                            for k, v in pi.items()}
-                a = self._indices(H, pi_H, check=check)
-                elm *= self.gen(a)
-            return elm
+            return self._element_from_group_components(G, pi, check)
 
         raise ValueError(f"{G} must be a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
+
+    def _singleton_term(self, k):
+        r"""
+        Return the molecular species consisting of a single label of
+        sort ``k``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: MolecularSpecies("X")._singleton_term(0)
+            X
+            sage: MolecularSpecies("X, Y")._singleton_term(1)
+            Y
+        """
+        term = self._singleton_terms.get(k)
+        if term is None:
+            term = self.gen(self._indices(_SymmetricGroup(1), {k: [1]}))
+            self._singleton_terms[k] = term
+        return term
+
+    def _element_from_group_components(self, G, pi, check):
+        r"""
+        Return the molecular species of the permutation group ``G``,
+        decomposing it into the direct product of its restrictions to
+        the components of the direct product decomposition.
+
+        TESTS::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
+            sage: M._element_from_group_components(G, {0: [1,2,3,4,5,6]}, True)
+            X^2*E_2(X^2)
+        """
+        components = G.disjoint_direct_product_decomposition()
+        if len(components) == 1:
+            return self.gen(self._indices(G, pi, check=check))
+
+        elm = self.one()
+        for component in components:
+            if len(component) == 1:
+                c = set(component).pop()
+                sorts = [k for k, v in pi.items() if c in v]
+                if len(sorts) == 1:
+                    # the component consists of a single label
+                    elm = elm * self._singleton_term(sorts[0])
+                    continue
+                H = _SymmetricGroup(1)
+                pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
+            else:
+                gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
+                        for gen in G.gens()]
+                H = PermutationGroup([gen for gen in gens if gen],
+                                     domain=component)
+                pi_H = {k: [e for e in v if e in component]
+                        for k, v in pi.items()}
+            a = self._indices(H, pi_H, check=check)
+            elm *= self.gen(a)
+        return elm
+
+    def _element_from_group_single_sort(self, G):
+        r"""
+        Return the molecular species of the permutation group ``G``
+        acting on its full domain, using a cache.
+
+        Two permutation groups acting on the same number of points have
+        the same molecular species if and only if they are conjugate
+        subgroups of the symmetric group.  Therefore we cache the
+        molecular species of each conjugacy class, keyed by the number
+        of points, the order of the group and the lengths of its
+        orbits, and verify cache hits by an explicit conjugacy test.
+
+        EXAMPLES::
+
+        Conjugate groups have the same molecular species, even if
+        their generators differ::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X")
+            sage: H = PermutationGroup([[(1,2),(3,4)], [(5,6),(7,8)]])
+            sage: M(H)
+            E_2(X^2)^2
+            sage: K = H.conjugate(PermutationGroupElement([(1,3),(2,4)]))
+            sage: M(K) is M(H)
+            True
+
+        Groups with the same order and orbit lengths, but which are
+        not conjugate, have different molecular species::
+
+            sage: M(PermutationGroup([[(1,2,3,4)]])) is M(PermutationGroup([[(1,2),(3,4)], [(1,4),(2,3)]]))
+            False
+        """
+        n = len(G.domain())
+        G_gap = G.gap()
+        key = (n, G.cardinality(),
+               tuple(sorted(len(o) for o in G_gap.Orbits().sage())))
+        bucket = self._group_cache.get(key)
+        if bucket is not None:
+            S_gap = _symmetric_group_gap(n)
+            for rep_gap, term in bucket:
+                if libgap.RepresentativeAction(S_gap, G_gap, rep_gap) != GAP_FAIL:
+                    return term
+        else:
+            bucket = self._group_cache[key] = []
+
+        # the factors of the direct product decomposition are directly
+        # indecomposable, so no check is needed
+        term = self._element_from_group_components(G, {0: G.domain()}, False)
+        bucket.append((G_gap, term))
+        return term
 
     def grading_set(self):
         r"""
