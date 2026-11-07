@@ -22,6 +22,7 @@ py.install_sources(
   'function.pyx',
   'function_factory.py',
   'function_factory.pyi',
+  'gamma_products.py',
   'getitem_impl.pyi',
   'maxima_wrapper.py',
   'operators.py',
