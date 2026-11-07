@@ -1351,7 +1351,7 @@ class _sage_doc:
     EXAMPLES::
 
         sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
-        'http://localhost:8000/doc/live/reference/index.html'
+        'https://doc.sagemath.org/html/en/reference/index.html'
 
     TESTS:
 
@@ -1374,9 +1374,9 @@ class _sage_doc:
         EXAMPLES::
 
             sage: browse_sage_doc._base_url
-            'http://localhost:8000/doc/live/'
+            'https://doc.sagemath.org/html/en/'
         """
-        self._base_url = "http://localhost:8000/doc/live/"
+        self._base_url = "https://doc.sagemath.org/html/en/"
         self._base_path = os.path.join(SAGE_DOC, "html", "en")
 
     def _open(self, name, testing=False):
@@ -1396,28 +1396,19 @@ class _sage_doc:
         EXAMPLES::
 
             sage: browse_sage_doc._open("reference", testing=True)[0]                   # needs sagemath_doc_html
-            'http://localhost:8000/doc/live/reference/index.html'
+            'https://doc.sagemath.org/html/en/reference/index.html'
             sage: browse_sage_doc._open("tutorial", testing=True)[1]                    # needs sagemath_doc_html
             '.../html/en/tutorial/index.html'
         """
         url = self._base_url + os.path.join(name, "index.html")
         path = os.path.join(self._base_path, name, "index.html")
-        if not os.path.exists(path):
-            if name == "reference":
-                target = "doc-html-reference-reference_top"
-            else:
-                target = f"doc-html-other-en-{name}"
-            raise OSError(
-                f"The document '{name}' does not exist. To build it from a Sage source checkout, run\n"
-                f"'meson compile -C builddir {target}', replacing 'builddir' with your Meson build directory.\n"
-                f"Then open 'builddir/src/doc/html/en/{name}/index.html' in your web browser.\n"
-                "See https://doc.sagemath.org/html/en/developer/sage_manuals.html#building-the-manuals\n"
-                f"for build instructions, or read the document at https://doc.sagemath.org/html/en/{name}/."
-            )
 
         if testing:
             return (url, path)
 
+        if not os.path.exists(path):
+            os.system(browser() + " " + url)
+            return
         os.system(browser() + " " + path)
 
     def tutorial(self):
