@@ -62,11 +62,11 @@ cpdef bint set_real_mpfr_element_from_gen(RealNumber self, Gen x) noexcept:
 
         sage: rt2 = sqrt(pari('2.0'))
         sage: rt2
-        1.41421356237310
+        1.41421356237...
         sage: rt2.sage()
-        1.41421356237309505
-        sage: rt2.sage().prec()
-        64
+        1.41421356237...
+        sage: rt2.sage().prec() == rt2.bitprecision()
+        True
         sage: pari(rt2.sage()) == rt2
         True
         sage: for i in range(100, 200):

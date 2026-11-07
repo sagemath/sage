@@ -10,6 +10,9 @@ AUTHORS:
 
 - Travis Morrison, Lorenz Panny (2026): :func:`rational_kernel_polynomials`
 """
+
+from __future__ import annotations
+
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -103,7 +106,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
     but are not implemented.
     """
 
-    def quadratic_twist(self, D=None):
+    def quadratic_twist(self, D=None) -> EllipticCurve_field:
         r"""
         Return the quadratic twist of this curve by ``D``.
 

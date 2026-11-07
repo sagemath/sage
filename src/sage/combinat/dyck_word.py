@@ -27,39 +27,23 @@ AUTHORS:
 
 REFERENCES:
 
-.. [Sta-EC2] Richard P. Stanley.
-   *Enumerative Combinatorics*, Volume 2.
-   Cambridge University Press, 2001.
+- [Sta-EC2]_
 
-.. [StaCat98] Richard Stanley. *Exercises on Catalan and Related Numbers
-   excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999)*,
-   version of 23 June 1998.
-   http://www-math.mit.edu/~rstan/ec/catalan.pdf
+- [StaCat98]_
 
-.. [Hag2008] James Haglund. *The* `q,t` -- *Catalan Numbers and the
-   Space of Diagonal Harmonics:
-   With an Appendix on the Combinatorics of Macdonald Polynomials*.
-   University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
+- [Hag2008]_
 
-.. [BK2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
-   between Dyck paths and 312-avoiding permutations*, Electronic
-   Journal of Combinatorics, Volume 8, Issue 1 (2001).
+- [BandlowKillpatrick2001]_
 
-.. [EP2004] \S. Elizalde, I. Pak. *Bijections for refined restricted
-   permutations**. JCTA 105(2) 2004.
+- [EP2004]_
 
-.. [CK2008] \A. Claesson, S. Kitaev. *Classification of bijections
-   between `321`- and `132`- avoiding permutations*. Séminaire
-   Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
+- [ClaessonKitaev2008]_
 
-.. [Knu1973] \D. Knuth. *The Art of Computer Programming, Vol. III*.
-   Addison-Wesley. Reading, MA. 1973.
+- [Knu1973]_
 
-.. [Kra2001] \C. Krattenthaler -- *Permutations with restricted
-   patterns and Dyck paths*, Adv. Appl. Math. 27 (2001), 510--530.
+- [Kra2001]_
 
-.. [DS1992] \A. Denise, R. Simion, *Two combinatorial statistics on
-   Dyck paths*, Discrete Math 137 (1992), 155--176.
+- [DS1992]_
 """
 
 # ****************************************************************************
@@ -2119,7 +2103,7 @@ class DyckWord_complete(DyckWord):
     def to_312_avoiding_permutation(self) -> Permutation:
         r"""
         Convert ``self`` to a `312`-avoiding permutation using the bijection
-        by Bandlow and Killpatrick in [BK2001]_.
+        by Bandlow and Killpatrick in [BandlowKillpatrick2001]_.
 
         This sends the area to the inversion number.
 
@@ -2201,7 +2185,7 @@ class DyckWord_complete(DyckWord):
     @combinatorial_map(name='to 321 avoiding permutation')
     def to_321_avoiding_permutation(self) -> Permutation:
         r"""
-        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [CK2008]_)
+        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [ClaessonKitaev2008]_)
         to send ``self`` to a `321`-avoiding permutation.
 
         It is shown in [EP2004]_ that it sends the number of centered tunnels

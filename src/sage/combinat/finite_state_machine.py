@@ -861,15 +861,9 @@ hooks.
 
 REFERENCES:
 
-.. [HKP2015] Clemens Heuberger, Sara Kropf, and Helmut Prodinger,
-   *Output sum of transducers: Limiting distribution and periodic
-   fluctuation*,
-   `Electron. J. Combin. 22 (2015), #P2.19 <http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19>`_.
+- [HKP2015]_
 
-.. [HKW2015] Clemens Heuberger, Sara Kropf and Stephan Wagner,
-   *Variances and Covariances in the Central Limit Theorem for the Output
-   of a Transducer*, European J. Combin. 49 (2015), 167-187,
-   :doi:`10.1016/j.ejc.2015.03.004`.
+- [HKW2015]_
 
 AUTHORS:
 
@@ -9962,10 +9956,7 @@ class FiniteStateMachine(SageObject):
 
         REFERENCES:
 
-        .. [HP2007] Clemens Heuberger and Helmut Prodinger, *The Hamming
-           Weight of the Non-Adjacent-Form under Various Input Statistics*,
-           Periodica Mathematica Hungarica Vol. 55 (1), 2007, pp. 81--96,
-           :doi:`10.1007/s10998-007-3081-z`.
+        - [HP2007]_
         """
         if self.input_alphabet is None:
             raise ValueError("No input alphabet is given. "
@@ -10313,17 +10304,11 @@ class FiniteStateMachine(SageObject):
 
         REFERENCES:
 
-        .. [FGT1992] Philippe Flajolet, Danièle Gardy, Loÿs Thimonier,
-           *Birthday paradox, coupon collectors, caching algorithms and
-           self-organizing search*, Discrete Appl. Math. 39 (1992),
-           207--229, :doi:`10.1016/0166-218X(92)90177-C`.
+        - [FGT1992]_
 
-        .. [FHP2015] Uta Freiberg, Clemens Heuberger, Helmut Prodinger,
-           *Application of Smirnov Words to Waiting Time Distributions
-           of Runs*, :arxiv:`1503.08096`.
+        - [FHP2015]_
 
-        .. [S1986] Gábor J. Székely, *Paradoxes in Probability Theory
-           and Mathematical Statistics*, D. Reidel Publishing Company.
+        - [S1986]_
 
         TESTS:
 
@@ -11529,15 +11514,9 @@ class Automaton(FiniteStateMachine):
 
         REFERENCES:
 
-        .. [HKP2015a] Clemens Heuberger, Sara Kropf, and Helmut
-           Prodinger, *Analysis of Carries in Signed Digit Expansions*,
-           :arxiv:`1503.08816`.
-        .. [P1964] William Parry, *Intrinsic Markov chains*, Transactions
-           of the American Mathematical Society 112, 1964, pp. 55-66.
-           :doi:`10.1090/S0002-9947-1964-0161372-1`.
-        .. [S1948] Claude E. Shannon, *A mathematical theory of communication*,
-           The Bell System Technical Journal 27, 1948, 379-423,
-           :doi:`10.1002/j.1538-7305.1948.tb01338.x`.
+        - [HKP2015a]_
+        - [P1964]_
+        - [S1948]_
         """
         from sage.modules.free_module_element import vector
         if not self.is_deterministic():
@@ -11913,9 +11892,7 @@ class Transducer(FiniteStateMachine):
 
         REFERENCES:
 
-        .. [BaWo2012] Javier Baliosian and Dina Wonsever, *Finite State
-           Transducers*, chapter in *Handbook of Finite State Based Models and
-           Applications*, edited by Jiacun Wang, Chapman and Hall/CRC, 2012.
+        - [BaWo2012]_
         """
         if not isinstance(other, Transducer):
             raise TypeError(

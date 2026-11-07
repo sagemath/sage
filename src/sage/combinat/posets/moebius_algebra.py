@@ -81,20 +81,11 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
     REFERENCES:
 
-    .. [Solomon67] Louis Solomon.
-       *The Burnside Algebra of a Finite Group*.
-       Journal of Combinatorial Theory, **2**, 1967.
-       :doi:`10.1016/S0021-9800(67)80064-4`.
+    - [Solomon67]_
 
-    .. [Greene73] Curtis Greene.
-       *On the Möbius algebra of a partially ordered set*.
-       Advances in Mathematics, **10**, 1973.
-       :doi:`10.1016/0001-8708(73)90106-0`.
+    - [Greene73]_
 
-    .. [Etienne98] Gwihen Etienne.
-       *On the Möbius algebra of geometric lattices*.
-       European Journal of Combinatorics, **19**, 1998.
-       :doi:`10.1006/eujc.1998.0227`.
+    - [Etienne98]_
     """
     def __init__(self, R, L) -> None:
         """

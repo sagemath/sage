@@ -20,6 +20,7 @@
 
 #include <map>
 #include <iostream>
+#include <iterator>
 #include <utility>
 
 typedef unsigned long v_index;

@@ -381,7 +381,7 @@ def add_attached_file(filename):
     INPUT:
 
     - ``filename`` -- string (the fully qualified file name)
-      or :class:`Path` object
+      or :class:`~pathlib.Path` object
 
     EXAMPLES::
 
@@ -431,7 +431,8 @@ def detach(filename):
     INPUT:
 
     - ``filename`` -- string, a list of strings or a tuple of strings
-      or a :class:`Path`, a list of :class:`Path` or a tuple of :class:`Path`
+      or a :class:`~pathlib.Path`, a list of :class:`~pathlib.Path`
+      or a tuple of :class:`~pathlib.Path`
 
     EXAMPLES::
 

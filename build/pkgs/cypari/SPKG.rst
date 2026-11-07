@@ -15,4 +15,4 @@ GPL version 2 or later
 Upstream Contact
 ----------------
 
-https://github.com/defeo/cypari2
+https://github.com/sagemath/cypari2

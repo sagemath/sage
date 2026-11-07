@@ -1,5 +1,8 @@
-from typing import Any
-from collections.abc import Callable
+from __future__ import annotations
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def verify_no_leak(callback: Callable[[], Any],

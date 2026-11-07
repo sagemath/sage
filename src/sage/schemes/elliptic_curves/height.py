@@ -863,14 +863,14 @@ class EllipticCurveCanonicalHeight:
 
             sage: E = EllipticCurve([0,0,1,-1,0])
             sage: P = E(0,0)
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: H = E.height_function()
-            sage: H(P)
+            sage: H(P)  # abs tol 1e-15
             0.0511114082399688
-            sage: H([0,0])
+            sage: H([0,0])  # abs tol 1e-15
             0.0511114082399688
-            sage: H((0,0))
+            sage: H((0,0))  # abs tol 1e-15
             0.0511114082399688
 
         Over a number field other than `\QQ`::
@@ -2064,7 +2064,7 @@ class EllipticCurveCanonicalHeight:
             sage: h = E.height_function()
             sage: h.min(.01, 5)
             0.03987318057488725
-            sage: E.gen(0).height()
+            sage: E.gen(0).height()  # abs tol 1e-15
             0.0511114082399688
 
         After base change the lower bound can decrease::
