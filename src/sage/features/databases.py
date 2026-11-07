@@ -20,9 +20,11 @@ import atexit
 from contextlib import ExitStack
 from functools import cache
 from importlib.resources import as_file, files
+from os.path import join
 
 from sage.env import sage_data_paths
 from sage.features import PythonModule, StaticFile
+from sage.features.join_feature import JoinFeature
 
 # Keep extracted resources alive for callers that retain filenames or open
 # database connections. With installed wheels, as_file uses the original path.
@@ -35,29 +37,11 @@ def _packaged_data_path(package, subdirectory):
     """
     Return a packaged data directory, retaining any temporary extraction.
     """
-    try:
-        resource = files(package).joinpath(subdirectory)
-    except ModuleNotFoundError:
-        return None
+    resource = files(package).joinpath(subdirectory)
     return str(_data_resource_contexts.enter_context(as_file(resource)))
 
 
-def _data_search_path(name, override, package, subdirectory=""):
-    """
-    Search legacy data directories before the packaged resources.
-
-    An explicit directory override remains authoritative.
-    """
-    if override:
-        return override
-    paths = list(sage_data_paths(name))
-    packaged_path = _packaged_data_path(package, subdirectory)
-    if packaged_path is not None:
-        paths.append(packaged_path)
-    return paths
-
-
-class DatabaseCremona(StaticFile):
+class DatabaseCremona(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of :ref:`John Cremona's
     database of elliptic curves <spkg_database_cremona_ellcurve>`.
@@ -86,35 +70,51 @@ class DatabaseCremona(StaticFile):
             sage: isinstance(DatabaseCremona(), DatabaseCremona)
             True
         """
-        from sage.env import CREMONA_LARGE_DATA_DIR, CREMONA_MINI_DATA_DIR
-
-        CREMONA_DATA_DIRS = {CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR}
-        CREMONA_DATA_DIRS.discard(None)
-        search_path = CREMONA_DATA_DIRS or sage_data_paths("cremona")
-
-        spkg = "database_cremona_ellcurve"
-        spkg_type = "optional"
+        self.filename = f"{name}.db"
         if name == "cremona_mini":
-            spkg = "elliptic_curves"
-            spkg_type = "standard"
-            if not CREMONA_DATA_DIRS:
-                search_path = _data_search_path(
-                    "cremona", None, "elliptic_curve_databases.data", "cremona"
-                )
+            feature = PythonModule(
+                "elliptic_curve_databases", spkg="elliptic_curves", type="standard"
+            )
+        else:
+            from sage.env import CREMONA_LARGE_DATA_DIR
 
-        StaticFile.__init__(
+            feature = StaticFile(
+                f"database_{name}_ellcurve",
+                filename=self.filename,
+                search_path=CREMONA_LARGE_DATA_DIR or tuple(sage_data_paths("cremona")),
+                spkg="database_cremona_ellcurve",
+                type="optional",
+                url="https://github.com/JohnCremona/ecdata",
+            )
+
+        JoinFeature.__init__(
             self,
             f"database_{name}_ellcurve",
-            filename=f"{name}.db",
-            search_path=search_path,
-            spkg=spkg,
-            type=spkg_type,
+            [feature],
             url="https://github.com/JohnCremona/ecdata",
             description="Cremona's database of elliptic curves",
         )
 
+    def absolute_filename(self):
+        """
+        Return the database filename, retaining any extracted resource.
 
-class DatabaseEllcurves(StaticFile):
+        EXAMPLES::
+
+            sage: from pathlib import Path
+            sage: from sage.features.databases import DatabaseCremona
+            sage: Path(DatabaseCremona('cremona_mini').absolute_filename()).is_file()
+            True
+            sage: Path(DatabaseCremona().absolute_filename()).is_file()  # optional - database_cremona_ellcurve
+            True
+        """
+        self.require()
+        if self.filename == "cremona_mini.db":
+            return join(_packaged_data_path("elliptic_curve_databases.data", "cremona"), self.filename)
+        return self._features[0].absolute_filename()
+
+
+class DatabaseEllcurves(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of
     William Stein's database of interesting curves.
@@ -134,24 +134,30 @@ class DatabaseEllcurves(StaticFile):
             sage: isinstance(DatabaseEllcurves(), DatabaseEllcurves)
             True
         """
-        from sage.env import ELLCURVE_DATA_DIR
-
-        search_path = _data_search_path(
-            "ellcurves", ELLCURVE_DATA_DIR, "elliptic_curve_databases.data", "ellcurves"
-        )
-
-        StaticFile.__init__(
+        self.filename = "rank0"
+        JoinFeature.__init__(
             self,
             "database_ellcurves",
-            filename="rank0",
-            search_path=search_path,
-            spkg="elliptic_curves",
-            type="standard",
-            description="William Stein's database of interesting curve",
+            [PythonModule("elliptic_curve_databases", spkg="elliptic_curves", type="standard")],
+            description="William Stein's database of interesting curves",
         )
 
+    def absolute_filename(self):
+        """
+        Return the rank-zero data filename, retaining its extracted directory.
 
-class DatabaseGraphs(StaticFile):
+        EXAMPLES::
+
+            sage: from pathlib import Path
+            sage: from sage.features.databases import DatabaseEllcurves
+            sage: Path(DatabaseEllcurves().absolute_filename()).is_file()  # optional - database_ellcurves
+            True
+        """
+        self.require()
+        return join(_packaged_data_path("elliptic_curve_databases.data", "ellcurves"), self.filename)
+
+
+class DatabaseGraphs(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of
     the graphs database.
@@ -171,21 +177,27 @@ class DatabaseGraphs(StaticFile):
             sage: isinstance(DatabaseGraphs(), DatabaseGraphs)
             True
         """
-        from sage.env import GRAPHS_DATA_DIR
-
-        search_path = _data_search_path(
-            "graphs", GRAPHS_DATA_DIR, "graph_databases.data"
-        )
-
-        StaticFile.__init__(
+        self.filename = "graphs.db"
+        JoinFeature.__init__(
             self,
             "database_graphs",
-            filename="graphs.db",
-            search_path=search_path,
-            spkg="graphs",
-            type="standard",
+            [PythonModule("graph_databases", spkg="graphs", type="standard")],
             description="A database of graphs",
         )
+
+    def absolute_filename(self):
+        """
+        Return the database filename, retaining its extracted directory.
+
+        EXAMPLES::
+
+            sage: from pathlib import Path
+            sage: from sage.features.databases import DatabaseGraphs
+            sage: Path(DatabaseGraphs().absolute_filename()).is_file()  # optional - database_graphs
+            True
+        """
+        self.require()
+        return join(_packaged_data_path("graph_databases.data", ""), self.filename)
 
 
 class DatabaseJones(StaticFile):
@@ -299,7 +311,7 @@ class DatabaseCubicHecke(PythonModule):
         PythonModule.__init__(self, "database_cubic_hecke", spkg="database_cubic_hecke")
 
 
-class DatabaseReflexivePolytopes(StaticFile):
+class DatabaseReflexivePolytopes(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of the
     :ref:`PALP databases of reflexive three-dimensional <spkg_polytopes_db>`
@@ -326,19 +338,41 @@ class DatabaseReflexivePolytopes(StaticFile):
             sage: DatabaseReflexivePolytopes('polytopes_db_4d').filename
             'Hodge4d'
         """
-        from sage.env import POLYTOPE_DATA_DIR
-
-        search_path = POLYTOPE_DATA_DIR or sage_data_paths("reflexive_polytopes")
-
-        dirname = "Full3d"
         if name == "polytopes_db_4d":
-            dirname = "Hodge4d"
+            from sage.env import POLYTOPE_DATA_DIR
+
+            self.filename = "Hodge4d"
+            feature = StaticFile(
+                name,
+                filename=self.filename,
+                search_path=POLYTOPE_DATA_DIR or tuple(sage_data_paths("reflexive_polytopes")),
+                spkg="polytopes_db_4d",
+            )
         else:
-            search_path = _data_search_path(
-                "reflexive_polytopes", POLYTOPE_DATA_DIR, "polytope_databases", "data"
+            self.filename = "Full3d"
+            feature = PythonModule(
+                "polytope_databases", spkg="polytopes_db", type="standard"
             )
 
-        StaticFile.__init__(self, name, filename=dirname, search_path=search_path)
+        JoinFeature.__init__(self, name, [feature])
+
+    def absolute_filename(self):
+        """
+        Return the PALP data directory, retaining any extracted resource.
+
+        EXAMPLES::
+
+            sage: from pathlib import Path
+            sage: from sage.features.databases import DatabaseReflexivePolytopes
+            sage: Path(DatabaseReflexivePolytopes().absolute_filename()).is_dir()  # optional - polytopes_db
+            True
+            sage: Path(DatabaseReflexivePolytopes('polytopes_db_4d').absolute_filename()).is_dir()  # optional - polytopes_db_4d
+            True
+        """
+        self.require()
+        if self.filename == "Full3d":
+            return join(_packaged_data_path("polytope_databases", "data"), self.filename)
+        return self._features[0].absolute_filename()
 
 
 def all_features():
