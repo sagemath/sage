@@ -1533,6 +1533,98 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
 
 
 # ============================================================================
+# Method for computing the modular width of the graph
+# ============================================================================
+
+def modular_width(G):
+    r"""
+    Return the modular-width of ``G``.
+
+    The modular-width of a graph `G` is the maximum cardinality of the prime
+    nodes/modules in its modular decomposition tree. By convention, series and
+    parallel nodes/modules have width 2. Because cographs have only parallel or
+    series nodes in their modular decomposition tree, the modular-width of any
+    cograph of order at least 2 is 2. We set the modular-width of the empty
+    graph to 0 and the graph with a single vertex to 1.
+
+    EXAMPLES:
+
+    The Bull graph and the Petersen graph are prime::
+
+        sage: G = graphs.BullGraph()
+        sage: G.modular_decomposition()
+        (PRIME, [1, 2, 0, 3, 4])
+        sage: G.modular_width()
+        5
+        sage: G = graphs.PetersenGraph()
+        sage: G.modular_decomposition()
+        (PRIME, [1, 4, 5, 0, 6, 2, 3, 9, 7, 8])
+        sage: G.modular_width()
+        10
+
+    The modular-width of a graph on more than 2 vertices is 2 if it is a cograph
+    and is strictly larger otherwise::
+
+        sage: G = graphs.RandomGNP(randint(2, 20), random())
+        sage: mw = G.modular_width()
+        sage: is_cograph = G.is_cograph()
+        sage: (is_cograph and mw == 2) or (not is_cograph and mw > 2)
+        True
+
+    Graph from the :wikipedia:`Modular_decomposition`::
+
+        sage: G = Graph('Jv\\zoKF@wN?', format='graph6')
+        sage: G.relabel([1..11])
+        sage: G.modular_decomposition()
+        (PRIME,
+         [(SERIES, [4, (PARALLEL, [2, 3])]),
+          1,
+          5,
+          (PARALLEL, [6, 7]),
+          (SERIES, [(PARALLEL, [10, 11]), 9, 8])])
+        sage: G.modular_width()
+        5
+
+    All graphs on at most 4 vertices are cographs except the path graph of order
+    4, `P_4`, which is prime and has modular-width 4::
+
+        sage: [g.is_isomorphic(graphs.PathGraph(4))
+        ....:  for n in range(5) for g in graphs(n) if not g.is_cograph()]
+        [True]
+        sage: [g.modular_width() for n in range(5) for g in graphs(n)]
+        [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2]
+
+    TESTS::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import modular_width
+        sage: modular_width(DiGraph())
+        Traceback (most recent call last):
+        ...
+        ValueError: this method is for undirected graphs only
+    """
+    if G.is_directed():
+        raise ValueError("this method is for undirected graphs only")
+
+    if G.order() < 2:
+        return G.order()
+    if G.is_cograph():
+        return 2
+
+    # Get the modular decomposition of G
+    D = modular_decomposition(G)
+
+    stack = [D]
+    width = 2
+    while stack:
+        u = stack.pop()
+        if u.node_type == NodeType.PRIME:
+            width = max(width, len(u.children))
+        stack.extend(v for v in u.children if v.node_type != NodeType.NORMAL)
+
+    return width
+
+
+# ============================================================================
 # Method for building the quotient graph
 # ============================================================================
 
