@@ -25772,13 +25772,40 @@ class GenericGraph(GenericGraph_pyx):
             sage: R = graphs.RandomGNP(2000, .01)                                       # needs networkx
             sage: R.is_vertex_transitive()                                              # needs networkx
             False
+
+        The empty graph is vertex transitive, and an empty cell of the
+        partition is ignored::
+
+            sage: Graph().is_vertex_transitive()
+            True
+            sage: DiGraph().is_vertex_transitive()
+            True
+            sage: P.is_vertex_transitive(partition=[list(P), []])                       # needs sage.groups
+            True
+
+        A partition without any vertex doesn't cover the vertices of a graph
+        that has some, so the answer is ``False``::
+
+            sage: graphs.PathGraph(3).is_vertex_transitive(partition=[])
+            False
+            sage: graphs.CompleteGraph(3).is_vertex_transitive()                        # needs sage.groups
+            True
+            sage: graphs.CompleteGraph(3).is_vertex_transitive(partition=[[]])
+            False
         """
+        if not self.n_vertices():
+            return True
+
         if partition is None:
             partition = [self.vertices(sort=False)]
 
+        # An empty cell has no orbit, so it is left out of the comparison
+        # with the orbits below. It is trivially transitive.
+        partition = [p for p in partition if p]
+        if not partition:
+            return False
+
         for p in partition:
-            if not p:
-                continue
             d = self.degree(p[0])
             if not all(self.degree(x) == d for x in p):
                 return False
