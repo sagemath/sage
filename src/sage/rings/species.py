@@ -1462,7 +1462,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         of points, the order of the group and the lengths of its
         orbits, and verify cache hits by an explicit conjugacy test.
 
-        EXAMPLES::
+        The trivial subgroup and the full symmetric group are the
+        unique subgroups of the symmetric group on their domain of
+        their respective order.  For such groups the key is conclusive:
+        a cache hit is returned without a conjugacy test.
+
+        EXAMPLES:
 
         Conjugate groups have the same molecular species, even if
         their generators differ::
@@ -1481,13 +1486,35 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: M(PermutationGroup([[(1,2,3,4)]])) is M(PermutationGroup([[(1,2),(3,4)], [(1,4),(2,3)]]))
             False
+
+        The trivial group and the full symmetric group are unique in
+        their conjugacy class, so groups with the same key are
+        conjugate even if their domains differ::
+
+            sage: M(PermutationGroup([()], domain=[1, 2, 3]))
+            X^3
+            sage: M(PermutationGroup([()], domain=[4, 5, 6])) is M(PermutationGroup([()], domain=[1, 2, 3]))
+            True
+            sage: M(SymmetricGroup(3)) is M(PermutationGroup([(1, 2), (2, 3)]))
+            True
         """
         n = len(G.domain())
-        G_gap = G.gap()
-        key = (n, G.cardinality(),
-               tuple(sorted(len(o) for o in G_gap.Orbits().sage())))
+        order = G.cardinality()
+        conclusive = order == 1 or order == factorial(n)
+        if conclusive:
+            key = (n, order)
+            G_gap = None
+        else:
+            G_gap = G.gap()
+            key = (n, order,
+                   tuple(sorted(len(o) for o in G_gap.Orbits().sage())))
+
         bucket = self._group_cache.get(key)
         if bucket is not None:
+            if conclusive:
+                # all groups with this key are conjugate, so the bucket
+                # contains a single entry
+                return bucket[0][1]
             S_gap = _symmetric_group_gap(n)
             for rep_gap, term in bucket:
                 if libgap.RepresentativeAction(S_gap, G_gap, rep_gap) != GAP_FAIL:
@@ -1498,7 +1525,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
         term = self._element_from_group_components(G, {0: G.domain()}, False)
-        bucket.append((G_gap, term))
+        bucket.append((G_gap if G_gap is not None else G.gap(), term))
         return term
 
     def grading_set(self):
