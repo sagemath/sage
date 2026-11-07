@@ -242,7 +242,8 @@ class MPolynomial_element(MPolynomial):
         if base_map is None:
             # Just use conversion
             base_map = codomain
-        # self.element() is a PolyDict, its dict() maps ETuple's to coefficents
+        # self.element() is a PolyDict,
+        # its dict() maps ETuple's to coefficients
         return sum((base_map(c) * prod(g**e for g, e in zip(im_gens, m) if e)
                     for m, c in self.element().dict().items()), codomain(0))
 
