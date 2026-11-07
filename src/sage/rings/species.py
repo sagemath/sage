@@ -1467,6 +1467,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         their respective order.  For such groups the key is conclusive:
         a cache hit is returned without a conjugacy test.
 
+        Since the key contains the orbit lengths, all groups in a
+        bucket have the same number of fixed points.  Two permutation
+        groups with the same number of fixed points are conjugate if
+        and only if their restrictions to their moved points are
+        conjugate.  Therefore the conjugacy test is carried out on
+        the restrictions to the moved points, where the groups act on
+        fewer points.
+
         EXAMPLES:
 
         Conjugate groups have the same molecular species, even if
@@ -1497,9 +1505,21 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             True
             sage: M(SymmetricGroup(3)) is M(PermutationGroup([(1, 2), (2, 3)]))
             True
+
+        Groups with fixed points are verified on their moved points,
+        which also applies to groups on different domains::
+
+            sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
+            sage: H = PermutationGroup([[(2,3),(4,5)]], domain=[1,2,3,4,5,6])
+            sage: M(G) is M(H)
+            True
         """
         n = len(G.domain())
         order = G.cardinality()
+        # the trivial subgroup and the full symmetric group are the
+        # unique subgroups of the symmetric group on their domain of
+        # their respective order, so for these groups the key is
+        # conclusive
         conclusive = order == 1 or order == factorial(n)
         if conclusive:
             key = (n, order)
@@ -1510,22 +1530,33 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                    tuple(sorted(len(o) for o in G_gap.Orbits().sage())))
 
         bucket = self._group_cache.get(key)
-        if bucket is not None:
-            if conclusive:
-                # all groups with this key are conjugate, so the bucket
-                # contains a single entry
-                return bucket[0][1]
-            S_gap = _symmetric_group_gap(n)
-            for rep_gap, term in bucket:
-                if libgap.RepresentativeAction(S_gap, G_gap, rep_gap) != GAP_FAIL:
-                    return term
-        else:
+        if bucket is None:
             bucket = self._group_cache[key] = []
+        elif conclusive:
+            # all groups with this key are conjugate, so the bucket
+            # contains a single entry
+            return bucket[0][1]
+        else:
+            # all groups in the bucket have the same number of fixed
+            # points, since the key contains the orbit lengths, and two
+            # permutation groups with the same number of fixed points
+            # are conjugate if and only if their restrictions to their
+            # moved points are
+            moved = G_gap.MovedPoints()
+            action = libgap.Action(G_gap, moved)
+            S_m = _symmetric_group_gap(len(moved))
+            for rep_action, term in bucket:
+                if libgap.RepresentativeAction(S_m, action, rep_action) != GAP_FAIL:
+                    return term
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
         term = self._element_from_group_components(G, {0: G.domain()}, False)
-        bucket.append((G_gap if G_gap is not None else G.gap(), term))
+        if conclusive:
+            bucket.append((None, term))
+        else:
+            moved = G_gap.MovedPoints()
+            bucket.append((libgap.Action(G_gap, moved), term))
         return term
 
     def grading_set(self):
