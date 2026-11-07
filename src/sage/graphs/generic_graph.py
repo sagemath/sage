@@ -15065,7 +15065,7 @@ class GenericGraph(GenericGraph_pyx):
                 for e in edges:
                     if len(e) == 3:
                         try:
-                            edges_to_keep_labeled.add((e[0], e[1], e[2]))
+                            edges_to_keep_labeled.add(e)
                         except TypeError:
                             unhashable_labels.setdefault((e[0], e[1]), []).append(e[2])
                     elif len(e) == 2:
@@ -15268,7 +15268,7 @@ class GenericGraph(GenericGraph_pyx):
             for e in edges:
                 if len(e) == 3:
                     try:
-                        edges_to_keep_labeled.add((e[0], e[1], e[2]))
+                        edges_to_keep_labeled.add(e)
                     except TypeError:
                         unhashable_labels.setdefault((e[0], e[1]), []).append(e[2])
                 elif len(e) == 2:
