@@ -25788,6 +25788,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: graphs.PathGraph(3).is_vertex_transitive(partition=[])
             False
+            sage: graphs.CompleteGraph(3).is_vertex_transitive()                        # needs sage.groups
+            True
             sage: graphs.CompleteGraph(3).is_vertex_transitive(partition=[[]])
             False
         """
