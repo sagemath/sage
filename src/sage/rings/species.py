@@ -125,7 +125,7 @@ def _SymmetricGroup(n):
 # fixed points, tabulated for all degrees up to ten; see
 # _conjugacy_class_determined for the exact statement and for a
 # verification of this table
-_DETERMINED_KEYS = {
+_MOLECULAR_DETERMINED_KEYS = {
     # subgroups of the symmetric group on 2 points
     (2, (2,)),
     # subgroups of the symmetric group on 3 points
@@ -188,7 +188,7 @@ def _conjugacy_class_determined(order, orbits):
     This is the case if and only if exactly one conjugacy class of
     subgroups of the symmetric group on sum(orbits) points without
     fixed points has this order and these orbit lengths.  All such
-    keys up to degree ten are tabulated in ``_DETERMINED_KEYS``.
+    keys up to degree ten are tabulated in ``_MOLECULAR_DETERMINED_KEYS``.
 
     EXAMPLES::
 
@@ -222,7 +222,7 @@ def _conjugacy_class_determined(order, orbits):
     lattice)::
 
         sage: from collections import Counter                                                    # optional - gap_package_tomlib
-        sage: from sage.rings.species import _DETERMINED_KEYS                                   # optional - gap_package_tomlib
+        sage: from sage.rings.species import _MOLECULAR_DETERMINED_KEYS                                   # optional - gap_package_tomlib
         sage: computed = set()                                                                   # optional - gap_package_tomlib
         sage: for m in range(2, 11):                                                             # optional - gap_package_tomlib
         ....:     counts = Counter()
@@ -232,10 +232,262 @@ def _conjugacy_class_determined(order, orbits):
         ....:             continue
         ....:         counts[(H.cardinality(), orbits)] += 1
         ....:     computed |= {k for k, v in counts.items() if v == 1}
-        sage: computed == _DETERMINED_KEYS                                                       # optional - gap_package_tomlib
+        sage: computed == _MOLECULAR_DETERMINED_KEYS                                                       # optional - gap_package_tomlib
         True
     """
-    return (order, orbits) in _DETERMINED_KEYS
+    return (order, orbits) in _MOLECULAR_DETERMINED_KEYS
+
+
+# The keys (order, pattern) that determine the atomic species of a
+# directly indecomposable permutation group together with an assignment
+# of its orbits to sorts, where the pattern records which orbits share a
+# sort and the lengths of the orbits in each sort; tabulated for all
+# degrees up to ten, see _atomic_species_determined for the exact
+# statement and for a verification of this table
+_ATOMIC_DETERMINED_KEYS = {
+    (2, ((2,),)), (2, ((2,),(2,))), (2, ((2,),(2,),(2,))),
+    (2, ((2,),(2,),(2,),(2,))), (2, ((2,),(2,),(2,),(2,),(2,))),
+    (2, ((2,),(2,),(2,),(2,2))), (2, ((2,),(2,),(2,2))),
+    (2, ((2,),(2,),(2,2,2))), (2, ((2,),(2,2))), (2, ((2,),(2,2),(2,2))),
+    (2, ((2,),(2,2,2))), (2, ((2,),(2,2,2,2))), (2, ((2,2),)),
+    (2, ((2,2),(2,2))), (2, ((2,2),(2,2,2))), (2, ((2,2,2),)),
+    (2, ((2,2,2,2),)), (2, ((2,2,2,2,2),)), (3, ((3,),)),
+    (3, ((3,),(3,))), (3, ((3,),(3,),(3,))), (3, ((3,),(3,3))),
+    (3, ((3,3),)), (3, ((3,3,3),)), (4, ((2,),(2,),(2,))),
+    (4, ((2,),(2,2))), (4, ((2,2,2),)), (4, ((2,2,2,2),)), (5, ((5,),)),
+    (5, ((5,),(5,))), (5, ((5,5),)), (6, ((2,),(2,),(2,),(3,))),
+    (6, ((2,),(2,),(2,3))), (6, ((2,),(2,),(3,))),
+    (6, ((2,),(2,),(3,),(3,))), (6, ((2,),(2,),(3,3))),
+    (6, ((2,),(2,2),(3,))), (6, ((2,),(2,2,3))), (6, ((2,),(2,3))),
+    (6, ((2,),(2,3),(3,))), (6, ((2,),(2,3,3))), (6, ((2,),(3,))),
+    (6, ((2,),(3,),(3,))), (6, ((2,),(3,3))), (6, ((2,2),(2,3))),
+    (6, ((2,2),(3,))), (6, ((2,2),(3,),(3,))), (6, ((2,2),(3,3))),
+    (6, ((2,2,2),(3,))), (6, ((2,2,2,3),)), (6, ((2,2,3),)),
+    (6, ((2,2,3),(3,))), (6, ((2,2,3,3),)), (6, ((2,3),)),
+    (6, ((2,3),(2,3))), (6, ((2,3),(3,))), (6, ((2,3,3),)), (6, ((3,),)),
+    (6, ((3,),(3,))), (6, ((3,),(3,),(3,))), (6, ((3,),(3,3))),
+    (6, ((3,3),)), (6, ((3,3,3),)), (7, ((7,),)),
+    (8, ((2,),(2,),(2,),(2,))), (8, ((2,),(2,),(2,2))),
+    (8, ((2,),(2,2,2))), (8, ((2,2),(2,2))), (8, ((2,2,2,2),)),
+    (8, ((4,),)), (9, ((3,),(3,),(3,))), (9, ((3,),(3,3))),
+    (9, ((3,3,3),)), (10, ((2,),(2,),(5,))), (10, ((2,),(2,5))),
+    (10, ((2,),(5,))), (10, ((2,2),(5,))), (10, ((2,2,5),)),
+    (10, ((2,5),)), (10, ((5,),)), (10, ((5,),(5,))), (10, ((5,5),)),
+    (12, ((2,),(2,),(3,))), (12, ((2,),(2,),(3,),(3,))),
+    (12, ((2,),(2,),(3,3))), (12, ((2,),(2,3))), (12, ((2,),(2,3),(3,))),
+    (12, ((2,),(2,3,3))), (12, ((2,2),(3,))), (12, ((2,2),(3,),(3,))),
+    (12, ((2,2),(3,3))), (12, ((2,2,3),)), (12, ((2,2,3),(3,))),
+    (12, ((2,2,3,3),)), (12, ((2,3),(2,3))), (12, ((4,),)),
+    (12, ((4,),(4,))), (12, ((4,4),)), (14, ((2,),(7,))), (14, ((2,7),)),
+    (14, ((7,),)), (16, ((2,),(2,),(2,),(2,),(2,))),
+    (16, ((2,),(2,),(2,),(2,2))), (16, ((2,),(2,),(2,2,2))),
+    (16, ((2,),(2,2),(2,2))), (16, ((2,),(2,2,2,2))),
+    (16, ((2,2),(2,2,2))), (16, ((2,2,2,2,2),)),
+    (18, ((2,),(2,),(3,),(3,))), (18, ((2,),(2,),(3,3))),
+    (18, ((2,),(2,),(6,))), (18, ((2,),(2,3),(3,))), (18, ((2,),(2,3,3))),
+    (18, ((2,),(2,6))), (18, ((2,),(3,),(3,))), (18, ((2,),(3,3))),
+    (18, ((2,),(6,))), (18, ((2,2),(3,),(3,))), (18, ((2,2),(3,3))),
+    (18, ((2,2),(6,))), (18, ((2,2,3),(3,))), (18, ((2,2,3,3),)),
+    (18, ((2,2,6),)), (18, ((2,3),(2,3))), (18, ((2,3),(3,))),
+    (18, ((2,3,3),)), (18, ((2,6),)), (18, ((3,),(3,))), (18, ((3,3),)),
+    (18, ((6,),)), (20, ((2,),(5,))), (20, ((2,5),)), (20, ((5,),)),
+    (20, ((5,),(5,))), (20, ((5,5),)), (21, ((3,),(7,))), (21, ((3,7),)),
+    (21, ((7,),)), (24, ((2,),(2,),(2,),(3,))),
+    (24, ((2,),(2,),(2,),(4,))), (24, ((2,),(2,),(2,3))),
+    (24, ((2,),(2,),(2,4))), (24, ((2,),(2,),(4,))),
+    (24, ((2,),(2,2),(3,))), (24, ((2,),(2,2),(4,))),
+    (24, ((2,),(2,2,3))), (24, ((2,),(2,2,4))), (24, ((2,),(2,4))),
+    (24, ((2,),(4,))), (24, ((2,),(4,),(4,))), (24, ((2,),(4,4))),
+    (24, ((2,2),(2,3))), (24, ((2,2),(2,4))), (24, ((2,2),(4,))),
+    (24, ((2,2,2),(3,))), (24, ((2,2,2),(4,))), (24, ((2,2,2,3),)),
+    (24, ((2,2,2,4),)), (24, ((2,2,4),)), (24, ((2,4),)),
+    (24, ((2,4),(4,))), (24, ((2,4,4),)), (24, ((4,),)),
+    (24, ((4,),(4,))), (24, ((4,4),)), (30, ((2,),(3,),(5,))),
+    (30, ((2,),(3,5))), (30, ((2,3),(5,))), (30, ((2,3,5),)),
+    (30, ((2,5),(3,))), (30, ((3,),(5,))), (30, ((3,5),)),
+    (36, ((2,),(3,),(3,))), (36, ((2,),(3,3))), (36, ((2,3),(3,))),
+    (36, ((2,3,3),)), (40, ((2,),(2,),(5,))), (40, ((2,),(2,5))),
+    (40, ((2,2),(5,))), (40, ((2,2,5),)), (40, ((10,),)),
+    (42, ((2,),(7,))), (42, ((2,7),)), (42, ((7,),)),
+    (48, ((2,),(2,),(4,))), (48, ((2,),(2,4))), (48, ((2,2),(4,))),
+    (48, ((2,2,4),)), (48, ((3,),(6,))), (48, ((3,6),)), (48, ((6,),)),
+    (50, ((5,),(5,))), (50, ((5,5),)), (50, ((10,),)),
+    (54, ((3,),(3,),(3,))), (54, ((3,),(3,3))), (54, ((3,),(6,))),
+    (54, ((3,3,3),)), (54, ((3,6),)), (56, ((8,),)), (60, ((3,),(5,))),
+    (60, ((3,5),)), (60, ((5,),)), (60, ((5,),(5,))), (60, ((5,5),)),
+    (60, ((6,),)), (60, ((10,),)), (72, ((2,),(2,),(3,),(3,))),
+    (72, ((2,),(2,),(3,3))), (72, ((2,),(2,3),(3,))),
+    (72, ((2,),(2,3,3))), (72, ((2,),(3,),(4,))), (72, ((2,),(3,4))),
+    (72, ((2,2),(3,),(3,))), (72, ((2,2),(3,3))), (72, ((2,2,3),(3,))),
+    (72, ((2,2,3,3),)), (72, ((2,3),(2,3))), (72, ((2,3),(4,))),
+    (72, ((2,3,4),)), (72, ((2,4),(3,))), (72, ((3,),(4,))),
+    (72, ((3,4),)), (72, ((6,),)), (80, ((10,),)), (81, ((9,),)),
+    (96, ((2,),(2,),(2,),(4,))), (96, ((2,),(2,),(2,4))),
+    (96, ((2,),(2,2),(4,))), (96, ((2,),(2,2,4))), (96, ((2,2),(2,4))),
+    (96, ((2,2,2),(4,))), (96, ((2,2,2,4),)), (108, ((3,),(3,),(3,))),
+    (108, ((3,),(3,3))), (108, ((3,3,3),)), (108, ((9,),)),
+    (120, ((2,),(2,),(5,))), (120, ((2,),(2,),(6,))), (120, ((2,),(2,5))),
+    (120, ((2,),(2,6))), (120, ((2,),(3,),(5,))), (120, ((2,),(3,5))),
+    (120, ((2,),(5,))), (120, ((2,),(6,))), (120, ((2,2),(5,))),
+    (120, ((2,2),(6,))), (120, ((2,2,5),)), (120, ((2,2,6),)),
+    (120, ((2,3),(5,))), (120, ((2,3,5),)), (120, ((2,5),)),
+    (120, ((2,5),(3,))), (120, ((2,6),)), (120, ((4,),(5,))),
+    (120, ((4,5),)), (120, ((5,),)), (120, ((5,),(5,))), (120, ((5,5),)),
+    (120, ((6,),)), (126, ((3,),(7,))), (126, ((3,7),)), (128, ((8,),)),
+    (144, ((2,),(3,),(4,))), (144, ((2,),(3,4))), (144, ((2,3),(4,))),
+    (144, ((2,3,4),)), (144, ((2,4),(3,))), (144, ((9,),)),
+    (168, ((7,),)), (200, ((5,),(5,))), (200, ((5,5),)),
+    (216, ((3,),(3,),(4,))), (216, ((3,),(3,4))), (216, ((3,3),(4,))),
+    (216, ((3,3,4),)), (216, ((4,),(6,))), (216, ((4,6),)),
+    (216, ((9,),)), (240, ((2,),(2,),(5,))), (240, ((2,),(2,),(6,))),
+    (240, ((2,),(2,5))), (240, ((2,),(2,6))), (240, ((2,2),(5,))),
+    (240, ((2,2),(6,))), (240, ((2,2,5),)), (240, ((2,2,6),)),
+    (240, ((10,),)), (288, ((2,),(4,),(4,))), (288, ((2,),(4,4))),
+    (288, ((2,),(8,))), (288, ((2,4),(4,))), (288, ((2,4,4),)),
+    (288, ((2,8),)), (288, ((4,),(4,))), (288, ((4,4),)), (288, ((8,),)),
+    (336, ((2,),(8,))), (336, ((2,8),)), (336, ((8,),)),
+    (360, ((2,),(3,),(5,))), (360, ((2,),(3,5))), (360, ((2,3),(5,))),
+    (360, ((2,3,5),)), (360, ((2,5),(3,))), (360, ((3,),(5,))),
+    (360, ((3,),(6,))), (360, ((3,5),)), (360, ((3,6),)), (360, ((6,),)),
+    (360, ((10,),)), (384, ((8,),)), (432, ((3,),(3,),(4,))),
+    (432, ((3,),(3,4))), (432, ((3,3),(4,))), (432, ((3,3,4),)),
+    (432, ((9,),)), (504, ((9,),)), (576, ((2,),(4,),(4,))),
+    (576, ((2,),(4,4))), (576, ((2,4),(4,))), (576, ((2,4,4),)),
+    (600, ((5,5),)), (640, ((10,),)), (720, ((2,),(2,),(6,))),
+    (720, ((2,),(2,6))), (720, ((2,),(3,),(5,))), (720, ((2,),(3,5))),
+    (720, ((2,),(6,))), (720, ((2,2),(6,))), (720, ((2,2,6),)),
+    (720, ((2,3),(5,))), (720, ((2,3,5),)), (720, ((2,5),(3,))),
+    (720, ((2,6),)), (720, ((6,),)), (800, ((10,),)), (960, ((10,),)),
+    (1152, ((8,),)), (1200, ((5,5),)), (1296, ((9,),)), (1344, ((8,),)),
+    (1440, ((2,),(2,),(6,))), (1440, ((2,),(2,6))), (1440, ((2,2),(6,))),
+    (1440, ((2,2,6),)), (1440, ((4,),(5,))), (1440, ((4,5),)),
+    (1440, ((10,),)), (1512, ((9,),)), (2160, ((3,),(6,))),
+    (2160, ((3,6),)), (2520, ((7,),)), (3840, ((10,),)),
+    (5040, ((2,),(7,))), (5040, ((2,7),)), (5040, ((7,),)),
+    (7200, ((5,),(5,))), (7200, ((5,5),)), (7200, ((10,),)),
+    (8640, ((4,),(6,))), (8640, ((4,6),)), (15120, ((3,),(7,))),
+    (15120, ((3,7),)), (20160, ((8,),)), (28800, ((10,),)),
+    (40320, ((2,),(8,))), (40320, ((2,8),)), (40320, ((8,),)),
+    (181440, ((9,),)), (362880, ((9,),)), (1814400, ((10,),)),
+    (3628800, ((10,),)),
+}
+
+
+def _atomic_species_determined(order, orbits, orbit_sorts):
+    r"""
+    Return whether the order and the assignment of the orbits to sorts
+    determine the atomic species of a directly indecomposable
+    permutation group without fixed points.
+
+    Two such groups with their sort assignments are conjugate if and
+    only if some element of the symmetric group conjugates the group and
+    carries each sort block onto the corresponding sort block, which is
+    possible only if the orbits have the same lengths and the same
+    sorts.  For a conjugacy class of subgroups, the classes of pairs
+    (group, sort assignment) are the orbits of the normalizer on the
+    assignments of the orbits to sorts.  The assignment is therefore
+    determined by the order and the lengths of the orbits together with
+    the coincidence pattern of the sorts, which orbits share a sort, if
+    exactly one conjugacy class of directly indecomposable subgroups
+    with this order and these orbit lengths realizes it.  All such keys
+    up to degree ten are tabulated in ``_ATOMIC_DETERMINED_KEYS``.
+
+    INPUT:
+
+    - ``order`` -- the order of the group
+    - ``orbits`` -- the orbits of the group
+    - ``orbit_sorts`` -- the sort of each orbit
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _atomic_species_determined
+        sage: _atomic_species_determined(2, [(1, 2), (3, 4)], [0, 1])
+        True
+
+    The cyclic and the Klein four group are both directly
+    indecomposable transitive subgroups of order four::
+
+        sage: _atomic_species_determined(4, [(1, 2, 3, 4)], [0])
+        False
+
+    The Klein four group acting diagonally on three pairs of
+    points is the only directly indecomposable subgroup of its order
+    with these orbit lengths::
+
+        sage: _atomic_species_determined(4, [(1, 2), (3, 4), (5, 6)], [0, 0, 1])
+        True
+
+    Keys of larger degree than the table are never determined::
+
+        sage: _atomic_species_determined(12, [list(range(1, 13))], [0])
+        False
+
+    TESTS:
+
+    The table agrees with a computation from GAP's table of marks
+    (without the package, the classes are computed from the subgroup
+    lattice)::
+
+        sage: from collections import Counter
+        sage: from itertools import product
+        sage: from sage.rings.species import _ATOMIC_DETERMINED_KEYS                      # optional - gap_package_tomlib
+        sage: def determined_patterns(m):
+        ....:     S = SymmetricGroup(m)
+        ....:     indecomp = [H for H in S.conjugacy_classes_subgroups()
+        ....:                 if sorted(len(o) for o in H.orbits())[0] > 1
+        ....:                 and H.disjoint_direct_product_decomposition().cardinality() == 1]
+        ....:     counts = Counter((H.cardinality(),
+        ....:                        tuple(sorted(len(o) for o in H.orbits())))
+        ....:                       for H in indecomp)
+        ....:     res = set()
+        ....:     for H in indecomp:
+        ....:         if counts[(H.cardinality(),
+        ....:                     tuple(sorted(len(o) for o in H.orbits())))] != 1:
+        ....:             continue
+        ....:         orbit_list = sorted((sorted(o) for o in H.orbits()), key=len)
+        ....:         pos = {tuple(o): i for i, o in enumerate(orbit_list)}
+        ....:         N = libgap.Normalizer(libgap.SymmetricGroup(m), H.gap())
+        ....:         gens = []
+        ....:         for nu in N.GeneratorsOfGroup():
+        ....:             g = [None] * len(orbit_list)
+        ....:             for i, o in enumerate(orbit_list):
+        ....:                 g[pos[tuple(sorted(libgap.OnSets(libgap(o), nu).sage()))]] = i
+        ....:             gens.append(tuple(g))
+        ....:         k = len(orbit_list)
+        ....:         seen = set()
+        ....:         cnt = Counter()
+        ....:         for coloring in product(range(k), repeat=k):
+        ....:             if coloring in seen:
+        ....:                 continue
+        ....:             stack = [coloring]
+        ....:             seen.add(coloring)
+        ....:             while stack:
+        ....:                 c = stack.pop()
+        ....:                 for g in gens:
+        ....:                     c2 = tuple(c[g[i]] for i in range(k))
+        ....:                     if c2 not in seen:
+        ....:                         seen.add(c2)
+        ....:                         stack.append(c2)
+        ....:             cnt[tuple(sorted((len(orbit_list[i]), s)
+        ....:                             for i, s in enumerate(coloring)))] += 1
+        ....:         for data, c in cnt.items():
+        ....:             if c != 1:
+        ....:                 continue
+        ....:             blocks = {}
+        ....:             for l, s in data:
+        ....:                 blocks.setdefault(s, []).append(l)
+        ....:             res.add((H.cardinality(),
+        ....:                      tuple(sorted(tuple(sorted(b)) for b in blocks.values()))))
+        ....:     return res
+        sage: computed = set().union(*(determined_patterns(m) for m in range(2, 11)))     # optional - gap_package_tomlib
+        sage: computed == _ATOMIC_DETERMINED_KEYS                                          # optional - gap_package_tomlib
+        True
+    """
+    blocks = {}
+    for o, s in zip(orbits, orbit_sorts):
+        blocks.setdefault(s, []).append(len(o))
+    pattern = tuple(sorted(tuple(sorted(b)) for b in blocks.values()))
+    return (order, pattern) in _ATOMIC_DETERMINED_KEYS
 
 
 def _label_sets(arity, labels):
@@ -309,10 +561,22 @@ class AtomicSpeciesElement(WithEqualityById,
           arity, representing the assignment of each element of the
           domain of ``dis`` to a sort
 
+        Two atomic species are conjugate if and only if some element
+        of the symmetric group conjugates their groups and carries
+        each sort block onto the corresponding sort block.  The
+        elements are cached by the order and the canonical
+        representative of the group, and verified by conjugacy tests.
+        Keys that determine the conjugacy class
+        (:func:`_atomic_species_determined`) are cached directly,
+        without conjugacy tests.
+
         .. WARNING::
 
             We do not check whether ``G`` is indeed directly
-            indecomposable.
+            indecomposable; the conclusive keys are computed for
+            directly indecomposable groups, so a decomposable group
+            whose order and orbit lengths coincide with a conclusive
+            key gives wrong results.
 
         TESTS::
 
@@ -370,16 +634,55 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: b = A(G, {0: [4,5,6], 1: [1,2,3]})
             sage: a == b
             True
+
+        Conclusive keys are answered without conjugacy tests, which
+        also applies to groups on other domains::
+
+            sage: G = PermutationGroup([[(1,3),(2,4)]])
+            sage: a = A(G, {0: [1,3], 1: [2,4]})
+            sage: b = A(PermutationGroup([[(5,7),(6,8)]], domain=[5,6,7,8]), {0: [5,7], 1: [6,8]})
+            sage: a is b
+            True
         """
         # a directly indecomposable group has no fixed points, so we
         # can use the gap group without worrying about the domain
         G_gap = G.gap()
         dompart = [[ZZ(G._domain_to_gap[e]) for e in b] for b in dompart]
         orbits = sorted(G_gap.Orbits().sage(), key=len, reverse=True)
+        # the sort of each orbit, checking that each orbit lies within
+        # a single sort
+        orbit_sorts = []
         for orbit in orbits:
-            if not any(set(orbit).issubset(b) for b in dompart):
+            for s, b in enumerate(dompart):
+                if set(orbit).issubset(b):
+                    orbit_sorts.append(s)
+                    break
+            else:
                 o = [G._domain_from_gap[e] for e in orbit]
                 raise ValueError(f"All elements of orbit {o} must have the same sort")
+
+        order = G_gap.Size().sage()
+        n = G.degree()
+        # the key consisting of the order and the length and sort of
+        # each orbit determines the atomic species for conclusive keys,
+        # see _atomic_species_determined; a directly indecomposable
+        # group of order greater than one has no fixed points, and one
+        # of order one has a single point
+        data = tuple(sorted((len(o), s)
+                            for o, s in zip(orbits, orbit_sorts)))
+        if order == 1 and n:
+            data = ((1, next(s for s, b in enumerate(dompart) if b)),)
+        if order == 1 or order == factorial(n):
+            # the trivial subgroup and the full symmetric group are
+            # the unique subgroups of their order, so their key
+            # determines the atomic species
+            determined = True
+        else:
+            determined = _atomic_species_determined(order, orbits, orbit_sorts)
+        if determined:
+            elm = parent._conclusive.get((order, data))
+            if elm is not None:
+                return elm
 
         def new_dis():
             """
@@ -397,7 +700,7 @@ class AtomicSpeciesElement(WithEqualityById,
 
         n = G.degree()
         S_gap = _SymmetricGroup(n).gap()
-        key = G_gap.Size().sage(), tuple([len(o) for o in orbits])
+        key = order, tuple([len(o) for o in orbits])
         if key in _dis_cache:
             lookup_dis = _dis_cache[key]
             for dis in lookup_dis:
@@ -447,6 +750,8 @@ class AtomicSpeciesElement(WithEqualityById,
         dompart = tuple([frozenset(b) for b in dompart])
         elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, dompart)
         lookup.append(elm)
+        if determined:
+            parent._conclusive[(order, data)] = elm
         return elm
 
     def __init__(self, parent, dis, domain_partition) -> None:
@@ -805,6 +1110,10 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         # list of atomic species - more than one beginning with 2
         # sorts and cardinality 8
         self._cache = dict()
+
+        # the elements of the keys that determine the conjugacy class,
+        # see AtomicSpeciesElement.__classcall__
+        self._conclusive = dict()
 
         # the degrees that have been renamed already
         self._renamed = set()
@@ -2569,7 +2878,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2^2      4*E_2^2
             Pb_4       4*Pb_4
             X*E_3      X*E_3 + X^2*E_2 + X*C_3
-            Eo_4       Eo_4 + Pb_4 + 2*X*C_3
+            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
             E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
             E_4        E_4 + E_2(E_2) + E_2^2 + X*C_3 + C_4
 
