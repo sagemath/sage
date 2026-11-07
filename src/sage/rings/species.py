@@ -120,6 +120,124 @@ def _SymmetricGroup(n):
     return _dis_cache[key][0]
 
 
+# The keys (order, orbit lengths) that determine the conjugacy class
+# of a subgroup of the symmetric group on sum(orbits) points without
+# fixed points, tabulated for all degrees up to ten; see
+# _conjugacy_class_determined for the exact statement and for a
+# verification of this table
+_DETERMINED_KEYS = {
+    # subgroups of the symmetric group on 2 points
+    (2, (2,)),
+    # subgroups of the symmetric group on 3 points
+    (3, (3,)), (6, (3,)),
+    # subgroups of the symmetric group on 4 points
+    (2, (2,2)), (4, (2,2)), (8, (4,)), (12, (4,)), (24, (4,)),
+    # subgroups of the symmetric group on 5 points
+    (5, (5,)), (10, (5,)), (12, (2,3)), (20, (5,)), (60, (5,)), (120, (5,)),
+    # subgroups of the symmetric group on 6 points
+    (2, (2,2,2)), (3, (3,3)), (6, (3,3)), (8, (2,2,2)), (9, (3,3)),
+    (16, (2,4)), (18, (6,)), (36, (3,3)), (48, (2,4)), (48, (6,)),
+    (60, (6,)), (72, (6,)), (120, (6,)), (360, (6,)), (720, (6,)),
+    # subgroups of the symmetric group on 7 points
+    (7, (7,)), (14, (7,)), (21, (7,)), (24, (2,2,3)), (36, (3,4)),
+    (40, (2,5)), (42, (7,)), (48, (3,4)), (144, (3,4)), (168, (7,)),
+    (240, (2,5)), (2520, (7,)), (5040, (7,)),
+    # subgroups of the symmetric group on 8 points
+    (2, (2,2,2,2)), (12, (2,3,3)), (12, (4,4)), (15, (3,5)),
+    (16, (2,2,2,2)), (18, (2,6)), (24, (4,4)), (32, (2,2,4)), (56, (8,)),
+    (64, (4,4)), (72, (2,3,3)), (96, (2,2,4)), (96, (2,6)), (120, (3,5)),
+    (128, (8,)), (144, (2,6)), (144, (4,4)), (180, (3,5)), (192, (4,4)),
+    (240, (2,6)), (288, (8,)), (336, (8,)), (384, (8,)), (576, (4,4)),
+    (720, (3,5)), (1152, (8,)), (1344, (8,)), (1440, (2,6)), (20160, (8,)),
+    (40320, (8,)),
+    # subgroups of the symmetric group on 9 points
+    (3, (3,3,3)), (6, (3,3,3)), (27, (3,3,3)), (28, (2,7)), (36, (3,3,3)),
+    (48, (2,2,2,3)), (48, (3,6)), (60, (4,5)), (80, (2,2,5)), (81, (9,)),
+    (84, (2,7)), (96, (2,3,4)), (108, (9,)), (144, (9,)), (160, (4,5)),
+    (180, (3,6)), (216, (3,3,3)), (216, (9,)), (288, (2,3,4)), (288, (3,6)),
+    (336, (2,7)), (432, (3,6)), (432, (9,)), (480, (2,2,5)), (504, (9,)),
+    (720, (3,6)), (720, (4,5)), (960, (4,5)), (1080, (3,6)), (1296, (9,)),
+    (1512, (9,)), (2880, (4,5)), (4320, (3,6)), (10080, (2,7)),
+    (181440, (9,)), (362880, (9,)),
+    # subgroups of the symmetric group on 10 points
+    (2, (2,2,2,2,2)), (5, (5,5)), (10, (5,5)), (18, (2,2,6)), (20, (5,5)),
+    (24, (2,2,3,3)), (25, (5,5)), (32, (2,2,2,2,2)), (40, (10,)),
+    (48, (3,3,4)), (50, (10,)), (60, (5,5)), (60, (10,)), (63, (3,7)),
+    (64, (2,2,2,4)), (80, (10,)), (84, (3,7)), (108, (3,3,4)), (112, (2,8)),
+    (120, (5,5)), (128, (2,4,4)), (144, (2,2,3,3)), (192, (2,2,2,4)),
+    (192, (2,2,6)), (240, (2,3,5)), (240, (10,)), (252, (3,7)),
+    (256, (2,8)), (288, (2,2,6)), (288, (2,8)), (288, (3,3,4)),
+    (300, (5,5)), (360, (10,)), (384, (2,4,4)), (384, (4,6)), (400, (5,5)),
+    (480, (2,2,6)), (504, (3,7)), (640, (10,)), (672, (2,8)), (720, (4,6)),
+    (768, (2,8)), (800, (10,)), (864, (3,3,4)), (960, (4,6)), (960, (10,)),
+    (1008, (3,7)), (1152, (2,4,4)), (1152, (4,6)), (1440, (2,3,5)),
+    (1440, (10,)), (1728, (4,6)), (2304, (2,8)), (2400, (5,5)),
+    (2688, (2,8)), (2880, (2,2,6)), (3600, (5,5)), (3840, (10,)),
+    (4320, (4,6)), (5760, (4,6)), (7200, (10,)), (7560, (3,7)),
+    (14400, (5,5)), (17280, (4,6)), (28800, (10,)), (30240, (3,7)),
+    (80640, (2,8)), (1814400, (10,)), (3628800, (10,)),
+}
+
+
+def _conjugacy_class_determined(order, orbits):
+    r"""
+    Return whether the order and the orbit lengths determine the
+    conjugacy class of a permutation group without fixed points whose
+    orbits have these lengths.
+
+    This is the case if and only if exactly one conjugacy class of
+    subgroups of the symmetric group on sum(orbits) points without
+    fixed points has this order and these orbit lengths.  All such
+    keys up to degree ten are tabulated in ``_DETERMINED_KEYS``.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _conjugacy_class_determined
+        sage: _conjugacy_class_determined(2, (2,))
+        True
+        sage: _conjugacy_class_determined(3, (3, 3))
+        True
+
+    The cyclic and the Klein four group are both transitive subgroups
+    of order four of the symmetric group on four points::
+
+        sage: _conjugacy_class_determined(4, (4,))
+        False
+
+    The symmetric group on six points has two conjugacy classes of
+    transitive subgroups of order twenty-four::
+
+        sage: _conjugacy_class_determined(24, (6,))
+        False
+
+    Keys of larger degree than the table are never determined::
+
+        sage: _conjugacy_class_determined(120, (12,))
+        False
+
+    TESTS:
+
+    The table agrees with a computation from GAP's table of marks
+    (without the package, the classes are computed from the subgroup
+    lattice)::
+
+        sage: from collections import Counter                                                    # optional - gap_package_tomlib
+        sage: from sage.rings.species import _DETERMINED_KEYS                                   # optional - gap_package_tomlib
+        sage: computed = set()                                                                   # optional - gap_package_tomlib
+        sage: for m in range(2, 11):                                                             # optional - gap_package_tomlib
+        ....:     counts = Counter()
+        ....:     for H in SymmetricGroup(m).conjugacy_classes_subgroups():
+        ....:         orbits = tuple(sorted(len(o) for o in H.orbits()))
+        ....:         if orbits[0] == 1:
+        ....:             continue
+        ....:         counts[(H.cardinality(), orbits)] += 1
+        ....:     computed |= {k for k, v in counts.items() if v == 1}
+        sage: computed == _DETERMINED_KEYS                                                       # optional - gap_package_tomlib
+        True
+    """
+    return (order, orbits) in _DETERMINED_KEYS
+
+
 def _label_sets(arity, labels):
     r"""
     Return labels as a list of tuples.
@@ -1195,9 +1313,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         IndexedFreeAbelianMonoid.__init__(self, indices, prefix='',
                                           bracket=False, category=category)
         self._arity = indices._arity
-        # caches for the construction from permutation groups
+        # caches for the construction from permutation groups: the
+        # terms of singletons; buckets of triples (gap group, action on
+        # its moved points, term), keyed by (number of points, order,
+        # orbit lengths); and the terms of the keys that determine the
+        # conjugacy class, see ``_element_from_group_single_sort``
         self._singleton_terms = {}
         self._group_cache = {}
+        self._group_conclusive = {}
 
     def _repr_(self):
         r"""
@@ -1459,21 +1582,30 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         the same molecular species if and only if they are conjugate
         subgroups of the symmetric group.  Therefore we cache the
         molecular species of each conjugacy class, keyed by the number
-        of points, the order of the group and the lengths of its
-        orbits, and verify cache hits by an explicit conjugacy test.
+        of points, the order of the group and the lengths of its orbits
+        on the moved points, and verify cache hits by an explicit
+        conjugacy test.
+
+        A key determines the conjugacy class, and thus the molecular
+        species, if exactly one conjugacy class of subgroups of the
+        symmetric group on the moved points has this order and these
+        orbit lengths (:func:`_conjugacy_class_determined`).  The
+        molecular species of such a key is cached and returned without
+        a conjugacy test.
 
         The trivial subgroup and the full symmetric group are the
         unique subgroups of the symmetric group on their domain of
-        their respective order.  For such groups the key is conclusive:
-        a cache hit is returned without a conjugacy test.
+        their respective order.  For such groups the key is determined
+        for every number of points, without consulting the table.
 
-        Since the key contains the orbit lengths, all groups in a
-        bucket have the same number of fixed points.  Two permutation
-        groups with the same number of fixed points are conjugate if
-        and only if their restrictions to their moved points are
-        conjugate.  Therefore the conjugacy test is carried out on
-        the restrictions to the moved points, where the groups act on
-        fewer points.
+        Otherwise, since the key contains the number of points and
+        the lengths of the orbits on the moved points, all groups
+        with the same key have the same number of fixed points.  Two
+        permutation groups with the same number of fixed points are
+        conjugate if and only if their restrictions to their moved
+        points are conjugate.  Therefore the conjugacy test is carried
+        out on the restrictions to the moved points, where the groups
+        act on fewer points.
 
         EXAMPLES:
 
@@ -1513,50 +1645,68 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: H = PermutationGroup([[(2,3),(4,5)]], domain=[1,2,3,4,5,6])
             sage: M(G) is M(H)
             True
+
+        For many further groups the order and the orbit lengths
+        determine the conjugacy class::
+
+            sage: M(PermutationGroup([[(1,2,3),(4,5,6)]])) is M(PermutationGroup([[(1,3,2),(4,6,5)]]))
+            True
         """
         n = len(G.domain())
         order = G.cardinality()
-        # the trivial subgroup and the full symmetric group are the
-        # unique subgroups of the symmetric group on their domain of
-        # their respective order, so for these groups the key is
-        # conclusive
-        conclusive = order == 1 or order == factorial(n)
-        if conclusive:
-            key = (n, order)
+        if order == 1 or order == factorial(n):
+            # the trivial subgroup and the full symmetric group are
+            # the unique subgroups of the symmetric group on their
+            # domain of their respective order, so their key
+            # determines the conjugacy class; their orbits on the
+            # moved points are stated without consulting GAP
             G_gap = None
+            orbits = (n,) if order > 1 else ()
+            determined = True
         else:
             G_gap = G.gap()
-            key = (n, order,
-                   tuple(sorted(len(o) for o in G_gap.Orbits().sage())))
+            # the orbits on the moved points
+            orbits = tuple(sorted(len(o) for o in G_gap.Orbits().sage()))
+            determined = _conjugacy_class_determined(order, orbits)
+        key = (n, order, orbits)
+
+        term = self._group_conclusive.get(key)
+        if term is not None:
+            # the key has been found to determine the conjugacy class
+            return term
+
+        if determined:
+            # the order and the orbit lengths determine the conjugacy
+            # class, so all groups with this key have the same
+            # molecular species; the factors of the direct product
+            # decomposition are directly indecomposable, so no check
+            # is needed
+            term = self._element_from_group_components(G, {0: G.domain()}, False)
+            self._group_conclusive[key] = term
+            return term
 
         bucket = self._group_cache.get(key)
         if bucket is None:
             bucket = self._group_cache[key] = []
-        elif conclusive:
-            # all groups with this key are conjugate, so the bucket
-            # contains a single entry
-            return bucket[0][1]
         else:
-            # all groups in the bucket have the same number of fixed
-            # points, since the key contains the orbit lengths, and two
-            # permutation groups with the same number of fixed points
-            # are conjugate if and only if their restrictions to their
-            # moved points are
+            for stored_gap, stored_action, term in bucket:
+                if stored_gap is G_gap:
+                    # the same group has already been converted
+                    return term
+            # all groups with this key have the same number of fixed
+            # points, so it suffices to test conjugacy of the
+            # restrictions to the moved points
             moved = G_gap.MovedPoints()
             action = libgap.Action(G_gap, moved)
             S_m = _symmetric_group_gap(len(moved))
-            for rep_action, term in bucket:
-                if libgap.RepresentativeAction(S_m, action, rep_action) != GAP_FAIL:
+            for stored_gap, stored_action, term in bucket:
+                if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
                     return term
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
         term = self._element_from_group_components(G, {0: G.domain()}, False)
-        if conclusive:
-            bucket.append((None, term))
-        else:
-            moved = G_gap.MovedPoints()
-            bucket.append((libgap.Action(G_gap, moved), term))
+        bucket.append((G_gap, libgap.Action(G_gap, G_gap.MovedPoints()), term))
         return term
 
     def grading_set(self):
