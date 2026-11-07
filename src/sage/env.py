@@ -185,11 +185,10 @@ SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 # should not be used directly; instead use sage_data_paths
 SAGE_DATA_PATH = var("SAGE_DATA_PATH")
 
-# database directories, the default is to search in SAGE_DATA_PATH
+# Optional database directories; standard datasets are Python package resources.
+# The default is to search in SAGE_DATA_PATH.
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
-CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR")
-ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR")
-GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR")
+# Only used by the optional four-dimensional polytope database.
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
 
 # installation directories for various packages

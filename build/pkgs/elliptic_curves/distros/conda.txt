@@ -1,1 +1,0 @@
-sagemath-db-elliptic-curves
