@@ -711,7 +711,8 @@ def turyn_type_sequences_smallcases(n, existence=False):
     r"""
     Construction of Turyn type sequences for small values of `n`.
 
-    The data is taken from [KTR2005]_ for `n= 36`, and from [BDKR2013]_ for `n\le 32`.
+    The data is taken from [KTR2005]_ for `n=36`, from [BDKR2013]_ for
+    `n\le 32`, and from Appendix A of [LK2025]_ for `n=40,42,44`.
 
     INPUT:
 
@@ -741,6 +742,19 @@ def turyn_type_sequences_smallcases(n, existence=False):
         ValueError: Turyn type sequences of length 17 are not implemented yet.
         sage: turyn_type_sequences_smallcases(17, existence=True)
         False
+
+    The new sequences from [LK2025]_ give base sequences and T-sequences::
+
+        sage: from sage.combinat.t_sequences import (base_sequences_construction,
+        ....:     T_sequences_smallcases, is_T_sequences_set)
+        sage: for n in (40, 42, 44):
+        ....:     seqs = turyn_type_sequences_smallcases(n)
+        ....:     assert list(map(len, seqs)) == [n, n, n, n-1]
+        ....:     assert turyn_type_sequences_smallcases(n, existence=True)
+        ....:     base = base_sequences_construction(seqs)
+        ....:     assert list(map(len, base)) == [2*n-1, 2*n-1, n, n]
+        ....:     assert T_sequences_smallcases(3*n-1, existence=True)
+        ....:     assert is_T_sequences_set(T_sequences_smallcases(3*n-1))
 
     ALGORITHM:
 
@@ -789,6 +803,9 @@ def turyn_type_sequences_smallcases(n, existence=False):
         30: '000000f70b106f9d427a25e9a96951',
         32: '00000138f64f1c1e77844f26d95a5961',
         36: '060989975b685d8fc80750b21c0212eceb26',
+        40: '0603e974475d3a384c3ac8b309c44c2cdce9a726',
+        42: '0080bc3834184327fd11be854738b30b392a9d4e56',
+        44: '00f32efbcab9d5c5c0f1f90698982729cd07c8aa4966',
     }
 
     if existence:

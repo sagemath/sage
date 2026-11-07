@@ -438,6 +438,13 @@
 .. [Ava2017] \R. Avanzi,
              *The QARMA block cipher family*; in ToSC, (2017.1), pp. 4-44.
 
+.. [AVR2026] Levent Alpöge, Philippe Voinov and Saul Reynolds-Haertle,
+             *Public Hadamard matrix data for twelve orders below 2000*
+             (announcement, 2026-08-12).
+             Sign payload: https://x.com/__alpoge__/status/2087504785952182273
+             Decoder: https://x.com/__alpoge__/status/2087504788938510427
+             Attribution: https://x.com/__alpoge__/status/2087504790435840207
+
 .. [AW2006] Adams, M.D. and Wise, D.S.,
             *Fast additions on masked integers*,
             ACM SIGPLAN Notices, 2006,
@@ -5217,6 +5224,10 @@
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LK2025] \S. London and I. Kotsireas,
+            *New Turyn-type sequences*.
+            Cryptography and Communications **17** (2025), 1601--1610.
+            :doi:`10.1007/s12095-025-00829-z`
 .. [LJCR] La Jolla Covering Repository,
    https://dmgordon.org/cover
 
@@ -6651,6 +6662,14 @@
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
 
+.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
+              (2026). Records the four length-166 sequences extracted from
+              Levent Alpöge's public payload and their bordered-array construction.
+              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
+              Seed data:
+              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
+              Original payload: https://x.com/__alpoge__/status/2087504785952182273
+              Decoder: https://x.com/__alpoge__/status/2087504788938510427
 .. [Rees00] Rolf S. Rees,
    Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.

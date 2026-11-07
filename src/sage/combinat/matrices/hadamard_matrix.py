@@ -30,19 +30,20 @@ The Hadamard conjecture (possibly due to Paley) states that a Hadamard
 matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
-The module below implements constructions of Hadamard and skew Hadamard matrices
-for all known orders `\le 1200`, plus some more greater than `1200`. It also
-allows you to pull a Hadamard matrix from the database at [SloaHada]_.
+The module below constructs Hadamard matrices for all orders divisible by four
+up to `1200`, plus many larger orders, including the twelve public records of
+[AVR2026]_. It also implements many skew Hadamard constructions and allows you
+to pull a matrix from the database at [SloaHada]_.
 
-The following code will test that a construction for all known orders `\le 4k`
-is implemented. The assertion above can be verified by setting ``k=300``
-(note that it will take a long time to run)::
+The following code tests the ordinary and skew constructions up to order `4k`.
+The list of unavailable skew orders below covers ``k=300``
+(note that this will take a long time to run)::
 
     sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [668, 716, 892, 1132]
+    sage: unknown_hadamard = []
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
     ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
@@ -1037,6 +1038,8 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
     The supplementary difference sets are taken from
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
+    For orders 892, 1132, 1244, 1948 and 1964, the four circulant seeds
+    are taken directly from the public data of [AVR2026]_.
 
     INPUT:
 
@@ -1084,19 +1087,24 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         ValueError: n must be a positive multiple of four
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_GOETHALS_SEIDEL_DATA
 
     if n <= 0 or n % 4 != 0:
         raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
-        return supplementary_difference_set_hadamard(t, existence=True)
+        return n in ALPOGE_GOETHALS_SEIDEL_DATA or supplementary_difference_set_hadamard(t, existence=True)
 
-    _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
-    a = [-1 if i in S1 else 1 for i in range(t)]
-    b = [-1 if i in S2 else 1 for i in range(t)]
-    c = [-1 if i in S3 else 1 for i in range(t)]
-    d = [-1 if i in S4 else 1 for i in range(t)]
+    if n in ALPOGE_GOETHALS_SEIDEL_DATA:
+        a, b, c, d = [[1 if sign == '+' else -1 for sign in row]
+                      for row in ALPOGE_GOETHALS_SEIDEL_DATA[n]]
+    else:
+        _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
+        a = [-1 if i in S1 else 1 for i in range(t)]
+        b = [-1 if i in S2 else 1 for i in range(t)]
+        c = [-1 if i in S3 else 1 for i in range(t)]
+        d = [-1 if i in S4 else 1 for i in range(t)]
 
     if n == 956:
         a, b, c, d = [-el for el in d], a, b, c
@@ -1532,6 +1540,12 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
     desired matrix.
 
+    For orders 668, 716, 1676 and 1772, the four sequences are taken from
+    the public payload of [AVR2026]_; see also [Reff2026]_ for order 668.
+    Their row sums are `2,0,0,0`, and their periodic autocorrelations sum to
+    `-4` at every nonzero shift. These identities suffice for the bordered
+    array below; no relative-difference-set origin is assumed for these seeds.
+
     INPUT:
 
     - ``n`` -- integer; the order of the matrix to be constructed
@@ -1556,6 +1570,8 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
         sage: hadamard_matrix_spence_construction(52, existence=True)
         True
+        sage: hadamard_matrix_spence_construction(668, existence=True)
+        True
 
     TESTS::
 
@@ -1578,24 +1594,33 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         AssertionError
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_SPENCE_DATA
 
     assert n % 4 == 0 and n > 0
 
     q = n//4
 
+    available = n in ALPOGE_SPENCE_DATA or supplementary_difference_set_from_rel_diff_set(q, existence=True)
     if existence:
-        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
+        return available
 
-    if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
+    if not available:
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
+    if n in ALPOGE_SPENCE_DATA:
+        rows = ALPOGE_SPENCE_DATA[n]
+        # This array's border requires row sums (0, 0, 0, 2).
+        # Move the first public sequence to A4.
+        A4, A1, A2, A3 = [matrix.circulant([1 if c == '+' else -1 for c in row])
+                          for row in rows]
+    else:
+        G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
-    Glist = list(G)
-    A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
-    A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
-    A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
-    A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
+        Glist = list(G)
+        A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
+        A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
+        A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
+        A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
 
     P = matrix(ZZ, [[1 if (i + j) % (q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
 
@@ -1613,6 +1638,124 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     if check:
         assert is_hadamard_matrix(H, verbose=True)
 
+    return H
+
+
+def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
+    r"""
+    Construct a Hadamard matrix from the larger-border records of [AVR2026]_.
+
+    The available orders are 1388, 1436 and 1916, with borders of size
+    20, 28 and 12, respectively. Their four core matrices are developed over
+    the abelian groups `C_2 \times C_3 \times C_{57}`,
+    `C_2 \times C_2 \times C_8 \times C_{11}` and
+    `C_2 \times C_2 \times C_{119}`. Here `C_k` denotes the cyclic group
+    of order `k`.
+
+    For a sequence `a` indexed by the development group, set
+    `A_{x,y}=a_{y-x}`, and let `R` act by inversion in that group. The core is
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & BR & CR & DR \\
+        -BR & A & D^\top R & -C^\top R \\
+        -CR & -D^\top R & A & B^\top R \\
+        -DR & C^\top R & -B^\top R & A
+        \end{pmatrix}.
+
+    The top and left borders are expanded from the published sign records.
+    This reproduces the public decoder's matrices without executing that
+    decoder or assuming how its seeds were discovered.
+
+    INPUT:
+
+    - ``n`` -- integer; order of the desired matrix
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); check the resulting matrix
+
+    OUTPUT:
+
+    A matrix over the integers, or a boolean if ``existence=True``. If no
+    record is available and ``existence=False``, raise :exc:`ValueError`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_bordered_goethals_seidel
+        sage: [hadamard_matrix_bordered_goethals_seidel(n, existence=True)
+        ....:  for n in (1388, 1436, 1916)]
+        [True, True, True]
+        sage: matrix.hadamard(1388, existence=True, construction_name=True)
+        'bordered Goethals-Seidel 1388'
+        sage: hadamard_matrix_bordered_goethals_seidel(1388).dimensions()  # long time
+        (1388, 1388)
+
+    TESTS::
+
+        sage: hadamard_matrix_bordered_goethals_seidel(668, existence=True)
+        False
+        sage: hadamard_matrix_bordered_goethals_seidel(668)
+        Traceback (most recent call last):
+        ...
+        ValueError: No larger-border Goethals-Seidel data for order 668
+    """
+    from itertools import product
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_BORDERED_DATA
+
+    if existence:
+        return n in ALPOGE_BORDERED_DATA
+    if n not in ALPOGE_BORDERED_DATA:
+        raise ValueError(f'No larger-border Goethals-Seidel data for order {n}')
+
+    factors, border, top_pair_repetitions, data = ALPOGE_BORDERED_DATA[n]
+    size = len(data[0]) // 4
+    coordinates = list(product(*(range(f) for f in factors)))
+    strides = []
+    stride = 1
+    for factor in reversed(factors):
+        strides.insert(0, stride)
+        stride *= factor
+
+    # Row-major mixed-radix indices of y-x and -x in the development group.
+    differences = [[sum(((y-x) % f) * s
+                        for x, y, f, s in zip(row, col, factors, strides))
+                    for col in coordinates] for row in coordinates]
+    inverse = [sum((-x % f) * s for x, f, s in zip(row, factors, strides))
+               for row in coordinates]
+    seeds = [[1 if c == '+' else -1 for c in data[0][i*size:(i+1)*size]]
+             for i in range(4)]
+    A, B, C, D = [matrix(ZZ, [[seed[k] for k in row] for row in differences])
+                  for seed in seeds]
+
+    def reverse_columns(M):
+        return M.matrix_from_columns(inverse)
+
+    BR, CR, DR = map(reverse_columns, (B, C, D))
+    BTR, CTR, DTR = map(reverse_columns, (B.T, C.T, D.T))
+    core = block_matrix([[A, BR, CR, DR],
+                         [-BR, A, DTR, -CTR],
+                         [-CR, -DTR, A, BTR],
+                         [-DR, CTR, -BTR, A]])
+
+    # Each core orbit has length equal to the last cyclic factor.
+    orbit = factors[-1]
+    width = len(data[1]) // border
+    top_rows = []
+    for i in range(border):
+        row = data[1][i*width:(i+1)*width]
+        signs = row[border:]
+        signs = ''.join(signs[j:j+2] * top_pair_repetitions
+                        for j in range(0, len(signs), 2))
+        expanded = row[:border] + ''.join(c * orbit for c in signs)
+        top_rows.append([1 if c == '+' else -1 for c in expanded])
+    top = matrix(ZZ, top_rows)
+    left = matrix(ZZ, [[1 if c == '+' else -1 for c in part[i:i+border]]
+                       for part in data[2:]
+                       for i in range(0, len(part), border)
+                       for _ in range(orbit)])
+    H = top.stack(left.augment(core))
+    if check:
+        assert is_hadamard_matrix(H)
     return H
 
 
@@ -1764,8 +1907,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
     Try to construct a Hadamard matrix using the available methods.
 
-    Currently all orders `\le 1200` for which a construction is
-    known are implemented. For `n > 1200`, only some orders are available.
+    All orders divisible by four up to 1200 are implemented. For `n > 1200`,
+    only some orders are available, including all twelve records of [AVR2026]_.
 
     INPUT:
 
@@ -1843,7 +1986,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(12,existence=True)
         True
         sage: matrix.hadamard(668,existence=True)
-        Unknown
+        True
+        sage: matrix.hadamard(668, existence=True, construction_name=True)
+        'spence 668'
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
         ...
@@ -1859,6 +2004,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(2060, existence=True, construction_name=True)
         'cooper-wallis small cases: 2060'
     """
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_HADAMARD_ORDERS
+
     name = str(n)
     if construction_name:
         def report_name(nam):
@@ -1934,6 +2081,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = hadamard_matrix_spence_construction(n, check=False)
+    elif hadamard_matrix_bordered_goethals_seidel(n, existence=True):
+        name = "bordered Goethals-Seidel " + name
+        if existence:
+            return report_name(name)
+        M = hadamard_matrix_bordered_goethals_seidel(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
         name = "skew " + name
         if existence:
@@ -1954,6 +2106,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
             return Unknown
         raise ValueError("The Hadamard matrix of order %s is not yet implemented." % n)
 
+    if n in ALPOGE_HADAMARD_ORDERS:
+        # Match this entry point's normalization convention while preserving
+        # the published border conventions in the specialized constructors.
+        M = normalise_hadamard(M)
     if check:
         assert is_hadamard_matrix(M)
 
