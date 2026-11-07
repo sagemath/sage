@@ -1530,3 +1530,217 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
         assert equivalent_trees(MD[0], MD[1])
         if verbose:
             print("Passes!")
+
+
+# ============================================================================
+# Method for building the quotient graph
+# ============================================================================
+
+def graph_from_quotient(Q, immutable=None):
+    r"""
+    Return the source graph of the quotient graph ``Q``.
+
+    This method is mostly for testing method :meth:`quotient_graph`. It works
+    only when the vertices are labeled with graphs, each representing the
+    subgraph of the original graph induced by a module of the decomposition. The
+    returned graph is isomorphic to the original graph.
+
+    INPUT:
+
+    - ``Q`` -- a Sage graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its quotient will behave the same way.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import graph_from_quotient
+        sage: G = graphs.RandomChordalGraph(20)
+        sage: Q = quotient_graph(G, style='graph')
+        sage: H = graph_from_quotient(Q)
+        sage: H.is_isomorphic(G)
+        True
+
+    TESTS::
+
+        sage: graph_from_quotient(quotient_graph(Graph(2), style='integer'))
+        Traceback (most recent call last):
+        ...
+        ValueError: the vertices must be labeled with graphs
+        sage: graph_from_quotient(quotient_graph(Graph(2), style='tuple'))
+        Traceback (most recent call last):
+        ...
+        ValueError: the vertices must be labeled with graphs
+    """
+    from sage.graphs.graph import Graph
+
+    if immutable is None:
+        immutable = Q.is_immutable()
+
+    if not Q:
+        return Graph(immutable=immutable)
+
+    u = next(Q.vertex_iterator())
+    if not isinstance(u, Graph):
+        raise ValueError("the vertices must be labeled with graphs")
+
+    # Each vertex of the quotient graph corresponds to a module and its label
+    # contains the edges of the subgraph induced by the module. Each edge of
+    # the quotient graph corresponds to a complete bipartite graph between the
+    # vertices of the corresponding modules.
+    vertices = (u for g in Q for u in g)
+    E1 = (e for g in Q for e in g.edge_iterator(labels=False))
+    E2 = ((u, v) for A, B in Q.edges(labels=False) for u in A for v in B)
+
+    from itertools import chain
+    return Graph([vertices, chain(E1, E2)], format='vertices_and_edges',
+                 immutable=immutable)
+
+
+def quotient_graph(G, style='integer', immutable=None):
+    r"""
+    Return the quotient graph from the modular decomposition of ``G``.
+
+    The quotient graph `Q` of a graph `G` is defined with respect to a partition
+    of the vertices of `G` into blocks. The quotient graph has one vertex per
+    block of the partition and there is an edge `(u, v)` in `Q` if some vertex
+    of the block corresponding to `u` is adjacent in `G` to some vertex in the
+    block corresponding to `v`.  See :wikipedia:`Quotient_graph` for more
+    details.
+
+    Here, the partition of the vertices of `G` is given by the modules of its
+    modular decomposition.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``style`` -- string (default: ``'integer'``); one of
+
+      - ``'integer'`` -- the vertices of the quotient graph are labeled as
+        integers in `0 \ldots |V(Q)| - 1`, where `V(Q)` is the vertex set of the
+        quotient graph `Q`.
+
+      - ``'tuple'`` -- the label of each vertex is a tuple of the vertices in
+        the module it represents
+
+      - ``'graph'`` -- the label of each vertex is the subgraph of `G` induced
+        by the vertices in the module it represents
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its quotient will behave the same way.
+
+    EXAMPLES:
+
+    The quotient graph of a star has a single edge::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
+        sage: [quotient_graph(graphs.StarGraph(n)).size() for n in range(2, 8)]
+        [1, 1, 1, 1, 1, 1]
+
+    When the style of the vertices of the quotient graph is
+    ``'graph'``, it is possible to reconstruct the original graph from
+    the quotient graph::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import graph_from_quotient
+        sage: G = graphs.RandomChordalGraph(20)
+        sage: Q = quotient_graph(G, style='graph')
+        sage: H = graph_from_quotient(Q)
+        sage: H.is_isomorphic(G)
+        True
+
+    TESTS:
+
+    Small cases::
+
+        sage: for style in ('integer', 'tuple', 'graph'):
+        ....:     for n in range(3):
+        ....:         print(quotient_graph(Graph(n), style=style).vertices())
+        []
+        [0]
+        [0, 1]
+        []
+        [(0,)]
+        [(0,), (1,)]
+        []
+        [Subgraph of (): Graph on 1 vertex]
+        [Subgraph of (): Graph on 1 vertex, Subgraph of (): Graph on 1 vertex]
+        sage: quotient_graph(Graph(), style='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter style must be 'integer', 'tuple' or 'graph'
+
+    Check the behavior of parameter immutable::
+
+        sage: mu = [Graph(n) for n in range(4)]
+        sage: any(quotient_graph(g).is_immutable() for g in mu)
+        False
+        sage: all(quotient_graph(g, immutable=True).is_immutable() for g in mu)
+        True
+        sage: im = [Graph(n, immutable=True) for n in range(4)]
+        sage: all(quotient_graph(g).is_immutable() for g in im)
+        True
+        sage: any(quotient_graph(g, immutable=False).is_immutable() for g in mu)
+        False
+    """
+    if G.is_directed():
+        raise ValueError("this method is for undirected graphs only")
+    if style not in ('integer', 'tuple', 'graph'):
+        raise ValueError("parameter style must be 'integer', 'tuple' or 'graph'")
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    from sage.graphs.graph import Graph
+    from itertools import combinations
+
+    if G.order() < 2:
+        if style == 'integer':
+            return Graph(G.order(), immutable=immutable)
+        vertices = [(u,) for u in G]
+        if style == 'graph':
+            vertices = [G.subgraph(v, immutable=True) for v in vertices]
+        return Graph([vertices, []], format='vertices_and_edges',
+                     immutable=immutable)
+
+    # Get the modular decomposition of G
+    D = modular_decomposition(G)
+    # Each child of the root is a module to which we associate a vertex of the
+    # quotient graph. For each module, we extract the corresponding list of
+    # vertices from G.
+    vertices = [tuple(get_vertices(y)) for y in D.children]
+    n = len(vertices)
+
+    # We now get the edges of the quotient graph according the type of the root.
+    # Recall that there is no edge between modules if PARALLEL
+    edges = []
+    node_type = D.node_type
+    if node_type == NodeType.SERIES:
+        # The modules form a clique
+        edges = combinations(range(n), 2)
+
+    elif node_type == NodeType.PRIME:
+        # Modules A and B are connected if there is a join (complete bipartite)
+        # in G between the vertices in A and the vertices in B. It suffices to
+        # check a single pair
+        if G.size() > n**2:
+            edges = ((u, v) for u, v in combinations(range(n), 2)
+                        if G.has_edge(vertices[u][0], vertices[v][0]))
+        else:
+            v_to_e = {u: i for i, vv in enumerate(vertices) for u in vv}
+            edges = ((v_to_e[u], v_to_e[v])
+                         for u, v in G.edge_iterator(labels=False)
+                         if v_to_e[u] != v_to_e[v])
+
+    elif node_type != NodeType.PARALLEL:
+        raise ValueError(f"unrecognized node type from the modular decomposition: {node_type}")
+
+    Q = Graph([range(n), edges], format='vertices_and_edges')
+
+    if style == 'tuple':
+        Q.relabel(vertices)
+    elif style == 'graph':
+        Q.relabel([G.subgraph(v, immutable=True) for v in vertices])
+    return Q.copy(immutable=True) if immutable else Q
