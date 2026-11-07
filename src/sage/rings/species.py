@@ -1413,8 +1413,10 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         # sorts and cardinality 8
         self._cache = dict()
 
-        # the elements of the keys that determine the conjugacy class,
-        # see AtomicSpeciesElement.__classcall__
+        # the elements of conclusive keys, whose data -- the order
+        # together with the length and the sort of each orbit --
+        # determines the atomic species, see
+        # AtomicSpeciesElement.__classcall__
         self._conclusive = dict()
 
         # the degrees that have been renamed already
