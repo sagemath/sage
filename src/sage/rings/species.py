@@ -239,12 +239,13 @@ def _conjugacy_class_determined(order, orbits):
     return (order, orbits) in _MOLECULAR_DETERMINED_KEYS
 
 
-# The keys (order, pattern) that determine the atomic species of a
-# directly indecomposable permutation group together with an assignment
-# of its orbits to sorts, where the pattern records which orbits share a
-# sort and the lengths of the orbits in each sort; tabulated for all
-# degrees up to ten, see _atomic_species_determined for the exact
-# statement and for a verification of this table
+# The keys (order, pattern) such that the data of any assignment of
+# the orbits to sorts with this pattern -- the multiset of the lengths
+# and sorts of the orbits -- determines the atomic species of a
+# directly indecomposable permutation group, where the pattern records
+# the lengths of the orbits in each sort; tabulated for all degrees up
+# to ten, see _atomic_species_determined for the exact statement and
+# for a verification of this table
 _ATOMIC_DETERMINED_KEYS = {
     # directly indecomposable subgroups of the symmetric group on 2 points
     (2, ((2,),)),
@@ -633,22 +634,40 @@ _ATOMIC_DETERMINED_KEYS = {
 
 def _atomic_species_determined(order, orbits, orbit_sorts):
     r"""
-    Return whether the order and the assignment of the orbits to sorts
-    determine the atomic species of a directly indecomposable
+    Return whether the order together with the length and the sort of
+    each orbit determine the atomic species of a directly indecomposable
     permutation group without fixed points.
 
-    Two such groups with their sort assignments are conjugate if and
-    only if some element of the symmetric group conjugates the group and
-    carries each sort block onto the corresponding sort block, which is
-    possible only if the orbits have the same lengths and the same
-    sorts.  For a conjugacy class of subgroups, the classes of pairs
-    (group, sort assignment) are the orbits of the normalizer on the
-    assignments of the orbits to sorts.  The assignment is therefore
-    determined by the order and the lengths of the orbits together with
-    the coincidence pattern of the sorts, which orbits share a sort, if
-    exactly one conjugacy class of directly indecomposable subgroups
-    with this order and these orbit lengths realizes it.  All such keys
-    up to degree ten are tabulated in ``_ATOMIC_DETERMINED_KEYS``.
+    A directly indecomposable permutation group together with an
+    assignment of its orbits to sorts gives an atomic species, and two
+    such pairs give the same atomic species if and only if some element
+    of the symmetric group conjugates the group and carries each sort
+    block onto the corresponding sort block.  In particular, the
+    multiset of the lengths and sorts of the orbits, the *data* of the
+    pair, is a conjugacy invariant, and the data determines the atomic
+    species if exactly one class of pairs has this data.
+
+    For a conjugacy class of subgroups, the classes of pairs are the
+    orbits of the normalizer on the assignments of the orbits to sorts,
+    so the data of an assignment determines the atomic species if no
+    other orbit of the normalizer has this data.  Since a relabelling
+    of the sorts commutes with the action of the normalizer, the number
+    of classes of pairs is the same for all data sharing the *pattern*,
+    which records the lengths of the orbits in each sort, but not the
+    sort of a given length: an orbit of length two and an orbit of
+    length three may go to the two sorts in either way, with the same
+    pattern but different data, and non-conjugate pairs.  It therefore
+    suffices to tabulate the conclusive patterns: the data of any
+    assignment whose (order, pattern) is tabulated determines the
+    atomic species.
+
+    The order and the orbit lengths do not characterize the conjugacy
+    class of the group in general -- the cyclic and the Klein four
+    group are both directly indecomposable transitive subgroups of
+    order four -- so the table is a finite classification, through
+    degree ten.  It comprises, for example, all patterns of groups of
+    prime order: such a group is a product of disjoint cycles of prime
+    length, and its normalizer permutes the orbits arbitrarily.
 
     INPUT:
 
@@ -667,6 +686,21 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
 
         sage: _atomic_species_determined(4, [(1, 2, 3, 4)], [0])
         False
+
+    The pattern does not determine the atomic species, the data does:
+    the symmetric group on three points acting on an additional pair
+    of points is, with either assignment of its two orbits to the
+    two sorts, the only directly indecomposable subgroup of its order
+    with these orbit lengths up to conjugacy, but the two assignments
+    are not conjugate::
+
+        sage: from sage.rings.species import AtomicSpecies
+        sage: A = AtomicSpecies("X, Y")
+        sage: G = PermutationGroup([[(1,2,3)], [(1,2),(4,5)]])
+        sage: A(G, {0: [4,5], 1: [1,2,3]}) == A(G, {0: [1,2,3], 1: [4,5]})
+        False
+        sage: _atomic_species_determined(6, [(4, 5), (1, 2, 3)], [0, 1])
+        True
 
     The Klein four group acting diagonally on three pairs of
     points is the only directly indecomposable subgroup of its order
@@ -825,8 +859,9 @@ class AtomicSpeciesElement(WithEqualityById,
         each sort block onto the corresponding sort block.  The
         elements are cached by the order and the canonical
         representative of the group, and verified by conjugacy tests.
-        Keys that determine the conjugacy class
-        (:func:`_atomic_species_determined`) are cached directly,
+        Keys that determine the atomic species -- the order together
+        with the length and the sort of each orbit, see
+        :func:`_atomic_species_determined` -- are cached directly,
         without conjugacy tests.
 
         .. WARNING::
