@@ -220,8 +220,7 @@ def std(v, bias=False):
 
         sage: # needs numpy
         sage: import numpy
-        sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     _ = numpy.set_printoptions(legacy="1.25")
+        sage: _ = numpy.set_printoptions(legacy="1.25")
         sage: x = numpy.array([1,2,3,4,5])
         sage: std(x, bias=False)
         1.5811388300841898
@@ -296,8 +295,7 @@ def variance(v, bias=False):
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
         sage: import numpy                                                              # needs numpy
-        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        sage: _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: x = numpy.array([1,2,3,4,5])                                              # needs numpy
         sage: variance(x, bias=False)                                                   # needs numpy
         2.5

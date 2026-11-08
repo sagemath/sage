@@ -153,8 +153,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
 
     import scipy.optimize
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
@@ -289,8 +288,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     b = float(b)
     import scipy.optimize
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     xmin, fval, iter, funcalls = scipy.optimize.fminbound(f, a, b, full_output=1, xtol=tol, maxfun=maxfun)
     return fval, xmin
@@ -380,8 +378,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         sage: def rosen(x):  # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
-        sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     _ = numpy.set_printoptions(legacy="1.25")
+        sage: _ = numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -399,8 +396,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     from scipy import optimize
     if isinstance(func, Expression):
@@ -542,8 +538,7 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
     from scipy import optimize
     function_type = type(lambda x, y: x+y)
 
@@ -666,8 +661,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
     ``lmdif`` and ``lmder`` algorithms.
     """
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     if not isinstance(data, numpy.ndarray):
         try:
