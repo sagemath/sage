@@ -77,8 +77,7 @@ cdef class PeriodicRegion:
         EXAMPLES::
 
             sage: import numpy as np
-            sage: if int(np.version.short_version[0]) > 1:
-            ....:     _ = np.set_printoptions(legacy="1.25")
+            sage: _ = np.set_printoptions(legacy="1.25")
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
             sage: data = np.zeros((4, 4))
             sage: PeriodicRegion(CDF(2), CDF(2*I), data).is_empty()
@@ -295,8 +294,7 @@ cdef class PeriodicRegion:
         EXAMPLES::
 
             sage: import numpy as np
-            sage: if int(np.version.short_version[0]) > 1:
-            ....:     _ = np.set_printoptions(legacy="1.25")
+            sage: _ = np.set_printoptions(legacy="1.25")
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
             sage: data = np.zeros((10, 10))
             sage: data[1:4,1:4] = True
@@ -319,8 +317,7 @@ cdef class PeriodicRegion:
         EXAMPLES::
 
             sage: import numpy as np
-            sage: if int(np.version.short_version[0]) > 1:
-            ....:     _ = np.set_printoptions(legacy="1.25")
+            sage: _ = np.set_printoptions(legacy="1.25")
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
             sage: data = np.zeros((4, 4))
             sage: data[1,1] = True
@@ -374,8 +371,7 @@ cdef class PeriodicRegion:
         EXAMPLES::
 
             sage: import numpy as np
-            sage: if int(np.version.short_version[0]) > 1:
-            ....:     _ = np.set_printoptions(legacy="1.25")
+            sage: _ = np.set_printoptions(legacy="1.25")
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
 
             sage: data = np.zeros((20, 20))
@@ -528,8 +524,7 @@ cdef class PeriodicRegion:
         TESTS::
 
             sage: import numpy as np
-            sage: if int(np.version.short_version[0]) > 1:
-            ....:     _ = np.set_printoptions(legacy="1.25")
+            sage: _ = np.set_printoptions(legacy="1.25")
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
             sage: data = np.zeros((4, 4))
             sage: data[1, 1] = True

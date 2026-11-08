@@ -552,8 +552,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     try:
         import numpy
         from numpy import ndarray
-        if int(numpy.version.short_version[0]) > 1:
-            numpy.set_printoptions(legacy="1.25")
+        numpy.set_printoptions(legacy="1.25")
 
     except ImportError:
         pass
@@ -1192,8 +1191,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         import numpy
         from numpy import array
-        if int(numpy.version.short_version[0]) > 1:
-            numpy.set_printoptions(legacy="1.25")
+        numpy.set_printoptions(legacy="1.25")
 
         try:
             return array(self, dtype=dtype)

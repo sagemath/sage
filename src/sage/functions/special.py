@@ -217,8 +217,7 @@ class SphericalHarmonic(BuiltinFunction):
         sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14                   # needs sage.symbolic
         0.345494149471335
         sage: import numpy as np                                                        # needs scipy
-        sage: if int(np.version.short_version[0]) > 1:                                  # needs scipy
-        ....:     _ = np.set_printoptions(legacy="1.25")                                # needs scipy
+        sage: _ = np.set_printoptions(legacy="1.25")                                    # needs scipy
         sage: import scipy.version
         sage: if scipy.version.version < '1.15.0':
         ....:     from scipy.special import sph_harm # NB: arguments x and y are swapped   # needs scipy

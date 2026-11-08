@@ -17175,8 +17175,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: # needs networkx
             sage: import numpy
-            sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            sage: numpy.set_printoptions(legacy="1.25")
             sage: graphs.FruchtGraph().clustering_coeff(weight=True)
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0,
              3: 0.3333333333333333, 4: 0.3333333333333333,
@@ -19577,9 +19576,8 @@ class GenericGraph(GenericGraph_pyx):
                 M = self.adjacency_matrix(vertices=int_to_vertex)
 
             # We call the Floyd-Warshall method from SciPy
-            import numpy  # to ensure numpy 2.0 compatibility
-            if int(numpy.version.short_version[0]) > 1:
-                numpy.set_printoptions(legacy="1.25")
+            import numpy
+            numpy.set_printoptions(legacy="1.25")
             from numpy import array as np_array
             from scipy.sparse.csgraph import floyd_warshall
             dd, pp = floyd_warshall(np_array(M), directed=self.is_directed(),
