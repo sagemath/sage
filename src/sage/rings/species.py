@@ -32,8 +32,9 @@ AUTHORS:
 
 from itertools import accumulate, chain, product
 from collections import defaultdict
+from math import prod
 
-from sage.arith.misc import divisors, is_prime
+from sage.arith.misc import divisors, is_prime, primes
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
@@ -122,65 +123,36 @@ def _SymmetricGroup(n):
 
 # The keys (order, orbit lengths) that determine the conjugacy class
 # of a subgroup of the symmetric group on sum(orbits) points without
-# fixed points, tabulated for all degrees up to ten; see
-# _conjugacy_class_determined for the exact statement and for a
+# fixed points, which are not decided by one of the theorems
+# implemented in _conjugacy_class_determined,
+# _transitive_class_determined and _sylow_subgroup_determined;
+# tabulated for all degrees up to ten;
+# see _conjugacy_class_determined for the exact statement and for a
 # verification of this table
 _MOLECULAR_DETERMINED_KEYS = {
-    # subgroups of the symmetric group on 3 points
-    (6, (3,)),
-    # subgroups of the symmetric group on 4 points
-    (4, (2, 2)),
-    (8, (4,)),
-    (12, (4,)),
-    (24, (4,)),
-    # subgroups of the symmetric group on 5 points
-    (10, (5,)),
-    (12, (2, 3)),
-    (20, (5,)),
-    (60, (5,)),
-    (120, (5,)),
     # subgroups of the symmetric group on 6 points
     (6, (3, 3)),
-    (8, (2, 2, 2)),
-    (9, (3, 3)),
-    (16, (2, 4)),
     (18, (6,)),
-    (36, (3, 3)),
-    (48, (2, 4)),
     (48, (6,)),
     (60, (6,)),
     (72, (6,)),
     (120, (6,)),
-    (360, (6,)),
-    (720, (6,)),
     # subgroups of the symmetric group on 7 points
-    (14, (7,)),
-    (21, (7,)),
-    (24, (2, 2, 3)),
     (36, (3, 4)),
     (40, (2, 5)),
-    (42, (7,)),
     (48, (3, 4)),
-    (144, (3, 4)),
     (168, (7,)),
-    (240, (2, 5)),
-    (2520, (7,)),
-    (5040, (7,)),
     # subgroups of the symmetric group on 8 points
     (12, (2, 3, 3)),
     (12, (4, 4)),
     (15, (3, 5)),
-    (16, (2, 2, 2, 2)),
     (18, (2, 6)),
     (24, (4, 4)),
     (32, (2, 2, 4)),
     (56, (8,)),
     (64, (4, 4)),
-    (72, (2, 3, 3)),
-    (96, (2, 2, 4)),
     (96, (2, 6)),
     (120, (3, 5)),
-    (128, (8,)),
     (144, (2, 6)),
     (144, (4, 4)),
     (180, (3, 5)),
@@ -189,37 +161,27 @@ _MOLECULAR_DETERMINED_KEYS = {
     (288, (8,)),
     (336, (8,)),
     (384, (8,)),
-    (576, (4, 4)),
-    (720, (3, 5)),
     (1152, (8,)),
     (1344, (8,)),
-    (1440, (2, 6)),
-    (20160, (8,)),
-    (40320, (8,)),
     # subgroups of the symmetric group on 9 points
     (6, (3, 3, 3)),
     (27, (3, 3, 3)),
     (28, (2, 7)),
     (36, (3, 3, 3)),
-    (48, (2, 2, 2, 3)),
     (48, (3, 6)),
     (60, (4, 5)),
     (80, (2, 2, 5)),
-    (81, (9,)),
     (84, (2, 7)),
     (96, (2, 3, 4)),
     (108, (9,)),
     (144, (9,)),
     (160, (4, 5)),
     (180, (3, 6)),
-    (216, (3, 3, 3)),
     (216, (9,)),
-    (288, (2, 3, 4)),
     (288, (3, 6)),
     (336, (2, 7)),
     (432, (3, 6)),
     (432, (9,)),
-    (480, (2, 2, 5)),
     (504, (9,)),
     (720, (3, 6)),
     (720, (4, 5)),
@@ -227,18 +189,11 @@ _MOLECULAR_DETERMINED_KEYS = {
     (1080, (3, 6)),
     (1296, (9,)),
     (1512, (9,)),
-    (2880, (4, 5)),
-    (4320, (3, 6)),
-    (10080, (2, 7)),
-    (181440, (9,)),
-    (362880, (9,)),
     # subgroups of the symmetric group on 10 points
     (10, (5, 5)),
     (18, (2, 2, 6)),
     (20, (5, 5)),
     (24, (2, 2, 3, 3)),
-    (25, (5, 5)),
-    (32, (2, 2, 2, 2, 2)),
     (40, (10,)),
     (48, (3, 3, 4)),
     (50, (10,)),
@@ -252,13 +207,10 @@ _MOLECULAR_DETERMINED_KEYS = {
     (112, (2, 8)),
     (120, (5, 5)),
     (128, (2, 4, 4)),
-    (144, (2, 2, 3, 3)),
-    (192, (2, 2, 2, 4)),
     (192, (2, 2, 6)),
     (240, (2, 3, 5)),
     (240, (10,)),
     (252, (3, 7)),
-    (256, (2, 8)),
     (288, (2, 2, 6)),
     (288, (2, 8)),
     (288, (3, 3, 4)),
@@ -274,33 +226,135 @@ _MOLECULAR_DETERMINED_KEYS = {
     (720, (4, 6)),
     (768, (2, 8)),
     (800, (10,)),
-    (864, (3, 3, 4)),
     (960, (4, 6)),
     (960, (10,)),
     (1008, (3, 7)),
-    (1152, (2, 4, 4)),
     (1152, (4, 6)),
-    (1440, (2, 3, 5)),
     (1440, (10,)),
     (1728, (4, 6)),
     (2304, (2, 8)),
     (2400, (5, 5)),
     (2688, (2, 8)),
-    (2880, (2, 2, 6)),
     (3600, (5, 5)),
     (3840, (10,)),
     (4320, (4, 6)),
     (5760, (4, 6)),
     (7200, (10,)),
     (7560, (3, 7)),
-    (14400, (5, 5)),
-    (17280, (4, 6)),
     (28800, (10,)),
-    (30240, (3, 7)),
-    (80640, (2, 8)),
-    (1814400, (10,)),
-    (3628800, (10,)),
 }
+
+
+def _transitive_class_determined(order, n):
+    r"""
+    Return whether a transitive permutation group of degree ``n`` and
+    order ``order`` is the unique subgroup of its order, up to
+    conjugacy, of the symmetric group on ``n`` points.
+
+    This is the case for the alternating group and for the subgroups
+    of prime degree ``p`` and order ``p d`` with ``d`` dividing
+    ``p - 1``.
+
+    - The alternating group is the unique subgroup of index two of
+      the symmetric group.
+
+    - A group of prime degree `p` and order `p d` has a normal Sylow
+      subgroup of order `p`, since the number of Sylow subgroups
+      divides `d < p` and is congruent to one modulo `p`; the group is
+      therefore a subgroup of the affine group `AGL(1, p)`, the
+      normalizer of its Sylow subgroup, whose cyclic point
+      stabilizer has a unique subgroup of order `d` for each divisor
+      `d` of `p - 1`.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _transitive_class_determined
+        sage: _transitive_class_determined(12, 4)   # A_4
+        True
+        sage: _transitive_class_determined(22, 11)  # dihedral of degree 11
+        True
+        sage: _transitive_class_determined(4, 4)     # C_4 and V_4
+        False
+        sage: _transitive_class_determined(24, 6)   # two classes, among them S_4
+        False
+
+    TESTS:
+
+    Every order which this function accepts is the order of exactly
+    one conjugacy class of transitive subgroups, up to degree twelve,
+    the limit of GAP's table of marks (without the package, the
+    classes are computed from the subgroup lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from sage.rings.species import _transitive_class_determined
+        sage: for n in range(2, 13):
+        ....:     counts = Counter(H.cardinality() for H in
+        ....:                     SymmetricGroup(n).conjugacy_classes_subgroups()
+        ....:                     if len(H.orbits()) == 1)
+        ....:     assert {o for o in counts if _transitive_class_determined(o, n)} <= \
+        ....:         {o for o, c in counts.items() if c == 1}
+    """
+    if 2 * order == factorial(n):
+        # the alternating group is the unique subgroup of index two
+        # of the symmetric group on n points
+        return True
+    if is_prime(n) and order % n == 0 and (n - 1) % (order // n) == 0:
+        # a group of prime degree n and order n * d, with d dividing
+        # n - 1, is the unique subgroup of its order in AGL(1, n)
+        return True
+    return False
+
+
+def _sylow_subgroup_determined(order, n):
+    r"""
+    Return whether a subgroup of order ``order`` of the symmetric
+    group on ``n`` points is a Sylow subgroup.
+
+    This is the case if and only if the order is `p^{v_p(n!)}` for
+    some prime `p`.  All Sylow subgroups are conjugate, and the orbit
+    lengths of a Sylow `p`-subgroup are the digits of `n` in base
+    `p`, so that its order alone determines its key.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _sylow_subgroup_determined
+        sage: _sylow_subgroup_determined(8, 4)     # Sylow 2 of S_4
+        True
+        sage: _sylow_subgroup_determined(16, 6)     # Sylow 2 of S_6
+        True
+        sage: _sylow_subgroup_determined(81, 9)    # Sylow 3 of S_9
+        True
+        sage: _sylow_subgroup_determined(8, 6)     # not a prime power part
+        False
+
+    TESTS:
+
+    Every order which this function accepts is the order of exactly
+    one conjugacy class of subgroups, up to degree twelve, the limit
+    of GAP's table of marks (without the package, the classes are
+    computed from the subgroup lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from sage.rings.species import _sylow_subgroup_determined
+        sage: for n in range(2, 13):
+        ....:     counts = Counter(H.cardinality() for H in
+        ....:                     SymmetricGroup(n).conjugacy_classes_subgroups())
+        ....:     assert all(counts[o] == 1 for o in counts
+        ....:                 if _sylow_subgroup_determined(o, n))
+    """
+    # the restriction to p <= n/2 omits the prime orders p with
+    # v_p(n!) == 1, decided by the theorem on groups of prime order
+    for p in primes(2, n // 2 + 1):
+        e = 0
+        q = n
+        while q:
+            q //= p
+            e += q
+        if order == p ** e:
+            return True
+    return False
 
 
 def _conjugacy_class_determined(order, orbits):
@@ -311,13 +365,30 @@ def _conjugacy_class_determined(order, orbits):
 
     This is the case if and only if exactly one conjugacy class of
     subgroups of the symmetric group on sum(orbits) points without
-    fixed points has this order and these orbit lengths.  All such
-    keys up to degree ten are tabulated in ``_MOLECULAR_DETERMINED_KEYS``.
+    fixed points has this order and these orbit lengths.  The keys
+    which are not decided by one of the theorems below are tabulated
+    in ``_MOLECULAR_DETERMINED_KEYS``, through degree ten.
 
     A permutation group of prime order ``p`` without fixed points is
     generated by a product of disjoint cycles of length ``p``, and all
-    such groups are conjugate.  Its keys are therefore determined for
-    every number of points, without consulting the table.
+    such groups are conjugate.
+
+    A permutation group whose orbits have lengths `m_1, \ldots, m_k`
+    embeds into the direct product of the symmetric groups on its
+    orbits, which has order `m_1! \cdots m_k!`; if the orders agree,
+    the group is this direct product, a Young subgroup, and all Young
+    subgroups with these orbit lengths are conjugate.
+
+    A transitive permutation group is determined by its order and its
+    degree if it is an alternating group or a subgroup of prime
+    degree `p` and order `p d` with `d` dividing `p - 1`, see
+    :func:`_transitive_class_determined`, and a subgroup of order
+    `p^{v_p(n!)}` of the symmetric group on `n` points is a Sylow
+    subgroup, whose orbit lengths are the digits of `n` in base `p`,
+    see :func:`_sylow_subgroup_determined`.
+
+    The keys of these groups are determined for every number of
+    points, without consulting the table.
 
     EXAMPLES::
 
@@ -339,19 +410,27 @@ def _conjugacy_class_determined(order, orbits):
         sage: _conjugacy_class_determined(24, (6,))
         False
 
-    The keys of groups of prime order are determined for every number
-    of points, the others only up to the degree of the table::
+    The keys decided by the theorems are determined for every number
+    of points, the tabulated ones only up to the degree of the table::
 
         sage: _conjugacy_class_determined(2, (2,) * 6)
+        True
+        sage: _conjugacy_class_determined(12, (4,))       # A_4
+        True
+        sage: _conjugacy_class_determined(16, (2, 4))      # Sylow 2 of S_6
+        True
+        sage: _conjugacy_class_determined(22, (11,))      # dihedral of degree 11
+        True
+        sage: _conjugacy_class_determined(17280, (3, 4, 5))   # S_3 x S_4 x S_5
         True
         sage: _conjugacy_class_determined(120, (12,))
         False
 
     TESTS:
 
-    The table agrees with a computation from GAP's table of marks
-    (without the package, the classes are computed from the subgroup
-    lattice)::
+    The table together with the theorems agrees with a computation
+    from GAP's table of marks (without the package, the classes are
+    computed from the subgroup lattice)::
 
         sage: # optional - gap_package_tomlib
         sage: from collections import Counter
@@ -365,15 +444,46 @@ def _conjugacy_class_determined(order, orbits):
         ....:             continue
         ....:         counts[(H.cardinality(), orbits)] += 1
         ....:     computed |= {k for k, v in counts.items() if v == 1}
-        sage: predicted = {(p, (p,) * k)
-        ....:               for p in [2, 3, 5, 7] for k in range(1, 11) if p * k <= 10}
+        sage: prime = {(p, (p,) * k)
+        ....:          for p in [2, 3, 5, 7] for k in range(1, 11) if p * k <= 10}
+        sage: young = {(prod(factorial(m) for m in comp), tuple(reversed(comp)))
+        ....:          for n in range(2, 11) for comp in Partitions(n, min_part=2)}
+        sage: alternating = {(factorial(n) // 2, (n,)) for n in range(3, 11)}
+        sage: sylow = set()
+        sage: for n in range(2, 11):
+        ....:     for p in [q for q in range(2, n) if is_prime(q)]:
+        ....:         digits = []
+        ....:         for i in range(1, 5):
+        ....:             digits += [p**i] * ((n // p**i) % p)
+        ....:         sylow.add((p ** sum(n // p**i for i in range(1, 5)),
+        ....:                    tuple(sorted(digits))))
+        sage: affine = {(p * d, (p,)) for p in [2, 3, 5, 7] for d in divisors(p - 1)}
+        sage: predicted = prime | young | alternating | sylow | affine
         sage: computed == _MOLECULAR_DETERMINED_KEYS | predicted
+        True
+        sage: # the table holds exactly the keys the theorems do not decide
+        sage: not (_MOLECULAR_DETERMINED_KEYS & predicted)
         True
     """
     if orbits and all(l == order for l in orbits) and is_prime(order):
         # a permutation group of prime order without fixed points is
         # generated by a product of disjoint cycles of prime length,
         # and all such groups are conjugate
+        return True
+    if order == prod(factorial(m) for m in orbits):
+        # a permutation group whose orbits have lengths m_1, ..., m_k
+        # embeds into the direct product of the symmetric groups on
+        # its orbits; if the orders agree, the group is this direct
+        # product, a Young subgroup, and all Young subgroups with
+        # these orbit lengths are conjugate
+        return True
+    if len(orbits) == 1 and _transitive_class_determined(order, orbits[0]):
+        # the restriction of the group to its single orbit is
+        # transitive of degree orbits[0]
+        return True
+    if _sylow_subgroup_determined(order, sum(orbits)):
+        # a subgroup of order p^v_p(n!) of the symmetric group on
+        # sum(orbits) points is a Sylow subgroup
         return True
     return (order, orbits) in _MOLECULAR_DETERMINED_KEYS
 
@@ -383,21 +493,16 @@ def _conjugacy_class_determined(order, orbits):
 # and sorts of the orbits -- determines the atomic species of a
 # directly indecomposable permutation group, where the pattern records
 # the lengths of the orbits in each sort; tabulated for all degrees up
-# to ten, see _atomic_species_determined for the exact statement and
-# for a verification of this table
+# to eight -- directly indecomposable groups with determined keys of
+# larger degree are exceptional, almost simple groups -- see
+# _atomic_species_determined for the exact statement and for a
+# verification of this table
 _ATOMIC_DETERMINED_KEYS = {
-    # directly indecomposable subgroups of the symmetric group on 3 points
-    (6, ((3,),)),
     # directly indecomposable subgroups of the symmetric group on 4 points
-    (8, ((4,),)),
-    (12, ((4,),)),
     (24, ((4,),)),
     # directly indecomposable subgroups of the symmetric group on 5 points
     (6, ((2,), (3,))),
     (6, ((2, 3),)),
-    (10, ((5,),)),
-    (20, ((5,),)),
-    (60, ((5,),)),
     (120, ((5,),)),
     # directly indecomposable subgroups of the symmetric group on 6 points
     (4, ((2,), (2,), (2,))),
@@ -414,7 +519,6 @@ _ATOMIC_DETERMINED_KEYS = {
     (60, ((6,),)),
     (72, ((6,),)),
     (120, ((6,),)),
-    (360, ((6,),)),
     (720, ((6,),)),
     # directly indecomposable subgroups of the symmetric group on 7 points
     (6, ((2,), (2,), (3,))),
@@ -427,17 +531,13 @@ _ATOMIC_DETERMINED_KEYS = {
     (12, ((2,), (2, 3))),
     (12, ((2, 2), (3,))),
     (12, ((2, 2, 3),)),
-    (14, ((7,),)),
     (20, ((2,), (5,))),
     (20, ((2, 5),)),
-    (21, ((7,),)),
-    (42, ((7,),)),
     (72, ((3,), (4,))),
     (72, ((3, 4),)),
     (120, ((2,), (5,))),
     (120, ((2, 5),)),
     (168, ((7,),)),
-    (2520, ((7,),)),
     (5040, ((7,),)),
     # directly indecomposable subgroups of the symmetric group on 8 points
     (4, ((2, 2, 2, 2),)),
@@ -479,7 +579,6 @@ _ATOMIC_DETERMINED_KEYS = {
     (60, ((3, 5),)),
     (120, ((2,), (6,))),
     (120, ((2, 6),)),
-    (128, ((8,),)),
     (288, ((4,), (4,))),
     (288, ((4, 4),)),
     (288, ((8,),)),
@@ -491,254 +590,7 @@ _ATOMIC_DETERMINED_KEYS = {
     (720, ((2, 6),)),
     (1152, ((8,),)),
     (1344, ((8,),)),
-    (20160, ((8,),)),
     (40320, ((8,),)),
-    # directly indecomposable subgroups of the symmetric group on 9 points
-    (6, ((2,), (2,), (2,), (3,))),
-    (6, ((2,), (2,), (2, 3))),
-    (6, ((2,), (2, 2), (3,))),
-    (6, ((2,), (2, 2, 3))),
-    (6, ((2, 2), (2, 3))),
-    (6, ((2, 2, 2), (3,))),
-    (6, ((2, 2, 2, 3),)),
-    (6, ((3,), (3,), (3,))),
-    (6, ((3,), (3, 3))),
-    (6, ((3, 3, 3),)),
-    (9, ((3,), (3,), (3,))),
-    (9, ((3,), (3, 3))),
-    (9, ((3, 3, 3),)),
-    (10, ((2,), (2,), (5,))),
-    (10, ((2,), (2, 5))),
-    (10, ((2, 2), (5,))),
-    (10, ((2, 2, 5),)),
-    (14, ((2,), (7,))),
-    (14, ((2, 7),)),
-    (24, ((2,), (2,), (2,), (3,))),
-    (24, ((2,), (2,), (2, 3))),
-    (24, ((2,), (2, 2), (3,))),
-    (24, ((2,), (2, 2, 3))),
-    (24, ((2, 2), (2, 3))),
-    (24, ((2, 2, 2), (3,))),
-    (24, ((2, 2, 2, 3),)),
-    (40, ((2,), (2,), (5,))),
-    (40, ((2,), (2, 5))),
-    (40, ((2, 2), (5,))),
-    (40, ((2, 2, 5),)),
-    (42, ((2,), (7,))),
-    (42, ((2, 7),)),
-    (48, ((3,), (6,))),
-    (48, ((3, 6),)),
-    (54, ((3,), (3,), (3,))),
-    (54, ((3,), (3, 3))),
-    (54, ((3,), (6,))),
-    (54, ((3, 3, 3),)),
-    (54, ((3, 6),)),
-    (72, ((2,), (3,), (4,))),
-    (72, ((2,), (3, 4))),
-    (72, ((2, 3), (4,))),
-    (72, ((2, 3, 4),)),
-    (72, ((2, 4), (3,))),
-    (81, ((9,),)),
-    (108, ((3,), (3,), (3,))),
-    (108, ((3,), (3, 3))),
-    (108, ((3, 3, 3),)),
-    (108, ((9,),)),
-    (120, ((2,), (2,), (5,))),
-    (120, ((2,), (2, 5))),
-    (120, ((2, 2), (5,))),
-    (120, ((2, 2, 5),)),
-    (120, ((4,), (5,))),
-    (120, ((4, 5),)),
-    (144, ((2,), (3,), (4,))),
-    (144, ((2,), (3, 4))),
-    (144, ((2, 3), (4,))),
-    (144, ((2, 3, 4),)),
-    (144, ((2, 4), (3,))),
-    (144, ((9,),)),
-    (216, ((9,),)),
-    (240, ((2,), (2,), (5,))),
-    (240, ((2,), (2, 5))),
-    (240, ((2, 2), (5,))),
-    (240, ((2, 2, 5),)),
-    (360, ((3,), (6,))),
-    (360, ((3, 6),)),
-    (432, ((9,),)),
-    (504, ((9,),)),
-    (1296, ((9,),)),
-    (1440, ((4,), (5,))),
-    (1440, ((4, 5),)),
-    (1512, ((9,),)),
-    (2160, ((3,), (6,))),
-    (2160, ((3, 6),)),
-    (5040, ((2,), (7,))),
-    (5040, ((2, 7),)),
-    (181440, ((9,),)),
-    (362880, ((9,),)),
-    # directly indecomposable subgroups of the symmetric group on 10 points
-    (6, ((2,), (2,), (3,), (3,))),
-    (6, ((2,), (2,), (3, 3))),
-    (6, ((2,), (2, 3), (3,))),
-    (6, ((2,), (2, 3, 3))),
-    (6, ((2, 2), (3,), (3,))),
-    (6, ((2, 2), (3, 3))),
-    (6, ((2, 2, 3), (3,))),
-    (6, ((2, 2, 3, 3),)),
-    (6, ((2, 3), (2, 3))),
-    (10, ((5,), (5,))),
-    (10, ((5, 5),)),
-    (12, ((2,), (2,), (3,), (3,))),
-    (12, ((2,), (2,), (3, 3))),
-    (12, ((2,), (2, 3), (3,))),
-    (12, ((2,), (2, 3, 3))),
-    (12, ((2, 2), (3,), (3,))),
-    (12, ((2, 2), (3, 3))),
-    (12, ((2, 2, 3), (3,))),
-    (12, ((2, 2, 3, 3),)),
-    (12, ((2, 3), (2, 3))),
-    (16, ((2,), (2,), (2,), (2,), (2,))),
-    (16, ((2,), (2,), (2,), (2, 2))),
-    (16, ((2,), (2,), (2, 2, 2))),
-    (16, ((2,), (2, 2), (2, 2))),
-    (16, ((2,), (2, 2, 2, 2))),
-    (16, ((2, 2), (2, 2, 2))),
-    (16, ((2, 2, 2, 2, 2),)),
-    (18, ((2,), (2,), (3,), (3,))),
-    (18, ((2,), (2,), (3, 3))),
-    (18, ((2,), (2,), (6,))),
-    (18, ((2,), (2, 3), (3,))),
-    (18, ((2,), (2, 3, 3))),
-    (18, ((2,), (2, 6))),
-    (18, ((2, 2), (3,), (3,))),
-    (18, ((2, 2), (3, 3))),
-    (18, ((2, 2), (6,))),
-    (18, ((2, 2, 3), (3,))),
-    (18, ((2, 2, 3, 3),)),
-    (18, ((2, 2, 6),)),
-    (18, ((2, 3), (2, 3))),
-    (20, ((5,), (5,))),
-    (20, ((5, 5),)),
-    (21, ((3,), (7,))),
-    (21, ((3, 7),)),
-    (24, ((2,), (2,), (2,), (4,))),
-    (24, ((2,), (2,), (2, 4))),
-    (24, ((2,), (2, 2), (4,))),
-    (24, ((2,), (2, 2, 4))),
-    (24, ((2,), (4,), (4,))),
-    (24, ((2,), (4, 4))),
-    (24, ((2, 2), (2, 4))),
-    (24, ((2, 2, 2), (4,))),
-    (24, ((2, 2, 2, 4),)),
-    (24, ((2, 4), (4,))),
-    (24, ((2, 4, 4),)),
-    (30, ((2,), (3,), (5,))),
-    (30, ((2,), (3, 5))),
-    (30, ((2, 3), (5,))),
-    (30, ((2, 3, 5),)),
-    (30, ((2, 5), (3,))),
-    (40, ((10,),)),
-    (50, ((5,), (5,))),
-    (50, ((5, 5),)),
-    (50, ((10,),)),
-    (60, ((5,), (5,))),
-    (60, ((5, 5),)),
-    (60, ((10,),)),
-    (72, ((2,), (2,), (3,), (3,))),
-    (72, ((2,), (2,), (3, 3))),
-    (72, ((2,), (2, 3), (3,))),
-    (72, ((2,), (2, 3, 3))),
-    (72, ((2, 2), (3,), (3,))),
-    (72, ((2, 2), (3, 3))),
-    (72, ((2, 2, 3), (3,))),
-    (72, ((2, 2, 3, 3),)),
-    (72, ((2, 3), (2, 3))),
-    (80, ((10,),)),
-    (96, ((2,), (2,), (2,), (4,))),
-    (96, ((2,), (2,), (2, 4))),
-    (96, ((2,), (2, 2), (4,))),
-    (96, ((2,), (2, 2, 4))),
-    (96, ((2, 2), (2, 4))),
-    (96, ((2, 2, 2), (4,))),
-    (96, ((2, 2, 2, 4),)),
-    (120, ((2,), (2,), (6,))),
-    (120, ((2,), (2, 6))),
-    (120, ((2,), (3,), (5,))),
-    (120, ((2,), (3, 5))),
-    (120, ((2, 2), (6,))),
-    (120, ((2, 2, 6),)),
-    (120, ((2, 3), (5,))),
-    (120, ((2, 3, 5),)),
-    (120, ((2, 5), (3,))),
-    (120, ((5,), (5,))),
-    (120, ((5, 5),)),
-    (126, ((3,), (7,))),
-    (126, ((3, 7),)),
-    (200, ((5,), (5,))),
-    (200, ((5, 5),)),
-    (216, ((3,), (3,), (4,))),
-    (216, ((3,), (3, 4))),
-    (216, ((3, 3), (4,))),
-    (216, ((3, 3, 4),)),
-    (216, ((4,), (6,))),
-    (216, ((4, 6),)),
-    (240, ((2,), (2,), (6,))),
-    (240, ((2,), (2, 6))),
-    (240, ((2, 2), (6,))),
-    (240, ((2, 2, 6),)),
-    (240, ((10,),)),
-    (288, ((2,), (4,), (4,))),
-    (288, ((2,), (4, 4))),
-    (288, ((2,), (8,))),
-    (288, ((2, 4), (4,))),
-    (288, ((2, 4, 4),)),
-    (288, ((2, 8),)),
-    (336, ((2,), (8,))),
-    (336, ((2, 8),)),
-    (360, ((2,), (3,), (5,))),
-    (360, ((2,), (3, 5))),
-    (360, ((2, 3), (5,))),
-    (360, ((2, 3, 5),)),
-    (360, ((2, 5), (3,))),
-    (360, ((10,),)),
-    (432, ((3,), (3,), (4,))),
-    (432, ((3,), (3, 4))),
-    (432, ((3, 3), (4,))),
-    (432, ((3, 3, 4),)),
-    (576, ((2,), (4,), (4,))),
-    (576, ((2,), (4, 4))),
-    (576, ((2, 4), (4,))),
-    (576, ((2, 4, 4),)),
-    (600, ((5, 5),)),
-    (640, ((10,),)),
-    (720, ((2,), (2,), (6,))),
-    (720, ((2,), (2, 6))),
-    (720, ((2,), (3,), (5,))),
-    (720, ((2,), (3, 5))),
-    (720, ((2, 2), (6,))),
-    (720, ((2, 2, 6),)),
-    (720, ((2, 3), (5,))),
-    (720, ((2, 3, 5),)),
-    (720, ((2, 5), (3,))),
-    (800, ((10,),)),
-    (960, ((10,),)),
-    (1200, ((5, 5),)),
-    (1440, ((2,), (2,), (6,))),
-    (1440, ((2,), (2, 6))),
-    (1440, ((2, 2), (6,))),
-    (1440, ((2, 2, 6),)),
-    (1440, ((10,),)),
-    (3840, ((10,),)),
-    (7200, ((5,), (5,))),
-    (7200, ((5, 5),)),
-    (7200, ((10,),)),
-    (8640, ((4,), (6,))),
-    (8640, ((4, 6),)),
-    (15120, ((3,), (7,))),
-    (15120, ((3, 7),)),
-    (28800, ((10,),)),
-    (40320, ((2,), (8,))),
-    (40320, ((2, 8),)),
-    (1814400, ((10,),)),
-    (3628800, ((10,),)),
 }
 
 
@@ -780,11 +632,24 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
     for every degree.  These keys are decided without consulting the
     table.
 
+    A directly indecomposable transitive permutation group has a
+    single orbit, all of whose points carry the same sort, so that its
+    data determines the atomic species if its conjugacy class is
+    determined by its order and its degree, see
+    :func:`_transitive_class_determined`: the alternating groups and
+    the groups of prime degree ``p`` and order ``p d`` with ``d``
+    dividing ``p - 1``.  A directly indecomposable subgroup of order
+    `p^{v_p(n!)}` is a Sylow subgroup, hence transitive, see
+    :func:`_sylow_subgroup_determined`.  These keys are also decided
+    for every degree, without consulting the table.
+
     The order and the orbit lengths do not characterize the conjugacy
     class of the group in general -- the cyclic and the Klein four
     group are both directly indecomposable transitive subgroups of
     order four -- so the table is a finite classification, through
-    degree ten.
+    degree eight.  Directly indecomposable groups with determined
+    keys of larger degree are exceptional, almost simple groups;
+    their conversions go through the conjugacy tests.
 
     INPUT:
 
@@ -826,8 +691,9 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         sage: _atomic_species_determined(4, [(1, 2), (3, 4), (5, 6)], [0, 0, 1])
         True
 
-    Keys of groups of prime order are determined for every degree, the
-    others only up to the degree of the table::
+    Keys of groups of prime order and of transitive groups whose
+    class is determined by their order and degree are decided for
+    every degree, the others only up to the degree of the table::
 
         sage: _atomic_species_determined(2, [(1, 2), (3, 4), (5, 6),
         ....:                                 (7, 8), (9, 10), (11, 12)], [0, 0, 0, 1, 1, 1])
@@ -835,6 +701,10 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
 
         sage: _atomic_species_determined(12, [list(range(1, 13))], [0])
         False
+        sage: _atomic_species_determined(181440, [list(range(1, 10))], [0])  # A_9
+        True
+        sage: _atomic_species_determined(22, [list(range(1, 12))], [0])  # dihedral of degree 11
+        True
 
     TESTS:
 
@@ -894,11 +764,27 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         ....:             res.add((H.cardinality(),
         ....:                      tuple(sorted(tuple(sorted(b)) for b in blocks.values()))))
         ....:     return res
-        sage: computed = set().union(*(determined_patterns(m) for m in range(2, 11)))
-        sage: predicted = {(p, tuple(sorted((p,) * s for s in sizes)))
-        ....:               for p in [2, 3, 5, 7] for k in range(1, 11) if p * k <= 10
-        ....:               for sizes in Partitions(k)}
+        sage: computed = set().union(*(determined_patterns(m) for m in range(2, 9)))
+        sage: prime = {(p, tuple(sorted((p,) * s for s in sizes)))
+        ....:          for p in [2, 3, 5, 7] for k in range(1, 9) if p * k <= 8
+        ....:          for sizes in Partitions(k)}
+        sage: alternating = {(factorial(n) // 2, ((n,),)) for n in range(3, 9)}
+        sage: sylow = {(p ** sum(n // p**i for i in range(1, 5)), ((n,),))
+        ....:          for p in [2, 3, 5, 7] for n in [p, p * p, p * p * p] if n <= 8}
+        sage: affine = {(p * d, ((p,),)) for p in [2, 3, 5, 7] for d in divisors(p - 1)}
+        sage: predicted = prime | alternating | sylow | affine
         sage: computed == _ATOMIC_DETERMINED_KEYS | predicted
+        True
+        sage: # the table holds exactly the keys the theorems do not decide
+        sage: not (_ATOMIC_DETERMINED_KEYS & predicted)
+        True
+        sage: # the theorems are claimed for every degree; verify them through ten
+        sage: computed10 = set().union(*(determined_patterns(m) for m in (9, 10)))
+        sage: prime10 = {(p, tuple(sorted((p,) * s for s in sizes)))
+        ....:           for p in [2, 3, 5, 7] for k in range(1, 11) if p * k in (9, 10)
+        ....:           for sizes in Partitions(k)}
+        sage: alternating10 = {(factorial(n) // 2, ((n,),)) for n in (9, 10)}
+        sage: prime10 | alternating10 | {(81, ((9,),))} <= computed10
         True
     """
     if orbits and all(len(o) == order for o in orbits) and is_prime(order):
@@ -906,6 +792,16 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         # product of disjoint cycles of prime length; all such groups
         # are conjugate, and the normalizer permutes the orbits
         # arbitrarily, so that all its data determine the atomic species
+        return True
+    if len(orbits) == 1 and _transitive_class_determined(order, len(orbits[0])):
+        # a directly indecomposable transitive group has a single
+        # orbit, all of whose points carry the same sort, so that its
+        # data determines the atomic species if its conjugacy class is
+        # determined by its order and degree
+        return True
+    if _sylow_subgroup_determined(order, sum(map(len, orbits))):
+        # a directly indecomposable subgroup of order p^v_p(n!) is a
+        # Sylow subgroup, hence transitive, with a single orbit
         return True
     blocks = {}
     for o, s in zip(orbits, orbit_sorts):
