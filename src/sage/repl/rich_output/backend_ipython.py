@@ -14,11 +14,118 @@ This module defines the IPython backends for
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
 import html
+import os
+import shlex
+import subprocess
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
+
+
+_VIEWER_HANDOFF_TIMEOUT = 1
+
+
+def _is_desktop_opener(command):
+    r"""
+    Return whether ``command`` is a freedesktop opener.
+
+    These commands normally return after handing the file to the desktop.
+    Waiting briefly for them usually avoids racing requests in a single-instance
+    viewer.  See :issue:`42292`.
+
+    EXAMPLES::
+
+        sage: from sage.repl.rich_output.backend_ipython import _is_desktop_opener as opener
+        sage: opener('xdg-open')
+        True
+        sage: opener('/usr/bin/gio open')
+        True
+        sage: opener('gvfs-open')
+        True
+        sage: opener('eog')
+        False
+        sage: opener('gio')
+        False
+        sage: opener('')
+        False
+    """
+    try:
+        argv = shlex.split(command)
+    except ValueError:
+        return False
+    if not argv:
+        return False
+    program = os.path.basename(argv[0])
+    return (program in ('xdg-open', 'gvfs-open')
+            or program == 'gio' and argv[1:2] == ['open'])
+
+
+def _launch_viewer_command(command, filename):
+    r"""
+    Launch an external viewer command for ``filename``.
+
+    Sage waits briefly for freedesktop openers so quick handoffs complete before
+    the next request.  Since ``xdg-open`` can instead run the viewer itself on
+    some desktops, the wait is bounded.  Other viewer commands remain in the
+    background.
+
+    INPUT:
+
+    - ``command`` -- string; the configured viewer command
+
+    - ``filename`` -- string; the file to show
+
+    TESTS::
+
+        sage: import subprocess
+        sage: from unittest.mock import Mock, patch
+        sage: from sage.repl.rich_output.backend_ipython import _launch_viewer_command
+        sage: process = Mock()
+        sage: with patch('sage.repl.rich_output.backend_ipython.subprocess.Popen', return_value=process) as popen:
+        ....:     with patch('sage.repl.rich_output.backend_ipython.os.system') as system:
+        ....:         _launch_viewer_command(
+        ....:             '$HOME/bin/xdg-open > "$HOME/viewer.log"',
+        ....:             '/tmp/a b;$(not-a-command).png')
+        sage: popen.assert_called_once_with(
+        ....:     "$HOME/bin/xdg-open > \"$HOME/viewer.log\" "
+        ....:     "'/tmp/a b;$(not-a-command).png'", shell=True,
+        ....:     stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+        ....:     stderr=subprocess.DEVNULL, start_new_session=True)
+        sage: system.assert_not_called()
+        sage: process.wait.assert_called_once_with(timeout=1)
+
+    A desktop opener that keeps running does not block the Sage prompt::
+
+        sage: slow_process = Mock()
+        sage: slow_process.wait.side_effect = subprocess.TimeoutExpired('xdg-open', 1)
+        sage: with patch('sage.repl.rich_output.backend_ipython.subprocess.Popen', return_value=slow_process):
+        ....:     with patch('sage.repl.rich_output.backend_ipython.os.system') as system:
+        ....:         _launch_viewer_command('xdg-open', '/tmp/plot.png')
+        sage: slow_process.wait.assert_called_once_with(timeout=1)
+        sage: system.assert_not_called()
+
+    Other viewers are launched in the background, with the filename quoted::
+
+        sage: with patch('sage.repl.rich_output.backend_ipython.os.system') as system:
+        ....:     with patch('sage.repl.rich_output.backend_ipython.subprocess.Popen') as popen:
+        ....:         _launch_viewer_command('eog', '/tmp/a b.png')
+        sage: system.assert_called_once_with(
+        ....:     "eog '/tmp/a b.png' 2>/dev/null 1>/dev/null &")
+        sage: popen.assert_not_called()
+    """
+    shell_command = f'{command} {shlex.quote(filename)}'
+    if _is_desktop_opener(command):
+        try:
+            process = subprocess.Popen(
+                shell_command, shell=True, stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                start_new_session=True)
+            process.wait(timeout=_VIEWER_HANDOFF_TIMEOUT)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    else:
+        os.system(f'{shell_command} 2>/dev/null 1>/dev/null &')
 
 
 class BackendIPython(BackendBase):
@@ -336,8 +443,7 @@ class BackendIPythonCommandline(BackendIPython):
             command = viewer.browser()
         from sage.doctest import DOCTEST_MODE
         if not DOCTEST_MODE:
-            os.system('{0} {1} 2>/dev/null 1>/dev/null &'
-                      .format(command, image_file))
+            _launch_viewer_command(command, image_file)
         return 'Launched {0} viewer for {1}'.format(ext, plain_text)
 
     def launch_jmol(self, output_jmol, plain_text):
@@ -372,8 +478,7 @@ class BackendIPythonCommandline(BackendIPython):
         launch_script = output_jmol.launch_script_filename()
         jmol_cmd = 'jmol'
         if not DOCTEST_MODE:
-            os.system('{0} {1} 2>/dev/null 1>/dev/null &'
-                      .format(jmol_cmd, launch_script))
+            _launch_viewer_command(jmol_cmd, launch_script)
         return 'Launched jmol viewer for {0}'.format(plain_text)
 
     def is_in_terminal(self):
