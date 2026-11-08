@@ -374,6 +374,15 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ...
             ValueError: The conic self (=Projective Conic Curve over Rational Field defined
             by x^2 + y^2) is not smooth, hence does not have a parametrization.
+
+        The point must be on the conic (:issue:`34440`)::
+
+            sage: C = Conic(QQ, [1, 1, -1])
+            sage: C.parametrization([1, 1, 0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Coordinates [1, 1, 0] do not define a point on
+            Projective Conic Curve over Rational Field defined by x^2 + y^2 - z^2
         """
         if (self._parametrization is not None) and not point:
             par = self._parametrization
@@ -382,7 +391,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 raise ValueError("The conic self (=%s) is not smooth, hence does not have a parametrization." % self)
             if point is None:
                 point = self.rational_point()
-            point = Sequence(point)
+            point = Sequence(self(point))
             Q = PolynomialRing(QQ, 'x,y')
             x, y = Q.gens()
             gens = self.ambient_space().gens()
