@@ -74,7 +74,7 @@ from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
                                          LazySymmetricFunctions)
 from sage.rings.species import (_label_sets,
-                                _symmetric_group,
+                                _SymmetricGroup,
                                 PolynomialSpecies)
 from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
@@ -826,7 +826,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             # self = a + b * X; self.revert() = -a/b + 1/b * X
             a = coeff_stream[0]
             b = coeff_stream[1].coefficients()[0]
-            X = R(_symmetric_group(1))  # as a polynomial species
+            X = R(_SymmetricGroup(1))  # as a polynomial species
             coeff_stream = Stream_exact((-a/b, 1/b * X),
                                         order=0)
             return P.element_class(P, coeff_stream)
@@ -837,7 +837,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             raise ValueError("cannot determine whether the compositional inverse exists")
 
         X_mol = P._laurent_poly_ring._indices.subset(1)[0]  # as a molecular species
-        X = P(_symmetric_group(1))  # as a lazy species
+        X = P(_SymmetricGroup(1))  # as a lazy species
 
         def coefficient(n):
             if n:
@@ -882,7 +882,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         A1 = M1._indices
 
         def E(mu):
-            return M1({A1(_symmetric_group(e)): a
+            return M1({A1(_SymmetricGroup(e)): a
                        for e, a in enumerate(mu.to_exp(), 1) if a})
 
         def pi(mu):
@@ -1728,7 +1728,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if not left[N]:
             return R.zero()
 
-        S_n = _symmetric_group(n)
+        S_n = _SymmetricGroup(n)
         G_n = G[n].monomial_coefficients(copy=False)
         if not G_n or (len(G_n) == 1
                        and next(iter(G_n)).permutation_group()[0] == S_n):
@@ -1781,7 +1781,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if not left[N]:
             return R.zero()
 
-        S_n = _symmetric_group(n)
+        S_n = _SymmetricGroup(n)
         G_n = G[n].monomial_coefficients(copy=False)
 
         if not G_n or (len(G_n) == 1
@@ -2393,7 +2393,7 @@ class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = parent._laurent_poly_ring
         A = P._indices._indices
-        S = parent(lambda n: A(_symmetric_group(n), check=False) if n else P.one())
+        S = parent(lambda n: A(_SymmetricGroup(n), check=False) if n else P.one())
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):

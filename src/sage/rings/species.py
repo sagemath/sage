@@ -87,40 +87,28 @@ _canonical_group_cache = dict()
 _normalizer_cache = dict()
 
 # the full symmetric group of degree n, as a Sage group
-_symmetric_group_cache = dict()
+_SymmetricGroup_cache = dict()
 
 
-def _symmetric_group_gap(n):
-    r"""
-    Return the full symmetric group of degree ``n``, as a GAP group.
-
-    The GAP group is memoized on the cached Sage group, so no
-    separate cache is needed.
-
-    EXAMPLES::
-
-        sage: from sage.rings.species import _symmetric_group_gap, _symmetric_group
-        sage: _symmetric_group_gap(3)
-        Sym( [ 1 .. 3 ] )
-        sage: _symmetric_group_gap(3) is _symmetric_group(3).gap()
-        True
-    """
-    return _symmetric_group(n).gap()
-
-
-def _symmetric_group(n):
+def _SymmetricGroup(n):
     r"""
     Return the full symmetric group of degree ``n`` quickly.
 
+    The group is cached, and its GAP group is memoized on the
+    instance, so that ``_SymmetricGroup(n).gap()`` returns the
+    identical GAP group on every call.
+
     EXAMPLES::
 
-        sage: from sage.rings.species import _symmetric_group
-        sage: _symmetric_group(1)
+        sage: from sage.rings.species import _SymmetricGroup
+        sage: _SymmetricGroup(1)
         Symmetric group of order 1! as a permutation group
+        sage: _SymmetricGroup(3).gap() is _SymmetricGroup(3).gap()
+        True
     """
-    S = _symmetric_group_cache.get(n)
+    S = _SymmetricGroup_cache.get(n)
     if S is None:
-        S = _symmetric_group_cache[n] = SymmetricGroup(n)
+        S = _SymmetricGroup_cache[n] = SymmetricGroup(n)
     return S
 
 
@@ -1093,7 +1081,8 @@ class AtomicSpeciesElement(WithEqualityById,
                     return elm
 
         n = G.degree()
-        S_gap = _symmetric_group_gap(n)
+        S = _SymmetricGroup(n)
+        S_gap = S.gap()
         group_key = order, tuple([len(o) for o in orbits])
         if order == factorial(n):
             # the full symmetric group is the unique subgroup of its
@@ -1102,7 +1091,7 @@ class AtomicSpeciesElement(WithEqualityById,
             # trivial groups of degrees zero and one share the key
             # (1, ()); since both are the full symmetric group of
             # their degree, overwriting the entry is harmless
-            canonical, canonical_gap = _symmetric_group(n), S_gap
+            canonical, canonical_gap = S, S_gap
             conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
             _canonical_group_cache[group_key] = [(canonical, canonical_gap)]
         elif group_key in _canonical_group_cache:
@@ -1277,7 +1266,7 @@ class AtomicSpeciesElement(WithEqualityById,
             return (sum(self._mc) < sum(other._mc)
                     or (sum(self._mc) == sum(other._mc)
                         and self._mc > other._mc))
-        S = _symmetric_group(sum(self._mc)).young_subgroup(self._mc)
+        S = _SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
         # conjugate self and other to match S
         conj_self = _perm_to_contiguous(self._dompart)
         G = libgap.ConjugateGroup(self._group, conj_self)
@@ -1335,7 +1324,7 @@ class AtomicSpeciesElement(WithEqualityById,
         """
         labels = _label_sets(self.parent()._arity, labels)
         n = tuple([len(U) for U in labels])
-        S = _symmetric_group(sum(n)).young_subgroup(n)
+        S = _SymmetricGroup(sum(n)).young_subgroup(n)
         l = [e for l in labels for e in l]
         if self._mc == n:
             for rep in libgap.RightTransversal(S, self._group):
@@ -1705,7 +1694,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         for s in range(self._arity):
             pi = {s: range(1, n+1)}
             if n == 1:
-                self(_symmetric_group(1), pi, check=False).rename(self._names[s])
+                self(_SymmetricGroup(1), pi, check=False).rename(self._names[s])
 
             if self._arity == 1:
                 sort = ""
@@ -1713,7 +1702,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 sort = f"({self._names[s]})"
 
             if n >= 2:
-                self(_symmetric_group(n), pi, check=False).rename(f"E_{n}" + sort)
+                self(_SymmetricGroup(n), pi, check=False).rename(f"E_{n}" + sort)
 
             if n >= 3:
                 self(CyclicPermutationGroup(n), pi, check=False).rename(f"C_{n}" + sort)
@@ -1838,7 +1827,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         """
         if len(mc) != self._arity:
             raise ValueError("invalid degree")
-        S = _symmetric_group(sum(mc)).young_subgroup(mc)
+        S = _SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()
@@ -2243,7 +2232,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         """
         term = self._singleton_terms.get(k)
         if term is None:
-            term = self.gen(self._indices(_symmetric_group(1), {k: [1]}))
+            term = self.gen(self._indices(_SymmetricGroup(1), {k: [1]}))
             self._singleton_terms[k] = term
         return term
 
@@ -2274,7 +2263,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     # the component consists of a single label
                     elm = elm * self._singleton_term(sorts[0])
                     continue
-                H = _symmetric_group(1)
+                H = _SymmetricGroup(1)
                 pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
             else:
                 gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
@@ -2418,7 +2407,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         moved = G_gap.MovedPoints()
         action = libgap.Action(G_gap, moved)
         if bucket:
-            S_m = _symmetric_group_gap(len(moved))
+            S_m = _SymmetricGroup(len(moved)).gap()
             for stored_gap, stored_action, term in bucket:
                 if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
                     return term
@@ -2482,7 +2471,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         """
         if len(mc) != self._arity:
             raise ValueError("invalid degree")
-        S = _symmetric_group(sum(mc)).young_subgroup(mc)
+        S = _SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()])
@@ -2602,7 +2591,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                             or (sum(self.grade()) == sum(other.grade())
                                 and self.grade() > other.grade()))
 
-                S = _symmetric_group(sum(self.grade())).young_subgroup(self.grade())
+                S = _SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
                 # conjugate self and other to match S
                 G, G_dompart = self.permutation_group()
                 conj_self = _perm_to_contiguous(G_dompart)
@@ -2690,7 +2679,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             factors = list(self)
             if not factors:
                 k = self.parent()._arity
-                return _symmetric_group(0), tuple([frozenset()]*k)
+                return _SymmetricGroup(0), tuple([frozenset()]*k)
 
             if len(factors) == 1:
                 A, n = factors[0]
@@ -3021,7 +3010,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     raise ValueError("the derivative variable must be specified for multisort species")
                 sort = 0
             else:
-                variables = tuple(M(_symmetric_group(1), {i: [1]}) for i in range(M._arity))
+                variables = tuple(M(_SymmetricGroup(1), {i: [1]}) for i in range(M._arity))
                 if parent(variable) is not M or variable not in variables:
                     raise ValueError("the derivative variable must be a sort generator of the parent")
                 sort = variables.index(variable)
@@ -3447,7 +3436,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         for L, c in self:
             mc = L.grade()
             tc = sum(mc)
-            S = _symmetric_group(tc).young_subgroup(mc)
+            S = _SymmetricGroup(tc).young_subgroup(mc)
             # conjugate L and R to match S
             G, dompart = L.permutation_group()
             conj_L = _perm_to_contiguous(dompart)
@@ -3527,7 +3516,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         comp = list(chain.from_iterable(args))
         pi = {i: range(x - comp[i] + 1, x + 1)
               for i, x in enumerate(accumulate(comp))}
-        S_down = _symmetric_group(sum(comp)).young_subgroup(comp)
+        S_down = _SymmetricGroup(sum(comp)).young_subgroup(comp)
 
         P = PolynomialSpecies(self.parent().base_ring(), names)
         result = P.zero()
@@ -3540,7 +3529,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             mc = M.grade()
             tc = sum(mc)
-            S_up = _symmetric_group(tc).young_subgroup(mc)
+            S_up = _SymmetricGroup(tc).young_subgroup(mc)
             taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
 
             # sum over double coset representatives.
@@ -4344,9 +4333,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         if n not in ZZ or n <= 0:
             raise ValueError("n must be a positive integer")
         if n == 1:
-            return self(_symmetric_group(1), {s: [1]}, check=False)
-        return (ZZ(n) * self(_symmetric_group(n), {s: range(1, n+1)}, check=False)
-                - sum(self(_symmetric_group(i), {s: range(1, i+1)}, check=False)
+            return self(_SymmetricGroup(1), {s: [1]}, check=False)
+        return (ZZ(n) * self(_SymmetricGroup(n), {s: range(1, n+1)}, check=False)
+                - sum(self(_SymmetricGroup(i), {s: range(1, i+1)}, check=False)
                       * self._powersum(s, n-i)
                       for i in range(1, n)))
 
@@ -4470,7 +4459,7 @@ def _atomic_set_like_species(n, names):
     M = MolecularSpecies(names)
     A = AtomicSpecies(names)
     if n == 1:
-        return tuple([M({A(_symmetric_group(1), {s: [1]}, check=False): ZZ.one()},
+        return tuple([M({A(_SymmetricGroup(1), {s: [1]}, check=False): ZZ.one()},
                         check=False)
                       for s in range(M._arity)])
     result = []
@@ -4478,11 +4467,11 @@ def _atomic_set_like_species(n, names):
         if d == 1:
             continue
         if d == n:
-            result.extend(M({A(_symmetric_group(n), {s: range(1, n+1)}, check=False): ZZ.one()},
+            result.extend(M({A(_SymmetricGroup(n), {s: range(1, n+1)}, check=False): ZZ.one()},
                             check=False)
                           for s in range(M._arity))
             continue
-        E_d = M1({A1(_symmetric_group(d), check=False): ZZ.one()},
+        E_d = M1({A1(_SymmetricGroup(d), check=False): ZZ.one()},
                  check=False)
         l = []
         w = []
