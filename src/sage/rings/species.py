@@ -32,7 +32,6 @@ AUTHORS:
 
 from itertools import accumulate, chain, product
 from collections import defaultdict
-from math import prod
 
 from sage.arith.misc import divisors, is_prime, primes
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
@@ -90,6 +89,9 @@ _normalizer_cache = dict()
 # the full symmetric group of degree n, as a GAP group
 _symmetric_group_gap_cache = dict()
 
+# the full symmetric group of degree n, as a Sage group
+_symmetric_group_cache = dict()
+
 
 def _symmetric_group_gap(n):
     r"""
@@ -123,10 +125,6 @@ def _symmetric_group(n):
     return S
 
 
-# the full symmetric group of degree n, as a Sage group
-_symmetric_group_cache = dict()
-
-
 def _canonical_group(G_gap, orbits):
     r"""
     Return a group conjugate to the GAP group ``G_gap`` whose orbits
@@ -154,9 +152,9 @@ def _canonical_group(G_gap, orbits):
     # contiguous sets of numbers
     mp = libgap.PermList(libgap([e for o in orbits for e in o])).Inverse()
     # the canonical group is presented by a sorted small generating
-    # set, so that its generators are canonical; the order reproduces
-    # Sage's sorted(set(gens)) and affects only the presentation,
-    # not the group
+    # set, so that its generator order is stable; the order
+    # reproduces Sage's sorted(set(gens)) and affects only the
+    # presentation, not the group
     gens = libgap.SortedList(G_gap.SmallGeneratingSet())
     if not gens:
         # the trivial group has no generators, so we present it by the
@@ -321,6 +319,8 @@ def _transitive_class_determined(order, n):
         False
         sage: _transitive_class_determined(24, 6)   # two classes, among them S_4
         False
+        sage: _transitive_class_determined(1, 2)     # A_2 is not transitive
+        False
 
     TESTS:
 
@@ -339,9 +339,10 @@ def _transitive_class_determined(order, n):
         ....:     assert {o for o in counts if _transitive_class_determined(o, n)} <= \
         ....:         {o for o, c in counts.items() if c == 1}
     """
-    if 2 * order == factorial(n):
+    if n >= 3 and 2 * order == factorial(n):
         # the alternating group is the unique subgroup of index two
-        # of the symmetric group on n points
+        # of the symmetric group on n points; the trivial group, the
+        # unique subgroup of index two of S_2, is not transitive
         return True
     if is_prime(n) and order % n == 0 and (n - 1) % (order // n) == 0:
         # a group of prime degree n and order n * d, with d dividing
@@ -1066,7 +1067,7 @@ class AtomicSpeciesElement(WithEqualityById,
 
         n = G.degree()
         S_gap = _symmetric_group_gap(n)
-        key = order, tuple([len(o) for o in orbits])
+        group_key = order, tuple([len(o) for o in orbits])
         if order == factorial(n):
             # the full symmetric group is the unique subgroup of its
             # order, so it is the canonical representative of its
@@ -1075,28 +1076,28 @@ class AtomicSpeciesElement(WithEqualityById,
             # (1, ()); since both are the full symmetric group of
             # their degree, overwriting the entry is harmless
             canonical, canonical_gap = _symmetric_group(n), S_gap
-            mp = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
-            _canonical_group_cache[key] = [(canonical, canonical_gap)]
-        elif key in _canonical_group_cache:
-            canonicals = _canonical_group_cache[key]
+            conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
+            _canonical_group_cache[group_key] = [(canonical, canonical_gap)]
+        elif group_key in _canonical_group_cache:
+            canonicals = _canonical_group_cache[group_key]
             for canonical, canonical_gap in canonicals:
-                mp = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
-                if mp != GAP_FAIL:
+                conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
+                if conjugator != GAP_FAIL:
                     break
             else:
-                canonical_gap, mp = _canonical_group(G_gap, orbits)
+                canonical_gap, conjugator = _canonical_group(G_gap, orbits)
                 canonical = PermutationGroup(gap_group=canonical_gap)
                 canonicals.append((canonical, canonical_gap))
         else:
-            canonical_gap, mp = _canonical_group(G_gap, orbits)
+            canonical_gap, conjugator = _canonical_group(G_gap, orbits)
             canonical = PermutationGroup(gap_group=canonical_gap)
-            _canonical_group_cache[key] = [(canonical, canonical_gap)]
+            _canonical_group_cache[group_key] = [(canonical, canonical_gap)]
 
-        dompart = [[ZZ(e ** mp) for e in b] for b in dompart]
+        dompart = [[ZZ(e ** conjugator) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
-        key = (mc, canonical)
-        if key in parent._cache:
-            lookup = parent._cache[key]
+        element_key = (mc, canonical)
+        if element_key in parent._cache:
+            lookup = parent._cache[element_key]
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
@@ -1112,16 +1113,16 @@ class AtomicSpeciesElement(WithEqualityById,
                 # check whether the assignment to sorts given by
                 # dompart and by elm._dompart are the same
                 elm_dompart_gap = libgap([sorted(b) for b in elm._dompart])
-                mp = libgap.RepresentativeAction(
+                sort_conjugator = libgap.RepresentativeAction(
                     norm_gap,
                     elm_dompart_gap,
                     dompart_gap,
                     libgap.OnTuplesSets
                 )
-                if mp != GAP_FAIL:
+                if sort_conjugator != GAP_FAIL:
                     return elm
         else:
-            lookup = parent._cache[key] = []
+            lookup = parent._cache[element_key] = []
 
         dompart = tuple([frozenset(b) for b in dompart])
         elm = WithPicklingByInitArgs.__classcall__(cls, parent, canonical,
@@ -2381,20 +2382,21 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 if stored_gap is G_gap:
                     # the same group has already been converted
                     return term
-            # all groups with this key have the same number of fixed
-            # points, so it suffices to test conjugacy of the
-            # restrictions to the moved points
-            moved = G_gap.MovedPoints()
-            action = libgap.Action(G_gap, moved)
-            S_m = _symmetric_group_gap(len(moved))
-            for stored_gap, stored_action, term in bucket:
-                if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
-                    return term
+
+        # all groups with this key have the same number of fixed
+        # points, so it suffices to test conjugacy of the
+        # restrictions to the moved points
+        moved = G_gap.MovedPoints()
+        action = libgap.Action(G_gap, moved)
+        S_m = _symmetric_group_gap(len(moved))
+        for stored_gap, stored_action, term in bucket:
+            if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
+                return term
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
         term = self._element_from_components(G, {0: G.domain()}, False)
-        bucket.append((G_gap, libgap.Action(G_gap, G_gap.MovedPoints()), term))
+        bucket.append((G_gap, action, term))
         return term
 
     def grading_set(self):
