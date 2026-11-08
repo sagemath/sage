@@ -86,9 +86,6 @@ _canonical_group_cache = dict()
 # symmetric group of its degree
 _normalizer_cache = dict()
 
-# the full symmetric group of degree n, as a GAP group
-_symmetric_group_gap_cache = dict()
-
 # the full symmetric group of degree n, as a Sage group
 _symmetric_group_cache = dict()
 
@@ -97,16 +94,18 @@ def _symmetric_group_gap(n):
     r"""
     Return the full symmetric group of degree ``n``, as a GAP group.
 
+    The GAP group is memoized on the cached Sage group, so no
+    separate cache is needed.
+
     EXAMPLES::
 
-        sage: from sage.rings.species import _symmetric_group_gap
+        sage: from sage.rings.species import _symmetric_group_gap, _symmetric_group
         sage: _symmetric_group_gap(3)
         Sym( [ 1 .. 3 ] )
+        sage: _symmetric_group_gap(3) is _symmetric_group(3).gap()
+        True
     """
-    S = _symmetric_group_gap_cache.get(n)
-    if S is None:
-        S = _symmetric_group_gap_cache[n] = _symmetric_group(n).gap()
-    return S
+    return _symmetric_group(n).gap()
 
 
 def _symmetric_group(n):
