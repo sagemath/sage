@@ -604,9 +604,14 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
             [([1, 1], [([1, 1], 1/t), ([2], -1/t)]),
              ([2], [([1, 1], -1/t), ([2], (t + 1)/t)])]
         """
+        # One ribbon-tableau cache for every coefficient of degree n: the
+        # shapes k*mu share subshapes and the weights share prefixes. It is
+        # dropped when the fill returns; the transition matrices are what is
+        # kept.
+        cache = {}
         self._invert_morphism(n, QQt, self._self_to_m_cache,
                               self._m_to_self_cache,
-                              to_other_function=self._to_m)
+                              to_other_function=lambda part: self._to_m(part, cache))
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
@@ -650,7 +655,7 @@ class LLT_spin(LLT_generic):
 
         LLT_generic.__init__(self, llt, prefix="HSp%s" % level)
 
-    def _to_m(self, part):
+    def _to_m(self, part, cache=None):
         r"""
         Return a function which gives the coefficient of a partition
         in the monomial expansion of self(part).
@@ -659,6 +664,8 @@ class LLT_spin(LLT_generic):
 
         - ``self`` -- an instance of the LLT hspin basis
         - ``part`` -- a partition
+        - ``cache`` -- dictionary or ``None`` (default); passed to
+          :func:`~sage.combinat.ribbon_tableau.spin_polynomial`
 
         OUTPUT:
 
@@ -675,7 +682,7 @@ class LLT_spin(LLT_generic):
             (t+2)*m[1, 1, 1] + (t+1)*m[2, 1] + t*m[3]
         """
         level = self.level()
-        f = lambda part2: QQt(ribbon_tableau.spin_polynomial([level*i for i in part], part2, level))
+        f = lambda part2: QQt(ribbon_tableau.spin_polynomial([level*i for i in part], part2, level, cache))
         return f
 
     class Element(LLT_generic.Element):
@@ -718,7 +725,7 @@ class LLT_cospin(LLT_generic):
         self._m_to_self_cache = m_to_hcosp_cache[level]
         LLT_generic.__init__(self, llt, prefix="HCosp%s" % level)
 
-    def _to_m(self, part):
+    def _to_m(self, part, cache=None):
         r"""
         Return a function which gives the coefficient of part2 in the
         monomial expansion of self(part).
@@ -727,6 +734,8 @@ class LLT_cospin(LLT_generic):
 
         - ``self`` -- an instance of the LLT hcospin basis
         - ``part`` -- a partition
+        - ``cache`` -- dictionary or ``None`` (default); passed to
+          :func:`~sage.combinat.ribbon_tableau.cospin_polynomial`
 
         OUTPUT:
 
@@ -743,7 +752,7 @@ class LLT_cospin(LLT_generic):
             (2*t+1)*m[1, 1, 1] + (t+1)*m[2, 1] + m[3]
         """
         level = self.level()
-        f = lambda part2: QQt(ribbon_tableau.cospin_polynomial([level*i for i in part], part2, level))
+        f = lambda part2: QQt(ribbon_tableau.cospin_polynomial([level*i for i in part], part2, level, cache))
         return f
 
     class Element(LLT_generic.Element):
