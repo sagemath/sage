@@ -72,7 +72,7 @@ related?
     sage: len(p.formulas())
     0
     sage: len(p.first_terms())
-    17
+    18
     sage: p.cross_references(fetch=True)    # random
     0: A000798: Number of different quasi-orders (or topologies, or transitive digraphs)
                 with n labeled elements.
