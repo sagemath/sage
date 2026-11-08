@@ -365,8 +365,8 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
     def _element_with_valuation(self, subgroup, s):
         r"""
         Return exponents such that `\pi^a+\psi^b` has valuation `s` where `\pi`
-        is a unformizer corresponding to this value group and `\psi` a
-        unformizer corresponding to its ``subgroup``.
+        is a uniformizer corresponding to this value group and `\psi` a
+        uniformizer corresponding to its ``subgroup``.
 
         The returned values are such that ``a`` is minimal.
 

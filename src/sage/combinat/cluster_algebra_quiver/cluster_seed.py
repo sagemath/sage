@@ -4092,7 +4092,8 @@ class ClusterSeed(SageObject):
             return False
         return mt.is_finite()
 
-    def is_mutation_finite(self, nr_of_checks=None, return_path=False):
+    def is_mutation_finite(self, nr_of_checks=None,
+                           return_path=False) -> tuple[bool, list[int] | None]:
         r"""
         Return ``True`` if ``self`` is of finite mutation type.
 

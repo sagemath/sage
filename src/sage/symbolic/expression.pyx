@@ -11196,6 +11196,14 @@ cdef class Expression(Expression_abc):
             gamma(n + 1)
             sage: binomial(m,n).to_gamma()
             gamma(m + 1)/(gamma(m - n + 1)*gamma(n + 1))
+
+        Constants that cannot be expressed in terms of the gamma function
+        are kept::
+
+            sage: pi.to_gamma()
+            pi
+            sage: (pi*factorial(n)).to_gamma()
+            pi*gamma(n + 1)
         """
         cdef GEx x
         sig_on()
@@ -13144,7 +13152,7 @@ cdef class Expression(Expression_abc):
             sage: k.prod(k, 1, n)
             factorial(n)
             sage: (x + i*(i+1)/2).prod(i,1,4)
-            x^4 + 20*x^3 + 127*x^2 + 288*x + 180
+            (x + 10)*(x + 6)*(x + 3)*(x + 1)
             sage: (i^2).prod(i,1,7)
             25401600
             sage: f = function('f')
