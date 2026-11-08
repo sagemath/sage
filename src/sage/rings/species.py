@@ -1068,10 +1068,11 @@ class AtomicSpeciesElement(WithEqualityById,
             if order == 1 and n:
                 # the single point of the trivial group carries the sort
                 data = ((1, next(s for s, b in enumerate(dompart) if b)),)
-            if order == 1 or order == factorial(n):
-                # the trivial subgroup and the full symmetric group
-                # are the unique subgroups of their order, so their
-                # key determines the atomic species
+            if order == 1:
+                # the trivial group is the unique subgroup of its
+                # order, so its key determines the atomic species;
+                # the full symmetric group is decided by the theorem
+                # on transitive classes in _atomic_species_determined
                 determined = True
             else:
                 determined = _atomic_species_determined(order, orbits,
