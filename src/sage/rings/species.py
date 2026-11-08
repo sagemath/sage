@@ -77,12 +77,14 @@ from sage.structure.unique_representation import (UniqueRepresentation,
                                                   WithPicklingByInitArgs)
 
 GAP_FAIL = libgap.eval('fail')
-# for each key (currently size and orbit-sizes) a list of canonical
-# representatives of directly indecomposable groups
-# TODO: most likely, it would be better to store the groups as GAP groups
-_dis_cache = dict()
 
-# normalizer of each canonical representative in the full symmetric group
+# for each key (order, orbit lengths) the canonical representatives of
+# the conjugacy classes of directly indecomposable groups with this
+# key, as (sage group, gap group) pairs
+_canonical_group_cache = dict()
+
+# the normalizer of each canonical representative in the full
+# symmetric group of its degree
 _normalizer_cache = dict()
 
 # the full symmetric group of degree n, as a GAP group
@@ -107,7 +109,7 @@ def _symmetric_group_gap(n):
 
 def _SymmetricGroup(n):
     r"""
-    Return a symmetric group quickly.
+    Return the full symmetric group of degree ``n`` quickly.
 
     EXAMPLES::
 
@@ -115,10 +117,47 @@ def _SymmetricGroup(n):
         sage: _SymmetricGroup(1)
         Symmetric group of order 1! as a permutation group
     """
-    key = factorial(n), (n,)  # the key for the symmetric group is unique
-    if key not in _dis_cache:
-        _dis_cache[key] = [SymmetricGroup(n)]
-    return _dis_cache[key][0]
+    S = _symmetric_group_cache.get(n)
+    if S is None:
+        S = _symmetric_group_cache[n] = SymmetricGroup(n)
+    return S
+
+
+# the full symmetric group of degree n, as a Sage group
+_symmetric_group_cache = dict()
+
+
+def _canonical_group(G_gap, orbits):
+    r"""
+    Return a group conjugate to the GAP group ``G_gap`` whose orbits
+    are contiguous sets of numbers, with larger orbits having smaller
+    numbers, together with the conjugating map.
+
+    All groups with the same key -- the same order and orbit lengths
+    -- are conjugate to one of the canonical representatives of
+    their key; they are converted by conjugating them onto such a
+    representative, see ``AtomicSpeciesElement.__classcall__``.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _canonical_group
+        sage: G = PermutationGroup([[(1, 4, 2, 5), (3, 6)]])
+        sage: orbits = sorted(G.gap().Orbits().sage(), key=len, reverse=True)
+        sage: canonical, mp = _canonical_group(G.gap(), orbits)
+        sage: sorted(PermutationGroup(gap_group=canonical).orbits())
+        [(1, 2, 3, 4), (5, 6)]
+    """
+    # the permutation mapping the points of the orbits to the
+    # contiguous sets of numbers
+    mp = libgap.PermList(libgap([e for o in orbits for e in o])).Inverse()
+    # the canonical group is presented by a sorted small generating
+    # set, so that its generators are canonical
+    gens = libgap.SortedList(G_gap.SmallGeneratingSet())
+    if not gens:
+        # the trivial group has no generators, so we present it by the
+        # identity permutation
+        gens = [libgap.PermList([1])]
+    return libgap.ConjugateGroup(libgap.GroupWithGenerators(gens), mp), mp
 
 
 # The keys (order, orbit lengths) that determine the conjugacy class
@@ -871,10 +910,10 @@ class AtomicSpeciesElement(WithEqualityById,
 
     INPUT:
 
-    - ``dis`` -- a directly indecomposable permutation group
+    - ``group`` -- a directly indecomposable permutation group
     - ``domain_partition`` -- a `k`-tuple of ``frozenset`` entries,
       where `k` is the arity, representing the assignment of each
-      element of the domain of ``dis`` to a sort
+      element of the domain of ``group`` to a sort
     """
     @staticmethod
     def __classcall__(cls, parent, G, dompart):
@@ -886,7 +925,7 @@ class AtomicSpeciesElement(WithEqualityById,
         - ``G`` -- a directly indecomposable permutation group
         - ``dompart`` -- a `k`-tuple of iterables, where `k` is the
           arity, representing the assignment of each element of the
-          domain of ``dis`` to a sort
+          domain of ``group`` to a sort
 
         Two atomic species are conjugate if and only if some element
         of the symmetric group conjugates their groups and carries
@@ -1020,51 +1059,43 @@ class AtomicSpeciesElement(WithEqualityById,
                 if elm is not None:
                     return elm
 
-        def new_dis():
-            """
-            Return a representative ``dis`` in the conjugacy
-            class of subgroups conjugate to ``G``, together with the
-            conjugating map ``mp``
-            """
-            # create a group conjugate to `G` whose orbits
-            # consist of contiguous sets of numbers, with larger
-            # orbits having smaller numbers, and compute a small
-            # generating set
-            mp = PermutationGroupElement([e for o in orbits for e in o]).inverse().gap()
-            H = PermutationGroup(G_gap.SmallGeneratingSet().sage())
-            return H.conjugate(mp), mp
-
         n = G.degree()
-        S_gap = _SymmetricGroup(n).gap()
+        S_gap = _symmetric_group_gap(n)
         key = order, tuple([len(o) for o in orbits])
-        if key in _dis_cache:
-            lookup_dis = _dis_cache[key]
-            for dis in lookup_dis:
-                dis_gap = dis.gap()
-                mp = libgap.RepresentativeAction(S_gap, G_gap, dis_gap)
+        if order == factorial(n):
+            # the full symmetric group is the unique subgroup of its
+            # order, so it is the canonical representative of its key
+            canonical, canonical_gap = _SymmetricGroup(n), S_gap
+            mp = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
+            _canonical_group_cache[key] = [(canonical, canonical_gap)]
+        elif key in _canonical_group_cache:
+            canonicals = _canonical_group_cache[key]
+            for canonical, canonical_gap in canonicals:
+                mp = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
                 if mp != GAP_FAIL:
                     break
             else:
-                dis, mp = new_dis()
-                lookup_dis.append(dis)
+                canonical_gap, mp = _canonical_group(G_gap, orbits)
+                canonical = PermutationGroup(gap_group=canonical_gap)
+                canonicals.append((canonical, canonical_gap))
         else:
-            dis, mp = new_dis()
-            lookup_dis = _dis_cache[key] = [dis]
+            canonical_gap, mp = _canonical_group(G_gap, orbits)
+            canonical = PermutationGroup(gap_group=canonical_gap)
+            _canonical_group_cache[key] = [(canonical, canonical_gap)]
 
         dompart = [[ZZ(e ** mp) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
-        key = (mc, dis)
+        key = (mc, canonical)
         if key in parent._cache:
             lookup = parent._cache[key]
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
 
-            dis_gap = dis.gap()
-            norm_gap = _normalizer_cache.get(dis)
+            norm_gap = _normalizer_cache.get(canonical)
             if norm_gap is None:
-                norm_gap = libgap.Normalizer(S_gap, dis_gap)
-                _normalizer_cache[dis] = norm_gap
+                norm_gap = libgap.Normalizer(S_gap, canonical_gap)
+                _normalizer_cache[canonical] = norm_gap
 
             dompart_gap = libgap([sorted(b) for b in dompart])
 
@@ -1084,13 +1115,14 @@ class AtomicSpeciesElement(WithEqualityById,
             lookup = parent._cache[key] = []
 
         dompart = tuple([frozenset(b) for b in dompart])
-        elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, dompart)
+        elm = WithPicklingByInitArgs.__classcall__(cls, parent, canonical,
+                                                   dompart)
         lookup.append(elm)
         if determined:
             parent._conclusive[(order, data)] = elm
         return elm
 
-    def __init__(self, parent, dis, domain_partition) -> None:
+    def __init__(self, parent, group, domain_partition) -> None:
         r"""
         Initialize an atomic species.
 
@@ -1105,7 +1137,7 @@ class AtomicSpeciesElement(WithEqualityById,
             True
         """
         Element.__init__(self, parent)
-        self._dis = dis
+        self._group = group
         self._dompart = domain_partition
         self._mc = tuple([len(v) for v in self._dompart])
         self._tc = sum(self._mc)
@@ -1142,10 +1174,10 @@ class AtomicSpeciesElement(WithEqualityById,
             return repr(self)
 
         if self.parent()._arity == 1:
-            return "{" + f"{self._dis.gens()}" + "}"
+            return "{" + f"{self._group.gens()}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
                             for b in self._dompart)
-        return "{" + f"{self._dis.gens()}: ({dompart})" + "}"
+        return "{" + f"{self._group.gens()}: ({dompart})" + "}"
 
     def grade(self):
         r"""
@@ -1212,10 +1244,10 @@ class AtomicSpeciesElement(WithEqualityById,
         # conjugate self and other to match S
         g = list(chain.from_iterable(self._dompart))
         conj_self = PermutationGroupElement(g).inverse()
-        G = libgap.ConjugateGroup(self._dis, conj_self)
+        G = libgap.ConjugateGroup(self._group, conj_self)
         h = list(chain.from_iterable(other._dompart))
         conj_other = PermutationGroupElement(h).inverse()
-        H = libgap.ConjugateGroup(other._dis, conj_other)
+        H = libgap.ConjugateGroup(other._group, conj_other)
         return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
     def __le__(self, other) -> bool:
@@ -1271,7 +1303,7 @@ class AtomicSpeciesElement(WithEqualityById,
         S = _SymmetricGroup(sum(n)).young_subgroup(n)
         l = [e for l in labels for e in l]
         if self._mc == n:
-            for rep in libgap.RightTransversal(S, self._dis):
+            for rep in libgap.RightTransversal(S, self._group):
                 yield tuple(S(rep)._act_on_list_on_position(l))
 
     def __call__(self, *args):
@@ -1318,7 +1350,7 @@ class AtomicSpeciesElement(WithEqualityById,
             raise ValueError("all args must be molecular species")
 
         Mlist = [None] * sum(self.grade())
-        G = self._dis
+        G = self._group
         dompart = self._dompart
         for i, v in enumerate(dompart):
             for k in v:
@@ -2157,7 +2189,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     and set(domain) == set(G.domain())):
                 return self._element_from_group_single_sort(G)
 
-            return self._element_from_group_components(G, pi, check)
+            return self._element_from_components(G, pi, check)
 
         raise ValueError(f"{G} must be a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
@@ -2180,7 +2212,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             self._singleton_terms[k] = term
         return term
 
-    def _element_from_group_components(self, G, pi, check):
+    def _element_from_components(self, G, pi, check):
         r"""
         Return the molecular species of the permutation group ``G``,
         decomposing it into the direct product of its restrictions to
@@ -2191,7 +2223,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: from sage.rings.species import MolecularSpecies
             sage: M = MolecularSpecies("X")
             sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
-            sage: M._element_from_group_components(G, {0: [1,2,3,4,5,6]}, True)
+            sage: M._element_from_components(G, {0: [1,2,3,4,5,6]}, True)
             X^2*E_2(X^2)
         """
         components = G.disjoint_direct_product_decomposition()
@@ -2328,7 +2360,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # molecular species; the factors of the direct product
             # decomposition are directly indecomposable, so no check
             # is needed
-            term = self._element_from_group_components(G, {0: G.domain()}, False)
+            term = self._element_from_components(G, {0: G.domain()}, False)
             self._group_conclusive[key] = term
             return term
 
@@ -2352,7 +2384,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
-        term = self._element_from_group_components(G, {0: G.domain()}, False)
+        term = self._element_from_components(G, {0: G.domain()}, False)
         bucket.append((G_gap, libgap.Action(G_gap, G_gap.MovedPoints()), term))
         return term
 
@@ -2625,13 +2657,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 A, n = factors[0]
                 if n == 1:
                     a = list(A._monomial)[0]  # as atomic species
-                    return a._dis, a._dompart
+                    return a._group, a._dompart
 
                 if n % 2 == 1:
                     # split off a single monomial
                     a = list(A._monomial)[0]  # as atomic species
                     b, b_dompart = (A ** (n-1)).permutation_group()
-                    gens = a._dis.gens() + shift_gens(b.gens(), a._tc)
+                    gens = a._group.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
                                          for p_a, p_b in zip(a._dompart, b_dompart)])
                     domain = range(1, n * a._tc + 1)
@@ -3364,7 +3396,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
             sage: A = AtomicSpecies("X")
             sage: P = PolynomialSpecies(QQ, "X")
-            sage: l = [P(a._dis, check=False) for a in A.subset(5)]
+            sage: l = [P(a._group, check=False) for a in A.subset(5)]
             sage: p = [a.hadamard_product(b) for a in l for b in l]
         """
         P = self.parent()
@@ -3760,7 +3792,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                         if s is None:
                             return None
                         pi.setdefault(s, []).extend(block)
-                return A(a._dis, pi, check=False)
+                return A(a._group, pi, check=False)
 
             result = {}
             for mol, c in self.monomial_coefficients().items():
