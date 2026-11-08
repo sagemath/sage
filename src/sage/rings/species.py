@@ -312,9 +312,13 @@ def _sylow_subgroup_determined(order, n):
     group on ``n`` points is a Sylow subgroup.
 
     This is the case if and only if the order is `p^{v_p(n!)}` for
-    some prime `p`.  All Sylow subgroups are conjugate, and the orbit
-    lengths of a Sylow `p`-subgroup are the digits of `n` in base
-    `p`, so that its order alone determines its key.
+    some prime `p` at most `n/2`; the prime orders `p` with
+    `v_p(n!) = 1`, arising for `p` larger than `n/2`, are decided by
+    the theorem on groups of prime order, see
+    :func:`_conjugacy_class_determined`.  All Sylow subgroups are
+    conjugate, and the orbit lengths of a Sylow `p`-subgroup are the
+    digits of `n` in base `p`, so that its order alone determines its
+    key.
 
     EXAMPLES::
 
@@ -493,10 +497,11 @@ def _conjugacy_class_determined(order, orbits):
 # and sorts of the orbits -- determines the atomic species of a
 # directly indecomposable permutation group, where the pattern records
 # the lengths of the orbits in each sort; tabulated for all degrees up
-# to eight -- directly indecomposable groups with determined keys of
-# larger degree are exceptional, almost simple groups -- see
-# _atomic_species_determined for the exact statement and for a
-# verification of this table
+# to eight -- the groups arising in practice decompose into directly
+# indecomposable factors of smaller degree, so that atomic
+# conversions of larger degree are rare and go through the conjugacy
+# tests -- see _atomic_species_determined for the exact statement and
+# for a verification of this table
 _ATOMIC_DETERMINED_KEYS = {
     # directly indecomposable subgroups of the symmetric group on 4 points
     (24, ((4,),)),
@@ -647,9 +652,11 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
     class of the group in general -- the cyclic and the Klein four
     group are both directly indecomposable transitive subgroups of
     order four -- so the table is a finite classification, through
-    degree eight.  Directly indecomposable groups with determined
-    keys of larger degree are exceptional, almost simple groups;
-    their conversions go through the conjugacy tests.
+    degree eight.  The keys of directly indecomposable groups of
+    larger degree are not tabulated: the groups arising in practice
+    decompose into directly indecomposable factors of smaller
+    degree, so that atomic conversions of larger degree are rare;
+    they go through the conjugacy tests.
 
     INPUT:
 
