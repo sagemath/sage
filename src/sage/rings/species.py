@@ -125,6 +125,26 @@ def _symmetric_group(n):
     return S
 
 
+def _perm_to_contiguous(blocks):
+    r"""
+    Return the permutation which maps the points of the blocks onto
+    the contiguous sets of numbers, in the order of the blocks.
+
+    Conjugating a permutation group whose orbits, or whose domain
+    partition, are the blocks by the returned permutation moves each
+    block onto a contiguous set of numbers.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _perm_to_contiguous
+        sage: mp = _perm_to_contiguous([[2, 3], [1, 4]])
+        sage: [i ** mp for i in range(1, 5)]
+        [3, 1, 2, 4]
+    """
+    flat = [e for b in blocks for e in b]
+    return libgap.PermList(libgap(flat)).Inverse()
+
+
 def _canonical_group(G_gap, orbits):
     r"""
     Return a group conjugate to the GAP group ``G_gap`` whose orbits
@@ -150,7 +170,7 @@ def _canonical_group(G_gap, orbits):
     """
     # the permutation mapping the points of the orbits to the
     # contiguous sets of numbers
-    mp = libgap.PermList(libgap([e for o in orbits for e in o])).Inverse()
+    mp = _perm_to_contiguous(orbits)
     # the canonical group is presented by a sorted small generating
     # set, so that its generator order is stable; the order
     # reproduces Sage's sorted(set(gens)) and affects only the
@@ -1252,11 +1272,9 @@ class AtomicSpeciesElement(WithEqualityById,
                         and self._mc > other._mc))
         S = _symmetric_group(sum(self._mc)).young_subgroup(self._mc)
         # conjugate self and other to match S
-        g = list(chain.from_iterable(self._dompart))
-        conj_self = PermutationGroupElement(g).inverse()
+        conj_self = _perm_to_contiguous(self._dompart)
         G = libgap.ConjugateGroup(self._group, conj_self)
-        h = list(chain.from_iterable(other._dompart))
-        conj_other = PermutationGroupElement(h).inverse()
+        conj_other = _perm_to_contiguous(other._dompart)
         H = libgap.ConjugateGroup(other._group, conj_other)
         return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
@@ -2341,21 +2359,25 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M(PermutationGroup([[(1,2,3),(4,5,6)]])) is M(PermutationGroup([[(1,3,2),(4,6,5)]]))
             True
         """
-        n = len(G.domain())
+        n = G.degree()
+        # the order is computed without constructing the GAP group
+        # where possible: it is one for a group without generators
+        # and the element order for a group with a single generator
         order = G.cardinality()
+        G_gap = None
         if order == 1 or order == factorial(n):
             # the trivial subgroup and the full symmetric group are
             # the unique subgroups of the symmetric group on their
             # domain of their respective order, so their key
             # determines the conjugacy class; their orbits on the
             # moved points are stated without consulting GAP
-            G_gap = None
             orbits = (n,) if order > 1 else ()
             determined = True
         else:
             G_gap = G.gap()
             # the orbits on the moved points
-            orbits = tuple(sorted(len(o) for o in G_gap.Orbits().sage()))
+            orbits = tuple(sorted(libgap.List(G_gap.Orbits(),
+                                             libgap.Length).sage()))
             determined = _conjugacy_class_determined(order, orbits)
         key = (n, order, orbits)
 
@@ -2575,12 +2597,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 S = _symmetric_group(sum(self.grade())).young_subgroup(self.grade())
                 # conjugate self and other to match S
                 G, G_dompart = self.permutation_group()
-                g = list(chain.from_iterable(G_dompart))
-                conj_self = PermutationGroupElement(g).inverse()
+                conj_self = _perm_to_contiguous(G_dompart)
                 G = libgap.ConjugateGroup(G, conj_self)
                 H, H_dompart = other.permutation_group()
-                h = list(chain.from_iterable(H_dompart))
-                conj_other = PermutationGroupElement(h).inverse()
+                conj_other = _perm_to_contiguous(H_dompart)
                 H = libgap.ConjugateGroup(H, conj_other)
                 return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
@@ -3422,8 +3442,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             S = _symmetric_group(tc).young_subgroup(mc)
             # conjugate L and R to match S
             G, dompart = L.permutation_group()
-            g = list(chain.from_iterable(dompart))
-            conj_L = PermutationGroupElement(g).inverse()
+            conj_L = _perm_to_contiguous(dompart)
             G = libgap.ConjugateGroup(G, conj_L)
             pi = {i: range(x - mc[i] + 1, x + 1)
                   for i, x in enumerate(accumulate(mc))}
@@ -3431,8 +3450,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 if mc != R.grade():
                     continue
                 G_R, dompart_R = R.permutation_group()
-                g = list(chain.from_iterable(dompart_R))
-                conj_R = PermutationGroupElement(g).inverse()
+                conj_R = _perm_to_contiguous(dompart_R)
                 H = libgap.ConjugateGroup(G_R, conj_R)
                 taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
                 # loop over representatives
@@ -3509,7 +3527,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             # Create group of the composition
             # conjugate self.group() so that [1..k] is sort 1, [k+1,..] is sort 2, so on
             G, dompart = M.permutation_group()
-            conj = PermutationGroupElement(list(chain.from_iterable(dompart))).inverse()
+            conj = _perm_to_contiguous(dompart)
             G = libgap.ConjugateGroup(G, conj)
 
             mc = M.grade()
