@@ -79,7 +79,7 @@ GAP_FAIL = libgap.eval('fail')
 
 # for each key (order, orbit lengths) the canonical representatives of
 # the conjugacy classes of directly indecomposable groups with this
-# key, as (sage group, gap group) pairs
+# key; the GAP group of a representative is its memoized gap()
 _canonical_group_cache = dict()
 
 # the normalizer of each canonical representative in the full
@@ -148,6 +148,11 @@ def _canonical_group(G_gap, orbits):
 
     The group ``G_gap`` must be fixed point free, so that the
     concatenation of its orbits is the image list of a permutation.
+
+    The returned GAP group is assigned to the ``_libgap`` attribute of
+    the Sage permutation group constructed from it, so that its
+    ``gap()`` returns it; the cache in ``AtomicSpeciesElement.__classcall__``
+    therefore stores only the Sage group.
 
     EXAMPLES::
 
@@ -1091,23 +1096,23 @@ class AtomicSpeciesElement(WithEqualityById,
             # trivial groups of degrees zero and one share the key
             # (1, ()); since both are the full symmetric group of
             # their degree, overwriting the entry is harmless
-            canonical, canonical_gap = S, S_gap
-            conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
-            _canonical_group_cache[group_key] = [(canonical, canonical_gap)]
+            canonical = S
+            conjugator = libgap.RepresentativeAction(S_gap, G_gap, S_gap)
+            _canonical_group_cache[group_key] = [canonical]
         elif group_key in _canonical_group_cache:
             canonicals = _canonical_group_cache[group_key]
-            for canonical, canonical_gap in canonicals:
-                conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical_gap)
+            for canonical in canonicals:
+                conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical.gap())
                 if conjugator != GAP_FAIL:
                     break
             else:
                 canonical_gap, conjugator = _canonical_group(G_gap, orbits)
                 canonical = PermutationGroup(gap_group=canonical_gap)
-                canonicals.append((canonical, canonical_gap))
+                canonicals.append(canonical)
         else:
             canonical_gap, conjugator = _canonical_group(G_gap, orbits)
             canonical = PermutationGroup(gap_group=canonical_gap)
-            _canonical_group_cache[group_key] = [(canonical, canonical_gap)]
+            _canonical_group_cache[group_key] = [canonical]
 
         dompart = [[ZZ(e ** conjugator) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
@@ -1120,7 +1125,7 @@ class AtomicSpeciesElement(WithEqualityById,
 
             norm_gap = _normalizer_cache.get(canonical)
             if norm_gap is None:
-                norm_gap = libgap.Normalizer(S_gap, canonical_gap)
+                norm_gap = libgap.Normalizer(S_gap, canonical.gap())
                 _normalizer_cache[canonical] = norm_gap
 
             dompart_gap = libgap([sorted(b) for b in dompart])
