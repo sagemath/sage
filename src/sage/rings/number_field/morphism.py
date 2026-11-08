@@ -16,13 +16,83 @@ fields (i.e. field embeddings).
 # ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.morphism import RingHomomorphism_im_gens, RingHomomorphism
-from sage.structure.sequence import Sequence
+from sage.rings.morphism import RingHomomorphism, RingHomomorphism_im_gens
 from sage.structure.richcmp import richcmp
+from sage.structure.sequence import Sequence
 
 
 class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
+
+    def pushforward(self, I):
+        r"""
+        Return the pushforward of an ideal.
+
+        For a rational quaternion algebra as codomain, return the integer
+        lattice given by the image of an integer basis of ``I``. This need
+        not have rank 4, so it is not a quaternion fractional ideal. It can
+        be multiplied by a quaternion order to extend the ideal to that order.
+
+        EXAMPLES:
+
+        The image lattice can be multiplied on either side by an order
+        (:issue:`38422`)::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: O = B.maximal_order()
+            sage: K.<a> = QuadraticField(-35)
+            sage: I = K.ideal(3, (a-1)/2)
+            sage: f = K.hom([5*i + j + 3*k])
+            sage: L = f(I)
+            sage: L.rank()
+            2
+            sage: O * L
+            Fractional ideal (1/2 + 1/2*i + 5/2*j + 3/2*k, i + j + k, 3*j, 3*k)
+            sage: O * L == O.left_ideal([f(x) for x in I.basis()])
+            True
+            sage: L * O == O.right_ideal([f(x) for x in I.basis()])
+            True
+
+        The integer basis must be used even for principal ideals, and even
+        when the image of the integers of ``K`` is not contained in ``O``::
+
+            sage: u = 1 + 3*i
+            sage: g = K.hom([u*f(a)/u])
+            sage: J = K.ideal(1)
+            sage: g((a-1)/2) in O
+            False
+            sage: g((a-1)/2) in g(J)
+            True
+            sage: O * g(J) == O.left_ideal([g(x) for x in J.basis()])
+            True
+            sage: O * g(J) == O.unit_ideal()
+            False
+            sage: f(K.ideal(1/2)).rank()
+            2
+
+        The zero ideal has a zero image lattice::
+
+            sage: Z = f(K.ideal(0))
+            sage: (Z.rank(), (O*Z).rank(), (Z*O).rank())
+            (0, 0, 0)
+
+        Pushforwards to number fields retain the usual ideal semantics::
+
+            sage: h = K.hom([-a])
+            sage: h(I) == K.ideal([h(x) for x in I.gens()])
+            True
+            sage: h(K.ideal(0)) == K.ideal(0)
+            True
+        """
+        from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra_abstract
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        from sage.rings.rational_field import QQ
+
+        R = self.codomain()
+        if (isinstance(R, QuaternionAlgebra_abstract) and R.base_ring() is QQ
+                and isinstance(I, NumberFieldIdeal) and I.number_field() is self.domain()):
+            return R.lattice([self(x) for x in I.basis()])
+        return super().pushforward(I)
+
     def __invert__(self):
         r"""
         Return the inverse of an isomorphism of absolute number fields.
