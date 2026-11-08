@@ -227,7 +227,10 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         # after homogenization, the basis elements will generate the defining
         # ideal of the projective closure of this affine subscheme
         R = AA.coordinate_ring()
-        G = self.defining_ideal().groebner_basis()
+        I = self.defining_ideal()
+        if R.term_order().name() not in ('degrevlex', 'deglex'):
+            I = I.change_ring(R.change_ring(order='degrevlex'))
+        G = [R(g) for g in I.groebner_basis()]
         v = list(PP.gens())
         z = v.pop(i)
         phi = R.hom(v, PR)
@@ -277,6 +280,18 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X = A.subscheme([z - x^2 - y^2])
             sage: X.projective_closure(1, P).ambient_space() == P                       # needs sage.libs.singular
             True
+
+        TESTS:
+
+        Check that :issue:`33622` is fixed::
+
+            sage: R.<u,v,w> = PolynomialRing(QQ, order='lex')
+            sage: X = AffineSpace(R).subscheme([v - w^2, u - w^3])
+            sage: X.projective_closure()                                                # needs sage.libs.singular
+            Closed subscheme of Projective Space of dimension 3 over Rational Field defined by:
+              x1^2 - x0*x2,
+              x1*x2 - x0*x3,
+              x2^2 - x1*x3
         """
         return self.projective_embedding(i, PP).codomain()
 
