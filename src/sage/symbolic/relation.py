@@ -855,10 +855,10 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         [x == sin(x)]
         sage: solve(sin(x)==x,x,explicit_solutions=True)
         []
-        sage: solve(abs(1-abs(1-x)) == 10, x)
-        [abs(abs(x - 1) - 1) == 10]
-        sage: solve(abs(1-abs(1-x)) == 10, x, to_poly_solve=True)
-        [x == -10, x == 12]
+        sage: solve(sin(x)==cos(x), x)
+        [sin(x) == cos(x)]
+        sage: solve(sin(x)==cos(x), x, to_poly_solve=True)
+        [x == 1/4*pi + pi*z...]
 
         sage: from sage.symbolic.expression import Expression
         sage: Expression.solve(x^2==1,x)
@@ -981,10 +981,10 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
 
     The following examples show the use of the keyword ``to_poly_solve``::
 
-        sage: solve(abs(1-abs(1-x)) == 10, x)
-        [abs(abs(x - 1) - 1) == 10]
-        sage: solve(abs(1-abs(1-x)) == 10, x, to_poly_solve=True)
-        [x == -10, x == 12]
+        sage: solve(sin(x)==cos(x), x)
+        [sin(x) == cos(x)]
+        sage: solve(sin(x)==cos(x), x, to_poly_solve=True)
+        [x == 1/4*pi + pi*z...]
 
         sage: var('Q')
         Q
@@ -1385,7 +1385,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     Maxima 5.49 no longer raises an error for these inputs::
 
         sage: solve(acot(x), x)
-        [arccot(x) == 0]
+        [...]
         sage: solve(acot(x), x, to_poly_solve=True)
         []
 

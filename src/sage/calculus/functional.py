@@ -364,11 +364,10 @@ def limit(f, dir=None, taylor=False, **argv):
         sage: limit((tan(sin(x)) - sin(tan(x)))/x^7, taylor=True, x=0)
         1/30
 
-    Sage does not know how to do this limit (which is 0), so it returns
-    it unevaluated::
+    Sage does not know how to do this limit, so it returns it unevaluated::
 
-        sage: lim(exp(x^2)*(1-erf(x)), x=infinity)
-        -limit((erf(x) - 1)*e^(x^2), x, +Infinity)
+        sage: lim(zeta(x)-1/(x-1), x, 1)
+        limit(-1/(x - 1) + zeta(x), x, 1)
     """
     if not isinstance(f, Expression):
         from sage.symbolic.ring import SR
