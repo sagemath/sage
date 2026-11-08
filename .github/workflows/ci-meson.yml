@@ -28,18 +28,18 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'macos', 'windows']
-        python: ['3.13', '3.14']
+        python: ['3.13', '3.14']  # TODO: Add 3.15
         tests: ['all']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
           # Test only changed files
           - os: 'ubuntu'
-            python: '3.13'
+            python: '3.14'  # TODO: Change to 3.15
             tests: 'new'
           # One additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: '3.13'
+            python: '3.14'  # TODO: Change to 3.15
             editable: true
             tests: 'all'
 
@@ -70,7 +70,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.13-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ matrix.python }}-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
@@ -143,7 +143,7 @@ jobs:
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
-        if: matrix.tests == 'all' && matrix.python == '3.13'
+        if: matrix.tests == 'all' && matrix.python == '3.14'
         run: |
           python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then

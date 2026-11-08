@@ -1346,7 +1346,7 @@ def sage_getfile_relative(obj):
     if not filename:
         return filename
 
-    from os.path import commonprefix, normpath, relpath
+    from os.path import commonpath, normpath, relpath
 
     def directories():
         try:
@@ -1360,7 +1360,7 @@ def sage_getfile_relative(obj):
         yield from sage.__path__
 
     for directory in directories():
-        if commonprefix([filename, directory]) == directory:
+        if commonpath([filename, directory]) == directory:
             return os.path.join('sage', relpath(filename, directory))
 
     return filename
