@@ -76,6 +76,24 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         return self.realization_of().h()
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by repeated multiplication.
+
+        For monomial symmetric functions this avoids the large intermediate
+        squares produced by binary exponentiation.
+
+        TESTS::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: f = m[2, 1] + m[3]
+            sage: all(f^n == f._pow_naive(n) for n in range(5))
+            True
+            sage: m.one()^(10^100) == m.one()
+            True
+        """
+        return self._power_naive(x, n)
+
     def product(self, left, right):
         """
         Return the product of ``left`` and ``right``.

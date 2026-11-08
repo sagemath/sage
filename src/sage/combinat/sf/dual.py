@@ -555,6 +555,19 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         d_product = left.dual() * right.dual()
         return eclass(self, dual=d_product)
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to the dual basis once.
+
+        TESTS::
+
+            sage: D = SymmetricFunctions(ZZ).witt().dual_basis()
+            sage: f = D[2] + D[1, 1]
+            sage: f^3 == f._pow_naive(3)
+            True
+        """
+        return self._power_via(x, n, self._dual_basis)
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         """
         An element in the dual basis.
