@@ -784,6 +784,14 @@ class SupersingularModule(HeckeModule_free_module):
 
         EXAMPLES:
 
+        The first Hecke operator acts as the identity::
+
+            sage: S = SupersingularModule(37)
+            sage: S.hecke_matrix(1)
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+
         This example computes the action of the Hecke operator `T_2`
         on the module of supersingular points on `X_0(1)/F_{37}`::
 
@@ -822,6 +830,14 @@ class SupersingularModule(HeckeModule_free_module):
         """
         if L in self.__hecke_matrices:
             return self.__hecke_matrices[L]
+
+        if L == 1:
+            T_L = MatrixSpace(
+                self.base_ring(), self.dimension(), sparse=True
+            )(1)
+            self.__hecke_matrices[L] = T_L
+            return T_L
+
         SS, II = self.supersingular_points()
         if L == 2:
             # since T_2 gets computed as a side effect of computing the supersingular points
