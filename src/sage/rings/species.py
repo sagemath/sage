@@ -86,17 +86,16 @@ _canonical_group_cache = dict()
 # symmetric group of its degree
 _normalizer_cache = dict()
 
-# the full symmetric group of degree n, as a Sage group
-_SymmetricGroup_cache = dict()
 
-
+@cached_function
 def _SymmetricGroup(n):
     r"""
     Return the full symmetric group of degree ``n`` quickly.
 
-    The group is cached, and its GAP group is memoized on the
-    instance, so that ``_SymmetricGroup(n).gap()`` returns the
-    identical GAP group on every call.
+    The group is cached, so that it is the identical object on every
+    call, and its GAP group is memoized on the instance, so that
+    ``_SymmetricGroup(n).gap()`` returns the identical GAP group on
+    every call.
 
     EXAMPLES::
 
@@ -106,10 +105,7 @@ def _SymmetricGroup(n):
         sage: _SymmetricGroup(3).gap() is _SymmetricGroup(3).gap()
         True
     """
-    S = _SymmetricGroup_cache.get(n)
-    if S is None:
-        S = _SymmetricGroup_cache[n] = SymmetricGroup(n)
-    return S
+    return SymmetricGroup(n)
 
 
 def _perm_to_contiguous(blocks):
