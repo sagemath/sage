@@ -1834,7 +1834,7 @@ class DeltaComplexExamples:
         DC = [[tuple() for _ in range(n + 1)]]
         for i in range(1, n + 1):
             lis = []
-            for p, v in resdic[i].items():
+            for v in resdic[i].values():
                 lisp = []
                 for s in v:
                     lisp.append(list(resdic[i-1].keys()).index(s))
