@@ -127,8 +127,11 @@ def _symmetric_group(n):
 
 def _perm_to_contiguous(blocks):
     r"""
-    Return the permutation which maps the points of the blocks onto
-    the contiguous sets of numbers, in the order of the blocks.
+    Return the GAP permutation which maps the points of the blocks
+    onto the contiguous sets of numbers, in the order of the blocks.
+
+    The blocks must partition the points ``{1, ..., n}``, where ``n``
+    is the sum of the block sizes.
 
     Conjugating a permutation group whose orbits, or whose domain
     partition, are the blocks by the returned permutation moves each
@@ -313,12 +316,13 @@ def _transitive_class_determined(order, n):
     order ``order`` is the unique subgroup of its order, up to
     conjugacy, of the symmetric group on ``n`` points.
 
-    This is the case for the alternating group and for the subgroups
-    of prime degree ``p`` and order ``p d`` with ``d`` dividing
-    ``p - 1``.
+    This is the case for the symmetric group, the alternating group
+    and for the subgroups of prime degree ``p`` and order ``p d`` with
+    ``d`` dividing ``p - 1``.
 
-    - The alternating group is the unique subgroup of index two of
-      the symmetric group.
+    - The symmetric group and the alternating group are the unique
+      subgroups of their order and of index two, respectively, in the
+      symmetric group on `n` points.
 
     - A group of prime degree `p` and order `p d` has a normal Sylow
       subgroup of order `p`, since the number of Sylow subgroups
@@ -333,11 +337,13 @@ def _transitive_class_determined(order, n):
         sage: from sage.rings.species import _transitive_class_determined
         sage: _transitive_class_determined(12, 4)   # A_4
         True
+        sage: _transitive_class_determined(24, 4)   # S_4
+        True
         sage: _transitive_class_determined(22, 11)  # dihedral of degree 11
         True
         sage: _transitive_class_determined(4, 4)     # C_4 and V_4
         False
-        sage: _transitive_class_determined(24, 6)   # two classes, among them S_4
+        sage: _transitive_class_determined(24, 6)   # S_4 on six points, and another
         False
         sage: _transitive_class_determined(1, 2)     # A_2 is not transitive
         False
@@ -359,6 +365,10 @@ def _transitive_class_determined(order, n):
         ....:     assert {o for o in counts if _transitive_class_determined(o, n)} <= \
         ....:         {o for o, c in counts.items() if c == 1}
     """
+    if order == factorial(n):
+        # the symmetric group is the unique subgroup of its order in
+        # the symmetric group on n points
+        return True
     if n >= 3 and 2 * order == factorial(n):
         # the alternating group is the unique subgroup of index two
         # of the symmetric group on n points; the trivial group, the
@@ -568,12 +578,9 @@ def _conjugacy_class_determined(order, orbits):
 # tests -- see _atomic_species_determined for the exact statement and
 # for a verification of this table
 _ATOMIC_DETERMINED_KEYS = {
-    # directly indecomposable subgroups of the symmetric group on 4 points
-    (24, ((4,),)),
     # directly indecomposable subgroups of the symmetric group on 5 points
     (6, ((2,), (3,))),
     (6, ((2, 3),)),
-    (120, ((5,),)),
     # directly indecomposable subgroups of the symmetric group on 6 points
     (4, ((2,), (2,), (2,))),
     (4, ((2,), (2, 2))),
@@ -589,7 +596,6 @@ _ATOMIC_DETERMINED_KEYS = {
     (60, ((6,),)),
     (72, ((6,),)),
     (120, ((6,),)),
-    (720, ((6,),)),
     # directly indecomposable subgroups of the symmetric group on 7 points
     (6, ((2,), (2,), (3,))),
     (6, ((2,), (2, 3))),
@@ -608,7 +614,6 @@ _ATOMIC_DETERMINED_KEYS = {
     (120, ((2,), (5,))),
     (120, ((2, 5),)),
     (168, ((7,),)),
-    (5040, ((7,),)),
     # directly indecomposable subgroups of the symmetric group on 8 points
     (4, ((2, 2, 2, 2),)),
     (6, ((2,), (3,), (3,))),
@@ -660,7 +665,6 @@ _ATOMIC_DETERMINED_KEYS = {
     (720, ((2, 6),)),
     (1152, ((8,),)),
     (1344, ((8,),)),
-    (40320, ((8,),)),
 }
 
 
@@ -706,12 +710,12 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
     single orbit, all of whose points carry the same sort, so that its
     data determines the atomic species if its conjugacy class is
     determined by its order and its degree, see
-    :func:`_transitive_class_determined`: the alternating groups and
-    the groups of prime degree ``p`` and order ``p d`` with ``d``
-    dividing ``p - 1``.  A directly indecomposable subgroup of order
-    `p^{v_p(n!)}` is a Sylow subgroup, hence transitive, see
-    :func:`_sylow_subgroup_determined`.  These keys are also decided
-    for every degree, without consulting the table.
+    :func:`_transitive_class_determined`: the symmetric groups, the
+    alternating groups and the groups of prime degree ``p`` and order
+    ``p d`` with ``d`` dividing ``p - 1``.  A directly indecomposable
+    subgroup of order `p^{v_p(n!)}` is a Sylow subgroup, hence
+    transitive, see :func:`_sylow_subgroup_determined`.  These keys are
+    also decided for every degree, without consulting the table.
 
     The order and the orbit lengths do not characterize the conjugacy
     class of the group in general -- the cyclic and the Klein four
@@ -774,6 +778,8 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         sage: _atomic_species_determined(12, [list(range(1, 13))], [0])
         False
         sage: _atomic_species_determined(181440, [list(range(1, 10))], [0])  # A_9
+        True
+        sage: _atomic_species_determined(362880, [list(range(1, 10))], [0])  # S_9
         True
         sage: _atomic_species_determined(22, [list(range(1, 12))], [0])  # dihedral of degree 11
         True
@@ -844,7 +850,8 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         sage: sylow = {(p ** sum(n // p**i for i in range(1, 5)), ((n,),))
         ....:          for p in [2, 3, 5, 7] for n in [p, p * p, p * p * p] if n <= 8}
         sage: affine = {(p * d, ((p,),)) for p in [2, 3, 5, 7] for d in divisors(p - 1)}
-        sage: predicted = prime | alternating | sylow | affine
+        sage: symmetric = {(factorial(n), ((n,),)) for n in range(2, 9)}
+        sage: predicted = prime | alternating | sylow | affine | symmetric
         sage: computed == _ATOMIC_DETERMINED_KEYS | predicted
         True
         sage: # the table holds exactly the keys the theorems do not decide
@@ -856,7 +863,8 @@ def _atomic_species_determined(order, orbits, orbit_sorts):
         ....:           for p in [2, 3, 5, 7] for k in range(1, 11) if p * k in (9, 10)
         ....:           for sizes in Partitions(k)}
         sage: alternating10 = {(factorial(n) // 2, ((n,),)) for n in (9, 10)}
-        sage: prime10 | alternating10 | {(81, ((9,),))} <= computed10
+        sage: symmetric10 = {(factorial(n), ((n,),)) for n in (9, 10)}
+        sage: prime10 | alternating10 | symmetric10 | {(81, ((9,),))} <= computed10
         True
     """
     if orbits and all(len(o) == order for o in orbits) and is_prime(order):
@@ -2410,10 +2418,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         # restrictions to the moved points
         moved = G_gap.MovedPoints()
         action = libgap.Action(G_gap, moved)
-        S_m = _symmetric_group_gap(len(moved))
-        for stored_gap, stored_action, term in bucket:
-            if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
-                return term
+        if bucket:
+            S_m = _symmetric_group_gap(len(moved))
+            for stored_gap, stored_action, term in bucket:
+                if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
+                    return term
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
