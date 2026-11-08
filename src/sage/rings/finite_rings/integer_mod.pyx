@@ -147,6 +147,28 @@ def Mod(n, m, parent=None):
         sage: a = randint(-100, 100)
         sage: Mod(a, 0) == a
         True
+
+    TESTS:
+
+    Construction of an element for which the ring already exists takes a
+    fast path through the cache of the ``IntegerModRing`` factory and must
+    give the very same parent (:issue:`36518`)::
+
+        sage: R = IntegerModRing(257)
+        sage: x = Mod(8, 257)
+        sage: x.parent() is R is IntegerModRing(257)
+        True
+        sage: Mod(8, int(257)).parent() is R
+        True
+
+    The fast path keeps no strong reference to the ring, so it does not
+    prevent garbage collection of otherwise unused rings::
+
+        sage: import gc, weakref
+        sage: wr = weakref.ref(Mod(3, 2^31 - 595).parent())
+        sage: _ = gc.collect()
+        sage: wr() is None
+        True
     """
     # when m is zero, then ZZ/0ZZ is isomorphic to ZZ
     if m == 0:
@@ -155,8 +177,13 @@ def Mod(n, m, parent=None):
     # m is nonzero, so return n mod m
     if parent is None:
         from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-        parent = IntegerModRing(m)
-    return IntegerMod(parent, n)
+        # Probing the factory cache directly is much faster than a full
+        # factory call and suffices whenever the ring already exists
+        # (:issue:`36518`).
+        parent = IntegerModRing.cached_object(m)
+        if parent is None:
+            parent = IntegerModRing(m)
+    return _IntegerMod(parent, n)
 
 
 mod = Mod
@@ -186,6 +213,10 @@ def IntegerMod(parent, value):
         sage: IntegerMod(R, -9158)
         42
     """
+    return _IntegerMod(parent, value)
+
+
+cdef _IntegerMod(parent, value):
     cdef NativeIntStruct modulus = parent._pyx_order
 
     cdef long val = 0
