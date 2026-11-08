@@ -64,6 +64,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.libs.gap.libgap import libgap
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -78,10 +79,12 @@ from sage.rings.species import (_label_sets,
                                 PolynomialSpecies)
 from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
+                                         Stream_neg,
                                          Stream_truncated,
                                          Stream_function,
                                          Stream_map_coefficients,
-                                         Stream_shift)
+                                         Stream_shift,
+                                         Stream_uninitialized)
 from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
@@ -227,6 +230,81 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 ######################################################################
 
 
+def _is_undefined_stream(coeff_stream):
+    r"""
+    Return whether ``coeff_stream`` is the stream of an actually
+    undefined series.
+
+    A stream is actually undefined only if it is an uninitialized
+    stream that has neither a target nor defining equations.  This is a
+    stronger condition than
+    :meth:`~sage.data_structures.stream.Stream_uninitialized.is_uninitialized`,
+    which also holds for a defined stream that transitively depends on
+    an undefined stream.
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _is_undefined_stream
+        sage: L = LazyCombinatorialSpecies(QQ, "X")
+        sage: X = L(SymmetricGroup(1))
+        sage: F = L.undefined(valuation=1)
+        sage: _is_undefined_stream(F._coeff_stream)
+        True
+        sage: G = L.undefined(valuation=1)
+        sage: G.define(X + F)
+        sage: _is_undefined_stream(G._coeff_stream)
+        False
+        sage: _is_undefined_stream(G._coeff_stream._target)
+        False
+    """
+    return (isinstance(coeff_stream, Stream_uninitialized)
+            and coeff_stream._target is None
+            and coeff_stream._eqs is None)
+
+
+def _generating_series_ring(P):
+    r"""
+    Return the ring of lazy power series in which the generating
+    series and the isotype generating series of species with parent
+    ``P`` live.
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _generating_series_ring
+        sage: L = LazyCombinatorialSpecies(QQ, "X")
+        sage: _generating_series_ring(L)
+        Lazy Taylor Series Ring in X over Rational Field
+
+        sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
+        sage: _generating_series_ring(L)
+        Multivariate Lazy Taylor Series Ring in X, Y over Rational Field
+    """
+    return LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                               P._laurent_poly_ring._indices._indices.variable_names())
+
+
+def _cycle_index_series_ring(P):
+    r"""
+    Return the ring of lazy symmetric functions in which the cycle
+    index series of species with parent ``P`` live.
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _cycle_index_series_ring
+        sage: L = LazyCombinatorialSpecies(QQ, "X")
+        sage: _cycle_index_series_ring(L)
+        Lazy completion of Symmetric Functions over Rational Field in the powersum basis
+
+        sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
+        sage: _cycle_index_series_ring(L)
+        Lazy completion of Symmetric Functions over Rational Field in the powersum basis # Symmetric Functions over Rational Field in the powersum basis
+    """
+    p = SymmetricFunctions(P.base_ring().fraction_field()).p()
+    if P._arity == 1:
+        return LazySymmetricFunctions(p)
+    return LazySymmetricFunctions(tensor([p for _ in range(P._arity)]))
+
+
 class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
     r"""
     EXAMPLES:
@@ -366,16 +444,13 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             + 1/3*p[3] # p[]
         """
         P = self.parent()
-        p = SymmetricFunctions(P.base_ring().fraction_field()).p()
-        if P._arity == 1:
-            L = LazySymmetricFunctions(p)
+        L = _cycle_index_series_ring(P)
 
+        if P._arity == 1:
             def coefficient(n):
                 return sum(c * M.permutation_group()[0].cycle_index()
                            for M, c in self[n].monomial_coefficients().items())
         else:
-            L = LazySymmetricFunctions(tensor([p for _ in range(P._arity)]))
-
             def coefficient(n):
                 return sum(c * M.cycle_index()
                            for M, c in self[n].monomial_coefficients().items())
@@ -438,6 +513,73 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
              ((E_3, ((1, 2, 3),)), (1, ()))]
         """
         return ProductSpeciesElement(self, other)
+
+    def _neg_(self):
+        r"""
+        Return the negative of this species.
+
+        The negative of a species retains the structure of its operand,
+        so that its associated series can be computed from the
+        corresponding series of the operand.  Species whose coefficient
+        stream is known exactly are negated generically.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: -E
+            (-1) + (-X) + (-E_2) + (-E_3) + (-E_4) + (-E_5) + (-E_6) + O^7
+
+            sage: X = L(SymmetricGroup(1))
+            sage: -X
+            (-X)
+
+            sage: -(-E) == E
+            True
+        """
+        if isinstance(self._coeff_stream, (Stream_zero, Stream_exact, Stream_neg)):
+            return super()._neg_()
+        return NegationSpeciesElement(self)
+
+    def _sub_(self, other):
+        r"""
+        Return the difference of this species and ``other``.
+
+        The difference retains the structure of its operands, so that
+        its associated series are computed from the corresponding
+        series of the operands, while the enumeration of structures and
+        isotypes uses the molecular expansion of the difference.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: X = L(SymmetricGroup(1))
+            sage: E.restrict(1) - X
+            E_2 + E_3 + E_4 + E_5 + E_6 + E_7 + O^8
+
+        Subtraction of a species from itself yields zero::
+
+            sage: E - E
+            0
+            sage: (E - E) == 0
+            True
+
+        The structures of a difference are those of the molecular
+        expansion of the difference::
+
+            sage: list(((E + X) - X).structures([1, 2]))
+            [(E_2, ((1, 2),))]
+            sage: list((E - X).structures([1]))
+            []
+        """
+        if isinstance(other._coeff_stream, Stream_zero):
+            return self
+        if isinstance(self._coeff_stream, Stream_zero):
+            return -other
+        if self._coeff_stream == other._coeff_stream:
+            return self.parent().zero()
+        return DifferenceSpeciesElement(self, other)
 
     def structures(self, *labels):
         r"""
@@ -812,6 +954,23 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: (3 + 2*X).revert()
             (-3/2) + 1/2*X
+
+        The inverse of the coefficient of ``X`` must be a unit of the
+        base ring::
+
+            sage: L2.<Y> = LazyCombinatorialSpecies(ZZ)
+            sage: (2*Y*L2.Sets()).revert()
+            Traceback (most recent call last):
+            ...
+            ValueError: compositional inverse does not exist
+
+        The compositional inverse of a recursively defined species is
+        defined by an equation as well::
+
+            sage: F = L.undefined(valuation=1)
+            sage: F.define(X + F*F)
+            sage: F.revert().generating_series()[1:4]
+            [1, -1, 0]
         """
         P = self.parent()
         if P._arity != 1:
@@ -831,24 +990,28 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
                                         order=0)
             return P.element_class(P, coeff_stream)
 
-        # TODO: coefficients should not be checked here, it prevents
-        # us from using self.define in some cases!
-        if coeff_stream[0]:
+        # The constant term and the coefficient of X are obtained from
+        # the generating series, which can be computed without the
+        # molecular expansion of this species.
+        gen = self.generating_series()
+        if gen[0]:
             raise ValueError("cannot determine whether the compositional inverse exists")
-
-        X_mol = P._laurent_poly_ring._indices.subset(1)[0]  # as a molecular species
-        X = P(_SymmetricGroup(1))  # as a lazy species
-
-        def coefficient(n):
-            if n:
-                return 0
-            c = coeff_stream[1].coefficient(X_mol)
-            if c.is_unit():
-                return ~c
+        R = P.base_ring()
+        b_val = gen[1]
+        # the inverse of the coefficient of X must be a unit of the base
+        # ring, since the coefficients of the inverse are molecular
+        # species over that ring
+        try:
+            b_unit = R(b_val)
+        except (ArithmeticError, TypeError, ValueError):
+            b_unit = None
+        if b_unit is None or not b_unit.is_unit():
             raise ValueError("compositional inverse does not exist")
 
-        b = P(lambda n: 0 if n else coeff_stream[1].coefficient(X_mol))  # TODO: we want a lazy version of Stream_exact
-        b_inv = P(coefficient)  # TODO: we want a lazy version of Stream_exact
+        X = P(_SymmetricGroup(1))  # as a lazy species
+
+        b = P(lambda n: 0 if n else b_unit)  # TODO: we want a lazy version of Stream_exact
+        b_inv = P(lambda n: 0 if n else ~b_unit)  # TODO: we want a lazy version of Stream_exact
         g = P.undefined(valuation=1)
         g.define(b_inv * (X - (self - b * X)(g)))
         return g
@@ -1182,6 +1345,340 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         return DerivativeSpeciesElement(self, sort)
 
 
+class UndefinedSpeciesElement(LazyCombinatorialSpeciesElement):
+    r"""
+    A species that can be defined by an equation.
+
+    These are the elements returned by
+    :meth:`LazyCombinatorialSpecies.undefined`.  In addition to the
+    molecular expansion, they retain the defining expression when they
+    are defined using :meth:`define`.
+
+    The associated series (:meth:`generating_series`,
+    :meth:`isotype_generating_series`, :meth:`cycle_index_series`) are
+    not placeholders that have to be defined when the species is
+    defined.  Instead, each of them is a lazy series -- created on
+    first request and cached in the attribute of the same name,
+    preceded by an underscore -- whose coefficients are computed by the
+    corresponding series of the defining expression by ordinary method
+    dispatch, and hence do not require the molecular expansion.  The
+    defining expression is found when the first coefficient is
+    actually computed: since the defining expression of a recursive
+    equation contains ``self`` again, requesting the same series there
+    yields the very same cached object, so the recursion is
+    represented directly by the lazy coefficient computation.
+
+    If the defining expression provides no structural implementation,
+    or if its result lives in an incompatible parent, the series is
+    computed from the molecular expansion of this species.  This also
+    covers species that are defined behind the back of
+    :meth:`define`, for example using
+    :meth:`~sage.rings.lazy_series_ring.LazySeriesRing.define_implicitly`.
+
+    In contrast to the series returned by
+    :meth:`LazyPowerSeriesRing.undefined`, a associated series of an
+    undefined species is not itself uninitialized: printing it, or
+    requesting any of its coefficients, raises the usual error for
+    undefined series instead of displaying ``Uninitialized Lazy
+    Series``.
+
+    TESTS::
+
+        sage: L = LazyCombinatorialSpecies(QQ, "X")
+        sage: F = L.undefined()
+        sage: TestSuite(F).run(skip=['_test_category', '_test_pickling',
+        ....:                     '_test_structures', '_test_isotypes'])
+    """
+    # the defining expression, None until the species is defined
+    _definition = None
+
+    def define(self, s):
+        r"""
+        Define this species by the equation ``self = s``.
+
+        In addition to the molecular expansion, the defining
+        expression ``s`` is retained, so that the associated series of
+        this species are computed from the corresponding series of
+        ``s``, without requiring the molecular expansion.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: F = L.undefined(valuation=1)
+            sage: F.define(X + F*F)
+            sage: F.generating_series()[1:6]
+            [1, 1, 2, 5, 14]
+            sage: F.isotype_generating_series()[1:6]
+            [1, 1, 2, 5, 14]
+
+        The series agree with the ones computed from the molecular
+        expansion::
+
+            sage: all(F.isotype_generating_series()[n] == sum(F[n].coefficients())
+            ....:     for n in range(1, 7))
+            True
+
+        A series requested before the definition works as well::
+
+            sage: G = L.undefined(valuation=1)
+            sage: gs = G.generating_series()
+            sage: G.define(X + G*G)
+            sage: gs[1:6]
+            [1, 1, 2, 5, 14]
+
+        Mutual recursion works as well::
+
+            sage: A = L.undefined(valuation=1)
+            sage: B = L.undefined(valuation=1)
+            sage: A.define(X + B*B)
+            sage: B.define(X + A*B)
+            sage: all(A.isotype_generating_series()[n] == sum(A[n].coefficients())
+            ....:     for n in range(1, 7))
+            True
+        """
+        if not isinstance(s, LazyModuleElement):
+            s = self.parent()(s)
+        # The molecular expansion is defined first; only after a
+        # successful definition the defining expression is retained.
+        # Nothing else has to be done: the associated series find the
+        # defining expression when they compute their first
+        # coefficient.
+        super().define(s)
+        self._definition = s
+
+    set = define
+
+    @lazy_attribute
+    def _generating_series(self):
+        r"""
+        Return the generating series of ``self``.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: F = L.undefined(valuation=1)
+            sage: F._generating_series is F.generating_series()
+            True
+        """
+        return self._forwarding_series(
+            _generating_series_ring(self.parent()), 'generating_series')
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        If this species is not yet defined, a series is returned whose
+        coefficients raise an error as long as the species is
+        undefined, see :meth:`define`.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: F = L.undefined(valuation=1)
+            sage: F.generating_series()[1]
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
+            sage: F.define(X + F*F)
+            sage: F.generating_series()[1:6]
+            [1, 1, 2, 5, 14]
+
+        Repeated requests return the same series::
+
+            sage: F.generating_series() is F.generating_series()
+            True
+
+        Requesting the generating series does not create the other
+        series::
+
+            sage: '_isotype_generating_series' in F.__dict__
+            False
+            sage: '_cycle_index_series' in F.__dict__
+            False
+        """
+        return self._generating_series
+
+    @lazy_attribute
+    def _isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: F = L.undefined(valuation=1)
+            sage: F._isotype_generating_series is F.isotype_generating_series()
+            True
+        """
+        return self._forwarding_series(
+            _generating_series_ring(self.parent()),
+            'isotype_generating_series')
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        If this species is not yet defined, a series is returned whose
+        coefficients raise an error as long as the species is
+        undefined, see :meth:`define`.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: F = L.undefined(valuation=1)
+            sage: iso = F.isotype_generating_series()
+            sage: F.define(X + F*F)
+            sage: iso[1:6]
+            [1, 1, 2, 5, 14]
+            sage: F.isotype_generating_series() is iso
+            True
+        """
+        return self._isotype_generating_series
+
+    @lazy_attribute
+    def _cycle_index_series(self):
+        r"""
+        Return the cycle index series of ``self``.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: F = L.undefined(valuation=1)
+            sage: F._cycle_index_series is F.cycle_index_series()
+            True
+        """
+        return self._forwarding_series(
+            _cycle_index_series_ring(self.parent()), 'cycle_index_series')
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        If this species is not yet defined, a series is returned whose
+        coefficients raise an error as long as the species is
+        undefined, see :meth:`define`.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: F = L.undefined(valuation=1)
+            sage: F.define(X + F*F)
+            sage: F.cycle_index_series()[3]
+            2*p[1, 1, 1]
+
+        The cycle index series agrees with the one computed from the
+        molecular expansion::
+
+            sage: all(F.cycle_index_series()[n]
+            ....:     == sum(c * M.permutation_group()[0].cycle_index()
+            ....:            for M, c in F[n].monomial_coefficients().items())
+            ....:     for n in range(1, 7))
+            True
+
+        Requesting the cycle index series does not create the other
+        series::
+
+            sage: '_generating_series' in F.__dict__
+            False
+            sage: '_isotype_generating_series' in F.__dict__
+            False
+        """
+        return self._cycle_index_series
+
+    def _forwarding_series(self, ring, name):
+        r"""
+        Return a series in ``ring`` forwarding to the associated series
+        of ``self`` identified by ``name``.
+
+        The coefficients of the returned series are those of the
+        corresponding series of the defining expression of ``self``,
+        computed when they are first requested, see
+        :meth:`_series_source`.  The series is created lazily in the
+        attribute of the same name as the associated series, preceded by
+        an underscore.
+
+        .. NOTE::
+
+            The rings of the associated series are sparse by default, so
+            that requesting a coefficient of an undefined species
+            raises an error without invalidating the stream: the
+            coefficient can be requested again after the definition.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: from sage.rings.lazy_species import _generating_series_ring
+            sage: F = L.undefined(valuation=1)
+            sage: gs = F._forwarding_series(_generating_series_ring(L),
+            ....:                          'generating_series')
+            sage: gs[1]
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
+            sage: F.define(X + F*F)
+            sage: gs[1:4]
+            [1, 1, 2]
+        """
+        source = None
+
+        def coefficient(n):
+            nonlocal source
+            if source is None:
+                source = self._series_source(ring, name)
+            return source[n]
+
+        return ring(coefficient,
+                    valuation=self._coeff_stream._approximate_order)
+
+    def _series_source(self, ring, name):
+        r"""
+        Return the associated series of ``self`` identified by ``name``.
+
+        If ``self`` is not yet defined, the usual error for undefined
+        series is raised.  Otherwise, the series is the one of the
+        defining expression, obtained by ordinary method dispatch, if
+        the defining expression has been retained and the result lives
+        in a parent that coerces into ``ring``.  If not, for example
+        because ``self`` was defined without calling :meth:`define`,
+        the series is computed from the molecular expansion.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: from sage.rings.lazy_species import _generating_series_ring
+            sage: F = L.undefined(valuation=1)
+            sage: F._series_source(_generating_series_ring(L),
+            ....:                  'generating_series')
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
+            sage: F.define(X + F*F)
+            sage: F._series_source(_generating_series_ring(L),
+            ....:                  'generating_series')[1:4]
+            [1, 1, 2]
+        """
+        if _is_undefined_stream(self._coeff_stream):
+            raise ValueError("stream is not yet defined")
+        t = None
+        s = self._definition
+        if s is not None:
+            try:
+                u = getattr(s, name)()
+                if ring.has_coerce_map_from(u.parent()):
+                    t = ring.coerce(u)
+            except (ArithmeticError, NotImplementedError, TypeError, ValueError):
+                t = None
+        if t is None:
+            # molecular fallback
+            t = getattr(LazyCombinatorialSpeciesElement, name)(self)
+        return t
+
 class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
     A lazy species element whose generating series are obtained
@@ -1376,6 +1873,25 @@ class SumSpeciesElement(LazyCombinatorialSpeciesElement):
         """
         return self._left.isotype_generating_series() + self._right.isotype_generating_series()
 
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        It is the sum of the cycle index series of the summands.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, C = L.Sets(), L.Cycles()
+            sage: S = E + C
+            sage: all(S.cycle_index_series()[n]
+            ....:     == sum(c * M.permutation_group()[0].cycle_index()
+            ....:            for M, c in S[n].monomial_coefficients().items())
+            ....:     for n in range(6))
+            True
+        """
+        return self._left.cycle_index_series() + self._right.cycle_index_series()
+
 
 class ProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, right):
@@ -1451,6 +1967,153 @@ class ProductSpeciesElement(LazyCombinatorialSpeciesElement):
             1 + 2*X + 3*X^2 + 4*X^3 + 5*X^4 + 6*X^5 + 7*X^6 + O(X^7)
         """
         return self._left.isotype_generating_series() * self._right.isotype_generating_series()
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        It is the product of the cycle index series of the factors.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, C = L.Sets(), L.Cycles()
+            sage: S = E * C
+            sage: all(S.cycle_index_series()[n]
+            ....:     == sum(c * M.permutation_group()[0].cycle_index()
+            ....:            for M, c in S[n].monomial_coefficients().items())
+            ....:     for n in range(6))
+            True
+        """
+        return self._left.cycle_index_series() * self._right.cycle_index_series()
+
+
+class NegationSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, F):
+        r"""
+        Initialize the negative of the species ``F``.
+
+        A negative species is virtual: iterating over its structures
+        or isotypes is not implemented.
+
+        TESTS::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: TestSuite(-E).run(skip=['_test_category', '_test_pickling',
+            ....:                     '_test_structures', '_test_isotypes'])
+            sage: TestSuite(E.restrict(1) - E).run(skip=['_test_category', '_test_pickling',
+            ....:                     '_test_structures', '_test_isotypes'])
+        """
+        G = super(LazyCombinatorialSpeciesElement, type(F))._neg_(F)
+        super().__init__(G.parent(), G._coeff_stream)
+        self._F = F
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: (-E).generating_series()
+            -1 - X - 1/2*X^2 - 1/6*X^3 - 1/24*X^4 - 1/120*X^5 - 1/720*X^6 + O(X^7)
+        """
+        return -self._F.generating_series()
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: (-E).isotype_generating_series()
+            -1 - X - X^2 + O(X^3)
+        """
+        return -self._F.isotype_generating_series()
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: LazySymmetricFunctions(h)((E - E.restrict(1)).cycle_index_series())
+            h[] + O^7
+        """
+        return -self._F.cycle_index_series()
+
+
+class DifferenceSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, left, right):
+        r"""
+        Initialize the difference of two species.
+
+        The coefficient stream is the molecular difference of the
+        operands, so that structures and isotypes are enumerated from
+        the molecular expansion of the difference; the associated
+        series are computed from the corresponding series of the
+        operands.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, X = L.Sets(), L(SymmetricGroup(1))
+            sage: TestSuite(E - X).run(skip=['_test_category', '_test_pickling'])
+        """
+        F = super(LazyCombinatorialSpeciesElement, type(left))._sub_(left, right)
+        super().__init__(F.parent(), F._coeff_stream)
+        self._left = left
+        self._right = right
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, X = L.Sets(), L(SymmetricGroup(1))
+            sage: (E - X).generating_series()[0:4]
+            [1, 0, 1/2, 1/6]
+        """
+        return self._left.generating_series() - self._right.generating_series()
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, X = L.Sets(), L(SymmetricGroup(1))
+            sage: (E - X).isotype_generating_series()[0:4]
+            [1, 0, 1, 1]
+        """
+        return (self._left.isotype_generating_series()
+                - self._right.isotype_generating_series())
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        It is the difference of the cycle index series of the operands.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E, X = L.Sets(), L(SymmetricGroup(1))
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: LazySymmetricFunctions(h)((E - X).cycle_index_series())
+            h[] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
+        """
+        return self._left.cycle_index_series() - self._right.cycle_index_series()
 
 
 class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
@@ -2231,6 +2894,46 @@ class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
         self._arity = len(names)
         self.options._add_option('rename',
                                  {'link_to': (self._laurent_poly_ring._indices._indices.options, 'rename')})
+
+    def undefined(self, valuation=None, name=None):
+        r"""
+        Return an uninitialized species.
+
+        INPUT:
+
+        - ``valuation`` -- integer; a lower bound for the valuation
+          of the species
+
+        - ``name`` -- string; a name that refers to the undefined
+          stream in error messages
+
+        The defining expression is retained when the species is defined
+        using :meth:`.define
+        <sage.rings.lazy_species.UndefinedSpeciesElement.define>`, so
+        that the associated series of a recursively defined species are
+        computed from the defining equation and do not require its
+        molecular expansion.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: X = L(SymmetricGroup(1))
+            sage: F = L.undefined(valuation=1)
+            sage: F.define(X + F*F)
+            sage: F.isotype_generating_series()[1:6]
+            [1, 1, 2, 5, 14]
+
+        TESTS::
+
+            sage: type(L.unknown()).__name__
+            'UndefinedSpeciesElement'
+        """
+        if valuation is None:
+            valuation = self._minimal_valuation
+        coeff_stream = Stream_uninitialized(valuation, name=name)
+        return UndefinedSpeciesElement(self, coeff_stream)
+
+    unknown = undefined
 
 
 class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
