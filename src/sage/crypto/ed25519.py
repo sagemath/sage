@@ -482,7 +482,7 @@ class Ed25519SignatureScheme(DigitalSignatureBase):
     string, which removes the risk of signing and verifying with mismatched
     domain parameters.  When the digital-signature framework of :issue:`42856`
     is available, this class is a
-    :class:`~sage.crypto.public_key.digital_signature.digital_signature_base.DigitalSignatureBase`
+    DigitalSignatureBase
     subclass and can be used uniformly with the other schemes of that
     framework.
 
