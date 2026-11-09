@@ -33,7 +33,7 @@ AUTHORS:
 from itertools import accumulate, chain, product
 from collections import defaultdict
 
-from sage.arith.misc import divisors
+from sage.arith.misc import divisors, is_prime, primes
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
@@ -76,28 +76,816 @@ from sage.structure.unique_representation import (UniqueRepresentation,
                                                   WithPicklingByInitArgs)
 
 GAP_FAIL = libgap.eval('fail')
-# for each key (currently size and orbit-sizes) a list of canonical
-# representatives of directly indecomposable groups
-# TODO: most likely, it would be better to store the groups as GAP groups
-_dis_cache = dict()
 
-# normalizer of each canonical representative in the full symmetric group
+# for each key (order, orbit lengths) the canonical representatives of
+# the conjugacy classes of directly indecomposable groups with this
+# key; the GAP group of a representative is its memoized gap()
+_canonical_group_cache = dict()
+
+# the normalizer of each canonical representative in the full
+# symmetric group of its degree
 _normalizer_cache = dict()
 
+
+@cached_function
 def _SymmetricGroup(n):
     r"""
-    Return a symmetric group quickly.
+    Return the full symmetric group of degree ``n`` quickly.
+
+    The group is cached, so that it is the identical object on every
+    call, and its GAP group is memoized on the instance, so that
+    ``_SymmetricGroup(n).gap()`` returns the identical GAP group on
+    every call.
 
     EXAMPLES::
 
         sage: from sage.rings.species import _SymmetricGroup
         sage: _SymmetricGroup(1)
         Symmetric group of order 1! as a permutation group
+        sage: _SymmetricGroup(3).gap() is _SymmetricGroup(3).gap()
+        True
     """
-    key = factorial(n), (n,)  # the key for the symmetric group is unique
-    if key not in _dis_cache:
-        _dis_cache[key] = [SymmetricGroup(n)]
-    return _dis_cache[key][0]
+    return SymmetricGroup(n)
+
+
+def _perm_to_contiguous(blocks):
+    r"""
+    Return the GAP permutation which maps the points of the blocks
+    onto the contiguous sets of numbers, in the order of the blocks.
+
+    The blocks must partition the points ``{1, ..., n}``, where ``n``
+    is the sum of the block sizes.
+
+    Conjugating a permutation group whose orbits, or whose domain
+    partition, are the blocks by the returned permutation moves each
+    block onto a contiguous set of numbers.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _perm_to_contiguous
+        sage: mp = _perm_to_contiguous([[2, 3], [1, 4]])
+        sage: [i ** mp for i in range(1, 5)]
+        [3, 1, 2, 4]
+    """
+    flat = [e for b in blocks for e in b]
+    return libgap.PermList(libgap(flat)).Inverse()
+
+
+def _canonical_group(G_gap, orbits):
+    r"""
+    Return a group conjugate to the GAP group ``G_gap`` whose orbits
+    are contiguous sets of numbers, with larger orbits having smaller
+    numbers, together with the conjugating map.
+
+    All groups with the same key -- the same order and orbit lengths
+    -- are conjugate to one of the canonical representatives of
+    their key; they are converted by conjugating them onto such a
+    representative, see ``AtomicSpeciesElement.__classcall__``.
+
+    The group ``G_gap`` must be fixed point free, so that the
+    concatenation of its orbits is the image list of a permutation.
+
+    The returned GAP group is assigned to the ``_libgap`` attribute of
+    the Sage permutation group constructed from it, so that its
+    ``gap()`` returns it; the cache in ``AtomicSpeciesElement.__classcall__``
+    therefore stores only the Sage group.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _canonical_group
+        sage: G = PermutationGroup([[(1, 4, 2, 5), (3, 6)]])
+        sage: orbits = sorted(G.gap().Orbits().sage(), key=len, reverse=True)
+        sage: canonical, mp = _canonical_group(G.gap(), orbits)
+        sage: sorted(PermutationGroup(gap_group=canonical).orbits())
+        [(1, 2, 3, 4), (5, 6)]
+    """
+    # the permutation mapping the points of the orbits to the
+    # contiguous sets of numbers
+    mp = _perm_to_contiguous(orbits)
+    # the canonical group is presented by a sorted small generating
+    # set, so that its generator order is stable; the order
+    # reproduces Sage's sorted(set(gens)) and affects only the
+    # presentation, not the group
+    gens = libgap.SortedList(G_gap.SmallGeneratingSet())
+    if not gens:
+        # the trivial group has no generators, so we present it by the
+        # identity permutation
+        gens = [libgap.PermList([1])]
+    return libgap.ConjugateGroup(libgap.GroupWithGenerators(gens), mp), mp
+
+
+# The keys (order, orbit lengths) that determine the conjugacy class
+# of a subgroup of the symmetric group on sum(orbits) points without
+# fixed points, which are not decided by one of the theorems
+# implemented in _conjugacy_class_determined,
+# _transitive_class_determined and _sylow_subgroup_determined;
+# tabulated for all degrees up to ten;
+# see _conjugacy_class_determined for the exact statement and for a
+# verification of this table
+_MOLECULAR_DETERMINED_KEYS = {
+    # subgroups of the symmetric group on 6 points
+    (6, (3, 3)),
+    (18, (6,)),
+    (48, (6,)),
+    (60, (6,)),
+    (72, (6,)),
+    (120, (6,)),
+    # subgroups of the symmetric group on 7 points
+    (36, (3, 4)),
+    (40, (2, 5)),
+    (48, (3, 4)),
+    (168, (7,)),
+    # subgroups of the symmetric group on 8 points
+    (12, (2, 3, 3)),
+    (12, (4, 4)),
+    (15, (3, 5)),
+    (18, (2, 6)),
+    (24, (4, 4)),
+    (32, (2, 2, 4)),
+    (56, (8,)),
+    (64, (4, 4)),
+    (96, (2, 6)),
+    (120, (3, 5)),
+    (144, (2, 6)),
+    (144, (4, 4)),
+    (180, (3, 5)),
+    (192, (4, 4)),
+    (240, (2, 6)),
+    (288, (8,)),
+    (336, (8,)),
+    (384, (8,)),
+    (1152, (8,)),
+    (1344, (8,)),
+    # subgroups of the symmetric group on 9 points
+    (6, (3, 3, 3)),
+    (27, (3, 3, 3)),
+    (28, (2, 7)),
+    (36, (3, 3, 3)),
+    (48, (3, 6)),
+    (60, (4, 5)),
+    (80, (2, 2, 5)),
+    (84, (2, 7)),
+    (96, (2, 3, 4)),
+    (108, (9,)),
+    (144, (9,)),
+    (160, (4, 5)),
+    (180, (3, 6)),
+    (216, (9,)),
+    (288, (3, 6)),
+    (336, (2, 7)),
+    (432, (3, 6)),
+    (432, (9,)),
+    (504, (9,)),
+    (720, (3, 6)),
+    (720, (4, 5)),
+    (960, (4, 5)),
+    (1080, (3, 6)),
+    (1296, (9,)),
+    (1512, (9,)),
+    # subgroups of the symmetric group on 10 points
+    (10, (5, 5)),
+    (18, (2, 2, 6)),
+    (20, (5, 5)),
+    (24, (2, 2, 3, 3)),
+    (40, (10,)),
+    (48, (3, 3, 4)),
+    (50, (10,)),
+    (60, (5, 5)),
+    (60, (10,)),
+    (63, (3, 7)),
+    (64, (2, 2, 2, 4)),
+    (80, (10,)),
+    (84, (3, 7)),
+    (108, (3, 3, 4)),
+    (112, (2, 8)),
+    (120, (5, 5)),
+    (128, (2, 4, 4)),
+    (192, (2, 2, 6)),
+    (240, (2, 3, 5)),
+    (240, (10,)),
+    (252, (3, 7)),
+    (288, (2, 2, 6)),
+    (288, (2, 8)),
+    (288, (3, 3, 4)),
+    (300, (5, 5)),
+    (360, (10,)),
+    (384, (2, 4, 4)),
+    (384, (4, 6)),
+    (400, (5, 5)),
+    (480, (2, 2, 6)),
+    (504, (3, 7)),
+    (640, (10,)),
+    (672, (2, 8)),
+    (720, (4, 6)),
+    (768, (2, 8)),
+    (800, (10,)),
+    (960, (4, 6)),
+    (960, (10,)),
+    (1008, (3, 7)),
+    (1152, (4, 6)),
+    (1440, (10,)),
+    (1728, (4, 6)),
+    (2304, (2, 8)),
+    (2400, (5, 5)),
+    (2688, (2, 8)),
+    (3600, (5, 5)),
+    (3840, (10,)),
+    (4320, (4, 6)),
+    (5760, (4, 6)),
+    (7200, (10,)),
+    (7560, (3, 7)),
+    (28800, (10,)),
+}
+
+
+def _transitive_class_determined(order, n):
+    r"""
+    Return whether a transitive permutation group of degree ``n`` and
+    order ``order`` is the unique subgroup of its order, up to
+    conjugacy, of the symmetric group on ``n`` points.
+
+    This is the case for the symmetric group, the alternating group
+    and for the subgroups of prime degree ``p`` and order ``p d`` with
+    ``d`` dividing ``p - 1``.
+
+    - The symmetric group and the alternating group are the unique
+      subgroups of their order and of index two, respectively, in the
+      symmetric group on `n` points.
+
+    - A group of prime degree `p` and order `p d` has a normal Sylow
+      subgroup of order `p`, since the number of Sylow subgroups
+      divides `d < p` and is congruent to one modulo `p`; the group is
+      therefore a subgroup of the affine group `AGL(1, p)`, the
+      normalizer of its Sylow subgroup, whose cyclic point
+      stabilizer has a unique subgroup of order `d` for each divisor
+      `d` of `p - 1`.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _transitive_class_determined
+        sage: _transitive_class_determined(12, 4)   # A_4
+        True
+        sage: _transitive_class_determined(24, 4)   # S_4
+        True
+        sage: _transitive_class_determined(22, 11)  # dihedral of degree 11
+        True
+        sage: _transitive_class_determined(4, 4)     # C_4 and V_4
+        False
+        sage: _transitive_class_determined(24, 6)   # S_4 on six points, and another
+        False
+        sage: _transitive_class_determined(1, 2)     # A_2 is not transitive
+        False
+
+    TESTS:
+
+    Every order which this function accepts is the order of exactly
+    one conjugacy class of transitive subgroups, up to degree twelve,
+    the limit of GAP's table of marks (without the package, the
+    classes are computed from the subgroup lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from sage.rings.species import _transitive_class_determined
+        sage: for n in range(2, 13):
+        ....:     counts = Counter(H.cardinality() for H in
+        ....:                     SymmetricGroup(n).conjugacy_classes_subgroups()
+        ....:                     if len(H.orbits()) == 1)
+        ....:     assert {o for o in counts if _transitive_class_determined(o, n)} <= \
+        ....:         {o for o, c in counts.items() if c == 1}
+    """
+    if order == factorial(n):
+        # the symmetric group is the unique subgroup of its order in
+        # the symmetric group on n points
+        return True
+    if n >= 3 and 2 * order == factorial(n):
+        # the alternating group is the unique subgroup of index two
+        # of the symmetric group on n points; the trivial group, the
+        # unique subgroup of index two of S_2, is not transitive
+        return True
+    if is_prime(n) and order % n == 0 and (n - 1) % (order // n) == 0:
+        # a group of prime degree n and order n * d, with d dividing
+        # n - 1, is the unique subgroup of its order in AGL(1, n)
+        return True
+    return False
+
+
+def _sylow_subgroup_determined(order, n):
+    r"""
+    Return whether a subgroup of order ``order`` of the symmetric
+    group on ``n`` points is a Sylow subgroup.
+
+    This is the case if and only if the order is `p^{v_p(n!)}` for
+    some prime `p` at most `n/2`; the prime orders `p` with
+    `v_p(n!) = 1`, arising for `p` larger than `n/2`, are decided by
+    the theorem on groups of prime order, see
+    :func:`_conjugacy_class_determined`.  All Sylow subgroups are
+    conjugate, and the orbit lengths of a Sylow `p`-subgroup are the
+    digits of `n` in base `p`, so that its order alone determines its
+    key.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _sylow_subgroup_determined
+        sage: _sylow_subgroup_determined(8, 4)     # Sylow 2 of S_4
+        True
+        sage: _sylow_subgroup_determined(16, 6)     # Sylow 2 of S_6
+        True
+        sage: _sylow_subgroup_determined(81, 9)    # Sylow 3 of S_9
+        True
+        sage: _sylow_subgroup_determined(8, 6)     # not a prime power part
+        False
+
+    TESTS:
+
+    Every order which this function accepts is the order of exactly
+    one conjugacy class of subgroups, up to degree twelve, the limit
+    of GAP's table of marks (without the package, the classes are
+    computed from the subgroup lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from sage.rings.species import _sylow_subgroup_determined
+        sage: for n in range(2, 13):
+        ....:     counts = Counter(H.cardinality() for H in
+        ....:                     SymmetricGroup(n).conjugacy_classes_subgroups())
+        ....:     assert all(counts[o] == 1 for o in counts
+        ....:                 if _sylow_subgroup_determined(o, n))
+    """
+    # the restriction to p <= n/2 omits the prime orders p with
+    # v_p(n!) == 1, decided by the theorem on groups of prime order
+    for p in primes(2, n // 2 + 1):
+        e = 0
+        q = n
+        while q:
+            q //= p
+            e += q
+        if order == p ** e:
+            return True
+    return False
+
+
+def _conjugacy_class_determined(order, orbits):
+    r"""
+    Return whether the order and the orbit lengths determine the
+    conjugacy class of a permutation group without fixed points whose
+    orbits have these lengths.
+
+    This is the case if and only if exactly one conjugacy class of
+    subgroups of the symmetric group on sum(orbits) points without
+    fixed points has this order and these orbit lengths.  The keys
+    which are not decided by one of the theorems below are tabulated
+    in ``_MOLECULAR_DETERMINED_KEYS``, through degree ten.
+
+    A permutation group of prime order ``p`` without fixed points is
+    generated by a product of disjoint cycles of length ``p``, and all
+    such groups are conjugate.
+
+    A permutation group whose orbits have lengths `m_1, \ldots, m_k`
+    embeds into the direct product of the symmetric groups on its
+    orbits, which has order `m_1! \cdots m_k!`; if the orders agree,
+    the group is this direct product, a Young subgroup, and all Young
+    subgroups with these orbit lengths are conjugate.
+
+    A transitive permutation group is determined by its order and its
+    degree if it is an alternating group or a subgroup of prime
+    degree `p` and order `p d` with `d` dividing `p - 1`, see
+    :func:`_transitive_class_determined`, and a subgroup of order
+    `p^{v_p(n!)}` of the symmetric group on `n` points is a Sylow
+    subgroup, whose orbit lengths are the digits of `n` in base `p`,
+    see :func:`_sylow_subgroup_determined`.
+
+    The keys of these groups are determined for every number of
+    points, without consulting the table.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _conjugacy_class_determined
+        sage: _conjugacy_class_determined(2, (2,))
+        True
+        sage: _conjugacy_class_determined(3, (3, 3))
+        True
+
+    The cyclic and the Klein four group are both transitive subgroups
+    of order four of the symmetric group on four points::
+
+        sage: _conjugacy_class_determined(4, (4,))
+        False
+
+    The symmetric group on six points has two conjugacy classes of
+    transitive subgroups of order twenty-four::
+
+        sage: _conjugacy_class_determined(24, (6,))
+        False
+
+    The keys decided by the theorems are determined for every number
+    of points, the tabulated ones only up to the degree of the table::
+
+        sage: _conjugacy_class_determined(2, (2,) * 6)
+        True
+        sage: _conjugacy_class_determined(12, (4,))       # A_4
+        True
+        sage: _conjugacy_class_determined(16, (2, 4))      # Sylow 2 of S_6
+        True
+        sage: _conjugacy_class_determined(22, (11,))      # dihedral of degree 11
+        True
+        sage: _conjugacy_class_determined(17280, (3, 4, 5))   # S_3 x S_4 x S_5
+        True
+        sage: _conjugacy_class_determined(120, (12,))
+        False
+
+    TESTS:
+
+    The table together with the theorems agrees with a computation
+    from GAP's table of marks (without the package, the classes are
+    computed from the subgroup lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from sage.rings.species import _MOLECULAR_DETERMINED_KEYS
+        sage: computed = set()
+        sage: for m in range(2, 11):
+        ....:     counts = Counter()
+        ....:     for H in SymmetricGroup(m).conjugacy_classes_subgroups():
+        ....:         orbits = tuple(sorted(len(o) for o in H.orbits()))
+        ....:         if orbits[0] == 1:
+        ....:             continue
+        ....:         counts[(H.cardinality(), orbits)] += 1
+        ....:     computed |= {k for k, v in counts.items() if v == 1}
+        sage: prime = {(p, (p,) * k)
+        ....:          for p in [2, 3, 5, 7] for k in range(1, 11) if p * k <= 10}
+        sage: young = {(prod(factorial(m) for m in comp), tuple(reversed(comp)))
+        ....:          for n in range(2, 11) for comp in Partitions(n, min_part=2)}
+        sage: alternating = {(factorial(n) // 2, (n,)) for n in range(3, 11)}
+        sage: sylow = set()
+        sage: for n in range(2, 11):
+        ....:     for p in [q for q in range(2, n) if is_prime(q)]:
+        ....:         digits = []
+        ....:         for i in range(1, 5):
+        ....:             digits += [p**i] * ((n // p**i) % p)
+        ....:         sylow.add((p ** sum(n // p**i for i in range(1, 5)),
+        ....:                    tuple(sorted(digits))))
+        sage: affine = {(p * d, (p,)) for p in [2, 3, 5, 7] for d in divisors(p - 1)}
+        sage: predicted = prime | young | alternating | sylow | affine
+        sage: computed == _MOLECULAR_DETERMINED_KEYS | predicted
+        True
+        sage: # the table holds exactly the keys the theorems do not decide
+        sage: not (_MOLECULAR_DETERMINED_KEYS & predicted)
+        True
+    """
+    if orbits and all(l == order for l in orbits) and is_prime(order):
+        # a permutation group of prime order without fixed points is
+        # generated by a product of disjoint cycles of prime length,
+        # and all such groups are conjugate
+        return True
+    if order == prod(factorial(m) for m in orbits):
+        # a permutation group whose orbits have lengths m_1, ..., m_k
+        # embeds into the direct product of the symmetric groups on
+        # its orbits; if the orders agree, the group is this direct
+        # product, a Young subgroup, and all Young subgroups with
+        # these orbit lengths are conjugate
+        return True
+    if len(orbits) == 1 and _transitive_class_determined(order, orbits[0]):
+        # the restriction of the group to its single orbit is
+        # transitive of degree orbits[0]
+        return True
+    if _sylow_subgroup_determined(order, sum(orbits)):
+        # a subgroup of order p^v_p(n!) of the symmetric group on
+        # sum(orbits) points is a Sylow subgroup
+        return True
+    return (order, orbits) in _MOLECULAR_DETERMINED_KEYS
+
+
+# The keys (order, pattern) such that the data of any assignment of
+# the orbits to sorts with this pattern -- the multiset of the lengths
+# and sorts of the orbits -- determines the atomic species of a
+# directly indecomposable permutation group, where the pattern records
+# the lengths of the orbits in each sort; tabulated for all degrees up
+# to eight -- the groups arising in practice decompose into directly
+# indecomposable factors of smaller degree, so that atomic
+# conversions of larger degree are rare and go through the conjugacy
+# tests -- see _atomic_species_determined for the exact statement and
+# for a verification of this table
+_ATOMIC_DETERMINED_KEYS = {
+    # directly indecomposable subgroups of the symmetric group on 5 points
+    (6, ((2,), (3,))),
+    (6, ((2, 3),)),
+    # directly indecomposable subgroups of the symmetric group on 6 points
+    (4, ((2,), (2,), (2,))),
+    (4, ((2,), (2, 2))),
+    (4, ((2, 2, 2),)),
+    (6, ((3,), (3,))),
+    (6, ((3, 3),)),
+    (18, ((3,), (3,))),
+    (18, ((3, 3),)),
+    (18, ((6,),)),
+    (24, ((2,), (4,))),
+    (24, ((2, 4),)),
+    (48, ((6,),)),
+    (60, ((6,),)),
+    (72, ((6,),)),
+    (120, ((6,),)),
+    # directly indecomposable subgroups of the symmetric group on 7 points
+    (6, ((2,), (2,), (3,))),
+    (6, ((2,), (2, 3))),
+    (6, ((2, 2), (3,))),
+    (6, ((2, 2, 3),)),
+    (10, ((2,), (5,))),
+    (10, ((2, 5),)),
+    (12, ((2,), (2,), (3,))),
+    (12, ((2,), (2, 3))),
+    (12, ((2, 2), (3,))),
+    (12, ((2, 2, 3),)),
+    (20, ((2,), (5,))),
+    (20, ((2, 5),)),
+    (72, ((3,), (4,))),
+    (72, ((3, 4),)),
+    (120, ((2,), (5,))),
+    (120, ((2, 5),)),
+    (168, ((7,),)),
+    # directly indecomposable subgroups of the symmetric group on 8 points
+    (4, ((2, 2, 2, 2),)),
+    (6, ((2,), (3,), (3,))),
+    (6, ((2,), (3, 3))),
+    (6, ((2, 3), (3,))),
+    (6, ((2, 3, 3),)),
+    (8, ((2,), (2,), (2,), (2,))),
+    (8, ((2,), (2,), (2, 2))),
+    (8, ((2,), (2, 2, 2))),
+    (8, ((2, 2), (2, 2))),
+    (8, ((2, 2, 2, 2),)),
+    (12, ((4,), (4,))),
+    (12, ((4, 4),)),
+    (18, ((2,), (3,), (3,))),
+    (18, ((2,), (3, 3))),
+    (18, ((2,), (6,))),
+    (18, ((2, 3), (3,))),
+    (18, ((2, 3, 3),)),
+    (18, ((2, 6),)),
+    (24, ((2,), (2,), (4,))),
+    (24, ((2,), (2, 4))),
+    (24, ((2, 2), (4,))),
+    (24, ((2, 2, 4),)),
+    (24, ((4,), (4,))),
+    (24, ((4, 4),)),
+    (30, ((3,), (5,))),
+    (30, ((3, 5),)),
+    (36, ((2,), (3,), (3,))),
+    (36, ((2,), (3, 3))),
+    (36, ((2, 3), (3,))),
+    (36, ((2, 3, 3),)),
+    (48, ((2,), (2,), (4,))),
+    (48, ((2,), (2, 4))),
+    (48, ((2, 2), (4,))),
+    (48, ((2, 2, 4),)),
+    (56, ((8,),)),
+    (60, ((3,), (5,))),
+    (60, ((3, 5),)),
+    (120, ((2,), (6,))),
+    (120, ((2, 6),)),
+    (288, ((4,), (4,))),
+    (288, ((4, 4),)),
+    (288, ((8,),)),
+    (336, ((8,),)),
+    (360, ((3,), (5,))),
+    (360, ((3, 5),)),
+    (384, ((8,),)),
+    (720, ((2,), (6,))),
+    (720, ((2, 6),)),
+    (1152, ((8,),)),
+    (1344, ((8,),)),
+}
+
+
+def _atomic_species_determined(order, orbits, orbit_sorts):
+    r"""
+    Return whether the order together with the length and the sort of
+    each orbit determine the atomic species of a directly indecomposable
+    permutation group without fixed points.
+
+    The trivial group is decided first: it is the unique subgroup of
+    its order, so that its key determines the atomic species; the
+    orbits passed for it are empty, since GAP's orbits see only the
+    moved points.
+
+    A directly indecomposable permutation group together with an
+    assignment of its orbits to sorts gives an atomic species, and two
+    such pairs give the same atomic species if and only if some element
+    of the symmetric group conjugates the group and carries each sort
+    block onto the corresponding sort block.  In particular, the
+    multiset of the lengths and sorts of the orbits, the *data* of the
+    pair, is a conjugacy invariant, and the data determines the atomic
+    species if exactly one class of pairs has this data.
+
+    For a conjugacy class of subgroups, the classes of pairs are the
+    orbits of the normalizer on the assignments of the orbits to sorts,
+    so the data of an assignment determines the atomic species if no
+    other orbit of the normalizer has this data.  Since a relabelling
+    of the sorts commutes with the action of the normalizer, the number
+    of classes of pairs is the same for all data sharing the *pattern*,
+    which records the lengths of the orbits in each sort, but not the
+    sort of a given length: an orbit of length two and an orbit of
+    length three may go to the two sorts in either way, with the same
+    pattern but different data, and non-conjugate pairs.  It therefore
+    suffices to tabulate the conclusive patterns: the data of any
+    assignment whose (order, pattern) is tabulated determines the
+    atomic species.
+
+    A group of prime order ``p`` without fixed points is generated by
+    a product of ``k`` disjoint cycles of length ``p``.  All such
+    groups are conjugate, and the normalizer of such a group permutes
+    the ``k`` orbits arbitrarily -- mapping each cycle of the
+    generator onto a cycle of the generator conjugates the generator
+    to itself -- so that all its data determine the atomic species,
+    for every degree.  These keys are decided without consulting the
+    table.
+
+    A directly indecomposable transitive permutation group has a
+    single orbit, all of whose points carry the same sort, so that its
+    data determines the atomic species if its conjugacy class is
+    determined by its order and its degree, see
+    :func:`_transitive_class_determined`: the symmetric groups, the
+    alternating groups and the groups of prime degree ``p`` and order
+    ``p d`` with ``d`` dividing ``p - 1``.  A directly indecomposable
+    subgroup of order `p^{v_p(n!)}` is a Sylow subgroup, hence
+    transitive, see :func:`_sylow_subgroup_determined`.  These keys are
+    also decided for every degree, without consulting the table.
+
+    The order and the orbit lengths do not characterize the conjugacy
+    class of the group in general -- the cyclic and the Klein four
+    group are both directly indecomposable transitive subgroups of
+    order four -- so the table is a finite classification, through
+    degree eight.  The keys of directly indecomposable groups of
+    larger degree are not tabulated: the groups arising in practice
+    decompose into directly indecomposable factors of smaller
+    degree, so that atomic conversions of larger degree are rare;
+    they go through the conjugacy tests.
+
+    INPUT:
+
+    - ``order`` -- the order of the group
+    - ``orbits`` -- the orbits of the group
+    - ``orbit_sorts`` -- the sort of each orbit
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _atomic_species_determined
+        sage: _atomic_species_determined(1, [], [])   # the trivial group
+        True
+        sage: _atomic_species_determined(2, [(1, 2), (3, 4)], [0, 1])
+        True
+
+    The cyclic and the Klein four group are both directly
+    indecomposable transitive subgroups of order four::
+
+        sage: _atomic_species_determined(4, [(1, 2, 3, 4)], [0])
+        False
+
+    The pattern does not determine the atomic species, the data does:
+    the symmetric group on three points acting on an additional pair
+    of points is, with either assignment of its two orbits to the
+    two sorts, the only directly indecomposable subgroup of its order
+    with these orbit lengths up to conjugacy, but the two assignments
+    are not conjugate::
+
+        sage: from sage.rings.species import AtomicSpecies
+        sage: A = AtomicSpecies("X, Y")
+        sage: G = PermutationGroup([[(1,2,3)], [(1,2),(4,5)]])
+        sage: A(G, {0: [4,5], 1: [1,2,3]}) == A(G, {0: [1,2,3], 1: [4,5]})
+        False
+        sage: _atomic_species_determined(6, [(4, 5), (1, 2, 3)], [0, 1])
+        True
+
+    The Klein four group acting diagonally on three pairs of
+    points is the only directly indecomposable subgroup of its order
+    with these orbit lengths::
+
+        sage: _atomic_species_determined(4, [(1, 2), (3, 4), (5, 6)], [0, 0, 1])
+        True
+
+    Keys of groups of prime order and of transitive groups whose
+    class is determined by their order and degree are decided for
+    every degree, the others only up to the degree of the table::
+
+        sage: _atomic_species_determined(2, [(1, 2), (3, 4), (5, 6),
+        ....:                                 (7, 8), (9, 10), (11, 12)], [0, 0, 0, 1, 1, 1])
+        True
+
+        sage: _atomic_species_determined(12, [list(range(1, 13))], [0])
+        False
+        sage: _atomic_species_determined(181440, [list(range(1, 10))], [0])  # A_9
+        True
+        sage: _atomic_species_determined(362880, [list(range(1, 10))], [0])  # S_9
+        True
+        sage: _atomic_species_determined(22, [list(range(1, 12))], [0])  # dihedral of degree 11
+        True
+
+    TESTS:
+
+    The table agrees with a computation from GAP's table of marks
+    (without the package, the classes are computed from the subgroup
+    lattice)::
+
+        sage: # optional - gap_package_tomlib
+        sage: from collections import Counter
+        sage: from itertools import product
+        sage: from sage.rings.species import _ATOMIC_DETERMINED_KEYS
+        sage: def determined_patterns(m):
+        ....:     S = SymmetricGroup(m)
+        ....:     indecomp = [H for H in S.conjugacy_classes_subgroups()
+        ....:                 if sorted(len(o) for o in H.orbits())[0] > 1
+        ....:                 and H.disjoint_direct_product_decomposition().cardinality() == 1]
+        ....:     counts = Counter((H.cardinality(),
+        ....:                        tuple(sorted(len(o) for o in H.orbits())))
+        ....:                       for H in indecomp)
+        ....:     res = set()
+        ....:     for H in indecomp:
+        ....:         if counts[(H.cardinality(),
+        ....:                     tuple(sorted(len(o) for o in H.orbits())))] != 1:
+        ....:             continue
+        ....:         orbit_list = sorted((sorted(o) for o in H.orbits()), key=len)
+        ....:         pos = {tuple(o): i for i, o in enumerate(orbit_list)}
+        ....:         N = libgap.Normalizer(libgap.SymmetricGroup(m), H.gap())
+        ....:         gens = []
+        ....:         for nu in N.GeneratorsOfGroup():
+        ....:             g = [None] * len(orbit_list)
+        ....:             for i, o in enumerate(orbit_list):
+        ....:                 g[pos[tuple(sorted(libgap.OnSets(libgap(o), nu).sage()))]] = i
+        ....:             gens.append(tuple(g))
+        ....:         k = len(orbit_list)
+        ....:         seen = set()
+        ....:         cnt = Counter()
+        ....:         for coloring in product(range(k), repeat=k):
+        ....:             if coloring in seen:
+        ....:                 continue
+        ....:             stack = [coloring]
+        ....:             seen.add(coloring)
+        ....:             while stack:
+        ....:                 c = stack.pop()
+        ....:                 for g in gens:
+        ....:                     c2 = tuple(c[g[i]] for i in range(k))
+        ....:                     if c2 not in seen:
+        ....:                         seen.add(c2)
+        ....:                         stack.append(c2)
+        ....:             cnt[tuple(sorted((len(orbit_list[i]), s)
+        ....:                             for i, s in enumerate(coloring)))] += 1
+        ....:         for data, c in cnt.items():
+        ....:             if c != 1:
+        ....:                 continue
+        ....:             blocks = {}
+        ....:             for l, s in data:
+        ....:                 blocks.setdefault(s, []).append(l)
+        ....:             res.add((H.cardinality(),
+        ....:                      tuple(sorted(tuple(sorted(b)) for b in blocks.values()))))
+        ....:     return res
+        sage: computed = set().union(*(determined_patterns(m) for m in range(2, 9)))
+        sage: prime = {(p, tuple(sorted((p,) * s for s in sizes)))
+        ....:          for p in [2, 3, 5, 7] for k in range(1, 9) if p * k <= 8
+        ....:          for sizes in Partitions(k)}
+        sage: alternating = {(factorial(n) // 2, ((n,),)) for n in range(3, 9)}
+        sage: sylow = {(p ** sum(n // p**i for i in range(1, 5)), ((n,),))
+        ....:          for p in [2, 3, 5, 7] for n in [p, p * p, p * p * p] if n <= 8}
+        sage: affine = {(p * d, ((p,),)) for p in [2, 3, 5, 7] for d in divisors(p - 1)}
+        sage: symmetric = {(factorial(n), ((n,),)) for n in range(2, 9)}
+        sage: predicted = prime | alternating | sylow | affine | symmetric
+        sage: computed == _ATOMIC_DETERMINED_KEYS | predicted
+        True
+        sage: # the table holds exactly the keys the theorems do not decide
+        sage: not (_ATOMIC_DETERMINED_KEYS & predicted)
+        True
+        sage: # the theorems are claimed for every degree; verify them through ten
+        sage: computed10 = set().union(*(determined_patterns(m) for m in (9, 10)))
+        sage: prime10 = {(p, tuple(sorted((p,) * s for s in sizes)))
+        ....:           for p in [2, 3, 5, 7] for k in range(1, 11) if p * k in (9, 10)
+        ....:           for sizes in Partitions(k)}
+        sage: alternating10 = {(factorial(n) // 2, ((n,),)) for n in (9, 10)}
+        sage: symmetric10 = {(factorial(n), ((n,),)) for n in (9, 10)}
+        sage: prime10 | alternating10 | symmetric10 | {(81, ((9,),))} <= computed10
+        True
+    """
+    if order == 1:
+        # the trivial group is the unique subgroup of its order
+        return True
+    if orbits and all(len(o) == order for o in orbits) and is_prime(order):
+        # a group of prime order without fixed points is generated by a
+        # product of disjoint cycles of prime length; all such groups
+        # are conjugate, and the normalizer permutes the orbits
+        # arbitrarily, so that all its data determine the atomic species
+        return True
+    if len(orbits) == 1 and _transitive_class_determined(order, len(orbits[0])):
+        # a directly indecomposable transitive group has a single
+        # orbit, all of whose points carry the same sort, so that its
+        # data determines the atomic species if its conjugacy class is
+        # determined by its order and degree
+        return True
+    if _sylow_subgroup_determined(order, sum(map(len, orbits))):
+        # a directly indecomposable subgroup of order p^v_p(n!) is a
+        # Sylow subgroup, hence transitive, with a single orbit
+        return True
+    blocks = {}
+    for o, s in zip(orbits, orbit_sorts):
+        blocks.setdefault(s, []).append(len(o))
+    pattern = tuple(sorted(tuple(sorted(b)) for b in blocks.values()))
+    return (order, pattern) in _ATOMIC_DETERMINED_KEYS
 
 
 def _label_sets(arity, labels):
@@ -154,10 +942,10 @@ class AtomicSpeciesElement(WithEqualityById,
 
     INPUT:
 
-    - ``dis`` -- a directly indecomposable permutation group
+    - ``group`` -- a directly indecomposable permutation group
     - ``domain_partition`` -- a `k`-tuple of ``frozenset`` entries,
       where `k` is the arity, representing the assignment of each
-      element of the domain of ``dis`` to a sort
+      element of the domain of ``group`` to a sort
     """
     @staticmethod
     def __classcall__(cls, parent, G, dompart):
@@ -169,12 +957,26 @@ class AtomicSpeciesElement(WithEqualityById,
         - ``G`` -- a directly indecomposable permutation group
         - ``dompart`` -- a `k`-tuple of iterables, where `k` is the
           arity, representing the assignment of each element of the
-          domain of ``dis`` to a sort
+          domain of ``group`` to a sort
+
+        Two atomic species are conjugate if and only if some element
+        of the symmetric group conjugates their groups and carries
+        each sort block onto the corresponding sort block.  The
+        elements are cached by the order and the canonical
+        representative of the group, and verified by conjugacy tests.
+        Keys that determine the atomic species -- the order together
+        with the length and the sort of each orbit, see
+        :func:`_atomic_species_determined` -- are cached directly,
+        without conjugacy tests.
 
         .. WARNING::
 
             We do not check whether ``G`` is indeed directly
-            indecomposable.
+            indecomposable; the conclusive keys are computed for
+            directly indecomposable groups, so a decomposable group,
+            even a fixed point free one, whose order and orbit lengths
+            coincide with a conclusive key gives wrong results and
+            pollutes the conclusive cache.
 
         TESTS::
 
@@ -232,62 +1034,99 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: b = A(G, {0: [4,5,6], 1: [1,2,3]})
             sage: a == b
             True
+
+        Conclusive keys are answered without conjugacy tests, which
+        also applies to groups on other domains::
+
+            sage: G = PermutationGroup([[(1,3),(2,4)]])
+            sage: a = A(G, {0: [1,3], 1: [2,4]})
+            sage: b = A(PermutationGroup([[(5,7),(6,8)]], domain=[5,6,7,8]), {0: [5,7], 1: [6,8]})
+            sage: a is b
+            True
         """
         # a directly indecomposable group has no fixed points, so we
         # can use the gap group without worrying about the domain
         G_gap = G.gap()
         dompart = [[ZZ(G._domain_to_gap[e]) for e in b] for b in dompart]
         orbits = sorted(G_gap.Orbits().sage(), key=len, reverse=True)
+        # the sort of each orbit, checking that each orbit lies within
+        # a single sort
+        orbit_sorts = []
         for orbit in orbits:
-            if not any(set(orbit).issubset(b) for b in dompart):
+            for s, b in enumerate(dompart):
+                if set(orbit).issubset(b):
+                    orbit_sorts.append(s)
+                    break
+            else:
                 o = [G._domain_from_gap[e] for e in orbit]
                 raise ValueError(f"All elements of orbit {o} must have the same sort")
 
-        def new_dis():
-            """
-            Return a representative ``dis`` in the conjugacy
-            class of subgroups conjugate to ``G``, together with the
-            conjugating map ``mp``
-            """
-            # create a group conjugate to `G` whose orbits
-            # consist of contiguous sets of numbers, with larger
-            # orbits having smaller numbers, and compute a small
-            # generating set
-            mp = PermutationGroupElement([e for o in orbits for e in o]).inverse().gap()
-            H = PermutationGroup(G_gap.SmallGeneratingSet().sage())
-            return H.conjugate(mp), mp
+        order = G_gap.Size().sage()
+        n = G.degree()
+        determined = False
+        # a directly indecomposable group of order greater than one
+        # has no fixed points, and one of order one has at most a
+        # single point; an input violating this is not directly
+        # indecomposable, so its key must not be cached conclusively
+        if not (order > 1 and sum(map(len, orbits)) != n
+                or order == 1 and n > 1):
+            # the key consisting of the order and the length and the
+            # sort of each orbit determines the atomic species for
+            # conclusive keys, see _atomic_species_determined
+            data = tuple(sorted((len(o), s)
+                                for o, s in zip(orbits, orbit_sorts)))
+            if order == 1 and n:
+                # the single point of the trivial group carries the sort
+                data = ((1, next(s for s, b in enumerate(dompart) if b)),)
+            determined = _atomic_species_determined(order, orbits,
+                                                     orbit_sorts)
+            if determined:
+                elm = parent._conclusive.get((order, data))
+                if elm is not None:
+                    return elm
 
         n = G.degree()
-        S_gap = _SymmetricGroup(n).gap()
-        key = G_gap.Size().sage(), tuple([len(o) for o in orbits])
-        if key in _dis_cache:
-            lookup_dis = _dis_cache[key]
-            for dis in lookup_dis:
-                dis_gap = dis.gap()
-                mp = libgap.RepresentativeAction(S_gap, G_gap, dis_gap)
-                if mp != GAP_FAIL:
+        S = _SymmetricGroup(n)
+        S_gap = S.gap()
+        group_key = order, tuple([len(o) for o in orbits])
+        if order == factorial(n):
+            # the full symmetric group is the unique subgroup of its
+            # order, so it is the canonical representative of its
+            # key.  GAP's Orbits sees only moved points, so the
+            # trivial groups of degrees zero and one share the key
+            # (1, ()); since both are the full symmetric group of
+            # their degree, overwriting the entry is harmless
+            canonical = S
+            conjugator = libgap.RepresentativeAction(S_gap, G_gap, S_gap)
+            _canonical_group_cache[group_key] = [canonical]
+        elif group_key in _canonical_group_cache:
+            canonicals = _canonical_group_cache[group_key]
+            for canonical in canonicals:
+                conjugator = libgap.RepresentativeAction(S_gap, G_gap, canonical.gap())
+                if conjugator != GAP_FAIL:
                     break
             else:
-                dis, mp = new_dis()
-                lookup_dis.append(dis)
+                canonical_gap, conjugator = _canonical_group(G_gap, orbits)
+                canonical = PermutationGroup(gap_group=canonical_gap)
+                canonicals.append(canonical)
         else:
-            dis, mp = new_dis()
-            lookup_dis = _dis_cache[key] = [dis]
+            canonical_gap, conjugator = _canonical_group(G_gap, orbits)
+            canonical = PermutationGroup(gap_group=canonical_gap)
+            _canonical_group_cache[group_key] = [canonical]
 
-        dompart = [[ZZ(e ** mp) for e in b] for b in dompart]
+        dompart = [[ZZ(e ** conjugator) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
-        key = (mc, dis)
-        if key in parent._cache:
-            lookup = parent._cache[key]
+        element_key = (mc, canonical)
+        if element_key in parent._cache:
+            lookup = parent._cache[element_key]
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
 
-            dis_gap = dis.gap()
-            norm_gap = _normalizer_cache.get(dis)
+            norm_gap = _normalizer_cache.get(canonical)
             if norm_gap is None:
-                norm_gap = libgap.Normalizer(S_gap, dis_gap)
-                _normalizer_cache[dis] = norm_gap
+                norm_gap = libgap.Normalizer(S_gap, canonical.gap())
+                _normalizer_cache[canonical] = norm_gap
 
             dompart_gap = libgap([sorted(b) for b in dompart])
 
@@ -295,23 +1134,26 @@ class AtomicSpeciesElement(WithEqualityById,
                 # check whether the assignment to sorts given by
                 # dompart and by elm._dompart are the same
                 elm_dompart_gap = libgap([sorted(b) for b in elm._dompart])
-                mp = libgap.RepresentativeAction(
+                sort_conjugator = libgap.RepresentativeAction(
                     norm_gap,
                     elm_dompart_gap,
                     dompart_gap,
                     libgap.OnTuplesSets
                 )
-                if mp != GAP_FAIL:
+                if sort_conjugator != GAP_FAIL:
                     return elm
         else:
-            lookup = parent._cache[key] = []
+            lookup = parent._cache[element_key] = []
 
         dompart = tuple([frozenset(b) for b in dompart])
-        elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, dompart)
+        elm = WithPicklingByInitArgs.__classcall__(cls, parent, canonical,
+                                                   dompart)
         lookup.append(elm)
+        if determined:
+            parent._conclusive[(order, data)] = elm
         return elm
 
-    def __init__(self, parent, dis, domain_partition) -> None:
+    def __init__(self, parent, group, domain_partition) -> None:
         r"""
         Initialize an atomic species.
 
@@ -326,7 +1168,7 @@ class AtomicSpeciesElement(WithEqualityById,
             True
         """
         Element.__init__(self, parent)
-        self._dis = dis
+        self._group = group
         self._dompart = domain_partition
         self._mc = tuple([len(v) for v in self._dompart])
         self._tc = sum(self._mc)
@@ -363,10 +1205,10 @@ class AtomicSpeciesElement(WithEqualityById,
             return repr(self)
 
         if self.parent()._arity == 1:
-            return "{" + f"{self._dis.gens()}" + "}"
+            return "{" + f"{self._group.gens()}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
                             for b in self._dompart)
-        return "{" + f"{self._dis.gens()}: ({dompart})" + "}"
+        return "{" + f"{self._group.gens()}: ({dompart})" + "}"
 
     def grade(self):
         r"""
@@ -431,12 +1273,10 @@ class AtomicSpeciesElement(WithEqualityById,
                         and self._mc > other._mc))
         S = _SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
         # conjugate self and other to match S
-        g = list(chain.from_iterable(self._dompart))
-        conj_self = PermutationGroupElement(g).inverse()
-        G = libgap.ConjugateGroup(self._dis, conj_self)
-        h = list(chain.from_iterable(other._dompart))
-        conj_other = PermutationGroupElement(h).inverse()
-        H = libgap.ConjugateGroup(other._dis, conj_other)
+        conj_self = _perm_to_contiguous(self._dompart)
+        G = libgap.ConjugateGroup(self._group, conj_self)
+        conj_other = _perm_to_contiguous(other._dompart)
+        H = libgap.ConjugateGroup(other._group, conj_other)
         return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
     def __le__(self, other) -> bool:
@@ -492,7 +1332,7 @@ class AtomicSpeciesElement(WithEqualityById,
         S = _SymmetricGroup(sum(n)).young_subgroup(n)
         l = [e for l in labels for e in l]
         if self._mc == n:
-            for rep in libgap.RightTransversal(S, self._dis):
+            for rep in libgap.RightTransversal(S, self._group):
                 yield tuple(S(rep)._act_on_list_on_position(l))
 
     def __call__(self, *args):
@@ -539,7 +1379,7 @@ class AtomicSpeciesElement(WithEqualityById,
             raise ValueError("all args must be molecular species")
 
         Mlist = [None] * sum(self.grade())
-        G = self._dis
+        G = self._group
         dompart = self._dompart
         for i, v in enumerate(dompart):
             for k in v:
@@ -667,6 +1507,12 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         # list of atomic species - more than one beginning with 2
         # sorts and cardinality 8
         self._cache = dict()
+
+        # the elements of conclusive keys, whose data -- the order
+        # together with the length and the sort of each orbit --
+        # determines the atomic species, see
+        # AtomicSpeciesElement.__classcall__
+        self._conclusive = dict()
 
         # the degrees that have been renamed already
         self._renamed = set()
@@ -1175,6 +2021,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         IndexedFreeAbelianMonoid.__init__(self, indices, prefix='',
                                           bracket=False, category=category)
         self._arity = indices._arity
+        # caches for the construction from permutation groups: the
+        # terms of singletons; buckets of triples (gap group, action on
+        # its moved points, term), keyed by (number of points, order,
+        # orbit lengths); and the terms of the keys that determine the
+        # conjugacy class, see ``_element_from_single_sort``
+        self._singleton_terms = {}
+        self._group_cache = {}
+        self._group_conclusive = {}
 
     def _repr_(self):
         r"""
@@ -1316,6 +2170,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair (X, a)
              specifying a group action of the symmetric group on pi=None
+
+        Input checking is skipped if ``check`` is ``False``::
+
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: M(G, {0: [1,2,3,4,4]}, check=False)
+            E_2(X^2)
+            sage: M(G, {0: [1,2,3,4,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: values of pi (=dict_values([[1, 2, 3, 4, 4]])) must partition the domain of G (={1, 2, 3, 4})
+
+        The result of the construction does not depend on ``check``::
+
+            sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
+            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -1357,34 +2231,230 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             elif not isinstance(pi, dict):
                 pi = dict(enumerate(pi))
             domain = [e for p in pi.values() for e in p]
-            if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
-                raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
+            if check:
+                if not set(pi).issubset(range(self._arity)):
+                    raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
+                if len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
+                    raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
 
-            components = G.disjoint_direct_product_decomposition()
-            if len(components) == 1:
-                return self.gen(self._indices(G, pi, check=check))
+            if (self._arity == 1 and domain
+                    and set(domain) == set(G.domain())):
+                return self._element_from_single_sort(G)
 
-            elm = self.one()
-            for component in components:
-                if len(component) == 1:
-                    H = _SymmetricGroup(1)
-                    c = set(component).pop()
-                    pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
-                else:
-                    # the following appears to be slower
-                    # H_gap = libgap.Action(G, [G._domain_to_gap[i] for i in component], libgap.OnPoints)
-                    # H = PermutationGroup(gap_group=H_gap, domain=component)
-                    gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
-                            for gen in G.gens()]
-                    H = PermutationGroup([gen for gen in gens if gen],
-                                         domain=component)
-                    pi_H = {k: [e for e in v if e in component]
-                            for k, v in pi.items()}
-                a = self._indices(H, pi_H, check=check)
-                elm *= self.gen(a)
-            return elm
+            return self._element_from_components(G, pi)
 
         raise ValueError(f"{G} must be a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
+
+    def _singleton_term(self, k):
+        r"""
+        Return the molecular species consisting of a single label of
+        sort ``k``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: MolecularSpecies("X")._singleton_term(0)
+            X
+            sage: MolecularSpecies("X, Y")._singleton_term(1)
+            Y
+        """
+        term = self._singleton_terms.get(k)
+        if term is None:
+            term = self.gen(self._indices(_SymmetricGroup(1), {k: [1]}))
+            self._singleton_terms[k] = term
+        return term
+
+    def _element_from_components(self, G, pi):
+        r"""
+        Return the molecular species of the permutation group ``G``,
+        decomposing it into the direct product of its restrictions to
+        the components of the direct product decomposition.
+
+        The assignment ``pi`` of the domain elements to sorts is assumed
+        to be valid: its keys and values have already been checked by
+        the caller.  Therefore the factors, which are directly
+        indecomposable by construction, are constructed without
+        further checks.
+
+        TESTS::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
+            sage: M._element_from_components(G, {0: [1,2,3,4,5,6]})
+            X^2*E_2(X^2)
+        """
+        components = G.disjoint_direct_product_decomposition()
+        if len(components) == 1:
+            # G is directly indecomposable, since its direct product
+            # decomposition consists of a single component
+            return self.gen(self._indices(G, pi, check=False))
+
+        elm = self.one()
+        for component in components:
+            if len(component) == 1:
+                c = set(component).pop()
+                sorts = [k for k, v in pi.items() if c in v]
+                if len(sorts) == 1:
+                    # the component consists of a single label
+                    elm = elm * self._singleton_term(sorts[0])
+                    continue
+                H = _SymmetricGroup(1)
+                pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
+            else:
+                gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
+                        for gen in G.gens()]
+                H = PermutationGroup([gen for gen in gens if gen],
+                                     domain=component)
+                pi_H = {k: [e for e in v if e in component]
+                        for k, v in pi.items()}
+            # H is directly indecomposable, since the components of
+            # the direct product decomposition are
+            a = self._indices(H, pi_H, check=False)
+            elm *= self.gen(a)
+        return elm
+
+    def _element_from_single_sort(self, G):
+        r"""
+        Return the molecular species of the permutation group ``G``
+        acting on its full domain, using a cache.
+
+        Two permutation groups acting on the same number of points have
+        the same molecular species if and only if they are conjugate
+        subgroups of the symmetric group.  Therefore we cache the
+        molecular species of each conjugacy class, keyed by the number
+        of points, the order of the group and the lengths of its orbits
+        on the moved points, and verify cache hits by an explicit
+        conjugacy test.
+
+        A key determines the conjugacy class, and thus the molecular
+        species, if exactly one conjugacy class of subgroups of the
+        symmetric group on the moved points has this order and these
+        orbit lengths (:func:`_conjugacy_class_determined`).  The
+        molecular species of such a key is cached and returned without
+        a conjugacy test.
+
+        The trivial subgroup and the full symmetric group are the
+        unique subgroups of the symmetric group on their domain of
+        their respective order.  For such groups the key is determined
+        for every number of points, without consulting the table.
+
+        Otherwise, since the key contains the number of points and
+        the lengths of the orbits on the moved points, all groups
+        with the same key have the same number of fixed points.  Two
+        permutation groups with the same number of fixed points are
+        conjugate if and only if their restrictions to their moved
+        points are conjugate.  Therefore the conjugacy test is carried
+        out on the restrictions to the moved points, where the groups
+        act on fewer points.
+
+        EXAMPLES:
+
+        Conjugate groups have the same molecular species, even if
+        their generators differ::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X")
+            sage: H = PermutationGroup([[(1,2),(3,4)], [(5,6),(7,8)]])
+            sage: M(H)
+            E_2(X^2)^2
+            sage: K = H.conjugate(PermutationGroupElement([(1,3),(2,4)]))
+            sage: M(K) is M(H)
+            True
+
+        Groups with the same order and orbit lengths, but which are
+        not conjugate, have different molecular species::
+
+            sage: M(PermutationGroup([[(1,2,3,4)]])) is M(PermutationGroup([[(1,2),(3,4)], [(1,4),(2,3)]]))
+            False
+
+        The trivial group and the full symmetric group are unique in
+        their conjugacy class, so groups with the same key are
+        conjugate even if their domains differ::
+
+            sage: M(PermutationGroup([()], domain=[1, 2, 3]))
+            X^3
+            sage: M(PermutationGroup([()], domain=[4, 5, 6])) is M(PermutationGroup([()], domain=[1, 2, 3]))
+            True
+            sage: M(SymmetricGroup(3)) is M(PermutationGroup([(1, 2), (2, 3)]))
+            True
+
+        Groups with fixed points are verified on their moved points,
+        which also applies to groups on different domains::
+
+            sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
+            sage: H = PermutationGroup([[(2,3),(4,5)]], domain=[1,2,3,4,5,6])
+            sage: M(G) is M(H)
+            True
+
+        For many further groups the order and the orbit lengths
+        determine the conjugacy class::
+
+            sage: M(PermutationGroup([[(1,2,3),(4,5,6)]])) is M(PermutationGroup([[(1,3,2),(4,6,5)]]))
+            True
+        """
+        n = G.degree()
+        # the order is computed without constructing the GAP group
+        # where possible: it is one for a group without generators
+        # and the element order for a group with a single generator
+        order = G.cardinality()
+        G_gap = None
+        if order == 1 or order == factorial(n):
+            # the trivial subgroup and the full symmetric group are
+            # the unique subgroups of the symmetric group on their
+            # domain of their respective order, so their key
+            # determines the conjugacy class; their orbits on the
+            # moved points are stated without consulting GAP
+            orbits = (n,) if order > 1 else ()
+            determined = True
+        else:
+            G_gap = G.gap()
+            # the orbits on the moved points
+            orbits = tuple(sorted(libgap.List(G_gap.Orbits(),
+                                             libgap.Length).sage()))
+            determined = _conjugacy_class_determined(order, orbits)
+        key = (n, order, orbits)
+
+        term = self._group_conclusive.get(key)
+        if term is not None:
+            # the key has been found to determine the conjugacy class
+            return term
+
+        if determined:
+            # the order and the orbit lengths determine the conjugacy
+            # class, so all groups with this key have the same
+            # molecular species; the factors of the direct product
+            # decomposition are directly indecomposable, so no check
+            # is needed
+            term = self._element_from_components(G, {0: G.domain()})
+            self._group_conclusive[key] = term
+            return term
+
+        bucket = self._group_cache.get(key)
+        if bucket is None:
+            bucket = self._group_cache[key] = []
+        else:
+            for stored_gap, stored_action, term in bucket:
+                if stored_gap is G_gap:
+                    # the same group has already been converted
+                    return term
+
+        # all groups with this key have the same number of fixed
+        # points, so it suffices to test conjugacy of the
+        # restrictions to the moved points
+        moved = G_gap.MovedPoints()
+        action = libgap.Action(G_gap, moved)
+        if bucket:
+            S_m = _SymmetricGroup(len(moved)).gap()
+            for stored_gap, stored_action, term in bucket:
+                if libgap.RepresentativeAction(S_m, action, stored_action) != GAP_FAIL:
+                    return term
+
+        # the factors of the direct product decomposition are directly
+        # indecomposable, so no check is needed
+        term = self._element_from_components(G, {0: G.domain()})
+        bucket.append((G_gap, action, term))
+        return term
 
     def grading_set(self):
         r"""
@@ -1562,12 +2632,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 S = _SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
                 # conjugate self and other to match S
                 G, G_dompart = self.permutation_group()
-                g = list(chain.from_iterable(G_dompart))
-                conj_self = PermutationGroupElement(g).inverse()
+                conj_self = _perm_to_contiguous(G_dompart)
                 G = libgap.ConjugateGroup(G, conj_self)
                 H, H_dompart = other.permutation_group()
-                h = list(chain.from_iterable(H_dompart))
-                conj_other = PermutationGroupElement(h).inverse()
+                conj_other = _perm_to_contiguous(H_dompart)
                 H = libgap.ConjugateGroup(H, conj_other)
                 return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
@@ -1655,13 +2723,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 A, n = factors[0]
                 if n == 1:
                     a = list(A._monomial)[0]  # as atomic species
-                    return a._dis, a._dompart
+                    return a._group, a._dompart
 
                 if n % 2 == 1:
                     # split off a single monomial
                     a = list(A._monomial)[0]  # as atomic species
                     b, b_dompart = (A ** (n-1)).permutation_group()
-                    gens = a._dis.gens() + shift_gens(b.gens(), a._tc)
+                    gens = a._group.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
                                          for p_a, p_b in zip(a._dompart, b_dompart)])
                     domain = range(1, n * a._tc + 1)
@@ -2246,7 +3314,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2^2      4*E_2^2
             Pb_4       4*Pb_4
             X*E_3      X*E_3 + X^2*E_2 + X*C_3
-            Eo_4       Eo_4 + Pb_4 + 2*X*C_3
+            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
             E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
             E_4        E_4 + E_2(E_2) + E_2^2 + X*C_3 + C_4
 
@@ -2394,7 +3462,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
             sage: A = AtomicSpecies("X")
             sage: P = PolynomialSpecies(QQ, "X")
-            sage: l = [P(a._dis, check=False) for a in A.subset(5)]
+            sage: l = [P(a._group, check=False) for a in A.subset(5)]
             sage: p = [a.hadamard_product(b) for a in l for b in l]
         """
         P = self.parent()
@@ -2409,8 +3477,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             S = _SymmetricGroup(tc).young_subgroup(mc)
             # conjugate L and R to match S
             G, dompart = L.permutation_group()
-            g = list(chain.from_iterable(dompart))
-            conj_L = PermutationGroupElement(g).inverse()
+            conj_L = _perm_to_contiguous(dompart)
             G = libgap.ConjugateGroup(G, conj_L)
             pi = {i: range(x - mc[i] + 1, x + 1)
                   for i, x in enumerate(accumulate(mc))}
@@ -2418,8 +3485,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 if mc != R.grade():
                     continue
                 G_R, dompart_R = R.permutation_group()
-                g = list(chain.from_iterable(dompart_R))
-                conj_R = PermutationGroupElement(g).inverse()
+                conj_R = _perm_to_contiguous(dompart_R)
                 H = libgap.ConjugateGroup(G_R, conj_R)
                 taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
                 # loop over representatives
@@ -2496,7 +3562,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             # Create group of the composition
             # conjugate self.group() so that [1..k] is sort 1, [k+1,..] is sort 2, so on
             G, dompart = M.permutation_group()
-            conj = PermutationGroupElement(list(chain.from_iterable(dompart))).inverse()
+            conj = _perm_to_contiguous(dompart)
             G = libgap.ConjugateGroup(G, conj)
 
             mc = M.grade()
@@ -2790,7 +3856,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                         if s is None:
                             return None
                         pi.setdefault(s, []).extend(block)
-                return A(a._dis, pi, check=False)
+                return A(a._group, pi, check=False)
 
             result = {}
             for mol, c in self.monomial_coefficients().items():
