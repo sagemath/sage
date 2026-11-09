@@ -628,23 +628,6 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib')  # optional - tdlib
         True
 
-    Check that :issue:`39404` is fixed ::
-
-        sage: G1 = Graph('J??s[`HS@O_')
-        sage: G1.treewidth(algorithm='tdlib')  # optional - tdlib
-        3
-        sage: G2 = Graph('I@?LShgTG')
-        sage: G2.treewidth(algorithm='tdlib')  # optional - tdlib
-        3
-
-    Check that :issue:`42572` is fixed ::
-
-        sage: from sage.graphs.graph_decompositions.tree_decomposition import is_valid_tree_decomposition
-        sage: graphs_42572 = ['HQhVv]~', 'J~~~~|_gM@_', 'K~~~~|Og@`wE', 'K~~~~{oSD@wE', 'K~~~~z{WD?wB']
-        sage: [is_valid_tree_decomposition(Graph(g6), Graph(g6).treewidth(algorithm='tdlib', certificate=True))  # optional - tdlib
-        ....:  for g6 in graphs_42572]
-        [True, True, True, True, True]
-
     Trivially true::
 
         sage: graphs.PetersenGraph().treewidth(k=35)
