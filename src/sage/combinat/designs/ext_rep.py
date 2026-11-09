@@ -552,7 +552,7 @@ def open_extrep_url(url):
         sage: os.remove(file_loc)
 
         sage: from sage.combinat.designs import ext_rep
-        sage: s = ext_rep.designs_from_XML_url("http://designtheory.org/database/v-b-k/v3-b6-k2.icgsa.txt.bz2") # optional - internet
+        sage: s = ext_rep.designs_from_XML_url("https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/v-b-k/v3-b6-k2.icgsa.txt.bz2")  # optional - internet
     """
 
     f = urlopen(url)
@@ -1037,7 +1037,7 @@ def designs_from_XML_url(url):
         sage: os.remove(file_loc)
 
         sage: from sage.combinat.designs import ext_rep
-        sage: ext_rep.designs_from_XML_url("http://designtheory.org/database/v-b-k/v3-b6-k2.icgsa.txt.bz2") # optional - internet
+        sage: ext_rep.designs_from_XML_url("https://webspace.maths.qmul.ac.uk/l.h.soicher/designtheory.org/database/v-b-k/v3-b6-k2.icgsa.txt.bz2")  # optional - internet
         [(3, [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 2]]),
          (3, [[0, 1], [0, 1], [0, 1], [0, 1], [0, 2], [0, 2]]),
          (3, [[0, 1], [0, 1], [0, 1], [0, 1], [0, 2], [1, 2]]),
