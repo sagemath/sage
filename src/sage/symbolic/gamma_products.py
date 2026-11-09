@@ -9,7 +9,8 @@ gamma functions, factorials and binomials with rational-linear arguments
 
 where ``C`` is a constant (a rational times rational powers of primes and of
 ``pi``, times gamma values at rational points in irreducible position),
-``d`` is a nonzero rational, the factorial arguments are nonnegative
+``d`` is a nonzero rational, or a rational function of the parameters, the
+factorial arguments are nonnegative
 integers for all ``n >= 0``, and the ``p_k(n)`` are products of consecutive
 linear factors.  The remaining gamma factors, if any, are in *irreducible position*:
 their shifts have pairwise distinct fractional parts within each slope, are
@@ -47,6 +48,17 @@ is used by :func:`~sage.calculus.calculus.symbolic_product`::
     sage: from sage.symbolic.gamma_products import exact_product
     sage: exact_product(factorial(k)/factorial(k + 2)*2^k, k, 0, n)
     2^(1/2*n^2 + 1/2*n)/((n + 2)*factorial(n + 1)^2)
+
+All free symbols of the input other than the product variable, and other than
+the variable the number of factors depends on, are treated as transcendental
+parameters.  For example, the product with a symbolic shift
+``prod_{k=0}^n (k + x)`` evaluates to ``x*gamma(n + x + 1)/gamma(x + 1)``.
+The resulting identities hold for generic parameter values: specializations
+may introduce additional zeros or poles which are not detected, and the
+normal form may be undefined at parameter values for which the input is
+defined.  In particular, if the shift of a gamma argument becomes a
+non-positive integer for a specialization, the normal form evaluates to zero
+or is undefined there, although the input may well be defined.
 
 ALGORITHM:
 
@@ -119,9 +131,10 @@ E_CONST = exp(Integer(1))
 # -----------------------------------------------------------------------
 
 
-def _linear_coeff(exp, n):
+def _linear_coeff(exp, n, K=QQ):
     r"""
-    Return ``(a, b)`` if ``exp == a*n + b`` with ``a, b`` rational, else ``None``.
+    Return ``(a, b)`` if ``exp == a*n + b`` with ``a`` and ``b`` in the
+    field ``K`` of parameters, else ``None``.
 
     INPUT:
 
@@ -129,13 +142,15 @@ def _linear_coeff(exp, n):
 
     - ``n`` -- the variable
 
+    - ``K`` -- (default: ``QQ``) the field of the constant coefficients
+
     The name of the variable must be a valid polynomial ring generator name;
     the callers guarantee this.
 
     EXAMPLES::
 
         sage: from sage.symbolic.gamma_products import _linear_coeff
-        sage: k = var('k')
+        sage: k, x = var('k x')
         sage: _linear_coeff(2*k + 1, k)
         (2, 1)
         sage: _linear_coeff(k^2 - (k - 1)^2, k)
@@ -144,12 +159,13 @@ def _linear_coeff(exp, n):
         True
         sage: _linear_coeff((k - 1)^3, k) is None
         True
-        sage: x = var('x')
         sage: _linear_coeff(x*k + 1, k) is None
         True
+        sage: _linear_coeff(x*k + 1, k, PolynomialRing(QQ, x).fraction_field())
+        (x, 1)
     """
     try:
-        p = PolynomialRing(QQ, n)(exp)
+        p = PolynomialRing(K, n)(exp)
     except TypeError:
         return None
     if p.degree() > 1:
@@ -157,7 +173,93 @@ def _linear_coeff(exp, n):
     return p[1], p[0]
 
 
-def _rational_atom(ex, n):
+def _rational_value(x):
+    r"""
+    Return ``x`` as a rational, or ``None`` if it is not rational.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _rational_value
+        sage: _rational_value(3/2), _rational_value(var('k'))
+        (3/2, None)
+    """
+    try:
+        return QQ(x)
+    except (TypeError, ValueError, ArithmeticError):
+        return None
+
+
+def _integer_value(x):
+    r"""
+    Return ``x`` as an integer, or ``None`` if it is not an integer.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _integer_value
+        sage: k = var('k')
+        sage: _integer_value(k + 1 - k), _integer_value(k)
+        (1, None)
+    """
+    try:
+        return ZZ(x)
+    except (TypeError, ValueError, ArithmeticError):
+        return None
+
+
+def _field_value(K, x):
+    r"""
+    Return ``x`` as an element of the field ``K``, or ``None``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _field_value
+        sage: from sage.rings.rational_field import QQ
+        sage: k = var('k')
+        sage: K = PolynomialRing(QQ, k).fraction_field()
+        sage: _field_value(K, 2*k + 1), _field_value(K, sqrt(2))
+        (2*k + 1, None)
+    """
+    try:
+        return K(x)
+    except (TypeError, ValueError, ArithmeticError):
+        return None
+
+
+def _parameter_field(mains, *exprs):
+    r"""
+    Construct the field of parameters.
+
+    INPUT:
+
+    - ``mains`` -- a tuple of protected variables, typically the product
+      variable and the variable the number of factors depends on
+
+    - ``*exprs`` -- symbolic expressions
+
+    OUTPUT: the fraction field of the polynomial ring over ``QQ`` in the
+    free symbols of ``exprs`` other than ``mains``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _parameter_field
+        sage: k, x = var('k x')
+        sage: _parameter_field((k,), k + x)
+        Fraction Field of Univariate Polynomial Ring in x over Rational Field
+        sage: _parameter_field((k,), k + 1)
+        Rational Field
+    """
+    mains = tuple(SR(m) for m in mains)
+    exprs = tuple(SR(e) for e in exprs)
+    params = set()
+    for e in exprs:
+        params.update(e.variables())
+    params.difference_update(mains)
+    params = tuple(sorted(params, key=str))
+    return (PolynomialRing(QQ, list(params)).fraction_field()
+            if params else QQ)
+
+
+def _rational_atom(ex, n, K=QQ):
     r"""
     Return ``(c, a, b)`` if ``ex == c^(a*n + b)`` with positive rational
     ``c`` and rational ``a`` and ``b``, else ``None``.
@@ -193,15 +295,16 @@ def _rational_atom(ex, n):
         return None
     if c <= 0:
         return None
-    lin = _linear_coeff(exp, n)
+    lin = _linear_coeff(exp, n, K)
     if lin is None:
         return None
     return c, lin[0], lin[1]
 
 
-def _strip_exponentials(E, n):
+def _strip_exponentials(E, n, K=QQ):
     r"""
-    Replace each atom ``c^(a*n+b)`` with positive rational base by `1`.
+    Replace each atom ``c^(a*n+b)`` with positive rational base by `1`, and
+    each atom with base free of ``n``, but not rational, by ``c^b``.
 
     INPUT:
 
@@ -233,6 +336,14 @@ def _strip_exponentials(E, n):
         (k + 1, Counter({2: -2}))
         sage: _strip_exponentials(sqrt(4^(k + 1))/(k + 1)/sqrt(4^k), k)
         (1/(k + 1), Counter({2: 1}))
+
+        Atoms with a base which is free of the variable, but not rational,
+        are stripped of their exponential part, and their constant part is
+        kept as a factor::
+
+            sage: x = var('x')
+            sage: _strip_exponentials(x^(k + 2)/x^k, k)
+            (x^2, Counter())
 
         Atoms which are not factors of the expression are kept::
 
@@ -270,14 +381,14 @@ def _strip_exponentials(E, n):
                 if not integral:
                     raise ValueError("negative base with non-integer exponent: %s" % ex)
             # an atom, or a rational power of an atom, is again an atom
-            atom = _rational_atom(ex, n)
+            atom = _rational_atom(ex, n, K)
             if atom is None:
                 try:
                     r = QQ(exp)
                 except TypeError:
                     r = None
                 if r is not None and r != 0:
-                    inner = _rational_atom(base, n)
+                    inner = _rational_atom(base, n, K)
                     if inner is not None:
                         c0, a, b = inner
                         atom = (c0, a * r, b * r)
@@ -287,6 +398,16 @@ def _strip_exponentials(E, n):
                     slopes[p] += kp * a * mult
                     const[p] += kp * b * mult
                 return SR(1)
+            # a base which is free of the variable, but not rational: the
+            # exponential part c^(a*n) is stripped, the constant c^b is kept
+            if n not in base.variables():
+                lin = _linear_coeff(exp, n, K)
+                if lin is not None:
+                    aq = _rational_value(lin[0])
+                    bq = _rational_value(lin[1])
+                    if aq is not None and bq is not None:
+                        slopes[base] += aq * mult
+                        return SR(base) ** SR(bq)
             # integer exponent: descend, tracking the multiplicity
             try:
                 k = QQ(args[1])
@@ -302,13 +423,13 @@ def _strip_exponentials(E, n):
 
     new = walk(E, 1)
     if any(slopes.values()):
-        growth = prod(p ** s for p, s in slopes.items())
+        growth = prod(SR(p) ** SR(s) for p, s in slopes.items())
         raise ValueError("expression is not hypergeometric "
                          "(exponential part grows like (%s)^n)" % growth)
     return new, const
 
 
-def _factor_ratio(R, n, constp=None):
+def _factor_ratio(R, n, K=QQ, constp=None):
     r"""
     Factor a rational function in ``n`` into a unit and linear factors.
 
@@ -316,20 +437,24 @@ def _factor_ratio(R, n, constp=None):
 
     - ``R`` -- a symbolic expression which is a rational function in ``n``
     - ``n`` -- the variable
+    - ``K`` -- (default: ``QQ``) the field of the coefficients, the fraction
+      field of a polynomial ring over ``QQ`` in the parameter symbols
     - ``constp`` -- (default: ``None``) a counter of prime exponents
       contributing to the unit
 
     OUTPUT: a pair ``(unit, factors)`` with ``R = unit * prod (A*n + B)^e``,
-    where ``unit`` is a rational and the entries of ``factors`` are triples
-    of integers ``A > 0``, ``B`` and ``e``.
+    where ``unit`` is a symbolic constant and the entries of ``factors`` are
+    triples ``A``, ``B`` and ``e`` with coefficients in ``K``, where ``A``
+    is positive whenever it is rational.
 
     A :exc:`ValueError` is raised if ``R`` does not split into linear factors
-    over ``QQ``, or if the unit is irrational.
+    over ``K``, or if the unit does not factor into powers of rational primes
+    and of elements free of the variable.
 
     EXAMPLES::
 
         sage: from sage.symbolic.gamma_products import _factor_ratio
-        sage: k = var('k')
+        sage: k, x = var('k x')
         sage: _factor_ratio((k + 1)*(k + 2)/k, k)
         (1, [(1, 1, 1), (1, 2, 1), (1, 0, -1)])
         sage: _factor_ratio(3/2, k)
@@ -338,15 +463,31 @@ def _factor_ratio(R, n, constp=None):
         Traceback (most recent call last):
         ...
         ValueError: expression is not hypergeometric (irrational ratio unit sqrt(2))
+
+        Symbolic parameters are admissible coefficients::
+
+        sage: K = PolynomialRing(QQ, x).fraction_field()
+        sage: _factor_ratio((k + x + 1)/(k + x), k, K)
+        (1, [(1, x + 1, 1), (1, x, -1)])
     """
     def unit_from_primes(sign):
         # assemble the unit from the prime exponents, rejecting irrational
-        # contributions such as sqrt(2)
+        # contributions such as sqrt(2); powers with symbolic exponents, for
+        # instance 2^x, are carried into the unit as symbolic factors
         for v in unitp.values():
-            if v not in ZZ:
+            vq = _rational_value(v)
+            if vq is not None and vq not in ZZ:
                 raise ValueError("expression is not hypergeometric "
                                  "(irrational ratio unit)")
-        return sign * prod(p ** v for p, v in unitp.items() if v)
+        res = SR(sign)
+        for p, v in unitp.items():
+            if v:
+                vq = _rational_value(v)
+                if vq is None:
+                    res *= SR(p) ** SR(v)
+                else:
+                    res *= SR(p ** vq)
+        return res
 
     R = SR(R)
     # a constant ratio contributes only to the unit; the conversion of a
@@ -354,8 +495,8 @@ def _factor_ratio(R, n, constp=None):
     if not R.has(n):
         unitp = Counter(constp)
         try:
-            c = QQ(R)
-        except (TypeError, ValueError):
+            c = K(R)
+        except (TypeError, ValueError, ArithmeticError):
             raise ValueError("expression is not hypergeometric "
                              "(irrational ratio unit %s)" % R) from None
         if not c:
@@ -364,36 +505,67 @@ def _factor_ratio(R, n, constp=None):
         for p, kp in F:
             unitp[p] += kp
         return unit_from_primes(F.unit()), []
-    P = PolynomialRing(QQ, n)
+    F = PolynomialRing(K, n).fraction_field()
     # any failure of the conversion means that the ratio is not a rational
     # function of the variable
     try:
-        fr = R.fraction(P)
+        fr = F(R)
     except Exception as exc:
         raise ValueError("expression is not hypergeometric (ratio %s)" % R) from exc
     num, den = fr.numerator(), fr.denominator()
     unitp = Counter(constp)
     sign = 1
+    scale = SR(1)
+    sym_unit = SR(1)
     factors = []
     for poly, side in ((num, 1), (den, -1)):
         F = poly.factor()
-        U = factor(F.unit())
-        sign *= U.unit()
-        for p, kp in U:
-            unitp[p] += kp * side
+        u = F.unit()
+        uq = _rational_value(u)
+        if uq is not None:
+            # the rational part of the unit is decomposed into prime
+            # exponents, so that it combines with the other contributions
+            if uq < 0:
+                sign = -sign
+                uq = -uq
+            for p, kp in factor(uq.numerator()):
+                unitp[p] += kp * side
+            for p, kp in factor(uq.denominator()):
+                unitp[p] -= kp * side
+        else:
+            sym_unit *= SR(u) ** side
         # flint factorizations have no constant factors, the content is
         # carried by the unit
         for f, e in F:
             if f.degree() != 1:
-                raise ValueError("irrational factor %s in the ratio" % f)
-            A, B = ZZ(f[1]), ZZ(f[0])
-            if A < 0:
-                A, B = -A, -B
+                raise ValueError("the factor %s of the ratio does not split "
+                                 "into linear factors" % f)
+            A, B = f[1], f[0]
+            Aq = _rational_value(A)
+            if Aq is not None:
+                if Aq < 0:
+                    # factorizations over fields of parameters may have
+                    # factors with negative leading coefficient; the sign
+                    # is moved into the unit
+                    A, B = -A, -B
+                    scale *= SR(-1) ** (e * side)
+                    Aq = -Aq
+                # clear the denominators of the coefficients, as the
+                # factorization of a fraction with integral numerator and
+                # denominator would
+                m = Aq.denominator()
+                Bq = _rational_value(B)
+                if Bq is not None:
+                    m = lcm(m, Bq.denominator())
+                if m != 1:
+                    A = A * m
+                    B = B * m
+                    scale *= SR(QQ((1, m))) ** (e * side)
             factors.append((A, B, e * side))
-    return unit_from_primes(sign), factors
+    return unit_from_primes(sign) * scale * sym_unit, factors
 
 
-def _linear_factors(E, n):
+def _linear_factors(E, n, K=QQ):
     r"""
     Return ``(unit, factors)`` with ``E(n+1)/E(n) = unit * prod (A*n+B)^e``.
 
@@ -431,11 +603,11 @@ def _linear_factors(E, n):
                          ) from exc
     # any gamma or factorial atoms surviving the normalization are caught by
     # the conversion of the ratio to a rational function in _factor_ratio
-    R, constp = _strip_exponentials(R, n)
-    return _factor_ratio(R, n, constp)
+    R, constp = _strip_exponentials(R, n, K)
+    return _factor_ratio(R, n, K, constp)
 
 
-def _parse_const_product(expression):
+def _parse_const_product(expression, K=QQ):
     r"""
     Split a constant symbolic expression into ``(unit, gammas, rest)``.
 
@@ -443,10 +615,12 @@ def _parse_const_product(expression):
 
     - ``expression`` -- a symbolic expression free of the product variable
 
+    - ``K`` -- (default: ``QQ``) the field of the parameters
+
     OUTPUT:
 
-    - ``unit`` -- the rational part
-    - ``gammas`` -- a counter mapping rational arguments to the exponent of
+    - ``unit`` -- the constant part, a symbolic expression
+    - ``gammas`` -- a counter mapping constant arguments to the exponent of
       their gamma value
     - ``rest`` -- the remaining factors, which are carried along unchanged
 
@@ -456,31 +630,33 @@ def _parse_const_product(expression):
         sage: _parse_const_product(6*gamma(1/3)^2*sqrt(2))
         (6, Counter({1/3: 2}), sqrt(2))
 
-    Fractional powers of positive rationals are split into prime powers, so
-    that they combine with the prime powers contributed elsewhere::
+        Fractional powers of positive rationals are split into prime powers, so
+        that they combine with the prime powers contributed elsewhere::
 
         sage: _parse_const_product(6^(3/2))
         (6, Counter(), sqrt(3)*sqrt(2))
+
+        With a field of parameters, symbolic constants are split off::
+
+        sage: k, x = var('k x')
+        sage: K = PolynomialRing(QQ, x).fraction_field()
+        sage: unit, cts, rest = _parse_const_product(2*gamma(x + 1)*gamma(x + 2), K)
+        sage: unit, rest, sorted(str(t) for t in cts)
+        (2, 1, ['x + 1', 'x + 2'])
     """
-    unit = QQ(1)
+    unit = SR(1)
     cts = Counter()
     rest = SR(1)
     for base, mult in _mult_split(expression):
         op = base.operator()
-        if op is None:
-            try:
-                unit *= QQ(base) ** mult
-                continue
-            except TypeError:
-                pass
-        elif op == GAMMA_OP:
+        if op == GAMMA_OP:
             arg = base.operands()[0]
-            if arg.operator() is None:
-                try:
-                    cts[QQ(arg)] += mult
-                    continue
-                except TypeError:
-                    pass
+            v = _rational_value(arg)
+            if v is None:
+                v = _field_value(K, arg)
+            if v is not None:
+                cts[v] += mult
+                continue
         elif op == operator.pow:
             # a positive rational raised to a nonintegral rational power is
             # split into prime powers, so that they combine with the prime
@@ -494,6 +670,12 @@ def _parse_const_product(expression):
                     continue
             except TypeError:
                 pass
+        v = _rational_value(base)
+        if v is None:
+            v = _field_value(K, base)
+        if v is not None:
+            unit *= SR(v) ** mult
+            continue
         rest *= base ** mult
     return unit, cts, rest
 
@@ -557,8 +739,8 @@ class _GammaSolver:
 
         INPUT:
 
-        - ``factors`` -- a list of triples ``(A, B, e)`` of integers, as
-          returned by :func:`_factor_ratio`
+        - ``factors`` -- a list of triples ``(A, B, e)``, as returned by
+          :func:`_factor_ratio`, with ``A`` and ``B`` in a common field
 
         EXAMPLES::
 
@@ -568,22 +750,33 @@ class _GammaSolver:
             sage: s.feed([(1, 1, 1), (1, 0, -1)])
             sage: sorted(s.state.items())
             [((0, 0), 1), ((0, 1), -1), ((1, 0), -1), ((1, 1), 1)]
+
+            Symbolic shifts are admissible; rational ones are normalized to
+            rationals::
+
+            sage: x = var('x')
+            sage: s = _GammaSolver(k); s.feed([(1, x + 1/2, 1)])
+            sage: sorted(((a, str(t)), e) for (a, t), e in s.state.items())
+            [((0, 'x + 1/2'), -1), ((1, 'x + 1/2'), 1)]
         """
         for A, B, e in factors:
-            x = B/A
-            self.d *= A ** e
+            x = _rational_value(B/A)
+            if x is None:
+                x = B/A
+            self.d *= SR(A) ** e
             self.state[(1, x)] += e
             self.state[(0, x)] -= e
 
     def normalize(self):
         r"""
-        Reduce the state within each (slope, residue) class of shifts.
+        Reduce the state within each class of shifts differing by integers.
 
-        Each residue class of shifts is combined at its representative, the
-        fractional part of the shifts: it survives as a gamma, the difference
-        becomes a product of consecutive linear factors.  Integral classes
-        become factorials, anchored at the smallest shift, which must be
-        positive, otherwise the term has a pole.
+        Each class is combined at its representative: it survives as a gamma,
+        the difference becomes a product of consecutive linear factors.
+        Rational integral classes become factorials, anchored at the smallest
+        shift, which must be positive, otherwise the term has a pole; symbolic
+        classes are kept as gammas in irreducible position, since whether a
+        pole is reached may depend on the parameters.
 
         EXAMPLES::
 
@@ -594,8 +787,8 @@ class _GammaSolver:
             sage: sorted(s.state.items()), s.polys, s.unit, s.d
             ([((0, 1/2), -2), ((1, 1/2), 2)], [(1, 1/2, 2, 1)], 4/3, 4)
 
-        Integral residue classes whose smallest member is not positive have
-        a pole::
+            Integral residue classes whose smallest member is not positive have
+            a pole::
 
             sage: s = _GammaSolver(k); s.feed([(1, -2, 1), (1, 1, 1)])
             sage: s.normalize()
@@ -603,28 +796,56 @@ class _GammaSolver:
             ...
             ValueError: gamma argument reaches a pole at -2 (term undefined at some n >= 0)
 
-        Constant classes whose members telescope across a pole are
-        rejected, since the term vanishes from some point on::
+            Constant classes whose members telescope across a pole are
+            rejected, since the term vanishes from some point on::
 
             sage: s = _GammaSolver(k); s.feed([(1, -1, 1), (1, 11, -1)])
             sage: s.normalize()
             Traceback (most recent call last):
             ...
             ValueError: gamma argument reaches a pole at 0 (term undefined at some n >= 0)
+
+            Symbolic shifts are grouped by integer differences and survive
+            as gammas::
+
+            sage: x = var('x')
+            sage: s = _GammaSolver(k); s.feed([(1, x + 2, 1), (1, x + 5, 1)])
+            sage: s.normalize()
+            sage: sorted(((a, str(t)), e) for (a, t), e in s.state.items()), [(a, str(t0), kk, e) for a, t0, kk, e in s.polys]
+            ([((0, 'x + 2'), -2), ((1, 'x + 2'), 2)], [(1, 'x + 2', 3, 1)])
         """
-        # split the entries into the residue classes of their shifts modulo
-        # the integers
+        # split the entries into classes of shifts whose pairwise
+        # differences are integers: rational shifts by their fractional
+        # part, symbolic shifts by exact integer differences
         groups = {}
+        sym = {}
         for (a, x), e in self.state.items():
             if not e:
                 continue
-            groups.setdefault((a, x - x.floor()), []).append((x, e))
+            xq = _rational_value(x)
+            if xq is not None:
+                groups.setdefault((a, xq - xq.floor()), []).append((xq, e))
+            else:
+                sym.setdefault(a, []).append((x, e))
+        for a, lst in sym.items():
+            clusters = []
+            for x, e in lst:
+                for rep, members in clusters:
+                    if _integer_value(x - rep) is not None:
+                        members.append((x, e))
+                        break
+                else:
+                    clusters.append([x, [(x, e)]])
+            for rep, members in clusters:
+                groups[(a, rep)] = members
 
         state = Counter()
         for (a, r), lst in groups.items():
+            rational = _rational_value(r) is not None
             # the representative is the fractional part of the shifts for
-            # fractional classes, and the smallest member for integral ones
-            x0 = r if r else min(x for x, _ in lst)
+            # rational fractional classes, the smallest member for rational
+            # integral ones, and the first member for symbolic classes
+            x0 = (r if r else min(x for x, _ in lst)) if rational else r
             tot = 0
             if not a:
                 # accumulate the correction exponents per offset, so that
@@ -639,14 +860,14 @@ class _GammaSolver:
                 for j, ej in exps.items():
                     if not ej:
                         continue
-                    if not x0 + j:
+                    if rational and not x0 + j:
                         # the telescoping of the constant gamma ratio
                         # crosses a pole: the term vanishes from some
                         # point on, or has a pole
                         raise ValueError("gamma argument reaches a "
                                          "pole at %s (term undefined "
                                          "at some n >= 0)" % (x0 + j))
-                    self.unit *= (x0 + j) ** ej
+                    self.unit *= SR(x0 + j) ** ej
             else:
                 for x, e in lst:
                     k = ZZ(x - x0)
@@ -657,7 +878,7 @@ class _GammaSolver:
                     tot += e
             if not tot:
                 continue
-            if not r:
+            if rational and not r:
                 # integral shifts become factorials, anchored at the
                 # smallest shift
                 if x0 < 1:
@@ -699,13 +920,25 @@ class _GammaSolver:
         state = self.state
         if not state:
             return
-        q = lcm(x.denominator() for _, x in state)
+        # only rational shifts participate in circles: the residue of a
+        # symbolic shift modulo the integers depends on the parameters, so
+        # symbolic shifts are in irreducible position
+        entries = []
+        q = 1
+        for (a, x), e in state.items():
+            if not e:
+                continue
+            xq = _rational_value(x)
+            if xq is not None:
+                entries.append((a, xq, e))
+                q = lcm(q, xq.denominator())
+        if not entries:
+            return
         # represent the shifts as integer multiples of 1/q, so that the
         # membership test in the circle enumeration is a set lookup
         ent = {}
-        for (a, x), e in state.items():
-            if e:
-                ent.setdefault(a, {})[x * q] = e
+        for a, xq, e in entries:
+            ent.setdefault(a, {})[xq * q] = e
         for a in sorted(ent):
             ae = ent[a]
             for x0u in sorted(ae):
@@ -852,7 +1085,8 @@ class _GammaSolver:
             raise _SearchBudget
         if not self.state:
             return True
-        key = tuple(sorted(self.state.items()))
+        key = tuple(sorted(self.state.items(),
+                           key=lambda item: (item[0][0], str(item[0][1]))))
         if key in self.memo:
             return False
         for mv in self._circle_moves():
@@ -963,16 +1197,20 @@ class _GammaSolver:
                 res *= p ** f
         if self.pi_exp:
             res *= pi ** self.pi_exp
-        if self.d != 1:
+        try:
+            is_one = bool(self.d == 1)
+        except TypeError:
+            is_one = False
+        if not is_one:
             res *= self.d ** n
         for (A, B), e in self.fact.items():
             if e:
                 res *= factorial(A * n + B) ** e
         for (a, x0, k, e) in self.polys:
-            res *= prod(a * n + x0 + j for j in range(k)) ** e
+            res *= prod(a * n + SR(x0) + j for j in range(k)) ** e
         for (a, x), e in self.state.items():
             if e:
-                res *= gamma(a * n + x) ** e
+                res *= gamma(a * n + SR(x)) ** e
         return res
 
 
@@ -1004,7 +1242,8 @@ def simplify_gamma(expression, var):
         C d^n \prod_i (A_i n + B_i)!^{e_i} \prod_k p_k(n)^{\varepsilon_k}
         \prod_j \Gamma(a_j n + b_j)^{\delta_j}
 
-    where `C` is a constant, `d` a nonzero rational, whose sign absorbs the
+    where `C` is a constant, `d` a nonzero rational or rational function of
+    the parameters, whose sign absorbs the
     sign of negative linear factors, `A_i, B_i` are nonnegative integers,
     `p_k(n)` are products of consecutive linear factors, and the residual
     gamma factors, if there are any, are in irreducible position: all shifts
@@ -1013,8 +1252,14 @@ def simplify_gamma(expression, var):
     multiplication formula reduces the product further.
 
     A :exc:`ValueError` is raised if ``expression`` is not a hypergeometric
-    term, does not split into linear factors over ``QQ``, or is zero or
-    undefined at ``var = 0``.
+    term, does not split into linear factors over the field generated by its
+    parameters, or is zero or undefined at ``var = 0``.
+
+    Free symbols of ``expression`` other than ``var`` are treated as
+    transcendental parameters, and the identities hold for generic parameter
+    values.  In particular, gamma arguments with symbolic shift are not
+    checked for poles, and shifts whose difference is an integer only for
+    special parameter values are not combined.
 
     The normal form is not canonical: in particular, constants may be
     represented by gamma values at rational points or by evaluated powers
@@ -1065,6 +1310,25 @@ def simplify_gamma(expression, var):
             sage: simplify_gamma(gamma(2*n + 1/3)*gamma(2*n + 2/3), n)
             4/3*sqrt(3)*pi^2*(1/729)^n*factorial(6*n)/(factorial(2*n)*gamma(5/6)*gamma(1/6))
 
+        Free symbols other than the variable are treated as parameters, and
+        Gauss circles among the rational shifts are still applied::
+
+            sage: k = var('k')
+            sage: simplify_gamma(gamma(n + 1/3)*gamma(n + 2/3)*gamma(n + k), n)
+            2/3*sqrt(3)*pi*(1/27)^n*factorial(3*n)*gamma(k + n)/factorial(n)
+            sage: simplify_gamma(gamma(k + 1/2)*gamma(n + 1/2)/gamma(n + k + 1/2), n)
+            sqrt(pi)*(1/4)^n*factorial(2*n)*gamma(k + 1/2)/(factorial(n)*gamma(k + n + 1/2))
+            sage: simplify_gamma(binomial(n + k, k), n)
+            gamma(k + n + 1)/(factorial(n)*gamma(k + 1))
+
+            Exponential atoms with symbolic base are stripped of their
+            exponential part::
+
+            sage: simplify_gamma(x^n*gamma(n + 1/2), n)
+            sqrt(pi)*(1/4*x)^n*factorial(2*n)/factorial(n)
+            sage: simplify_gamma(x^n*(x + 1)^(-n)*factorial(n), n)
+            (x/(x + 1))^n*factorial(n)
+
     The following term arises in the enumeration of certain trees; the
     denominator stems from a conversion of a product and was left in an
     unexpanded form::
@@ -1109,8 +1373,10 @@ def simplify_gamma(expression, var):
         raise TypeError("the variable must be a symbol")
     E = SR(expression)
 
+    # collect the free symbols other than the variable as parameters
+    K = _parameter_field((n,), E)
 
-    unit, factors = _linear_factors(E, n)
+    unit, factors = _linear_factors(E, n, K)
     solver = _GammaSolver(n)
     solver.feed(factors)
     solver.d *= unit
@@ -1130,14 +1396,13 @@ def simplify_gamma(expression, var):
     if zero:
         raise ValueError("the term vanishes at the anchor var=0; "
                          "factor out the polynomial zero first")
-    u0, cts, rest = _parse_const_product(v)
+    u0, cts, rest = _parse_const_product(v, K)
     solver.unit *= u0
     for x, e in cts.items():
         solver.state[(0, x)] += e
 
     solver.solve()
-    res = solver.expression(rest)
-    return res
+    return solver.expression(rest)
 
 
 def _factor_count(m):
@@ -1151,10 +1416,8 @@ def _factor_count(m):
     OUTPUT: the pair ``(count, lin)``.  If the number of factors is a
     concrete constant, ``count`` is a nonnegative integer and ``lin`` is
     ``None``.  Otherwise ``count`` is ``None`` and ``lin`` is the pair
-    ``((n, q, r0), n0)``, meaning that the number of factors equals
-    ``q*n0 + r0`` with a positive integer slope ``q`` and a nonnegative
-    integer ``r0``; the count variable ``n`` is a valid generator name,
-    renamed if necessary.
+    ``(n, q, r0)``, meaning that the number of factors equals ``q*n + r0``
+    with a positive integer slope ``q`` and a nonnegative integer ``r0``.
 
     A :exc:`ValueError` is raised if the number of factors is neither of
     these.
@@ -1164,7 +1427,7 @@ def _factor_count(m):
         sage: from sage.symbolic.gamma_products import _factor_count
         sage: n = var('n')
         sage: _factor_count(3*n + 2)
-        (None, ((n, 3, 2), n))
+        (None, (n, 3, 2))
         sage: _factor_count(SR(5))
         (5, None)
         sage: _factor_count(n^2)
@@ -1194,8 +1457,6 @@ def _factor_count(m):
     n = mvars[0]
     lin = _linear_coeff(m, n)
     if lin is None:
-        # report the failure against the original expression, not the
-        # renamed one
         raise ValueError("the number of factors %s is not linear in a single "
                          "variable with rational coefficients" % m0)
     q, r0 = lin
@@ -1203,7 +1464,7 @@ def _factor_count(m):
         raise ValueError("the number of factors grows by %s per step" % q)
     if r0 not in ZZ or r0 < 0:
         raise ValueError("the number of factors is %s at the anchor" % r0)
-    return None, ((n, ZZ(q), ZZ(r0)), mvars[0])
+    return None, (n, ZZ(q), ZZ(r0))
 
 
 def _rational_range_product(f, w, a, count):
@@ -1233,11 +1494,13 @@ def factorial_product(f, var, a, b):
 
     INPUT:
 
-    - ``f`` -- a rational function of ``var`` with rational coefficients
+    - ``f`` -- a rational function of ``var`` whose coefficients are rational
+      functions of the parameters, the free symbols other than ``var`` and
+      the variable the number of factors depends on
 
     - ``var`` -- the product variable
 
-    - ``a`` -- the lower bound, a rational number
+    - ``a`` -- the lower bound, a rational number or a parameter expression
 
     - ``b`` -- the upper bound, such that the number of factors
       ``b - a + 1`` is a nonnegative integer, or an integer-linear expression
@@ -1278,11 +1541,15 @@ def factorial_product(f, var, a, b):
         Traceback (most recent call last):
         ...
         ValueError: 2^k is not a rational function of k ...
-        sage: x = var('x')
+        sage: x, y = var('x y')
         sage: factorial_product(x + k, k, 0, n)
-        Traceback (most recent call last):
-        ...
-        ValueError: k + x is not a rational function of k with rational coefficients
+        x*gamma(n + x + 1)/gamma(x + 1)
+
+        Bodies with symbolic coefficients are rational functions of the
+        product variable in the parameters::
+
+        sage: factorial_product((k + x)/(k + y), k, 0, n)
+        x*gamma(n + x + 1)*gamma(y + 1)/(y*gamma(n + y + 1)*gamma(x + 1))
 
         Products which vanish from some point on, or have a pole in the
         range, are rejected::
@@ -1317,38 +1584,67 @@ def factorial_product(f, var, a, b):
     if aS.is_infinity() or bS.is_infinity():
         raise ValueError("product bounds must be finite")
 
-    w = v
-    f0 = f
+    m = bS - aS + 1
+    mvars = m.variables()
+    # collect the free symbols other than the product variable and the
+    # variable the number of factors depends on as parameters
+    K = _parameter_field((v,) + mvars, f, m, aS, bS)
+    f0, m0 = f, m
+    w, mv = v, mvars
 
     # check that f is a rational function of the product variable with
-    # rational coefficients; any failure of the conversion counts as a
-    # rejection
-    Pv = PolynomialRing(QQ, w)
+    # coefficients rational in the parameters; any failure of the conversion
+    # counts as a rejection
+    Pv = PolynomialRing(K, w)
     try:
         fr = Pv.fraction_field()(f)
     except Exception as exc:
         raise ValueError("%s is not a rational function of %s with rational "
                          "coefficients" % (f0, v)) from exc
 
-    count, lin = _factor_count(bS - aS + 1)
-    if lin is None:
+    if not mv:
         try:
-            aq = QQ(a)
+            count = QQ(m)
         except (TypeError, ValueError):
+            raise ValueError("the number of factors %s is not rational" % m0)
+        if count not in ZZ or count < 0:
+            raise ValueError("the number of factors %s is not a nonnegative "
+                             "integer" % count)
+        aq = _rational_value(a)
+        if aq is None:
+            aq = _field_value(K, a)
+        if aq is None:
             raise ValueError("the lower bound %s is not rational" % a)
         try:
             res = _rational_range_product(f, w, aq, count)
         except (TypeError, ValueError):
-            raise ValueError("%s cannot be evaluated exactly over the given "
-                             "range" % f)
+            try:
+                res = prod(f.subs({w: aq + j}) for j in range(ZZ(count)))
+            except (ArithmeticError, TypeError, ValueError) as exc:
+                raise ValueError("%s cannot be evaluated exactly over the "
+                                 "given range" % f) from exc
         if not res:
             raise ValueError("the product vanishes")
         return SR(res)
 
-    (n, q, r0), n0 = lin
-    try:
-        aq = QQ(a)
-    except (TypeError, ValueError):
+    if len(mv) > 1:
+        raise ValueError("the number of factors %s depends on more than one "
+                         "variable" % m0)
+    n0 = mv[0]
+    lin = _linear_coeff(m, n0)
+    if lin is None:
+        raise ValueError("the number of factors %s is not linear with "
+                         "rational coefficients in a single variable" % m0)
+    q, r0 = lin
+    if q not in ZZ or q < 1:
+        raise ValueError("the number of factors grows by %s per step" % q)
+    if r0 not in ZZ or r0 < 0:
+        raise ValueError("the number of factors is %s at the anchor" % r0)
+    q, r0 = ZZ(q), ZZ(r0)
+    aq = _rational_value(a)
+    if aq is None:
+        aq = _field_value(K, a)
+    if aq is None:
         raise ValueError("the lower bound %s is not rational" % a)
 
     # reject bodies with zeros or poles in the shifting part of the
@@ -1356,41 +1652,71 @@ def factorial_product(f, var, a, b):
     # undefined from some point on and has no normal form.  the anchor
     # part of the range is checked by direct evaluation below.  the
     # product variable runs over the lattice a + ZZ, so only roots in
-    # that lattice can be hit
-    for root, _ in fr.denominator().roots():
-        if (root - aq) in ZZ and root > aq + r0 - 1:
-            raise ValueError("the product is undefined from some point on: "
-                             "the body has a pole at %s" % root)
-    num = fr.numerator()
-    if num.is_zero():
+    # that lattice can be hit.  with symbolic parameters the roots may
+    # be undecidable; the checks are then skipped and the result holds
+    # for generic parameter values
+    for poly, message in ((fr.denominator(), "the product is undefined from "
+                            "some point on: the body has a pole at %s"),
+                           (fr.numerator(), "the product vanishes from some "
+                            "point on: the body has a zero at %s")):
+        roots = _safe_roots(poly)
+        if roots is None:
+            continue
+        for root, _ in roots:
+            d = _integer_value(root - aq)
+            if d is not None and d > r0 - 1:
+                raise ValueError(message % root)
+    if fr.numerator().is_zero():
         raise ValueError("the product vanishes")
-    for root, _ in num.roots():
-        if (root - aq) in ZZ and root > aq + r0 - 1:
-            raise ValueError("the product vanishes from some point on: "
-                             "the body has a zero at %s" % root)
 
     # the term ratio is the product of the last q factors,
     # E(n+1)/E(n) = prod_{j=0}^{q-1} f(a + m(n) + j)
-    R = prod(f.subs({w: aq + q*n + r0 + j}) for j in range(q))
-    unit, factors = _factor_ratio(R, n)
+    R = prod(f.subs({w: aq + q*n0 + r0 + j}) for j in range(q))
+    unit, factors = _factor_ratio(R, n0, K)
 
-    solver = _GammaSolver(n)
+    solver = _GammaSolver(n0)
     solver.feed(factors)
     solver.d *= unit
 
-    # anchor: E(0) is the product of the first r0 factors
+    # anchor: E(0) is the product of the first r0 factors; with symbolic
+    # parameters or bounds, poles of the anchor cannot be detected, and the
+    # result holds for generic parameter values
     try:
         E0 = _rational_range_product(f, w, aq, r0)
     except (TypeError, ValueError):
-        raise ValueError("cannot evaluate the product at the anchor: "
-                         "the product has a pole or an irrational factor")
+        try:
+            E0 = prod(f.subs({w: aq + j}) for j in range(r0))
+        except (ArithmeticError, TypeError, ValueError) as exc:
+            raise ValueError("cannot evaluate the product at the anchor: "
+                             "the product has a pole or an irrational factor") from exc
     if not E0:
         raise ValueError("the product vanishes at the anchor")
     solver.unit *= E0
 
     solver.solve()
-    res = solver.expression(1)
-    return res
+    return solver.expression(1)
+
+
+def _safe_roots(poly):
+    r"""
+    Return the roots of ``poly``, or ``None`` if they cannot be determined.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _safe_roots
+        sage: k, x = var('k x')
+        sage: _safe_roots(PolynomialRing(QQ, k)(k^2 - 1))
+        [(1, 1), (-1, 1)]
+        sage: K = PolynomialRing(QQ, x).fraction_field()
+        sage: _safe_roots(PolynomialRing(K, k)((x + 1)*k - 3))
+        [(3/(x + 1), 1)]
+        sage: _safe_roots(PolynomialRing(K, k)(k^2 - x))
+        []
+    """
+    try:
+        return poly.roots()
+    except Exception:
+        return None
 
 
 def _factorials_to_gamma(E, conv=None):
@@ -1492,13 +1818,13 @@ def exact_product(f, var, a, b):
       ``c^symbolic_sum(p, var, a, b)``; for instance, ``2^k`` over ``k = 0..n``
       evaluates to ``2^(n*(n+1)/2)``,
 
-    - linear factors ``A*var + B`` with rational slope ``A`` and ``B`` free of
-      the product variable, which are evaluated in terms of gamma functions,
-      for instance ``x + k`` over ``k = 0..n`` evaluates to
-      ``gamma(x+n+1)/gamma(x)``; over a concrete range the finite product is
-      evaluated directly, since the gamma quotient has removable poles at the
-      zeros of the factors, so that its size grows linearly with the number
-      of factors,
+    - linear factors ``A*var + B`` with slope ``A`` and constant term ``B``
+      free of the product variable, which are evaluated in terms of gamma
+      functions, for instance ``x + k`` over ``k = 0..n`` evaluates to
+      ``x*gamma(n + x + 1)/gamma(x + 1)``; over a concrete range the finite
+      product is evaluated directly, since the gamma quotient has removable
+      poles at the zeros of the factors, so that its size grows linearly
+      with the number of factors,
 
     - factors independent of the product variable, which are evaluated as
       ``c^(b - a + 1)``,
@@ -1544,12 +1870,16 @@ def exact_product(f, var, a, b):
 
         Parameter-linear factors over a concrete range are evaluated
         directly, so that removable gamma poles do not become evaluation
-        errors::
+        errors; this also holds when the slope is a symbolic parameter::
 
             sage: exact_product(x + k, k, 0, 1)
             (x + 1)*x
             sage: exact_product(x + k, k, 0, 1).subs(x = -2)
             2
+            sage: exact_product(x*k + 1, k, 0, 2)
+            (2*x + 1)*(x + 1)
+            sage: exact_product(x*k + 1, k, 0, 2).subs(x = -1)
+            0
 
         A vanishing product is an admissible value over a concrete range,
         provided every factor is defined::
@@ -1571,7 +1901,7 @@ def exact_product(f, var, a, b):
         failing at the removable poles::
 
             sage: exact_product(x + k, k, 0, n)
-            gamma(n + x + 1)/gamma(x)
+            x*gamma(n + x + 1)/gamma(x + 1)
             sage: try:
             ....:     exact_product(x + k, k, 0, n).subs(x = -2, n = 1)
             ....: except RuntimeError as err:
@@ -1609,7 +1939,7 @@ def exact_product(f, var, a, b):
         gamma functions::
 
             sage: exact_product((x + k)/(k + 1), k, 0, n)
-            gamma(n + x + 1)/(factorial(n + 1)*gamma(x))
+            x*gamma(n + x + 1)/(factorial(n + 1)*gamma(x + 1))
 
         Nothing can be done for genuinely non-rational bodies::
 
@@ -1636,6 +1966,8 @@ def exact_product(f, var, a, b):
         # the empty product
         return SR(1)
 
+    # collect the free symbols other than the product variable as parameters
+    K = _parameter_field((v,), f, aS, bS)
     w = v
 
     # normalize the body to expose hidden rationality
@@ -1645,14 +1977,14 @@ def exact_product(f, var, a, b):
 
     # split the normalized body into a rational, an exponential, a constant
     # and a residual part
-    F = PolynomialRing(QQ, w).fraction_field()
+    F = PolynomialRing(K, w).fraction_field()
     R = SR(1)
     C = SR(1)
     expo = []
     param = []
     rest = []
     for g, e in _mult_split(nf):
-        # the conversion to QQ(w) is used as a membership test of an arbitrary
+        # the conversion to K(w) is used as a membership test of an arbitrary
         # symbolic expression in the rational function field; which of the
         # arithmetic exceptions it raises on failure is an implementation
         # detail of the conversion
@@ -1686,15 +2018,14 @@ def exact_product(f, var, a, b):
         if coeffs is not None and set(coeffs) <= {0, 1}:
             A = coeffs.get(1, SR(0))
             B = coeffs.get(0, SR(0))
-            if A != 0 and w not in B.variables():
-                try:
-                    A = QQ(A)
-                except TypeError:
-                    A = None
-                if A:
+            if w not in B.variables():
+                Aq = _rational_value(A)
+                if Aq is None:
+                    Aq = _field_value(K, A)
+                if Aq:
                     # prod_{k=a}^{b} (A*k + B)^e is
                     # A^(e*(b-a+1)) * (gamma(B/A + b + 1)/gamma(B/A + a))^e
-                    param.append((A, B/A, e))
+                    param.append((SR(Aq), SR(B)/SR(Aq), e))
                     continue
         if w not in g.variables():
             C *= g**e
@@ -1761,5 +2092,4 @@ def exact_product(f, var, a, b):
         # everything cancelled: the body is multiplicatively trivial
         return SR(1)
 
-    res = prod(parts)
-    return res
+    return prod(parts)
