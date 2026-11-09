@@ -166,11 +166,13 @@ Setting up SageMath as a Jupyter kernel in an existing Jupyter notebook or Jupyt
 
 By default, SageMath installs itself as a Jupyter kernel in the same
 environment as the SageMath installation. This is the most convenient way to
-use SageMath in a Jupyter notebook. To check if the Sage kernel is
-available, start a Jupyter notebook and look for the kernel named
-``SageMath <x.y.z>`` in the list of available kernels.
-Alternatively, you can use the following command to check which kernels are
-available:
+use SageMath in a Jupyter notebook. If your notebook or JupyterLab server also
+runs from that environment, no extra setup is needed.
+
+To check if the Sage kernel is available, start the Jupyter notebook or
+JupyterLab server that you plan to use and look for the kernel named
+``SageMath <x.y.z>`` in the list of available kernels. Alternatively, run the
+``jupyter`` command from that same Jupyter installation:
 
 .. code-block:: console
 
@@ -179,73 +181,52 @@ available:
       python3     <path to env>/share/jupyter/kernels/python3
       sagemath    <path to env>/share/jupyter/kernels/sagemath
 
-In case the Sage kernel is not listed, you can check if the file ``kernel.json``
-is present in ``<path to env>/share/jupyter/kernels/sagemath``.
-If it is not there, you can create it using ``jupyter kernelspec install``
-as described below.
+In case the Sage kernel is not listed in that Jupyter installation, you can
+install it with the ``sage --jupyter-kernel`` command described below.
 
 You may already have a global installation of Jupyter. For added
-convenience, it is possible to link your installation of SageMath into
-your Jupyter installation, adding it to the list of available kernels
+convenience, it is possible to make your installation of SageMath available
+in that Jupyter installation, adding it to the list of available kernels
 that can be selected in the notebook or JupyterLab interface.
 
-Assuming that SageMath can be invoked by typing ``sage``, you can use
+If that Jupyter installation lives in the *same* Python environment as
+SageMath, the kernel is already available. Otherwise, assuming that the command
+``sage`` starts the SageMath installation that you want to use as a kernel, run
 
 .. code-block:: console
 
-    $ sage -sh -c 'ls -d $SAGE_VENV/share/jupyter/kernels/sagemath'
+    $ sage --jupyter-kernel install --user
 
-to find the location of the SageMath kernel description.
-Alternatively, use ``jupyter kernelspec list`` from the same environment
-where SageMath is installed to find the location of the SageMath kernel.
+This installs a kernel spec into your per-user Jupyter directory. By default the
+spec is *portable*: it records the absolute path to Sage's Python interpreter
+and adds Sage's ``bin`` directories to ``PATH``, so it works even when the
+Jupyter server runs in a different environment, for example a system-wide
+JupyterLab or a JupyterHub deployment. (Pass ``--no-portable`` to instead write
+a spec that uses a bare ``python3``, which only works when the Jupyter server
+itself runs inside Sage's environment.)
 
-Now pick a name for the kernel that identifies it clearly and uniquely.
+The portable kernel spec is portable between Jupyter environments, but it is
+not relocatable: it contains absolute paths to this SageMath installation. If
+you move SageMath, switch to a different SageMath installation, or upgrade in a
+way that changes Sage's Python environment, rerun the command above.
 
-For example, if you install Sage from source tarballs, you could decide
-to include the version number in the name, such as ``sagemath-9.6``.
-If you build SageMath from a clone of the git repository, it is better to
-choose a name that identifies the directory, perhaps ``sagemath-dev``
-or ``sagemath-teaching`` because the version will change.
+Only ``kernel.json`` and the kernel icons are installed, and the SageMath
+documentation is symlinked rather than copied. This avoids copying gigabytes of
+documentation into your Jupyter configuration directory.
 
-Now assuming that the Jupyter notebook can be started by typing
-``jupyter notebook``, the following command will install SageMath as a
-new kernel named ``sagemath-dev``.
-
-.. code-block:: console
-
-    $ jupyter kernelspec install --user $(sage -sh -c 'ls -d $SAGE_VENV/share/jupyter/kernels/sagemath') --name sagemath-dev
-
-The ``jupyter kernelspec`` approach by default does lead to about 2Gb of
-SageMath documentation being copied into your personal jupyter configuration
-directory. You can avoid that by instead putting a symlink in the relevant spot
-and
+Run
 
 .. code-block:: console
 
-    $ jupyter --paths
+    $ sage --jupyter-kernel install --help
 
-to find valid data directories for your Jupyter installation.
-A command along the lines of
+to see the available options, such as ``--sys-prefix`` or ``--prefix`` to
+install into a different location instead of the per-user directory. For a
+shared JupyterHub or another managed Jupyter installation, an administrator may
+prefer ``--prefix`` with the Jupyter data prefix used by that installation.
 
-.. code-block:: console
-
-    $ ln -s $(sage -sh -c 'ls -d $SAGE_VENV/share/jupyter/kernels/sagemath') $HOME/.local/share/jupyter/kernels/sagemath-dev
-
-can then be used to create a symlink to the SageMath kernel description
-in a location where your own ``jupyter`` can find it.
-
-If you have installed SageMath from source, the alternative command
-
-.. code-block:: console
-
-    $ ln -s $(sage -sh -c 'ls -d $SAGE_ROOT/venv/share/jupyter/kernels/sagemath') $HOME/.local/share/jupyter/kernels/sagemath-dev
-
-creates a symlink that will stay current even if you switch to a different Python version
-later.
-
-To get the full functionality of the SageMath kernel in your global
-Jupyter installation, the following Notebook Extension packages also
-need to be installed (or linked) in the environment from which the
+The command above registers the SageMath kernel. Some optional frontend
+features may also need packages or assets in the environment from which the
 Jupyter installation runs.
 
 You can check the presence of some of these packages using the command

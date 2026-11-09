@@ -19,6 +19,9 @@ class CliOptions:
     """The notebook type to start."""
     notebook: str = "jupyter"
 
+    """The arguments for the ``--jupyter-kernel`` command, or ``None``."""
+    jupyter_kernel: list[str] | None = None
+
     """The command to execute."""
     command: str | None = None
 

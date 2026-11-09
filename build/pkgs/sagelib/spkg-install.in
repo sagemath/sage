@@ -63,9 +63,18 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         cd $SAGE_PKGS/sagelib/src && time sdh_build_and_store_wheel --no-build-isolation .
     fi
 
-    # Install jupyter kernelspecs
-    # (needed since in editable mode the kernel spec is not copied to the correct location in the meson build)
-    jupyter kernelspec install --name=sagemath --user build/sage-distro/src/sage
+    # Install the jupyter kernel spec into the venv (sys.prefix), where the
+    # docbuild and an in-venv jupyter look for it.
+    # (Needed since in editable mode the kernel spec is not copied to the
+    # correct location by the meson build.)  We install it with our own command
+    # rather than "jupyter kernelspec install <dir>" because the latter would
+    # copy the whole meson build tree (gigabytes); the command below writes
+    # only kernel.json plus symlinked resources.  See Issue #40605.
+    # --no-portable keeps the in-venv 'python3' argv, matching the wheel
+    # (data_files) kernel.json.in; the in-venv jupyter resolves it to this
+    # interpreter.  The portable spec (the command default) is meant for an
+    # explicit install into a *different* environment's Jupyter.
+    python3 -m sage.repl.ipython_kernel.install install --sys-prefix --no-portable
 else
     # Now implied: "$SAGE_WHEELS" = yes
     # We should remove the egg-link that may have been installed previously.

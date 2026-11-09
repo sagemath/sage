@@ -386,6 +386,11 @@ usage_advanced() {
     echo "                         environment (not Sage), passing additional"
     echo "                         additional options to IPython"
     echo "  --jupyter [...]     -- run Sage's Jupyter with given arguments"
+    echo "  --jupyter-kernel [...]"
+    echo "                      -- install the SageMath Jupyter kernel spec;"
+    echo "                         run \"sage --jupyter-kernel install --help\""
+    echo "                         for options.  The installed spec works from"
+    echo "                         an external Jupyter server by default."
     echo "  --kash [...]        -- run Sage's Kash with the given arguments"
     command -v kash &>/dev/null || \
     echo "                         (not installed currently, run sage -i kash)"
@@ -620,6 +625,11 @@ fi
 if [ "$1" = '-jupyter' -o "$1" = '--jupyter' ]; then
     shift
     exec jupyter "$@"
+fi
+
+if [ "$1" = '-jupyter-kernel' -o "$1" = '--jupyter-kernel' ]; then
+    shift
+    exec python3 -m sage.repl.ipython_kernel.install "$@"
 fi
 
 #####################################################################
