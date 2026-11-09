@@ -37,6 +37,10 @@ on:
         description: 'Extra Sage packages to install as system packages'
         type: string
         default: ""
+      extra_configure_args:
+        description: 'Additional Sage configure arguments'
+        type: string
+        default: ""
       max_parallel:
         type: number
         default: 30
@@ -96,7 +100,7 @@ on:
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       max-parallel: ${{ inputs.max_parallel }}
@@ -113,7 +117,7 @@ jobs:
       FROM_DOCKER_REPOSITORY: ${{ inputs.from_docker_repository }}
       FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
       FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
-      EXTRA_CONFIGURE_ARGS: --enable-fat-binary
+      EXTRA_CONFIGURE_ARGS: --enable-fat-binary ${{ inputs.extra_configure_args }}
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space

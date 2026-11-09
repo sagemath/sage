@@ -1,28 +1,16 @@
 name: Homebrew bottles
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       sage_repository:
-        description: Optional repository containing the Sage changes (defaults to this repository)
         type: string
       sage_ref:
-        description: Optional branch, tag, commit, or refs/pull/NUMBER/head (defaults to the workflow commit)
         type: string
       suite:
-        description: Doctest suite (pytest tests always run)
+        type: string
         default: smoke
-        type: choice
-        options:
-          - smoke
-          - all
       doctest_paths:
-        description: Optional space-separated paths under src/sage; overrides suite
         type: string
 
 permissions:

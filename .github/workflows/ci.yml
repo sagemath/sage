@@ -1,23 +1,12 @@
-name: CI
+name: Build & Test using uv
 
 on:
-  push:
-    tags:
-      - '*'
-  pull_request:
-    paths:
-      - '**.build'
-      - 'uv.lock'
-      - 'subprojects/**'
-      - '.github/workflows/ci.yml'
-      - 'build/pkgs/*/distros/*.txt'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_call:
 
 jobs:
   linux:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:

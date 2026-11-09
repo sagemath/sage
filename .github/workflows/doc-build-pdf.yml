@@ -1,25 +1,14 @@
 name: Build documentation (PDF)
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
   PYTHON_VERSION: 3.13
 
 jobs:
   doc-pdf:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7

@@ -1,17 +1,12 @@
 name: Test Optional Packages
 
 on:
-  workflow_dispatch:
-    inputs:
-      packages:
-        description: 'List (comma separated, no whitespaces) of optional packages'
-        required: true
-        type: string
+  workflow_call:
 
 jobs:
   prepare:
     name: Build and Test Sage with given optional packages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
        opt_targets_docker: ${{ steps.convert.outputs.opt_targets_docker }}
        opt_targets_macos: ${{ steps.convert.outputs.opt_targets_macos }}

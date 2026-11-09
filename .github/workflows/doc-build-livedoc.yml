@@ -1,16 +1,7 @@
 name: Build live documentation
 
 on:
-  push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
@@ -23,7 +14,7 @@ env:
 
 jobs:
   livedoc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
