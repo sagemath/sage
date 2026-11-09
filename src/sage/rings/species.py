@@ -2241,7 +2241,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     and set(domain) == set(G.domain())):
                 return self._element_from_single_sort(G)
 
-            return self._element_from_components(G, pi, check)
+            return self._element_from_components(G, pi)
 
         raise ValueError(f"{G} must be a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
@@ -2264,23 +2264,31 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             self._singleton_terms[k] = term
         return term
 
-    def _element_from_components(self, G, pi, check):
+    def _element_from_components(self, G, pi):
         r"""
         Return the molecular species of the permutation group ``G``,
         decomposing it into the direct product of its restrictions to
         the components of the direct product decomposition.
+
+        The assignment ``pi`` of the domain elements to sorts is assumed
+        to be valid: its keys and values have already been checked by
+        the caller.  Therefore the factors, which are directly
+        indecomposable by construction, are constructed without
+        further checks.
 
         TESTS::
 
             sage: from sage.rings.species import MolecularSpecies
             sage: M = MolecularSpecies("X")
             sage: G = PermutationGroup([[(1,2),(3,4)]], domain=[1,2,3,4,5,6])
-            sage: M._element_from_components(G, {0: [1,2,3,4,5,6]}, True)
+            sage: M._element_from_components(G, {0: [1,2,3,4,5,6]})
             X^2*E_2(X^2)
         """
         components = G.disjoint_direct_product_decomposition()
         if len(components) == 1:
-            return self.gen(self._indices(G, pi, check=check))
+            # G is directly indecomposable, since its direct product
+            # decomposition consists of a single component
+            return self.gen(self._indices(G, pi, check=False))
 
         elm = self.one()
         for component in components:
@@ -2300,7 +2308,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                      domain=component)
                 pi_H = {k: [e for e in v if e in component]
                         for k, v in pi.items()}
-            a = self._indices(H, pi_H, check=check)
+            # H is directly indecomposable, since the components of
+            # the direct product decomposition are
+            a = self._indices(H, pi_H, check=False)
             elm *= self.gen(a)
         return elm
 
@@ -2416,7 +2426,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # molecular species; the factors of the direct product
             # decomposition are directly indecomposable, so no check
             # is needed
-            term = self._element_from_components(G, {0: G.domain()}, False)
+            term = self._element_from_components(G, {0: G.domain()})
             self._group_conclusive[key] = term
             return term
 
@@ -2442,7 +2452,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         # the factors of the direct product decomposition are directly
         # indecomposable, so no check is needed
-        term = self._element_from_components(G, {0: G.domain()}, False)
+        term = self._element_from_components(G, {0: G.domain()})
         bucket.append((G_gap, action, term))
         return term
 
