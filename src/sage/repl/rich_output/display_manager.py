@@ -344,7 +344,7 @@ class DisplayManager(SageObject):
         """
         return self._preferences
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 

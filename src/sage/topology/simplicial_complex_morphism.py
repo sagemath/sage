@@ -742,7 +742,7 @@ class SimplicialComplexMorphism(Morphism):
         from sage.homology.homology_morphism import InducedHomologyMorphism
         return InducedHomologyMorphism(self, base_ring, cohomology)
 
-    def is_contiguous_to(self, other):
+    def is_contiguous_to(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is contiguous to ``other``.
 

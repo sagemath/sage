@@ -1161,7 +1161,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     g[strategy_profile][i] = sgn * Decimal(float(self.utilities[strategy_profile][i]))
         return g
 
-    def is_constant_sum(self):
+    def is_constant_sum(self) -> bool:
         r"""
         Check if the game is constant sum.
 

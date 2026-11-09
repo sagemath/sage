@@ -545,7 +545,7 @@ class DualMatroid(Matroid):
         """
         return self._matroid.relabel(mapping).dual()
 
-    def is_valid(self, certificate=False):
+    def is_valid(self, certificate=False) -> bool | tuple:
         """
         Test if ``self`` obeys the matroid axioms.
 

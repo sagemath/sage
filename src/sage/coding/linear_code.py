@@ -1255,7 +1255,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         k = self.dimension()
         return n + 1 - k - d
 
-    def is_permutation_equivalent(self, other, algorithm=None):
+    def is_permutation_equivalent(self, other, algorithm=None) -> bool | tuple:
         """
         Return ``True`` if ``self`` and ``other`` are permutation equivalent
         codes and ``False`` otherwise.
