@@ -1635,7 +1635,8 @@ def minimal_separators(G, forbidden_vertices=None):
         ...
         ValueError: the input must be an undirected graph
 
-    A disconected graph without cut vertices::
+    A disconnected graph without cut vertices::
+
         sage: G = graphs.CycleGraph(4) + graphs.PathGraph(2) + Graph(1)
         sage: sorted(sorted(sep) for sep in G.minimal_separators())
         [[0, 2], [1, 3]]

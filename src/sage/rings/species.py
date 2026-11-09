@@ -2146,7 +2146,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         sage: TestSuite(E2*X + C3).run()
     """
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if this is a constant polynomial species.
 
@@ -2166,7 +2166,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return self.is_zero() or not self.maximal_degree()
 
-    def is_virtual(self):
+    def is_virtual(self) -> bool:
         r"""
         Return if ``self`` is a virtual species.
 
@@ -2185,7 +2185,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return any(x < 0 for x in self.coefficients(sort=False))
 
-    def is_molecular(self):
+    def is_molecular(self) -> bool:
         r"""
         Return if ``self`` is a molecular species.
 
@@ -2206,7 +2206,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
 
-    def is_atomic(self):
+    def is_atomic(self) -> bool:
         r"""
         Return if ``self`` is an atomic species.
 

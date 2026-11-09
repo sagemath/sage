@@ -1,6 +1,7 @@
 "Evaluating shell scripts"
 
 import os
+from typing import Any
 
 
 class Sh:
@@ -12,7 +13,8 @@ class Sh:
     temporary) directory where the Sage worksheet process is
     executing.
     """
-    def eval(self, code, globals=None, locals=None):
+    def eval(self, code: str, globals: dict[str, Any] | None = None,
+             locals: dict[str, Any] | None = None) -> str:
         r"""
         This is difficult to test because the output goes to the
         screen rather than being captured by the doctest program, so
