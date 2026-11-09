@@ -16,7 +16,32 @@ from sage.libs.gmp.all cimport *
 
 from sage.rings.real_mpfr cimport RealField
 
+import sage.rings.abc
+
 gmpy2.import_gmpy2()
+
+# Parents whose elements are rigorous enclosures, which mpmath cannot provide
+cdef tuple ENCLOSURE_FIELDS = (sage.rings.abc.RealIntervalField,
+                               sage.rings.abc.ComplexIntervalField,
+                               sage.rings.abc.RealBallField,
+                               sage.rings.abc.ComplexBallField)
+
+
+cdef bint contains_enclosure(x) except -1:
+    """
+    Return whether ``x`` is an interval or a ball, or a tuple, list or dict
+    containing one (recursively).
+    """
+    if isinstance(x, Element):
+        return isinstance((<Element>x)._parent, ENCLOSURE_FIELDS)
+    if isinstance(x, dict):
+        x = x.values()
+    elif not isinstance(x, (tuple, list)):
+        return False
+    for v in x:
+        if contains_enclosure(v):
+            return True
+    return False
 
 cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     """
@@ -281,11 +306,42 @@ def call(func, *args, **kwargs):
 
         sage: a.call(a.log, -1.0r, parent=float)
         3.141592653589793j
+
+    Interval and ball fields are rejected: mpmath does not provide error
+    bounds, so the result would be a zero-width enclosure which in general
+    does not contain the true value::
+
+        sage: a.call(a.ei, 1, parent=RIF)
+        Traceback (most recent call last):
+        ...
+        TypeError: mpmath results carry no rigorous error bound, cannot convert to Real Interval Field with 53 bits of precision
+        sage: a.call(a.ei, 1, parent=CBF)
+        Traceback (most recent call last):
+        ...
+        TypeError: mpmath results carry no rigorous error bound, cannot convert to Complex ball field with 53 bits of precision
+
+    Likewise for interval and ball arguments, which would otherwise be
+    replaced by their midpoints::
+
+        sage: a.call(a.erf, RIF(1, 2))
+        Traceback (most recent call last):
+        ...
+        TypeError: mpmath cannot evaluate functions at intervals or balls rigorously
+        sage: a.call(a.hyper, [RBF(1/3)], [2], 1/2)
+        Traceback (most recent call last):
+        ...
+        TypeError: mpmath cannot evaluate functions at intervals or balls rigorously
     """
     from mpmath import mp
     orig = mp.prec
     prec = kwargs.pop('prec', orig)
     parent = kwargs.pop('parent', None)
+    if isinstance(parent, ENCLOSURE_FIELDS):
+        raise TypeError(f"mpmath results carry no rigorous error bound, "
+                        f"cannot convert to {parent}")
+    if contains_enclosure(args) or contains_enclosure(kwargs):
+        raise TypeError("mpmath cannot evaluate functions at intervals "
+                        "or balls rigorously")
     if parent is not None:
         try:
             prec = parent.prec()

@@ -2077,6 +2077,284 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         return self.sinh() / self.cosh()
 
+    # The following functions are computed using ball arithmetic. Without
+    # them, symbolic expressions involving these functions were evaluated
+    # in floating point and silently converted to zero-width intervals
+    # which did not contain the true value.
+
+    def arcsin(self):
+        """
+        Return the arcsine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arcsin()
+            0.66623943249252? + 1.06127506190504?*I
+            sage: CIF(2).arcsin()
+            1.570796326794897? - 1.316957896924817?*I
+        """
+        return _ball_eval(self, "arcsin")
+
+    def arccos(self):
+        """
+        Return the arccosine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccos()
+            0.90455689430238? - 1.06127506190504?*I
+        """
+        return _ball_eval(self, "arccos")
+
+    def arctan(self):
+        """
+        Return the arctangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arctan()
+            1.017221967897851? + 0.402359478108525?*I
+
+        TESTS:
+
+        Symbolic expressions are evaluated rigorously and at the requested
+        precision; they used to be computed in double precision and returned
+        as zero-width intervals::
+
+            sage: # needs sage.symbolic
+            sage: v = ComplexIntervalField(100)(arctan(1/3)); v
+            0.32175055439664219340140461436?
+            sage: v.overlaps(ComplexIntervalField(300)(arctan(1/3)))
+            True
+            sage: CIF(arctan2(1/3, 2)).diameter() > 0
+            True
+        """
+        return _ball_eval(self, "arctan")
+
+    def arcsinh(self):
+        """
+        Return the inverse hyperbolic sine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arcsinh()
+            1.06127506190504? + 0.66623943249252?*I
+        """
+        return _ball_eval(self, "arcsinh")
+
+    def arccosh(self):
+        """
+        Return the inverse hyperbolic cosine of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccosh()
+            1.061275061905035? + 0.904556894302381?*I
+        """
+        return _ball_eval(self, "arccosh")
+
+    def arctanh(self):
+        """
+        Return the inverse hyperbolic tangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arctanh()
+            0.402359478108525? + 1.017221967897851?*I
+        """
+        return _ball_eval(self, "arctanh")
+
+    def cot(self):
+        """
+        Return the cotangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).cot()
+            0.217621561854403? - 0.868014142895925?*I
+
+        TESTS::
+
+            sage: CIF(cot(sqrt(2))).diameter() > 0                                      # needs sage.symbolic
+            True
+        """
+        return _ball_eval(self, "cot")
+
+    def sec(self):
+        """
+        Return the secant of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).sec()
+            0.498337030555187? + 0.591083841721045?*I
+        """
+        return _ball_eval(self, "sec")
+
+    def csc(self):
+        """
+        Return the cosecant of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).csc()
+            0.621518017170429? - 0.303931001628427?*I
+        """
+        return _ball_eval(self, "csc")
+
+    def coth(self):
+        """
+        Return the hyperbolic cotangent of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).coth()
+            0.868014142895925? - 0.217621561854403?*I
+        """
+        return _ball_eval(self, "coth")
+
+    def sech(self):
+        """
+        Return the hyperbolic secant of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).sech()
+            0.498337030555187? - 0.591083841721045?*I
+        """
+        return _ball_eval(self, "sech")
+
+    def csch(self):
+        """
+        Return the hyperbolic cosecant of this complex interval.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).csch()
+            0.303931001628427? - 0.621518017170429?*I
+        """
+        return _ball_eval(self, "csch")
+
+    def arccot(self):
+        """
+        Return the inverse cotangent of this complex interval,
+        defined as the arctangent of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccot()
+            0.553574358897045? - 0.402359478108525?*I
+        """
+        return _ball_eval(self, "arctan", True)
+
+    def arcsec(self):
+        """
+        Return the inverse secant of this complex interval,
+        defined as the arccosine of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arcsec()
+            1.118517879643706? + 0.530637530952518?*I
+        """
+        return _ball_eval(self, "arccos", True)
+
+    def arccsc(self):
+        """
+        Return the inverse cosecant of this complex interval,
+        defined as the arcsine of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccsc()
+            0.452278447151191? - 0.530637530952518?*I
+        """
+        return _ball_eval(self, "arcsin", True)
+
+    def arccoth(self):
+        """
+        Return the inverse hyperbolic cotangent of this complex interval,
+        defined as the inverse hyperbolic tangent of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccoth()
+            0.402359478108525? - 0.553574358897045?*I
+            sage: CIF(1/2).arccoth()
+            0.549306144334055? - 1.570796326794897?*I
+
+        TESTS::
+
+            sage: CIF(acoth(sqrt(2))).diameter() > 0                                    # needs sage.symbolic
+            True
+        """
+        return _ball_eval(self, "arctanh", True)
+
+    def arcsech(self):
+        """
+        Return the inverse hyperbolic secant of this complex interval,
+        defined as the inverse hyperbolic cosine of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arcsech()
+            0.53063753095252? - 1.11851787964371?*I
+        """
+        return _ball_eval(self, "arccosh", True)
+
+    def arccsch(self):
+        """
+        Return the inverse hyperbolic cosecant of this complex interval,
+        defined as the inverse hyperbolic sine of its inverse.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).arccsch()
+            0.530637530952518? - 0.452278447151191?*I
+        """
+        return _ball_eval(self, "arcsinh", True)
+
+    def gamma(self):
+        """
+        Return the image of this interval by the Gamma function.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).gamma()
+            0.498015668118356? - 0.154949828301811?*I
+
+        TESTS::
+
+            sage: CIF(factorial(1/3)).diameter() > 0                                    # needs sage.symbolic
+            True
+        """
+        return _ball_eval(self, "gamma")
+
+    def log_gamma(self):
+        """
+        Return the image of this interval by the logarithmic Gamma function.
+
+        The branch cut is placed on the negative real axis, as for
+        :meth:`sage.rings.complex_arb.ComplexBall.log_gamma`.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).log_gamma()
+            -0.650923199301856? - 0.301640320467533?*I
+        """
+        return _ball_eval(self, "log_gamma")
+
+    def psi(self):
+        """
+        Return the image of this interval by the digamma function.
+
+        EXAMPLES::
+
+            sage: CIF(1, 1).psi()
+            0.0946503206224770? + 1.076674047468581?*I
+        """
+        return _ball_eval(self, "psi")
+
     def zeta(self, a=None):
         """
         Return the image of this interval by the Hurwitz zeta function.
@@ -2095,6 +2373,19 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         from sage.rings.complex_arb import ComplexBallField
         return ComplexBallField(self.prec())(self).zeta(a).\
             _complex_mpfi_(self._parent)
+
+
+cdef _ball_eval(ComplexIntervalFieldElement z, str name, bint invert=False):
+    """
+    Return an enclosure of the image of ``z`` (or of ``1/z`` if ``invert``
+    is set) by the function computed by the method ``name`` of complex balls.
+    """
+    from sage.rings.complex_arb import ComplexBallField
+    b = ComplexBallField(z.prec())(z)
+    if invert:
+        b = ~b
+    return getattr(b, name)()._complex_mpfi_(z._parent)
+
 
 cdef _negate_interval(mpfr_ptr xmin, mpfr_ptr xmax):
     """
