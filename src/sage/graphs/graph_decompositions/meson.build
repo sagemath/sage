@@ -1,6 +1,6 @@
-if cc.has_header('treedec/combinations.hpp', required: get_option('tdlib'))
+if cpp.has_header('treedec/combinations.hpp', required: get_option('tdlib')) and cpp.has_header('gala/graph.h', required: get_option('tdlib'))
   # tdlib is a header-only library
-  tdlib = declare_dependency()
+  tdlib = declare_dependency(compile_args: ['-DHAVE_GALA_GRAPH_H'])
 else
   tdlib = disabler()
 endif

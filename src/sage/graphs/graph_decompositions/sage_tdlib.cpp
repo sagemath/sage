@@ -68,7 +68,7 @@ int sage_exact_decomposition(std::vector<unsigned int> &V_G, std::vector<unsigne
 
     TD_tree_dec_t T;
 
-    treedec::exact_decomposition_cutset(G, T, lb);
+    treedec::exact_decomposition_ex17(G, T, lb);
 
     treedec::make_small(T);
 

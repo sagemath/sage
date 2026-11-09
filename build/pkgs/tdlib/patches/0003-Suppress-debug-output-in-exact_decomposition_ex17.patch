@@ -1,0 +1,49 @@
+From f54a7e4c7afb41a7a891ce631496b25a00000000 Mon Sep 17 00:00:00 2001
+From: Atharva Vaish <atharva.vaish240@gmail.com>
+Date: Mon, 9 Nov 2026 22:30:00 +0530
+Subject: [PATCH] Suppress debug output in exact_decomposition_ex17
+
+---
+ src/bits/trie.hpp  | 2 +-
+ src/exact_base.hpp | 2 +-
+ src/exact_ta.hpp   | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/bits/trie.hpp b/src/bits/trie.hpp
+index f1695ad..c416e8d 100644
+--- a/src/bits/trie.hpp
++++ b/src/bits/trie.hpp
+@@ -337 +337 @@ public:
+-		std::cerr << "incomplete ../../src/bits/trie.hpp:336:TRIE\n";
++		// std::cerr << "incomplete ../../src/bits/trie.hpp:336:TRIE\n";
+diff --git a/src/exact_base.hpp b/src/exact_base.hpp
+index c660fa1..ea011c9 100644
+--- a/src/exact_base.hpp
++++ b/src/exact_base.hpp
+@@ -354,7 +354,7 @@ void exact_decomposition<G_t, config, kernel>::try_it(T_t& T, unsigned lb_bs)
+         //Lower bound on the treewidth of the reduced instance of G.
+         G_t H(_g);
+ //        incomplete(); //deltac does not seem to work
+-        std::cerr << "incomplete ../../src/exact_base.hpp:348:try_it\n";
++        // std::cerr << "incomplete ../../src/exact_base.hpp:348:try_it\n";
+
+         int tw_lb_deltaC = 0; // treedec::lb::deltaC_least_c(H);
+
+diff --git a/src/exact_ta.hpp b/src/exact_ta.hpp
+index 1f50da9..a27f8fc 100644
+--- a/src/exact_ta.hpp
++++ b/src/exact_ta.hpp
+@@ -1081,3 +1081,3 @@ inline bool exact_ta<EXTA_a>::try_decompose(unsigned bs)
+
+-	fprintf(stderr, "try bagsize = %d\n", _bag_size);
++	// fprintf(stderr, "try bagsize = %d\n", _bag_size);
+
+@@ -1149,7 +1149,7 @@ inline void exact_ta<EXTA_a>::make_td(TREEDEC_t& td) const
+     // all in one...
+     make_td(_solution, &td);
+   }
+-  std::cerr << "make_td nvt " << boost::num_vertices(td) << "\n";
++  // std::cerr << "make_td nvt " << boost::num_vertices(td) << "\n";
+   assert(boost::num_edges(td)+1==boost::num_vertices(td));
+
+ #ifdef DEBUG
