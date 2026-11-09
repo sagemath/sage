@@ -11213,6 +11213,52 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, x)
 
+    def to_hypergeometric(self):
+        r"""
+        Rewrite every unevaluated symbolic sum in this expression in
+        hypergeometric notation.
+
+        Every subexpression which is an unevaluated symbolic sum is
+        replaced by its value in hypergeometric notation, a constant times
+        ``hypergeometric(A, B, z)``, provided that the summand is
+        hypergeometric and the bounds are infinite, see
+        :func:`sage.symbolic.gamma_products.hypergeometric_sum`.
+
+        EXAMPLES::
+
+            sage: k, x = var('k x')
+            sage: sum(k^2*x^k/factorial(k), k, 1, oo, hold=True).to_hypergeometric()
+            x*hypergeometric((2,), (1,), x)
+            sage: (sum(k^2*x^k/factorial(k), k, 1, oo, hold=True)
+            ....:  + sum(k^3*x^k/factorial(k), k, 0, oo, hold=True)).to_hypergeometric()
+            x*hypergeometric((2, 2), (1, 1), x) + x*hypergeometric((2,), (1,), x)
+
+        The expression may contain arbitrary other factors::
+
+            sage: sin(sum(1/factorial(k), k, 0, oo, hold=True)).to_hypergeometric()
+            sin(hypergeometric((), (), 1))
+
+        Expressions without unevaluated sums are returned unchanged::
+
+            sage: (1 + x).to_hypergeometric()
+            x + 1
+
+        A :exc:`ValueError` is raised if a sum is not hypergeometric, or
+        if its bounds are not of the required form::
+
+            sage: sum(sin(k)*x^k, k, 0, oo, hold=True).to_hypergeometric()
+            Traceback (most recent call last):
+            ...
+            ValueError: the term x^k*sin(k) is not hypergeometric in k
+            sage: n = var('n')
+            sage: sum(x^k, k, 0, n, hold=True).to_hypergeometric()
+            Traceback (most recent call last):
+            ...
+            ValueError: the upper bound n is not infinite
+        """
+        from sage.symbolic.gamma_products import _to_hypergeometric
+        return _to_hypergeometric(self)
+
     def gamma_normalize(self):
         """
         Return the expression with any gamma functions that have
