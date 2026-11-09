@@ -70,7 +70,7 @@ Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Section 4.6 of [Rüt2014]_.
 """
 # ****************************************************************************
-#       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2016-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -375,6 +375,14 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         LimitValuation_generic.__init__(self, parent, approximation)
         InfiniteDiscretePseudoValuation.__init__(self, parent)
 
+        # This valuation sends an irreducible factor of _G to infinity.
+        # We update _G when we find a smaller factor of _G with that property, e.g.,
+        # when we determine the irreducible factor that is sent to infinity.
+        from sage.rings.all import infinity
+        if self._approximation.mu() is infinity:
+            # TODO: Should this be here or should this be part of the calling contract?
+            assert self._approximation.phi().divides(G)
+            G = self._approximation.phi()
         self._G = G
         self._next_coefficients = None
         self._next_valuations = None
@@ -505,10 +513,18 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         assert (len(approximations) == 1)
         self._approximation, _, _, self._next_coefficients, self._next_valuations = approximations[0]
 
+        if self._approximation.mu() is infinity:
+            self._G = self._approximation.phi()
+
     def _improve_approximation_for_call(self, f):
         r"""
         Replace our approximation with a sufficiently precise approximation to
         correctly compute the valuation of ``f``.
+
+        TODO: Explain what this means when f goes to infinity, i.e., the
+        approximation is still finite in that case.
+
+        TODO: Explain that G | f if f goes to infinity afterwards.
 
         EXAMPLES:
 
@@ -556,36 +572,51 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             (and in fact replace `G` with the factor with infinite valuation
             for all future computations.)
         """
-        from sage.rings.infinity import infinity
-        if self._approximation(self._approximation.phi()) is infinity:
-            # an infinite valuation can not be improved further
-            return
-
         if f == 0:
             # zero always has infinite valuation (actually, this might
             # not be desirable for inexact zero elements with leading
             # zero coefficients.)
+            # TODO: Explain that this is also a performance improvement
             return
 
-        while not self._approximation.is_equivalence_unit(f):
-            # TODO: I doubt that this really works over inexact fields
-            s = self._G.gcd(f)
-            if s.is_constant():
+        from sage.rings.infinity import infinity
+        if self._approximation.mu() is infinity:
+            # an infinite valuation can not be improved further
+            # TODO: Explain that this is just a performance improvement.
+            return
+
+        if self._approximation.is_equivalence_unit(f):
+            # TODO: Explain that we now know the valuation of f.
+            return
+
+        # TODO: I doubt that this gcd and the below division really works reliably over inexact fields
+        s = self._G.gcd(f)
+        if s.is_constant():
+            # G and f are coprime. The valuation of f is finite. After finitely
+            # many augmentations, f will be an equivalence unit and thus the
+            # approximation will correctly determine its valuation.
+            while not self._approximation.is_equivalence_unit(f):
                 self._improve_approximation()
-            else:
-                t = self._G // s
+        elif self._G.divides(f):
+            # f has infinite valuation
+            return
+        else:
+            # Determine whether s = gcd(f,G) or its coprime part t = G//s has finite valuation.
+            t = self._G // s
 
-                while True:
-                    if self._approximation.is_equivalence_unit(s):
-                        # t has infinite valuation
-                        self._G = t
-                        return self._improve_approximation_for_call(f // s)
-                    if self._approximation.is_equivalence_unit(t):
-                        # s has infinite valuation
-                        self._G = s
-                        return
+            while True:
+                if self._approximation.is_equivalence_unit(s):
+                    # s has finite valuation, hence t has infinite valuation
+                    # We recurse to determine the valuation of f which might still be infinite.
+                    self._G = t
+                    return self._improve_approximation_for_call(f)
+                if self._approximation.is_equivalence_unit(t):
+                    # t has finite valuation, hence s has infinite valuation.
+                    # Therefore, f has infinite valuation since it's divisible by s.
+                    self._G = s
+                    return
 
-                    self._improve_approximation()
+                self._improve_approximation()
 
     def _improve_approximation_for_reduce(self, f):
         r"""
@@ -652,10 +683,33 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
             sage: valuations.LimitValuation(V[0], F) >= valuations.LimitValuation(V[1], F)
             False
-            sage: valuations.LimitValuation(V[1], F) >= valuations.LimitValuation(V[1], G)
-            True
-            sage: valuations.LimitValuation(V[2], F) >= valuations.LimitValuation(V[2], G)
-            True
+
+        TESTS::
+
+            sage: # needs sage.geometry.polyhedron
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
+
+        An example with several valuations that correspond to factors of F over Q2 that are not rational::
+
+            sage: # needs sage.geometry.polyhedron
+            sage: R.<x> = QQ[]
+            sage: F = (x^2 - 17) * (x^2 - 25) * (x^7 - 1)
+            sage: G = (x^2 - 25) * (x^7 - 1)
+            sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
+
+            sage: # needs sage.geometry.polyhedron
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
+
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
@@ -666,13 +720,42 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # v<w can hold everywhere.
                 # They are equal iff they approximate the same factor of their
                 # defining G. Note that they can be equal even if the defining
-                # G is different, so we need to make sure that this can not be
-                # the case.
-                self._improve_approximation_for_call(other._G)
-                other._improve_approximation_for_call(self._G)
-                if self._G != other._G:
-                    assert self._G.gcd(other._G).is_one()
-                    return False
+                # Gs are different but share a common factor.
+                # We therefore refine the defining Gs until they are either
+                # equal or we can otherwise decide that the valuations must be distinct.
+                while self._G != other._G:
+                    if self._G.gcd(other._G).is_constant():
+                        # The valuations cannot approximate the same factor of
+                        # their defining Gs. They must be distinct.
+                        return False
+
+                    from sage.rings.infinity import infinity
+
+                    if self(other._G) is not infinity:
+                        # The valuations differ on other._G, they must be different.
+                        return False
+
+                    # Since self sends other._G to infinity, self._G divides
+                    # other._G, see _improve_approximation_for_call. (*)
+
+                    if other(self._G) is not infinity:
+                        # The valuations differ on self._G, they must be different.
+                        return False
+
+                    # Since other send self._G to infinity, other._G divides
+                    # self._G, _improve_approximation_for_call. (**)
+
+                    # Therefore, at least one of self._G and other._G has been
+                    # replaced by one of its factors in this iteration of the
+                    # while loop which means that the loop is eventually going
+                    # to terminate.
+                    # Note that (*) and (**) do not imply that self._G ==
+                    # other._G since other._G might have been mutated so (*)
+                    # might not hold anymore. (However, due to exact
+                    # construction performed by
+                    # _improve_approximation_for_call, self._G == other._G
+                    # actually should hold now but we consider this an
+                    # implementation detail that we do not want to rely on.)
 
                 # If the valuations are comparable, they must approximate the
                 # same factor of G (see the documentation of LimitValuation:
