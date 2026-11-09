@@ -83,7 +83,8 @@ cdef class _lazy_attribute():
         EXAMPLES::
 
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: g = lazy_attribute(sage.misc.banner.banner)
+            sage: from sage.misc.banner import banner
+            sage: g = lazy_attribute(banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
             'def banner() -> None:\n'
