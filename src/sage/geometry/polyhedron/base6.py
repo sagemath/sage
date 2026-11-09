@@ -180,6 +180,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: polytopes.hypercube(3)._plot_with_nonlinear_transformation(
             ....:  nonlinear_transformation=lambda v:v/v.norm(),plot_points=15,
             ....:  reparameterization=True,point_kwds=False,
@@ -189,6 +190,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         TESTS::
 
+            sage: # needs sage.plot
             sage: polytopes.hypercube(4)._plot_with_nonlinear_transformation(
             ....:  nonlinear_transformation=lambda v:vector(v),
             ....:  plot_points=15,reparameterization=True,
@@ -309,9 +311,9 @@ class Polyhedron_base6(Polyhedron_base5):
           used in 2D plots; see :func:`~sage.plot.plot3d.all.parametric_plot3d`
 
         - ``reparameterization`` -- (optional) parametric smoothing for edges
-          and faces. Details on when to disable for severe deformations in
-          NOTE. Accepted values: ``None``, ``True``, ``False``, ``'sin2sin'``,
-          or a pair ``(edge_func, face_func)`` of callables.
+          and faces. See the NOTE below on when disabling helps for severe
+          deformations. Accepted values: ``None``, ``True``, ``False``,
+          ``'sin2sin'``, or a pair ``(edge_func, face_func)`` of callables.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
           all graphics objects
@@ -510,7 +512,7 @@ class Polyhedron_base6(Polyhedron_base5):
               translation`
             - :meth:`~sage.plot.plot3d.base.Graphics3d.transform`
             - :func:`~sage.plot.plot3d.plot3d.plot3d` (``transformation``)
-            - :ref:`thematic_tutorials_geometry_tips`
+            - :ref:`tips`
 
         TESTS::
 
@@ -599,6 +601,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Plotting of 1D objects (1D -> 2D)
 
+            sage: # needs sage.plot
             sage: p = Polyhedron(vertices=[[0],[1]])
             sage: type(p.plot())
             <class 'sage.plot.graphics.Graphics'>
@@ -609,6 +612,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         point/line/polygon options work with nonlinear_transformation
 
+            sage: # needs sage.plot
             sage: p = polytopes.hypercube(2)
             sage: f = lambda v: vector(v)
             sage: type(p.plot(nonlinear_transformation=f, point=False))

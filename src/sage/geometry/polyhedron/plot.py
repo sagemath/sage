@@ -2042,6 +2042,7 @@ def _plot_transformed_polyhedron_2d(poly, nonlinear_transformation,
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: from sage.geometry.polyhedron.plot import (
         ....:     _plot_transformed_polyhedron_2d)
         sage: p = polytopes.hypercube(2)
@@ -2127,6 +2128,7 @@ def _plot_transformed_polyhedron_3d(poly, nonlinear_transformation,
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: from sage.geometry.polyhedron.plot import (
         ....:     _plot_transformed_polyhedron_3d)
         sage: p = polytopes.hypercube(3)
