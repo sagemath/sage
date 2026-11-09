@@ -10113,6 +10113,34 @@ cdef class Matrix(Matrix1):
     # for backwards compatibility: see #4983.
     get_subdivisions = subdivisions
 
+    def subdivided(self, row_lines=None, col_lines=None):
+        r"""
+        Return a copy of ``self`` with the given subdivisions.
+
+        The input is the same as for :meth:`subdivide`, but ``self`` is
+        not changed. So this also works for immutable matrices.
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ, 3, 4, range(12))
+            sage: B = A.subdivided([1], [2]); B
+            [ 0  1| 2  3]
+            [-----+-----]
+            [ 4  5| 6  7]
+            [ 8  9|10 11]
+            sage: A.subdivisions()
+            ([], [])
+
+        The matrix can be immutable::
+
+            sage: A.set_immutable()
+            sage: A.subdivided(2, 1).subdivisions()
+            ([2], [1])
+        """
+        M = self.__copy__()
+        M.subdivide(row_lines, col_lines)
+        return M
+
     def tensor_product(self, A, subdivide=True):
         r"""
         Return the tensor product of two matrices.
@@ -16386,8 +16414,24 @@ cdef class Matrix(Matrix1):
             sage: M = random_matrix(RR, 2)
             sage: M == M.conjugate()
             True
+
+        TESTS:
+
+        Subdivisions are kept (:issue:`30468`)::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: M = matrix(K, 2, [1+i, 2, 3, i])
+            sage: M.subdivide(1, 1)
+            sage: M.conjugate().subdivisions()
+            ([1], [1])
+            sage: M.H.subdivisions()
+            ([1], [1])
         """
-        return self.new_matrix(self.nrows(), self.ncols(), [z.conjugate() for z in self.list()])
+        M = self.new_matrix(self.nrows(), self.ncols(), [z.conjugate() for z in self.list()])
+        if self._subdivisions is not None:
+            M.subdivide(*self.subdivisions())
+        return M
 
     def conjugate_transpose(self):
         r"""
