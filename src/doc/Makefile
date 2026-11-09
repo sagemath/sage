@@ -19,11 +19,13 @@ clean:
 	rm -rf en/reference/sage
 	rm -f common/*.pyc
 
+SAGE_DOC_PDF_JOBS ?= 2
+
 doc-html:
 	meson compile -C ../../build/sage-distro doc-html
 
 doc-pdf:
-	meson compile -C ../../build/sage-distro doc-pdf
+	meson compile -C ../../build/sage-distro -j $(SAGE_DOC_PDF_JOBS) doc-pdf
 
 .PHONY: all clean \
 	doc-src \
