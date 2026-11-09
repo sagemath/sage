@@ -442,17 +442,28 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             + 1/2*p[1] # p[1, 1] + 1/2*p[1] # p[2] + 1/2*p[1, 1] # p[1]
             + 1/6*p[1, 1, 1] # p[] + 1/2*p[2] # p[1] + 1/2*p[2, 1] # p[]
             + 1/3*p[3] # p[]
+
+        The coefficients of the molecular expansion may live in a base
+        ring other than ``QQ``; the cycle indices of the molecular
+        species are then computed in the powersum basis over the
+        fraction field of that base ring::
+
+            sage: R.<q> = QQ[]
+            sage: L = LazyCombinatorialSpecies(R, "X")
+            sage: (q * L.Sets()).cycle_index_series()[2]
+            1/2*q*p[1, 1] + 1/2*q*p[2]
         """
         P = self.parent()
         L = _cycle_index_series_ring(P)
+        S = L._laurent_poly_ring
 
         if P._arity == 1:
             def coefficient(n):
-                return sum(c * M.permutation_group()[0].cycle_index()
+                return sum(c * M.permutation_group()[0].cycle_index(parent=S)
                            for M, c in self[n].monomial_coefficients().items())
         else:
             def coefficient(n):
-                return sum(c * M.cycle_index()
+                return sum(c * M.cycle_index(parent=S)
                            for M, c in self[n].monomial_coefficients().items())
 
         return L(coefficient)
@@ -1628,12 +1639,21 @@ class UndefinedSpeciesElement(LazyCombinatorialSpeciesElement):
 
         def coefficient(n):
             nonlocal source
+            if n < self._coeff_stream._approximate_order:
+                # The coefficients below the approximate order of the
+                # species are known to vanish.  Returning zero without
+                # resolving the source is what closes recursive equations
+                # (the molecular streams obtain this from their approximate
+                # orders).
+                return ZZ.zero()
             if source is None:
                 source = self._series_source(ring, name)
             return source[n]
 
-        return ring(coefficient,
-                    valuation=self._coeff_stream._approximate_order)
+        # The molecular counterparts create their series without an explicit
+        # valuation (default 0); doing the same here keeps the display
+        # (approximate order) identical to the molecular computation.
+        return ring(coefficient)
 
     def _series_source(self, ring, name):
         r"""
