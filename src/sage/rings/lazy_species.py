@@ -1387,7 +1387,8 @@ class UndefinedSpeciesElement(LazyCombinatorialSpeciesElement):
     :meth:`~sage.rings.lazy_series_ring.LazySeriesRing.define_implicitly`.
 
     In contrast to the series returned by
-    :meth:`LazyPowerSeriesRing.undefined`, a associated series of an
+    :meth:`~sage.rings.lazy_series_ring.LazySeriesRing.undefined`, an
+    associated series of an
     undefined species is not itself uninitialized: printing it, or
     requesting any of its coefficients, raises the usual error for
     undefined series instead of displaying ``Uninitialized Lazy
