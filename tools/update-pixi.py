@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Generate Pixi dependencies from Sage's shared Conda dependency mappings."""
+
+import argparse
+import difflib
+import json
+import re
+import sys
+from pathlib import Path
+
+from environment_dependencies import PLATFORMS, PYTHONS, get_dependencies
+
+MARKER = "# BEGIN GENERATED DEPENDENCIES"
+# Minimal CI must exercise Sage with these libraries absent, as well as with
+# their Meson features disabled. Keep them in a feature omitted by that job.
+FULL_ONLY = frozenset({"bliss", "libbraiding", "libhomfly", "rw", "sirocco"})
+
+
+def parse_requirement(requirement: str) -> tuple[str, dict[str, str]]:
+    """Convert the MatchSpec forms produced by our resolver to Pixi fields.
+
+    Fail on unsupported syntax instead of silently dropping a constraint.
+    In particular, ``name=version=build`` specifies an exact version, whereas
+    ``name=version`` is a version prefix in Conda's MatchSpec syntax.
+    """
+    match = re.fullmatch(r"([a-zA-Z0-9_.-]+)\s*(.*)", requirement)
+    if match is None:
+        raise ValueError(f"Unsupported dependency: {requirement!r}")
+    name, constraint = match.groups()
+    constraint = constraint.replace(" ", "")
+    build_match = re.fullmatch(r"={1,2}([^=<>!,|]+)=([^=<>!,|]+)", constraint)
+    if build_match:
+        version, build = build_match.groups()
+        if "*" not in version:
+            version = "==" + version
+        return name, {"version": version, "build": build}
+    if not constraint:
+        return name, {"version": "*"}
+    if constraint.startswith("=") and not constraint.startswith("=="):
+        version = constraint[1:]
+        if not re.fullmatch(r"[a-zA-Z0-9_.+*!-]+", version):
+            raise ValueError(f"Unsupported dependency: {requirement!r}")
+        constraint = version if "*" in version else version + ".*"
+    elif not re.fullmatch(r"[a-zA-Z0-9_.+*<>=!~,|()-]+", constraint):
+        raise ValueError(f"Unsupported dependency: {requirement!r}")
+    return name, {"version": constraint}
+
+
+def merge_requirements(requirements: set[str]) -> dict[str, dict[str, str]]:
+    """Combine multiple constraints for one package without losing any."""
+    dependencies = {}
+    for requirement in sorted(requirements):
+        name, dependency = parse_requirement(requirement)
+        if name == "python":
+            # Python is selected by the py313/py314 features in the manifest.
+            continue
+        if name not in dependencies:
+            dependencies[name] = dependency
+            continue
+        previous = dependencies[name]
+        builds = {d["build"] for d in (previous, dependency) if "build" in d}
+        if len(builds) > 1:
+            raise ValueError(f"Incompatible build constraints for {name}: {builds}")
+        versions = {d["version"] for d in (previous, dependency)} - {"*"}
+        if len(versions) > 1 and any("|" in version for version in versions):
+            raise ValueError(f"Cannot combine alternative version constraints for {name}")
+        combined = {"version": ",".join(sorted(versions)) or "*"}
+        if builds:
+            combined["build"] = builds.pop()
+        dependencies[name] = combined
+    return dependencies
+
+
+def common_dependencies(dependencies: list[dict]) -> dict:
+    """Return package specifications that are identical in every environment."""
+    first, *others = dependencies
+    return {name: spec for name, spec in first.items()
+            if all(other.get(name) == spec for other in others)}
+
+
+def dependency_tables(pyproject: Path) -> dict[str, dict]:
+    """Factor dependencies into shared, full, and platform/Python tables."""
+    environments = {
+        (python, platform): merge_requirements(get_dependencies(pyproject, python, platform))
+        for python in PYTHONS
+        for platform in PLATFORMS
+    }
+    full_tables = {}
+    for platform in PLATFORMS:
+        optional = [
+            {name: spec for name, spec in environments[python, platform].items()
+             if name in FULL_ONLY}
+            for python in PYTHONS
+        ]
+        if any(dependencies != optional[0] for dependencies in optional[1:]):
+            raise ValueError(f"Full feature needs Python-specific dependencies on {platform}")
+        if optional[0]:
+            full_tables[f"feature.full.target.{platform}.dependencies"] = optional[0]
+        for python in PYTHONS:
+            for name in optional[0]:
+                del environments[python, platform][name]
+
+    shared = common_dependencies(list(environments.values()))
+    tables = {"dependencies": shared}
+    for dependencies in environments.values():
+        for name in shared:
+            del dependencies[name]
+
+    for platform in PLATFORMS:
+        shared = common_dependencies([environments[python, platform] for python in PYTHONS])
+        if shared:
+            tables[f"target.{platform}.dependencies"] = shared
+        for python in PYTHONS:
+            dependencies = environments[python, platform]
+            for name in shared:
+                del dependencies[name]
+            if dependencies:
+                feature = "py" + python.replace(".", "")
+                tables[f"feature.{feature}.target.{platform}.dependencies"] = dependencies
+    tables.update(full_tables)
+    return tables
+
+
+def render_dependencies(tables: dict[str, dict]) -> str:
+    """Serialize dependency tables as TOML, including BLAS build selectors."""
+    lines = [MARKER, "# Generated by tools/update-pixi.py; do not edit this section."]
+    for table, dependencies in tables.items():
+        lines.extend(["", f"[{table}]"])
+        for name, spec in sorted(dependencies.items()):
+            if set(spec) == {"version"}:
+                value = json.dumps(spec["version"])
+            else:
+                fields = ", ".join(f"{key} = {json.dumps(value)}"
+                                   for key, value in sorted(spec.items()))
+                value = "{ " + fields + " }"
+            lines.append(f"{json.dumps(name)} = {value}")
+    return "\n".join(lines) + "\n"
+
+
+def update_pixi(source_dir: Path, check: bool = False) -> bool:
+    """Update the generated suffix, or check it without changing the manifest."""
+    manifest = source_dir / "pixi.toml"
+    original = manifest.read_text()
+    if original.count(MARKER) != 1:
+        raise ValueError(f"{manifest} must contain exactly one {MARKER!r} marker")
+    prefix = original.split(MARKER, 1)[0]
+    updated = prefix + render_dependencies(dependency_tables(source_dir / "pyproject.toml"))
+    if original == updated:
+        print(f"{manifest} dependencies are up to date")
+        return True
+    if check:
+        print("".join(difflib.unified_diff(
+            original.splitlines(keepends=True), updated.splitlines(keepends=True),
+            fromfile=str(manifest), tofile="generated dependencies",
+        )), end="")
+        print("Run python tools/update-pixi.py, then pixi lock.", file=sys.stderr)
+        return False
+    manifest.write_text(updated)
+    print(f"Updated {manifest}; run pixi lock to update the lockfile")
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("sourcedir", nargs="?", default=".", type=Path)
+    parser.add_argument("--check", action="store_true",
+                        help="fail if generated dependencies are stale; do not write files")
+    options = parser.parse_args()
+    return 0 if update_pixi(options.sourcedir, options.check) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

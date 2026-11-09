@@ -80,25 +80,30 @@ jobs:
       id-token: write
     env:
       CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
+      PIXI_ENVIRONMENT: py313
+      PIXI_CACHE_DIR: ${{ github.workspace }}/.pixi/cache
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v4
+      - name: Cache dependency downloads
+        uses: actions/cache@v6
         with:
-          python-version: 3.13
-          miniforge-version: latest
-          use-mamba: true
-          channels: conda-forge
-          channel-priority: true
-          activate-environment: sage-dev
-          environment-file: environment-3.13-linux.yml
+          path: ${{ env.PIXI_CACHE_DIR }}
+          key: ${{ runner.os }}-${{ runner.arch }}-pixi-${{ env.PIXI_ENVIRONMENT }}-${{ hashFiles('pixi.lock') }}
+
+      - name: Setup Pixi environment
+        uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.84.1
+          environments: ${{ env.PIXI_ENVIRONMENT }}
+          activate-environment: false
+          locked: true
+          cache: false
 
       - name: Create source distribution
-        shell: bash -l {0}
+        shell: bash
         run: |
-          conda install --yes python-build
-          python -m build --sdist --no-isolation --outdir dist .
+          pixi run --locked -e "$PIXI_ENVIRONMENT" -- python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
       - uses: actions/upload-artifact@v7

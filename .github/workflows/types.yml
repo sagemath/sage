@@ -19,6 +19,9 @@ jobs:
   types:
     name: Type check
     runs-on: ubuntu-latest
+    env:
+      PIXI_ENVIRONMENT: py313
+      PIXI_CACHE_DIR: ${{ github.workspace }}/.pixi/cache
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -29,35 +32,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Cache conda packages
+      - name: Cache dependency downloads
         uses: actions/cache@v6
         with:
-          path: ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.13-linux.yml') }}
+          path: ${{ env.PIXI_CACHE_DIR }}
+          key: ${{ runner.os }}-${{ runner.arch }}-pixi-${{ env.PIXI_ENVIRONMENT }}-${{ hashFiles('pixi.lock') }}
 
-      - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v4
+      - name: Setup Pixi environment
+        uses: prefix-dev/setup-pixi@v0.11.3
         with:
-          python-version: 3.13
-          miniforge-version: latest
-          use-mamba: true
-          channels: conda-forge
-          channel-priority: true
-          activate-environment: sage-dev
-          environment-file: environment-3.13-linux.yml
+          pixi-version: v0.84.1
+          environments: ${{ env.PIXI_ENVIRONMENT }}
+          activate-environment: false
+          locked: true
+          cache: false
 
         # No need to build sagelib; pyright only needs the libraries from which sagelib imports
 
       - name: Static code check with ty
-        shell: bash -l {0}
-        run: ty check --output-format=github
+        shell: bash
+        run: pixi run --locked -e "$PIXI_ENVIRONMENT" -- ty check --output-format=github
 
       - name: Static code check with pyright
         uses: jakebailey/pyright-action@v3.0.2
         with:
           version: 1.1.332
           annotate: "errors"
+          python-path: ${{ github.workspace }}/.pixi/envs/${{ env.PIXI_ENVIRONMENT }}/bin/python
         env:
           # To avoid out of memory errors
           NODE_OPTIONS: --max-old-space-size=8192
