@@ -39,6 +39,7 @@ py.install_sources(
   'multi_polynomial_ring_base.pxd',
   'multi_polynomial_ring_base.pyx',
   'multi_polynomial_sequence.py',
+  'multivariate_small_roots.py',
   'omega.py',
   'ore_function_element.py',
   'ore_function_field.py',
