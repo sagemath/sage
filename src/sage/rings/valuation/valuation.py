@@ -87,7 +87,7 @@ class DiscretePseudoValuation(Morphism):
         """
         Morphism.__init__(self, parent=parent)
 
-    def is_equivalent(self, f, g):
+    def is_equivalent(self, f, g) -> bool:
         r"""
         Return whether ``f`` and ``g`` are equivalent.
 
@@ -289,7 +289,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
         True
         sage: TestSuite(w).run()                # long time
     """
-    def is_discrete_valuation(self):
+    def is_discrete_valuation(self) -> bool:
         r"""
         Return whether this valuation is a discrete valuation.
 
@@ -324,7 +324,7 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
 
         sage: TestSuite(w).run()                # long time
     """
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains the value `-\infty`.
 
@@ -362,7 +362,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         True
         sage: TestSuite(w).run()                # long time
     """
-    def is_discrete_valuation(self):
+    def is_discrete_valuation(self) -> bool:
         r"""
         Return whether this valuation is a discrete valuation.
 

@@ -1010,7 +1010,7 @@ def full_group_by(l, key=None):
     return [(original_keys[s], elements[s]) for s in sorted(elements)]
 
 
-def equal(iterator):
+def equal(iterator) -> bool:
     """
     Check whether all elements of ``iterator`` are equal.
 
@@ -1507,7 +1507,7 @@ class FSMState(SageObject):
             self._final_word_out_ = []
 
     @property
-    def is_final(self):
+    def is_final(self) -> bool:
         """
         Describe whether the state is final or not.
 
@@ -3875,7 +3875,7 @@ class FiniteStateMachine(SageObject):
             return self.has_transition(item)
         return False
 
-    def is_Markov_chain(self, is_zero=None):
+    def is_Markov_chain(self, is_zero=None) -> bool:
         """
         Check whether ``self`` is a Markov chain where the transition
         probabilities are modeled as input labels.
@@ -5455,7 +5455,7 @@ class FiniteStateMachine(SageObject):
     # properties
     # ************************************************************************
 
-    def is_deterministic(self):
+    def is_deterministic(self) -> bool:
         """
         Return whether the finite finite state machine is deterministic.
 
@@ -5509,7 +5509,7 @@ class FiniteStateMachine(SageObject):
                     return False
         return True
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """
         Return whether the finite state machine is complete.
 
@@ -10434,7 +10434,7 @@ class FiniteStateMachine(SageObject):
             return expectation
         return {'expectation': expectation, 'variance': variance}
 
-    def is_monochromatic(self):
+    def is_monochromatic(self) -> bool:
         """
         Check whether the colors of all states are equal.
 
@@ -11104,7 +11104,7 @@ class Automaton(FiniteStateMachine):
 
         return result
 
-    def is_equivalent(self, other):
+    def is_equivalent(self, other) -> bool:
         """
         Test whether two automata are equivalent, i.e., accept the same
         language.

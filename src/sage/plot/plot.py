@@ -1067,11 +1067,18 @@ def plot(funcs, *args, **kwds):
 
     MATPLOTLIB STYLE SHEET OPTION:
 
-    - ``stylesheet`` -- (default: classic) support for loading a full matplotlib style sheet.
-      Any style sheet listed in ``matplotlib.pyplot.style.available`` is acceptable. If a
-      non-existing style is provided the default classic is applied.
+    - ``stylesheet`` -- (default: ``None``) load a Matplotlib style sheet when
+      displaying or saving the plot. Any style sheet listed in
+      ``matplotlib.pyplot.style.available`` is acceptable. A recognized style
+      updates the global Matplotlib settings. If no style is supplied, or the
+      name is unrecognized, the current settings are retained.
 
     EXAMPLES:
+
+    Select a Matplotlib stylesheet when constructing a plot::
+
+        sage: plot(lambda x: x*x, (0, 1), stylesheet='bmh')
+        Graphics object consisting of 1 graphics primitive
 
     We plot the `\sin` function::
 
