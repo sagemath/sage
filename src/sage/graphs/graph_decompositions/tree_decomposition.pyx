@@ -628,6 +628,15 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib')  # optional - tdlib
         True
 
+    Check that :issue:`39404` is fixed ::
+
+        sage: G1 = Graph('J??s[`HS@O_')
+        sage: G1.treewidth(algorithm='tdlib')  # optional - tdlib
+        3
+        sage: G2 = Graph('I@?LShgTG')
+        sage: G2.treewidth(algorithm='tdlib')  # optional - tdlib
+        3
+
     Trivially true::
 
         sage: graphs.PetersenGraph().treewidth(k=35)

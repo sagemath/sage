@@ -1,0 +1,39 @@
+From 5dd9fb3f61b71b547ada89754ab853788168ff5e Mon Sep 17 00:00:00 2001
+From: harshit-vavaiya <harshit-shaileshbhai.vavaiya@stud.uni-bamberg.de>
+Date: Fri, 13 Jun 2025 00:00:00 +0000
+Subject: [PATCH] src/preprocessing.hpp: Fix bug in cube rule caused by
+ assign_neighbours
+
+---
+ src/preprocessing.hpp | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/src/preprocessing.hpp b/src/preprocessing.hpp
+index 984917b..3e56214 100755
+--- a/src/preprocessing.hpp
++++ b/src/preprocessing.hpp
+@@ -647,6 +647,13 @@ private: // graph update stuff.
+         // does not work like this for vectors.
+         boost::clear_vertex(v, _g);
+     }
++    void insert_neighbors(std::set<vertex_descriptor>& cbag, vertex_descriptor a) {
++      auto p = adjacent_vertices(a);
++      for (; p.first != p.second; ++p.first) {
++        auto n = *p.first;
++        cbag.insert(n);
++      }
++    }
+ #ifndef nofilter
+     std::pair<adjacency_iterator_filter, adjacency_iterator_filter>
+     adjacent_vertices(vertex_descriptor v) const{
+@@ -1122,7 +1129,9 @@ bool preprocessing<G_t, CFG>::Cube(vertex_descriptor x)
+     }
+
+     std::set<vertex_descriptor> cbag;
+-    assign_neighbours(cbag, a, b, c, _g);
++    insert_neighbors(cbag, a);
++    insert_neighbors(cbag, b);
++    insert_neighbors(cbag, c);
+
+     if(cbag.size() != 4){
+         return false;
