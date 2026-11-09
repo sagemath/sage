@@ -492,12 +492,6 @@ def small_roots_modular(f, N, bounds, m=2, t=0):
     require larger ``m``, extra shifts (``t > 0``), or strategy tuning.
     Following the paper, experiments must be done for the specific
     polynomial at hand.
-
-    REFERENCES:
-
-    .. [JM06] E. Jochemsz, A. May, "A Strategy for Finding Roots of
-       Multivariate Polynomials with New Applications in Attacking RSA
-       Variants", ASIACRYPT 2006, LNCS 4284, pp. 267--282.
     """
     ring = f.parent()
     if ring.ngens() == 1:
@@ -636,12 +630,6 @@ def small_roots_integer(f, bounds, m=2, t=0):
         sage: roots3 = small_roots_integer(f3, [2**11, 2**11, 2**11], m=2)
         sage: (1234, 1567, 1891) in roots3
         True
-
-    REFERENCES:
-
-    .. [JM06] E. Jochemsz, A. May, "A Strategy for Finding Roots of
-       Multivariate Polynomials with New Applications in Attacking RSA
-       Variants", ASIACRYPT 2006, LNCS 4284, pp. 267--282.
     """
     if m is None:
         tried = False
