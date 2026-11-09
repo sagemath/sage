@@ -187,7 +187,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return richcmp(tuple(self), tuple(other), op)
 
-    def __iter__(self) -> Iterator[Polynomial]:
+    def __iter__(self) -> Iterator[Polynomial | int | Integer]:
         r"""
         TESTS:
 
@@ -633,7 +633,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         g = self._parent.curve().genus()
         return not (self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2)
 
-    def __iter__(self) -> Iterator[Polynomial]:
+    def __iter__(self) -> Iterator[Polynomial | int | Integer]:
         r"""
         TESTS:
 
