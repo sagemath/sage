@@ -438,6 +438,17 @@ cdef class Graphics3d(SageObject):
             sage: str = d._rich_repr_threejs(online=True).html.get_str()
             sage: '<title>&quot;Page&quot; &amp; &lt;Title&gt;</title>' in str
             True
+
+        The stereoscopic viewing modes (Normal/Side-by-Side/Parallax
+        Barrier/Anaglyph) are unconditionally embedded in every rendered
+        scene; verify the template still carries the user-facing menu
+        entry, the dispatch function, and the THREE.js stereo camera::
+
+            sage: s = sphere(online=True)._rich_repr_threejs().html.get_str()
+            sage: 'Stereo View' in s and 'function renderStereo' in s
+            True
+            sage: 'new THREE.StereoCamera' in s
+            True
         """
         options = self._process_viewing_options(kwds)
         options.setdefault('online', False)
