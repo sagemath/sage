@@ -305,10 +305,11 @@ class Polyhedron_base6(Polyhedron_base5):
           interpolated as curves and surfaces. Set to ``False`` for standard
           rendering.
 
-        - ``plot_points`` -- (default: ``20``) initial number of sample points
-          in each parameter; an integer for an edge, a pair of integers for a
-          triangular patch of a face (center to edge). Only the first value is
-          used in 2D plots; see :func:`~sage.plot.plot3d.all.parametric_plot3d`
+        - ``plot_points`` -- (default: ``20``) initial number of sample
+          points in each parameter; an integer for an edge, a pair of
+          integers for a triangular patch of a face (center to edge).
+          Only the first value is used in 2D plots;
+          see :func:`~sage.plot.plot3d.plot3d.parametric_plot3d`
 
         - ``reparameterization`` -- (optional) parametric smoothing for edges
           and faces. See the NOTE below on when disabling helps for severe
@@ -504,12 +505,9 @@ class Polyhedron_base6(Polyhedron_base5):
 
         .. SEEALSO::
 
-            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
-              linear_transformation`
-            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
-              dilation`
-            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.
-              translation`
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.linear_transformation`
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.translation`
+            - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.dilation`
             - :meth:`~sage.plot.plot3d.base.Graphics3d.transform`
             - :func:`~sage.plot.plot3d.plot3d.plot3d` (``transformation``)
             - :ref:`tips`
