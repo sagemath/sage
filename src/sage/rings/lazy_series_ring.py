@@ -471,11 +471,28 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L(filter(is_odd, NN), -3)
             z^-3 + 3*z^-2 + 5*z^-1 + 7 + 9*z + 11*z^2 + 13*z^3 + O(z^4)
         """
-        if valuation is not None and valuation not in ZZ:
-            raise ValueError("the valuation must be an integer")
+        self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients)
+
+    def _check_valuation(self, valuation):
+        r"""
+        Check the ``valuation`` constructor argument, if given.
+
+        Only the type is validated here; assigning a default valuation
+        is input-kind-aware and happens in the ring-specific entry paths.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L(L.gen(), valuation=3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be an integer
+        """
+        if valuation is not None and valuation not in ZZ:
+            raise ValueError("the valuation must be an integer")
 
     # The element-constructor capabilities and hooks implementing the
     # common control flow in ``_element_constructor_dispatch`` below.
@@ -491,8 +508,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         The ring-specific work is confined to the hooks
 
         - ``_series_uninitialized`` (phase 1),
-        - ``_element_constructor_normalize`` (normalization of ``degree``
-          and ``constant``),
+        - ``_element_constructor_normalize`` (syntactic normalization of
+          ``degree`` and ``constant``: tuple unpacking as declared by the
+          capability flags ``_unpacks_constant_tuple`` and
+          ``_unpacks_degree_tuple``, followed by the semantic hook
+          ``_normalize_constructor_constant``),
         - ``_series_from_coefficient_function`` (phases 2 and 6),
         - ``_convert_to_exact_polynomial`` and
           ``_series_from_exact_polynomial`` (phase 3),
@@ -569,12 +589,23 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         # Phase 7: nothing worked.
         self._unable_to_convert(x)
 
+    # Support for the (transitional) tuple forms ``constant = (c, d)``
+    # and ``degree = (c, d)`` of the constructor, declared per ring: the
+    # four constructor implementations differ in which of these forms
+    # they accept.
+    _unpacks_constant_tuple = True
+    _unpacks_degree_tuple = True
+
     def _element_constructor_normalize(self, degree, constant):
         r"""
         Normalize the ``degree`` and ``constant`` constructor arguments.
 
-        This unpacks the (transitional) tuple forms of ``constant`` and
-        ``degree`` and converts ``constant`` into the coefficient ring.
+        Syntactic normalization only: unpack the (transitional) tuple
+        forms ``constant = (c, d)`` and ``degree = (c, d)``, as declared
+        by the capability flags ``_unpacks_constant_tuple`` and
+        ``_unpacks_degree_tuple``.  The semantic part, namely converting
+        ``constant`` into the coefficient ring, is delegated to
+        ``_normalize_constructor_constant``.
 
         EXAMPLES::
 
@@ -582,11 +613,23 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L(lambda i: i, valuation=-3, constant=(-1, 3))
             -3*z^-3 - 2*z^-2 - z^-1 + z + 2*z^2 - z^3 - z^4 - z^5 + O(z^6)
         """
-        BR = self._internal_poly_ring.base_ring()
-        if isinstance(constant, (tuple, list)):
+        if self._unpacks_constant_tuple and isinstance(constant, (tuple, list)):
             constant, degree = constant
-        if isinstance(degree, (tuple, list)):
+        if self._unpacks_degree_tuple and isinstance(degree, (tuple, list)):
             constant, degree = degree
+        return self._normalize_constructor_constant(degree, constant)
+
+    def _normalize_constructor_constant(self, degree, constant):
+        r"""
+        Convert ``constant`` into the coefficient ring.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L._normalize_constructor_constant(None, 2)
+            (None, 2)
+        """
+        BR = self._internal_poly_ring.base_ring()
         if constant is not None:
             constant = BR(constant)
         return degree, constant
@@ -3337,24 +3380,44 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(coefficients=lambda i: i, valuation=2)
             2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + 8*z^8 + O(z^9)
         """
-        if valuation is not None:
-            if valuation < 0:
-                raise ValueError("the valuation of a Taylor series must be nonnegative")
+        if valuation is None:
+            if self._arity > 1:
+                valuation = 0
+        else:
+            self._check_valuation(valuation)
             # TODO: the following is nonsense, think of an iterator
 #            if self._arity > 1 and valuation != 0:
 #                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
-        elif self._arity > 1:
-            valuation = 0
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients, check)
+
+    def _check_valuation(self, valuation):
+        r"""
+        Check the ``valuation`` constructor argument, if given.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: L(1, valuation=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation of a Taylor series must be nonnegative
+        """
+        if valuation is not None and valuation < 0:
+            raise ValueError("the valuation of a Taylor series must be nonnegative")
+
+    # Taylor series do not support the (transitional) tuple form of
+    # ``degree``.
+    _unpacks_degree_tuple = False
 
     def _element_constructor_normalize(self, degree, constant):
         r"""
         Normalize the ``degree`` and ``constant`` constructor arguments.
 
         This unpacks the (transitional) tuple form of ``constant`` and
-        converts ``constant`` into the coefficient ring.
+        delegates the conversion of ``constant`` into the coefficient
+        ring to ``_normalize_constructor_constant``.
 
         EXAMPLES::
 
@@ -3362,12 +3425,25 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(lambda i: i, valuation=3, constant=(-1, 5))
             3*z^3 + 4*z^4 - z^5 - z^6 - z^7 + O(z^8)
         """
-        BR = self._internal_poly_ring.base_ring()
-        if isinstance(constant, (tuple, list)):
+        if self._unpacks_constant_tuple and isinstance(constant, (tuple, list)):
             constant, degree = constant
+        return self._normalize_constructor_constant(degree, constant)
+
+    def _normalize_constructor_constant(self, degree, constant):
+        r"""
+        Convert ``constant`` into the coefficient ring, checking the
+        arity of the ring.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: L(lambda i: i, valuation=3, constant=(-1, 5))
+            3*z^3 + 4*z^4 - z^5 - z^6 - z^7 + O(z^8)
+        """
         if constant is not None:
             if self._arity > 1 and constant:
                 raise ValueError("constant must be zero for multivariate Taylor series")
+            BR = self._internal_poly_ring.base_ring()
             constant = BR(constant)
         return degree, constant
 
@@ -4025,19 +4101,40 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         if valuation is None:
             valuation = 0
-        if valuation < 0:
-            raise ValueError("the valuation of a lazy completion element must be nonnegative")
+        else:
+            self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, None, check)
+
+    def _check_valuation(self, valuation):
+        r"""
+        Check the ``valuation`` constructor argument, if given.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: L(1, valuation=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation of a lazy completion element must be nonnegative
+        """
+        if valuation is not None and valuation < 0:
+            raise ValueError("the valuation of a lazy completion element must be nonnegative")
 
     # A completion of a graded algebra has no rational-function fallback:
     # its conversion semantics differ from those of the polynomial rings.
     _accepts_fraction_field = False
 
-    def _element_constructor_normalize(self, degree, constant):
+    # Completions do not support the (transitional) tuple forms of
+    # ``constant`` and ``degree``.
+    _unpacks_constant_tuple = False
+    _unpacks_degree_tuple = False
+
+    def _normalize_constructor_constant(self, degree, constant):
         r"""
-        Normalize the ``degree`` and ``constant`` constructor arguments.
+        Return ``degree`` and ``constant`` unchanged.
 
         Nothing to do for completions: the (transitional) tuple forms of
         ``constant`` are not supported and ``constant`` is not converted
@@ -4682,11 +4779,30 @@ class LazyDirichletSeriesRing(LazySeriesRing):
                     coefficients = x
                     x = None
 
-        if valuation is not None and (valuation not in ZZ or valuation <= 0):
-            raise ValueError("the valuation must be a positive integer")
+        if valuation is not None:
+            self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients)
+
+    def _check_valuation(self, valuation):
+        r"""
+        Check the ``valuation`` constructor argument, if given.
+
+        EXAMPLES::
+
+            sage: L = LazyDirichletSeriesRing(QQ, 'z')
+            sage: L(1, valuation=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be a positive integer
+            sage: L(1, valuation=3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be a positive integer
+        """
+        if valuation is not None and (valuation not in ZZ or valuation <= 0):
+            raise ValueError("the valuation must be a positive integer")
 
     def _an_element_(self):
         """
