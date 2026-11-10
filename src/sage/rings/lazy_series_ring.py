@@ -478,7 +478,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     def _check_valuation(self, valuation):
         r"""
-        Check the ``valuation`` constructor argument, if given.
+        Check the ``valuation`` constructor argument, which is not
+        ``None``: the dispatcher only calls this hook when a valuation
+        is given.
 
         Only the type is validated here; assigning a default valuation
         is input-kind-aware and happens in the ring-specific entry paths.
@@ -491,7 +493,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             ...
             ValueError: the valuation must be an integer
         """
-        if valuation is not None and valuation not in ZZ:
+        if valuation not in ZZ:
             raise ValueError("the valuation must be an integer")
 
     # The element-constructor capabilities and hooks implementing the
@@ -507,7 +509,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         The ring-specific work is confined to the hooks
 
-        - ``_check_valuation`` (phase 0),
+        - ``_check_valuation`` (phase 0, only called when a
+          ``valuation`` is given),
         - ``_series_uninitialized`` (phase 1),
         - ``_element_constructor_normalize`` (syntactic normalization of
           ``degree`` and ``constant``: tuple unpacking as declared by the
@@ -540,10 +543,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + 8*z^8 + 9*z^9 + O(z^10)
         """
         # Phase 0: check the ``valuation`` argument (type and range per
-        # ring).  This runs after the ring-specific entry preprocessing
-        # (defaults, Dirichlet preprocessing), i.e. at the historical
-        # position of each ring's check.
-        self._check_valuation(valuation)
+        # ring), if given.  This runs after the ring-specific entry
+        # preprocessing (defaults, Dirichlet preprocessing), i.e. at the
+        # historical position of each ring's check.
+        if valuation is not None:
+            self._check_valuation(valuation)
 
         # Phase 1: an uninitialized series.
         # WARNING: if x is not explicitly specified as None, it is
@@ -3479,7 +3483,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     def _check_valuation(self, valuation):
         r"""
-        Check the ``valuation`` constructor argument, if given.
+        Check the ``valuation`` constructor argument, which is not
+        ``None``: the dispatcher only calls this hook when a valuation
+        is given.
 
         EXAMPLES::
 
@@ -3494,7 +3500,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             ValueError: the valuation must be an integer
         """
         super()._check_valuation(valuation)
-        if valuation is not None and valuation < 0:
+        if valuation < 0:
             raise ValueError("the valuation of a Taylor series must be nonnegative")
 
     # Taylor series do not support the (transitional) tuple form of
@@ -4222,7 +4228,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     def _check_valuation(self, valuation):
         r"""
-        Check the ``valuation`` constructor argument, if given.
+        Check the ``valuation`` constructor argument, which is not
+        ``None``: the dispatcher only calls this hook when a valuation
+        is given.
 
         EXAMPLES::
 
@@ -4238,7 +4246,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             ValueError: the valuation must be an integer
         """
         super()._check_valuation(valuation)
-        if valuation is not None and valuation < 0:
+        if valuation < 0:
             raise ValueError("the valuation of a lazy completion element must be nonnegative")
 
     # A completion of a graded algebra has no rational-function fallback:
@@ -4927,7 +4935,9 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
     def _check_valuation(self, valuation):
         r"""
-        Check the ``valuation`` constructor argument, if given.
+        Check the ``valuation`` constructor argument, which is not
+        ``None``: the dispatcher only calls this hook when a valuation
+        is given.
 
         EXAMPLES::
 
@@ -4941,7 +4951,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             ...
             ValueError: the valuation must be a positive integer
         """
-        if valuation is not None and (valuation not in ZZ or valuation <= 0):
+        if valuation not in ZZ or valuation <= 0:
             raise ValueError("the valuation must be a positive integer")
 
     def _an_element_(self):
