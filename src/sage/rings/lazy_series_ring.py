@@ -657,11 +657,30 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: the degree must be an integer
+
+        A direct (non-tuple) ``degree`` must be an integer as well, and
+        a scalar ``degree`` or ``constant`` must not be given separately
+        when the other argument is given in tuple form::
+
+            sage: L(lambda i: i, valuation=-3, degree=3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer
+            sage: L(lambda i: i, valuation=-3, constant=(-1, 3), degree=4)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must not be given separately from the tuple form of constant
+            sage: L(lambda i: i, valuation=-3, degree=(-1, 3), constant=5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the constant must not be given separately from the tuple form of degree
         """
         if self._unpacks_constant_tuple:
             if isinstance(constant, (tuple, list)):
                 if isinstance(degree, (tuple, list)):
                     raise ValueError("constant and degree must not both be given in tuple form")
+                if degree is not None:
+                    raise ValueError("the degree must not be given separately from the tuple form of constant")
                 if len(constant) != 2:
                     raise ValueError("the tuple form of constant must be a pair (c, d)")
                 c, d = constant
@@ -669,12 +688,16 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                     raise ValueError("the degree must be an integer")
                 constant, degree = c, d
         if self._unpacks_degree_tuple and isinstance(degree, (tuple, list)):
+            if constant is not None:
+                raise ValueError("the constant must not be given separately from the tuple form of degree")
             if len(degree) != 2:
                 raise ValueError("the tuple form of degree must be a pair (c, d)")
             c, d = degree
             if d is not None and d not in ZZ:
                 raise ValueError("the degree must be an integer")
             constant, degree = c, d
+        if degree is not None and degree not in ZZ:
+            raise ValueError("the degree must be an integer")
         return self._normalize_constructor_constant(degree, constant)
 
     def _normalize_constructor_constant(self, degree, constant):
@@ -1061,9 +1084,28 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: d.define(D.one() + g*d)
             sage: d                                                    # needs sage.symbolic
             1 + 1/(2^s) + 1/(3^s) + 2/4^s + 1/(5^s) + 3/6^s + 1/(7^s) + O(1/(8^s))
+
+        The valuation is validated as in the constructor::
+
+            sage: P = LazyPowerSeriesRing(QQ, 'x')
+            sage: P.undefined(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation of a Taylor series must be nonnegative
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: LazySymmetricFunctions(m).undefined(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation of a lazy completion element must be nonnegative
+            sage: D.undefined(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be a positive integer
         """
         if valuation is None:
             valuation = self._minimal_valuation
+        if valuation is not None:
+            self._check_valuation(valuation)
         coeff_stream = Stream_uninitialized(valuation, name=name)
         return self.element_class(self, coeff_stream)
 
@@ -3539,10 +3581,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(coefficients=lambda i: i, valuation=2)
             2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + 8*z^8 + O(z^9)
         """
-        # TODO: the following is nonsense, think of an iterator
-#        if self._arity > 1 and valuation != 0:
-#            raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
-
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients, check)
 
@@ -4481,6 +4519,13 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         If ``valuation`` is given, it is the valuation of the result: the
         source series is shifted accordingly.
 
+        The raw coefficient stream is shared with the source series; in
+        particular, the raw coefficients retain the source basis (and
+        its base ring) until they are accessed.  The user-visible
+        coefficients are converted on access (``__getitem__`` and
+        ``_repr_`` convert through this ring), so they always live in
+        the basis of this ring, as lazily as possible.
+
         EXAMPLES::
 
             sage: m = SymmetricFunctions(ZZ).m()
@@ -4934,6 +4979,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
           valuation of the series
         - ``degree`` -- (optional) the degree when the series is ``constant``
         - ``constant`` -- (optional) the eventual constant of the series
+        - ``coefficients`` -- (optional) a function or a list of
+          coefficients defining the series
 
         EXAMPLES::
 
