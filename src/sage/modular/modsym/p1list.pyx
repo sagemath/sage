@@ -8,6 +8,7 @@ Lists of Manin symbols over `\QQ`, elements of `\mathbb{P}^1(\ZZ/N\ZZ)`
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
+from sage.arith.misc import xgcd
 from sage.misc.search cimport search
 from sage.structure.richcmp cimport rich_to_bool
 
@@ -1364,6 +1365,11 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(0, 0, 1)
         [1, 0, 0, 1]
     """
+    if N == 0:
+        g, s, t = xgcd(c, d)
+        if g != 1:
+            raise ValueError("input must have gcd 1")
+        return [t, -s, c, d]
     if N <= 46340:
         return lift_to_sl2z_int(c, d, N)
     if N <= 2147483647:
