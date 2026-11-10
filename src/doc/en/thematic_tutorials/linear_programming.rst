@@ -448,9 +448,10 @@ following libraries are currently supported:
   `COIN-OR <http://www.coin-or.org/>`_,
   provided under the Eclipse Public License (EPL), which is an open source
   license but incompatible with GPL. CBC and the Sage CBC backend can be
-  installed using the shell command::
+  installed by enabling cbc::
 
-    $ sage -i -c sage_numerical_backends_coin
+    $ ./configure  --enable-cbc=yes # other options omitted
+    $ make # possibly build cbc, rebuild sagelib using it
 
 * `CPLEX
   <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_:

@@ -1655,7 +1655,7 @@ def default_mip_solver(solver=None):
 
     elif solver == "Coin":
         try:
-            from sage_numerical_backends_coin.coin_backend import CoinBackend
+            from sage.numerical.backends.coin_backend import CoinBackend
             default_solver = solver
         except ImportError:
             raise ValueError("COIN is not available. Please refer to the documentation to install it.")
@@ -1768,7 +1768,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
       - When set to ``True``, after solving the ``MixedIntegerLinearProgram``,
         it is possible to add a constraint, and then solve it again.
         The effect is that solvers that do not support this feature will not be
-        used.  (Coin and SCIP are such solvers.)
+        used.  (SCIP is such a solver.)
 
       - Defaults to ``False``.
 
@@ -1850,9 +1850,8 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
             elif base_ring is not RDF:
                 solver = "Interactivelp"
 
-        # We do not want to use Coin for constraint_generation. It just does not
-        # work
-        if solver in ("Coin", "SCIP") and constraint_generation:
+        # SCIP does not support constraint generation.
+        if solver == "SCIP" and constraint_generation:
             solver = "Glpk"
 
     if callable(solver):
@@ -1865,7 +1864,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         solver = solver.capitalize()
 
     if solver == "Coin":
-        from sage_numerical_backends_coin.coin_backend import CoinBackend
+        from sage.numerical.backends.coin_backend import CoinBackend
         return CoinBackend()
 
     elif solver == "Glpk":

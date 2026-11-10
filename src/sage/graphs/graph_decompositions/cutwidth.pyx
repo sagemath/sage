@@ -365,24 +365,27 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         ...
         ValueError: the specified cut off parameter must be an integer
 
-    Cutwidth of a graph with one edge (:issue:`32131`)::
+    Cutwidth of a graph with one edge (:issue:`32131`). The optimal
+    ordering need not be unique::
 
-        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth, width_of_cut_decomposition
         sage: G = Graph([(0, 1)])
         sage: cutwidth(G, algorithm='exponential')
         (1, [0, 1])
-        sage: cutwidth(G, algorithm='MILP')
-        (1, [0, 1])
+        sage: cw, L = cutwidth(G, algorithm='MILP')
+        sage: cw, width_of_cut_decomposition(G, L)
+        (1, 1)
 
     Cutwidth of a disconnected graph::
 
-        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth, width_of_cut_decomposition
         sage: G = Graph(5)
         sage: G.add_edge(2, 3)
         sage: cutwidth(G, algorithm='exponential')
         (1, [2, 3, 0, 1, 4])
-        sage: cutwidth(G, algorithm='MILP')
-        (1, [2, 3, 0, 1, 4])
+        sage: cw, L = cutwidth(G, algorithm='MILP')
+        sage: cw, width_of_cut_decomposition(G, L)
+        (1, 1)
     """
     from sage.graphs.graph import Graph
 

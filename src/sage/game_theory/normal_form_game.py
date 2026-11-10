@@ -1543,7 +1543,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg = NormalFormGame([A])
             sage: cg.obtain_nash(algorithm='lp')
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: cg.obtain_nash(algorithm='lp', solver='Coin')                   # optional - sage_numerical_backends_coin
+            sage: cg.obtain_nash(algorithm='lp', solver='Coin')                   # optional - cbc
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1554,8 +1554,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - sage_numerical_backends_coin
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]         # optional - sage_numerical_backends_coin
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - cbc
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]         # optional - cbc
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
@@ -1568,8 +1568,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - sage_numerical_backends_coin
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]         # optional - sage_numerical_backends_coin
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - cbc
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]         # optional - cbc
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
@@ -1610,7 +1610,8 @@ class NormalFormGame(SageObject, MutableMapping):
         constant sum games only ever finds one Nash equilibrium. Although it
         is possible for the ``'LCP'`` solver to find all Nash equilibria
         in some instances, there are instances where it will not be able to
-        find all Nash equilibria.::
+        find all Nash equilibria. In the zero-payoff game below, any pair of
+        probability distributions is a Nash equilibrium::
 
             sage: A = matrix(2, 2)
             sage: gg = NormalFormGame([A])
@@ -1618,16 +1619,18 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs')  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp')
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: [(p, q)] = gg.obtain_nash(algorithm='lp')
+            sage: all(len(s) == 2 and min(s) >= 0 and abs(sum(s) - 1) < 1e-10 for s in (p, q))
+            True
             sage: gg.obtain_nash(algorithm='LCP')  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
             sage: gg.obtain_nash(algorithm='enumeration', maximization=False)
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs', maximization=False)  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', maximization=False)
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: [(p, q)] = gg.obtain_nash(algorithm='lp', maximization=False)
+            sage: all(len(s) == 2 and min(s) >= 0 and abs(sum(s) - 1) < 1e-10 for s in (p, q))
+            True
             sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
 
@@ -1839,7 +1842,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('gambit')  # optional - gambit
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: g._solve_LP('Coin')  # optional - sage_numerical_backends_coin
+            sage: g._solve_LP('Coin')  # optional - cbc
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1851,8 +1854,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = g._solve_LP('gambit')  # optional - gambit
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]  # optional - gambit
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = g._solve_LP('Coin')  # optional - sage_numerical_backends_coin
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]  # optional - sage_numerical_backends_coin
+            sage: ne = g._solve_LP('Coin')  # optional - cbc
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]  # optional - cbc
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: g._solve_LP('PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
