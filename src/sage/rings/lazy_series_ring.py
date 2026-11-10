@@ -4026,7 +4026,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                 for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
                                                      for F, p in zip(B.tensor_factors(), c)])]
 
-    def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True):
+    def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, coefficients=None, check=True):
         r"""
         Construct a lazy element in ``self`` from ``x``.
 
@@ -4037,6 +4037,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
           of the series
         - ``degree`` -- (optional) the degree when the lazy element
           has finite support
+        - ``coefficients`` -- (optional) a function or a list giving the
+          coefficients of the series
         - ``check`` -- (optional) check that coefficients are homogeneous of
           the correct degree when they are retrieved
 
@@ -4073,6 +4075,20 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L(s.an_element())
             2*m[] + 2*m[1] + (3*m[1,1]+3*m[2])
 
+        ``coefficients`` may be used to specify a coefficient function,
+        exactly as for the other lazy series rings::
+
+            sage: L(coefficients=lambda i: m[i], valuation=1)
+            m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+
+            sage: L(int(0), coefficients=lambda i: m[i], valuation=1)
+            m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+
+            sage: L(m[1], coefficients=lambda i: m[i], valuation=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficients must be None if x is provided
+
         TESTS::
 
             sage: e = SymmetricFunctions(ZZ).e()
@@ -4105,7 +4121,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
-                                                   constant, None, check)
+                                                   constant, coefficients,
+                                                   check)
 
     def _check_valuation(self, valuation):
         r"""
@@ -4263,6 +4280,47 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         return callable(x) or isinstance(x, (tuple, list))
 
+    def _check_homogeneous(self, f, d):
+        r"""
+        Check that the coefficient ``f`` is homogeneous of degree ``d``.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: L._check_homogeneous(m[2] + m[1,1], 2)
+            sage: L._check_homogeneous(m[2], 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficient m[2] should be an element of homogeneous degree 1 but has degree 2
+            sage: L._check_homogeneous(0, 1)
+        """
+        if self._arity == 1:
+            if not f:
+                return
+            try:
+                d1 = f.homogeneous_degree()
+                if d1 == d:
+                    return
+            except ValueError:
+                raise ValueError("coefficient %s should be an element of homogeneous degree %s" % (f, d))
+            raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
+        if not f:
+            return
+        for m in f.monomials():
+            try:
+                d1 = m.degree()
+            except AttributeError:
+                # FIXME: Fallback for symmetric functions in multiple variables
+                for t in m.support():
+                    d1 = sum(p.size() for p in t)
+                    if d1 != d:
+                        raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
+            except (TypeError, ValueError):
+                raise ValueError("coefficient %s is not homogeneous")
+            if d1 != d:
+                raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
+
     def _series_from_coefficient_function(self, f, valuation, degree,
                                            constant, check=True):
         r"""
@@ -4279,41 +4337,13 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         if not self._accepts_coefficient_function(f):
             self._unable_to_convert(f)
         R = self._laurent_poly_ring
-        if self._arity == 1:
-            def check_homogeneous_of_degree(f, d):
-                if not f:
-                    return
-                try:
-                    d1 = f.homogeneous_degree()
-                    if d1 == d:
-                        return
-                except ValueError:
-                    raise ValueError("coefficient %s should be an element of homogeneous degree %s" % (f, d))
-                raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
-        else:
-            def check_homogeneous_of_degree(f, d):
-                if not f:
-                    return
-                for m in f.monomials():
-                    try:
-                        d1 = m.degree()
-                    except AttributeError:
-                        # FIXME: Fallback for symmetric functions in multiple variables
-                        for t in m.support():
-                            d1 = sum(p.size() for p in t)
-                            if d1 != d:
-                                raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
-                    except (TypeError, ValueError):
-                        raise ValueError("coefficient %s is not homogeneous")
-                    if d1 != d:
-                        raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
 
         if isinstance(f, (tuple, list)):
             if degree is None:
                 degree = valuation + len(f)
             p = [R(e) for e in f]
             for i, e in enumerate(p, valuation):
-                check_homogeneous_of_degree(e, i)
+                self._check_homogeneous(e, i)
             coeff_stream = Stream_exact(p,
                                         order=valuation,
                                         constant=self._laurent_poly_ring.zero(),
@@ -4323,7 +4353,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         if degree is not None:
             p = [R(f(i)) for i in range(valuation, degree)]
             for i, e in enumerate(p, valuation):
-                check_homogeneous_of_degree(e, i)
+                self._check_homogeneous(e, i)
             coeff_stream = Stream_exact(p,
                                         order=valuation,
                                         constant=self._laurent_poly_ring.zero(),
@@ -4333,7 +4363,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         if check:
             def y(n):
                 e = R(f(n))
-                check_homogeneous_of_degree(e, n)
+                self._check_homogeneous(e, n)
                 return e
 
             coeff_stream = Stream_function(y, self._sparse, valuation)
