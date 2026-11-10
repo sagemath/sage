@@ -510,7 +510,7 @@ class Polyhedron_base6(Polyhedron_base5):
             - :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.dilation`
             - :meth:`~sage.plot.plot3d.base.Graphics3d.transform`
             - :func:`~sage.plot.plot3d.plot3d.plot3d` (``transformation``)
-            - :ref:`tips`
+            - `Polyhedra tips and tricks <https://doc.sagemath.org/html/en/thematic_tutorials/geometry/tips.html>`_
 
         TESTS::
 
@@ -597,9 +597,8 @@ class Polyhedron_base6(Polyhedron_base5):
             ...
             ValueError: nonlinear_transformation must return at most 3D points
 
-        Plotting of 1D objects (1D -> 2D)
-
             sage: # needs sage.plot
+            sage: # Plotting of 1D objects (1D -> 2D)
             sage: p = Polyhedron(vertices=[[0],[1]])
             sage: type(p.plot())
             <class 'sage.plot.graphics.Graphics'>
@@ -608,9 +607,8 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: type(p_cube.plot(nonlinear_transformation=trans_1d))
             <class 'sage.plot.graphics.Graphics'>
 
-        point/line/polygon options work with nonlinear_transformation
-
             sage: # needs sage.plot
+            sage: # point/line/polygon options work with nonlinear_transformation
             sage: p = polytopes.hypercube(2)
             sage: f = lambda v: vector(v)
             sage: type(p.plot(nonlinear_transformation=f, point=False))
@@ -620,10 +618,9 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: type(p.plot(nonlinear_transformation=f, polygon=False))
             <class 'sage.plot.graphics.Graphics'>
 
-        Unbounded polyhedron (rays):
-        nonlinear_transformation ignored with warning
-
             sage: # needs sage.plot
+            sage: # Unbounded polyhedron (rays): nonlinear_transformation
+            sage: # is ignored with warning
             sage: import warnings
             sage: p = Polyhedron(rays=[[1,0],[0,1]]) # unbounded polyhedron
             sage: with warnings.catch_warnings():
