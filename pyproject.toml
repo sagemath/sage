@@ -47,8 +47,10 @@ dependencies = [
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
   'cython >=3.1.0',
+  'elliptic-curve-databases >=0.8.3',
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
+  'graph-databases >=20210214.2',
   'ipykernel >=5.2.1',
   'ipython >=8.32.0',
   'ipywidgets >=7.5.1',
@@ -61,6 +63,7 @@ dependencies = [
   'pexpect >=4.8.0',
   'pillow >=7.2.0',
   'platformdirs',
+  'polytope-databases >=20170220.2',
   # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
   'pplpy >=0.8.6; sys_platform != "win32"',
   'primecountpy; sys_platform != "win32"',
@@ -175,9 +178,6 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/sagemath-elliptic-curves",
-  "pkg:generic/sagemath-graphs",
-  "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/tachyon",
 ]
 

@@ -627,6 +627,15 @@ wheels = [
 ]
 
 [[package]]
+name = "elliptic-curve-databases"
+version = "0.8.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/c2/3a36dafcbb97c8e6489e93523fd68425db4572cc3c4889741c2e99b3837d/elliptic_curve_databases-0.8.3.tar.gz", hash = "sha256:5a2bf93c9f92a0c010c911c7ebe2a3af0275f9f11e86894ba00810887b04daa7", size = 4972132, upload-time = "2026-11-05T06:29:23.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/e1/4772eeab51901f8b1fd9a7fe8c7417b5fd69846acd474d0231baeadf1f2f/elliptic_curve_databases-0.8.3-py3-none-any.whl", hash = "sha256:966179be782f008dd181035d32d7db8f575f85bfc03d4c70778a4a17b78bf187", size = 4326000, upload-time = "2026-11-05T06:29:22.162Z" },
+]
+
+[[package]]
 name = "execnet"
 version = "2.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -801,6 +810,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1a/f8/5c1d910a1149a906ad8c0329ad22819651e2378b2adb692eb36d65e28354/gmpy2-2.3.2-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:3d70119b7e8bfcc40f0d0d89052ff18e1d99c12d4c1e8747cf1183270dd610a8", size = 1648494, upload-time = "2026-10-04T01:57:14.012Z" },
     { url = "https://files.pythonhosted.org/packages/b7/48/5078bf6f61253c0868e2b5d26cf2bbf73c4b1e5a35a3d2aaa056232e5584/gmpy2-2.3.2-cp314-cp314t-win_amd64.whl", hash = "sha256:4ac16cd212acb593a382f3237eff10f73cf15ca693977562b293c25ffb8e3807", size = 1196833, upload-time = "2026-10-04T01:57:15.822Z" },
     { url = "https://files.pythonhosted.org/packages/9f/88/dbc343775556827bb0236351b6aaaaebbceb71465ad2a7cda46c863ef9b3/gmpy2-2.3.2-cp314-cp314t-win_arm64.whl", hash = "sha256:7bca984a15dab91c6f9008037d456377b5db49721c3e22fe41661226af1f2002", size = 795955, upload-time = "2026-10-04T01:57:17.496Z" },
+]
+
+[[package]]
+name = "graph-databases"
+version = "20210214.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/39/3b2accb0a96c414d8acb063e5e7f1c7bf90d5f2f923507de62ddfe008e3a/graph_databases-20210214.2.tar.gz", hash = "sha256:d8dca276b5839ecd0126219597ff9b9def92f9d2b7dd217a1bc672b6623d0917", size = 465482, upload-time = "2026-11-05T06:28:54.628Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/38/af663885c9ed97556311456ea653ecbdc7d3eb234399e13ab63164a8a32e/graph_databases-20210214.2-py3-none-any.whl", hash = "sha256:52d158465adaff186f348b383e59a5bd0bf943aaf0189526e7406a3ed22b17dc", size = 472280, upload-time = "2026-11-05T06:28:52.716Z" },
 ]
 
 [[package]]
@@ -1643,6 +1661,15 @@ wheels = [
 ]
 
 [[package]]
+name = "polytope-databases"
+version = "20170220.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/0d/4acc73023decb8891530595cf229d647df0085457d8f1363b5643ace07cf/polytope_databases-20170220.2.tar.gz", hash = "sha256:c7793ad1f4dc4cf0a5d94fe3a6e8855ed7b055194c5c7b1305c862e0e609367b", size = 61562, upload-time = "2026-11-05T06:29:11.884Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/e2/a3e94f049d359994d422841191cf7f476eea86592440afb6b2ec09ac5406/polytope_databases-20170220.2-py3-none-any.whl", hash = "sha256:c3d192972a0ca87a522c23cbf40a67e3bb296a5535d48f10ef675b5289f25e2c", size = 62583, upload-time = "2026-11-05T06:29:10.597Z" },
+]
+
+[[package]]
 name = "pplpy"
 version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2376,13 +2403,16 @@ wheels = [
 
 [[package]]
 name = "sagemath"
+source = { editable = "." }
 dependencies = [
     { name = "conway-polynomials" },
     { name = "cypari2", marker = "sys_platform != 'win32'" },
     { name = "cysignals" },
     { name = "cython" },
+    { name = "elliptic-curve-databases" },
     { name = "fpylll", marker = "sys_platform != 'win32'" },
     { name = "gmpy2" },
+    { name = "graph-databases" },
     { name = "ipykernel" },
     { name = "ipython" },
     { name = "ipywidgets" },
@@ -2396,6 +2426,7 @@ dependencies = [
     { name = "pillow" },
     { name = "pkgconfig" },
     { name = "platformdirs" },
+    { name = "polytope-databases" },
     { name = "pplpy", marker = "sys_platform != 'win32'" },
     { name = "primecountpy", marker = "sys_platform != 'win32'" },
     { name = "ptyprocess" },
@@ -2405,9 +2436,6 @@ dependencies = [
     { name = "sympy" },
     { name = "traitlets" },
 ]
-
-[package.source]
-editable = "."
 
 [package.optional-dependencies]
 extra = [
@@ -2473,8 +2501,10 @@ requires-dist = [
     { name = "cypari2", marker = "sys_platform != 'win32'", url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" },
     { name = "cysignals", specifier = ">=1.12.1" },
     { name = "cython", specifier = ">=3.1.0" },
+    { name = "elliptic-curve-databases", specifier = ">=0.8.3" },
     { name = "fpylll", marker = "sys_platform != 'win32'", specifier = ">=0.5.9" },
     { name = "gmpy2", specifier = ">=2.1.5" },
+    { name = "graph-databases", specifier = ">=20210214.2" },
     { name = "igraph", marker = "extra == 'extra'" },
     { name = "ipykernel", specifier = ">=5.2.1" },
     { name = "ipython", specifier = ">=8.32.0" },
@@ -2490,6 +2520,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=7.2.0" },
     { name = "pkgconfig" },
     { name = "platformdirs" },
+    { name = "polytope-databases", specifier = ">=20170220.2" },
     { name = "pplpy", marker = "sys_platform != 'win32'", specifier = ">=0.8.6" },
     { name = "primecountpy", marker = "sys_platform != 'win32'" },
     { name = "ptyprocess", specifier = ">0.5" },
