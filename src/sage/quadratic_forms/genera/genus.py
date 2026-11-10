@@ -2629,7 +2629,7 @@ class GenusSymbol_global_ring:
 
         - ``proper`` -- boolean
 
-        OUTPUT: list of primes not dividing the determinant
+        OUTPUT: list of odd primes not dividing ``2 * determinant``
 
         EXAMPLES::
 
@@ -2637,6 +2637,96 @@ class GenusSymbol_global_ring:
             sage: gen = Genus(g)
             sage: gen.spinor_generators(False)
             [5]
+
+        Check that independent spinor classes generate the whole quotient, and
+        that the definite enumeration recovers the twelve classes reported for
+        the lattice $B^1$ by Benham--Hsia, §2.3::
+
+            sage: G = Genus(matrix.diagonal(ZZ, [1, 20, 400]))
+            sage: A, K = G._improper_spinor_kernel()
+            sage: Q = A.quotient(K)
+            sage: Q.order() == 4 and all(g.order() in (1, 2) for g in Q.gens())
+            True
+            sage: primes = G.spinor_generators(False)
+            sage: primes == [3, 11]
+            True
+            sage: all(p % 2 == 1 for p in primes)
+            True
+            sage: U = Q.subgroup([])
+            sage: orders = []
+            sage: for p in primes:
+            ....:     Unew = Q.subgroup((Q(A.delta(p)),) + U.gens())
+            ....:     orders.append(Unew.order())
+            ....:     U = Unew
+            sage: orders == [2, 4]
+            True
+            sage: (Q.subgroup([Q(A.delta(p)) for p in primes]).order()
+            ....:  == Q.order())
+            True
+
+        For this published example the two independent improper classes are
+        represented by the primes 3 and 11, each of order two::
+
+            sage: c3, c11 = Q(A.delta(3)), Q(A.delta(11))
+            sage: c3.order() == c11.order() == 2
+            True
+            sage: Q.subgroup([c3, c11]).order() == Q.order() == 4
+            True
+
+        The same four-way partition holds for the proper spinor quotient::
+
+            sage: A_proper, K_proper = G._proper_spinor_kernel()
+            sage: Q_proper = A_proper.quotient(K_proper)
+            sage: Q_proper.order() == 4 and all(
+            ....:     g.order() in (1, 2) for g in Q_proper.gens())
+            True
+            sage: proper_primes = G.spinor_generators(True)
+            sage: Q_proper.subgroup(
+            ....:     [Q_proper(A_proper.delta(p)) for p in proper_primes]
+            ....: ).order() == Q_proper.order()
+            True
+            sage: U_proper = Q_proper.subgroup([])
+            sage: proper_orders = []
+            sage: for p in proper_primes:
+            ....:     U_new = Q_proper.subgroup(
+            ....:         (Q_proper(A_proper.delta(p)),) + U_proper.gens())
+            ....:     proper_orders.append(U_new.order())
+            ....:     U_proper = U_new
+            sage: proper_orders == [2, 4]
+            True
+            sage: reps = G.representatives()
+            sage: len(reps)
+            12
+
+        The twelve classes satisfy the definite mass formula, independently
+        weighting each class by the reciprocal of its automorphism-group
+        order::
+
+            sage: from sage.quadratic_forms.quadratic_form import QuadraticForm
+            sage: sum(1 / QuadraticForm(ZZ, 2*R).automorphism_group().order()
+            ....:     for R in reps) == G.mass() == QQ(3)/2
+            True
+
+        The same generator-coverage invariant holds for an indefinite genus.
+        For $\operatorname{diag}(1,20,-400)$, the improper quotient has order
+        two and the genus has two classes. Since this lattice is isotropic,
+        this agrees with the theorem that each spinor genus of an isotropic
+        indefinite lattice of rank at least three consists of one class
+        (Conway--Sloane, *Sphere Packings, Lattices and Groups*, 3rd ed.,
+        Ch. 15, §9.1, Thm. 14)::
+
+            sage: H = Genus(matrix.diagonal(ZZ, [1, 20, -400]))
+            sage: A_indef, K_indef = H._improper_spinor_kernel()
+            sage: Q_indef = A_indef.quotient(K_indef)
+            sage: p_indef = H.spinor_generators(False)
+            sage: Q_indef.subgroup(
+            ....:     [Q_indef(A_indef.delta(p)) for p in p_indef]
+            ....: ).order() == Q_indef.order() == 2
+            True
+            sage: len(H.representatives())
+            2
+
+
         """
         from sage.sets.primes import Primes
         if proper:
@@ -2645,21 +2735,39 @@ class GenusSymbol_global_ring:
             A, K = self._improper_spinor_kernel()
         Q = A.quotient(K)
         q = Q.order()
+        assert Q.is_abelian(), "the spinor norm quotient must be abelian"
+        assert all(g.order() in (1, 2) for g in Q.gens()), (
+            "the spinor quotient must be elementary 2"
+        )
         U = Q.subgroup([])
 
         spinor_gens = []
         P = Primes()
+        # Every spinor class has infinitely many prime representatives by
+        # the Chebotarev density theorem (Neukirch, *Algebraic Number Theory*,
+        # Chapter VII, §13) applied to the spinor class field. Initialize at 2 because
+        # the loop advances with P.next(p), so its first candidate is 3. All
+        # returned generators are therefore odd and coprime to 2*det, as
+        # required by the p-neighbour spinor-action theorem.
         p = ZZ(2)
         while not U.order() == q:
             p = P.next(p)
             if p.divides(self.determinant()):
                 continue
             g = Q(A.delta(p))
-            if g.gap() in U.gap():  # containment in sage is broken
+            # The spinor quotient is elementary 2, so each prime class has
+            # order one or two. Membership testing in these quotient groups is
+            # unreliable; compare subgroup orders to test whether g enlarges U.
+            assert g.order() in (1, 2)
+            enlarged = Q.subgroup((g,) + U.gens())
+            if enlarged.order() == U.order():
                 continue
-            else:
-                spinor_gens.append(p)
-                U = Q.subgroup((g,) + Q.gens())
+            assert enlarged.order() == 2 * U.order(), (
+                "a spinor generator must enlarge the elementary "
+                "2-quotient by index two"
+            )
+            spinor_gens.append(p)
+            U = enlarged
         return spinor_gens
 
     def _proper_is_improper(self):
