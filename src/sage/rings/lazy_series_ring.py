@@ -72,6 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -471,8 +472,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L(filter(is_odd, NN), -3)
             z^-3 + 3*z^-2 + 5*z^-1 + 7 + 9*z + 11*z^2 + 13*z^3 + O(z^4)
         """
-        self._check_valuation(valuation)
-
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients)
 
@@ -507,6 +506,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         The ring-specific work is confined to the hooks
 
+        - ``_check_valuation`` (phase 0),
         - ``_series_uninitialized`` (phase 1),
         - ``_element_constructor_normalize`` (syntactic normalization of
           ``degree`` and ``constant``: tuple unpacking as declared by the
@@ -538,17 +538,24 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L(lambda i: i, valuation=3)
             3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + 8*z^8 + 9*z^9 + O(z^10)
         """
+        # Phase 0: check the ``valuation`` argument (type and range per
+        # ring).  This runs after the ring-specific entry preprocessing
+        # (defaults, Dirichlet preprocessing), i.e. at the historical
+        # position of each ring's check.
+        self._check_valuation(valuation)
+
         # Phase 1: an uninitialized series.
         # WARNING: if x is not explicitly specified as None, it is
         # set to 0 by Parent.__call__
         if x is None and coefficients is None:
             return self._series_uninitialized(valuation, degree, constant)
 
-        # Phase 2: the ``coefficients`` escape hatch.  If ``x`` is a
-        # Python zero, it is treated as if it had not been supplied,
-        # since ``Parent.__call__`` substitutes 0 for an omitted ``x``.
+        # Phase 2: the ``coefficients`` escape hatch.  A zero ``x`` (a
+        # Python ``int`` or a Sage ``Integer``) is treated as if it had
+        # not been supplied, since ``Parent.__call__`` substitutes 0 for
+        # an omitted ``x``.
         if (coefficients is not None and x is not None
-                and (not isinstance(x, int) or x)):
+                and (not isinstance(x, (int, Integer)) or x)):
             raise ValueError("coefficients must be None if x is provided")
 
         # Normalize the (transitional) tuple forms of ``constant`` and
@@ -603,7 +610,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         Syntactic normalization only: unpack the (transitional) tuple
         forms ``constant = (c, d)`` and ``degree = (c, d)``, as declared
         by the capability flags ``_unpacks_constant_tuple`` and
-        ``_unpacks_degree_tuple``.  The semantic part, namely converting
+        ``_unpacks_degree_tuple``, rejecting malformed and overlapping
+        uses with clear errors.  The semantic part, namely converting
         ``constant`` into the coefficient ring, is delegated to
         ``_normalize_constructor_constant``.
 
@@ -612,11 +620,45 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
             sage: L(lambda i: i, valuation=-3, constant=(-1, 3))
             -3*z^-3 - 2*z^-2 - z^-1 + z + 2*z^2 - z^3 - z^4 - z^5 + O(z^6)
+
+        The tuple forms must not be used to specify ``constant`` and
+        ``degree`` at once, must be pairs, and the degree in them must
+        be an integer::
+
+            sage: L(lambda i: i, valuation=-3, constant=(-1, 3), degree=(1, 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: constant and degree must not both be given in tuple form
+            sage: L(lambda i: i, valuation=-3, constant=(-1, 3, 0))
+            Traceback (most recent call last):
+            ...
+            ValueError: the tuple form of constant must be a pair (c, d)
+            sage: L(lambda i: i, valuation=-3, constant=(-1, 'x'))
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer
+            sage: L(lambda i: i, valuation=-3, degree=(-1, 'x'))
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer
         """
-        if self._unpacks_constant_tuple and isinstance(constant, (tuple, list)):
-            constant, degree = constant
+        if self._unpacks_constant_tuple:
+            if isinstance(constant, (tuple, list)):
+                if isinstance(degree, (tuple, list)):
+                    raise ValueError("constant and degree must not both be given in tuple form")
+                if len(constant) != 2:
+                    raise ValueError("the tuple form of constant must be a pair (c, d)")
+                c, d = constant
+                if d is not None and d not in ZZ:
+                    raise ValueError("the degree must be an integer")
+                constant, degree = c, d
         if self._unpacks_degree_tuple and isinstance(degree, (tuple, list)):
-            constant, degree = degree
+            if len(degree) != 2:
+                raise ValueError("the tuple form of degree must be a pair (c, d)")
+            c, d = degree
+            if d is not None and d not in ZZ:
+                raise ValueError("the degree must be an integer")
+            constant, degree = c, d
         return self._normalize_constructor_constant(degree, constant)
 
     def _normalize_constructor_constant(self, degree, constant):
@@ -731,7 +773,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             if degree is not None:
                 # truncate the series and then possibly make constant
                 x_val = x._coeff_stream.order()
-                if not valuation:
+                if valuation is None:
                     valuation = x_val
                 initial_coefficients = [x[x_val+i] for i in range(degree-valuation)]
                 if not any(initial_coefficients):
@@ -3383,11 +3425,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if valuation is None:
             if self._arity > 1:
                 valuation = 0
-        else:
-            self._check_valuation(valuation)
-            # TODO: the following is nonsense, think of an iterator
-#            if self._arity > 1 and valuation != 0:
-#                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
+        # TODO: the following is nonsense, think of an iterator
+#        if self._arity > 1 and valuation != 0:
+#            raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients, check)
@@ -3403,31 +3443,18 @@ class LazyPowerSeriesRing(LazySeriesRing):
             Traceback (most recent call last):
             ...
             ValueError: the valuation of a Taylor series must be nonnegative
+            sage: L(1, valuation=3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be an integer
         """
+        super()._check_valuation(valuation)
         if valuation is not None and valuation < 0:
             raise ValueError("the valuation of a Taylor series must be nonnegative")
 
     # Taylor series do not support the (transitional) tuple form of
     # ``degree``.
     _unpacks_degree_tuple = False
-
-    def _element_constructor_normalize(self, degree, constant):
-        r"""
-        Normalize the ``degree`` and ``constant`` constructor arguments.
-
-        This unpacks the (transitional) tuple form of ``constant`` and
-        delegates the conversion of ``constant`` into the coefficient
-        ring to ``_normalize_constructor_constant``.
-
-        EXAMPLES::
-
-            sage: L = LazyPowerSeriesRing(QQ, 'z')
-            sage: L(lambda i: i, valuation=3, constant=(-1, 5))
-            3*z^3 + 4*z^4 - z^5 - z^6 - z^7 + O(z^8)
-        """
-        if self._unpacks_constant_tuple and isinstance(constant, (tuple, list)):
-            constant, degree = constant
-        return self._normalize_constructor_constant(degree, constant)
 
     def _normalize_constructor_constant(self, degree, constant):
         r"""
@@ -3607,7 +3634,14 @@ class LazyPowerSeriesRing(LazySeriesRing):
                     raise ValueError("coefficient %s at degree %s is not a homogeneous polynomial" % (e, n))
                 coeff_stream = Stream_function(y, self._sparse, valuation)
             else:
-                coeff_stream = Stream_iterator(map(R, _skip_leading_zeros(f)), valuation)
+                def checked_iterator():
+                    for i, c in enumerate(_skip_leading_zeros(f), valuation):
+                        e = R(c)
+                        if not e or e.is_homogeneous() and e.degree() == i:
+                            yield e
+                        else:
+                            raise ValueError("coefficient %s at degree %s is not a homogeneous polynomial" % (e, i))
+                coeff_stream = Stream_iterator(checked_iterator(), valuation)
         elif callable(f):
             coeff_stream = Stream_function(lambda i: BR(f(i)), self._sparse, valuation)
         else:
@@ -4026,7 +4060,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                 for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
                                                      for F, p in zip(B.tensor_factors(), c)])]
 
-    def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, coefficients=None, check=True):
+    def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True, *, coefficients=None):
         r"""
         Construct a lazy element in ``self`` from ``x``.
 
@@ -4037,8 +4071,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
           of the series
         - ``degree`` -- (optional) the degree when the lazy element
           has finite support
-        - ``coefficients`` -- (optional) a function or a list giving the
-          coefficients of the series
+        - ``coefficients`` -- (optional; keyword only) a function or a list
+          giving the coefficients of the series
         - ``check`` -- (optional) check that coefficients are homogeneous of
           the correct degree when they are retrieved
 
@@ -4117,8 +4151,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         if valuation is None:
             valuation = 0
-        else:
-            self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients,
@@ -4136,7 +4168,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             Traceback (most recent call last):
             ...
             ValueError: the valuation of a lazy completion element must be nonnegative
+            sage: L(1, valuation=3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be an integer
         """
+        super()._check_valuation(valuation)
         if valuation is not None and valuation < 0:
             raise ValueError("the valuation of a lazy completion element must be nonnegative")
 
@@ -4317,7 +4354,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                     if d1 != d:
                         raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
             except (TypeError, ValueError):
-                raise ValueError("coefficient %s is not homogeneous")
+                raise ValueError("coefficient %s should be an element of homogeneous degree %s but is not homogeneous" % (f, d))
             if d1 != d:
                 raise ValueError("coefficient %s should be an element of homogeneous degree %s but has degree %s" % (f, d, d1))
 
@@ -4808,9 +4845,6 @@ class LazyDirichletSeriesRing(LazySeriesRing):
                         raise ValueError("coefficients must be None if x is provided")
                     coefficients = x
                     x = None
-
-        if valuation is not None:
-            self._check_valuation(valuation)
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients)
