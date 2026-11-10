@@ -45,3 +45,57 @@ are implemented using the PolyBoRi library (cf.
    sage/rings/polynomial/flatten
 
    sage/rings/monomials
+
+
+Absolute factorization and absolute irreducibility
+==================================================
+
+In computational algebra and algebraic geometry, **absolute factorization**
+refers to factorization of polynomials over the algebraic closure
+:math:`\overline{\QQ}` of the rational numbers. A polynomial is called
+**absolutely irreducible** if it is irreducible over
+:math:`\overline{\QQ}`.
+
+SageMath supports absolute factorization natively via the algebraic number
+fields ``QQbar`` (the field of algebraic numbers) and ``AA`` (the field of
+real algebraic numbers).
+
+Multivariate absolute factorization over ``QQbar``
+--------------------------------------------------
+
+For multivariate polynomials over ``QQbar``, Sage computes an absolute
+factorization using Singular’s ``absfact`` library::
+
+    sage: R.<x,y> = QQbar[]
+    sage: f = x^2 + y^2
+    sage: f.factor()
+    (x - I*y) * (x + I*y)
+
+This shows that ``x^2 + y^2`` is reducible over
+:math:`\overline{\QQ}`, even though it is irreducible over ``QQ``.
+
+Absolute irreducibility test
+----------------------------
+
+A common way to test whether a polynomial is absolutely irreducible is
+to factor it after extending the coefficient ring to ``QQbar``::
+
+    sage: R.<x,y> = QQ[]
+    sage: f = x^2 + y^2
+    sage: f.is_irreducible()
+    True
+    sage: f.change_ring(QQbar).is_irreducible()
+    False
+
+Thus, ``f`` is irreducible over ``QQ`` but **not absolutely irreducible**.
+
+Real algebraic coefficients
+---------------------------
+
+When factoring over ``AA`` (the field of real algebraic numbers), complex
+conjugate factors are combined whenever possible, so that the result
+lies in ``AA``::
+
+    sage: R.<x,y> = AA[]
+    sage: (x^2 + y^2).factor()
+    x^2 + y^2
