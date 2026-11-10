@@ -552,7 +552,18 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         # Phase 1: an uninitialized series.
         # WARNING: if x is not explicitly specified as None, it is
         # set to 0 by Parent.__call__
-        if x is None and coefficients is None:
+        if x is None:
+            # Transitional route; ``undefined()`` is the intended API
+            # and the single place constructing an uninitialized stream
+            # (the hooks delegate to it).  The validation of the
+            # arguments that do not apply to an undefined series lives
+            # here in the shim.
+            if degree is not None:
+                raise ValueError("the degree must not be given for an undefined series")
+            if constant is not None:
+                raise ValueError("the constant must not be given for an undefined series")
+            if coefficients is not None:
+                raise ValueError("the coefficients must not be given for an undefined series")
             return self._series_uninitialized(valuation, degree, constant)
 
         # Phase 2: the ``coefficients`` escape hatch.  A zero ``x`` (a
@@ -685,15 +696,52 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         r"""
         Return an uninitialized series (``x is None`` input).
 
+        This is the transitional route; :meth:`undefined` is the
+        intended API and the single place that constructs the
+        uninitialized stream (this hook delegates to it).  There is no
+        minimal valuation to default to, so an omitted ``valuation``
+        raises here (while :meth:`undefined` raises only at stream
+        construction time).
+
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
             sage: L(None, valuation=-1)
             Uninitialized Lazy Series
+            sage: L(None)
+            Traceback (most recent call last):
+            ...
+            ValueError: the valuation must be specified
+
+        A ``define()`` round-trip through this route::
+
+            sage: z = L.gen()
+            sage: e = L(None, valuation=-1)
+            sage: e.define(L.zero())
+            sage: e
+            0
+            sage: e = L(None, valuation=-1)
+            sage: e.define(z^-1 + z^2*e^2)
+            sage: e
+            z^-1 + 1 + 2*z + 5*z^2 + 14*z^3 + 42*z^4 + 132*z^5 + O(z^6)
+
+        The same route for Dirichlet series (whose :meth:`undefined`
+        defaults to valuation 1)::
+
+            sage: D = LazyDirichletSeriesRing(QQ, 's')
+            sage: e = D(None, valuation=1)
+            sage: e.define(D.zero())
+            sage: e
+            0
+            sage: g = D(constant=1, valuation=2)
+            sage: e = D(None, valuation=1)
+            sage: e.define(D.one() + g*e)
+            sage: e                                                    # needs sage.symbolic
+            1 + 1/(2^s) + 1/(3^s) + 2/4^s + 1/(5^s) + 3/6^s + 1/(7^s) + O(1/(8^s))
         """
         if valuation is None:
             raise ValueError("the valuation must be specified")
-        return self.element_class(self, Stream_uninitialized(valuation))
+        return self.undefined(valuation)
 
     def _convert_to_exact_polynomial(self, x):
         r"""
@@ -966,6 +1014,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         r"""
         Return an uninitialized series.
 
+        This is the single place that constructs the uninitialized
+        coefficient stream.  The transitional constructor route
+        ``L(None, valuation=...)`` delegates here, but keeps its own
+        historically grown omitted-valuation behavior (for example,
+        ``LazyPowerSeriesRing(QQ, 'z')(None)`` raises while
+        ``undefined()`` defaults to valuation 0).
+
         INPUT:
 
         - ``valuation`` -- integer; a lower bound for the valuation
@@ -996,6 +1051,16 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: f.define(z^-1 + z^2*f^2)
             sage: f
             z^-1 + 1 + 2*z + 5*z^2 + 14*z^3 + 42*z^4 + 132*z^5 + O(z^6)
+
+        An omitted valuation defaults to the minimal valuation of the
+        ring::
+
+            sage: D = LazyDirichletSeriesRing(QQ, 's')
+            sage: d = D.undefined()
+            sage: g = D(constant=1, valuation=2)
+            sage: d.define(D.one() + g*d)
+            sage: d                                                    # needs sage.symbolic
+            1 + 1/(2^s) + 1/(3^s) + 2/4^s + 1/(5^s) + 3/6^s + 1/(7^s) + O(1/(8^s))
         """
         if valuation is None:
             valuation = self._minimal_valuation
@@ -3529,6 +3594,15 @@ class LazyPowerSeriesRing(LazySeriesRing):
         r"""
         Return an uninitialized series (``x is None`` input).
 
+        This is the transitional route; :meth:`undefined` is the
+        intended API and the single place that constructs the
+        uninitialized stream (this hook delegates to it).  The
+        omitted-valuation behavior of this route differs from
+        :meth:`undefined` on purpose: this route has no valuation to
+        default to for univariate Taylor series, so ``L(None)``
+        raises, while ``L.undefined()`` (like the multivariate route)
+        defaults to valuation 0.
+
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
@@ -3538,11 +3612,37 @@ class LazyPowerSeriesRing(LazySeriesRing):
             Traceback (most recent call last):
             ...
             ValueError: the valuation must be specified for undefined series
+            sage: L.undefined(0)
+            Uninitialized Lazy Series
+            sage: L = LazyPowerSeriesRing(QQ, 'z,t')
+            sage: L(None)
+            Uninitialized Lazy Series
+
+        ``define()`` round-trips through this route::
+
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: z = L.gen()
+            sage: e = L(None, valuation=1)
+            sage: e.define(L.zero())
+            sage: e
+            0
+            sage: e = L(None, valuation=1)
+            sage: e.define(z + (e^2 + e(z^2))/2)
+            sage: e
+            z + z^2 + z^3 + 2*z^4 + 3*z^5 + 6*z^6 + 11*z^7 + O(z^8)
+            sage: L = LazyPowerSeriesRing(QQ, 'z,t')
+            sage: z, t = L.gens()
+            sage: e = L(None, valuation=1)
+            sage: e.define(z + t*e)
+            sage: e
+            z + z*t + z*t^2 + z*t^3 + z*t^4 + z*t^5 + z*t^6 + O(z,t)^8
         """
-        assert degree is None
-        if valuation is None and self._arity > 1:
-            valuation = 0
-        return self.element_class(self, Stream_uninitialized(valuation))
+        if valuation is None:
+            if self._arity > 1:
+                valuation = 0
+            else:
+                raise ValueError("the valuation must be specified for undefined series")
+        return self.undefined(valuation)
 
     def _convert_to_exact_polynomial(self, x):
         r"""
@@ -4279,6 +4379,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         r"""
         Return an uninitialized series (``x is None`` input).
 
+        This is the transitional route; :meth:`undefined` is the
+        intended API and the single place that constructs the
+        uninitialized stream (this hook delegates to it).  An omitted
+        ``valuation`` defaults to the minimal valuation 0 of a
+        completion, as in :meth:`undefined`.
+
         EXAMPLES::
 
             sage: m = SymmetricFunctions(ZZ).m()
@@ -4287,11 +4393,19 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             Uninitialized Lazy Series
             sage: L(None)
             Uninitialized Lazy Series
+
+        A ``define()`` round-trip through this route::
+
+            sage: e = L(None, valuation=1)
+            sage: e.define(L(m[1]))
+            sage: e
+            m[1]
+            sage: e = L(None, valuation=1)
+            sage: e.define(L(m[2]) + L(m[3]))
+            sage: e
+            m[2] + m[3]
         """
-        assert degree is None
-        if valuation is None:
-            valuation = 0
-        return self.element_class(self, Stream_uninitialized(valuation))
+        return self.undefined(valuation)
 
     def _convert_to_exact_polynomial(self, x):
         r"""
@@ -4928,7 +5042,11 @@ class LazyDirichletSeriesRing(LazySeriesRing):
                     if coefficients is not None:
                         raise ValueError("coefficients must be None if x is provided")
                     coefficients = x
-                    x = None
+                    # x is now "omitted" (0 is the sentinel that
+                    # ``Parent.__call__`` substitutes for an omitted first
+                    # argument); passing ``None`` would trigger the
+                    # undefined-series route of the dispatcher
+                    x = 0
 
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients)
