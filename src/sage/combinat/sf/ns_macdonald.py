@@ -315,7 +315,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         return self.shape().boxes() + [(i, 0)
                                        for i in range(1, len(self.shape()) + 1)]
 
-    def attacking_boxes(self):
+    def attacking_boxes(self) -> list:
         """
         Return a list of pairs of boxes in ``self`` that are attacking.
 
@@ -329,14 +329,11 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
              ((1, 1), (2, 0)),
              ((1, 1), (3, 0))]
         """
-        boxes = self.boxes()
-        res = []
-        for (i, j), (ii, jj) in Combinations(boxes, 2):
-            if self.are_attacking(i, j, ii, jj):
-                res.append(((i, j), (ii, jj)))
-        return res
+        return [((i, j), (ii, jj))
+                for (i, j), (ii, jj) in Combinations(self.boxes(), 2)
+                if self.are_attacking(i, j, ii, jj)]
 
-    def is_non_attacking(self):
+    def is_non_attacking(self) -> bool:
         """
         Return ``True`` if ``self`` is non-attacking.
 

@@ -236,6 +236,10 @@
              addition formulas and applications*, Advances in Applied
              Mathematics 28 (2002) 302-342.
 
+.. [ALM2026] \E. Artal, A. Larraya and M.A. Marco-Buzunariz, *Retraction of the 
+             complement of smooth projective hypersurfaces to an `n`-dimensional `\Delta`-complex.* 
+             https://https://arxiv.org/abs/2605.26768
+
 .. [ALPRRV2019] \E. Andreeva, V. Lallemand, A. Purnal, R. Reyhanitabar, A. Roy, D. Vizar
                 "ForkAE v.1"
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/forkae-spec.pdf
@@ -962,6 +966,9 @@
 .. [BHS2023] Jose Bastidas, Christophe Hohlweg, and Franco Saliola.
              *The primitive Eulerian polynomial*.
              Preprint, (2023) :arxiv:`2306.15556`.
+
+.. [BHS25] Daniel Bump, Andrew Hardt, and Travis Scrimshaw. *On the boson-fermion
+           correspondence for factorial Schur functions*. Preprint, (2025) :arxiv:`2502.02841`.
 
 .. [BHZ2005] \N. Bergeron, C. Hohlweg, and M. Zabrocki, *Posets
              related to the Connectivity Set of Coxeter Groups*.
@@ -3332,6 +3339,9 @@
              Journal of Combinatorial Theory, Series A,
              Volume 144 (2016), pp. 212–249. :doi:`10.1016/j.jcta.2016.06.018`
 
+.. [GG1999] Joachim von zur Gathen and Jürgen Gerhard,
+            *Modern Computer Algebra*. Cambridge University Press, 1999.
+
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
             submitted, 2012. Preprint:
@@ -3533,6 +3543,10 @@
 
 .. [Gos1972] Bill Gosper, "Continued Fraction Arithmetic"
              https://perl.plover.com/classes/cftalk/INFO/gosper.txt
+
+.. [Gos1978] \R. W. Gosper, Jr., *Decision procedure for indefinite
+             hypergeometric summation*, Proc. Natl. Acad. Sci. U.S.A. 75
+             (1978), 40--42.
 
 .. [Gos1998] \D. Goss. Basic structures of function field arithmetic. Springer,
              1998.
@@ -5879,6 +5893,9 @@
 .. [Mo2009] \D. Moody, Des. Codes Cryptogr. (2009)
             52: 381. :doi:`10.1007/s10623-009-9287-x`
 
+.. [Moe2007] Moens, Els. *Supersymmetric Schur functions and Lie superalgebra
+             representations*, PhD thesis, Ghent University, 2007.
+
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.
@@ -6112,6 +6129,11 @@
 .. [NaiRow2011] Naidu and Rowell, *A finiteness property for braided fusion
                 categories*. Algebr. Represent. Theory 14 (2011), no. 5, 837-855.
                 :arxiv:`0903.4157`.
+
+.. [Nak2026] T. Nakano, *A Recursive Construction of Resolvable
+             2-(p^r,p,1) Designs with Free Row Permutations, and Anti-Pasch*,
+             Zenodo (2026).
+             :doi:`10.5281/zenodo.23757682`.
 
 .. [NAR2018] Jamie R. Nunez, Christopher R. Anderson, Ryan S. Renslow
              *Optimizing colormaps with consideration for color vision
@@ -6393,6 +6415,9 @@
 .. [Pau2006] Sebastian Pauli, *Constructing Class Fields over Local
              Fields*, Journal de Théorie des Nombres de Bordeaux,
              Vol. 18, No. 3 (2006), pp. 627-652.
+
+.. [Paule1995] Peter Paule, Greatest factorial factorization and symbolic
+               summation, J. Symbolic Comput. 20 (1995), 235--268.
 
 .. [PDynk1999] \R. A. Proctor. *Dynkin diagram classification of λ-minuscule
                Bruhat lattices and of d-complete posets*. J. Algebraic Combin.,
