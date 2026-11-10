@@ -3106,7 +3106,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
         sage: special_supersingular_curve(GF(1049^2), endomorphism=True, maximal_order=True)[2]
         Order of Quaternion Algebra (-3, -1049) with base ring Rational Field
-          with basis (1, 1/2 + 1/2*i, 1/2*j + 1/2*k, 1/3*i + 1/3*k)
+          with basis (1, 1/2 + 1/2*i, j, 1/2 + 1/6*i + 1/2*j + 1/6*k)
 
     ::
 

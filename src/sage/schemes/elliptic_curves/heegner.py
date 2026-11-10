@@ -4917,9 +4917,9 @@ class HeegnerQuatAlg(SageObject):
 
             sage: heegner_points(11).reduce_mod(3).left_orders()
             [Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-              with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k),
+              with basis (1, 11*i, 1/2 + 2*i + 1/2*j, 17/2*i + 1/2*k),
              Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-              with basis (1/2 + 1/2*j + 7*k, 1/4*i + 1/2*j + 63/4*k, j + 14*k, 22*k)]
+              with basis (1, 22*i, 1/2 + 13*i + 1/2*j, 1/2 + 83/4*i + 1/4*k)]
         """
         return [I.left_order() for I in self.right_ideals()]
 
@@ -5255,18 +5255,18 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; c = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[1]
             sage: g = H.kolyvagin_generators(f.domain().number_field(), c)
             sage: alpha_quaternion = f(g[0]); alpha_quaternion
-            1 - 77/192*i - 5/128*j - 137/384*k
+            1 - 77/192*i + 33/64*j + 19/96*k
             sage: H.kolyvagin_cyclic_subideals(I, 5, alpha_quaternion)
-            [(Fractional ideal (2560, 1280 + 47360*i, 1146 + 37678*i + 4*j, 212 + 54664/3*i + 2*j + 2/3*k), 0),
-             (Fractional ideal (2560, 1280 + 47360*i, 2426 + 9262*i + 4*j, 2004 + 83080/3*i + 2*j + 2/3*k), 1),
-             (Fractional ideal (2560, 1280 + 47360*i, 1914 + 9262*i + 4*j, 1748 + 111496/3*i + 2*j + 2/3*k), 2),
-             (Fractional ideal (2560, 1280 + 47360*i, 2170 + 18734*i + 4*j, 212 + 111496/3*i + 2*j + 2/3*k), 3),
-             (Fractional ideal (2560, 1280 + 47360*i, 890 + 28206*i + 4*j, 1748 + 54664/3*i + 2*j + 2/3*k), 4),
-             (Fractional ideal (2560, 1280 + 47360*i, 634 + 37678*i + 4*j, 2516 + 83080/3*i + 2*j + 2/3*k), 5)]
+            [(Fractional ideal (2560, 1280 + 47360*i, 1416 + 20692*i + 4*j, 814 + 117370/3*i + 2*j + 2/3*k), 0),
+             (Fractional ideal (2560, 1280 + 47360*i, 1416 + 1748*i + 4*j, 1582 + 88954/3*i + 2*j + 2/3*k), 1),
+             (Fractional ideal (2560, 1280 + 47360*i, 1160 + 30164*i + 4*j, 302 + 3706/3*i + 2*j + 2/3*k), 2),
+             (Fractional ideal (2560, 1280 + 47360*i, 904 + 20692*i + 4*j, 1838 + 3706/3*i + 2*j + 2/3*k), 3),
+             (Fractional ideal (2560, 1280 + 47360*i, 2440 + 39636*i + 4*j, 558 + 88954/3*i + 2*j + 2/3*k), 4),
+             (Fractional ideal (2560, 1280 + 47360*i, 904 + 1748*i + 4*j, 1326 + 117370/3*i + 2*j + 2/3*k), 5)]
         """
         X = I.cyclic_right_subideals(p, alpha_quaternion)
         return [(J, i) for i, J in enumerate(X)]
@@ -5291,7 +5291,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
             sage: H.kolyvagin_generator(f.domain().number_field(), 5)
             a + 1
@@ -5342,7 +5342,7 @@ class HeegnerQuatAlg(SageObject):
 
             sage: N = 37; D = -7; ell = 17; p = 5
             sage: H = heegner_points(N).reduce_mod(ell)
-            sage: I = H.brandt_module().right_ideals()[49]
+            sage: I = H.brandt_module().right_ideals()[50]
             sage: f = H.optimal_embeddings(D, 1, I.left_order())[0]
             sage: H.kolyvagin_generators(f.domain().number_field(), 5*17)
             [-34*a + 1, 35*a + 106]
@@ -5424,17 +5424,17 @@ class HeegnerQuatAlg(SageObject):
             sage: N = 37; D = -7; ell = 17; c = 41; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.heegner_divisor(D,1).element().nonzero_positions()
-            [49, 51]
-            sage: k49 = H.kolyvagin_sigma_operator(D, c, 49); k49
-            (79, 32, 31, 11, 53, 37, 1, 23, 15, 7, 0, 0, 0, 64, 32, 34, 53, 0, 27, 27, 0, 0, 0, 26, 0, 0, 18, 0, 22, 0, 53, 19, 27, 10, 0, 0, 0, 30, 35, 38, 0, 0, 0, 53, 0, 0, 4, 0, 0, 0, 0, 0)
+            [50, 51]
+            sage: k50 = H.kolyvagin_sigma_operator(D, c, 50); k50
+            (69, 1, 53, 32, 37, 32, 40, 6, 13, 5, 0, 9, 0, 0, 64, 53, 53, 27, 53, 53, 10, 0, 2, 36, 17, 0, 0, 25, 37, 22, 14, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 39, 0, 0, 28, 0, 0, 0, 0, 0)
             sage: k51 = H.kolyvagin_sigma_operator(D, c, 51); k51
-            (20, 12, 57, 0, 0, 0, 0, 52, 23, 15, 0, 7, 0, 0, 19, 4, 0, 73, 11, 0, 104, 31, 0, 38, 31, 0, 0, 31, 5, 47, 0, 27, 35, 0, 57, 32, 24, 10, 0, 8, 0, 31, 41, 0, 0, 0, 16, 0, 0, 0, 0, 0)
+            (26, 69, 0, 18, 17, 25, 10, 2, 33, 41, 43, 64, 1, 43, 0, 0, 0, 0, 0, 0, 17, 0, 22, 14, 29, 86, 43, 21, 0, 0, 0, 59, 5, 27, 38, 43, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 22, 30, 0, 0, 0, 0)
             sage: V = H.modp_dual_elliptic_curve_factor(EllipticCurve('37a'), q, 5); V
             Vector space of degree 52 and dimension 2 over Ring of integers modulo 3
             Basis matrix:
             2 x 52 dense matrix over Ring of integers modulo 3
-            sage: [b.dot_product(k49.element().change_ring(GF(q))) for b in V.basis()]
-            [1, 1]
+            sage: [b.dot_product(k50.element().change_ring(GF(q))) for b in V.basis()]
+            [2, 2]
             sage: [b.dot_product(k51.element().change_ring(GF(q))) for b in V.basis()]
             [1, 1]
 
@@ -5606,7 +5606,7 @@ class HeegnerQuatAlg(SageObject):
             sage: N = 37; D = -7; ell = 17; c = 41; p = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.kolyvagin_point_on_curve(D, c, EllipticCurve('37a'), p)
-            [1, 1]
+            [2, 2]
         """
         k = self.rational_kolyvagin_divisor(D, c)
         V = self.modp_dual_elliptic_curve_factor(E, p, bound)
@@ -6024,7 +6024,7 @@ class HeegnerQuatAlgEmbedding(SageObject):
             sage: H = heegner_points(11).reduce_mod(3); R = H.left_orders()[0]
             sage: H.optimal_embeddings(-7, 2, R)[0].codomain()
             Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-             with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k)
+             with basis (1, 11*i, 1/2 + 2*i + 1/2*j, 17/2*i + 1/2*k)
         """
         return self.__R
 

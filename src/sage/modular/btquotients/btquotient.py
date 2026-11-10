@@ -2235,7 +2235,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return M(v[0] + self._II * v[1] + self._JJ * v[2] + self._KK * v[3])
 
         # Get basis of the maximal order and compute their action on vector (1, 0)
-        B = self.get_maximal_order().basis()
+        from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
+        B = basis_for_quaternion_lattice(self.get_maximal_order().basis(), reverse=False)
         col_vectors = [phi(b).column(0) for b in B]
         mat = column_matrix(col_vectors)
 
@@ -2447,20 +2448,20 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(7,2*3*5)
             sage: X.get_embedding_matrix(4)
-            [                      1 + O(7^4)         5 + 2*7 + 3*7^3 + O(7^4) 4 + 5*7 + 6*7^2 + 6*7^3 + O(7^4)       6 + 3*7^2 + 4*7^3 + O(7^4)]
-            [                          O(7^4)                           O(7^4)                   3 + 7 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)]
-            [                          O(7^4)         2 + 5*7 + 6*7^3 + O(7^4) 3 + 5*7 + 6*7^2 + 6*7^3 + O(7^4)         3 + 3*7 + 3*7^2 + O(7^4)]
-            [                      1 + O(7^4) 3 + 4*7 + 6*7^2 + 3*7^3 + O(7^4)                   3 + 7 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)]
+            [        5 + 2*7 + 3*7^3 + O(7^4)         2 + 5*7 + 6*7^3 + O(7^4)       6 + 3*7^2 + 4*7^3 + O(7^4)   1 + 3*7 + 6*7^2 + 7^3 + O(7^4)]
+            [                          O(7^4)                           O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)         6 + 3*7 + 5*7^3 + O(7^4)]
+            [        2 + 5*7 + 6*7^3 + O(7^4)   4 + 3*7 + 7^2 + 5*7^3 + O(7^4)         3 + 3*7 + 3*7^2 + O(7^4)             3 + 7 + 7^3 + O(7^4)]
+            [3 + 4*7 + 6*7^2 + 3*7^3 + O(7^4)           5 + 7 + 6*7^2 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)         6 + 3*7 + 5*7^3 + O(7^4)]
             sage: X.get_embedding_matrix(3)
-            [                      1 + O(7^4)         5 + 2*7 + 3*7^3 + O(7^4) 4 + 5*7 + 6*7^2 + 6*7^3 + O(7^4)       6 + 3*7^2 + 4*7^3 + O(7^4)]
-            [                          O(7^4)                           O(7^4)                   3 + 7 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)]
-            [                          O(7^4)         2 + 5*7 + 6*7^3 + O(7^4) 3 + 5*7 + 6*7^2 + 6*7^3 + O(7^4)         3 + 3*7 + 3*7^2 + O(7^4)]
-            [                      1 + O(7^4) 3 + 4*7 + 6*7^2 + 3*7^3 + O(7^4)                   3 + 7 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)]
+            [        5 + 2*7 + 3*7^3 + O(7^4)         2 + 5*7 + 6*7^3 + O(7^4)       6 + 3*7^2 + 4*7^3 + O(7^4)   1 + 3*7 + 6*7^2 + 7^3 + O(7^4)]
+            [                          O(7^4)                           O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)         6 + 3*7 + 5*7^3 + O(7^4)]
+            [        2 + 5*7 + 6*7^3 + O(7^4)   4 + 3*7 + 7^2 + 5*7^3 + O(7^4)         3 + 3*7 + 3*7^2 + O(7^4)             3 + 7 + 7^3 + O(7^4)]
+            [3 + 4*7 + 6*7^2 + 3*7^3 + O(7^4)           5 + 7 + 6*7^2 + O(7^4) 1 + 6*7 + 3*7^2 + 2*7^3 + O(7^4)         6 + 3*7 + 5*7^3 + O(7^4)]
             sage: X.get_embedding_matrix(5)
-            [                              1 + O(7^5)         5 + 2*7 + 3*7^3 + 6*7^4 + O(7^5) 4 + 5*7 + 6*7^2 + 6*7^3 + 6*7^4 + O(7^5)       6 + 3*7^2 + 4*7^3 + 5*7^4 + O(7^5)]
-            [                                  O(7^5)                                   O(7^5)                           3 + 7 + O(7^5)   1 + 6*7 + 3*7^2 + 2*7^3 + 7^4 + O(7^5)]
-            [                                  O(7^5)         2 + 5*7 + 6*7^3 + 5*7^4 + O(7^5) 3 + 5*7 + 6*7^2 + 6*7^3 + 6*7^4 + O(7^5)         3 + 3*7 + 3*7^2 + 5*7^4 + O(7^5)]
-            [                              1 + O(7^5)         3 + 4*7 + 6*7^2 + 3*7^3 + O(7^5)                           3 + 7 + O(7^5)   1 + 6*7 + 3*7^2 + 2*7^3 + 7^4 + O(7^5)]
+            [      5 + 2*7 + 3*7^3 + 6*7^4 + O(7^5)       2 + 5*7 + 6*7^3 + 5*7^4 + O(7^5)     6 + 3*7^2 + 4*7^3 + 5*7^4 + O(7^5) 1 + 3*7 + 6*7^2 + 7^3 + 4*7^4 + O(7^5)]
+            [                                O(7^5)                                 O(7^5) 1 + 6*7 + 3*7^2 + 2*7^3 + 7^4 + O(7^5)       6 + 3*7 + 5*7^3 + 2*7^4 + O(7^5)]
+            [      2 + 5*7 + 6*7^3 + 5*7^4 + O(7^5) 4 + 3*7 + 7^2 + 5*7^3 + 4*7^4 + O(7^5)       3 + 3*7 + 3*7^2 + 5*7^4 + O(7^5)           3 + 7 + 7^3 + 3*7^4 + O(7^5)]
+            [      3 + 4*7 + 6*7^2 + 3*7^3 + O(7^5)           5 + 7 + 6*7^2 + 7^4 + O(7^5) 1 + 6*7 + 3*7^2 + 2*7^3 + 7^4 + O(7^5)       6 + 3*7 + 5*7^3 + 2*7^4 + O(7^5)]
         """
         if exact is True:
             try:
@@ -2680,7 +2681,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_eichler_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:
@@ -2708,7 +2709,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_maximal_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:
@@ -2965,7 +2966,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         alpha0 = self._conv(alpha1)
 
         alpha = Matrix(QQ, 4, 1, alpha1)
-        alphamat = self.embed_quaternion(alpha)
+        alphamat = self.embed_quaternion(alpha, prec=max(self._prec, 40), exact=False)
         letters = self.get_nontorsion_generators()
         letters += [g for g in self._find_elements_in_order(1)
                     if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
@@ -3176,10 +3177,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(3,17)
             sage: X._find_lattice(Matrix(ZZ,2,2,[1,2,3,4]),Matrix(ZZ,2,2,[3,2,1,5]), True,0)
             (
-            [1 0 0 0]  [138 204 -35 102]
-            [2 3 0 0]  [204 306 -51 153]
-            [0 0 1 0]  [-35 -51  12 -34]
-            [0 0 0 1], [102 153 -34 102]
+            [1 0 0 0]  [216  91 255 136]
+            [0 1 0 0]  [ 91  46 102  68]
+            [2 0 3 0]  [255 102 306 153]
+            [0 0 0 1], [136  68 153 102]
             )
         """
         if as_edges:
@@ -3431,7 +3432,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             v = [1] + list(self._A.gens())
             self._O = self._A.maximal_order()
             self._OMax = self._O
-            OBasis = self._O.basis()
+            from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
+            OBasis = basis_for_quaternion_lattice(self._O.basis(), reverse=False)
             self._B = [self._A(OBasis[tt]) for tt in range(4)]
 
         self._OQuadForm = QuadraticForm(self._Mat_44([(self._B[ii] * self._B[jj].conjugate()).reduced_trace() for ii in range(4) for jj in range(4)]))
