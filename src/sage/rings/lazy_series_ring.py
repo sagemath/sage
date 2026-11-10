@@ -523,7 +523,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         - ``_series_from_lazy_element`` (phase 4),
         - ``_convert_to_fraction_field``, guarded by the capability
           ``_accepts_fraction_field`` (phase 5),
-        - ``_accepts_coefficient_function`` (phase 6), and
+        - ``_is_coefficient_function`` (phase 6), and
         - ``_unable_to_convert`` (phase 7).
 
         .. WARNING::
@@ -604,7 +604,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 return self(frac.numerator()) / self(frac.denominator())
 
         # Phase 6: a coefficient function or an iterator.
-        if self._accepts_coefficient_function(x):
+        if self._is_coefficient_function(x):
             return self._series_from_coefficient_function(x, valuation,
                                                            degree, constant,
                                                            check)
@@ -942,7 +942,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         except (TypeError, ValueError, AttributeError):
             return None
 
-    def _accepts_coefficient_function(self, x):
+    def _is_coefficient_function(self, x):
         r"""
         Return whether ``x`` may be interpreted as a coefficient
         function or an iterator of coefficients.
@@ -950,9 +950,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
-            sage: L._accepts_coefficient_function(lambda i: i)
+            sage: L._is_coefficient_function(lambda i: i)
             True
-            sage: L._accepts_coefficient_function([1, 2])
+            sage: L._is_coefficient_function([1, 2])
             False
         """
         return callable(x) or isinstance(x, (GeneratorType, map, filter))
@@ -970,7 +970,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             4*z^-2 + z^-1 + z + 4*z^2 + 9*z^3 + 16*z^4 + O(z^5)
         """
         # ``check`` is ignored: there is no homogeneity notion here
-        if not self._accepts_coefficient_function(f):
+        if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
         BR = self._internal_poly_ring.base_ring()
         if valuation is None:
@@ -3773,7 +3773,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(lambda i: i^2, valuation=2)
             4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + 64*z^8 + O(z^9)
         """
-        if not self._accepts_coefficient_function(f):
+        if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
         R = self._laurent_poly_ring
         BR = self._internal_poly_ring.base_ring()  # this is the ring containing the elements of the stream
@@ -4497,7 +4497,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             return ret.shift(valuation - x._coeff_stream.order())
         return None
 
-    def _accepts_coefficient_function(self, x):
+    def _is_coefficient_function(self, x):
         r"""
         Return whether ``x`` may be interpreted as a coefficient
         function or a list of coefficients.
@@ -4506,9 +4506,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
-            sage: L._accepts_coefficient_function(lambda i: i)
+            sage: L._is_coefficient_function(lambda i: i)
             True
-            sage: L._accepts_coefficient_function((m[1], m[2]))
+            sage: L._is_coefficient_function((m[1], m[2]))
             True
         """
         return callable(x) or isinstance(x, (tuple, list))
@@ -4567,7 +4567,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L(lambda i: m[i], valuation=1)
             m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
         """
-        if not self._accepts_coefficient_function(f):
+        if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
         if valuation is None:
             valuation = 0
