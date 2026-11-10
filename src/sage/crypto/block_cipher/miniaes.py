@@ -299,10 +299,14 @@ class MiniAES(SageObject):
             sage: plaintxt == P
             True
 
+        Verify the test vector from Example 9 of [Pha2002]_::
+
             sage: P = bin("1001110001100011")
             sage: key = bin("1100001111110000")
-            sage: maes(P, key, algorithm='encrypt')
+            sage: C = maes(P, key, algorithm='encrypt'); C
             0111001011000110
+            sage: maes(C, key, algorithm='decrypt') == P
+            True
 
         TESTS:
 
@@ -367,6 +371,10 @@ class MiniAES(SageObject):
         MS = MatrixSpace(FiniteField(self._key_size, "x"), 2, 2)
         bin = BinaryStrings()
         S = ""
+        # MatrixSpace fills rows first, but Phan's Mini-AES state and key
+        # arrange the four nibbles column by column, so transpose the inputs.
+        # GF_to_binary reads rows first, so transpose the outputs back to
+        # restore the original binary order.
         matK = MS(self.binary_to_GF(key)).transpose()
         if algorithm == "encrypt":
             # encrypt each 16-bit block in succession
