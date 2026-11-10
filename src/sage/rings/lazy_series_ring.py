@@ -518,8 +518,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
           ``_unpacks_degree_tuple``, followed by the semantic hook
           ``_normalize_constructor_constant``),
         - ``_series_from_coefficient_function`` (phases 2 and 6),
-        - ``_convert_to_exact_polynomial`` and
-          ``_series_from_exact_polynomial`` (phase 3),
+        - ``_convert_to_exact_data`` and
+          ``_series_from_exact_data`` (phase 3),
         - ``_series_from_lazy_element`` (phase 4),
         - ``_convert_to_fraction_field``, guarded by the capability
           ``_accepts_fraction_field`` (phase 5),
@@ -587,9 +587,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         # Phase 3: exact data, namely an element of the internal
         # polynomial ring.
-        poly = self._convert_to_exact_polynomial(x)
+        poly = self._convert_to_exact_data(x)
         if poly is not None:
-            return self._series_from_exact_polynomial(poly, valuation,
+            return self._series_from_exact_data(poly, valuation,
                                                        degree, constant)
 
         # Phase 4: a lazy element of a supported source parent.
@@ -743,7 +743,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             raise ValueError("the valuation must be specified")
         return self.undefined(valuation)
 
-    def _convert_to_exact_polynomial(self, x):
+    def _convert_to_exact_data(self, x):
         r"""
         Return ``x`` viewed as an element of the internal polynomial
         ring, or ``None`` if ``x`` cannot be so viewed.
@@ -751,9 +751,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
-            sage: L._convert_to_exact_polynomial(2)
+            sage: L._convert_to_exact_data(2)
             2
-            sage: L._convert_to_exact_polynomial(lambda i: i) is None
+            sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
         R = self._internal_poly_ring
@@ -765,7 +765,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             return x
         return None
 
-    def _series_from_exact_polynomial(self, x, valuation, degree, constant):
+    def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
         Return the series defined by the polynomial ``x`` (an element of
         the internal polynomial ring).
@@ -3644,7 +3644,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 raise ValueError("the valuation must be specified for undefined series")
         return self.undefined(valuation)
 
-    def _convert_to_exact_polynomial(self, x):
+    def _convert_to_exact_data(self, x):
         r"""
         Return ``x`` viewed as an element of the internal polynomial
         ring, or ``None`` if ``x`` cannot be so viewed.
@@ -3652,9 +3652,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
-            sage: L._convert_to_exact_polynomial(2)
+            sage: L._convert_to_exact_data(2)
             2
-            sage: L._convert_to_exact_polynomial(lambda i: i) is None
+            sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
         R = self._laurent_poly_ring
@@ -3666,7 +3666,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             return x
         return None
 
-    def _series_from_exact_polynomial(self, x, valuation, degree, constant):
+    def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
         Return the series defined by the polynomial ``x`` (an element of
         the internal polynomial ring).
@@ -4407,7 +4407,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         return self.undefined(valuation)
 
-    def _convert_to_exact_polynomial(self, x):
+    def _convert_to_exact_data(self, x):
         r"""
         Return ``x`` viewed as an element of the basis, or ``None`` if
         ``x`` cannot be so viewed.
@@ -4416,9 +4416,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
-            sage: L._convert_to_exact_polynomial(m[2])
+            sage: L._convert_to_exact_data(m[2])
             m[2]
-            sage: L._convert_to_exact_polynomial(lambda i: i) is None
+            sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
         R = self._laurent_poly_ring
@@ -4430,7 +4430,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             return x
         return None
 
-    def _series_from_exact_polynomial(self, x, valuation, degree, constant):
+    def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
         Return the series defined by the element ``x`` of the basis.
 
