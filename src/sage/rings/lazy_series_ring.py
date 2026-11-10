@@ -89,6 +89,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.data_structures.stream import (
     Stream_zero,
     Stream_function,
+    Stream_inexact,
     Stream_iterator,
     Stream_exact,
     Stream_uninitialized,
@@ -739,6 +740,36 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                                     order=x.valuation(), degree=degree, constant=constant)
         return self.element_class(self, coeff_stream)
 
+    def _convert_stream_lazily(self, stream, BR, source_base_ring):
+        r"""
+        Return ``stream`` with its coefficients lazily converted into ``BR``.
+
+        An inexact stream that is reused from a lazy element of a source
+        ring over a different base ring is wrapped so that its
+        coefficients are converted into ``BR`` at access time; this
+        mirrors the eager coefficient conversion performed when the
+        source is exact.  Exact streams and streams whose source base
+        ring coincides with the target base ring are returned unchanged.
+
+        EXAMPLES::
+
+            sage: Lq = LazyLaurentSeriesRing(QQ, 'z')
+            sage: Lz = LazyLaurentSeriesRing(ZZ, 'z')
+            sage: g = Lq(lambda n: QQ(n), valuation=1)
+            sage: stream = Lz._convert_stream_lazily(g._coeff_stream, ZZ, QQ)
+            sage: stream[1].parent()
+            Integer Ring
+            sage: stream = Lz._convert_stream_lazily(g._coeff_stream, ZZ, ZZ)
+            sage: stream[1].parent()
+            Rational Field
+        """
+        if (isinstance(stream, Stream_inexact)
+                and source_base_ring is not BR):
+            src = stream
+            return Stream_function(lambda i: BR(src[i]),
+                                   src._is_sparse, src.order())
+        return stream
+
     def _series_from_lazy_element(self, x, valuation, degree, constant):
         r"""
         Return the series obtained from the lazy element ``x`` of a
@@ -747,6 +778,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         The supported source parents for this ring are its own element
         class and (univariate) lazy power series rings.
+
+        If ``valuation`` is given, it is the valuation of the result: the
+        source series is shifted accordingly.
 
         EXAMPLES::
 
@@ -787,7 +821,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 return self.element_class(self, coeff_stream)
 
             # We are just possibly shifting the result
-            ret = self.element_class(self, x._coeff_stream)
+            stream = self._convert_stream_lazily(x._coeff_stream,
+                                                 self.base_ring(),
+                                                 parent(x).base_ring())
+            ret = self.element_class(self, stream)
             if valuation is None:
                 return ret
             return ret.shift(valuation - x._coeff_stream.order())
@@ -802,24 +839,35 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 if x.parent()._arity != 1:
                     # Special case for constant series
                     if stream._degree == 1:
-                        return self(BR(stream[0]))
+                        return self(BR(stream[0]), valuation=valuation)
                 else:
                     coeffs = [BR(val) for val in stream._initial_coefficients]
-                    valuation = stream._approximate_order
+                    x_val = stream._approximate_order
                     for i, c in enumerate(coeffs):
                         if c:
-                            valuation += i
+                            x_val += i
                             coeffs = coeffs[i:]
                             break
                     else:
-                        valuation += len(coeffs)
+                        x_val += len(coeffs)
                         coeffs = []
-                    return self(coeffs,
+                    ret = self(coeffs,
                                 degree=stream._degree,
                                 constant=BR(stream._constant),
-                                valuation=valuation)
+                                valuation=x_val)
+                    if valuation is None:
+                        return ret
+                    return ret.shift(valuation - x_val)
             elif x.parent()._arity == 1:
-                return self.element_class(self, stream)
+                shift = None
+                if valuation is not None:
+                    shift = valuation - stream.order()
+                stream = self._convert_stream_lazily(stream, BR,
+                                                     x.parent().base_ring())
+                ret = self.element_class(self, stream)
+                if shift is None:
+                    return ret
+                return ret.shift(shift)
             raise ValueError(f"unable to convert {x} into {self}")
 
         return None
@@ -3422,9 +3470,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(coefficients=lambda i: i, valuation=2)
             2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + 8*z^8 + O(z^9)
         """
-        if valuation is None:
-            if self._arity > 1:
-                valuation = 0
         # TODO: the following is nonsense, think of an iterator
 #        if self._arity > 1 and valuation != 0:
 #            raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
@@ -3489,6 +3534,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
             ValueError: the valuation must be specified for undefined series
         """
         assert degree is None
+        if valuation is None and self._arity > 1:
+            valuation = 0
         return self.element_class(self, Stream_uninitialized(valuation))
 
     def _convert_to_exact_polynomial(self, x):
@@ -3560,33 +3607,53 @@ class LazyPowerSeriesRing(LazySeriesRing):
         The supported source parents for this ring are the lazy power
         series rings (of any arity).
 
+        If ``valuation`` is given, it is the valuation of the result: the
+        source series is shifted accordingly.
+
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
             sage: L(L([1, 2, 3], valuation=2))
             z^2 + 2*z^3 + 3*z^4
+            sage: L(L([1, 2, 3], valuation=2), valuation=5)
+            z^5 + 2*z^6 + 3*z^7
         """
         if not isinstance(x, LazyPowerSeries):
             return None
         stream = x._coeff_stream
+        if isinstance(stream, Stream_zero):
+            return self.element_class(self, stream)
         if isinstance(stream, Stream_exact):
             BR = self._internal_poly_ring.base_ring()
             coeffs = [BR(val) for val in stream._initial_coefficients]
             constant = BR(stream._constant)
-            valuation = stream._approximate_order
+            x_val = stream._approximate_order
             for i, c in enumerate(coeffs):
                 if c:
-                    valuation += i
+                    x_val += i
                     coeffs = coeffs[i:]
                     break
             else:
-                valuation += len(coeffs)
+                x_val += len(coeffs)
                 coeffs = []
-            return self(coeffs,
+            ret = self(coeffs,
                         degree=stream._degree,
                         constant=constant,
-                        valuation=valuation)
-        return self.element_class(self, stream)
+                        valuation=x_val)
+            if valuation is None:
+                return ret
+            return ret.shift(valuation - x_val)
+        # inexact source
+        BR = self._internal_poly_ring.base_ring()
+        shift = None
+        if valuation is not None:
+            shift = valuation - stream.order()
+        stream = self._convert_stream_lazily(stream, BR,
+                                             x.parent().base_ring())
+        ret = self.element_class(self, stream)
+        if shift is None:
+            return ret
+        return ret.shift(shift)
 
     def _series_from_coefficient_function(self, f, valuation, degree,
                                            constant, check=True):
@@ -4149,9 +4216,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             ValueError: coefficient h[] # e[] should be an element
             of homogeneous degree 1 but has degree 0
         """
-        if valuation is None:
-            valuation = 0
-
         return self._element_constructor_dispatch(x, valuation, degree,
                                                    constant, coefficients,
                                                    check)
@@ -4217,6 +4281,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             Uninitialized Lazy Series
         """
         assert degree is None
+        if valuation is None:
+            valuation = 0
         return self.element_class(self, Stream_uninitialized(valuation))
 
     def _convert_to_exact_polynomial(self, x):
@@ -4290,15 +4356,23 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         The supported source parents for this ring are the rings with
         the same element class (in particular itself).
 
+        If ``valuation`` is given, it is the valuation of the result: the
+        source series is shifted accordingly.
+
         EXAMPLES::
 
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
             sage: L(L(m[2]))
             m[2]
+            sage: L(L(m[2]), valuation=5)[5]
+            m[2]
         """
         if isinstance(x, self.Element):
-            return self.element_class(self, x._coeff_stream)
+            ret = self.element_class(self, x._coeff_stream)
+            if valuation is None or isinstance(x._coeff_stream, Stream_zero):
+                return ret
+            return ret.shift(valuation - x._coeff_stream.order())
         return None
 
     def _accepts_coefficient_function(self, x):
@@ -4373,6 +4447,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         if not self._accepts_coefficient_function(f):
             self._unable_to_convert(f)
+        if valuation is None:
+            valuation = 0
         R = self._laurent_poly_ring
 
         if isinstance(f, (tuple, list)):
