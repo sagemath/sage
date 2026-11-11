@@ -195,6 +195,7 @@ class PolynomialRing_generic(Ring):
     """
     Univariate polynomial ring over a ring.
     """
+    eagerly_reduce_ideal_gens_by_gcd = False
 
     def __init__(self, base_ring, name=None, sparse=False, implementation=None,
                  element_class=None, category=None):
