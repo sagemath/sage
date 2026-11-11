@@ -293,7 +293,7 @@ class NakajimaMonomial(Element):
 
             sage: M = crystals.infinity.NakajimaMonomials(['G',2,1])
             sage: M.module_generators[0].f_string([1,0,2])._latex_Y()
-            'Y_{0,0}^{-1} Y_{1,0}^{-1} Y_{1,1}^{2} Y_{2,0} Y_{2,1}^{-1} '
+            'Y_{0,0}^{-1} Y_{1,0}^{-1} Y_{1,1}^{2} Y_{2,0} Y_{2,1}^{-1}'
         """
         if not self._Y:
             return "\\boldsymbol{1}"
@@ -302,9 +302,9 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s}" % x[1]
             else:
-                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1])
         return return_str
 
     def _latex_A(self):
