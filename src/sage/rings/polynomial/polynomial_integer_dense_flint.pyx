@@ -1872,3 +1872,317 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
 
         return res
+
+    @coerce_binop
+    def divides(self, Polynomial_integer_dense_flint other):
+        r"""
+        Return ``True`` if this polynomial divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x - 1
+            sage: g = x^3 - 1
+            sage: f.divides(g)
+            True
+            sage: f.divides(x + 1)
+            False
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: f.divides(R(0))
+            True
+        """
+        cdef Polynomial_integer_dense_flint q
+        cdef int result
+        if self.is_zero():
+            return other.is_zero()
+        q = self._new()
+        sig_on()
+        result = fmpz_poly_divides(q._poly, other._poly, self._poly)
+        sig_off()
+        return bool(result)
+
+    def is_squarefree(self):
+        r"""
+        Return ``True`` if this polynomial is squarefree.
+
+        By convention, the zero polynomial is considered squarefree.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (x^2 - 1).is_squarefree()
+            True
+            sage: ((x - 1)^2).is_squarefree()
+            False
+            sage: R(1).is_squarefree()
+            True
+            sage: R(0).is_squarefree()
+            True
+        """
+        sig_on()
+        cdef bint result = fmpz_poly_is_squarefree(self._poly)
+        sig_off()
+        return bool(result)
+
+    def is_cyclotomic(self, certificate=False, algorithm=None):
+        r"""
+        Test whether this polynomial is a cyclotomic polynomial.
+
+        A *cyclotomic polynomial* is a monic, irreducible polynomial such that
+        all roots are roots of unity.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, return
+          ``0`` if not cyclotomic, otherwise return the positive integer ``n``
+          such that ``self`` is the ``n``-th cyclotomic polynomial
+        - ``algorithm`` -- ignored (kept for compatibility with the generic
+          method); FLINT's algorithm is always used
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (x^2 + x + 1).is_cyclotomic()
+            True
+            sage: (x^2 + x + 1).is_cyclotomic(certificate=True)
+            3
+            sage: (x^2 - 1).is_cyclotomic()
+            False
+            sage: (x^2 - 1).is_cyclotomic(certificate=True)
+            0
+            sage: R(1).is_cyclotomic()
+            False
+        """
+        sig_on()
+        cdef ulong idx = fmpz_poly_is_cyclotomic(self._poly)
+        sig_off()
+        if certificate:
+            return Integer(idx)
+        return bool(idx)
+
+    def taylor_shift(self, c):
+        r"""
+        Return ``self(x + c)``, the Taylor shift of this polynomial by ``c``.
+
+        INPUT:
+
+        - ``c`` -- an integer
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x^3 + 2*x - 1
+            sage: f.taylor_shift(1)
+            x^3 + 3*x^2 + 5*x + 2
+            sage: f.taylor_shift(1) == f(x + 1)
+            True
+            sage: f.taylor_shift(-2)
+            x^3 - 6*x^2 + 14*x - 13
+        """
+        cdef Polynomial_integer_dense_flint res = self._new()
+        cdef fmpz_t c_fmpz
+        cdef Integer cc = ZZ(c)
+        fmpz_init(c_fmpz)
+        fmpz_set_mpz(c_fmpz, cc.value)
+        sig_on()
+        fmpz_poly_taylor_shift(res._poly, self._poly, c_fmpz)
+        sig_off()
+        fmpz_clear(c_fmpz)
+        return res
+
+    def height(self):
+        r"""
+        Return the height of this polynomial, that is, the maximum of the
+        absolute values of the coefficients.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (3*x^2 - 7*x + 2).height()
+            7
+            sage: R(0).height()
+            0
+            sage: R(-5).height()
+            5
+        """
+        cdef fmpz_t h
+        cdef Integer result = Integer.__new__(Integer)
+        fmpz_init(h)
+        sig_on()
+        fmpz_poly_height(h, self._poly)
+        sig_off()
+        fmpz_get_mpz(result.value, h)
+        fmpz_clear(h)
+        return result
+
+    def bound_roots(self):
+        r"""
+        Return a nonnegative integer `B` such that every complex root `z` of
+        this polynomial satisfies `|z| \le B`.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: B = ((x - 3) * (x + 5)).bound_roots()
+            sage: all(abs(r) <= B for r in [-5, 3])
+            True
+            sage: (x^2 - 2).bound_roots()
+            2
+            sage: R(7).bound_roots()
+            0
+        """
+        cdef fmpz_t b
+        cdef Integer result = Integer.__new__(Integer)
+        fmpz_init(b)
+        sig_on()
+        fmpz_poly_bound_roots(b, self._poly)
+        sig_off()
+        fmpz_get_mpz(result.value, b)
+        fmpz_clear(b)
+        return result
+
+    def num_real_roots(self):
+        r"""
+        Return the number of distinct real roots of this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: (x^2 - 1).num_real_roots()
+            2
+            sage: (x^2 + 1).num_real_roots()
+            0
+            sage: ((x - 1)^2 * (x + 2)).num_real_roots()
+            2
+            sage: ((x^2 - 2)*(x^2 - 3)).num_real_roots()
+            4
+            sage: R(0).num_real_roots()
+            Traceback (most recent call last):
+            ...
+            ValueError: number of real roots is not defined for the zero polynomial
+        """
+        if self.is_zero():
+            raise ValueError("number of real roots is not defined for the zero polynomial")
+        # FLINT requires the polynomial to be squarefree
+        cdef Polynomial_integer_dense_flint sf
+        if fmpz_poly_is_squarefree(self._poly):
+            sf = self
+        else:
+            sf = self._new()
+            sig_on()
+            fmpz_poly_divexact(sf._poly, self._poly,
+                               (<Polynomial_integer_dense_flint>self.gcd(self.derivative()))._poly)
+            sig_off()
+        sig_on()
+        cdef slong n = fmpz_poly_num_real_roots(sf._poly)
+        sig_off()
+        return Integer(n)
+
+    def nth_derivative(self, n):
+        r"""
+        Return the ``n``-th derivative of this polynomial.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x^4 + 3*x^2 + 5
+            sage: f.nth_derivative(0) == f
+            True
+            sage: f.nth_derivative(1)
+            4*x^3 + 6*x
+            sage: f.nth_derivative(2)
+            12*x^2 + 6
+            sage: f.nth_derivative(4)
+            24
+            sage: f.nth_derivative(10)
+            0
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        cdef Polynomial_integer_dense_flint res = self._new()
+        sig_on()
+        fmpz_poly_nth_derivative(res._poly, self._poly, <ulong>n)
+        sig_off()
+        return res
+
+    @coerce_binop
+    def compose_series(self, Polynomial_integer_dense_flint other, n):
+        r"""
+        Return the composition of this polynomial with ``other`` modulo `x^n`.
+
+        The polynomial ``other`` must have zero constant term so that the
+        composition is well-defined as a power series.
+
+        INPUT:
+
+        - ``other`` -- a polynomial with zero constant coefficient
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = 1 + x + x^2
+            sage: g = x + x^3
+            sage: f.compose_series(g, 6)
+            2*x^4 + x^3 + x^2 + x + 1
+            sage: (1 + x).compose_series(x, 4)
+            x + 1
+
+        TESTS::
+
+            sage: f.compose_series(1 + x, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: other must have zero constant term
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if not other.is_zero() and fmpz_poly_length(other._poly) > 0:
+            # check constant term
+            if other[0] != 0:
+                raise ValueError("other must have zero constant term")
+        cdef Polynomial_integer_dense_flint res = self._new()
+        sig_on()
+        fmpz_poly_compose_series(res._poly, self._poly, other._poly, <slong>n)
+        sig_off()
+        return res
+
+    def power_sums(self, n):
+        r"""
+        Return the polynomial whose coefficients are the Newton power sums
+        of the roots of this polynomial, up to (but not including) order
+        ``n``.
+
+        If `r_1, \dots, r_d` are the roots of this polynomial (counted with
+        multiplicity), then the returned polynomial is
+        `\sum_{k=0}^{n-1} p_k x^k` where `p_k = \sum_i r_i^k`.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = (x - 1) * (x - 2) * (x + 3)
+            sage: f.power_sums(5)
+            98*x^4 - 18*x^3 + 14*x^2 + 3
+            sage: f.power_sums(0)
+            0
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if self.is_zero():
+            raise ValueError("power_sums is not defined for the zero polynomial")
+        cdef Polynomial_integer_dense_flint res = self._new()
+        sig_on()
+        fmpz_poly_power_sums(res._poly, self._poly, <slong>n)
+        sig_off()
+        return res
