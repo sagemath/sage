@@ -19,6 +19,7 @@ AUTHOR:
 from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
+from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace_libsingular
 
 #####################
 # Free algebra elements
@@ -642,7 +643,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
             This may not be the normal form of this element, unless
             the argument is a twosided Groebner basis up to the degree
-            of this element.
+            of this element.  If a commutative polynomial ideal is given,
+            then the caller is responsible for providing suitable reductors.
 
         EXAMPLES::
 
@@ -672,6 +674,18 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             y*y*z*z*z + y*z*y*z*z - y*z*z*y*z + y*z*z*z*z
             sage: p.reduce(I) != p.reduce(G) != p.normal_form(I) != p.reduce(I)
             True
+
+        Check that reduction by a two-sided Groebner basis does not rely on
+        the shifted commutative reductors, which are not always a Groebner
+        basis (see :issue:`42105`)::
+
+            sage: A.<x,y> = FreeAlgebra(QQ, 2, implementation='letterplace')
+            sage: f = x*y*x + y*y*x - y*x*x - y*x*y
+            sage: I = A*f*A
+            sage: g = f*y*x
+            sage: G = I.groebner_basis(degbound=g.degree())
+            sage: g.reduce(G)
+            0
         """
         cdef FreeAlgebra_letterplace P = self._parent
         if not isinstance(G, (list, tuple)):
@@ -679,12 +693,103 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                 return P.zero()
             if not (isinstance(G, MPolynomialIdeal) and G.ring() == P._current_ring):
                 G = G.gens()
-        C = P.current_ring()
-        cdef int selfdeg = self._poly.degree()
         if isinstance(G, MPolynomialIdeal):
+            C = P.current_ring()
             gI = G
-        else:
-            gI = P._reductor_(G, selfdeg)  # C.ideal(g,coerce=False)
+            from sage.libs.singular.option import LibSingularOptions
+            libsingular_options = LibSingularOptions()
+            bck = (libsingular_options['redTail'], libsingular_options['redSB'])
+            libsingular_options['redTail'] = True
+            libsingular_options['redSB'] = True
+            from sage.libs.singular.function import singular_function
+            poly_reduce = singular_function("NF")
+            try:
+                poly = poly_reduce(C(self._poly), gI, ring=C,
+                                   attributes={gI: {"isSB": 1}})
+            finally:
+                libsingular_options['redTail'] = bck[0]
+                libsingular_options['redSB'] = bck[1]
+            return FreeAlgebraElement_letterplace(P, poly, check=False)
+        return self._letterplace_normal_form(G, self._poly.degree())
+
+    def _letterplace_normal_form(self, G, degbound):
+        """
+        Return the normal form of ``self`` modulo ``G`` computed in
+        Singular's letterplace ring.
+
+        INPUT:
+
+        - ``G`` -- a list or tuple of weighted homogeneous elements of the
+          parent free algebra, to be interpreted as a (partial) two-sided
+          Groebner basis up to degree ``degbound``
+        - ``degbound`` -- nonnegative integer; an upper bound on the degree
+          of the reductions to be performed.  Singular's letterplace ring
+          requires a degree bound of at least 2, so smaller values are
+          silently raised to 2.
+
+        OUTPUT:
+
+        The two-sided normal form of ``self`` modulo ``G``, as an element
+        of the parent free algebra.
+
+        .. NOTE::
+
+            This is an internal helper used by :meth:`reduce` and
+            :meth:`normal_form`. It bypasses the shifted commutative
+            reductor approach (see
+            :meth:`~sage.algebras.letterplace.free_algebra_letterplace.FreeAlgebra_letterplace._reductor_`),
+            which only yields a commutative Groebner basis when the
+            generators are of degree 1, and routes the reduction through
+            Singular's actual letterplace ring instead (see
+            :issue:`42105`).
+
+        EXAMPLES:
+
+        A reduction by a two-sided Groebner basis (returns 0)::
+
+            sage: A.<x,y> = FreeAlgebra(QQ, 2, implementation='letterplace')
+            sage: f = x*y*x + y*y*x - y*x*x - y*x*y
+            sage: I = A*f*A
+            sage: g = f*y*x
+            sage: G = I.groebner_basis(degbound=g.degree()).gens()
+            sage: g._letterplace_normal_form(G, g.degree())
+            0
+
+        Reduction by an empty list returns ``self``::
+
+            sage: x._letterplace_normal_form([], 1)
+            x
+
+        Reduction with a degree bound below 2 is silently raised to 2,
+        so that Singular's letterplace ring can be constructed::
+
+            sage: x._letterplace_normal_form([y], 0)
+            x
+
+        Reduction in an algebra with non-trivial degree weights::
+
+            sage: F.<p,q,r> = FreeAlgebra(QQ, implementation='letterplace', degrees=[1,2,3])
+            sage: J = F*[p*q+r-q*p, p*q*r-p^6+q^3]*F
+            sage: G = J.groebner_basis(Infinity).gens()
+            sage: (r*J.0 - J.1)._letterplace_normal_form(G, 6)
+            0
+        """
+        degbound = max(degbound, 2)
+        cdef FreeAlgebra_letterplace A = self._parent
+        A.set_degbound(degbound)
+        P = A._current_ring
+        if not G:
+            return FreeAlgebraElement_letterplace(A, P(self._poly), check=False)
+        cdef FreeAlgebra_letterplace_libsingular lp_ring = \
+            FreeAlgebra_letterplace_libsingular(A._commutative_ring, A.degbound())
+        L = lp_ring._lp_ring_internal
+        to_L = P.hom(L.gens(), L, check=False)
+        from_L = L.hom(P.gens(), P, check=False)
+        cdef FreeAlgebraElement_letterplace gen
+        gens_in_L = []
+        for gen in G:
+            gens_in_L.append(to_L(gen._poly))
+        gI = L.ideal(gens_in_L)
         from sage.libs.singular.option import LibSingularOptions
         libsingular_options = LibSingularOptions()
         bck = (libsingular_options['redTail'], libsingular_options['redSB'])
@@ -692,11 +797,13 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         libsingular_options['redSB'] = True
         from sage.libs.singular.function import singular_function
         poly_reduce = singular_function("NF")
-        poly = poly_reduce(C(self._poly), gI, ring=C,
-                           attributes={gI: {"isSB": 1}})
-        libsingular_options['redTail'] = bck[0]
-        libsingular_options['redSB'] = bck[1]
-        return FreeAlgebraElement_letterplace(P, poly, check=False)
+        try:
+            nf = poly_reduce(to_L(P(self._poly)), gI, ring=L,
+                             attributes={gI: {"isSB": 1}})
+        finally:
+            libsingular_options['redTail'] = bck[0]
+            libsingular_options['redSB'] = bck[1]
+        return FreeAlgebraElement_letterplace(A, P(from_L(nf)), check=False)
 
     def normal_form(self, I):
         """
@@ -747,4 +854,11 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         if self._parent != I.ring():
             raise ValueError("cannot compute normal form wrt an ideal that does not belong to %s" % self._parent)
         sdeg = self._poly.degree()
-        return self.reduce(self._parent._reductor_(I.groebner_basis(degbound=sdeg).gens(), sdeg))
+        degbound = max(sdeg, 2)
+        # Compute the normal form using Singular's letterplace ring
+        # directly. This avoids relying on the shifts of generators (as
+        # produced by ``_reductor_``) being a commutative Groebner basis,
+        # which is not always the case (see :issue:`42105`).
+        # Singular's letterplace ring requires a degree bound of at least 2.
+        return self._letterplace_normal_form(I.groebner_basis(degbound=degbound).gens(),
+                                             degbound)
