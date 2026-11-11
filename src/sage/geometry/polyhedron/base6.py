@@ -890,13 +890,52 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: polytopes.cube().affine_hull().is_universe()
             True
+
+        The base ring is preserved when an integral affine hull admits an
+        integral point (:issue:`42142`)::
+
+            sage: pp = Polyhedron(vertices=[[-1, -1, 1, -1], [-1, -1, 5, 1],
+            ....:                           [-1, 5, -1, 1], [5, -1, -1, 1]])
+            sage: ah = pp.affine_hull()
+            sage: ah.base_ring()
+            Integer Ring
+            sage: ah.Hrepresentation()
+            (An equation (1, 1, 1, -2) x - 1 == 0,)
+            sage: ah.base_extend(QQ) == pp.base_extend(QQ).affine_hull()
+            True
+
+        Rays and lines contribute to the affine hull as directions::
+
+            sage: P = Polyhedron(vertices=[[1, 0, 0]], rays=[[1, 1, 0], [1, -1, 0]])
+            sage: P.affine_hull().Hrepresentation()
+            (An equation (0, 0, 1) x + 0 == 0,)
+            sage: P = Polyhedron(vertices=[[2, 3, 0]], lines=[[1, 1, 0]])
+            sage: P.affine_hull().Hrepresentation()
+            (An equation (1, -1, 0) x + 1 == 0, An equation (0, 0, 1) x + 0 == 0)
+
+        PPL may choose a non-integral point for an integral affine space.
+        Sage replaces it by an integral representative::
+
+            sage: P = Polyhedron(vertices=[[0, 3, -3], [-2, -2, -3]],
+            ....:                rays=[[2, -3, -1]], base_ring=ZZ)
+            sage: P.affine_hull()
+            A 2-dimensional polyhedron in ZZ^3 defined as
+             the convex hull of 1 vertex and 2 lines
+            sage: P.affine_hull().Hrepresentation()
+            (An equation (5, -2, 16) x + 54 == 0,)
         """
         if args or kwds:
             raise TypeError("the method 'affine_hull' does not take any parameters; perhaps you meant 'affine_hull_projection'")
         if not self.inequalities():
             return self
-        self_as_face = self.faces(self.dimension())[0]
-        return self_as_face.affine_tangent_cone()
+
+        verts = self.vertices()
+        v0 = verts[0].vector()
+        directions = [v.vector() - v0 for v in verts[1:]]
+        directions.extend(r.vector() for r in self.rays())
+        directions.extend(l.vector() for l in self.lines())
+        parent = self.parent()
+        return parent.element_class(parent, [[v0], [], directions], None)
 
     @cached_method
     def _affine_hull_projection(self, *,
