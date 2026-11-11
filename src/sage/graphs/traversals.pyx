@@ -499,14 +499,16 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
     sig_off()
     cdef list sigma = [Gbackend.vertex_label(vi) for vi in sigma_int]
-    cdef dict predecessor = {u: sigma[i] for u, i in zip(sigma, pred) if i != -1}
+    cdef list edges
+    if tree:
+        # Build the list of edges
+        edges = [(u, sigma[i]) for u, i in zip(sigma, pred) if i != -1]
 
     if reverse:
         sigma.reverse()
 
     if tree:
         from sage.graphs.digraph import DiGraph
-        edges = predecessor.items()
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
     return sigma
