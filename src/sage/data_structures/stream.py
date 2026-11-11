@@ -922,7 +922,7 @@ class Stream_exact(Stream):
             sage: from sage.data_structures.stream import Stream_exact
             sage: s = Stream_exact([2], order=-1, degree=2, constant=1)
             sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-            sage: s._polynomial_part(L._laurent_poly_ring)
+            sage: s._polynomial_part(L._stream_poly_ring)
             2*z^-1
         """
         v = self._approximate_order

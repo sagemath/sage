@@ -69,7 +69,6 @@ from sage.categories.complete_discrete_valuation import (CompleteDiscreteValuati
                                                          CompleteDiscreteValuationRings)
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
@@ -710,7 +709,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L._normalize_constructor_constant(None, 2)
             (None, 2)
         """
-        BR = self._internal_poly_ring.base_ring()
+        BR = self._coefficient_ring
         if constant is not None:
             constant = BR(constant)
         return degree, constant
@@ -774,15 +773,15 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
-            sage: L._try_exact_data_ring(L._internal_poly_ring, 2)
+            sage: L._try_exact_data_ring(L._exact_data_ring, 2)
             2
             sage: P = LazyPowerSeriesRing(QQ, 'z')
-            sage: P._try_exact_data_ring(P._laurent_poly_ring, 2)
+            sage: P._try_exact_data_ring(P._exact_data_ring, 2)
             2
             sage: m = SymmetricFunctions(ZZ).m()
             sage: LazySymmetricFunctions(m)._try_exact_data_ring(m, m[2])
             m[2]
-            sage: L._try_exact_data_ring(L._internal_poly_ring, lambda i: i) is None
+            sage: L._try_exact_data_ring(L._exact_data_ring, lambda i: i) is None
             True
         """
         try:
@@ -795,8 +794,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     def _convert_to_exact_data(self, x):
         r"""
-        Return ``x`` viewed as an element of the internal polynomial
-        ring, or ``None`` if ``x`` cannot be so viewed.
+        Return ``x`` viewed as an element of the exact-data ring of
+        this ring (see ``_exact_data_ring``), or ``None`` if ``x``
+        cannot be so viewed.
 
         EXAMPLES::
 
@@ -806,7 +806,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
-        return self._try_exact_data_ring(self._internal_poly_ring, x)
+        return self._try_exact_data_ring(self._exact_data_ring, x)
 
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
@@ -819,7 +819,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
-            sage: L(L._internal_poly_ring.gen()^3)
+            sage: L(L._exact_data_ring.gen()^3)
             z^3
         """
         if not x and not constant:
@@ -928,7 +928,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         # Handle when it is a power series
         if isinstance(x, LazyPowerSeries):
-            BR = self._internal_poly_ring.base_ring()
+            BR = self._coefficient_ring
             stream = x._coeff_stream
             if isinstance(stream, Stream_zero):
                 return self.zero()
@@ -982,7 +982,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             (z + 1)/(z^2 + 1)
         """
         try:
-            FF = self._laurent_poly_ring.fraction_field()
+            FF = self._exact_data_ring.fraction_field()
             return FF(x)
         except (TypeError, ValueError, AttributeError):
             return None
@@ -1021,7 +1021,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         # ``check`` is ignored: there is no homogeneity notion here
         if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
-        BR = self._internal_poly_ring.base_ring()
+        BR = self._coefficient_ring
         if valuation is None:
             raise ValueError("the valuation must be specified")
         if degree is None:
@@ -1543,7 +1543,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         for f, ic in zip(s, ics):
             f.define_implicitly(s, ic, eqs,
                                 self.base_ring(),
-                                self._internal_poly_ring.base_ring(),
+                                self._coefficient_ring,
                                 self._terms_of_degree,
                                 max_lookahead=max_lookahead)
 
@@ -1726,12 +1726,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         if self.base_ring().has_coerce_map_from(S):
             return True
 
-        R = self._laurent_poly_ring
+        R = self._exact_data_ring
         if R.has_coerce_map_from(S):
             return True
 
         if (isinstance(S, LazySeriesRing)
-            and self._laurent_poly_ring.has_coerce_map_from(S._laurent_poly_ring)):
+            and self._exact_data_ring.has_coerce_map_from(S._exact_data_ring)):
             return True
 
         return None
@@ -2411,8 +2411,9 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise ValueError("only univariate lazy Laurent series are implemented")
         self._arity = 1
         self._minimal_valuation = None
-        self._laurent_poly_ring = LaurentPolynomialRing(base_ring, names, sparse=sparse)
-        self._internal_poly_ring = self._laurent_poly_ring
+        self._exact_data_ring = self._stream_poly_ring = LaurentPolynomialRing(base_ring, names, sparse=sparse)
+        self._coefficient_ring = base_ring
+        self._structured_coefficients = False
 
         category = Algebras(base_ring.category())
         if base_ring in Fields():
@@ -2470,7 +2471,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.variable_names_recursive(1)
             ('z',)
         """
-        return self._laurent_poly_ring.variable_names_recursive(depth)
+        return self._exact_data_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -2532,7 +2533,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.an_element()
             z^-2 + z^3 + z^4 + z^5 + O(z^6)
         """
-        return self(self._laurent_poly_ring.an_element(),
+        return self(self._exact_data_ring.an_element(),
                     valuation=-2,
                     degree=3,
                     constant=self.base_ring().an_element())
@@ -2673,7 +2674,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L._monomial(2, -4)
             2*z^-4
         """
-        return self._laurent_poly_ring(c).shift(n)
+        return self._exact_data_ring(c).shift(n)
 
     def _terms_of_degree(self, n, R):
         r"""
@@ -3281,11 +3282,12 @@ class LazyPowerSeriesRing(LazySeriesRing):
         self._minimal_valuation = 0
         self._arity = len(names)
         if self._arity == 1:
-            self._laurent_poly_ring = PolynomialRing(base_ring, names, sparse=sparse)
-            self._internal_poly_ring = self._laurent_poly_ring
+            self._exact_data_ring = self._stream_poly_ring = PolynomialRing(base_ring, names, sparse=sparse)
+            self._coefficient_ring = base_ring
         else:
-            self._laurent_poly_ring = PolynomialRing(base_ring, names)
-            self._internal_poly_ring = PolynomialRing(self._laurent_poly_ring, "DUMMY_VARIABLE", sparse=sparse)
+            self._exact_data_ring = self._coefficient_ring = PolynomialRing(base_ring, names)
+            self._stream_poly_ring = PolynomialRing(self._exact_data_ring, "DUMMY_VARIABLE", sparse=sparse)
+        self._structured_coefficients = self._arity > 1
         category = Algebras(base_ring.category())
         mixin_gcd = False
         if self._arity == 1:
@@ -3330,9 +3332,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
         from sage.categories.pushout import CompletionFunctor
         if self._arity == 1:
             return (CompletionFunctor(self._names[0], infinity),
-                    self._laurent_poly_ring)
+                    self._exact_data_ring)
         return (CompletionFunctor(self._names, infinity),
-                self._laurent_poly_ring)
+                self._exact_data_ring)
 
     def _repr_(self):
         """
@@ -3374,7 +3376,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             2*z^3
         """
         m = len(self.variable_names())
-        L = self._laurent_poly_ring
+        L = self._exact_data_ring
         if m == 1:
             return L(c) * L.gen() ** n
         return L(c)
@@ -3401,7 +3403,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if self._arity == 1:
             return [R.one()]
         return [m.change_ring(R)
-                for m in self._internal_poly_ring.base_ring().monomials_of_degree(n)]
+                for m in self._coefficient_ring.monomials_of_degree(n)]
 
     def variable_names_recursive(self, depth=infinity):
         r"""
@@ -3420,7 +3422,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L.variable_names_recursive(2)
             ('x', 'y')
         """
-        return self._laurent_poly_ring.variable_names_recursive(depth)
+        return self._exact_data_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -3443,7 +3445,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 raise IndexError("there is only one generator")
             raise IndexError("there are only %s generators" % m)
 
-        R = self._laurent_poly_ring
+        R = self._exact_data_ring
         BR = self.base_ring()
         if len(self.variable_names()) == 1:
             coeff_stream = Stream_exact([BR.one()], constant=BR.zero(), order=1)
@@ -3650,7 +3652,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if constant is not None:
             if self._arity > 1 and constant:
                 raise ValueError("constant must be zero for multivariate Taylor series")
-            BR = self._internal_poly_ring.base_ring()
+            BR = self._coefficient_ring
             constant = BR(constant)
         return degree, constant
 
@@ -3708,20 +3710,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 raise ValueError("the valuation must be specified for undefined series")
         return self.undefined(valuation)
 
-    def _convert_to_exact_data(self, x):
-        r"""
-        Return ``x`` viewed as an element of the multivariate
-        polynomial ring of this ring, or ``None`` if ``x`` cannot be so
-        viewed.
-
-        EXAMPLES::
-
-            sage: L = LazyPowerSeriesRing(QQ, 'z')
-            sage: L._convert_to_exact_data(2)
-            2
-        """
-        return self._try_exact_data_ring(self._laurent_poly_ring, x)
-
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
         Return the series defined by the polynomial ``x`` (an element of
@@ -3735,7 +3723,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
-            sage: L(L._laurent_poly_ring.gen()^3)
+            sage: L(L._exact_data_ring.gen()^3)
             z^3
         """
         if not x and not constant:
@@ -3787,7 +3775,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         if not isinstance(x, LazyPowerSeries):
             return None
-        BR = self._internal_poly_ring.base_ring()
+        BR = self._coefficient_ring
         stream = x._coeff_stream
         if isinstance(stream, Stream_zero):
             return self.element_class(self, stream)
@@ -3845,8 +3833,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
-        R = self._laurent_poly_ring
-        BR = self._internal_poly_ring.base_ring()  # this is the ring containing the elements of the stream
+        # the ring containing the elements of the stream
+        R = BR = self._coefficient_ring
         if valuation is None:
             valuation = 0
         if degree is not None:
@@ -3920,9 +3908,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
             x
         """
         if self._arity == 1:
-            return self(self._laurent_poly_ring.an_element(),
+            return self(self._exact_data_ring.an_element(),
                         constant=self.base_ring().an_element())
-        return self(self._laurent_poly_ring.an_element())
+        return self(self._exact_data_ring.an_element())
 
     def uniformizer(self):
         """
@@ -4015,7 +4003,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if self._arity == 1:
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: n**2)])
         else:
-            PR = self._laurent_poly_ring
+            PR = self._exact_data_ring
             sum_gens = PR.sum(PR.gens())
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: sum_gens**n)])
         return elts
@@ -4079,7 +4067,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             pass
 
         if self._arity != 1:
-            R = self._laurent_poly_ring
+            R = self._exact_data_ring
             BR = R.base_ring()
             args = f.arguments()
             subs = {str(va): ZZ.zero() for va in args}
@@ -4217,8 +4205,9 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             category = category.Infinite()
         Parent.__init__(self, base=base_ring, category=category)
         self._sparse = sparse
-        self._laurent_poly_ring = basis
-        self._internal_poly_ring = PolynomialRing(self._laurent_poly_ring, "DUMMY_VARIABLE", sparse=sparse)
+        self._exact_data_ring = self._coefficient_ring = basis
+        self._stream_poly_ring = PolynomialRing(basis, "DUMMY_VARIABLE", sparse=sparse)
+        self._structured_coefficients = True
 
     def _repr_(self):
         """
@@ -4230,7 +4219,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: LazySymmetricFunctions(s)                                             # needs sage.modules
             Lazy completion of Symmetric Functions over Finite Field of size 2 in the Schur basis
         """
-        return "Lazy completion of {}".format(self._laurent_poly_ring)
+        return "Lazy completion of {}".format(self._exact_data_ring)
 
     def _latex_(self):
         r"""
@@ -4244,7 +4233,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             \text{\texttt{Symmetric{ }Functions{ }over{ }Finite{ }Field{ }of{ }size{ }2{ }in{ }the{ }Schur{ }basis}}
         """
         from sage.misc.latex import latex
-        return latex(self._laurent_poly_ring)
+        return latex(self._exact_data_ring)
 
     def _monomial(self, c, n):
         r"""
@@ -4258,7 +4247,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L._monomial(s[2,1], 3)
             2*m[1, 1, 1] + m[2, 1]
         """
-        L = self._laurent_poly_ring
+        L = self._coefficient_ring
         return L(c)
 
     @cached_method
@@ -4293,7 +4282,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         from sage.combinat.integer_vector import IntegerVectors
         from sage.misc.mrange import cartesian_product_iterator
         from sage.categories.tensor import tensor
-        B = self._internal_poly_ring.base_ring()
+        B = self._coefficient_ring
         B = B.change_ring(R)
         if self._arity == 1:
             return list(B.homogeneous_component_basis(n))
@@ -4477,20 +4466,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         return self.undefined(valuation)
 
-    def _convert_to_exact_data(self, x):
-        r"""
-        Return ``x`` viewed as an element of the basis, or ``None`` if
-        ``x`` cannot be so viewed.
-
-        EXAMPLES::
-
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: L = LazySymmetricFunctions(m)
-            sage: L._convert_to_exact_data(m[2])
-            m[2]
-        """
-        return self._try_exact_data_ring(self._laurent_poly_ring, x)
-
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
         Return the series defined by the element ``x`` of the basis.
@@ -4658,7 +4633,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             self._unable_to_convert(f)
         if valuation is None:
             valuation = 0
-        R = self._laurent_poly_ring
+        R = self._coefficient_ring
 
         if isinstance(f, (tuple, list)):
             if degree is None:
@@ -4728,7 +4703,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L.an_element()                                                        # needs sage.modules
             2*m[] + 2*m[1] + 3*m[2]
         """
-        return self(self._laurent_poly_ring.an_element())
+        return self(self._exact_data_ring.an_element())
 
     def some_elements(self):
         """
@@ -4767,7 +4742,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             pass
         # an element with no constant term and an invertible
         # coefficient of the linear term
-        it = iter(self._laurent_poly_ring.basis())
+        it = iter(self._exact_data_ring.basis())
         temp = self.sum(b for _ in range(4) if (b := next(it)).degree())
         if temp:
             elts.append(temp)
@@ -4926,24 +4901,6 @@ class LazyDirichletSeriesRing(LazySeriesRing):
     # Follow the "generic" normalization
     __classcall_private__ = LazySeriesRing.__classcall_private__
 
-    @lazy_attribute
-    def _laurent_poly_ring(self):
-        r"""
-        Return the symbolic ring.
-
-        .. TODO::
-
-            It would be good to have something better than the symbolic ring.
-
-        TESTS::
-
-            sage: L = LazyDirichletSeriesRing(ZZ, 't')
-            sage: L._laurent_poly_ring is SR                                            # needs sage.symbolic
-            True
-        """
-        from sage.symbolic.ring import SR
-        return SR
-
     def __init__(self, base_ring, names, sparse=True, category=None):
         r"""
         Initialize the ring.
@@ -4966,7 +4923,9 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         self._sparse = sparse
         self._minimal_valuation = 1
         self._arity = 1
-        self._internal_poly_ring = PolynomialRing(base_ring, names, sparse=sparse)
+        self._exact_data_ring = self._stream_poly_ring = PolynomialRing(base_ring, names, sparse=sparse)
+        self._coefficient_ring = base_ring
+        self._structured_coefficients = False
 
         category = Algebras(base_ring.category())
         if base_ring in IntegralDomains():
@@ -5112,7 +5071,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             -1/(2^t) - 1/(3^t) - 1/(5^t) + 1/(6^t) - 1/(7^t) + O(1/(9^t))
         """
         if isinstance(x, (list, tuple)):
-            p = self._internal_poly_ring(x)
+            p = self._exact_data_ring(x)
             if valuation is None:
                 if not p:
                     valuation = 1 + len(x)
@@ -5227,8 +5186,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             5/3^z
         """
         try:
-            L = self._laurent_poly_ring
-            return L(c) * L(n) ** -L(self.variable_name())
+            from sage.symbolic.ring import SR
+            return SR(c) * SR(n) ** -SR(self.variable_name())
         except (ValueError, TypeError):
             return '({})/{}^{}'.format(self.base_ring()(c), n, self.variable_name())
 
@@ -5435,8 +5394,9 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
         self._arity = 1
         self._minimal_valuation = None
 
-        self._laurent_poly_ring = base_ring
-        self._internal_poly_ring = LaurentPolynomialRing(base_ring, "PARTIAL", sparse=sparse)
+        self._coefficient_ring = base_ring
+        self._exact_data_ring = self._stream_poly_ring = LaurentPolynomialRing(base_ring, "PARTIAL", sparse=sparse)
+        self._structured_coefficients = True
         self._variable = variable
 
         category = Algebras(base_ring.category())
@@ -5516,7 +5476,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
             sage: L._monomial(2*(t + t^2)/(t^2 + t^3), 3)
             2*t^-1
         """
-        return self._laurent_poly_ring(c)
+        return self._coefficient_ring(c)
 
     @cached_method
     def _terms_of_degree(self, n, R):
