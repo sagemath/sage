@@ -501,6 +501,53 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     # :class:`LazyCompletionGradedAlgebra`) switch it off explicitly.
     _accepts_fraction_field = True
 
+    # The constructor data attributes: they are set in the ``__init__``
+    # of every concrete subclass; the ``None`` defaults below only
+    # document the contract.
+    #
+    # - ``_exact_data_ring`` -- the ring the exact data converts into (the
+    #   phase-3 target of the element constructor: the ring describing
+    #   what the known finite part of a series looks like).  It is also
+    #   the source of the rational-function fallback routing and of the
+    #   variable-name introspection.
+    #
+    # - ``_coefficient_ring`` -- the ring a single entry of a coefficient
+    #   stream lives in (coefficient functions produce its elements; it
+    #   is also the target of the lazy stream conversion of a source
+    #   series over a different base ring).
+    #
+    # - ``_stream_poly_ring`` -- for rings with structured coefficients
+    #   (Taylor series of arity greater than one, completions of graded
+    #   algebras, and pseudo-differential operator rings), the univariate
+    #   "shell" polynomial ring over ``_coefficient_ring`` in which the
+    #   coefficient of a stream index lives (a DUMMY one-variable ring
+    #   when the coefficients are structured); it coincides with
+    #   ``_exact_data_ring`` when the coefficients are unstructured.
+    #
+    # The related flag ``_structured_coefficients`` records whether the
+    # coefficient of a stream index is itself structured (multi-variate
+    # homogeneous or graded), and thus needs the shell ring.
+    #
+    # Per ring:
+    #
+    # ======  ===========================  =====================  =========================
+    # ring    ``_exact_data_ring``         ``_coefficient_ring``  ``_stream_poly_ring``
+    # ======  ===========================  =====================  =========================
+    # A       Laurent polynomial ring      base ring             coincides
+    # B (1)   polynomial ring               base ring             coincides
+    # B (>1)  polynomial ring, all vars    same polynomial ring  DUMMY ring over it
+    # C       basis                        basis                 DUMMY ring over the basis
+    # D       encoding polynomial ring     base ring             coincides
+    # PD      PARTIAL Laurent ring         base ring             coincides
+    # ======  ===========================  =====================  =========================
+    #
+    # with A = Laurent, B = Taylor (arity 1 / > 1), C = completion,
+    # D = Dirichlet, PD = pseudo-differential operators; ``coincides``
+    # means the attribute is the same object as ``_exact_data_ring``.
+    _exact_data_ring = None
+    _coefficient_ring = None
+    _stream_poly_ring = None
+
     def _element_constructor_dispatch(self, x, valuation, degree, constant,
                                       coefficients, check=None):
         r"""
