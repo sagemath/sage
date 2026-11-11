@@ -151,10 +151,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
     - :wikipedia:`Dynkin_diagram#Folding`
 
-    .. [OSShimo03] \M. Okado, A. Schilling, M. Shimozono.
-       "Virtual crystals and fermionic formulas for type `D_{n+1}^{(2)}`,
-       `A_{2n}^{(2)}`, and `C_n^{(1)}`". Representation Theory. **7** (2003).
-       101-163. :doi:`10.1.1.192.2095`, :arxiv:`0810.5067`.
+    - [OSShimo03]_
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, virtual, orbit):

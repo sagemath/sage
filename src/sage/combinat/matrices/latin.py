@@ -2171,9 +2171,7 @@ def LatinSquare_generator(L_start, check_assertions=False):
 
     REFERENCES:
 
-    .. [JacMat96] Mark T. Jacobson and Peter Matthews, "Generating uniformly
-       distributed random Latin squares", Journal of Combinatorial Designs,
-       4 (1996)
+    - [JacMat96]_
     """
     if check_assertions:
         assert L_start.is_latin_square()

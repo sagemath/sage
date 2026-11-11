@@ -1956,7 +1956,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if auxiliary_variable is None:
             auxiliary_variable = x + "0" if isinstance(x, str) else "x0"
         names = [str(auxiliary_variable)]
-        names.extend([str(s) for s in self.x()])
+        names.extend(str(s) for s in self.x())
         names.extend(slack_variables)
         if names[0] == names[1]:
             names.pop(0)

@@ -27,7 +27,6 @@ Check that ``eclib`` is imported as needed::
 """
 import sys
 
-from sage.libs.eclib.mwrank import _Curvedata, _mw, _two_descent, parse_point_list
 from sage.rings.integer_ring import IntegerRing
 from sage.structure.sage_object import SageObject
 
@@ -116,6 +115,10 @@ class mwrank_EllipticCurve(SageObject):
         except (TypeError, ValueError):
             raise TypeError("ainvs must be a list or tuple of integers.")
         self.__ainvs = a_int
+
+        from sage.features.eclib import Eclib
+        Eclib().require()
+        from sage.libs.eclib.mwrank import _Curvedata
         self.__curve = _Curvedata(a_int[0], a_int[1], a_int[2],
                                   a_int[3], a_int[4])
 
@@ -342,6 +345,9 @@ class mwrank_EllipticCurve(SageObject):
             sage: E.two_descent(verbose=False)
             True
         """
+        from sage.features.eclib import Eclib
+        Eclib().require()
+        from sage.libs.eclib.mwrank import _two_descent
         first_limit = int(first_limit)
         second_limit = int(second_limit)
         n_aux = int(n_aux)
@@ -579,6 +585,9 @@ class mwrank_EllipticCurve(SageObject):
             sage: E.gens()
             ([0, -1, 1],)
         """
+        from sage.features.eclib import Eclib
+        Eclib().require()
+        from sage.libs.eclib.mwrank import parse_point_list
         self.saturate()
         return tuple(parse_point_list(self.__two_descent_data().getbasis()))
 
@@ -810,6 +819,10 @@ class mwrank_MordellWeil(SageObject):
             verb = 1
         else:
             verb = 0
+
+        from sage.features.eclib import Eclib
+        Eclib().require()
+        from sage.libs.eclib.mwrank import _mw
         self.__mw = _mw(curve._curve_data(), verb, pp, maxr)
 
     def __reduce__(self):

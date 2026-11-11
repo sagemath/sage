@@ -47,13 +47,9 @@ AUTHORS:
 
 REFERENCES:
 
-.. [AI] \P. Arnoux, S. Ito,
-   Pisot substitutions and Rauzy fractals,
-   Bull. Belg. Math. Soc. 8 (2), 2001, pp. 181--207
+- [AI]_
 
-.. [SAI] \Y. Sano, P. Arnoux, S. Ito,
-   Higher dimensional extensions of substitutions and their dual maps,
-   J. Anal. Math. 83, 2001, pp. 183--206
+- [SAI]_
 
 EXAMPLES:
 

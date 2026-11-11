@@ -13,6 +13,7 @@ py.install_sources(
   'functools_partial_src.py',
   'gosper-sum.py',
   'lazy_imports.py',
+  'maxima_library_test.py',
   'modular_group_cohomology.py',
   'numpy.py',
   'parigp.py',

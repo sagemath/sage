@@ -53,13 +53,17 @@ AUTHORS:
 
 - Vincent Delecroix (November 2013): additional methods
 """
+from __future__ import annotations
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
-from sage.sets.family import AbstractFamily
 from sage.structure.element import Element, FieldElement
 from sage.structure.richcmp import richcmp
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.sets.family import AbstractFamily
 
 
 class AlgebraicClosureFiniteFieldElement(FieldElement):

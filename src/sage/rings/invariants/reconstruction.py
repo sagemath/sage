@@ -76,7 +76,8 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
     OUTPUT:
 
     A set of coefficients of a binary cubic, whose discriminant
-    is equal to the given ``discriminant`` up to a scaling.
+    is equal to the given ``discriminant`` (up to a scaling in
+    characteristic 2).
 
     EXAMPLES::
 
@@ -87,6 +88,11 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
         sage: R.<x> = QQ[]
         sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
         1
+        sage: coeffs = binary_cubic_coefficients_from_invariants(2)
+        sage: coeffs
+        (0, 1, -1, -1/4)
+        sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
+        2
 
     The two non-equivalent cubics `x^3` and `x^2*z` with discriminant 0 can't
     be distinguished based on their discriminant, hence an error is raised::
@@ -102,7 +108,9 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
     if discriminant == 0:
         raise ValueError('no unique reconstruction possible for binary '
                          'cubics with a double root')
-    else:
+    try:
+        return (0, 1, -1, (1 - discriminant)/4)
+    except ZeroDivisionError:
         return (0, 1, -1, 0)
 
 

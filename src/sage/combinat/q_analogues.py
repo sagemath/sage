@@ -314,9 +314,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     REFERENCES:
 
-    .. [CH2006] William Y.C. Chen and Qing-Hu Hou, *Factors of the Gaussian
-       coefficients*, Discrete Mathematics 306 (2006), 1446-1449.
-       :doi:`10.1016/j.disc.2006.03.031`
+    - [CH2006]_
 
     AUTHORS:
 
@@ -816,14 +814,9 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
 
     REFERENCES:
 
-    .. [Bu87] Butler, Lynne M. *A unimodality result in the enumeration
-       of subgroups of a finite abelian group.* Proceedings of the American
-       Mathematical Society 101, no. 4 (1987): 771-775.
-       :doi:`10.1090/S0002-9939-1987-0911049-8`
+    - [Bu87]_
 
-    .. [Delsarte48] \S. Delsarte, *Fonctions de Möbius Sur Les Groupes Abéliens
-       Finis*, Annals of Mathematics, second series, Vol. 45, No. 3, (Jul 1948),
-       pp. 600-609. http://www.jstor.org/stable/1969047
+    - [Delsarte48]_
 
     AUTHORS:
 

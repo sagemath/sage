@@ -43,7 +43,7 @@ def number_of_rooted_trees(n):
 
     REFERENCES:
 
-    .. [SL000081] Sloane's :oeis:`A000081`
+    - [SL000081]_
     """
     if n == 0:
         return Integer(0)

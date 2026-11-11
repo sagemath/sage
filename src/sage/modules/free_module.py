@@ -2052,9 +2052,8 @@ class FreeModule_generic(Module_free_ambient):
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: FreeModule(ZZ,3).category()
         Category of finite dimensional modules with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings and infinite enumerated sets
-          and metric spaces)
+         (euclidean domains and noetherian rings
+          and infinite enumerated sets and metric spaces)
         sage: (QQ^0).category()
         Category of finite enumerated finite dimensional vector spaces with basis
          over (number fields and quotient fields and metric spaces)
@@ -8480,6 +8479,9 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(FF, is_sparse=False)               # needs sage.rings.finite_rings
         <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+        sage: FFntl = GF(2, impl='ntl')                                                 # needs sage.rings.finite_rings
+        sage: sage.modules.free_module.element_class(FFntl, is_sparse=False)            # needs sage.rings.finite_rings
+        <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         sage: sage.modules.free_module.element_class(GF(7), is_sparse=False)
         <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
         sage: sage.modules.free_module.element_class(P, is_sparse=True)
@@ -8494,6 +8496,13 @@ def element_class(R, is_sparse):
     if isinstance(R, sage.rings.rational_field.RationalField) and not is_sparse:
         from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
+    if isinstance(R, FiniteField) and R.order() == 2 and not is_sparse:
+        try:
+            from sage.modules.vector_mod2_dense import Vector_mod2_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_mod2_dense
     if isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:
         if R.order() == 2:
             try:

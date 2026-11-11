@@ -64,7 +64,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         sage: R = Representation(G, M, action)
         sage: I = R.invariant_module()
 
-    Then we can lift the basis from the invariant to the original module::
+    Then we can lift the basis from the invariant submodule to the ambient G-module R::
 
         sage: [I.lift(b) for b in I.basis()]
         [M[1] + M[2] + M[3]]
@@ -129,7 +129,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         sage: [I.lift(b) for b in I.basis()]
         [1, x0 + x1 + x2, x0*x1 - x0*x2 + x1*x2, x0*x1*x2]
 
-    or we can express the basis intrinsicallly to the invariant ``I``::
+    or we can express the basis intrinsically to the invariant ``I``::
 
         sage: B = I.basis()
         sage: m = 3*B[0] + 2*B[1] + 7*B[3]

@@ -250,7 +250,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         """
         self._q = q
         cat = Algebras(Rings().Commutative()).WithBasis()
-        indices = cartesian_product([NonNegativeIntegers()]*6)
+        indices = cartesian_product([NonNegativeIntegers()] * 6)
         CombinatorialFreeModule.__init__(self, R, indices, prefix='AW',
                                          sorting_key=_basis_key,
                                          sorting_reverse=True,
@@ -370,7 +370,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             sage: AW.one_basis()
             (0, 0, 0, 0, 0, 0)
         """
-        return self._indices([0]*6)
+        return self._indices([0] * 6)
 
     def q(self):
         r"""
@@ -401,13 +401,13 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         q = self._q
         I = self._indices
         R = self.base_ring()
-        elt = {I((1,0,0,0,0,0)): R(1),
-               I((1,0,2,0,1,0)): R.an_element(),
-               I((0,1,0,2,0,1)): q**2 * R(3),
-               I((0,0,0,1,1,3)): q**-3 + R(3) + R(2)*q + q**2}
+        elt = {I((1, 0, 0, 0, 0, 0)): R(1),
+               I((1, 0, 2, 0, 1, 0)): R.an_element(),
+               I((0, 1, 0, 2, 0, 1)): q**2 * R(3),
+               I((0, 0, 0, 1, 1, 3)): q**-3 + R(3) + R(2) * q + q**2}
         return self.element_class(self, elt)
 
-    def some_elements(self):
+    def some_elements(self) -> tuple:
         r"""
         Return some elements of ``self``.
 
@@ -522,7 +522,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((0, 1, 0, 0, 0, 0)): q**-3 - q**1,  # q^-1(q^-2-q^2) B
                        I((0, 0, 0, 0, 1, 0)): 1 - q**-2}     # -q^-1(q^-1-q) b
                 rel = self.element_class(self, rel)
-                return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
+                return self.monomial(I(lhs + [0] * 3)) * (rel * self.monomial(I(rhs)))
             if rhs[1] > 0:  # rhs has a B to commute with C
                 lhs[2] -= 1
                 rhs[1] -= 1
@@ -530,7 +530,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((1, 0, 0, 0, 0, 0)): q**3 - q**-1,  # q(q^2-q^-2) A
                        I((0, 0, 0, 1, 0, 0)): -q**2 + 1}     # -q(q-q^-1) a
                 rel = self.element_class(self, rel)
-                return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
+                return self.monomial(I(lhs + [0] * 3)) * (rel * self.monomial(I(rhs)))
             # nothing to commute as rhs has no A nor B
             rhs[2] += lhs[2]
             rhs[1] = lhs[1]
@@ -545,7 +545,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((0, 0, 1, 0, 0, 0)): q**3 - q**-1,  # q(q^2-q^-2) C
                        I((0, 0, 0, 0, 0, 1)): -q**2 + 1}     # -q(q-q^-1) g
                 rel = self.element_class(self, rel)
-                return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
+                return self.monomial(I(lhs + [0] * 3)) * (rel * self.monomial(I(rhs)))
             # nothing to commute as rhs has no A
             rhs[1] += lhs[1]
             rhs[0] = lhs[0]
@@ -590,8 +590,8 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             sage: r3(AW.an_element()) == AW.an_element()
             True
         """
-        A,B,C,a,b,g = self.gens()
-        return AlgebraMorphism(self, [B,C,A,b,g,a], codomain=self)
+        A, B, C, a, b, g = self.gens()
+        return AlgebraMorphism(self, [B, C, A, b, g, a], codomain=self)
 
     rho = permutation_automorphism
 
@@ -637,11 +637,11 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             sage: s2(AW.an_element()) == AW.an_element()
             True
         """
-        A,B,C,a,b,g = self.gens()
+        A, B, C, a, b, g = self.gens()
         q = self._q
         # Note that sage: (A*B-B*A) / (q-q^-1) == -q*A*B - (1+q^2)*C + q*g
-        Cp = C - q*A*B - (1+q**2)*C + q*g
-        return AlgebraMorphism(self, [B,A,Cp,b,a,g], codomain=self)
+        Cp = C - q * A * B - (1 + q**2) * C + q * g
+        return AlgebraMorphism(self, [B, A, Cp, b, a, g], codomain=self)
 
     sigma = reflection_automorphism
 
@@ -750,19 +750,21 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         la = base.gen()
         inv = ~la
         M = MatrixSpace(base, 2)
-        A = M([[la,1-inv],[0,inv]])
-        Ai = M([[inv,inv-1],[0,la]])
-        B = M([[inv,0],[la-1,la]])
-        Bi = M([[la,0],[1-la,inv]])
-        C = M([[1,1-la],[inv-1,la+inv-1]])
-        Ci = M([[la+inv-1,la-1],[1-inv,1]])
+        A = M([[la, 1 - inv], [0, inv]])
+        Ai = M([[inv, inv - 1], [0, la]])
+        B = M([[inv, 0], [la - 1, la]])
+        Bi = M([[la, 0], [1 - la, inv]])
+        C = M([[1, 1 - la], [inv - 1, la + inv - 1]])
+        Ci = M([[la + inv - 1, la - 1], [1 - inv, 1]])
         mu = la + inv
         nu = (self._q**2 + self._q**-2) * mu + mu**2
         nuI = M(nu)
         # After #29374 is fixed, the category can become
         # Algebras(Rings().Commutative()) as it was before #29399.
         category = Rings()
-        return AlgebraMorphism(self, [q*A + q**-1*Ai, q*B + q**-1*Bi, q*C + q**-1*Ci,
+        return AlgebraMorphism(self, [q * A + q**-1 * Ai,
+                                      q * B + q**-1 * Bi,
+                                      q * C + q**-1 * Ci,
                                       nuI, nuI, nuI],
                                codomain=M, category=category)
 
@@ -819,7 +821,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
         ModuleMorphismByLinearity.__init__(self, domain=domain, codomain=codomain,
                                            position=position, category=category)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Check equality.
 
@@ -840,7 +842,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
                 and self._on_generators == other._on_generators
                 and self._position == other._position
                 and self._is_module_with_basis_over_same_base_ring
-                    == other._is_module_with_basis_over_same_base_ring)
+                == other._is_module_with_basis_over_same_base_ring)
 
     def _on_basis(self, c):
         r"""

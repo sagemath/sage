@@ -96,8 +96,8 @@ class Polyhedron_polymake(Polyhedron_base):
 
     Quadratic fields work::
 
-        sage: V = polytopes.dodecahedron().vertices_list()                              # needs sage.groups sage.rings.number_field
-        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake, needs sage.groups sage.rings.number_field
+        sage: V = polytopes.dodecahedron().vertices_list()
+        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake
         A 3-dimensional polyhedron
          in (Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?)^3
@@ -657,7 +657,7 @@ class Polyhedron_polymake(Polyhedron_base):
             sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
             sage: P._test_polymake_pickling(other=P2)
 
-            sage: # optional - jupymake, needs sage.rings.number_field
+            sage: # optional - jupymake
             sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')
             Possible output...
             sage: P1 = loads(dumps(P))

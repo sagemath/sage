@@ -156,7 +156,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: Polyhedron().slack_matrix()
             []
-            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()    # needs sage.rings.number_field
+            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()
             Number Field in a with defining polynomial x^2 - 2 with a = 1.41...
         """
         if not self.n_Vrepresentation() or not self.n_Hrepresentation():
@@ -277,7 +277,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: P = polytopes.twenty_four_cell()
             sage: M = P.incidence_matrix()
-            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)                       # needs sage.combinat
+            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)
             True
 
         TESTS:
@@ -983,8 +983,8 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: M = Q.vertex_adjacency_matrix()
             sage: sum(M)
             (4, 4, 3, 3, 4, 4, 4, 3, 3)
-            sage: G = Q.vertex_graph()                                                  # needs sage.graphs
-            sage: G.degree()                                                            # needs sage.graphs
+            sage: G = Q.vertex_graph()
+            sage: G.degree()
             [4, 4, 3, 3, 4, 4, 4, 3, 3]
 
         TESTS:
@@ -1266,8 +1266,8 @@ class Polyhedron_base3(Polyhedron_base2):
             True
             sage: P.is_pyramid(certificate=True)
             (True, A vertex at (1, 0, 0, 0))
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.rings.number_field
-            sage: egyptian_pyramid.is_pyramid()                                         # needs sage.rings.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
+            sage: egyptian_pyramid.is_pyramid()
             True
             sage: Q = polytopes.octahedron()
             sage: Q.is_pyramid()
@@ -1437,8 +1437,8 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: L.is_lattice_polytope()
             True
 
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.number_field
-            sage: egyptian_pyramid.is_lawrence_polytope()                               # needs sage.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
+            sage: egyptian_pyramid.is_lawrence_polytope()
             True
 
             sage: polytopes.octahedron().is_lawrence_polytope()

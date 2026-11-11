@@ -458,7 +458,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self.parent()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Answer whether ``self`` is a unit.
 
@@ -496,10 +496,11 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_unit()
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
-        Return ``True`` if ``self`` is nilpotent, i.e., some power of ``self``
-        is 0.
+        Return ``True`` if ``self`` is nilpotent.
+
+        This means that some power of ``self`` is 0.
 
         EXAMPLES::
 
@@ -521,7 +522,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_nilpotent()
 
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if ``self`` is a constant and ``False`` otherwise.
 
@@ -553,7 +554,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.constant_coefficient()
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         """
         Return whether ``self`` is a monomial.
 
@@ -571,7 +572,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_monomial()
 
-    def is_term(self):
+    def is_term(self) -> bool:
         """
         Return whether ``self`` is a term.
 
@@ -2234,7 +2235,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             blocklength = sh
             nM = sh + 1
             for i in range(P.ngens()):
-                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
+                newVars.extend(PPgens[sh - p(j)] for j in range(blocklength, -1, -1))
                 sh += nM
             mapR = PP.hom(newVars, PP)
             return InfinitePolynomial_dense(P, mapR(self._p))

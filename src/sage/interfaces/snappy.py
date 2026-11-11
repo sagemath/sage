@@ -186,8 +186,8 @@ class SnapPy(PythonInternalInterface):
             <class 'SnapPy.AbelianGroup'>
         """
         if not self._interface_globals:
-            from sage.features.interfaces import SnapPy
-            SnapPy().module.require()
+            from sage.features.internal_interfaces import SnapPy
+            SnapPy.require()
             import snappy
             import spherogram
             if self._high_precision:

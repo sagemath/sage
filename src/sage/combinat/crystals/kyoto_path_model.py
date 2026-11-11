@@ -15,7 +15,7 @@ Kyoto path model for affine highest weight crystals
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.structure.parent import Parent
@@ -249,9 +249,9 @@ class KyotoPathModel(TensorProductOfCrystals):
             # public for TensorProductOfCrystals
             self.crystals = tuple([C.affinization() for C in crystals])
             self._epsilon_dicts = [{b.Epsilon(): self.crystals[i](b, 0) for b in B}
-                                   for i,B in enumerate(crystals)]
+                                   for i, B in enumerate(crystals)]
             self._phi_dicts = [{b.Phi(): self.crystals[i](b, 0) for b in B}
-                               for i,B in enumerate(crystals)]
+                               for i, B in enumerate(crystals)]
         else:
             # public for TensorProductOfCrystals
             self.crystals = tuple(crystals)
@@ -261,7 +261,7 @@ class KyotoPathModel(TensorProductOfCrystals):
                                for B in crystals]
         self.module_generators = (self.element_class(self, [self._phi_dicts[0][weight]]),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -396,10 +396,10 @@ class KyotoPathModel(TensorProductOfCrystals):
             k = self.position_of_first_unmatched_plus(i)
             if k is None:
                 return None
-            if k == len(self)-1:
+            if k == len(self) - 1:
                 return None
             crystal = self[k].e(i)
-            if k == len(self)-2 and crystal.Epsilon() == self[-1].Phi():
+            if k == len(self) - 2 and crystal.Epsilon() == self[-1].Phi():
                 l = self[:-1]
                 l[-1] = crystal
                 return self.__class__(self.parent(), l)
@@ -424,10 +424,10 @@ class KyotoPathModel(TensorProductOfCrystals):
             k = self.position_of_last_unmatched_minus(i)
             if k is None:
                 return None
-            if k == len(self)-1:
+            if k == len(self) - 1:
                 l = list(self)
                 k = len(l) % len(self.parent().crystals)
-                l.append(self.parent()._phi_dicts[k][ l[-1].Epsilon() ])
+                l.append(self.parent()._phi_dicts[k][l[-1].Epsilon()])
                 l[-2] = l[-2].f(i)
                 return self.__class__(self.parent(), l)
             return self._set_index(k, self[k].f(i))
@@ -492,5 +492,5 @@ class KyotoPathModel(TensorProductOfCrystals):
                 N = len(self.parent().crystals)
                 while len(l) < k:
                     i = len(l) % N
-                    l.append(self.parent()._phi_dicts[i][ l[-1].Epsilon() ])
+                    l.append(self.parent()._phi_dicts[i][l[-1].Epsilon()])
             return P(*l)

@@ -61,6 +61,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+# This import is deliberately at runtime visibility (not inside a
+# TYPE_CHECKING block): the class-level ``__call__`` annotation below is
+# resolved by typing.get_type_hints - in the TESTS block of this module
+# and by downstream stub generators - which evaluates the annotation
+# string in the module namespace, so the name must exist there.
+from collections.abc import Callable  # noqa: TC003
 
 import sage.misc.prandom as random
 
@@ -203,7 +211,40 @@ class IntegerModFactory(UniqueFactory):
     the ring factory::
 
         sage: IntegerModRing._cache.clear()
+
+    TESTS:
+
+    The return type exposed to static type checkers matches the runtime
+    type::
+
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
+        sage: from sage.rings.integer_ring import IntegerRing_class
+        sage: isinstance(Zmod(29), IntegerModRing_generic)
+        True
+        sage: isinstance(Integers(0), IntegerRing_class)
+        True
+
+    The ``__call__`` annotation resolves to the same union::
+
+        sage: import collections.abc
+        sage: import typing
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
+        sage: ann = typing.get_type_hints(IntegerModFactory)['__call__']
+        sage: typing.get_origin(ann) == collections.abc.Callable
+        True
+        sage: ann == collections.abc.Callable[..., IntegerModRing_generic | IntegerRing_class]
+        True
     """
+    # This class-level annotation is only there for the typing info: it
+    # lets static type checkers infer the return type of ``IntegerModRing``
+    # and its aliases without a forwarding ``__call__`` override, which
+    # would add a Python frame and a ``super()`` lookup to every factory
+    # call.  No value is assigned, so instances keep dispatching directly
+    # to the inherited ``UniqueFactory.__call__`` at full speed.  The
+    # unquoted forward reference is safe because this file has
+    # ``from __future__ import annotations``.
+    __call__: Callable[..., IntegerModRing_generic | integer_ring.IntegerRing_class]
+
     def get_object(self, version, key, extra_args):
         out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
@@ -1919,6 +1960,17 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ....:     s1 = set(f.roots(multiplicities=False))
             ....:     s2 = set(d for d in R if f(d) == 0)
             ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
+
+        Check that :issue:`42796` is fixed::
+
+            sage: x = polygen(Zmod(4))
+            sage: f = 2*x - 2
+            sage: f.roots(multiplicities=False)
+            [1, 3]
+            sage: x = polygen(Zmod(9))
+            sage: f = 3*x - 3
+            sage: f.roots(multiplicities=False)
+            [1, 4, 7]
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1959,11 +2011,13 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             # whole eqn divided by g
             N_by_g = N.divide_knowing_divisible_by(g)
             a_by_g = al.divide_knowing_divisible_by(g)
+            b_by_g = bl.divide_knowing_divisible_by(g)
             _R = Zmod(N_by_g)
-            assert _R(a_by_g).is_unit()
+            _S = _R[f.parent().variable_name()]
+            f = _S([b_by_g, a_by_g])
 
             # single root
-            _root = self(f.roots(_R, multiplicities=False)[0])
+            _root = self(f.any_root())
             inc = self(N_by_g)
             return [_root + k * inc for k in range(g)]
 

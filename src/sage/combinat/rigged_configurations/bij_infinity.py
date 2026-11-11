@@ -8,9 +8,7 @@ AUTHORS:
 
 REFERENCES:
 
-.. [RC-MLT] Ben Salisbury and Travis Scrimshaw. *Connecting marginally
-   large tableaux and rigged configurations via crystals*.
-   Preprint. :arxiv:`1505.07040`.
+- [RC-MLT]_
 """
 
 # ****************************************************************************

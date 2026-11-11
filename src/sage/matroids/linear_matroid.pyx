@@ -1124,7 +1124,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.matroids.linear_matroid.LinearMatroid'
-            object has no attribute '_invariant'
+            object has no attribute '_invariant'...
             sage: M1._fast_isom_test(M3) is None
             True
             sage: Matroid(graphs.WheelGraph(6), regular=True)._fast_isom_test(          # needs sage.graphs

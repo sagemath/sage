@@ -919,7 +919,7 @@ class e6(ExceptionalMatrixLieAlgebra):
                   [(2,3), (6,8), (9,11), (16,18), (17,19), (23,24)],
                   [(3,5), (4,6), (11,14), (13,16), (15,17), (24,25)],
                   [(5,7), (6,9), (8,11), (10,13), (12,15), (25,26)]]
-        e = [MS({c: one for c in coord}) for coord in coords]
+        e = [MS(dict.fromkeys(coord, one)) for coord in coords]
         f = [MS({(c[1],c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 6]), e, f)
 
@@ -954,7 +954,7 @@ class e7(ExceptionalMatrixLieAlgebra):
                   [(2,3), (10,12), (11,14), (13,16), (23,26), (25,28), (27,30), (29,32), (39,42), (41,44), (43,45), (52,53)],
                   [(1,2), (12,15), (14,17), (16,20), (19,23), (22,25), (30,33), (32,36), (35,39), (38,41), (40,43), (53,54)],
                   [(0,1), (15,18), (17,21), (20,24), (23,27), (25,29), (26,30), (28,32), (31,35), (34,38), (37,40), (54,55)]]
-        e = [MS({c: one for c in coord}) for coord in coords]
+        e = [MS(dict.fromkeys(coord, one)) for coord in coords]
         f = [MS({(c[1], c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 7]), e, f)
 
@@ -1027,7 +1027,7 @@ class f4(ExceptionalMatrixLieAlgebra):
                    (14,16), (18,21), (20,22), (23,24)],
                   [(2,3), (6,8), (9,11), (15,17), (16,18), (22,23)],
                   [(3,4), (5,6), (7,9), (17,19), (18,20), (21,22)]]
-        e = [MS({c: one for c in coord}) for coord in coords]
+        e = [MS(dict.fromkeys(coord, one)) for coord in coords]
         # Double (10, 12) in e1 and (11,13) in e2
         e[0][10,12] = 2*one
         e[1][11,13] = 2*one
@@ -1038,7 +1038,7 @@ class f4(ExceptionalMatrixLieAlgebra):
                    (16,14), (21,18), (22,20), (24,23)],
                   [(3,2), (8,6), (11,9), (17,15), (18,16), (23,22)],
                   [(4,3), (6,5), (9,7), (19,17), (20,18), (22,21)]]
-        f = [MS({c: one for c in coord}) for coord in coords]
+        f = [MS(dict.fromkeys(coord, one)) for coord in coords]
         # Double (14, 12) in f1 and (15,13) in f2
         f[0][14,12] = 2*one
         f[1][15,13] = 2*one

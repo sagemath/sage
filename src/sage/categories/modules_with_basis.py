@@ -1746,11 +1746,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: z.coefficient([1,2])
                 Traceback (most recent call last):
                 ...
-                AssertionError: [1, 2] should be an element of Partitions
+                ValueError: [1, 2] should be an element of Partitions
                 sage: z.coefficient(Composition([2,1]))
                 Traceback (most recent call last):
                 ...
-                AssertionError: [2, 1] should be an element of Partitions
+                ValueError: [2, 1] should be an element of Partitions
 
             Test that ``coefficient`` also works for those parents that do
             not have an ``element_class``::
@@ -1767,8 +1767,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             # NT: coefficient_fast should be the default, just with appropriate assertions
             # that can be turned on or off
             C = self.parent().basis().keys()
-            # TODO: This should raise a ValueError - TS
-            assert m in C, "%s should be an element of %s" % (m, C)
+            if m not in C:
+                raise ValueError("%s should be an element of %s" % (m, C))
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]
@@ -2414,6 +2414,46 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3*x*y^2
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
+
+        def change_ring(self, R):
+            r"""
+            Return this element with its coefficients converted to ``R``.
+
+            INPUT:
+
+            - ``R`` -- the new base ring
+
+            EXAMPLES::
+
+                sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: B = F.basis()
+                sage: x = B['a'] + 2*B['b']
+                sage: y = x.change_ring(ZZ)
+                sage: y
+                B['a'] + 2*B['b']
+                sage: y.parent().base_ring()
+                Integer Ring
+
+            If the base ring is unchanged, return the same element::
+
+                sage: x.change_ring(QQ) is x
+                True
+
+            Coefficients that become zero are removed::
+
+                sage: (7*B['a'] + B['b']).change_ring(GF(7))                            # needs sage.rings.finite_rings
+                B['b']
+
+            The coefficients must be convertible to the new base ring::
+
+                sage: (1/2*B['a']).change_ring(ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+            """
+            if R is self.base_ring():
+                return self
+            return self.map_coefficients(lambda c: c, new_base_ring=R)
 
         def map_coefficients(self, f, new_base_ring=None):
             """

@@ -318,7 +318,7 @@ class PiecewiseFunction(BuiltinFunction):
 
     class EvaluationMethods:
 
-        def __pow__(self, parameters, variable, n):
+        def __pow__(self, parameters, variable, n):  # noqa: PLE0302
             """
             Return the `n`-th power of the piecewise function by applying the
             operation to each piece.
@@ -413,7 +413,7 @@ class PiecewiseFunction(BuiltinFunction):
                 intervals += list(domain)
             return RealSet(*intervals)
 
-        def __len__(self, parameters, variable):
+        def __len__(self, parameters, variable):  # noqa: PLE0302
             """
             Return the number of "pieces".
 

@@ -46,9 +46,9 @@ class Polyhedron_base6(Polyhedron_base5):
 
         sage: from sage.geometry.polyhedron.base6 import Polyhedron_base6
         sage: P = polytopes.cube()
-        sage: Polyhedron_base6.plot(P)                                                  # needs sage.plot
+        sage: Polyhedron_base6.plot(P)
         Graphics3d Object
-        sage: print(Polyhedron_base6.tikz(P, output_type='TikzPicture'))                # needs sage.plot
+        sage: print(Polyhedron_base6.tikz(P, output_type='TikzPicture'))
         \RequirePackage{luatex85}
         \documentclass[tikz]{standalone}
         \begin{document}
@@ -131,7 +131,7 @@ class Polyhedron_base6(Polyhedron_base5):
         \end{document}
 
         sage: Q = polytopes.hypercube(4)
-        sage: Polyhedron_base6.show(Q)                                                  # needs sage.plot
+        sage: Polyhedron_base6.show(Q)
         sage: Polyhedron_base6.schlegel_projection(Q)
         The projection of a polyhedron into 3 dimensions
 
@@ -252,32 +252,32 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: hcube = polytopes.hypercube(5)
             sage: facet = hcube.facets()[0].as_polyhedron(); facet
             A 4-dimensional polyhedron in ZZ^5 defined as the convex hull of 16 vertices
-            sage: facet.plot()                                                          # needs sage.plot
+            sage: facet.plot()
             Graphics3d Object
 
         For a 3d plot, we may draw the polygons with rainbow colors, using any of the following ways::
 
-            sage: cube.plot(polygon='rainbow')                                          # needs sage.plot
+            sage: cube.plot(polygon='rainbow')
             Graphics3d Object
-            sage: cube.plot(polygon={'color':'rainbow'})                                # needs sage.plot
+            sage: cube.plot(polygon={'color':'rainbow'})
             Graphics3d Object
-            sage: cube.plot(fill='rainbow')                                             # needs sage.plot
+            sage: cube.plot(fill='rainbow')
             Graphics3d Object
 
         For a 3d plot, the size of a point, the thickness of a line and the width of an arrow
         are controlled by the respective parameters::
 
             sage: prism = Polyhedron(vertices=[[0,0,0],[1,0,0],[0,1,0]], rays=[[0,0,1]])
-            sage: prism.plot(size=20, thickness=30, width=1)                            # needs sage.plot
+            sage: prism.plot(size=20, thickness=30, width=1)
             Graphics3d Object
-            sage: prism.plot(point={'size':20, 'color':'black'},                        # needs sage.plot
+            sage: prism.plot(point={'size':20, 'color':'black'},
             ....:            line={'thickness':30, 'width':1, 'color':'black'},
             ....:            polygon='rainbow')
             Graphics3d Object
 
         TESTS::
 
-            sage: for p in square.plot():                                               # needs sage.plot
+            sage: for p in square.plot():
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 4 point(s)
             blue Line defined by 2 points
@@ -286,18 +286,18 @@ class Polyhedron_base6(Polyhedron_base5):
             blue Line defined by 2 points
             green Polygon defined by 4 points
 
-            sage: for p in line.plot():                                                 # needs sage.plot
+            sage: for p in line.plot():
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 2 point(s)
             green Line defined by 2 points
 
-            sage: for p in point.plot():                                                # needs sage.plot
+            sage: for p in point.plot():
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             green Point set defined by 1 point(s)
 
         Draw the lines in red and nothing else::
 
-            sage: for p in square.plot(point=False, line='red', polygon=False):         # needs sage.plot
+            sage: for p in square.plot(point=False, line='red', polygon=False):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
             red Line defined by 2 points
@@ -306,30 +306,30 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Draw vertices in red, no lines, and a blue polygon::
 
-            sage: for p in square.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):         # needs sage.plot
+            sage: for p in square.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 4 point(s)
             (0, 0, 1) Polygon defined by 4 points
 
-            sage: for p in line.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):           # needs sage.plot
+            sage: for p in line.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 2 point(s)
 
-            sage: for p in point.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):          # needs sage.plot
+            sage: for p in point.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
         Draw in red without wireframe::
 
-            sage: for p in square.plot(wireframe=False, fill='red'):                    # needs sage.plot
+            sage: for p in square.plot(wireframe=False, fill='red'):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Polygon defined by 4 points
 
-            sage: for p in line.plot(wireframe=False, fill='red'):                      # needs sage.plot
+            sage: for p in line.plot(wireframe=False, fill='red'):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
 
-            sage: for p in point.plot(wireframe=False, fill='red'):                     # needs sage.plot
+            sage: for p in point.plot(wireframe=False, fill='red'):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
@@ -346,7 +346,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         In 4d a projection to 3d is used::
 
-            sage: type(polytopes.hypercube(4).plot())                                   # needs sage.plot
+            sage: type(polytopes.hypercube(4).plot())
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
             sage: type(polytopes.hypercube(5).plot())
             Traceback (most recent call last):
@@ -401,10 +401,10 @@ class Polyhedron_base6(Polyhedron_base5):
             Graphics3d Object
 
             sage: cylinder = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0)], lines=[(0, 0, 1)])
-            sage: cylinder.plot(fill='red')  # check it is not all black                # needs sage.plot
+            sage: cylinder.plot(fill='red')  # check it is not all black
             Graphics3d Object
             sage: quarter = Polyhedron(rays=[(-1, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
-            sage: quarter.plot(fill='rainbow')  # check it is not all black nor with too many colors                    # needs sage.plot
+            sage: quarter.plot(fill='rainbow')  # check it is not all black nor with too many colors
             Graphics3d Object
         """
         def merge_options(*opts):
@@ -471,7 +471,7 @@ class Polyhedron_base6(Polyhedron_base5):
         EXAMPLES::
 
             sage: square = polytopes.hypercube(2)
-            sage: square.show(point='red')                                              # needs sage.plot
+            sage: square.show(point='red')
         """
         self.plot(**kwds).show()
 
@@ -688,8 +688,8 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Check that :issue:`29073` is fixed::
 
-            sage: P = polytopes.icosahedron(exact=False)                                # needs sage.groups
-            sage: sum(P.gale_transform()).norm() < 1e-15                                # needs sage.groups
+            sage: P = polytopes.icosahedron(exact=False)
+            sage: sum(P.gale_transform()).norm() < 1e-15
             True
         """
         if not self.is_compact():
@@ -780,8 +780,8 @@ class Polyhedron_base6(Polyhedron_base5):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(3)
-            sage: p_solid = p.render_solid(opacity=.7)                                  # needs sage.plot
-            sage: type(p_solid)                                                         # needs sage.plot
+            sage: p_solid = p.render_solid(opacity=.7)
+            sage: type(p_solid)
             <class 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
         """
         proj = self.projection()
@@ -799,8 +799,8 @@ class Polyhedron_base6(Polyhedron_base5):
         EXAMPLES::
 
             sage: p = Polyhedron([[1,2,],[1,1],[0,0]])
-            sage: p_wireframe = p.render_wireframe()                                    # needs sage.plot
-            sage: p_wireframe._objects                                                  # needs sage.plot
+            sage: p_wireframe = p.render_wireframe()
+            sage: p_wireframe._objects
             [Line defined by 2 points, Line defined by 2 points, Line defined by 2 points]
         """
         proj = self.projection()
@@ -847,24 +847,24 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: tfcube.facets()[-1]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[-1])
-            sage: sp.plot()                                                             # needs sage.plot
+            sage: sp.plot()
             Graphics3d Object
 
         The same truncated cube but see inside the tetrahedral facet::
 
             sage: tfcube.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
-            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])                   # needs sage.symbolic
-            sage: sp.plot()                                                             # needs sage.plot sage.symbolic
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])
+            sage: sp.plot()
             Graphics3d Object
 
         A different values of ``position`` changes the projection::
 
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4], 1/2)
-            sage: sp.plot()                                                             # needs sage.plot
+            sage: sp.plot()
             Graphics3d Object
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4], 4)
-            sage: sp.plot()                                                             # needs sage.plot
+            sage: sp.plot()
             Graphics3d Object
 
         A value which is too large give a projection point that sees more than
@@ -960,11 +960,11 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: P = Polyhedron(V)
             sage: P.affine_hull_projection()
             A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 6 vertices
-            sage: P.affine_hull_projection(orthonormal=True)                            # needs sage.symbolic
+            sage: P.affine_hull_projection(orthonormal=True)
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"
-            sage: P.affine_hull_projection(orthonormal=True, extend=True)               # needs sage.rings.number_field
+            sage: P.affine_hull_projection(orthonormal=True, extend=True)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 6 vertices
         """
         result = AffineHullProjectionData()
@@ -1180,13 +1180,13 @@ class Polyhedron_base6(Polyhedron_base5):
             A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 2 vertices
             sage: A.vertices()
             (A vertex at (0), A vertex at (2))
-            sage: A = L.affine_hull_projection(orthonormal=True)                        # needs sage.rings.number_field
+            sage: A = L.affine_hull_projection(orthonormal=True)
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"
-            sage: A = L.affine_hull_projection(orthonormal=True, extend=True); A        # needs sage.rings.number_field
+            sage: A = L.affine_hull_projection(orthonormal=True, extend=True); A
             A 1-dimensional polyhedron in AA^1 defined as the convex hull of 2 vertices
-            sage: A.vertices()                                                          # needs sage.rings.number_field
+            sage: A.vertices()
             (A vertex at (1.414213562373095?), A vertex at (0.?e-18))
 
         More generally::
@@ -1212,9 +1212,9 @@ class Polyhedron_base6(Polyhedron_base5):
              A vertex at (2, 0, 0),
              A vertex at (1, 3/2, 0),
              A vertex at (1, 1/2, 4/3))
-            sage: A = S.affine_hull_projection(orthonormal=True, extend=True); A        # needs sage.rings.number_field
+            sage: A = S.affine_hull_projection(orthonormal=True, extend=True); A
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 4 vertices
-            sage: A.vertices()                                                          # needs sage.rings.number_field
+            sage: A.vertices()
             (A vertex at (0.7071067811865475?, 0.4082482904638630?, 1.154700538379252?),
              A vertex at (0.7071067811865475?, 1.224744871391589?, 0.?e-18),
              A vertex at (1.414213562373095?, 0.?e-18, 0.?e-18),
@@ -1236,11 +1236,11 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: P = polytopes.permutahedron(3); P
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-            sage: set([F.as_polyhedron().affine_hull_projection(                        # needs sage.combinat sage.rings.number_field
+            sage: set([F.as_polyhedron().affine_hull_projection(
             ....:          orthonormal=True, extend=True).volume()
             ....:     for F in P.affine_hull_projection().faces(1)]) == {1, sqrt(AA(2))}
             True
-            sage: set([F.as_polyhedron().affine_hull_projection(                        # needs sage.combinat sage.rings.number_field
+            sage: set([F.as_polyhedron().affine_hull_projection(
             ....:          orthonormal=True, extend=True).volume()
             ....:     for F in P.affine_hull_projection(
             ....:             orthonormal=True, extend=True).faces(1)]) == {sqrt(AA(2))}
@@ -1293,12 +1293,12 @@ class Polyhedron_base6(Polyhedron_base5):
 
         The affine hull is combinatorially equivalent to the input::
 
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection())           # needs sage.rings.number_field
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection())
             True
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(             # needs sage.rings.number_field
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(
             ....:     orthogonal=True))
             True
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(             # needs sage.rings.number_field
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(
             ....:     orthonormal=True, extend=True))
             True
 
@@ -1498,8 +1498,8 @@ class Polyhedron_base6(Polyhedron_base5):
 
         TESTS::
 
-            sage: D = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: D.facets()[0].as_polyhedron()._test_affine_hull_projection()          # needs sage.rings.number_field
+            sage: D = polytopes.dodecahedron()
+            sage: D.facets()[0].as_polyhedron()._test_affine_hull_projection()
         """
         if tester is None:
             tester = self._tester(**options)
@@ -1613,13 +1613,13 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Orthogonal version::
 
-            sage: A = triangle.affine_hull_manifold(name='A', orthogonal=True); A       # needs sage.symbolic
+            sage: A = triangle.affine_hull_manifold(name='A', orthogonal=True); A
             2-dimensional Riemannian submanifold A embedded in the Euclidean space E^3
-            sage: A.embedding().display()                                               # needs sage.symbolic
+            sage: A.embedding().display()
             A → E^3
                (x0, x1) ↦ (x, y, z) = (t0 - 1/2*x0 - 1/3*x1 + 1,
                                        t0 + 1/2*x0 - 1/3*x1, t0 + 2/3*x1)
-            sage: A.embedding().inverse().display()                                     # needs sage.symbolic
+            sage: A.embedding().inverse().display()
             E^3 → A
                (x, y, z) ↦ (x0, x1) = (-x + y + 1, -1/2*x - 1/2*y + z + 1/2)
 
@@ -1631,7 +1631,7 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:     F.as_polyhedron().affine_hull_manifold(name=f'F{i}',
             ....:                                            orthogonal=True, ambient_space=E3)
             ....:     for i, F in enumerate(D.facets())]
-            sage: sum(FM.plot({},               # long time, not tested                 # needs sage.plot
+            sage: sum(FM.plot({},               # long time, not tested
             ....:             srange(-2, 2, 0.1), srange(-2, 2, 0.1),
             ....:             opacity=0.2)
             ....:     for FM in submanifolds) + D.plot()
@@ -1641,7 +1641,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: cube = polytopes.cube(); cube
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: cube.affine_hull_manifold()                                           # needs sage.symbolic
+            sage: cube.affine_hull_manifold()
             Euclidean space E^3
         """
         if ambient_space is None:

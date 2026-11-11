@@ -102,6 +102,7 @@ py.install_sources(
   'quotient_ring_element.py',
   'rational.pxd',
   'rational.pyx',
+  'rational.pyi',
   'rational_field.py',
   'real_arb.pxd',
   'real_arb.pyx',
@@ -199,7 +200,7 @@ foreach name, pyx : extension_data
   elif name == 'complex_mpc'
     deps += [gmpy2, mpfr, mpc]
   elif name == 'complex_mpfr'
-    deps += [gmpy2, mpfr]
+    deps += [gmpy2, gsl, mpfr]
   elif name == 'factorint_flint'
     deps += [flint]
   elif name == 'integer'

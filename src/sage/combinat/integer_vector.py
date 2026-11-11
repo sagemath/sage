@@ -1637,6 +1637,11 @@ class IntegerVectorsConstraints(IntegerVectors):
 
             sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
+
+            sage: [] in IntegerVectors(max_part=0)
+            True
+            sage: [] in IntegerVectors(max_length=0)
+            True
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
             return True
@@ -1650,8 +1655,20 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.n is not None and sum(x) != self.n:
             return False
 
+        # Reject vectors that violate conflicting length constraints
+        length = self.constraints.get('length')
+        if length is not None:
+            if (self.constraints.get('min_length') is not None
+                    and length < self.constraints['min_length']):
+                return False
+            if (self.constraints.get('max_length') is not None
+                    and length > self.constraints['max_length']):
+                return False
+
         from sage.combinat.misc import check_integer_list_constraints
-        return check_integer_list_constraints(x, singleton=True, **self.constraints)
+        return check_integer_list_constraints(
+            x, singleton=True, **self.constraints
+        ) is not None
 
     def cardinality(self):
         """
@@ -1671,7 +1688,58 @@ class IntegerVectorsConstraints(IntegerVectors):
             27
             sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
             16
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: P.cardinality()
+            1
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: Q.cardinality()
+            1
+            sage: list(Q)
+            [[]]
+            sage: P = IntegerVectors(1, length=1, max_length=0, max_part=1)
+            sage: [1] in P
+            False
+            sage: P.cardinality()
+            0
+            sage: list(P)
+            []
+            sage: Q = IntegerVectors(max_length=0, min_length=1)
+            sage: [] in Q
+            False
+            sage: Q.cardinality()
+            0
+            sage: list(Q)
+            []
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: [] in R
+            False
+            sage: R.cardinality()
+            0
+            sage: list(R)
+            []
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
+                    return Integer(0)
+                return Integer(1)
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
+                    return Integer(0)
+                return Integer(1)
+
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
@@ -1753,7 +1821,38 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: iv = [ IntegerVectors(x[0], x[1], max_part=x[2]-1) for x in essai ]
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: list(Q)
+            [[]]
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: list(R)
+            []
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+
         from sage.combinat.integer_lists import IntegerListsLex
 
         if self.n is None:

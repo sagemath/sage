@@ -4147,7 +4147,8 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
 
             cur_roots = [oc.mapping.from_ocean(r) for r in rel_roots]
 
-            all_roots.extend([(cur_roots[j], factor, exp, oc, j) for j in range(len(cur_roots))])
+            all_roots.extend((cur_roots[j], factor, exp, oc, j)
+                             for j in range(len(cur_roots)))
 
         all_roots.sort()
 

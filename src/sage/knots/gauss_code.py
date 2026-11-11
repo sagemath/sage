@@ -13,8 +13,7 @@ REFERENCES:
 
 - https://math.stackexchange.com/questions/1233249/recovering-knot-crossing-orientations-from-a-gauss-code-or-dowker-notation
 
-.. [Kauf1999] Louis H. Kauffman, *Virtual Knot Theory*, Europ. J. Combinatorics
-   (1999) 20, 663-691 ; http://homepages.math.uic.edu/~kauffman/VKT.pdf
+- [Kauf1999]_
 """
 # ****************************************************************************
 #       Copyright (C) 2019 Frédéric Chapoton <fchapoton2@gmail.com>
@@ -153,7 +152,7 @@ def recover_orientations(gauss):
     # third step, determine the local orientations
     # this is done by following the knot
 
-    signs_local = {d: 1 for d in range(1, n + 1)}
+    signs_local = dict.fromkeys(range(1, n + 1), 1)
     for x, _ in negative:
         signs_local[changed[x]] *= -1
 

@@ -1370,7 +1370,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: CIF(c)                                                                # needs sage.rings.complex_interval_field
             0.6324555320336758?*I
             sage: complex(c)
-            0.6324555320336758j
+            0.6324555320336759j
 
             sage: K.<x> = Frac(RR['x'])
             sage: ZZ(2*x/x)              # indirect doctest

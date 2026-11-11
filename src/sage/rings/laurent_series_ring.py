@@ -143,8 +143,8 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
-         over (Dedekind domains and euclidean domains
-         and noetherian rings and infinite enumerated sets and metric spaces)
+         over (euclidean domains and noetherian rings
+         and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -215,9 +215,8 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
-             over (Dedekind domains and euclidean domains
-             and noetherian rings and infinite enumerated sets
-             and metric spaces)
+             over (euclidean domains and noetherian rings
+             and infinite enumerated sets and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -816,6 +815,34 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             False
         """
         return False
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        my_vars = self.variable_names()
+        if depth <= 0:
+            return ()
+        if depth == 1:
+            return my_vars
+        try:
+            base_vars = self.base_ring().variable_names_recursive(depth - len(my_vars))
+        except AttributeError:
+            return my_vars
+        return base_vars + my_vars
 
     @cached_method
     def gen(self, n=0):

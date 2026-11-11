@@ -3028,7 +3028,7 @@ class WordMorphism(SageObject):
             raise TypeError("type of option colormap (=%s) must be dict or str" % colormap)
 
         if opacity is None:
-            opacity = {a: 1 for a in alphabet}
+            opacity = dict.fromkeys(alphabet, 1)
 
         elif not isinstance(opacity, dict):
             raise TypeError("type of option opacity (=%s) must be dict" % opacity)
