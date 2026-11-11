@@ -65,11 +65,14 @@ Scalar multiplication ``n * P`` is computed in extended homogeneous
 coordinates ``(X : Y : Z : T)`` with ``x = X/Z``, ``y = Y/Z`` and
 ``T = XY/Z``, using the complete addition law of Hisil--Wong--Carter--Dawson.
 Only a single field inversion is performed, when the affine coordinates of
-the result are reconstructed.  Over prime fields ``GF(p)`` the arithmetic of
-the scalar-multiplication inner loop runs directly on Python integers, and
-points that are scalar-multiplied repeatedly build a cached fixed-base comb
-table, which makes repeated multiplications such as ``n * B`` for the
-Ed25519 base point substantially faster::
+the result are reconstructed.  Over inexact base rings such as ``RDF`` the
+affine formulas are used instead: the extended coordinates carry a common
+projective scale, which can underflow to zero when many doublings are
+chained in floating-point arithmetic.  Over prime fields ``GF(p)`` the
+arithmetic of the scalar-multiplication inner loop runs directly on Python
+integers, and points that are scalar-multiplied repeatedly build a cached
+fixed-base comb table, which makes repeated multiplications such as
+``n * B`` for the Ed25519 base point substantially faster::
 
     sage: from sage.crypto.ed25519 import Ed25519, Ed25519BasePoint
     sage: B = Ed25519BasePoint()
@@ -461,7 +464,9 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         default of the coercion model.  The computation uses the complete
         extended-coordinate addition law, performs a single field inversion
         at the very end, and over prime fields caches a fixed-base comb
-        table on points that are multiplied repeatedly.
+        table on points that are multiplied repeatedly.  Over inexact base
+        rings the affine addition formulas are used instead; see
+        :meth:`_edwards_mul_affine`.
 
         Scalars must coerce canonically into ``ZZ``: Python and Sage
         integers are accepted, while rational or finite-field elements are
@@ -525,6 +530,15 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: CK = TwistedEdwardsCurve(K, 1, z + 2)
             sage: PK = CK(z + 3, 2)
             sage: (3 * PK).to_elliptic_curve() == 3 * PK.to_elliptic_curve()
+            True
+
+        Over an inexact base ring the affine formulas are used, so that the
+        common projective scale of the extended coordinates cannot underflow
+        to zero in floating-point arithmetic::
+
+            sage: C = TwistedEdwardsCurve(RDF, 1, -8)
+            sage: P = C(RDF(1)/2, RDF(1)/2)
+            sage: 256 * P == C.zero()
             True
 
         Non-integer scalars are rejected::
@@ -641,9 +655,10 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
     def _edwards_mul(self, k):
         r"""Return ``[k]self`` for an integer ``k > 1``.
 
-        Dispatches between the generic field-element implementation and the
-        Python-integer fast path for prime base fields, and manages the
-        per-point fixed-base comb table.
+        Dispatches between the affine formulas for inexact base rings, the
+        generic field-element implementation, and the Python-integer fast
+        path for prime base fields, and manages the per-point fixed-base
+        comb table.
 
         The comb table is built the second time the same point is
         multiplied, as a one-time cost: for a 255-bit scalar it takes on
@@ -653,6 +668,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         which costs about a millisecond per multiplication.
         """
         C = self.parent()
+        if not C.base_ring().is_exact():
+            return self._edwards_mul_affine(k)
         p = C._edwards_prime_modulus()
         if p is None:
             return self._edwards_mul_field(k)
@@ -673,8 +690,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         r"""Return ``[k]self`` using the base field's own arithmetic.
 
         Windowed left-to-right scalar multiplication in extended
-        coordinates with one inversion at the end.  Used over fields that
-        are not prime fields.
+        coordinates with one inversion at the end.  Used over exact fields
+        that are not prime fields.
         """
         C = self.parent()
         R = C.base_ring()
@@ -707,6 +724,39 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         X, Y, Z, _ = acc
         zinv = ~Z
         return type(self)(C, (X * zinv, Y * zinv), check=False)
+
+    def _edwards_mul_affine(self, k):
+        r"""Return ``[k]self`` using the affine addition formulas.
+
+        Used over inexact base rings.  The extended coordinates of
+        :meth:`_edwards_mul_field` and the integer fast path carry a common
+        projective scale ``Z``, which is only removed by the final
+        inversion; over an inexact field such as ``RDF`` that scale can
+        underflow to zero when many doublings are chained, and the final
+        inversion then produces ``NaN`` coordinates.  Each affine addition
+        here divides the coordinates back to scale one, so no such
+        underflow accumulates.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: C = TwistedEdwardsCurve(RDF, 1, -8)
+            sage: P = C(RDF(1)/2, RDF(1)/2)
+            sage: P._edwards_mul_affine(3) == P + P + P
+            True
+            sage: 256 * P == C.zero()
+            True
+        """
+        C = self.parent()
+        acc = C.zero()
+        base = self
+        while k:
+            if k & 1:
+                acc = acc._add_(base)
+            k >>= 1
+            if k:
+                base = base._add_(base)
+        return acc
 
     def to_elliptic_curve(self):
         r"""Map this point to Sage's Weierstrass elliptic-curve model.
