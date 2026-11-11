@@ -766,6 +766,33 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             raise ValueError("the valuation must be specified")
         return self.undefined(valuation)
 
+    def _try_exact_data_ring(self, R, x):
+        r"""
+        Return ``x`` converted into the ring ``R`` of exact data, or
+        ``None`` if ``x`` cannot be so converted.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L._try_exact_data_ring(L._internal_poly_ring, 2)
+            2
+            sage: P = LazyPowerSeriesRing(QQ, 'z')
+            sage: P._try_exact_data_ring(P._laurent_poly_ring, 2)
+            2
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: LazySymmetricFunctions(m)._try_exact_data_ring(m, m[2])
+            m[2]
+            sage: L._try_exact_data_ring(L._internal_poly_ring, lambda i: i) is None
+            True
+        """
+        try:
+            x = R(x)
+        except (TypeError, ValueError, AttributeError, NotImplementedError):
+            pass
+        if parent(x) is R:
+            return x
+        return None
+
     def _convert_to_exact_data(self, x):
         r"""
         Return ``x`` viewed as an element of the internal polynomial
@@ -779,14 +806,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
-        R = self._internal_poly_ring
-        try:
-            x = R(x)
-        except (TypeError, ValueError):
-            pass
-        if parent(x) is R:
-            return x
-        return None
+        return self._try_exact_data_ring(self._internal_poly_ring, x)
 
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
@@ -840,9 +860,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         """
         if (isinstance(stream, Stream_inexact)
                 and source_base_ring is not BR):
-            src = stream
-            return Stream_function(lambda i: BR(src[i]),
-                                   src._is_sparse, src.order())
+            return Stream_function(lambda i: BR(stream[i]),
+                                   stream._is_sparse, stream.order())
         return stream
 
     def _series_from_lazy_element(self, x, valuation, degree, constant):
@@ -3684,25 +3703,17 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     def _convert_to_exact_data(self, x):
         r"""
-        Return ``x`` viewed as an element of the internal polynomial
-        ring, or ``None`` if ``x`` cannot be so viewed.
+        Return ``x`` viewed as an element of the multivariate
+        polynomial ring of this ring, or ``None`` if ``x`` cannot be so
+        viewed.
 
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
             sage: L._convert_to_exact_data(2)
             2
-            sage: L._convert_to_exact_data(lambda i: i) is None
-            True
         """
-        R = self._laurent_poly_ring
-        try:
-            x = R(x)
-        except (TypeError, ValueError, AttributeError):
-            pass
-        if parent(x) == R:
-            return x
-        return None
+        return self._try_exact_data_ring(self._laurent_poly_ring, x)
 
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
@@ -3810,6 +3821,12 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L = LazyPowerSeriesRing(QQ, 'z')
             sage: L(lambda i: i^2, valuation=2)
             4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + 64*z^8 + O(z^9)
+
+        When ``degree`` is given, the coefficients form the finite
+        initial segment of an exact stream; its representation requires
+        each coefficient to be homogeneous of the correct degree, which
+        is therefore validated irrespective of ``check`` (for arity
+        greater than one).
         """
         if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
@@ -4456,17 +4473,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L = LazySymmetricFunctions(m)
             sage: L._convert_to_exact_data(m[2])
             m[2]
-            sage: L._convert_to_exact_data(lambda i: i) is None
-            True
         """
-        R = self._laurent_poly_ring
-        try:
-            x = R(x)
-        except (TypeError, ValueError, NotImplementedError):
-            pass
-        if x in R:
-            return x
-        return None
+        return self._try_exact_data_ring(self._laurent_poly_ring, x)
 
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
@@ -4545,7 +4553,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
     def _is_coefficient_function(self, x):
         r"""
         Return whether ``x`` may be interpreted as a coefficient
-        function or a list of coefficients.
+        function, a list of coefficients, or an iterator of coefficients.
 
         EXAMPLES::
 
@@ -4555,8 +4563,11 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             True
             sage: L._is_coefficient_function((m[1], m[2]))
             True
+            sage: L._is_coefficient_function(filter(None, NN))
+            True
         """
-        return callable(x) or isinstance(x, (tuple, list))
+        return (callable(x)
+                or isinstance(x, (tuple, list, GeneratorType, map, filter)))
 
     def _check_homogeneous(self, f, d):
         r"""
@@ -4603,7 +4614,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                                            constant, check=True):
         r"""
         Return the series whose coefficients are given by the function
-        ``f`` or by the list ``f``.
+        ``f``, the list ``f``, or the iterator ``f``.
 
         EXAMPLES::
 
@@ -4611,6 +4622,15 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L = LazySymmetricFunctions(m)
             sage: L(lambda i: m[i], valuation=1)
             m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+            sage: L((m[i] for i in NN if i), valuation=1)
+            m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+            sage: L((m[i] for i in NN if i), valuation=1, check=False)
+            m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+
+        When ``degree`` is given, the coefficients form the finite
+        initial segment of an exact stream; its representation requires
+        each coefficient to be homogeneous of the correct degree,
+        which is therefore validated irrespective of ``check``.
         """
         if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
@@ -4622,33 +4642,42 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             if degree is None:
                 degree = valuation + len(f)
             p = [R(e) for e in f]
-            for i, e in enumerate(p, valuation):
-                self._check_homogeneous(e, i)
-            coeff_stream = Stream_exact(p,
-                                        order=valuation,
-                                        constant=self._laurent_poly_ring.zero(),
-                                        degree=degree)
+        elif degree is not None:
+            if callable(f):
+                p = [R(f(i)) for i in range(valuation, degree)]
+            else:
+                p = [R(c) for c, _ in zip(_skip_leading_zeros(f),
+                                          range(valuation, degree))]
+        elif callable(f):
+            if check:
+                def y(n):
+                    e = R(f(n))
+                    self._check_homogeneous(e, n)
+                    return e
+
+                coeff_stream = Stream_function(y, self._sparse, valuation)
+            else:
+                coeff_stream = Stream_function(f, self._sparse, valuation)
             return self.element_class(self, coeff_stream)
-
-        if degree is not None:
-            p = [R(f(i)) for i in range(valuation, degree)]
-            for i, e in enumerate(p, valuation):
-                self._check_homogeneous(e, i)
-            coeff_stream = Stream_exact(p,
-                                        order=valuation,
-                                        constant=self._laurent_poly_ring.zero(),
-                                        degree=degree)
-            return self.element_class(self, coeff_stream)
-
-        if check:
-            def y(n):
-                e = R(f(n))
-                self._check_homogeneous(e, n)
-                return e
-
-            coeff_stream = Stream_function(y, self._sparse, valuation)
         else:
-            coeff_stream = Stream_function(f, self._sparse, valuation)
+            # an iterator of coefficients
+            if check:
+                def checked_iterator():
+                    for i, c in enumerate(_skip_leading_zeros(f), valuation):
+                        e = R(c)
+                        self._check_homogeneous(e, i)
+                        yield e
+                coeff_stream = Stream_iterator(checked_iterator(), valuation)
+            else:
+                coeff_stream = Stream_iterator(_skip_leading_zeros(f), valuation)
+            return self.element_class(self, coeff_stream)
+
+        for i, e in enumerate(p, valuation):
+            self._check_homogeneous(e, i)
+        coeff_stream = Stream_exact(p,
+                                    order=valuation,
+                                    constant=R.zero(),
+                                    degree=degree)
         return self.element_class(self, coeff_stream)
 
     def _unable_to_convert(self, x):
@@ -4659,10 +4688,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
-            sage: L(filter(None, NN))
+            sage: L(QQ(1)/2)
             Traceback (most recent call last):
             ...
-            ValueError: unable to convert <filter object at ...> into a lazy completion element
+            ValueError: unable to convert 1/2 into a lazy completion element
         """
         raise ValueError(f"unable to convert {x} into a lazy completion element")
 
