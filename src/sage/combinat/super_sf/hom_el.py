@@ -8,7 +8,6 @@ AUTHORS:
 from itertools import combinations, combinations_with_replacement
 
 from sage.combinat.partition import Partitions, _Partitions
-from sage.functions.other import factorial
 from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -155,16 +154,14 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         Supersym = self.realization_of()
         R = self.base_ring()
 
-        def z(part):
-            return R.prod(i**mi * factorial(mi)
-                          for i, mi in part.to_exp_dict().items())
-
         ssp = Supersym.p()
         if basis_name == 'homogeneous':
-            return ssp._from_dict({part: ~z(part) for part in parts})
+            return ssp._from_dict({part: ~part.centralizer_size()
+                                   for part in parts})
         if basis_name == 'elementary':
-            return ssp._from_dict({part: (-1)**(n - len(part)) / z(part)
-                                  for part in parts})
+            return ssp._from_dict({part: (-1)**(n - len(part))
+                                   / part.centralizer_size()
+                                   for part in parts})
         return R.zero()
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
