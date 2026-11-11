@@ -32,6 +32,7 @@ import sys
 import re
 import random
 import doctest
+import inspect
 from sage.cpython.string import bytes_to_str
 from sage.repl.load import load
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1211,6 +1212,82 @@ class PythonSource(SourceLanguage):
                     in_docstring = True
                 neutralized.append(" "*reindent + line)
         return "".join(neutralized)
+
+
+class RuntimePythonFileSource(FileDocTestSource, PythonSource):
+    r"""
+    A Python doctest source that discovers docstrings after executing a file.
+
+    This source is useful for Python files that amend docstrings at runtime,
+    for example by decorators.  It is deliberately restricted to Python
+    files: Cython sources cannot be executed before they are compiled.
+    """
+    def __init__(self, path, options):
+        FileDocTestSource.__init__(self, path, options)
+        if not path.endswith('.py'):
+            raise ValueError("runtime doctest discovery requires a Python file")
+        self.__class__ = RuntimePythonFileSource
+
+    def create_doctests(self, namespace) -> tuple[list[doctest.DocTest], dict]:
+        r"""
+        Create doctests from the docstrings produced by executing this file.
+
+        TESTS::
+
+            sage: from sage.doctest.control import DocTestDefaults
+            sage: from sage.doctest.sources import RuntimePythonFileSource
+            sage: filename = tmp_filename(ext='.py')
+            sage: with open(filename, 'w') as f:
+            ....:     _ = f.write("def amend_docstring(obj):\n"
+            ....:                 "    obj.__doc__ += '\\n\\n    sage: Decorated.answer()\\n    42\\n'\n"
+            ....:                 "    return obj\n\n"
+            ....:                 "@amend_docstring\n"
+            ....:                 "class Decorated:\n"
+            ....:                 "    \\\"\\\"\\\"A decorated class.\\\"\\\"\\\"\n\n"
+            ....:                 "    @staticmethod\n"
+            ....:                 "    def answer():\n"
+            ....:                 "        return 42\n")
+            sage: source = RuntimePythonFileSource(filename, DocTestDefaults())
+            sage: doctests, _ = source.create_doctests({})
+            sage: any('Decorated.answer()' in example.sage_source
+            ....:     for test in doctests for example in test.examples)
+            True
+        """
+        if not os.path.exists(self.path):
+            import errno
+            raise OSError(errno.ENOENT, "File does not exist", self.path)
+
+        path = os.path.abspath(self.path)
+        base, filename = os.path.split(path)
+        cwd = os.getcwd()
+        if base:
+            os.chdir(base)
+        try:
+            load(path, namespace)
+        finally:
+            os.chdir(cwd)
+
+        self._init()
+        self.parser = SageDocTestParser(self.options.optional,
+                                        self.options.long,
+                                        probed_tags=self.options.probe,
+                                        file_optional_tags=self.file_optional_tags)
+        self.qualified_name = NestedName(self.basename)
+        doctests = []
+        for name, obj in namespace.items():
+            if name.startswith('__') or not inspect.isclass(obj) and not inspect.isfunction(obj):
+                continue
+            if inspect.getsourcefile(obj) != path:
+                continue
+            docstring = inspect.getdoc(obj)
+            if not docstring:
+                continue
+            self.qualified_name = NestedName(f'{self.basename}.{name}')
+            start = inspect.getsourcelines(obj)[1] - 1
+            self._process_doc(doctests, [docstring], namespace, start)
+        extras = {'tab': False, 'line_number': False,
+                  'optionals': self.parser.optionals}
+        return doctests, extras
 
 
 class TexSource(SourceLanguage):
