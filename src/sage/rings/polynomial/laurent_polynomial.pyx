@@ -616,6 +616,24 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         except TypeError:
             raise TypeError('only integral Laurent polynomials available in Regina')
 
+    def _magma_init_(self, magma):
+        """
+        Return a string that evaluates in Magma to this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: magma = Magma()  # new session
+            sage: R.<y> = LaurentPolynomialRing(QQ)
+            sage: f = y^3 - 7*y + 5/y
+            sage: g = magma(f); g
+            (y^4 - 7*y^2 + 5)/y
+        """
+        R = self.parent().polynomial_ring()
+        num = self.__u._magma_init_(magma)
+        den = (R.gen()**self.__n)._magma_init_(magma)
+        return f"{num}/{den}"
+
     def _latex_(self):
         r"""
         EXAMPLES::
