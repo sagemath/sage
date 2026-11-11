@@ -1,6 +1,10 @@
 gcc: The GNU Compiler Collection or other suitable C and C++ compilers
 ======================================================================
 
+.. raw:: latex
+
+   \hypertarget{spkg-gcc}{}
+
 Description
 -----------
 
