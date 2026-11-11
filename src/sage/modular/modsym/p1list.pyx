@@ -8,6 +8,7 @@ Lists of Manin symbols over `\QQ`, elements of `\mathbb{P}^1(\ZZ/N\ZZ)`
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
+from sage.arith.misc import xgcd
 from sage.misc.search cimport search
 from sage.structure.richcmp cimport rich_to_bool
 
@@ -1363,7 +1364,32 @@ def lift_to_sl2z(c, d, N):
 
         sage: lift_to_sl2z(0, 0, 1)
         [1, 0, 0, 1]
+        sage: lift_to_sl2z(2, 3, 0)
+        [1, 1, 2, 3]
+        sage: all(type(x) is int for x in lift_to_sl2z(2, 3, 0))
+        True
+        sage: all(type(x) is int for x in lift_to_sl2z(ZZ(2), ZZ(3), 0))
+        True
+        sage: lift_to_sl2z(10**12, 10**12 + 1, 0)
+        [1, 1, 1000000000000, 1000000000001]
+        sage: all(type(x) is int for x in lift_to_sl2z(10**12, 10**12 + 1, 0))
+        True
+        sage: all(type(x) is int for x in lift_to_sl2z(ZZ(10**12), ZZ(10**12 + 1), 0))
+        True
+        sage: lift_to_sl2z(10**25, 10**25 + 1, 0)
+        [1, 1, 10000000000000000000000000, 10000000000000000000000001]
+        sage: all(type(x) is int for x in lift_to_sl2z(10**25, 10**25 + 1, 0))
+        True
+        sage: lift_to_sl2z(2, 4, 0)
+        Traceback (most recent call last):
+        ...
+        ValueError: input must have gcd 1
     """
+    if N == 0:
+        g, s, t = xgcd(c, d)
+        if g != 1:
+            raise ValueError("input must have gcd 1")
+        return [int(t), int(-s), int(c), int(d)]
     if N <= 46340:
         return lift_to_sl2z_int(c, d, N)
     if N <= 2147483647:
