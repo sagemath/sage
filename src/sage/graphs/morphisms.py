@@ -640,7 +640,7 @@ def _vertex_ordering(C):
         ...
         ValueError: graph must be non-empty and connected
     """
-    if C.order() == 0 or not C.is_connected():
+    if not C or not C.is_connected():
         raise ValueError("graph must be non-empty and connected")
 
     n = C.order()
@@ -664,27 +664,23 @@ def _vertex_ordering(C):
     return order
 
 
-def _homomorphisms_connected(C, H, max_count=None):
+def _homomorphisms_connected(C, H):
     r"""
-    Yield homomorphisms from connected graph ``C`` to ``H``.
+    Yield homomorphisms from connected graph C to H.
     """
-    n = C.order()
-    if n == 0:
+    if not C:
         yield {}
         return
-    if H.order() == 0:
+    if not H:
         return
-    if n == 1:
+    if C.order() == 1:
         u = next(iter(C))
-        count = 0
         for v in H:
-            if max_count is not None and count >= max_count:
-                return
             yield {u: v}
-            count += 1
         return
 
     order = _vertex_ordering(C)
+    n = len(order)
     pos = {u: i for i, u in enumerate(order)}
     pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
 
@@ -697,15 +693,10 @@ def _homomorphisms_connected(C, H, max_count=None):
         init_cand = list(H)
 
     current_phi = [None] * n
-    count = 0
 
     def backtrack(idx):
-        nonlocal count
-        if max_count is not None and count >= max_count:
-            return
         if idx == n:
             yield {order[i]: current_phi[i] for i in range(n)}
-            count += 1
             return
 
         if idx == 0:
@@ -719,41 +710,31 @@ def _homomorphisms_connected(C, H, max_count=None):
         for v in candidates:
             current_phi[idx] = v
             yield from backtrack(idx + 1)
-            if max_count is not None and count >= max_count:
-                return
 
     yield from backtrack(0)
 
 
-def _homomorphisms_generator(G, H, max_count=None):
+def _homomorphisms_generator(G, H):
     r"""
-    Internal generator yielding homomorphisms from ``G`` to ``H``.
+    Internal generator yielding homomorphisms from G to H.
     """
-    if max_count == 0:
-        return
-
-    if G.order() == 0:
+    if not G:
         yield {}
         return
 
-    if H.order() == 0:
+    if not H:
         return
 
     components = G.connected_components(sort=False)
     if len(components) == 1:
-        yield from _homomorphisms_connected(G, H, max_count=max_count)
+        yield from _homomorphisms_connected(G, H)
         return
 
     subgraphs = [G.subgraph(c) for c in components]
-    count = 0
 
     def combine(comp_idx, current_mapping):
-        nonlocal count
-        if max_count is not None and count >= max_count:
-            return
         if comp_idx == len(subgraphs):
             yield dict(current_mapping)
-            count += 1
             return
 
         for phi in _homomorphisms_connected(subgraphs[comp_idx], H):
@@ -761,8 +742,6 @@ def _homomorphisms_generator(G, H, max_count=None):
             yield from combine(comp_idx + 1, current_mapping)
             for k in phi:
                 del current_mapping[k]
-            if max_count is not None and count >= max_count:
-                return
 
     current_mapping = {}
     yield from combine(0, current_mapping)
@@ -943,24 +922,26 @@ def homomorphisms(G, H, max_count=None):
         if max_count < 0:
             raise ValueError("max_count must be a non-negative integer or None")
 
-    return _homomorphisms_generator(G, H, max_count=max_count)
+    gen = _homomorphisms_generator(G, H)
+    if max_count is None:
+        return gen
+    from itertools import islice
+    return islice(gen, int(max_count))
 
 
 def _homomorphism_count_connected(C, H):
     r"""
-    Return the number of homomorphisms from connected graph ``C`` to ``H``.
+    Return the number of homomorphisms from connected graph C to H.
     """
-    from sage.rings.integer import Integer
-
-    n = C.order()
-    if n == 0:
-        return Integer(1)
-    if H.order() == 0:
-        return Integer(0)
-    if n == 1:
-        return Integer(H.order())
+    if not C:
+        return 1
+    if not H:
+        return 0
+    if C.order() == 1:
+        return H.order()
 
     order = _vertex_ordering(C)
+    n = len(order)
     pos = {u: i for i, u in enumerate(order)}
     pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
 
@@ -994,7 +975,7 @@ def _homomorphism_count_connected(C, H):
             backtrack(idx + 1)
 
     backtrack(0)
-    return Integer(total)
+    return total
 
 
 def homomorphism_count(G, H):
@@ -1177,16 +1158,16 @@ def homomorphism_count(G, H):
     G._scream_if_not_simple()
     H._scream_if_not_simple()
 
-    if G.order() == 0:
+    if not G:
         return Integer(1)
-    if H.order() == 0:
+    if not H:
         return Integer(0)
 
-    m = Integer(H.order())
+    m = H.order()
     components = G.connected_components(sort=False)
 
     num_isolated = 0
-    total_count = Integer(1)
+    total_count = 1
 
     for c in components:
         if len(c) == 1:
@@ -1201,4 +1182,4 @@ def homomorphism_count(G, H):
     if num_isolated > 0:
         total_count *= m ** num_isolated
 
-    return total_count
+    return Integer(total_count)
