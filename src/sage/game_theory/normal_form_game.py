@@ -445,10 +445,8 @@ It is also possible to generate a Normal form game from a gambit Game::
      (1, 0): [10.0, 2.0],
      (1, 1): [5.0, 5.0]}
 
-For more information on using Gambit in Sage see ``Using Gambit in
-Sage``. This includes how to access Gambit
-directly using the version of iPython shipped with Sage and an explanation
-as to why the ``int`` calls are needed to handle the Sage preparser.
+The ``int`` calls are needed to handle the Sage preparser when
+constructing a Gambit game directly in Sage.
 
 Here is a slightly longer game that would take too long to solve with
 ``'enumeration'``. Consider the following:
