@@ -304,7 +304,7 @@ Funcions
 
 La declaració general d'una funció
 de `n` arguments
-per la que s'hagi de fer 
+per la que s'hagi de fer
 una sèrie d'operacions és:
 
 .. skip
@@ -359,9 +359,9 @@ Com que en l'exemple donat la funció retorna dos valors, podem assignar-los a d
 
 Aquesta crida, però, ens donaria un error si la solució no existís o fos única.
 
-Observem que totes les variables utilitzades 
+Observem que totes les variables utilitzades
 són per defecte locals i que
-no ha calgut declarar-les. Una variable externa a la funció amb nom igual a una de 
+no ha calgut declarar-les. Una variable externa a la funció amb nom igual a una de
 les variables locals
 no es modificarà a causa de la funció. Per exemple, considerem la funció `f`:
 
@@ -620,7 +620,7 @@ Algebra lineal
 Construcció de vectors
 ----------------------
 
-Donat un cos `K`, creem l'espai vectorial 
+Donat un cos `K`, creem l'espai vectorial
 `K^n` mitjançant ``VectorSpace(K,n)``, o escrivint ``K^n``.
 Per crear vectors podem fer una coerció dins l'espai dels vectors corresponent o bé els podem definir directament::
 
@@ -701,7 +701,7 @@ la notació usual. Per trobar la matriu inversa d'una
 matriu invertible `m`
 escriurem ``m^-1``.
 
-Per trobar les solucions d'un sistema lineal `x m=v` on 
+Per trobar les solucions d'un sistema lineal `x m=v` on
 `m` és una matriu i `v` és un vector tenim  ``m.solve_left()``
 mentre que per resoldre el sistema `x m=v` tenim
 ``m.solve_right()``. ::
@@ -993,10 +993,10 @@ ordre visualitza una esfera utilitzant la fórmula clàssica:
     sage: implicit_plot3d(x^2 + y^2 + z^2 - 4, (x,-2, 2), (y,-2, 2), (z,-2, 2))
     Graphics3d Object
 
-Índexs i taules
-===============
-
 ..  [Jmol] Jmol: un visualitzador d'estructures químiques en 3D, de codi obert i escrit en Java i Javascript.  http://www.jmol.org/.
+
+Índex i cerca
+=============
 
 * :ref:`genindex`
 * :ref:`search`
