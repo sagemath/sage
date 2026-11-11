@@ -75,6 +75,12 @@ class MLKEM(KEMBase):
         sage: ss2 = kem.decaps(sk, ct)
         sage: ss1 == ss2
         True
+
+    The full Sage :class:`TestSuite` passes, including pickling::
+
+        sage: import warnings; warnings.simplefilter('ignore')
+        sage: kem = MLKEM.from_parameter_set("toy")
+        sage: TestSuite(kem).run()
     """
 
     PARAMETER_SETS = {
@@ -200,6 +206,75 @@ class MLKEM(KEMBase):
             self._POLY_RING.gen() ** n + 1, 'x'
         )
         self._ZETAS = self._compute_zetas()
+
+    # ------------------------------------------------------------------
+    # Comparison and hashing
+    # ------------------------------------------------------------------
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` have the same parameters.
+
+        Two :class:`MLKEM` instances are equal if and only if they were
+        constructed with the same values of ``n``, ``q``, ``k``,
+        ``eta1``, ``eta2``, ``du``, and ``dv``.
+
+        EXAMPLES::
+
+            sage: import warnings; warnings.simplefilter('ignore')
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: MLKEM.from_parameter_set("512") == MLKEM.from_parameter_set("512")
+            True
+            sage: MLKEM.from_parameter_set("512") == MLKEM.from_parameter_set("768")
+            False
+            sage: MLKEM(n=256, q=3329, k=2, eta1=3, eta2=2, du=10, dv=4) == MLKEM.from_parameter_set("512")
+            True
+            sage: MLKEM.from_parameter_set("512") == 42
+            False
+        """
+        if not isinstance(other, MLKEM):
+            return NotImplemented
+        return (
+            self.n, self.q, self.k,
+            self.eta1, self.eta2, self.du, self.dv,
+        ) == (
+            other.n, other.q, other.k,
+            other.eta1, other.eta2, other.du, other.dv,
+        )
+
+    def __ne__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` have different parameters.
+
+        EXAMPLES::
+
+            sage: import warnings; warnings.simplefilter('ignore')
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: MLKEM.from_parameter_set("512") != MLKEM.from_parameter_set("768")
+            True
+            sage: MLKEM.from_parameter_set("512") != MLKEM.from_parameter_set("512")
+            False
+        """
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
+    def __hash__(self):
+        r"""
+        Return a hash consistent with :meth:`__eq__`.
+
+        EXAMPLES::
+
+            sage: import warnings; warnings.simplefilter('ignore')
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: hash(MLKEM.from_parameter_set("512")) == hash(MLKEM.from_parameter_set("512"))
+            True
+        """
+        return hash((
+            "MLKEM", self.n, self.q, self.k,
+            self.eta1, self.eta2, self.du, self.dv,
+        ))
 
     # ------------------------------------------------------------------
     # Twiddle factors

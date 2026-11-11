@@ -72,31 +72,48 @@ def test_kat(params):
 # Regression tests for toy / custom-parameter paths.
 # ----------------------------------------------------------------------
 
-def test_compression_round_trip():
-    """Same serialized ciphertext must give the same decapsulated result.
+def test_compression_in_normal_path():
+    """Compression loss must be reflected in encaps()'s returned output.
 
-    Encapsulation now returns compressed-then-decompressed ciphertext
-    polynomials, so decapsulation operates on the same data a recipient
-    would receive.  This test checks that re-applying the compression
-    (as if the ciphertext had been transmitted and decoded) yields the
-    same shared secret.
+    Uses small parameters where compression error overwhelms the
+    message, so that decapsulation takes the implicit rejection path.
+    This is exactly the case the earlier implementation hid: with
+    uncompressed ciphertext returned by encaps(), decapsulation would
+    succeed here even though a real recipient (who sees the compressed
+    ciphertext) would take the rejection path.
     """
-    kem = MLKEM.from_parameter_set("toy")
+    # Small parameters: du=4, dv=4 at n=16 makes the compression error
+    # large enough that the recovered message differs from the input.
+    kem = MLKEM(n=16, q=3329, k=2, eta1=2, eta2=2, du=4, dv=4)
+
+    # Deterministic inputs from cxzhong's original counterexample.
     d = bytes(32)
-    z = bytes(range(32))
-    m = bytes(kem.n // 8)
+    z = bytes(32)
+    m = b"\x00\x01"  # 2 bytes for n=16
+
     pk, sk = kem.keygen(d=d, z=z)
     ct, K = kem.encaps(pk, m=m)
 
-    # Simulate transport: Compress followed by Decompress.
-    ct_compressed = kem._compress_ct(*ct)
+    # (1) encaps() must already return compressed data.  Otherwise
+    # the round trip effectively ignores du and dv.
+    assert ct == kem._compress_ct(*ct), (
+        "encaps() must return compressed ciphertext; otherwise the "
+        "roundtrip ignores du and dv"
+    )
 
-    # The serialized bytes should be identical.
-    assert kem._encode_ct(*ct) == kem._encode_ct(*ct_compressed)
-
-    # Decapsulating either form must recover the original K.
-    assert kem.decaps(sk, ct) == K
-    assert kem.decaps(sk, ct_compressed) == K
+    # (2) Decapsulation must take the implicit rejection path because
+    # compression loss has corrupted the message here.  If encaps()
+    # had returned uncompressed data, decapsulation would have
+    # incorrectly succeeded.
+    _, _, _, z_out = sk
+    c_bytes = kem._encode_ct(*ct)
+    K_bar = kem._hash_j(z_out + c_bytes)
+    assert kem.decaps(sk, ct) == K_bar, (
+        "decapsulation should take the implicit rejection path"
+    )
+    assert kem.decaps(sk, ct) != K, (
+        "compression loss should prevent recovery of the original K"
+    )
 
 
 def test_reject_small_n():
