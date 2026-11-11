@@ -765,33 +765,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             raise ValueError("the valuation must be specified")
         return self.undefined(valuation)
 
-    def _try_exact_data_ring(self, R, x):
-        r"""
-        Return ``x`` converted into the ring ``R`` of exact data, or
-        ``None`` if ``x`` cannot be so converted.
-
-        EXAMPLES::
-
-            sage: L = LazyLaurentSeriesRing(QQ, 'z')
-            sage: L._try_exact_data_ring(L._exact_data_ring, 2)
-            2
-            sage: P = LazyPowerSeriesRing(QQ, 'z')
-            sage: P._try_exact_data_ring(P._exact_data_ring, 2)
-            2
-            sage: m = SymmetricFunctions(ZZ).m()
-            sage: LazySymmetricFunctions(m)._try_exact_data_ring(m, m[2])
-            m[2]
-            sage: L._try_exact_data_ring(L._exact_data_ring, lambda i: i) is None
-            True
-        """
-        try:
-            x = R(x)
-        except (TypeError, ValueError, AttributeError, NotImplementedError):
-            pass
-        if parent(x) is R:
-            return x
-        return None
-
     def _convert_to_exact_data(self, x):
         r"""
         Return ``x`` viewed as an element of the exact-data ring of
@@ -803,10 +776,23 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
             sage: L._convert_to_exact_data(2)
             2
+            sage: P = LazyPowerSeriesRing(QQ, 'z')
+            sage: P._convert_to_exact_data(2)
+            2
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: LazySymmetricFunctions(m)._convert_to_exact_data(m[2])
+            m[2]
             sage: L._convert_to_exact_data(lambda i: i) is None
             True
         """
-        return self._try_exact_data_ring(self._exact_data_ring, x)
+        R = self._exact_data_ring
+        try:
+            x = R(x)
+        except (TypeError, ValueError, AttributeError, NotImplementedError):
+            pass
+        if parent(x) is R:
+            return x
+        return None
 
     def _series_from_exact_data(self, x, valuation, degree, constant):
         r"""
