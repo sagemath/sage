@@ -820,6 +820,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             coeff_stream = Stream_exact([], order=degree, constant=constant)
             return self.element_class(self, coeff_stream)
         initial_coefficients = [x[i] for i in range(x.valuation(), x.degree() + 1)]
+        if degree is not None and degree <= x.degree():
+            raise ValueError("the degree must be greater than the degree of the data")
         coeff_stream = Stream_exact(initial_coefficients,
                                     order=x.valuation(), degree=degree, constant=constant)
         return self.element_class(self, coeff_stream)
@@ -3723,6 +3725,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
             coeff_stream = Stream_zero()
         else:
             if not x:
+                if valuation is not None and degree is not None and valuation > degree:
+                    raise ValueError("the degree must be greater than the degree of the data")
                 coeff_stream = Stream_exact([],
                                             order=valuation,
                                             degree=degree,
@@ -3741,6 +3745,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 d = max(p_dict.keys())
                 p_list = [p_dict.get(i, 0) for i in range(v, d + 1)]
 
+            if degree is not None and degree < v + len(p_list):
+                raise ValueError("the degree must be greater than the degree of the data")
             coeff_stream = Stream_exact(p_list,
                                         order=v,
                                         constant=constant,
@@ -3841,9 +3847,13 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 p = [BR(c) for c in p]
             else:
                 p = [R(c) for c in p]
-                if not all(e.is_homogeneous() and e.degree() == i
+                if not all(not e or e.is_homogeneous() and e.degree() == i
                            for i, e in enumerate(p, valuation)):
                     raise ValueError("coefficients must be homogeneous polynomials of the correct degree")
+            if not any(p) and not constant:
+                return self.zero()
+            if degree < valuation:
+                raise ValueError("the degree must be greater than the degree of the data")
             coeff_stream = Stream_exact(p,
                                         order=valuation,
                                         constant=constant,
@@ -4493,6 +4503,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             d = max(p_dict)
             p_list = [p_dict.get(i, 0) for i in range(v, d + 1)]
 
+            if degree is not None and degree <= d:
+                raise ValueError("the degree must be greater than the degree of the data")
             coeff_stream = Stream_exact(p_list,
                                         order=v,
                                         constant=self.base_ring().zero(),
@@ -4664,6 +4676,10 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         for i, e in enumerate(p, valuation):
             self._check_homogeneous(e, i)
+        if not any(p):
+            return self.zero()
+        if degree < valuation + len(p):
+            raise ValueError("the degree must be greater than the degree of the data")
         coeff_stream = Stream_exact(p,
                                     order=valuation,
                                     constant=R.zero(),
