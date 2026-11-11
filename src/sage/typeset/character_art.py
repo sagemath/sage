@@ -57,8 +57,8 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: i = var('i')                                                          # needs sage.symbolic
-            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                       # needs sage.symbolic
+            sage: i = var('i')
+            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
              pi*x
             e
 
@@ -158,10 +158,10 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,2],[3,4]])                                             # needs sage.modules
-            sage: format(ascii_art(M))                                                  # needs sage.modules
+            sage: M = matrix([[1,2],[3,4]])
+            sage: format(ascii_art(M))
             '[1 2]\n[3 4]'
-            sage: format(unicode_art(M))                                                # needs sage.modules
+            sage: format(unicode_art(M))
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
         return format(str(self), fmt)
