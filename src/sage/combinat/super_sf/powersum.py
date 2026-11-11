@@ -219,8 +219,7 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
             R_gens = R.gens()
             x_gens1 = R_gens[:n]
             y_gens1 = R_gens[n:]
-            return sum(self_parts[part] *
-                       prod(sum(x**p - y**p
-                                for x, y in zip(x_gens1, y_gens1))
-                            for p in part)
-                       for part in self_parts)
+            D = (cf * prod(sum(x**p - y**p for x, y in zip(x_gens1, y_gens1))
+                           for p in part)
+                 for part, cf in self_parts.items())
+            return sum(D)

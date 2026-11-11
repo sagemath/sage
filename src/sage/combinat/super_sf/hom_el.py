@@ -212,8 +212,7 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             monomial_coeff = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
             y_gens = [alphabet_y + str(i) for i in range(m)]
-            variables = x_gens + y_gens
-            R = PolynomialRing(self.base_ring(), variables)
+            R = PolynomialRing(self.base_ring(), x_gens + y_gens)
             R_gens = R.gens_dict()
             x_gens = [R_gens[gen] for gen in x_gens]
             y_gens = [R_gens[gen] for gen in y_gens]
@@ -221,19 +220,18 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             def el_i(i, X_gens, Y_gens, x_count, y_count):
                 req_sum = R.zero()
                 for p in range(i + 1):
-                    for seq1 in combinations(range(y_count), (i - p)):
+                    for seq1 in combinations(range(y_count), i - p):
+                        p1 = prod([Y_gens[i] for i in seq1])
                         for seq2 in combinations_with_replacement(range(x_count), p):
-                            res_prod = prod([Y_gens[i] for i in seq1]) * prod([X_gens[j] for j in seq2])
-                            req_sum += res_prod
+                            req_sum += p1 * prod([X_gens[j] for j in seq2])
                 return req_sum
 
             if basis_name == 'homogeneous':
 
                 fin_res = R.zero()
                 for part in monomial_coeff:
-                    res_prod = R.one()
-                    for p in part:
-                        res_prod *= el_i(p, x_gens, y_gens, n, m)
+                    res_prod = R.prod(el_i(p, x_gens, y_gens, n, m)
+                                      for p in part)
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
 
@@ -241,10 +239,9 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
 
                 fin_res = R.zero()
                 for part in monomial_coeff:
-                    res_prod = R.one()
-                    for p in part:
-                        res_prod *= el_i(p, y_gens, x_gens, m, n)
-                        # Same function el_i used for hom and el,
-                        # except with gens swapped as per definition
+                    res_prod = R.prod(el_i(p, y_gens, x_gens, m, n)
+                                      for p in part)
+                    # Same function el_i used for hom and el,
+                    # except with gens swapped as per definition
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
