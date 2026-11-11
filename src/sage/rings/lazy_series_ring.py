@@ -966,6 +966,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: P = PolynomialRing(QQ, 'z')
             sage: L._convert_to_fraction_field((1 + P.gen()) / (1 + P.gen()^2))
             (z + 1)/(z^2 + 1)
+
+        For Dirichlet series the fraction field is that of the encoding
+        polynomial ring::
+
+            sage: D = LazyDirichletSeriesRing(QQ, 'z')
+            sage: D((1 + P.gen()) / (1 + P.gen()^2))
+            1 + 3/5/2^z + 2/5/3^z + 5/17/4^z + 3/13/5^z + 7/37/6^z + 4/25/7^z + O(1/(8^z))
         """
         try:
             FF = self._exact_data_ring.fraction_field()
