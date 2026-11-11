@@ -1059,7 +1059,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         try:
             FF = self._exact_data_ring.fraction_field()
             return FF(x)
-        except (TypeError, ValueError, AttributeError):
+        except (TypeError, ValueError, AttributeError, NotImplementedError):
             return None
 
     def _is_coefficient_function(self, x):
