@@ -480,7 +480,7 @@ def AlternatingPresentation(n) -> FinitelyPresentedGroup:
     EXAMPLES::
 
         sage: A6 = groups.presentation.Alternating(6)
-        sage: A6.as_permutation_group().is_isomorphic(AlternatingGroup(6)), A6.order()
+        sage: A6.as_permutation_group().is_isomorphic(AlternatingGroup(6)), A6.order()  # optional - internet
         (True, 360)
 
     TESTS:
