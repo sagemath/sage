@@ -3,6 +3,7 @@ py.install_sources(
   'all.py',
   'constructor.py',
   'cubegroup.py',
+  'hyperoctahedral_group.py',
   'permgroup.py',
   'permgroup_element.pxd',
   'permgroup_element.pyx',
