@@ -609,7 +609,32 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
                               to_other_function=self._to_m)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
-        pass
+        def __pow__(self, n):
+            r"""
+            Return the power of ``self``.
+
+            Multiplication is performed by converting to the monomial basis,
+            which avoids the exponential term explosion seen in binary
+            exponentiation for this basis.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self``
+
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
+
+                sage: L = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hspin()
+                sage: f = L([1,1])
+                sage: len(f^4)  # long time
+                18
+            """
+            P = self.parent()
+
+            return P(P._m(self).__pow__(n))
 
 
 # the H-spin basis
