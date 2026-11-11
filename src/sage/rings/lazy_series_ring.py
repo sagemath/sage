@@ -813,6 +813,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         Return the series defined by the polynomial ``x`` (an element of
         the internal polynomial ring).
 
+        If ``valuation`` is given, it is the valuation of the result: the
+        polynomial is shifted accordingly.
+
         EXAMPLES::
 
             sage: L = LazyLaurentSeriesRing(QQ, 'z')
@@ -1004,6 +1007,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         r"""
         Return the series whose coefficients are given by the function or
         iterator ``f``.
+
+        Unlike the power series and completion families, an explicit
+        ``valuation`` is required: Laurent series have no minimal
+        valuation to default to.
 
         EXAMPLES::
 
@@ -3720,6 +3727,11 @@ class LazyPowerSeriesRing(LazySeriesRing):
         Return the series defined by the polynomial ``x`` (an element of
         the internal polynomial ring).
 
+        The coefficients are the homogeneous components of ``x`` for
+        multivariate rings and the coefficients of ``x`` otherwise.  If
+        ``valuation`` is given, it is the valuation of the result: the
+        series is shifted accordingly.
+
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'z')
@@ -3775,11 +3787,11 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         if not isinstance(x, LazyPowerSeries):
             return None
+        BR = self._internal_poly_ring.base_ring()
         stream = x._coeff_stream
         if isinstance(stream, Stream_zero):
             return self.element_class(self, stream)
         if isinstance(stream, Stream_exact):
-            BR = self._internal_poly_ring.base_ring()
             coeffs = [BR(val) for val in stream._initial_coefficients]
             constant = BR(stream._constant)
             x_val = stream._approximate_order
@@ -3799,7 +3811,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 return ret
             return ret.shift(valuation - x_val)
         # inexact source
-        BR = self._internal_poly_ring.base_ring()
         shift = None
         if valuation is not None:
             shift = valuation - stream.order()
@@ -3822,6 +3833,10 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L(lambda i: i^2, valuation=2)
             4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + 64*z^8 + O(z^9)
 
+        ``check`` is only effective for multivariate rings (arity
+        greater than one): coefficients are converted into the base ring
+        otherwise, and there is nothing to check.
+
         When ``degree`` is given, the coefficients form the finite
         initial segment of an exact stream; its representation requires
         each coefficient to be homogeneous of the correct degree, which
@@ -3836,7 +3851,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             valuation = 0
         if degree is not None:
             if constant is None:
-                constant = ZZ.zero()
+                constant = BR.zero()
             if callable(f):
                 p = [f(i) for i in range(valuation, degree)]
             else:
@@ -4626,6 +4641,13 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
             sage: L((m[i] for i in NN if i), valuation=1, check=False)
             m[1] + m[2] + m[3] + m[4] + m[5] + m[6] + m[7] + O^8
+
+        ``check`` (the default) validates lazily, on access, that each
+        coefficient is homogeneous of the correct degree, for any arity
+        (for arity one this is the ``homogeneous_degree`` of the
+        coefficient in the basis).  With ``check=False``, the raw ``f``
+        is used directly and its values are converted into the basis on
+        access.
 
         When ``degree`` is given, the coefficients form the finite
         initial segment of an exact stream; its representation requires
