@@ -30,12 +30,16 @@ AUTHORS:
 
 - Lorenz Panny (2026): :meth:`~EllipticCurveHom.kernel_subgroup`, :meth:`~EllipticCurveHom.kernel_gens`
 """
+import operator
+
 from sage.arith.misc import integer_floor
+from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import coercion_model, parent
 from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_not_equal
 from sage.rings.number_field import number_field_base
 
@@ -136,6 +140,185 @@ class EllipticCurveHom(Morphism):
             ret = EllipticCurveHom_composite.from_factors([other, self])
 
         return ret
+
+    def __mul__(self, other):
+        r"""
+        Compose this elliptic-curve morphism with another map, or multiply
+        it by a scalar (:issue:`42789`).
+
+        When multiplying by an integer `n` (on the left or right), the result
+        is the composition `[n] \circ \phi` of the scalar-multiplication
+        endomorphism on the codomain curve with this morphism.
+
+        .. NOTE::
+
+            ``Map.__mul__`` raises a :class:`TypeError` for non-map
+            operands, and raw Python integers cannot reach Sage's coercion
+            framework, so ``__mul__`` and ``__rmul__`` delegate to it.
+            The scalar logic lives in ``_acted_upon_``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: 5 * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi * 5
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: 5 * phi == phi * 5 == 5r * phi == phi * 5r
+            True
+
+        Multiplying a scalar endomorphism by an integer simplifies directly
+        to an :class:`~sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`::
+
+            sage: sc = E.scalar_multiplication(3)
+            sage: 5 * sc
+            Scalar-multiplication endomorphism [15] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+            sage: sc * 5
+            Scalar-multiplication endomorphism [15] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+
+        Multiplying two maps computes their composition::
+
+            sage: phi.dual() * phi
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+
+        Multiplying by an incompatible type raises a :class:`TypeError`::
+
+            sage: phi * "invalid"
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+
+        TESTS::
+
+            sage: 5r * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi * 5r
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: (5 * phi).degree()
+            75
+            sage: (-5) * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: ((-5) * phi).degree()
+            75
+            sage: 0 * phi
+            Composite morphism of degree 0 = 3*0:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: (0 * phi).degree()
+            0
+            sage: "invalid" * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: phi * (1/2)
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: (1/2) * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: phi * 1.5
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: "x" * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: GF(419)(5) * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: Mod(5, 7) * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: "5" * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+            sage: 2.0 * phi
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+        """
+        if isinstance(other, Map):
+            return super().__mul__(other)
+        return coercion_model.bin_op(self, other, operator.mul)
+
+    def __rmul__(self, other):
+        r"""
+        Multiply this elliptic-curve morphism by a scalar on the left
+        (:issue:`42789`).
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: 5 * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: 5r * phi
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+        """
+        return coercion_model.bin_op(other, self, operator.mul)
+
+    def _acted_upon_(self, scalar, self_on_left):
+        r"""
+        Implement the action of integers on elliptic-curve morphisms within
+        Sage's coercion framework (:issue:`42789`).
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: phi._acted_upon_(5, False)
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi._acted_upon_(5, True)
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+            sage: phi._acted_upon_("invalid", False) is None
+            True
+            sage: phi._acted_upon_(1/2, False) is None
+            True
+            sage: phi._acted_upon_(1.5, False) is None
+            True
+            sage: phi._acted_upon_(GF(419)(5), False) is None
+            True
+            sage: phi._acted_upon_(Mod(5, 7), False) is None
+            True
+            sage: phi._acted_upon_("5", False) is None
+            True
+            sage: phi._acted_upon_(2.0, False) is None
+            True
+        """
+        try:
+            if not ZZ.has_coerce_map_from(parent(scalar)):
+                return None
+            n = ZZ(scalar)
+        except (TypeError, ValueError):
+            return None
+        return self.codomain().scalar_multiplication(n) * self
 
     def _add_(self, other):
         r"""
