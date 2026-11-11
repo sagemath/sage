@@ -1160,7 +1160,7 @@ class EllipticCurveHom(Morphism):
         assert not self.is_separable() or th.valuation() == +1, f"th has valuation {th.valuation()} (should be +1)"
         return th
 
-    def is_normalized(self):
+    def is_normalized(self) -> bool:
         r"""
         Determine whether this morphism is a normalized isogeny.
 
@@ -1286,7 +1286,7 @@ class EllipticCurveHom(Morphism):
         """
         return self.degree() // self.inseparable_degree()
 
-    def is_separable(self):
+    def is_separable(self) -> bool:
         r"""
         Determine whether or not this morphism is a separable isogeny.
 
@@ -1365,7 +1365,7 @@ class EllipticCurveHom(Morphism):
             raise ValueError('constant zero map is not an isogeny')
         return self.inseparable_degree().is_one()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Determine whether or not this morphism is surjective.
 
@@ -1396,7 +1396,7 @@ class EllipticCurveHom(Morphism):
         """
         return bool(self.degree())
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Determine whether or not this morphism has trivial kernel.
 
@@ -1474,7 +1474,7 @@ class EllipticCurveHom(Morphism):
             return False
         return self.separable_degree().is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Check whether this elliptic-curve morphism is the zero map.
 
