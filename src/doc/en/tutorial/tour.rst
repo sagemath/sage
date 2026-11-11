@@ -3,9 +3,9 @@ A Guided Tour
 *************
 
 This section is a guided tour of some of what is available in Sage.
-For many more examples, see "Sage Constructions", which is intended
+For many more examples, see :ref:`Sage Constructions <constructions>`, which is intended
 to answer the general question "How do I construct ...?". See also
-the "Sage Reference Manual", which has thousands more examples.
+the :ref:`Sage Reference Manual <reference-manual>`, which has thousands more examples.
 Also note that you can interactively work through this tour in the
 Sage notebook by clicking the ``Help`` link.
 
