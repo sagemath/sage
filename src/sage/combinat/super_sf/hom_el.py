@@ -5,12 +5,15 @@ AUTHORS:
 
 - Shriya M
 """
-from . import super_sfa
-from itertools import combinations_with_replacement, combinations
+from itertools import combinations, combinations_with_replacement
+
 from sage.combinat.partition import Partitions, _Partitions
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.functions.other import factorial
 from sage.misc.misc_c import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import super_sfa
+
 
 class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
     r"""
@@ -130,8 +133,9 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         """
         def P(i):
             return _Partitions([i]) if i else _Partitions([])
+
         T = self.tensor_square()
-        return T.sum_of_monomials((P(j), P(n-j)) for j in range(n+1))
+        return T.sum_of_monomials((P(j), P(n - j)) for j in range(n + 1))
 
     def lift_on_gens(self, n):
         r"""
@@ -150,21 +154,18 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         parts = Partitions(n)
         Supersym = self.realization_of()
         R = self.base_ring()
-        res = R.zero()
 
         def z(part):
-            prod = R.one()
-            for p in part:
-                m = part.to_exp()[p-1]
-                prod *= (p ** m) * factorial(p)
-            return prod
+            return R.prod(i**mi * factorial(mi)
+                          for i, mi in part.to_exp_dict().items())
 
         ssp = Supersym.p()
         if basis_name == 'homogeneous':
-            res = ssp._from_dict({part: ~z(part) for part in parts})
+            return ssp._from_dict({part: ~z(part) for part in parts})
         elif basis_name == 'elementary':
-            res = ssp._from_dict({part: (-1) ** (n - len(part)) / z(part) for part in parts})
-        return res
+            return ssp._from_dict({part: (-1)**(n - len(part)) / z(part)
+                                  for part in parts})
+        return R.zero()
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
         def expand(self, n, m, alphabet_x='x', alphabet_y='y'):
@@ -222,11 +223,11 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
 
             def el_i(i, X_gens, Y_gens, x_count, y_count):
                 req_sum = R.zero()
-                for p in range(i+1):
+                for p in range(i + 1):
                     for seq1 in combinations(range(y_count), (i - p)):
                         for seq2 in combinations_with_replacement(range(x_count), p):
-                                res_prod = prod([Y_gens[i] for i in seq1]) * prod([X_gens[j] for j in seq2])
-                                req_sum += res_prod
+                            res_prod = prod([Y_gens[i] for i in seq1]) * prod([X_gens[j] for j in seq2])
+                            req_sum += res_prod
                 return req_sum
 
             if basis_name == 'homogeneous':
