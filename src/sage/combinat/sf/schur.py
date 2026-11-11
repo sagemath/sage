@@ -338,6 +338,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 s[2, 1]
                 sage: s([2,1,1]).omega()
                 s[3, 1]
+                sage: s([]).omega()
+                s[]
+                sage: s[1].omega()
+                s[1]
+                sage: s[3,1].omega()
+                s[2, 1, 1]
             """
             conj = lambda part: part.conjugate()
             return self.map_support(conj)
