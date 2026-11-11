@@ -495,9 +495,15 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         initial_v_int = Gbackend.get_vertex(initial_vertex)
     else:
         initial_v_int = -1
-    sig_on()
-    extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
-    sig_off()
+    if tree:
+        # We need the predecessors for extracting tree edges
+        sig_on()
+        extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
+        sig_off()
+    else:
+        sig_on()
+        extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, NULL, NULL, NULL)
+        sig_off()
     cdef list sigma = [Gbackend.vertex_label(vi) for vi in sigma_int]
     cdef list edges
     if tree:
