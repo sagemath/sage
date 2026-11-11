@@ -148,7 +148,7 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             sage: s = SuperSymmetricFunctions(QQ)
             sage: h = s.h()
             sage: h.lift_on_gens(3)
-            p[1, 1, 1] + 1/4*p[2, 1] + 1/18*p[3]
+            1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]
         """
         basis_name = self.basis_name
         parts = Partitions(n)
