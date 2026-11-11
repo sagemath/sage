@@ -162,7 +162,7 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         ssp = Supersym.p()
         if basis_name == 'homogeneous':
             return ssp._from_dict({part: ~z(part) for part in parts})
-        elif basis_name == 'elementary':
+        if basis_name == 'elementary':
             return ssp._from_dict({part: (-1)**(n - len(part)) / z(part)
                                   for part in parts})
         return R.zero()
