@@ -18,7 +18,7 @@ Elements of posets, lattices, semilattices, etc.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.latex import latex
-from sage.structure.element import Element, have_same_parent
+from sage.structure.element import Element
 
 
 class PosetElement(Element):
@@ -108,11 +108,14 @@ class PosetElement(Element):
             False
             sage: PosetElement(P,0,"b") == PosetElement(P,0,"c")
             False
+            sage: R = Poset([["a","b"],["d"],["c"],["d"],[]], facade = False)
+            sage: P(0) == R(0)
+            True
 
-        .. warning:: as an optimization, this only compares the parent
-           and vertex, using the invariant that, in a proper poset
-           element, ``self.element == other.element`` if and only
-           ``self.vertex == other.vertex``::
+        If the parent is identical, this only compares the vertex, using
+        the invariant that, in a proper poset element,
+        ``self.element == other.element`` if and only
+        ``self.vertex == other.vertex``::
 
             sage: PosetElement(P,1,"c") == PosetElement(P,0,"c")
             True
@@ -122,11 +125,11 @@ class PosetElement(Element):
             sage: P(0) == int(0)
             False
         """
-        # This should instead exploit unique representation, using
-        # self is other, or best inherit __eq__ from there. But there
-        # are issues around pickling and rich comparison functions.
-        return have_same_parent(self, other) \
-            and self.vertex == other.vertex
+        if not isinstance(other, PosetElement):
+            return False
+        if self.parent() is other.parent():
+            return self.vertex == other.vertex
+        return self.parent() == other.parent() and self.element == other.element
 
     def __ne__(self, other):
         r"""
