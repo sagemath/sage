@@ -38,6 +38,7 @@ Elliptic curves over number fields
    :maxdepth: 1
 
    sage/schemes/elliptic_curves/ell_rational_field
+   sage/schemes/elliptic_curves/integral_points
    sage/schemes/elliptic_curves/ec_database
 
    sage/schemes/elliptic_curves/ell_number_field
