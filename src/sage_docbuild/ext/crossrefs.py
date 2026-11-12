@@ -20,6 +20,7 @@ import builtins
 import functools
 import os
 import sys
+import types
 import typing
 
 from sphinx.ext import intersphinx
@@ -409,6 +410,12 @@ def _type_parameter_names(modname):
         sage: sorted(_type_parameter_names('no.such.module'))
         []
 
+    Overloads can declare type parameters that the implementation does not::
+
+        sage: import sage.matrix.special
+        sage: sorted(_type_parameter_names('sage.matrix.special'))
+        ['F']
+
     The answer for a module that is not imported is not remembered: importing
     it later is what gives it type parameters to find::
 
@@ -443,7 +450,17 @@ def _type_parameters_of_imported_module(modname):
     def type_params(obj):
         if isinstance(obj, LazyImport):
             return set()
-        return {tp.__name__ for tp in safe_getattr(obj, '__type_params__', ())}
+        if isinstance(obj, (staticmethod, classmethod)):
+            obj = obj.__func__
+        names = {tp.__name__ for tp in safe_getattr(obj, '__type_params__', ())}
+        if isinstance(obj, types.FunctionType):
+            for overload in typing.get_overloads(obj):
+                # Either decorator order can put a descriptor in the registry.
+                func = (overload.__func__ if isinstance(overload, (staticmethod, classmethod))
+                        else overload)
+                names.update(tp.__name__ for tp in
+                             safe_getattr(func, '__type_params__', ()))
+        return names
 
     names = set()
     seen_bases = set()
@@ -484,6 +501,21 @@ def _is_type_parameter(node, reftarget):
         sage: _is_type_parameter(node, 'typing.Any')
         False
         sage: _is_type_parameter(node, 'Parent')
+        False
+
+    The same applies to parameters declared only by overloads::
+
+        sage: import sage.matrix.special
+        sage: node = {'py:module': 'sage.matrix.special'}
+        sage: _is_type_parameter(node, 'F')
+        True
+        sage: _is_type_parameter(node, 'typing.F')
+        True
+        sage: _is_type_parameter(node, 'unrelated.F')
+        False
+        sage: _is_type_parameter(node, 'UnknownType')
+        False
+        sage: _is_type_parameter(node, 'typing.Any')
         False
     """
     name = reftarget.removeprefix('typing.')
