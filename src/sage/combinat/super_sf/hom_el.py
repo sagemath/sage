@@ -218,13 +218,12 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             y_gens = [R_gens[gen] for gen in y_gens]
 
             def el_i(i, X_gens, Y_gens, x_count, y_count):
-                req_sum = R.zero()
-                for p in range(i + 1):
-                    for seq1 in combinations(range(y_count), i - p):
-                        p1 = prod([Y_gens[i] for i in seq1])
-                        for seq2 in combinations_with_replacement(range(x_count), p):
-                            req_sum += p1 * prod([X_gens[j] for j in seq2])
-                return req_sum
+                return R.sum(
+                    sum(prod(seq1)
+                        for seq1 in combinations(Y_gens, i - p))
+                    * sum(prod(seq2)
+                          for seq2 in combinations_with_replacement(X_gens, p))
+                    for p in range(i + 1))
 
             if basis_name == 'homogeneous':
 
