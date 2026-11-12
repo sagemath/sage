@@ -5,16 +5,16 @@ AUTHORS:
 
 - Shriya M
 """
-from sage.categories.realizations import Category_realization_of_parent
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.hopf_algebras import HopfAlgebras
-from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.realizations import Category_realization_of_parent
+from sage.categories.tensor import TensorProductsCategory, tensor
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.partition import Partition, _Partitions
-from sage.rings.integer_ring import ZZ
-from sage.categories.tensor import TensorProductsCategory
-from sage.categories.tensor import tensor
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.rings.integer_ring import ZZ
+
 
 class SuperSymmetricFunctionsBases(Category_realization_of_parent):
     r"""
@@ -208,6 +208,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
                 TF = self.tensor_factors()
                 return tensor([F.antipode_on_basis(c[0]) for F, c in zip(TF, x)])
 
+
 class GradedSuperSymBases(Category_realization_of_parent):
     r"""
     The category of graded bases of supersymmetric functions.
@@ -274,6 +275,7 @@ class GradedSuperSymBases(Category_realization_of_parent):
                 3
             """
             return element.coefficient(_Partitions([]))
+
 
 class SuperSymAlgebra_generic(CombinatorialFreeModule):
     r"""
@@ -376,13 +378,13 @@ class SuperSymAlgebra_generic(CombinatorialFreeModule):
         """
         old_basis = x.parent().basis_name
         new_basis = self.basis_name
-        R = self.base_ring()
-        Sym = SymmetricFunctions(R)
+        Sym = SymmetricFunctions(self.base_ring())
         old_basis_sym = getattr(Sym, old_basis)()
         new_basis_sym = getattr(Sym, new_basis)()
         new_x = old_basis_sym._from_dict(x.monomial_coefficients())
         res = new_basis_sym(new_x)
         return self._from_dict(d=res.monomial_coefficients())
+
 
 class SuperSymAlgebra_multiplicative(SuperSymAlgebra_generic):
     r"""

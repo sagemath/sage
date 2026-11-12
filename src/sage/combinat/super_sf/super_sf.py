@@ -14,16 +14,15 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.rational_field import QQ
-from sage.categories.fields import Fields
-from sage.categories.rings import Rings
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.combinat.super_sf.powersum import SupersymFunctionAlgebra_powersum
+from sage.categories.rings import Rings
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.combinat.super_sf.hom_el import SupersymFunctionAlgebra_hom_el
+from sage.combinat.super_sf.powersum import SupersymFunctionAlgebra_powersum
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class SuperSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
