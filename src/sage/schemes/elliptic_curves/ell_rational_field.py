@@ -795,7 +795,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self.__mwrank_curve
         except AttributeError:
             pass
-        from sage.libs.eclib.all import mwrank_EllipticCurve
+        from sage.libs.eclib.interface import mwrank_EllipticCurve
         self.__mwrank_curve = mwrank_EllipticCurve(self.ainvs(), verbose=verbose)
         return self.__mwrank_curve
 
@@ -2686,7 +2686,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             v.append((x*d, y*d, d))
 
         c = Emin.mwrank_curve()
-        from sage.libs.eclib.all import mwrank_MordellWeil
+        from sage.libs.eclib.interface import mwrank_MordellWeil
         mw = mwrank_MordellWeil(c, verbose)
         mw.process(v) # by default, this does no saturation yet
         ok, index, unsat = mw.saturate(max_prime=max_prime, min_prime=min_prime)
