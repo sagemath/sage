@@ -402,14 +402,15 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: len(X(QQ).numerical_points(F=ComplexField(100)))                      # needs sage.libs.singular
+            sage: len(X(QQ).numerical_points(F=CDF))                                    # needs sage.libs.singular
             4
 
-        ::
+        We use a higher-precision field for this higher-degree system and
+        the requested tolerance::
 
             sage: A.<x1, x2> = AffineSpace(QQ, 2)
             sage: E = A.subscheme([30*x1^100 + 1000*x2^2 + 2000*x1*x2 + 1, x1 + x2])
-            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))    # needs sage.libs.singular
+            sage: len(E(A.base_ring()).numerical_points(F=ComplexField(100), zero_tolerance=1e-9))  # needs sage.libs.singular
             100
 
         TESTS::
