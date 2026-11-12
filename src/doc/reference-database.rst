@@ -2396,7 +2396,7 @@
 
 .. [Dav1995] \S. David,
              *Minorations de formes linéaires de logarithmes elliptiques*.
-             Mém. Soc. Math. France (N.S.) 62 (1995), Theorem 2.1.
+             Mém. Soc. Math. France (N.S.) 62 (1995).
              :doi:`10.24033/msmf.376`.
 
 .. [Dav1997] B.A. Davey, H.A. Priestley,
@@ -4816,11 +4816,6 @@
 .. [KoikeTerada1987] \K. Koike, I. Terada, *Young-diagrammatic methods for
    the representation theory of the classical groups of type Bn, Cn, Dn*.
    J. Algebra 107 (1987), no. 2, 466-511.
-
-.. [Kol1989] \V. A. Kolyvagin,
-             *Finiteness of E(Q) and Ш(E,Q) for a subclass of Weil curves*.
-             Math. USSR-Izv. 32 (1989), 523--541.
-             :doi:`10.1070/IM1989v032n03ABEH000779`.
 
 .. [Kol1991] \V. A. Kolyvagin. On the structure of Shafarevich-Tate
              groups. Algebraic geometry, 94--121, Lecture Notes in Math., 1479,
@@ -7315,14 +7310,8 @@
             `<ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz>`_
 
 .. [ST1994b] \R. J. Stroeker and N. Tzanakis,
-             *Solving elliptic diophantine equations by estimating linear
-             forms in elliptic logarithms*. Acta Arith. 67 (1994), 177--196.
-
-.. [ST1999] \R. J. Stroeker and N. Tzanakis,
-            *On the elliptic logarithm method for elliptic Diophantine
-            equations: reflections and an improvement*.
-            Experimental Mathematics 8 (1999), 135--149.
-            :doi:`10.1080/10586458.1999.10504395`.
+            *Solving elliptic diophantine equations by estimating linear
+            forms in elliptic logarithms*. Acta Arith. 67 (1994), 177--196.
 
 .. [St2007] \W. Stein. *Modular Forms, a Computational Approach*.
             With an appendix by Paul E. Gunnells.
