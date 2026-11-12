@@ -3,7 +3,6 @@ name: Build & Test with all meson features disabled
 # TODO:
 #
 #   * -Dbrial=disabled
-#   * -Declib=disabled
 #   * -Dauto_features=disabled (when all others are working)
 
 on:
@@ -93,7 +92,7 @@ jobs:
       # those to fail as well.
       - name: Remove optional packages from Conda environment
         shell: bash -l {0}
-        run: conda remove bliss libbraiding libhomfly rw sirocco
+        run: conda remove bliss eclib libbraiding libhomfly rw sirocco
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -107,7 +106,7 @@ jobs:
           # Let Meson discover the compiler through the ccache wrappers.
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 
-          meson setup --buildtype=release --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
+          meson setup --buildtype=release --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Declib=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
           meson install -C builddir
 
       - name: Check that all modules can be imported
