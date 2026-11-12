@@ -916,10 +916,10 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
     Two older algorithms are available, both of which are much slower
     except for very small degrees.
 
-    Method 'exhaustive' makes use of the complete and unconditionsl classification of
-    all orders of class number up to 100, and hence will raise an
-    error if `j` is an algebraic integer of degree greater than
-    this.
+    Method 'exhaustive' makes use of the complete and unconditional
+    classification of all orders of class number up to 100, and hence
+    will raise an error if `j` is an algebraic integer of degree
+    greater than this.
 
     Method 'reduction' constructs an elliptic curve over the number
     field `\QQ(j)` and computes its traces of Frobenius at several

@@ -2137,7 +2137,7 @@ def is_classical_parameters_graph(list array):
             # Halved cube graph
             gamma = ClassicalParametersGraph.HalvedCube
         else:
-            return False  # no other (unbounbded) drg exists with b = 1
+            return False  # no other (unbounded) drg exists with b = 1
 
     elif b < 0 and is_prime_power(-b):
         if (alpha + 1 == (1 + b*b) / (1 + b) and

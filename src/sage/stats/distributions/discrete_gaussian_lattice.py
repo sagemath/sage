@@ -390,8 +390,10 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     def _randomise(self, v):
         r"""
-        Randomly round to the latice coset `\ZZ + v` with Gaussian parameter
-        `r`. Used at ``_call_non_spherical``.
+        Randomly round to the lattice coset `\ZZ + v` with Gaussian parameter
+        `r`.
+
+        Used at ``_call_non_spherical``.
 
         REFERENCES:
 
