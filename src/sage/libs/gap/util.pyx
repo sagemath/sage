@@ -12,11 +12,11 @@ Utility functions for GAP
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from libc.signal cimport signal, SIGALRM, SIGCHLD, SIG_DFL, SIGINT
+from libc.signal cimport sig_atomic_t, SIGALRM, SIGCHLD, SIGINT
 from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 from posix.signal cimport sigaction, sigaction_t, sigemptyset
 
-from cpython.exc cimport PyErr_Fetch, PyErr_Restore
+from cpython.exc cimport PyErr_Fetch, PyErr_Restore, PyErr_SetFromErrno
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE, Py_TYPE
 from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
 
@@ -235,10 +235,10 @@ MakeImmutable(libgap_errout);
 cdef sigaction_t gap_sigint_sa
 cdef sigaction_t sage_sigint_sa
 cdef sigaction_t sage_sigalrm_sa
-cdef int last_signum = 0
+cdef volatile sig_atomic_t last_signum = 0
 
 
-cdef void gap_interrupt_asap(int signum) noexcept:
+cdef void gap_interrupt_asap(int signum) noexcept nogil:
     # A wrapper around InterruptExecStat(). This tells GAP to raise an
     # error at the next opportunity.
     global last_signum
@@ -328,8 +328,18 @@ cdef initialize():
     # them to be invoked while libgap code is executing, whereas the
     # default would enable them globally. We will explicitly wrap GAP
     # computations in gap_sig_on() and gap_sig_off() instead.
-    GAP_Initialize(argc, argv, gasman_callback, error_handler,
-                   handleSignals=False)
+    # GAP still installs a SIGCHLD handler despite handleSignals=False
+    # (https://github.com/gap-system/gap/issues/3380). Preserve the host's
+    # complete signal action, including its mask and flags.
+    cdef sigaction_t sigchld_sa
+    if sigaction(SIGCHLD, NULL, &sigchld_sa) < 0:
+        PyErr_SetFromErrno(OSError)
+    try:
+        GAP_Initialize(argc, argv, gasman_callback, error_handler,
+                       handleSignals=False)
+    finally:
+        if sigaction(SIGCHLD, &sigchld_sa, NULL) < 0:
+            PyErr_SetFromErrno(OSError)
 
     # Configure a SIGINT handler (which can be enabled by calling
     # gap_sig_on) to run InterruptExecStat. This is essentially GAP's
@@ -338,11 +348,7 @@ cdef initialize():
     global gap_sigint_sa
     gap_sigint_sa.sa_handler = gap_interrupt_asap
     sigemptyset(&(gap_sigint_sa.sa_mask))
-    gap_sigint_sa.sa_flags = 0;
-
-    # Disable GAP's SIGCHLD handler ChildStatusChanged(), which calls
-    # waitpid() on random child processes.
-    signal(SIGCHLD, SIG_DFL)
+    gap_sigint_sa.sa_flags = 0
 
     # Set the ERROR_OUTPUT global in GAP to an output stream in which to
     # receive error output
@@ -361,7 +367,7 @@ cdef initialize():
 
 
 cpdef void gap_sig_on() noexcept:
-    # Install GAP's own SIGINT handler, typically for the duration of
+    # Install our cooperative interrupt handler, typically for the duration of
     # some libgap commands. We install it for SIGALRM too so that the
     # doctest runner can use alarm() to interrupt it.
     global gap_sigint_sa
