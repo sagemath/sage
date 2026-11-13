@@ -1,24 +1,12 @@
 name: Static type check
 
 on:
-  merge_group:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   types:
     name: Type check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
