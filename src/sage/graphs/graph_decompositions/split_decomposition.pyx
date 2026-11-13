@@ -1503,7 +1503,7 @@ cdef class GraphLabelledTree:
         return G
 
 
-def split_tree(G, check=False):
+def split_tree(G, check=True):
     r"""
     Return the split-tree (Cunningham) decomposition of ``G``.
 
@@ -1518,7 +1518,7 @@ def split_tree(G, check=False):
 
     - ``G`` -- a connected graph without loops
 
-    - ``check`` -- boolean (default: ``False``); whether to run internal tests
+    - ``check`` -- boolean (default: ``True``); whether to run internal tests
       and procedures for checking the consistency of the internal data
       structures and the the validity of the construction during its execution.
 
