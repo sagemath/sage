@@ -1321,6 +1321,11 @@ cdef class GraphLabelledTree:
             True
             sage: ST.as_graph(include_leaves=False, immutable=False).is_immutable()
             False
+            sage: ST = GraphLabelledTree(graphs.CompleteGraph(3))
+            sage: ST.as_graph().order()
+            4
+            sage: ST.as_graph(include_leaves=False).order()
+            1
         """
         from sage.graphs.graph import Graph
         if immutable is None:
@@ -1354,8 +1359,8 @@ cdef class GraphLabelledTree:
                     if x != y:
                         yield (x, y, (m_str[m1], m_str[m2], None))
 
-        return Graph(edges(), format="list_of_edges", immutable=immutable)
-
+        return Graph([n_to_v.values(), edges()], format="vertices_and_edges",
+                     immutable=immutable)
 
     cdef set _accessible_markers(self, int m0):
         r"""
