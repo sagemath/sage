@@ -197,7 +197,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     permutations, whereas its coproduct is given by splitting
     a permutation (regarded as a word) into two (at every
     possible point) and standardizing the two pieces.
-    This Hopf algebra was introduced in [MR]_.
+    This Hopf algebra was introduced in [MR1995]_.
     See [GriRei18]_ (Chapter 8) for a treatment using modern
     notations.
 
@@ -345,7 +345,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    - [MR]_
+    - [MR1995]_
     - [LR1998]_
     - [GriRei18]_
     """

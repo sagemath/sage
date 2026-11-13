@@ -6,15 +6,19 @@ warning(
   'Documentation building enabled, generating targets may be slow. To disable this, pass -Dbuild-docs=false.',
 )
 
-sphinx_check = py_module.find_installation(required: false, modules: ['sphinx'])
+sphinx_check = py_module.find_installation(
+  required: false,
+  modules: ['sphinx', 'sphinxcontrib.bibtex'],
+)
 if not sphinx_check.found()
   warning(
-    'Python package "sphinx" is not installed. Documentation build not enabled.',
+    'Sphinx or sphinxcontrib-bibtex is not installed. Install the docs dependencies to build documentation.',
   )
   subdir_done()
 endif
 
 doc_src = []
+subdir('references')
 subdir('el')
 subdir('ca')
 subdir('zh')

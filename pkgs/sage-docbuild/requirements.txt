@@ -1,2 +1,6 @@
 #sage
+latexcodec
+pybtex >=0.25
+pybtex-docutils >=1.0.2
 sphinx >=9.1, <10
+sphinxcontrib-bibtex >=2.7, <3

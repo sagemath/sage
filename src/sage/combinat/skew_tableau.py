@@ -2381,7 +2381,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         """
         Return the number of standard skew tableaux with shape of the skew
         partition ``skp``. This uses a formula due to Aitken
-        (see Cor. 7.16.3 of [Sta-EC2]_).
+        (see Cor. 7.16.3 of [EnumComb2]_).
 
         EXAMPLES::
 

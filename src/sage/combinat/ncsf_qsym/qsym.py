@@ -113,7 +113,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
     Chapter 5 of [GriRei18]_ and Section 11 of [HazWitt1]_ are devoted
     to quasi-symmetric functions, as are Malvenuto's thesis [Mal1993]_
-    and part of Chapter 7 of [Sta-EC2]_.
+    and part of Chapter 7 of [EnumComb2]_.
 
     .. rubric:: The implementation of the quasi-symmetric function Hopf algebra
 
@@ -173,7 +173,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
     dual Hopf algebra of the non-commutative symmetric functions `NCSF`.
     Under this duality, the Monomial basis of `\mathrm{QSym}` is dual to
     the Complete basis of `NCSF`, and the Fundamental basis of
-    `\mathrm{QSym}` is dual to the Ribbon basis of `NCSF` (see [MR]_).
+    `\mathrm{QSym}` is dual to the Ribbon basis of `NCSF` (see [MR1995]_).
 
     ::
 
@@ -2739,7 +2739,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         The Hopf algebra of quasi-symmetric function in the Quasisymmetric
         Schur basis.
 
-        The basis of Quasisymmetric Schur functions is defined in [QSCHUR]_
+        The basis of Quasisymmetric Schur functions is defined in [HLMvW2011]_
         and in Definition 5.1.1 of [LMvW13]_.
         Don't mistake them for the completely unrelated quasi-Schur
         functions of [NCSF1]_!

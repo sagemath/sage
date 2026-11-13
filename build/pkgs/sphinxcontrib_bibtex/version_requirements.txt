@@ -1,0 +1,1 @@
+sphinxcontrib-bibtex >=2.7, <3

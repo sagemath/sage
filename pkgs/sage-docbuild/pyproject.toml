@@ -21,7 +21,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
-dependencies = ["sphinx >=9.1, <10", "sphinx-copybutton"]
+dependencies = [
+    "latexcodec",
+    "pybtex >=0.25",
+    "pybtex-docutils >=1.0.2",
+    "sphinx >=9.1, <10",
+    "sphinx-copybutton",
+    "sphinxcontrib-bibtex >=2.7, <3",
+]
 dynamic = ["version"]
 
 [project.readme]
@@ -34,6 +41,9 @@ packages = [
     "sage_docbuild.ext",
 ]
 include-package-data = false
+
+[tool.setuptools.package-data]
+sage_docbuild = ["references/*.bib"]
 
 [tool.setuptools.dynamic]
 version = {file = ["VERSION.txt"]}

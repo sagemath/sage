@@ -57,7 +57,7 @@ invariant factors of the group. You should now use
     (4, f4, 4)
 
 Background on invariant factors and the Smith normal form
-(according to section 4.1 of [Cohen1]_): An abelian group is a
+(according to section 4.1 of [Coh2000]_): An abelian group is a
 group `A` for which there exists an exact sequence
 `\ZZ^k \rightarrow \ZZ^\ell \rightarrow A \rightarrow 1`,
 for some positive integers
@@ -151,7 +151,7 @@ the underlying representation is lists of integer exponents::
 
 REFERENCES:
 
-- [Cohen1]_
+- [Coh2000]_
 
 - [Cohen2]_
 

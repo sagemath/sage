@@ -23,7 +23,7 @@ REFERENCES:
 
 - [BmBGL09]_
 
-- [Loth02]_
+- [Lot2002]_
 
 - [Fogg]_
 
@@ -729,7 +729,7 @@ class WordGenerator:
         the sequence: `s_0 = b, s_1 = a, \ldots, s_{n+1} = s_n^{d_n} s_{n-1}`
         for `n > 0`.
 
-        See Section 2.1 of [Loth02]_ for more details.
+        See Section 2.1 of [Lot2002]_ for more details.
 
         INPUT:
 
@@ -1096,7 +1096,7 @@ class WordGenerator:
         The lower mechanical word `s_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s_{\alpha,\rho}(n) = \lfloor\alpha(n+1) + \rho\rfloor -
-        \lfloor\alpha n + \rho\rfloor`. [Loth02]_
+        \lfloor\alpha n + \rho\rfloor`. [Lot2002]_
 
         INPUT:
 
@@ -1154,7 +1154,7 @@ class WordGenerator:
         The upper mechanical word `s'_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s'_{\alpha,\rho}(n) = \lceil\alpha(n+1) + \rho\rceil -
-        \lceil\alpha n + \rho\rceil`. [Loth02]_
+        \lceil\alpha n + \rho\rceil`. [Lot2002]_
 
         INPUT:
 
