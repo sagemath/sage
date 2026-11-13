@@ -71,6 +71,25 @@ Hypergraphs
    sage/combinat/designs/incidence_structures
 
 
+Graph decomposition algorithms
+--------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/graphs/graph_decompositions/tree_decomposition
+   sage/graphs/graph_decompositions/vertex_separation
+   sage/graphs/graph_decompositions/rankwidth
+   sage/graphs/graph_decompositions/bandwidth
+   sage/graphs/graph_decompositions/cutwidth
+   sage/graphs/graph_decompositions/fast_digraph
+   sage/graphs/graph_decompositions/graph_products
+   sage/graphs/graph_decompositions/slice_decomposition
+   sage/graphs/graph_decompositions/modular_decomposition
+   sage/graphs/graph_decompositions/split_decomposition
+   sage/graphs/graph_decompositions/clique_separators
+
+
 Libraries of algorithms
 -----------------------
 
@@ -99,16 +118,6 @@ Libraries of algorithms
    sage/graphs/traversals
    sage/graphs/graph_plot
    sage/graphs/graph_plot_js
-   sage/graphs/graph_decompositions/tree_decomposition
-   sage/graphs/graph_decompositions/vertex_separation
-   sage/graphs/graph_decompositions/rankwidth
-   sage/graphs/graph_decompositions/bandwidth
-   sage/graphs/graph_decompositions/cutwidth
-   sage/graphs/graph_decompositions/fast_digraph
-   sage/graphs/graph_decompositions/graph_products
-   sage/graphs/graph_decompositions/slice_decomposition
-   sage/graphs/graph_decompositions/modular_decomposition
-   sage/graphs/graph_decompositions/clique_separators
    sage/graphs/convexity_properties
    sage/graphs/weakly_chordal
    sage/graphs/distances_all_pairs
