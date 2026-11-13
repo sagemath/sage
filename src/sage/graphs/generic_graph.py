@@ -14918,6 +14918,15 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 1, 'a'), (0, 1, {'w': 2}), (1, 2, {'w': 3})]
             [(1, 0, {'w': 2}), (1, 2, {'w': 3})]
             [(1, 0, {'w': 2}), (1, 2, {'w': 3})]
+
+        Edges can also be given as lists::
+
+            sage: G = Graph([(0, 1, 'a'), (1, 2, 'b'), (2, 3, 'c')])
+            sage: for algorithm in ['add', 'delete']:
+            ....:     S = G.subgraph(edges=[[0, 1, 'a'], [1, 2]], algorithm=algorithm)
+            ....:     print(S.edges(sort=True))
+            [(0, 1, 'a'), (1, 2, 'b')]
+            [(0, 1, 'a'), (1, 2, 'b')]
         """
         if vertices is None:
             vertices = self
@@ -15065,11 +15074,11 @@ class GenericGraph(GenericGraph_pyx):
                 for e in edges:
                     if len(e) == 3:
                         try:
-                            edges_to_keep_labeled.add(e)
+                            edges_to_keep_labeled.add(tuple(e))
                         except TypeError:
                             unhashable_labels.setdefault((e[0], e[1]), []).append(e[2])
                     elif len(e) == 2:
-                        edges_to_keep_unlabeled.add(e)
+                        edges_to_keep_unlabeled.add(tuple(e))
 
                 edges_to_keep = []
                 if self._directed:
@@ -15268,11 +15277,11 @@ class GenericGraph(GenericGraph_pyx):
             for e in edges:
                 if len(e) == 3:
                     try:
-                        edges_to_keep_labeled.add(e)
+                        edges_to_keep_labeled.add(tuple(e))
                     except TypeError:
                         unhashable_labels.setdefault((e[0], e[1]), []).append(e[2])
                 elif len(e) == 2:
-                    edges_to_keep_unlabeled.add(e)
+                    edges_to_keep_unlabeled.add(tuple(e))
             edges_to_delete = []
             if G._directed:
                 for u, v, l in G.edge_iterator():
