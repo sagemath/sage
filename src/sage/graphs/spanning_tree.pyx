@@ -1314,6 +1314,18 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         sage: F = G.edge_disjoint_spanning_trees(k=2)
         sage: len(F)
         2
+
+    The number of trees can reach the minimum degree of the graph::
+
+        sage: G = graphs.CompleteGraph(7)
+        sage: G.add_edges([(7, 0), (7, 1), (7, 2)])
+        sage: F = edge_disjoint_spanning_trees(G, 3)
+        sage: [f.is_tree() for f in F]
+        [True, True, True]
+        sage: len(set(frozenset(e) for f in F for e in f.edge_iterator(labels=False)))
+        21
+        sage: len(G.edge_disjoint_spanning_trees())
+        3
     """
     if G.is_directed():
         raise ValueError("this method is for undirected graphs only")
@@ -1331,7 +1343,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         if not E and G.order() != 1:
             raise EmptySetError(msg_no_solution)
         return [Graph([G, E], format='vertices_and_edges')]
-    elif k > 1 + min(G.degree()) // 2:
+    elif k > min(G.degree()) or k * (G.order() - 1) > G.size():
         raise EmptySetError(msg_no_solution)
 
     # Initialization of data structures
