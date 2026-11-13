@@ -72,7 +72,7 @@ Hypergraphs
 
 
 Graph decomposition algorithms
---------------------------
+------------------------------
 
 .. toctree::
    :maxdepth: 1
