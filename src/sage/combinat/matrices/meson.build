@@ -4,6 +4,7 @@ py.install_sources(
   'dancing_links.pyx',
   'dlxcpp.py',
   'hadamard_matrix.py',
+  'hadamard_matrix_data.py',
   'hadamard_matrix_test.py',
   'latin.py',
   subdir: 'sage/combinat/matrices',

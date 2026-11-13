@@ -2891,6 +2891,10 @@
 .. [EilLan53] On the groups `H(\pi, n)`, I, Samuel Eilenberg and Saunders Mac Lane,
               1953.
 
+.. [EKLO2026] Ronan Egan, Ilias Kotsireas, Stephen London and Pádraig Ó Catháin,
+             *Recent progress in the construction of Hadamard matrices* (2026).
+             :arxiv:`2610.27175v1`, Section 3.
+
 .. [EKLP1992] \N. Elkies, G. Kuperberg, M. Larsen, J. Propp,
               *Alternating-Sign Matrices and Domino Tilings*, Journal of Algebraic
               Combinatorics, volume 1 (1992), p. 111-132.
@@ -5231,6 +5235,10 @@
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LK2025] \S. London and I. Kotsireas,
+            *New Turyn-type sequences*.
+            Cryptography and Communications **17** (2025), 1601--1610.
+            :doi:`10.1007/s12095-025-00829-z`
 .. [LJCR] La Jolla Covering Repository,
    https://dmgordon.org/cover
 
@@ -6675,6 +6683,13 @@
 .. [Red2001] Maria Julia Redondo. *Hochschild cohomology: some methods
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
+
+.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
+              (2026). Records the four length-166 sequences extracted from
+              Levent Alpöge's public payload and their bordered-array construction.
+              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
+              Seed data:
+              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
 
 .. [Rees00] Rolf S. Rees,
    Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,

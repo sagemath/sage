@@ -4,6 +4,7 @@ Combinatorics on matrices
 - :ref:`sage.combinat.matrices.dancing_links`
 - :ref:`sage.combinat.matrices.dlxcpp`
 - :ref:`sage.combinat.matrices.hadamard_matrix`
+- :ref:`sage.combinat.matrices.hadamard_matrix_data`
 - :ref:`sage.combinat.matrices.latin`
 """
 # install the docstring of this module to the containing package
