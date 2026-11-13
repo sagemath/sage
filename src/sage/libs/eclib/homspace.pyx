@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 "Cremona modular symbols"
 
 from cysignals.signals cimport sig_on, sig_off

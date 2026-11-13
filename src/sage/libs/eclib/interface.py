@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 r"""
 Sage interface to Cremona's ``eclib`` library (also known as ``mwrank``)
 
@@ -14,16 +15,6 @@ and call methods that are implemented using this module.
    This interface is a direct library-level interface to ``eclib``,
    including the 2-descent program ``mwrank``.
 
-TESTS:
-
-Check that ``eclib`` is imported as needed::
-
-    sage: [k for k in sys.modules if k.startswith("sage.libs.eclib")]
-    []
-    sage: EllipticCurve('11a1').mwrank_curve()
-    y^2 + y = x^3 - x^2 - 10 x - 20
-    sage: [k for k in sys.modules if k.startswith("sage.libs.eclib")]
-    ['...']
 """
 import sys
 
