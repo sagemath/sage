@@ -126,9 +126,9 @@ def normalise_hadamard(H, skew=False):
         True
 
     If ``skew`` is ``True`` but the Hadamard matrix is not skew, the matrix returned
-    will not be normalized::
+    need not be normalized::
 
-        sage: H = normalise_hadamard(hadamard_matrix(92), skew=True)
+        sage: H = normalise_hadamard(williamson_hadamard_matrix_smallcases(92), skew=True)
         sage: is_hadamard_matrix(H, normalized=True)
         False
     """
@@ -1909,6 +1909,8 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
 
     All orders divisible by four up to 1200 are implemented. For `n > 1200`,
     only some orders are available, including all twelve records of [AVR2026]_.
+    The returned matrix is normalized: its first row and column consist entirely
+    of `+1`.
 
     INPUT:
 
@@ -2004,8 +2006,6 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(2060, existence=True, construction_name=True)
         'cooper-wallis small cases: 2060'
     """
-    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_HADAMARD_ORDERS
-
     name = str(n)
     if construction_name:
         def report_name(nam):
@@ -2106,12 +2106,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
             return Unknown
         raise ValueError("The Hadamard matrix of order %s is not yet implemented." % n)
 
-    if n in ALPOGE_HADAMARD_ORDERS:
-        # Match this entry point's normalization convention while preserving
-        # the published border conventions in the specialized constructors.
-        M = normalise_hadamard(M)
+    # Normalize every construction, including those enabled by new T-sequences.
+    M = normalise_hadamard(M)
     if check:
-        assert is_hadamard_matrix(M)
+        assert is_hadamard_matrix(M, normalized=True)
 
     return M
 

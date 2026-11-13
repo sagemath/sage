@@ -37,6 +37,7 @@ def test_hadamard_matrix_from_turyn_type_sequences(n):
     assert hadamard_matrix(order, existence=True) is True
 
 
+@pytest.mark.longlong
 @pytest.mark.parametrize("constructor", ["general", "specialized"])
 @pytest.mark.parametrize("n,construction", [
     (668, "spence"), (716, "spence"),
@@ -88,6 +89,7 @@ def test_hadamard_alpoge_payload():
     )
 
 
+@pytest.mark.longlong
 @pytest.mark.parametrize("n,digest", [
     (1388, 'a6b92584eb803b87026709d64fe892dec8f7182a120e13de9edd3065cf05bf0b'),
     (1436, 'e4d745a4d44f39a5671f9cd86f5c1d0aef93504dcfb2e253451cadc9e4086728'),
@@ -113,6 +115,21 @@ def test_hadamard_bordered_unavailable(n):
     assert hadamard_matrix_bordered_goethals_seidel(n, existence=True) is False
     with pytest.raises(ValueError, match=f'No larger-border Goethals-Seidel data for order {n}'):
         hadamard_matrix_bordered_goethals_seidel(n)
+
+
+@pytest.mark.longlong
+def test_hadamard_matrix_2620_normalized():
+    """Normalize Cooper--Wallis matrices enabled by the length-44 TT seed."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix, is_hadamard_matrix,
+    )
+
+    assert hadamard_matrix(2620, existence=True, construction_name=True) == (
+        'cooper-wallis small cases: 2620'
+    )
+    H = hadamard_matrix(2620, check=False)
+    assert H.dimensions() == (2620, 2620)
+    assert is_hadamard_matrix(H, normalized=True)
 
 
 @pytest.mark.longlong
