@@ -8,7 +8,7 @@ class MPComplexNumber(FieldElement):
     value: mpc_t
     init: bool
 
-    def _new(self) -> 'MPComplexNumber':
+    def _new(self) -> MPComplexNumber:
         ...
 
     def _add_(self, other: Any) -> Any:

@@ -866,7 +866,7 @@ class InterfaceElement(Element):
             sage: loads(dumps(maxima('"abc"')))
             Traceback (most recent call last):
             ...
-            TypeError: unable to make sense of Maxima expression '\"abc\"' in Sage
+            TypeError: unable to make sense of Maxima expression '"abc"' in Sage
         """
         return self.parent(), (self._reduce(),)
 

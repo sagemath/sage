@@ -16,7 +16,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
@@ -29,6 +29,10 @@ from sage.structure.element import Expression
 from sage.structure.parent import Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class ImageSubobject(Parent):

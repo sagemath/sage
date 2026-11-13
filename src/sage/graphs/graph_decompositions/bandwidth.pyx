@@ -155,7 +155,7 @@ def bandwidth(G, k=None):
 
         sage: from sage.graphs.graph_decompositions.bandwidth import bandwidth
         sage: G = graphs.PetersenGraph()
-        sage: bandwidth(G,3)
+        sage: bandwidth(G, 3)
         False
         sage: bandwidth(G)
         (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2])

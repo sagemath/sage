@@ -2143,7 +2143,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
             ....:     for j in range(1,10):
             ....:         if j == 5:
             ....:             continue
-            ....:         assert i/j == R(i/j).rational_reconstruction()
+            ....:         q = QQ(i)/QQ(j)
+            ....:         assert q == R(q).rational_reconstruction()
         """
         if self.is_zero(self.precision_absolute()):
             return Rational(0)

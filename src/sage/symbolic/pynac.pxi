@@ -114,10 +114,18 @@ cdef extern from "pynac_wrap.h":
         const char* get_name "get_name().c_str" ()
 
     cdef cppclass GExPair "std::pair<ex, ex>":
-        pass
+        GEx first
+        GEx second
+
+    cdef cppclass GExMapIter "GiNaC::exmap::const_iterator":
+        void inc "operator++" ()
+        GExPair pair "operator*" ()
+        bint operator!=(GExMapIter i)
 
     cdef cppclass GExMap "exmap":
         void insert(GExPair e)
+        GExMapIter begin()
+        GExMapIter end()
 
     cdef cppclass GExListIter "GiNaC::lst::const_iterator":
         void inc "operator++" ()
@@ -548,7 +556,6 @@ cdef extern from "pynac_wrap.h":
         mpq_ptr py_mpq_from_rational(x)
 
         py_float(a, PyObject* kwds)
-        py_RDF_from_double(double x)
 
         py_factorial(x)
         py_doublefactorial(x)

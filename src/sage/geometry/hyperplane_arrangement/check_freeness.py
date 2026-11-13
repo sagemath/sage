@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.libs.singular
 r"""
 Helper Functions For Freeness Of Hyperplane Arrangements
 

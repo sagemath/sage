@@ -367,7 +367,7 @@ class Gp(ExtraTabCompletion, Expect):
         try:
             b = self.__builtin
         except AttributeError:
-            b = self.eval('?*').split()
+            b = self.eval('\\c').split()
             self.__builtin = b
         return b + self.eval('?0').split()
 

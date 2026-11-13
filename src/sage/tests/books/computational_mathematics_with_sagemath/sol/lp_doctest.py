@@ -7,10 +7,6 @@ sage -t ./sol/lp_doctest.sage
 It is always safe to delete this file; it is not used in typesetting your
 document.
 
-Sage example in ./sol/lp.tex, line 1::
-
-  sage: sage.numerical.backends.generic_backend.default_solver = "Glpk"
-
 Sage example in ./sol/lp.tex, line 28::
 
   sage: l = [28, 10, -89, 69, 42, -37, 76, 78, -40, 92, -93, 45]

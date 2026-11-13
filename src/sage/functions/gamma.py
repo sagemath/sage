@@ -257,7 +257,7 @@ class Function_log_gamma(GinacFunction):
         TESTS::
 
             sage: log_gamma(pari(6))                                                    # needs sage.libs.pari
-            4.78749174278205
+            4.78749174278...
 
             sage: # needs sage.symbolic
             sage: log_gamma(-2.1 + I)

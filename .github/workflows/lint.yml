@@ -31,6 +31,9 @@ jobs:
       id: deps
       run: pip install uv
 
+    - name: Test label synchronization command handling
+      run: python3 -m unittest build.test.test_sync_labels
+
     - name: Code style check with ruff
       if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: |

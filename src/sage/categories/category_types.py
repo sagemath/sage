@@ -230,11 +230,9 @@ class Category_over_base(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-             and Category of euclidean domains
+            Join of Category of euclidean domains
              and Category of noetherian rings
-             and Category of infinite enumerated sets
-             and Category of metric spaces
+             and Category of infinite enumerated sets and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
             Join of Category of number fields
              and Category of quotient fields

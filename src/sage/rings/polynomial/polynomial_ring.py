@@ -210,13 +210,11 @@ class PolynomialRing_generic(Ring):
             sage: category(ZZ['x'])
             Join of Category of unique factorization domains
              and Category of algebras with basis over
-              (Dedekind domains and euclidean domains
-               and noetherian rings and infinite enumerated sets
-               and metric spaces)
+              (euclidean domains and noetherian rings
+               and infinite enumerated sets and metric spaces)
              and Category of commutative algebras over
-              (Dedekind domains and euclidean domains
-               and noetherian rings and infinite enumerated sets
-               and metric spaces)
+              (euclidean domains and noetherian rings
+               and infinite enumerated sets and metric spaces)
              and Category of infinite sets
 
             sage: category(GF(7)['x'])
@@ -1255,7 +1253,7 @@ class PolynomialRing_generic(Ring):
         return self.gen()
 
     @cached_method
-    def is_exact(self):
+    def is_exact(self) -> bool:
         return self.base_ring().is_exact()
 
     def is_field(self, proof=True):

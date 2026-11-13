@@ -24,6 +24,10 @@ TESTS::
     [0 0]
 """
 
+from __future__ import annotations
+
+import operator
+
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,35 +35,34 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 # System imports
 import sys
-import operator
-
-# Sage matrix imports see :issue:`34283`
-
-# Sage imports
-import sage.structure.coerce_actions
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings import integer
-from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.misc import latex
-import sage.modules.free_module
-
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.persist import register_unpickle_override
-from sage.categories.monoids import Monoids
-from sage.categories.semirings import Semirings
-from sage.categories.rings import Rings
-from sage.categories.fields import Fields
-from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
+
+import sage.modules.free_module
+
+# Sage matrix imports see :issue:`34283`
+# Sage imports
+import sage.structure.coerce_actions
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.fields import Fields
+from sage.categories.monoids import Monoids
+from sage.categories.rings import Rings
+from sage.categories.semirings import Semirings
 from sage.features.meataxe import Meataxe
+from sage.misc import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.rings import integer
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
+lazy_import('sage.structure.sage_object', 'SageObject')
 
 _Semirings = Semirings()
 _Fields = Fields()
@@ -278,9 +281,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 # Could not find cutoff where LinBox multiplication is better for n >= 26 bits
                 # Could not find cutoff where LinBox is better for inverses
 
-
                 try:
-                    from . import matrix_modn_dense_double, matrix_modn_dense_float, matrix_modn_dense_flint, matrix_mod2_dense
+                    from . import (
+                        matrix_mod2_dense,
+                        matrix_modn_dense_double,
+                        matrix_modn_dense_flint,
+                        matrix_modn_dense_float,
+                    )
                 except ImportError:
                     pass
                 if R.order() < matrix_modn_dense_flint.MAX_MODULUS:
@@ -331,7 +338,10 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     return matrix_complex_ball_dense.Matrix_complex_ball_dense
 
             try:
-                from sage.rings.polynomial import polynomial_ring, multi_polynomial_ring_base
+                from sage.rings.polynomial import (
+                    multi_polynomial_ring_base,
+                    polynomial_ring,
+                )
             except ImportError:
                 pass
             else:
@@ -553,13 +563,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ, 10, 5).category()
         Category of infinite enumerated finite dimensional modules with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings
+         (euclidean domains and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ, 10, 10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings
+         (euclidean domains and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ, 10).category()
         Category of infinite finite dimensional algebras with basis over
@@ -616,13 +624,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ, 10, 5).category()
         Category of infinite enumerated finite dimensional modules with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings
+         (euclidean domains and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ, 10, 10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings
+         (euclidean domains and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ, 10).category()
         Category of infinite finite dimensional algebras with basis over
@@ -724,6 +730,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Traceback (most recent call last):
         ...
         ValueError: duplicate values for nrows
+
+    Check the optional SharedMeatAxe backend::
+
+        sage: M1 = MatrixSpace(GF(2), 5)
+        sage: M3 = MatrixSpace(GF(2), 5, implementation='meataxe') # optional - meataxe
+        sage: m3 = M3.random_element()                             # optional - meataxe
+        sage: M1(m3 * m3) == M1(m3) * M1(m3)                       # optional - meataxe
+        True
     """
 
     @staticmethod
@@ -884,13 +898,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
             sage: MatrixSpace(ZZ,10,5).category()
             Category of infinite enumerated finite dimensional modules with basis over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(ZZ,10,10).category()
             Category of infinite enumerated finite dimensional algebras with basis over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(QQ,10).category()
             Category of infinite finite dimensional algebras with basis over
@@ -942,16 +954,13 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MatrixSpace(ZZ,2) in Sets().Infinite()
             True
         """
-        # Checks of input data are supposed to be done in __classcall__
-        assert isinstance(implementation, type)
-
         self.Element = implementation
         self.__nrows = nrows
         self.__ncols = ncols
         self.__is_sparse = sparse
 
-        from sage.categories.modules import Modules
         from sage.categories.algebras import Algebras
+        from sage.categories.modules import Modules
         if base_ring in Rings():
             if nrows == ncols:
                 category = Algebras(base_ring.category())
@@ -1063,7 +1072,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
         """
         return MatrixSpace(self._base, self.__ncols, self.__nrows,
-                self.__is_sparse, self.Element)
+                           self.__is_sparse, self.Element)
 
     def _element_constructor_(self, entries, **kwds):
         """
@@ -1291,8 +1300,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         try:
             try:
-                from sage.schemes.generic.homset import SchemeHomset_generic
-                from sage.schemes.generic.homset import SchemeHomset_points
+                from sage.schemes.generic.homset import (
+                    SchemeHomset_generic,
+                    SchemeHomset_points,
+                )
             except ImportError:
                 SchemeHomset_generic = SchemeHomset_points = None
             if op is operator.mul:
@@ -1481,12 +1492,17 @@ class MatrixSpace(UniqueRepresentation, Parent):
         except AttributeError:
             pass
         else:
+            if isinstance(meth_matrix_space, SageObject):
+                return False
+            # check above to avoid the case of Expect interfaces
             MS = meth_matrix_space()
             if isinstance(S, MatrixGroup_base):
                 return self.has_coerce_map_from(MS)
 
             try:
-                from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
+                from sage.modular.arithgroup.arithgroup_generic import (
+                    ArithmeticSubgroup,
+                )
             except ImportError:
                 pass
             else:
@@ -2371,7 +2387,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self(x, **kwds)
 
-    def matrix_space(self, nrows=None, ncols=None, sparse=False):
+    def matrix_space(self, nrows=None, ncols=None, sparse=False) -> MatrixSpace:
         """
         Return the matrix space with given number of rows, columns and
         sparsity over the same base ring as self, and defaults the same as
@@ -2432,8 +2448,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         try:
             return self.__row_space
         except AttributeError:
-            self.__row_space = sage.modules.free_module.FreeModule(self.base_ring(),
-                                                self.ncols(), sparse=self.is_sparse())
+            self.__row_space = sage.modules.free_module.FreeModule(
+                self.base_ring(), self.ncols(), sparse=self.is_sparse())
             return self.__row_space
 
     def column_space(self):
@@ -2450,8 +2466,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         try:
             return self.__column_space
         except AttributeError:
-            self.__column_space = sage.modules.free_module.FreeModule(self.base_ring(), self.nrows(),
-                                                                   sparse=self.is_sparse())
+            self.__column_space = sage.modules.free_module.FreeModule(
+                self.base_ring(), self.nrows(), sparse=self.is_sparse())
             return self.__column_space
 
     def random_element(self, density=None, *args, **kwds):
@@ -2507,10 +2523,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Z = self.element_class(self, None, False, False)
         if density is None:
             Z.randomize(density=float(1), nonzero=kwds.pop('nonzero', False),
-                *args, **kwds)
+                        *args, **kwds)
         else:
             Z.randomize(density=density, nonzero=kwds.pop('nonzero', True),
-                *args, **kwds)
+                        *args, **kwds)
         return Z
 
     def _an_element_(self):
@@ -2868,14 +2884,19 @@ def _MatrixSpace_ZZ_2x2():
     return MatrixSpace(ZZ, 2)
 
 
-register_unpickle_override('sage.matrix.matrix_modn_dense',
+register_unpickle_override(
+    'sage.matrix.matrix_modn_dense',
     'Matrix_modn_dense', Matrix_modn_dense_double)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'Matrix_integer_2x2', Matrix_integer_dense)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2_class', MatrixSpace)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2', _MatrixSpace_ZZ_2x2)
 lazy_import('sage.matrix.matrix_gf2e_dense', 'unpickle_matrix_gf2e_dense_v0')
-register_unpickle_override('sage.matrix.matrix_mod2e_dense',
+register_unpickle_override(
+    'sage.matrix.matrix_mod2e_dense',
     'unpickle_matrix_mod2e_dense_v0', unpickle_matrix_gf2e_dense_v0)

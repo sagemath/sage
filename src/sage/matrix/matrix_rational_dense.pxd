@@ -10,7 +10,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     cdef _pickle_version0(self)
     cdef _unpickle_version0(self, data)
-    cpdef _export_as_string(self, int base=?)
+    cpdef _export_as_string(self, int base=?, bint comma=?)
 
     cdef _add_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n)
     cdef _sub_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n)

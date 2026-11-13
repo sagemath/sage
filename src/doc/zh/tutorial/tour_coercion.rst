@@ -92,8 +92,7 @@
     sage: Rings()
     Category of rings
     sage: ZZ.category()
-    Join of Category of Dedekind domains
-        and Category of euclidean domains
+    Join of Category of euclidean domains
         and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces

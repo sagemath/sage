@@ -3,7 +3,7 @@ r"""
 Affinization crystals
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,16 +15,16 @@ Affinization crystals
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
-from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.regular_crystals import RegularCrystals
 from sage.rings.infinity import Infinity
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class AffinizationOfCrystal(UniqueRepresentation, Parent):
@@ -76,7 +76,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
     - [HK2002]_ Chapter 10
     """
 
-    def __init__(self, B):
+    def __init__(self, B) -> None:
         """
         Initialize ``self``.
 
@@ -97,7 +97,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         self.module_generators = tuple([self.element_class(self, b, 0)
                                         for b in B.module_generators])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -113,7 +113,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         An element in an affinization crystal.
         """
 
-        def __init__(self, parent, b, m):
+        def __init__(self, parent, b, m) -> None:
             """
             Initialize ``self``.
 
@@ -127,7 +127,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             self._m = m
             Element.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -143,7 +143,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             """
             return "{!r}({})".format(self._b, self._m)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 
@@ -161,7 +161,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             from sage.misc.latex import latex
             return latex(self._b) + "({})".format(self._m)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             r"""
             TESTS::
 
@@ -172,7 +172,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             """
             return hash(self._b) ^ hash(self._m)
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Comparison.
 
@@ -233,7 +233,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             if bp is None:
                 return None
             if i == 0:
-                return self.__class__(self.parent(), bp, self._m+1)
+                return self.__class__(self.parent(), bp, self._m + 1)
             return self.__class__(self.parent(), bp, self._m)
 
         def f(self, i):
@@ -261,7 +261,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             if bp is None:
                 return None
             if i == 0:
-                return self.__class__(self.parent(), bp, self._m-1)
+                return self.__class__(self.parent(), bp, self._m - 1)
             return self.__class__(self.parent(), bp, self._m)
 
         def epsilon(self, i):
@@ -327,4 +327,4 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             """
             WLR = self.parent().weight_lattice_realization()
             La = WLR.fundamental_weights()
-            return WLR.sum(c*La[i] for i,c in self._b.weight()) + self._m * WLR.null_root()
+            return WLR.sum(c * La[i] for i, c in self._b.weight()) + self._m * WLR.null_root()

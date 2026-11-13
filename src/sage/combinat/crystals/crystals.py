@@ -155,7 +155,7 @@ MuPAD-Combinat (see <MuPAD-Combinat>/lib/COMBINAT/crystals.mu).
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 # Acknowledgment: most of the design and implementation of this
 # library is heavily inspired from MuPAD-Combinat.

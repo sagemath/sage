@@ -1890,8 +1890,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
 
             sage: L = LazyLaurentSeriesRing(QQ, 't')
@@ -1906,11 +1905,11 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
              (unique factorization domains and algebras with basis over
-              (Dedekind domains and euclidean domains
+              (euclidean domains
                and noetherian rings
                and infinite enumerated sets and metric spaces)
               and commutative algebras over
-               (Dedekind domains and euclidean domains
+               (euclidean domains
                 and noetherian rings
                 and infinite enumerated sets and metric spaces)
               and infinite sets)
@@ -4392,7 +4391,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 
     .. WARNING::
 
-        For technical reaasons, we implement the ring of pseudo-differential
+        For technical reasons, we implement the ring of pseudo-differential
         operators as a Laurent polynomial ring in `\partial^{-1}`. So for
         an element ``P``, the coefficient ``P[k]`` is the coefficient of
         `\partial^{-k}`.

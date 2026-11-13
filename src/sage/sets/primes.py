@@ -9,6 +9,21 @@ AUTHORS:
  - Xavier Caruso (2025-10): implement congruence conditions
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.infinity import PlusInfinity
+    from sage.rings.integer import Integer
+
+from sage.arith.misc import euler_phi
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_cat import EmptySetError
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
@@ -18,16 +33,10 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer_ring import ZZ
-from sage.rings.infinity import infinity
-from .set import Set_generic
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.arith.misc import euler_phi
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.sets_cat import EmptySetError
+
+from .set import Set_generic
 
 
 def _repr_items(items, left=4, right=2):
@@ -441,7 +450,7 @@ class Primes(Set_generic, UniqueRepresentation):
         e = self._exceptions.get(x, None)
         return (e is True) or (e is None and x % self._modulus in self._classes)
 
-    def cardinality(self):
+    def cardinality(self) -> PlusInfinity:
         r"""
         Return the cardinality of this set.
 
@@ -463,7 +472,7 @@ class Primes(Set_generic, UniqueRepresentation):
             return ZZ(len(self._elements))
         return infinity
 
-    def first(self, n=None):
+    def first(self, n=None) -> Integer:
         r"""
         Return the first element in this set.
 
@@ -478,7 +487,7 @@ class Primes(Set_generic, UniqueRepresentation):
             raise EmptySetError
         return self.next(1)
 
-    def next(self, x):
+    def next(self, x) -> Integer:
         r"""
         Return the smallest element in this set strictly
         greater than ``x``.
@@ -548,7 +557,7 @@ class Primes(Set_generic, UniqueRepresentation):
             raise ValueError("this set is empty")
         return self.next(42)
 
-    def unrank(self, n):
+    def unrank(self, n) -> Integer:
         r"""
         Return the ``n``-th element of this set.
 

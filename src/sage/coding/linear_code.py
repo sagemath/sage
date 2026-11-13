@@ -1472,6 +1472,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: codes.HammingCode(GF(2), 2).minimum_distance()                        # needs sage.libs.gap
             3
 
+        The computation does not depend on the pexpect GAP interface::
+
+            sage: from unittest.mock import patch
+            sage: with patch('sage.interfaces.gap.gap', None), seed(123):               # needs sage.libs.gap
+            ....:     c = codes.HammingCode(GF(2), 3)._minimum_weight_codeword()
+            sage: c.hamming_weight()                                                   # needs sage.libs.gap
+            3
+
         AUTHORS:
 
         - David Joyner (11-2005)
@@ -1481,7 +1489,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         F = self.base_field()
         Gmat = libgap(self.generator_matrix())
 
-        current_randstate().set_seed_gap()
+        current_randstate().set_seed_libgap()
 
         if algorithm == 'guava':
             GapPackage('guava', spkg='gap_packages').require()
@@ -2944,13 +2952,13 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``word`` and return a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 
@@ -3103,13 +3111,13 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 

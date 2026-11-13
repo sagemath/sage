@@ -116,10 +116,19 @@ class AffineCipher(SymmetricKeyCipher):
             True
             sage: D(C) == P == D(E(P))
             True
+
+        TESTS:
+
+        Check that :issue:`33658` is fixed::
+
+            sage: E("HELLO")
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument M must be a string in the plaintext/ciphertext space.
         """
         # sanity check
         D = self.domain()  # = plaintext_space = ciphertext_space
-        if M.parent() != D:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == D):
             raise TypeError("Argument M must be a string in the plaintext/ciphertext space.")
 
         from sage.rings.finite_rings.integer_mod import Mod
@@ -192,7 +201,7 @@ class HillCipher(SymmetricKeyCipher):
 
     def __call__(self, M):
         S = self.domain() # = plaintext_space = ciphertext_space
-        if not isinstance(M, StringMonoidElement) and M.parent() == S:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == S):
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
         m = self.parent().block_length()
         if len(M) % m != 0:
@@ -330,7 +339,7 @@ class ShiftCipher(SymmetricKeyCipher):
             1011000010110100110100111101111110011010100100011001000010001010100110001001011111011111100011001001011110010110100110011000101110010110100100011001100011010001
         """
         dom = self.domain()  # = plaintext_space = ciphertext_space
-        if not isinstance(M, StringMonoidElement) and M.parent() == dom:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == dom):
             raise TypeError("Argument M (= %s) must be a string in the plaintext/ciphertext space." % M)
         from sage.rings.finite_rings.integer_mod import Mod
         A = list(dom.alphabet())   # plaintext/ciphertext alphabet as a list
@@ -412,7 +421,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
 
     def __call__(self, M):
         S = self.domain() # = plaintext_space = ciphertext_space
-        if not isinstance(M, StringMonoidElement) and M.parent() == S:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == S):
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
         A = list(S.alphabet())
         K = str(self.key()) # K is a string, while we want the indices:
@@ -499,7 +508,7 @@ class TranspositionCipher(SymmetricKeyCipher):
 
     def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
-        if not isinstance(M, StringMonoidElement) and M.parent() == S:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == S):
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
         if not mode == "ECB":
             raise NotImplementedError("Enciphering not implemented for mode (= %s) other than 'ECB'." % mode)
@@ -545,12 +554,19 @@ class VigenereCipher(SymmetricKeyCipher):
             sage: E = VigenereCryptosystem(S,11)
             sage: E == loads(dumps(E))
             True
+
+        Check that :issue:`33658` is fixed::
+
+            sage: e(BinaryStrings()("0101"))
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument M (= 0101) must be a string in the plaintext space.
         """
         SymmetricKeyCipher.__init__(self, parent, key)
 
     def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
-        if not isinstance(M, StringMonoidElement) and M.parent() == S:
+        if not (isinstance(M, StringMonoidElement) and M.parent() == S):
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
         if not mode == "ECB":
             raise NotImplementedError("Enciphering not implemented for mode (= %s) other than 'ECB'." % mode)

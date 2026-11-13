@@ -22,6 +22,7 @@ py.install_sources(
   'function.pyx',
   'function_factory.py',
   'function_factory.pyi',
+  'gamma_products.py',
   'getitem_impl.pyi',
   'maxima_wrapper.py',
   'operators.py',
@@ -35,6 +36,7 @@ py.install_sources(
   'ring.pyi',
   'ring.pyx',
   'series_impl.pyi',
+  'rootsum.py',
   'subring.py',
   'symbols.py',
   'tests.py',
@@ -125,7 +127,6 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/symbolic',
     install: true,
     override_options: ['cython_language=cpp'],
-    cpp_args: '-std=c++11',
     include_directories: [
       inc_cpython,
       inc_ext,

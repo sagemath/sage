@@ -138,22 +138,30 @@ bool ex::match(const ex & pattern, exvector& vec) const
         return ret;
 }
 
+static bool find_matches(const ex & expression, const ex & pattern, lst & found)
+{
+	if (expression.match(pattern)) {
+		found.append(expression);
+		return true;
+	}
+	bool any_found = false;
+	for (size_t i = 0; i < expression.nops(); ++i)
+		if (find_matches(expression.op(i), pattern, found))
+			any_found = true;
+	return any_found;
+}
+
 /** Find all occurrences of a pattern. The found matches are appended to
  *  the "found" list. If the expression itself matches the pattern, the
  *  children are not further examined. This function returns true when any
  *  matches were found. */
 bool ex::find(const ex & pattern, lst & found) const
 {
-	if (match(pattern)) {
-		found.append(*this);
+	const bool any_found = find_matches(*this, pattern, found);
+	if (any_found) {
 		found.sort();
 		found.unique();
-		return true;
 	}
-	bool any_found = false;
-	for (size_t i=0; i<nops(); i++)
-		if (op(i).find(pattern, found))
-			any_found = true;
 	return any_found;
 }
 
@@ -484,52 +492,56 @@ symbolset ex::symbols() const
 	return the_set;
 }
 
-static void collect_bound_symbols(const ex& e, symbolset& syms)
+// Compute free symbols per subtree: removing bound names from a global
+// symbol set would also erase free occurrences in neighbouring subtrees.
+static void collect_free_symbols(const ex& e, symbolset& syms)
 {
-        static unsigned int sum_serial = function::find_function("sum", 4);
-        static unsigned int integral_serial = function::find_function("integrate", 4);
-        static unsigned int limit_serial = function::find_function("limit", 0);
-	if (is_exactly_a<function>(e)) {
-                const function& f = ex_to<function>(e);
-                if (f.get_serial() == sum_serial
-                    and is_exactly_a<symbol>(f.op(1))) {
-                        syms.insert(ex_to<symbol>(f.op(1)));
-                        return collect_bound_symbols(f.op(0), syms);
-                }
-                if (f.get_serial() == integral_serial
-                    and is_exactly_a<symbol>(f.op(1))) {
-                        syms.insert(ex_to<symbol>(f.op(1)));
-                        return collect_bound_symbols(f.op(0), syms);
-                }
-                if (f.get_serial() == limit_serial
-                    and is_exactly_a<symbol>(f.op(1))) {
-                        syms.insert(ex_to<symbol>(f.op(1)));
-                        return collect_bound_symbols(f.op(0), syms);
-                }
-        }
-        else if (is_exactly_a<fderivative>(e)) {
-                const fderivative& d = ex_to<fderivative>(e);
-                for (size_t i=0; i<d.nops(); i++)
-                        if (is_exactly_a<symbol>(d.op(i)))
-                                syms.insert(ex_to<symbol>(d.op(i)));
+        if (is_exactly_a<symbol>(e)) {
+                syms.insert(ex_to<symbol>(e));
                 return;
         }
-	else
-		for (size_t i=0; i < e.nops(); i++)
-                        collect_bound_symbols(e.op(i), syms);
+        if (is_exactly_a<function>(e)) {
+                const function& f = ex_to<function>(e);
+                const std::string& name = f.get_name();
+                if (name == "root_sum" && f.nops() == 3
+                    && is_exactly_a<symbol>(f.op(1))) {
+                        symbolset local;
+                        collect_free_symbols(f.op(0), local);
+                        collect_free_symbols(f.op(2), local);
+                        local.erase(ex_to<symbol>(f.op(1)));
+                        syms.insert(local.begin(), local.end());
+                        return;
+                }
+                if ((((name == "sum" || name == "integrate") && f.nops() == 4)
+                     || (name == "limit" && f.nops() >= 2))
+                    && is_exactly_a<symbol>(f.op(1))) {
+                        symbolset local;
+                        collect_free_symbols(f.op(0), local);
+                        local.erase(ex_to<symbol>(f.op(1)));
+                        syms.insert(local.begin(), local.end());
+                        // Bounds and evaluation points are outside the scope.
+                        for (size_t i=2; i<f.nops(); i++)
+                                collect_free_symbols(f.op(i), syms);
+                        return;
+                }
+        }
+        if (is_exactly_a<fderivative>(e)) {
+                // Preserve the existing treatment of direct symbolic
+                // arguments of formal derivative objects.
+                for (size_t i=0; i<e.nops(); i++)
+                        if (!is_exactly_a<symbol>(e.op(i)))
+                                collect_free_symbols(e.op(i), syms);
+                return;
+        }
+        for (size_t i=0; i<e.nops(); i++)
+                collect_free_symbols(e.op(i), syms);
 }
 
 symbolset ex::free_symbols() const
 {
-        symbolset the_set, bound_set;
-        collect_symbols(*this, the_set);
-        collect_bound_symbols(*this, bound_set);
-        for (auto it = the_set.begin(); it != the_set.end(); )
-                if (bound_set.find(*it) != bound_set.end())
-                        it = the_set.erase(it);
-                else
-                        ++it;
-	return the_set;
+        symbolset syms;
+        collect_free_symbols(*this, syms);
+        return syms;
 }
 
 static void collect_functions(const ex& e, std::unordered_set<unsigned>& funs)
@@ -756,7 +768,7 @@ static bool _collect_powers(ex& e, ex& repl, bool& collected)
 ex ex::collect_powers() const
 {
         ex the_ex = *this;
-        bool b;
+        bool b = false;
         ex r;
         (void)_collect_powers(the_ex, r, b);
         return b? r:the_ex;
