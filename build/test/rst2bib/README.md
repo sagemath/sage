@@ -44,23 +44,26 @@ then converts the consolidated database to BibTeX. The examples and fixtures
 below compare the original Sage 11.0.beta2 baseline (`0835358cba6`) with the
 combined result of both PRs.
 
-To check the conversion on its own, build the catalogue from the cleanup branch
-and compare it with the BibTeX branch using the narrower fixture:
+To check the conversion on its own, build the catalogue from current `develop`
+(Sage 11.0.beta6, `026e931e470`) and compare it with the BibTeX branch using the
+narrower fixture:
 
 ```sh
 python build/test/rst2bib/compare-html-dom.py \
-  cleanup/html/en/reference/references/index.html \
+  develop/html/en/reference/references/index.html \
   bibtex/html/en/reference/references/index.html \
   --key-map build/test/rst2bib/deduplicated-keys.json \
   --expected-differences build/test/rst2bib/conversion-differences.json \
   --output conversion-comparison.json
 ```
 
-The cleanup catalogue has 1,979 entries; the BibTeX catalogue has 1,955 after
+The current RST catalogue has 1,986 entries; the BibTeX catalogue has 1,962 after
 consolidating 24 duplicates. The key map accounts for every retired label.
-There are 1,834 identical descriptions and 145 documented differences, including
+There are 1,841 identical descriptions and 145 documented differences, including
 the renamed entries, reviewed URL/metadata corrections, and `VT2001`'s
-mathematical-symbol encoding. No unmapped missing or additional entries are
+mathematical-symbol encoding. The seven entries added since Sage 11.0.beta4
+are included; `ALM2026` also fixes a duplicated `https://` prefix and renders
+the title's math instead of the old literal backticks. No unmapped missing or additional entries are
 permitted in this comparison.
 
 ## Reference catalogue

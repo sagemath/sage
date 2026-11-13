@@ -15,6 +15,31 @@ The original documentation baseline is Sage 11.0.beta2, commit
 [`0835358cba6`](https://github.com/sagemath/sage/commit/0835358cba6).
 Validation was performed on 12–13 October 2026.
 
+## 12 November rebase
+
+The branch is rebased onto Sage 11.0.beta6, commit `026e931e470`. The current
+RST catalogue has 1,986 entries. All seven entries added since Sage 11.0.beta4
+are now in the BibTeX database, keeping their existing citation keys:
+`ALM2026`, `BHS25`, `GG1999`, `Gos1978`, `Moe2007`, `Nak2026`, and `Paule1995`.
+Their author, title, year, and available publication/identifier fields are
+structured, while annotations preserve the source descriptions.
+
+For `ALM2026`, the broken `https://https://arxiv.org/abs/2605.26768` link is
+corrected to the [arXiv record](https://arxiv.org/abs/2605.26768), and the title's
+`n` and `Delta` are rendered as mathematics instead of literal backtick text.
+These are the only new rendered differences, recorded in
+[`conversion-differences.json`](build/test/rst2bib/conversion-differences.json).
+The previously migrated BibTeX records are unchanged.
+
+There are now 1,962 canonical entries and 595 unique DOI fields. The same 24
+duplicate-key mappings account for every RST citation key. The HTML comparison
+finds 1,841 identical descriptions and 145 documented differences, with no
+missing or added keys. All 1,962 entries pass the metadata audit; 1,955 format
+without annotations and the same seven undated chapters remain explicit
+exceptions. All 23 bibliography regression tests pass.
+
+The October counts below describe the original migration and its audits.
+
 ## Separate review of cleanup and conversion
 
 The work is now split into two pull requests:

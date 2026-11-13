@@ -39,6 +39,41 @@
       ]
     }
   },
+  "ALM2026": {
+    "text": {
+      "before": "E. Artal, A. Larraya and M.A. Marco-Buzunariz, Retraction of the complement of smooth projective hypersurfaces to an `n`-dimensional `Delta`-complex. https://https://arxiv.org/abs/2605.26768",
+      "after": "E. Artal, A. Larraya and M.A. Marco-Buzunariz, Retraction of the complement of smooth projective hypersurfaces to an \\(n\\) -dimensional \\(\\Delta\\) -complex. https://arxiv.org/abs/2605.26768"
+    },
+    "links": {
+      "before": [
+        [
+          "https://https://arxiv.org/abs/2605.26768",
+          "https://https://arxiv.org/abs/2605.26768"
+        ]
+      ],
+      "after": [
+        [
+          "https://arxiv.org/abs/2605.26768",
+          "https://arxiv.org/abs/2605.26768"
+        ]
+      ]
+    },
+    "math": {
+      "before": [],
+      "after": [
+        "\\(n\\)",
+        "\\(\\Delta\\)"
+      ]
+    },
+    "emphasis": {
+      "before": [
+        "Retraction of the complement of smooth projective hypersurfaces to an `n`-dimensional `Delta`-complex."
+      ],
+      "after": [
+        "Retraction of the complement of smooth projective hypersurfaces to an \\(n\\) -dimensional \\(\\Delta\\) -complex."
+      ]
+    }
+  },
   "AndHonk97": {
     "text": {
       "before": "Ian Anderson and Iiro Honkala, A short course in Combinatorial Designs , Internet Editions, Spring 1997. http://www.utu.fi/~honkala/designs.ps",
