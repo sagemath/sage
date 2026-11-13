@@ -1411,9 +1411,9 @@ cdef class GraphLabelledTree:
             from these data. It is used from checking the validity of the
             construction and is often faster than algorithm ``'B'``.
 
-          - ``B`` -- this algorithm first builds the graph representation of the
-            graph-labelled tree (using method ``as_graph``) and then extracts
-            the graph. It helps checking the construction returned by
+          - ``'B'`` -- this algorithm first builds the graph representation of
+            the graph-labelled tree (using method ``as_graph``) and then
+            extracts the graph. It helps checking the construction returned by
             ``as_graph``.
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
