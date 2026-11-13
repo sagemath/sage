@@ -3556,6 +3556,19 @@
             Edizioni della Normale, Pisa.
             :doi:`10.1007/978-88-7642-431-1_13`
 
+.. [GP2012b] Emeric Gioan, Christophe Paul: *Split decomposition and
+             graph-labelled trees: Characterizations and fully dynamic
+             algorithms for totally decomposable graphs*.
+             Discrete Applied Mathematics, 160(6):708-733, 2012.
+             :doi:`10.1016/j.dam.2011.05.007`
+             :arxiv:`0810.1823v2`
+
+.. [GPTC2016] Emeric Gioan, Christophe Paul, Marc Tedder, Derek G. Corneil:
+             *Practical and Efficient Split Decomposition via Graph-Labelled Trees*.
+             Algorithmica 69(4): 789-843 (2014)
+             :doi:`10.1007/S00453-013-9752-9`
+             :arxiv:`1104.3283v3`
+
 .. [GPV2008] Craig Gentry, Chris Peikert, Vinod Vaikuntanathan. *How
              to Use a Short Basis: Trapdoors for Hard Lattices and New
              Cryptographic
