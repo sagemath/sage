@@ -529,8 +529,7 @@ cdef class CoercionModel:
     Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
-        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
+        sage: __ = numpy.set_printoptions(legacy="1.25")                                # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
