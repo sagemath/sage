@@ -727,7 +727,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
                         minv = v
                         minu = u
             if i != -1:
-                # i is the first row below m with an entry in colunmn m-1 with minimal valuation
+                # i is the first row below m with an entry in column m-1 with minimal valuation
                 q = n_pow(p, e-minv)
                 if minv == 0:
                     preq = prepe
@@ -853,7 +853,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             try:
                 nmod_mat_init(H, n, n, 1)
                 nmod_mat_init(c, n+1, n+1, N)
-                # Now we use N cummulatively as we work through the factorization
+                # Now we use N cumulatively as we work through the factorization
                 N = 1
                 for pz, ez in F:
                     pe = n_pow(pz, ez)

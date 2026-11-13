@@ -312,20 +312,17 @@ Simplifying expressions involving scientific notation::
     sage: sqrt(c^3)
     sqrt(((2.00000000000000e-6)*k + 12)^3)
 
-The symbolic calculus package uses its own copy of Maxima for
-simplification, etc., which is separate from the default
-system-wide version::
+The symbolic calculus package shares the library interface with ``maxima``.
+Sage symbolic variables are translated to names prefixed with
+``_SAGE_VAR_``, so they are distinct from variables entered as Maxima
+strings::
 
     sage: maxima.eval('[x,y]: [1,2]')
     '[1,2]'
     sage: maxima.eval('expand((x+y)^3)')
     '27'
 
-If the copy of Maxima used by the symbolic calculus package were
-the same as the default one, then the following would return 27,
-which would be very confusing indeed!
-
-::
+Thus these assignments do not change the Sage symbolic variables::
 
     sage: x, y = var('x,y')
     sage: expand((x+y)^3)
@@ -348,9 +345,8 @@ But this still uses Maxima::
     sage: (x + x + pi).simplify()
     pi + 2*x
 
-Note that ``x`` is still ``x``, since the
-maxima used by the calculus package is different than the one in
-the interactive interpreter.
+Note that ``x`` is still ``x`` because of the variable-name translation.
+Maxima settings such as ``domain`` are shared with the calculus package.
 Clear the maxima variables to avoid interference with other tests::
 
     sage: maxima('kill(x,y)')
@@ -621,6 +617,23 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
        Maple and Mathematica, so even if the chosen backend can perform
        the summation the result might not be convertible into a Sage
        expression.
+
+    TESTS:
+
+    Check that :issue:`42894` is fixed::
+
+        sage: k = var('k')
+        sage: n = 4
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        42
+        sage: n = 11
+        sage: sum((3*k)*binomial(n, 3*k-n-2), k, 0, oo)  # known bug
+        12630
+
+    The failures are due to a bug in Maxima's ``simplify_sum`` that
+    returns a wrong value for sums with finite-support binomials.  The
+    upstream bug report is https://sourceforge.net/p/maxima/bugs/5688/.
+    Once Maxima is fixed, the ``# known bug`` annotations can be removed.
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -864,7 +877,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         sage: symbolic_product(k, k, 1, n)
         factorial(n)
         sage: symbolic_product(x + i*(i+1)/2, i, 1, 4)
-        x^4 + 20*x^3 + 127*x^2 + 288*x + 180
+        (x + 10)*(x + 6)*(x + 3)*(x + 1)
         sage: symbolic_product(i^2, i, 1, 7)
         25401600
         sage: f = function('f')
@@ -877,6 +890,22 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         1/factorial(n + 1)
         sage: symbolic_product(f(i), i, 1, n).log().log_expand()
         sum(log(f(i)), i, 1, n)
+        sage: k, n = var('k n')
+        sage: symbolic_product((3*k + 1)*(3*k + 2), k, 0, n)
+        (1/3)^n*(3*n + 2)*(3*n + 1)*factorial(3*n)/factorial(n)
+        sage: symbolic_product(3*k + 1, k, 0, n)
+        3^n*(3*n + 1)*gamma(n + 1/3)/gamma(1/3)
+        sage: symbolic_product(2^k, k, 0, n)
+        2^(1/2*n^2 + 1/2*n)
+        sage: symbolic_product(factorial(k)/factorial(k + 2), k, 0, n)
+        1/((n + 2)*factorial(n + 1)^2)
+        sage: f = (18*k^3 + 27*k^2 + 13*k + 2)/(2*k^3 + 9*k^2 + 13*k + 6)*factorial(k)
+        sage: symbolic_product(f, k, 0, n)
+        (1/3)^n*(3*n + 2)*(3*n + 1)*factorial(3*n)*product(factorial(k), k, 0, n)/((2*n + 3)*(n + 2)*factorial(n + 1)^2*factorial(n))
+        sage: symbolic_product((k + 1)*cos(k), k, 0, n)
+        factorial(n + 1)*product(cos(k), k, 0, n)
+        sage: symbolic_product(1/factorial(k), k, 1, n)
+        1/product(factorial(k), k, 1, n)
 
     TESTS:
 
@@ -899,7 +928,19 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         return sprod(expression, v, a, b)
 
     if algorithm == 'maxima':
-        return maxima.sr_prod(expression,v,a,b)
+        # exact_product receives arbitrary input and signals "unsupported form"
+        # from different depths with different exception types: its own
+        # ValueError, failed conversions of symbolic expressions (TypeError,
+        # ValueError) or degenerate arithmetic such as poles (ArithmeticError).
+        # Catching all of them guarantees that this path can only improve on
+        # the traditional evaluation below.  A RuntimeError from a failed
+        # self-verification indicates a bug and is deliberately not caught.
+        try:
+            from sage.symbolic.gamma_products import exact_product
+            return exact_product(expression, v, a, b)
+        except (ValueError, TypeError, ArithmeticError):
+            pass
+        return maxima.sr_prod(expression, v, a, b)
 
     if algorithm == 'mathematica':
         try:

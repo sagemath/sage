@@ -1351,7 +1351,8 @@ class Link(SageObject):
         homologies = ChainComplex(complexes).homology()
         return tuple(sorted(homologies.items()))
 
-    def khovanov_homology(self, ring=ZZ, height=None, degree=None, implementation='native', **kwds):
+    def khovanov_homology(self, ring=ZZ, height=None, degree=None,
+                          implementation='native', **kwds) -> dict:
         r"""
         Return the Khovanov homology of the link.
 
@@ -1387,8 +1388,7 @@ class Link(SageObject):
             the underlying Frobenius algebra
 
           * ``root`` -- integer specifying a root of the modulus of the
-            Frobenius algeba
-
+            Frobenius algebra
 
         OUTPUT:
 

@@ -10,6 +10,9 @@ AUTHORS:
 
 - David Joyner (2005-12-20): More Examples
 """
+
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
@@ -23,6 +26,7 @@ import builtins
 import math
 
 from sage.misc.lazy_import import lazy_import
+
 from sage.misc.superseded import deprecation
 
 lazy_import('sage.rings.complex_double', 'CDF')
@@ -657,7 +661,7 @@ def symbolic_prod(expression, *args, **kwds):
         sage: product(k, k, 1, n)
         factorial(n)
         sage: product(x + i*(i+1)/2, i, 1, 4)
-        x^4 + 20*x^3 + 127*x^2 + 288*x + 180
+        (x + 10)*(x + 6)*(x + 3)*(x + 1)
         sage: product(i^2, i, 1, 7)
         25401600
         sage: f = function('f')
@@ -1231,7 +1235,7 @@ def minimal_polynomial(x, var='x'):
 minpoly = minimal_polynomial
 
 
-def multiplicative_order(x):
+def multiplicative_order(x) -> Integer | PlusInfinity:
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
     raise :exc:`ArithmeticError` otherwise.
@@ -1838,8 +1842,9 @@ def squarefree_part(x):
         return x.squarefree_part()
     except AttributeError:
         pass
-    from sage.arith.misc import factor
     from sage.structure.element import parent
+
+    from sage.arith.misc import factor
     F = factor(x)
     n = parent(x)(1)
     for p, e in F:

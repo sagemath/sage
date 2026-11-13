@@ -20,7 +20,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Iterator
 from collections.abc import Sequence as AbcSequence
-from typing import Any, Literal, overload
+from typing import Any, Literal, overload, TYPE_CHECKING
 
 from sage.misc.misc_c import prod
 from sage.rings.rational import Rational
@@ -33,8 +33,10 @@ from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.rings.integer import GCD_list, Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
+
+if TYPE_CHECKING:
+    from sage.structure.factorization import Factorization
 
 ##################################################################
 # Elementary Arithmetic
@@ -2383,11 +2385,12 @@ def get_inverse_mod(order):
 #     return s
 
 
-@overload
-def power_mod(a: int, n: int, m: int) -> int: ...
-
+# Put the Integer case first: type checkers can otherwise select the int case.
 @overload
 def power_mod(a: Integer, n: int | Integer, m: int | Integer) -> Integer: ...
+
+@overload
+def power_mod(a: int, n: int, m: int) -> int: ...
 
 @overload
 def power_mod(a, n, m) -> Any: ...
@@ -3809,13 +3812,34 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         [-2/3*x^3 + x^2 - 2/3*x + 1, 6/13*x^3 - x^2 + 6/13*x, 8/39*x^3 + 8/39*x]
         sage: [[bi % mj for mj in mods] for bi in b]
         [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+
+    TESTS:
+
+    Moduli that are not pairwise coprime, but where the first one is
+    coprime to the others::
+
+        sage: mods = [14, 33, 9]
+        sage: b, coprime = CRT_basis(mods, require_coprime_moduli=False)
+        sage: len(b), coprime
+        (3, False)
+        sage: x = sum(r * bi for r, bi in zip([5, 15, 3], b))
+        sage: [x % m for m in mods]
+        [5, 15, 3]
+
+    Python integers as moduli::
+
+        sage: mods = [int(10), int(4)]
+        sage: b, coprime = CRT_basis(mods, require_coprime_moduli=False)
+        sage: x = sum(r * bi for r, bi in zip([1, 3], b))
+        sage: [x % m for m in mods]
+        [1, 3]
     """
     n = len(moduli)
     if n == 0:
         return []
-    cs = []
     try:
         M = prod(moduli)
+        cs = []
         for m in moduli:
             Mm = M // m
             d, _, v = xgcd(m, Mm)
@@ -3829,6 +3853,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
     except ValueError:
         if require_coprime_moduli:
             raise
+        from sage.arith.functions import lcm
         e = [1]
         M_i = moduli[0]
         for i in range(1, n):
@@ -3836,11 +3861,11 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
             d_i = gcd(M_i, m_i)
             e_i = CRT(0, 1, M_i // d_i, m_i // d_i)
             e.append(e_i)
-            M_i = M_i.lcm(m_i)
+            M_i = lcm(M_i, m_i)
         partial_prod_table = [1]
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
-        cs.extend(e[i] * partial_prod_table[-i - 1] for i in range(n))
+        cs = [e[i] * partial_prod_table[-i - 1] for i in range(n)]
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 

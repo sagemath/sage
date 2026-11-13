@@ -1,4 +1,5 @@
 # sage.doctest: needs sage.rings.finite_rings
+# ruff: noqa: TC001, TC003  (some annotations are used at runtime for doctests, replace these with Python 3.15 lazy imports eventually)
 r"""
 Finite fields
 
@@ -176,8 +177,8 @@ from collections import defaultdict
 from collections.abc import Callable
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
+from sage.rings.integer import Integer
 
 try:
     # We don't late import this because this means trouble with the Givaro library

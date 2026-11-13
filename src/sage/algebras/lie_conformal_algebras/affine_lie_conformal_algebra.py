@@ -133,7 +133,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
 
     def cartan_type(self):
         """
-        The Cartan type of this Lie conformal algbera.
+        Return the Cartan type of this Lie conformal algebra.
 
         EXAMPLES::
 
