@@ -32,8 +32,8 @@ of `4`.
 
 The module below constructs Hadamard matrices for all orders divisible by four
 up to `1200`, plus many larger orders, including the twelve public records of
-[AVR2026]_. It also implements many skew Hadamard constructions and allows you
-to pull a matrix from the database at [SloaHada]_.
+[EKLO2026]_, Section 3. It also implements many skew Hadamard constructions
+and allows you to pull a matrix from the database at [SloaHada]_.
 
 The following code tests the ordinary and skew constructions up to order `4k`.
 The list of unavailable skew orders below covers ``k=300``
@@ -1039,7 +1039,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     The supplementary difference sets are taken from
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
     For orders 892, 1132, 1244, 1948 and 1964, the four circulant seeds
-    are taken directly from the public data of [AVR2026]_.
+    are those analysed in [EKLO2026]_, Section 3, Table 1.
 
     INPUT:
 
@@ -1541,7 +1541,8 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     desired matrix.
 
     For orders 668, 716, 1676 and 1772, the four sequences are taken from
-    the public payload of [AVR2026]_; see also [Reff2026]_ for order 668.
+    the matrices analysed in [EKLO2026]_, Section 3, Theorem 5;
+    see also [Reff2026]_ for order 668.
     Their row sums are `2,0,0,0`, and their periodic autocorrelations sum to
     `-4` at every nonzero shift. These identities suffice for the bordered
     array below; no relative-difference-set origin is assumed for these seeds.
@@ -1643,7 +1644,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
 def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
     r"""
-    Construct a Hadamard matrix from the larger-border records of [AVR2026]_.
+    Construct a Hadamard matrix using [EKLO2026]_, Section 3, Theorem 7.
 
     The available orders are 1388, 1436 and 1916, with borders of size
     20, 28 and 12, respectively. Their four core matrices are developed over
@@ -1908,9 +1909,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     Try to construct a Hadamard matrix using the available methods.
 
     All orders divisible by four up to 1200 are implemented. For `n > 1200`,
-    only some orders are available, including all twelve records of [AVR2026]_.
-    The returned matrix is normalized: its first row and column consist entirely
-    of `+1`.
+    only some orders are available, including all twelve records analysed in
+    [EKLO2026]_, Section 3. The returned matrix is normalized: its first row
+    and column consist entirely of `+1`.
 
     INPUT:
 

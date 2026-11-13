@@ -1,8 +1,10 @@
 r"""
 Seed data for the Hadamard matrices announced by Alpöge, Voinov and Reynolds-Haertle
 
-The twelve records below are decoded from the public sign payload and header
-table of [AVR2026]_. No shell decoder or network access is needed to use them.
+The twelve records below are the matrices of Alpöge, Voinov and Reynolds-Haertle
+analysed in [EKLO2026]_, Section 3, Tables 1 and 2. They are decoded from the
+original public sign payload and header table. No shell decoder or network
+access is needed to use them.
 The discovery method of these particular seeds is not assumed.
 
 The complete 23828-sign payload has SHA-256

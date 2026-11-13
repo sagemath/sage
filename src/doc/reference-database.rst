@@ -438,13 +438,6 @@
 .. [Ava2017] \R. Avanzi,
              *The QARMA block cipher family*; in ToSC, (2017.1), pp. 4-44.
 
-.. [AVR2026] Levent Alpöge, Philippe Voinov and Saul Reynolds-Haertle,
-             *Public Hadamard matrix data for twelve orders below 2000*
-             (announcement, 2026-08-12).
-             Sign payload: https://x.com/__alpoge__/status/2087504785952182273
-             Decoder: https://x.com/__alpoge__/status/2087504788938510427
-             Attribution: https://x.com/__alpoge__/status/2087504790435840207
-
 .. [AW2006] Adams, M.D. and Wise, D.S.,
             *Fast additions on masked integers*,
             ACM SIGPLAN Notices, 2006,
@@ -2890,6 +2883,10 @@
 
 .. [EilLan53] On the groups `H(\pi, n)`, I, Samuel Eilenberg and Saunders Mac Lane,
               1953.
+
+.. [EKLO2026] Ronan Egan, Ilias Kotsireas, Stephen London and Pádraig Ó Catháin,
+             *Recent progress in the construction of Hadamard matrices* (2026).
+             :arxiv:`2610.27175v1`, Section 3.
 
 .. [EKLP1992] \N. Elkies, G. Kuperberg, M. Larsen, J. Propp,
               *Alternating-Sign Matrices and Domino Tilings*, Journal of Algebraic
@@ -6668,8 +6665,7 @@
               https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
               Seed data:
               https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
-              Original payload: https://x.com/__alpoge__/status/2087504785952182273
-              Decoder: https://x.com/__alpoge__/status/2087504788938510427
+
 .. [Rees00] Rolf S. Rees,
    Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
