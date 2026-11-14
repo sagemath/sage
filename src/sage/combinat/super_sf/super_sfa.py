@@ -1,5 +1,5 @@
 r"""
-Bases of Supersymmetric functions
+Bases of Supersymmetric Functions
 
 AUTHORS:
 
@@ -31,7 +31,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
     """
     def _repr_(self):
         r"""
-        Return the string representation of this category.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -42,7 +42,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
             sage: s1._repr_()
             'Category of bases of Supersymmetric functions over Rational Field'
         """
-        return "Category of bases of %s" % self.base()
+        return "Category of bases of {}".format(self.base())
 
     def super_categories(self):
         r"""
@@ -123,7 +123,7 @@ class SuperSymmetricFunctionsBases(Category_realization_of_parent):
                 Fraction Field of Supersymmetric functions over Rational Field in the powersum basis
             """
             if not self.is_integral_domain():
-                raise TypeError("self must be an integral domain")
+                raise TypeError("not an integral domain")
             from sage.rings.fraction_field import FractionField_generic
             return FractionField_generic(self)
 
@@ -234,7 +234,7 @@ class GradedSuperSymBases(Category_realization_of_parent):
             sage: f._repr_()
             'Category of graded bases of Supersymmetric functions over Rational Field'
         """
-        return "Category of graded bases of %s" % self.base()
+        return "Category of graded bases of {}".format(self.base())
 
     def super_categories(self):
         r"""
@@ -312,18 +312,18 @@ class SuperSymAlgebra_generic(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, basis_keys=_Partitions, category=cat, bracket='', prefix=prefix)
 
     def _repr_(self):
-            r"""
-            Return a string representation of ``self``.
+        r"""
+        Return a string representation of ``self``.
 
-            EXAMPLES::
+        EXAMPLES::
 
-                sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-                sage: s = SuperSymmetricFunctions(QQ)
-                sage: e = s.e()
-                sage: e._repr_()
-                'Supersymmetric functions over Rational Field in the elementary basis'
-            """
-            return "%s in the %s basis" % (self.realization_of(), self.basis_name)
+            sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
+            sage: s = SuperSymmetricFunctions(QQ)
+            sage: e = s.e()
+            sage: e._repr_()
+            'Supersymmetric functions over Rational Field in the elementary basis'
+        """
+        return "%s in the %s basis" % (self.realization_of(), self.basis_name)
 
     def __getitem__(self, c):
         r"""
@@ -359,7 +359,7 @@ class SuperSymAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` -- an element of supersymmetric functions
+        - ``x`` -- element of supersymmetric functions
 
         EXAMPLES::
 
@@ -418,7 +418,7 @@ class SuperSymAlgebra_multiplicative(SuperSymAlgebra_generic):
 
         INPUT:
 
-        - ``mu`` -- a partition
+        - ``mu`` -- partition
 
         EXAMPLES::
 

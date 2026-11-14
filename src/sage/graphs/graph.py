@@ -9808,6 +9808,8 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
     from sage.graphs.graph_decompositions.bandwidth import bandwidth
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
+    from sage.graphs.graph_decompositions.modular_decomposition import modular_width
+    from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
     cliques_maximum = LazyImport('sage.graphs.cliquer', 'all_max_clique', at_startup=True)
@@ -9862,6 +9864,7 @@ _additional_categories = {
     "is_weakly_chordal"         : "Graph properties",
     "is_asteroidal_triple_free" : "Graph properties",
     "chromatic_polynomial"      : "Coloring",
+    "modular_width"             : "Modules",
     "rank_decomposition"        : "Algorithmically hard stuff",
     "treewidth"                 : "Algorithmically hard stuff",
     "pathwidth"                 : "Algorithmically hard stuff",
@@ -9915,7 +9918,8 @@ _additional_categories = {
     "is_factor_critical"        : "Matching",
     "is_matching_covered"       : "Matching",
     "matching"                  : "Matching",
-    "perfect_matchings"         : "Matching"
+    "perfect_matchings"         : "Matching",
+    "quotient_graph"            : "Leftovers"
 }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

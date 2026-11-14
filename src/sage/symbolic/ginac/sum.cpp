@@ -190,7 +190,9 @@ ex to_gamma(const ex& the_ex)
                         vec.push_back(to_gamma(m.op(i)));
                 return add(vec);
         }
-        throw std::runtime_error("can't happen in to_gamma");
+
+        // anything else, in particular constants such as pi, is kept
+        return the_ex;
 }
 
 static ex combine_powers(const ex& the_ex)

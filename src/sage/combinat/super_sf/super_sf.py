@@ -1,5 +1,5 @@
 r"""
-Supersymmetric functions, with their realizations
+Supersymmetric Functions
 
 AUTHORS:
 
@@ -24,17 +24,16 @@ from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.combinat.super_sf.powersum import SupersymFunctionAlgebra_powersum
 from sage.combinat.super_sf.hom_el import SupersymFunctionAlgebra_hom_el
-from sage.combinat.super_sf.schur import SupersymFunctionAlgebra_schur
-from sage.combinat.super_sf.monomial import SupersymFunctionAlgebra_monomial
 
 class SuperSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
-    The abstract class of commutative supersymmetric functions.
+    The abstract ring of commutative supersymmetric functions.
 
-    A *supersymmetric function* is a symmetric function `f(\mathbb{x}|\mathbb{y})`
-    defined over the variable sets `\mathbb{x}=(x_1, \ldots, x_m)` and `\mathbb{y}=(y_1, \ldots, y_n)`
-    such that substituting `x_m = t` and `y_n = -t` results in `f(\mathbb{x'}|\mathbb{y'})`, where
-    `\mathbb{x}=(x_1, \ldots, x_{m-1})` and `\mathbb{y}=(y_1, \ldots, y_{n-1})`.
+    A *supersymmetric function* is a function `f(\mathbf{x}|\mathbf{y})` defined
+    over the variable sets `\mathbf{x}=(x_1, \ldots, x_m)` and `\mathbf{y}=(y_1, \ldots, y_n)`
+    that is symmetric in the `\mathbf{x}` variables and the `\mathbf{y}` variables
+    such that substituting `x_1 = t` and `y_1 = -t` results in `f(\mathbf{x'}|\mathbf{y'})`, where
+    `\mathbf{x}=(x_2, \ldots, x_m)` and `\mathbf{y}=(y_2, \ldots, y_n)`.
 
     INPUT:
 
@@ -149,41 +148,3 @@ class SuperSymmetricFunctions(UniqueRepresentation, Parent):
         return SupersymFunctionAlgebra_hom_el(self, basis_name='elementary')
 
     e = elementary
-
-    def schur(self):
-        r"""
-        The Schur basis of supersymmetric functions.
-
-        .. SEEALSO::
-
-            :mod:`sage.combinat.super_sf.schur`
-
-        EXAMPLES::
-
-            sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-            sage: s = SuperSymmetricFunctions(QQ)
-            sage: s.schur()
-            Supersymmetric functions over Rational Field in the Schur basis
-        """
-        return SupersymFunctionAlgebra_schur(self)
-
-    s = schur
-
-    def monomial(self):
-        r"""
-        The monomial supersymmetric functions.
-
-        .. SEEALSO::
-
-            :mod:`sage.combinat.super_sf.monomial`
-
-        EXAMPLES::
-
-            sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-            sage: s = SuperSymmetricFunctions(QQ)
-            sage: s.monomial()
-            Supersymmetric functions over Rational Field in the monomial basis
-        """
-        return SupersymFunctionAlgebra_monomial(self)
-
-    m = monomial

@@ -8,7 +8,6 @@ AUTHORS:
 from . import super_sfa
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.partition import _Partitions, Partition
-from sage.categories.tensor import tensor
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
@@ -17,12 +16,12 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
     r"""
     Powersum supersymmetric functions.
 
-    The powersum supersymmetric function defined on variables `\mathbb{x}` and
-    `\mathbb{y}`, `p_i(\mathbb{x} \mid \mathbb{y})`, is given as
+    The powersum supersymmetric function on variables `\mathbf{x}` and
+    `\mathbf{y}` is defined as
 
     .. MATH::
 
-        p_i(\mathbb{x} \mid \mathbb{y}) = \sum_{k=1}^\infty x_k^i - y_k^i.
+        p_i(\mathbf{x} \mid \mathbf{y}) = \sum_{k=1}^\infty x_k^i - y_k^i
 
     These form a non-graded multiplicative basis for the ring of supersymmetric
     functions.
@@ -85,7 +84,7 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
 
         INPUT:
 
-        - ``part`` -- a list or partition
+        - ``part`` -- list or partition
 
         EXAMPLES::
 
@@ -174,34 +173,53 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
         return self.lift.section()
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
-        def expand(self, n, alphabet_x='x', alphabet_y='y'):
+        def expand(self, n, m, alphabet_x='x', alphabet_y='y'):
             r"""
             Expand the supersymmetric function ``self`` as a supersymmetric
-            polynomial in ``n`` variables.
+            polynomial in ``n`` `x` variables and ``m`` `y` variables.
 
             INPUT:
 
             - ``n`` -- nonnegative integer
+            - ``m`` -- nonnegative integer
             - ``alphabet_x`` -- (default: ``'x'``) a variable for the expansion `x`
             - ``alphabet_y`` -- (default: ``'y'``) a variable for the expansion `y`
 
             EXAMPLES::
 
                 sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-                sage: s = SuperSymmetricFunctions(QQ)
-                sage: p = s.p()
-                sage: p[[4]].expand(3)
-                x1^4 + x2^4 + x3^4 - y1^4 - y2^4 - y3^4
+                sage: Sym = SuperSymmetricFunctions(QQ)
+                sage: p = Sym.p()
+                sage: p[2,1].expand(1,0)  # Checking corner cases
+                x0^3
+                sage: p[2,1].expand(1,1)
+                x0^3 - x0^2*y0 - x0*y0^2 + y0^3
+                sage: p[2,1].expand(0,0)
+                0
+                sage: p[2,1].expand(0,1)
+                0
+                sage: sym = SymmetricFunctions(QQ)
+                sage: p1 = sym.p()
+                sage: p[2,1].expand(3,0) == p1[2,1].expand(3)
+                True
             """
             self_parts = self.monomial_coefficients()
-            x_gens = [alphabet_x + str(i) for i in range(1, n + 1)]
-            y_gens = [alphabet_y + str(i) for i in range(1, n + 1)]
+            x_gens = [alphabet_x + str(i) for i in range(n)]
+            if not m:
+                R = PolynomialRing(self.base_ring(), x_gens)
+                x_gens1 = R.gens()
+                return sum(self_parts[part] *
+                            prod(sum(x**p
+                                    for x in x_gens1)
+                                for p in part)
+                            for part in self_parts)
+            y_gens = [alphabet_y + str(i) for i in range(m)]
             R = PolynomialRing(self.base_ring(), x_gens + y_gens)
             R_gens = R.gens()
             x_gens1 = R_gens[:n]
             y_gens1 = R_gens[n:]
             return sum(self_parts[part] *
-                       prod(sum(x**p - y**p
+                    prod(sum(x**p - y**p
                                 for x, y in zip(x_gens1, y_gens1))
                             for p in part)
-                       for part in self_parts)
+                    for part in self_parts)
