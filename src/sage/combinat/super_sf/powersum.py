@@ -5,12 +5,14 @@ AUTHORS:
 
 - Shriya M
 """
-from . import super_sfa
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.combinat.partition import _Partitions, Partition
+from sage.combinat.partition import Partition, _Partitions
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.misc_c import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import super_sfa
+
 
 class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative):
     r"""
@@ -209,17 +211,15 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
                 R = PolynomialRing(self.base_ring(), x_gens)
                 x_gens1 = R.gens()
                 return sum(self_parts[part] *
-                            prod(sum(x**p
-                                    for x in x_gens1)
+                           prod(sum(x**p for x in x_gens1)
                                 for p in part)
-                            for part in self_parts)
+                           for part in self_parts)
             y_gens = [alphabet_y + str(i) for i in range(m)]
             R = PolynomialRing(self.base_ring(), x_gens + y_gens)
             R_gens = R.gens()
             x_gens1 = R_gens[:n]
             y_gens1 = R_gens[n:]
-            return sum(self_parts[part] *
-                    prod(sum(x**p - y**p
-                                for x, y in zip(x_gens1, y_gens1))
-                            for p in part)
-                    for part in self_parts)
+            D = (cf * prod(sum(x**p - y**p for x, y in zip(x_gens1, y_gens1))
+                           for p in part)
+                 for part, cf in self_parts.items())
+            return sum(D)

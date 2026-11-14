@@ -1316,6 +1316,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair (X, a)
              specifying a group action of the symmetric group on pi=None
+
+        Input checking is skipped if ``check`` is ``False``::
+
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: M(G, {0: [1,2,3,4,4]}, check=False)
+            {((1,2)(3,4),)}
+            sage: M(G, {0: [1,2,3,4,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: values of pi (=dict_values([[1, 2, 3, 4, 4]])) must partition the domain of G (={1, 2, 3, 4})
+
+        The result of the construction does not depend on ``check``::
+
+            sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
+            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -1357,12 +1377,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             elif not isinstance(pi, dict):
                 pi = dict(enumerate(pi))
             domain = [e for p in pi.values() for e in p]
-            if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
-                raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
+            if check:
+                if not set(pi).issubset(range(self._arity)):
+                    raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
+                if len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
+                    raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
 
             components = G.disjoint_direct_product_decomposition()
             if len(components) == 1:
-                return self.gen(self._indices(G, pi, check=check))
+                # G is directly indecomposable, since it consists of a
+                # single component of the direct product decomposition
+                return self.gen(self._indices(G, pi, check=False))
 
             elm = self.one()
             for component in components:
@@ -1380,7 +1405,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                          domain=component)
                     pi_H = {k: [e for e in v if e in component]
                             for k, v in pi.items()}
-                a = self._indices(H, pi_H, check=check)
+                # H is directly indecomposable, since the components of
+                # the direct product decomposition are
+                a = self._indices(H, pi_H, check=False)
                 elm *= self.gen(a)
             return elm
 
