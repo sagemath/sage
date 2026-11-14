@@ -22,6 +22,7 @@ py.install_sources(
   'rankwidth.pyx',
   'slice_decomposition.pxd',
   'slice_decomposition.pyx',
+  'split_decomposition.pyx',
   'tdlib.pyx',
   'tree_decomposition.pxd',
   'tree_decomposition.pyx',
@@ -36,6 +37,7 @@ extension_data = {
   'fast_digraph': files('fast_digraph.pyx'),
   'graph_products': files('graph_products.pyx'),
   'rankwidth': files('rankwidth.pyx'),
+  'split_decomposition': files('split_decomposition.pyx'),
   'tree_decomposition': files('tree_decomposition.pyx'),
   'vertex_separation': files('vertex_separation.pyx'),
 }
