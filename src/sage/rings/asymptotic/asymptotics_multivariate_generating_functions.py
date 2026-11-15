@@ -3893,11 +3893,44 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: B = function('B')(*tuple(T))
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
-        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :issue:`35207`)
-        sage: sorted(DD)                                 # long time
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
+        sage: sorted(DD)
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
-        sage: DD[(0, 1, 2)].number_of_operands()         # long time
+        sage: DD[(0, 1, 2)].number_of_operands()
         246
+
+    .. NOTE::
+
+        The inner loop skips zero entries of ``product_derivs`` via a
+        pointer identity check. Trivially zero symbolic derivatives are
+        normalized to ``ZZ.zero()`` once at storage time, using the
+        fast structural test
+        :meth:`~sage.symbolic.expression.Expression.is_trivial_zero`.
+        This avoids the expensive symbolic zero tests that used to be
+        performed on every entry (see :issue:`35207`).
+
+        Expressions that are zero but not trivially so (for example
+        `\sin(x)^2 + \cos(x)^2 - 1`) are *not* detected by
+        :meth:`~sage.symbolic.expression.Expression.is_trivial_zero`
+        and are left in the result as explicit zero terms. This is a
+        deliberate trade-off for performance; the mathematical value
+        is unchanged.
+
+    TESTS:
+
+    Trivially zero derivatives are normalized to ``ZZ.zero()``::
+
+        sage: diff_op(1, 1, {}, T, M, 1, 2)[(0, 1, 0)]
+        0
+
+    Expressions that are zero but not trivially so remain as
+    explicit zero terms (the mathematical value is unchanged)::
+
+        sage: AB_derivs = {diff(A, x, x): sin(x)**2 + cos(x)**2 - 1,
+        ....:              diff(A, x, y): 0, diff(A, y, y): 0}
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
+        sage: DD[(0, 1, 0)]
+        -cos(x)^2 - sin(x)^2 + 1
     """
     from itertools import product
     from sage.misc.mrange import xmrange
@@ -3912,6 +3945,14 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
             for l in range(2 * k + 1):
                 for s in combinations_with_replacement(V, 2 * (k + l)):
                     DF = diff(A[j] * B ** l, list(s)).subs(AB_derivs)
+                    # Fast structural normalization: only trivially zero
+                    # expressions (e.g. literal 0) become ZZ.zero().
+                    # Proving non-trivially-zero expressions is expensive
+                    # (see :issue:`35207`) and is not attempted here; such
+                    # expressions remain in product_derivs as explicit
+                    # zero terms. The mathematical result is unchanged.
+                    if DF.parent() is SR and DF.is_trivial_zero():
+                        DF = ZZ.zero()
                     product_derivs[(j, k, l) + s] = DF
 
     # Second, compute DD^(k+l)(A[j]*B^l)(p) and store values in dictionary.
@@ -3931,7 +3972,10 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
                 diffo = ZZ.zero()
                 for t in P:
                     idx = (j, k, l) + diff_seq(V, t)
-                    if product_derivs[idx] != ZZ.zero():
+                    # Cheap pointer identity check; the expensive symbolic
+                    # zero tests were removed in :issue:`35207`. Trivially
+                    # zero values were already normalized to ZZ.zero().
+                    if product_derivs[idx] is not ZZ.zero():
                         MM = ZZ.one()
                         for a, b in t:
                             MM *= M[a][b]
