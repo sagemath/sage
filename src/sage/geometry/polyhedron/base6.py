@@ -416,15 +416,15 @@ class Polyhedron_base6(Polyhedron_base5):
         Examples for nonlinear_transformation::
 
             sage: # needs sage.plot
-            sage: p = polytopes.hypercube(3)
+            sage: p3 = polytopes.hypercube(3)
             sage: # Standard plot (no nonlinear_transformation)
-            sage: p.plot(thickness=3)
+            sage: p3.plot(thickness=3)
             Graphics3d Object
             sage: # Define a spherical projection
             sage: def spherical_projection(v):
             ....:     s2 = sum(x**2 for x in v)
             ....:     return vector(v)/s2**0.5
-            sage: p.plot(nonlinear_transformation=spherical_projection,
+            sage: p3.plot(nonlinear_transformation=spherical_projection,
             ....:  thickness=3)
             Graphics3d Object
 
@@ -446,21 +446,21 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: # Tesseract in 3D (4D -> 3D)
             sage: # Comparison of the Schlegel diagram
             sage: # and stereographic projection (Dimensions style)
-            sage: p = polytopes.hypercube(4)
+            sage: p4 = polytopes.hypercube(4)
             sage: # Plotting of the tesseract as a Schlegel diagram
-            sage: p.plot()
+            sage: p4.plot()
             Graphics3d Object
             sage: def stereographic_projection(v):
             ....:     s2 = sum(x**2 for x in v)
             ....:     v1 = vector(v)/s2**0.5
             ....:     n1 = len(v1)-1
             ....:     return vector([v1[i] for i in range(n1)])/(v1[n1]+1)
-            sage: p.plot(nonlinear_transformation=stereographic_projection,
+            sage: p4.plot(nonlinear_transformation=stereographic_projection,
             ....:  polygon={'opacity':0.5})
             Graphics3d Object
 
             sage: # Custom resolution and reparameterization
-            sage: facet3 = p.facets()[4].as_polyhedron()
+            sage: facet3 = p4.facets()[4].as_polyhedron()
             sage: facet3.plot(thickness=2)
             Graphics3d Object
             sage: facet3.plot(
@@ -591,16 +591,16 @@ class Polyhedron_base6(Polyhedron_base5):
             NotImplementedError: plotting of 5-dimensional polyhedra not implemented
 
             sage: # needs sage.plot
-            sage: p = polytopes.hypercube(4)
-            sage: p.plot(nonlinear_transformation=lambda v: vector(v))
+            sage: p4 = polytopes.hypercube(4)
+            sage: p4.plot(nonlinear_transformation=lambda v: vector(v))
             Traceback (most recent call last):
             ...
             ValueError: nonlinear_transformation must return at most 3D points
 
             sage: # needs sage.plot
             sage: # Plotting of 1D objects (1D -> 2D)
-            sage: p = Polyhedron(vertices=[[0],[1]])
-            sage: type(p.plot())
+            sage: p1 = Polyhedron(vertices=[[0],[1]])
+            sage: type(p1.plot())
             <class 'sage.plot.graphics.Graphics'>
             sage: def trans_1d(v): return vector([sum(v)])
             sage: p_cube = polytopes.hypercube(3)
@@ -609,30 +609,30 @@ class Polyhedron_base6(Polyhedron_base5):
 
             sage: # needs sage.plot
             sage: # point/line/polygon options work with nonlinear_transformation
-            sage: p = polytopes.hypercube(2)
+            sage: p2 = polytopes.hypercube(2)
             sage: f = lambda v: vector(v)
-            sage: type(p.plot(nonlinear_transformation=f, point=False))
+            sage: type(p2.plot(nonlinear_transformation=f, point=False))
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(p.plot(nonlinear_transformation=f, line=False))
+            sage: type(p2.plot(nonlinear_transformation=f, line=False))
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(p.plot(nonlinear_transformation=f, polygon=False))
+            sage: type(p2.plot(nonlinear_transformation=f, polygon=False))
             <class 'sage.plot.graphics.Graphics'>
 
             sage: # needs sage.plot
             sage: # Unbounded polyhedron (rays): nonlinear_transformation
             sage: # is ignored with warning
             sage: import warnings
-            sage: p = Polyhedron(rays=[[1,0],[0,1]]) # unbounded polyhedron
+            sage: u = Polyhedron(rays=[[1,0],[0,1]]) # unbounded polyhedron
             sage: with warnings.catch_warnings():
             ....:     warnings.simplefilter("ignore")
-            ....:     type(p.plot(nonlinear_transformation=lambda v:vector(v)))
+            ....:     type(u.plot(nonlinear_transformation=lambda v:vector(v)))
             <class 'sage.plot.graphics.Graphics'>
 
         plot_points='automatic' is supported for 3D plots but not for 2D plots
 
             sage: # needs sage.plot
-            sage: q = polytopes.hypercube(2)
-            sage: q.plot(
+            sage: p2 = polytopes.hypercube(2)
+            sage: p2.plot(
             ....:  nonlinear_transformation=lambda v: vector(v),
             ....:  plot_points='automatic')
             Traceback (most recent call last):
