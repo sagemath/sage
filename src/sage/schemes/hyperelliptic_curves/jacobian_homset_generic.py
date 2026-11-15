@@ -908,7 +908,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         INPUT:
 
-        - ``fast`` -- (boolean, default ``True``) If set to ``True``, a fast
+        - ``fast`` -- (boolean, default ``False``) If set to ``True``, a fast
           algorithm is used, but the output is **NOT** guaranteed to cover the
           entire Jacobian. See examples below. If set to ``False``, a slower
           algorithm is used, but covers the entire Jacobian.
