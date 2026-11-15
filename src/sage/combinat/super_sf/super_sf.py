@@ -21,6 +21,8 @@ from sage.categories.unique_factorization_domains import UniqueFactorizationDoma
 from sage.combinat.super_sf.hom_el import SupersymFunctionAlgebra_hom_el
 from sage.combinat.super_sf.schur import SupersymFunctionAlgebra_schur
 from sage.combinat.super_sf.monomial import SupersymFunctionAlgebra_monomial
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 class SuperSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
