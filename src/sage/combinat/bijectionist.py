@@ -158,8 +158,8 @@ following code is equivalent to ``tau = findstat(397)``::
     sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
-    sage: list(bij.solutions_iterator())
-    []
+    sage: len(list(bij.solutions_iterator()))
+    0
 
 Next we demonstrate how to search for a bijection.  To do so, we identify `s`
 and `S`::
@@ -2308,10 +2308,10 @@ class Bijectionist(SageObject):
 
             sage: A = B = 'abc'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
-            sage: next(bij.solutions_iterator())
-            {'a': 0, 'b': 0, 'c': 1}
+            sage: sorted(next(bij.solutions_iterator()).values())
+            [0, 0, 1]
 
-            sage: list(bij.solutions_iterator())
+            sage: sorted(bij.solutions_iterator(), key=lambda s: tuple(s[a] for a in A))
             [{'a': 0, 'b': 0, 'c': 1},
              {'a': 0, 'b': 1, 'c': 0},
              {'a': 1, 'b': 0, 'c': 0}]
@@ -2674,14 +2674,17 @@ class _BijectionistMILP:
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
             sage: it2 = bmilp.solutions_iterator(False, [bmilp._x[('c', 1)] == 1])
-            sage: next(it)
-            {'a': 0, 'b': 0, 'c': 1}
+            sage: s1 = next(it)
             sage: next(it2)
             {'a': 0, 'b': 0, 'c': 1}
-            sage: next(it)
-            {'a': 0, 'b': 1, 'c': 0}
-            sage: next(it)
-            {'a': 1, 'b': 0, 'c': 0}
+            sage: s2 = next(it)
+            sage: s3 = next(it)
+            sage: sorted([s1, s2, s3], key=lambda s: tuple(s[a] for a in A))
+            [{'a': 0, 'b': 0, 'c': 1},
+             {'a': 0, 'b': 1, 'c': 0},
+             {'a': 1, 'b': 0, 'c': 0}]
+            sage: list(it), list(it2)
+            ([], [])
         """
         i = 0  # the first unconsidered element of _solution_cache
         while True:
