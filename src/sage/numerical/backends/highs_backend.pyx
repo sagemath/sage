@@ -546,14 +546,17 @@ cdef class HiGHSBackend(GenericBackend):
         """
         Return the value of a variable given by the solver.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Use an objective with a unique optimum so that both variable values
+        are determined::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver='HiGHS')
             sage: p.add_variables(2)
             1
             sage: p.add_linear_constraint([(0, 1), (1, 1)], None, 2.0)
-            sage: p.set_objective([1, 1])
+            sage: p.set_objective([2, 1])
             sage: p.solve()
             0
             sage: p.get_variable_value(0)
@@ -1305,13 +1308,10 @@ cdef class HiGHSBackend(GenericBackend):
         r"""
         Return the relative objective gap of the best known solution.
 
-        For a minimization problem, this value is computed by
-        `(\texttt{bestinteger} - \texttt{bestobjective}) / (1e-10 +
-        |\texttt{bestobjective}|)`, where ``bestinteger`` is the value returned
-        by :meth:`get_objective_value` and ``bestobjective`` is the value
-        returned by :meth:`best_known_objective_bound`. For a maximization
-        problem, the value is computed by `(\texttt{bestobjective} -
-        \texttt{bestinteger}) / (1e-10 + |\texttt{bestobjective}|)`.
+        HiGHS computes this as `|p - d| / |p|`, where `p` is the best
+        integer objective value and `d` is the best known objective bound.
+        If `p = d = 0`, the gap is zero; if only `p` is zero, it is infinite.
+        For a continuous linear program, the gap is zero.
 
         .. NOTE::
 

@@ -938,7 +938,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             return reason is None, reason
         return reason is None
 
-    def is_minimal(self, f, assume_equivalence_irreducible=False):
+    def is_minimal(self, f, assume_equivalence_irreducible=False) -> bool:
         r"""
         Return whether the polynomial ``f`` is minimal with respect to this
         valuation.

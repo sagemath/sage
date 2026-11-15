@@ -186,7 +186,7 @@ class BackendBase(SageObject):
         """
         raise NotImplementedError('derived classes must implement this method')
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 

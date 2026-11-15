@@ -42,8 +42,8 @@ Python classes::
 
     sage: sage_getfile(BlockFinder)
     '.../sage/misc/sageinspect.py'
-    sage: sage_getdoc(BlockFinder).lstrip()[:50]                                        # needs sphinx
-    'Provide a "tokeneater()" method to detect the end '
+    sage: sage_getdoc(BlockFinder).lstrip()[:50]
+    'Provide a :meth:tokeneater method to detect the en'
     sage: sage_getsource(BlockFinder)
     'class BlockFinder:...'
 
