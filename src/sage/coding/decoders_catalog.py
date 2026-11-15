@@ -23,6 +23,10 @@ that code (:meth:`sage.coding.abstract_code.AbstractCode.decoder`).
 - :class:`grs_code.GRSKeyEquationSyndromeDecoder <sage.coding.grs_code.GRSKeyEquationSyndromeDecoder>`
 - :class:`guruswami_sudan.gs_decoder.GRSGuruswamiSudanDecoder <sage.coding.guruswami_sudan.gs_decoder.GRSGuruswamiSudanDecoder>`
 
+**Goppa code decoder**
+
+- :class:`goppa_code.GoppaCodePattersonDecoder <sage.coding.goppa_code.GoppaCodePattersonDecoder>`
+
 **Generic decoders**
 
 - :class:`linear_code.LinearCodeNearestNeighborDecoder <sage.coding.linear_code.LinearCodeNearestNeighborDecoder>`
@@ -65,6 +69,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.coding.bch_code', 'BCHUnderlyingGRSDecoder')
 lazy_import('sage.coding.cyclic_code', 'CyclicCodeSurroundingBCHDecoder')
 lazy_import('sage.coding.extended_code', 'ExtendedCodeOriginalCodeDecoder')
+lazy_import('sage.coding.goppa_code', 'GoppaCodePattersonDecoder')
 lazy_import('sage.coding.grs_code', ['GRSBerlekampWelchDecoder',
                                      'GRSErrorErasureDecoder',
                                      'GRSGaoDecoder',
