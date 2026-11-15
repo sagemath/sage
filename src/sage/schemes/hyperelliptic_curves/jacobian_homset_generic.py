@@ -513,8 +513,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Efficient cantor composition for doubling an affine divisor
 
         Returns the Cantor composition of (u1, v1) with (u1, v1)
-        together with the degree of the polynomial ``s`` which is
-        needed for computing weights for the split and inert models.
+        together with the polynomial ``s`` such that
+        `D_1 + D_1 = D_3 + \mathrm{div}(s)` on the affine part.
 
         """
         f, h = self.extended_curve().hyperelliptic_polynomials()
@@ -530,7 +530,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             v3 = v1 + e2 * (f - v1 * h - v1**2) // s
         v3 = v3 % u3
 
-        return u3, v3, s.degree()
+        return u3, v3, s
 
     def _cantor_composition_generic(self, u1, v1, u2, v2):
         r"""
@@ -538,9 +538,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         OUTPUT:
 
-        The Cantor composition of ``(u1, v1)`` with ``(u2, v2)``,
-        together with the degree of the polynomial ``s`` which is
-        needed for computing the weights for the split and inert models.
+        The Cantor composition ``(u3, v3)`` of ``(u1, v1)`` with ``(u2, v2)``,
+        together with the polynomial ``s`` such that the affine divisors
+        satisfy `D_1 + D_2 = D_3 + \mathrm{div}(s)` on the affine part,
+        i.e. ``s`` is the product of `x - x(P)` over the pairs of
+        mutually inverse points `P \in D_1`, `\iota(P) \in D_2` which cancel.
 
         TESTS::
 
@@ -548,10 +550,15 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: H = HyperellipticCurve(x^5 + 2*x + 1)
             sage: JK = H.jacobian()(GF(13))
             sage: (u1,v1) = (x^2 + 1, 10*x + 6)
+            sage: (u2,v2) = (x + 5, R(5))
+            sage: JK._cantor_composition_generic(u1,v1,u2,v2)
+            (x + 8, 4, x + 5)
+
+        ::
+
             sage: (u2,v2) = (x + 5, R(8))
             sage: JK._cantor_composition_generic(u1,v1,u2,v2)
-            (x^3 + 5*x^2 + x + 5, 9*x^2 + 10*x + 2, 0)
-
+            (x^3 + 5*x^2 + x + 5, 9*x^2 + 10*x + 2, 1)
         """
         # Collect data from HyperellipticCurve
         H = self.extended_curve()
@@ -580,7 +587,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             u3 = u1 * u2
             v3 = v2 + e2 * u2 * v1_m_v2
             v3 = v3 % u3
-            return u3, v3, 0
+            return u3, v3, s0
 
         # Step Two
         w0 = v1 + v2 + h
@@ -591,14 +598,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             u3 = (u1 * u2) // (s0**2)
             v3 = v2 + e2 * v1_m_v2 * (u2 // s0)
             v3 = v3 % u3
-            return u3, v3, s0.degree()
+            return u3, v3, s0
 
         # Step Three
         s, c1, c2 = s0.xgcd(w0)
         u3 = (u1 * u2) // (s**2)
         v3 = v2 + (c1 * e2 * v1_m_v2 * u2 + c2 * (f - h * v2 - v2**2)) // s
         v3 = v3 % u3
-        return u3, v3, s.degree()
+        return u3, v3, s
 
     def _cantor_reduction_generic(self, u0, v0):
         r"""
