@@ -16,6 +16,7 @@ from cysignals.signals cimport sig_check
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
 from sage.categories.rings import Rings
+from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 
@@ -1347,6 +1348,12 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
+        The result is over a common ring (:issue:`17595`)::
+
+            sage: A = matrix(ZZ, [[1]], sparse=True)
+            sage: A.augment(matrix(QQ, [[1/2]], sparse=True))
+            [  1 1/2]
+
         Verify that :issue:`12689` is fixed::
 
             sage: A = identity_matrix(QQ, 2, sparse=True)
@@ -1361,8 +1368,11 @@ cdef class Matrix_sparse(matrix.Matrix):
             else:
                 raise TypeError("right must be a matrix")
 
-        if not (self._base_ring is right.base_ring()):
-            right = right.change_ring(self._base_ring)
+        if self._base_ring is not right.base_ring():
+            R = coercion_model.common_parent(self._base_ring, right.base_ring())
+            if R is not self._base_ring:
+                return self.change_ring(R).augment(right, subdivide)
+            right = right.change_ring(R)
 
         cdef Matrix_sparse other = right.sparse_matrix()
 
