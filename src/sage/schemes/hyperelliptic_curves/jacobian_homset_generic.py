@@ -725,10 +725,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 return self.zero()
             return [self.zero()]
 
-        if not isinstance(K, FiniteField_generic) or K.degree() != 1:
-            raise NotImplementedError(
-                "lift_u is only implemented for Jacobians over a finite field of prime order"
-            )
+        if not isinstance(K, FiniteField_generic):
+            raise NotImplementedError("lift_u is only implemented for Jacobians over a finite field")
 
         f, h = H.hyperelliptic_polynomials()
         u1, v1 = R.one(), R.zero()
@@ -758,9 +756,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if H.is_split():
                 if n is None or not (0 <= n <= g - u1.degree()):
                     # this is an internal function
-                    raise ValueError(
-                        f"bug: n must be an integer between 0 and {g - u1.degree()}"
-                    )
+                    raise ValueError(f"bug: n must be an integer between 0 and {g - u1.degree()}")
                 return self._morphism_element(self, u1, v1, n, check=False)
 
             # We need to ensure the degree of u is even
@@ -936,9 +932,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             16
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
-            raise NotImplementedError(
-                "random element of Jacobian is only implemented over Finite Fields"
-            )
+            raise NotImplementedError("random element of Jacobian is only implemented over finite fields")
 
         if fast:
             return self._random_element_rational(*args, **kwargs)
