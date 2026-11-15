@@ -105,6 +105,7 @@ from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_it
 from sage.categories.action import Action
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.quotient_fields import QuotientFields
+from sage.categories.tensor import tensor
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
@@ -3670,18 +3671,28 @@ class Stream_plethysm(Stream_binary):
         else:
             self._basis = ring
         self._p = p
-        g = Stream_map_coefficients(g, lambda x: p(x), is_sparse)
-        self._powers = [g]  # a cache for the powers of g in the powersum basis
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
+        def to_powersum(x):
+            P = x.parent()
+            return P.realization_of().p()(x)
+
+        f = Stream_map_coefficients(f, to_powersum, is_sparse)
+
+        def to_powersum_tensor(x):
+            P = x.parent()
+            powersum = tensor([factor.realization_of().p() for factor in P._sets])
+            return powersum(x)
+
         if HopfAlgebrasWithBasis(R).TensorProducts() in p.categories():
             self._tensor_power = len(p._sets)
-            p_f = p._sets[0]
-            f = Stream_map_coefficients(f, lambda x: p_f(x), is_sparse)
+            g = Stream_map_coefficients(g, to_powersum_tensor, is_sparse)
         else:
             self._tensor_power = None
-            f = Stream_map_coefficients(f, lambda x: p(x), is_sparse)
+            g = Stream_map_coefficients(g, to_powersum, is_sparse)
+
+        self._powers = [g]  # a cache for the powers of g in the powersum basis
         super().__init__(f, g, is_sparse)
 
     @lazy_attribute
