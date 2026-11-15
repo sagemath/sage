@@ -181,5 +181,5 @@ class SuperSymmetricFunctions(UniqueRepresentation, Parent):
             Supersymmetric functions over Rational Field in the monomial basis
         """
         return SupersymFunctionAlgebra_monomial(self, basis_name='monomial')
-    
+
     m = monomial
