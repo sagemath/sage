@@ -2401,6 +2401,11 @@
              manifolds*, J. Indian Inst. Sci. 87 (2007), no. 4,
              429-449.
 
+.. [Dav1995] \S. David,
+             *Minorations de formes linéaires de logarithmes elliptiques*.
+             Mém. Soc. Math. France (N.S.) 62 (1995).
+             :doi:`10.24033/msmf.376`.
+
 .. [Dav1997] B.A. Davey, H.A. Priestley,
              *Introduction to Lattices and Order*,
              Cambridge University Press, 1997.
@@ -7140,6 +7145,11 @@
              elliptic curves. Mathematics of Computation, Vol. 51,
              No. 183 (Jul., 1988), pp. 339-358.
 
+.. [Sil1990] \J. H. Silverman,
+             *The difference between the Weil height and the canonical
+             height on elliptic curves*. Math. Comp. 55 (1990), 723--743.
+             :doi:`10.1090/S0025-5718-1990-1035944-5`.
+
 .. [Sil1994] Joseph H. Silverman, Advanced topics in the arithmetic of
              elliptic curves. GTM 151, Springer-Verlag, New York, 1994.
 
@@ -7323,6 +7333,10 @@
             Orders, Algorithms, and Applications, 1994,
             :doi:`10.1007/BFb0019427`,
             `<ftp://ftp.inf.ethz.ch/doc/papers/ti/ga/ST94.ps.gz>`_
+
+.. [ST1994b] \R. J. Stroeker and N. Tzanakis,
+            *Solving elliptic diophantine equations by estimating linear
+            forms in elliptic logarithms*. Acta Arith. 67 (1994), 177--196.
 
 .. [St2007] \W. Stein. *Modular Forms, a Computational Approach*.
             With an appendix by Paul E. Gunnells.

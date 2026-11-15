@@ -38,6 +38,7 @@ py.install_sources(
   'hom_sum.py',
   'hom_velusqrt.py',
   'homset.py',
+  'integral_points.py',
   'isogeny_class.py',
   'isogeny_small_degree.py',
   'jacobian.py',
