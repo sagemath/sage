@@ -334,7 +334,11 @@ HTML or PDF manuals, use
 .. code-block:: console
 
     $ meson compile -C builddir doc-html
-    $ meson compile -C builddir doc-pdf
+    $ meson compile -C builddir -j 2 doc-pdf
+
+The PDF manual build uses two parallel jobs by default to limit memory
+consumption. To change the number of parallel jobs, use the
+``SAGE_DOC_PDF_JOBS`` variable when invoking the top-level Makefile.
 
 Building PDF manuals requires a working LaTeX installation.  The generated
 manuals are written below :file:`builddir/src/doc/html` and
