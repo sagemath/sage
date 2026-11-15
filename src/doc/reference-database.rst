@@ -6721,6 +6721,10 @@
              `Downloadable from Reutenauer's website
              <https://reutenauer.math.uqam.ca/wp-content/uploads/2024/05/Free-Lie-Algebras-Handbook-2003-compresse.pdf>`_
 
+.. [RFC5903] \D. Fu and J. Solinas, *Elliptic Curve Groups modulo a Prime
+             (ECP Groups) for IKE and IKEv2*, RFC 5903, June 2010.
+             :doi:`10.17487/RFC5903`
+
 .. [RFC8032] S. Josefsson and I. Liusvaara, *Edwards-Curve Digital Signature
    Algorithm (EdDSA)*, RFC 8032, January 2017.
 
@@ -7050,6 +7054,14 @@
 .. [Seb2017] \J. Seberry,
              *Orthogonal designs: Hadamard matrices, quadratic forms and algebras*.
              Springer 2017. :doi:`10.1007/978-3-319-59032-5`
+
+.. [SEC1] Certicom Research, *SEC 1: Elliptic Curve Cryptography*,
+          Standards for Efficient Cryptography, Version 2.0, May 2009.
+          https://www.secg.org/sec1-v2.pdf
+
+.. [SEC2] Certicom Research, *SEC 2: Recommended Elliptic Curve Domain
+          Parameters*, Standards for Efficient Cryptography, Version 2.0,
+          January 2010. https://www.secg.org/sec2-v2.pdf
 
 .. [Sei2002] \T. R. Seifullin, *Computation of determinants, adjoint
              matrices, and characteristic polynomials without division*
