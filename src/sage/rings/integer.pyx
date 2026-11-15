@@ -638,8 +638,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: # needs numpy
             sage: import numpy
-            sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     _ = numpy.set_printoptions(legacy="1.25")
+            sage: _ = numpy.set_printoptions(legacy="1.25")
             sage: numpy.int8('12') == 12
             True
             sage: 12 == numpy.int8('12')

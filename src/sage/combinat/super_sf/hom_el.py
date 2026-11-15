@@ -5,12 +5,14 @@ AUTHORS:
 
 - Shriya M
 """
-from . import super_sfa
-from itertools import combinations_with_replacement, combinations
+from itertools import combinations, combinations_with_replacement
+
 from sage.combinat.partition import Partitions, _Partitions
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.functions.other import factorial
 from sage.misc.misc_c import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import super_sfa
+
 
 class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
     r"""
@@ -130,8 +132,9 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         """
         def P(i):
             return _Partitions([i]) if i else _Partitions([])
+
         T = self.tensor_square()
-        return T.sum_of_monomials((P(j), P(n-j)) for j in range(n+1))
+        return T.sum_of_monomials((P(j), P(n - j)) for j in range(n + 1))
 
     def lift_on_gens(self, n):
         r"""
@@ -144,27 +147,22 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             sage: s = SuperSymmetricFunctions(QQ)
             sage: h = s.h()
             sage: h.lift_on_gens(3)
-            p[1, 1, 1] + 1/4*p[2, 1] + 1/18*p[3]
+            1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3]
         """
         basis_name = self.basis_name
         parts = Partitions(n)
         Supersym = self.realization_of()
         R = self.base_ring()
-        res = R.zero()
-
-        def z(part):
-            prod = R.one()
-            for p in part:
-                m = part.to_exp()[p-1]
-                prod *= (p ** m) * factorial(p)
-            return prod
 
         ssp = Supersym.p()
         if basis_name == 'homogeneous':
-            res = ssp._from_dict({part: ~z(part) for part in parts})
-        elif basis_name == 'elementary':
-            res = ssp._from_dict({part: (-1) ** (n - len(part)) / z(part) for part in parts})
-        return res
+            return ssp._from_dict({part: ~part.centralizer_size()
+                                   for part in parts})
+        if basis_name == 'elementary':
+            return ssp._from_dict({part: (-1)**(n - len(part))
+                                   / part.centralizer_size()
+                                   for part in parts})
+        return R.zero()
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
         def expand(self, n, m, alphabet_x='x', alphabet_y='y'):
@@ -214,28 +212,25 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             monomial_coeff = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
             y_gens = [alphabet_y + str(i) for i in range(m)]
-            variables = x_gens + y_gens
-            R = PolynomialRing(self.base_ring(), variables)
+            R = PolynomialRing(self.base_ring(), x_gens + y_gens)
             R_gens = R.gens_dict()
             x_gens = [R_gens[gen] for gen in x_gens]
             y_gens = [R_gens[gen] for gen in y_gens]
 
             def el_i(i, X_gens, Y_gens, x_count, y_count):
-                req_sum = R.zero()
-                for p in range(i+1):
-                    for seq1 in combinations(range(y_count), (i - p)):
-                        for seq2 in combinations_with_replacement(range(x_count), p):
-                                res_prod = prod([Y_gens[i] for i in seq1]) * prod([X_gens[j] for j in seq2])
-                                req_sum += res_prod
-                return req_sum
+                return R.sum(
+                    sum(prod(seq1)
+                        for seq1 in combinations(Y_gens, i - p))
+                    * sum(prod(seq2)
+                          for seq2 in combinations_with_replacement(X_gens, p))
+                    for p in range(i + 1))
 
             if basis_name == 'homogeneous':
 
                 fin_res = R.zero()
                 for part in monomial_coeff:
-                    res_prod = R.one()
-                    for p in part:
-                        res_prod *= el_i(p, x_gens, y_gens, n, m)
+                    res_prod = R.prod(el_i(p, x_gens, y_gens, n, m)
+                                      for p in part)
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
 
@@ -243,10 +238,9 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
 
                 fin_res = R.zero()
                 for part in monomial_coeff:
-                    res_prod = R.one()
-                    for p in part:
-                        res_prod *= el_i(p, y_gens, x_gens, m, n)
-                        # Same function el_i used for hom and el,
-                        # except with gens swapped as per definition
+                    res_prod = R.prod(el_i(p, y_gens, x_gens, m, n)
+                                      for p in part)
+                    # Same function el_i used for hom and el,
+                    # except with gens swapped as per definition
                     fin_res += monomial_coeff[part] * res_prod
                 return fin_res
