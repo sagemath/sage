@@ -2402,7 +2402,6 @@ dependencies = [
     { name = "requests" },
     { name = "scipy" },
     { name = "six" },
-    { name = "sphinx" },
     { name = "sympy" },
     { name = "traitlets" },
 ]
@@ -2501,7 +2500,6 @@ requires-dist = [
     { name = "rpy2", marker = "extra == 'r'", specifier = ">=3.3" },
     { name = "scipy", specifier = ">=1.15" },
     { name = "six", specifier = ">=1.15.0" },
-    { name = "sphinx", specifier = ">=9.1,<10" },
     { name = "sympy", specifier = ">=1.6,<2.0" },
     { name = "traitlets" },
 ]
