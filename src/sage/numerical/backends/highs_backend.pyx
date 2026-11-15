@@ -895,7 +895,8 @@ cdef class HiGHSBackend(GenericBackend):
             name_bytes = str(name).encode('utf-8')
             row_idx = self.numrows
             status = Highs_passRowName(self.highs, row_idx, name_bytes)
-            if status != kHighsStatusOk:
+            # HiGHS >= 1.16 returns a warning for duplicate constraints
+            if status != kHighsStatusOk and status != kHighsStatusWarning:
                 raise MIPSolverException("HiGHS: Failed to set constraint name")
         self.numrows += 1
 
