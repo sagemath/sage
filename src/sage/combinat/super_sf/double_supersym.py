@@ -14,13 +14,15 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.free_module import CombinatorialFreeModule
 
 class DoubleSupersymmetricFunctions(UniqueRepresentation, Parent):
-    def __init__(self, R):
-        if R not in Rings().Commutative():
-            raise ValueError("the base ring must be a commutative ring")
-        cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
-        if R in PrincipalIdealDomains():
-            cat &= UniqueFactorizationDomains()
-        Parent.__init__(self, base=R, category=cat.WithRealizations())
+    def __init__(self, Sym):
+        self.Sym = Sym
 
-class DoubleSupersymmetricFunctions_generic(CombinatorialFreeModule):
-    pass
+    def homogeneous(self):
+        return
+
+    def elementary(self):
+        return
+
+    def schur(self):
+        return
+
