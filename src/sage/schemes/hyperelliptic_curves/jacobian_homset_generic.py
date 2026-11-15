@@ -705,6 +705,20 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J = H.jacobian()
             sage: P = J.lift_u(x^2 + 42*x + 270); P
             (x^2 + 42*x + 270, 1837*x + 838)
+
+        TESTS:
+
+        Make sure it also works over non-prime finite fields::
+
+            sage: K.<z> = GF(9)
+            sage: R.<x> = K[]
+            sage: J = HyperellipticCurve(x^5 + z*x + 1).jacobian()
+            sage: J.lift_u(x)
+            (x, 2)
+            sage: P = J.lift_u(x^2 + z*x + 2*z); P
+            (x^2 + z*x + 2*z, (2*z + 1)*x + 2*z)
+            sage: P in J
+            True
         """
         H = self.extended_curve()
         K = H.base_ring()
@@ -748,6 +762,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             vs = (y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False)
             if len(vs) == 0 and not all:
                 raise ValueError(f"no point with u-coordinate {u} on {self}")
+
+            # When K is not a prime field, K_ext is a quotient ring K[a]/(x)
+            # rather than a finite field, so its elements do not convert to
+            # R directly: lift them to polynomials first.
+            if K.degree() != 1:
+                vs = [R(v.lift()) for v in vs]
 
             vss.append(vs)
 
@@ -930,6 +950,17 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             16
             sage: J.order()
             16
+
+        TESTS:
+
+        Make sure the non-``fast`` method also works over non-prime fields::
+
+            sage: K.<z> = GF(4)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurve(x^5 + z*x + 1, x^3 + x + 1)
+            sage: J = H.jacobian()
+            sage: all(J.random_element() in J for _ in range(20))
+            True
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
             raise NotImplementedError("random element of Jacobian is only implemented over finite fields")
