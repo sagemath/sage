@@ -34,6 +34,8 @@ if TYPE_CHECKING:
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+from sage.categories.fields import Fields
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.structure.element import AdditiveGroupElement
@@ -349,7 +351,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         # the degree of u is smaller than g + 1
         while u3.degree() > g:
             u3, v3 = self._parent.cantor_reduction(u3, v3)
-        v3 = v3 % u3
+        v3 %= u3
 
         return self._parent(u3, v3, check=False)
 
@@ -379,6 +381,727 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         v1 = (-h - v0) % u0
         return self._parent(u0, v1, check=False)
+
+    # ------------------------------------------------------------------
+    # Miller functions and pairings
+    # ------------------------------------------------------------------
+
+    def _miller_add(self, other) -> tuple:
+        r"""
+        Return the sum ``self + other`` together with a function `h`
+        on the curve such that
+
+        .. MATH::
+
+            \mathrm{div}(h) = D_{\mathrm{self}} + D_{\mathrm{other}} - D_{\mathrm{self} + \mathrm{other}},
+
+        where `D_A` denotes the degree-zero divisor encoded by the
+        Mumford representation of `A` (including its part at infinity).
+
+        The function `h` is returned as a list of triples ``(a, b, c)`` of
+        polynomials, each representing the function `(a(x) + b(x) y) / c(x)`,
+        which give `h` when multiplied together.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: J = H.jacobian()
+            sage: D1 = J(x^2 + 1, 10*x + 6)
+            sage: D2 = J(x + 5, 5)
+            sage: D3, h = D1._miller_add(D2)
+            sage: D3 == D1 + D2
+            True
+            sage: h
+            [(x + 5, 0, 1)]
+            sage: D3, h = D1._miller_add(D1)
+            sage: D3 == 2*D1
+            True
+            sage: h
+            [(1, 0, 1), (4*x^2 + 3*x + 11, 1, x + 10)]
+        """
+        parent = self._parent
+        g = parent.curve().genus()
+        R = self._u.parent()
+
+        u1, v1 = self.uv()
+        u2, v2 = other.uv()
+
+        # Composition (affine parts): D1 + D2 = D3 + div(s)
+        u3, v3, s = parent._cantor_composition_generic(u1, v1, u2, v2)
+        funs = [(s, R.zero(), R.one())]
+
+        # Reduction (affine parts): D3 - D4 = div((y - v3) / u4)
+        while u3.degree() > g:
+            u4, v4 = parent.cantor_reduction(u3, v3)
+            funs.append((-v3, R.one(), u4))
+            u3, v3 = u4, v4
+        v3 %= u3
+
+        return parent(u3, v3, check=False), funs
+
+    def _miller_values(self, n, Ds) -> list:
+        r"""
+        Return the values `f_{n,P}(D)` for each `D` in ``Ds``, where
+        `P` is ``self`` and `f_{n,P}` is the Miller function with divisor
+        `n D_P - D_{nP}`.
+
+        Here `D_A` denotes the divisor encoded by the Mumford representation
+        of `A`. The divisors `D` are effective affine divisors given by
+        their Mumford coordinates ``(u, v)``. Since the Miller function is
+        only well-defined up to a constant, the output is only meaningful for
+        combinations of degree zero.
+
+        This method raises a :exc:`ZeroDivisionError` if one of the divisors
+        meets the support of one of the intermediate functions.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x^2 + x + 8, 80*x + 51)
+            sage: P.order()
+            2399
+            sage: E1 = J(x^2 + 78*x + 14, 51*x + 38)
+            sage: E2 = J(x^2 + 74*x + 90, 54*x + 53)
+            sage: P._miller_values(2399, [E1.uv(), E2.uv()])
+            [62, 33]
+
+        Since `P` itself is in the support of `f_{n,P}`, we cannot
+        evaluate the Miller function at `P`::
+
+            sage: P._miller_values(2399, [P.uv()])
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: divisor meets the support of a Miller function
+        """
+        n = ZZ(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
+
+        K = self._parent.value_ring()
+        Ds = [(u.monic(), v) for u, v in Ds]
+        num = [K.one()] * len(Ds)
+        den = [K.one()] * len(Ds)
+
+        def update(funs):
+            for i, (u, v) in enumerate(Ds):
+                if u.degree() == 0:
+                    continue
+                for a, b, c in funs:
+                    num[i] *= u.resultant((a + b * v) % u)
+                    den[i] *= u.resultant(c % u)
+            if not all(num + den):
+                raise ZeroDivisionError("divisor meets the support of a Miller function")
+
+        T = self
+        for bit in reversed(n.bits()[:-1]):
+            num = [z**2 for z in num]
+            den = [z**2 for z in den]
+            T, funs = T._miller_add(T)
+            update(funs)
+            if bit:
+                T, funs = T._miller_add(self)
+                update(funs)
+
+        return [a / b for a, b in zip(num, den)]
+
+    def _random_auxiliary_divisor(self, other=None, tries=10):
+        r"""
+        Return a random element `R` of the Jacobian such that the Mumford
+        coordinates `u` of `R` and of ``self + R`` both have degree `g`.
+
+        For such `R`, the divisor class of ``self`` is represented by the
+        affine degree-zero divisor `E_{\mathrm{self} + R} - E_R`, where
+        `E_A` denotes the effective affine divisor defined by the Mumford
+        coordinates of `A`. If ``other`` is an element of the parent, we
+        also require that the supports of `E_{\mathrm{self} + R}` and `E_R`
+        are disjoint from those of `E_{\mathrm{other}}`.
+
+        OUTPUT: `R`
+
+        A :exc:`ValueError` is raised if no such `R` is found after
+        ``tries`` random samples, which may happen over very small fields.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x + 5, 5)
+            sage: PR, R = P._random_auxiliary_divisor()
+            sage: PR - R == P
+            True
+            sage: PR[0].degree() == R[0].degree() == 2
+            True
+
+        Over `\FF_2`, the Jacobian below has no element with Mumford
+        coordinate `u` of degree `2`, so there is no suitable auxiliary
+        divisor::
+
+            sage: R.<x> = GF(2)[]
+            sage: H = HyperellipticCurve(x^5 + 1, x^2 + 1)
+            sage: J = H.jacobian()
+            sage: J.points()
+            [(1, 0), (x + 1, 0)]
+            sage: J.zero()._random_auxiliary_divisor()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to find a suitable auxiliary divisor
+
+        TESTS:
+
+        This curve has no rational points; check that we don't hang::
+
+            sage: K.<a> = GF(4)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurve(x^6 + a*x^4 + a*x^3 + a*x + a, a*x^3 + 1)
+            sage: H.is_inert()
+            True
+            sage: H.rational_points()
+            []
+            sage: J = H.jacobian()(K)
+            sage: J.zero()._random_auxiliary_divisor()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to find a suitable auxiliary divisor
+        """
+        parent = self._parent
+        H = parent.extended_curve()
+        g = H.genus()
+        for _ in range(tries):
+            try:
+                R = parent.random_element(fast=True)
+            except ValueError:
+                # curve is pointless
+                break
+            if R._u.degree() != g:
+                continue
+            PR = self + R
+            if PR._u.degree() != g:
+                continue
+            if other is not None and not other._u.gcd(PR._u * R._u).is_one():
+                continue
+            return PR, R
+        raise ValueError("unable to find a suitable auxiliary divisor")
+
+    def change_ring(self, R):
+        r"""
+        Return ``self`` in the group of points of the Jacobian
+        over a different ring.
+
+        The argument ``R`` can either be a ring or a coercion
+        map into another ring.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^6 + x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x + 3, 8, 0)
+            sage: L, phi = GF(13).extension(3, map=True)
+            sage: PL = P.change_ring(L); PL
+            (x + 3, 8 : 0)
+            sage: PL.parent()
+            Abelian group of points over Finite Field in z3 of size 13^3
+              on Jacobian of Hyperelliptic Curve over Finite Field of size 13
+              defined by y^2 = x^6 + x + 1
+            sage: PL = P.change_ring(phi); PL
+            (x + 3, 8 : 0)
+            sage: PL.parent()
+            Abelian group of points over Finite Field in z3 of size 13^3
+              on Jacobian of Hyperelliptic Curve over Finite Field of size 13
+              defined by y^2 = x^6 + x + 1
+        """
+        if R in Fields():
+            K = self._parent.value_ring()
+            phi = R.coerce_map_from(K)
+        else:
+            phi = R
+            R = phi.codomain()
+        J = self._parent.codomain()(R)
+        coords = [c.map_coefficients(phi, R) if isinstance(c, Polynomial) else c for c in self]
+        return J(*coords)
+
+    def _pairing_extensions(self, n):
+        r"""
+        Iterate over embeddings of the field of definition `K` of ``self``
+        into extensions `L / K` which can be used to compute pairings on
+        the curve when `K` is too small to find suitable auxiliary divisors.
+
+        The degrees `[L : K]` run over the odd primes not dividing `n`:
+        odd-degree extensions preserve inertness, and degrees coprime to
+        `n` permit recovering the Tate pairing over `K`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: P = H.jacobian()(x + 5, 5)
+            sage: it = P._pairing_extensions(15)
+            sage: [next(it).codomain() for _ in range(2)]
+            [Finite Field in z7 of size 13^7, Finite Field in z11 of size 13^11]
+        """
+        K = self._parent.value_ring()
+        d = ZZ(2)
+        while True:
+            d = d.next_prime()
+            if n % d:
+                yield K.extension(d, map=True)[1]
+
+    def _weil_pairing_value(self, Q, n, tries=5):
+        r"""
+        Return the Weil pairing `e_n(P, Q)` of `P` = ``self`` and ``Q``,
+        or ``None`` if no suitable auxiliary divisors were found within
+        ``tries`` attempts.
+
+        See :meth:`weil_pairing`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(2)[]
+            sage: H = HyperellipticCurve(x^5 + 1, x^2 + 1)
+            sage: P = H.jacobian()(x + 1, 0)
+            sage: P._weil_pairing_value(P, 2) is None
+            True
+        """
+        P = self
+        for _ in range(tries):
+            try:
+                PS, S = P._random_auxiliary_divisor()
+                QR, R = Q._random_auxiliary_divisor(PS)
+                if not S._u.gcd(QR._u * R._u).is_one():
+                    continue
+                # f_P = f_{n,P+S} / f_{n,S} has divisor n (E_{P+S} - E_S)
+                a1, a2 = PS._miller_values(n, [QR.uv(), R.uv()])
+                b1, b2 = S._miller_values(n, [QR.uv(), R.uv()])
+                # f_Q = f_{n,Q+R} / f_{n,R} has divisor n (E_{Q+R} - E_R)
+                c1, c2 = QR._miller_values(n, [PS.uv(), S.uv()])
+                d1, d2 = R._miller_values(n, [PS.uv(), S.uv()])
+            except (ValueError, ZeroDivisionError):
+                continue
+            return (a1 * b2 * c2 * d1) / (a2 * b1 * c1 * d2)
+        return None
+
+    def _tate_miller_value(self, Q, n, tries=5):
+        r"""
+        Return `f_P(D_Q)`, where `P` = ``self``, `f_P` is a function with
+        divisor `n D_P` and `D_Q` is a random degree-zero divisor over the
+        field of definition `K` representing ``Q``, or ``None`` if no
+        suitable `D_Q` was found in ``tries`` attempts.
+
+        The output is well-defined modulo `n`-th powers in `K^*`. See
+        :meth:`tate_pairing`.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(157)[]
+            sage: H = HyperellipticCurve(x^5 + 66*x^4 + 47*x^3 + 15*x^2 + 65*x + 7)
+            sage: J = H.jacobian()
+            sage: P = J(x^2 + 45*x + 15, 75*x + 136)
+            sage: Q = J(x^2 + 84*x + 87, 81*x + 25)
+            sage: P._tate_miller_value(Q, 13)^12  # random
+            101
+            sage: P._tate_miller_value(Q, 13)^12 == P.tate_pairing(Q, 13)
+            True
+        """
+        for _ in range(tries):
+            try:
+                QR, R = Q._random_auxiliary_divisor(self)
+                a1, a2 = self._miller_values(n, [QR.uv(), R.uv()])
+            except (ValueError, ZeroDivisionError):
+                continue
+            return a1 / a2
+        return None
+
+    def _check_pairing_input(self, other, n):
+        r"""
+        Check the input of :meth:`weil_pairing` and :meth:`tate_pairing`.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x + 5, 5)
+            sage: P._check_pairing_input(P, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be a positive integer
+            sage: P._check_pairing_input(P, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the element P = (x + 5, 5) must be 2-torsion
+            sage: P._check_pairing_input(J.change_ring(GF(13^2))(x + 5, 5), 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: elements must lie in the same group of points of the Jacobian
+        """
+        n = ZZ(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
+        if other.parent() is not self.parent():
+            raise ValueError("elements must lie in the same group of points of the Jacobian")
+        if not isinstance(self._parent.value_ring(), FiniteField_generic):
+            raise NotImplementedError("pairings are only implemented for Jacobians over finite fields")
+        if n * self:
+            raise ValueError(f"the element P = {self} must be {n}-torsion")
+        return n
+
+    def weil_pairing(self, Q, n):
+        r"""
+        Compute the Weil pairing `e_n(P, Q)` of `P` = ``self`` and ``Q``.
+
+        For `n`-torsion elements `P`, `Q` of the Jacobian, choose degree-zero
+        divisors `D_P`, `D_Q` with disjoint supports, and functions `f_P`, `f_Q`
+        with divisors `n D_P` and `n D_Q`. The Weil pairing then equals
+
+        .. MATH::
+
+            e_n(P, Q) = \frac{f_P(D_Q)}{f_Q(D_P)}.
+
+        For elliptic curves this agrees with the convention of
+        :meth:`sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.weil_pairing`.
+
+        The functions are computed using Miller's algorithm, where each
+        step of Cantor's algorithm contributes a function on the curve.
+        The divisors `D_P` and `D_Q` are chosen at random from their class.
+        If no suitable divisors are found after a few attempts, which may
+        happen over very small fields, the computation is carried out over
+        an extension field instead.
+
+        INPUT:
+
+        - ``Q`` -- an element of the same group of points as ``self``
+
+        - ``n`` -- positive integer such that `nP = nQ = 0`
+
+        OUTPUT: an `n`-th root of unity in the base field
+
+        EXAMPLES:
+
+        The Jacobian of `y^2 = x^5 + x` over `\FF_7` is supersingular;
+        over `\FF_{7^2}` the Frobenius acts as `-7`, so the full
+        `8`-torsion is rational there::
+
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurve(x^5 + x)
+            sage: K.<z2> = GF(7^2)
+            sage: J = H.jacobian()(K)
+            sage: J.order().factor()
+            2^12
+            sage: P = J(x^2 + (3*z2 + 1)*x + 2*z2 + 2, (3*z2 + 6)*x + z2)
+            sage: Q = J(x^2 + (3*z2 + 5)*x + 3*z2 + 3, (5*z2 + 1)*x + 2*z2)
+            sage: e = P.weil_pairing(Q, 8); e
+            5*z2 + 3
+            sage: e.multiplicative_order()
+            8
+
+        The Weil pairing is bilinear, alternating and Galois equivariant::
+
+            sage: P.weil_pairing(P, 8)
+            1
+            sage: Q.weil_pairing(P, 8) == e^-1
+            True
+            sage: (3*P).weil_pairing(5*Q, 8) == e^15
+            True
+            sage: (P + Q).weil_pairing(Q, 8) == e
+            True
+            sage: frob = lambda D: J(*[c.map_coefficients(lambda a: a^7) for c in D])
+            sage: frob(P).weil_pairing(frob(Q), 8) == e^7
+            True
+
+        A split example of genus 3::
+
+            sage: R.<x> = GF(23)[]
+            sage: H = HyperellipticCurve(x^8 + 1)
+            sage: H.is_split()
+            True
+            sage: K.<z2> = GF(23^2)
+            sage: J = H.jacobian()(K)
+            sage: J.order().factor()
+            2^18 * 3^6
+            sage: P = J(x^3 + (5*z2 + 4)*x^2 + (5*z2 + 8)*x + 19*z2 + 13,
+            ....:       (19*z2 + 12)*x^2 + (6*z2 + 15)*x + 17*z2 + 6)
+            sage: Q = J(x^3 + (16*z2 + 9)*x^2 + 15*z2*x + 4*z2 + 7,
+            ....:       5*x^2 + (8*z2 + 12)*x + z2 + 17)
+            sage: P.weil_pairing(Q, 3)
+            19*z2 + 15
+
+        A larger example: the genus-3 curve `y^2 = x^7 + x` is superspecial
+        modulo `p`, and the `(p+1)`-torsion is rational over `\FF_{p^2}`.
+        We pair elements of large prime order `\ell` dividing `p+1`, as well
+        as elements of order `p+1`::
+
+            sage: p = 10000000000000001119
+            sage: R.<x> = GF(p)[]
+            sage: H = HyperellipticCurve(x^7 + x)
+            sage: K.<z2> = GF(p^2)
+            sage: J = H.jacobian()(K)
+            sage: (p + 1) * J.random_element()
+            (1, 0)
+            sage: factor(p + 1)
+            2^5 * 5 * 197 * 317258883248731
+            sage: l = 317258883248731
+            sage: P = ((p + 1) // l) * J.random_element()
+            sage: Q = ((p + 1) // l) * J.random_element()
+            sage: e = P.weil_pairing(Q, l)
+            sage: e.multiplicative_order() == l  # random (False with probability about 1/l)
+            True
+            sage: (2*P).weil_pairing(3*Q, l) == e^6
+            True
+            sage: Q.weil_pairing(P, l) == e^-1
+            True
+            sage: frob = lambda D: J(*[c.map_coefficients(lambda a: a^p) for c in D])
+            sage: frob(P).weil_pairing(frob(Q), l) == e^p
+            True
+            sage: P.tate_pairing(Q, l) / Q.tate_pairing(P, l) == e^((p^2-1) // l)
+            True
+            sage: P = J.random_element()
+            sage: Q = J.random_element()
+            sage: e = P.weil_pairing(Q, p + 1)
+            sage: e^(p + 1)
+            1
+            sage: (P + Q).weil_pairing(Q, p + 1) == e
+            True
+
+        For elliptic curves, the result matches the Weil pairing
+        implementation in
+        :meth:`sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.weil_pairing`::
+
+            sage: K.<z2> = GF(11^2)
+            sage: E = EllipticCurve(K, [0, 1])
+            sage: R.<x> = GF(11)[]
+            sage: J = HyperellipticCurve(x^3 + 1).jacobian()(K)
+            sage: P, Q = E.torsion_basis(12)
+            sage: to_J = lambda T: J(x - T.x(), T.y())
+            sage: to_J(P).weil_pairing(to_J(Q), 12) == P.weil_pairing(Q, 12)
+            True
+
+        Pairings can also be computed over very small fields, where the
+        computation may be carried out over an extension field. On the
+        curve `y^2 = x^5 - x` over `\FF_5`, the `2`-torsion is
+        rational and the classes `T_a = (a, 0) - \infty` satisfy
+        `e_2(T_a, T_b) = -1` for `a \neq b`::
+
+            sage: S.<t> = GF(5)[]
+            sage: J5 = HyperellipticCurve(t^5 - t).jacobian()
+            sage: T = [J5(t - a, 0) for a in GF(5)]
+            sage: matrix([[A.weil_pairing(B, 2) for B in T] for A in T])
+            [1 4 4 4 4]
+            [4 1 4 4 4]
+            [4 4 1 4 4]
+            [4 4 4 1 4]
+            [4 4 4 4 1]
+
+        TESTS:
+
+        Both elements must be `n`-torsion::
+
+            sage: to_J(P).weil_pairing(to_J(Q), 6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the element P = ... must be 6-torsion
+            sage: to_J(6*P).weil_pairing(to_J(Q), 6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the element Q = ... must be 6-torsion
+
+        Very small fields, where there may be no suitable auxiliary divisors
+        over the base field::
+
+            sage: R.<x> = GF(2)[]
+            sage: J = HyperellipticCurve(x^5 + 1, x^2 + 1).jacobian()
+            sage: J.points()
+            [(1, 0), (x + 1, 0)]
+            sage: J(x + 1, 0).weil_pairing(J(x + 1, 0), 2)
+            1
+            sage: K.<a> = GF(4)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurve(x^6 + a*x^4 + a*x^3 + a*x + a, a*x^3 + 1)
+            sage: H.is_inert(), H.rational_points()
+            (True, [])
+            sage: J = H.jacobian()(K)
+            sage: P = J(x^2 + a*x + a, 0); 5*P
+            (1, 0 : 1)
+            sage: P.weil_pairing(2*P, 5)
+            1
+        """
+        P = self
+        n = P._check_pairing_input(Q, n)
+        if n * Q:
+            raise ValueError(f"the element Q = {Q} must be {n}-torsion")
+
+        e = P._weil_pairing_value(Q, n)
+        if e is not None:
+            return e
+
+        # The base field is too small: compute the pairing over an extension.
+        # The value is the same, since the Weil pairing is intrinsic.
+        for phi in P._pairing_extensions(n):
+            e = P.change_ring(phi)._weil_pairing_value(Q.change_ring(phi), n)
+            if e is not None:
+                return phi.section()(e)
+
+    def tate_pairing(self, Q, n, k=None, q=None):
+        r"""
+        Return the (reduced) Tate pairing of `P` = ``self`` and ``Q``.
+
+        Let `P` be an `n`-torsion element of the Jacobian over
+        `K = \FF_{q^k}`, where `n` divides `q^k-1`, and let `Q` be any
+        element of the Jacobian over `K`. Choose a function `f_P` with
+        divisor `n D_P`, and a divisor `D_Q` with support disjoint
+        from `D_P`. The reduced Tate pairing then equals
+
+        .. MATH::
+
+            t_n(P, Q) = f_P(D_Q)^{(q^k-1)/n}.
+
+        The Tate pairing is bilinear and nondegenerate as a pairing
+        `J[n](K) \times J(K)/nJ(K) \to \mu_n`.
+
+        INPUT:
+
+        - ``Q`` -- an element of the same group of points of the Jacobian as
+          ``self``
+
+        - ``n`` -- positive integer such that `nP = 0`
+
+        - ``k`` -- (optional) positive integer; the embedding degree
+
+        - ``q`` -- (optional) positive integer; size of the base field
+          (the "big" field is `\FF_{q^k}`). By default, `q^k` is the
+          size of the field of definition of the elements.
+
+        OUTPUT: an `n`-th root of unity in the base field
+
+        ALGORITHM:
+
+        The function `f_P` is computed using Miller's algorithm and evaluated
+        at a random divisor `D_Q`. If no suitable divisor is found after a
+        few attempts, which may happen over very small fields, we compute
+        `u = f_P(D_Q')` for a divisor `D_Q'` over an extension `L / K` of
+        degree `d` coprime to `n`. Then `N_{L/K}(u)` agrees with
+        `f_P(D_Q)^d` up to `n`-th powers in `K^*`, so we recover
+        `t_n(P, Q) = (N_{L/K}(u)^{(q^k-1)/n})^{1/d}`.
+
+        EXAMPLES:
+
+        Since `n` must divide `q^k-1`, the Tate pairing can be
+        nondegenerate on elements defined over a field which does
+        not contain the full `n`-torsion::
+
+            sage: R.<x> = GF(157)[]
+            sage: H = HyperellipticCurve(x^5 + 66*x^4 + 47*x^3 + 15*x^2 + 65*x + 7)
+            sage: J = H.jacobian()
+            sage: J.order().factor()
+            2 * 7 * 13 * 137
+            sage: P = J(x^2 + 45*x + 15, 75*x + 136)
+            sage: Q = J(x^2 + 84*x + 87, 81*x + 25)
+            sage: t = P.tate_pairing(Q, 13); t
+            101
+            sage: t.multiplicative_order()
+            13
+            sage: P.tate_pairing(2*Q, 13) == t^2
+            True
+            sage: P.tate_pairing(13*Q, 13)
+            1
+
+        The Weil pairing can be computed from the Tate pairing::
+
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurve(x^5 + x)
+            sage: K.<z2> = GF(7^2)
+            sage: J = H.jacobian()(K)
+            sage: P = J(x^2 + (3*z2 + 1)*x + 2*z2 + 2, (3*z2 + 6)*x + z2)
+            sage: Q = J(x^2 + (3*z2 + 5)*x + 3*z2 + 3, (5*z2 + 1)*x + 2*z2)
+            sage: P.tate_pairing(Q, 8)
+            2*z2 + 1
+            sage: P.tate_pairing(Q, 8, k=2) == P.tate_pairing(Q, 8, q=7) == P.tate_pairing(Q, 8)
+            True
+            sage: P.tate_pairing(Q, 8) / Q.tate_pairing(P, 8) == P.weil_pairing(Q, 8)^6
+            True
+
+        For elliptic curves, we recover
+        :meth:`sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.tate_pairing`::
+
+            sage: K.<z2> = GF(11^2)
+            sage: E = EllipticCurve(K, [0, 1])
+            sage: R.<x> = GF(11)[]
+            sage: J = HyperellipticCurve(x^3 + 1).jacobian()(K)
+            sage: to_J = lambda T: J(x - T.x(), T.y())
+            sage: P = E.torsion_basis(12)[0]
+            sage: Q = E.random_point()
+            sage: to_J(P).tate_pairing(to_J(Q), 12) == P.tate_pairing(Q, 12, 2)
+            True
+
+        Over very small fields, the computation may be carried out over an
+        extension field::
+
+            sage: S.<t> = GF(3)[]
+            sage: J3 = HyperellipticCurve(t^5 + t^4 + 2*t^2 + t + 2).jacobian()
+            sage: J3.order()
+            8
+            sage: P3 = J3(t + 1, 0)
+            sage: Q3 = J3(t + 2, 2)
+            sage: Q3.order()
+            8
+            sage: P3.tate_pairing(Q3, 2)
+            2
+            sage: P3.tate_pairing(2*Q3, 2)
+            1
+
+        TESTS::
+
+            sage: to_J(P).tate_pairing(to_J(Q), 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the element P = ... must be 5-torsion
+            sage: to_J(P).tate_pairing(to_J(Q), 12, q=5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the size of the field of definition must be a power of q = 5
+            sage: to_J(P).tate_pairing(to_J(Q), 12, k=1, q=5)
+            Traceback (most recent call last):
+            ...
+            ValueError: n = 12 does not divide q^k-1 = 4
+        """
+        P = self
+        n = P._check_pairing_input(Q, n)
+
+        K = P.parent().value_ring()
+        if q is None:
+            if k is None:
+                q, k = K.order(), 1
+            elif K.degree().is_one():
+                q = K.order()
+            elif K.degree() == k:
+                q = K.base_ring().order()
+            else:
+                raise ValueError("unexpected field degree: set keyword argument q equal to the "
+                                 f"size of the base field (big field is GF(q^{k}))")
+        elif k is None:
+            try:
+                k = ZZ(K.order().log(q))
+            except TypeError:
+                raise ValueError(f"the size of the field of definition must be a power of q = {q}")
+        e, r = (q**k-1).quo_rem(n)
+        if r:
+            raise ValueError(f"n = {n} does not divide q^k-1 = {q**k-1}")
+
+        u = P._tate_miller_value(Q, n)
+        if u is not None:
+            return u**e
+
+        # The base field is too small: compute over an extension of degree coprime to n.
+        for phi in P._pairing_extensions(n):
+            u = P.change_ring(phi)._tate_miller_value(Q.change_ring(phi), n)
+            if u is not None:
+                L = phi.codomain()
+                d = L.degree() // K.degree()
+                u = phi.section()(u**((L.order()-1) // (K.order()-1)))
+                return (u**e)**d.inverse_mod(n)
 
 
 # =======================================================================
@@ -714,11 +1437,72 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
         while n3 < 0 or n3 > g - u3.degree():
-            u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                u3, v3, n3, plus=(n3 >= 0)
-            )
+            plus = n3 >= 0
+            u3, v3, n3, _ = self._parent.cantor_compose_at_infinity(u3, v3, n3, plus=plus)
 
         return self._parent(u3, v3, n3, check=False)
+
+    def _miller_add(self, other) -> tuple:
+        r"""
+        Return the sum ``self + other`` together with a function `h`
+        on the curve such that
+
+        .. MATH::
+
+            \mathrm{div}(h) = D_{\mathrm{self}} + D_{\mathrm{other}} - D_{\mathrm{self} + \mathrm{other}}`.
+
+        See :meth:`MumfordDivisorClassField._miller_add` for the output format.
+
+        Here `D_A = E_A + n \infty_+ + m \infty_- - D_\infty` is the
+        balanced divisor of `A`, so that the functions arising from
+        the steps of :meth:`_add_` also take into account the points
+        at infinity.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^6 + x + 1)
+            sage: J = H.jacobian()
+            sage: D1 = J(x + 3, 8, 0)
+            sage: D2 = J(x^2 + 7, 7*x + 1, 0)
+            sage: D3, h = D1._miller_add(D2)
+            sage: D3 == D1 + D2
+            True
+
+        Here, the composition does not cancel any points, and the
+        divisor is then reduced by a composition at infinity::
+
+            sage: h
+            [(1, 0, 1), (x^3 + 11*x^2 + 11, 1, x^2 + 9*x + 6)]
+        """
+        parent = self._parent
+        H = parent.extended_curve()
+        g = H.genus()
+        R = self._u.parent()
+
+        u1, v1 = self.uv()
+        u2, v2 = other.uv()
+        n1, n2 = self._n, other._n
+
+        # Composition: D1 + D2 = D3 + div(s)
+        u3, v3, s = parent._cantor_composition_generic(u1, v1, u2, v2)
+        n3 = n1 + n2 + s.degree() - ((g + 1) // 2)
+        funs = [(s, R.zero(), R.one())]
+
+        # Reduction: D3 - D4 = div((y - v3) / u4)
+        while u3.degree() > (g + 1):
+            u4, v4, n4 = parent.cantor_reduction(u3, v3, n3)
+            funs.append((-v3, R.one(), u4))
+            u3, v3, n3 = u4, v4, n4
+
+        # Composition at infinity: D3 - D4 = div((y - w) / u4)
+        while n3 < 0 or n3 > g - u3.degree():
+            plus = n3 >= 0
+            u4, v4, n4, w = parent.cantor_compose_at_infinity(u3, v3, n3, plus=plus)
+            funs.append((-w, R.one(), u4))
+            u3, v3, n3 = u4, v4, n4
+
+        return parent(u3, v3, n3, check=False), funs
 
     def _neg_(self):
         r"""
@@ -761,9 +1545,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         else:
             # Composition at infinity always with plus=True.
             # want to "subtract" \infty_+ - \infty_-
-            (u1, v1, n1) = self._parent.cantor_compose_at_infinity(
-                u0, -h - v0, n0, plus=True
-            )
+            u1, v1, n1, _ = self._parent.cantor_compose_at_infinity(u0, -h - v0, n0, plus=True)
             n1 = n1 - n0 + m0 + 1  # Shouldn't this always be 0? (See Alg 3.8 of [Mireles2008]_)
             assert n1 == 0
 
