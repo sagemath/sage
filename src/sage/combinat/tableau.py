@@ -111,9 +111,11 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 
-lazy_import('sage.combinat.posets.posets', 'Poset')
-lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
+lazy_import("sage.combinat.posets.posets", "Poset")
+lazy_import("sage.groups.perm_gps.permgroup", "PermutationGroup")
+lazy_import(
+    "sage.combinat.sf.transition_kernels", ["kostka_number", "semistandard_tableaux"]
+)
 
 
 @richcmp_method
@@ -6991,7 +6993,8 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
     def cardinality(self):
         """
         Return the number of semistandard tableaux of the given shape and
-        weight, as computed by ``kostka_number`` function of ``symmetrica``.
+        weight, as computed by
+        :func:`~sage.combinat.sf.transition_kernels.kostka_number`.
 
         EXAMPLES::
 
@@ -7005,7 +7008,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             sage: SemistandardTableaux([3,2,1], [2, 2, 2]).cardinality()
             2
         """
-        return symmetrica.kostka_number(self.shape, self.weight)
+        return kostka_number(self.shape, self.weight)
 
     def __iter__(self):
         """
@@ -7017,13 +7020,12 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             sage: sst[0].parent() is sst                                                # needs sage.modules
             True
         """
-        for t in symmetrica.kostka_tab(self.shape, self.weight):
+        for t in semistandard_tableaux(self.shape, self.weight):
             yield self.element_class(self, t)
 
     def list(self):
         """
-        Return a list of all semistandard tableaux in ``self`` generated
-        by symmetrica.
+        Return a list of all semistandard tableaux in ``self``.
 
         EXAMPLES::
 
@@ -7036,8 +7038,13 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
             [[[1, 1], [2, 2], [3, 3]]]
             sage: SemistandardTableaux([3,2,1], [2, 2, 2]).list()
             [[[1, 1, 2], [2, 3], [3]], [[1, 1, 3], [2, 2], [3]]]
+            sage: SemistandardTableaux([2,2,2], [2, 2, 2]).list()[0].parent()
+            Semistandard tableaux of shape [2, 2, 2] and weight [2, 2, 2]
         """
-        return symmetrica.kostka_tab(self.shape, self.weight)
+        return [
+            self.element_class(self, t)
+            for t in semistandard_tableaux(self.shape, self.weight)
+        ]
 
     random_element = FiniteEnumeratedSets.ParentMethods._random_element_from_unrank
 
