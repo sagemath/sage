@@ -475,15 +475,15 @@ except ImportError:
 
 
 class Ed25519SignatureScheme(DigitalSignatureBase):
-    r"""Ed25519, Ed25519ctx and Ed25519ph as a digital-signature scheme object.
+    r"""
+    Ed25519, Ed25519ctx and Ed25519ph as a digital-signature scheme object.
 
-    This is the object-oriented counterpart of the module-level functions:
-    one instance bundles the RFC 8032 variant and (for ctx/ph) the context
-    string, which removes the risk of signing and verifying with mismatched
-    domain parameters.  When the digital-signature framework of :issue:`42856`
-    is available, this class is a
-    :class:`~sage.crypto.public_key.digital_signature.digital_signature_base.DigitalSignatureBase`
-    subclass and can be used uniformly with the other schemes of that
+    This is the object-oriented counterpart of the module-level
+    functions: one instance bundles the RFC 8032 variant and (for
+    ctx/ph) the context string, which removes the risk of signing and
+    verifying with mismatched domain parameters.  When the
+    digital-signature framework of :issue:`42856` is available, this
+    class can be used uniformly with the other schemes of that
     framework.
 
     INPUT:

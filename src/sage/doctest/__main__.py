@@ -3,8 +3,6 @@ import os
 import shlex
 import sys
 
-import pytest
-
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
                                                    '.sage'))
@@ -161,7 +159,14 @@ def _make_parser():
 
 
 def main():
+    # Match sage-env's OpenBLAS policy for reliable process spawning (#26118).
+    # Set this before importing Sage modules that can initialize OpenBLAS.
+    os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
     from importlib.util import find_spec
+
+    import pytest
+
     from sage.doctest.control import DocTestController
     from sage.env import SAGE_SRC
 

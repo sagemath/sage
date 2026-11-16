@@ -364,7 +364,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             url = lmfdb_url.format(self.cremona_label())
         webbrowser.open(url)
 
-    def is_p_integral(self, p):
+    def is_p_integral(self, p) -> bool:
         r"""
         Return ``True`` if this elliptic curve has `p`-integral
         coefficients.
@@ -392,7 +392,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return True
         return bool(mul([x.valuation(p) >= 0 for x in self.ainvs()]))
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Return ``True`` if this elliptic curve has integral coefficients (in
         Z).
@@ -793,7 +793,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self.__mwrank_curve
         except AttributeError:
             pass
-        from sage.libs.eclib.all import mwrank_EllipticCurve
+        from sage.libs.eclib.interface import mwrank_EllipticCurve
         self.__mwrank_curve = mwrank_EllipticCurve(self.ainvs(), verbose=verbose)
         return self.__mwrank_curve
 
@@ -2649,7 +2649,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             v.append((x*d, y*d, d))
 
         c = Emin.mwrank_curve()
-        from sage.libs.eclib.all import mwrank_MordellWeil
+        from sage.libs.eclib.interface import mwrank_MordellWeil
         mw = mwrank_MordellWeil(c, verbose)
         mw.process(v) # by default, this does no saturation yet
         ok, index, unsat = mw.saturate(max_prime=max_prime, min_prime=min_prime)
@@ -3006,7 +3006,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__minimal_model = constructor.EllipticCurve([Q(F[i]) for i in range(5)])
             return self.__minimal_model
 
-    def is_minimal(self):
+    def is_minimal(self) -> bool:
         r"""
         Return ``True`` iff this elliptic curve is a reduced minimal model.
 
@@ -3031,7 +3031,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         return self.ainvs() == self.minimal_model().ainvs()
 
-    def is_p_minimal(self, p):
+    def is_p_minimal(self, p) -> bool:
         r"""
         Test if curve is `p`-minimal at a given prime `p`.
 
@@ -3484,7 +3484,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return gamma_inc(t+1, 2*pi*n/sqrtN) * C(sqrtN/(2*pi*n))**(t+1)
         return sum(a[n]*(_F(n,s-1) + eps*_F(n,1-s)) for n in range(1, prec+1))
 
-    def is_local_integral_model(self, *p):
+    def is_local_integral_model(self, *p) -> bool:
         r"""
         Test if ``self`` is integral at the prime `p`, or at all the
         primes if `p` is a list or tuple of primes.
@@ -3526,7 +3526,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         e = min([(ai[i].valuation(p)/[1,2,3,4,6][i]) for i in range(5)]).floor()
         return constructor.EllipticCurve([ai[i]/p**(e*[1,2,3,4,6][i]) for i in range(5)])
 
-    def is_global_integral_model(self):
+    def is_global_integral_model(self) -> bool:
         r"""
         Return ``True`` iff ``self`` is integral at all primes.
 
@@ -5221,7 +5221,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__rho = GaloisRepresentation(self)
         return self.__rho
 
-    def is_semistable(self):
+    def is_semistable(self) -> bool:
         """
         Return ``True`` iff this elliptic curve is semi-stable at all primes.
 
@@ -5236,7 +5236,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         return self.conductor().is_squarefree()
 
-    def is_ordinary(self, p, ell=None):
+    def is_ordinary(self, p, ell=None) -> bool:
         r"""
         Return ``True`` precisely when the mod-``p`` representation attached
         to this elliptic curve is ordinary at ``ell``.
@@ -5263,7 +5263,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             ell = p
         return self.ap(ell) % p != 0
 
-    def is_good(self, p, check=True):
+    def is_good(self, p, check=True) -> bool:
         r"""
         Return ``True`` if ``p`` is a prime of good reduction for `E`.
 
@@ -5288,7 +5288,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 raise ValueError("p must be prime")
         return self.conductor() % p != 0
 
-    def is_supersingular(self, p, ell=None):
+    def is_supersingular(self, p, ell=None) -> bool:
         r"""
         Return ``True`` precisely when `p` is a prime of good reduction and the
         mod-`p` representation attached to this elliptic curve is

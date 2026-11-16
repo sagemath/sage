@@ -1022,7 +1022,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self.base_ring().characteristic()
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Test whether elements of this matrix space are represented exactly.
 
@@ -2117,7 +2117,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             A[i, i] = entries[i]
         return A
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return whether matrices in ``self`` are dense.
 
@@ -2130,7 +2130,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return not self.__is_sparse
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return whether matrices in ``self`` are sparse.
 
@@ -2143,7 +2143,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self.__is_sparse
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether this matrix space is finite.
 

@@ -16,7 +16,7 @@ from pathlib import Path
 from sage.cpython.string import str_to_bytes, bytes_to_str, FS_ENCODING
 
 
-def is_loadable_filename(filename):
+def is_loadable_filename(filename) -> bool:
     """
     Return whether a file can be loaded into Sage.
 
