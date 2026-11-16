@@ -15212,7 +15212,7 @@ cdef class Matrix(Matrix1):
             return result
 
         cdef Py_ssize_t i, j, k  # loop indices
-        cdef Py_ssize_t r = 0    # another row/column index (set before use)
+        cdef Py_ssize_t r        # another row/column index
 
         # We have to make at least one copy of the input matrix so
         # that we can change the base ring to its fraction field. Both
@@ -15334,6 +15334,12 @@ cdef class Matrix(Matrix1):
             # Note: omega_1 is defined as a C double, but the abs()
             # below would make a complex number approximate anyway.
             omega_1 = 0
+
+            # We set r = i > k >= 0 in the loop if we find a nonzero
+            # subdiagonal entry. If r is still zero at the end, that
+            # indicates that the entire subdiagonal is zero. Testing
+            # the integer r is faster than testing omega_1.
+            r = 0
             for i in range(k+1, n):
                 a_ik_abs = A.get_unsafe(i, k).abs()
                 if a_ik_abs > omega_1:
@@ -15345,7 +15351,7 @@ cdef class Matrix(Matrix1):
                     # his computation of omega_1.
                     r = i
 
-            if omega_1 == 0:
+            if r == 0:
                 # In this case, our matrix looks like
                 #
                 #   [ a 0 ]
