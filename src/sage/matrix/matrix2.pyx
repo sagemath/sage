@@ -93,7 +93,7 @@ from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import Vector
-from sage.structure.element cimport have_same_parent
+from sage.structure.element cimport RingElement, have_same_parent
 from sage.misc.verbose import verbose
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, IntegerRing_class
@@ -15243,8 +15243,12 @@ cdef class Matrix(Matrix1):
             # might waste here checking if we need to do it.
             A = self.change_ring(ring)
 
-        zero = ring.zero()
-        one = ring.one()
+        # Elements of SR.fraction_field() == SR are not FieldElements,
+        # only CommutativeRingElements. And elements of RealField are
+        # not even commutative! This is not so surprising given that
+        # floating point arithmetic fails to have every nice property.
+        cdef RingElement zero = ring.zero()
+        cdef RingElement one = ring.one()
 
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
         # This is mainly useful for numerical stability, so we use its
