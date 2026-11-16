@@ -15822,6 +15822,15 @@ cdef class Matrix(Matrix1):
             True
             sage: matrix(QQ, 0, 0).block_ldlt()
             ([], [], [])
+
+        An example that can incorrectly take the second 1x1 pivot
+        branch if do the comparison (inf >= inf) using C doubles::
+
+            sage: A = matrix(RR, [[RR('1e150'), RR('1e200')],
+            ....:                 [RR('1e200'), RR('1e150')]])
+            sage: P, L, D = A.block_ldlt()
+            sage: (P.T*A*P - L*D*L.T).is_zero()
+            True
         """
         cdef Matrix P, L, D   # output matrices
 
