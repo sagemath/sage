@@ -15831,6 +15831,15 @@ cdef class Matrix(Matrix1):
             sage: P, L, D = A.block_ldlt()
             sage: (P.T*A*P - L*D*L.T).is_zero()
             True
+
+        An example with entries too small to represent as a C double::
+
+            sage: t = QQ(1) / 2^2000
+            sage: A = matrix(QQ, [[0, t],
+            ....:                 [t, 0]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
         """
         cdef Matrix P, L, D   # output matrices
 
