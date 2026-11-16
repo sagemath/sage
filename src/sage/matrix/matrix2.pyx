@@ -15250,6 +15250,9 @@ cdef class Matrix(Matrix1):
         cdef RingElement zero = ring.zero()
         cdef RingElement one = ring.one()
 
+        # The current 1x1 pivot candidate and its absolute value.
+        cdef RingElement A_kk, A_kk_abs
+
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
         # This is mainly useful for numerical stability, so we use its
         # numerical approximation to speed up the comparisons we're
@@ -15358,7 +15361,8 @@ cdef class Matrix(Matrix1):
                 k += 1
                 continue
 
-            if A_kk.abs() > alpha*omega_1:
+            A_kk_abs = A_kk.abs()  # Store to avoid an extra abs()
+            if A_kk_abs > alpha*omega_1:
                 # This is the first case in Higham's Step (1), and B&K's
                 # Step (2). Note that we have skipped the part of B&K's
                 # Step (1) where we determine "r", since "r" is not yet
@@ -15390,7 +15394,7 @@ cdef class Matrix(Matrix1):
                 if a_rj_abs > omega_r:
                     omega_r = a_rj_abs
 
-            if A_kk.abs()*omega_r >= alpha*(omega_1**2):
+            if A_kk_abs*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
                 E = one_by_one_space(A_kk)
                 E.set_immutable()
