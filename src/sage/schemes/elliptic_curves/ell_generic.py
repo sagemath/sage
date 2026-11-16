@@ -660,9 +660,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         d = lcm(x.denominator(), y.denominator())
         return R.curve().change_ring(GF(p))([x*d, y*d, d])
 
-    def is_x_coord(self, x):
+    def is_x_coord(self, x, ring=None):
         r"""
-        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve
+        defined over ``ring``. If ``ring`` is not given (default: ``None``),
+        the base ring of the curve is used.
 
         .. NOTE::
 
@@ -714,7 +716,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: set(P[0] for P in E.points() if P!=E(0)) == set(x for x in F if E.is_x_coord(x))  # needs sage.rings.finite_rings
             True
         """
-        K = self.base_ring()
+        K = ring if ring is not None else self.base_ring()
         try:
             x = K(x)
         except TypeError:

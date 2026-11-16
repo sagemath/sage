@@ -196,7 +196,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
             pass
 
     def curve(self):
-        """
+        r"""
         Return the curve that this point is on.
 
         This is a synonym for :meth:`~sage.schemes.generic.point.SchemePoint.scheme`.
@@ -220,6 +220,15 @@ class EllipticCurvePoint(AdditiveGroupElement,
             sage: P.scheme()                                                            # needs sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + x + 1 over
              Number Field in a with defining polynomial x^2 - 3
+
+        The curve is `E` even for points over extension fields (:issue:`37427`)::
+
+            sage: # needs sage.rings.number_field
+            sage: P = E(K)(1, a)
+            sage: P.curve() is E
+            True
+            sage: P.parent().extended_codomain() == E.base_extend(K)
+            True
         """
         return self.scheme()
 
@@ -346,7 +355,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
                         if not mod_2nd.is_one():
                             pt = CRT_vectors([pt, [x2.lift(), y2.lift(), z2.lift()]], [mod, mod_2nd])
 
-                        return E.point(Sequence(pt, E.base_ring()), check=False)
+                        return self.parent()(Sequence(pt, E.base_ring()), check=False)
 
         from sage.schemes.elliptic_curves.addition_formulas_ring import _add
         from sage.modules.free_module_element import vector
@@ -354,7 +363,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         pts = []
         for pt in filter(any, _add(E, self, other)):
             if R.one() in R.ideal(pt):
-                return E.point(pt)
+                return self.parent()(pt)
             pts.append(pt)
         assert len(pts) == 2, 'bug in elliptic-curve point addition'
 
@@ -372,7 +381,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         for _ in range(1000):
             result = tuple(sum(R.random_element() * pt for pt in pts))
             if R.one() in R.ideal(result):
-                return E.point(result, check=False)
+                return self.parent()(result, check=False)
 
         assert False, 'bug: failed to compute elliptic-curve point addition'
 
@@ -404,7 +413,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         E = self.curve()
         a1, _, a3, _, _ = E.a_invariants()
         x, y, z = self
-        return E.point([x, -y - a1*x - a3*z, z], check=False)
+        return self.parent()([x, -y - a1*x - a3*z, z], check=False)
 
     def _sub_(self, other):
         """
@@ -588,7 +597,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P=E(2, -4, 2); P
             (1 : -2 : 1)
         """
-        point_homset = curve.point_homset()
+        from sage.schemes.generic.homset import SchemeHomset_points
+        if isinstance(curve, SchemeHomset_points):
+            point_homset = curve
+        else:
+            point_homset = curve.point_homset()
         R = point_homset.value_ring()
         if isinstance(v, SchemeMorphism):
             v = list(v)
@@ -1102,7 +1115,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         x2, y2 = other.xy()
 
         if x1 == x2 and y1 == -y2 - a1*x2 - a3:
-            return E(0)  # point at infinity
+            return self.parent().zero()  # point at infinity
 
         try:
             if x1 == x2 and y1 == y2:
@@ -1124,7 +1137,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         x3 = -x1 - x2 - a2 + m*(m+a1)
         y3 = -y1 - a3 - a1*x3 + m*(x1-x3)
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x3, y3, E.base_ring().one()], check=False)
+        return self.parent()([x3, y3, E.base_ring().one()], check=False)
 
     _sub_ = EllipticCurvePoint._sub_
 
@@ -1155,7 +1168,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return self
         E, x, y = self.curve(), self[0], self[1]
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
+        return self.parent()([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
     def xy(self) -> tuple:
         """
@@ -1441,6 +1454,18 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: EK(0).division_points(9)
             [(0 : 1 : 0), (5 : 9 : 1), (5 : -10 : 1), (-150/121*t^8 + 414/121*t^7 + 1481/242*t^6 - 2382/121*t^5 - 103/242*t^4 + 629/22*t^3 - 367/242*t^2 - 1307/121*t + 625/121 : 35/484*t^8 - 133/242*t^7 + 445/242*t^6 - 799/242*t^5 + 373/484*t^4 + 113/22*t^3 - 2355/484*t^2 - 753/242*t + 1165/484 : 1), (-150/121*t^8 + 414/121*t^7 + 1481/242*t^6 - 2382/121*t^5 - 103/242*t^4 + 629/22*t^3 - 367/242*t^2 - 1307/121*t + 625/121 : -35/484*t^8 + 133/242*t^7 - 445/242*t^6 + 799/242*t^5 - 373/484*t^4 - 113/22*t^3 + 2355/484*t^2 + 753/242*t - 1649/484 : 1), (-1383/484*t^8 + 970/121*t^7 + 3159/242*t^6 - 5211/121*t^5 + 37/484*t^4 + 654/11*t^3 - 909/484*t^2 - 4831/242*t + 6791/484 : 927/121*t^8 - 5209/242*t^7 - 8187/242*t^6 + 27975/242*t^5 - 1147/242*t^4 - 1729/11*t^3 + 1566/121*t^2 + 12873/242*t - 10871/242 : 1), (-1383/484*t^8 + 970/121*t^7 + 3159/242*t^6 - 5211/121*t^5 + 37/484*t^4 + 654/11*t^3 - 909/484*t^2 - 4831/242*t + 6791/484 : -927/121*t^8 + 5209/242*t^7 + 8187/242*t^6 - 27975/242*t^5 + 1147/242*t^4 + 1729/11*t^3 - 1566/121*t^2 - 12873/242*t + 10629/242 : 1), (-4793/484*t^8 + 6791/242*t^7 + 10727/242*t^6 - 18301/121*t^5 + 2347/484*t^4 + 2293/11*t^3 - 7311/484*t^2 - 17239/242*t + 26767/484 : 30847/484*t^8 - 21789/121*t^7 - 34605/121*t^6 + 117164/121*t^5 - 10633/484*t^4 - 29437/22*t^3 + 39725/484*t^2 + 55428/121*t - 176909/484 : 1), (-4793/484*t^8 + 6791/242*t^7 + 10727/242*t^6 - 18301/121*t^5 + 2347/484*t^4 + 2293/11*t^3 - 7311/484*t^2 - 17239/242*t + 26767/484 : -30847/484*t^8 + 21789/121*t^7 + 34605/121*t^6 - 117164/121*t^5 + 10633/484*t^4 + 29437/22*t^3 - 39725/484*t^2 - 55428/121*t + 176425/484 : 1)]
 
+        It also works when this point is defined over a larger field
+        than the curve itself (see :issue:`37427`)::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^2 + x - 24)
+            sage: E = EllipticCurve('37a')
+            sage: P = E(K)(3, a)
+            sage: (2*P).division_points(2)
+            [(3 : a : 1)]
+            sage: [Q.parent() is E(K) for Q in (2*P).division_points(2)]
+            [True]
+
         TESTS:
 
         Check that :issue:`24844` is fixed::
@@ -1516,7 +1541,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # solutions (over the algebraic closure) is m^2, assuming that
         # the characteristic does not divide m.
 
-        E = self.curve()
+        E = self.parent().extended_codomain()
         P = self
         nP = -P
         P_is_2_torsion = (P == nP)
@@ -1598,6 +1623,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             pass
 
         # Finally, sort and return
+        ans = Sequence(ans, P.parent())
         ans.sort()
         return ans
 
@@ -1652,7 +1678,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         P = self
         E = P.curve()
-        F = E.base_field()
+        F = self.parent().value_ring()
         n = P.order()
 
         if n < oo:
@@ -1683,11 +1709,10 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
                     # need to extend the field to get the x-coordinate
                     g = f.factor()[0][0]
                     F, emb, x = ffext(g)
-                    E = E.change_ring(emb)
                     P = P.change_ring(emb)
                     coercion = emb * coercion
 
-                h = E.defining_polynomial()(x=x, z=1).univariate_polynomial()
+                h = E.defining_polynomial().change_ring(coercion)(x=x, z=1).univariate_polynomial()
                 try:
                     y = h.any_root()
                 except ValueError:
@@ -1695,12 +1720,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
                     if not extend:
                         raise ValueError('division point not defined over this field and "extend" is not set')
                     F, emb, y = ffext(h)
-                    E = E.change_ring(emb)
                     P = P.change_ring(emb)
                     coercion = emb * coercion
                     x = emb(x)
 
-                pt = E(x, y)
+                pt = E(F)(x, y)
                 if q * pt != P:
                     pt = -pt
                 assert q * pt == P
@@ -4525,10 +4549,10 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             222
         """
         k = ZZ(other)
-        E = self.curve()
+        parent = self.parent()
 
         try:
-            pariQ = pari.ellmul(E, self, k)
+            pariQ = pari.ellmul(parent.extended_codomain(), self, k)
         except PariError as err:
             if str(err.errdata().component(1)) == "Fp_inv":
                 val = err.errdata().component(2)
@@ -4543,14 +4567,15 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         if pariQ is not None:
             if pariQ == [0]:
-                vQ = 0
+                vQ = 0, 1, 0
             else:
                 assert len(pariQ) == 2
-                vQ = Sequence(tuple(pariQ) + (1,), E.base_ring())
-            Q = EllipticCurvePoint_finite_field(E, vQ, check=False)
+                vQ = tuple(pariQ) + (1,)
+            vQ = Sequence(vQ, parent.value_ring())
+            Q = parent(vQ, check=False)
 
         else:
-            Q = IntegerMulAction(ZZ, self.parent())._act_(k, self)
+            Q = IntegerMulAction(ZZ, parent)._act_(k, self)
 
         n = getattr(self, '_order', None)
         if n is not None:
