@@ -1578,6 +1578,17 @@ cdef py_cos(x):
     except (TypeError, ValueError):
         return CC(x).cos()
 
+cdef bint is_enclosure_field(P) except -1:
+    """
+    Return whether ``P`` is a field of intervals or balls, whose elements
+    are rigorous enclosures (which floating-point evaluation cannot provide).
+    """
+    return isinstance(P, (sage.rings.abc.RealIntervalField,
+                          sage.rings.abc.ComplexIntervalField,
+                          sage.rings.abc.RealBallField,
+                          sage.rings.abc.ComplexBallField))
+
+
 cdef py_stieltjes(x):
     """
     Return the Stieltjes constant of the given index.
@@ -1597,10 +1608,24 @@ cdef py_stieltjes(x):
         Traceback (most recent call last):
         ...
         ValueError: Stieltjes constant of negative index
+
+    No rigorous enclosure is available, so intervals and balls are
+    rejected instead of returning a floating-point value::
+
+        sage: py_stieltjes(RIF(2))
+        Traceback (most recent call last):
+        ...
+        TypeError: cannot compute a rigorous enclosure of stieltjes(2)
+        sage: RIF(stieltjes(2))
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to simplify to a real interval approximation
     """
     n = ZZ(x)
     if n < 0:
         raise ValueError("Stieltjes constant of negative index")
+    if isinstance(x, Element) and is_enclosure_field((<Element>x)._parent):
+        raise TypeError(f"cannot compute a rigorous enclosure of stieltjes({n})")
     import mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
@@ -2075,7 +2100,13 @@ cdef py_li(x, n, parent):
         -0.822467033424113
         sage: py_li(0, 1, float)
         0.000000000000000
+        sage: py_li(1/3, 3, RIF)
+        Traceback (most recent call last):
+        ...
+        TypeError: cannot compute a rigorous enclosure of polylog(3, 1/3)
     """
+    if is_enclosure_field(parent):
+        raise TypeError(f"cannot compute a rigorous enclosure of polylog({n}, {x})")
     import mpmath
     try:
         prec = parent.prec()
