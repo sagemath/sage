@@ -570,9 +570,11 @@ class SchemeHomset_points(SchemeHomset_generic):
                 return False
             except AttributeError:  # no .ambient_space
                 return False
+
         elif isinstance(other, SchemeHomset_points):
             # we are converting between scheme points
             source = other.codomain()
+
             if isinstance(target, AlgebraicScheme_subscheme):
                 # subscheme coerce when there is containment
                 if not isinstance(source, AlgebraicScheme_subscheme):
@@ -595,29 +597,29 @@ class SchemeHomset_points(SchemeHomset_generic):
                 if S is target or set(S.defining_polynomials()) == set(target.defining_polynomials()):
                     return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                 return False
-            else:
-                # if the target is an ambient space, we can coerce if the base rings coerce
-                # and they are the same type: affine, projective, etc and have the same
-                # variable names
-                try:
-                    ta = target.ambient_space()
-                    sa = source.ambient_space()
-                except AttributeError:  # no .ambient_space
-                    return False
-                # for projective and affine varieties, we check dimension
-                # and matching variable names
-                if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
-                        or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
-                    if (ta.variable_names() == sa.variable_names()):
-                        return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    return False
-                # for products of projective spaces, we check dimension of
-                # components and matching variable names
-                if isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
-                    if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
-                      and (ta.variable_names() == sa.variable_names()):
-                        return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    return False
+
+            # if the target is an ambient space, we can coerce if the base rings coerce
+            # and they are the same type: affine, projective, etc and have the same
+            # variable names
+            try:
+                ta = target.ambient_space()
+                sa = source.ambient_space()
+            except AttributeError:  # no .ambient_space
+                return False
+            # for projective and affine varieties, we check dimension
+            # and matching variable names
+            if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
+                    or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
+                if (ta.variable_names() == sa.variable_names()):
+                    return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
+                return False
+            # for products of projective spaces, we check dimension of
+            # components and matching variable names
+            if isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
+                if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
+                  and (ta.variable_names() == sa.variable_names()):
+                    return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
+                return False
 
     def _element_constructor_(self, *v, **kwds):
         """
