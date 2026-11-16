@@ -398,7 +398,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(self._parent._base, deg)
         M = MS(v)
-        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0,1]+[0]*(deg-2))).list())
+        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0, 1]+[0]*(deg-2))).list())
 
         f = self._x(y).map_coefficients(lambda c: c.nth_root(char))
         return self._parent(f)

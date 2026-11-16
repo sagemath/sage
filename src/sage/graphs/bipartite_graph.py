@@ -2771,6 +2771,19 @@ class BipartiteGraph(Graph):
             sage: H = B._subgraph_by_adding(vertices=B.vertices(sort=False), edge_property=(lambda e: e[2] == 1))
             sage: H.order(), H.size()
             (5, 2)
+
+        TESTS:
+
+        The edges can be given by an iterator, and their labels need not be
+        hashable::
+
+            sage: B = BipartiteGraph([(0, 1, {'w': 1}), (0, 3, {'w': 2}), (2, 1, {'w': 3})])
+            sage: edges = [(0, 1), (1, 2, {'w': 3}), (0, 3, {'w': 0})]
+            sage: for algorithm in ['add', 'delete']:
+            ....:     H = B.subgraph(edges=iter(edges), algorithm=algorithm)
+            ....:     print(H.edges(labels=False, sort=True))
+            [(0, 1), (1, 2)]
+            [(0, 1), (1, 2)]
         """
         B = self.__class__(weighted=self._weighted, loops=self.allows_loops(),
                            multiedges=self.allows_multiple_edges())
@@ -2783,14 +2796,29 @@ class BipartiteGraph(Graph):
         if edges is None:
             edges_to_keep = self.edge_boundary(B.left, B.right, sort=False)
         else:
-            edges_to_keep_labeled = set(e for e in edges if len(e) == 3)
-            edges_to_keep_unlabeled = set(e for e in edges if len(e) == 2)
+            # The edges are read once, as they may be given by an iterator,
+            # and the labels that are not hashable (e.g., dictionaries) are
+            # compared by equality
+            edges_to_keep_labeled = set()
+            unhashable_labels = {}
+            edges_to_keep_unlabeled = set()
+            for e in edges:
+                if len(e) == 3:
+                    uv = frozenset((e[0], e[1]))
+                    try:
+                        edges_to_keep_labeled.add((uv, e[2]))
+                    except TypeError:
+                        unhashable_labels.setdefault(uv, []).append(e[2])
+                elif len(e) == 2:
+                    edges_to_keep_unlabeled.add(frozenset(e))
             edges_to_keep = []
             for u, v, l in self.edge_boundary(B.left, B.right, sort=False):
-                if ((u, v, l) in edges_to_keep_labeled
-                        or (v, u, l) in edges_to_keep_labeled
-                        or (u, v) in edges_to_keep_unlabeled
-                        or (v, u) in edges_to_keep_unlabeled):
+                uv = frozenset((u, v))
+                try:
+                    keep = (uv, l) in edges_to_keep_labeled
+                except TypeError:
+                    keep = l in unhashable_labels.get(uv, ())
+                if keep or uv in edges_to_keep_unlabeled:
                     edges_to_keep.append((u, v, l))
 
         if edge_property is not None:
@@ -2867,13 +2895,28 @@ class BipartiteGraph(Graph):
 
         edges_to_delete = []
         if edges is not None:
-            edges_to_keep_labeled = set(e for e in edges if len(e) == 3)
-            edges_to_keep_unlabeled = set(e for e in edges if len(e) == 2)
+            # The edges are read once, as they may be given by an iterator,
+            # and the labels that are not hashable (e.g., dictionaries) are
+            # compared by equality
+            edges_to_keep_labeled = set()
+            unhashable_labels = {}
+            edges_to_keep_unlabeled = set()
+            for e in edges:
+                if len(e) == 3:
+                    uv = frozenset((e[0], e[1]))
+                    try:
+                        edges_to_keep_labeled.add((uv, e[2]))
+                    except TypeError:
+                        unhashable_labels.setdefault(uv, []).append(e[2])
+                elif len(e) == 2:
+                    edges_to_keep_unlabeled.add(frozenset(e))
             for u, v, l in B.edge_iterator():
-                if ((u, v, l) not in edges_to_keep_labeled
-                        and (v, u, l) not in edges_to_keep_labeled
-                        and (u, v) not in edges_to_keep_unlabeled
-                        and (v, u) not in edges_to_keep_unlabeled):
+                uv = frozenset((u, v))
+                try:
+                    keep = (uv, l) in edges_to_keep_labeled
+                except TypeError:
+                    keep = l in unhashable_labels.get(uv, ())
+                if not keep and uv not in edges_to_keep_unlabeled:
                     edges_to_delete.append((u, v, l))
         if edge_property is not None:
             # We might get duplicate edges, but this does handle the case of

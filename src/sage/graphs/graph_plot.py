@@ -159,6 +159,9 @@ layout_options = {
           plots each connected component using the 'tree' layout
         - :meth:`'acyclic' <sage.graphs.digraph.DiGraph.layout_acyclic>` --
           plots an acyclic digraph so that all edges point upward
+        - the name of any NetworkX layout function such as "kamada_kawai",
+          "spectral", "shell", or "spiral" (see
+          :meth:`~sage.graphs.generic_graph.GenericGraph.layout_networkx`).
 ''',
     'iterations':
         'The number of times to execute the spring layout algorithm.',

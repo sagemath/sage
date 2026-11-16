@@ -100,9 +100,9 @@ and to the action of the symmetric group only::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import factorial
 from sage.coding.codecan.codecan import PartitionRefinementLinearCode
 from sage.combinat.permutation import Permutation
-from sage.arith.misc import factorial
 
 
 def _cyclic_shift(n, p):
@@ -126,9 +126,8 @@ def _cyclic_shift(n, p):
         [0, 2, 7, 3, 1, 5, 6, 4, 8, 9]
     """
     x = list(range(1, n + 1))
-    for i in range(1, len(p)):
-        x[p[i - 1]] = p[i] + 1
-    x[p[len(p) - 1]] = p[0] + 1
+    for i, pi in enumerate(p):
+        x[p[i - 1]] = pi + 1
     return Permutation(x)
 
 
@@ -257,7 +256,7 @@ class LinearCodeAutGroupCanLabel:
 
         normalization = S(v=normalization_factors)
         normalization_inverse = normalization ** (-1)
-        col_set = list({col_list[y] for y in nz})
+        col_set = {col_list[y] for y in nz}
         col2pos = []
         col2P = []
         for c in col_set:
