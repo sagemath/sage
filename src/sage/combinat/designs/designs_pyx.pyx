@@ -221,10 +221,10 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
     - ``OA`` -- the Orthogonal Array to be tested
 
-    - ``k``, ``n``, ``t`` -- integers; only implemented for `t=2`
+    - ``k``, ``n``, ``t`` -- integers
 
     - ``verbose`` -- boolean; whether to display some information when ``OA``
-      is not an orthogonal array `OA(k,n)`
+      is not an orthogonal array `OA(k,n,t)`
 
     - ``terminology`` -- string; how to phrase the information when ``verbose =
       True``. Possible values are `"OA"`, `"MOLS"`
@@ -249,10 +249,15 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
     TESTS::
 
-        sage: is_orthogonal_array(OA,8,9, t=3)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: only implemented for t=2
+        sage: from itertools import product
+        sage: OA3 = [list(row) + [sum(row) % 2]
+        ....:        for row in product(range(2), repeat=3)]
+        sage: is_orthogonal_array(OA3, 4, 2, 3)
+        True
+        sage: OA3[0][0] = 1
+        sage: is_orthogonal_array(OA3, 4, 2, 3, verbose=True)
+        Columns (0, 1, 2) are not orthogonal
+        False
         sage: is_orthogonal_array([[3]*8],8,9, verbose=True)
         The number of rows is 1 instead of 9^2=81
         False
@@ -278,11 +283,26 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
         sage: n
         48
     """
+    if t > 2:
+        from itertools import combinations
+
+        nt = n**t
+        if k < t or any(len(R) != k for R in OA) or len(OA) != nt:
+            return False
+        if any(x < 0 or x >= n for R in OA for x in R):
+            return False
+        for columns in combinations(range(k), t):
+            rows = {tuple(R[i] for i in columns) for R in OA}
+            if len(rows) != nt:
+                if verbose:
+                    print("Columns {} are not orthogonal".format(columns))
+                return False
+        return True
+    if t < 2:
+        raise NotImplementedError("only implemented for t>=2")
+
     cdef int n2 = n*n
     cdef int x
-
-    if t != 2:
-        raise NotImplementedError("only implemented for t=2")
 
     for R in OA:
         if len(R) != k:
