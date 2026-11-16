@@ -164,7 +164,7 @@ class SuperSymmetricFunctions(UniqueRepresentation, Parent):
             sage: s.schur()
             Supersymmetric functions over Rational Field in the Schur basis
         """
-        return SupersymFunctionAlgebra_schur(self, basis_name='schur')
+        return SupersymFunctionAlgebra_schur(self)
 
     s = schur
 
@@ -183,6 +183,6 @@ class SuperSymmetricFunctions(UniqueRepresentation, Parent):
             sage: s.monomial()
             Supersymmetric functions over Rational Field in the monomial basis
         """
-        return SupersymFunctionAlgebra_monomial(self, basis_name='monomial')
+        return SupersymFunctionAlgebra_monomial(self)
 
     m = monomial
