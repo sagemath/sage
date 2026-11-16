@@ -38,6 +38,7 @@ This module defines the following functions:
     :meth:`OA_standard_label` | Return a version of the OA relabelled to symbols `(0,\dots,n-1)`.
     :meth:`OA_from_quasi_difference_matrix` | Return an Orthogonal Array from a Quasi-Difference matrix
     :meth:`OA_from_Vmt` | Return an Orthogonal Array from a `V(m,t)`
+    :meth:`OA_from_Bush` | Return an Orthogonal Array using Bush's construction
     :meth:`OA_from_PBD` | Return an `OA(k,n)` from a PBD
     :meth:`OA_n_times_2_pow_c_from_matrix` | Return an `OA(k, \vert G\vert \cdot 2^c)` from a constrained `(G,k-1,2)`-difference matrix.
     :meth:`OA_from_wider_OA` | Return the first `k` columns of `OA`.
@@ -722,6 +723,107 @@ def TD_product(k, TD1, n1, TD2, n2, check=True):
     return TD
 
 
+def OA_from_Bush(k, n, t, check=True):
+    r"""
+    Return an orthogonal array using Bush's construction.
+
+    Let `F` be the finite field of order `n`. Each polynomial
+
+    .. MATH::
+
+        f(x) = a_0 + a_1x + \cdots + a_{t-1}x^{t-1}
+
+    over `F` determines a row whose first `n` entries are the values of `f`
+    on `F`, and whose last entry is `a_{t-1}`. These rows form an
+    `OA(n+1,n,t)` whenever `n` is a prime power and `t \leq n+1`
+    [Bush1952]_. If `n` is even and `t=3`, the coefficient `a_1` gives one
+    additional column.
+
+    INPUT:
+
+    - ``k`` -- number of columns
+
+    - ``n`` -- number of symbols; must be a prime power
+
+    - ``t`` -- strength of the array
+
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      output is an orthogonal array
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.orthogonal_arrays import OA_from_Bush
+        sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
+        sage: OA = OA_from_Bush(6, 5, 3)
+        sage: is_orthogonal_array(OA, 6, 5, 3)
+        True
+
+    Bush's extra column for even prime powers gives an `OA(4,2,3)`::
+
+        sage: OA_from_Bush(4, 2, 3)
+        [[0, 0, 0, 0], [0, 1, 1, 0], [0, 1, 0, 1], [0, 0, 1, 1],
+         [1, 1, 0, 0], [1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 1, 1]]
+
+    TESTS:
+
+    The construction works over finite fields of non-prime order::
+
+        sage: OA = OA_from_Bush(5, 4, 4)
+        sage: is_orthogonal_array(OA, 5, 4, 4)
+        True
+
+    Check the extra column over `\GF{4}` and the automatic dispatch through
+    :func:`orthogonal_array`::
+
+        sage: OA = OA_from_Bush(6, 4, 3)
+        sage: is_orthogonal_array(OA, 6, 4, 3)
+        True
+        sage: designs.orthogonal_arrays.build(6, 4, 3) == OA
+        True
+        sage: designs.orthogonal_arrays.largest_available_k(4, 3)
+        6
+    """
+    from itertools import product
+
+    from sage.arith.misc import is_prime_power
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+
+    if not is_prime_power(n):
+        raise ValueError("n(={}) must be a prime power".format(n))
+    if t < 2 or t > n + 1:
+        raise ValueError("t(={}) must satisfy 2 <= t <= n+1={}".format(t, n+1))
+    if k < t:
+        raise ValueError("undefined for k<t")
+
+    max_k = n + 2 if t == 3 and n % 2 == 0 else n + 1
+    if k > max_k:
+        raise ValueError("Bush's construction has at most {} columns for "
+                         "n={} and t={}".format(max_k, n, t))
+
+    F = list(FiniteField(n, 'x'))
+    relabel = {x: i for i, x in enumerate(F)}
+    evaluation_points = F[:min(k, n)]
+
+    OA = []
+    for coefficients in product(F, repeat=t):
+        row = []
+        for x in evaluation_points:
+            value = coefficients[-1]
+            for coefficient in reversed(coefficients[:-1]):
+                value = value*x + coefficient
+            row.append(relabel[value])
+        if k > n:
+            row.append(relabel[coefficients[-1]])
+        if k > n + 1:
+            row.append(relabel[coefficients[1]])
+        OA.append(row)
+
+    if check:
+        assert is_orthogonal_array(OA, k, n, t, verbose=1)
+
+    return OA
+
+
 def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, explain_construction=False):
     r"""
     Return an orthogonal array of parameters `k,n,t`.
@@ -816,12 +918,12 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
         sage: designs.orthogonal_arrays.build(16,1)
         [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-    when `t>2` and `k=None`::
+    Bush's construction is used when `t>2` and `n` is a prime power::
 
         sage: t = 3
-        sage: designs.orthogonal_arrays.largest_available_k(5,t=t) == t
-        True
-        sage: _ = designs.orthogonal_arrays.build(t,5,t)
+        sage: designs.orthogonal_arrays.largest_available_k(5,t=t)
+        6
+        sage: _ = designs.orthogonal_arrays.build(6,5,t)
     """
     assert n >= 0, "n(={}) must be nonnegative".format(n)
 
@@ -888,12 +990,21 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
         return [list(x) for x in product(range(n), repeat=k)]
 
     elif t != 2:
-        if existence:
-            return Unknown
-        msg = "Only trivial orthogonal arrays are implemented for t>=2"
-        if explain_construction:
-            return msg
-        raise NotImplementedError(msg)
+        from sage.arith.misc import is_prime_power
+        max_k = n + 2 if t == 3 and n % 2 == 0 else n + 1
+        if is_prime_power(n) and t <= n + 1 and k <= max_k:
+            if existence:
+                return True
+            if explain_construction:
+                return "Bush's construction over the finite field of order {}".format(n)
+            OA = OA_from_Bush(k, n, t, check=False)
+        else:
+            if existence:
+                return Unknown
+            msg = "Only trivial orthogonal arrays and Bush's construction are implemented for t>2"
+            if explain_construction:
+                return msg
+            raise NotImplementedError(msg)
 
     elif k <= 3:
         if existence:
