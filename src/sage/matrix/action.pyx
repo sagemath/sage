@@ -99,6 +99,42 @@ cdef class MatrixMulAction(Action):
         sage: A.codomain()
         Full MatrixSpace of 2 by 2 dense matrices
          over Univariate Polynomial Ring in x over Rational Field
+
+    TESTS:
+
+    The entries of the vectors of a free module can lie outside of its
+    base ring (:issue:`23576`)::
+
+        sage: M = span([vector([1/3])], ZZ)
+        sage: x = M([1/3])
+        sage: B = matrix(ZZ, [1])
+        sage: x * B, B * x
+        ((1/3), (1/3))
+        sage: x * B.sparse_matrix(), B.sparse_matrix() * x
+        ((1/3), (1/3))
+        sage: (x * B).parent()
+        Vector space of dimension 1 over Rational Field
+
+        sage: M = span([vector([1/3, 2/5])], ZZ)
+        sage: x = M([1/3, 2/5])
+        sage: A = matrix(ZZ, [[2, 1], [3, 4]])
+        sage: x * A, A * x
+        ((28/15, 29/15), (16/15, 13/5))
+
+    Vectors with integer entries still give vectors over ``ZZ``::
+
+        sage: z = vector(ZZ, [2, 3])
+        sage: N = span([vector([2, 0]), vector([0, 3])], ZZ)
+        sage: (z * A).parent() is ZZ^2, (N(z) * A).parent() is ZZ^2
+        (True, True)
+
+    A vector of the dual lattice times the Gram matrix::
+
+        sage: L = IntegralLattice(matrix(ZZ, [[2, 1], [1, 2]]))
+        sage: v = L.dual_lattice().gen(0); v
+        (1/3, 1/3)
+        sage: v * L.gram_matrix()
+        (1, 1)
     """
     def __init__(self, G, S, is_left):
         if not isinstance(G, MatrixSpace):
@@ -109,8 +145,14 @@ cdef class MatrixMulAction(Action):
             else:
                 base = G.base_ring()
         else:
-            if G.base_ring() is not S.base_ring():
-                base = coercion_model.common_parent(G.base_ring(), S.base_ring())
+            if isinstance(S, FreeModule_generic):
+                # the entries of the vectors can lie outside of the base
+                # ring, for example in the ZZ-span of (1/3)
+                S_base = S.coordinate_ring()
+            else:
+                S_base = S.base_ring()
+            if G.base_ring() is not S_base:
+                base = coercion_model.common_parent(G.base_ring(), S_base)
             else:
                 base = G.base_ring()
             self.fix_sparseness = G.is_sparse() != S.is_sparse()
