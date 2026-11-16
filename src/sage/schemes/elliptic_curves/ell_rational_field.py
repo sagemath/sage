@@ -4791,10 +4791,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if other.base_field() is not QQ:
             raise ValueError("the base field of the second elliptic curve must be the rationals")
 
-        if self.is_isomorphic(other):
-            return True
-
         if any(self.ap(p) != other.ap(p) for p in prime_range(2, 20)):
+            return False
+
+        if self.conductor() != other.conductor():
             return False
 
         maxp = self.sturm_bound(other)
