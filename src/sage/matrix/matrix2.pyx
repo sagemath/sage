@@ -15258,7 +15258,7 @@ cdef class Matrix(Matrix1):
         # working in exact arithmetic where the process is stable anyway.
         # So, we define these constants to be C doubles, forcing any
         # comparisons to be made quickly.
-        cdef double omega_1, omega_r = 0
+        cdef double omega_1, omega_r
 
         # Keep track of the permutations and diagonal blocks in a vector
         # rather than in a matrix, for efficiency.
