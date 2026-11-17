@@ -45,7 +45,7 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-macos.yml --name sage-dev
+            $ mamba env create --file environment-3.13-macos.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: Windows
@@ -78,7 +78,7 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-win.yml --name sage-dev
+            $ mamba env create --file environment-3.13-win.yml --name sage-dev
             $ conda activate sage-dev
             $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
             $ set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%
@@ -96,7 +96,7 @@ Using Conda
             >>> Integer(5) + 2.0
             7.0
 
-    A different Python version can be selected by replacing ``3.12`` with the
+    A different Python version can be selected by replacing ``3.13`` with the
     desired version.
 
 - To compile and install Sage in editable install, just use:
@@ -317,7 +317,7 @@ compilation.
 
   This will then install in the directory specified by ``--prefix``,
   in particular the root folder will be be installed to
-  ``/desired/install/path/lib/python3.12/site-packages/sage``.
+  ``/desired/install/path/lib/python3.13/site-packages/sage``.
   Usually, this directory is not on your Python path, so you have to use:
 
   .. code-block:: console
@@ -362,7 +362,7 @@ compilation.
 
   With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
   being ``/usr/local``, it may then install to
-  ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+  ``$DESTDIR/usr/local/lib/python3.13/site-packages/sage``.
 
   See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
   and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
