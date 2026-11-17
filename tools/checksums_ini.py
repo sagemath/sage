@@ -27,8 +27,12 @@ if __name__ == '__main__':
     entries = []
     for url in urls:
         tarball = url['filename']
+        tarball_components = tarball.split('-')
+        assert version in tarball_components[1]
+        tarball_components[1] = tarball_components[1].replace(version, 'VERSION')
+        tarball_name = '-'.join(tarball_components)
         sha256 = url['digests']['sha256']
         upstream_url = url['url']
 
-        entries.append(f'tarball={tarball}\nsha256={sha256}\nupstream_url={upstream_url}')
+        entries.append(f'tarball={tarball_name}\nsha256={sha256}\nupstream_url={upstream_url}')
     print('\n\n'.join(entries))
