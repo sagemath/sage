@@ -15254,18 +15254,10 @@ cdef class Matrix(Matrix1):
         cdef RingElement A_kk, A_kk_abs
 
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
-        # This is mainly useful for numerical stability, so we use its
-        # numerical approximation to speed up the comparisons we're
-        # going to make with it.
-        cdef double alpha = 0.6403882032022076
+        cdef RingElement alpha = (one + ring(17).sqrt()) / ring(8)
 
-        # Likewise, these two values are only ever used in comparisons
-        # that determine which row/column swaps we make. It's quite
-        # pointless to make long, slow comparisons when we happen to be
-        # working in exact arithmetic where the process is stable anyway.
-        # So, we define these constants to be C doubles, forcing any
-        # comparisons to be made quickly.
-        cdef double omega_1, omega_r
+        # Row/column maxima that determine row/column swaps.
+        cdef RingElement omega_1, omega_r
 
         # Keep track of the permutations and diagonal blocks in a vector
         # rather than in a matrix, for efficiency.
@@ -15330,10 +15322,7 @@ cdef class Matrix(Matrix1):
             # but is part of Step (1) in Bunch and Kaufman. We adopt
             # Higham's "omega" notation instead of B&K's "lambda"
             # because "lambda" can lead to some confusion.
-            #
-            # Note: omega_1 is defined as a C double, but the abs()
-            # below would make a complex number approximate anyway.
-            omega_1 = 0
+            omega_1 = zero
 
             # We set r = i > k >= 0 in the loop if we find a nonzero
             # subdiagonal entry. If r is still zero at the end, that
@@ -15389,10 +15378,7 @@ cdef class Matrix(Matrix1):
             # active submatrix. Since the matrix is Hermitian, we search
             # row "r", whose corresponding entries have the same
             # magnitudes.
-            #
-            # Note: omega_r is defined as a C double, but the abs()
-            # below would make a complex number approximate anyway.
-            omega_r = 0
+            omega_r = zero
             for j in range(k, n):
                 if j == r:
                     continue
