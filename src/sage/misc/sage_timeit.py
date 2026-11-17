@@ -52,10 +52,13 @@ class SageTimeitResult:
         sage: SageTimeitResult(stats)
         7 loops, best of 13: 3.1416 ns per loop
 
-    If the third argument is not a Python integer, a :exc:`TypeError` is raised::
+    If the third argument is not a Python integer, a :exc:`TypeError` is raised
+    when formatting the result::
 
-        sage: SageTimeitResult( (1, 2, 3, 4, 's') )
-        <repr(<sage.misc.sage_timeit.SageTimeitResult at 0x...>) failed: TypeError: * wants int>
+        sage: repr(SageTimeitResult((1, 2, 3, 4, 's')))
+        Traceback (most recent call last):
+        ...
+        TypeError: ...* ...int...
     """
     def __init__(self, stats, series=None):
         r"""
@@ -200,8 +203,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     import math
     import timeit as timeit_
 
-    from sage.repl import interpreter
     import sage.repl.preparse as preparser
+    from sage.repl import interpreter
 
     number = int(number)
     repeat = int(repeat)
