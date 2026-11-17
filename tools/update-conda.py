@@ -45,6 +45,7 @@ def write_env_file(env_file: Path, dependencies: list[str]) -> None:
         """name: sage
 channels:
   - conda-forge
+  - conda-forge/label/python_rc
   - nodefaults
 dependencies:
 """
@@ -117,8 +118,6 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                     "uv", "tool", "run", "--python", sys.executable,
                     "--from", "conda-lock", "conda-lock",
                     "--mamba",
-                    "--channel",
-                    "conda-forge",
                     "--kind",
                     "env",
                     "--platform",
