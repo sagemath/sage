@@ -17,7 +17,8 @@ Quick start
 
 If you are in a hurry, you can skip the details and just follow these steps:
 
-1. Install Git (see :ref:`section-git-install`) and `Conda <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_.
+1. Install Git (see :ref:`section-git-install`) and
+   `Pixi <https://pixi.prefix.dev/latest/installation/>`_.
 
 2. Clone the Sage repository from GitHub
 
@@ -31,20 +32,24 @@ If you are in a hurry, you can skip the details and just follow these steps:
 
        $ cd sage
 
-4. Create a new Conda environment
+4. Install the locked development dependencies
 
    .. code-block:: console
 
-       $ conda env create --file environment-3.13-linux.yml --name sage-dev
-       $ conda activate sage-dev
+       $ pixi install --locked
 
-   Replace ``environment-3.13-linux.yml`` with the appropriate file for your system.
+   Pixi selects the environment for your operating system automatically.
+   See `the Pixi setup instructions <../installation/pixi.html>`_ for platform
+   prerequisites, including the compiler setup for native Windows builds.
 
 5. Build and install Sage
 
    .. code-block:: console
 
-       $ pip install --no-build-isolation --editable .
+       $ pixi run build
+
+   Start Sage with ``pixi run sage``. To test a file you changed, use
+   ``pixi run test path/to/file.py``.
 
 6. Create a new branch for your changes
 
@@ -113,41 +118,49 @@ the Sage source code.
 Building Sage
 =============
 
-Sage is a large project with many dependencies. To build it, we recommend using
-Conda. You can instead use the approach described in the section
+Sage is a large project with many dependencies. For development, we recommend
+using Pixi to install the dependencies from conda-forge and build your checkout.
+You can instead use the approach described in the section
 `Sage-the-distribution (classical build) <../installation/source-distro.html>`_
 of the Sage installation guide, or use ``uv``, see `System Package Manager <../installation/source.html#using-system-package-manager>`_.
 
-Here we concentrate on using Conda.  If you don't have Conda installed, you can install it by following the `official
-instructions <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_
+Install Pixi by following its `official instructions
+<https://pixi.prefix.dev/latest/installation/>`_. Then, from your Sage checkout,
+run:
 
 .. code-block:: console
 
-    $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-    $ bash Miniforge3-$(uname)-$(uname -m).sh
+    $ pixi install --locked
+    $ pixi run build
+    $ pixi run sage
 
-Now create and activate a new conda environment with the dependencies of Sage
-and a few additional developer tools
+The first command creates a local environment in ``.pixi/`` using the versions
+recorded in ``pixi.lock``. The build task installs Sage in editable mode, so
+changes to the source are used by subsequent Sage sessions. Cython changes
+are rebuilt when needed.
 
-.. code-block:: console
-
-    $ conda env create --file environment-3.13-linux.yml --name sage-dev
-    $ conda activate sage-dev
-
-Replace ``environment-3.13-linux.yml`` with the appropriate file for your system.
-You can find the environment files in the root directory of the Sage repository.
-
-Now you can build and install Sage:
+To work in an activated shell, use ``pixi shell`` and then run ``sage`` or other
+development commands directly. Use ``exit`` to leave that shell. Run tests of
+an individual file with:
 
 .. code-block:: console
 
-    $ pip install --no-build-isolation --editable .
+    $ pixi run test src/sage/rings/integer.pyx
 
-This will install Sage in the current Conda environment.
-You can then start Sage from the command line with ``sage``.
+The default environment uses Python 3.13. To build and run with Python 3.14,
+select the ``py314`` environment:
 
-For more information on building Sage we refer to the section `building
-from source <../installation/source.html>`_ in the Sage installation guide.
+.. code-block:: console
+
+    $ pixi run -e py314 build
+    $ pixi run -e py314 sage
+
+Each environment has its own dependencies and build directory. Rerun the build
+task after changing Python package metadata or updating the environment.
+
+See `Developing with Pixi <../installation/pixi.html>`_ for platform setup,
+dependency updates, and build-directory details. Other build options are
+described in `Building from source <../installation/source.html>`_.
 
 .. _section-walkthrough-branch:
 
@@ -251,7 +264,7 @@ Additionally, you can write or modify doctests in the relevant files to
 confirm the correctness of your changes.
 To run the doctests for a specific file, use the following command::
 
-    $ ./sage -t path/to/your/file.py
+    $ pixi run test path/to/your/file.py
 
 This will execute all the doctests in the specified file and report any
 failures. Make sure all tests pass before proceeding

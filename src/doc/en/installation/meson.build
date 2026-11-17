@@ -3,6 +3,7 @@ doc_sources = [
   'conf.py',
   'index.rst',
   'launching.rst',
+  'pixi.rst',
   'source.rst',
   'troubles.rst',
   'source-distro.rst',

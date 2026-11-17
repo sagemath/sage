@@ -19,9 +19,23 @@ Walkthrough
     Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
 
 Sage relies on a number of external libraries, which have to be installed
-before building. The easiest way to install them is to use Conda.
-Alternatively, you can install them via your system package manager.
-Both methods are described below.
+before building. For development, we recommend using Pixi to install them
+from conda-forge. Conda and your system package manager are alternatives.
+
+Using Pixi (recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+After installing Pixi and cloning the Sage repository, run these commands
+from the checkout:
+
+.. code-block:: console
+
+    $ pixi install --locked
+    $ pixi run build
+    $ pixi run sage
+
+See :ref:`sec-installation-pixi` for platform prerequisites, testing,
+selecting a Python version, and updating dependencies.
 
 Using Conda
 ~~~~~~~~~~~
@@ -281,7 +295,9 @@ you don't want to build the HTML documentation, you might use
 
 If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as
-``build/cp312``.
+``build/cp313``. The Pixi build task instead uses ``sage-build`` inside the
+selected environment, such as ``.pixi/envs/default/sage-build``; substitute
+that path for ``builddir`` in these commands and run them with ``pixi run``.
 
 To compile the project, run the following command:
 

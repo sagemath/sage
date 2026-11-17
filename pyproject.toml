@@ -106,7 +106,7 @@ platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 [tool.pytest.ini_options]
 # sage.libs.giac is a stub to keep the old imports working; all
 # it does is try to import sagemath_giac.
-norecursedirs = "local prefix venv build builddir pkgs .git .github src/doc src/bin src/sage/libs/giac tools subprojects"
+norecursedirs = "local prefix venv build builddir pkgs .git .github .pixi src/doc src/bin src/sage/libs/giac tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings --strict-markers"
@@ -219,7 +219,8 @@ extra = [
 [dependency-groups]
 dev = [
   "cibuildwheel",
-  "grayskull",
+  # Older versions import pkg_resources, removed from current setuptools.
+  "grayskull>=2.9.2",
   "meson >=1.11.2", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
@@ -228,7 +229,7 @@ dev = [
   "python-build",
   "ruff",
   "tqdm",
-  "ty >=0.0.12",
+  "ty >=0.0.97",
   "uv",
   "virtualenv >=21.14.13",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
@@ -294,6 +295,7 @@ test = ["coverage", "pytest"]
 "conflicting-declarations" = "ignore"
 "deprecated" = "ignore"
 "empty-body" = "ignore"
+"import-not-found" = "ignore"
 "inconsistent-mro" = "ignore"
 "index-out-of-bounds" = "ignore"
 "invalid-argument-type" = "ignore"
@@ -324,7 +326,6 @@ test = ["coverage", "pytest"]
 "unknown-argument" = "ignore"
 "unresolved-attribute" = "ignore"
 "unresolved-global" = "ignore"
-"unresolved-import" = "ignore"
 "unresolved-reference" = "ignore"
 "unsupported-base" = "ignore"
 "unsupported-operator" = "ignore"

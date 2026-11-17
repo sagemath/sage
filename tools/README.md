@@ -2,6 +2,36 @@
 
 This folder contains various command-line tools that are used to facilitate different development tasks. Below is a brief description of each command available in this directory.
 
+## Update Pixi Development Dependencies
+
+The development workspace uses `pixi.toml` and a committed `pixi.lock`. Its
+dependency tables are generated from `pyproject.toml`, sharing package-name
+mappings and platform exclusions with the Conda environment generator.
+After changing dependency metadata, run:
+
+```bash
+pixi run python tools/update-pixi.py
+pixi lock
+```
+
+Commit the updated manifest and lockfile with the metadata change. The generator
+preserves the workspace settings and tasks above the generated dependency
+section. Check that the dependency tables are current without writing files with:
+
+```bash
+pixi run python tools/update-pixi.py --check
+```
+
+Use `pixi update PACKAGE` when updating a selected locked package within the
+existing constraints. Rebuild and test Sage after updating dependencies.
+
+The `default`, `py313`, and `py314` environments include the generated `full`
+feature. The Linux `minimal-py314` CI environment omits it so that `bliss`,
+`libbraiding`, `libhomfly`, `rw`, and `sirocco` are absent. It shares a solve group
+with `py314` to keep common package versions identical. Minimal CI also checks
+the installed package records, catching any transitive dependency that would
+reintroduce an excluded library.
+
 ## Update Conda Environment Files
 
 This command is used to update the Conda environment files in the project. It automatically adds new dependencies to the Conda files, removes deleted dependencies, and updates the version of existing dependencies. The source of the dependencies is the `pyproject.toml` file, which specifies the following dependencies:
