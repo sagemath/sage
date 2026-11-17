@@ -215,7 +215,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             True
         """
         P = [copy(self[i]) for i in range(self.codomain().ambient_space().n_components())]
-        return (self.codomain().point(P, False))
+        return self.parent()(P, check=False)
 
     def __iter__(self):
         r"""

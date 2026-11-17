@@ -1971,8 +1971,7 @@ class SchemeMorphism_point(SchemeMorphism):
 
     def __copy__(self):
         r"""
-        Return a copy of the :class:`SchemeMorphism_point` ``self`` coerced to
-        `R`.
+        Return a copy of the :class:`SchemeMorphism_point` ``self``.
 
         OUTPUT: :class:`SchemeMorphism_point`
 
@@ -1985,8 +1984,17 @@ class SchemeMorphism_point(SchemeMorphism):
             False
             sage: Q2 == Q
             True
+
+        The parent is copied correctly even for points over extensions
+        (since :issue:`43170`)::
+
+            sage: K.<i> = QuadraticField(-1)
+            sage: E = EllipticCurve('37a')
+            sage: Q = E(K)(0, 0)
+            sage: copy(Q).parent() is E(K)
+            True
         """
-        return self._codomain.point(self._coords, check=False)
+        return self.parent()(self._coords, check=False)
 
     def specialization(self, D=None, phi=None, ambient=None):
         r"""
