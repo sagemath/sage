@@ -13,8 +13,10 @@ py.install_sources(
   'mip.pxd',
   'mip.pyx',
   'optimize.py',
+  'riemann_theta.pyx',
   'sdp.pxd',
   'sdp.pyx',
+  'siegel_reduction.py',
   subdir: 'sage/numerical',
 )
 
@@ -22,6 +24,7 @@ extension_data = {
   'gauss_legendre': files('gauss_legendre.pyx'),
   'linear_functions': files('linear_functions.pyx'),
   'linear_tensor_element': files('linear_tensor_element.pyx'),
+  'riemann_theta': files('riemann_theta.pyx'),
   'mip': files('mip.pyx'),
   'sdp': files('sdp.pyx'),
 }
@@ -33,7 +36,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/numerical',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cypari2, gmp, mpfr],
+    dependencies: [py_dep, cypari2, gmp, mpfr, mpc],
   )
 endforeach
 
