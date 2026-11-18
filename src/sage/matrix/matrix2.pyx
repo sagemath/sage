@@ -15625,14 +15625,35 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES:
 
-        This three-by-three real symmetric matrix has one positive, one
-        negative, and one zero eigenvalue -- so it is not any flavor of
-        (semi)definite, yet we can still factor it::
+        This three-by-three real symmetric matrix has one positive,
+        one negative, and one zero eigenvalue -- so it is not any
+        flavor of (semi)definite, yet we can still factor it. The
+        default "greedy" algorithm over ``QQ`` and "bunch-kaufman"
+        give two different but valid answers::
 
             sage: A =  matrix(QQ, [[0, 1, 0],
             ....:                  [1, 1, 2],
             ....:                  [0, 2, 0]])
+
             sage: P,L,D = A.block_ldlt()
+            sage: P
+            [0 1 0]
+            [1 0 0]
+            [0 0 1]
+            sage: L
+            [1 0 0]
+            [1 1 0]
+            [2 2 1]
+            sage: D
+            [ 1| 0| 0]
+            [--+--+--]
+            [ 0|-1| 0]
+            [--+--+--]
+            [ 0| 0| 0]
+            sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+            sage: P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
             sage: P
             [1 0 0]
             [0 1 0]
@@ -15668,7 +15689,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, [ [0,1],
             ....:                  [1,0] ])
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
@@ -15682,7 +15703,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQbar, [ [ 0,I],
             ....:                     [-I,0] ])
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
@@ -15699,11 +15720,11 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 2, 2, [ [1e-10, 1    ],
             ....:                         [1    , 2e-10] ])
-            sage: _,L,D = A.block_ldlt(classical=True)
+            sage: _,L,D = A.block_ldlt(algorithm="classical")
             sage: L*D*L.T
             [1e-10   1.0]
             [  1.0   0.0]
-            sage: A.block_ldlt()                                                        # needs scipy
+            sage: A.block_ldlt()  # needs scipy
             (
             [1.0 0.0]  [1.0 0.0]  [1e-10   1.0]
             [0.0 1.0], [0.0 1.0], [  1.0 2e-10]
@@ -15731,25 +15752,31 @@ cdef class Matrix(Matrix1):
             ....:                 [-2,  6,  3,  8]])
             sage: A[0:3,0:3].det() == 0
             True
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
-            sage: A.block_ldlt()
-            (
-            [1 0 0 0]  [     1      0      0      0]
-            [0 0 1 0]  [ -2/21      1      0      0]
-            [0 0 0 1]  [   5/7  39/41      1      0]
-            [0 1 0 0], [   4/7 87/164  48/79      1],
-            <BLANKLINE>
-            [     21|      0|      0|      0]
-            [-------+-------+-------+-------]
-            [      0| 164/21|      0|      0]
-            [-------+-------+-------+-------]
-            [      0|      0|-237/41|      0]
-            [-------+-------+-------+-------]
-            [      0|      0|      0| 25/316]
-            )
+            sage: P,L,D = A.block_ldlt()
+            sage: P.T*A*P == L*D*L.T
+            True
+            sage: P
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 0 1]
+            [0 0 1 0]
+            sage: L
+            [      1       0       0       0]
+            [    5/7       1       0       0]
+            [  -2/21    52/9       1       0]
+            [    4/7     1/3 -15/316       1]
+            sage: D
+            [    21|     0|     0|     0]
+            [------+------+------+------]
+            [     0|   9/7|     0|     0]
+            [------+------+------+------]
+            [     0|     0|-316/9|     0]
+            [------+------+------+------]
+            [     0|     0|     0|25/316]
 
         An indefinite symmetric matrix that happens to have a
         classical factorization::
@@ -15759,7 +15786,7 @@ cdef class Matrix(Matrix1):
             ....:                 [ 9, -16,  28,  16, -40],
             ....:                 [ 6, -11,  16,   9, -19],
             ....:                 [-9,  17, -40, -19,  68]])
-            sage: A.block_ldlt(classical=True)[1:]
+            sage: A.block_ldlt(algorithm="classical")[1:]
             (
                               [ 3| 0| 0| 0| 0]
                               [--+--+--+--+--]
@@ -15775,11 +15802,11 @@ cdef class Matrix(Matrix1):
         An indefinite Hermitian matrix that happens to have a
         classical factorization::
 
-            sage: F.<I> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],                           # needs sage.rings.number_field
+            sage: F.<I> = QuadraticField(-1)
+            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],
             ....:                [4 + 2*I,       8,    10*I],
             ....:                [2 - 2*I,   -10*I,      -3]])
-            sage: A.block_ldlt(classical=True)[1:]                                      # needs sage.rings.number_field
+            sage: A.block_ldlt(algorithm="classical")[1:]
             (
                                        [ 2| 0| 0]
                                        [--+--+--]
@@ -15794,16 +15821,23 @@ cdef class Matrix(Matrix1):
 
             sage: n = ZZ.random_element(6)
             sage: I = matrix.identity(QQ,n)
-            sage: P,L,D = I.block_ldlt()
+            sage: P,L,D = I.block_ldlt(algorithm="greedy")
+            sage: P == I and L == I and D == I
+            True
+            sage: P,L,D = I.block_ldlt(algorithm="bunch-kaufman")
             sage: P == I and L == I and D == I
             True
 
-        Ensure that a "random" real symmetric matrix is factored correctly::
+        Ensure that a "random" real symmetric matrix is factored
+        correctly::
 
             sage: n = ZZ.random_element(6)
             sage: A = matrix.random(QQ, n)
             sage: A = A + A.transpose()
-            sage: P,L,D = A.block_ldlt()
+            sage: P,L,D = A.block_ldlt(algorithm="greedy")
+            sage: A == P*L*D*L.transpose()*P.transpose()
+            True
+            sage: P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
             sage: A == P*L*D*L.transpose()*P.transpose()
             True
 
@@ -15814,7 +15848,10 @@ cdef class Matrix(Matrix1):
             sage: F = QuadraticField(-1, 'I')
             sage: A = matrix.random(F, n)
             sage: A = A + A.conjugate_transpose()
-            sage: P,L,D = A.block_ldlt()
+            sage: P,L,D = A.block_ldlt(algorithm="greedy")
+            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()
+            True
+            sage: P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
             sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()
             True
 
@@ -15845,7 +15882,12 @@ cdef class Matrix(Matrix1):
         trivial::
 
             sage: A = matrix(QQ,0,[])
-            sage: P,L,D = A.block_ldlt()
+            sage: P,L,D = A.block_ldlt(algorithm="greedy")
+            sage: P.base_ring() == L.base_ring()
+            True
+            sage: L.base_ring() == D.base_ring()
+            True
+            sage: P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
             sage: P.base_ring() == L.base_ring()
             True
             sage: L.base_ring() == D.base_ring()
@@ -15858,7 +15900,7 @@ cdef class Matrix(Matrix1):
             sage: n = ZZ.random_element(6)
             sage: A = matrix.random(QQ, n)
             sage: A = A*A.transpose() + matrix.identity(QQ, n)
-            sage: _,L,D = A.block_ldlt(classical=True)
+            sage: _,L,D = A.block_ldlt(algorithm="classical")
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
             True
@@ -15867,14 +15909,14 @@ cdef class Matrix(Matrix1):
         cannot be modified::
 
             sage: A = matrix(QQ, [[4, 2], [2, 5]])
-            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: P,L,D = A.block_ldlt(algorithm="classical")
             sage: L.is_immutable()
             True
             sage: L[1, 0] = 100
             Traceback (most recent call last):
             ...
             ValueError: matrix is immutable; please change a copy instead...
-            sage: A.block_ldlt(classical=True)[1] is L
+            sage: A.block_ldlt(algorithm="classical")[1] is L
             True
             sage: A.cholesky()
             [2 0]
