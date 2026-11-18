@@ -48,7 +48,7 @@ def je(template, **kwargs):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters.internal import je
+        sage: from internal import je
         sage: je("{{ a }} > {{ b }} * {{ c }}", a='"a suffusion of yellow"', b=3, c=7)
         '"a suffusion of yellow" > 3 * 7'
     """
@@ -74,7 +74,7 @@ def indent_lines(n, text):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters.internal import indent_lines
+        sage: from internal import indent_lines
         sage: indent_lines(3, "foo")
         '   foo'
         sage: indent_lines(3, "foo\nbar")
@@ -100,7 +100,7 @@ def reindent_lines(n, text):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters.internal import reindent_lines
+        sage: from internal import reindent_lines
         sage: print(reindent_lines(3, " foo\n  bar"))
            foo
              bar
@@ -116,7 +116,7 @@ def write_if_changed(fn, value):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters.internal import *
+        sage: from internal import *
         sage: def last_modification(fn): return os.stat(fn).st_mtime
         sage: fn = tmp_filename('gen_interp')
         sage: write_if_changed(fn, 'Hello, world')

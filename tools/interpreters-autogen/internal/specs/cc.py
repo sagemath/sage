@@ -10,22 +10,22 @@
 # ****************************************************************************
 from ..instructions import (
     InstrSpec,
-    instr_funcall_1arg_mpfr,
-    instr_funcall_2args_mpfr,
+    instr_funcall_1arg_mpc,
+    instr_funcall_2args_mpc,
     params_gen,
 )
 from ..memory import MemoryChunk, MemoryChunkConstants
-from ..storage import ty_mpfr, ty_python
+from ..storage import ty_mpc, ty_python
 from ..utils import je
 from ..utils import reindent_lines as ri
 from .base import StackInterpreter
 from .python import MemoryChunkPyConstant
 
 
-class MemoryChunkRRRetval(MemoryChunk):
+class MemoryChunkCCRetval(MemoryChunk):
     r"""
     A special-purpose memory chunk, for dealing with the return value
-    of the RR-based interpreter.
+    of the CC-based interpreter.
     """
 
     def declare_class_members(self):
@@ -35,9 +35,9 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_class_members()
             ''
         """
@@ -50,15 +50,15 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_call_locals()
-            '        cdef RealNumber retval = (self.domain)()\n'
+            '        cdef ComplexNumber retval = (self.domain_element._new())\n'
         """
         return je(ri(8,
             """
-            cdef RealNumber {{ myself.name }} = (self.domain)()
+            cdef ComplexNumber {{ myself.name }} = (self.domain_element._new())
             """), myself=self)
 
     def declare_parameter(self):
@@ -68,11 +68,11 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_parameter()
-            'mpfr_t retval'
+            'mpc_t retval'
         """
         return '%s %s' % (self.storage_type.c_reference_type(), self.name)
 
@@ -83,13 +83,13 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
-            'retval.value'
+            '(<mpc_t>(retval.__re))'
         """
-        return je("""{{ myself.name }}.value""", myself=self)
+        return je("""(<mpc_t>({{ myself.name }}.__re))""", myself=self)
 
     def pass_call_c_argument(self):
         r"""
@@ -98,34 +98,34 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_call_c_argument()
             'result'
         """
         return "result"
 
 
-class RRInterpreter(StackInterpreter):
+class CCInterpreter(StackInterpreter):
     r"""
     A subclass of StackInterpreter, specifying an interpreter over
     MPFR arbitrary-precision floating-point numbers.
     """
 
-    name = 'rr'
+    name = 'cc'
 
     def __init__(self):
         r"""
-        Initialize an RDFInterpreter.
+        Initialize a CCInterpreter.
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
-            sage: interp = RRInterpreter()
+            sage: from internal import *
+            sage: from internal.specs.cc import *
+            sage: interp = CCInterpreter()
             sage: interp.name
-            'rr'
+            'cc'
             sage: interp.mc_py_constants
             {MC:py_constants}
             sage: interp.chunks
@@ -134,50 +134,35 @@ class RRInterpreter(StackInterpreter):
             ([({MC:args}, {MC:code}, None)], [({MC:stack}, None, None)])
             sage: instrs = dict([(ins.name, ins) for ins in interp.instr_descs])
             sage: instrs['add']
-            add: SS->S = 'mpfr_add(o0, i0, i1, MPFR_RNDN);'
+            add: SS->S = 'mpc_add(o0, i0, i1, MPC_RNDNN);'
             sage: instrs['py_call']
-            py_call: *->S = '\nif (!rr_py_call_h...goto error;\n}\n'
+            py_call: *->S = '\n  if (!cc_py_call...goto error;\n}\n'
 
         That py_call instruction is particularly interesting, and
         demonstrates a useful technique to let you use Cython code
         in an interpreter.  Let's look more closely::
 
             sage: print(instrs['py_call'].code)
-            if (!rr_py_call_helper(domain, i0, n_i1, i1, o0)) {
+            <BLANKLINE>
+            if (!cc_py_call_helper(domain, i0, n_i1, i1, o0)) {
               goto error;
             }
+            <BLANKLINE>
 
-        This instruction makes use of the function ``rr_py_call_helper``,
-        which is declared in ``wrapper_rr.h``::
+        This instruction makes use of the function cc_py_call_helper,
+        which is declared::
 
             sage: print(interp.c_header)
             <BLANKLINE>
-            #include <mpfr.h>
+            #include <mpc.h>
             <BLANKLINE>
-
-        The function ``rr_py_call_helper`` is implemented in Cython::
-
-            sage: print(interp.pyx_header)
-            cdef public bint rr_py_call_helper(object domain, object fn,
-                                               int n_args,
-                                               mpfr_t* args, mpfr_t retval) except 0:
-                py_args = []
-                cdef int i
-                cdef RealNumber rn
-                for i from 0 <= i < n_args:
-                    rn = domain()
-                    mpfr_set(rn.value, args[i], MPFR_RNDN)
-                    py_args.append(rn)
-                cdef RealNumber result = domain(fn(*py_args))
-                mpfr_set(retval, result.value, MPFR_RNDN)
-                return 1
 
         So instructions where you need to interact with Python can
         call back into Cython code fairly easily.
         """
 
-        mc_retval = MemoryChunkRRRetval('retval', ty_mpfr)
-        super().__init__(ty_mpfr, mc_retval=mc_retval)
+        mc_retval = MemoryChunkCCRetval('retval', ty_mpc)
+        super().__init__(ty_mpc, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')
@@ -190,74 +175,72 @@ class RRInterpreter(StackInterpreter):
         self.pg = pg
         self.c_header = ri(0,
             '''
-            #include <mpfr.h>
+            #include <mpc.h>
             ''')
 
         self.pxd_header = ri(0,
             """
-            from sage.rings.real_mpfr cimport RealField_class, RealNumber
+            from sage.rings.real_mpfr cimport RealNumber
             from sage.libs.mpfr cimport *
-
+            from sage.rings.complex_mpfr cimport ComplexNumber
+            from sage.libs.mpc cimport *
             """)
 
         self.pyx_header = ri(0,
             """\
-            cdef public bint rr_py_call_helper(object domain, object fn,
+            # distutils: libraries = mpfr mpc gmp
+
+            cdef public bint cc_py_call_helper(object domain, object fn,
                                                int n_args,
-                                               mpfr_t* args, mpfr_t retval) except 0:
+                                               mpc_t* args, mpc_t retval) except 0:
                 py_args = []
                 cdef int i
-                cdef RealNumber rn
+                cdef ComplexNumber ZERO=domain.zero()
+                cdef ComplexNumber cn
                 for i from 0 <= i < n_args:
-                    rn = domain()
-                    mpfr_set(rn.value, args[i], MPFR_RNDN)
-                    py_args.append(rn)
-                cdef RealNumber result = domain(fn(*py_args))
-                mpfr_set(retval, result.value, MPFR_RNDN)
+                    cn = ZERO._new()
+                    mpfr_set(cn.__re, mpc_realref(args[i]), MPFR_RNDN)
+                    mpfr_set(cn.__im, mpc_imagref(args[i]), MPFR_RNDN)
+                    py_args.append(cn)
+                cdef ComplexNumber result = domain(fn(*py_args))
+                mpc_set_fr_fr(retval, result.__re,result.__im, MPC_RNDNN)
                 return 1
             """)
 
         instrs = [
             InstrSpec('load_arg', pg('A[D]', 'S'),
-                       code='mpfr_set(o0, i0, MPFR_RNDN);'),
+                       code='mpc_set(o0, i0, MPC_RNDNN);'),
             InstrSpec('load_const', pg('C[D]', 'S'),
-                       code='mpfr_set(o0, i0, MPFR_RNDN);'),
+                       code='mpc_set(o0, i0, MPC_RNDNN);'),
             InstrSpec('return', pg('S', ''),
-                       code='mpfr_set(retval, i0, MPFR_RNDN);\nreturn 1;\n'),
+                       code='mpc_set(retval, i0, MPC_RNDNN);\nreturn 1;\n'),
             InstrSpec('py_call', pg('P[D]S@D', 'S'),
                        uses_error_handler=True,
-                       code=ri(0,
-                           """
-                           if (!rr_py_call_helper(domain, i0, n_i1, i1, o0)) {
-                             goto error;
-                           }
-                           """))
+                       code="""
+  if (!cc_py_call_helper(domain, i0, n_i1, i1, o0)) {
+  goto error;
+}
+""")
             ]
-        for (name, op) in [('add', 'mpfr_add'), ('sub', 'mpfr_sub'),
-                           ('mul', 'mpfr_mul'), ('div', 'mpfr_div'),
-                           ('pow', 'mpfr_pow')]:
-            instrs.append(instr_funcall_2args_mpfr(name, pg('SS', 'S'), op))
-        instrs.append(instr_funcall_2args_mpfr('ipow', pg('SD', 'S'), 'mpfr_pow_si'))
-        for name in ['neg', 'abs',
-                     'log', 'log2', 'log10',
-                     'exp', 'exp2', 'exp10',
+        for (name, op) in [('add', 'mpc_add'), ('sub', 'mpc_sub'),
+                           ('mul', 'mpc_mul'), ('div', 'mpc_div'),
+                           ('pow', 'mpc_pow')]:
+            instrs.append(instr_funcall_2args_mpc(name, pg('SS', 'S'), op))
+        instrs.append(instr_funcall_2args_mpc('ipow', pg('SD', 'S'), 'mpc_pow_si'))
+        for name in ['neg',
+                     'log', 'log10',
+                     'exp',
                      'cos', 'sin', 'tan',
-                     'sec', 'csc', 'cot',
                      'acos', 'asin', 'atan',
                      'cosh', 'sinh', 'tanh',
-                     'sech', 'csch', 'coth',
-                     'acosh', 'asinh', 'atanh',
-                     'log1p', 'expm1', 'eint',
-                     'gamma', 'lngamma',
-                     'zeta', 'erf', 'erfc',
-                     'j0', 'j1', 'y0', 'y1']:
-            instrs.append(instr_funcall_1arg_mpfr(name, pg('S', 'S'), 'mpfr_' + name))
-        # mpfr_ui_div constructs a temporary mpfr_t and then calls mpfr_div;
+                     'acosh', 'asinh', 'atanh']:
+            instrs.append(instr_funcall_1arg_mpc(name, pg('S', 'S'), 'mpc_' + name))
+        # mpc_ui_div constructs a temporary mpc_t and then calls mpc_div;
         # it would probably be (slightly) faster to use a permanent copy
         # of "one" (on the other hand, the constructed temporary copy is
         # on the stack, so it's very likely to be in the cache).
         instrs.append(InstrSpec('invert', pg('S', 'S'),
-                                 code='mpfr_ui_div(o0, 1, i0, MPFR_RNDN);'))
+                             code='mpc_ui_div(o0, 1, i0, MPC_RNDNN);'))
         self.instr_descs = instrs
         self._set_opcodes()
         # Supported for exponents that fit in a long, so we could use

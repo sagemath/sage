@@ -40,8 +40,8 @@ class RDFInterpreter(StackInterpreter):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rdf import *
+            sage: from internal import *
+            sage: from internal.specs.rdf import *
             sage: interp = RDFInterpreter()
             sage: interp.name
             'rdf'

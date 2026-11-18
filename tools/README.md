@@ -73,6 +73,19 @@ cd flint-autogen
 FLINT_GIT_DIR=/path/to/flint.git python flint_autogen.py
 ```
 
+## Generate the interpreters for `fast_callable`
+
+The interpreters-autogen directory contains the generator of the C
+interpreters and their Cython wrappers in `sage.ext.interpreters`, which
+are used by `sage.ext.fast_callable`. Meson runs it during the build of
+the Sage library (see `src/sage/ext/interpreters/meson.build`), so there
+is usually no need to call it by hand. To inspect the generated sources,
+run it with `jinja2` installed:
+
+```bash
+python tools/interpreters-autogen <output_dir>
+```
+
 ## Check status of ruff config
 
 The `tools/check_ruff.py` script lists any ruff linter prefixes or rules that already pass on the entire codebase.

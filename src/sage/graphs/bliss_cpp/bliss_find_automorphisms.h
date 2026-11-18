@@ -1,5 +1,3 @@
-/* sage_setup: distribution = sagemath-bliss */
-
 #include <bliss/graph.hh>
 #include <bliss/digraph.hh>
 
