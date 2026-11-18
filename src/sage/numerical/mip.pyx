@@ -3056,22 +3056,22 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     def get_relative_objective_gap(self):
         r"""
-        Return the relative objective gap of the best known solution.
+        Return the relative objective gap reported by the solver.
 
-        For a minimization problem, this value is computed by
-        `(\texttt{bestinteger} - \texttt{bestobjective}) / (1e-10 +
-        |\texttt{bestobjective}|)`, where ``bestinteger`` is the value returned
-        by :meth:`~MixedIntegerLinearProgram.get_objective_value` and
-        ``bestobjective`` is the value returned by
-        :meth:`~MixedIntegerLinearProgram.best_known_objective_bound`. For a
-        maximization problem, the value is computed by `(\texttt{bestobjective}
-        - \texttt{bestinteger}) / (1e-10 + |\texttt{bestobjective}|)`.
+        The gap compares the best integer objective value with the best known
+        objective bound. Its normalization depends on the solver. For HiGHS,
+        it is `|p - d| / |p|`, where `p` is the integer objective value and `d`
+        is the bound. HiGHS reports zero if both are zero, and infinity if only
+        `p` is zero.
 
         .. NOTE::
 
            Has no meaning unless ``solve`` has been called before.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A relative gap tolerance is an upper bound for termination; the solver
+        may find a better solution, including an optimum with zero gap::
 
             sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
@@ -3082,18 +3082,30 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: for v in g:
             ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
             sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
-            sage: p.solve() # rel tol 100
-            1.0
-            sage: p.get_relative_objective_gap()  # random
-            46.99999999999999
-
-        TESTS:
-
-        Just make sure that the variable *has* been defined, and is not just
-        undefined::
-
-            sage: p.get_relative_objective_gap() > 1                                    # needs sage.graphs
+            sage: objective = p.solve()
+            sage: bound = p.best_known_objective_bound()
+            sage: gap = p.get_relative_objective_gap()
+            sage: from math import isclose, isfinite
+            sage: all(isfinite(value) for value in (objective, bound, gap))
             True
+            sage: 1 <= objective <= bound
+            True
+            sage: 0 <= gap <= p.solver_parameter("mip_gap_tolerance")
+            True
+            sage: isclose(gap, abs(bound - objective) / abs(objective),
+            ....:         rel_tol=1e-12, abs_tol=1e-12)
+            True
+
+        An integer program with a known optimum has zero gap::
+
+            sage: p = MixedIntegerLinearProgram(solver='HiGHS')
+            sage: x = p.new_variable(integer=True, nonnegative=True)
+            sage: p.add_constraint(2*x[0] <= 3)
+            sage: p.set_objective(x[0])
+            sage: p.solve()
+            1.0
+            sage: p.get_relative_objective_gap()
+            0.0
         """
         return self._backend.get_relative_objective_gap()
 
