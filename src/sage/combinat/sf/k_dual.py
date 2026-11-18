@@ -1280,7 +1280,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
             sage: dks3._dks_to_khlp_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=self.t)
@@ -1428,7 +1428,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
             sage: F._m_to_F_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=1)

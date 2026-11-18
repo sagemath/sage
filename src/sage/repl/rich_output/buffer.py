@@ -130,6 +130,27 @@ class OutputBuffer(SageObject):
             sage: import os, stat
             sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
             0
+
+        TESTS:
+
+        A file that is already read-only is left alone, so this also works
+        on a read-only file system::
+
+            sage: from unittest import mock
+            sage: with mock.patch('os.chmod') as chmod:
+            ....:     OutputBuffer._chmod_readonly(tmp)
+            sage: chmod.called
+            False
+
+        Failing to change the permissions is not an error::
+
+            sage: import errno
+            sage: tmp = sage.misc.temporary_file.tmp_filename()
+            sage: with open(tmp, 'wb') as f:
+            ....:    _ = f.write(b'file content')
+            sage: erofs = OSError(errno.EROFS, 'Read-only file system')
+            sage: with mock.patch('os.chmod', side_effect=erofs):
+            ....:     OutputBuffer._chmod_readonly(tmp)
         """
         from sage.env import SAGE_SRC
         filename = os.path.abspath(filename)
@@ -138,12 +159,17 @@ class OutputBuffer(SageObject):
             # files, as it will cause trouble when upgrading Sage
             return
         import stat
-        mode = os.stat(filename).st_mode
-        mode = stat.S_IMODE(mode) & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
-        # The file may already be read only for that user
+        old_mode = stat.S_IMODE(os.stat(filename).st_mode)
+        mode = old_mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
+        if mode == old_mode:
+            # Already read only. Calling chmod anyway would fail on a
+            # read-only file system.
+            return
+        # We may not own the file (EPERM), or it may be on a read-only
+        # file system (EROFS)
         try:
             os.chmod(filename, mode)
-        except PermissionError:
+        except OSError:
             pass
 
     def _repr_(self) -> str:

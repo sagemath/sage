@@ -806,7 +806,7 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
 
 class AndersonMotiveMorphism(OreModuleMorphism):
     r"""
-    A class for morphisms betweeen Anderson motives.
+    A class for morphisms between Anderson motives.
 
     TESTS::
 
@@ -817,7 +817,7 @@ class AndersonMotiveMorphism(OreModuleMorphism):
         sage: f = u.anderson_motive()
         sage: TestSuite(f).run()
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this morphism.
 

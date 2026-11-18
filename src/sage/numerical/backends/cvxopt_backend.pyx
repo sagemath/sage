@@ -492,47 +492,87 @@ cdef class CVXOPTBackend(GenericBackend):
             0.00
             sage: N(g.get_values(xg[2]), digits=4)
             100.0
+
+        TESTS:
+
+        Equality constraints must use the coefficients of the entire row
+        (:issue:`18572`). The two lower bounds on ``y`` intersect at
+        ``x[0] = 2/3``, ``x[1] = 1/3``, and ``y[0] = 5/3``::
+
+            sage: p = MixedIntegerLinearProgram(solver='CVXOPT', maximization=False)
+            sage: x = p.new_variable(nonnegative=True)
+            sage: y = p.new_variable(nonnegative=False)
+            sage: p.add_constraint(2*x[0] + x[1] - y[0] <= 0)
+            sage: p.add_constraint(x[0] + 3*x[1] - y[0] <= 0)
+            sage: p.add_constraint(x[0] + x[1] == 1)
+            sage: p.set_objective(y[0])
+            sage: p.solve()  # abs tol 1e-6
+            1.6666666666666667
+            sage: values = p.get_values(x)
+            sage: (values[0], values[1])  # abs tol 1e-6
+            (0.6666666666666667, 0.3333333333333333)
+
+        Solving twice, or adding a constraint after solving, must not corrupt
+        the stored constraint matrix::
+
+            sage: p.solve()  # abs tol 1e-6
+            1.6666666666666667
+            sage: p.add_constraint(x[0] <= 1/2)
+            sage: p.solve()  # abs tol 1e-6
+            2.0
+
+        Test lower-only, upper-only, ranged, and unbounded rows with non-unit
+        coefficients. Positive and negative variable lower bounds have the
+        same sign convention::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: b = get_solver(solver='CVXOPT')
+            sage: b.add_variable(lower_bound=2, upper_bound=5)
+            0
+            sage: b.add_variable(lower_bound=-3, upper_bound=4)
+            1
+            sage: b.add_linear_constraint([(0, 2), (1, -1)], 3, None)
+            sage: b.add_linear_constraint([(0, 1), (1, 2)], None, 4)
+            sage: b.add_linear_constraint([(0, 3), (1, 1)], 5, 8)
+            sage: b.add_linear_constraint([(0, 1)], None, None)
+            sage: b.set_objective([1, 0])
+            sage: b.set_sense(-1)
+            sage: b.solve()
+            0
+            sage: b.get_variable_value(0)  # abs tol 1e-6
+            2.0
+            sage: b.set_sense(1)
+            sage: b.solve()
+            0
+            sage: b.get_variable_value(0)  # abs tol 1e-6
+            3.6666666666666665
         """
         from cvxopt import matrix, solvers
         h = []
+        G = [[] for _ in self.G_matrix]
 
-        # for the equation bounds
-        for eq_index in range(self.nrows()):
-            h.append(self.row_upper_bound[eq_index])
-            # upper bound is already in G
-            if self.row_lower_bound[eq_index] is not None:
-                h.append(-1 * self.row_lower_bound[eq_index])
-                for cindex in range(len(self.G_matrix)):
-                    if cindex == eq_index:
-                        self.G_matrix[cindex].append(-1) # after multiplying the eq by -1
-                    else:
-                        self.G_matrix[cindex].append(0)
+        # Convert each finite row bound to an inequality G*x <= h.
+        # Equalities give two opposite inequalities. Build local columns so
+        # that solving does not modify the stored constraint matrix.
+        for row_index in range(self.nrows()):
+            for sign, bound in ((1, self.row_upper_bound[row_index]),
+                                (-1, self.row_lower_bound[row_index])):
+                if bound is not None:
+                    h.append(sign * float(bound))
+                    for col, stored_col in zip(G, self.G_matrix):
+                        col.append(sign * float(stored_col[row_index]))
 
-        # for the upper bounds (if there are any)
+        # Variable bounds use unit rows with the same sign convention.
         for i in range(len(self.col_upper_bound)):
-            if self.col_upper_bound[i] is not None:
-                h.append(self.col_upper_bound[i])
-                for cindex in range(len(self.G_matrix)):
-                    if cindex == i:
-                        self.G_matrix[cindex].append(1)
-                    else:
-                        self.G_matrix[cindex].append(0)
-            if self.col_lower_bound[i] is not None:
-                h.append(self.col_lower_bound[i])
-                for cindex in range(len(self.G_matrix)):
-                    if cindex == i:
-                        self.G_matrix[cindex].append(-1) # after multiplying the eq by -1
-                    else:
-                        self.G_matrix[cindex].append(0)
+            for sign, bound in ((1, self.col_upper_bound[i]),
+                                (-1, self.col_lower_bound[i])):
+                if bound is not None:
+                    h.append(sign * float(bound))
+                    for cindex, col in enumerate(G):
+                        col.append(float(sign) if cindex == i else 0.0)
 
-        G = []
-        for col in self.G_matrix:
-            tempcol = []
-            for i in range(len(col)):
-                tempcol.append( float(col[i]) )
-            G.append(tempcol)
-
-        G = matrix(G)
+        G = matrix([value for col in G for value in col],
+                   (len(h), self.ncols()), 'd')
 
         # cvxopt minimizes on default
         if self.is_maximize:

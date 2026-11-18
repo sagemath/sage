@@ -650,7 +650,7 @@ class AbstractSimplex_class(SageObject):
         """
         return self._underlying
 
-    def degeneracies(self):
+    def degeneracies(self) -> list:
         """
         Return the list of indices for the degeneracy maps for this
         simplex.
@@ -665,7 +665,7 @@ class AbstractSimplex_class(SageObject):
         """
         return list(self._degens)
 
-    def is_degenerate(self):
+    def is_degenerate(self) -> bool:
         """
         Return ``True`` if this simplex is degenerate.
 
@@ -679,7 +679,7 @@ class AbstractSimplex_class(SageObject):
         """
         return bool(self.degeneracies())
 
-    def is_nondegenerate(self):
+    def is_nondegenerate(self) -> bool:
         """
         Return ``True`` if this simplex is non-degenerate.
 
@@ -1649,7 +1649,7 @@ class SimplicialSet_arbitrary(Parent):
             codomain = Point()
         return self.Hom(codomain).constant_map(point)
 
-    def is_reduced(self):
+    def is_reduced(self) -> bool:
         """
         Return ``True`` if this simplicial set has only one vertex.
 
@@ -1705,7 +1705,7 @@ class SimplicialSet_arbitrary(Parent):
             G.add_vertex(v)
         return G
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if this simplicial set is connected.
 

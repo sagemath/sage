@@ -1,9 +1,12 @@
-from typing import final
+from typing import Literal, final, overload
 
 from sage.rings.integer import Integer
 
-def prime_range(start: Integer | int, stop: Integer | int | None = None, step: Integer | int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
-    ...
+@overload
+def prime_range(start: Integer | int, stop: Integer | int | None = ..., step: Integer | int | None = ..., algorithm: str | None = ..., py_ints: Literal[False] = ...) -> list[Integer]: ...
+
+@overload
+def prime_range(start: Integer | int, stop: Integer | int | None = ..., step: Integer | int | None = ..., algorithm: str | None = ..., *, py_ints: Literal[True]) -> list[int]: ...
 
 @final
 class arith_int:

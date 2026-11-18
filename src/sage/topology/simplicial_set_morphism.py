@@ -719,7 +719,7 @@ class SimplicialSetMorphism(Morphism):
             return self.codomain()
         return self.codomain().subsimplicial_set(simplices)
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         Return ``True`` if this morphism is an identity map.
 
@@ -771,7 +771,7 @@ class SimplicialSetMorphism(Morphism):
         self._is_identity = ans
         return ans
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True`` if this map is surjective.
 
@@ -793,7 +793,7 @@ class SimplicialSetMorphism(Morphism):
         """
         return self._is_identity or self.image() == self.codomain()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if this map is injective.
 
@@ -824,7 +824,7 @@ class SimplicialSetMorphism(Morphism):
                 return False
         return True
 
-    def is_bijective(self):
+    def is_bijective(self) -> bool:
         """
         Return ``True`` if this map is bijective.
 
@@ -846,7 +846,7 @@ class SimplicialSetMorphism(Morphism):
         """
         return self.is_injective() and self.is_surjective()
 
-    def is_pointed(self):
+    def is_pointed(self) -> bool:
         """
         Return ``True`` if this is a pointed map.
 
@@ -871,7 +871,7 @@ class SimplicialSetMorphism(Morphism):
         return (self.domain().is_pointed() and self.codomain().is_pointed()
                 and self(self.domain().base_point()) == self.codomain().base_point())
 
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if this morphism is a constant map.
 
