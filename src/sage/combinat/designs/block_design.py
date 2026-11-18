@@ -15,11 +15,9 @@ REFERENCES:
   External Representation of Block Designs' by Peter J. Cameron, Peter
   Dobcsanyi, John P. Morgan, Leonard H. Soicher)
 
-.. [Hu57] Daniel R. Hughes, "A class of non-Desarguesian projective planes",
-   The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378
+- [Hu57]_
 
-.. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
-   the AMS, vol. 54 num. 10, pages 1294--1303
+- [We07]_
 
 AUTHORS:
 
@@ -1052,8 +1050,7 @@ def Hadamard3Design(n):
 
     REFERENCES:
 
-    .. [CvL] \P. Cameron, J. H. van Lint, Designs, graphs, codes and
-      their links, London Math. Soc., 1991.
+    - [CvL]_
     """
     if n == 1 or n == 4:
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)

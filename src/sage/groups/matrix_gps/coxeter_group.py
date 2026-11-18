@@ -68,7 +68,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     a quadratic number field when possible.
 
     For more on creating Coxeter groups, see
-    :meth:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
+    :func:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
 
     .. TODO::
 
@@ -642,7 +642,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         norm.
 
         The positive roots are listed first, then the negative roots
-        in the same order. The order is the one given by :meth:`roots`.
+        in the same order. The order is the one given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -676,7 +677,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         Return the index of the simple root `\alpha_i`.
 
         This is the position of `\alpha_i` in the list of all roots
-        as given be :meth:`roots`.
+        as given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -861,7 +863,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             """
             Return the action on the set of roots.
 
-            The roots are ordered as in the output of the method :meth:`roots`.
+            The roots are ordered as in the output of the method
+            :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
             EXAMPLES::
 

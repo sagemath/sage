@@ -374,12 +374,15 @@ class NCSymBases(Category_realization_of_parent):
             Return the image of the symmetric function ``f`` in ``self``.
 
             This is performed by converting to the monomial basis and
-            extending the method :meth:`sum_of_partitions` linearly.  This is a
+            extending the method
+            :meth:`~sage.combinat.ncsym.ncsym.SymmetricFunctionsNonCommutingVariables.monomial.sum_of_partitions`
+            linearly.  This is a
             linear map from the symmetric functions to the symmetric functions
             in non-commuting variables that does not preserve the product or
             coproduct structure of the Hopf algebra.
 
-            .. SEEALSO:: :meth:`to_symmetric_function`
+            .. SEEALSO::
+                :meth:`~sage.combinat.ncsym.bases.NCSymBases.ElementMethods.to_symmetric_function`
 
             INPUT:
 

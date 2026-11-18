@@ -10,5 +10,12 @@ sdh_configure $SAGE_CONFIGURE_NTL \
               --with-flint=$SAGE_FLINT_PREFIX \
               --with-boost="no" \
               --disable-allprogs
+
+# Fix #42872: Strip trailing bare -L flags in Libtool postdeps
+# caused by Conda GCC specs appending search paths after crtendS.o
+if [ -f libtool ]; then
+    sed -i.bak -e 's/ -L -L"/ "/' -e 's/ -L"$/"/' libtool
+fi
+
 sdh_make
 sdh_make_install

@@ -43,24 +43,24 @@ def DegreeSequence(deg_sequence, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3])                                      # needs networkx
+        sage: G = graphs.DegreeSequence([3, 3, 3, 3])                                   # needs networkx
         sage: G.edges(sort=True, labels=False)                                          # needs networkx
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
         sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])  # needs networkx
+        sage: G = graphs.DegreeSequence([3] * 22)                                       # needs networkx
         sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])                              # needs networkx
+        sage: G = graphs.DegreeSequence([4, 4, 4, 4, 4, 4, 4, 4])                       # needs networkx
         sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])                        # needs networkx
+        sage: G = graphs.DegreeSequence([1, 2, 3, 4, 3, 4, 3, 2, 3, 2, 1])              # needs networkx
         sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
@@ -99,7 +99,7 @@ def DegreeSequenceBipartite(s1, s2, immutable=False):
     If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]`` we are given as
     expected the complete bipartite graph `K_{2,5}`::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # needs sage.combinat sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2, 2, 2, 2, 2], [5, 5])               # needs sage.combinat sage.modules
         sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # needs sage.combinat sage.modules
         True
 
@@ -107,7 +107,7 @@ def DegreeSequenceBipartite(s1, s2, immutable=False):
     the functions raises a :exc:`ValueError` when no graph corresponding
     to the degree sequences exists::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.combinat sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2, 2, 2, 2, 1], [5, 5])               # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         ValueError: there exists no bipartite graph corresponding to the given degree sequences
@@ -116,7 +116,7 @@ def DegreeSequenceBipartite(s1, s2, immutable=False):
 
     :issue:`12155`::
 
-        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.combinat sage.modules
+        sage: graphs.DegreeSequenceBipartite([2, 2, 2, 2, 2], [5, 5]).complement()      # needs sage.combinat sage.modules
         Graph on 7 vertices
     """
     from sage.combinat.integer_vector import gale_ryser_theorem
@@ -156,7 +156,7 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])                        # needs networkx
+        sage: G = graphs.DegreeSequenceConfigurationModel([1, 1])                       # needs networkx
         sage: G.adjacency_matrix()                                                      # needs networkx sage.modules
         [0 1]
         [1 0]
@@ -164,7 +164,7 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None, immutable=False):
     The output is allowed to contain both loops and multiple edges::
 
         sage: # needs networkx
-        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
+        sage: deg_sequence = [3] * 20
         sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)
         sage: G.order(), G.size()
         (20, 30)
@@ -204,7 +204,7 @@ def DegreeSequenceTree(deg_sequence, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # needs networkx
+        sage: G = graphs.DegreeSequenceTree([3, 1, 3, 3, 1, 1, 1, 2, 1]); G             # needs networkx
         Graph on 9 vertices
         sage: G.show()                          # long time                             # needs networkx sage.plot
     """
@@ -236,7 +236,7 @@ def DegreeSequenceExpected(deg_sequence, seed=None, immutable=False):
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # needs networkx
+        sage: G = graphs.DegreeSequenceExpected([1, 2, 3, 2, 3]); G                     # needs networkx
         Looped graph on 5 vertices
         sage: G.show()                          # long time                             # needs networkx sage.plot
 

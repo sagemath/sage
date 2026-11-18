@@ -813,7 +813,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         Construct a tensor field on the domain of ``self`` or a tensor product
         of ``self`` with other modules.
 
-        If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
+        If ``args`` consist of other parents, just delegate to
+        :meth:`~sage.tensor.modules.reflexive_module.ReflexiveModule_abstract.tensor_product`.
 
         Otherwise, construct a tensor (i.e., a tensor field on the domain of
         the vector field module) from the following input.
@@ -860,7 +861,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.tensor((0,2), name='a', antisym=(0,1))
             2-form a on the 2-dimensional differentiable manifold M
 
-        Delegation to :meth:`tensor_product`::
+        Delegation to
+        :meth:`~sage.tensor.modules.reflexive_module.ReflexiveModule_abstract.tensor_product`::
 
             sage: M = Manifold(2, 'M')
             sage: XM = M.vector_field_module()

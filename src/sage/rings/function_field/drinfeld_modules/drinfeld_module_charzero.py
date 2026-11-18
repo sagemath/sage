@@ -463,7 +463,8 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: phi.coefficient_in_function_ring(2)
             T^2
 
-        Compare with the method :meth:`coefficient`::
+        Compare with the method
+        :meth:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule.coefficient`::
 
             sage: phi.coefficient(2)
             U^2

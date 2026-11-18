@@ -142,8 +142,7 @@ cdef class ProbabilityDistribution:
              2.0]
         """
         import numpy as np
-        if int(np.version.short_version[0]) > 1:
-            np.set_printoptions(legacy="1.25")
+        np.set_printoptions(legacy="1.25")
         import pylab
         ell = [float(self.get_random_element()) for _ in range(num_samples)]
         S = pylab.hist(ell, bins, density=True)
@@ -151,7 +150,8 @@ cdef class ProbabilityDistribution:
 
     def generate_histogram_plot(self, name, num_samples=1000, bins=50):
         r"""
-        Save the histogram from :func:`generate_histogram_data() <sage.libs.gsl.ProbabilityDistribution.generate_histogram_data>`
+        Save the histogram from
+        :meth:`generate_histogram_data() <sage.probability.probability_distribution.ProbabilityDistribution.generate_histogram_data>`
         to a file.
 
         INPUT:

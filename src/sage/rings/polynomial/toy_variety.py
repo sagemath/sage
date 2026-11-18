@@ -104,7 +104,8 @@ def coefficient_matrix(polys):
     .. NOTE::
 
         This function may be merged with
-        :meth:`sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic.coefficient_matrix()` in the future.
+        :meth:`~sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic.coefficients_monomials`
+        in the future.
     """
     from sage.matrix.constructor import matrix
     R = polys[0].base_ring()

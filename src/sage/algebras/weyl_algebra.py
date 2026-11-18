@@ -667,7 +667,9 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     .. TODO::
 
-        Implement the :meth:`graded_algebra` as a polynomial ring once
+        Implement
+        :meth:`~sage.categories.filtered_algebras.FilteredAlgebras.ParentMethods.graded_algebra`
+        as a polynomial ring once
         they are considered to be graded rings (algebras).
     """
     @staticmethod
@@ -1305,7 +1307,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
         Differential Weyl algebra in countably many variables y over Rational Field
 
     Alternatively, one can first define an
-    :class:`InfinitePolynomialRing`<sage.rings.infinite_polynomial_ring.InfinitePolynomialRing_dense>`
+    :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRing_dense>`
     and then define the differential Weyl algebra of that ring::
 
         sage: R.<x> = InfinitePolynomialRing(QQ)

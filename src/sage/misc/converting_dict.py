@@ -11,6 +11,10 @@ AUTHORS:
 
 - Martin von Gagern (2015-01-31): initial version
 
+.. autoclass:: sage.misc.converting_dict::KT
+
+.. autoclass:: sage.misc.converting_dict::VT
+
 EXAMPLES:
 
 A ``KeyConvertingDict`` will apply a conversion function to all method
@@ -25,7 +29,6 @@ arguments which are keys::
 This is used e.g. in the result of a variety, to allow access to the
 result no matter how a generator is identified::
 
-    sage: # needs sage.libs.singular sage.rings.number_field
     sage: K.<x,y> = QQ[]
     sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
     sage: V = sorted(I.variety(AA), key=str)

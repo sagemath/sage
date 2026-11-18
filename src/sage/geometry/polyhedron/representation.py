@@ -220,9 +220,9 @@ class PolyhedronRepresentation(SageObject):
         OUTPUT:
 
         For a V-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`. For
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`. For
         a H-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`
         + 1.
 
         EXAMPLES::
@@ -769,8 +769,8 @@ class Inequality(Hrepresentation):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.slack_matrix`
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.slack_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
 
         EXAMPLES::
 
@@ -785,7 +785,7 @@ class Inequality(Hrepresentation):
             sage: Q = Polyhedron(ieqs=[[0,2,0,3]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
-            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])                           # needs sage.rings.number_field
+            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
             sage: Q = Polyhedron(ieqs=[[1,1,0,0]])
@@ -888,9 +888,9 @@ class Inequality(Hrepresentation):
         Test that :issue:`21105` has been fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # needs sage.rings.number_field
-            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # needs sage.rings.number_field
-            sage: P.inequalities()                                                      # needs sage.rings.number_field
+            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)
+            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])
+            sage: P.inequalities()
             (An inequality (-cbrt2^2 - cbrt2 - 1, 0, 0) x + cbrt2^2 + cbrt2 + 2 >= 0,
              An inequality (cbrt2^2 + cbrt2 + 1, 0, 0) x - cbrt2^2 + cbrt2 + 1 >= 0)
         """

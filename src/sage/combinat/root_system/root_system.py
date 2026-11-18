@@ -257,10 +257,10 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     .. SEEALSO::
 
-        - :mod:`sage.combinat.root_system`
+        - :mod:`sage.combinat.root_system.root_system`
         - :class:`RootSpace`
         - :class:`WeightSpace`
-        - :class:`AmbientSpace`
+        - :class:`~sage.combinat.root_system.ambient_space.AmbientSpace`
         - :class:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations`
         - :class:`~sage.combinat.root_system.weight_lattice_realizations.WeightLatticeRealizations`
 
@@ -543,7 +543,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             - :meth:`weight_space`
             - :meth:`coweight_space`, :meth:`coweight_lattice`
-            - :class:`~sage.combinat.root_system.WeightSpace`
+            - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
 
         EXAMPLES::
 
@@ -565,7 +565,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             - :meth:`weight_lattice`
             - :meth:`coweight_space`, :meth:`coweight_lattice`
-            - :class:`~sage.combinat.root_system.WeightSpace`
+            - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
 
         EXAMPLES::
 
@@ -588,7 +588,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             - :meth:`coweight_space`
             - :meth:`weight_space`, :meth:`weight_lattice`
-            - :class:`~sage.combinat.root_system.WeightSpace`
+            - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
 
         EXAMPLES::
 
@@ -610,7 +610,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             - :meth:`coweight_lattice`
             - :meth:`weight_space`, :meth:`weight_lattice`
-            - :class:`~sage.combinat.root_system.WeightSpace`
+            - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
 
         EXAMPLES::
 
@@ -685,9 +685,9 @@ class RootSystem(UniqueRepresentation, SageObject):
             - The section on ambient spaces in :class:`RootSystem`
             - :meth:`ambient_lattice`
             - :class:`~sage.combinat.root_system.ambient_space.AmbientSpace`
-            - :class:`~sage.combinat.root_system.ambient_space.type_affine.AmbientSpace`
+            - :class:`~sage.combinat.root_system.type_affine.AmbientSpace`
             - :meth:`root_space`
-            - :meth:`weight:space`
+            - :meth:`weight_space`
 
         EXAMPLES::
 

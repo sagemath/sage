@@ -58,7 +58,7 @@ cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) excep
         if x.dtype == np.int64:
             set_mzd_from_numpy_unsafe(entries, <np.ndarray[np.int64_t, ndim=1]>x)
             return True
-        if x.dtype == np.bool_:
+        if x.dtype == np.bool:
             x_bool = x
             for i in range(degree):
                 mzd_write_bit(entries, 0, i, x_bool[i])

@@ -891,7 +891,7 @@ class FMatrix(SageObject):
             (100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
              100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
         """
-        nonz = {idx: 100 for idx in self._singles}
+        nonz = dict.fromkeys(self._singles, 100)
         for idx in self._ks:
             nonz[idx] = 100
         return ETuple(nonz, self._poly_ring.ngens())
@@ -1430,7 +1430,7 @@ class FMatrix(SageObject):
             eqns.extend((mat.T * mat - matrix.identity(mat.nrows())).coefficients())
         if output:
             return eqns
-        self.ideal_basis.extend([poly_to_tup(eq) for eq in eqns])
+        self.ideal_basis.extend(poly_to_tup(eq) for eq in eqns)
 
     def get_defining_equations(self, option, output=True):
         r"""

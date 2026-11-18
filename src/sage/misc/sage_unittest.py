@@ -94,9 +94,9 @@ class TestSuite:
 
     Adding a new test boils down to adding a new method in the class
     of the object or any super class (e.g. in a category). This method
-    should use the utility :meth:`._tester` to handle standard options
+    should use the utility ``._tester`` to handle standard options
     and report test failures. See the code of
-    :meth:`._test_an_element` for an example. Note: Python's testunit
+    ``._test_an_element`` for an example. Note: Python's testunit
     convention is to look for methods called ``.test*``; we use instead
     ``._test_*`` so as not to pollute the object's interface.
 
@@ -116,7 +116,7 @@ class TestSuite:
         - Allow for customized behavior in case of failing assertion
           (warning, error, statistic accounting).
           This involves reimplementing the methods fail / failIf / ...
-          of unittest.TestCase in InstanceTester
+          of :class:`TestCase <unittest.TestCase>` in InstanceTester
 
         - Don't catch the exceptions if ``TestSuite(..).run()`` is called
           under the debugger, or with ``%pdb`` on (how to detect this? see
@@ -347,7 +347,7 @@ def instance_tester(instance, tester=None, **options):
         AssertionError: 1 != 0
 
     The available assertion testing facilities are the same as in
-    :class:`unittest.TestCase` [UNITTEST]_, which see (actually, by a slight
+    :class:`TestCase <unittest.TestCase>` [UNITTEST]_, which see (actually, by a slight
     abuse, tester is currently an instance of this class).
 
     TESTS::
@@ -411,9 +411,9 @@ class InstanceTester(unittest.TestCase):
 
     def runTest(self):
         """
-        Trivial implementation of :meth:`unittest.TestCase.runTest` to
-        please the super class :class:`TestCase`. That's the price to
-        pay for abusively inheriting from it.
+        Trivial implementation of the default ``unittest.TestCase.runTest()``
+        method expected by :class:`TestCase <unittest.TestCase>`. That's the
+        price to pay for abusively inheriting from it.
 
         EXAMPLES::
 

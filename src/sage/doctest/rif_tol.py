@@ -23,10 +23,14 @@ Helpers for tolerance checking in doctests
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.doctest.marked_output import MarkedOutput
+from __future__ import annotations
 from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
+from typing import TYPE_CHECKING
 
-_RIFtol: 'RealIntervalField | None' = None
+if TYPE_CHECKING:
+    from sage.doctest.marked_output import MarkedOutput
+
+_RIFtol: RealIntervalField | None = None
 
 
 def RIFtol(*args) -> RealIntervalFieldElement:
@@ -68,7 +72,8 @@ def add_tolerance(wantval, want: MarkedOutput):
     INPUT:
 
     - ``wantval`` -- a real interval element
-    - ``want`` -- a :class:`MarkedOutput` describing the tolerance
+    - ``want`` -- a
+      :class:`~sage.doctest.marked_output.MarkedOutput` describing the tolerance
 
     OUTPUT: an interval element containing ``wantval``
 

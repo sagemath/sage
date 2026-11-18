@@ -23,6 +23,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     cpdef _add_(self, other)
     cpdef _sub_(self, other)
+    cpdef set_to_product(self, Matrix left, Matrix right)
+
+    cdef void _set_to_product(self, Matrix left, Matrix right) except *
+    cdef void _set_to_product_classical(self, Matrix left, Matrix right) except *
+    cdef void _set_to_product_strassen(self, Matrix left, Matrix right, int cutoff) except *
 
     cdef bint _will_use_strassen(self, Matrix right) except -2
     cdef bint _will_use_strassen_echelon(self) except -2

@@ -579,8 +579,7 @@ cdef class MPComplexField_class(Field):
         mpc_urandom(z.value, rstate.gmp_state)
         if min == 0 and max == 1:
             return z
-        else:
-            return (max-min)*z + min*self(1,1)
+        return (max-min)*z + min*self(1,1)
 
     cpdef bint is_exact(self) except -2:
         """
@@ -1205,19 +1204,19 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             sage: MPC = MPComplexField()
             sage: a = MPC(2,1)
             sage: a.__pari__()                                                          # needs sage.libs.pari
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: pari(a)                                                               # needs sage.libs.pari
-            2.00000000000000 + 1.00000000000000*I
+            2.00000000000... + 1.00000000000...*I
             sage: pari(a).type()                                                        # needs sage.libs.pari
             't_COMPLEX'
             sage: a = MPC(pi)                                                           # needs sage.libs.pari sage.symbolic
             sage: pari(a)                                                               # needs sage.libs.pari sage.symbolic
-            3.14159265358979
+            3.14159265358...
             sage: pari(a).type()                                                        # needs sage.libs.pari sage.symbolic
             't_REAL'
             sage: a = MPC(-2).sqrt()
             sage: pari(a)                                                               # needs sage.libs.pari
-            1.41421356237310*I
+            1.41421356237...*I
 
         The precision is preserved, rounded up to the wordsize::
 
@@ -2417,7 +2416,7 @@ cdef inline mp_exp_t max_exp(MPComplexNumber z) noexcept:
     """
     if mpfr_zero_p(z.value.im):
         return mpfr_get_exp(z.value.re)
-    elif mpfr_zero_p(z.value.re):
+    if mpfr_zero_p(z.value.re):
         return mpfr_get_exp(z.value.im)
     return max_exp_t(mpfr_get_exp(z.value.re), mpfr_get_exp(z.value.im))
 

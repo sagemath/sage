@@ -938,7 +938,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             return reason is None, reason
         return reason is None
 
-    def is_minimal(self, f, assume_equivalence_irreducible=False):
+    def is_minimal(self, f, assume_equivalence_irreducible=False) -> bool:
         r"""
         Return whether the polynomial ``f`` is minimal with respect to this
         valuation.
@@ -1155,7 +1155,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
           decomposition (default: ``True``)
 
         - ``degree_bound`` -- a bound on the degree of the
-          :meth:`_equivalence_reduction` of ``f`` (default: ``None``)
+          ``_equivalence_reduction`` of ``f`` (default: ``None``)
 
         ALGORITHM:
 

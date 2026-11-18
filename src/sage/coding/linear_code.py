@@ -1255,7 +1255,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         k = self.dimension()
         return n + 1 - k - d
 
-    def is_permutation_equivalent(self, other, algorithm=None):
+    def is_permutation_equivalent(self, other, algorithm=None) -> bool | tuple:
         """
         Return ``True`` if ``self`` and ``other`` are permutation equivalent
         codes and ``False`` otherwise.
@@ -1281,22 +1281,46 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C2 = codes.random_linear_code(GF(3), 10, 5)
             sage: C1.is_permutation_equivalent(C2)
             False
+            sage: C1 = LinearCode(matrix(GF(3), [[1, 0, 1], [0, 1, 2]]))
+            sage: C2 = LinearCode(matrix(GF(3), [[0, 1, 1], [1, 0, 2]]))
+            sage: C1.is_permutation_equivalent(C2)
+            True
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            (True, (1,2))
+
+        Column scalings do not define a permutation equivalence (see
+        :issue:`40503`)::
+
+            sage: C1 = LinearCode(matrix(GF(3), [1, 1]))
+            sage: C2 = LinearCode(matrix(GF(3), [1, 2]))
+            sage: C1.is_permutation_equivalent(C2)
+            False
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            False
         """
-        from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
         F = self.base_ring()
         F_o = other.base_ring()
         q = F.order()
-        G = self.generator_matrix()
         n = self.length()
         n_o = other.length()
         if F != F_o or n != n_o:
             return False
-        k = len(G.rows())
+        k = self.dimension()
+        if k != other.dimension():
+            return False
         MS = MatrixSpace(F, q**k, n)
         CW1 = MS(self.list())
         CW2 = MS(other.list())
-        B1 = NonlinearBinaryCodeStruct(CW1)
-        B2 = NonlinearBinaryCodeStruct(CW2)
+        if q == 2:
+            from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
+            CodeStruct = NonlinearBinaryCodeStruct
+        else:
+            # NonlinearBinaryCodeStruct stores only supports; over larger fields
+            # that would incorrectly ignore nonzero field entries.
+            from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
+            CodeStruct = MatrixStruct
+        B1 = CodeStruct(CW1)
+        B2 = CodeStruct(CW2)
         ans = B1.is_isomorphic(B2)
         if ans is not False:
             if algorithm == "verbose":
@@ -1448,6 +1472,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: codes.HammingCode(GF(2), 2).minimum_distance()                        # needs sage.libs.gap
             3
 
+        The computation does not depend on the pexpect GAP interface::
+
+            sage: from unittest.mock import patch
+            sage: with patch('sage.interfaces.gap.gap', None), seed(123):               # needs sage.libs.gap
+            ....:     c = codes.HammingCode(GF(2), 3)._minimum_weight_codeword()
+            sage: c.hamming_weight()                                                   # needs sage.libs.gap
+            3
+
         AUTHORS:
 
         - David Joyner (11-2005)
@@ -1457,7 +1489,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         F = self.base_field()
         Gmat = libgap(self.generator_matrix())
 
-        current_randstate().set_seed_gap()
+        current_randstate().set_seed_libgap()
 
         if algorithm == 'guava':
             GapPackage('guava', spkg='gap_packages').require()
@@ -1534,7 +1566,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         Note that if the base ring of `C` is `GF(2)` then this is the full
         automorphism group. Otherwise, you could use
-        :meth:`~sage.coding.linear_code.LinearCode.automorphism_group_gens`
+        :meth:`~sage.coding.linear_code.AbstractLinearCode.automorphism_group_gens`
         to compute generators of the full automorphism group.
 
         INPUT:
@@ -1548,7 +1580,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           Finally, if ``'codecan'`` then the partition refinement algorithm
           of Thomas Feulner is used, which also computes a canonical
           representative of ``self`` (call
-          :meth:`~sage.coding.linear_code.LinearCode.canonical_representative`
+          :meth:`~sage.coding.linear_code.AbstractLinearCode.canonical_representative`
           to access it).
 
         OUTPUT: permutation automorphism group
@@ -2920,13 +2952,13 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``word`` and return a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 
@@ -3079,13 +3111,13 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self``'s message space
+        OUTPUT: a codeword of ``self.code()``
 
         EXAMPLES::
 

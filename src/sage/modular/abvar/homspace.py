@@ -765,7 +765,7 @@ class EndomorphismSubring(Homspace):
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
         :issue:`16275` removed the custom ``__reduce__`` method, since
-        :meth:`Homset.__reduce__` already implements appropriate
+        ``Homset.__reduce__`` already implements appropriate
         unpickling by construction::
 
             sage: E.__reduce__.__module__

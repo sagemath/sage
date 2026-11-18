@@ -73,7 +73,7 @@ Obtain the matrix of a list of faces::
     :mod:`~sage.geometry.polyhedron.combinatorial_polyhedron.base`,
     :mod:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator`,
     :mod:`~sage.geometry.polyhedron.combinatorial_polyhedron.conversions`,
-    :mod:`~sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_faces_lattice`.
+    :mod:`~sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice`.
 
 AUTHOR:
 
@@ -111,10 +111,10 @@ cdef class ListOfFaces:
 
     .. SEEALSO::
 
-        :meth:`incidence_matrix_to_bit_rep_of_facets`,
-        :meth:`incidence_matrix_to_bit_rep_of_Vrep`,
-        :meth:`facets_tuple_to_bit_rep_of_facets`,
-        :meth:`facets_tuple_to_bit_rep_of_Vrep`,
+        :func:`~sage.geometry.polyhedron.combinatorial_polyhedron.conversions.incidence_matrix_to_bit_rep_of_facets`,
+        :func:`~sage.geometry.polyhedron.combinatorial_polyhedron.conversions.incidence_matrix_to_bit_rep_of_Vrep`,
+        :func:`~sage.geometry.polyhedron.combinatorial_polyhedron.conversions.facets_tuple_to_bit_rep_of_facets`,
+        :func:`~sage.geometry.polyhedron.combinatorial_polyhedron.conversions.facets_tuple_to_bit_rep_of_Vrep`,
         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`.
 

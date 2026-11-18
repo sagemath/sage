@@ -66,13 +66,14 @@ exclude_patterns = exclude_patterns + ['_sage']
 
 multidocs_is_master = True
 
-# Sorted list of subdocs. Include all subdirectories of ref_src except
-# for 'static' and 'templates', and to deal with upgrades: 'sage',
-# 'media', and 'other'.
-bad_directories = ['static', 'templates', 'sage', 'media', 'other']
-multidocs_subdoc_list = sorted([x for x in os.listdir(ref_src)
-                                if os.path.isdir(os.path.join(ref_src, x))
-                                and x not in bad_directories])
+# Sorted list of subdocs. A sub-document is a subdirectory of ref_src holding
+# an index.rst, which is how sage_docbuild.builders.get_all_reference_documents
+# finds the ones to build. Listing the subdirectories instead would take in
+# 'static' and 'templates', 'sage', 'media' and 'other' left by an upgrade, and
+# the __pycache__ that importing this very file creates in a source checkout.
+multidocs_subdoc_list = sorted(
+    x for x in os.listdir(ref_src)
+    if os.path.isfile(os.path.join(ref_src, x, 'index.rst')))
 
 # List of directories, relative to source directory, that shouldn't be
 # searched for source files.

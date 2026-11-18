@@ -77,7 +77,7 @@ Higher powers of `\tau` can be rewritten as linear combinations
     ((4*z^2 + 4*z + 3)*T + z^2 + 4*z + 2, (z^2 + 4*z)*T + 3, 3*z^2 + 4*z + 4)
 
 The matrix of the operator `\tau_M` can be obtained using the method
-:meth:`matrix`::
+:meth:`~sage.modules.ore_module.OreModule.matrix`::
 
     sage: M.matrix()
     [                              0                               1                               0]
@@ -806,7 +806,7 @@ class AndersonQuotientMotive(AndersonMotive_general, OreQuotientModule):
 
 class AndersonMotiveMorphism(OreModuleMorphism):
     r"""
-    A class for morphisms betweeen Anderson motives.
+    A class for morphisms between Anderson motives.
 
     TESTS::
 
@@ -817,7 +817,7 @@ class AndersonMotiveMorphism(OreModuleMorphism):
         sage: f = u.anderson_motive()
         sage: TestSuite(f).run()
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this morphism.
 
@@ -882,7 +882,7 @@ class AndersonMotiveMorphism(OreModuleMorphism):
 
         We compute the characteristic polynomial of the Frobenius and
         compare the result with the output of the method
-        :meth:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.frobenius_charpoly`::
+        :meth:`sage.rings.function_field.drinfeld_modules.drinfeld_module_finite.DrinfeldModule_finite.frobenius_charpoly`::
 
             sage: Frob = phi.frobenius_endomorphism().anderson_motive()
             sage: Frob.characteristic_polynomial()

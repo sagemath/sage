@@ -221,7 +221,8 @@ class ShuffleAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         r"""
         Return the empty word, which index of `1` of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -236,7 +237,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, w1, w2):
         r"""
         Return the product of basis elements ``w1`` and ``w2``, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis()`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         INPUT:
 

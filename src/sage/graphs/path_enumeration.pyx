@@ -266,7 +266,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
         for p in all_paths:
             path_with_labels.extend(product(*[edge_labels[e] for e in zip(p[:-1], p[1:])]))
         return path_with_labels
-    elif use_multiedges and G.has_multiple_edges():
+    if use_multiedges and G.has_multiple_edges():
         multiple_all_paths = []
         for p in all_paths:
             m = prod(edge_multiplicity[e] for e in zip(p[:-1], p[1:]))
@@ -278,7 +278,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
                 else:
                     multiple_all_paths.append(p)
         return multiple_all_paths
-    elif report_edges:
+    if report_edges:
         return [list(zip(p[:-1], p[1:])) for p in all_paths]
     return all_paths
 
@@ -972,7 +972,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
       See [Feng2014]_ for more details on this algorithm.
 
     - ``postponed=True``
-      This algorithm is based on the the above algorithm in [Feng2014]_, but
+      This algorithm is based on the above algorithm in [Feng2014]_, but
       postpones the shortest path tree computation when non-simple deviations
       occur. See Postponed Node Classification algorithm in [ACN2023]_ for the
       algorithm description. When not all simple paths are needed, this algorithm

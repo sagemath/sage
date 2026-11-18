@@ -56,7 +56,7 @@ def Associahedron(cartan_type, backend='ppl'):
       :class:`sage.combinat.root_system.cartan_type.CartanTypeFactory`
 
     - ``backend`` -- string (``'ppl'``); the backend to use;
-      see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+      see :func:`sage.geometry.polyhedron.constructor.Polyhedron`
 
     EXAMPLES::
 
@@ -378,10 +378,10 @@ class Associahedra_base:
         inequalities = []
         for orbit in root_space.almost_positive_roots_decomposition():
             c = rhocheck.coefficient(orbit[0].leading_support())
-            for beta in orbit:
-                inequalities.append([c] + [beta.coefficient(i) for i in I])
-        associahedron = super()._element_constructor_(None, [inequalities, []], cartan_type=cartan_type)
-        return associahedron
+            inequalities.extend([c] + [beta.coefficient(i) for i in I]
+                                for beta in orbit)
+        return super()._element_constructor_(None, [inequalities, []],
+                                             cartan_type=cartan_type)
 
     def _coerce_map_from_(self, X):
         r"""

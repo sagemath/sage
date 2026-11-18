@@ -17,23 +17,15 @@ information about each word, which provides a useful reference.
 
 REFERENCES:
 
-.. [AC03] \B. Adamczewski, J. Cassaigne, On the transcendence of real
-   numbers with a regular expansion, J. Number Theory 103 (2003)
-   27--37.
+- [AC03]_
 
-.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
-   critical exponent of generalized Thue-Morse words. *Discrete Math.
-   Theor. Comput.  Sci.* 9 (1):293--304, 2007.
+- [BmBGL07]_
 
-.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
-   and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
+- [BmBGL09]_
 
-.. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
-   Encyclopedia of Mathematics and its Applications, Cambridge
-   University Press, U.K., 2002.
+- [Loth02]_
 
-.. [Fogg] Pytheas Fogg,
-   https://www.lirmm.fr/arith/wiki/PytheasFogg/S-adiques.
+- [Fogg]_
 
 EXAMPLES::
 
@@ -418,11 +410,9 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Brlek89] Brlek, S. 1989. «Enumeration of the factors in the Thue-Morse
-           word», *Discrete Appl. Math.*, vol. 24, p. 83--96.
+        - [Brlek89]_
 
-        .. [MH38] Morse, M., et G. A. Hedlund. 1938. «Symbolic dynamics»,
-           *American Journal of Mathematics*, vol. 60, p. 815--866.
+        - [MH38]_
         """
         W = InfiniteWords(alphabet)
         alphabet = W.alphabet()
@@ -1034,9 +1024,7 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Kolakoski66] William Kolakoski, proposal 5304, American Mathematical Monthly
-           72 (1965), 674; for a partial solution, see "Self Generating Runs,"
-           by Necdet Üçoluk, Amer. Math. Mon. 73 (1966), 681-2.
+        - [Kolakoski66]_
         """
         a, b = alphabet
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:

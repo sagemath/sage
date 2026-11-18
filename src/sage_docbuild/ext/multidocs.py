@@ -18,14 +18,18 @@ More precisely this extension ensures the correct merging of
 - the javascript index
 - the citations
 """
+from __future__ import annotations
 import os
 import pickle
 import shutil
 import sphinx
-from sphinx.application import Sphinx
 from sphinx.util.console import bold
 from sage.env import SAGE_DOC
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx
 
 logger = sphinx.util.logging.getLogger(__name__)
 
@@ -126,6 +130,11 @@ def merge_js_index(app):
     """
     Merge the JS indexes of the sub-docs into the main JS index
     """
+    if app.builder.indexer is None:
+        # A builder that does not search, htmlhelp for one, has no index to
+        # merge the ones of the sub-documents into.  The event expects a
+        # sequence of extra pages either way.
+        return []
     logger.info('')
     logger.info(bold('Merging js index files...'))
     mapping = app.builder.indexer._mapping
@@ -168,15 +177,10 @@ def get_js_index(app, curdoc):
     """
     Get the JS index of a sub-doc from the file
     """
-    from sphinx.search import IndexBuilder, languages
+    from sphinx.search import IndexBuilder
     # FIXME: find the correct lang
-    sphinx_version = __import__("sphinx").__version__
-    if (sphinx_version < '1.2'):
-        indexer = IndexBuilder(app.env, 'en',
-                               app.config.html_search_options)
-    else:
-        indexer = IndexBuilder(app.env, 'en',
-                               app.config.html_search_options, scoring=None)
+    indexer = IndexBuilder(app.env, 'en',
+                           app.config.html_search_options, scoring=None)
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
         f = open(indexfile)

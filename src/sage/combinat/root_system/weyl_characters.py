@@ -1186,7 +1186,8 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: WeylCharacterRing("E7").maximal_subgroup("A1")
             [iii branching rule E7 => A1, iv branching rule E7 => A1]
 
-        For more information, see the related method :meth:`maximal_subgroups`.
+        For more information, see the related method
+        :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.maximal_subgroups`.
         """
         return sage.combinat.root_system.branching_rules.maximal_subgroups(self.cartan_type(), mode='get_rule')[ct]
 

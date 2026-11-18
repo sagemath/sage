@@ -759,7 +759,7 @@ class LieAlgebras(Category_over_base_ring):
 
             * the elements of ``self`` by matrices;
             * the basis elements of ``self`` using a ``dict`` or
-              a :func:`Family`;
+              a :func:`~sage.sets.family.Family`;
             * a function on basis elements (either passed as ``on_basis``
               or setting ``on_basis=True``).
 
@@ -956,7 +956,8 @@ class LieAlgebras(Category_over_base_ring):
             ``self``).
 
             Implement this if you implement ``g.module()``.
-            See :meth:`LieAlgebras.module` for how this is to be done.
+            See :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
+            for how this is to be done.
 
             EXAMPLES::
 

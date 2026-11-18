@@ -39,6 +39,10 @@ infinity ring in the obvious way.
     the same as ``Infinity`` in the
     :class:`UnsignedInfinityRing<UnsignedInfinityRing_class>`.
 
+.. autoclass:: sage.rings.infinity::_uniq
+
+.. autodata:: sage.rings.infinity::infinity
+
 EXAMPLES:
 
 We fetch the unsigned infinity ring and create some elements::

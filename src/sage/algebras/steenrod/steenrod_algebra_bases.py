@@ -73,7 +73,7 @@ methods:
 
 - :meth:`_milnor_on_basis <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic._milnor_on_basis>`
 
-- :meth:`an_element <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic.an_element>`
+- :meth:`_an_element_ <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic._an_element_>`
 
 In the file :file:`steenrod_algebra_misc.py`:
 
@@ -264,8 +264,8 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     - ``basis`` -- string, which basis to use (default: ``'milnor'``)
     - ``p`` -- positive prime number (default: 2)
     - ``profile`` -- profile function (default: ``None``); this
-      is just passed on to the functions :func:`milnor_basis` and
-      :func:`pst_basis`
+      is just passed on to the function :func:`milnor_basis` and related
+      basis constructors
     - ``truncation_type`` -- truncation type, either 0 or ``Infinity``
       (default: ``Infinity`` if no profile function is specified,
       0 otherwise).  This is just passed on to the function

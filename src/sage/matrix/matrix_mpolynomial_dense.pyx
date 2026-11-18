@@ -428,7 +428,9 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         OUTPUT:
 
         Return a tuple representing the column swaps during the last application
-        of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
+        of the Gauss-Bareiss algorithm (see
+        :meth:`~sage.matrix.matrix_mpolynomial_dense.Matrix_mpolynomial_dense.echelon_form`
+        for details).
 
         The tuple as length equal to the rank of ``self`` and the value at the
         `i`-th position indicates the source column which was put as the `i`-th

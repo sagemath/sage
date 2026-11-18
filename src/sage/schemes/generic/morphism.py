@@ -4,8 +4,8 @@ Scheme morphism
 .. NOTE::
 
     You should never create the morphisms directly. Instead, use the
-    :meth:`~sage.schemes.generic.scheme.hom` and
-    :meth:`~sage.structure.parent.Hom` methods that are inherited by
+    :meth:`~sage.schemes.generic.scheme.Scheme.hom` and
+    :meth:`~sage.structure.parent.Parent.Hom` methods that are inherited by
     all schemes.
 
 If you want to extend the Sage library with some new kind of scheme,
@@ -1499,7 +1499,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         Given a family of maps defined over a polynomial ring. A specialization
         is a particular member of that family. The specialization can be specified either
-        by a dictionary or a :class:`SpecializationMorphism`.
+        by a dictionary or a :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
@@ -1994,7 +1994,7 @@ class SchemeMorphism_point(SchemeMorphism):
 
         Given a family of points defined over a polynomial ring. A specialization
         is a particular member of that family. The specialization can be specified either
-        by a dictionary or a :class:`SpecializationMorphism`.
+        by a dictionary or a :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 

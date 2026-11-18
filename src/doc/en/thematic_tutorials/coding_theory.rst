@@ -333,11 +333,11 @@ Calling::
 
 is actually a short-hand for constructing the encoder manually,
 by calling the constructor for
-:class:`sage.coding.grs_code.EncoderGRSEvaluationVector` yourself.
+:class:`sage.coding.grs_code.GRSEvaluationVectorEncoder` yourself.
 If you don't supply ``encoder_name`` to
-:meth:`sage.coding.linear_code.AbstractLinearCode.encoder`
+:meth:`sage.coding.abstract_code.AbstractCode.encoder`
 you get the default encoder for the code.
-:meth:`sage.coding.linear_code.AbstractLinearCode.encoder`
+:meth:`sage.coding.abstract_code.AbstractCode.encoder`
 also has an important side-effect: **it caches the constructed encoder**
 before returning it. This means that each time one will access the same
 ``EvaluationVector`` encoder for ``C``, which saves construction time.
@@ -380,8 +380,8 @@ demands that the messages are actually picked from a subspace hereof.
 
 The default encoder of a code always has a vector space as message space,
 so when we call
-:meth:`sage.coding.linear_code.AbstractLinearCode.decode_to_message` or
-:meth:`sage.coding.linear_code.AbstractLinearCode.unencode` on the code itself,
+:meth:`sage.coding.abstract_code.AbstractCode.decode_to_message` or
+:meth:`sage.coding.abstract_code.AbstractCode.unencode` on the code itself,
 as illustrated on the first example, this will always return
 vectors whose length is the dimension of the code.
 
@@ -397,7 +397,7 @@ make sense for other types of encoders), which specifies that linear map.
 Generator matrices have been placed on Encoder objects since a code
 has many generator matrices, and each of these will encode messages differently.
 One will also find
-:meth:`sage.coding.linear_code.AbstractLinearCode.generator_matrix`
+:meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.generator_matrix`
 on code objects, but this is again simply a convenience method which forwards
 the query to the default encoder.
 
@@ -472,7 +472,7 @@ introduce a second Channel.
         in Sage.
 
 Consider again the
-:meth:`sage.coding.channel.ChannelStaticErrorRate` from before.
+:class:`sage.coding.channel.StaticErrorRateChannel` from before.
 This is a channel that places errors in the transmitted vector
 but within controlled boundaries.
 We can describe these boundaries in two ways:
@@ -547,7 +547,7 @@ is not the same as its input space, i.e. the ambient space of C.
 Rather, it will return two vectors: the first is the transmitted word
 with the errors added and erased positions set to 0.
 The second one is the erasure vector whose erased positions contain ones.
-This is reflected in :meth:`sage.coding.channel.output_space`::
+This is reflected in :meth:`sage.coding.channel.Channel.output_space`::
 
     sage: C = codes.random_linear_code(GF(7), 10, 5)
     sage: Chan.output_space()

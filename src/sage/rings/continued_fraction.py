@@ -172,9 +172,8 @@ Nevertheless, the tail is preserved under invertible integer homographies::
 
 .. TODO::
 
-    - Improve numerical approximation (the method
-      :meth:`~ContinuedFraction_base._mpfr_` is quite slow compared to the
-      same method for an element of a number field)
+    - Improve numerical approximation (the method ``_mpfr_`` is quite slow
+      compared to the same method for an element of a number field)
 
     - Make a class for generalized continued fractions of the form `a_0 +
       b_0/(a_1 + b_1/(...))` (the standard continued fractions are when all
@@ -201,6 +200,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import numbers
 
 import sage.rings.abc
@@ -210,6 +210,10 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp import rich_to_bool, richcmp_method
 from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.rational import Rational
 
 lazy_import('sage.combinat.words.abstract_word', 'Word_class')
 lazy_import('sage.combinat.words.finite_word', 'FiniteWord_class')
@@ -327,14 +331,14 @@ class ContinuedFraction_base(SageObject):
     - computation of convergents in :meth:`convergent`, :meth:`numerator` and
       :meth:`denominator`
 
-    - comparison with other continued fractions (see :meth:`__richcmp__`)
+    - comparison with other continued fractions (see ``__richcmp__``)
 
     - elementary arithmetic function :meth:`floor`, :meth:`ceil`, :meth:`sign`
 
-    - accurate numerical approximations :meth:`_mpfr_`
+    - accurate numerical approximations ``_mpfr_``
 
     All other methods, in particular the ones involving binary operations like
-    sum or product, rely on the optional method :meth:`value` (and not on
+    sum or product, rely on the optional method ``value`` (and not on
     convergents) and may fail at execution if it is not implemented.
     """
     def __init__(self):
@@ -828,7 +832,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.numerator(n) / self.denominator(n)
 
-    def convergents(self):
+    def convergents(self) -> list[Rational]:
         """
         Return the list of partial convergents of ``self``.
 
@@ -1159,7 +1163,7 @@ class ContinuedFraction_base(SageObject):
         Return the continued fraction of `(ax + b)/(cx + d)`.
 
         This is computed using Gosper's algorithm, see
-        :mod:`~sage.rings.continued_fraction_gosper`.
+        ``sage.rings.continued_fraction_gosper``.
 
         INPUT:
 
@@ -1790,7 +1794,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
     Continued fraction of a real (exact) number.
 
     This class simply wraps a real number into an attribute (that can be
-    accessed through the method :meth:`value`). The number is assumed to be
+    accessed through the method :meth:`~sage.rings.continued_fraction.ContinuedFraction_real.value`). The number is assumed to be
     irrational.
 
     EXAMPLES::
@@ -2509,7 +2513,7 @@ def continued_fraction_list(x, type='std', partial_convergents=False,
     return [cf.quotient(i) for i in range(limit)]
 
 
-def continued_fraction(x, value=None):
+def continued_fraction(x, value=None) -> ContinuedFraction_periodic | ContinuedFraction_real | ContinuedFraction_infinite:
     r"""
     Return the continued fraction of `x`.
 
@@ -2712,7 +2716,7 @@ def continued_fraction(x, value=None):
     return continued_fraction(continued_fraction_list(x))
 
 
-def convergents(x):
+def convergents(x) -> list[Rational]:
     r"""
     Return the (partial) convergents of the number ``x``.
 

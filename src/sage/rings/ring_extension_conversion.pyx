@@ -46,8 +46,7 @@ cpdef backend_parent(R):
     """
     if isinstance(R, RingExtension_generic):
         return (<RingExtension_generic>R)._backend
-    else:
-        return R
+    return R
 
 cpdef from_backend_parent(R, RingExtension_generic E):
     r"""
@@ -127,8 +126,7 @@ cpdef backend_element(x):
     """
     if isinstance(x, RingExtensionElement):
         return (<RingExtensionElement>x)._backend
-    else:
-        return x
+    return x
 
 cpdef from_backend_element(x, RingExtension_generic E):
     r"""
@@ -174,8 +172,7 @@ cpdef from_backend_element(x, RingExtension_generic E):
     parent = from_backend_parent(x.parent(),E)
     if parent is None:
         return x
-    else:
-        return parent(x)
+    return parent(x)
 
 
 # For morphisms
@@ -380,15 +377,15 @@ cpdef to_backend(arg):
     """
     if isinstance(arg, list):
         return [ to_backend(x) for x in arg ]
-    elif isinstance(arg, tuple):
+    if isinstance(arg, tuple):
         return tuple([ to_backend(x) for x in arg ])
-    elif isinstance(arg, dict):
+    if isinstance(arg, dict):
         return { to_backend(key): to_backend(value) for (key, value) in arg.items() }
-    elif isinstance(arg, RingExtension_generic):
+    if isinstance(arg, RingExtension_generic):
         return (<RingExtension_generic>arg)._backend
-    elif isinstance(arg, Map):
+    if isinstance(arg, Map):
         return backend_morphism(arg)
-    elif isinstance(arg, RingExtensionElement):
+    if isinstance(arg, RingExtensionElement):
         return (<RingExtensionElement>arg)._backend
     return arg
 
@@ -457,5 +454,4 @@ cpdef from_backend(arg, E):
         ans = from_backend_element(arg,E)
     if ans is None:
         return arg
-    else:
-        return ans
+    return ans

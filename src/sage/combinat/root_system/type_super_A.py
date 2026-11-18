@@ -451,7 +451,7 @@ class CartanType(SuperCartanType_standard):
     """
     Cartan Type `A(m|n)`.
 
-    .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
     """
 
     def __init__(self, m, n):

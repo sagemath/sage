@@ -663,8 +663,9 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
             For a labelled tree, this will fail unless all labels are
             distinct. For unlabelled trees, some arbitrary labels are chosen.
-            Use :meth:`_latex_`, ``view``,
-            :meth:`_ascii_art_` or ``pretty_print`` for more
+            Use ``_latex_``, ``view``,
+            :meth:`~sage.structure.sage_object.SageObject._ascii_art_` or
+            ``pretty_print`` for more
             faithful representations of the data of the tree.
 
         EXAMPLES::

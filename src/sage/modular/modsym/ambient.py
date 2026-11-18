@@ -483,7 +483,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             ...
             TypeError: Unable to coerce zeta4 to a rational
 
-        Similarly with :meth:`base_extend`::
+        Similarly with :meth:`~sage.modules.module.Module.base_extend`::
 
             sage: M = ModularSymbols(DirichletGroup(5).0, 7); MM = M.base_extend(CyclotomicField(8)); MM
             Modular Symbols space of dimension 6 and level 5, weight 7, character [zeta8^2], sign 0, over Cyclotomic Field of order 8 and degree 4

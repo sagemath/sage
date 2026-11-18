@@ -776,9 +776,6 @@
         "failed": true,
         "ntests": 24
     },
-    "sage.cpython.atexit": {
-        "ntests": 19
-    },
     "sage.cpython.cython_metaclass": {
         "ntests": 4
     },

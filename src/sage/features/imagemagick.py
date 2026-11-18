@@ -114,7 +114,7 @@ class ImageMagick(JoinFeature):
     A :class:`~sage.features.Feature` describing the presence of
     :ref:`ImageMagick <spkg_imagemagick>`
 
-    Currently, only the availability of the :class:`magick` (or :class:`convert`) program is checked.
+    Currently, only the availability of the ``magick`` (or ``convert``) program is checked.
 
     EXAMPLES::
 

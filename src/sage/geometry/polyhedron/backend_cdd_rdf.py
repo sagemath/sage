@@ -1,5 +1,3 @@
-# sage.doctest: needs sage.rings.real_double
-
 r"""
 The cdd backend for polyhedral computations, floating point version
 """

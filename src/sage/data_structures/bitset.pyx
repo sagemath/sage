@@ -551,8 +551,7 @@ cdef class FrozenBitset:
         hash = bitset_hash(self._bitset)
         if hash == -1:
             return 0
-        else:
-            return hash
+        return hash
 
     cpdef bint isempty(self) noexcept:
         """
@@ -803,8 +802,7 @@ cdef class FrozenBitset:
         """
         if n < self._bitset.size:
             return bitset_in(self._bitset, n)
-        else:
-            return False
+        return False
 
     def __len__(self):
         """

@@ -1300,7 +1300,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         r"""
         Return all reduced (primitive) elements of discriminant ``D``.
 
-        Also see the element method :meth:`is_reduced` for more information.
+        Also see the element method :meth:`~sage.modular.modform_hecketriangle.hecke_triangle_group_element.HeckeTriangleGroupElement.is_reduced` for more information.
 
         - ``D`` -- an element of the base ring corresponding
           to a valid discriminant

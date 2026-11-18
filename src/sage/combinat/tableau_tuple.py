@@ -190,7 +190,7 @@ Parent classes:
     * :class:`StandardTableaux`
     * :class:`Partitions`
     * :class:`PartitionTuples`
-    * :class:`ResidueSequence`
+    * :class:`sage.combinat.tableau_residues.ResidueSequence`
 
 .. TODO::
 
@@ -952,7 +952,9 @@ class TableauTuple(CombinatorialElement):
     def reduced_row_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the :meth:`initial_tableau` to ``self``.
+        permutation that maps the
+        :meth:`~sage.combinat.partition_tuple.PartitionTuple.initial_tableau`
+        to ``self``.
 
         This reduced expression is a minimal length coset representative for the
         corresponding Young subgroup.  In one line notation, the permutation is
@@ -980,7 +982,9 @@ class TableauTuple(CombinatorialElement):
     def reduced_column_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the :meth:`initial_column_tableau` to ``self``.
+        permutation that maps the
+        :meth:`~sage.combinat.partition_tuple.PartitionTuple.initial_column_tableau`
+        to ``self``.
 
         This reduced expression is a minimal length coset representative for the
         corresponding Young subgroup.  In one line notation, the permutation is
@@ -1061,7 +1065,8 @@ class TableauTuple(CombinatorialElement):
 
     def row_stabilizer(self):
         """
-        Return the :class:`PermutationGroup` corresponding to ``self``. That
+        Return the :func:`sage.groups.perm_gps.permgroup.PermutationGroup`
+        corresponding to ``self``. That
         is, return subgroup of the symmetric group of degree :meth:`size`
         which is the row stabilizer of ``self``.
 
@@ -1089,7 +1094,8 @@ class TableauTuple(CombinatorialElement):
 
     def column_stabilizer(self):
         """
-        Return the :class:`PermutationGroup` corresponding to ``self``. That
+        Return the :func:`sage.groups.perm_gps.permgroup.PermutationGroup`
+        corresponding to ``self``. That
         is, return subgroup of the symmetric group of degree :meth:`size`
         which is the column stabilizer of ``self``.
 
@@ -1447,8 +1453,8 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
 
     .. SEEALSO::
 
-        - :class:`RowTableau`
-        - :class:`RowTableaux`
+        - :class:`Tableau`
+        - :class:`Tableaux`
         - :class:`TableauTuples`
         - :class:`TableauTuple`
         - :class:`StandardTableauTuples`

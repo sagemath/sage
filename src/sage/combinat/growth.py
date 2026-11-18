@@ -15,7 +15,7 @@ AUTHORS:
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
       :class:`RuleBurge`
-    - implement backward rules for :class:`GrowthDiagram.rules.Domino`
+    - implement backward rules for :attr:`sage.combinat.growth.Rules.Domino`
     - implement backward rule from [LLMSSZ2013]_, [LS2007]_
     - make semistandard extension generic
     - accommodate dual filtered graphs
@@ -509,7 +509,6 @@ The labels are now alternating between vertices and edge-colors::
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from __future__ import annotations
-from copy import copy
 from itertools import zip_longest
 
 from sage.structure.global_options import GlobalOptions
@@ -1397,7 +1396,7 @@ class GrowthDiagram(SageObject):
         if self.rule.has_multiple_edges:
             if not (len(labels) % 2):
                 raise ValueError("only a list of odd length can specify a path, but %s has even length" % len(labels))
-            path_length = (len(labels) + 1) / 2
+            path_length = (len(labels) + 1) // 2
         else:
             path_length = len(labels)
 
@@ -1528,11 +1527,10 @@ class GrowthDiagram(SageObject):
                 v = next(iter(filling.values()))
                 if isinstance(v, dict):
                     # it is a dict of dicts
-                    F = dict()
-                    for i, row in filling.items():
-                        for j, v in row.items():
-                            if v != 0:
-                                F[(i, j)] = int(v)
+                    F = {(i, j): int(v)
+                         for i, row in filling.items()
+                         for j, v in row.items()
+                         if v != 0}
                 else:
                     # it is dict of coordinates
                     F = {(i, j): v for (i, j), v in filling.items()
@@ -2081,6 +2079,8 @@ class Rule(UniqueRepresentation, SageObject):
     In particular, this allows to work with dual graded graphs
     without local rules.
 
+    .. automethod:: _test_local_rules
+
     """
     has_multiple_edges = False          # override when necessary
     zero_edge = 0                       # override when necessary
@@ -2093,7 +2093,8 @@ class Rule(UniqueRepresentation, SageObject):
         zero.
 
         By default, this is ``[1,...,r]``.  It is used by the
-        :class:`TestSuite` in :meth:`_test_local_rules`.
+        :class:`~sage.misc.sage_unittest.TestSuite` in
+        :meth:`_test_local_rules <sage.combinat.growth.Rule._test_local_rules>`.
 
         EXAMPLES::
 
@@ -2919,26 +2920,25 @@ class RuleShiftedShapes(Rule):
             if f != 0:
                 raise ValueError("degenerate edge f should have color 0")
             g, z = f, y
-        else:
-            if x != y:
-                row = SkewPartition([x, t]).cells()[0][0]
-                g, z = f, _make_partition(y).add_cell(row)
-            elif x == y != t and f == 2:  # blue
-                row = 1+SkewPartition([x, t]).cells()[0][0]
-                if row == len(y):
-                    g, z = 1, _make_partition(y).add_cell(row)  # black
-                else:
-                    g, z = 2, _make_partition(y).add_cell(row)  # blue
-            elif x == y != t and f in [1, 3]:   # black or red
-                c = SkewPartition([x, t]).cells()[0]
-                col = c[0] + c[1] + 1
-                for i in range(len(y)):
-                    if i + y[i] == col:
-                        z = y[:i] + [y[i] + 1] + y[i + 1:]
-                        break
-                g = 3
+        elif x != y:
+            row = SkewPartition([x, t]).cells()[0][0]
+            g, z = f, _make_partition(y).add_cell(row)
+        elif x == y != t and f == 2:  # blue
+            row = 1+SkewPartition([x, t]).cells()[0][0]
+            if row == len(y):
+                g, z = 1, _make_partition(y).add_cell(row)  # black
             else:
-                raise NotImplementedError
+                g, z = 2, _make_partition(y).add_cell(row)  # blue
+        elif x == y != t and f in [1, 3]:   # black or red
+            c = SkewPartition([x, t]).cells()[0]
+            col = c[0] + c[1] + 1
+            for i in range(len(y)):
+                if i + y[i] == col:
+                    z = y[:i] + [y[i] + 1] + y[i + 1:]
+                    break
+            g = 3
+        else:
+            raise NotImplementedError
         return g, _make_partition(z), h
 
     def backward_rule(self, y, g, z, h, x):
@@ -3058,7 +3058,7 @@ class RuleLLMS(Rule):
         0  0  0  0  0  1
         0  0  0  1  0  0
 
-    The :meth:`P_symbol` is a
+    The :meth:`~sage.combinat.growth.RulePartitions.P_symbol` is a
     :class:`~sage.combinat.k_tableau.StrongTableau`::
 
         sage: G.P_symbol().pp()
@@ -3068,7 +3068,7 @@ class RuleLLMS(Rule):
          5
          6
 
-    The :meth:`Q_symbol` is a
+    The :meth:`~sage.combinat.growth.RulePartitions.Q_symbol` is a
     :class:`~sage.combinat.k_tableau.WeakTableau`::
 
         sage: G.Q_symbol().pp()
@@ -3581,13 +3581,12 @@ class RuleBinaryWord(Rule):
             z = x
         elif x == t != y:
             z = y
+        elif x != y:
+            z = Word(list(y) + [x[-1]], alphabet=[0,1])
+        elif x == y != t:
+            z = Word(list(y) + [0], alphabet=[0,1])
         else:
-            if x != y:
-                z = Word(list(y) + [x[-1]], alphabet=[0,1])
-            elif x == y != t:
-                z = Word(list(y) + [0], alphabet=[0,1])
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
         return z
 
     def backward_rule(self, y, z, x):
@@ -3649,8 +3648,8 @@ class RuleSylvester(Rule):
     is the lattice of finite order ideals of the infinite binary
     tree, see Example 2.4.6 in [Fom1994]_.
 
-    For a permutation, the :meth:`P_symbol` is the binary search
-    tree, the :meth:`Q_symbol` is the increasing tree corresponding
+    For a permutation, the :meth:`~sage.combinat.growth.RulePartitions.P_symbol` is the binary search
+    tree, the :meth:`~sage.combinat.growth.RulePartitions.Q_symbol` is the increasing tree corresponding
     to the inverse permutation.  Note that, instead of passing the
     rule to :class:`GrowthDiagram`, we can also call the rule to
     create growth diagrams.  From [Nze2007]_::
@@ -4037,7 +4036,7 @@ class RuleSylvester(Rule):
             for t in successors(y):
                 if RuleSylvester._delete_right_most_node(t) == x:
                     return t
-            raise ValueError("could not find union of %s and %s" % (y,x))
+            raise ValueError("could not find union of %s and %s" % (y, x))
 
         if y == t == x:
             if content == 0:
@@ -4291,12 +4290,11 @@ class RuleYoungFibonacci(Rule):
             r = y
         elif y == t:
             r = x
+        elif x != t != y:
+            r = Word([2] + list(t), alphabet=[1,2])
         else:
-            if x != t != y:
-                r = Word([2] + list(t), alphabet=[1,2])
-            else:
-                raise NotImplementedError("for y=%s, t=%s, x=%s, content %s we have no rule"
-                                          % (y, t, x, content))
+            raise NotImplementedError("for y=%s, t=%s, x=%s, content %s we have no rule"
+                                      % (y, t, x, content))
         return r
 
     def backward_rule(self, y, z, x):
@@ -4460,7 +4458,7 @@ class RuleRSK(RulePartitions):
         [   3            ,   5             ]
 
     For rectangular fillings, the Kleitman-Greene invariant is the
-    shape of the :meth:`P_symbol` (or the :meth:`Q_symbol`).  Put
+    shape of the :meth:`~sage.combinat.growth.RulePartitions.P_symbol` (or the :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`).  Put
     differently, it is the partition labelling the lower right corner
     of the filling (recall that we are using matrix coordinates).  It
     can be computed alternatively as the partition
@@ -5160,7 +5158,8 @@ class RuleCompositions(Rule):
         sage: L.vertices(3)
         Compositions of 3
 
-    The saturated chains in the :meth:`Q_graph` are not in the OEIS
+    The saturated chains in the :meth:`sage.combinat.growth.Rule.Q_graph`
+    are not in the OEIS
     as of 2026::
 
         sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]
@@ -5233,8 +5232,7 @@ class RuleCompositions(Rule):
                 if w[j] == v[j] + 1:
                     if w[j+1:] == v[j+1:] and w[j] not in w[j+1:]:
                         return w[j]
-                else:
-                    if w[j] == 1 and w[j+1:] == v[j:] and w[j] not in w[j+1:]:
+                elif w[j] == 1 and w[j+1:] == v[j:] and w[j] not in w[j+1:]:
                         return w[j]
                 return None
         if w[len(v)] == 1:
@@ -5288,7 +5286,8 @@ class RuleLeftCompositions(RuleCompositions):
         sage: L.vertices(3)
         Compositions of 3
 
-    A saturated chain in the :meth:`P_graph` is a (skew)
+    A saturated chain in the :meth:`sage.combinat.growth.Rule.P_graph`
+    is a (skew)
     :class:`~sage.combinat.composition_tableau.CompositionTableau`::
 
         sage: c = [[], [1], [2], [1, 2], [1, 1, 2], [1, 1, 3], [2, 1, 3], [1, 2, 1, 3]]
@@ -5309,7 +5308,8 @@ class RuleLeftCompositions(RuleCompositions):
         sage: [StandardTableaux(n).cardinality() for n in range(7)]
         [1, 1, 2, 4, 10, 26, 76]
 
-    The saturated chains in the :meth:`Q_graph` are not in the OEIS
+    The saturated chains in the :meth:`sage.combinat.growth.Rule.Q_graph`
+    are not in the OEIS
     as of 2026::
 
         sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]

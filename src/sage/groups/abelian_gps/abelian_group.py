@@ -151,14 +151,11 @@ the underlying representation is lists of integer exponents::
 
 REFERENCES:
 
-.. [Cohen1] \H. Cohen, Advanced topics in computational number theory,
-  Springer, 2000.
+- [Cohen1]_
 
-.. [Cohen2] \H. Cohen, A course in computational algebraic number theory,
-  Springer, 1996.
+- [Cohen2]_
 
-.. [Rotman] \J. Rotman, An introduction to the theory of
-  groups, 4th ed, Springer, 1995.
+- [Rotman]_
 
 .. WARNING::
 
@@ -884,6 +881,18 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # Make sure to LoadPackage("Polycyclic") in gap
         GapPackage("polycyclic", spkg='gap_packages').require()
         return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
+
+    def _snappy_(self, snappy):
+        r"""
+        Return ``self`` as in interface wrapper object for SnapPy.
+
+        EXAMPLES::
+
+           sage: A = AbelianGroup([5,15,0,0])
+           sage: snappy(A)                      # optional snappy
+           Z/5 + Z/15 + Z + Z
+        """
+        return snappy.AbelianGroup(elementary_divisors=list(self.gens_orders()))
 
     def gen(self, i=0):
         """

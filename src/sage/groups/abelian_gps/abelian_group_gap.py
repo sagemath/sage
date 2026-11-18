@@ -444,7 +444,8 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         r"""
         Return the elementary divisors of this group.
 
-        See :meth:`sage.groups.abelian_gps.abelian_group_gap.elementary_divisors`.
+        See
+        :meth:`~sage.groups.abelian_gps.abelian_group.AbelianGroup_class.elementary_divisors`.
 
         EXAMPLES::
 
@@ -747,7 +748,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
     .. NOTE::
 
         Do not construct this class directly. Instead use
-        :meth:`~sage.groups.abelian_groups.AbelianGroupGap.subgroup`.
+        :meth:`~sage.groups.abelian_gps.abelian_group_gap.AbelianGroup_gap.subgroup`.
 
     EXAMPLES::
 
@@ -891,7 +892,8 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
 
     .. NOTE::
 
-        Do not call this directly. Instead use :meth:`quotient`.
+        Do not call this directly. Instead use
+        :meth:`~sage.groups.abelian_gps.abelian_group_gap.AbelianGroup_gap.quotient`.
 
     EXAMPLES::
 

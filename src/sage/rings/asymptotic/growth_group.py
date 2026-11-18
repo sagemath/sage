@@ -488,7 +488,7 @@ class Variable(CachedRepresentation, SageObject):
         """
         return self.var_bases
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         r"""
         Return whether this is a monomial variable.
 
@@ -706,7 +706,7 @@ class PartialConversionElement(SageObject):
     def split(self):
         r"""
         Split the contained ``raw_element`` according to the growth group's
-        :meth:`GrowthGroup._split_raw_element_`.
+        :meth:`~sage.rings.asymptotic.growth_group.GenericGrowthGroup._split_raw_element_`.
 
         EXAMPLES::
 
@@ -741,7 +741,7 @@ class PartialConversionElement(SageObject):
         other = PartialConversionElement(self.growth_group, raw_other)
         return here, other
 
-    def is_compatible(self, other):
+    def is_compatible(self, other) -> bool:
         r"""
         Wrapper to :meth:`GenericGrowthGroup.is_compatible`.
 
@@ -907,7 +907,7 @@ def _log_factor_(self, base=None, locals=None):
     - ``locals`` -- dictionary which may contain the following keys and values:
 
       - ``'log'`` -- value: a function. If not used, then the usual
-        :class:`log <sage.functions.log.Function_log>` is taken.
+        :class:`log <sage.functions.log.Function_log1>` is taken.
 
     OUTPUT:
 
@@ -1395,7 +1395,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 
@@ -1614,6 +1614,8 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         :class:`MonomialGrowthGroup`,
         :class:`ExponentialGrowthGroup`
+
+    .. automethod:: _split_raw_element_
     """
     # TODO: implement some sort of 'assume', where basic assumptions
     # for the variables can be stored. --> within the Cartesian product
@@ -2182,7 +2184,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         """
         pass
 
-    def is_compatible(self, other):
+    def is_compatible(self, other) -> bool:
         r"""
         Return whether this growth group is compatible with ``other`` meaning
         that both are of the same type and have the same variables, but
@@ -2942,7 +2944,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 
@@ -3018,7 +3020,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a growth element
 
@@ -4018,7 +4020,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT:
 
