@@ -37,16 +37,16 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.bindable_class import BindableClass
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.global_options import GlobalOptions
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
-from sage.combinat.shuffle import ShuffleProduct_overlapping, ShuffleProduct
+from sage.combinat.shuffle import ShuffleProduct, ShuffleProduct_overlapping
+from sage.misc.bindable_class import BindableClass
 from sage.rings.integer_ring import ZZ
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
@@ -59,7 +59,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis (must match one
       of the names that the basis can be constructed from `WQSym`)
     """
-    def __init__(self, alg, graded=True):
+    def __init__(self, alg, graded=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -76,7 +76,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                                          sorting_key=sorting_key,
                                          bracket='', prefix=self._prefix)
 
-    def _repr_term(self, osp):
+    def _repr_term(self, osp) -> str:
         r"""
         Return a string representation of an element of WordQuasiSymmetricFunctions
         in the basis ``self``.
@@ -93,7 +93,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         """
         return self._prefix + self.options._dispatch(self, '_repr_', 'objects', osp)
 
-    def _repr_compositions(self, osp):
+    def _repr_compositions(self, osp) -> str:
         """
         Return a string representation of ``osp`` indexed by ordered set partitions.
 
@@ -127,7 +127,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         # treat display as 'normal'
         return disp
 
-    def _repr_words(self, osp):
+    def _repr_words(self, osp) -> str:
         """
         Return a string representation of ``self`` indexed by packed words.
 
@@ -247,7 +247,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         """
         return self([[1]]) + 2 * self([[1], [2]])
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return some elements of the word quasi-symmetric functions.
 
@@ -462,7 +462,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         - Dendriform structure.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -480,7 +480,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -713,7 +713,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "X"
         _basis_name = "Characteristic"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -911,7 +911,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "C"
         _basis_name = "Cone"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -939,7 +939,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             M.register_coercion(M.coerce_map_from(X) * phi)
             self.register_coercion(inv_phi * X.coerce_map_from(M))
 
-        def some_elements(self):
+        def some_elements(self) -> list:
             """
             Return some elements of the word quasi-symmetric functions
             in the Cone basis.
@@ -1060,7 +1060,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Q"
         _basis_name = "Q"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1077,7 +1077,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             phi_inv = M.module_morphism(self._M_to_Q, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
-        def some_elements(self):
+        def some_elements(self) -> list:
             """
             Return some elements of the word quasi-symmetric functions
             in the Q basis.
@@ -1442,7 +1442,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Phi"
         _basis_name = "Phi"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1459,7 +1459,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             phi_inv = M.module_morphism(self._M_to_Phi, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
-        def some_elements(self):
+        def some_elements(self) -> list:
             """
             Return some elements of the word quasi-symmetric functions
             in the Phi basis.
@@ -1900,7 +1900,7 @@ class WQSymBases(Category_realization_of_parent):
     r"""
     The category of bases of `WQSym`.
     """
-    def __init__(self, base, graded):
+    def __init__(self, base, graded) -> None:
         r"""
         Initialize ``self``.
 
@@ -1916,11 +1916,21 @@ class WQSymBases(Category_realization_of_parent):
             sage: bases = WQSymBases(WQSym, True)
             sage: WQSym.M() in bases
             True
+
+            sage: M = algebras.WQSym(QQ).M()
+            sage: M.is_field()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: No way to prove that Word Quasi-symmetric
+            functions over Rational Field in the Monomial basis
+            is an integral domain!
+            sage: M in Fields()
+            False
         """
         self._graded = graded
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1933,13 +1943,10 @@ class WQSymBases(Category_realization_of_parent):
             sage: WQSymBases(WQSym, False)
             Category of filtered bases of Word Quasi-symmetric functions over Integer Ring
         """
-        if self._graded:
-            type_str = "graded"
-        else:
-            type_str = "filtered"
-        return "Category of {} bases of {}".format(type_str, self.base())
+        type_str = "graded" if self._graded else "filtered"
+        return f"Category of {type_str} bases of {self.base()}"
 
-    def super_categories(self):
+    def super_categories(self) -> list:
         r"""
         The super categories of ``self``.
 
@@ -1976,7 +1983,7 @@ class WQSymBases(Category_realization_of_parent):
                 cat.Connected()]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `WQSym`.
 
@@ -2035,18 +2042,6 @@ class WQSymBases(Category_realization_of_parent):
                 return self.monomial(self._indices(p))
             except TypeError:
                 raise ValueError("cannot convert %s into an element of %s" % (p, self._indices))
-
-        def is_field(self, proof=True):
-            """
-            Return whether ``self`` is a field.
-
-            EXAMPLES::
-
-                sage: M = algebras.WQSym(QQ).M()
-                sage: M.is_field()
-                False
-            """
-            return False
 
         def one_basis(self):
             """

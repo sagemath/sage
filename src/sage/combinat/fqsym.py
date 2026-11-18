@@ -17,18 +17,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
+from sage.categories.hopf_algebras import HopfAlgebras
+from sage.categories.realizations import Category_realization_of_parent
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutation, Permutations
+from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+from sage.combinat.words.word import Word
 from sage.misc.bindable_class import BindableClass
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.hopf_algebras import HopfAlgebras
-from sage.categories.realizations import Category_realization_of_parent
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.permutation import Permutations, Permutation
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-from sage.combinat.words.word import Word
 
 lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
@@ -44,7 +44,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
       of the names that the basis can be constructed from FQSym
     """
 
-    def __init__(self, alg):
+    def __init__(self, alg) -> None:
         r"""
         Initialize ``self``.
 
@@ -350,7 +350,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     - [GriRei18]_
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -381,7 +381,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         G.module_morphism(G._G_to_F_on_basis,
                           codomain=F, category=category).register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -899,7 +899,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "M"
         _basis_name = "Monomial"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1225,7 +1225,8 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 # See the FQSymBases.ElementMethods.star_involution doc
                 # for the formula we're using here.
                 M = self.parent()
-                return M._from_dict({w.complement().reverse(): c for w, c in self},
+                return M._from_dict({w.complement().reverse(): c
+                                     for w, c in self},
                                     remove_zeros=False)
 
 
@@ -1234,7 +1235,7 @@ class FQSymBases(Category_realization_of_parent):
     The category of graded bases of `FQSym` indexed by permutations.
     """
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of an `FQSym`.
 
@@ -1249,10 +1250,18 @@ class FQSymBases(Category_realization_of_parent):
             sage: bases = FQSymBases(FQSym)
             sage: FQSym.F() in bases
             True
+
+            sage: F = algebras.FQSym(QQ).F()
+            sage: F.is_field()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: No way to prove that Free Quasi-symmetric functions over Rational Field in the F basis is an integral domain!
+            sage: F in Fields()
+            False
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1265,7 +1274,7 @@ class FQSymBases(Category_realization_of_parent):
         """
         return "Category of bases of {}".format(self.base())
 
-    def super_categories(self):
+    def super_categories(self) -> list:
         r"""
         The super categories of ``self``.
 
@@ -1288,7 +1297,7 @@ class FQSymBases(Category_realization_of_parent):
                 ]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `FQSym`.
 
@@ -1344,19 +1353,7 @@ class FQSymBases(Category_realization_of_parent):
                 return Family(self._indices, self.monomial)
             return Family(Permutations(degree), self.monomial)
 
-        def is_field(self, proof=True):
-            """
-            Return whether this `FQSym` is a field.
-
-            EXAMPLES::
-
-                sage: F = algebras.FQSym(QQ).F()
-                sage: F.is_field()
-                False
-            """
-            return False
-
-        def some_elements(self):
+        def some_elements(self) -> list:
             """
             Return some elements of the free quasi-symmetric functions.
 
