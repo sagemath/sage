@@ -4991,6 +4991,18 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         sage: L = LazyDirichletSeriesRing(QQ, 's')
         sage: L in PrincipalIdealDomains
         False
+
+    A callable input, e.g. a polynomial or a rational function, is
+    converted pointwise: it is evaluated at the positive integers, the
+    value at `n` becoming the coefficient of `n^s`.  In particular,
+    `1 + 2 n` is not the truncation `[1, 2]`::
+
+        sage: n = polygen(QQ, 'n')
+        sage: D = LazyDirichletSeriesRing(QQ, 'z')
+        sage: D(1 + 2*n)
+        3 + 5/2^z + 7/3^z + 9/4^z + 11/5^z + 13/6^z + 15/7^z + O(1/(8^z))
+        sage: D([1, 2])
+        1 + 2/2^z
     """
     Element = LazyDirichletSeries
 
