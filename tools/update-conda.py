@@ -36,6 +36,9 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
+# Temporary: there are no conda-forge feedstocks for these packages yet, so
+# they are installed from PyPI with pip. Once the feedstocks exist, remove
+# this and install them from conda-forge like the other dependencies.
 pypi_data_packages = {
     "elliptic-curve-databases",
     "graph-databases",
@@ -107,7 +110,7 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             project = tomllib.load(f)
         pip_dependencies = sorted(
             requirement
-            for requirement in project["project"]["dependencies"]
+            for requirement in get_optional_dependencies(project)
             if Requirement(requirement).name in pypi_data_packages
         )
         for tag in tags:

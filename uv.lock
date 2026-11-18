@@ -2409,10 +2409,8 @@ dependencies = [
     { name = "cypari2", marker = "sys_platform != 'win32'" },
     { name = "cysignals" },
     { name = "cython" },
-    { name = "elliptic-curve-databases" },
     { name = "fpylll", marker = "sys_platform != 'win32'" },
     { name = "gmpy2" },
-    { name = "graph-databases" },
     { name = "ipykernel" },
     { name = "ipython" },
     { name = "ipywidgets" },
@@ -2426,7 +2424,6 @@ dependencies = [
     { name = "pillow" },
     { name = "pkgconfig" },
     { name = "platformdirs" },
-    { name = "polytope-databases" },
     { name = "pplpy", marker = "sys_platform != 'win32'" },
     { name = "primecountpy", marker = "sys_platform != 'win32'" },
     { name = "ptyprocess" },
@@ -2438,6 +2435,11 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+databases = [
+    { name = "elliptic-curve-databases" },
+    { name = "graph-databases" },
+    { name = "polytope-databases" },
+]
 extra = [
     { name = "igraph" },
     { name = "lrcalc", marker = "sys_platform != 'win32'" },
@@ -2501,10 +2503,10 @@ requires-dist = [
     { name = "cypari2", marker = "sys_platform != 'win32'", url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" },
     { name = "cysignals", specifier = ">=1.12.1" },
     { name = "cython", specifier = ">=3.1.0" },
-    { name = "elliptic-curve-databases", specifier = ">=0.8.3" },
+    { name = "elliptic-curve-databases", marker = "extra == 'databases'", specifier = ">=0.8.3" },
     { name = "fpylll", marker = "sys_platform != 'win32'", specifier = ">=0.5.9" },
     { name = "gmpy2", specifier = ">=2.1.5" },
-    { name = "graph-databases", specifier = ">=20210214.2" },
+    { name = "graph-databases", marker = "extra == 'databases'", specifier = ">=20210214.2" },
     { name = "igraph", marker = "extra == 'extra'" },
     { name = "ipykernel", specifier = ">=5.2.1" },
     { name = "ipython", specifier = ">=8.32.0" },
@@ -2520,7 +2522,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=7.2.0" },
     { name = "pkgconfig" },
     { name = "platformdirs" },
-    { name = "polytope-databases", specifier = ">=20170220.2" },
+    { name = "polytope-databases", marker = "extra == 'databases'", specifier = ">=20170220.2" },
     { name = "pplpy", marker = "sys_platform != 'win32'", specifier = ">=0.8.6" },
     { name = "primecountpy", marker = "sys_platform != 'win32'" },
     { name = "ptyprocess", specifier = ">0.5" },
@@ -2534,7 +2536,7 @@ requires-dist = [
     { name = "sympy", specifier = ">=1.6,<2.0" },
     { name = "traitlets" },
 ]
-provides-extras = ["r", "extra", "test"]
+provides-extras = ["r", "databases", "extra", "test"]
 
 [package.metadata.requires-dev]
 dev = [
