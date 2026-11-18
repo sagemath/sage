@@ -283,7 +283,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         if P._arity == 1:
             def coefficient(n):
                 return sum(self[n].coefficients())
@@ -327,7 +327,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         if P._arity == 1:
             def coefficient(n):
                 return sum(c / M.permutation_group()[0].cardinality()
@@ -639,7 +639,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             1 + X + E_2 + E_3
         """
         S = self.parent()
-        R = S._exact_data_ring
+        R = S._flat_data_ring
 
         if isinstance(self._coeff_stream, Stream_zero):
             return R.zero()
@@ -819,7 +819,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         coeff_stream = self._coeff_stream
         if isinstance(coeff_stream, Stream_zero):
             raise ValueError("compositional inverse does not exist")
-        R = P._exact_data_ring
+        R = P._stream_coefficient_ring
         if (isinstance(coeff_stream, Stream_exact)
             and coeff_stream.order() >= 0
             and coeff_stream._degree == 2):
@@ -836,7 +836,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         if coeff_stream[0]:
             raise ValueError("cannot determine whether the compositional inverse exists")
 
-        X_mol = P._exact_data_ring._indices.subset(1)[0]  # as a molecular species
+        X_mol = P._stream_coefficient_ring._indices.subset(1)[0]  # as a molecular species
         X = P(_SymmetricGroup(1))  # as a lazy species
 
         def coefficient(n):
@@ -877,7 +877,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         if P._arity != 1:
             raise ValueError("arity must be equal to 1")
         log = self.log()
-        P1 = P._exact_data_ring
+        P1 = P._flat_data_ring
         M1 = P1._indices
         A1 = M1._indices
 
@@ -1215,7 +1215,7 @@ class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
         ....:     def __init__(self, parent):
         ....:         G = PermutationGroup([], domain=[1,2,3,4])
         ....:         pi = {0:[1,2],1:[3,4]}
-        ....:         P = parent._exact_data_ring
+        ....:         P = parent._flat_data_ring
         ....:         super().__init__(parent, parent(P(G, pi)))
         ....:     def cycle_index_series(self):
         ....:         s = SymmetricFunctions(QQ).s()
@@ -1252,15 +1252,15 @@ class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
         one = ZZ.one()
 
         if P._arity == 1:
             return L(lambda n: cis[n].principal_specialization(one, one))
 
-        vars = L._exact_data_ring.gens()
-        parents = cis.parent()._exact_data_ring.tensor_factors()
+        vars = L._flat_data_ring.gens()
+        parents = cis.parent()._flat_data_ring.tensor_factors()
 
         def coefficient(n):
             return sum(c * prod(S(la).principal_specialization(one, one)
@@ -1285,15 +1285,15 @@ class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
         one = ZZ.one()
 
         if P._arity == 1:
             return L(lambda n: cis[n].exponential_specialization(one, one))
 
-        vars = L._exact_data_ring.gens()
-        parents = cis.parent()._exact_data_ring.tensor_factors()
+        vars = L._flat_data_ring.gens()
+        parents = cis.parent()._flat_data_ring.tensor_factors()
 
         def coefficient(n):
             return sum(c * prod(S(la).exponential_specialization(one, one)
@@ -1510,14 +1510,14 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
 
         sorder = left._coeff_stream._approximate_order
         gv = min(g._coeff_stream._approximate_order for g in args)
-        R = P._coefficient_ring
-        L = fP._coefficient_ring
+        R = P._stream_coefficient_ring
+        L = fP._stream_coefficient_ring
 
         # composition with zero and singleton species only relabels
         # the sorts.
         if all(isinstance(g._coeff_stream, Stream_zero) or g.is_singleton()
                for g in args):
-            zero = P._coefficient_ring.zero()
+            zero = P._stream_coefficient_ring.zero()
             poly_args = [zero if isinstance(g._coeff_stream, Stream_zero) else g[1]
                          for g in args]
 
@@ -1610,7 +1610,7 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         G = self._args
         m = len(G)  # == F.parent()._arity
         k = self.parent()._arity  # == G[i].parent()._arity
-        names = self.parent()._exact_data_ring._indices._indices._names
+        names = self.parent()._flat_data_ring._indices._indices._names
         labels = _label_sets(k, labels)
         # make label sets disjoint
         U = [(e, i) for l, i in zip(labels, names) for e in l]
@@ -1723,7 +1723,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         """
         N = factorial(n) * self._right_gf[n]
         G = self._right
-        R = G.parent()._exact_data_ring
+        R = G.parent()._stream_coefficient_ring
         left = self._left
         if not left[N]:
             return R.zero()
@@ -1776,7 +1776,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         """
         N = factorial(n) * self._right_gf[n]
         G = self._right
-        R = G.parent()._exact_data_ring
+        R = G.parent()._stream_coefficient_ring
         left = self._left
         if not left[N]:
             return R.zero()
@@ -1878,7 +1878,7 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
         if P._arity != 1:
             raise NotImplementedError("multisort arithmetic product is not yet implemented")
 
-        R = P._exact_data_ring
+        R = P._stream_coefficient_ring
 
         def coefficient(n):
             if not n:
@@ -2109,7 +2109,7 @@ class DerivativeSpeciesElement(LazyCombinatorialSpeciesElement):
         self._F = F
         self._sort = sort
         P = F.parent()
-        sort_variable = P._exact_data_ring._first_ngens(P._arity)[sort]
+        sort_variable = P._flat_data_ring._first_ngens(P._arity)[sort]
         coeff_stream = Stream_map_coefficients(
             F._coeff_stream,
             lambda c: c._derivative(sort_variable),
@@ -2188,7 +2188,7 @@ class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
              + (X^5+5*X^4*Y+10*X^3*Y^2+10*X^2*Y^3+5*X*Y^4+Y^5)
              + (X^6+6*X^5*Y+15*X^4*Y^2+20*X^3*Y^3+15*X^2*Y^4+6*X*Y^5+Y^6) + O^7
         """
-        return tuple([self(g) for g in self._exact_data_ring._first_ngens(n)])
+        return tuple([self(g) for g in self._flat_data_ring._first_ngens(n)])
 
     def __init__(self, base_ring, names, sparse):
         r"""
@@ -2230,7 +2230,7 @@ class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
         self.options._add_option('rename',
-                                 {'link_to': (self._exact_data_ring._indices._indices.options, 'rename')})
+                                 {'link_to': (self._flat_data_ring._indices._indices.options, 'rename')})
 
 
 class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
@@ -2391,7 +2391,7 @@ class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: E is L.Sets()
             True
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
         A = P._indices._indices
         S = parent(lambda n: A(_SymmetricGroup(n), check=False) if n else P.one())
         super().__init__(parent, S._coeff_stream)
@@ -2436,7 +2436,7 @@ class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L.gen().exp()
 
     def isotype_generating_series(self):
@@ -2454,7 +2454,7 @@ class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L(constant=1)
 
     def cycle_index_series(self):
@@ -2493,7 +2493,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: C[1000].degree()
             1000
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
         A = P._indices._indices
         S = parent(lambda n: A(CyclicPermutationGroup(n), check=False), valuation=1)
         super().__init__(parent, S._coeff_stream)
@@ -2544,7 +2544,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return -(L.one()-L.gen()).log()
 
     def isotype_generating_series(self):
@@ -2562,7 +2562,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L(constant=1, valuation=1)
 
 
@@ -2581,7 +2581,7 @@ class PolygonSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: P is L.Polygons()
             True
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
         A = P._indices._indices
         S = parent(lambda n: A(DihedralGroup(n), check=False), valuation=3)
         super().__init__(parent, S._coeff_stream)
@@ -2613,7 +2613,7 @@ class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: Eo is L.OrientedSets()
             True
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
         M = P._indices
         A = P._indices._indices
 
@@ -2651,7 +2651,7 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: Ch is L.Chains()
             True
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
 
         def coefficient(n):
             if not n:
@@ -2716,7 +2716,7 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         x = L.gen()
         return (1 / (1 - x) + 1 + x) / 2
 
@@ -2735,7 +2735,7 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L(constant=1)
 
     def cycle_index_series(self):
@@ -2798,7 +2798,7 @@ class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
             sage: L.Graphs(True) is L.Graphs(connected=1)
             True
         """
-        P = parent._exact_data_ring
+        P = parent._stream_coefficient_ring
         self._connected = bool(connected)
         if self._connected:
             S = parent(lambda n: 0 if not n else sum(P(G.automorphism_group()) for G in graphs.nauty_geng("%s -c" % n)))
@@ -2870,7 +2870,7 @@ class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         s = L(lambda n: 2**ZZ(n).binomial(2) / ZZ(n).factorial())
         if self._connected:
             return s.log()
@@ -3016,7 +3016,7 @@ class SetPartitionSpecies(CompositionSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L(lambda n: SetPartitions(n).cardinality() / factorial(n))
 
     def isotype_generating_series(self):
@@ -3032,7 +3032,7 @@ class SetPartitionSpecies(CompositionSpeciesElement, UniqueRepresentation,
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._exact_data_ring._indices._indices.variable_names())
+                                P._flat_data_ring._indices._indices.variable_names())
         return L(lambda n: Partitions(n).cardinality())
 
 
