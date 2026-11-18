@@ -14050,11 +14050,12 @@ cdef class Matrix(Matrix1):
             C.set_immutable()
             return C
 
-        # Use classical=True to ensure that we don't get a permuted L.
+        # Use algorithm="classical" to ensure that we don't get a
+        # permuted L.
         cdef Matrix L  # block_ldlt() results
         cdef list d    # block_ldlt() results
         try:
-            _, L, d = self._block_ldlt(True)
+            _, L, d = self._block_ldlt(True, False)
         except ValueError:
             # If the matrix was positive-definite, that would
             # have worked.
@@ -15177,7 +15178,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg.format(d))
         return L, vector(L.base_ring(), d)
 
-    cdef tuple _block_ldlt(self, bint classical):
+    cdef tuple _block_ldlt(self, bint classical, bint greedy):
         r"""
         Perform a user-unfriendly block-`LDL^{T}` factorization of the
         Hermitian matrix `A`
@@ -15207,6 +15208,8 @@ cdef class Matrix(Matrix1):
         cdef str cache_string = "_block_ldlt"
         if classical:
             cache_string += "_classical"
+        elif greedy:
+            cache_string += "_greedy"
         cdef tuple result = self.fetch(cache_string)
         if result is not None:
             return result
@@ -15253,9 +15256,12 @@ cdef class Matrix(Matrix1):
         # The current 1x1 pivot candidate and its absolute value.
         cdef RingElement A_kk, A_kk_abs
 
-        # Used in both row searches, to hold the absolute value of
+        # Alternate diagonal pivot candidate.
+        cdef RingElement A_rr, A_rr_abs
+
+        # Used in both row searches, to hold the (absolute) value of
         # either A_kj or A_rj.
-        cdef RingElement A_ij_abs
+        cdef RingElement A_ij, A_ij_abs
 
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
         cdef RingElement alpha = (one + ring(17).sqrt()) / ring(8)
@@ -15306,12 +15312,14 @@ cdef class Matrix(Matrix1):
                 k += 1
                 continue
 
-            if classical:
+            if classical or (greedy and A_kk):
                 try:
-                    # This is a "step zero" that doesn't appear in the published algorithms.
-                    # It's a back door that lets us escape with only the standard non-block
-                    # non-pivoting LDL^T factorization. This allows us to implement e.g.
-                    # indefinite_factorization() in terms of this method.
+                    # This is a "step zero" that doesn't appear in the
+                    # published algorithms. It's a back door that
+                    # lets us escape with only the standard non-block
+                    # non-pivoting LDL^T factorization. This allows us
+                    # to implement e.g. indefinite_factorization() in
+                    # terms of this method.
                     E = one_by_one_space(A_kk)
                     E.set_immutable()
                     d.append(E)
@@ -15319,7 +15327,9 @@ cdef class Matrix(Matrix1):
                     k += 1
                     continue
                 except ZeroDivisionError:
-                    raise ValueError("matrix has no classical LDL^T factorization")
+                    raise ValueError(
+                        "matrix has no classical LDL^T factorization"
+                    )
 
             # Find the largest subdiagonal entry (in magnitude) in the
             # kth column. This occurs prior to Step (1) in Higham,
@@ -15330,14 +15340,16 @@ cdef class Matrix(Matrix1):
 
             # We set r = j > k >= 0 in the loop if we find a nonzero
             # subdiagonal entry. If r is still zero at the end, that
-            # indicates that the entire subdiagonal is zero. Testing
-            # the integer r is faster than testing omega_1.
+            # indicates that the entire subdiagonal is zero.
+            #
+            # Testing the integer r is faster than testing omega_1.
             r = 0
             for j in range(k+1, n):
-                # Imagine i = k for A_ij_abs to make sense. We scan
+                # Imagine i = k for A_ij to make sense. We scan
                 # the row instead of the column for speed; matrices in
                 # Sage are row-based.
-                A_ij_abs = A.get_unsafe(k, j).abs()
+                A_ij = A.get_unsafe(k, j)
+                A_ij_abs = A_ij.abs()
                 if A_ij_abs > omega_1:
                     omega_1 = A_ij_abs
                     # We record the index "r" that corresponds to
@@ -15346,6 +15358,9 @@ cdef class Matrix(Matrix1):
                     # branch of Higham's Step (1), separate from
                     # his computation of omega_1.
                     r = j
+                    if greedy:
+                        # Any nonzero entry will do
+                        break
 
             if r == 0:
                 # In this case, our matrix looks like
@@ -15362,6 +15377,54 @@ cdef class Matrix(Matrix1):
                 d.append(E)
                 k += 1
                 continue
+
+            if greedy:
+                # If r == k+1, the top-left 2x2 block is already a
+                # valid pivot, but it seems prudent to search the
+                # diagonal for 1x1 pivots first, falling back to the
+                # 2x2 block only when no 1x1 block is found.
+                for j in range(k+1, n):
+                    A_ij = A.get_unsafe(j, j)
+                    if A_ij:
+                        # 1x1 pivot, swap rows/cols k,j
+                        E = one_by_one_space(A_ij)
+                        E.set_immutable()
+                        d.append(E)
+                        A.swap_columns_c(k, j)
+                        A.swap_rows_c(k, j)
+                        p_k = p[k]
+                        p[k] = p[j]
+                        p[j] = p_k
+                        _block_ldlt_pivot1x1(A, k)
+                        k += 1
+                        # We'd like to "continue" the "k" loop here,
+                        # but python doesn't make it easy. Instead we
+                        # break the inner loop, bypass the "else",
+                        # and wind up at the outer continue.
+                        break
+                else:
+                    # The diagonal is zero and the top-left 2x2 block is
+                    # zero, but r being nonzero means that A[k,r] is too.
+                    # Swap rows/cols k+1,r and do a 2x2 pivot.
+                    A.swap_columns_c(k+1, r)
+                    A.swap_rows_c(k+1, r)
+                    p_k = p[k+1]
+                    p[k+1] = p[r]
+                    p[r] = p_k
+                    E = A[k:k+2, k:k+2]
+                    E.set_immutable()
+                    d.append(E)
+                    _block_ldlt_pivot2x2(A, k)
+                    k += 2
+                    continue
+
+                # This is the "continue" from the non-zero row search.
+                continue
+
+            # Bunch-Kaufman
+            # =============
+            # We're past the shortcuts for the classical/greedy
+            # algorithms, and are entering Bunch-Kaufman.
 
             A_kk_abs = A_kk.abs()  # Store to avoid an extra abs()
             if A_kk_abs > alpha*omega_1:
@@ -15453,42 +15516,63 @@ cdef class Matrix(Matrix1):
         self.cache(cache_string, result)
         return result
 
-    def block_ldlt(self, classical=False):
+    def block_ldlt(self, classical=False, algorithm=None):
         r"""
         Compute a block-`LDL^{T}` factorization of a Hermitian
         matrix.
 
-        The standard `LDL^{T}` factorization of a positive-definite
-        matrix `A` factors it as `A = LDL^{T}` where `L` is
-        unit-lower-triangular and `D` is diagonal. If one allows
-        row/column swaps via a permutation matrix `P`, then this
-        factorization can be extended to many positive-semidefinite
-        matrices `A` via the factorization `P^{T}AP = LDL^{T}` that
-        places the zeros at the bottom of `D` to avoid division by
-        zero. These factorizations extend easily to complex Hermitian
-        matrices when one replaces the transpose by the
-        conjugate-transpose.
+        The classical `LDL^{T}` factorization of a real symmetric
+        positive-definite matrix `A` is `A = LDL^{T}`, where `L` is
+        unit-lower-triangular and `D` is diagonal. If we are allowed
+        to make row/column swaps using a permutation matrix `P`, this
+        extends to all symmetric `A` having nonzero diagonal,
+        producing `P^{T}AP = LDL^{T}`. If we furthermore allow `D` to
+        contain `2 \times 2` blocks, then every real symmetric `A` has
+        such a factorization. The ideas extend easily to complex
+        Hermitian matrices using the conjugate-transpose.
 
-        However, we can go one step further. If, in addition, we allow
-        `D` to potentially contain `2 \times 2` blocks on its
-        diagonal, then every real or complex Hermitian matrix `A` can
-        be factored as `A = PLDL^{*}P^{T}`. When the row/column swaps
-        are made intelligently, this process is numerically stable
-        over inexact rings like ``RDF``.  Bunch and Kaufman describe
-        such a "pivot" scheme that is suitable for the solution of
-        Hermitian systems, and that is how we choose our row and
-        column swaps.
+        When the row/column swaps are chosen intelligently, there are
+        stability guarantees for the solution of `Ax = b` over an
+        inexact ring using the factored matrix. The method by which
+        the swaps are chosen is called a pivot scheme. Choosing the
+        best row/column -- called complete pivoting, as in Gaussian
+        elimination -- would involve scanning the entire matrix at
+        each step. To avoid that, Bunch and Kaufman devised a pivot
+        scheme that retains some stability guarantees while scanning
+        only one row/column at each step. This "bunch-kaufman"
+        algorithm is used by default in inexact rings.
+
+        Over exact rings, where stability is less of an issue, a
+        "greedy" algorithm is used instead. With a preference for `1
+        \times 1` blocks, the greedy algorithm takes the first usable
+        pivot. This will scan fewer entries and making fewer
+        comparisons at each step, ensuring only that we do not divide
+        by zero.
 
         INPUT:
 
-        - ``classical`` -- boolean (default: ``False``); whether or not to
-          attempt a classical non-block `LDL^{T}` factorization with no
-          row/column swaps.
+        - ``algorithm`` -- string (default: ``None``); one of
+
+          - ``None`` -- use the greedy algorithm in exact and
+            symbolic rings, and Bunch-Kaufman partial pivoting
+            everywhere else.
+
+          - ``"bunch-kaufman"`` -- use Bunch-Kaufman partial pivoting.
+
+          - ``"greedy"`` -- use a greedy algorithm that chooses the
+            first usable (does not divide by zero) pivot.
+
+          - ``"classical"`` -- attempts a classical non-block `LDL^{T}`
+            factorization with no row/column swaps.
+
+        - ``classical`` -- boolean (default: ``False``); deprecated
+          alias for ``algorithm="classical"``.
+
 
         .. WARNING::
 
             Not all matrices have a classical `LDL^{T}` factorization.
-            Set ``classical=True`` at your own risk, preferably after
+            Set ``algorithm="classical"`` at your own risk, preferably after
             verifying that your matrix is positive-definite and (over
             inexact rings) not ill-conditioned.
 
@@ -15506,16 +15590,29 @@ cdef class Matrix(Matrix1):
         The matrix `L` is cached, hence immutable. So is `D` when it
         consists of a single block.
 
-        With ``classical=True``, the permutation matrix `P` is always
-        an identity matrix and the diagonal blocks are always
+        With ``algorithm="classical"``, the permutation matrix `P` is
+        always an identity matrix and the diagonal blocks are always
         one-by-one. A :exc:`ValueError` is raised if the matrix has no
         classical `LDL^{T}` factorization.
 
         ALGORITHM:
 
         We essentially follow "Algorithm A" in the paper by Bunch and
-        Kaufman [BK1977]_ that describes the stable pivoting strategy.
-        The same scheme is described by Higham [Hig2002]_.
+        Kaufman [BK1977]_, the partial pivoting strategy. The same
+        scheme is described by Higham [Hig2002]_. Trap doors for the
+        classical and greedy algorithms have been inserted to exit the
+        loop sooner than usual:
+
+          * The classical algorithm blindly attempts a `1 \times 1`
+            pivot at the beginning of each iteration.
+
+          * The greedy algorithm waits for the scan of the current row
+            to proceed; if the row is identically zero, the iteration
+            is skipped. If not, the first nonzero `1 \times 1`
+            diagonal entry is permuted into place and used as the
+            pivot. If all diagonal entries are zero, a `2 \times 2`
+            pivot is constructed using the nonzero entry found in the
+            row scan.
 
         .. SEEALSO::
 
@@ -15560,7 +15657,8 @@ cdef class Matrix(Matrix1):
             sage: H = RDF(1e200)
             sage: A = matrix(RDF, [[0, 1, 0], [1, 1, H], [0, H, 1]])
             sage: P, L, D = A.block_ldlt()
-            sage: any(x.is_infinity() or x.is_NaN() for x in L.list() + D.list())
+            sage: any(x.is_infinity() or x.is_NaN()
+            ....:     for x in L.list() + D.list())
             False
             sage: P.T * A * P == L * D * L.T
             True
@@ -15817,7 +15915,26 @@ cdef class Matrix(Matrix1):
         """
         cdef Matrix P, L, D   # output matrices
 
-        p, L, d = self._block_ldlt(classical)
+        if classical:
+            from sage.misc.superseded import deprecation
+            deprecation(1, 'classical=True is deprecated, ' +
+                           'use algorithm="classical" instead')
+            algorithm = "classical"
+
+        if algorithm is None:
+            R = self.base_ring()
+            if R.is_exact() or isinstance(R, SymbolicRing):
+                algorithm = "greedy"
+            else:
+                algorithm = "bunch-kaufman"
+
+        if algorithm == "classical":
+            p, L, d = self._block_ldlt(True, False)
+        elif algorithm == "bunch-kaufman":
+            p, L, d = self._block_ldlt(False, False)
+        elif algorithm == "greedy":
+            p, L, d = self._block_ldlt(False, True)
+
         MS = L.matrix_space()
         P = MS.matrix(lambda i, j: p[j] == i)
 
@@ -15860,7 +15977,11 @@ cdef class Matrix(Matrix1):
             return True  # vacuously
 
         cdef list d
-        _, _, d = self._block_ldlt(False)
+        cdef bint greedy = False
+        if R.is_exact() or isinstance(R, SymbolicRing):
+            # mimic how block_ldlt() chooses an algorithm
+            greedy = True
+        _, _, d = self._block_ldlt(False, greedy)
 
         # Check each 1x1 block for a nonpositive (negative) entry. If
         # we don't find any, the matrix is positive-(semi)definite. The
