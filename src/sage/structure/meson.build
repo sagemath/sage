@@ -21,6 +21,7 @@ py.install_sources(
   'dynamic_class.py',
   'element.pxd',
   'element.pyx',
+  'element.pyi',
   'element_wrapper.pxd',
   'element_wrapper.pyi',
   'element_wrapper.pyx',

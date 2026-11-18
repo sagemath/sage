@@ -1000,6 +1000,43 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
     .. automethod:: _sage_
     """
+    def _fricas_init_(self):
+        """
+        Return the variable name of this element in the FriCAS session.
+
+        Elements are passed by name (reference), not by their printed
+        form, so that their FriCAS type is preserved and so that nested
+        conversions work even when the printed form is not valid input
+        syntax.
+
+        EXAMPLES::
+
+            sage: m = fricas.maxShift(2)
+            sage: fricas([m]).typeOf()
+            List(GuessOption)
+
+        Without this method, ``m`` would be serialized by its printed
+        form ``maxDerivative = 2``, which FriCAS parses as an equation
+        between two polynomials, so that ``guessRec(l, [m])`` would
+        fail to match ``guessRec(List F, List GuessOption)``::
+
+            sage: from sage.combinat.q_analogues import q_factorial
+            sage: l = [q_factorial(n) for n in range(13)]
+            sage: fricas.guessRec(l, [fricas.maxShift(2)])
+                                                2
+             [[f(n): - f(n)f(n + 2) + q f(n + 1)  + f(n)f(n + 1) = 0, f(0) = 1, f(1) = 1]]
+
+        Finally, it also makes nesting elements whose printed form is
+        not valid input syntax work::
+
+            sage: fricas([fricas('matrix [[1,2],[3,4]]')])
+             +1  2+
+            [|    |]
+             +3  4+
+        """
+        self._check_valid()
+        return self.name()
+
     def __len__(self):
         """
         Return the length of a list.

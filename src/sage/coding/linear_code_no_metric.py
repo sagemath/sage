@@ -666,7 +666,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.encoder("Systematic").systematic_positions()
 
-    def is_information_set(self, positions):
+    def is_information_set(self, positions) -> bool:
         """
         Return whether the given positions form an information set.
 
@@ -972,7 +972,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self == self.dual_code()
 
-    def is_self_orthogonal(self):
+    def is_self_orthogonal(self) -> bool:
         """
         Return ``True`` if this code is self-orthogonal and ``False``
         otherwise.
