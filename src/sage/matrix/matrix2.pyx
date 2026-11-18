@@ -15330,9 +15330,9 @@ cdef class Matrix(Matrix1):
             # the integer r is faster than testing omega_1.
             r = 0
             for i in range(k+1, n):
-                a_ik_abs = A.get_unsafe(i, k).abs()
-                if a_ik_abs > omega_1:
-                    omega_1 = a_ik_abs
+                a_ki_abs = A.get_unsafe(k, i).abs()
+                if a_ki_abs > omega_1:
+                    omega_1 = a_ki_abs
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
