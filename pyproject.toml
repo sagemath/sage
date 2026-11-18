@@ -82,6 +82,14 @@ urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
 R = ['rpy2 >=3.3']
+# Databases used by Sage's interfaces and doctests. They are optional
+# because some of them are only useful together with optional libraries,
+# for example the elliptic curve database with eclib.
+databases = [
+  'elliptic-curve-databases >=0.8.3',
+  'graph-databases >=20210214.2',
+  'polytope-databases >=20170220.2',
+]
 extra = [
   'igraph',
   'lrcalc ~=2.1; sys_platform != "win32"',
@@ -175,9 +183,6 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/sagemath-elliptic-curves",
-  "pkg:generic/sagemath-graphs",
-  "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/tachyon",
 ]
 
