@@ -102,11 +102,11 @@ jobs:
       - name: Check that all modules can be imported
         shell: bash -l {0}
         run: |
-          # We want pytest to ignore sage_setup and sage_docbuild when
-          # they are not installed (not able to be imported). We also
+          # We want pytest to ignore sage_docbuild when
+          # it is not installed (not able to be imported). We also
           # kill src/build-docs.py because it is used to build the
           # docs and thus imports sage_docbuild.
-          rm -R src/sage_setup src/sage_docbuild src/build-docs.py
+          rm -R src/sage_docbuild src/build-docs.py
 
           # Increase the length of the lines in the "short summary"
           export COLUMNS=120

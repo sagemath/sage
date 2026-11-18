@@ -46,9 +46,9 @@ class InterpreterSpec:
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
+            sage: from internal import *
+            sage: from internal.specs.rdf import RDFInterpreter
+            sage: from internal.specs.rr import RRInterpreter
             sage: interp = RDFInterpreter()
             sage: interp.c_header
             '#include <gsl/gsl_math.h>'
@@ -83,8 +83,8 @@ class InterpreterSpec:
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
+            sage: from internal import *
+            sage: from internal.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: interp.instr_descs[5].opcode
             5
@@ -128,10 +128,10 @@ class StackInterpreter(InterpreterSpec):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters.internal import *
-            sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
-            sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
-            sage: from sage_setup.autogen.interpreters.internal.specs.element import ElementInterpreter
+            sage: from internal import *
+            sage: from internal.specs.rdf import RDFInterpreter
+            sage: from internal.specs.rr import RRInterpreter
+            sage: from internal.specs.element import ElementInterpreter
             sage: rdf = RDFInterpreter()
             sage: rr = RRInterpreter()
             sage: el = ElementInterpreter()

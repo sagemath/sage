@@ -120,10 +120,6 @@ Fast Expression Evaluation
    sage/ext/fast_callable
    sage/ext/fast_eval
 
-.. The docbuilder only accepts modules from src/sage/* in the reference
-.. manual (#18216)
-..   sage_setup/autogen/interpreters
-
 .. Automatically generated interpreters, probably shouldn't be documented.
 ..   sage/ext/interpreters/wrapper_cdf
 ..   sage/ext/interpreters/wrapper_el

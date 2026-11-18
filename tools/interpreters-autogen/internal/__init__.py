@@ -138,8 +138,8 @@ def build_interp(interp_spec, dir):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters.internal import *
-        sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
+        sage: from internal import *
+        sage: from internal.specs.rdf import RDFInterpreter
         sage: testdir = tmp_dir()
         sage: rdf_interp = RDFInterpreter()
         sage: build_interp(rdf_interp, testdir)
@@ -180,7 +180,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
 
     Monolithic build::
 
-        sage: from sage_setup.autogen.interpreters.internal import *
+        sage: from internal import *
         sage: testdir = tmp_dir()
         sage: rebuild(testdir)
         Generating interpreters for fast_callable in ...

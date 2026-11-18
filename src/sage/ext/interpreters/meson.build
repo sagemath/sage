@@ -23,10 +23,10 @@ interpreters = custom_target(
     'interp_rr.c',
     '__init__.py',
   ],
-  input: '../../../../tools/autogen/interpreters/internal/__init__.py',
+  input: '../../../../tools/interpreters-autogen/internal/__init__.py',
   command: [
     py,
-    files('../../../../tools/autogen/interpreters/__main__.py'),
+    files('../../../../tools/interpreters-autogen/__main__.py'),
     '@OUTDIR@',
   ],
   # Manually install the generated files instead of using install_sources
