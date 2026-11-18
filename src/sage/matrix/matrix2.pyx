@@ -15253,6 +15253,9 @@ cdef class Matrix(Matrix1):
         # The current 1x1 pivot candidate and its absolute value.
         cdef RingElement A_kk, A_kk_abs
 
+        # Used in the row/column search.
+        cdef RingElement A_ki_abs, A_rj_abs
+
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
         cdef RingElement alpha = (one + ring(17).sqrt()) / ring(8)
 
@@ -15330,9 +15333,9 @@ cdef class Matrix(Matrix1):
             # the integer r is faster than testing omega_1.
             r = 0
             for i in range(k+1, n):
-                a_ki_abs = A.get_unsafe(k, i).abs()
-                if a_ki_abs > omega_1:
-                    omega_1 = a_ki_abs
+                A_ki_abs = A.get_unsafe(k, i).abs()
+                if A_ki_abs > omega_1:
+                    omega_1 = A_ki_abs
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
@@ -15382,9 +15385,9 @@ cdef class Matrix(Matrix1):
             for j in range(k, n):
                 if j == r:
                     continue
-                a_rj_abs = A.get_unsafe(r, j).abs()
-                if a_rj_abs > omega_r:
-                    omega_r = a_rj_abs
+                A_rj_abs = A.get_unsafe(r, j).abs()
+                if A_rj_abs > omega_r:
+                    omega_r = A_rj_abs
 
             if A_kk_abs*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
