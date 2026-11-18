@@ -15253,8 +15253,9 @@ cdef class Matrix(Matrix1):
         # The current 1x1 pivot candidate and its absolute value.
         cdef RingElement A_kk, A_kk_abs
 
-        # Used in the row/column search.
-        cdef RingElement A_ki_abs, A_rj_abs
+        # Used in both row searches, to hold the absolute value of
+        # either A_kj or A_rj.
+        cdef RingElement A_ij_abs
 
         # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
         cdef RingElement alpha = (one + ring(17).sqrt()) / ring(8)
@@ -15327,21 +15328,24 @@ cdef class Matrix(Matrix1):
             # because "lambda" can lead to some confusion.
             omega_1 = zero
 
-            # We set r = i > k >= 0 in the loop if we find a nonzero
+            # We set r = j > k >= 0 in the loop if we find a nonzero
             # subdiagonal entry. If r is still zero at the end, that
             # indicates that the entire subdiagonal is zero. Testing
             # the integer r is faster than testing omega_1.
             r = 0
-            for i in range(k+1, n):
-                A_ki_abs = A.get_unsafe(k, i).abs()
-                if A_ki_abs > omega_1:
-                    omega_1 = A_ki_abs
+            for j in range(k+1, n):
+                # Imagine i = k for A_ij_abs to make sense. We scan
+                # the row instead of the column for speed; matrices in
+                # Sage are row-based.
+                A_ij_abs = A.get_unsafe(k, j).abs()
+                if A_ij_abs > omega_1:
+                    omega_1 = A_ij_abs
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
                     # branch of Higham's Step (1), separate from
                     # his computation of omega_1.
-                    r = i
+                    r = j
 
             if r == 0:
                 # In this case, our matrix looks like
@@ -15385,9 +15389,10 @@ cdef class Matrix(Matrix1):
             for j in range(k, n):
                 if j == r:
                     continue
-                A_rj_abs = A.get_unsafe(r, j).abs()
-                if A_rj_abs > omega_r:
-                    omega_r = A_rj_abs
+                # Imagine i = r for A_rj_abs to make sense.
+                A_ij_abs = A.get_unsafe(r, j).abs()
+                if A_ij_abs > omega_r:
+                    omega_r = A_ij_abs
 
             if A_kk_abs*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
