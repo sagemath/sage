@@ -15435,41 +15435,7 @@ cdef class Matrix(Matrix1):
             E = A[k:k+2, k:k+2]
             E.set_immutable()
             d.append(E)
-
-            C = A[k+2:n, k:k+2]
-            B = A[k+2:, k+2:]
-
-            # We don't actually need the inverse of E, what we really need
-            # is C*E.inverse(), and that can be found by setting
-            #
-            #   X = C*E.inverse()   <====>   XE = C.
-            #
-            # Then "X" can be found easily by solving a system.  Note: I
-            # do not actually know that sage solves the system more
-            # intelligently, but this is still The Right Thing To Do.
-            CE_inverse = E.solve_left(C)
-
-            schur_complement = B - (CE_inverse*C.conjugate_transpose())
-
-            # Compute the Schur complement that we'll work on during
-            # the following iteration, and store it back in the lower-
-            # right-hand corner of "A".
-            for i in range(n-k-2):
-                for j in range(i+1):
-                    A.set_unsafe(k+2+i, k+2+j, schur_complement[i, j])
-                    A.set_unsafe(k+2+j, k+2+i, schur_complement[j, i])
-
-            # The on- and above-diagonal entries of "L" will be fixed
-            # later, so we only need to worry about the lower-left entry
-            # of the 2x2 identity matrix that belongs at the top of the
-            # new column of "L".
-            A.set_unsafe(k+1, k, zero)
-            for i in range(n-k-2):
-                for j in range(2):
-                    # Store the new (k and (k+1)st) columns of "L" within
-                    # the lower-left-hand corner of "A".
-                    A.set_unsafe(k+i+2, k+j, CE_inverse[i, j])
-
+            _block_ldlt_pivot2x2(A, k)
             k += 2
 
         for i in range(n):
@@ -21122,7 +21088,7 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
     to return zero/one so that ``1`` can be used to indicate that
     a python exception occurred.
     """
-    cdef Py_ssize_t i, j  # dumy loop indices
+    cdef Py_ssize_t i, j  # loop indices
     cdef Py_ssize_t n = A._nrows
     pivot = A.get_unsafe(k, k)
 
@@ -21145,5 +21111,59 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
         A.set_unsafe(k+i+1,
                      k,
                      A.get_unsafe(k+i+1, k)/ pivot)
+
+    return 0
+
+
+cdef inline bint _block_ldlt_pivot2x2(Matrix A, Py_ssize_t k) except 1:
+    r"""
+    Update the `n`-by-`n` matrix `A` as part of a 2x2 pivot (``E``) in
+    the ``k,k`` position. Relies on the fact that `A` is passed in by
+    reference, since for performance reasons this routine should
+    overwrite its argument.
+
+    There is no return value from this function, as its intended
+    effect is to update the matrix `A` in-place, but we allow it
+    to return zero/one so that ``1`` can be used to indicate that
+    a python exception occurred.
+    """
+    cdef Py_ssize_t i,j  # loop indices
+    cdef Py_ssize_t n = A._nrows
+
+    cdef Matrix E = A[k:k+2, k:k+2]
+    cdef Matrix C = A[k+2:n, k:k+2]
+    cdef Matrix B = A[k+2:, k+2:]
+
+    # We don't actually need the inverse of E, what we really need
+    # is C*E.inverse(), and that can be found by setting
+    #
+    #   X = C*E.inverse()   <====>   XE = C.
+    #
+    # Then "X" can be found easily by solving a system.  Note: I
+    # do not actually know that sage solves the system more
+    # intelligently, but this is still The Right Thing To Do.
+    cdef Matrix CE_inverse = E.solve_left(C)
+    cdef Matrix schur_complement = B - (CE_inverse*C.conjugate_transpose())
+
+    # Compute the Schur complement that we'll work on during
+    # the following iteration, and store it back in the lower-
+    # right-hand corner of "A".
+    for i in range(n-k-2):
+        for j in range(i+1):
+            A.set_unsafe(k+2+i, k+2+j,
+                         schur_complement.get_unsafe(i, j))
+            A.set_unsafe(k+2+j, k+2+i,
+                         schur_complement.get_unsafe(j, i))
+
+    # The on- and above-diagonal entries of "L" will be fixed
+    # later, so we only need to worry about the lower-left entry
+    # of the 2x2 identity matrix that belongs at the top of the
+    # new column of "L".
+    A.set_unsafe(k+1, k, 0*A.get_unsafe(k+1,k))
+    for i in range(n-k-2):
+        for j in range(2):
+            # Store the new (k and (k+1)st) columns of "L" within
+            # the lower-left-hand corner of "A".
+            A.set_unsafe(k+i+2, k+j, CE_inverse.get_unsafe(i, j))
 
     return 0
