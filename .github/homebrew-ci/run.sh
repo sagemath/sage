@@ -37,6 +37,14 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
                 brew unlink "$formula"
             fi
         done
+        # The dependency bottles use the tap's ECM build. Unlike link
+        # conflicts, Homebrew refuses to replace an installed core keg
+        # with the same formula name, even if the core keg is unlinked.
+        installed_formulae=$(brew list --formula --full-name)
+        if grep -Fxq gmp-ecm <<< "$installed_formulae" ||
+            grep -Fxq homebrew/core/gmp-ecm <<< "$installed_formulae"; then
+            HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --force --ignore-dependencies homebrew/core/gmp-ecm
+        fi
         brew install --force-bottle dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps
         brew list --versions > "$CI_RESULTS/brew-versions.txt"
         brew info --json=v2 dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps \
