@@ -56,7 +56,14 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
                 brew unlink "$formula"
             fi
         done
-        brew install --force-bottle dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps
+        bundles=(dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps)
+        brew install --force-bottle "${bundles[@]}"
+        # On the persistent runner brew install can skip already-installed bundles
+        # even when a dependency such as gmp-ecm has been removed.
+        if [[ $RUNNER_OS == macOS ]] && ! brew missing "${bundles[@]}"; then
+            brew install --force-bottle --only-dependencies "${bundles[@]}"
+            brew missing "${bundles[@]}"
+        fi
         brew list --versions > "$CI_RESULTS/brew-versions.txt"
         brew info --json=v2 dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps \
             > "$CI_RESULTS/dependency-bottles.json"
