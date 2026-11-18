@@ -24,8 +24,7 @@ NumPy provides, for example, functions to compute the arithmetic mean and
 the standard deviation::
 
     sage: import numpy as np
-    sage: if int(np.version.short_version[0]) > 1:
-    ....:     _ = np.set_printoptions(legacy="1.25")
+    sage: _ = np.set_printoptions(legacy="1.25")
     sage: np.mean([1, 2, 3, 5])
     2.75
 
