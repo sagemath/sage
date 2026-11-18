@@ -280,7 +280,7 @@ def _generating_series_ring(P):
         Multivariate Lazy Taylor Series Ring in X, Y over Rational Field
     """
     return LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                               P._laurent_poly_ring._indices._indices.variable_names())
+                               P._flat_data_ring._indices._indices.variable_names())
 
 
 def _cycle_index_series_ring(P):
@@ -455,7 +455,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         P = self.parent()
         L = _cycle_index_series_ring(P)
-        S = L._laurent_poly_ring
+        S = L._stream_coefficient_ring
 
         if P._arity == 1:
             def coefficient(n):
