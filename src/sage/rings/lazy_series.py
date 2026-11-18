@@ -3443,7 +3443,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             and (n > 0 or len(cs._initial_coefficients) == 1)):
             n = QQ(n)
             ret = None
-            poly_part = cs._polynomial_part(P._stream_exact_ring)
+            poly_part = cs._initial_part(P._stream_exact_ring)
             try:
                 ret = poly_part ** n
                 ret = P._stream_exact_ring(ret)
@@ -3773,8 +3773,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
             and hasattr(R.base_ring(), "fraction_field")
             and hasattr(R, "_gcd_univariate_polynomial")):
             z = R.gen()
-            num = left._polynomial_part(R) * (1-z) + left._constant * z**left._degree
-            den = right._polynomial_part(R) * (1-z) + right._constant * z**right._degree
+            num = left._initial_part(R) * (1-z) + left._constant * z**left._degree
+            den = right._initial_part(R) * (1-z) + right._constant * z**right._degree
             # num / den is not necessarily reduced, but gcd and // seems to work:
             # sage: a = var("a"); R.<z> = SR[]
             # sage: (a*z - a)/(z - 1)
@@ -4489,7 +4489,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         if isinstance(self._coeff_stream, Stream_exact) and not self._coeff_stream._constant:
             # constant polynomial
             R = self.parent()._stream_exact_ring
-            poly = self._coeff_stream._polynomial_part(R)
+            poly = self._coeff_stream._initial_part(R)
             if poly.is_constant():
                 return P(poly[0])
             if not isinstance(g, LazyModuleElement):
@@ -4501,7 +4501,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                 and isinstance(g._coeff_stream, Stream_exact)
                 and not g._coeff_stream._constant):
                 R = P._stream_exact_ring
-                g_poly = g._coeff_stream._polynomial_part(R)
+                g_poly = g._coeff_stream._initial_part(R)
                 try:
                     ret = poly(g_poly)
                 except (ValueError, TypeError):  # the result is not a Laurent polynomial
@@ -5190,7 +5190,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             strformat = lambda x: x
 
         if isinstance(cs, Stream_exact):
-            poly = cs._polynomial_part(R)
+            poly = cs._initial_part(R)
             if not cs._constant:
                 return formatter(poly)
             m = cs._degree + P.options.constant_length
@@ -8285,7 +8285,7 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             return formatter(self._format_series(repr))
 
         if isinstance(cs, Stream_exact):
-            poly = cs._polynomial_part(R)
+            poly = cs._initial_part(R)
             if not cs._constant:
                 ret = repr(poly)
             else:
@@ -8428,7 +8428,7 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             if left._degree <= 1:
                 from sage.functions.other import binomial
                 R = P._stream_exact_ring
-                lpd = left._polynomial_part(R).dict()
+                lpd = left._initial_part(R).dict()
                 ir = right._initial_coefficients
                 rv = right.order()
                 temp = R.zero()

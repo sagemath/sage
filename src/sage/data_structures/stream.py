@@ -913,7 +913,7 @@ class Stream_exact(Stream):
         """
         return True
 
-    def _polynomial_part(self, R):
+    def _initial_part(self, R):
         """
         Return the initial part of ``self`` as a Laurent polynomial in ``R``.
 
@@ -922,7 +922,7 @@ class Stream_exact(Stream):
             sage: from sage.data_structures.stream import Stream_exact
             sage: s = Stream_exact([2], order=-1, degree=2, constant=1)
             sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-            sage: s._polynomial_part(L._stream_exact_ring)
+            sage: s._initial_part(L._stream_exact_ring)
             2*z^-1
         """
         v = self._approximate_order
