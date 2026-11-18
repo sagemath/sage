@@ -832,8 +832,23 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             m[2]
             sage: L._convert_to_exact_data(lambda i: i) is None
             True
+
+        A lazy element is exact data only through the coercion of its
+        parent into the exact-data ring (embedding it as a constant);
+        without such a coercion it converts lazily, coefficient-wise, in
+        ``_series_from_lazy_element``::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: Lh = LazySymmetricFunctions(h)
+            sage: Lp = LazySymmetricFunctions(p)
+            sage: Lp._convert_to_exact_data(Lh(lambda n: h[n], valuation=1)) is None
+            True
         """
         R = self._exact_data_ring
+        if isinstance(x, LazyModuleElement) and not R.has_coerce_map_from(parent(x)):
+            # doomed to fail for such ``x`` (see above)
+            return None
         try:
             x = R(x)
         except (TypeError, ValueError, AttributeError, NotImplementedError):
@@ -4402,6 +4417,24 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L = LazySymmetricFunctions(m)
             sage: L(s.an_element())
             2*m[] + 2*m[1] + (3*m[1,1]+3*m[2])
+
+        ``x`` can also be a lazy symmetric function in another basis.
+        The conversion is lazy: constructing it does not evaluate any
+        coefficient of ``x``, and the coefficients of ``x`` are converted
+        only when the corresponding coefficient is retrieved -- in the
+        example below, the ``2`` is printed by the coefficient function
+        of ``f`` at retrieval time, and nothing is printed by the
+        construction itself::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: Lh = LazySymmetricFunctions(h)
+            sage: Lp = LazySymmetricFunctions(p)
+            sage: f = Lh(lambda n: (print(n) or h[n]), valuation=1)
+            sage: g = Lp(f)
+            sage: g[2]
+            2
+            1/2*p[1, 1] + 1/2*p[2]
 
         ``coefficients`` may be used to specify a coefficient function,
         exactly as for the other lazy series rings::
