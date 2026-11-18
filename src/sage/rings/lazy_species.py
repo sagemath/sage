@@ -1431,6 +1431,16 @@ class UndefinedSpeciesElement(LazyCombinatorialSpeciesElement):
             ....:     for n in range(1, 7))
             True
 
+        Many rooted tree-like structures are most naturally defined in
+        this way.  For example, trees whose nodes are non-empty sets::
+
+            sage: E = L.Sets()
+            sage: E1 = E.restrict(1)
+            sage: T = L.undefined(valuation=1)
+            sage: T.define(E1*E(T))
+            sage: T.isotype_generating_series()
+            X + 2*X^2 + 5*X^3 + 13*X^4 + 37*X^5 + 108*X^6 + O(X^7)
+
         A series requested before the definition works as well::
 
             sage: G = L.undefined(valuation=1)
