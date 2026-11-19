@@ -289,6 +289,13 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: D = JK(x^2 + 5*x + 6, 6*x + 3)
             sage: D.order()
             38
+
+        TESTS:
+
+        Check that the :meth:`additive_order()` alias works::
+
+            sage: D.additive_order()
+            38
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
             raise NotImplementedError(
@@ -296,6 +303,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             )
         n = self.parent().order()
         return order_from_multiple(self, n)
+
+    additive_order = order  # compatibility alias
 
     def degree(self) -> Integer:
         r"""
