@@ -245,10 +245,14 @@ docs = [
   "docutils",
   "furo",
   "jupyter-sphinx",
+  "latexcodec",
+  "pybtex >=0.25",
+  "pybtex-docutils >=1.0.2",
   "python-dateutil",
   "sphinx >=9.1, <10",
   "sphinx-copybutton",
   "sphinx-inline-tabs",
+  "sphinxcontrib-bibtex >=2.7, <3",
 ]
 lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
 test = ["coverage", "pytest"]
