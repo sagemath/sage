@@ -176,9 +176,11 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
-.. tab:: Homebrew (macOS)
+.. tab:: Homebrew (Linux and macOS)
 
-    Not yet (fully) supported.
+    The community formula ``dimpase/tap/sagemath-deps`` provides the build
+    dependencies. Follow :ref:`sec-homebrew-source` for the complete build
+    commands using this formula.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
