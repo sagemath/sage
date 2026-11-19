@@ -4026,8 +4026,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         TESTS:
 
         We verify for a random quaternion ideal connecting two maximal orders
-        that this basis is *greedy-reduced*, which is equivalent to Minkowski
-        for dimensions `\leq 4`::
+        that the computed basis is indeed Minkowski-reduced. In dimension `\leq 4`,
+        it suffices to check that no shorter vectors can arise from linear
+        combinations with coefficients in `{+1,0,-1}`; see [NS2009]_, Theorem 2.2.2::
 
             sage: import itertools
             sage: p = random_prime(2**99)
@@ -4036,10 +4037,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I = O.random_ideal()
             sage: B = I.minkowski_basis()
             sage: for i in range(4):
-            ....:     for v in itertools.product(range(-2,3), repeat=i):
-            ....:         lhs = B[i]
-            ....:         rhs = sum(c*g for c,g in zip(v+(1,), B))
-            ....:         assert lhs.reduced_norm() <= rhs.reduced_norm()
+            ....:     for v in itertools.product((-1,0,+1), repeat=4):
+            ....:         if not any(v[i:]):
+            ....:             continue
+            ....:         rhs = sum(c * g for c, g in zip(v, B))
+            ....:         assert B[i].reduced_norm() <= rhs.reduced_norm()
 
         Check that the shortest found vector matches :meth:`minimal_element`::
 
