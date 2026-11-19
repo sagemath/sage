@@ -100,7 +100,7 @@ except Exception:
     '''
     pari_version = cc.run(
       pari_version_code,
-      args: ['-v'],
+      args: ['-v', '-D_POSIX_C_SOURCE=200112L'],
       name: 'pari version',
       dependencies: [pari],
       required: true,
