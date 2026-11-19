@@ -5432,12 +5432,12 @@ def minkowski_basis_gram(G):
         sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
         sage: L = matrix(ZZ, [[-5, -6, -1], [2, -5, 2], [5, 15, 5]])
         sage: G = L * L.transpose()  # Gram matrix
-        sage: Bl = G.LLL_gram().columns(); B
-        [(1, 0), (1, 1)]
+        sage: Bl = G.LLL_gram().columns(); Bl
+        [(0, 1, 0), (2, 1, 1), (1, -1, 0)]
         sage: [b * G * b for b in Bl]
         [33, 38, 59]
-        sage: Bm = minkowski_basis_gram(G); B
-        [(1, 0), (1, 1)]
+        sage: Bm = minkowski_basis_gram(G); Bm
+        [(0, 1, 0), (2, 1, 1), (-1, -1, -1)]
         sage: [b * G * b for b in Bm]
         [33, 38, 56]
 
@@ -5446,12 +5446,12 @@ def minkowski_basis_gram(G):
         sage: from sage.algebras.quatalg.quaternion_algebra import minkowski_basis_gram
         sage: L = matrix(ZZ, [[-1,-4, 0,-5], [-1, 1, 1, 2], [ 0, 2,-3,-6], [-5, 1, 0,-1]])
         sage: G = L * L.transpose()  # Gram matrix
-        sage: Bl = G.LLL_gram().columns(); B
-        [(1, 0), (1, 1)]
+        sage: Bl = G.LLL_gram().columns(); Bl
+        [(-1, -4, -1, 1), (0, 1, 0, 0), (-1, -3, 0, 1), (-1, -2, 0, 0)]
         sage: [b * G * b for b in Bl]
         [6, 7, 18, 18]
-        sage: Bm = minkowski_basis_gram(G); B
-        [(1, 0), (1, 1)]
+        sage: Bm = minkowski_basis_gram(G); Bm
+        [(-1, -4, -1, 1), (0, 1, 0, 0), (-1, -2, 0, 1), (-1, -2, 0, 0)]
         sage: [b * G * b for b in Bm]
         [6, 7, 17, 18]
 
