@@ -792,6 +792,17 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: (x^3 + 1).factor()
             (x + 1) * (x^2 + 6436342*x + 1)
 
+        Factoring `x^n - 1` over `\ZZ / p^e \ZZ` uses the Dickson Engine
+        (including both unramified and ramified cases, see :issue:`43116`)::
+
+            sage: R.<x> = Zmod(1009^5)[]
+            sage: F = (x^1010 - 1).factor()
+            sage: len(F)
+            506
+            sage: R.<x> = Zmod(3^2)[]
+            sage: (x^12 - 1).factor()
+            (x + 1) * (x + 8) * (x^2 + 1) * (x^2 + x + 1) * (x^2 + 8*x + 1) * (x^4 + 8*x^2 + 1)
+
         TESTS::
 
             sage: R.<x> = GF(5)[]
@@ -827,6 +838,15 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             p,e = R.characteristic().is_prime_power(get_data=True)
             if not e:
                 raise NotImplementedError("factorization of polynomials over rings with composite characteristic is not implemented")
+
+            deg = nmod_poly_degree(&self.x)
+            if deg >= 1:
+                lc = self[deg]
+                if self[0] == -lc and lc.is_unit():
+                    if all(nmod_poly_get_coeff_ui(&self.x, i) == 0 for i in range(1, deg)):
+                        from sage.rings.polynomial.cyclotomic import dickson_cyclotomic_factors
+                        return dickson_cyclotomic_factors(deg, p, e, full=True,
+                                                          ring=self.parent(), unit=lc)
 
             # Factoring is well-defined for prime-power moduli.
             # For simplicity we reuse the implementation for p-adics;

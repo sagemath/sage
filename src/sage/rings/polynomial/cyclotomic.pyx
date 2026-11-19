@@ -26,14 +26,62 @@ method of univariate polynomial ring objects and the top-level
 
 import sys
 
+from libc.stdint cimport int64_t
 from cysignals.memory cimport sig_malloc, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.arith.misc import factor
+from sage.arith.misc import factor, gcd
 from sage.combinat.subset import subsets
 from sage.misc.misc_c import prod
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
+from sage.structure.factorization import Factorization
+
+cdef extern from *:
+    """
+    #include <stdint.h>
+    #if defined(__SIZEOF_INT128__)
+    #define DICKSON_WORD_BITS 62
+    static inline int64_t mulmod_i64(int64_t a, int64_t b, int64_t m) {
+        return (int64_t)(((unsigned __int128)a * (unsigned __int128)b) % (unsigned __int128)m);
+    }
+    #else
+    #define DICKSON_WORD_BITS 31
+    static inline int64_t mulmod_i64(int64_t a, int64_t b, int64_t m) {
+        return (int64_t)(((uint64_t)a * (uint64_t)b) % (uint64_t)m);
+    }
+    #endif
+    static inline int64_t invmod_i64(int64_t a, int64_t m) {
+        int64_t t = 0, newt = 1;
+        int64_t r = m, newr = a % m;
+        if (newr < 0) newr += m;
+        while (newr != 0) {
+            int64_t q = r / newr;
+            int64_t tmp = t - q * newt;
+            t = newt; newt = tmp;
+            tmp = r - q * newr;
+            r = newr; newr = tmp;
+        }
+        if (r > 1) return 0;
+        return t < 0 ? t + m : t;
+    }
+    static inline long gcd_long(long a, long b) {
+        long tmp;
+        while (b != 0) {
+            tmp = b;
+            b = a % b;
+            a = tmp;
+        }
+        return a < 0 ? -a : a;
+    }
+    """
+    # Largest bit size of moduli handled by the word-sized C code path
+    int DICKSON_WORD_BITS
+    # All arguments are expected to be nonnegative and reduced modulo ``m``
+    int64_t mulmod_i64(int64_t a, int64_t b, int64_t m) noexcept nogil
+    int64_t invmod_i64(int64_t a, int64_t m) noexcept nogil
+    long gcd_long(long a, long b) noexcept nogil
 
 try:
     from sage.libs.pari import pari
@@ -399,3 +447,597 @@ def bateman_bound(nn):
     primes = [p for p, _ in factor(n)]
     j = len(primes)
     return prod(primes[k] ** (2 ** (j - k - 2) - 1) for k in range(j - 2))
+
+
+# ============================================================================
+# Dickson Engine for factoring x^n - 1 and cyclotomic polynomials over Z/p^e Z
+# ============================================================================
+
+cdef list _poly_substitute_power(list poly, Py_ssize_t power):
+    """
+    Return the coefficient list of ``poly(x^power)``.
+    """
+    cdef Py_ssize_t deg = len(poly) - 1
+    cdef Py_ssize_t i
+    cdef list res = [0] * (deg * power + 1)
+    for i in range(deg + 1):
+        res[i * power] = poly[i]
+    return res
+
+
+cdef list _coeff_list(f):
+    """
+    Return the coefficients of the polynomial ``f`` as a list of Python ints.
+    """
+    cdef list L = [int(c) for c in f.list()]
+    return L if L else [0]
+
+
+cdef tuple _find_primitive_seed_fp(p_val, Py_ssize_t m_unram, Py_ssize_t m_order):
+    r"""
+    Return a pair ``(G, H_inv)`` of polynomials over `\GF{p}`.
+
+    Here ``G`` is a monic irreducible factor of degree ``m_order`` of the
+    cyclotomic polynomial `\Phi_m(x)`, where `m` is ``m_unram``, and ``H_inv``
+    is `H(x)^{-1} \bmod G(x)` for the cofactor `H = (x^m - 1)/G`. The inverse
+    is obtained without forming `H`, from the derivative identity
+    `H(x)^{-1} \equiv m^{-1} x G'(x) \pmod{G(x)}`.
+    """
+    from sage.arith.misc import euler_phi, power_mod
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    F_p = GF(p_val)
+    R_fp = F_p['x']
+    x = R_fp.gen()
+
+    if m_order == euler_phi(m_unram):
+        # Phi_m(x) is irreducible over GF(p)
+        G = R_fp.cyclotomic_polynomial(m_unram)
+    elif m_order == 1:
+        G = x - F_p.zeta(m_unram)
+    else:
+        # Project a random element of GF(p^d) = GF(p)[x]/(P) onto the
+        # subgroup of m-th roots of unity until a primitive one is found.
+        p_int = int(p_val)
+        P = R_fp.irreducible_element(m_order)
+        exp = (p_int ** m_order - 1) // m_unram
+        prime_divs = [int(q) for q, _ in factor(m_unram)]
+        c = 0
+        while True:
+            if c < p_int and c < 32:
+                alpha = x + F_p(c)
+            else:
+                alpha = R_fp.random_element(degree=(1, m_order - 1))
+            c += 1
+            zeta = power_mod(alpha, exp, P)
+            if zeta and all(power_mod(zeta, m_unram // q, P) != 1
+                            for q in prime_divs):
+                break
+        G = R_fp(pari(zeta).Mod(pari(P)).minpoly())
+
+    H_inv = (~F_p(m_unram) * x * G.derivative()) % G
+    return G, H_inv
+
+
+cdef _hensel_lift_factor(G, H_inv, n, p_val, Py_ssize_t e, R_e):
+    r"""
+    Lift a monic factor ``G`` of `x^n - 1` over `\GF{p}`, with `p \nmid n`, to
+    the unique monic factor of `x^n - 1` over `\ZZ / p^e \ZZ` reducing to ``G``.
+
+    ``H_inv`` is the inverse modulo ``G`` over `\GF{p}` of the cofactor
+    `(x^n - 1)/G`. It stays fixed during the lifting (single-seed,
+    cofactor-free linear Hensel lifting), so each of the `e - 1` steps costs
+    one modular exponentiation `x^n \bmod G` in ``R_e``, a polynomial ring over
+    `\ZZ / p^e \ZZ` whose arithmetic is delegated to FLINT or NTL.
+    """
+    cdef list G_list = _coeff_list(G)
+    if e <= 1:
+        return R_e(G_list)
+    cdef Py_ssize_t i
+    cdef Py_ssize_t d = len(G_list) - 1
+    R_fp = G.parent()
+    X = R_e.gen()
+    p_int = int(p_val)
+    pk = p_int
+    for _ in range(1, e):
+        # x^n - 1 = 0 mod (p^h, G); extract the next p-adic digit of the error
+        r_list = _coeff_list(pow(X, n, R_e(G_list)))
+        r_list[0] -= 1
+        E = R_fp([c // pk for c in r_list])
+        D = (E * H_inv) % G
+        for i in range(d):
+            G_list[i] += pk * int(D[i])
+        pk *= p_int
+    return R_e(G_list)
+
+
+cdef list _coset_factor_fallback(G, Py_ssize_t i, n, p_val, Py_ssize_t e, R_e):
+    r"""
+    Return the coefficient list of the monic irreducible factor of `x^n - 1`
+    over `\ZZ / p^e \ZZ` whose roots are the `\zeta^{i p^j}`, where `\zeta` is
+    a root of the seed ``G``.
+
+    This is used when the Newton-Girard reconstruction would require dividing
+    by a multiple of `p`: the factor is computed over `\GF{p}` as the minimal
+    polynomial of `x^i \bmod G` and then Hensel lifted on its own.
+    """
+    R_fp = G.parent()
+    x = R_fp.gen()
+    n_i = n // int(gcd(i, n))
+    beta = pow(x, i, G)
+    if beta.degree() <= 0:
+        g = x - beta[0]
+    else:
+        g = R_fp(pari(beta).Mod(pari(G)).minpoly())
+    H_inv = (~R_fp.base_ring()(n_i) * x * g.derivative()) % g
+    return _coeff_list(_hensel_lift_factor(g, H_inv, n_i, p_val, e, R_e))
+
+
+cdef list _dickson_unramified_c(int64_t p_c, Py_ssize_t m_order,
+                                list G_lifted, long m_unram, int64_t final_mod,
+                                bint full, G_fp, Py_ssize_t e, R_e):
+    """
+    Fast C-level trace generation and MED coset factor reconstruction
+    for word-sized prime-power moduli.
+    """
+    cdef long max_T = m_unram if m_unram > m_order else m_order
+    cdef int64_t *A = NULL
+    cdef int64_t *T = NULL
+    cdef char *visited = NULL
+    cdef int64_t *med_traces = NULL
+    cdef int64_t *e_sym = NULL
+
+    cdef long j, k, i, curr, m_coset, idx
+    cdef int64_t coeff, param_sum, term, tail, next_T, scale, scale_inv, raw_trace, sum_val, k_inv
+    cdef bint ok
+    cdef list factors = []
+    cdef list f_coeffs
+
+    try:
+        A = <int64_t*>check_calloc(m_order + 1, sizeof(int64_t))
+        T = <int64_t*>check_calloc(max_T + 1, sizeof(int64_t))
+        visited = <char*>check_calloc(m_unram, sizeof(char))
+        med_traces = <int64_t*>check_calloc(m_order + 1, sizeof(int64_t))
+        e_sym = <int64_t*>check_calloc(m_order + 1, sizeof(int64_t))
+
+        for j in range(1, m_order + 1):
+            coeff = <int64_t>G_lifted[m_order - j] if (m_order - j) < len(G_lifted) else 0
+            coeff %= final_mod
+            if (j & 1) and coeff:
+                coeff = final_mod - coeff
+            A[j] = coeff
+
+        T[0] = m_order % final_mod
+        if max_T >= 1:
+            T[1] = A[1]
+
+        sig_on()
+        for k in range(2, m_order + 1):
+            param_sum = 0
+            for j in range(1, k):
+                term = mulmod_i64(A[j], T[k - j], final_mod)
+                if not (j & 1):
+                    term = final_mod - term if term else 0
+                param_sum += term
+                if param_sum >= final_mod:
+                    param_sum -= final_mod
+            tail = mulmod_i64(k % final_mod, A[k], final_mod)
+            if not (k & 1):
+                tail = final_mod - tail if tail else 0
+            T[k] = (param_sum + tail) % final_mod
+
+        for k in range(m_order + 1, m_unram + 1):
+            next_T = 0
+            for j in range(1, m_order + 1):
+                term = mulmod_i64(A[j], T[k - j], final_mod)
+                if not (j & 1):
+                    term = final_mod - term if term else 0
+                next_T += term
+                if next_T >= final_mod:
+                    next_T -= final_mod
+            T[k] = next_T
+        sig_off()
+
+        # Index 0 corresponds to (x - 1) = Phi_1(x)
+        visited[0] = 1
+        if full or m_unram == 1:
+            factors.append([final_mod - 1, 1])
+
+        for i in range(1, m_unram):
+            if visited[i]:
+                continue
+            m_coset = 0
+            curr = i
+            while not visited[curr]:
+                visited[curr] = 1
+                curr = <long>mulmod_i64(curr, p_c % m_unram, m_unram)
+                m_coset += 1
+
+            if not full and gcd_long(i, m_unram) != 1:
+                continue
+
+            scale = m_order // m_coset
+            scale_inv = invmod_i64(scale, final_mod) if p_c > m_coset else 0
+
+            if p_c > m_coset and scale_inv != 0:
+                for k in range(1, m_coset + 1):
+                    idx = <long>mulmod_i64(i, k, m_unram)
+                    raw_trace = (m_order % final_mod) if idx == 0 else T[idx]
+                    med_traces[k] = mulmod_i64(raw_trace, scale_inv, final_mod)
+
+                e_sym[0] = 1
+                ok = True
+                for k in range(1, m_coset + 1):
+                    sum_val = 0
+                    for j in range(1, k + 1):
+                        term = mulmod_i64(e_sym[k - j], med_traces[j], final_mod)
+                        if not (j & 1):
+                            term = final_mod - term if term else 0
+                        sum_val += term
+                        if sum_val >= final_mod:
+                            sum_val -= final_mod
+                    k_inv = invmod_i64(k, final_mod)
+                    if k_inv == 0:
+                        ok = False
+                        break
+                    e_sym[k] = mulmod_i64(sum_val, k_inv, final_mod)
+
+                if ok:
+                    f_coeffs = [0] * (m_coset + 1)
+                    f_coeffs[m_coset] = 1
+                    for k in range(1, m_coset + 1):
+                        if k & 1:
+                            f_coeffs[m_coset - k] = (final_mod - e_sym[k]) if e_sym[k] else 0
+                        else:
+                            f_coeffs[m_coset - k] = e_sym[k]
+                    factors.append(f_coeffs)
+                    continue
+
+            factors.append(_coset_factor_fallback(G_fp, i, m_unram, p_c, e, R_e))
+    finally:
+        sig_free(A)
+        sig_free(T)
+        sig_free(visited)
+        sig_free(med_traces)
+        sig_free(e_sym)
+
+    return factors
+
+
+cdef list _dickson_unramified_bignum(p_val, Py_ssize_t m_order,
+                                     list G_lifted, m_unram, final_mod,
+                                     bint full, G_fp, Py_ssize_t e, R_e):
+    """
+    Arbitrary-precision trace generation and MED coset factor reconstruction
+    for prime-power moduli exceeding the word-sized C code path.
+    """
+    p_int = int(p_val)
+    n_int = int(m_unram)
+    mod_int = int(final_mod)
+
+    cdef list A = [0] * (m_order + 1)
+    cdef Py_ssize_t j, k, i, curr, m_coset, idx
+    for j in range(1, m_order + 1):
+        coeff = G_lifted[m_order - j] if (m_order - j) < len(G_lifted) else 0
+        sign = -1 if (j & 1) else 1
+        A[j] = (coeff * sign) % mod_int
+
+    max_T = max(n_int, m_order)
+    cdef list T = [0] * (max_T + 1)
+    T[0] = m_order % mod_int
+    if max_T >= 1:
+        T[1] = A[1]
+
+    for k in range(2, m_order + 1):
+        param_sum = 0
+        for j in range(1, k):
+            term = (A[j] * T[k - j]) % mod_int
+            if not (j & 1):
+                term = -term
+            param_sum = (param_sum + term) % mod_int
+        tail = (k * A[k]) % mod_int
+        if not (k & 1):
+            tail = -tail
+        T[k] = (param_sum + tail) % mod_int
+
+    for k in range(m_order + 1, n_int + 1):
+        next_T = 0
+        for j in range(1, m_order + 1):
+            term = (A[j] * T[k - j]) % mod_int
+            if not (j & 1):
+                term = -term
+            next_T = (next_T + term) % mod_int
+        T[k] = next_T
+
+    cdef list factors = []
+    cdef list visited = [False] * n_int
+    visited[0] = True
+    if full or n_int == 1:
+        factors.append([(mod_int - 1) % mod_int, 1])
+
+    for i in range(1, n_int):
+        if visited[i]:
+            continue
+        m_coset = 0
+        curr = i
+        while not visited[curr]:
+            visited[curr] = True
+            curr = (curr * p_int) % n_int
+            m_coset += 1
+
+        if not full and int(gcd(i, n_int)) != 1:
+            continue
+
+        scale = m_order // m_coset
+        if p_int > m_coset and scale % p_int != 0:
+            scale_inv = pow(scale, -1, mod_int)
+            med_traces = [0] * (m_coset + 1)
+            for k in range(1, m_coset + 1):
+                idx = (i * k) % n_int
+                raw_trace = (m_order % mod_int) if idx == 0 else T[idx]
+                med_traces[k] = (raw_trace * scale_inv) % mod_int
+
+            e_sym = [0] * (m_coset + 1)
+            e_sym[0] = 1
+            for k in range(1, m_coset + 1):
+                sum_val = 0
+                for j in range(1, k + 1):
+                    term = (e_sym[k - j] * med_traces[j]) % mod_int
+                    if not (j & 1):
+                        term = -term
+                    sum_val = (sum_val + term) % mod_int
+                k_inv = pow(k, -1, mod_int)
+                e_sym[k] = (sum_val * k_inv) % mod_int
+
+            f_coeffs = [0] * (m_coset + 1)
+            f_coeffs[m_coset] = 1
+            for k in range(1, m_coset + 1):
+                sign = -1 if (k & 1) else 1
+                f_coeffs[m_coset - k] = (sign * e_sym[k]) % mod_int
+            factors.append(f_coeffs)
+        else:
+            factors.append(_coset_factor_fallback(G_fp, i, n_int, p_int, e, R_e))
+
+    return factors
+
+
+def dickson_cyclotomic_factors(n, p, e=1, bint full=True, ring=None, unit=None):
+    r"""
+    Return the canonical monic irreducible factorization of `x^n - 1` (if
+    ``full=True``) or the `n`-th cyclotomic polynomial `\Phi_n(x)` (if
+    ``full=False``) over `\ZZ / p^e \ZZ` using the Dickson Engine.
+
+    Both the unramified regime (`\gcd(n, p) = 1`) and the ramified regime
+    (`p \mid n`) are supported for arbitrary prime powers `p^e`.
+
+    INPUT:
+
+    - ``n`` -- positive integer
+    - ``p`` -- prime number
+    - ``e`` -- positive integer (default: ``1``)
+    - ``full`` -- boolean (default: ``True``); if ``True``, factor `x^n - 1`;
+      if ``False``, factor `\Phi_n(x)`
+    - ``ring`` -- optional univariate polynomial ring over `\ZZ / p^e \ZZ`
+      (or `\GF{p}`); if provided, a :class:`~sage.structure.factorization.Factorization`
+      object in ``ring`` is returned, otherwise a list of pairs
+      ``(coeffs, multiplicity)`` is returned
+    - ``unit`` -- optional unit element in the base ring of ``ring`` for scaling
+      the returned :class:`~sage.structure.factorization.Factorization`
+
+    OUTPUT:
+
+    A :class:`~sage.structure.factorization.Factorization` object in ``ring``
+    if ``ring`` is given, or a list of ``(coeffs, multiplicity)`` tuples where
+    ``coeffs`` is the coefficient list ``[c_0, c_1, ..., 1]`` of a monic factor.
+
+    ALGORITHM:
+
+    Write `n = p^k m` with `\gcd(m, p) = 1`:
+
+    1. **Unramified core (`\gcd(m, p) = 1`):**
+       Find a single primitive irreducible factor `G_1(x) \in \GF{p}[x]` of
+       `\Phi_m(x)` of degree `d = \mathrm{ord}_m(p)` and lift it to
+       `\ZZ / p^e \ZZ[x]` by cofactor-free single-seed linear Hensel lifting:
+       the inverse `H_1(x)^{-1} \bmod G_1(x)` of the cofactor is computed once
+       over `\GF{p}` as `m^{-1} x G_1'(x) \bmod G_1(x)`, and each of the
+       `e - 1` lifting steps costs one modular exponentiation `x^m \bmod G_1`
+       in degree `d` [WDYH2026a]_, [WDYH2026b]_. Next, generate the power-sum
+       trace sequence `T_1, \dots, T_m \pmod{p^e}` via the order-`d` Dickson
+       linear recurrence and reconstruct all irreducible factors across
+       `p`-cyclotomic cosets using Multiple Equal-Difference (MED) coset
+       partitioning [ZZLW2025]_ and Newton-Girard identities. When a
+       Newton-Girard denominator is divisible by `p` (which can only happen
+       if `p \le d`), the factor attached to the coset is instead computed
+       over `\GF{p}` and Hensel lifted on its own.
+
+    2. **Ramified extension (`k \ge 1`):**
+       When `e \ge 2`, by the linear disjointness of unramified and totally
+       ramified cyclotomic extensions of `\QQ_p`, each unramified factor
+       `G_i(x)` of `x^m - 1` yields canonical monic irreducible factors
+       `H_i^{(j)}(x) = G_i(x^{p^j}) / G_i(x^{p^{j-1}})` over `\ZZ / p^e \ZZ`
+       for `1 \le j \le k` via exact polynomial division and substitution.
+       When `e = 1` (over `\GF{p}`), `G_i(x)` appears with multiplicity `p^k`
+       in `x^n - 1` and `\varphi(p^k)` in `\Phi_n(x)`.
+
+    .. NOTE::
+
+        Factorizations over `\ZZ / p^e \ZZ` with `e \ge 2` into irreducible
+        polynomials are in general not unique. The factors returned here are
+        the reductions modulo `p^e` of the monic irreducible factors of
+        `x^n - 1` over the `p`-adic integers `\ZZ_p`.
+
+    REFERENCES:
+
+    - [ZZLW2025]_
+    - [WDYH2026a]_
+    - [WDYH2026b]_
+
+    EXAMPLES:
+
+    Unramified factorization of `x^n - 1` over `\ZZ / p^e \ZZ`::
+
+        sage: from sage.rings.polynomial.cyclotomic import dickson_cyclotomic_factors
+        sage: R.<x> = Zmod(5^3)[]
+        sage: F = dickson_cyclotomic_factors(6, 5, 3, ring=R); F
+        (x + 1) * (x + 124) * (x^2 + x + 1) * (x^2 + 124*x + 1)
+        sage: F.expand() == x^6 - 1
+        True
+
+    Factoring a single cyclotomic polynomial `\Phi_n(x)` (``full=False``)::
+
+        sage: R.<x> = Zmod(11^3)[]
+        sage: F = dickson_cyclotomic_factors(12, 11, 3, full=False, ring=R); F
+        (x^2 + 578*x + 1) * (x^2 + 753*x + 1)
+        sage: F.expand() == R.cyclotomic_polynomial(12)
+        True
+
+    Small characteristic (`p \le \mathrm{ord}_n(p)`), where some factors are
+    computed over `\GF{p}` and lifted separately::
+
+        sage: R.<x> = Zmod(2^4)[]
+        sage: F = dickson_cyclotomic_factors(15, 2, 4, ring=R)
+        sage: len(F)
+        5
+        sage: F.expand() == x^15 - 1
+        True
+
+    Ramified regime (`p \mid n`) over `\ZZ / p^e \ZZ` via cyclotomic substitution::
+
+        sage: R.<x> = Zmod(3^2)[]
+        sage: F = dickson_cyclotomic_factors(12, 3, 2, ring=R); F
+        (x + 1) * (x + 8) * (x^2 + 1) * (x^2 + x + 1) * (x^2 + 8*x + 1) * (x^4 + 8*x^2 + 1)
+        sage: F.expand() == x^12 - 1
+        True
+
+    Large prime-power moduli exceeding 64-bit machine words::
+
+        sage: R.<x> = Zmod(101^10)[]
+        sage: F = dickson_cyclotomic_factors(102, 101, 10, ring=R)
+        sage: len(F)
+        52
+        sage: F.expand() == x^102 - 1
+        True
+
+    Over `\ZZ / 8 \ZZ` we have `x^2 - 1 = (x - 1)(x + 1) = (x - 3)(x + 3)`;
+    the factorization coming from `\ZZ_2` is returned::
+
+        sage: R.<x> = Zmod(8)[]
+        sage: dickson_cyclotomic_factors(2, 2, 3, ring=R)
+        (x + 1) * (x + 7)
+        sage: (x + 3) * (x + 5) == x^2 - 1
+        True
+
+    TESTS::
+
+        sage: R.<x> = GF(3)[]
+        sage: F = dickson_cyclotomic_factors(12, 3, 1, ring=R); F
+        (x + 1)^3 * (x + 2)^3 * (x^2 + 1)^3
+        sage: F.expand() == x^12 - 1
+        True
+        sage: F_cyclo = dickson_cyclotomic_factors(12, 3, 1, full=False, ring=R); F_cyclo
+        (x^2 + 1)^2
+        sage: F_cyclo.expand() == R.cyclotomic_polynomial(12)
+        True
+
+    Large multiplicative order `\mathrm{ord}_n(p)`::
+
+        sage: R.<x> = Zmod(257^5)[]
+        sage: F = dickson_cyclotomic_factors(509, 257, 5, ring=R)
+        sage: [f.degree() for f, _ in F]
+        [1, 508]
+        sage: F.expand() == x^509 - 1
+        True
+        sage: R.<x> = Zmod(2^3)[]
+        sage: F = dickson_cyclotomic_factors(4095, 2, 3, ring=R)
+        sage: len(F), F.expand() == x^4095 - 1
+        (351, True)
+
+    Consistency checks::
+
+        sage: all(dickson_cyclotomic_factors(n, p, e, ring=Zmod(p^e)['y']).expand()
+        ....:     == Zmod(p^e)['y'].gen()^n - 1
+        ....:     for p in primes(14) for e in [1, 2, 3] for n in [1..30])
+        True
+        sage: all(dickson_cyclotomic_factors(n, p, e, full=False, ring=Zmod(p^e)['y']).expand()
+        ....:     == Zmod(p^e)['y'].cyclotomic_polynomial(n)
+        ....:     for p in primes(14) for e in [1, 2, 3] for n in [1..30])
+        True
+        sage: dickson_cyclotomic_factors(6, 5, 2, ring=Zmod(5)['x'])
+        Traceback (most recent call last):
+        ...
+        ValueError: ring must be a polynomial ring over Z/p^e Z
+    """
+    n_zz = ZZ(n)
+    p_zz = ZZ(p)
+    e_zz = ZZ(e)
+    if n_zz < 1:
+        raise ValueError("n must be a positive integer")
+    if not p_zz.is_prime():
+        raise ValueError("p must be a prime number")
+    if e_zz < 1:
+        raise ValueError("e must be a positive integer")
+
+    cdef Py_ssize_t k_ram, j, e_int = <Py_ssize_t>e_zz
+    k_ram, m_unram_zz = n_zz.val_unit(p_zz)
+    final_mod_zz = p_zz ** e_zz
+    final_mod_int = int(final_mod_zz)
+    p_int = int(p_zz)
+    m_unram_int = int(m_unram_zz)
+
+    if ring is None:
+        from sage.rings.finite_rings.integer_mod_ring import Zmod
+        R_e = Zmod(final_mod_zz)['x']
+    else:
+        if ring.base_ring().characteristic() != final_mod_zz:
+            raise ValueError("ring must be a polynomial ring over Z/p^e Z")
+        R_e = ring
+
+    cdef list unramified_factors
+    cdef Py_ssize_t m_order
+    if m_unram_int == 1:
+        unramified_factors = [[final_mod_int - 1, 1]]
+    else:
+        m_order = <Py_ssize_t>int(Mod(p_zz, m_unram_zz).multiplicative_order())
+        G_fp, H_inv = _find_primitive_seed_fp(p_zz, m_unram_int, m_order)
+        G_lifted = _coeff_list(_hensel_lift_factor(G_fp, H_inv, m_unram_int,
+                                                   p_zz, e_int, R_e))
+        if final_mod_zz.nbits() <= DICKSON_WORD_BITS and m_unram_int < (1 << 30):
+            unramified_factors = _dickson_unramified_c(
+                <int64_t>p_int, m_order, G_lifted, <long>m_unram_int,
+                <int64_t>final_mod_int, full, G_fp, e_int, R_e)
+        else:
+            unramified_factors = _dickson_unramified_bignum(
+                p_int, m_order, G_lifted, m_unram_int, final_mod_int, full,
+                G_fp, e_int, R_e)
+
+    cdef list result_pairs = []
+    cdef list G, H1
+    if k_ram == 0:
+        for G in unramified_factors:
+            result_pairs.append((G, 1))
+    elif e_int == 1:
+        mult = p_int ** k_ram if full else (p_int ** (k_ram - 1)) * (p_int - 1)
+        for G in unramified_factors:
+            result_pairs.append((G, mult))
+    else:
+        for G in unramified_factors:
+            # first ramified layer G(x^p) / G(x), by exact monic division
+            H1 = _coeff_list(R_e(_poly_substitute_power(G, p_int)) // R_e(G))
+            if full:
+                result_pairs.append((G, 1))
+                result_pairs.append((H1, 1))
+                for j in range(2, k_ram + 1):
+                    result_pairs.append((_poly_substitute_power(H1, p_int ** (j - 1)), 1))
+            elif k_ram == 1:
+                result_pairs.append((H1, 1))
+            else:
+                result_pairs.append((_poly_substitute_power(H1, p_int ** (k_ram - 1)), 1))
+
+    if ring is None:
+        return result_pairs
+
+    if unit is None:
+        unit = ring.base_ring().one()
+    F = Factorization([(ring(coeffs), mult) for coeffs, mult in result_pairs], unit=unit)
+    F.sort()
+    return F
