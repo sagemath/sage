@@ -11,7 +11,7 @@ SageMath version and banner info
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sys
-from typing import TypedDict, cast, LiteralString, TypedDict
+from typing import TypedDict, cast
 
 from sage.env import SAGE_BANNER, SAGE_VERSION
 from sage.version import banner as sage_banner
@@ -22,27 +22,6 @@ class VersionDict(TypedDict):
     minor: int
     tiny: float
     prerelease: bool
-
-
-def version() -> str:
-    """
-    Return the version of Sage.
-
-    OUTPUT: string
-
-    EXAMPLES::
-
-       sage: version()
-       doctest:warning
-       ...
-       DeprecationWarning: Use sage.version.version instead.
-       ...
-       'SageMath version ..., Release Date: ...'
-    """
-    from sage.misc.superseded import deprecation
-
-    deprecation(39015, "Use sage.version.version instead.")
-    return sage_banner
 
 
 def banner_text(full: bool = True) -> str:
@@ -94,7 +73,6 @@ def banner_text(full: bool = True) -> str:
     return "".join(lines)
 
 
-def banner() -> None:
 def banner() -> None:
     """
     Print the Sage banner.
