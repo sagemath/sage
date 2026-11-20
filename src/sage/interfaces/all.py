@@ -2,7 +2,7 @@
 
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.interfaces.maxima', 'maxima')
+lazy_import('sage.interfaces.maxima_lib', 'maxima')
 lazy_import('sage.interfaces.sage0', ['sage0', 'sage0_version', 'Sage'])
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])
@@ -39,6 +39,8 @@ lazy_import('sage.interfaces.read_data', 'read_data')
 lazy_import('sage.interfaces.regina', ['regina', 'Regina'])
 lazy_import('sage.interfaces.scilab', 'scilab')
 lazy_import('sage.interfaces.singular', ['singular', 'singular_version', 'Singular'])
+lazy_import('sage.interfaces.snappy', ['snappy', 'SnapPy'])
+lazy_import('sage.interfaces.snappy', ['snappyhp', 'SnapPyHP'])
 lazy_import('sage.interfaces.tachyon', 'tachyon_rt')
 
 # The following variable is used by sage-shell-mode in emacs:

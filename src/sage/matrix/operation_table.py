@@ -536,7 +536,8 @@ class OperationTable(SageObject):
           describing the elements.  This is used for formatting the ASCII
           version of the table.
         - ``name_list`` -- list of strings naming the elements, in the
-          same order as given by the :meth:`list` method
+          same order as given by the
+          :meth:`~sage.matrix.operation_table.OperationTable.column_keys` method
         - ``name_list_ext`` -- list of strings naming the elements that are
           not in the list of elements if passed
         - ``name_dict`` -- dictionary giving the correspondence between the
@@ -881,7 +882,8 @@ class OperationTable(SageObject):
         The rows of the table, as a list of rows, each row
         being a list of integer entries.  The integers correspond
         to the order of the elements in the headings of the table
-        and the order of the output of the :meth:`list` method.
+        and the order of the output of the
+        :meth:`~sage.matrix.operation_table.OperationTable.column_keys` method.
 
         EXAMPLES::
 
@@ -903,11 +905,12 @@ class OperationTable(SageObject):
 
           * ``'letters'`` -- lowercase ASCII letters are used
             for a base 26 representation of the elements'
-            positions in the list given by :meth:`list`,
+            positions in the list given by
+            :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
             padded to a common width with leading 'a's.
           * ``'digits'`` -- base 10 representation of the
             elements' positions in the list given by
-            :meth:`list`, padded to a common width
+            :meth:`~sage.matrix.operation_table.OperationTable.column_keys`, padded to a common width
             with leading zeros.
           * ``'elements'`` -- the string representations
             of the elements themselves.
@@ -917,7 +920,7 @@ class OperationTable(SageObject):
         OUTPUT:
         ``None``.  This method changes the table "in-place",
         so any printed version will change and the output of
-        the :meth:`dict` will also change.  So any items of
+        the :meth:`~sage.matrix.operation_table.OperationTable.translation` will also change.  So any items of
         interest about a particular table need to be copied/saved
         prior to calling this method.
 
@@ -1014,7 +1017,7 @@ class OperationTable(SageObject):
         - ``element_names`` -- (default: ``True``) whether to display text with
           element names on the image
 
-        - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
+        - ``cmap`` -- (default: ``matplotlib.cm.gist_rainbow``) color map for plot, see :mod:`matplotlib.cm`
 
         - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 

@@ -104,7 +104,7 @@ reused whenever possible (unique representation), and can be pickled.
 
 Cython classes cannot inherit from a dynamic class (there might be
 some partial support for this in the future). On the other hand, such
-an inheritance can be partially emulated using :meth:`__getattr__`. See
+an inheritance can be partially emulated using ``__getattr__``. See
 ``sage.categories.examples.semigroups_cython`` for an example.
 """
 

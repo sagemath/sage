@@ -100,9 +100,10 @@ class HighestWeightCrystals(Category_singleton):
         additional structure: it only guarantees the existence of a
         unique highest weight element in each component.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

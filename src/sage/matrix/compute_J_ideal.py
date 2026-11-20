@@ -78,7 +78,7 @@ The last output means that
    Test code over PIDs other than ZZ.
 
    This requires implementation of
-   :meth:`~sage.matrix.matrix_integer_dense.Matrix_integer_dense.frobenius`
+   :meth:`~sage.matrix.matrix_integer_dense.Matrix_integer_dense.frobenius_form`
    over more general domains than ZZ.
 
    Additionally, :func:`lifting` requires modification or a bug

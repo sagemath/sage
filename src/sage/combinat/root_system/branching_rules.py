@@ -1365,9 +1365,8 @@ def branching_rule(Rtype, Stype, rule='default'):
         ntypes = len(Stypes)
         if Stype.is_compound():
             def br(x):
-                yl = []
-                for i in range(ntypes):
-                    yl.append(rules[i](x[shifts[stor[i]]:shifts[stor[i]+1]]))
+                yl = [rules[i](x[shifts[stor[i]]:shifts[stor[i]+1]])
+                      for i in range(ntypes)]
                 return flatten(yl)
         else:
             j = stor[0]
@@ -2056,7 +2055,8 @@ def maximal_subgroups(ct, mode='print_rules'):
         A1xC2:branching_rule("D4","C1xC2","tensor")*branching_rule("C1xC2","A1xC2",[branching_rule("C1","A1","isomorphic"),"identity"])
         A1xA1xA1xA1:branching_rule("D4","D2xD2","orthogonal_sum")*branching_rule("D2xD2","A1xA1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])
 
-    .. SEEALSO:: :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
+    .. SEEALSO::
+        :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.maximal_subgroups`
     """
 
     if CartanType(ct) == CartanType("A2"):

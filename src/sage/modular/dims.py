@@ -31,9 +31,7 @@ classes.
 
 REFERENCES:
 
-.. [CO1977] \H. Cohen, J. Oesterlé, *Dimensions des espaces de formes
-   modulaires*, p. 69-78 in Modular functions in one variable VI.
-   Lecture Notes in Math. 627, Springer-Verlag, NewYork, 1977.
+- [CO1977]_
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2008 William Stein <wstein@gmail.com>
@@ -534,7 +532,7 @@ def sturm_bound(level, weight=2):
     Return the Sturm bound for modular forms with given level and weight.
 
     For more details, see the documentation for the ``sturm_bound`` method
-    of :class:`sage.modular.arithgroup.CongruenceSubgroup` objects.
+    of :class:`~sage.modular.arithgroup.congroup_generic.CongruenceSubgroup` objects.
 
     INPUT:
 

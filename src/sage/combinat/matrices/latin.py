@@ -41,7 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+#. methods :meth:`~sage.combinat.matrices.latin.LatinSquare.is_partial_latin_square`
+   and :meth:`~sage.combinat.matrices.latin.LatinSquare.is_latin_square` to test
    if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
@@ -1463,7 +1464,8 @@ def isotopism(p):
     - a list of integers -- the function adds `1` to each member of the
       list, and returns the corresponding permutation
 
-    - a :class:`PermutationGroupElement` ``p`` -- returns a permutation
+    - a :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`
+      ``p`` -- returns a permutation
       describing ``p`` **without** any shift
 
     EXAMPLES::
@@ -2169,9 +2171,7 @@ def LatinSquare_generator(L_start, check_assertions=False):
 
     REFERENCES:
 
-    .. [JacMat96] Mark T. Jacobson and Peter Matthews, "Generating uniformly
-       distributed random Latin squares", Journal of Combinatorial Designs,
-       4 (1996)
+    - [JacMat96]_
     """
     if check_assertions:
         assert L_start.is_latin_square()

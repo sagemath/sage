@@ -643,7 +643,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
     def dimension_vectors_of_level(self, k):
         r"""
-        Return a :class:`Family` of dimension vectors of level ``k``.
+        Return a :func:`~sage.sets.family.Family` of dimension vectors of level ``k``.
 
         EXAMPLES::
 

@@ -246,8 +246,7 @@ specified if given a non-interval and an interval::
 TESTS::
 
     sage: import numpy                                                                  # needs numpy
-    sage: if int(numpy.version.short_version[0]) > 1:                                   # needs numpy
-    ....:     _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
+    sage: _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
     sage: RIF(2) == numpy.int8('2')                                                     # needs numpy
     True
     sage: numpy.int8('2') == RIF(2)                                                     # needs numpy
@@ -331,8 +330,10 @@ cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
     - ``prec`` -- integer (default: 53); precision.
       The number of bits used to represent the mantissa of a
       floating-point number. The precision can be any integer between
-      :func:`mpfr_prec_min()` and :func:`mpfr_prec_max()`. In the current
-      implementation, :func:`mpfr_prec_min()` is equal to 2.
+      :func:`~sage.rings.real_mpfr.mpfr_prec_min()` and
+      :func:`~sage.rings.real_mpfr.mpfr_prec_max()`. In the current
+      implementation, :func:`~sage.rings.real_mpfr.mpfr_prec_min()` is equal
+      to 2.
 
     - ``sci_not`` -- boolean (default: ``False``); whether or not to display using
       scientific notation
@@ -564,7 +565,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def lower_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDD'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDD'``
         (rounding towards minus infinity).
 
         EXAMPLES::
@@ -578,7 +579,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def middle_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDN'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDN'``
         (rounding towards nearest).
 
         EXAMPLES::
@@ -592,7 +593,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def upper_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDU'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDU'``
         (rounding towards plus infinity).
 
         EXAMPLES::
@@ -606,7 +607,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def _real_field(self, rnd):
         """
-        Return the :class:`RealField_class` with rounding mode ``rnd``.
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``rnd``.
 
         EXAMPLES::
 
@@ -1680,8 +1681,7 @@ cdef class RealIntervalFieldElement(RingElement):
         if mpfi_nan_p(self.value):
             if base >= 24:
                 return "[.. @NaN@ ..]"
-            else:
-                return "[.. NaN ..]"
+            return "[.. NaN ..]"
 
         if e is None:
             if base > 10:
@@ -2626,10 +2626,9 @@ cdef class RealIntervalFieldElement(RingElement):
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._add_(right)
-        elif isinstance(left, RealIntervalFieldElement):
+        if isinstance(left, RealIntervalFieldElement):
             return Element.__add__(left, right)
-        else:
-            return Element.__radd__(right, left)
+        return Element.__radd__(right, left)
 
     def __sub__(left, right):
         r"""
@@ -2643,10 +2642,9 @@ cdef class RealIntervalFieldElement(RingElement):
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._sub_(right)
-        elif isinstance(left, RealIntervalFieldElement):
+        if isinstance(left, RealIntervalFieldElement):
             return Element.__sub__(left, right)
-        else:
-            return Element.__rsub__(right, left)
+        return Element.__rsub__(right, left)
 
     def __mul__(left, right):
         r"""
@@ -2660,10 +2658,9 @@ cdef class RealIntervalFieldElement(RingElement):
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._mul_(right)
-        elif isinstance(left, RealIntervalFieldElement):
+        if isinstance(left, RealIntervalFieldElement):
             return Element.__mul__(left, right)
-        else:
-            return Element.__rmul__(right, left)
+        return Element.__rmul__(right, left)
 
     def __truediv__(left, right):
         r"""
@@ -2677,10 +2674,9 @@ cdef class RealIntervalFieldElement(RingElement):
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._div_(right)
-        elif isinstance(left, RealIntervalFieldElement):
+        if isinstance(left, RealIntervalFieldElement):
             return Element.__truediv__(left, right)
-        else:
-            return Element.__rtruediv__(right, left)
+        return Element.__rtruediv__(right, left)
 
     cpdef _add_(self, other):
         """
@@ -2967,7 +2963,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         if self == 1:
             return 1
-        elif self == -1:
+        if self == -1:
             return 2
         return sage.rings.infinity.infinity
 
@@ -3950,15 +3946,14 @@ cdef class RealIntervalFieldElement(RingElement):
         i = mpfr_cmp(&lt.value.left, &rt.value.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&lt.value.right, &rt.value.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
-        else:
-            return 0
+        return 0
 
     def __contains__(self, other):
         """
@@ -4428,12 +4423,11 @@ cdef class RealIntervalFieldElement(RingElement):
             mpfi_log(x.value, self.value)
             sig_off()
             return x
-        elif base == 10:
+        if base == 10:
             return self.log10()
-        elif base == 2:
+        if base == 2:
             return self.log2()
-        else:
-            return self.log() / (self.parent()(base)).log()
+        return self.log() / (self.parent()(base)).log()
 
     def log2(self):
         """
@@ -4598,8 +4592,7 @@ cdef class RealIntervalFieldElement(RingElement):
         b = b.floor()
         if a == b:
             return True, a
-        else:
-            return False, None
+        return False, None
 
     def cos(self):
         """
@@ -5220,10 +5213,8 @@ cdef _simplest_rational_exact(Rational low, Rational high, int low_open, int hig
                 inv_high = ~high
                 if high_open:
                     return ~Rational(inv_high.floor() + 1)
-                else:
-                    return ~Rational(inv_high.ceil())
-            else:
-                return Rational(0)
+                return ~Rational(inv_high.ceil())
+            return Rational(0)
 
         if high > 1:
             return Rational(1)

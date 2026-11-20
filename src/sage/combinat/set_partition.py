@@ -350,7 +350,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`__mul__`
+            ``__mul__``
 
         EXAMPLES::
 
@@ -382,7 +382,8 @@ class AbstractSetPartition(ClonableArray,
 
         This is not related to standard set partitions (which simply
         means set partitions of `[n] = \{ 1, 2, \ldots , n \}` for some
-        integer `n`) or standardization (:meth:`standardization`).
+        integer `n`) or standardization
+        (:meth:`~sage.combinat.set_partition.SetPartition.standardization`).
 
         EXAMPLES::
 
@@ -435,7 +436,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`refinements`
+            :meth:`sage.combinat.set_partition.SetPartition.refinements`
 
         EXAMPLES::
 
@@ -868,7 +869,14 @@ class SetPartition(AbstractSetPartition,
 
     cardinality = ClonableArray.__len__
 
-    size = AbstractSetPartition.base_set_cardinality
+    def size(self):
+        r"""
+        Return the cardinality of the base set of ``self``.
+
+        This is an alias for
+        :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set_cardinality`.
+        """
+        return self.base_set_cardinality()
 
     def pipe(self, other):
         r"""
@@ -1789,7 +1797,7 @@ class SetPartition(AbstractSetPartition,
 
         .. SEEALSO::
 
-            :meth:`coarsenings`
+            :meth:`sage.combinat.set_partition.AbstractSetPartition.coarsenings`
 
         EXAMPLES::
 
@@ -1882,7 +1890,8 @@ class SetPartition(AbstractSetPartition,
         - ``color`` -- (default: ``'black'``) color of the arcs
 
         - ``base_set_dict`` -- (optional) dictionary with keys elements
-          of :meth:`base_set()` and values as integer or float
+          of :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set`
+          and values as integer or float
 
         EXAMPLES::
 

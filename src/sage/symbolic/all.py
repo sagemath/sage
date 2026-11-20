@@ -12,3 +12,4 @@ from sage.symbolic.units import units
 π = pi
 
 from sage.symbolic.operators import D
+from sage.symbolic.rootsum import root_sum

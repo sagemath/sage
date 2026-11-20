@@ -300,8 +300,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         if i is None:
             return bool(self.fixed.prod())
-        else:
-            return bool(self.fixed[i])
+        return bool(self.fixed[i])
 
     def fix(self, i=None):
         r"""

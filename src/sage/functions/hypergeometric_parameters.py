@@ -247,8 +247,7 @@ class HypergeometricParameters(SageObject):
                 raise ValueError
         if s == 0:
             return infinity
-        else:
-            return deg
+        return deg
 
     @cached_method
     def christol_sorting(self, c=1):
@@ -1041,7 +1040,7 @@ class HypergeometricParameters(SageObject):
 
         - ``p`` -- a prime number
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import HypergeometricParameters
             sage: pa = HypergeometricParameters([1/4, 1/3, 1/2], [2/5, 3/5])

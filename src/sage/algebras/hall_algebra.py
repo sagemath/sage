@@ -379,7 +379,7 @@ class HallAlgebra(CombinatorialFreeModule):
         if all(x == 1 for x in la):
             r = len(la)
             q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
-            return self._from_dict({p: q for p in Partitions(r)})
+            return self._from_dict(dict.fromkeys(Partitions(r), q))
 
         I = HallAlgebraMonomials(self.base_ring(), self._q)
         return self(I(self.monomial(la)).antipode())
@@ -714,7 +714,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         cur = self.one()
         for r in a:
             q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
-            cur *= self(H._from_dict({p: q for p in Partitions(r)}))
+            cur *= self(H._from_dict(dict.fromkeys(Partitions(r), q)))
         return cur
 
     def counit(self, x):

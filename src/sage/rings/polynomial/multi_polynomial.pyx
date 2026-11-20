@@ -347,7 +347,10 @@ cdef class MPolynomial(CommutativePolynomial):
         Multiple variables and iteration counts may be supplied; see
         documentation for the global function :func:`derivative` for more details.
 
-        .. SEEALSO:: :meth:`._derivative`
+        .. SEEALSO::
+
+            :meth:`~sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict._derivative`,
+            :meth:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular._derivative`
 
         EXAMPLES:
 
@@ -806,8 +809,7 @@ cdef class MPolynomial(CommutativePolynomial):
         for m in M:
             if m.degree() != d:
                 return False
-        else:
-            return True
+        return True
 
     def homogeneous_components(self):
         r"""
@@ -1276,7 +1278,8 @@ cdef class MPolynomial(CommutativePolynomial):
         INPUT:
 
         - ``as_ETuples`` -- boolean (default: ``True``); if ``True``, iterate over
-          pairs whose first element is an :class:`ETuple`, otherwise as a tuples
+          pairs whose first element is an
+          :class:`~sage.rings.polynomial.polydict.ETuple`, otherwise as a tuples
 
         EXAMPLES::
 
@@ -2045,7 +2048,9 @@ cdef class MPolynomial(CommutativePolynomial):
         multiplied with its respective weight in ``weights``.
 
         This method is given for convenience. It is faster to use polynomial
-        rings with weighted term orders and the standard ``degree`` function.
+        rings with weighted term orders and the standard
+        :meth:`degree <sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular.degree>`
+        method.
 
         INPUT:
 
@@ -2091,8 +2096,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: p.weighted_degree(2/1, 1, 1)
             6
 
-        The :meth:`weighted_degree` coincides with the :meth:`degree` of a weighted
-        polynomial ring, but the latter is faster.
+        The :meth:`weighted_degree` method coincides with the
+        :meth:`degree <sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular.degree>`
+        method of a weighted polynomial ring, but the latter is faster.
 
         ::
 
@@ -2314,13 +2320,16 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Given a family of polynomials defined over a polynomial ring. A specialization
         is a particular member of that family. The specialization can be specified either
-        by a dictionary or a :class:`SpecializationMorphism`.
+        by a dictionary or a
+        :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
         - ``D`` -- dictionary (optional)
 
-        - ``phi`` -- :class:`SpecializationMorphism` (optional)
+        - ``phi`` --
+          :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`
+          (optional)
 
         OUTPUT: a new polynomial
 
@@ -3035,8 +3044,7 @@ cdef remove_from_tuple(e, int ind):
     del w[ind]
     if len(w) == 1:
         return w[0]
-    else:
-        return tuple(w)
+    return tuple(w)
 
 
 cdef class MPolynomial_libsingular(MPolynomial):

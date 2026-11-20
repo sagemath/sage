@@ -185,7 +185,6 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: from sage.repl.display.fancy_repr import LargeMatrixHelpRepr
             sage: M = identity_matrix(40)
             sage: pp = LargeMatrixHelpRepr()
@@ -196,9 +195,9 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         Leads to::
 
-            sage: M                                                                     # needs sage.modules
+            sage: M
             40 x 40 dense matrix over Integer Ring (use the '.str()' method...)
-            sage: [M, M]                                                                # needs sage.modules
+            sage: [M, M]
             [40 x 40 dense matrix over Integer Ring,
              40 x 40 dense matrix over Integer Ring]
         """
@@ -317,7 +316,7 @@ class TallListRepr(ObjectReprABC):
 
             sage: from sage.repl.display.fancy_repr import TallListRepr
             sage: format_list = TallListRepr().format_string
-            sage: format_list([1, 2, identity_matrix(2)])                               # needs sage.modules
+            sage: format_list([1, 2, identity_matrix(2)])
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
         Check that :issue:`18743` is fixed::

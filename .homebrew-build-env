@@ -2,7 +2,7 @@
 # that activate keg-only homebrew package installations
 
 HOMEBREW=`brew --prefix` || return 1
-for l in bzip2 texinfo polymake; do
+for l in bzip2 cliquer eclib lcalc lrcalc texinfo polymake; do
     if [ -d "$HOMEBREW/opt/$l/bin" ]; then
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
     fi
@@ -14,7 +14,7 @@ else
     PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
 fi
 # libpng.pc depends on zlib.pc
-for l in openblas openssl readline sqlite zlib; do
+for l in brial cliquer eclib lcalc libhomfly openblas openssl planarity readline sqlite zlib; do
     if [ -d "$HOMEBREW/opt/$l/lib/pkgconfig" ]; then
        PKG_CONFIG_PATH="$HOMEBREW/opt/$l/lib/pkgconfig:$PKG_CONFIG_PATH"
     fi
@@ -27,7 +27,7 @@ export PKG_CONFIG_PATH
 LIBRARY_PATH="$HOMEBREW/lib$LIBRARY_PATH"
 [ -z "$CPATH" ] || CPATH=":${CPATH}"
 CPATH="$HOMEBREW/include$CPATH"
-for l in readline bzip2 ntl polymake libpng bdw-gc primesieve; do
+for l in brial eclib readline bzip2 ntl polymake libpng lrcalc bdw-gc primesieve libomp; do
     if [ -d "$HOMEBREW/opt/$l/lib" ]; then
         LIBRARY_PATH="$HOMEBREW/opt/$l/lib:$LIBRARY_PATH"
     fi
@@ -35,7 +35,7 @@ for l in readline bzip2 ntl polymake libpng bdw-gc primesieve; do
         CPATH="$HOMEBREW/opt/$l/include:$CPATH"
     fi
 done
-for l in "gcc/lib/gcc/11 gcc/lib/gcc/10 gcc/lib/gcc/9"; do
+for l in "gcc/lib/gcc/current gcc/lib/gcc/16 gcc/lib/gcc/15"; do
     if [ -d "$HOMEBREW/opt/$l" ]; then
         LIBRARY_PATH="$HOMEBREW/opt/$l:$LIBRARY_PATH"
         break

@@ -11,12 +11,14 @@ This is used for visual representations of graphs and posets
 with vertex labels.
 """
 
+from typing import Any
+
 from sage.misc.latex import latex
 
 
 class ElementWithLabel:
     """
-    Auxiliary class for showing/viewing :class:`Poset`s with
+    Auxiliary class for showing/viewing posets with
     non-injective labelings.
     For hashing and equality testing the resulting object behaves
     like a tuple ``(element, label)``.
@@ -24,15 +26,13 @@ class ElementWithLabel:
 
     EXAMPLES::
 
-        sage: # needs sage.combinat sage.graphs
         sage: P = Poset({1: [2,3]})
         sage: labs = {i: P.rank(i) for i in range(1, 4)}
         sage: print(labs)
         {1: 0, 2: 1, 3: 1}
-        sage: print(P.plot(element_labels=labs))                                        # needs sage.plot
+        sage: print(P.plot(element_labels=labs))
         Graphics object consisting of 6 graphics primitives
 
-        sage: # needs sage.combinat sage.graphs sage.modules
         sage: from sage.misc.element_with_label import ElementWithLabel
         sage: W = WeylGroup("A1")
         sage: P = W.bruhat_poset(facade=True)
@@ -42,7 +42,10 @@ class ElementWithLabel:
         sage: list(nP)
         [(0, 0), (0, 0)]
     """
-    def __init__(self, element, label):
+    element: Any
+    label: Any
+
+    def __init__(self, element: Any, label: Any) -> None:
         """
         Construct an object that wraps ``element`` but presents itself
         as ``label``.
@@ -59,55 +62,55 @@ class ElementWithLabel:
         self.element = element
         self.label = label
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return the latex representation of ``self``,
         which is just the latex representation of the label.
 
         TESTS::
 
-            sage: var('a_1')                                                            # needs sage.symbolic
+            sage: var('a_1')
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
-            sage: latex(e)                                                              # needs sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)
+            sage: latex(e)
             a_{1}
         """
         return latex(self.label)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return the string representation of ``self``, which is just
         the string representation of the label.
 
         TESTS::
 
-            sage: var('a_1')                                                            # needs sage.symbolic
+            sage: var('a_1')
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
-            sage: str(e)                                                                # needs sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)
+            sage: str(e)
             'a_1'
         """
         return str(self.label)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the representation of ``self``, which is just
         the representation of the label.
 
         TESTS::
 
-            sage: var('a_1')                                                            # needs sage.symbolic
+            sage: var('a_1')
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
-            sage: repr(e)                                                               # needs sage.symbolic
+            sage: e = ElementWithLabel(1, a_1)
+            sage: repr(e)
             'a_1'
         """
         return repr(self.label)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of the labeled element ``self``,
         which is just the hash of ``self.element``.
@@ -128,7 +131,7 @@ class ElementWithLabel:
         """
         return hash(self.element)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """
         Two labeled elements are equal if and only if both of their
         constituents are equal.
@@ -153,7 +156,7 @@ class ElementWithLabel:
             return False
         return self.element == other.element and self.label == other.label
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """
         Two labeled elements are not equal if and only if first or second
         constituents are not equal.

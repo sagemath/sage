@@ -40,8 +40,7 @@ def red_mfact(a, b):
 
     if a:
         return (-b + abs(a))//(2*a)
-    else:
-        return 0
+    return 0
 
 
 def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
@@ -482,10 +481,9 @@ def primitivize(long long v0, long long v1, long long v2, p):
     if v2 % p:
         v2_inv = inverse_mod(v2, p)
         return v2_inv*v0 % p, v2_inv*v1 % p, 1
-    elif v1 % p:
+    if v1 % p:
         return inverse_mod(v1, p)*v0 % p, 1, 0
-    else:
-        return 1, 0, 0
+    return 1, 0, 0
 
 
 def evaluate(a, b, c, r, s, t, v):
@@ -969,8 +967,7 @@ def extend(v):
     if v[0] == v[1] == 0:
         if v[2] < 0:
             return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
-        else:
-            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
+        return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
 
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])

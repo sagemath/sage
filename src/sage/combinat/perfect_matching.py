@@ -244,7 +244,8 @@ class PerfectMatching(SetPartition):
         """
         Return the standardization of ``self``.
 
-        See :meth:`SetPartition.standardization` for details.
+        See :meth:`~sage.combinat.set_partition.SetPartition.standardization`
+        for details.
 
         EXAMPLES::
 
@@ -283,7 +284,8 @@ class PerfectMatching(SetPartition):
         INPUT:
 
         - ``other`` -- a perfect matching of the same set of ``self``
-          (if the second argument is empty, the method :meth:`an_element` is
+          (if the second argument is empty, the method
+          :meth:`~sage.structure.parent.Parent.an_element` is
           called on the parent of the first)
 
         OUTPUT:
@@ -332,7 +334,8 @@ class PerfectMatching(SetPartition):
         INPUT:
 
         - ``other`` -- a perfect matching of the same set of ``self``
-          (if the second argument is empty, the method :meth:`an_element` is
+          (if the second argument is empty, the method
+          :meth:`~sage.structure.parent.Parent.an_element` is
           called on the parent of the first)
 
         OUTPUT:
@@ -381,7 +384,8 @@ class PerfectMatching(SetPartition):
         INPUT:
 
         - ``other`` -- a perfect matching of the same set of ``self``
-          (if the second argument is empty, the method :meth:`an_element` is
+          (if the second argument is empty, the method
+          :meth:`~sage.structure.parent.Parent.an_element` is
           called on the parent of the first)
 
         OUTPUT:
@@ -414,7 +418,8 @@ class PerfectMatching(SetPartition):
         INPUT:
 
         - ``other`` -- a perfect matching of the same set of ``self``
-          (if the second argument is empty, the method :meth:`an_element` is
+          (if the second argument is empty, the method
+          :meth:`~sage.structure.parent.Parent.an_element` is
           called on the parent of the first)
 
         OUTPUT:

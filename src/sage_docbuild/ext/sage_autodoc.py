@@ -11,13 +11,26 @@ The original header of :mod:`sphinx.ext.autodoc`:
     the doctree, thus avoiding duplication between docstrings and documentation
     for those who like elaborate docstrings.
 
-This module is currently based on :mod:`sphinx.ext.autodoc` from Sphinx version
-8.0.2. Compare (do diff) with the upstream source file
-`sphinx/ext/autodoc/__init__.py
-<https://github.com/sphinx-doc/sphinx/blob/v7.2.6/sphinx/ext/autodoc/__init__.py>`_.
+This module is currently based on the legacy class-based implementation of
+:mod:`sphinx.ext.autodoc` from Sphinx version 9.1.0.  Compare (do diff) with
+the upstream source file
+`sphinx/ext/autodoc/_legacy_class_based/_documenters.py
+<https://github.com/sphinx-doc/sphinx/blob/v9.1.0/sphinx/ext/autodoc/_legacy_class_based/_documenters.py>`_.
 
 In the source file of this module, major modifications are delimited by a pair
 of comment dividers. To lessen maintenance burden, we aim at reducing the modifications.
+What Sphinx keeps outside that file -- the directive options, the sentinels and
+the signature regular expressions -- is imported from :mod:`sphinx.ext.autodoc`,
+which exports them publicly, so that a rebase only has to consider the parts
+that Sage really changes.
+
+.. NOTE::
+
+    Since Sphinx 9.1.0, the class-based documenters that this module derives
+    from are the opt-in ``autodoc_use_legacy_class_based`` implementation:
+    Sphinx builds its own ``auto*`` directives on a different implementation by
+    default.  Sage does not run into the two of them at once, because it loads
+    this module in place of :mod:`sphinx.ext.autodoc`.
 
 AUTHORS:
 
@@ -41,20 +54,52 @@ AUTHORS:
 - François Bissey (2025-02-24): Remove python 3.9 support hacks, making us closer to upstream
 
 - François Bissey (2025-03-18): rebased on sphinx 8.2.3
+
+- Chenxin Zhong (2026-07-07): rebased on Sphinx 9.1.0, where the class-based
+  implementation this module derives from became ``autodoc_use_legacy_class_based``
+
+- Chenxin Zhong (2026-07-25): import the directive options and the sentinels
+  from :mod:`sphinx.ext.autodoc` instead of copying them
 """
 
 from __future__ import annotations
 
+import ast
 import functools
+import importlib.util
 import operator
 import re
+import sys
+import tokenize
 from inspect import Parameter, Signature
+from types import MappingProxyType, ModuleType
 from typing import TYPE_CHECKING, Any, NewType, TypeVar
 
 import sphinx
 from docutils.statemachine import StringList
 from sphinx.config import ENUM
 from sphinx.errors import PycodeError
+
+# Sphinx keeps these in modules of its own; import them rather than carrying a
+# copy, so that only the parts that Sage really changes have to be rebased.
+from sphinx.ext.autodoc import (
+    ALL,
+    INSTANCEATTR,
+    SLOTSATTR,
+    SUPPRESS,
+    UNINITIALIZED_ATTR,
+    annotation_option,
+    bool_option,
+    class_doc_from_option,
+    exclude_members_option,
+    identity,
+    inherited_members_option,
+    member_order_option,
+    members_option,
+    merge_members_option,
+    py_ext_sig_re,
+    special_member_re,
+)
 from sphinx.ext.autodoc.importer import get_class_members, import_module, import_object
 from sphinx.ext.autodoc.mock import ismock, mock, undecorate
 from sphinx.locale import _, __
@@ -62,13 +107,24 @@ from sphinx.pycode import ModuleAnalyzer
 from sphinx.util import inspect, logging
 from sphinx.util.docstrings import prepare_docstring, separate_metadata
 from sphinx.util.inspect import (
+    TypeAliasForwardRef,
+    TypeAliasNamespace,
     evaluate_signature,
-    getdoc,
     object_description,
     safe_getattr,
-    stringify_signature,
 )
-from sphinx.util.typing import get_type_hints, restify, stringify_annotation
+from sphinx.util.inspect import (
+    stringify_signature as _sphinx_stringify_signature,
+)
+from sphinx.util.typing import (
+    get_type_hints,
+)
+from sphinx.util.typing import (
+    restify as _sphinx_restify,
+)
+from sphinx.util.typing import (
+    stringify_annotation as _sphinx_stringify_annotation,
+)
 
 # ------------------------------------------------------------------
 from sage.misc.sageinspect import (
@@ -79,59 +135,33 @@ from sage.misc.sageinspect import (
     sage_getdoc_original,
 )
 
-_getdoc = getdoc
-
 
 def getdoc(obj, *args, **kwargs):
+    """Read a docstring the way Sage does, in place of Sphinx's own reader.
+
+    This accepts the calling convention of
+    ``sphinx.util.inspect.getdoc`` rather than repeating its signature,
+    so that the documenters below can call it either way round.  Everything
+    past the object is discarded: Sage resolves inheritance and Cython
+    docstrings itself, so the ``attrgetter``, ``allow_inherited``, ``cls``
+    and ``name`` that Sphinx would use have nothing left to decide.
+    """
     return sage_getdoc_original(obj)
 
 
 # ------------------------------------------------------------------
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator, Sequence
-    from types import ModuleType
-    from typing import ClassVar, Literal, TypeAlias
+    from collections.abc import Callable, Iterator, Mapping, Sequence
+    from typing import ClassVar, Literal
 
     from sphinx.application import Sphinx
-    from sphinx.config import Config
     from sphinx.environment import BuildEnvironment, _CurrentDocument
     from sphinx.events import EventManager
-    from sphinx.ext.autodoc.directive import DocumenterBridge
     from sphinx.registry import SphinxComponentRegistry
-    from sphinx.util.typing import ExtensionMetadata, OptionSpec, _RestifyMode
-
-    _AutodocObjType = Literal[
-        'module', 'class', 'exception', 'function', 'method', 'attribute'
-    ]
-    _AutodocProcessDocstringListener: TypeAlias = Callable[
-        [Sphinx, _AutodocObjType, str, Any, dict[str, bool], list[str]], None
-    ]
+    from sphinx.util.typing import ExtensionMetadata, _RestifyMode
 
 logger = logging.getLogger(__name__)
-
-
-# This type isn't exposed directly in any modules, but can be found
-# here in most Python versions
-MethodDescriptorType = type(type.__subclasses__)
-
-# ------------------------------------------------------------------------
-# As of Sphinx 7.2.6, Sphinx is confused with unquoted "::" in the comment
-# below.
-# ------------------------------------------------------------------------
-#: extended signature RE: with explicit module name separated by "::"
-py_ext_sig_re = re.compile(
-    r"""^ ([\w.]+::)?            # explicit module name
-          ([\w.]+\.)?            # module and/or class name(s)
-          (\w+)  \s*             # thing name
-          (?: \[\s*(.*?)\s*])?   # optional: type parameters list
-          (?: \((.*)\)           # optional: arguments
-           (?:\s* -> \s* (.*))?  #           return annotation
-          )? $                   # and nothing more
-    """,
-    re.VERBOSE,
-)
-special_member_re = re.compile(r'^__\S+__$')
 
 
 def _get_render_mode(
@@ -142,231 +172,817 @@ def _get_render_mode(
     return 'fully-qualified-except-typing'
 
 
-def identity(x: Any) -> Any:
-    return x
+# ------------------------------------------------------------------
+# Annotations commonly refer to names that their module imports only under
+# ``if TYPE_CHECKING:``.  Sphinx evaluates the annotations of a signature in
+# one go, so a single such name makes the *whole* signature fall back to its
+# unevaluated source text, where every name loses its module and no longer
+# cross-references.  We therefore collect the deferred imports of a module and
+# pass them to Sphinx as :confval:`autodoc_type_aliases` entries.
+
+_NO_TYPE_ALIASES: Mapping[str, str] = MappingProxyType({})
 
 
-class _All:
-    """A special value for :*-members: that matches to any member."""
+class _ModuleBindingVisitor(ast.NodeVisitor):
+    """Find names that a statement may bind in its surrounding module."""
 
-    def __contains__(self, item: Any) -> bool:
-        return True
+    def __init__(self) -> None:
+        self.names: set[str] = set()
+        self.has_star_import = False
 
-    def append(self, item: Any) -> None:
-        pass  # nothing
+    def visit_Name(self, node: ast.Name) -> None:
+        if isinstance(node.ctx, (ast.Store, ast.Del)):
+            self.names.add(node.id)
+
+    def visit_Import(self, node: ast.Import) -> None:
+        for alias in node.names:
+            self.names.add(alias.asname or alias.name.partition('.')[0])
+
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        for alias in node.names:
+            if alias.name == '*':
+                self.has_star_import = True
+            else:
+                self.names.add(alias.asname or alias.name)
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        self.names.add(node.name)
+        for decorator in node.decorator_list:
+            self.visit(decorator)
+        for default in (*node.args.defaults,
+                        *(value for value in node.args.kw_defaults
+                          if value is not None)):
+            self.visit(default)
+        arguments = (*node.args.posonlyargs, *node.args.args,
+                     *node.args.kwonlyargs)
+        for argument in arguments:
+            if argument.annotation is not None:
+                self.visit(argument.annotation)
+        for argument in (node.args.vararg, node.args.kwarg):
+            if argument is not None and argument.annotation is not None:
+                self.visit(argument.annotation)
+        if node.returns is not None:
+            self.visit(node.returns)
+        for parameter in getattr(node, 'type_params', ()):
+            for attribute in ('bound', 'default_value'):
+                value = getattr(parameter, attribute, None)
+                if value is not None:
+                    self.visit(value)
+
+    visit_AsyncFunctionDef = visit_FunctionDef
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self.names.add(node.name)
+        for expression in (*node.decorator_list, *node.bases,
+                           *(keyword.value for keyword in node.keywords)):
+            self.visit(expression)
+        for parameter in getattr(node, 'type_params', ()):
+            for attribute in ('bound', 'default_value'):
+                value = getattr(parameter, attribute, None)
+                if value is not None:
+                    self.visit(value)
+
+    def visit_Lambda(self, node: ast.Lambda) -> None:
+        for default in (*node.args.defaults,
+                        *(value for value in node.args.kw_defaults
+                          if value is not None)):
+            self.visit(default)
+
+    def _visit_comprehension(self, node, values) -> None:
+        # Iteration targets live in the comprehension's implicit function
+        # scope on Python 3.  Its iterable, filters, and result expressions can
+        # still contain assignment expressions that bind in the surrounding
+        # module, so visit those without visiting ``generator.target``.
+        for generator in node.generators:
+            self.visit(generator.iter)
+            for condition in generator.ifs:
+                self.visit(condition)
+        for value in values:
+            self.visit(value)
+
+    def visit_ListComp(self, node: ast.ListComp) -> None:
+        self._visit_comprehension(node, (node.elt,))
+
+    visit_SetComp = visit_ListComp
+    visit_GeneratorExp = visit_ListComp
+
+    def visit_DictComp(self, node: ast.DictComp) -> None:
+        self._visit_comprehension(node, (node.key, node.value))
+
+    def visit_ExceptHandler(self, node: ast.ExceptHandler) -> None:
+        if node.name:
+            self.names.add(node.name)
+        self.generic_visit(node)
+
+    def visit_MatchAs(self, node: ast.MatchAs) -> None:
+        if node.name:
+            self.names.add(node.name)
+        self.generic_visit(node)
+
+    def visit_MatchStar(self, node: ast.MatchStar) -> None:
+        if node.name:
+            self.names.add(node.name)
 
 
-class _Empty:
-    """A special value for :exclude-members: that never matches to any member."""
-
-    def __contains__(self, item: Any) -> bool:
-        return False
-
-
-ALL = _All()
-EMPTY = _Empty()
-UNINITIALIZED_ATTR = object()
-INSTANCEATTR = object()
-SLOTSATTR = object()
+def _bound_module_names(node: ast.AST) -> tuple[set[str], bool]:
+    """Return names that *node* may bind, without entering nested scopes."""
+    visitor = _ModuleBindingVisitor()
+    visitor.visit(node)
+    return visitor.names, visitor.has_star_import
 
 
-def members_option(arg: Any) -> object | list[str]:
-    """Used to convert the :members: option to auto directives."""
-    if arg in {None, True}:
-        return ALL
-    if arg is False:
-        return None
-    return [x.strip() for x in arg.split(',') if x.strip()]
+def _type_checking_value(test: ast.expr, flags: set[str],
+                         modules: set[str]) -> str | None:
+    """Classify *test* as the typing flag or module, if it names either."""
+    if isinstance(test, ast.Name):
+        if test.id in flags:
+            return 'flag'
+        if test.id in modules:
+            return 'module'
+    if (isinstance(test, ast.Attribute) and test.attr == 'TYPE_CHECKING'
+            and isinstance(test.value, ast.Name) and test.value.id in modules):
+        return 'flag'
+    return None
 
 
-def exclude_members_option(arg: Any) -> object | set[str]:
-    """Used to convert the :exclude-members: option."""
-    if arg in {None, True}:
-        return EMPTY
-    return {x.strip() for x in arg.split(',') if x.strip()}
+def _update_type_checking_names(node: ast.stmt, flags: set[str],
+                                modules: set[str]) -> None:
+    """Update known typing bindings after the module executes *node*."""
+    def forget(names: set[str]) -> None:
+        flags.difference_update(names)
+        modules.difference_update(names)
 
-
-def inherited_members_option(arg: Any) -> set[str]:
-    """Used to convert the :inherited-members: option to auto directives."""
-    if arg in {None, True}:
-        return {'object'}
-    if arg:
-        return {x.strip() for x in arg.split(',')}
-    return set()
-
-
-def member_order_option(arg: Any) -> str | None:
-    """Used to convert the :member-order: option to auto directives."""
-    if arg in {None, True}:
-        return None
-    if arg in {'alphabetical', 'bysource', 'groupwise'}:
-        return arg
-    raise ValueError(__('invalid value for member-order option: %s') % arg)
-
-
-def class_doc_from_option(arg: Any) -> str | None:
-    """Used to convert the :class-doc-from: option to autoclass directives."""
-    if arg in {'both', 'class', 'init'}:
-        return arg
-    raise ValueError(__('invalid value for class-doc-from option: %s') % arg)
-
-
-SUPPRESS = object()
-
-
-def annotation_option(arg: Any) -> Any:
-    if arg in {None, True}:
-        # suppress showing the representation of the object
-        return SUPPRESS
-    return arg
-
-
-def bool_option(arg: Any) -> bool:
-    """Used to convert flag options to auto directives.  (Instead of
-    directives.flag(), which returns None).
-    """
-    return True
-
-
-def merge_members_option(options: dict[str, Any]) -> None:
-    """Merge :private-members: and :special-members: options to the
-    :members: option.
-    """
-    if options.get('members') is ALL:
-        # merging is not needed when members: ALL
+    if (isinstance(node, ast.If)
+            and _tests_type_checking(node.test, flags, modules)):
+        # typing.TYPE_CHECKING is false while the module executes.  Bindings
+        # in the positive body therefore do not replace the runtime aliases
+        # used by a later guard; an ``else`` body does execute.
+        for statement in node.orelse:
+            _update_type_checking_names(statement, flags, modules)
         return
 
-    members = options.setdefault('members', [])
-    for key in ('private-members', 'special-members'):
-        other_members = options.get(key)
-        if other_members is not None and other_members is not ALL:
-            for member in other_members:
-                if member not in members:
-                    members.append(member)
+    if isinstance(node, ast.Import):
+        for alias in node.names:
+            name = alias.asname or alias.name.partition('.')[0]
+            forget({name})
+            if (alias.name == 'typing'
+                    or (alias.asname is None
+                        and alias.name.startswith('typing.'))):
+                modules.add(name)
+        return
+
+    if isinstance(node, ast.ImportFrom):
+        for alias in node.names:
+            if alias.name == '*':
+                # A star import may replace any tracked alias (``Any`` is a
+                # particularly plausible one).  Only the canonical flag that
+                # typing itself exports can be known afterwards.
+                flags.clear()
+                modules.clear()
+                if node.level == 0 and node.module == 'typing':
+                    flags.add('TYPE_CHECKING')
+                continue
+            name = alias.asname or alias.name
+            forget({name})
+            if (node.level == 0 and node.module == 'typing'
+                    and alias.name == 'TYPE_CHECKING'):
+                flags.add(name)
+        return
+
+    if isinstance(node, (ast.Assign, ast.AnnAssign)):
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        if isinstance(node, ast.AnnAssign) and node.value is None:
+            # A bare annotation does not bind its target at runtime.  Its
+            # annotation expression can still contain a module-level named
+            # expression, so invalidate only names bound there.
+            forget(_bound_module_names(node.annotation)[0])
+            return
+        names = {name for target in targets
+                 for name in _bound_module_names(target)[0]}
+        if isinstance(node, ast.AnnAssign):
+            names.update(_bound_module_names(node.annotation)[0])
+        value = node.value
+        if value is not None:
+            # Assignment expressions in the value bind in the surrounding
+            # scope too: ``holder = (TC := False)`` invalidates ``TC``.
+            names.update(_bound_module_names(value)[0])
+        kind = _type_checking_value(value, flags, modules) if value is not None else None
+        forget(names)
+        # Propagate a simple alias, but not a destructuring assignment whose
+        # runtime value cannot be recovered from the syntax alone.
+        simple_names = [target.id for target in targets if isinstance(target, ast.Name)]
+        if kind == 'flag':
+            flags.update(simple_names)
+        elif kind == 'module':
+            modules.update(simple_names)
+        return
+
+    names, has_star_import = _bound_module_names(node)
+    if has_star_import:
+        flags.clear()
+        modules.clear()
+    else:
+        forget(names)
+
+
+def _type_checking_guards(tree: ast.Module) -> Iterator[ast.If]:
+    r"""
+    Yield positive ``TYPE_CHECKING`` guards in their binding context.
+
+    Imports take effect only after their statement, and bindings in nested
+    scopes never leak into the module::
+
+        sage: import ast
+        sage: from sage_docbuild.ext.sage_autodoc import _type_checking_guards
+        sage: source = '''\
+        ....: from typing import TYPE_CHECKING as TC
+        ....: if TC: pass
+        ....: TC = False
+        ....: if TC: pass
+        ....: if LATE: pass
+        ....: from typing import TYPE_CHECKING as LATE
+        ....: def f():
+        ....:     from typing import TYPE_CHECKING as LOCAL
+        ....: if LOCAL: pass
+        ....: import typing as t
+        ....: if t.TYPE_CHECKING: pass
+        ....: '''
+        sage: [ast.unparse(guard.test)
+        ....:  for guard in _type_checking_guards(ast.parse(source))]
+        ['TC', 't.TYPE_CHECKING']
+
+    Comprehension iteration variables do not rebind the module's flag::
+
+        sage: tree = ast.parse(
+        ....:     'from typing import TYPE_CHECKING as TC\n'
+        ....:     'dummy = [TC for TC in ()]\nif TC: pass')
+        sage: [ast.unparse(guard.test) for guard in _type_checking_guards(tree)]
+        ['TC']
+
+    Expressions evaluated while defining a nested scope can rebind it::
+
+        sage: tree = ast.parse(
+        ....:     'from typing import TYPE_CHECKING as TC\n'
+        ....:     'def f(value=(TC := False)): pass\nif TC: pass')
+        sage: list(_type_checking_guards(tree))
+        []
+
+    A bare module annotation does not replace the value it annotates::
+
+        sage: tree = ast.parse(
+        ....:     'from typing import TYPE_CHECKING as TC\n'
+        ....:     'TC: bool\nif TC: pass')
+        sage: [ast.unparse(guard.test) for guard in _type_checking_guards(tree)]
+        ['TC']
+
+    Nor does an assignment in the non-executed body of an earlier typing
+    guard replace the flag for a later guard::
+
+        sage: tree = ast.parse(
+        ....:     'from typing import TYPE_CHECKING as TC\n'
+        ....:     'if TC:\n    TC = False\nif TC: pass')
+        sage: [ast.unparse(guard.test) for guard in _type_checking_guards(tree)]
+        ['TC', 'TC']
+
+    A star import from :mod:`typing` binds the flag too::
+
+        sage: tree = ast.parse('from typing import *\nif TYPE_CHECKING: pass')
+        sage: [ast.unparse(guard.test) for guard in _type_checking_guards(tree)]
+        ['TYPE_CHECKING']
+        sage: tree = ast.parse(
+        ....:     'from typing import TYPE_CHECKING as Any\n'
+        ....:     'from typing import *\nif Any: pass')
+        sage: list(_type_checking_guards(tree))
+        []
+        sage: tree = ast.parse(
+        ....:     'from .typing import TYPE_CHECKING\nif TYPE_CHECKING: pass')
+        sage: list(_type_checking_guards(tree))
+        []
+
+    Importing a :mod:`typing` submodule without an alias binds the top-level
+    module, just as Python does::
+
+        sage: tree = ast.parse(
+        ....:     'import typing.io\nif typing.TYPE_CHECKING: pass')
+        sage: [ast.unparse(guard.test) for guard in _type_checking_guards(tree)]
+        ['typing.TYPE_CHECKING']
+    """
+    flags: set[str] = set()
+    modules: set[str] = set()
+    for node in tree.body:
+        if (isinstance(node, ast.If)
+                and _tests_type_checking(node.test, flags, modules)):
+            yield node
+        _update_type_checking_names(node, flags, modules)
+
+
+def _tests_type_checking(test: ast.expr, flags: set[str],
+                         modules: set[str]) -> bool:
+    """
+    Return whether the expression *test* is a guard on ``TYPE_CHECKING``.
+
+    *flags* and *modules* are the bindings known immediately before *test*.
+    Only the plain guard counts, and only on the flag of :mod:`typing`: a
+    negated or a compound test binds its names under a condition of its own,
+    and an unrelated ``TYPE_CHECKING`` - a setting of a framework, say - says
+    nothing about what is deferred for typing.
+
+    EXAMPLES::
+
+        sage: import ast
+        sage: from sage_docbuild.ext.sage_autodoc import _tests_type_checking
+        sage: def guards(source, flags={'TYPE_CHECKING'}, modules={'typing'}):
+        ....:     return _tests_type_checking(
+        ....:         ast.parse(source, mode='eval').body, flags, modules)
+        sage: guards('TYPE_CHECKING')
+        True
+        sage: guards('typing.TYPE_CHECKING')
+        True
+        sage: guards('sys.version_info')
+        False
+        sage: guards('not TYPE_CHECKING')
+        False
+        sage: guards('TYPE_CHECKING and sys.platform')
+        False
+
+    A module that never imported the flag does not test it::
+
+        sage: guards('TYPE_CHECKING', flags=set())
+        False
+        sage: guards('settings.TYPE_CHECKING')
+        False
+    """
+    if isinstance(test, ast.Name):
+        return test.id in flags
+    return (isinstance(test, ast.Attribute) and test.attr == 'TYPE_CHECKING'
+            and isinstance(test.value, ast.Name) and test.value.id in modules)
+
+
+def _type_checking_aliases(modname: str) -> Mapping[str, str]:
+    r"""
+    Return the names that the module *modname* imports under ``TYPE_CHECKING``.
+
+    The names are mapped to their fully qualified targets, in the format
+    expected of :confval:`autodoc_type_aliases`.  Names that the module also
+    provides at runtime are left out, since those already evaluate.
+
+    EXAMPLES::
+
+        sage: from sage_docbuild.ext.sage_autodoc import _type_checking_aliases
+        sage: aliases = _type_checking_aliases('sage_docbuild.ext.sage_autodoc')
+        sage: aliases['Sphinx']
+        'sphinx.application.Sphinx'
+        sage: aliases['ExtensionMetadata']
+        'sphinx.util.typing.ExtensionMetadata'
+
+    Modules that are not imported, that have no Python source available, or
+    that defer no import give an empty mapping::
+
+        sage: sorted(_type_checking_aliases('no.such.module'))
+        []
+        sage: sorted(_type_checking_aliases('sage.rings.integer'))   # compiled
+        []
+        sage: sorted(_type_checking_aliases('sage.misc.sageinspect'))
+        []
+
+    Looking for source metadata does not invoke a module's PEP 562 hook::
+
+        sage: from types import ModuleType
+        sage: dynamic = ModuleType('_sage_docbuild_dynamic_alias_test')
+        sage: calls = []
+        sage: dynamic.__getattr__ = lambda name: calls.append(name)
+        sage: sys.modules[dynamic.__name__] = dynamic
+        sage: dict(_type_checking_aliases(dynamic.__name__)), calls
+        ({}, [])
+        sage: del sys.modules[dynamic.__name__]
+
+    The answer for a module that is not imported is not remembered: importing
+    it later is what gives it one::
+
+        sage: import sage.geometry.polyhedron.base  # any module with aliases
+        sage: name = 'sage.geometry.polyhedron.base'
+        sage: _type_checking_aliases(name) == _type_checking_aliases(name)
+        True
+
+    Parsed source is cached by its stable module metadata, while names
+    appearing in the live module namespace are filtered on every call::
+
+        sage: from pathlib import Path
+        sage: from sage.misc.temporary_file import tmp_filename
+        sage: name = '_sage_docbuild_type_alias_test'
+        sage: filename = tmp_filename(ext='.py')
+        sage: source = '''\
+        ....: from typing import TYPE_CHECKING
+        ....: if TYPE_CHECKING:
+        ....:     if MAYBE:
+        ....:         from wrong import Conditional
+        ....:     from example import Deferred
+        ....:     Deferred: object
+        ....: '''
+        sage: _ = Path(filename).write_text(source)
+        sage: module = ModuleType(name)
+        sage: module.__file__ = filename
+        sage: sys.modules[name] = module
+        sage: dict(_type_checking_aliases(name))
+        {'Deferred': 'example.Deferred'}
+        sage: module.Deferred = object()
+        sage: dict(_type_checking_aliases(name))
+        {}
+        sage: del sys.modules[name]
+        sage: Path(filename).unlink()
+    """
+    module = sys.modules.get(modname)
+    if module is None:
+        # Reading it needs __file__, and a later call, once something has
+        # imported it, has to be free to answer differently.
+        return _NO_TYPE_ALIASES
+    if not isinstance(module, ModuleType):
+        return _NO_TYPE_ALIASES
+    namespace = vars(module)
+    filename = namespace.get('__file__') or ''
+    if not filename.endswith('.py'):
+        return _NO_TYPE_ALIASES  # compiled: no source to scan
+    module_name = namespace.get('__name__') or modname
+    package = namespace.get('__package__') or module_name.rpartition('.')[0]
+    aliases = _aliases_of_imported_module(filename, package)
+    if not aliases or not any(name in namespace for name in aliases):
+        return aliases
+    return MappingProxyType({name: target for name, target in aliases.items()
+                             if name not in namespace})
+
+
+@functools.lru_cache(maxsize=256)
+def _aliases_of_imported_module(
+    filename: str,
+    package: str,
+) -> Mapping[str, str]:
+    """
+    Parse deferred aliases once per source file.
+
+    Source contents, module objects, and module namespaces are deliberately
+    absent from the bounded cache key.  A running docbuild does not edit the
+    source of an imported module, while runtime names are filtered cheaply by
+    :func:`_type_checking_aliases` after this returns.
+    """
+    try:
+        with tokenize.open(filename) as source_file:
+            source = source_file.read()
+        tree = ast.parse(source, filename=filename)
+    except (OSError, SyntaxError, UnicodeError, ValueError):
+        return _NO_TYPE_ALIASES
+
+    aliases: dict[str, str] = {}
+    for guard in _type_checking_guards(tree):
+        # Only ``from ... import ...`` is handled: a plain ``import x`` binds a
+        # module, which Sphinx cannot look attributes up on.
+        # A nested conditional has terms of its own, so only imports that the
+        # positive guard executes directly are unconditional typing aliases.
+        for node in guard.body:
+            if not isinstance(node, ast.ImportFrom):
+                if isinstance(node, ast.AnnAssign) and node.value is None:
+                    names, has_star_import = _bound_module_names(
+                        node.annotation)
+                else:
+                    names, has_star_import = _bound_module_names(node)
+                if has_star_import:
+                    aliases.clear()
+                else:
+                    for name in names:
+                        aliases.pop(name, None)
+                continue
+            if any(alias.name == '*' for alias in node.names):
+                aliases.clear()
+                continue
+            if node.level:
+                try:
+                    target = importlib.util.resolve_name(
+                        '.' * node.level + (node.module or ''), package
+                    )
+                except (ImportError, ValueError):
+                    continue
+            else:
+                target = node.module or ''
+            if not target:
+                continue
+            for alias in node.names:
+                name = alias.asname or alias.name
+                aliases.pop(name, None)
+                if name == '*':
+                    continue
+                aliases[name] = f'{target}.{alias.name}'
+    return MappingProxyType(aliases)
+
+
+def _unwrap_type_alias_forward_refs(text: str) -> str:
+    """
+    Strip ``TypeAliasForwardRef`` wrappers from an already-rendered annotation.
+
+    Sphinx resolves the values of :confval:`autodoc_type_aliases` to
+    :class:`~sphinx.util.inspect.TypeAliasForwardRef` objects and unwraps them
+    again for the annotation of a parameter or of a return value.  Inside a
+    composite annotation such as ``Alias | None`` the wrapper survives, and
+    Sphinx renders it as its :func:`repr`.
+
+    EXAMPLES::
+
+        sage: from sage_docbuild.ext.sage_autodoc import _unwrap_type_alias_forward_refs
+        sage: _unwrap_type_alias_forward_refs(
+        ....:     "TypeAliasForwardRef('sphinx.application.Sphinx') | None")
+        'sphinx.application.Sphinx | None'
+
+    Quoted literal values may force :func:`repr` to escape the quote that wraps
+    the forward-reference name.  Decode that string literal rather than leaving
+    its representation escapes in the displayed annotation::
+
+        sage: from sphinx.util.inspect import TypeAliasForwardRef
+        sage: name = '''typing.Literal['left"right']'''
+        sage: rendered = f'{TypeAliasForwardRef(name)!r} | None'
+        sage: _unwrap_type_alias_forward_refs(rendered) == f'{name} | None'
+        True
+
+    Wrapper-looking text that is itself quoted is left alone::
+
+        sage: text = '''typing.Literal["TypeAliasForwardRef('value')"]'''
+        sage: _unwrap_type_alias_forward_refs(text) == text
+        True
+    """
+    pattern = r'''TypeAliasForwardRef\((?P<literal>'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")\)'''
+    wrapper = re.compile(pattern)
+    answer = []
+    quote = None
+    position = 0
+    while position < len(text):
+        character = text[position]
+        if quote is not None:
+            answer.append(character)
+            if character == '\\' and position + 1 < len(text):
+                position += 1
+                answer.append(text[position])
+            elif character == quote:
+                quote = None
+            position += 1
+            continue
+        if character in "'\"":
+            quote = character
+            answer.append(character)
+            position += 1
+            continue
+        match = wrapper.match(text, position)
+        if match is None:
+            answer.append(character)
+            position += 1
+            continue
+        try:
+            name = ast.literal_eval(match['literal'])
+        except (SyntaxError, ValueError):
+            name = None
+        answer.append(name if isinstance(name, str) else match[0])
+        position = match.end()
+    return ''.join(answer)
+
+
+def _render_subscript_argument(argument: Any) -> str:
+    """
+    Render *argument* as it was written between the brackets of an annotation.
+
+    :func:`stringify_annotation` renders a type; the brackets of an annotation
+    hold other things too, and each of them has a source form of its own.
+
+    EXAMPLES::
+
+        sage: from sage_docbuild.ext.sage_autodoc import _render_subscript_argument
+        sage: _render_subscript_argument(int)
+        'int'
+        sage: _render_subscript_argument('literal')            # as in Literal
+        "'literal'"
+        sage: _render_subscript_argument(())                   # as in Tuple[()]
+        '()'
+        sage: _render_subscript_argument((int,))
+        '(int,)'
+        sage: _render_subscript_argument([int, str])            # as in Callable
+        '[int, str]'
+        sage: _render_subscript_argument({'item': int})         # as in Annotated
+        "{'item': int}"
+        sage: _render_subscript_argument(slice(None, 3, None))  # as in A[:3]
+        ':3'
+        sage: _render_subscript_argument(Ellipsis)
+        '...'
+    """
+    if isinstance(argument, TypeAliasForwardRef):
+        return argument.name
+    if isinstance(argument, (str, bytes)):
+        # A Literal holds values, and a string among them keeps its quotes.
+        return repr(argument)
+    if isinstance(argument, tuple):
+        inside = ', '.join(map(_render_subscript_argument, argument))
+        if len(argument) == 1:
+            inside += ','
+        return f'({inside})'
+    if isinstance(argument, list):
+        return '[' + ', '.join(map(_render_subscript_argument, argument)) + ']'
+    if isinstance(argument, dict):
+        items = (f'{_render_subscript_argument(key)}: '
+                 f'{_render_subscript_argument(value)}'
+                 for key, value in argument.items())
+        return '{' + ', '.join(items) + '}'
+    if isinstance(argument, (set, frozenset)):
+        items = sorted(map(_render_subscript_argument, argument))
+        if isinstance(argument, frozenset):
+            return ('frozenset({' + ', '.join(items) + '})'
+                    if items else 'frozenset()')
+        return '{' + ', '.join(items) + '}' if items else 'set()'
+    if isinstance(argument, slice):
+        parts = [argument.start, argument.stop, argument.step]
+        while len(parts) > 2 and parts[-1] is None:
+            parts.pop()
+        return ':'.join('' if part is None
+                        else _render_subscript_argument(part) for part in parts)
+    return stringify_annotation(argument)
+
+
+def _render_literal_argument(argument: Any) -> str:
+    """Render a value in a deferred :class:`typing.Literal`."""
+    from sphinx.util.inspect import isenumattribute
+
+    if isinstance(argument, TypeAliasForwardRef):
+        return argument.name
+    if isenumattribute(argument):
+        enum = type(argument)
+        return f'{enum.__module__}.{enum.__qualname__}.{argument.name}'
+    return repr(argument)
+
+
+def _subscript_type_alias_forward_ref(self: TypeAliasForwardRef, item: Any) -> Any:
+    """
+    Return the subscripted forward reference, as another forward reference.
+
+    An annotation such as ``list[ReferenceType[Expect]]`` subscripts the names
+    it is made of, and the class that Sphinx substitutes for an entry of
+    :confval:`autodoc_type_aliases` supports ``|`` but not ``[]``.  Evaluating
+    such an annotation raises, and Sphinx then keeps the whole signature as the
+    source text it was written as, where no name cross-references any more.
+
+    EXAMPLES::
+
+        sage: from sphinx.util.inspect import TypeAliasForwardRef
+        sage: import sage_docbuild.ext.sage_autodoc
+        sage: TypeAliasForwardRef('weakref.ReferenceType')[int]
+        TypeAliasForwardRef('weakref.ReferenceType[int]')
+        sage: TypeAliasForwardRef('collections.abc.Callable')[..., int]
+        TypeAliasForwardRef('collections.abc.Callable[..., int]')
+
+    The forms that a subscription can take are kept as they were written::
+
+        sage: TypeAliasForwardRef('typing.Tuple')[()]
+        TypeAliasForwardRef('typing.Tuple[()]')
+        sage: TypeAliasForwardRef('typing.Literal')['left', 'right']
+        TypeAliasForwardRef("typing.Literal['left', 'right']")
+        sage: TypeAliasForwardRef('collections.abc.Callable')[[int, str], int]
+        TypeAliasForwardRef('collections.abc.Callable[[int, str], int]')
+        sage: TypeAliasForwardRef('example.Alias')[int,]
+        TypeAliasForwardRef('example.Alias[int,]')
+        sage: TypeAliasForwardRef('example.Alias')[((int,), str)]
+        TypeAliasForwardRef('example.Alias[(int,), str]')
+
+    Enum members keep the qualified source form required by
+    :class:`typing.Literal`::
+
+        sage: from enum import Enum
+        sage: class Color(Enum):
+        ....:     red = 1
+        sage: deferred = TypeAliasForwardRef('typing.Literal')[Color.red]
+        sage: deferred.name.endswith('.Color.red]') and '<Color.red:' not in deferred.name
+        True
+    """
+    render = (_render_literal_argument
+              if self.name.rpartition('.')[2] == 'Literal'
+              else _render_subscript_argument)
+    if isinstance(item, tuple):
+        if not item:
+            # The empty tuple is the item of A[()], not an empty subscription.
+            inside = '()'
+        else:
+            inside = ', '.join(map(render, item))
+            # __class_getitem__ receives a tuple, rather than its sole member,
+            # for a one-item comma-separated subscription.
+            if (len(item) == 1
+                    and not (isinstance(item[0], TypeAliasForwardRef)
+                             and item[0].name.startswith('*'))):
+                inside += ','
+    else:
+        inside = render(item)
+    return TypeAliasForwardRef(f'{self.name}[{inside}]')
+
+
+def _iterate_type_alias_forward_ref(
+    self: TypeAliasForwardRef,
+) -> Iterator[TypeAliasForwardRef]:
+    r"""
+    Yield the unpacked form of a forward reference exactly once.
+
+    Merely adding ``__getitem__`` would otherwise activate Python's legacy
+    sequence iteration, which keeps asking for indices forever because every
+    integer is a valid annotation parameter.  A one-item iterator also models
+    the behavior of :class:`typing.TypeVarTuple` in ``Alias[*Parameters]``::
+
+        sage: from sphinx.util.inspect import TypeAliasForwardRef
+        sage: import sage_docbuild.ext.sage_autodoc
+        sage: parameters = TypeAliasForwardRef('example.Parameters')
+        sage: list(parameters)
+        [TypeAliasForwardRef('*example.Parameters')]
+        sage: TypeAliasForwardRef('example.Alias')[*parameters]
+        TypeAliasForwardRef('example.Alias[*example.Parameters]')
+    """
+    yield TypeAliasForwardRef(f'*{self.name}')
+
+
+if not hasattr(TypeAliasForwardRef, '__getitem__'):
+    TypeAliasForwardRef.__getitem__ = _subscript_type_alias_forward_ref
+if not hasattr(TypeAliasForwardRef, '__iter__'):
+    TypeAliasForwardRef.__iter__ = _iterate_type_alias_forward_ref
+
+
+def restify(cls: Any, mode: _RestifyMode = 'fully-qualified-except-typing') -> str:
+    """
+    Convert a type-like object to a reST reference.
+    """
+    return _unwrap_type_alias_forward_refs(_sphinx_restify(cls, mode=mode))
+
+
+def stringify_annotation(
+    annotation: Any,
+    /,
+    mode: _RestifyMode = 'fully-qualified-except-typing',
+    *,
+    short_literals: bool = False,
+) -> str:
+    """
+    Stringify a type annotation.
+    """
+    return _unwrap_type_alias_forward_refs(
+        _sphinx_stringify_annotation(
+            annotation, mode=mode, short_literals=short_literals
+        )
+    )
+
+
+def stringify_signature(
+    sig: Signature,
+    show_annotation: bool = True,
+    show_return_annotation: bool = True,
+    unqualified_typehints: bool = False,
+    short_literals: bool = False,
+) -> str:
+    """
+    Stringify a signature.
+    """
+    return _unwrap_type_alias_forward_refs(
+        _sphinx_stringify_signature(
+            sig,
+            show_annotation=show_annotation,
+            show_return_annotation=show_return_annotation,
+            unqualified_typehints=unqualified_typehints,
+            short_literals=short_literals,
+        )
+    )
+
+
+# ------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Some useful event listener factories for autodoc-process-docstring.
 
 
-def cut_lines(
-    pre: int, post: int = 0, what: Sequence[str] | None = None
-) -> _AutodocProcessDocstringListener:
-    """Return a listener that removes the first *pre* and last *post*
-    lines of every docstring.  If *what* is a sequence of strings,
-    only docstrings of a type in *what* will be processed.
-
-    Use like this (e.g. in the ``setup()`` function of :file:`conf.py`)::
-
-       from sphinx.ext.autodoc import cut_lines
-
-       app.connect('autodoc-process-docstring', cut_lines(4, what={'module'}))
-
-    This can (and should) be used in place of ``automodule_skip_lines``.
-    """
-    # -------------------------------------------------------------------------
-    # Sphinx in Sage does not use 'sphinx_toolbox.confval' extension, and hence
-    # does not know the role ":confval:". Use of the role in this module
-    # results in failure of building the reference manual.
-    #
-    # In the above docstring,
-    #
-    #     ... in place of :confval:`automodule_skip_lines`.
-    #
-    # was changed to
-    #
-    #     ... in place of ``automodule_skip_lines``.
-    # -------------------------------------------------------------------------
-    if not what:
-        what_unique: frozenset[str] = frozenset()
-    elif isinstance(what, str):  # strongly discouraged
-        what_unique = frozenset({what})
-    else:
-        what_unique = frozenset(what)
-
-    def process(
-        app: Sphinx,
-        what_: _AutodocObjType,
-        name: str,
-        obj: Any,
-        options: dict[str, bool],
-        lines: list[str],
-    ) -> None:
-        if what_unique and what_ not in what_unique:
-            return
-        del lines[:pre]
-        if post:
-            # remove one trailing blank line.
-            if lines and not lines[-1]:
-                lines.pop(-1)
-            del lines[-post:]
-        # make sure there is a blank line at the end
-        if lines and lines[-1]:
-            lines.append('')
-
-    return process
 
 
-def between(
-    marker: str,
-    what: Sequence[str] | None = None,
-    keepempty: bool = False,
-    exclude: bool = False,
-) -> _AutodocProcessDocstringListener:
-    """Return a listener that either keeps, or if *exclude* is True excludes,
-    lines between lines that match the *marker* regular expression.  If no line
-    matches, the resulting docstring would be empty, so no change will be made
-    unless *keepempty* is true.
-
-    If *what* is a sequence of strings, only docstrings of a type in *what* will
-    be processed.
-    """
-    marker_re = re.compile(marker)
-
-    def process(
-        app: Sphinx,
-        what_: _AutodocObjType,
-        name: str,
-        obj: Any,
-        options: dict[str, bool],
-        lines: list[str],
-    ) -> None:
-        if what and what_ not in what:
-            return
-        deleted = 0
-        delete = not exclude
-        orig_lines = lines.copy()
-        for i, line in enumerate(orig_lines):
-            if delete:
-                lines.pop(i - deleted)
-                deleted += 1
-            if marker_re.match(line):
-                delete = not delete
-                if delete:
-                    lines.pop(i - deleted)
-                    deleted += 1
-        if not lines and not keepempty:
-            lines[:] = orig_lines
-        # make sure there is a blank line at the end
-        if lines and lines[-1]:
-            lines.append('')
-
-    return process
 
 
-# This class is used only in ``sphinx.ext.autodoc.directive``,
-# But we define this class here to keep compatibility
-# See: https://github.com/sphinx-doc/sphinx/issues/4538
-class Options(dict[str, Any]):  # NoQA: FURB189
-    """A dict/attribute hybrid that returns None on nonexisting keys."""
-
-    def copy(self) -> Options:
-        return Options(super().copy())
-
-    def __getattr__(self, name: str) -> Any:
-        try:
-            return self[name.replace('_', '-')]
-        except KeyError:
-            return None
 
 
 class ObjectMember:
@@ -438,7 +1054,7 @@ class Documenter:
     #: true if the generated content may contain titles
     titles_allowed = True
 
-    option_spec: ClassVar[OptionSpec] = {
+    option_spec: ClassVar[dict[str, Any]] = {
         'no-index': bool_option,
         'no-index-entry': bool_option,
         'noindex': bool_option,
@@ -457,10 +1073,10 @@ class Documenter:
         raise NotImplementedError(msg)
 
     def __init__(
-        self, directive: DocumenterBridge, name: str, indent: str = ''
+        self, directive: Any, name: str, indent: str = ''
     ) -> None:
         self.directive = directive
-        self.config: Config = directive.env.config
+        self.config: sphinx.config.Config = directive.env.config
         self.env: BuildEnvironment = directive.env
         self._current_document: _CurrentDocument = directive.env.current_document
         self._events: EventManager = directive.env.events
@@ -579,6 +1195,40 @@ class Documenter:
         imported.
         """
         return self.get_attr(self.object, '__module__', None) or self.modname
+
+    # ------------------------------------------------------------------
+    def _type_aliases(self, obj: Any = None) -> Mapping[str, str]:
+        """Get the type aliases to evaluate the annotations of *obj* with.
+
+        These are the configured :confval:`autodoc_type_aliases`, augmented
+        with the names that the module defining *obj* imports under
+        ``if TYPE_CHECKING:``.  Without them, a single deferred name makes
+        Sphinx keep the whole signature unevaluated.  *obj* defaults to the
+        object being documented; pass a module or a class to evaluate the
+        annotations of its members.
+
+        This is for :func:`~sphinx.util.inspect.signature`, which builds a
+        namespace of its own; see :meth:`_type_alias_namespace` for the rest.
+        """
+        modname = self.get_attr(obj if obj is not None else self.object,
+                                '__module__', None) or self.modname
+        aliases = _type_checking_aliases(modname)
+        if not aliases:
+            return self.config.autodoc_type_aliases
+        # Configured aliases take precedence over the deferred imports.
+        return {**aliases, **self.config.autodoc_type_aliases}
+
+    def _type_alias_namespace(self, obj: Any = None) -> TypeAliasNamespace:
+        """Get the local namespace to evaluate the annotations of *obj* in.
+
+        The aliases of :meth:`_type_aliases` are plain strings, which
+        :func:`~sphinx.util.typing.get_type_hints` and
+        :func:`~sphinx.util.inspect.evaluate_signature` would evaluate a
+        second time; that fails for a target whose module is not imported.
+        """
+        return TypeAliasNamespace(self._type_aliases(obj))
+
+    # ------------------------------------------------------------------
 
     def check_module(self) -> bool:
         """Check if *self.object* is really defined in the module given by
@@ -1198,7 +1848,7 @@ class ModuleDocumenter(Documenter):
     content_indent = ''
     _extra_indent = '   '
 
-    option_spec: ClassVar[OptionSpec] = {
+    option_spec: ClassVar[dict[str, Any]] = {
         'members': members_option,
         'undoc-members': bool_option,
         'no-index': bool_option,
@@ -1333,24 +1983,23 @@ class ModuleDocumenter(Documenter):
             for member in members.values():
                 if member.__name__ not in self.__all__:
                     member.skipped = True
-                return False, list(members.values())
-        else:
-            memberlist = self.options.members or []
-            ret = []
-            for name in memberlist:
-                if name in members:
-                    ret.append(members[name])
-                else:
-                    logger.warning(
-                        __(
-                            'missing attribute mentioned in :members: option: '
-                            'module %s, attribute %s'
-                        ),
-                        safe_getattr(self.object, '__name__', '???'),
-                        name,
-                        type='autodoc',
-                    )
-            return False, ret
+            return False, list(members.values())
+        memberlist = self.options.members or []
+        ret = []
+        for name in memberlist:
+            if name in members:
+                ret.append(members[name])
+            else:
+                logger.warning(
+                    __(
+                        'missing attribute mentioned in :members: option: '
+                        'module %s, attribute %s'
+                    ),
+                    safe_getattr(self.object, '__name__', '???'),
+                    name,
+                    type='autodoc',
+                )
+        return False, ret
 
     def sort_members(
         self, documenters: list[tuple[Documenter, bool]], order: str
@@ -1653,13 +2302,13 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
                         sigs.append(documenter.format_signature())
         if overloaded and self.analyzer is not None:
             actual = inspect.signature(
-                self.object, type_aliases=self.config.autodoc_type_aliases
+                self.object, type_aliases=self._type_aliases()
             )
             __globals__ = safe_getattr(self.object, '__globals__', {})
             for overload in self.analyzer.overloads['.'.join(self.objpath)]:
                 overload = self.merge_default_value(actual, overload)
                 overload = evaluate_signature(
-                    overload, __globals__, self.config.autodoc_type_aliases
+                    overload, __globals__, self._type_alias_namespace()
                 )
 
                 sig = stringify_signature(overload, **kwargs)
@@ -1682,7 +2331,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # typ
     ) -> Callable[..., Any] | None:
         """Annotate type hint to the first argument of function if needed."""
         try:
-            sig = inspect.signature(func, type_aliases=self.config.autodoc_type_aliases)
+            sig = inspect.signature(func, type_aliases=self._type_aliases(func))
         except TypeError as exc:
             logger.warning(
                 __('Failed to get a function signature for %s: %s'), self.fullname, exc
@@ -1744,7 +2393,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
 
     objtype = 'class'
     member_order = 20
-    option_spec: ClassVar[OptionSpec] = {
+    option_spec: ClassVar[dict[str, Any]] = {
         'members': members_option,
         'undoc-members': bool_option,
         'no-index': bool_option,
@@ -1891,9 +2540,10 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             object_sig = self.object.__signature__
             if isinstance(object_sig, Signature):
                 return None, None, object_sig
-            if callable(object_sig) and isinstance(object_sig_str := object_sig(), str):
-                # Support for enum.Enum.__signature__
-                return None, None, inspect.signature_from_str(object_sig_str)
+            if sys.version_info[:2] <= (3, 14) and callable(object_sig):
+                # Support for enum.Enum.__signature__ in Python 3.12, 3.13, and 3.14.
+                if isinstance(object_sig_str := object_sig(), str):
+                    return None, None, inspect.signature_from_str(object_sig_str)
 
         # Next, let's see if it has an overloaded __call__ defined
         # in its metaclass
@@ -1909,7 +2559,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
                 sig = inspect.signature(
                     call,
                     bound_method=True,
-                    type_aliases=self.config.autodoc_type_aliases,
+                    type_aliases=self._type_aliases(call),
                 )
                 return type(self.object), '__call__', sig
             except ValueError:
@@ -1928,7 +2578,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
                 sig = inspect.signature(
                     new,
                     bound_method=True,
-                    type_aliases=self.config.autodoc_type_aliases,
+                    type_aliases=self._type_aliases(new),
                 )
                 return self.object, '__new__', sig
             except ValueError:
@@ -1942,7 +2592,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
                 sig = inspect.signature(
                     init,
                     bound_method=True,
-                    type_aliases=self.config.autodoc_type_aliases,
+                    type_aliases=self._type_aliases(init),
                 )
                 return self.object, '__init__', sig
             except ValueError:
@@ -1957,7 +2607,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             sig = inspect.signature(
                 self.object,
                 bound_method=False,
-                type_aliases=self.config.autodoc_type_aliases,
+                type_aliases=self._type_aliases(),
             )
             return None, None, sig
         except ValueError:
@@ -2030,7 +2680,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             __globals__ = safe_getattr(method, '__globals__', {})
             for overload in overloads:
                 overload = evaluate_signature(
-                    overload, __globals__, self.config.autodoc_type_aliases
+                    overload, __globals__, self._type_alias_namespace(method)
                 )
 
                 parameters = list(overload.parameters.values())
@@ -2113,11 +2763,53 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             )
 
             mode = _get_render_mode(self.config.autodoc_typehints_format)
-            base_classes = [restify(cls, mode=mode) for cls in bases]
+            base_classes = [self._restify_base_class(cls, mode=mode) for cls in bases]
 
             sourcename = self.get_sourcename()
             self.add_line('', sourcename)
             self.add_line('   ' + _('Bases: %s') % ', '.join(base_classes), sourcename)
+
+    def _restify_base_class(self, cls: Any, mode: str) -> str:
+        """
+        Return the reStructuredText representation of a base class.
+
+        Python's inventory documents ``functools.partial`` as a function. Use
+        that role for the inheritance display as well.
+
+        Sage dynamically creates category helper classes such as
+        ``FiniteEnumeratedSets.parent_class``.  These classes are not
+        importable Python-domain objects, but the underlying category class is.
+        Link the inheritance display to that stable category target.
+
+        TESTS::
+
+            sage: import functools
+            sage: from sage_docbuild.ext.sage_autodoc import ClassDocumenter
+            sage: ClassDocumenter._restify_base_class(None, functools.partial, 'smart')
+            ':py:func:`~functools.partial`'
+            sage: ClassDocumenter._restify_base_class(
+            ....:     None, functools.partial, 'fully-qualified-except-typing')
+            ':py:func:`functools.partial`'
+        """
+        if cls is functools.partial:
+            # Sphinx identifies this callable type as a class, but Python's
+            # inventory documents it as a function.  Keep the established
+            # restify target/title (including smart mode's ``~``) and change
+            # only the role that is wrong for this one inheritance display.
+            return restify(cls, mode=mode).replace(':py:class:', ':py:func:', 1)
+        if isinstance(cls, type):
+            module = getattr(cls, '__module__', '')
+            qualname = getattr(cls, '__qualname__', '')
+            helper_names = ('parent_class', 'element_class', 'subcategory_class')
+            category_name, sep, helper_name = qualname.rpartition('.')
+            if (
+                module.startswith('sage.categories.')
+                and sep
+                and helper_name in helper_names
+            ):
+                target = f'{module}.{category_name}'
+                return f':class:`{qualname} <{target}>`'
+        return restify(cls, mode=mode)
 
     def get_object_members(self, want_all: bool) -> tuple[bool, list[ObjectMember]]:
         members = get_class_members(
@@ -2317,7 +3009,7 @@ class ExceptionDocumenter(ClassDocumenter):
 
 class DataDocumenterMixinBase:
     # define types of instance variables
-    config: Config
+    config: sphinx.config.Config
     env: BuildEnvironment
     modname: str
     parent: Any
@@ -2375,7 +3067,7 @@ class UninitializedGlobalVariableMixin(DataDocumenterMixinBase):
                     annotations = get_type_hints(
                         parent,
                         None,
-                        self.config.autodoc_type_aliases,
+                        self._type_alias_namespace(parent),
                         include_extras=True,
                     )
                     if self.objpath[-1] in annotations:
@@ -2410,7 +3102,7 @@ class DataDocumenter(
     objtype = 'data'
     member_order = 40
     priority = -10
-    option_spec: ClassVar[OptionSpec] = dict(ModuleLevelDocumenter.option_spec)
+    option_spec: ClassVar[dict[str, Any]] = dict(ModuleLevelDocumenter.option_spec)
     option_spec['annotation'] = annotation_option
     option_spec['no-value'] = bool_option
 
@@ -2469,7 +3161,7 @@ class DataDocumenter(
                 annotations = get_type_hints(
                     self.parent,
                     None,
-                    self.config.autodoc_type_aliases,
+                    self._type_alias_namespace(self.parent),
                     include_extras=True,
                 )
                 if self.objpath[-1] in annotations:
@@ -2580,22 +3272,29 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
         # uses a method _sage_argspec_, that only works on objects, not on
         # classes, though.
         obj = self.object
-        if hasattr(obj, "_sage_argspec_"):
-            argspec = obj._sage_argspec_()
-        elif inspect.isbuiltin(obj) or inspect.ismethoddescriptor(obj):
-            # can never get arguments of a C function or method unless
-            # a function to do so is supplied
-            argspec = sage_getargspec(obj)
+        if obj == object.__init__ and self.parent != object:  # NoQA: E721
+            # Classes not having own __init__() method are shown as no arguments.
+            #
+            # Note: The signature of object.__init__() is
+            # (self, /, *args, **kwargs).  But it makes users confused.
+            args = '()'
         else:
-            # The check above misses ordinary Python methods in Cython
-            # files.
-            argspec = sage_getargspec(obj)
+            if hasattr(obj, "_sage_argspec_"):
+                argspec = obj._sage_argspec_()
+            elif inspect.isbuiltin(obj) or inspect.ismethoddescriptor(obj):
+                # can never get arguments of a C function or method unless
+                # a function to do so is supplied
+                argspec = sage_getargspec(obj)
+            else:
+                # The check above misses ordinary Python methods in Cython
+                # files.
+                argspec = sage_getargspec(obj)
 
-        if argspec is not None and argspec[0] and argspec[0][0] in ('cls', 'self'):
-            del argspec[0][0]
-        if argspec is None:
-            return None
-        args = sage_formatargspec(*argspec)
+            if argspec is not None and argspec[0] and argspec[0][0] in ('cls', 'self'):
+                del argspec[0][0]
+            if argspec is None:
+                return None
+            args = sage_formatargspec(*argspec)
         # -----------------------------------------------------------------
 
         if self.config.strip_signature_backslash:
@@ -2647,7 +3346,7 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):  # type: 
     ) -> Callable[..., Any] | None:
         """Annotate type hint to the first argument of function if needed."""
         try:
-            sig = inspect.signature(func, type_aliases=self.config.autodoc_type_aliases)
+            sig = inspect.signature(func, type_aliases=self._type_aliases(func))
         except TypeError as exc:
             logger.warning(
                 __('Failed to get a method signature for %s: %s'), self.fullname, exc
@@ -2891,7 +3590,7 @@ class UninitializedInstanceAttributeMixin(DataDocumenterMixinBase):
     def is_uninitialized_instance_attribute(self, parent: Any) -> bool:
         """Check the subject is an annotation only attribute."""
         annotations = get_type_hints(
-            parent, None, self.config.autodoc_type_aliases, include_extras=True
+            parent, None, self._type_alias_namespace(parent), include_extras=True
         )
         return self.objpath[-1] in annotations
 
@@ -2947,7 +3646,7 @@ class AttributeDocumenter(  # type: ignore[misc]
 
     objtype = 'attribute'
     member_order = 60
-    option_spec: ClassVar[OptionSpec] = dict(ModuleLevelDocumenter.option_spec)
+    option_spec: ClassVar[dict[str, Any]] = dict(ModuleLevelDocumenter.option_spec)
     option_spec['annotation'] = annotation_option
     option_spec['no-value'] = bool_option
 
@@ -3058,7 +3757,7 @@ class AttributeDocumenter(  # type: ignore[misc]
                 annotations = get_type_hints(
                     self.parent,
                     None,
-                    self.config.autodoc_type_aliases,
+                    self._type_alias_namespace(self.parent),
                     include_extras=True,
                 )
                 if self.objpath[-1] in annotations:
@@ -3197,7 +3896,7 @@ class PropertyDocumenter(DocstringStripSignatureMixin, ClassLevelDocumenter):  #
 
         try:
             signature = inspect.signature(
-                func, type_aliases=self.config.autodoc_type_aliases
+                func, type_aliases=self._type_aliases(func)
             )
             if signature.return_annotation is not Parameter.empty:
                 mode = _get_render_mode(self.config.autodoc_typehints_format)
@@ -3234,6 +3933,10 @@ def autodoc_attrgetter(
 
 
 def setup(app: Sphinx) -> ExtensionMetadata:
+    from sphinx.ext.autodoc.preserve_defaults import update_defvalue
+    from sphinx.ext.autodoc.type_comment import update_annotations_using_type_comments
+    from sphinx.ext.autodoc.typehints import _merge_typehints, record_typehints
+
     app.add_autodocumenter(ModuleDocumenter)
     app.add_autodocumenter(ClassDocumenter)
     app.add_autodocumenter(ExceptionDocumenter)
@@ -3292,15 +3995,30 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     app.add_config_value(
         'autodoc_inherit_docstrings', True, 'env', types=frozenset({bool})
     )
+    app.add_config_value(
+        'autodoc_preserve_defaults', False, 'env', types=frozenset({bool})
+    )
+    app.add_config_value(
+        'autodoc_use_type_comments', True, 'env', types=frozenset({bool})
+    )
+    # Sage's autodoc fork is the legacy class-based implementation.  Keep the
+    # Sphinx 9 configuration value available, but this extension does not
+    # implement the new dynamic autodoc branch.
+    app.add_config_value(
+        'autodoc_use_legacy_class_based', True, 'env', types=frozenset({bool})
+    )
     app.add_event('autodoc-before-process-signature')
     app.add_event('autodoc-process-docstring')
     app.add_event('autodoc-process-signature')
     app.add_event('autodoc-skip-member')
     app.add_event('autodoc-process-bases')
 
-    app.setup_extension('sphinx.ext.autodoc.preserve_defaults')
-    app.setup_extension('sphinx.ext.autodoc.type_comment')
-    app.setup_extension('sphinx.ext.autodoc.typehints')
+    app.connect('object-description-transform', _merge_typehints)
+    app.connect('autodoc-before-process-signature', update_defvalue)
+    app.connect(
+        'autodoc-before-process-signature', update_annotations_using_type_comments
+    )
+    app.connect('autodoc-process-signature', record_typehints)
 
     return {
         'version': sphinx.__display_version__,

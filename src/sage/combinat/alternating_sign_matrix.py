@@ -479,7 +479,8 @@ class AlternatingSignMatrix(Element,
         r"""
         Return the six vertex model configuration from ``self``.
 
-        This method calls :meth:`sage.combinat.six_vertex_model.from_alternating_sign_matrix`.
+        This method calls
+        :meth:`sage.combinat.six_vertex_model.SquareIceModel.from_alternating_sign_matrix`.
 
         EXAMPLES::
 
@@ -1471,7 +1472,8 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 1 0 0 0]
             [1 0 0 0 0]
         """
-        m = self._matrix_space.zero().__copy__()
+        MS = self._matrix_space
+        m = MS.element_class(MS, None, False, False)
         for i in range(self._n):
             m[i, self._n - i - 1] = 1
         m.set_immutable()

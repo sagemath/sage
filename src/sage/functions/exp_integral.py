@@ -30,7 +30,7 @@ AUTHORS:
 - David Joyner and William Stein
 
     Authors of the code which was moved from special.py and trans.py.
-    Implementation of :meth:`exp_int` (from sage/functions/special.py).
+    Implementation of ``exp_int`` (from sage/functions/special.py).
     Implementation of :meth:`exponential_integral_1` (from
     sage/functions/transcendental.py).
 """

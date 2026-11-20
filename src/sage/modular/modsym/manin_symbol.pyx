@@ -488,8 +488,7 @@ def _print_polypart(i, j):
         times = ""
     if xpart or ypart:
         return xpart + times + ypart
-    else:
-        return ""
+    return ""
 
 
 register_unpickle_override('sage.modular.modsym.manin_symbols',

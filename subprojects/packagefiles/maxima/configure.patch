@@ -4,7 +4,7 @@ new mode 100644
 index 6716f3a04a6..732dcfeae8b
 --- a/configure
 +++ b/configure
-@@ -7092,15 +7092,6 @@ if test x"${ccl64}" = xtrue ; then
+@@ -7039,15 +7039,6 @@ if test x"${ccl64}" = xtrue ; then
  	fi
  fi
  

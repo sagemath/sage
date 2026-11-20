@@ -60,7 +60,7 @@ the variable indices occurring in ``c``.
 
 If you want to substitute variables you can use the standard polynomial
 methods, such as
-:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse.subs`::
+:meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial.subs`::
 
     sage: R.<x,y> = InfinitePolynomialRing(QQ)
     sage: f = x[1] + x[1]*x[2]*x[3]
@@ -458,7 +458,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self.parent()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Answer whether ``self`` is a unit.
 
@@ -496,10 +496,11 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_unit()
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
-        Return ``True`` if ``self`` is nilpotent, i.e., some power of ``self``
-        is 0.
+        Return ``True`` if ``self`` is nilpotent.
+
+        This means that some power of ``self`` is 0.
 
         EXAMPLES::
 
@@ -521,7 +522,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_nilpotent()
 
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if ``self`` is a constant and ``False`` otherwise.
 
@@ -553,7 +554,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.constant_coefficient()
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         """
         Return whether ``self`` is a monomial.
 
@@ -571,7 +572,7 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p.is_monomial()
 
-    def is_term(self):
+    def is_term(self) -> bool:
         """
         Return whether ``self`` is a term.
 
@@ -1713,7 +1714,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
     # Basic tools for Buchberger algorithm:
     # order, leading term/monomial, symmetric cancellation order
 
-    def _richcmp_(self, x, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Comparison of Infinite Polynomials.
 
@@ -1775,20 +1776,23 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
         # system can't guess what order we want.
         from sage.structure.element import parent
         R1 = parent(self._p)
-        R2 = parent(x._p)
-        if ((hasattr(R1, 'has_coerce_map_from') and R1.has_coerce_map_from(R2))
-            or (hasattr(R2, 'has_coerce_map_from') and R2.has_coerce_map_from(R1))):
-            return richcmp(self._p, x._p, op)
-        R = self._common_polynomial_ring(x)
-        if (self._p.parent() is self._p.base_ring()) or not self._p.parent().gens():
-            fself = self._p.base_ring()
+        R2 = parent(other._p)
+        if ((hasattr(R1, 'has_coerce_map_from')
+             and R1.has_coerce_map_from(R2))
+            or (hasattr(R2, 'has_coerce_map_from')
+                and R2.has_coerce_map_from(R1))):
+            return richcmp(self._p, other._p, op)
+
+        R = self._common_polynomial_ring(other)
+        if R1 is self._p.base_ring() or not R1.gens():
+            fs = self._p.base_ring()
         else:
-            fself = self._p.parent().hom(self._p.parent().variable_names(), R)
-        if (x._p.parent() is x._p.base_ring()) or not x._p.parent().gens():
-            fx = x._p.base_ring()
+            fs = R1.hom(R1.variable_names(), R)
+        if R2 is other._p.base_ring() or not R2.gens():
+            fo = other._p.base_ring()
         else:
-            fx = x._p.parent().hom(x._p.parent().variable_names(), R)
-        return richcmp(fself(self._p), fx(x._p), op)
+            fo = R2.hom(R2.variable_names(), R)
+        return richcmp(fs(self._p), fo(other._p), op)
 
     def gcd(self, x):
         """
@@ -2070,7 +2074,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         except ValueError:
             return res
 
-    def _richcmp_(self, x, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         TESTS:
 
@@ -2098,8 +2102,8 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         """
         P = self.parent()
         self._p = P._P(self._p)
-        x._p = P._P(x._p)
-        return richcmp(self._p, x._p, op)
+        other._p = P._P(other._p)
+        return richcmp(self._p, other._p, op)
 
     # Basic arithmetics
     def _add_(self, x):
@@ -2231,7 +2235,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             blocklength = sh
             nM = sh + 1
             for i in range(P.ngens()):
-                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
+                newVars.extend(PPgens[sh - p(j)] for j in range(blocklength, -1, -1))
                 sh += nM
             mapR = PP.hom(newVars, PP)
             return InfinitePolynomial_dense(P, mapR(self._p))

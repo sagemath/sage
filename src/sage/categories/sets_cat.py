@@ -1,5 +1,9 @@
 r"""
 Sets
+
+.. automethod:: sage.categories.sets_cat::Sets.ParentMethods._test_elements_eq_symmetric
+
+.. automethod:: sage.categories.sets_cat::Sets.ParentMethods._test_elements_eq_transitive
 """
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
@@ -55,7 +59,7 @@ def print_compare(x, y):
     """
     Helper method used in
     :meth:`Sets.ParentMethods._test_elements_eq_symmetric`,
-    :meth:`Sets.ParentMethods._test_elements_eq_tranisitive`.
+    :meth:`Sets.ParentMethods._test_elements_eq_transitive`.
 
     INPUT:
 
@@ -308,7 +312,7 @@ class Sets(Category_singleton):
             .. SEEALSO::
 
                 - :class:`.cartesian_product.CartesianProductFunctor`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -450,7 +454,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Quotients`, :meth:`Subobjects`, :meth:`IsomorphicObjects`
                 - :class:`.subquotients.SubquotientsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             TESTS::
 
@@ -479,7 +483,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.quotients.QuotientsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -536,7 +540,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.subobjects.SubobjectsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -659,7 +663,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.isomorphic_objects.IsomorphicObjectsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             TESTS::
 
@@ -808,7 +812,7 @@ class Sets(Category_singleton):
             <category-primer-parents-elements-categories>`, and their
             elements know which distinguished set they belong to. For
             example, the ring of integers `\ZZ` is modelled by the
-            parent :obj:`ZZ`, and integers know that they belong to
+            parent ``ZZ``, and integers know that they belong to
             this set::
 
                 sage: ZZ
@@ -926,9 +930,10 @@ class Sets(Category_singleton):
 
             A parent which is a facade must either:
 
-            - call :meth:`Parent.__init__` using the ``facade`` parameter to
-              specify a parent, or tuple thereof.
-            - overload the method :meth:`~Sets.Facade.ParentMethods.facade_for`.
+            - call :class:`~sage.structure.parent.Parent` initialization using
+              the ``facade`` parameter to specify a parent, or tuple thereof.
+            - overload the method
+              :meth:`~sage.categories.facade_sets.FacadeSets.ParentMethods.facade_for`.
 
             .. NOTE::
 
@@ -1022,7 +1027,8 @@ class Sets(Category_singleton):
                 sage: S.is_parent_of(2/1)
                 False
 
-            This method differs from :meth:`__contains__` because it
+            This method differs from
+            :meth:`~sage.structure.parent.Parent.__contains__` because it
             does not attempt any coercion::
 
                 sage: 2/1 in S, S.is_parent_of(2/1)
@@ -1059,9 +1065,9 @@ class Sets(Category_singleton):
             set ``self`` is empty, :meth:`an_element` should raise the exception
             :exc:`EmptySetError`.
 
-            This default implementation calls :meth:`_an_element_` and
+            This default implementation calls ``_an_element_`` and
             caches the result. Any parent should implement either
-            :meth:`an_element` or :meth:`_an_element_`.
+            :meth:`an_element` or ``_an_element_``.
 
             EXAMPLES::
 
@@ -1535,7 +1541,7 @@ class Sets(Category_singleton):
             - ``category`` -- (default: ``None``) the category the
               Cartesian product belongs to. If ``None`` is passed,
               then
-              :meth:`~sage.categories.covariant_functorial_construction.CovariantFactorialConstruction.category_from_parents`
+              :meth:`~sage.categories.covariant_functorial_construction.CovariantFunctorialConstruction.category_from_parents`
               is used to determine the category.
 
             - ``extra_category`` -- (default: ``None``) a category
@@ -1953,7 +1959,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for subquotients of sets.
 
-        .. SEEALSO:: :meth:`Sets().Subquotients`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Subquotients`
 
         EXAMPLES::
 
@@ -2029,7 +2036,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     :class:`Sets.SubcategoryMethods.Subquotients` for
                     the specifications, :meth:`.ambient`, :meth:`.retract`,
-                    and also :meth:`Sets.Subquotients.ElementMethods.lift`.
+                    and also
+                    :meth:`~sage.categories.sets_cat.Sets.Subquotients.ElementMethods.lift`.
                 """
 
             @abstract_method
@@ -2044,8 +2052,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 .. SEEALSO::
 
                     :class:`Sets.SubcategoryMethods.Subquotients` for
-                    the specifications, :meth:`.ambient`, :meth:`.retract`,
-                    and also :meth:`Sets.Subquotients.ElementMethods.retract`.
+                    the specifications, :meth:`.ambient`, :meth:`.lift`,
+                    and the element method
+                    :meth:`~sage.categories.sets_cat.Sets.Subquotients.ElementMethods.lift`.
 
                 EXAMPLES::
 
@@ -2082,7 +2091,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for quotients of sets.
 
-        .. SEEALSO:: :meth:`Sets().Quotients`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Quotients`
 
         EXAMPLES::
 
@@ -2126,7 +2136,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for subobjects of sets.
 
-        .. SEEALSO:: :meth:`Sets().Subobjects`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Subobjects`
 
         EXAMPLES::
 

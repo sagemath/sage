@@ -339,7 +339,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     The original data are obtained from KnotInfo web-page (URL see the example
     below). In order to have these data installed during the build process as
     a sage-package they are converted as csv files into a tarball. This tarball
-    has been created using the method :meth:`create_spkg_tarball`.
+    has been created using the method ``create_spkg_tarball``.
 
     EXAMPLES::
 

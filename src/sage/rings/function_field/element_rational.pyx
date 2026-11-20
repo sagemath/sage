@@ -355,8 +355,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         if all:
             return [self._parent(r) for r in self._x.sqrt(all=True)]
-        else:
-            return self._parent(self._x.sqrt())
+        return self._parent(self._x.sqrt())
 
     cpdef bint is_nth_power(self, n) noexcept:
         r"""
@@ -486,7 +485,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         P = self.parent()
         F = self._x.factor()
         from sage.structure.factorization import Factorization
-        return Factorization([(P(a),e) for a,e in F], unit=F.unit())
+        return Factorization([(P(a), e) for a, e in F], unit=F.unit())
 
     def inverse_mod(self, I):
         """

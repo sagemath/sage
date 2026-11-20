@@ -383,7 +383,7 @@ class SubmoduleHelper_polynomial_ring(SubmoduleHelper):
         return self.basis.stack(self.complement).inverse()
 
     @lazy_attribute
-    def is_saturated(self):
+    def is_saturated(self) -> bool:
         r"""
         Return ``True`` if this submodule is saturated; ``False`` otherwise.
 

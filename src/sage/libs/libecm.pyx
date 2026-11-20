@@ -34,7 +34,7 @@ EXAMPLES::
     (True, 5704689200685129054721, 227140902)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Robert Miller
 #       Copyright (C) 2012 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -42,8 +42,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -175,9 +175,9 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     sig_on()
     mpz_init(n)
     mpz_set(n, sage_int_number.value)
-    mpz_init(f) # For potential factor
+    mpz_init(f)  # For potential factor
     ecm_init(q)
-    mpz_set(q.sigma,sage_int_sigma.value)
+    mpz_set(q.sigma, sage_int_sigma.value)
 
     res = ecm_factor(f, n, B1, q)
 

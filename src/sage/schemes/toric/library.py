@@ -18,7 +18,7 @@ EXAMPLES::
 
 You can assign the homogeneous coordinates to Sage variables either
 with
-:meth:`~sage.schemes.toric.variety.ToricVariety_field.inject_variables`
+``ToricVariety_field.inject_variables``
 or immediately during assignment like this::
 
     sage: P2.<x,y,z> = toric_varieties.P2()

@@ -194,6 +194,7 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef bint is_quaternary(self) noexcept
     cpdef bint is_regular(self) noexcept
     cpdef bint is_graphic(self) noexcept
 
@@ -224,6 +225,7 @@ cdef class Matroid(SageObject):
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
     cpdef characteristic_polynomial(self, la=*)
+    cpdef beta_invariant(self)
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*)
 
     # misc

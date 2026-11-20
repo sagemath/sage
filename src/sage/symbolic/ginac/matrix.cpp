@@ -919,8 +919,8 @@ ex matrix::charpoly(const ex & lambda) const
 		}
 		if ((row%2) != 0u)
 			return -poly;
-		
-			return poly;
+
+		return poly;
 
 	} else {
 	

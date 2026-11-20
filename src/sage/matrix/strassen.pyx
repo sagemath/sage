@@ -283,7 +283,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     ::
 
         sage: n = 32; A = matrix(Integers(389),n,range(n^2))
-        sage: B = A.__copy__(); B._echelon_in_place_classical()
+        sage: B = A.__copy__(); B.echelonize()
         sage: C = A.__copy__(); C._echelon_strassen(2)
         sage: B == C
         True
@@ -291,7 +291,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     TESTS::
 
         sage: A = matrix(Integers(7), 4, 4, [1,2,0,3,0,0,1,0,0,1,0,0,0,0,0,1])
-        sage: B = A.__copy__(); B._echelon_in_place_classical()
+        sage: B = A.__copy__(); B.echelonize()
         sage: C = A.__copy__(); C._echelon_strassen(2)
         sage: B == C
         True
@@ -299,7 +299,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     ::
 
         sage: A = matrix(Integers(7), 4, 4, [1,0,5,0,2,0,3,6,5,1,2,6,4,6,1,1])
-        sage: B = A.__copy__(); B._echelon_in_place_classical()
+        sage: B = A.__copy__(); B.echelonize()
         sage: C = A.__copy__(); C._echelon_strassen(2)   #indirect doctest
         sage: B == C
         True

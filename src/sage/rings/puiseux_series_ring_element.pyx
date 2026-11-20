@@ -978,7 +978,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         if self.prec() is infinity:
             return p.prec()
-        elif p.prec() is infinity:
+        if p.prec() is infinity:
             return self.prec()
         return min(self.prec(), p.prec())
 

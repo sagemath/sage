@@ -102,7 +102,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         RuntimeError: f appears to have no zero on the interval
     """
     try:
-        return f.find_root(a=a,b=b,xtol=xtol,rtol=rtol,maxiter=maxiter,full_output=full_output)
+        return f.find_root(a=a, b=b, xtol=xtol, rtol=rtol,
+                           maxiter=maxiter, full_output=full_output)
     except AttributeError:
         pass
     a = float(a)
@@ -152,12 +153,12 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
 
     import scipy.optimize
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
-                                 full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
+                                      full_output=full_output, xtol=xtol,
+                                      rtol=rtol, maxiter=maxiter)
     # A check following :issue:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
     # The idea is to take roughly the derivative and multiply by estimated
@@ -287,8 +288,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     b = float(b)
     import scipy.optimize
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     xmin, fval, iter, funcalls = scipy.optimize.fminbound(f, a, b, full_output=1, xtol=tol, maxfun=maxfun)
     return fval, xmin
@@ -378,8 +378,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         sage: def rosen(x):  # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
-        sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     _ = numpy.set_printoptions(legacy="1.25")
+        sage: _ = numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -393,16 +392,54 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6
         ....:          algorithm='bfgs')
         (1.0, 1.0, 1.0)
+
+    TESTS:
+
+    If ``func`` is symbolic, its minimizer should be in the same order as
+    its arguments, even when they are not in alphabetical order
+    (:issue:`43048`; the same problem was fixed for
+    :func:`minimize_constrained` in :issue:`32511`)::
+
+        sage: # needs sage.symbolic
+        sage: x, y, z = SR.var('x, y, z')
+        sage: f(y, x) = (x - 1)^2 + 10*(y - 2)^2
+        sage: minimize(f, [0, 0])  # abs tol 1e-4
+        (2.0, 1.0)
+        sage: minimize(f, [0, 0], algorithm='simplex')  # abs tol 1e-4
+        (2.0, 1.0)
+        sage: minimize(f, [0, 0], algorithm='ncg')  # abs tol 1e-6
+        (2.0, 1.0)
+
+    This holds for every algorithm::
+
+        sage: # needs sage.symbolic
+        sage: h(z, x, y) = (x - 1)^2 + (y - 2)^2 + (z - 3)^2
+        sage: algorithms = ['default', 'simplex', 'bfgs', 'cg', 'powell', 'ncg']
+        sage: for algorithm in algorithms:
+        ....:     m = minimize(h, [0, 0, 0], algorithm=algorithm)
+        ....:     print(algorithm, (m - vector([3, 1, 2])).norm() < 1e-3)
+        default True
+        simplex True
+        bfgs True
+        cg True
+        powell True
+        ncg True
+
+    Arguments that do not appear in ``func`` are allowed::
+
+        sage: # needs sage.symbolic
+        sage: g(x, y) = (x - 3)^2
+        sage: minimize(g, [0, 0])  # abs tol 1e-6
+        (3.0, 0.0)
     """
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     from scipy import optimize
     if isinstance(func, Expression):
-        var_list = func.variables()
+        var_list = func.arguments()
         var_names = [str(_) for _ in var_list]
         fast_f = fast_callable(func, vars=var_names, domain=float)
         f = lambda p: fast_f(*p)
@@ -410,7 +447,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         fast_gradient_functions = [fast_callable(gradient_list[i],
                                                  vars=var_names, domain=float)
                                    for i in range(len(gradient_list))]
-        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        gradient = lambda p: numpy.array([a(*p)
+                                          for a in fast_gradient_functions])
     else:
         f = func
 
@@ -418,7 +456,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         if gradient is None:
             min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         else:
-            min = optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
+            min = optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
     else:
         if algorithm == "simplex":
             min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
@@ -431,12 +469,15 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         elif algorithm == "ncg":
             if isinstance(func, Expression):
                 hess = func.hessian()
-                hess_fast = [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
+                hess_fast = [[fast_callable(a, vars=var_names, domain=float)
+                              for a in row] for row in hess]
                 hessian = lambda p: [[a(*p) for a in row] for row in hess_fast]
                 from numpy import dot
-                hessian_p = lambda p,v: dot(numpy.array(hessian(p)),v)
-                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient,
-                      fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
+                hessian_p = lambda p, v: dot(numpy.array(hessian(p)), v)
+                min = optimize.fmin_ncg(f, [float(_) for _ in x0],
+                                        fprime=gradient,
+                                        fhess=hessian, fhess_p=hessian_p,
+                                        disp=verbose, **args)
     return vector(RDF, min)
 
 
@@ -536,27 +577,27 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
     from scipy import optimize
-    function_type = type(lambda x,y: x+y)
+    function_type = type(lambda x, y: x+y)
 
     if isinstance(func, Expression):
         var_list = func.arguments()
         fast_f = fast_callable(func, vars=var_list, domain=float)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
-        fast_gradient_functions = [ fast_callable(gi,
-                                                  vars=var_list,
-                                                  domain=float)
-                                    for gi in gradient_list ]
-        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        fast_gradient_functions = [fast_callable(gi,
+                                                 vars=var_list,
+                                                 domain=float)
+                                   for gi in gradient_list]
+        gradient = lambda p: numpy.array([a(*p)
+                                          for a in fast_gradient_functions])
         if isinstance(cons, Expression):
             fast_cons = fast_callable(cons, vars=var_list, domain=float)
             cons = lambda p: numpy.array([fast_cons(*p)])
         elif isinstance(cons, list) and isinstance(cons[0], Expression):
-            fast_cons = [ fast_callable(ci, vars=var_list, domain=float)
-                          for ci in cons ]
+            fast_cons = [fast_callable(ci, vars=var_list, domain=float)
+                         for ci in cons]
             cons = lambda p: numpy.array([a(*p) for a in fast_cons])
     else:
         f = func
@@ -659,8 +700,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
     ``lmdif`` and ``lmder`` algorithms.
     """
     import numpy
-    if int(numpy.version.short_version[0]) > 1:
-        numpy.set_printoptions(legacy="1.25")
+    numpy.set_printoptions(legacy="1.25")
 
     if not isinstance(data, numpy.ndarray):
         try:
@@ -875,7 +915,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
                 return binpacking(items, k=k, maximum=maximum, solver=solver, verbose=verbose,
                                   integrality_tolerance=integrality_tolerance)
             except MIPSolverException:
-                k = k + 1
+                k += 1
 
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
     p = MixedIntegerLinearProgram(solver=solver)
@@ -885,11 +925,11 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
 
     # Capacity constraint of each bin
     for b in range(k):
-        p.add_constraint(p.sum(weight[i]*box[i,b] for i in weight) <= maximum)
+        p.add_constraint(p.sum(weight[i]*box[i, b] for i in weight) <= maximum)
 
     # Each item is assigned exactly one bin
     for i in weight:
-        p.add_constraint(p.sum(box[i,b] for b in range(k)) == 1)
+        p.add_constraint(p.sum(box[i, b] for b in range(k)) == 1)
 
     try:
         p.solve(log=verbose)
@@ -901,7 +941,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     boxes = [[] for i in range(k)]
 
     for i,b in box:
-        if box[i,b]:
+        if box[i, b]:
             boxes[b].append(weight[i] if isinstance(items, list) else i)
 
     return boxes

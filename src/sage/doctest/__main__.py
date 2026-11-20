@@ -3,8 +3,6 @@ import os
 import shlex
 import sys
 
-import pytest
-
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
                                                    '.sage'))
@@ -161,7 +159,14 @@ def _make_parser():
 
 
 def main():
+    # Match sage-env's OpenBLAS policy for reliable process spawning (#26118).
+    # Set this before importing Sage modules that can initialize OpenBLAS.
+    os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
     from importlib.util import find_spec
+
+    import pytest
+
     from sage.doctest.control import DocTestController
     from sage.env import SAGE_SRC
 
@@ -225,10 +230,9 @@ def main():
     if pytest_nprocs != 1 and not find_spec("xdist"):
         # The default is "1", so anything else is an explicit request
         # that we should warn about if we are unable to comply.
-        from pytest import PytestWarning
         from warnings import warn
         warn("pytest-xdist not found, pytest will run sequentially",
-             PytestWarning)
+             pytest.PytestWarning)
         pytest_nprocs = 1
 
     # pytest-xdist is now guaranteed to be available in these cases

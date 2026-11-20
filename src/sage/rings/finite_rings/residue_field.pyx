@@ -1089,8 +1089,7 @@ cdef class ReductionMap(Map):
             p = p.gen()
             if p.degree() == 1:
                 return self._F((x.numerator() % p)[0] / (x.denominator() % p)[0])
-            else:
-                return self._F((x.numerator() % p).list()) / self._F((x.denominator() % p).list())
+            return self._F((x.numerator() % p).list()) / self._F((x.denominator() % p).list())
 
         try:
             return self._F(self._to_vs(x) * self._PBinv)
@@ -1342,8 +1341,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             p = self._F.p.gen()
             if p.degree() == 1:
                 return self._F((x % p)[0])
-            else:
-                return self._F((x % p).list())
+            return self._F((x % p).list())
         return self._F(self._to_vs(x) * self._PBinv)
         #return self._F(self._to_vs(x.parent().fraction_field()(x)) * self._PBinv)
 
@@ -1420,8 +1418,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         """
         if self.domain() is ZZ:
             return x.lift()
-        else:
-            return self.section()(x)
+        return self.section()(x)
 
 cdef class LiftingMap(Section):
     """
@@ -1579,8 +1576,7 @@ cdef class LiftingMap(Section):
         elif isinstance(self._K, FractionField_generic):
             if self._F.p.degree() == 1:
                 return self._K(self._K.ring_of_integers()(x))
-            else:
-                return self._K(self._K.ring_of_integers()(x.polynomial().list()))
+            return self._K(self._K.ring_of_integers()(x.polynomial().list()))
         elif isinstance(self._K, PolynomialRing_generic):
             return self._K(x.polynomial().list())
         # Else the lifting map is just x |--> to_order(x * PB)
@@ -1589,8 +1585,7 @@ cdef class LiftingMap(Section):
         ans = self._to_order(self._PB.linear_combination_of_rows(v))
         if ans.parent() is self._K:
             return ans
-        else:
-            return self._K(ans)
+        return self._K(ans)
 
     def _repr_type(self):
         """

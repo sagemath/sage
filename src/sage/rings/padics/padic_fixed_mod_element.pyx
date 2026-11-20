@@ -300,7 +300,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         cdef Integer selfvalue, modulus
         cdef long aprec

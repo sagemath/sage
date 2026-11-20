@@ -32,20 +32,19 @@ AUTHORS:
 from operator import xor
 
 from sage.arith.misc import gcd, power_mod, xgcd
-from sage.crypto.cryptosystem import PublicKeyCryptosystem
 from sage.crypto.util import is_blum_prime, least_significant_bits, random_blum_prime
 from sage.functions.log import log
 from sage.functions.other import Function_floor
 from sage.monoids.string_monoid import BinaryStrings
 from sage.rings.finite_rings.integer_mod import Mod as mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
-
+from sage.structure.sage_object import SageObject
 
 floor = Function_floor()
 IntegerModRing = IntegerModFactory("IntegerModRing")
 
 
-class BlumGoldwasser(PublicKeyCryptosystem):
+class BlumGoldwasser(SageObject):
     r"""
     The Blum-Goldwasser probabilistic public-key encryption scheme.
 

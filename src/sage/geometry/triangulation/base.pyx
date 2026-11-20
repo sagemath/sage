@@ -341,7 +341,7 @@ cdef class Point(SageObject):
 cdef class PointConfiguration_base(Parent):
     r"""
     The cython abstract base class for
-    :class:`~sage.geometry.triangulation.PointConfiguration`.
+    :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
 
     .. WARNING::
 
@@ -454,7 +454,7 @@ cdef class PointConfiguration_base(Parent):
         """
         Return the vector space that contains the affine points.
 
-        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
+        OUTPUT: a vector space over the fraction field of :meth:`~sage.geometry.triangulation.base.PointConfiguration_base.base_ring`
 
         EXAMPLES::
 
@@ -473,7 +473,7 @@ cdef class PointConfiguration_base(Parent):
         Return the vector space that is spanned by the homogeneous
         coordinates.
 
-        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
+        OUTPUT: a vector space over the fraction field of :meth:`~sage.geometry.triangulation.base.PointConfiguration_base.base_ring`
 
         EXAMPLES::
 
@@ -492,7 +492,7 @@ cdef class PointConfiguration_base(Parent):
         Return the dimension of the ambient space of the point
         configuration.
 
-        See also :meth:`dimension`
+        See also :meth:`~sage.geometry.triangulation.base.PointConfiguration_base.dim`
 
         EXAMPLES::
 
@@ -633,7 +633,7 @@ cdef class PointConfiguration_base(Parent):
 
         OUTPUT:
 
-        A list of the points. See also the :meth:`__iter__`
+        A list of the points. See also ``__iter__``
         method, which returns the corresponding generator.
 
         EXAMPLES::
@@ -656,7 +656,7 @@ cdef class PointConfiguration_base(Parent):
         """
         Return the `i`-th point of the configuration.
 
-        Same as :meth:`__getitem__`
+        Same as ``__getitem__``
 
         INPUT:
 

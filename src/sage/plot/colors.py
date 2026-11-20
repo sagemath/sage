@@ -4,7 +4,7 @@ Colors
 
 This module defines a :class:`Color` object and helper functions (see,
 e.g., :func:`hue`, :func:`rainbow`), as well as a set of
-:data:`colors` and :data:`colormaps` to use with
+``colors`` and ``colormaps`` to use with
 :class:`Graphics` objects in Sage.
 
 For a list of pre-defined colors in Sage, evaluate::
@@ -1260,7 +1260,7 @@ def rainbow(n, format='hex'):
 # about cmap where it is used and to test these classes.
 def get_cmap(cmap):
     r"""
-    Return a color map (actually, a matplotlib :class:`Colormap`
+    Return a color map (actually, a matplotlib :class:`~matplotlib.colors.Colormap`
     object), given its name or a [mixed] list/tuple of RGB list/tuples
     and color names.  For a list of map names, evaluate::
 

@@ -62,7 +62,7 @@ AUTHORS:
 - Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
 - Peter Bruin (2016-06): made number fields fully satisfy unique representation
 - John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
-- Anna Haensch (2018-03): added :meth:`quadratic_defect`
+- Anna Haensch (2018-03): added :meth:`~sage.rings.number_field.number_field.NumberField_generic.quadratic_defect`
 - Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
 """
 # ****************************************************************************
@@ -88,7 +88,7 @@ import sage.rings.real_double
 import sage.rings.real_lazy
 import sage.rings.real_mpfr
 import sage.structure.coerce_exceptions
-from sage.arith.misc import euler_phi, factor, gcd, next_prime
+from sage.arith.misc import euler_phi, factor, gcd, next_prime, previous_prime
 from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.categories.sets_cat import Sets
@@ -162,7 +162,7 @@ _NumberFields = NumberFields()
 def is_NumberFieldHomsetCodomain(codomain, category=None) -> bool:
     """
     Return whether ``codomain`` is a valid codomain for a
-    :class:`NumberFieldHomset` in ``category``.
+    :class:`~sage.rings.number_field.homset.NumberFieldHomset` in ``category``.
 
     EXAMPLES:
 
@@ -254,7 +254,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
       having to factor the discriminant, but of course can lead to wrong
       results; only applies for absolute fields at present.
     - ``structure`` -- ``None``, a list or an instance of
-      :class:`structure.NumberFieldStructure` (default: ``None``),
+      :class:`~sage.rings.number_field.structure.NumberFieldStructure` (default: ``None``),
       internally used to pass in additional structural information, e.g.,
       about the field from which this field is created as a subfield.
 
@@ -581,7 +581,7 @@ class NumberFieldFactory(UniqueFactory):
       having to factor the discriminant, but of course can lead to wrong
       results; only applies for absolute fields at present.
     - ``structure`` -- ``None`` or an instance of
-      :class:`structure.NumberFieldStructure` (default: ``None``),
+      :class:`~sage.rings.number_field.structure.NumberFieldStructure` (default: ``None``),
       internally used to pass in additional structural information, e.g.,
       about the field from which this field is created as a subfield.
 
@@ -1373,7 +1373,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     def _convert_map_from_(self, other):
         r"""
         Additional conversion maps from ``other`` may be defined by
-        :meth:`structure`.
+        :meth:`~sage.rings.number_field.number_field.NumberField_generic.structure`.
 
         .. SEEALSO::
 
@@ -1643,6 +1643,20 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             !2
             sage: L(gap(tau)^3)     # indirect doctest                                  # needs sage.libs.gap
             2
+            sage: L(libgap(tau)^3)   # indirect doctest                                  # needs sage.libs.gap
+            2
+            sage: L(libgap(tau + 1)) # indirect doctest                                  # needs sage.libs.gap
+            tau + 1
+
+        GAP may print elements of a cyclotomic base field as ``E(n)``; these
+        should be interpreted in the base field, not in the universal
+        cyclotomic field::
+
+            sage: K.<zeta> = CyclotomicField(3)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 2)
+            sage: L(libgap(zeta*b + 1)) == zeta*b + 1                                    # needs sage.libs.gap
+            True
 
         Check that :issue:`22202` and :issue:`27765` are fixed::
 
@@ -1714,11 +1728,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 raise TypeError("%s has unsupported PARI type %s" % (x, x.type()))
             x = self.absolute_polynomial().parent()(x)
             return self._element_class(self, x)
-        if isinstance(x, GapElement):
-            s = x._sage_repr()
-            if self.variable_name() in s:
-                return self._convert_from_str(s)
-            return self._convert_from_str(s.replace('!', ''))
+        if isinstance(x, (LibGapElement, GapElement)):
+            return self._convert_from_gap_element(x)
         if isinstance(x, str):
             return self._convert_from_str(x)
         if isinstance(x, (tuple, list,
@@ -1900,6 +1911,59 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if not (isinstance(w, Element) and w.parent() is self):
             return self(w)
         return w
+
+    def _convert_from_gap_element(self, x):
+        """
+        Convert a GAP element into this number field.
+
+        The conversion uses coordinates in GAP's power basis, recursively
+        converting the coefficients into the base field.
+
+        TESTS::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: K._convert_from_gap_element(gap(a)^2)                                  # needs sage.libs.gap
+            2
+            sage: K._convert_from_gap_element(libgap(a + 2))                             # needs sage.libs.gap
+            a + 2
+            sage: K._convert_from_gap_element(libgap(3/2))                               # needs sage.libs.gap
+            3/2
+
+        Elements from the base of a relative field also convert through the
+        classic GAP interface::
+
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 3)
+            sage: L._convert_from_gap_element(gap(a + 1))                                # needs sage.libs.gap
+            a + 1
+
+        GAP collapses relative extensions of degree one to their base field::
+
+            sage: E.<c> = K.extension(y - a)
+            sage: E._convert_from_gap_element(libgap(c)) == c                            # needs sage.libs.gap
+            True
+
+        This also works recursively over a cyclotomic base field::
+
+            sage: K.<zeta> = CyclotomicField(3)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 2)
+            sage: L._convert_from_gap_element(libgap(zeta*b + 1))                        # needs sage.libs.gap
+            zeta*b + 1
+        """
+        if x.IsRat():
+            return self(QQ(x))
+        if not self.is_absolute() and (isinstance(x, GapElement) or self.relative_degree() == 1):
+            return self(self.base_field()(x))
+        if isinstance(x, LibGapElement):
+            from sage.libs.gap.libgap import libgap
+            gap_field = libgap(self)
+        else:
+            gap_field = self._gap_()
+        basis = gap_field.Basis()
+        coefficients = basis.Coefficients(x * gap_field.One())
+        return self([self.base_field()(c) for c in coefficients])
 
     def _Hom_(self, codomain, category=None):
         """
@@ -3132,7 +3196,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         been specified.
 
         Fields created with the :func:`QuadraticField` or
-        :func:`CyclotomicField` constructors come with an implicit
+        :class:`CyclotomicField
+        <sage.rings.number_field.number_field.CyclotomicFieldFactory>`
+        constructors come with an implicit
         embedding. To get one of these fields without the embedding, use
         the generic :class:`NumberField` constructor.
 
@@ -3667,7 +3733,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         underlying prime (or equivalently, by norm).
 
         If there is a tie, the exact ordering should be assumed to be random.
-        See the remark in :meth:`NumberFieldIdeal._richcmp_`.
+        See the remark in ``NumberFieldIdeal._richcmp_``.
 
         EXAMPLES::
 
@@ -4487,6 +4553,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             [ tau ]
             sage: gap(tau)^3
             !2
+
+        Generator names that are Python keywords remain convertible from GAP::
+
+            sage: T = NumberField(z^2 - 3, 'True')
+            sage: T(gap(T.gen())) == T.gen()
+            True
         """
         if not self.is_absolute():
             raise NotImplementedError("Currently, only simple algebraic extensions are implemented in gap")
@@ -4496,13 +4568,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         x = q.variable_name()
         E = 'E' if x != 'E' else 'F'
         R = G(self.base_ring())
-
         return (
             f'CallFuncList(function() local {x},{E}; {x}:=Indeterminate({R.name()},"{x}"); '
             f'{E}:=AlgebraicExtension({R.name()},{self.polynomial()!r},"{self.gen()}"); '
             f'return {E}; end,[])'
         )
 
+    @cached_method
     def _libgap_(self):
         """
         Override :meth:`sage.structure.sage_object.SageObject._libgap_`,
@@ -4543,12 +4615,30 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             x^2-3
             sage: gapK.PrimitiveElement()
             a
-        """
-        if not self.is_absolute():
-            raise NotImplementedError("Currently, only simple algebraic extensions are implemented in libgap")
 
+        Relative number fields are converted as towers of GAP algebraic
+        extensions::
+
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - a)
+            sage: gapL = libgap(L); gapL
+            <algebraic extension over the Rationals of degree 4>
+            sage: gapL.GeneratorsOfField()
+            [ b ]
+        """
         from sage.libs.gap.libgap import libgap
-        return libgap.AlgebraicExtension(self.base_ring(), self.polynomial(), str(self.gen()))
+        if self.is_absolute():
+            return libgap.AlgebraicExtension(self.base_ring(), self.polynomial(), str(self.gen()))
+
+        gap_base = libgap(self.base_field())
+        polynomial = self.relative_polynomial()
+        x = gap_base.Indeterminate(polynomial.variable_name())
+        gap_polynomial = gap_base.Zero()
+        power = gap_base.One()
+        for coeff in polynomial.list():
+            gap_polynomial += libgap(coeff) * power
+            power *= x
+        return libgap.AlgebraicExtension(gap_base, gap_polynomial, str(self.gen()))
 
     def characteristic(self):
         """
@@ -4573,7 +4663,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         INPUT:
 
         - ``proof`` -- if ``True`` (default), then compute the class group
-          provably correctly; call :func:`number_field_proof` to change this
+          provably correctly; call ``number_field_proof`` to change this
           default globally
 
         - ``names`` -- names of the generators of this class group
@@ -4846,17 +4936,15 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Number fields defined by non-monic and non-integral
         polynomials are supported (:issue:`252`). The units returned
-        below differ slightly depending on the CPU::
+        below differ slightly depending on the CPU and the pari version::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: ps = tuple(K.primes_above(2) + K.primes_above(3))
             sage: units, gens = K._S_class_group_and_units(ps)
             sage: gens
             []
-            sage: units  # needs 32_bit
-            [6*a + 2, -6*a - 3, -1, -12*a - 5]
-            sage: units  # needs !32_bit
-            [6*a + 2, -6*a + 3, -1, -12*a - 5]
+            sage: units
+            [6*a + 2, -6*a ... 3, -1, -12*a - 5]
 
         """
         K_pari = self.pari_bnf(proof=proof)
@@ -5747,7 +5835,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def disc(self, v=None):
         """
-        Shortcut for :meth:`discriminant`.
+        Shortcut for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -5788,7 +5876,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``n`` -- integer
 
         - ``proof`` -- boolean (default: ``True``, unless you called
-          :meth:`proof.number_field` and set it otherwise)
+          ``proof.number_field`` and set it otherwise)
 
         OUTPUT:
 
@@ -6221,9 +6309,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, or ``'magma'``
-          (default: ``'pari'``); for degrees between 12 and 15 default is
-          ``'gap'``, and when the degree is >= 16 it is ``'kash'``)
+        - ``algorithm`` -- ``'pari'``, ``'gap'``, or ``'magma'`` (default:
+          ``'pari'``; for degrees greater than 11, ``'gap'`` is attempted
+          instead)
 
         - ``names`` -- string giving a name for the generator of the Galois
           closure of ``self``, when this field is not Galois
@@ -6305,7 +6393,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Galois group 10T22 (S(5)[x]2) with order 240 of t^5 - t + a
         """
         from .galois_group import GaloisGroup_v2
-        return GaloisGroup_v2(self, algorithm=algorithm, names=names, gc_numbering=gc_numbering, _type=type)
+        return GaloisGroup_v2(self, algorithm=algorithm, names=names, gc_numbering=gc_numbering)
 
     def _normalize_prime_list(self, v):
         """
@@ -6814,7 +6902,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         r"""
         Return the defining polynomial of this number field.
 
-        This is exactly the same as :meth:`polynomial`.
+        This is exactly the same as :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -7945,7 +8033,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``assume_maximal`` -- ``True``, ``False``, ``None``, or
           ``'non-maximal-non-unique'`` (default: ``'non-maximal-non-unique'``)
           ignored when ``v`` is ``None``; otherwise, controls whether we assume
-          that the order :meth:`order.is_maximal` outside of ``v``.
+          that the order ``order.is_maximal`` outside of ``v``.
 
           - if ``True``, the order is assumed to be maximal at all primes.
 
@@ -8509,7 +8597,7 @@ class NumberField_absolute(NumberField_generic):
     def absolute_polynomial(self):
         r"""
         Return absolute polynomial that defines this absolute field. This
-        is the same as :meth:`polynomial`.
+        is the same as :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -9108,7 +9196,7 @@ class NumberField_absolute(NumberField_generic):
         and in the other direction.
 
         For an absolute extension this is identical to
-        :meth:`vector_space`.
+        :meth:`~sage.rings.number_field.number_field_rel.NumberField_relative.vector_space`.
 
         EXAMPLES::
 
@@ -9766,8 +9854,8 @@ class NumberField_absolute(NumberField_generic):
         - ``names`` -- 2-tuple of names of generator for output field `K` and the
           subfield `\QQ(\alpha)`
         - ``structure`` -- an instance of
-          :class:`structure.NumberFieldStructure` or ``None`` (default:
-          ``None``), if ``None``, then the resulting field's :meth:`structure`
+          :class:`~sage.rings.number_field.structure.NumberFieldStructure` or ``None`` (default:
+          ``None``), if ``None``, then the resulting field's :meth:`~sage.rings.number_field.number_field.NumberField_generic.structure`
           will return isomorphisms from and to this field. Otherwise, the field
           will be equipped with ``structure``.
 
@@ -10013,7 +10101,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_degree(self):
         """
-        A synonym for :meth:`degree`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.degree`.
 
         EXAMPLES::
 
@@ -10026,7 +10114,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_degree(self):
         """
-        A synonym for :meth:`degree`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.degree`.
 
         EXAMPLES::
 
@@ -10039,7 +10127,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_polynomial(self):
         """
-        A synonym for :meth:`polynomial`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -10052,7 +10140,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_vector_space(self, *args, **kwds):
         """
-        A synonym for :meth:`vector_space`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_rel.NumberField_relative.vector_space`.
 
         EXAMPLES::
 
@@ -10071,7 +10159,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_discriminant(self):
         """
-        A synonym for :meth:`discriminant`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -10084,7 +10172,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_discriminant(self):
         """
-        A synonym for :meth:`discriminant`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -10097,7 +10185,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_different(self):
         """
-        A synonym for :meth:`different`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.different`.
 
         EXAMPLES::
 
@@ -10110,7 +10198,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_different(self):
         """
-        A synonym for :meth:`different`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.different`.
 
         EXAMPLES::
 
@@ -11805,6 +11893,122 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             if p % n == 1:
                 return p
 
+    def previous_split_prime(self, p, exclude=None):
+        """
+        Return the previous prime integer `p` that splits completely in
+        this cyclotomic field (and does not ramify).
+
+        INPUT:
+
+        - ``p`` -- an integer
+
+        - ``exclude`` -- a list of integers; if specified, the returned prime will not divide any of them.
+
+        EXAMPLES::
+
+            sage: K.<z> = CyclotomicField(3)
+            sage: K.previous_split_prime(17)
+            13
+            sage: K.previous_split_prime(17, [26])
+            7
+
+        If there are no previous split primes, this function will raise a ValueError::
+
+            sage: K.previous_split_prime(7)
+            Traceback (most recent call last):
+            ...
+            ValueError: no previous prime
+
+        We can handle the edge case of ``CyclotomicField(1)``, where all primes split::
+
+            sage: CyclotomicField(1).previous_split_prime(3)
+            2
+        """
+        n = self._n()
+        if n == 1:
+            return previous_prime(p)
+        while True:
+            p = previous_prime(p)
+            if p % n == 1 and (exclude is None or all(d % p != 0 for d in exclude)):
+                return p
+
+    @cached_method
+    def _reduction_matrix(self, p):
+        """
+        This method is used in multimodular algorithms for linear algebra.
+
+        It is better to cache on the base ring since the reduction matrix
+        depends only on the field.
+
+        INPUT:
+
+        ``p`` -- a prime that splits completely
+
+        OUTPUT:
+
+        - a matrix over GF(p) whose action from the left
+          gives the map from O_K to GF(p) x ... x GF(p)
+          given by reducing modulo all the primes over p.
+
+        - the inverse of this matrix
+
+        EXAMPLES::
+
+            sage: K.<z> = CyclotomicField(3)
+            sage: A, B = K._reduction_matrix(7)
+            sage: A
+            [1 4]
+            [1 2]
+            sage: B
+            [6 2]
+            [4 3]
+
+        The reduction matrix is used to calculate the reductions mod primes
+        above p. ::
+
+            sage: K.<z> = CyclotomicField(5)
+            sage: A = matrix(K, 2, 2, [1, z, z^2+1, 5*z^3]); A
+            [      1       z]
+            [z^2 + 1   5*z^3]
+            sage: T, S = K._reduction_matrix(11)
+            sage: T * A._rational_matrix().change_ring(GF(11))
+            [ 1  9  5  4]
+            [ 1  5  4  9]
+            [ 1  4  6  1]
+            [ 1  3 10  3]
+
+        The rows of this product are the (flattened) matrices mod each prime above p::
+
+            sage: roots = [r for r, e in K.defining_polynomial().change_ring(GF(11)).roots()]; roots
+            [9, 5, 4, 3]
+            sage: [r^2+1 for r in roots]
+            [5, 4, 6, 10]
+            sage: [5*r^3 for r in roots]
+            [4, 9, 1, 3]
+
+        The reduction matrix is cached::
+
+            sage: K._reduction_matrix(31) is K._reduction_matrix(31)
+            True
+        """
+        phi = self.defining_polynomial()
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+        from sage.matrix.constructor import matrix
+        F = GF(p)
+        aa = [a for a, _ in phi.change_ring(F).roots()]
+        n = self.degree()
+        if len(aa) != n:
+            raise ValueError("the prime p (=%s) must split completely but doesn't" % p)
+        T = matrix(F, n)
+        for i in range(n):
+            a = aa[i]
+            b = 1
+            for j in range(n):
+                T[i,j] = b
+                b *= a
+        T.set_immutable()
+        return T, T**(-1)
+
     def _pari_integral_basis(self, v=None, important=True):
         """
         Internal function returning an integral basis of this number field in
@@ -12220,7 +12424,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         INPUT:
 
         - ``proof`` -- boolean (default: ``True``, unless you called
-          :meth:`proof.number_field` and set it otherwise).  If
+          ``proof.number_field`` and set it otherwise).  If
           ``proof`` is ``False`` (*not* the default!), and the
           discriminant of the field is negative, then the following
           warning from the PARI manual applies:

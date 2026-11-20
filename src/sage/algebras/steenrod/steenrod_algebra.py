@@ -390,8 +390,9 @@ Applying the antipode twice returns the original element::
     True
 
 Internal representation: you can use any element as an iterator (``for
-x in a: ...``), and the method :meth:`monomial_coefficients` returns a
-dictionary with keys tuples representing basis elements and with
+x in a: ...``), and the method
+:meth:`~sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic.Element.monomial_coefficients`
+returns a dictionary with keys tuples representing basis elements and with
 corresponding value representing the coefficient of that term::
 
     sage: c = Sq(5).antipode(); c
@@ -425,7 +426,9 @@ corresponding value representing the coefficient of that term::
 The tuple in the previous output stands for the element `\beta^0
 P^2 \beta^0`, i.e., `P^2`.  Going in the other direction, if you
 want to specify a basis element by giving the corresponding tuple,
-you can use the :meth:`monomial` method on the algebra::
+you can use the
+:attr:`~sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic.monomial`
+attribute on the algebra::
 
     sage: SteenrodAlgebra(p=7, basis='adem').monomial((0, 2, 0))
     P^2
@@ -471,6 +474,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     Users should not call this, but use the function
     :func:`SteenrodAlgebra` instead. See that function for
     extensive documentation.
+
+    .. automethod:: _repr_term
+    .. automethod:: _milnor_on_basis
+    .. automethod:: _an_element_
+    .. attribute:: monomial
 
     EXAMPLES::
 
@@ -3143,6 +3151,27 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         ``sage.algebras.steenrod.steenrod_algebra?``) for more
         information about elements of the Steenrod algebra.
         """
+        def monomial_coefficients(self, copy=True):
+            """
+            Return the internal dictionary representing ``self``.
+
+            This forwards to the implementation inherited from
+            ``IndexedFreeModuleElement``.
+
+            INPUT:
+
+            - ``copy`` -- boolean (default: ``True``); whether to return a
+              copy of the internal dictionary
+
+            EXAMPLES::
+
+                sage: c = Sq(5).antipode(); c
+                Sq(2,1) + Sq(5)
+                sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
+                True
+            """
+            return super().monomial_coefficients(copy=copy)
+
         def prime(self):
             """
             The prime associated to ``self``.
@@ -3895,7 +3924,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     documentation for this module (type
     ``sage.algebras.steenrod.steenrod_algebra?``) and the function
     :func:`steenrod_algebra_basis
-    <sage.algebras.steenrod.steenrod_algebra_bases.steenrod_algebra_basis_>`
+    <sage.algebras.steenrod.steenrod_algebra_bases.steenrod_algebra_basis>`
     for full descriptions of each of the implemented bases.
 
     This module implements the following bases at all primes:

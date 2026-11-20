@@ -6,7 +6,7 @@
 #                     2014-2017 François Bissey
 #                     2016-2022 Matthias Koeppe
 #                     2017-2018 Erik M. Bray
-#                     2018      Dima Pasechnik
+#                     2018-2026 Dima Pasechnik
 #                     2020      Jonathan Kliem
 #                     2021-2023 Michael Orlitzky
 #
@@ -342,20 +342,21 @@ m4_pushdef([SAGE_BOOTSTRAP_URL],[See https://doc.sagemath.org/html/en/reference/
    ])
 
 # choose BLAS/LAPACK on Darwin
-AC_ARG_WITH([darwin-accelerate],
-            [AS_HELP_STRING([--with-darwin-accelerate={no (default)},yes}],
-                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
-            [SAGE_DARWIN_ACCELERATE="$withval"],
-            [SAGE_DARWIN_ACCELERATE="no"])
-AC_SUBST([SAGE_DARWIN_ACCELERATE])
-
 SAGE_DARWIN_PKG_CONFIG_PATH=
 case $host in
-    *-*-darwin*)
+  *-*-darwin*)
+   AC_ARG_WITH([darwin-accelerate],
+            [AS_HELP_STRING([--with-darwin-accelerate={yes (default)},no}],
+                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
+            [SAGE_DARWIN_ACCELERATE="$withval"],
+            [SAGE_DARWIN_ACCELERATE="yes"])
+   AC_SUBST([SAGE_DARWIN_ACCELERATE])
    AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
     [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/accelerate/pkgconfig:"])
     ;;
-    *)
+  *)
+   SAGE_DARWIN_ACCELERATE="no"
+   ;;
 esac
 
 # Check for zlib
@@ -384,7 +385,7 @@ PKG_CHECK_MODULES([liblzma], [liblzma], [], [
 # Check for Python 3 for venv (required system package)
 ########################################################################
 
-m4_pushdef([PYTHON_MIN_VERSION],               [3.12.0])
+m4_pushdef([PYTHON_MIN_VERSION],               [3.13.0])
 m4_pushdef([PYTHON_LT_VERSION],                [3.15.0])
 
 AC_ARG_WITH([python],
@@ -608,7 +609,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11 rpds_py; do
+    for pkg in notebook nbconvert beautifulsoup4 nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11 rpds_py; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -674,6 +675,7 @@ dnl when the system package is not usable.
 AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
+SAGE_CHECK_SYSTEM_LIBTOOL()
 
 AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
 

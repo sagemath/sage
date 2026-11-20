@@ -38,7 +38,7 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-linux.yml --name sage-dev
+            $ mamba env create --file environment-3.13-linux.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: macOS
@@ -128,6 +128,12 @@ Using Conda
     .. code-block:: console
 
         $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
+
+
+To rebuild the documentation after editing it, see
+:ref:`Building the manuals <section-building-manuals>` in the Sage Developer's
+Guide.
+
 
 .. _system_package_manager:
 
@@ -237,8 +243,10 @@ Remarks
   You can update the conda lock files by running ``tools/update-conda.py``.
   In order to update the conda environment afterwards use::
 
-    $ mamba env update --file environment-3.12-linux.yml --name sage-dev
+    $ mamba env update --file environment-3.13-linux.yml --name sage-dev
 
+
+.. _section-meson-build-directory:
 
 Background information
 ======================
