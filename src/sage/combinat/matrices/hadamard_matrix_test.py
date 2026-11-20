@@ -161,6 +161,31 @@ def test_hadamard_matrix_2060(constructor):
     assert is_hadamard_matrix(H, normalized=True)
 
 
+def _assert_hadamard_by_hamming(H):
+    """Check a positive square sign matrix using exact row-pair distances."""
+    n = H.nrows()
+    assert n > 0 and H.ncols() == n
+    packed = []
+    for row in H:
+        entries = row.list()
+        assert set(entries) <= {-1, 1}
+        packed.append(int(''.join('1' if c == 1 else '0' for c in entries), 2))
+    # For sign rows, the inner product is n minus twice the Hamming distance.
+    # Each row has squared norm n, and every distinct pair must be orthogonal.
+    for j, row in enumerate(packed):
+        assert all((row ^ other).bit_count() == n // 2 for other in packed[:j])
+
+
+def test_hadamard_hamming_verifier():
+    """Check the exact verifier against valid and corrupted small matrices."""
+    from sage.matrix.constructor import matrix
+
+    _assert_hadamard_by_hamming(matrix([[1, 1], [1, -1]]))
+    for rows in ([[1, 1], [1, 1]], [[1, 1], [1, 0]], [[1, 1, 1], [1, -1, 1]]):
+        with pytest.raises(AssertionError):
+            _assert_hadamard_by_hamming(matrix(rows))
+
+
 @pytest.mark.parametrize(
     "n,digest",
     [

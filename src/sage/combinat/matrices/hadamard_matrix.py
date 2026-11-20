@@ -1221,7 +1221,24 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     e3 = _construction_goethals_seidel_matrix(X3, -X4, -X1, X2)
     e4 = _construction_goethals_seidel_matrix(X4, X3, -X2, -X1)
 
-    H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
+    # Assemble the tensor sum blockwise. For T-matrices each coefficient
+    # tuple selects a single signed Williamson block, so only eight small
+    # blocks are needed instead of four full-sized tensor products.
+    units = (e1, e2, e3, e4)
+    block_types = {}
+    blocks = []
+    for r in range(4*n):
+        row = []
+        for c in range(4*n):
+            coefficients = tuple(e[r, c] for e in units)
+            if coefficients not in block_types:
+                block_types[coefficients] = sum(
+                    (coefficient * W
+                     for coefficient, W in zip(coefficients, will_matrices)
+                     if coefficient), zero_matrix(A.base_ring(), m))
+            row.append(block_types[coefficients])
+        blocks.append(row)
+    H = block_matrix(blocks)
     if check:
         assert is_hadamard_matrix(H)
     return H
