@@ -1030,7 +1030,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: E = EllipticCurve(K, [0, 1])
             sage: R.<x> = GF(11)[]
             sage: J = HyperellipticCurve(x^3 + 1).jacobian()(K)
-            sage: to_J = lambda T: J(x - T.x(), T.y())
+            sage: to_J = lambda T: J(x - T.x(), T.y()) if T else J.zero()
             sage: P = E.torsion_basis(12)[0]
             sage: Q = E.random_point()
             sage: to_J(P).tate_pairing(to_J(Q), 12) == P.tate_pairing(Q, 12, 2)
