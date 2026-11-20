@@ -31,6 +31,8 @@ AUTHORS:
   numbers of higher level
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
+
+- Julianne Grageda (2026-11): Added is_congruent
 """
 
 ##############################################################################
