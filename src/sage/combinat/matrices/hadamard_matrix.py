@@ -85,24 +85,28 @@ REFERENCES:
 from math import sqrt
 from urllib.request import urlopen
 
-from sage.arith.misc import divisors, is_prime_power, is_square, is_prime
-from sage.combinat.designs.difference_family import (get_fixed_relative_difference_set,
-                                                     relative_difference_set_from_homomorphism,
-                                                     skew_supplementary_difference_set,
-                                                     complementary_difference_sets)
+from sage.arith.misc import divisors, is_prime, is_prime_power, is_square
+from sage.combinat.designs.difference_family import (
+    complementary_difference_sets,
+    get_fixed_relative_difference_set,
+    relative_difference_set_from_homomorphism,
+    skew_supplementary_difference_set,
+)
 from sage.combinat.t_sequences import T_sequences_smallcases
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.matrix.constructor import (block_matrix,
-                                     block_diagonal_matrix,
-                                     diagonal_matrix,
-                                     identity_matrix as I,
-                                     ones_matrix as J,
-                                     matrix,
-                                     matrix_method,
-                                     zero_matrix)
+from sage.matrix.constructor import (
+    block_diagonal_matrix,
+    block_matrix,
+    diagonal_matrix,
+    matrix,
+    matrix_method,
+    zero_matrix,
+)
+from sage.matrix.constructor import identity_matrix as I
+from sage.matrix.constructor import ones_matrix as J
 from sage.misc.unknown import Unknown
 from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def normalise_hadamard(H, skew=False):
@@ -128,6 +132,8 @@ def normalise_hadamard(H, skew=False):
     If ``skew`` is ``True`` but the Hadamard matrix is not skew, the matrix returned
     need not be normalized::
 
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     williamson_hadamard_matrix_smallcases)
         sage: H = normalise_hadamard(williamson_hadamard_matrix_smallcases(92), skew=True)
         sage: is_hadamard_matrix(H, normalized=True)
         False
@@ -701,7 +707,8 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
 
     TESTS::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import williamson_hadamard_matrix_smallcases
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     williamson_hadamard_matrix_smallcases)
         sage: williamson_hadamard_matrix_smallcases(116)
         116 x 116 dense matrix over Integer Ring...
         sage: williamson_hadamard_matrix_smallcases(172)
@@ -1086,7 +1093,9 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         ...
         ValueError: n must be a positive multiple of four
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+    from sage.combinat.designs.difference_family import (
+        supplementary_difference_set_hadamard,
+    )
     from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_GOETHALS_SEIDEL_DATA
 
     if n <= 0 or n % 4 != 0:
@@ -1594,7 +1603,9 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         ...
         AssertionError
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
+    from sage.combinat.designs.difference_family import (
+        supplementary_difference_set_from_rel_diff_set,
+    )
     from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_SPENCE_DATA
 
     assert n % 4 == 0 and n > 0
@@ -1701,6 +1712,7 @@ def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
         ValueError: No larger-border Goethals-Seidel data for order 668
     """
     from itertools import product
+
     from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_BORDERED_DATA
 
     if existence:
@@ -2459,7 +2471,7 @@ def _helper_payley_matrix(n, zero_position=True):
 
     # Order the elements of K in K_list
     # so that K_list[i] = -K_list[n - i - 1]
-    K_pairs = set(tuple(sorted([x, -x])) for x in K if x)
+    K_pairs = {tuple(sorted([x, -x])) for x in K if x}
     K_list = [K.zero()] * n
     shift = 0 if zero_position else 1
 
@@ -2529,7 +2541,9 @@ def rshcd_from_close_prime_powers(n):
 
     K = (U*Sa).tensor_product(Sb) + U.tensor_product(J(b)-I(b)) - J(a).tensor_product(I(b))
 
-    F = lambda x: diagonal_matrix([-(-1)**i for i in range(x)])
+    def F(x):
+        return diagonal_matrix([-(-1)**i for i in range(x)])
+
     G = block_diagonal_matrix([J(1), I(a).tensor_product(F(b))])
     e = matrix(a*b, [1]*(a*b))
     H = block_matrix(2, [-J(1), e.transpose(), e, K])
@@ -2734,7 +2748,11 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
         ...
         ValueError: q=8 is not a valid parameter for this construction
     """
-    from sage.combinat.designs.difference_family import is_fixed_relative_difference_set, difference_family, complementary_difference_sets
+    from sage.combinat.designs.difference_family import (
+        complementary_difference_sets,
+        difference_family,
+        is_fixed_relative_difference_set,
+    )
 
     q = None
     m = n // 4
@@ -3638,7 +3656,7 @@ def szekeres_difference_set_pair(m, check=True):
     A = [a for a in G if a - F.one() in sG]
     B = [b for b in G if b + F.one() in sG]
     if check:
-        from itertools import product, chain
+        from itertools import chain, product
         assert (len(A) == len(B) == m)
         if m > 1:
             assert (sG == {xy[0] / xy[1]

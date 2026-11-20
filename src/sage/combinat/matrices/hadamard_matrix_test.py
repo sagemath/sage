@@ -4,16 +4,16 @@ import pytest
 @pytest.mark.parametrize("n", [40, 42, 44])
 def test_hadamard_matrix_from_turyn_type_sequences(n):
     """Construct matrices using each new TT sequence from London--Kotsireas."""
-    from sage.combinat.t_sequences import (
-        T_sequences_construction_from_base_sequences,
-        base_sequences_construction,
-        turyn_type_sequences_smallcases,
-    )
     from sage.combinat.matrices.hadamard_matrix import (
         hadamard_matrix,
         hadamard_matrix_cooper_wallis_construction,
         hadamard_matrix_cooper_wallis_smallcases,
         is_hadamard_matrix,
+    )
+    from sage.combinat.t_sequences import (
+        T_sequences_construction_from_base_sequences,
+        base_sequences_construction,
+        turyn_type_sequences_smallcases,
     )
     from sage.matrix.constructor import matrix
 
@@ -73,6 +73,7 @@ def test_hadamard_matrices_alpoge(n, construction, constructor):
 def test_hadamard_alpoge_payload():
     """The stored records reproduce the original public payload exactly."""
     from hashlib import sha256
+
     from sage.combinat.matrices.hadamard_matrix_data import (
         ALPOGE_BORDERED_DATA,
         ALPOGE_GOETHALS_SEIDEL_DATA,
@@ -98,7 +99,10 @@ def test_hadamard_alpoge_payload():
 def test_hadamard_alpoge_decoder_conventions(n, digest):
     """Match the audited public decoder's larger-border outputs byte for byte."""
     from hashlib import sha256
-    from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_bordered_goethals_seidel
+
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix_bordered_goethals_seidel,
+    )
 
     H = hadamard_matrix_bordered_goethals_seidel(n, check=False)
     fingerprint = sha256()
@@ -110,7 +114,9 @@ def test_hadamard_alpoge_decoder_conventions(n, digest):
 @pytest.mark.parametrize("n", [0, -4, 10, 668, 1389])
 def test_hadamard_bordered_unavailable(n):
     """Availability queries and construction agree for unsupported orders."""
-    from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_bordered_goethals_seidel
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix_bordered_goethals_seidel,
+    )
 
     assert hadamard_matrix_bordered_goethals_seidel(n, existence=True) is False
     with pytest.raises(ValueError, match=f'No larger-border Goethals-Seidel data for order {n}'):
@@ -121,7 +127,8 @@ def test_hadamard_bordered_unavailable(n):
 def test_hadamard_matrix_2620_normalized():
     """Normalize Cooper--Wallis matrices enabled by the length-44 TT seed."""
     from sage.combinat.matrices.hadamard_matrix import (
-        hadamard_matrix, is_hadamard_matrix,
+        hadamard_matrix,
+        is_hadamard_matrix,
     )
 
     assert hadamard_matrix(2620, existence=True, construction_name=True) == (
@@ -140,12 +147,11 @@ def test_hadamard_matrix_2060(constructor):
 
     Constructing the matrix and checking its orthogonality take a long time.
     """
-    from sage.matrix.constructor import matrix
-
     from sage.combinat.matrices.hadamard_matrix import (
         hadamard_matrix_cooper_wallis_smallcases,
         is_hadamard_matrix,
     )
+    from sage.matrix.constructor import matrix
 
     if constructor == "general":
         H = matrix.hadamard(2060, check=False)
