@@ -19,7 +19,9 @@ import math
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import increase_recursion_limit
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import Expression
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 
 lazy_import('sage.functions.gamma', 'psi')
@@ -157,6 +159,23 @@ class Function_zeta(GinacFunction):
                                             'sympy': 'zeta',
                                             'mathematica': 'Zeta'})
 
+    def __call__(self, *args, **kwargs):
+        r"""
+        TESTS::
+
+            sage: # needs sage.symbolic
+            sage: zeta(oo)
+            1
+            sage: zeta(-oo)
+            zeta(-Infinity)
+        """
+        if len(args) == 1 and not kwargs.get('hold', False):
+            s = args[0]
+            if ((isinstance(s, Expression) and s.is_positive_infinity())
+                    or (not isinstance(s, Expression) and s == infinity)):
+                return ZZ.one()
+        return GinacFunction.__call__(self, *args, **kwargs)
+
 
 zeta = Function_zeta()
 
@@ -247,12 +266,29 @@ class Function_HurwitzZeta(BuiltinFunction):
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
             sage: hurwitz_zeta(0, x)
             -x + 1/2
+            sage: hurwitz_zeta(11/10, oo)
+            0
+            sage: hurwitz_zeta(2, +Infinity)
+            0
 
             sage: hurwitz_zeta(3, 0.5)                                                  # needs mpmath
             8.41439832211716
         """
         if x == 1:
             return zeta(s)
+        if ((isinstance(x, Expression) and x.is_positive_infinity())
+                or (not isinstance(x, Expression) and x == infinity)):
+            if isinstance(s, Expression):
+                if s.is_real():
+                    delta = s - 1
+                    if delta.is_positive():
+                        return ZZ.zero()
+            else:
+                try:
+                    if s > 1:
+                        return ZZ.zero()
+                except TypeError:
+                    pass
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
         if s in ZZ and s <= 0:
