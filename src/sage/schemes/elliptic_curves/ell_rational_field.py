@@ -120,7 +120,7 @@ def sturm_bound(N: Integer) -> Integer:
 
     INPUT:
 
-    - ``N`` -- a positive integer 
+    - ``N`` -- a positive integer
 
     EXAMPLE::
 
