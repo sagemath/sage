@@ -30,19 +30,20 @@ The Hadamard conjecture (possibly due to Paley) states that a Hadamard
 matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
-The module below implements constructions of Hadamard and skew Hadamard matrices
-for all known orders `\le 1200`, plus some more greater than `1200`. It also
-allows you to pull a Hadamard matrix from the database at [SloaHada]_.
+The module below constructs Hadamard matrices for all orders divisible by four
+up to `1200`, plus many larger orders, including the twelve public records of
+[EKLO2026]_, Section 3. It also implements many skew Hadamard constructions
+and allows you to pull a matrix from the database at [SloaHada]_.
 
-The following code will test that a construction for all known orders `\le 4k`
-is implemented. The assertion above can be verified by setting ``k=300``
-(note that it will take a long time to run)::
+The following code tests the ordinary and skew constructions up to order `4k`.
+The list of unavailable skew orders below covers ``k=300``
+(note that this will take a long time to run)::
 
     sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [668, 716, 892, 1132]
+    sage: unknown_hadamard = []
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
     ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
@@ -84,24 +85,28 @@ REFERENCES:
 from math import sqrt
 from urllib.request import urlopen
 
-from sage.arith.misc import divisors, is_prime_power, is_square, is_prime
-from sage.combinat.designs.difference_family import (get_fixed_relative_difference_set,
-                                                     relative_difference_set_from_homomorphism,
-                                                     skew_supplementary_difference_set,
-                                                     complementary_difference_sets)
+from sage.arith.misc import divisors, is_prime, is_prime_power, is_square
+from sage.combinat.designs.difference_family import (
+    complementary_difference_sets,
+    get_fixed_relative_difference_set,
+    relative_difference_set_from_homomorphism,
+    skew_supplementary_difference_set,
+)
 from sage.combinat.t_sequences import T_sequences_smallcases
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.matrix.constructor import (block_matrix,
-                                     block_diagonal_matrix,
-                                     diagonal_matrix,
-                                     identity_matrix as I,
-                                     ones_matrix as J,
-                                     matrix,
-                                     matrix_method,
-                                     zero_matrix)
+from sage.matrix.constructor import (
+    block_diagonal_matrix,
+    block_matrix,
+    diagonal_matrix,
+    matrix,
+    matrix_method,
+    zero_matrix,
+)
+from sage.matrix.constructor import identity_matrix as I
+from sage.matrix.constructor import ones_matrix as J
 from sage.misc.unknown import Unknown
 from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def normalise_hadamard(H, skew=False):
@@ -125,9 +130,11 @@ def normalise_hadamard(H, skew=False):
         True
 
     If ``skew`` is ``True`` but the Hadamard matrix is not skew, the matrix returned
-    will not be normalized::
+    need not be normalized::
 
-        sage: H = normalise_hadamard(hadamard_matrix(92), skew=True)
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     williamson_hadamard_matrix_smallcases)
+        sage: H = normalise_hadamard(williamson_hadamard_matrix_smallcases(92), skew=True)
         sage: is_hadamard_matrix(H, normalized=True)
         False
     """
@@ -700,7 +707,8 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
 
     TESTS::
 
-        sage: from sage.combinat.matrices.hadamard_matrix import williamson_hadamard_matrix_smallcases
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     williamson_hadamard_matrix_smallcases)
         sage: williamson_hadamard_matrix_smallcases(116)
         116 x 116 dense matrix over Integer Ring...
         sage: williamson_hadamard_matrix_smallcases(172)
@@ -1037,6 +1045,10 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
     The supplementary difference sets are taken from
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
+    For orders 892, 1132, 1244, 1948 and 1964, the four circulant seeds
+    are those analysed in [EKLO2026]_, Section 3, Table 1.
+    For orders 3732, 4492, 5020 and 5932, they are developed from the
+    multiplier orbits of the seeds in [EKLO2026]_, Section 4.
 
     INPUT:
 
@@ -1066,6 +1078,11 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
         sage: hadamard_matrix_from_sds(764, existence=True)
         True
+        sage: orders = [3732, 4492, 5020, 5932]
+        sage: [hadamard_matrix_from_sds(n, existence=True) for n in orders]
+        [True, True, True, True]
+        sage: hadamard_matrix_from_sds(3732).dimensions()  # long time
+        (3732, 3732)
 
     TESTS::
 
@@ -1083,20 +1100,38 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         ...
         ValueError: n must be a positive multiple of four
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
+    from sage.combinat.designs.difference_family import (
+        supplementary_difference_set_hadamard,
+    )
+    from sage.combinat.matrices.hadamard_matrix_data import (
+        ALPOGE_GOETHALS_SEIDEL_DATA,
+        EKLO_GOETHALS_SEIDEL_DATA,
+    )
 
     if n <= 0 or n % 4 != 0:
         raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
-        return supplementary_difference_set_hadamard(t, existence=True)
+        return (n in ALPOGE_GOETHALS_SEIDEL_DATA
+                or n in EKLO_GOETHALS_SEIDEL_DATA
+                or supplementary_difference_set_hadamard(t, existence=True))
 
-    _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
-    a = [-1 if i in S1 else 1 for i in range(t)]
-    b = [-1 if i in S2 else 1 for i in range(t)]
-    c = [-1 if i in S3 else 1 for i in range(t)]
-    d = [-1 if i in S4 else 1 for i in range(t)]
+    if n in ALPOGE_GOETHALS_SEIDEL_DATA:
+        a, b, c, d = [[1 if sign == '+' else -1 for sign in row]
+                      for row in ALPOGE_GOETHALS_SEIDEL_DATA[n]]
+    elif n in EKLO_GOETHALS_SEIDEL_DATA:
+        multipliers, representatives = EKLO_GOETHALS_SEIDEL_DATA[n]
+        supports = [{u * r % t for r in reps for u in multipliers}
+                    for reps in representatives]
+        a, b, c, d = [[-1 if i in support else 1 for i in range(t)]
+                      for support in supports]
+    else:
+        _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
+        a = [-1 if i in S1 else 1 for i in range(t)]
+        b = [-1 if i in S2 else 1 for i in range(t)]
+        c = [-1 if i in S3 else 1 for i in range(t)]
+        d = [-1 if i in S4 else 1 for i in range(t)]
 
     if n == 956:
         a, b, c, d = [-el for el in d], a, b, c
@@ -1186,10 +1221,274 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     e3 = _construction_goethals_seidel_matrix(X3, -X4, -X1, X2)
     e4 = _construction_goethals_seidel_matrix(X4, X3, -X2, -X1)
 
-    H = e1.tensor_product(A) + e2.tensor_product(B) + e3.tensor_product(C) + e4.tensor_product(D)
+    # Assemble the tensor sum blockwise. For T-matrices each coefficient
+    # tuple selects a single signed Williamson block, so only eight small
+    # blocks are needed instead of four full-sized tensor products.
+    units = (e1, e2, e3, e4)
+    block_types = {}
+    blocks = []
+    for r in range(4*n):
+        row = []
+        for c in range(4*n):
+            coefficients = tuple(e[r, c] for e in units)
+            if coefficients not in block_types:
+                block_types[coefficients] = sum(
+                    (coefficient * W
+                     for coefficient, W in zip(coefficients, will_matrices)
+                     if coefficient), zero_matrix(A.base_ring(), m))
+            row.append(block_types[coefficients])
+        blocks.append(row)
+    H = block_matrix(blocks)
     if check:
         assert is_hadamard_matrix(H)
     return H
+
+
+def symmetric_butson_hadamard_matrix_smallcases(
+    n, existence=False, check=True
+):
+    r"""
+    Return an available symmetric Butson matrix with fourth-root entries.
+
+    Currently this implements the symmetric `BH(86,4)` of [EKLO2026]_,
+    Section 4, from two length-42 seeds. The matrix is over the exact
+    cyclotomic field `\QQ(i)`, with entries in `\{1,-1,i,-i\}`.
+    See :func:`williamson_type_from_symmetric_butson` for its use in
+    constructing real Hadamard matrices.
+
+    INPUT:
+
+    - ``n`` -- integer; matrix order
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); verify symmetry and `HH^*=nI`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     symmetric_butson_hadamard_matrix_smallcases)
+        sage: H = symmetric_butson_hadamard_matrix_smallcases(86)
+        sage: H.dimensions(), H == H.T
+        ((86, 86), True)
+        sage: H * H.conjugate_transpose() == 86 * identity_matrix(
+        ....:     H.base_ring(), 86)
+        True
+        sage: symmetric_butson_hadamard_matrix_smallcases(86, existence=True)
+        True
+
+    TESTS::
+
+        sage: symmetric_butson_hadamard_matrix_smallcases(84, existence=True)
+        False
+        sage: symmetric_butson_hadamard_matrix_smallcases(84)
+        Traceback (most recent call last):
+        ...
+        ValueError: No symmetric BH(84, 4) data available
+    """
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_BH86_DATA
+    from sage.rings.number_field.number_field import CyclotomicField
+
+    if existence:
+        return n == 86
+    if n != 86:
+        raise ValueError(f'No symmetric BH({n}, 4) data available')
+    K = CyclotomicField(4)
+    i = K.gen()
+    values = {'+': K(1), '-': K(-1), 'i': i, 'j': -i}
+    a, b = [[values[c] for c in seed] for seed in EKLO_BH86_DATA]
+    A = matrix.circulant(a)
+    B = matrix(K, 42, 42, lambda r, c: b[(r + c) % 42])
+    e = J(K, 1, 42)
+    H = block_matrix(
+        [
+            [matrix(K, [[-i]]), e, matrix(K, [[-1]]), e],
+            [e.T, A, e.T, B],
+            [matrix(K, [[-1]]), e, matrix(K, [[-i]]), -e],
+            [e.T, B, -e.T, -A.conjugate()],
+        ]
+    )
+    if check:
+        assert H == H.T
+        assert H * H.conjugate_transpose() == n * I(K, n)
+    return H
+
+
+def williamson_type_from_symmetric_butson(H, check=True):
+    r"""
+    Construct Williamson-type matrices from a symmetric `BH(m,4)`.
+
+    Set `q=2m+1`. For `q \equiv 1 \pmod 4` a prime power, the symmetric
+    complex input gives four symmetric, pairwise amicable integer matrices
+    of order `q` whose Gram matrices sum to `4qI`. This is Miyamoto's
+    construction [Miy1991]_, reformulated as Lemma 26 of [SY1990]_.
+    Symmetry of the input is essential; see [EKLO2026]_, Remark 8.
+
+    Write `H=P+iQ` and take Paley matrices `A,B` of order `m` with row sums
+    1,0 and `AA^\top+BB^\top=qI-2J`. In Lemma 26 use
+    `U=(A,B,0,0)` and `V=(I,0,P+Q,P-Q)`. Each core is
+
+    .. MATH::
+
+        U_j\otimes J_2 + V_j\otimes
+        \begin{pmatrix}1&-1\\-1&1\end{pmatrix}.
+
+    Add a border with corner 1 and signs -1 for the first matrix, +1 for
+    the other three. Paley matrices here use multiplicative coordinates
+    in the finite field, so the resulting real matrices may differ from
+    the authors' gallery output.
+
+    INPUT:
+
+    - ``H`` -- symmetric square matrix over `\QQ(i)`, with fourth-root entries
+    - ``check`` -- boolean (default: ``True``); validate the input and output
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     symmetric_butson_hadamard_matrix_smallcases,
+        ....:     williamson_type_from_symmetric_butson)
+        sage: H = symmetric_butson_hadamard_matrix_smallcases(86)
+        sage: W = williamson_type_from_symmetric_butson(H)
+        sage: [A.dimensions() for A in W]
+        [(173, 173), (173, 173), (173, 173), (173, 173)]
+        sage: sum(A*A.T for A in W) == 692 * identity_matrix(173)
+        True
+
+    TESTS::
+
+        sage: williamson_type_from_symmetric_butson(matrix([[1, 1, 1]]))
+        Traceback (most recent call last):
+        ...
+        ValueError: H must be square of positive even order
+        sage: williamson_type_from_symmetric_butson(matrix([[1, 1], [-1, 1]]))
+        Traceback (most recent call last):
+        ...
+        ValueError: H must be symmetric
+    """
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.rings.number_field.number_field import CyclotomicField
+
+    m = H.nrows()
+    if m == 0 or m % 2 or H.ncols() != m:
+        raise ValueError('H must be square of positive even order')
+    q = 2 * m + 1
+    if not is_prime_power(q):
+        raise ValueError('2*H.nrows()+1 must be a prime power')
+    K = CyclotomicField(4)
+    H = H.change_ring(K)
+    if check:
+        if H != H.T:
+            raise ValueError('H must be symmetric')
+        if any(c**4 != 1 for c in H.list()):
+            raise ValueError('H must have fourth-root entries')
+        if H * H.conjugate_transpose() != m * I(K, m):
+            raise ValueError('H must satisfy H*H.conjugate_transpose() = mI')
+    P = matrix(ZZ, m, m, [ZZ((c + c.conjugate()) / 2) for c in H.list()])
+    Q = matrix(
+        ZZ, m, m, [ZZ((c - c.conjugate()) / (2 * K.gen())) for c in H.list()]
+    )
+    field = GF(q, 'a')
+    g = field.multiplicative_generator()
+
+    def character(x):
+        return 0 if not x else 1 if x.is_square() else -1
+
+    a = [-character(g ** (2 * j) - 1) for j in range(m)]
+    b = [character(g ** (1 - 2 * j) - 1) for j in range(m)]
+    A = matrix.circulant(a)
+    B = matrix(ZZ, m, m, lambda r, c: b[(r + c) % m])
+    Z = zero_matrix(ZZ, m)
+    U = (A, B, Z, Z)
+    V = (I(ZZ, m), Z, P + Q, P - Q)
+    difference = matrix(ZZ, [[1, -1], [-1, 1]])
+    e = J(ZZ, 1, 2 * m)
+    result = []
+    for j, (u, v) in enumerate(zip(U, V)):
+        core = u.tensor_product(J(ZZ, 2)) + v.tensor_product(difference)
+        border = -e if j == 0 else e
+        result.append(
+            block_matrix([[matrix(ZZ, [[1]]), border], [border.T, core]])
+        )
+    if check:
+        assert all(A == A.T for A in result)
+        assert all(
+            A * B.T == B * A.T
+            for j, A in enumerate(result)
+            for B in result[j + 1 :]
+        )
+        assert sum(A * A.T for A in result) == 4 * q * I(ZZ, q)
+    return tuple(result)
+
+
+def T_matrices_smallcases(n, existence=False, check=True):
+    r"""
+    Return four circulant T-matrices at an available order.
+
+    Currently orders 151 and 163 are implemented using the periodic
+    T-matrices discussed in [EKLO2026]_, Section 4. They have entries
+    `0,1,-1`, pairwise disjoint supports, and satisfy
+    `\sum_{j=1}^4 T_jT_j^\top=nI`. Unlike T-sequences, their first rows
+    need not have cancelling nonperiodic autocorrelations.
+
+    The data is stored as signed states on multiplier orbits, with
+    multiplier groups of order 5 for 151 and order 9 for 163. Combined
+    with Williamson matrices, these give Hadamard matrices at orders
+    5436, 6644, 7852 and 7172, 8476, respectively.
+
+    INPUT:
+
+    - ``n`` -- integer; order of the four matrices
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); verify the T-matrix identities
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     T_matrices_smallcases)
+        sage: T = T_matrices_smallcases(151)
+        sage: [M.dimensions() for M in T]
+        [(151, 151), (151, 151), (151, 151), (151, 151)]
+        sage: sum(M*M.T for M in T) == 151 * identity_matrix(151)
+        True
+        sage: T_matrices_smallcases(163, existence=True)
+        True
+
+    TESTS::
+
+        sage: T_matrices_smallcases(127, existence=True)
+        False
+        sage: T_matrices_smallcases(127)
+        Traceback (most recent call last):
+        ...
+        ValueError: No stored T-matrices of order 127
+    """
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_T_MATRIX_DATA
+
+    if existence:
+        return n in EKLO_T_MATRIX_DATA
+    if n not in EKLO_T_MATRIX_DATA:
+        raise ValueError(f'No stored T-matrices of order {n}')
+    multipliers, state = EKLO_T_MATRIX_DATA[n]
+    rows = [[0] * n for _ in range(4)]
+    seen = set()
+    orbits = []
+    for a in range(n):
+        if a not in seen:
+            orbit = {a * u % n for u in multipliers}
+            seen.update(orbit)
+            orbits.append(orbit)
+    assert len(orbits) == len(state)
+    for symbol, orbit in zip(state, orbits):
+        value = int(symbol)
+        for position in orbit:
+            rows[value % 4][position] = -1 if value >= 4 else 1
+    if check:
+        assert all(sum(abs(row[i]) for row in rows) == 1 for i in range(n))
+        assert all(
+            sum(row[i] * row[(i + s) % n] for row in rows for i in range(n))
+            == 0
+            for s in range(1, n)
+        )
+    return tuple(matrix.circulant(row) for row in rows)
 
 
 def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
@@ -1202,6 +1501,16 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     T-matrices or T-sequences from
     :func:`sage.combinat.t_sequences.T_sequences_smallcases`.
     The matrices `A`, `B`, `C`, `D` are taken from :func:`williamson_type_quadruples_smallcases`.
+
+    Williamson-type matrices of order 173 are instead obtained from the
+    symmetric `BH(86,4)` of [EKLO2026]_ using
+    :func:`williamson_type_from_symmetric_butson`. Combining them with
+    T-sequences of lengths 3, 5, 7, 9, 11 and 13 gives the six orders
+    2076, 3460, 4844, 6228, 7612 and 8996 discussed in that paper.
+
+    The periodic T-matrices of orders 151 and 163 from
+    :func:`T_matrices_smallcases` give orders 5436, 6644, 7852 and
+    7172, 8476, respectively, using Williamson matrices of orders 9, 11, 13.
 
     Data for T-matrices of order 67 is taken from [Saw1985]_. For order
     2060, Loïc Schneider found the length-103 sequences and identified the
@@ -1252,6 +1561,12 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         True
         sage: hadamard_matrix_cooper_wallis_smallcases(2060, existence=True)
         True
+        sage: [hadamard_matrix_cooper_wallis_smallcases(692*t, existence=True)
+        ....:  for t in (3, 5, 7, 9, 11, 13)]
+        [True, True, True, True, True, True]
+        sage: [hadamard_matrix_cooper_wallis_smallcases(n, existence=True)
+        ....:  for n in (5436, 6644, 7172, 7852, 8476)]
+        [True, True, True, True, True]
         sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
         False
         sage: hadamard_matrix_cooper_wallis_smallcases(64)
@@ -1297,21 +1612,39 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     for T_seq_len in divisors(n//4):
         will_size = n // (4*T_seq_len)
-        if (T_seq_len in db or T_sequences_smallcases(T_seq_len, existence=True)) and williamson_type_quadruples_smallcases(will_size, existence=True):
+        stored_t_matrices = T_matrices_smallcases(T_seq_len, existence=True)
+        has_t_matrices = (T_seq_len in db or stored_t_matrices
+                          or T_sequences_smallcases(T_seq_len, existence=True))
+        if has_t_matrices and (
+            will_size == 173
+            or williamson_type_quadruples_smallcases(
+                will_size, existence=True)
+        ):
             if existence:
                 return True
 
             e1, e2, e3, e4 = None, None, None, None
             if T_seq_len in db:
                 e1, e2, e3, e4 = db[T_seq_len]
+            elif stored_t_matrices:
+                e1, e2, e3, e4 = (
+                    M.row(0) for M in T_matrices_smallcases(
+                        T_seq_len, check=check))
             else:
                 e1, e2, e3, e4 = T_sequences_smallcases(T_seq_len, check=False)
 
-            will_matrices = williamson_type_quadruples_smallcases(will_size)
-            A, B, C, D = map(matrix.circulant, will_matrices)
+            if will_size == 173:
+                H = symmetric_butson_hadamard_matrix_smallcases(
+                    86, check=False)
+                A, B, C, D = williamson_type_from_symmetric_butson(
+                    H, check=check)
+            else:
+                will_matrices = williamson_type_quadruples_smallcases(
+                    will_size)
+                A, B, C, D = map(matrix.circulant, will_matrices)
             M = hadamard_matrix_cooper_wallis_construction(e1, e2, e3, e4, A, B, C, D, check=False)
 
-            if n == 2060:
+            if n == 2060 or will_size == 173 or stored_t_matrices:
                 M = normalise_hadamard(M)
 
             if check:
@@ -1532,6 +1865,13 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
     desired matrix.
 
+    For orders 668, 716, 1676 and 1772, the four sequences are taken from
+    the matrices analysed in [EKLO2026]_, Section 3, Theorem 5;
+    see also [Reff2026]_ for order 668.
+    Their row sums are `2,0,0,0`, and their periodic autocorrelations sum to
+    `-4` at every nonzero shift. These identities suffice for the bordered
+    array below; no relative-difference-set origin is assumed for these seeds.
+
     INPUT:
 
     - ``n`` -- integer; the order of the matrix to be constructed
@@ -1556,6 +1896,8 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
         sage: hadamard_matrix_spence_construction(52, existence=True)
         True
+        sage: hadamard_matrix_spence_construction(668, existence=True)
+        True
 
     TESTS::
 
@@ -1577,25 +1919,36 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
         ...
         AssertionError
     """
-    from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
+    from sage.combinat.designs.difference_family import (
+        supplementary_difference_set_from_rel_diff_set,
+    )
+    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_SPENCE_DATA
 
     assert n % 4 == 0 and n > 0
 
     q = n//4
 
+    available = n in ALPOGE_SPENCE_DATA or supplementary_difference_set_from_rel_diff_set(q, existence=True)
     if existence:
-        return supplementary_difference_set_from_rel_diff_set(q, existence=True)
+        return available
 
-    if not supplementary_difference_set_from_rel_diff_set(q, existence=True):
+    if not available:
         raise ValueError(f'The order {n} is not covered by Spence construction.')
 
-    G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
+    if n in ALPOGE_SPENCE_DATA:
+        rows = ALPOGE_SPENCE_DATA[n]
+        # This array's border requires row sums (0, 0, 0, 2).
+        # Move the first public sequence to A4.
+        A4, A1, A2, A3 = [matrix.circulant([1 if c == '+' else -1 for c in row])
+                          for row in rows]
+    else:
+        G, [S1, S2, S3, S4] = supplementary_difference_set_from_rel_diff_set(q, check=False)
 
-    Glist = list(G)
-    A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
-    A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
-    A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
-    A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
+        Glist = list(G)
+        A1 = matrix.circulant([1 if j in S1 else -1 for j in Glist])
+        A2 = matrix.circulant([1 if j in S4 else -1 for j in Glist])
+        A3 = matrix.circulant([1 if j in S3 else -1 for j in Glist])
+        A4 = matrix.circulant([1 if j in S2 else -1 for j in Glist])
 
     P = matrix(ZZ, [[1 if (i + j) % (q-1) == 0 else 0 for i in range(1, q)] for j in range(1, q)])
 
@@ -1613,6 +1966,145 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     if check:
         assert is_hadamard_matrix(H, verbose=True)
 
+    return H
+
+
+def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
+    r"""
+    Construct a Hadamard matrix using [EKLO2026]_, Theorem 7.
+
+    The orders from [EKLO2026]_, Section 3, are 1388, 1436 and 1916, with
+    borders of size 20, 28 and 12, respectively. Their four core matrices
+    are developed over
+    the abelian groups `C_2 \times C_3 \times C_{57}`,
+    `C_2 \times C_2 \times C_8 \times C_{11}` and
+    `C_2 \times C_2 \times C_{119}`. Here `C_k` denotes the cyclic group
+    of order `k`.
+
+    Order 5788 uses the generalized bordered array of [EKLO2026]_,
+    Theorem 7, over `C_2^2 \times C_{19}^2`, the additive group of
+    `C_2^2 \times \mathbb{F}_{19^2}`. Its border has size 12 and is
+    constant on the 361-element cosets of `C_{19}^2`.
+
+    For a sequence `a` indexed by the development group, set
+    `A_{x,y}=a_{y-x}`, and let `R` act by inversion in that group. The core is
+
+    .. MATH::
+
+        \begin{pmatrix}
+        A & BR & CR & DR \\
+        -BR & A & D^\top R & -C^\top R \\
+        -CR & -D^\top R & A & B^\top R \\
+        -DR & C^\top R & -B^\top R & A
+        \end{pmatrix}.
+
+    The top and left borders are expanded from the published sign records.
+    This reproduces the published matrices without a network connection
+    or assumptions about how their seeds were discovered.
+
+    INPUT:
+
+    - ``n`` -- integer; order of the desired matrix
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); check the resulting matrix
+
+    OUTPUT:
+
+    A matrix over the integers, or a boolean if ``existence=True``. If no
+    record is available and ``existence=False``, raise :exc:`ValueError`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_bordered_goethals_seidel
+        sage: [hadamard_matrix_bordered_goethals_seidel(n, existence=True)
+        ....:  for n in (1388, 1436, 1916)]
+        [True, True, True]
+        sage: matrix.hadamard(1388, existence=True, construction_name=True)
+        'bordered Goethals-Seidel 1388'
+        sage: hadamard_matrix_bordered_goethals_seidel(1388).dimensions()  # long time
+        (1388, 1388)
+        sage: hadamard_matrix_bordered_goethals_seidel(5788, existence=True)
+        True
+        sage: matrix.hadamard(5788, existence=True, construction_name=True)
+        'bordered Goethals-Seidel 5788'
+        sage: H = hadamard_matrix_bordered_goethals_seidel(5788)  # long time
+        sage: H.dimensions()  # long time
+        (5788, 5788)
+
+    TESTS::
+
+        sage: hadamard_matrix_bordered_goethals_seidel(668, existence=True)
+        False
+        sage: hadamard_matrix_bordered_goethals_seidel(668)
+        Traceback (most recent call last):
+        ...
+        ValueError: No larger-border Goethals-Seidel data for order 668
+    """
+    from itertools import product
+
+    from sage.combinat.matrices.hadamard_matrix_data import (
+        ALPOGE_BORDERED_DATA,
+        EKLO_BORDERED_DATA,
+    )
+
+    if existence:
+        return n in ALPOGE_BORDERED_DATA or n in EKLO_BORDERED_DATA
+    if n in EKLO_BORDERED_DATA:
+        factors, border, orbit, data = EKLO_BORDERED_DATA[n]
+        top_pair_repetitions = 1
+    elif n in ALPOGE_BORDERED_DATA:
+        factors, border, top_pair_repetitions, data = ALPOGE_BORDERED_DATA[n]
+        orbit = factors[-1]
+    else:
+        raise ValueError(f'No larger-border Goethals-Seidel data for order {n}')
+
+    size = len(data[0]) // 4
+    coordinates = list(product(*(range(f) for f in factors)))
+    strides = []
+    stride = 1
+    for factor in reversed(factors):
+        strides.insert(0, stride)
+        stride *= factor
+
+    # Row-major mixed-radix indices of y-x and -x in the development group.
+    differences = [[sum(((y-x) % f) * s
+                        for x, y, f, s in zip(row, col, factors, strides))
+                    for col in coordinates] for row in coordinates]
+    inverse = [sum((-x % f) * s for x, f, s in zip(row, factors, strides))
+               for row in coordinates]
+    seeds = [[1 if c == '+' else -1 for c in data[0][i*size:(i+1)*size]]
+             for i in range(4)]
+    A, B, C, D = [matrix(ZZ, [[seed[k] for k in row] for row in differences])
+                  for seed in seeds]
+
+    def reverse_columns(M):
+        return M.matrix_from_columns(inverse)
+
+    BR, CR, DR = map(reverse_columns, (B, C, D))
+    BTR, CTR, DTR = map(reverse_columns, (B.T, C.T, D.T))
+    core = block_matrix([[A, BR, CR, DR],
+                         [-BR, A, DTR, -CTR],
+                         [-CR, -DTR, A, BTR],
+                         [-DR, CTR, -BTR, A]])
+
+    # Expand the compressed borders on the subgroup cosets.
+    width = len(data[1]) // border
+    top_rows = []
+    for i in range(border):
+        row = data[1][i*width:(i+1)*width]
+        signs = row[border:]
+        signs = ''.join(signs[j:j+2] * top_pair_repetitions
+                        for j in range(0, len(signs), 2))
+        expanded = row[:border] + ''.join(c * orbit for c in signs)
+        top_rows.append([1 if c == '+' else -1 for c in expanded])
+    top = matrix(ZZ, top_rows)
+    left = matrix(ZZ, [[1 if c == '+' else -1 for c in part[i:i+border]]
+                       for part in data[2:]
+                       for i in range(0, len(part), border)
+                       for _ in range(orbit)])
+    H = top.stack(left.augment(core))
+    if check:
+        assert is_hadamard_matrix(H)
     return H
 
 
@@ -1764,8 +2256,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
     Try to construct a Hadamard matrix using the available methods.
 
-    Currently all orders `\le 1200` for which a construction is
-    known are implemented. For `n > 1200`, only some orders are available.
+    All orders divisible by four up to 1200 are implemented. For `n > 1200`,
+    only some orders are available, including all twelve records analysed in
+    [EKLO2026]_, Section 3. The returned matrix is normalized: its first row
+    and column consist entirely of `+1`.
 
     INPUT:
 
@@ -1843,7 +2337,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         sage: matrix.hadamard(12,existence=True)
         True
         sage: matrix.hadamard(668,existence=True)
-        Unknown
+        True
+        sage: matrix.hadamard(668, existence=True, construction_name=True)
+        'spence 668'
         sage: matrix.hadamard(10)
         Traceback (most recent call last):
         ...
@@ -1934,6 +2430,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = hadamard_matrix_spence_construction(n, check=False)
+    elif hadamard_matrix_bordered_goethals_seidel(n, existence=True):
+        name = "bordered Goethals-Seidel " + name
+        if existence:
+            return report_name(name)
+        M = hadamard_matrix_bordered_goethals_seidel(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
         name = "skew " + name
         if existence:
@@ -1954,8 +2455,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
             return Unknown
         raise ValueError("The Hadamard matrix of order %s is not yet implemented." % n)
 
+    # Normalize every construction, including those enabled by new T-sequences.
+    M = normalise_hadamard(M)
     if check:
-        assert is_hadamard_matrix(M)
+        assert is_hadamard_matrix(M, normalized=True)
 
     return M
 
@@ -2304,7 +2807,7 @@ def _helper_payley_matrix(n, zero_position=True):
 
     # Order the elements of K in K_list
     # so that K_list[i] = -K_list[n - i - 1]
-    K_pairs = set(tuple(sorted([x, -x])) for x in K if x)
+    K_pairs = {tuple(sorted([x, -x])) for x in K if x}
     K_list = [K.zero()] * n
     shift = 0 if zero_position else 1
 
@@ -2374,7 +2877,9 @@ def rshcd_from_close_prime_powers(n):
 
     K = (U*Sa).tensor_product(Sb) + U.tensor_product(J(b)-I(b)) - J(a).tensor_product(I(b))
 
-    F = lambda x: diagonal_matrix([-(-1)**i for i in range(x)])
+    def F(x):
+        return diagonal_matrix([-(-1)**i for i in range(x)])
+
     G = block_diagonal_matrix([J(1), I(a).tensor_product(F(b))])
     e = matrix(a*b, [1]*(a*b))
     H = block_matrix(2, [-J(1), e.transpose(), e, K])
@@ -2579,7 +3084,11 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
         ...
         ValueError: q=8 is not a valid parameter for this construction
     """
-    from sage.combinat.designs.difference_family import is_fixed_relative_difference_set, difference_family, complementary_difference_sets
+    from sage.combinat.designs.difference_family import (
+        complementary_difference_sets,
+        difference_family,
+        is_fixed_relative_difference_set,
+    )
 
     q = None
     m = n // 4
@@ -3483,7 +3992,7 @@ def szekeres_difference_set_pair(m, check=True):
     A = [a for a in G if a - F.one() in sG]
     B = [b for b in G if b + F.one() in sG]
     if check:
-        from itertools import product, chain
+        from itertools import chain, product
         assert (len(A) == len(B) == m)
         if m > 1:
             assert (sG == {xy[0] / xy[1]

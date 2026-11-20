@@ -2891,6 +2891,11 @@
 .. [EilLan53] On the groups `H(\pi, n)`, I, Samuel Eilenberg and Saunders Mac Lane,
               1953.
 
+.. [EKLO2026] Ronan Egan, Ilias Kotsireas, Stephen London and Pádraig Ó Catháin,
+             *Recent progress in the construction of Hadamard matrices* (2026).
+             :arxiv:`2610.27175v1`.
+             Matrix data: https://www.math74.com/Hadamard/.
+
 .. [EKLP1992] \N. Elkies, G. Kuperberg, M. Larsen, J. Propp,
               *Alternating-Sign Matrices and Domino Tilings*, Journal of Algebraic
               Combinatorics, volume 1 (1992), p. 111-132.
@@ -5231,6 +5236,10 @@
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LK2025] \S. London and I. Kotsireas,
+            *New Turyn-type sequences*.
+            Cryptography and Communications **17** (2025), 1601--1610.
+            :doi:`10.1007/s12095-025-00829-z`
 .. [LJCR] La Jolla Covering Repository,
    https://dmgordon.org/cover
 
@@ -6676,6 +6685,13 @@
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
 
+.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
+              (2026). Records the four length-166 sequences extracted from
+              Levent Alpöge's public payload and their bordered-array construction.
+              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
+              Seed data:
+              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
+
 .. [Rees00] Rolf S. Rees,
    Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
@@ -7596,6 +7612,13 @@
 .. [SWW1972] \A. Street, W. Wallis, J. Wallis,
              Combinatorics: Room squares, sum-free sets, Hadamard matrices.
              Lecture notes in Mathematics 292 (1972).
+
+.. [SY1990] Jennifer Seberry and Mieko Yamada,
+            *On the Products of Hadamard Matrices, Williamson Matrices and
+            Other Orthogonal Matrices using M-Structures*,
+            Journal of Combinatorial Mathematics and Combinatorial Computing
+            **7** (1990), 97-137, Lemma 26.
+            https://documents.uow.edu.au/~jennie/WEBPDF/139_1990.pdf
 
 .. [SYKU2010] Toshiki Saitoh, Katsuhisa Yamanaka, Masashi Kiyomi, Ryuhei Uehara:
               Random Generation and Enumeration of Proper Interval Graphs.
