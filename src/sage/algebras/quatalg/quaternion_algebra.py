@@ -5493,6 +5493,7 @@ def minkowski_basis_gram(G):
         S = B.transpose() * G
         y = (S * B).solve_right(S * t)
 
+        # bounds from [NS2009]_, Theorem 2.3.2
         if k == 1:
             bounds = [QQ((1,2))]
         elif k == 2:
