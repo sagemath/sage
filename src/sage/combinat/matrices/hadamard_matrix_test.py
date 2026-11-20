@@ -240,3 +240,107 @@ def test_hadamard_eklo_matrices(n):
     H = hadamard_matrix_from_sds(n)
     assert H.dimensions() == (n, n)
     assert hadamard_matrix(n, check=False) == normalise_hadamard(H)
+
+
+def test_hadamard_bordered_5788_data():
+    """Verify group autocorrelations and the Theorem 7 border identities."""
+    from hashlib import sha256
+    from itertools import product
+
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_bordered_goethals_seidel,
+    )
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_BORDERED_DATA
+    from sage.matrix.constructor import (
+        block_matrix,
+        identity_matrix,
+        matrix,
+        ones_matrix,
+    )
+    from sage.rings.integer_ring import ZZ
+
+    factors, border, orbit, data = EKLO_BORDERED_DATA[5788]
+    assert (factors, border, orbit) == ((2, 2, 19, 19), 12, 361)
+    assert sha256(''.join(data).encode('ascii')).hexdigest() == (
+        'f39d20d62fa95e936e948c2b508cebc3791675cd5307e27f355d86a2ca58a5ef'
+    )
+    assert set(''.join(data)) == {'+', '-'}
+    size = 4 * orbit
+    assert (
+        list(map(len, data))
+        == [4 * size, border * (border + 16)] + [4 * border] * 4
+    )
+    signs = [[1 if c == '+' else -1 for c in part] for part in data]
+    rows = [signs[0][i * size : (i + 1) * size] for i in range(4)]
+    coordinates = list(product(range(2), range(2), range(19), range(19)))
+    for a, b, c, d in coordinates[1:]:
+        shifted = [
+            ((x ^ a) * 2 + (y ^ b)) * 361 + ((z + c) % 19) * 19 + (w + d) % 19
+            for x, y, z, w in coordinates
+        ]
+        correlation = sum(
+            row[i] * row[j] for row in rows for i, j in enumerate(shifted)
+        )
+        assert correlation == (-12 if a == b == 0 else 4)
+
+    top = matrix(ZZ, border, border + 16, signs[1])
+    K = top[:, :border]
+    E = top[:, border:]
+    F = matrix(ZZ, 16, border, sum(signs[2:], []))
+    assert K * K.T == 12 * identity_matrix(ZZ, 12)
+    assert E * E.T == 16 * identity_matrix(ZZ, 12)
+    assert F * F.T == 16 * identity_matrix(ZZ, 16) - 4 * (
+        identity_matrix(ZZ, 4).tensor_product(ones_matrix(ZZ, 4))
+    )
+    # The core acts on coset-constant vectors through this 16-by-16 quotient.
+    sums = [
+        [sum(row[i * orbit : (i + 1) * orbit]) for i in range(4)]
+        for row in rows
+    ]
+    A, B, C, D = [matrix(ZZ, 4, 4, lambda i, j: row[i ^ j]) for row in sums]
+    Q = block_matrix(
+        [
+            [A, B, C, D],
+            [-B, A, D.T, -C.T],
+            [-C, -D.T, A, B.T],
+            [-D, C.T, -B.T, A],
+        ]
+    )
+    assert Q * E.T + F * K.T == 0
+    assert (
+        hadamard_matrix_bordered_goethals_seidel(5788, existence=True) is True
+    )
+    assert hadamard_matrix(5788, existence=True) is True
+    assert hadamard_matrix(5788, existence=True, construction_name=True) == (
+        'bordered Goethals-Seidel 5788'
+    )
+
+
+@pytest.mark.longlong
+def test_hadamard_bordered_5788_matrix():
+    """Check full orthogonality, the source image fingerprint, and dispatch."""
+    from hashlib import sha256
+
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_bordered_goethals_seidel,
+        normalise_hadamard,
+    )
+
+    # The default check=True computes the full exact product H H^T.
+    H = hadamard_matrix_bordered_goethals_seidel(5788)
+    assert H.dimensions() == (5788, 5788)
+    fingerprint = sha256()
+    for row in H.rows():
+        fingerprint.update(
+            (''.join('+' if c == 1 else '-' for c in row) + '\n').encode(
+                'ascii'
+            )
+        )
+    assert fingerprint.hexdigest() == (
+        'dd5893a18e4fe0f8ab3a36df163e0e5643a64deb017726300f37ce4f9761b06d'
+    )
+    normalise_hadamard(H)
+    assert set(H.row(0)) == set(H.column(0)) == {1}
+    assert hadamard_matrix(5788, check=False) == H

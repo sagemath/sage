@@ -1673,14 +1673,20 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
 
 def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
     r"""
-    Construct a Hadamard matrix using [EKLO2026]_, Section 3, Theorem 7.
+    Construct a Hadamard matrix using [EKLO2026]_, Theorem 7.
 
-    The available orders are 1388, 1436 and 1916, with borders of size
-    20, 28 and 12, respectively. Their four core matrices are developed over
+    The orders from [EKLO2026]_, Section 3, are 1388, 1436 and 1916, with
+    borders of size 20, 28 and 12, respectively. Their four core matrices
+    are developed over
     the abelian groups `C_2 \times C_3 \times C_{57}`,
     `C_2 \times C_2 \times C_8 \times C_{11}` and
     `C_2 \times C_2 \times C_{119}`. Here `C_k` denotes the cyclic group
     of order `k`.
+
+    Order 5788 uses the generalized bordered array of [EKLO2026]_,
+    Theorem 7, over `C_2^2 \times C_{19}^2`, the additive group of
+    `C_2^2 \times \mathbb{F}_{19^2}`. Its border has size 12 and is
+    constant on the 361-element cosets of `C_{19}^2`.
 
     For a sequence `a` indexed by the development group, set
     `A_{x,y}=a_{y-x}`, and let `R` act by inversion in that group. The core is
@@ -1695,8 +1701,8 @@ def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
         \end{pmatrix}.
 
     The top and left borders are expanded from the published sign records.
-    This reproduces the public decoder's matrices without executing that
-    decoder or assuming how its seeds were discovered.
+    This reproduces the published matrices without a network connection
+    or assumptions about how their seeds were discovered.
 
     INPUT:
 
@@ -1719,6 +1725,13 @@ def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
         'bordered Goethals-Seidel 1388'
         sage: hadamard_matrix_bordered_goethals_seidel(1388).dimensions()  # long time
         (1388, 1388)
+        sage: hadamard_matrix_bordered_goethals_seidel(5788, existence=True)
+        True
+        sage: matrix.hadamard(5788, existence=True, construction_name=True)
+        'bordered Goethals-Seidel 5788'
+        sage: H = hadamard_matrix_bordered_goethals_seidel(5788)  # long time
+        sage: H.dimensions()  # long time
+        (5788, 5788)
 
     TESTS::
 
@@ -1731,14 +1744,22 @@ def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
     """
     from itertools import product
 
-    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_BORDERED_DATA
+    from sage.combinat.matrices.hadamard_matrix_data import (
+        ALPOGE_BORDERED_DATA,
+        EKLO_BORDERED_DATA,
+    )
 
     if existence:
-        return n in ALPOGE_BORDERED_DATA
-    if n not in ALPOGE_BORDERED_DATA:
+        return n in ALPOGE_BORDERED_DATA or n in EKLO_BORDERED_DATA
+    if n in EKLO_BORDERED_DATA:
+        factors, border, orbit, data = EKLO_BORDERED_DATA[n]
+        top_pair_repetitions = 1
+    elif n in ALPOGE_BORDERED_DATA:
+        factors, border, top_pair_repetitions, data = ALPOGE_BORDERED_DATA[n]
+        orbit = factors[-1]
+    else:
         raise ValueError(f'No larger-border Goethals-Seidel data for order {n}')
 
-    factors, border, top_pair_repetitions, data = ALPOGE_BORDERED_DATA[n]
     size = len(data[0]) // 4
     coordinates = list(product(*(range(f) for f in factors)))
     strides = []
@@ -1768,8 +1789,7 @@ def hadamard_matrix_bordered_goethals_seidel(n, existence=False, check=True):
                          [-CR, -DTR, A, BTR],
                          [-DR, CTR, -BTR, A]])
 
-    # Each core orbit has length equal to the last cyclic factor.
-    orbit = factors[-1]
+    # Expand the compressed borders on the subgroup cosets.
     width = len(data[1]) // border
     top_rows = []
     for i in range(border):
