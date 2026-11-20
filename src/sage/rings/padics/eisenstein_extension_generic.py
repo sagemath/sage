@@ -153,10 +153,10 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     #    ##
     #    raise NotImplementedError
 
-    #def is_abelian(self):
+    #def is_abelian(self) -> bool:
     #    raise NotImplementedError
 
-    #def is_normal(self):
+    #def is_normal(self) -> bool:
     #    raise NotImplementedError
 
     def gen(self, n=0):

@@ -32,6 +32,8 @@ AUTHORS:
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
 
+- Maya Lin (2026): Added sturm_bound and optimized is_isogenous
+
 - Julianne Grageda (2026-11): Added is_congruent
 """
 
@@ -113,6 +115,27 @@ CMJ = { 0: -3, 54000: -12, -12288000: -27, 1728: -4, 287496: -16,
       -3375: -7, 16581375: -28, 8000: -8, -32768: -11, -884736: -19,
       -884736000: -43, -147197952000: -67, -262537412640768000: -163}
 
+def sturm_bound(N: Integer) -> Integer:
+    r"""
+    Helper function for
+    :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_isogenous`
+    and :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_congruent`.
+
+    INPUT:
+
+    - ``N`` -- a positive integer 
+
+    EXAMPLE::
+
+        sage: from sage.schemes.elliptic_curves.ell_rational_field import sturm_bound
+        sage: sturm_bound(14)
+        4
+    """
+    N_pdiv = N.prime_divisors()
+    a = N*prod(q+1 for q in N_pdiv)
+    b = prod(q for q in N_pdiv)
+
+    return a.divide_knowing_divisible_by(b) // 6
 
 class EllipticCurve_rational_field(EllipticCurve_number_field):
     r"""
@@ -364,7 +387,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             url = lmfdb_url.format(self.cremona_label())
         webbrowser.open(url)
 
-    def is_p_integral(self, p):
+    def is_p_integral(self, p) -> bool:
         r"""
         Return ``True`` if this elliptic curve has `p`-integral
         coefficients.
@@ -392,7 +415,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return True
         return bool(mul([x.valuation(p) >= 0 for x in self.ainvs()]))
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Return ``True`` if this elliptic curve has integral coefficients (in
         Z).
@@ -793,7 +816,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self.__mwrank_curve
         except AttributeError:
             pass
-        from sage.libs.eclib.all import mwrank_EllipticCurve
+        from sage.libs.eclib.interface import mwrank_EllipticCurve
         self.__mwrank_curve = mwrank_EllipticCurve(self.ainvs(), verbose=verbose)
         return self.__mwrank_curve
 
@@ -2649,7 +2672,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             v.append((x*d, y*d, d))
 
         c = Emin.mwrank_curve()
-        from sage.libs.eclib.all import mwrank_MordellWeil
+        from sage.libs.eclib.interface import mwrank_MordellWeil
         mw = mwrank_MordellWeil(c, verbose)
         mw.process(v) # by default, this does no saturation yet
         ok, index, unsat = mw.saturate(max_prime=max_prime, min_prime=min_prime)
@@ -3006,7 +3029,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__minimal_model = constructor.EllipticCurve([Q(F[i]) for i in range(5)])
             return self.__minimal_model
 
-    def is_minimal(self):
+    def is_minimal(self) -> bool:
         r"""
         Return ``True`` iff this elliptic curve is a reduced minimal model.
 
@@ -3031,7 +3054,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         return self.ainvs() == self.minimal_model().ainvs()
 
-    def is_p_minimal(self, p):
+    def is_p_minimal(self, p) -> bool:
         r"""
         Test if curve is `p`-minimal at a given prime `p`.
 
@@ -3484,7 +3507,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return gamma_inc(t+1, 2*pi*n/sqrtN) * C(sqrtN/(2*pi*n))**(t+1)
         return sum(a[n]*(_F(n,s-1) + eps*_F(n,1-s)) for n in range(1, prec+1))
 
-    def is_local_integral_model(self, *p):
+    def is_local_integral_model(self, *p) -> bool:
         r"""
         Test if ``self`` is integral at the prime `p`, or at all the
         primes if `p` is a list or tuple of primes.
@@ -3526,7 +3549,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         e = min([(ai[i].valuation(p)/[1,2,3,4,6][i]) for i in range(5)]).floor()
         return constructor.EllipticCurve([ai[i]/p**(e*[1,2,3,4,6][i]) for i in range(5)])
 
-    def is_global_integral_model(self):
+    def is_global_integral_model(self) -> bool:
         r"""
         Return ``True`` iff ``self`` is integral at all primes.
 
@@ -4719,59 +4742,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 i += 1
             return isogs
 
-    def sturm_bound(self, other: EllipticCurve_generic) -> Integer:
+    def is_isogenous(self, other: EllipticCurve_generic, *args, **kwds) -> bool:
         r"""
-        Return the Sturm bound of two elliptic curves.
-
-        INPUT:
-
-        -``other`` -- an elliptic curve over `\QQ`
-
-        EXAMPLES::
-
-            sage: E1 = EllipticCurve('14a1')
-            sage: E2 = EllipticCurve('14a6')
-            sage: E1.sturm_bound(E2)
-            4
-        """
-        if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("second argument is not an elliptic curve")
-        if other.base_field() is not QQ:
-            raise ValueError("the base field of the second elliptic curve must be the rationals")
-        N = self.conductor()._lcm(other.conductor())
-
-        return (N/6)*prod(1+1/q for q in N.prime_divisors())
-
-    def is_isogenous(self, other, proof=True):
-        r"""
-        Return whether or not ``self`` is isogenous to other.
+        Return whether or not ``self`` is isogenous to ``other``.
 
         INPUT:
 
         - ``other`` -- another elliptic curve
 
-        - ``proof`` -- boolean (default: ``True``); if ``False``, the function
-          will return ``True`` whenever the two curves have the same
-          conductor and are isogenous modulo `p` for `p` up to ``maxp``;
-          otherwise this test is followed by a rigorous test (which
-          may be more time-consuming)
+        - ``*args`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
-        - ``maxp`` -- (default: 200) the maximum prime `p` for
-          which isogeny modulo `p` will be checked
-
-        OUTPUT:
-
-        boolean; ``True`` if there is an isogeny from curve ``self`` to
-        curve ``other``.
+        - ``**kwds`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
         ALGORITHM:
 
-        First the conductors are compared as well as the Traces of
-        Frobenius for good primes up to ``maxp``.  If any of these
-        tests fail, ``False`` is returned.  If they all pass and
-        ``proof`` is ``False`` then ``True`` is returned, otherwise a
-        complete set of curves isogenous to ``self`` is computed and
-        ``other`` is checked for isomorphism with any of these,
+        First the `a_p` values are compared one by one for primes up to 20.
+        If any `a_p` value does not match, ``False`` is returned. If they all match 
+        up to 20 and the conductors are equal, the Sturm bound is computed and 
+        the `a_p` values are compared for all primes up to the Sturm bound.
+        See Theorem 9.21 of [St2007]_.
 
         EXAMPLES::
 
@@ -4795,26 +4784,21 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             False
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("Second argument is not an Elliptic Curve.")
+            raise ValueError("second argument must be an elliptic curve.")
         if other.base_field() is not QQ:
-            raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
+            raise ValueError("the base field of the second elliptic curve must be the rationals")
 
-        if self.is_isomorphic(other):
-            return True
-
-        E1 = self.minimal_model()
-        E2 = other.minimal_model()
-        maxp = E1.sturm_bound(E2)
-
-        if any(E1.ap(p) != E2.ap(p) for p in prime_range(2, 20)):
+        if any(self.ap(p) != other.ap(p) for p in prime_range(2, 20)):
             return False
 
-        if E1.conductor() != E2.conductor():
+        N = self.conductor()
+
+        if N != other.conductor():
             return False
 
-        if not proof:
-            return True
-        return E2 in E1.isogeny_class().curves
+        maxp = sturm_bound(N)
+
+        return self.aplist(maxp, python_ints=True) == other.aplist(maxp, python_ints=True)
 
     def is_congruent(self, other, l):
         r"""
@@ -4847,7 +4831,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         l = ZZ(l)
         if not l.is_prime():
             raise ValueError("l must be a prime")
-        for p in prime_range(self.sturm_bound(other)):
+
+        bound = sturm_bound(self.conductor().lcm(other.conductor()))
+        for p in prime_range(bound):
             if p != l and self.is_good(p) == True and other.is_good(p) == True and (self.ap(p) - other.ap(p)) % l != 0:
                 return False
         return True
@@ -5272,7 +5258,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__rho = GaloisRepresentation(self)
         return self.__rho
 
-    def is_semistable(self):
+    def is_semistable(self) -> bool:
         """
         Return ``True`` iff this elliptic curve is semi-stable at all primes.
 
@@ -5287,7 +5273,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         return self.conductor().is_squarefree()
 
-    def is_ordinary(self, p, ell=None):
+    def is_ordinary(self, p, ell=None) -> bool:
         r"""
         Return ``True`` precisely when the mod-``p`` representation attached
         to this elliptic curve is ordinary at ``ell``.
@@ -5314,7 +5300,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             ell = p
         return self.ap(ell) % p != 0
 
-    def is_good(self, p, check=True):
+    def is_good(self, p, check=True) -> bool:
         r"""
         Return ``True`` if ``p`` is a prime of good reduction for `E`.
 
@@ -5339,7 +5325,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 raise ValueError("p must be prime")
         return self.conductor() % p != 0
 
-    def is_supersingular(self, p, ell=None):
+    def is_supersingular(self, p, ell=None) -> bool:
         r"""
         Return ``True`` precisely when `p` is a prime of good reduction and the
         mod-`p` representation attached to this elliptic curve is
