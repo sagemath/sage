@@ -43,7 +43,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         You should not create objects of this class directly. The
         preferred method to construct such subschemes is to use
-        :meth:`~sage.schemes.projective.projective_space.ProjectiveSpace_field.subscheme`
+        :meth:`~sage.schemes.projective.projective_space.ProjectiveSpace_ring.subscheme`
         method of :class:`projective space
         <sage.schemes.projective.projective_space.ProjectiveSpace_field>`.
 
@@ -211,8 +211,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         OUTPUT:
 
         An affine algebraic scheme with fixed
-        :meth:`embedding_morphism` equal to the default
-        :meth:`projective_embedding` map`.
+        :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.embedding_morphism`
+        equal to the default
+        :meth:`~sage.schemes.affine.affine_subscheme.AlgebraicScheme_subscheme_affine.projective_embedding`
+        map.
 
         EXAMPLES::
 
@@ -337,11 +339,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         An affine algebraic scheme (polynomial equations in affine
         space) ``result`` such that
 
-        * :meth:`embedding_morphism
-          <AlgebraicScheme.embedding_morphism>` is an isomorphism to a
+        * :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.embedding_morphism`
+          is an isomorphism to a
           neighborhood of ``point``
 
-        * :meth:`embedding_center <AlgebraicScheme.embedding_center>`
+        * :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.embedding_center`
           is mapped to ``point``.
 
         EXAMPLES::

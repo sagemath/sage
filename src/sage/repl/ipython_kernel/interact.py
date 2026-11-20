@@ -160,12 +160,12 @@ class sage_interactive(interactive):
             sage: from sage.repl.ipython_kernel.interact import sage_interactive
             sage: sage_interactive.widget_from_single_value("sin(x)")
             ...Text(value='sin(x)')
-            sage: sage_interactive.widget_from_single_value(sin(x))                     # needs sage.symbolic
+            sage: sage_interactive.widget_from_single_value(sin(x))
             ...EvalText(value='sin(x)')
-            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))   # needs sage.modules
+            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))
             ...Grid(value=[[1, 2], [3, 4]], children=(Label(value=''), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='3', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='2', layout=Layout(max_width='5em')), EvalText(value='4', layout=Layout(max_width='5em'))))))
-            sage: from sage.plot.colors import Color                                    # needs sage.plot
-            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))    # needs sage.plot
+            sage: from sage.plot.colors import Color
+            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))
             ...SageColorPicker(value='#6495ed')
         """
         # Support Sage matrices and colors
@@ -207,15 +207,15 @@ class sage_interactive(interactive):
             ...IntSlider(value=3, max=10)
             sage: sage_interactive.widget_from_tuple((2, [('one', 1), ('two', 2), ('three', 3)]))
             ...Dropdown(index=1, options=(('one', 1), ('two', 2), ('three', 3)), value=2)
-            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )                   # needs sage.symbolic
+            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
 
         TESTS:
 
         Symbolic subrings::
 
-            sage: SCR = SR.subring(no_variables=True)                                   # needs sage.symbolic
-            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )         # needs sage.symbolic
+            sage: SCR = SR.subring(no_variables=True)
+            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
         """
         # Support (description, abbrev)

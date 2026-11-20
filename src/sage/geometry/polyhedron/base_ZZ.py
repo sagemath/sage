@@ -85,7 +85,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()                    # needs sage.rings.number_field
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()
             False
 
         TESTS:
@@ -664,8 +664,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         EXAMPLES::
 
-            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)             # needs palp sage.graphs
-            sage: list(P.fibration_generator(2))                                        # needs palp sage.graphs
+            sage: P = Polyhedron(toric_varieties.P4_11169().fan().rays(), base_ring=ZZ)             # needs palp
+            sage: list(P.fibration_generator(2))                                        # needs palp
             [A 2-dimensional polyhedron in ZZ^4 defined as the convex hull of 3 vertices]
         """
         from sage.combinat.combination import Combinations
@@ -893,9 +893,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
              A vertex at (0, -1),
              A vertex at (0, 1),
              A vertex at (1, 0))
-            sage: d.normal_form()                                                       # needs sage.groups
+            sage: d.normal_form()
             [(1, 0), (0, 1), (0, -1), (-1, 0)]
-            sage: d.lattice_polytope().normal_form("palp_native")                       # needs sage.groups
+            sage: d.lattice_polytope().normal_form("palp_native")
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -904,7 +904,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         Using ``permutation=True``::
 
-            sage: d.normal_form(permutation=True)                                       # needs sage.groups
+            sage: d.normal_form(permutation=True)
             ([(1, 0), (0, 1), (0, -1), (-1, 0)], ())
 
         It is not possible to compute normal forms for polytopes which do not

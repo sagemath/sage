@@ -93,7 +93,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.combinat import permutation
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.composition import Composition, Compositions
+from sage.combinat.composition import Compositions
 from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
 from sage.combinat.subset import powerset
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -180,7 +180,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         ValueError: a tableau must be a list of iterables
     """
     @staticmethod
-    def __classcall_private__(cls, t):
+    def __classcall_private__(cls, t, check=True):
         r"""
         This ensures that a tableau is only ever constructed as an
         ``element_class`` call of an appropriate parent.
@@ -207,7 +207,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
 
-        return Tableaux_all().element_class(Tableaux_all(), t)
+        return Tableaux_all().element_class(Tableaux_all(), t, check=check)
 
     def __init__(self, parent, t, check=True):
         r"""
@@ -1450,7 +1450,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         `w` by `1, 2, \ldots, k_1` from left to right, all `2`'s in `w` by
         `k_1 + 1, k_1 + 2, \ldots, k_2`, and repeating for all letters which
         appear in `w`.
-        See also :meth:`Word.standard_permutation()`.
+        See also :meth:`sage.combinat.words.finite_word.FiniteWord_class.standard_permutation`.
 
         INPUT:
 
@@ -3938,7 +3938,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         The ``multicharge`` is a list of length 1 which gives an offset for
         all of the contents. It is included mainly for compatibility with
-        :meth:`~sage.combinat.tableau_tuples.TableauTuple.residue`.
+        :meth:`~sage.combinat.tableau_tuple.TableauTuple.residue`.
 
         OUTPUT: the residue in `\ZZ / e\ZZ`
 
@@ -3979,12 +3979,12 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         The `multicharge` is a list of length 1 which gives an offset for
         all of the contents. It is included mainly for compatibility with
-        :meth:`~sage.combinat.tableau_tuples.StandardTableauTuple.residue`.
+        :meth:`~sage.combinat.tableau_tuple.TableauTuple.residue`.
 
         OUTPUT:
 
         The corresponding residue sequence of the tableau;
-        see :class:`ResidueSequence`.
+        see :class:`~sage.combinat.tableau_residues.ResidueSequence`.
 
         EXAMPLES::
 
@@ -4149,9 +4149,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     def reduced_row_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the :meth:`initial_tableau` to ``self``.
+        permutation that maps the :meth:`~sage.combinat.partition.Partition.initial_tableau`
+        to ``self``.
 
-        Ths reduced expression is a minimal length coset representative for the
+        This reduced expression is a minimal length coset representative for the
         corresponding Young subgroup.  In one line notation, the permutation is
         obtained by concatenating the rows of the tableau in order from top to
         bottom.
@@ -4174,10 +4175,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     def reduced_column_word(self):
         r"""
         Return the lexicographically minimal reduced expression for the
-        permutation that maps the conjugate of the :meth:`initial_tableau`
+        permutation that maps the conjugate of the
+        :meth:`~sage.combinat.partition.Partition.initial_tableau`
         to ``self``.
 
-        Ths reduced expression is a minimal length coset representative for
+        This reduced expression is a minimal length coset representative for
         the corresponding Young subgroup.  In one line notation, the
         permutation is obtained by concatenating the columns of the
         tableau in order from top to bottom.
@@ -4289,7 +4291,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         `\xi_\lambda^{-1}` from [Pak2002]_ Section 5.
         It is denoted by `\mathcal{RSK}` in [Hopkins2017]_.
         It is the inverse of the Pak correspondence
-        (:meth:`pak_correspondence`).
+        (:func:`~sage.combinat.hillman_grassl.pak_correspondence`).
         The following description of the Sulzgruber correspondence
         follows [Hopkins2017]_ (which denotes it by `\mathcal{RSK}`):
 
@@ -4455,7 +4457,7 @@ class SemistandardTableau(Tableau):
         Semistandard tableaux of size 3 and maximum entry 3
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a SemistandardTableau is only ever constructed as an
         element_class call of an appropriate parent.
@@ -4474,8 +4476,9 @@ class SemistandardTableau(Tableau):
         """
         if isinstance(t, SemistandardTableau):
             return t
-        if t in SemistandardTableaux():
-            return SemistandardTableaux_all().element_class(SemistandardTableaux_all(), t)
+        if not check or t in SemistandardTableaux():
+            SST = SemistandardTableaux_all()
+            return SST.element_class(SST, t, check=check)
 
         # t is not a semistandard tableau so we give an appropriate error message
         if t not in Tableaux():
@@ -4617,7 +4620,7 @@ class RowStandardTableau(Tableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`RowStandardTableau` is only
         constructed as an ``element_class`` call of an appropriate parent.
@@ -4636,7 +4639,7 @@ class RowStandardTableau(Tableau):
             return t
 
         RST = RowStandardTableaux_all()
-        return RST.element_class(RST, t)
+        return RST.element_class(RST, t, check=check)
 
     def check(self):
         r"""
@@ -4723,7 +4726,7 @@ class StandardTableau(SemistandardTableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`StandardTableau` is only ever constructed
         as an ``element_class`` call of an appropriate parent.
@@ -4741,7 +4744,8 @@ class StandardTableau(SemistandardTableau):
         if isinstance(t, StandardTableau):
             return t
 
-        return StandardTableaux_all().element_class(StandardTableaux_all(), t)
+        S = StandardTableaux_all()
+        return S.element_class(S, t, check=check)
 
     def check(self):
         """
@@ -4975,7 +4979,8 @@ class StandardTableau(SemistandardTableau):
         [Sag2011]_ (p. 23) and in [Stan2009]_, and is the inverse of the map
         called "promotion" in [Hai1992]_ (p. 90).
 
-        See the :meth:`~sage.combinat.tableau.promotion_inverse` method for a
+        See the :meth:`~sage.combinat.tableau.Tableau.promotion_inverse`
+        method for a
         more general operator.
 
         EXAMPLES::
@@ -5018,7 +5023,8 @@ class StandardTableau(SemistandardTableau):
         (p. 90). It is the inverse of the maps called "promotion" in [Sag2011]_
         (p. 23) and in [Stan2009]_.
 
-        See the :meth:`~sage.combinat.tableau.promotion` method for a
+        See the :meth:`~sage.combinat.tableau.Tableau.promotion`
+        method for a
         more general operator.
 
         EXAMPLES::
@@ -5167,7 +5173,7 @@ class IncreasingTableau(Tableau):
         Increasing tableaux of size 3 and maximum entry 3
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         Construct an :class:`IncreasingTableau` from the appropriate parent.
 
@@ -5186,7 +5192,7 @@ class IncreasingTableau(Tableau):
         if isinstance(t, IncreasingTableau):
             return t
         IT = IncreasingTableaux()
-        return IT.element_class(IT, t)  # The check() will raise the appropriate error
+        return IT.element_class(IT, t, check=check)
 
     def check(self):
         """
@@ -5519,7 +5525,7 @@ class Tableaux(UniqueRepresentation, Parent):
         False
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`Tableaux` for more
@@ -5534,13 +5540,6 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: Tableaux(n=3)
             Tableaux of size 3
         """
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs['n']
-        else:
-            n = None
-
         if n is None:
             return Tableaux_all()
         if not isinstance(n, (int, Integer)) or n < 0:
@@ -6650,15 +6649,25 @@ class SemistandardTableaux_size(SemistandardTableaux):
             sage: SemistandardTableaux(4, max_entry=10).cardinality()
             4225
             sage: ns = list(range(1, 6))
-            sage: ssts = [ SemistandardTableaux(n) for n in ns ]
-            sage: all(sst.cardinality() == len(sst.list()) for sst in ssts)             # needs sage.modules
+            sage: ssts = [SemistandardTableaux(n) for n in ns]
+            sage: all(sst.cardinality() == len(sst.list()) for sst in ssts)
             True
+
+        TESTS:
+
+        Check that we can compute large cardinalities::
+
+            sage: SemistandardTableaux(50, max_entry=100).cardinality()
+            9680859464176053556183499527252114760388193143191787221809144649430208
         """
-        from sage.combinat.partition import Partitions
-        c = 0
-        for part in Partitions(self.size):
-            c += SemistandardTableaux_shape(part, self.max_entry).cardinality()
-        return c
+        # this is the coefficient of t^n in the generating function
+        # \sum_\mu s_\mu(t,...,t), which evaluates by the Cauchy
+        # identity to (1-t)^m (1-t^2)^{\binom{m}{2}}
+        m = self.max_entry
+        n = self.size
+        return sum(binomial(binomial(m, 2) + k - 1, k)
+                   * binomial(m + n - 2*k - 1, m - 1)
+                   for k in range(n // 2 + 1))
 
     def __iter__(self):
         """
@@ -7197,7 +7206,7 @@ class RowStandardTableaux(Tableaux):
         Standard tableaux with 3-residue sequence (2,0,0,1,2) and multicharge (0)
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`RowStandardTableaux` for
@@ -7225,13 +7234,6 @@ class RowStandardTableaux(Tableaux):
         """
         from sage.combinat.partition import _Partitions
         from sage.combinat.skew_partition import SkewPartitions
-
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs[n]
-        else:
-            n = None
 
         if n is None:
             return RowStandardTableaux_all()
@@ -7594,7 +7596,7 @@ class StandardTableaux(SemistandardTableaux):
         Standard tableaux with 3-residue sequence (0,1,2,2,0) and multicharge (0)
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`StandardTableaux` for
@@ -7624,13 +7626,6 @@ class StandardTableaux(SemistandardTableaux):
         """
         from sage.combinat.partition import _Partitions
         from sage.combinat.skew_partition import SkewPartitions
-
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs['n']
-        else:
-            n = None
 
         if n is None:
             return StandardTableaux_all()

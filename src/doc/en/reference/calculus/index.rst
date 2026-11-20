@@ -23,10 +23,12 @@ Using calculus
 
 - :doc:`More about symbolic variables and functions <sage/calculus/var>`
 - :doc:`Main operations on symbolic expressions <sage/symbolic/expression>`
+- :doc:`Normal forms for products of gamma functions <sage/symbolic/gamma_products>`
 - :doc:`sage/calculus/expr`
 - :doc:`Assumptions about symbols and functions <sage/symbolic/assumptions>`
 - :doc:`sage/symbolic/relation`
 - :doc:`sage/symbolic/integration/integral`
+- :doc:`sage/symbolic/rootsum`
 - :doc:`sage/calculus/desolvers`
 - :doc:`sage/calculus/ode`
 - :doc:`sage/calculus/integration`
@@ -64,6 +66,7 @@ Internal functionality supporting calculus
    :hidden:
 
    sage/symbolic/expression
+   sage/symbolic/gamma_products
    sage/symbolic/callable
    sage/calculus/expr
    sage/symbolic/assumptions
@@ -76,6 +79,7 @@ Internal functionality supporting calculus
    sage/symbolic/function_factory
    sage/calculus/functional
    sage/symbolic/integration/integral
+   sage/symbolic/rootsum
    sage/symbolic/integration/external
    sage/calculus/test_sympy
    sage/calculus/tests

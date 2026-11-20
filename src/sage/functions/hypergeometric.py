@@ -793,7 +793,9 @@ def closed_form(hyp):
     Try to evaluate ``hyp`` in closed form using elementary
     (and other simple) functions.
 
-    It may be necessary to call :meth:`Hypergeometric.deflated` first to
+    It may be necessary to call
+    :meth:`~sage.functions.hypergeometric.Hypergeometric.EvaluationMethods.deflated`
+    first to
     find some closed forms.
 
     EXAMPLES::

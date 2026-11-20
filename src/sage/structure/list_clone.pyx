@@ -777,10 +777,9 @@ cdef class ClonableArray(ClonableElement):
         """
         if start is None:
             return self._list.index(x)
-        elif stop is None:
+        if stop is None:
             return self._list.index(x, start)
-        else:
-            return self._list.index(x, start, stop)
+        return self._list.index(x, start, stop)
 
     cpdef int count(self, key) except -1:
         """
@@ -1612,9 +1611,8 @@ cdef class ClonableIntArray(ClonableElement):
         if left._list is NULL:
             if rgt._list is NULL:
                 return rich_to_bool(op, 0)
-            else:
-                return rich_to_bool(op, -1)
-        elif rgt._list is NULL:
+            return rich_to_bool(op, -1)
+        if rgt._list is NULL:
             return rich_to_bool(op, 1)
         if left._len < rgt._len:
             minlen = left._len
@@ -1629,8 +1627,7 @@ cdef class ClonableIntArray(ClonableElement):
             if left._list[i] != rgt._list[i]:
                 if left._list[i] < rgt._list[i]:
                     return rich_to_bool(op, -1)
-                else:
-                    return rich_to_bool(op, 1)
+                return rich_to_bool(op, 1)
         return rich_to_bool(op, reslen)
 
     cpdef ClonableIntArray __copy__(self):

@@ -927,7 +927,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.normalize_coordinates(); f
             Dynamical System of Projective Space of dimension 1 over Number Field in a with defining polynomial 3*x^2 + 1
               Defn: Defined on coordinates by sending (z : w) to
-                    (z^2 + w^2 : (-3*a)*z*w)
+                    (...z^2 + ...w^2 : (...)*z*w)
 
         ::
 
@@ -1106,7 +1106,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer, then
           the two values of the tuple are assumed to be the same
 
-        OUTPUT: :class:`SchemeMorphism_polynomial_affine_space`
+        OUTPUT: :class:`~sage.schemes.affine.affine_morphism.SchemeMorphism_polynomial_affine_space`
 
         EXAMPLES::
 
@@ -1234,7 +1234,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return self.__dehomogenization[n]
 
     @cached_method
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         r"""
         Return ``True`` if this map is a morphism.
 
@@ -2579,7 +2579,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         return Amb.subscheme(polys).reduce()
 
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         """
         Return ``True`` if the map is defined everywhere on the domain.
 

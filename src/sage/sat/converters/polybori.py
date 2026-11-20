@@ -64,7 +64,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         - ``solver`` -- a SAT-solver instance
 
-        - ``ring`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomialRing`
+        - ``ring`` -- a :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomialRing`
 
         - ``max_vars_sparse`` -- maximum number of variables for direct conversion
 
@@ -256,7 +256,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
 
         EXAMPLES::
 
@@ -305,7 +305,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
 
         EXAMPLES::
 
@@ -490,7 +490,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
 
         EXAMPLES::
 
@@ -541,7 +541,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``F`` -- an iterable of :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``F`` -- an iterable of :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
 
         OUTPUT: an inverse map int -> variable
 
@@ -581,7 +581,7 @@ class CNFEncoder(ANF2CNFConverter):
 
     def to_polynomial(self, c):
         """
-        Convert clause to :class:`sage.rings.polynomial.pbori.BooleanPolynomial`.
+        Convert clause to :class:`~sage.rings.polynomial.pbori.pbori.BooleanPolynomial`.
 
         INPUT:
 

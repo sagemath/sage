@@ -362,8 +362,7 @@ class DegenerateManifold(DifferentiableManifold):
             for chart2 in coord_def:
                 if chart2 != chart1 and (chart1, chart2) in self._coord_changes:
                     self._coord_changes[(chart1, chart2)].restrict(resu)
-        #!# update non-coordinate vector frames and change of frames
-        #
+        # update non-coordinate vector frames and change of frames
         return resu
 
 

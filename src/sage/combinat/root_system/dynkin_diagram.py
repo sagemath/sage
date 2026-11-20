@@ -681,7 +681,8 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def is_crystallographic(self) -> bool:
         """
-        Implement :meth:`CartanType_abstract.is_crystallographic`.
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_crystallographic`.
 
         A Dynkin diagram always corresponds to a crystallographic root system.
 

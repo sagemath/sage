@@ -13,13 +13,14 @@ AUTHORS:
 """
 
 import http.client as httplib
+from typing import Any
 from urllib.parse import urlencode
 from ssl import create_default_context as default_context
 
 pushover_defaults = {"token": "Eql67F14ohOZJ0AtEBJJU7FiLAk8wK"}
 
 
-def pushover(message, **kwds):
+def pushover(message: str, **kwds: Any) -> bool:
     """
     Send a push notification with ``message`` to ``user`` using https://pushover.net/.
 

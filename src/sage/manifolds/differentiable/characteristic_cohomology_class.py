@@ -120,7 +120,8 @@ The Chern character is then given by::
      manifold M
 
 The corresponding characteristic form w.r.t. the bundle connection can be
-obtained via :meth:`get_form`::
+obtained via
+:meth:`~sage.manifolds.differentiable.characteristic_cohomology_class.CharacteristicCohomologyClassRingElement.get_form`::
 
     sage: ch_form = ch.get_form(nab); ch_form.display_expansion()
     ch(E, nabla^E) = 1 + 1/2*d(A)/dt/pi dt∧dx
@@ -311,7 +312,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
     :class:`CharacteristicCohomologyClassRing`.
 
     To construct a characteristic cohomology class, please use
-    :func:`CharacteristicCohomologyClass`.
+    :meth:`~sage.manifolds.differentiable.vector_bundle.DifferentiableVectorBundle.characteristic_cohomology_class`.
 
     EXAMPLES::
 
@@ -920,7 +921,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = r'\mathrm{ch}'
                 class_type = 'additive'
-                coeff = [1 / factorial(k) for k in
+                coeff = [base_ring.one() / factorial(k) for k in
                          range(dim // 2 + 1)]  # exp(x)
                 val = P(coeff)
             elif val == 'Todd':
@@ -933,8 +934,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 class_type = 'multiplicative'
                 val = 1 + x / 2
                 for k in range(1, dim // 2 + 1):
-                    val += (-1) ** (k + 1) / factorial(2 * k) * bernoulli(
-                        2 * k) * x ** (2 * k)
+                    val += (-1)**(k + 1) * bernoulli(2*k) * x**(2*k) / factorial(2*k)
             elif val == 'Hirzebruch':
                 if vbundle._field_type != 'real':
                     raise ValueError(f'Hirzebruch class not defined on {vbundle}')
@@ -943,7 +943,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = 'L'
                 class_type = 'multiplicative'
-                coeff = [2 ** (2 * k) * bernoulli(2 * k) / factorial(2 * k)
+                coeff = [2**(2*k) * bernoulli(2*k) / factorial(2*k)
                          for k in range(dim // 4 + 1)]
                 val = P(coeff)
             elif val == 'AHat':
@@ -954,8 +954,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = r'\hat{A}'
                 class_type = 'multiplicative'
-                coeff = [- (2 ** (2 * k) - 2) / 2 ** (2 * k) * bernoulli(
-                    2 * k) / factorial(2 * k)
+                coeff = [- (2**(2*k) - 2) * bernoulli(2*k) / (factorial(2*k) * 2**(2*k))
                          for k in range(dim // 4 + 1)]
                 val = P(coeff)
             elif val == 'Euler':

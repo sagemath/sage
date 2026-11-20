@@ -72,7 +72,9 @@ AUTHORS:
 ##########################################################################
 
 import os
+from pathlib import Path
 import shutil
+
 
 from sage.calculus.functional import diff
 from sage.misc.lazy_import import lazy_import
@@ -1426,6 +1428,19 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
         sage: Q = [[j,k] for i,j,k in P]
         sage: LP = list_plot(Q)                                                         # needs sage.plot
 
+    Python floating-point initial values are accepted (see :issue:`33730`)::
+
+        sage: x, y, t = var('x y t')
+        sage: P = desolve_system_rk4([x, y], [x, y],
+        ....:                        ics=[float(0), float(1), float(2)],
+        ....:                        ivar=t, end_points=0.1, step=0.1)
+        sage: P[0]
+        [0.0, 1.0, 2.0]
+        sage: abs(float(P[1][1]) - 1.1051708333333333) < 1e-10
+        True
+        sage: abs(float(P[1][2]) - 2.2103416666666666) < 1e-10
+        True
+
     ALGORITHM:
 
     `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
@@ -1454,7 +1469,8 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
     varss = [varsi._maxima_().str() for varsi in vars]
     varstr = "[" + ",".join(varss) + "]"
     x0 = ics[0]
-    icss = [ics[i]._maxima_().str() for i in range(1, len(ics))]
+    from sage.symbolic.ring import SR
+    icss = [SR(ic)._maxima_().str() for ic in ics[1:]]
     icstr = "[" + ",".join(icss) + "]"
     step = abs(step)
 
@@ -1743,20 +1759,20 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
         raise RuntimeError('Unable to run because gcc cannot be found')
     from sage.interfaces.tides import genfiles_mintides
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics],
                       N(initial), N(final), N(delta), N(tolrel),
-                      N(tolabs), fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                      N(tolabs), str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + ' -lm  -O2 ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):
@@ -1839,19 +1855,19 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     from sage.functions.other import ceil
     from sage.interfaces.tides import genfiles_mpfr
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
-                  digits, tolrel, tolabs, fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                  digits, tolrel, tolabs, str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):

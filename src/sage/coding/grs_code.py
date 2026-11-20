@@ -368,7 +368,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         """
         return self._column_multipliers
 
-    def is_generalized(self):
+    def is_generalized(self) -> bool:
         r"""
         Return whether ``self`` is a Generalized Reed-Solomon code or
         a regular Reed-Solomon code.
@@ -943,7 +943,8 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transform the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of
+        :meth:`~sage.coding.encoder.Encoder.code`.
 
         One can use the following shortcut to encode a word with
         an encoder ``E``::
@@ -1019,11 +1020,11 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         Use this method with caution: it does not check if ``c``
         belongs to the code, and if this is not the case, the output is
-        unspecified. Instead, use :meth:`unencode`.
+        unspecified. Instead, use :meth:`~sage.coding.encoder.Encoder.unencode`.
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`
+        - ``c`` -- a codeword of :meth:`~sage.coding.encoder.Encoder.code`
 
         OUTPUT:
 
@@ -1189,7 +1190,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT:
 
@@ -1263,9 +1264,9 @@ class GRSBerlekampWelchDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self`` message space
+        OUTPUT: a polynomial in the message space of ``self``
 
         EXAMPLES::
 
@@ -1314,7 +1315,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -1577,7 +1578,7 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT:
 
@@ -1639,9 +1640,9 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self`` message space
+        OUTPUT: a polynomial in the message space of ``self``
 
         EXAMPLES::
 
@@ -1690,7 +1691,7 @@ class GRSGaoDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -2231,7 +2232,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -2315,7 +2316,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT: a vector of ``self`` message space
 

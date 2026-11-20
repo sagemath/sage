@@ -930,13 +930,16 @@ class SkewTableau(ClonableList,
 
         .. WARNING::
 
-            The :meth:`inner_corners` and :meth:`outer_corners` are the
+            The :meth:`sage.combinat.skew_partition.SkewPartition.inner_corners`
+            and :meth:`sage.combinat.skew_partition.SkewPartition.outer_corners`
+            are the
             :meth:`sage.combinat.partition.Partition.corners` of the inner and
             outer partitions of the skew shape. They are different from the
             inner/outer corners defined in [Sag2001]_.
 
             The "inner corners" of [Sag2001]_ may be found by calling
-            :meth:`outer_corners`. The "outer corners" of [Sag2001]_ may be
+            :meth:`sage.combinat.skew_partition.SkewPartition.outer_corners`.
+            The "outer corners" of [Sag2001]_ may be
             found by calling ``self.outer_shape().outside_corners()``.
 
         EXAMPLES::
@@ -1482,7 +1485,7 @@ class SkewTableau(ClonableList,
         in `w` by `1, 2, \ldots, k_1` from left to right, all `2`'s in `w` by
         `k_1 + 1, k_1 + 2, \ldots, k_2`, and repeating for all letters that
         appear in `w`.
-        See also :meth:`Word.standard_permutation()`.
+        See also :meth:`sage.combinat.words.finite_word.FiniteWord_class.standard_permutation`.
 
         INPUT:
 

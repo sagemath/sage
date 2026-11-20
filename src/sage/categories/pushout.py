@@ -1158,7 +1158,8 @@ class MultiPolynomialFunctor(ConstructionFunctor):
 
 class InfinitePolynomialFunctor(ConstructionFunctor):
     r"""
-    A Construction Functor for Infinite Polynomial Rings (see :mod:`~sage.rings.polynomial.infinite_polynomial_ring`).
+    A Construction Functor for Infinite Polynomial Rings
+    (see :mod:`~sage.rings.polynomial.infinite_polynomial_ring`).
 
     AUTHOR:
 

@@ -2,14 +2,14 @@
 r"""
 Gabidulin Code
 
-This module provides the :class:`~sage.coding.gabidulin.GabidulinCode`, which constructs
+This module provides the :class:`~sage.coding.gabidulin_code.GabidulinCode`, which constructs
 Gabidulin Codes that are the rank metric equivalent of Reed Solomon codes and are
 defined as the evaluation codes of degree-restricted skew polynomials.
 
-This module also provides :class:`~sage.coding.gabidulin.GabidulinPolynomialEvaluationEncoder`,
-an encoder with a skew polynomial message space and :class:`~sage.coding.gabidulin.GabidulinVectorEvaluationEncoder`,
+This module also provides :class:`~sage.coding.gabidulin_code.GabidulinPolynomialEvaluationEncoder`,
+an encoder with a skew polynomial message space and :class:`~sage.coding.gabidulin_code.GabidulinVectorEvaluationEncoder`,
 an encoder based on the generator matrix. It also provides a decoder
-:class:`~sage.coding.gabidulin.GabidulinGaoDecoder` which corrects errors using
+:class:`~sage.coding.gabidulin_code.GabidulinGaoDecoder` which corrects errors using
 the Gao algorithm in the rank metric.
 
 AUTHOR:
@@ -661,7 +661,8 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
     def encode(self, p, form='vector'):
         """
-        Transform the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of
+        :meth:`~sage.coding.encoder.Encoder.code`.
 
         The output codeword can be represented as a vector or a matrix,
         depending on the ``form`` input.
@@ -739,7 +740,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`
+        - ``c`` -- a codeword of :meth:`~sage.coding.encoder.Encoder.code`
 
         OUTPUT:
 

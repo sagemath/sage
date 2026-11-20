@@ -6,6 +6,8 @@ build a complete graph on 15 elements, one can do::
 
     sage: g = graphs.CompleteGraph(15)
 
+.. autodata:: sage.graphs.graph_generators::graphs
+
 To get a path with 4 vertices, and the house graph::
 
     sage: p = graphs.PathGraph(4)
@@ -534,7 +536,8 @@ class GraphGenerators:
     representatives.
 
     Also: see the use of the nauty package for generating graphs
-    at the :meth:`nauty_geng` method.
+    at the
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.nauty_geng` method.
 
     INPUT:
 
@@ -1115,7 +1118,7 @@ class GraphGenerators:
         OUTPUT:
 
         A generator which will produce the graphs as
-        :class:`~sage/graphs.bipartite_graph.BipartiteGraph`. These will be
+        :class:`~sage.graphs.bipartite_graph.BipartiteGraph`. These will be
         simple bipartite graphs: no loops, no multiple edges, no directed edges.
 
         EXAMPLES:
@@ -1252,7 +1255,7 @@ class GraphGenerators:
 
     def nauty_genktreeg(self, options='', debug=False, immutable=False):
         r"""
-        Return a generator which creates all `k`-trees using nauty..
+        Return a generator which creates all `k`-trees using nauty.
 
         A `k`-tree is an undirected graph formed by starting with a complete
         graph on `k + 1` vertices and then repeatedly add vertices in such a

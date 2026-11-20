@@ -309,8 +309,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         if tmp != 0:
             if tmp < 0:
                 return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
-            else:
-                return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
+            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
         # compare coefficients
         if not r.cf.cfEqual(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf):

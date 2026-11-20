@@ -11,7 +11,7 @@ channels, and we borrow the nomenclature from communication theory, such as
 "transmission" and "positions" as the elements of transmitted vectors.
 Transmission can be achieved with two methods:
 
-- :meth:`Channel.transmit`. Considering a channel ``Chan`` and a message
+- :meth:`~sage.coding.channel.Channel.transmit`. Considering a channel ``Chan`` and a message
   ``msg``, transmitting ``msg`` with ``Chan`` can be done this way::
 
     Chan.transmit(msg)
@@ -20,8 +20,8 @@ Transmission can be achieved with two methods:
 
     Chan(msg)
 
-- :meth:`transmit_unsafe`. This does the exact same thing as
-  :meth:`transmit` except that it does not check if ``msg`` belongs to the
+- :meth:`~sage.coding.channel.Channel.transmit_unsafe`. This does the exact same thing as
+  :meth:`~sage.coding.channel.Channel.transmit` except that it does not check if ``msg`` belongs to the
   input space of ``Chan``::
 
     Chan.transmit_unsafe(msg)
@@ -137,7 +137,7 @@ class Channel(SageObject):
 
     - call the super constructor,
 
-    - override :meth:`transmit_unsafe`.
+    - override :meth:`~sage.coding.channel.Channel.transmit_unsafe`.
 
     While not being mandatory, it might be useful to reimplement representation methods (``_repr_`` and
     ``_latex_``).

@@ -2130,6 +2130,15 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C = Curve(x^5 + y^5 + x*y + 1)
             sage: C.function_field()
             Function field in y defined by y^5 + x*y + x^5 + 1
+
+        ::
+
+            sage: # regression test: non-default variable names must not raise TypeError
+            sage: A.<y,z> = AffineSpace(GF(2), 2)
+            sage: C = Curve(y*z^2 + y^2 + z^2)
+            sage: C.function_field()
+            Function field in z_ defined by z_^3 + z_^2 + y_^2
+            sage: TestSuite(C.function_field()).run()
         """
         return self._function_field
 
@@ -2429,11 +2438,15 @@ class IntegralAffineCurve(AffineCurve_field):
         if proper_extension:
             Z = FR(convert(from_N(from_M(z)), n - 1))
 
+            # Build a ring homomorphism from M.base_field() (a rational function
+            # field whose generator may have been renamed, e.g. y -> y_, by simple_model() / separable_model()) into FR.
+            base_to_FR = M.base_field().hom([FR(R.gen(indep))])
+
             def evaluate(f):
                 coeffs = f._x.list()
                 v = 0
                 while coeffs:
-                    v = v * Z + coeffs.pop()._x
+                    v = v * Z + base_to_FR(coeffs.pop())
                 return FR(v)
         else:
             def evaluate(f):

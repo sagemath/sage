@@ -662,7 +662,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         except AttributeError:
             p = self._p
             self._edges_leaving_origin = [self.edge(self._Mat_22([0, -1, p, 0]))]
-            self._edges_leaving_origin.extend([self.edge(self._Mat_22([p, i, 0, 1])) for i in range(p)])
+            self._edges_leaving_origin.extend(self.edge(self._Mat_22([p, i, 0, 1])) for i in range(p))
             return self._edges_leaving_origin
 
     def edge_between_vertices(self, v1, v2, normalized=False):
@@ -823,11 +823,11 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         if level == 0:
             return [self._Mat_22(edge) for edge in edgelist]
         newEgood = []
-        for edge in edgelist:
-            edge = self._Mat_22(edge)
+        for ed in edgelist:
+            edge = self._Mat_22(ed)
             origin = self.origin(edge)
             newE = self.leaving_edges(self.target(edge))
-            newEgood.extend([e for e in newE if self.target(e) != origin])
+            newEgood.extend(e for e in newE if self.target(e) != origin)
         return self.subdivide(newEgood, level - 1)
 
     def get_balls(self, center=1, level=1):

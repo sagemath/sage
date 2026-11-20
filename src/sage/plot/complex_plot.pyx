@@ -97,8 +97,7 @@ cdef inline double mag_to_lightness(double r, double rate=0.5) noexcept:
     """
     if rate == 0.5:
         return atan(log(sqrt(r)+1)) * (4/PI) - 1
-    else:
-        return atan(log(pow(r, rate)+1)) * (4/PI) - 1
+    return atan(log(pow(r, rate)+1)) * (4/PI) - 1
 
 
 cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2) noexcept:
@@ -643,7 +642,7 @@ def add_lightness_smoothing_to_rgb(rgb, delta):
     piecewise-linearly vary from black to the initial `(r, g, b)` to white.
 
     We assume that the ``delta`` values come from a function like
-    :func:`sage.plot.complex_plot.mag_to_lightness`, which maps magnitudes to
+    ``mag_to_lightness``, which maps magnitudes to
     the range `[-1, +1]`.
 
     INPUT:
@@ -695,7 +694,7 @@ def add_contours_to_rgb(rgb, delta, dark_rate=0.5):
     color, while positive ``delta`` values lighten the pixel.
 
     We assume that the ``delta`` values come from a function like
-    :func:`sage.plot.complex_plot.mag_to_lightness`, which maps magnitudes to
+    ``mag_to_lightness``, which maps magnitudes to
     the range `[-1, +1]`.
 
     INPUT:

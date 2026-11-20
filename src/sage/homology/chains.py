@@ -4,7 +4,7 @@ Chains and cochains
 
 This module implements formal linear combinations of cells of a given
 cell complex (:class:`Chains`) and their dual (:class:`Cochains`). It
-is closely related to the :mod:`sage.topology.chain_complex`
+is closely related to the :mod:`~sage.homology.chain_complex`
 module. The main differences are that chains and cochains here are of
 homogeneous dimension only, and that they reference their cell
 complex.

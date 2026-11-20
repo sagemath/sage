@@ -2,7 +2,7 @@
 Wrapper for Boyer's (C) planarity algorithm
 """
 
-cdef extern from "planarity/graph.h":
+cdef extern from "planarity-compat.h":
     ctypedef struct vertexRec:
         int link[2]
         int index
@@ -23,7 +23,7 @@ cdef extern from "planarity/graph.h":
 
     cdef graphP gp_New()
     cdef void gp_Free(graphP *pGraph)
-    cdef int gp_InitGraph(graphP theGraph, int N)
+    cdef int gp_EnsureVertexCapacity(graphP theGraph, int N)
     cdef int gp_AddEdge(graphP theGraph, int u, int ulink, int v, int vlink)
     cdef int gp_Embed(graphP theGraph, int embedFlags)
     cdef int gp_SortVertices(graphP theGraph)
@@ -143,9 +143,9 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, immutable
     cdef graphP theGraph
     theGraph = gp_New()
     cdef int status
-    status = gp_InitGraph(theGraph, g.order())
+    status = gp_EnsureVertexCapacity(theGraph, g.order())
     if status != OK:
-        raise RuntimeError("gp_InitGraph status is not ok")
+        raise RuntimeError("gp_EnsureVertexCapacity status is not ok")
     for u, v in g.edge_iterator(labels=False):
         status = gp_AddEdge(theGraph, ffrom[u], 0, ffrom[v], 0)
         if status == NOTOK:

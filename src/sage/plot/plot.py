@@ -76,8 +76,6 @@ The following miscellaneous Graphics functions are included:
 
 -  :func:`~sage.plot.graphics.Graphics`
 
--  :func:`~sage.plot.graphics.is_Graphics`
-
 -  :func:`~sage.plot.colors.hue`
 
 Type ``?`` after each primitive in Sage for help and examples.
@@ -1069,11 +1067,18 @@ def plot(funcs, *args, **kwds):
 
     MATPLOTLIB STYLE SHEET OPTION:
 
-    - ``stylesheet`` -- (default: classic) support for loading a full matplotlib style sheet.
-      Any style sheet listed in ``matplotlib.pyplot.style.available`` is acceptable. If a
-      non-existing style is provided the default classic is applied.
+    - ``stylesheet`` -- (default: ``None``) load a Matplotlib style sheet when
+      displaying or saving the plot. Any style sheet listed in
+      ``matplotlib.pyplot.style.available`` is acceptable. A recognized style
+      updates the global Matplotlib settings. If no style is supplied, or the
+      name is unrecognized, the current settings are retained.
 
     EXAMPLES:
+
+    Select a Matplotlib stylesheet when constructing a plot::
+
+        sage: plot(lambda x: x*x, (0, 1), stylesheet='bmh')
+        Graphics object consisting of 1 graphics primitive
 
     We plot the `\sin` function::
 
@@ -1755,7 +1760,7 @@ def plot(funcs, *args, **kwds):
         sphinx_plot(g)
 
     This includes options for custom ticks and formatting.  See documentation
-    for :meth:`show` for more details.
+    for :meth:`~sage.plot.graphics.Graphics.show` for more details.
 
     ::
 

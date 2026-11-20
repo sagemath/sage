@@ -561,7 +561,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
           the column permutation which brings ``self`` into the returned code
           is also returned
 
-        OUTPUT: a :class:`LinearCode` whose :meth:`systematic_generator_matrix`
+        OUTPUT: a :class:`LinearCode` whose
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`
         is guaranteed to be of the form `[I \vert A]`.
 
         EXAMPLES::
@@ -607,7 +608,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         For any given code, there can be many systematic generator matrices
         (depending on which positions should form the identity). This method
         will use the matrix returned by
-        :meth:`AbstractLinearCode.systematic_generator_matrix`.
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`.
 
         OUTPUT:
 
@@ -665,7 +666,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.encoder("Systematic").systematic_positions()
 
-    def is_information_set(self, positions):
+    def is_information_set(self, positions) -> bool:
         """
         Return whether the given positions form an information set.
 
@@ -971,7 +972,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self == self.dual_code()
 
-    def is_self_orthogonal(self):
+    def is_self_orthogonal(self) -> bool:
         """
         Return ``True`` if this code is self-orthogonal and ``False``
         otherwise.
@@ -1021,7 +1022,8 @@ class LinearCodeSystematicEncoder(Encoder):
     generator matrix in systematic form. What is called systematic form here
     is the reduced row echelon form of a matrix, which is not necessarily
     `[I \vert H]`, where `I` is the identity block and `H` the parity block.
-    One can refer to :meth:`LinearCodeSystematicEncoder.generator_matrix`
+    One can refer to
+    :meth:`~sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder.generator_matrix`
     for a concrete example.
     Once such a matrix has been computed, it is used to encode any message
     into a codeword.

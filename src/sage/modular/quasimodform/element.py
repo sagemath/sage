@@ -89,7 +89,7 @@ class QuasiModularFormsElement(ModuleElement):
     generators are given by ``Ek_i`` and ``Sk_i`` to denote the `i`-th basis
     element of the weight `k` Eisenstein subspace and cuspidal subspace
     respectively (for more details, see the documentation of
-    :meth:`~sage.modular.quasimodform.ring.QuasiModularFormsRing.polynomial_ring`) ::
+    :meth:`~sage.modular.quasimodform.ring.QuasiModularForms.polynomial_ring`) ::
 
         sage: QM = QuasiModularForms(Gamma1(4))
         sage: F = (QM.0^4)*(QM.1^3) + QM.3

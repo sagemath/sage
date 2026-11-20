@@ -124,15 +124,16 @@ result in the cache. This has the following implications:
   collection.
 - It is possible to preprocess the input arguments by implementing a
   ``__classcall__`` or a ``__classcall_private__`` method, but in order to
-  benefit from caching, :meth:`CachedRepresentation.__classcall__` should at
-  some point be called.
+  benefit from caching,
+  :meth:`CachedRepresentation.__classcall__ <sage.structure.unique_representation.CachedRepresentation.__classcall__>`
+  should at some point be called.
 
 .. NOTE::
 
     For technical reasons, it is needed that ``__classcall__`` respectively
     ``__classcall_private__`` are "static methods", i.e., they are callable
     objects that do not bind to an instance or class. For example, a
-    :class:`~sage.misc.cachefunc.cached_function` can be used here, because it
+    :func:`~sage.misc.cachefunc.cached_function` can be used here, because it
     is callable, but does not bind to an instance or class, because it has no
     ``__get__()`` method. A usual Python function, however, has a
     ``__get__()`` method and would thus under normal circumstances bind to an
@@ -147,16 +148,19 @@ result in the cache. This has the following implications:
 .. WARNING::
 
     If there is preprocessing, then the preprocessed arguments
-    passed to :meth:`CachedRepresentation.__classcall__` must be invariant
+    passed to
+    :meth:`CachedRepresentation.__classcall__ <sage.structure.unique_representation.CachedRepresentation.__classcall__>`
+    must be invariant
     under the preprocessing. That is to say, preprocessing the input
     arguments twice must have the same effect as preprocessing the input
     arguments only once. That is to say, the preprocessing must be idempotent.
 
 The reason for this warning lies in the way pickling is implemented. If the
 preprocessed arguments are passed to
-:meth:`CachedRepresentation.__classcall__`, then the resulting instance will
-store the *preprocessed* arguments in some attribute, and will use them for
-pickling. If the pickle is unpickled, then preprocessing is applied to the
+:meth:`CachedRepresentation.__classcall__ <sage.structure.unique_representation.CachedRepresentation.__classcall__>`,
+then the resulting instance will store the *preprocessed* arguments in some
+attribute, and will use them for pickling. If the pickle is unpickled, then
+preprocessing is applied to the
 preprocessed arguments---and this second round of preprocessing must not
 change the arguments further, since otherwise a different instance would be
 created.
@@ -531,6 +535,10 @@ accordingly, for example by inheriting from
 
    :class:`sage.structure.factory.UniqueFactory`
 
+.. automethod:: CachedRepresentation.__classcall__
+.. automethod:: WithPicklingByInitArgs.__copy__
+.. automethod:: WithPicklingByInitArgs.__deepcopy__
+
 AUTHORS:
 
 - Nicolas M. Thiery (2008): initial version
@@ -563,12 +571,15 @@ from sage.misc.fast_methods import WithEqualityById
 class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
     r"""
     Classes derived from :class:`WithPicklingByInitArgs` store the arguments
-    passed to :meth:`__init__` to implement pickling.
+    passed to ``__init__`` to implement pickling.
 
     This class is for objects that are semantically immutable and determined
-    by the class and the arguments passed to :meth:`__init__`.
-    The class also provides implementations of :meth:`__copy__` and
-    :func:`__deepcopy__`, which simply return the object.
+    by the class and the arguments passed to ``__init__``.
+    The class also provides implementations of
+    :meth:`__copy__ <sage.structure.unique_representation.WithPicklingByInitArgs.__copy__>`
+    and
+    :meth:`__deepcopy__ <sage.structure.unique_representation.WithPicklingByInitArgs.__deepcopy__>`,
+    which simply return the object.
     """
 
     @staticmethod
@@ -876,15 +887,16 @@ class CachedRepresentation(WithPicklingByInitArgs):
 
     Constraints:
 
-    - :meth:`__classcall__` is a staticmethod (like, implicitly,
-      :meth:`__new__<object.__new__>`)
+    - :meth:`__classcall__ <sage.structure.unique_representation.CachedRepresentation.__classcall__>`
+      is a staticmethod (like, implicitly, :meth:`__new__<object.__new__>`)
     - the preprocessing on the arguments should be idempotent. That is, if
       ``MyClass2.__classcall__(<arguments>)`` calls
       ``CachedRepresentation.__classcall__(<preprocessed_arguments>)``, then
       ``MyClass2.__classcall__(<preprocessed_arguments>)`` should also result
       in a call to ``CachedRepresentation.__classcall__(<preprocessed_arguments>)``.
     - ``MyClass2.__classcall__`` should return the result of
-      :meth:`CachedRepresentation.__classcall__` without modifying it.
+      :meth:`CachedRepresentation.__classcall__ <sage.structure.unique_representation.CachedRepresentation.__classcall__>`
+      without modifying it.
 
     Other than that ``MyClass2.__classcall__`` may play any tricks, like
     acting as a factory and returning objects from other classes.

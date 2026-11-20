@@ -847,10 +847,9 @@ cdef class pAdicPrinter_class(SageObject):
         if isinstance(value, Integer):
             from sage.rings.padics.padic_capped_relative_element import base_p_list
             return base_p_list(value, pos, self.prime_pow)
-        elif pos:
+        if pos:
             return trim_zeros(list(value.unit_part().expansion()))
-        else:
-            return trim_zeros(list(value.unit_part().expansion(lift_mode='smallest')))
+        return trim_zeros(list(value.unit_part().expansion(lift_mode='smallest')))
 
     def repr_gen(self, elt, do_latex, pos=None, mode=None, ram_name=None):
         """
@@ -1102,27 +1101,26 @@ cdef class pAdicPrinter_class(SageObject):
                 s = self._terse_frac(lift_z, v, lift_z, ram_name, do_latex)
                 if paren and not do_latex:
                     return "(%s)" % (s)
-                else:
-                    return s
-            else: # mode == series
-                slist = self.base_p_list(elt, pos)
-                slist, ellipsis = self._truncate_list(slist, self.max_ram_terms, 0)
-                s = ""
-                exp = elt.valuation()
-                for a in slist:
-                    if a != 0:
-                        if a < 0:
-                            if len(s) == 0:
-                                s = "-"
-                            else:
-                                s += " - "
-                            a = -a
-                        elif len(s) != 0:
-                            s += " + "
-                        s += self._co_dot_var(a, ram_name, exp, do_latex)
-                    exp += 1
-                if ellipsis:
-                    s += self._plus_ellipsis(do_latex)
+                return s
+            # mode == series
+            slist = self.base_p_list(elt, pos)
+            slist, ellipsis = self._truncate_list(slist, self.max_ram_terms, 0)
+            s = ""
+            exp = elt.valuation()
+            for a in slist:
+                if a != 0:
+                    if a < 0:
+                        if len(s) == 0:
+                            s = "-"
+                        else:
+                            s += " - "
+                        a = -a
+                    elif len(s) != 0:
+                        s += " + "
+                    s += self._co_dot_var(a, ram_name, exp, do_latex)
+                exp += 1
+            if ellipsis:
+                s += self._plus_ellipsis(do_latex)
         else: # not self.base
             if mode == terse:
                 if elt.parent()._implementation == 'FLINT':
@@ -1295,8 +1293,7 @@ cdef class pAdicPrinter_class(SageObject):
             return str(x)
         if do_latex:
             return "%s^{%s}" % (x, exp)
-        else:
-            return "%s^%s" % (x, exp)
+        return "%s^%s" % (x, exp)
 
     cdef _dot_var(self, x, exp, do_latex):
         """
@@ -1307,12 +1304,10 @@ cdef class pAdicPrinter_class(SageObject):
         if exp == 1:
             if do_latex:
                 return " \\cdot %s" % (x)
-            else:
-                return "*%s" % (x)
+            return "*%s" % (x)
         if do_latex:
             return " \\cdot %s^{%s}" % (x, exp)
-        else:
-            return "*%s^%s" % (x, exp)
+        return "*%s^%s" % (x, exp)
 
     cdef _co_dot_var(self, co, x, exp, do_latex):
         """
@@ -1327,17 +1322,14 @@ cdef class pAdicPrinter_class(SageObject):
                 return "%s" % x
             if do_latex:
                 return "%s \\cdot %s" % (co, x)
-            else:
-                return "%s*%s" % (co, x)
+            return "%s*%s" % (co, x)
         if co == 1:
             if do_latex:
                 return "%s^{%s}" % (x, exp)
-            else:
-                return "%s^%s" % (x, exp)
+            return "%s^%s" % (x, exp)
         if do_latex:
             return "%s \\cdot %s^{%s}" % (co, x, exp)
-        else:
-            return "%s*%s^%s" % (co, x, exp)
+        return "%s*%s^%s" % (co, x, exp)
 
     cdef _plus_ellipsis(self, bint do_latex):
         """
@@ -1345,8 +1337,7 @@ cdef class pAdicPrinter_class(SageObject):
         """
         if do_latex:
             return " + \\cdots"
-        else:
-            return " + ..."
+        return " + ..."
 
     cdef _ellipsis(self, bint do_latex):
         """
@@ -1354,8 +1345,7 @@ cdef class pAdicPrinter_class(SageObject):
         """
         if do_latex:
             return "\\cdots"
-        else:
-            return "..."
+        return "..."
 
     cdef _truncate_list(self, L, max_terms, zero):
         """

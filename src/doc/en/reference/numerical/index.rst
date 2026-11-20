@@ -54,6 +54,7 @@ Semidefinite Optimization (SDP) Solver backends
    :maxdepth: 1
 
    sage/numerical/backends/generic_sdp_backend
+   sage/numerical/backends/matrix_sdp_backend
    sage/numerical/backends/cvxopt_sdp_backend
 
 For more details on CVXOPT, see `CVXOPT documentation <http://cvxopt.org/documentation/index.html>`_.

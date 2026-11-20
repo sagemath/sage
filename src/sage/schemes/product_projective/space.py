@@ -820,7 +820,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``X`` -- list or tuple of equations
 
-        OUTPUT: :class:`AlgebraicScheme_subscheme_projective_cartesian_product`
+        OUTPUT:
+
+        :class:`~sage.schemes.product_projective.subscheme.AlgebraicScheme_subscheme_product_projective`
 
         EXAMPLES::
 

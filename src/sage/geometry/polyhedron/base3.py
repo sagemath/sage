@@ -1,7 +1,7 @@
 r"""
 Base class for polyhedra: Methods regarding the combinatorics of a polyhedron
 
-Excluding methods relying on :mod:`sage.graphs`.
+Excluding methods relying on :ref:`sage.graphs <sage.graphs>`.
 """
 
 # ****************************************************************************
@@ -44,6 +44,8 @@ class Polyhedron_base3(Polyhedron_base2):
     Methods related to the combinatorics of a polyhedron.
 
     See :class:`sage.geometry.polyhedron.base.Polyhedron_base`.
+
+    .. automethod:: _test_combinatorial_face_as_combinatorial_polyhedron
 
     TESTS::
 
@@ -154,7 +156,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: Polyhedron().slack_matrix()
             []
-            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()    # needs sage.rings.number_field
+            sage: Polyhedron(base_ring=QuadraticField(2)).slack_matrix().base_ring()
             Number Field in a with defining polynomial x^2 - 2 with a = 1.41...
         """
         if not self.n_Vrepresentation() or not self.n_Hrepresentation():
@@ -275,7 +277,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: P = polytopes.twenty_four_cell()
             sage: M = P.incidence_matrix()
-            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)                       # needs sage.combinat
+            sage: sum(sum(x) for x in M) == P.flag_f_vector(0, 3)
             True
 
         TESTS:
@@ -626,7 +628,7 @@ class Polyhedron_base3(Polyhedron_base2):
         .. SEEALSO::
 
             :meth:`face_generator`,
-            :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.facet`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.facets`.
 
         EXAMPLES:
 
@@ -806,7 +808,7 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: Polyhedron(ieqs=[[1,-1,0,0],[1,1,0,0]]).f_vector()
             (1, 0, 0, 2, 1)
 
-        However, the method :meth:`Polyhedron_base.vertices` returns
+        However, the method :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.vertices` returns
         two points that belong to the ``Vrepresentation``::
 
             sage: P = Polyhedron(ieqs=[[1,-1,0],[1,1,0]])
@@ -882,7 +884,7 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 1 1 1 0]
 
         The rows and columns of the vertex adjacency matrix correspond
-        to the :meth:`Vrepresentation` objects: vertices, rays, and
+        to the :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.Vrepresentation` objects: vertices, rays, and
         lines. The `(i,j)` matrix entry equals `1` if the `i`-th and
         `j`-th V-representation object are adjacent.
 
@@ -981,8 +983,8 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: M = Q.vertex_adjacency_matrix()
             sage: sum(M)
             (4, 4, 3, 3, 4, 4, 4, 3, 3)
-            sage: G = Q.vertex_graph()                                                  # needs sage.graphs
-            sage: G.degree()                                                            # needs sage.graphs
+            sage: G = Q.vertex_graph()
+            sage: G.degree()
             [4, 4, 3, 3, 4, 4, 4, 3, 3]
 
         TESTS:
@@ -1264,8 +1266,8 @@ class Polyhedron_base3(Polyhedron_base2):
             True
             sage: P.is_pyramid(certificate=True)
             (True, A vertex at (1, 0, 0, 0))
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.rings.number_field
-            sage: egyptian_pyramid.is_pyramid()                                         # needs sage.rings.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
+            sage: egyptian_pyramid.is_pyramid()
             True
             sage: Q = polytopes.octahedron()
             sage: Q.is_pyramid()
@@ -1435,8 +1437,8 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: L.is_lattice_polytope()
             True
 
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()             # needs sage.number_field
-            sage: egyptian_pyramid.is_lawrence_polytope()                               # needs sage.number_field
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
+            sage: egyptian_pyramid.is_lawrence_polytope()
             True
 
             sage: polytopes.octahedron().is_lawrence_polytope()

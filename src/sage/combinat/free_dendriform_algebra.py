@@ -455,7 +455,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`prec`, :meth:`over`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`prec`, :meth:`over`, :meth:`under`
 
         EXAMPLES::
 
@@ -529,7 +529,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`over`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`over`, :meth:`under`
 
         EXAMPLES::
 
@@ -556,7 +556,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`prec`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`prec`, :meth:`under`
 
         EXAMPLES::
 
@@ -584,7 +584,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`prec`, :meth:`over`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`prec`, :meth:`over`
 
         EXAMPLES::
 

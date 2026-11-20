@@ -272,15 +272,21 @@ cdef class NCPolynomialRing_plural(Ring):
 
         - ``base_ring`` -- base ring (must be either `\GF{q}`, `\ZZ`, `\ZZ/n\ZZ`, `\QQ` or absolute number field)
         - ``names`` -- tuple of names of ring variables
-        - ``c``, ``d`` -- upper triangular matrices of coefficients,
-          resp. commutative polynomials, satisfying the nondegeneracy
-          conditions, which are to be tested if ``check`` is ``True``. These
-          matrices describe the noncommutative relations:
+        - ``c``, ``d`` -- upper triangular matrices of coefficients and
+          polynomial remainders, respectively. The entries of ``d`` belong to
+          the commutative polynomial ring that Singular uses to encode
+          ordered/PBW monomials. These matrices satisfy the nondegeneracy
+          conditions, which are to be tested if ``check`` is ``True``. They
+          describe the noncommutative relations:
 
             ``self.gen(j)*self.gen(i) == c[i, j] * self.gen(i)*self.gen(j) + d[i, j],``
 
-          where ``0 <= i < j < self.ngens()``. Note that two variables
-          commute if they are not part of one of these relations.
+          where ``0 <= i < j < self.ngens()``. For a valid `G`-algebra,
+          ``d[i, j]`` is either zero or has leading monomial smaller than
+          ``self.gen(i)*self.gen(j)`` in the chosen term order, so the
+          relation reduces ``self.gen(j)*self.gen(i)`` toward normal form.
+          Note that two variables commute if they are not part of one of these
+          relations.
         - ``order`` -- term order
         - ``check`` -- check the noncommutative conditions (default: ``True``)
 
@@ -1136,8 +1142,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         if not p_DivisibleBy(_a, _b, _r):
             return False
-        else:
-            return True
+        return True
 
     def monomial_lcm(self, NCPolynomial_plural f, NCPolynomial_plural g):
         """
@@ -1328,13 +1333,12 @@ cdef class NCPolynomialRing_plural(Ring):
         if p == NULL:
             if q == NULL:
                 return False  # GCD(0,0) = 0
-            else:
-                return True  # GCD(x,0) = 1
+            return True  # GCD(x,0) = 1
 
-        elif q == NULL:
+        if q == NULL:
             return True  # GCD(0,x) = 1
 
-        elif p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
+        if p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
             return False
 
         for i from 1 <= i <= r.N:

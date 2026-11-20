@@ -400,7 +400,7 @@ cdef class Octonion_generic(AlgebraElement):
         Return the quadratic form of ``self``.
 
         The octonion algebra has a distinguished quadratic form given
-        by `N(x) = x x^*`, where `x^*` is the :meth:`conjugate` of `x`.
+        by `N(x) = x x^*`, where `x^*` is the :meth:`~sage.algebras.octonion_algebra.Octonion_generic.conjugate` of `x`.
 
         EXAMPLES::
 
@@ -423,7 +423,7 @@ cdef class Octonion_generic(AlgebraElement):
         Return the norm of ``self``.
 
         The norm of an octonion `x` is `\lVert x \rVert = \sqrt{x x^*}`,
-        where `x^*` is the :meth:`conjugate` of `x`.
+        where `x^*` is the :meth:`~sage.algebras.octonion_algebra.Octonion_generic.conjugate` of `x`.
 
         .. SEEALSO::
 
@@ -566,7 +566,7 @@ cdef class Octonion(Octonion_generic):
         Return the quadratic form of ``self``.
 
         The octonion algebra has a distinguished quadratic form given
-        by `N(x) = x x^*`, where `x^*` is the :meth:`conjugate` of `x`.
+        by `N(x) = x x^*`, where `x^*` is the :meth:`~sage.algebras.octonion_algebra.Octonion_generic.conjugate` of `x`.
 
         EXAMPLES::
 
@@ -585,7 +585,7 @@ cdef class Octonion(Octonion_generic):
         Return the norm of ``self``.
 
         The norm of an octonion `x` is `\lVert x \rVert = \sqrt{x x^*}`,
-        where `x^*` is the :meth:`conjugate` of `x`.
+        where `x^*` is the :meth:`~sage.algebras.octonion_algebra.Octonion_generic.conjugate` of `x`.
 
         .. SEEALSO::
 
@@ -615,7 +615,8 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
     were originally constructed by Graves and independently discovered by
     Cayley (due to being published first, these are sometimes called
     the Cayley numbers) and can also be built from the Cayley-Dickson
-    construction with the :class:`quaternions <QuaternionAlgebra>`.
+    construction with the
+    :class:`quaternions <sage.algebras.quatalg.quaternion_algebra.QuaternionAlgebraFactory>`.
 
     We use the multiplication table from [Scha1996]_. The octonion
     algebra `\mathbf{O}_{a,b,c}(R)` is a composition (Hurwitz) algebra,

@@ -247,8 +247,7 @@ cdef class SymmetricReductionStrategy:
         if not isinstance(other, SymmetricReductionStrategy):
             if op in [Py_NE, Py_EQ]:
                 return (op == Py_NE)
-            else:
-                return NotImplemented
+            return NotImplemented
         cdef SymmetricReductionStrategy left = self
         cdef SymmetricReductionStrategy right = other
         return richcmp((left._parent, left._lm, left._tail),

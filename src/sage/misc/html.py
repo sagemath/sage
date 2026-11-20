@@ -49,7 +49,9 @@ class HtmlFragment(str, SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See the `display manager documentation
+        <../../../repl/sage/repl/rich_output/display_manager.html>`_ for
+        details.
 
         EXAMPLES::
 
@@ -292,11 +294,17 @@ class MathJax:
             sage: MathJax().eval(type(3), mode='inline')
             <html>\(\verb|&lt;class|\verb| |\verb|'sage.rings.integer.Integer'>|\)</html>
 
-        TESTS:
+        TESTS::
 
             sage: from sage.misc.html import MathJax
             sage: MathJax().eval(IntegerModRing(6))
             <html>\[\newcommand{\ZZ}{\Bold{Z}}\newcommand{\Bold}[1]{\mathbf{#1}}\ZZ/6\ZZ\]</html>
+            sage: MathJax().eval(['\\'], mode='display_left')
+            <html>\(\displaystyle \left[\verb|\|\right]\)</html>
+            sage: MathJax().eval(['{'], mode='display_left')
+            <html>\(\displaystyle \left[\texttt{\{}\right]\)</html>
+            sage: MathJax().eval(['a{b}c'], mode='display_left')
+            <html>\(\displaystyle \left[\verb|a|\texttt{\{}\verb|b|\texttt{\}}\verb|c|\right]\)</html>
         """
         # Get a regular LaTeX representation of x
         x = latex(x, combine_all=combine_all)
@@ -309,11 +317,17 @@ class MathJax:
             if i == 0:
                 continue    # Nothing to do with the head part
             n = 1
+            escaped = False
             for closing, c in enumerate(part):
-                if c == "{" and part[closing - 1] != "\\":
-                    n += 1
-                if c == "}" and part[closing - 1] != "\\":
-                    n -= 1
+                if c == "\\":
+                    escaped = not escaped
+                    continue
+                if not escaped:
+                    if c == "{":
+                        n += 1
+                    elif c == "}":
+                        n -= 1
+                escaped = False
                 if n == -1:
                     break
             # part should end in "}}", so omit the last two characters
@@ -340,7 +354,14 @@ class MathJax:
                 if nspaces > 0:
                     subparts.append(wrapper % (" " * nspaces))
                 nspaces = 1
-                subparts.append(wrapper % subpart)
+                # Unbalanced braces in \verb hide the closing math delimiter.
+                for piece in re.split(r"([{}])", subpart):
+                    if not piece:
+                        continue
+                    if piece in "{}":
+                        subparts.append(r"\texttt{\%s}" % piece)
+                    else:
+                        subparts.append(wrapper % piece)
             subparts.append(part[closing + 1:])
             parts[i] = "".join(subparts)
 

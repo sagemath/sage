@@ -90,12 +90,13 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     In this class, the `R`-module isomorphism from `A` to
     `\operatorname{gr} A` is implemented as
-    :meth:`to_graded_conversion` and also as the default
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.to_graded_conversion`
+    and also as the default
     conversion from `A` to `\operatorname{gr} A`. Its
     inverse map is implemented as
-    :meth:`from_graded_conversion`.
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.from_graded_conversion`.
     The projection `p_i : F_i \to G_i` is implemented as
-    :meth:`projection` ``(i)``.
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.projection` ``(i)``.
 
     INPUT:
 

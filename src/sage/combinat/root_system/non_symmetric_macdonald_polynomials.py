@@ -178,7 +178,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     The ``i``-th Demazure-Lusztig operator is an operator on `K[L]`
     which interpolates between the reflection `s_i` and the Demazure operator `\pi_i`
-    (see :meth:`.root_lattice_realization.RootLatticeRealization.Algebras.ParentMethods.demazure_lusztig_operators`).::
+    (see
+    :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`).::
 
         sage: KL = L.algebra(K); KL
         Algebra of the Ambient space of the Root system of type ['C', 2, 1]
@@ -354,18 +355,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     REFERENCES:
 
-    .. [HaimanICM] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics,
-       Proceedings of the International Congress of Mathematicians,
-       Madrid 2006, Vol. III, 843-872.
+    - [HaimanICM]_
 
-    .. [HHL06] \J. Haglund, M. Haiman and N. Loehr,
-       A combinatorial formula for nonsymmetric Macdonald polynomials,
-       Amer. J. Math. 130, No. 2 (2008), 359-383.
+    - [HHL06]_
 
-    .. [LNSSS12] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, M. Shimozono,
-       A uniform model for Kirillov-Reshetikhin crystals I: Lifting
-       the parabolic quantum Bruhat graph, preprint :arxiv:`1211.2042`
-       [math.QA]
+    - [LNSSS12]_
 
     .. RUBRIC:: More examples
 
@@ -1566,8 +1560,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         .. SEEALSO::
 
-            - :meth:`.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
-            - :meth:`affine_retract`
+            - :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
+            - :meth:`~sage.combinat.root_system.non_symmetric_macdonald_polynomials.NonSymmetricMacdonaldPolynomials.affine_retract`
             - :meth:`L_prime`
 
         EXAMPLES:
@@ -1631,7 +1625,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         .. SEEALSO::
 
-            - :meth:`.hecke_algebra_representation.HeckeAlgebraRepresentation.affine_retract`
+            - :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_retract`
             - :meth:`affine_lift`
             - :meth:`L_prime`
 

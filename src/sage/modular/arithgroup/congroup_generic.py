@@ -39,7 +39,8 @@ def CongruenceSubgroup_constructor(*args):
 
     The allowed inputs are as follows:
 
-    - A :class:`~sage.groups.matrix_gps.matrix_group.MatrixGroup` object. This
+    - An object returned by
+      :func:`~sage.groups.matrix_gps.finitely_generated.MatrixGroup`. This
       must be a group of matrices over `\ZZ / N\ZZ` for some `N`, with
       determinant 1, in which case the function will return the group of
       matrices in `SL(2, \ZZ)` whose reduction mod `N` is in the given group.

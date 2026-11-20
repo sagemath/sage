@@ -101,7 +101,7 @@ class TrivialDiscretePseudoValuation_base(DiscretePseudoValuation):
         """
         raise ValueError("Trivial valuations do not define a uniformizing element")
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return whether this valuation is trivial.
 
@@ -113,7 +113,7 @@ class TrivialDiscretePseudoValuation_base(DiscretePseudoValuation):
         """
         return True
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains the value `-\infty`.
 

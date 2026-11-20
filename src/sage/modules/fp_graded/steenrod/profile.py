@@ -188,6 +188,15 @@ def find_min_profile(prof, char=2):
         ((1,), (2, 2))
         sage: find_min_profile([[], [2,1,1,2]], char=3)
         ((0,), (2, 1, 1, 2))
+
+    This shows that :issue:`42342` is fixed: a profile whose computed
+    even part strips down to all zeroes still returns a single zero entry
+    instead of raising an ``IndexError``. ::
+
+        sage: find_min_profile([0])
+        (0,)
+        sage: find_min_profile(([0], [2, 2, 2]), char=3)
+        ((0,), (2, 2, 2))
     """
     if char == 2:
         if not prof:
@@ -211,8 +220,10 @@ def find_min_profile(prof, char=2):
         for r in range(len(e)):
             m = max((min(e[r - i] - i, e[i]) for i in range(1, r)), default=0)
             e[r] = max(m, new[r])
-        # Strip trailing zeroes.
-        while e[-1] == 0:
+        # Strip trailing zeroes, but always keep at least one entry: a
+        # profile function must have at least one element, even if it is
+        # zero, so the stripper must not empty the list (:issue:`42342`).
+        while len(e) > 2 and e[-1] == 0:
             e = e[:-1]
         return tuple(e[1:])
 

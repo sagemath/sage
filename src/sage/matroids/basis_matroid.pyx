@@ -976,8 +976,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._bases_invariant2() != other._bases_invariant2():
             return None
@@ -989,8 +988,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._bases_invariant3() == other._bases_invariant3():
             PHS = self._bases_partition3()
@@ -1127,8 +1125,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             return NotImplemented
         if left.equals(right):
             return rich_to_bool(op, 0)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __reduce__(self):
         """

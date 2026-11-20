@@ -327,8 +327,7 @@ def cyclotomic_value(n, x):
         # if n is prime, return n
         if L == 1:
             return n * x  # in case the parent of x has nonzero characteristic
-        else:
-            return x
+        return x
     xd = [x]  # the x^d for d | n
     cdef char mu
     cdef char* md = <char*>sig_malloc(sizeof(char) * (1 << L))  # the mu(d) for d | n

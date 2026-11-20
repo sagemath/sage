@@ -12,31 +12,25 @@ It defines the following functions:
 
 REFERENCES:
 
-.. [BJL99-1] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. I."
-   Second edition. Encyclopedia of Mathematics and its Applications, 69. Cambridge
-   University Press, (1999).
+- [BJL99-1]_
 
-.. [BLJ99-2] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. II."
-   Second edition. Encyclopedia of Mathematics and its Applications, 78. Cambridge
-   University Press, (1999).
+- [BLJ99-2]_
 
-.. [Bo39] \R. C. Bose, "On the construction of balanced incomplete block
-   designs", Ann. Eugenics, 9 (1939), 353--399.
+- [Bo39]_
 
-.. [Bu95] \M. Buratti "On simple radical difference families", J.
-   Combinatorial Designs, 3 (1995) 161--168.
+- [Bu95]_
 
-.. [Tu1965] \R. J. Turyn "Character sum and difference sets"
-   Pacific J. Math. 15 (1965) 319--346.
+- [Tu1965]_
 
-.. [Tu1984] \R. J. Turyn "A special class of Williamson matrices and
-   difference sets" J. Combinatorial Theory (A) 36 (1984) 111--115.
+- [Tu1984]_
 
-.. [Wi72] \R. M. Wilson "Cyclotomy and difference families in elementary Abelian
-   groups", J. Number Theory, 4 (1972) 17--47.
+- [Wi72]_
 
 Functions
 ---------
+
+.. autofunction:: _construct_gs_difference_family_from_full
+.. autofunction:: _construct_gs_difference_family_from_compact
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -267,7 +261,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False) -> bool:
             return False
 
     # Check that every x \in G-{0},occurs exactly l times as a difference
-    counter = {g: 0 for g in Glist}
+    counter = dict.fromkeys(Glist, 0)
     where = {g: set() for g in Glist}
     del counter[identity]
 
@@ -1087,10 +1081,7 @@ def mcfarland_1973_construction(q, s):
 
     REFERENCES:
 
-    .. [McF1973] Robert L. McFarland
-       "A family of difference sets in non-cyclic groups"
-       J. Combinatorial Theory (A) 15 (1973) 1--10.
-       :doi:`10.1016/0097-3165(73)90031-9`
+    - [McF1973]_
 
     EXAMPLES::
 
@@ -1707,7 +1698,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
             print(f'G has order {G.order()}, but it should be {v}')
         return False
 
-    differences_counter = {el: 0 for el in G}
+    differences_counter = dict.fromkeys(G, 0)
     for K in Ks:
         for el1 in K:
             for el2 in K:
@@ -2230,7 +2221,7 @@ def _construct_gs_difference_family_from_compact(rep1, rep2, H, mu):
     modulo `n`.
 
     The other two sets are constructed using
-    :func:`_construct_gs_difference_family_from_full`.
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`.
 
     INPUT:
 
@@ -2273,9 +2264,11 @@ def spin_goethals_seidel_difference_family(n, existence=False, check=True):
     each value of `n`, either a full representation of `S_1, S_2` together with
     the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
     multiplier.
-    This data is used to construct the difference family using the functions
-    :func:`_construct_gs_difference_family_from_full` and
-    :func:`_construct_gs_difference_family_from_compact`.
+    This data is used to construct the difference family using the helper
+    functions
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`
+    and
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_compact`.
 
     Additionally, this function also checks if a (skew) difference family can be
     constructed using :func:`skew_spin_goethals_seidel_difference_family`.
@@ -2393,9 +2386,11 @@ def skew_spin_goethals_seidel_difference_family(n, existence=False, check=True):
     the multiplier `\mu`, or a subgroup `H`, two sets of representatives, and the
     multiplier.
 
-    This data is used to construct the difference family using the functions
-    :func:`_construct_gs_difference_family_from_full` and
-    :func:`_construct_gs_difference_family_from_compact`.
+    This data is used to construct the difference family using the helper
+    functions
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_full`
+    and
+    :func:`~sage.combinat.designs.difference_family._construct_gs_difference_family_from_compact`.
 
     INPUT:
 

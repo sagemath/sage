@@ -988,7 +988,7 @@ class ToricVariety_field(AmbientSpace):
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
-            :meth:`base_extend` instead.
+            :meth:`~sage.schemes.toric.divisor.ToricDivisorGroup.base_extend` instead.
 
         EXAMPLES::
 
@@ -1059,7 +1059,7 @@ class ToricVariety_field(AmbientSpace):
         OUTPUT:
 
         - :class:`scheme morphism
-          <sage.schemes.generic.morphism.SchemeMorphism_polynomial_toric_variety>`
+          <sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety>`
           if the default embedding morphism was defined for ``self``,
           otherwise a :exc:`ValueError` exception is raised.
 
