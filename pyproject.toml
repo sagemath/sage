@@ -11,7 +11,6 @@ requires = [
   'jinja2',
   'memory_allocator',
   'numpy >=2.2.4',
-  'pkgconf',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -225,7 +224,7 @@ dev = [
   "meson", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
-  "pkgconf", # Duplicate build-system requirement to fix editable installs with uv
+  "pkgconf",
   "pygithub",
   "pytest",
   "python-build",
@@ -455,5 +454,10 @@ select = [
 ]
 
 [tool.uv]
+# The pkg-config executable of the pkgconf package (installed with the dev group) does not
+# know about system libraries. With FORCE_PKGCONF_PYPI, it behaves like pkgconf-pypi instead:
+# it also finds the pkg-config files registered by Python packages (in particular, the pari.pc
+# of cypari2) and falls back to the system pkg-config for everything else.
+extra-build-variables = { sagemath = { FORCE_PKGCONF_PYPI = "1" } }
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
 no-build-isolation-package = ["sagemath"]

@@ -84,11 +84,14 @@ except Exception:
     check: true,
   ).stdout().strip()
 
-  pari = dependency('pari', version: '>=2.17.0', required: false)
+  # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2.
+  # This has to be the same PARI library that cypari2 uses: another copy of PARI
+  # in the same process has its own PARI stack and global state, leading to crashes.
+  # Newer versions of cypari2 ship a pari.pc (in cypari2 wheels for
+  # the PARI library bundled in the wheel)
+  pari = dependency('pari', version: '>2.17.0', required: false)
   if not pari.found()
     # Fallback in case pkg-config info is not available
-    # Cannot be found via pkg-config
-    # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
     pari = cc.find_library('pari', required: not is_windows, disabler: true)
     if pari.found() and not meson.is_cross_build()
       # Verify PARI version
