@@ -7588,6 +7588,13 @@
              Combinatorics: Room squares, sum-free sets, Hadamard matrices.
              Lecture notes in Mathematics 292 (1972).
 
+.. [SY1990] Jennifer Seberry and Mieko Yamada,
+            *On the Products of Hadamard Matrices, Williamson Matrices and
+            Other Orthogonal Matrices using M-Structures*,
+            Journal of Combinatorial Mathematics and Combinatorial Computing
+            **7** (1990), 97-137, Lemma 26.
+            https://documents.uow.edu.au/~jennie/WEBPDF/139_1990.pdf
+
 .. [SYKU2010] Toshiki Saitoh, Katsuhisa Yamanaka, Masashi Kiyomi, Ryuhei Uehara:
               Random Generation and Enumeration of Proper Interval Graphs.
               IEICE Trans. Inf. Syst. 93-D(7): 1816-1823 (2010)

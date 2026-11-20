@@ -35,6 +35,11 @@ circulant seeds. Source URLs and extraction conventions are recorded below.
 5788 from the same paper. Its record specifies the cyclic factors, border
 size, coset size, and compressed sign data, with conventions recorded below.
 
+``EKLO_BH86_DATA`` contains the two length-42 seeds of the symmetric
+`BH(86,4)` used in Section 4 of [EKLO2026]_. The symbols ``+,-,i,j``
+represent `1,-1,i,-i`, respectively. The reconstruction and source
+fingerprint are recorded alongside the seeds.
+
 TESTS::
 
     sage: from sage.combinat.matrices.hadamard_matrix_data import (
@@ -643,3 +648,22 @@ EKLO_BORDERED_DATA = {
         ),
     ),
 }
+
+
+# Symmetric BH(86,4) of [EKLO2026]_, Section 4. Symbols +,-,i,j mean
+# 1,-1,i,-i. The two strings generate a circulant A and a back-circulant B
+# of order 42. With block sizes 1,42,1,42, the matrix is
+# [-i, 1, -1, 1; 1, A, 1, B; -1, 1, -i, -1; 1, B, -1, -conjugate(A)].
+#
+# Recovered from https://www.math74.com/Hadamard/02/Hadamard_2076.png
+# PNG SHA-256: 87c716ac1deff23e4c4efcc1b2161377442f57e7a2719eff9dcdab75c355a6a0
+# Interpret palette 0 (blue) as +1 and palette 1 (green) as -1. The first
+# four 173-by-173 blocks of the first block row give Williamson matrices
+# W0,W1,W2,W3. Delete their first row and column. In the W2 and W3 cores,
+# let V=(S[::2,::2]-S[::2,1::2])/2. Then H=(V2+V3)/2+i*(V2-V3)/2.
+# Its blocks H[1:43,1:43] and H[1:43,44:86] give the two seeds below.
+# The reconstructed H is symmetric and H*H.conjugate_transpose()=86I.
+EKLO_BH86_DATA = (
+    'j++j-ij-j-++-i+ji-i-+++-i-ij+i-++-j-ji-j++',
+    '---++---++-++-+---++-+----+-+---+-++++++++',
+)

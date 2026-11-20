@@ -369,3 +369,107 @@ def test_hadamard_bordered_5788_matrix():
     normalise_hadamard(H)
     assert set(H.row(0)) == set(H.column(0)) == {1}
     assert hadamard_matrix(5788, check=False) == H
+
+
+def test_hadamard_bh86_seed_and_conversion():
+    """Verify the recovered BH data and all Williamson-type identities."""
+    from hashlib import sha256
+
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_cooper_wallis_smallcases,
+        symmetric_butson_hadamard_matrix_smallcases,
+        williamson_type_from_symmetric_butson,
+    )
+    from sage.matrix.constructor import identity_matrix
+
+    H = symmetric_butson_hadamard_matrix_smallcases(86)
+    assert H.dimensions() == (86, 86)
+    assert H == H.T
+    assert H * H.conjugate_transpose() == 86 * identity_matrix(
+        H.base_ring(), 86
+    )
+    i = H.base_ring().gen()
+    symbols = {H.base_ring()(1): '+', H.base_ring()(-1): '-', i: 'i', -i: 'j'}
+    payload = ''.join(symbols[c] for c in H.list())
+    assert sha256(payload.encode('ascii')).hexdigest() == (
+        '15da4d8dcaacbecd3f7128c44dcef8a2cc76d14b69e036c7d47271080989289e'
+    )
+    W = williamson_type_from_symmetric_butson(H)
+    assert all(A.dimensions() == (173, 173) and A == A.T for A in W)
+    assert all(set(A.list()) == {-1, 1} for A in W)
+    assert all(A * B.T == B * A.T for j, A in enumerate(W) for B in W[j + 1 :])
+    assert sum(A * A.T for A in W) == 692 * identity_matrix(173)
+    for t in (3, 5, 7, 9, 11, 13):
+        assert (
+            hadamard_matrix_cooper_wallis_smallcases(692 * t, existence=True)
+            is True
+        )
+        assert hadamard_matrix(
+            692 * t, existence=True, construction_name=True
+        ) == (f'cooper-wallis small cases: {692 * t}')
+
+
+@pytest.mark.parametrize('n', [0, -2, 42, 84, 88])
+def test_hadamard_bh_unavailable(n):
+    from sage.combinat.matrices.hadamard_matrix import (
+        symmetric_butson_hadamard_matrix_smallcases,
+    )
+
+    assert (
+        symmetric_butson_hadamard_matrix_smallcases(n, existence=True) is False
+    )
+    with pytest.raises(ValueError, match='No symmetric BH'):
+        symmetric_butson_hadamard_matrix_smallcases(n)
+
+
+@pytest.mark.parametrize(
+    'rows,message',
+    [
+        ([[1, 1, 1]], 'positive even order'),
+        ([[1, 1], [-1, 1]], 'must be symmetric'),
+        ([[2, 1], [1, 2]], 'fourth-root entries'),
+        ([[1, 1], [1, 1]], 'must satisfy'),
+    ],
+)
+def test_hadamard_bh_invalid_input(rows, message):
+    from sage.combinat.matrices.hadamard_matrix import (
+        williamson_type_from_symmetric_butson,
+    )
+    from sage.matrix.constructor import matrix
+
+    with pytest.raises(ValueError, match=message):
+        williamson_type_from_symmetric_butson(matrix(rows))
+
+
+def test_hadamard_bh86_small_prime_power():
+    """Exercise the general conversion over a non-prime finite field (q=9)."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        williamson_type_from_symmetric_butson,
+    )
+    from sage.matrix.constructor import identity_matrix
+
+    W = williamson_type_from_symmetric_butson(hadamard_matrix(4))
+    assert all(A.dimensions() == (9, 9) for A in W)
+    assert sum(A * A.T for A in W) == 36 * identity_matrix(9)
+
+
+@pytest.mark.longlong
+@pytest.mark.parametrize('n', [2076, 3460, 4844, 6228, 7612, 8996])
+def test_hadamard_bh86_full_matrices(n):
+    """Verify all six full matrices by exact row-pair Hamming distances."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_cooper_wallis_smallcases,
+    )
+
+    # Exercise default check=True (integer Gram product) at the first order.
+    H = (
+        hadamard_matrix_cooper_wallis_smallcases(n)
+        if n == 2076
+        else hadamard_matrix(n, check=False)
+    )
+    assert H.dimensions() == (n, n)
+    assert set(H.row(0)) == set(H.column(0)) == {1}
+    _assert_hadamard_by_hamming(H)

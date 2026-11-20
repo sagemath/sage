@@ -1244,6 +1244,181 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     return H
 
 
+def symmetric_butson_hadamard_matrix_smallcases(
+    n, existence=False, check=True
+):
+    r"""
+    Return an available symmetric Butson matrix with fourth-root entries.
+
+    Currently this implements the symmetric `BH(86,4)` of [EKLO2026]_,
+    Section 4, from two length-42 seeds. The matrix is over the exact
+    cyclotomic field `\QQ(i)`, with entries in `\{1,-1,i,-i\}`.
+    See :func:`williamson_type_from_symmetric_butson` for its use in
+    constructing real Hadamard matrices.
+
+    INPUT:
+
+    - ``n`` -- integer; matrix order
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); verify symmetry and `HH^*=nI`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     symmetric_butson_hadamard_matrix_smallcases)
+        sage: H = symmetric_butson_hadamard_matrix_smallcases(86)
+        sage: H.dimensions(), H == H.T
+        ((86, 86), True)
+        sage: H * H.conjugate_transpose() == 86 * identity_matrix(
+        ....:     H.base_ring(), 86)
+        True
+        sage: symmetric_butson_hadamard_matrix_smallcases(86, existence=True)
+        True
+
+    TESTS::
+
+        sage: symmetric_butson_hadamard_matrix_smallcases(84, existence=True)
+        False
+        sage: symmetric_butson_hadamard_matrix_smallcases(84)
+        Traceback (most recent call last):
+        ...
+        ValueError: No symmetric BH(84, 4) data available
+    """
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_BH86_DATA
+    from sage.rings.number_field.number_field import CyclotomicField
+
+    if existence:
+        return n == 86
+    if n != 86:
+        raise ValueError(f'No symmetric BH({n}, 4) data available')
+    K = CyclotomicField(4)
+    i = K.gen()
+    values = {'+': K(1), '-': K(-1), 'i': i, 'j': -i}
+    a, b = [[values[c] for c in seed] for seed in EKLO_BH86_DATA]
+    A = matrix.circulant(a)
+    B = matrix(K, 42, 42, lambda r, c: b[(r + c) % 42])
+    e = J(K, 1, 42)
+    H = block_matrix(
+        [
+            [matrix(K, [[-i]]), e, matrix(K, [[-1]]), e],
+            [e.T, A, e.T, B],
+            [matrix(K, [[-1]]), e, matrix(K, [[-i]]), -e],
+            [e.T, B, -e.T, -A.conjugate()],
+        ]
+    )
+    if check:
+        assert H == H.T
+        assert H * H.conjugate_transpose() == n * I(K, n)
+    return H
+
+
+def williamson_type_from_symmetric_butson(H, check=True):
+    r"""
+    Construct Williamson-type matrices from a symmetric `BH(m,4)`.
+
+    Set `q=2m+1`. For `q \equiv 1 \pmod 4` a prime power, the symmetric
+    complex input gives four symmetric, pairwise amicable integer matrices
+    of order `q` whose Gram matrices sum to `4qI`. This is Miyamoto's
+    construction [Miy1991]_, reformulated as Lemma 26 of [SY1990]_.
+    Symmetry of the input is essential; see [EKLO2026]_, Remark 8.
+
+    Write `H=P+iQ` and take Paley matrices `A,B` of order `m` with row sums
+    1,0 and `AA^\top+BB^\top=qI-2J`. In Lemma 26 use
+    `U=(A,B,0,0)` and `V=(I,0,P+Q,P-Q)`. Each core is
+
+    .. MATH::
+
+        U_j\otimes J_2 + V_j\otimes
+        \begin{pmatrix}1&-1\\-1&1\end{pmatrix}.
+
+    Add a border with corner 1 and signs -1 for the first matrix, +1 for
+    the other three. Paley matrices here use multiplicative coordinates
+    in the finite field, so the resulting real matrices may differ from
+    the authors' gallery output.
+
+    INPUT:
+
+    - ``H`` -- symmetric square matrix over `\QQ(i)`, with fourth-root entries
+    - ``check`` -- boolean (default: ``True``); validate the input and output
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     symmetric_butson_hadamard_matrix_smallcases,
+        ....:     williamson_type_from_symmetric_butson)
+        sage: H = symmetric_butson_hadamard_matrix_smallcases(86)
+        sage: W = williamson_type_from_symmetric_butson(H)
+        sage: [A.dimensions() for A in W]
+        [(173, 173), (173, 173), (173, 173), (173, 173)]
+        sage: sum(A*A.T for A in W) == 692 * identity_matrix(173)
+        True
+
+    TESTS::
+
+        sage: williamson_type_from_symmetric_butson(matrix([[1, 1, 1]]))
+        Traceback (most recent call last):
+        ...
+        ValueError: H must be square of positive even order
+        sage: williamson_type_from_symmetric_butson(matrix([[1, 1], [-1, 1]]))
+        Traceback (most recent call last):
+        ...
+        ValueError: H must be symmetric
+    """
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.rings.number_field.number_field import CyclotomicField
+
+    m = H.nrows()
+    if m == 0 or m % 2 or H.ncols() != m:
+        raise ValueError('H must be square of positive even order')
+    q = 2 * m + 1
+    if not is_prime_power(q):
+        raise ValueError('2*H.nrows()+1 must be a prime power')
+    K = CyclotomicField(4)
+    H = H.change_ring(K)
+    if check:
+        if H != H.T:
+            raise ValueError('H must be symmetric')
+        if any(c**4 != 1 for c in H.list()):
+            raise ValueError('H must have fourth-root entries')
+        if H * H.conjugate_transpose() != m * I(K, m):
+            raise ValueError('H must satisfy H*H.conjugate_transpose() = mI')
+    P = matrix(ZZ, m, m, [ZZ((c + c.conjugate()) / 2) for c in H.list()])
+    Q = matrix(
+        ZZ, m, m, [ZZ((c - c.conjugate()) / (2 * K.gen())) for c in H.list()]
+    )
+    field = GF(q, 'a')
+    g = field.multiplicative_generator()
+
+    def character(x):
+        return 0 if not x else 1 if x.is_square() else -1
+
+    a = [-character(g ** (2 * j) - 1) for j in range(m)]
+    b = [character(g ** (1 - 2 * j) - 1) for j in range(m)]
+    A = matrix.circulant(a)
+    B = matrix(ZZ, m, m, lambda r, c: b[(r + c) % m])
+    Z = zero_matrix(ZZ, m)
+    U = (A, B, Z, Z)
+    V = (I(ZZ, m), Z, P + Q, P - Q)
+    difference = matrix(ZZ, [[1, -1], [-1, 1]])
+    e = J(ZZ, 1, 2 * m)
+    result = []
+    for j, (u, v) in enumerate(zip(U, V)):
+        core = u.tensor_product(J(ZZ, 2)) + v.tensor_product(difference)
+        border = -e if j == 0 else e
+        result.append(
+            block_matrix([[matrix(ZZ, [[1]]), border], [border.T, core]])
+        )
+    if check:
+        assert all(A == A.T for A in result)
+        assert all(
+            A * B.T == B * A.T
+            for j, A in enumerate(result)
+            for B in result[j + 1 :]
+        )
+        assert sum(A * A.T for A in result) == 4 * q * I(ZZ, q)
+    return tuple(result)
+
+
 def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     r"""
     Construct Hadamard matrices using the Cooper-Wallis construction for some small values of `n`.
@@ -1254,6 +1429,12 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     T-matrices or T-sequences from
     :func:`sage.combinat.t_sequences.T_sequences_smallcases`.
     The matrices `A`, `B`, `C`, `D` are taken from :func:`williamson_type_quadruples_smallcases`.
+
+    Williamson-type matrices of order 173 are instead obtained from the
+    symmetric `BH(86,4)` of [EKLO2026]_ using
+    :func:`williamson_type_from_symmetric_butson`. Combining them with
+    T-sequences of lengths 3, 5, 7, 9, 11 and 13 gives the six orders
+    2076, 3460, 4844, 6228, 7612 and 8996 discussed in that paper.
 
     Data for T-matrices of order 67 is taken from [Saw1985]_. For order
     2060, Loïc Schneider found the length-103 sequences and identified the
@@ -1304,6 +1485,9 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         True
         sage: hadamard_matrix_cooper_wallis_smallcases(2060, existence=True)
         True
+        sage: [hadamard_matrix_cooper_wallis_smallcases(692*t, existence=True)
+        ....:  for t in (3, 5, 7, 9, 11, 13)]
+        [True, True, True, True, True, True]
         sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
         False
         sage: hadamard_matrix_cooper_wallis_smallcases(64)
@@ -1349,7 +1533,13 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     for T_seq_len in divisors(n//4):
         will_size = n // (4*T_seq_len)
-        if (T_seq_len in db or T_sequences_smallcases(T_seq_len, existence=True)) and williamson_type_quadruples_smallcases(will_size, existence=True):
+        has_t_matrices = (T_seq_len in db
+                          or T_sequences_smallcases(T_seq_len, existence=True))
+        if has_t_matrices and (
+            will_size == 173
+            or williamson_type_quadruples_smallcases(
+                will_size, existence=True)
+        ):
             if existence:
                 return True
 
@@ -1359,11 +1549,18 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
             else:
                 e1, e2, e3, e4 = T_sequences_smallcases(T_seq_len, check=False)
 
-            will_matrices = williamson_type_quadruples_smallcases(will_size)
-            A, B, C, D = map(matrix.circulant, will_matrices)
+            if will_size == 173:
+                H = symmetric_butson_hadamard_matrix_smallcases(
+                    86, check=False)
+                A, B, C, D = williamson_type_from_symmetric_butson(
+                    H, check=check)
+            else:
+                will_matrices = williamson_type_quadruples_smallcases(
+                    will_size)
+                A, B, C, D = map(matrix.circulant, will_matrices)
             M = hadamard_matrix_cooper_wallis_construction(e1, e2, e3, e4, A, B, C, D, check=False)
 
-            if n == 2060:
+            if n == 2060 or will_size == 173:
                 M = normalise_hadamard(M)
 
             if check:
