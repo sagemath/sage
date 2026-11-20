@@ -1002,16 +1002,18 @@ class Module_free_ambient(Module):
                     return x.__copy__()
                 return x
             x = x.list()
-        if check and self.coordinate_ring().is_exact():
-            # Check entries are in the base ring
-            try:
-                R = self.base_ring()
-                for d in x:
-                    if d not in R:
-                        raise ArithmeticError
-            except ArithmeticError:
-                raise TypeError("element {!r} is not in free module".format(x))
-            # Additional membership check (e.g., submodule membership)
+        if check:
+            if self.coordinate_ring().is_exact():
+                # Check entries are in the base ring
+                try:
+                    R = self.base_ring()
+                    for d in x:
+                        if d not in R:
+                            raise ArithmeticError
+                except ArithmeticError:
+                    raise TypeError("element {!r} is not in free module".format(x))
+            # Additional membership check (e.g., submodule membership).
+            # Subclasses decide how to handle unavailable membership tests.
             self._check_element_membership(x)
         return self.element_class(self, x, coerce, copy)
 
@@ -1667,7 +1669,8 @@ class Module_free_ambient(Module):
         if not other.gens():
             # other is the zero module
             return False
-        if self.ambient_module().is_submodule(other):
+        ambient = self.ambient_module()
+        if ambient is not self and ambient.is_submodule(other):
             return True
 
         raise NotImplementedError("could not determine containment")
