@@ -1419,6 +1419,78 @@ def williamson_type_from_symmetric_butson(H, check=True):
     return tuple(result)
 
 
+def T_matrices_smallcases(n, existence=False, check=True):
+    r"""
+    Return four circulant T-matrices at an available order.
+
+    Currently orders 151 and 163 are implemented using the periodic
+    T-matrices discussed in [EKLO2026]_, Section 4. They have entries
+    `0,1,-1`, pairwise disjoint supports, and satisfy
+    `\sum_{j=1}^4 T_jT_j^\top=nI`. Unlike T-sequences, their first rows
+    need not have cancelling nonperiodic autocorrelations.
+
+    The data is stored as signed states on multiplier orbits, with
+    multiplier groups of order 5 for 151 and order 9 for 163. Combined
+    with Williamson matrices, these give Hadamard matrices at orders
+    5436, 6644, 7852 and 7172, 8476, respectively.
+
+    INPUT:
+
+    - ``n`` -- integer; order of the four matrices
+    - ``existence`` -- boolean (default: ``False``); only query availability
+    - ``check`` -- boolean (default: ``True``); verify the T-matrix identities
+
+    EXAMPLES::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     T_matrices_smallcases)
+        sage: T = T_matrices_smallcases(151)
+        sage: [M.dimensions() for M in T]
+        [(151, 151), (151, 151), (151, 151), (151, 151)]
+        sage: sum(M*M.T for M in T) == 151 * identity_matrix(151)
+        True
+        sage: T_matrices_smallcases(163, existence=True)
+        True
+
+    TESTS::
+
+        sage: T_matrices_smallcases(127, existence=True)
+        False
+        sage: T_matrices_smallcases(127)
+        Traceback (most recent call last):
+        ...
+        ValueError: No stored T-matrices of order 127
+    """
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_T_MATRIX_DATA
+
+    if existence:
+        return n in EKLO_T_MATRIX_DATA
+    if n not in EKLO_T_MATRIX_DATA:
+        raise ValueError(f'No stored T-matrices of order {n}')
+    multipliers, state = EKLO_T_MATRIX_DATA[n]
+    rows = [[0] * n for _ in range(4)]
+    seen = set()
+    orbits = []
+    for a in range(n):
+        if a not in seen:
+            orbit = {a * u % n for u in multipliers}
+            seen.update(orbit)
+            orbits.append(orbit)
+    assert len(orbits) == len(state)
+    for symbol, orbit in zip(state, orbits):
+        value = int(symbol)
+        for position in orbit:
+            rows[value % 4][position] = -1 if value >= 4 else 1
+    if check:
+        assert all(sum(abs(row[i]) for row in rows) == 1 for i in range(n))
+        assert all(
+            sum(row[i] * row[(i + s) % n] for row in rows for i in range(n))
+            == 0
+            for s in range(1, n)
+        )
+    return tuple(matrix.circulant(row) for row in rows)
+
+
 def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     r"""
     Construct Hadamard matrices using the Cooper-Wallis construction for some small values of `n`.
@@ -1435,6 +1507,10 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     :func:`williamson_type_from_symmetric_butson`. Combining them with
     T-sequences of lengths 3, 5, 7, 9, 11 and 13 gives the six orders
     2076, 3460, 4844, 6228, 7612 and 8996 discussed in that paper.
+
+    The periodic T-matrices of orders 151 and 163 from
+    :func:`T_matrices_smallcases` give orders 5436, 6644, 7852 and
+    7172, 8476, respectively, using Williamson matrices of orders 9, 11, 13.
 
     Data for T-matrices of order 67 is taken from [Saw1985]_. For order
     2060, Loïc Schneider found the length-103 sequences and identified the
@@ -1488,6 +1564,9 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
         sage: [hadamard_matrix_cooper_wallis_smallcases(692*t, existence=True)
         ....:  for t in (3, 5, 7, 9, 11, 13)]
         [True, True, True, True, True, True]
+        sage: [hadamard_matrix_cooper_wallis_smallcases(n, existence=True)
+        ....:  for n in (5436, 6644, 7172, 7852, 8476)]
+        [True, True, True, True, True]
         sage: hadamard_matrix_cooper_wallis_smallcases(64, existence=True)
         False
         sage: hadamard_matrix_cooper_wallis_smallcases(64)
@@ -1533,7 +1612,8 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     for T_seq_len in divisors(n//4):
         will_size = n // (4*T_seq_len)
-        has_t_matrices = (T_seq_len in db
+        stored_t_matrices = T_matrices_smallcases(T_seq_len, existence=True)
+        has_t_matrices = (T_seq_len in db or stored_t_matrices
                           or T_sequences_smallcases(T_seq_len, existence=True))
         if has_t_matrices and (
             will_size == 173
@@ -1546,6 +1626,10 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
             e1, e2, e3, e4 = None, None, None, None
             if T_seq_len in db:
                 e1, e2, e3, e4 = db[T_seq_len]
+            elif stored_t_matrices:
+                e1, e2, e3, e4 = (
+                    M.row(0) for M in T_matrices_smallcases(
+                        T_seq_len, check=check))
             else:
                 e1, e2, e3, e4 = T_sequences_smallcases(T_seq_len, check=False)
 
@@ -1560,7 +1644,7 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
                 A, B, C, D = map(matrix.circulant, will_matrices)
             M = hadamard_matrix_cooper_wallis_construction(e1, e2, e3, e4, A, B, C, D, check=False)
 
-            if n == 2060 or will_size == 173:
+            if n == 2060 or will_size == 173 or stored_t_matrices:
                 M = normalise_hadamard(M)
 
             if check:

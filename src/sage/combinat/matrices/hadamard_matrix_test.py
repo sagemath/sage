@@ -473,3 +473,110 @@ def test_hadamard_bh86_full_matrices(n):
     assert H.dimensions() == (n, n)
     assert set(H.row(0)) == set(H.column(0)) == {1}
     _assert_hadamard_by_hamming(H)
+
+
+@pytest.mark.parametrize(
+    't,digest,multiplier_order',
+    [
+        (
+            151,
+            'af7b3ef131089a95ade9c78fd633e714af75f005a18d7ca237b2eaa904c5fdf6',
+            5,
+        ),
+        (
+            163,
+            '471d27f40e9b208a928134ce99461f90a836a6e9e62d2a088bd9d425effac927',
+            9,
+        ),
+    ],
+)
+def test_tmatrix_seeds(t, digest, multiplier_order):
+    """Verify recovered rows, disjoint supports, and the periodic identity."""
+    from hashlib import sha256
+
+    from sage.combinat.matrices.hadamard_matrix import T_matrices_smallcases
+    from sage.combinat.matrices.hadamard_matrix_data import EKLO_T_MATRIX_DATA
+    from sage.matrix.constructor import identity_matrix
+
+    matrices = T_matrices_smallcases(t)
+    rows = [list(M.row(0)) for M in matrices]
+    assert all(M.dimensions() == (t, t) for M in matrices)
+    assert (
+        sha256(
+            ''.join(str(x) for row in rows for x in row).encode('ascii')
+        ).hexdigest()
+        == digest
+    )
+    U, state = EKLO_T_MATRIX_DATA[t]
+    assert len(U) == multiplier_order
+    assert {u * v % t for u in U for v in U} == set(U)
+    assert len(state) == 1 + (t - 1) // len(U)
+    assert all(set(row) <= {-1, 0, 1} for row in rows)
+    assert all(sum(abs(row[i]) for row in rows) == 1 for i in range(t))
+    assert all(
+        row[u * i % t] == row[i] for row in rows for u in U for i in range(t)
+    )
+    for shift in range(1, t):
+        assert (
+            sum(
+                row[i] * row[(i + shift) % t] for row in rows for i in range(t)
+            )
+            == 0
+        )
+    assert sum(M * M.T for M in matrices) == t * identity_matrix(t)
+    # Periodic complementarity does not imply nonperiodic complementarity.
+    assert any(
+        sum(row[i] * row[i + shift] for row in rows for i in range(t - shift))
+        != 0
+        for shift in range(1, t)
+    )
+
+
+@pytest.mark.parametrize('t', [0, -1, 127, 150])
+def test_tmatrix_unavailable(t):
+    from sage.combinat.matrices.hadamard_matrix import T_matrices_smallcases
+
+    assert T_matrices_smallcases(t, existence=True) is False
+    with pytest.raises(ValueError, match=f'No stored T-matrices of order {t}'):
+        T_matrices_smallcases(t)
+
+
+@pytest.mark.parametrize('t', [151, 163])
+def test_tmatrix_cooper_wallis_small(t):
+    """Check default integer verification and dispatch at base orders."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_cooper_wallis_smallcases,
+    )
+
+    H = hadamard_matrix_cooper_wallis_smallcases(4 * t)
+    assert H.dimensions() == (4 * t, 4 * t)
+    assert set(H.row(0)) == set(H.column(0)) == {1}
+    assert hadamard_matrix(4 * t, check=False) == H
+
+
+@pytest.mark.parametrize('n', [5436, 6644, 7172, 7852, 8476])
+def test_tmatrix_order_availability(n):
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_cooper_wallis_smallcases,
+    )
+
+    assert hadamard_matrix_cooper_wallis_smallcases(n, existence=True) is True
+    assert hadamard_matrix(n, existence=True, construction_name=True) == (
+        f'cooper-wallis small cases: {n}'
+    )
+
+
+@pytest.mark.longlong
+@pytest.mark.parametrize('n', [5436, 6644, 7172, 7852, 8476])
+def test_tmatrix_full_matrices(n):
+    """Check every row pair in each of the five new full matrices."""
+    from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
+    from sage.rings.integer_ring import ZZ
+
+    H = hadamard_matrix(n, check=False)
+    assert H.dimensions() == (n, n)
+    assert H.base_ring() is ZZ
+    assert set(H.row(0)) == set(H.column(0)) == {1}
+    _assert_hadamard_by_hamming(H)

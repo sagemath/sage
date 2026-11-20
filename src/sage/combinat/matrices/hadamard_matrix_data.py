@@ -40,6 +40,10 @@ size, coset size, and compressed sign data, with conventions recorded below.
 represent `1,-1,i,-i`, respectively. The reconstruction and source
 fingerprint are recorded alongside the seeds.
 
+``EKLO_T_MATRIX_DATA`` stores the multiplier orbits of periodic T-matrices
+of orders 151 and 163 discussed in Section 4 of [EKLO2026]_. These rows
+are not T-sequences: their nonperiodic autocorrelations do not cancel.
+
 TESTS::
 
     sage: from sage.combinat.matrices.hadamard_matrix_data import (
@@ -59,6 +63,11 @@ TESTS::
     ....:     EKLO_BORDERED_DATA)
     sage: sorted(EKLO_BORDERED_DATA)
     [5788]
+    sage: from sage.combinat.matrices.hadamard_matrix_data import (
+    ....:     EKLO_T_MATRIX_DATA)
+    sage: [(t, len(U), len(state))
+    ....:  for t, (U, state) in sorted(EKLO_T_MATRIX_DATA.items())]
+    [(151, 5, 31), (163, 9, 19)]
 """
 
 # This file is distributed under the terms of the GNU General Public License
@@ -667,3 +676,34 @@ EKLO_BH86_DATA = (
     'j++j-ij-j-++-i+ji-i-+++-i-ij+i-++-j-ji-j++',
     '---++---++-++-+---++-+----+-+---+-++++++++',
 )
+
+
+# Periodic T-matrix data for the orders discussed in [EKLO2026]_, Section 4.
+# Each record contains a multiplier subgroup U of (Z/tZ)^* and a state
+# string on its orbits, ordered
+# by increasing least element. A digit d selects row d % 4, with sign -1
+# when d >= 4 and +1 otherwise. All other rows are zero on that orbit.
+# These satisfy periodic, but not nonperiodic, complementary correlations.
+# The sign and row conventions below are fixed by first occurrence in the
+# published matrix; negating or permuting whole rows preserves the identity.
+#
+# Sources (gallery formulas G(TM(151),W(9)) and G(TM(163),W(13)):
+# https://www.math74.com/Hadamard/05/Hadamard_5436.png
+# https://www.math74.com/Hadamard/08/Hadamard_8476.png
+# PNG SHA-256 hashes, respectively:
+# a4fdf47cc1a8870a33ef0c004ba389ab88f5093b8780608ce8f90f9c5fd7be58
+# 889541bb3a1ef687a3d1919928a5a67b12e3fc434362371b93ee603419dedcf5
+#
+# Recovery: interpret palette 0 (blue) as +1 and 1 (green) as -1. Split the
+# first pixel row into four equal blocks and reverse the last three to undo
+# the back-diagonal R. For each residue a modulo t, gather columns k with
+# k = a (mod t), in order of k mod w, where w=9 or 13. The resulting four
+# length-w patterns have exactly four classes up to simultaneous negation.
+# Classify by first occurrence, giving the four disjoint signed T rows.
+# Decode the orbit states to reproduce these rows exactly. Construction at
+# runtime uses Cooper--Wallis with Sage's Williamson matrices, and may differ
+# entrywise from the gallery's cyclic-product array.
+EKLO_T_MATRIX_DATA = {
+    151: ((1, 8, 19, 59, 64), '0001426131274052375433662712356'),
+    163: ((1, 38, 40, 53, 58, 85, 104, 133, 140), '0412337537617626570'),
+}
