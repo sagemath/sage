@@ -223,6 +223,7 @@ dev = [
   "meson >=1.11.2", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
+  "pkgconf",
   "pygithub",
   "pytest",
   "python-build",
@@ -740,6 +741,11 @@ select = [
 ignore = ["E501", "E741"]
 
 [tool.uv]
+# The pkg-config executable of the pkgconf package (installed with the dev group) does not
+# know about system libraries. With FORCE_PKGCONF_PYPI, it behaves like pkgconf-pypi instead:
+# it also finds the pkg-config files registered by Python packages (in particular, the pari.pc
+# of cypari2) and falls back to the system pkg-config for everything else.
+extra-build-variables = { sagemath = { FORCE_PKGCONF_PYPI = "1" } }
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
 no-build-isolation-package = ["sagemath"]
 # Build these packages from source instead of installing pre-built wheels.

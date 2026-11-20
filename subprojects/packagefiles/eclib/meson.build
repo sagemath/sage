@@ -12,11 +12,15 @@ if flint.version().version_compare('<3.1')
   # Match Sage's workaround for the older, broken pkg-config file.
   flint = cpp.find_library('flint')
 endif
+pari = dependency('pari', required: false)
+if not pari.found()
+  pari = cpp.find_library('pari')
+endif
 deps = [
   flint,
   dependency('gmp'),
   cpp.find_library('ntl'),
-  cpp.find_library('pari'),
+  pari,
   dependency('threads'),
 ]
 
