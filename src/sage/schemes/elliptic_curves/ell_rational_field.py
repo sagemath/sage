@@ -115,7 +115,8 @@ CMJ = { 0: -3, 54000: -12, -12288000: -27, 1728: -4, 287496: -16,
 
 def sturm_bound(N: Integer) -> Integer:
     r"""
-    Helper function for :meth: `sage.schemes.elliptic_curves.ell_rational_field.is_isogenous` and :meth: `sage.schemes.elliptic_curves.ell_rational_field.is_congruent`.
+    Helper function for
+    :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_isogenous`.
     Returns the Sturm bound given the lcm of the conductors of two elliptic curves.
 
     INPUT:
