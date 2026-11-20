@@ -2886,7 +2886,8 @@
 
 .. [EKLO2026] Ronan Egan, Ilias Kotsireas, Stephen London and Pádraig Ó Catháin,
              *Recent progress in the construction of Hadamard matrices* (2026).
-             :arxiv:`2610.27175v1`, Section 3.
+             :arxiv:`2610.27175v1`.
+             Matrix data: https://www.math74.com/Hadamard/.
 
 .. [EKLP1992] \N. Elkies, G. Kuperberg, M. Larsen, J. Propp,
               *Alternating-Sign Matrices and Domino Tilings*, Journal of Algebraic

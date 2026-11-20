@@ -1,5 +1,5 @@
 r"""
-Seed data for the Hadamard matrices announced by Alpöge, Voinov and Reynolds-Haertle
+Seed data for published Hadamard matrices
 
 The twelve records below are the matrices of Alpöge, Voinov and Reynolds-Haertle
 analysed in [EKLO2026]_, Section 3, Tables 1 and 2. They are decoded from the
@@ -25,6 +25,12 @@ row is repeated by that same factor order. The strings retain their published
 order, so concatenating the records by increasing matrix order recovers the
 original payload.
 
+The records in ``EKLO_GOETHALS_SEIDEL_DATA`` encode the four unbordered
+Goethals--Seidel constructions of [EKLO2026]_, Section 4, at orders 3732,
+4492, 5020 and 5932. Each record contains a multiplier subgroup and four
+lists of representatives whose orbits specify the negative entries of the
+circulant seeds. Source URLs and extraction conventions are recorded below.
+
 TESTS::
 
     sage: from sage.combinat.matrices.hadamard_matrix_data import (
@@ -35,6 +41,11 @@ TESTS::
     [892, 1132, 1244, 1948, 1964]
     sage: sorted(ALPOGE_BORDERED_DATA)
     [1388, 1436, 1916]
+    sage: from sage.combinat.matrices.hadamard_matrix_data import (
+    ....:     EKLO_GOETHALS_SEIDEL_DATA)
+    sage: [(n, len(data[0]))
+    ....:  for n, data in sorted(EKLO_GOETHALS_SEIDEL_DATA.items())]
+    [(3732, 31), (4492, 33), (5020, 50), (5932, 39)]
 """
 
 # This file is distributed under the terms of the GNU General Public License
@@ -422,3 +433,74 @@ ALPOGE_BORDERED_DATA = {
 ALPOGE_HADAMARD_ORDERS = tuple(sorted(
     ALPOGE_SPENCE_DATA.keys() | ALPOGE_GOETHALS_SEIDEL_DATA.keys() | ALPOGE_BORDERED_DATA.keys()
 ))
+
+
+# Goethals--Seidel seeds from [EKLO2026]_, Section 4. Each record contains
+# (multipliers, negative_orbit_representatives) over Z/(n/4)Z. The four
+# negative supports are the unions of the listed multiplicative orbits.
+#
+# Extracted from https://www.math74.com/Hadamard/{directory}/Hadamard_{n}.png,
+# with directory 03, 04, 05, 05 for n = 3732, 4492, 5020, 5932 respectively.
+# These are n-by-n indexed PNGs: blue (palette 0) is interpreted as +1,
+# green (palette 1) as -1. Split the first pixel row into four equal blocks;
+# retain the first and reverse each of the other three to undo R in BR, CR, DR.
+# The resulting four sequences have zero summed periodic autocorrelation at
+# every nonzero shift. No image decoder or network access is needed at runtime.
+# SHA-256 of the downloaded PNG files, in the same order:
+# a112087fa5c9c3fb898c37758fe3e54da6fcc6c7abd4aea8110eb88d0d3ae21c
+# 2cd3f0fb5f71f8524405ad26e106c1d458d8899805beb2f998a5430d4de66bdd
+# b6722034544574839e54aefc5f7146df4df0abf0906fe34b2d463bc09ec2a8a0
+# 52f41cc6d722232f6bb9e191a2aafa689ec0b5c5019d5a02716724a97088ff42
+EKLO_GOETHALS_SEIDEL_DATA = {
+    3732: (
+        (1, 7, 13, 49, 91, 121, 169, 250, 265, 331, 343, 358, 394, 400, 424,
+         451, 457, 535, 571, 637, 640, 646, 727, 748, 790, 817, 847, 856,
+         865, 892, 922),
+        (
+            (0, 1, 2, 3, 4, 9, 10, 20, 23, 33, 34, 46, 50, 57, 59, 99),
+            (0, 2, 10, 11, 15, 25, 27, 33, 34, 37, 38, 50, 59, 69, 99, 100),
+            (1, 3, 5, 6, 10, 19, 20, 23, 33, 34, 38, 46, 50, 57, 99),
+            (1, 2, 4, 5, 6, 11, 15, 20, 25, 33, 34, 51, 57, 125, 311, 622),
+        ),
+    ),
+    4492: (
+        (1, 7, 33, 49, 60, 89, 155, 169, 206, 231, 316, 319, 321, 343, 345,
+         366, 384, 420, 442, 486, 494, 580, 623, 691, 694, 848, 857, 885,
+         992, 1032, 1085, 1089, 1110),
+        (
+            (3, 9, 11, 12, 15, 22, 24, 25, 26, 30, 44, 52, 54, 55, 72, 90,
+             143),
+            (2, 5, 9, 10, 16, 22, 24, 25, 26, 27, 44, 45, 48, 50, 52, 72, 108),
+            (2, 3, 5, 8, 9, 11, 12, 13, 16, 18, 24, 36, 44, 48, 52, 90, 143),
+            (4, 6, 9, 10, 12, 15, 16, 25, 26, 27, 30, 36, 45, 52, 108, 143),
+        ),
+    ),
+    5020: (
+        (1, 4, 16, 51, 64, 69, 91, 94, 149, 201, 204, 211, 219, 241, 249,
+         256, 271, 276, 314, 331, 351, 364, 374, 376, 494, 506, 566, 571,
+         596, 651, 706, 721, 751, 754, 769, 804, 816, 844, 866, 876, 954,
+         964, 994, 996, 1009, 1024, 1029, 1084, 1104, 1129),
+        (
+            (1, 2, 7, 9, 14, 17, 26, 30, 34, 35, 62, 63, 85, 90, 170, 251),
+            (1, 3, 6, 7, 9, 10, 13, 15, 17, 26, 30, 53, 85, 90, 126, 502),
+            (2, 6, 7, 9, 10, 15, 31, 34, 39, 45, 53, 62, 63, 70, 251, 502),
+            (0, 3, 6, 7, 9, 14, 17, 18, 30, 31, 42, 45, 90, 126, 170),
+        ),
+    ),
+    5932: (
+        (1, 28, 38, 53, 132, 153, 191, 391, 465, 503, 531, 567, 577, 694,
+         730, 737, 784, 889, 899, 917, 921, 1046, 1064, 1111, 1144, 1145,
+         1156, 1161, 1164, 1190, 1225, 1312, 1318, 1326, 1357, 1365, 1444,
+         1448, 1449),
+        (
+            (4, 5, 7, 9, 10, 11, 14, 20, 21, 27, 30, 31, 37, 44, 49, 64, 73,
+             74, 88),
+            (3, 6, 7, 10, 12, 13, 15, 17, 21, 22, 24, 30, 31, 44, 49, 60, 73,
+             74, 103),
+            (2, 3, 6, 8, 11, 12, 13, 15, 16, 20, 22, 27, 30, 31, 32, 37, 64,
+             88, 93),
+            (0, 1, 4, 8, 10, 13, 14, 15, 16, 17, 27, 30, 32, 37, 44, 49, 73,
+             74, 93),
+        ),
+    ),
+}

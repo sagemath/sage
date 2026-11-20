@@ -1047,6 +1047,8 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
     For orders 892, 1132, 1244, 1948 and 1964, the four circulant seeds
     are those analysed in [EKLO2026]_, Section 3, Table 1.
+    For orders 3732, 4492, 5020 and 5932, they are developed from the
+    multiplier orbits of the seeds in [EKLO2026]_, Section 4.
 
     INPUT:
 
@@ -1076,6 +1078,11 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
         sage: hadamard_matrix_from_sds(764, existence=True)
         True
+        sage: orders = [3732, 4492, 5020, 5932]
+        sage: [hadamard_matrix_from_sds(n, existence=True) for n in orders]
+        [True, True, True, True]
+        sage: hadamard_matrix_from_sds(3732).dimensions()  # long time
+        (3732, 3732)
 
     TESTS::
 
@@ -1096,18 +1103,29 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     from sage.combinat.designs.difference_family import (
         supplementary_difference_set_hadamard,
     )
-    from sage.combinat.matrices.hadamard_matrix_data import ALPOGE_GOETHALS_SEIDEL_DATA
+    from sage.combinat.matrices.hadamard_matrix_data import (
+        ALPOGE_GOETHALS_SEIDEL_DATA,
+        EKLO_GOETHALS_SEIDEL_DATA,
+    )
 
     if n <= 0 or n % 4 != 0:
         raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
-        return n in ALPOGE_GOETHALS_SEIDEL_DATA or supplementary_difference_set_hadamard(t, existence=True)
+        return (n in ALPOGE_GOETHALS_SEIDEL_DATA
+                or n in EKLO_GOETHALS_SEIDEL_DATA
+                or supplementary_difference_set_hadamard(t, existence=True))
 
     if n in ALPOGE_GOETHALS_SEIDEL_DATA:
         a, b, c, d = [[1 if sign == '+' else -1 for sign in row]
                       for row in ALPOGE_GOETHALS_SEIDEL_DATA[n]]
+    elif n in EKLO_GOETHALS_SEIDEL_DATA:
+        multipliers, representatives = EKLO_GOETHALS_SEIDEL_DATA[n]
+        supports = [{u * r % t for r in reps for u in multipliers}
+                    for reps in representatives]
+        a, b, c, d = [[-1 if i in support else 1 for i in range(t)]
+                      for support in supports]
     else:
         _, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(t, check=False)
         a = [-1 if i in S1 else 1 for i in range(t)]

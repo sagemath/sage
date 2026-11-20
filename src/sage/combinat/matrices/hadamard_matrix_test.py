@@ -159,3 +159,84 @@ def test_hadamard_matrix_2060(constructor):
         H = hadamard_matrix_cooper_wallis_smallcases(2060, check=False)
     assert H.dimensions() == (2060, 2060)
     assert is_hadamard_matrix(H, normalized=True)
+
+
+@pytest.mark.parametrize(
+    "n,digest",
+    [
+        (
+            3732,
+            "81f305ef4f38b4ec7d70d1316ba27628847cb278d8c31366319052aec593aaa9",
+        ),
+        (
+            4492,
+            "b694d19734a5eadd4d21fbbb62de95db6ccbfce42f30b2a1c16917dfc883ee6e",
+        ),
+        (
+            5020,
+            "abc51153c01dc99f2a0652546ad65e1cbf3dc55b796f5340848ac3ecf34c1d3b",
+        ),
+        (
+            5932,
+            "19c355158e4c4bf4a12c1305fa0442ab750fac24316ef1d579423618308e682c",
+        ),
+    ],
+)
+def test_hadamard_eklo_seeds(n, digest):
+    """Check the published seeds exactly, independently of the matrix array."""
+    from hashlib import sha256
+    from math import gcd
+
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_from_sds,
+    )
+    from sage.combinat.matrices.hadamard_matrix_data import (
+        EKLO_GOETHALS_SEIDEL_DATA,
+    )
+
+    t = n // 4
+    multipliers, representatives = EKLO_GOETHALS_SEIDEL_DATA[n]
+    assert all(gcd(u, t) == 1 for u in multipliers)
+    assert {u * v % t for u in multipliers for v in multipliers} == set(
+        multipliers
+    )
+    supports = [
+        {u * r % t for r in reps for u in multipliers}
+        for reps in representatives
+    ]
+    rows = [
+        [-1 if i in support else 1 for i in range(t)] for support in supports
+    ]
+    payload = ''.join('+' if a == 1 else '-' for row in rows for a in row)
+    assert sha256(payload.encode('ascii')).hexdigest() == digest
+    # Use integer sums, with no floating-point Fourier approximation.
+    for shift in range(1, t):
+        assert (
+            sum(
+                row[i] * row[(i + shift) % t] for row in rows for i in range(t)
+            )
+            == 0
+        )
+    assert hadamard_matrix_from_sds(n, existence=True) is True
+    assert hadamard_matrix(n, existence=True) is True
+    assert (
+        hadamard_matrix(n, existence=True, construction_name=True)
+        == f'SDS {n}'
+    )
+
+
+@pytest.mark.longlong
+@pytest.mark.parametrize("n", [3732, 4492, 5020, 5932])
+def test_hadamard_eklo_matrices(n):
+    """Verify full matrices and exercise the general dispatcher."""
+    from sage.combinat.matrices.hadamard_matrix import (
+        hadamard_matrix,
+        hadamard_matrix_from_sds,
+        normalise_hadamard,
+    )
+
+    # The default check=True verifies the core identity and full Gram matrix.
+    H = hadamard_matrix_from_sds(n)
+    assert H.dimensions() == (n, n)
+    assert hadamard_matrix(n, check=False) == normalise_hadamard(H)
