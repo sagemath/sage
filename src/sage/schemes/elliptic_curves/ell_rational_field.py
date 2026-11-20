@@ -4800,29 +4800,32 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         return self.aplist(maxp, python_ints=True) == other.aplist(maxp, python_ints=True)
 
-    def is_congruent(self, other, l):
+    def is_congruent(self, other: EllipticCurve_generic, l: Integer | int) -> bool:
         r"""
-        returns if two elliptic curves are congruent modulo a prime l
+        Check if two elliptic curves are congruent modulo the prime ``l``.
 
         INPUT:
 
-        - ''other'' is an elliptic curve
-        - ''l'' must be any prime
+        - ``other`` -- another elliptic curve
+        - ``l`` -- prime integer
 
-        EXAMPLES:
-        sage: E1 = EllipticCurve('11a1')
-        sage: E2 = EllipticCurve('26a1')
-        sage: E3 = EllipticCurve('34a1')
+        ALGORITHM:
 
-        sage: E1.is_congruent(E1, 5)
-        True
+        Compares the `a_p` values modulo `l` of the elliptic curves for all
+        good primes up to the Sturm bound. See Theorem 9.21 of [St2007]_.
 
-        sage: E1.is_congruent(E2, 2)
-        False
 
-        sage: E2.is_congruent(E3, 3)
-        True
+        EXAMPLES::
 
+            sage: E1 = EllipticCurve('11a1')
+            sage: E2 = EllipticCurve('26a1')
+            sage: E3 = EllipticCurve('34a1')
+            sage: E1.is_congruent(E1, 5)
+            True
+            sage: E1.is_congruent(E2, 2)
+            False
+            sage: E2.is_congruent(E3, 3)
+            True
         """
         if not isinstance(other, EllipticCurve_generic):
             raise ValueError("second argument is not an elliptic curve")
@@ -4834,7 +4837,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         bound = sturm_bound(self.conductor().lcm(other.conductor()))
         for p in prime_range(bound):
-            if p != l and self.is_good(p) == True and other.is_good(p) == True and (self.ap(p) - other.ap(p)) % l != 0:
+            if p != l and self.is_good(p) and other.is_good(p) and (self.ap(p) - other.ap(p)) % l != 0:
                 return False
         return True
 
