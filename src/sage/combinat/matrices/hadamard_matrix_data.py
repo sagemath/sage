@@ -694,6 +694,11 @@ EKLO_BH86_DATA = (
 # a4fdf47cc1a8870a33ef0c004ba389ab88f5093b8780608ce8f90f9c5fd7be58
 # 889541bb3a1ef687a3d1919928a5a67b12e3fc434362371b93ee603419dedcf5
 #
+# At order 8476, [EKLO2026]_, Section 4, reports a bordered construction
+# using Theorem 7. The downloaded gallery file above is instead labelled
+# G(TM(163),W(13)). The order-163 seeds below are recovered from that
+# T-matrix array; the bordered order-8476 example is not encoded here.
+#
 # Recovery: interpret palette 0 (blue) as +1 and 1 (green) as -1. Split the
 # first pixel row into four equal blocks and reverse the last three to undo
 # the back-diagonal R. For each residue a modulo t, gather columns k with
