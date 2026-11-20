@@ -4032,10 +4032,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: import itertools
             sage: p = random_prime(2**99)
-            sage: O = QuaternionAlgebra(p).maximal_order()
+            sage: Quat = QuaternionAlgebra(p)
+            sage: O = Quat.maximal_order()
             sage: O = O.random_ideal().right_order()
             sage: I = O.random_ideal()
             sage: B = I.minkowski_basis()
+            sage: Quat.fractional_ideal(B) == I
+            True
             sage: for i in range(4):
             ....:     for v in itertools.product((-1,0,+1), repeat=4):
             ....:         if not any(v[i:]):
