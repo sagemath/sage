@@ -36,7 +36,7 @@ for more information.
 
 ## Pull requests and AI tools
 
-AI tools are welcome in SageMath development, for writing code and for
+AI tools are allowed in SageMath development, for writing code and for
 reviewing it. Reviewer time is what limits how much the project can take
 in, so these rules aim to keep it well spent. They apply to every pull
 request, whoever or whatever wrote it.
