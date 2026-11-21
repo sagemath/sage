@@ -8,7 +8,7 @@
 
 ### :mag: What was checked
 
-<!-- v What did you verify by hand, what is untested, and which parts need a closer look? -->
+<!-- What did you verify by hand, what is untested, and which parts need a closer look? -->
 
 
 
