@@ -29,4 +29,6 @@
 <!-- - #12345: short description why this is a dependency -->
 <!-- - #34567: ... -->
 
+### :robot: AI disclosure
 
+<!-- Explain if and how AI was used in preparing this PR. -->
