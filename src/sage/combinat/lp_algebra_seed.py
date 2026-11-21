@@ -28,19 +28,18 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from copy import copy
 
 from sage.arith.misc import factor, gcd
 from sage.graphs.graph import Graph
+from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
-from sage.rings.integer_ring import IntegerRing_class, ZZ
+from sage.rings.integer_ring import ZZ, IntegerRing_class
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
 from sage.structure.sage_object import SageObject
-from sage.misc.latex import latex
-from sage.symbolic.ring import SR
+from sage.symbolic.ring import SR, var
 
 
 class LPASeed(SageObject):
@@ -70,32 +69,28 @@ class LPASeed(SageObject):
     variables::
 
         sage: x1, x2 = SR.var('x1,x2')
-        sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
-        sage: S
+        sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1}); S
         A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
 
     We add some coefficients to get the generic linear LP algebra in three
     variables::
 
-        sage: var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
-        (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
+        sage: V = var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
         sage: S = LPASeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2}, coefficients=[a0,a2,a3,b0,b1,b3,c0,c1,c2],base_ring=ZZ)
         sage: S
-        A seed with cluster variables [x1, x2, x3] and exchange polynomials [x2*a2 + x3*a3 + a0, x1*b1 + x3*b3 + b0, x1*c1 + x2*c2 + c0]
+        A seed with cluster variables [x1, x2, x3] and exchange polynomials [x3*a3 + x2*a2 + a0, x3*b3 + x1*b1 + b0, x2*c2 + x1*c1 + c0]
 
     More complicated polynomials are allowed, as long as they are
     irreducible::
 
-        sage: var('x1,x2,x3')
-        (x1, x2, x3)
+        sage: x1, x2, x3 = var('x1,x2,x3')
         sage: S = LPASeed({x1: 1 + x2*x3^2 + 4*x3^3, x2: 2 - x1^2, x3: 4 + x1^3*x2^2 - 3*x1})
         sage: S
         A seed with cluster variables [x1, x2, x3] and exchange polynomials [x2*x3^2 + 4*x3^3 + 1, -x1^2 + 2, x1^3*x2^2 - 3*x1 + 4]
 
     Nonirreducible polynomials will raise an exception::
 
-        sage: var('x1, x2')
-        (x1, x2)
+        sage: x1, x2 = var('x1, x2')
         sage: S = LPASeed({x1: 4 - x2^2, x2: 1 + x1})
         Traceback (most recent call last):
         ...
@@ -103,10 +98,8 @@ class LPASeed(SageObject):
 
     Different base rings are allowed::
 
-        sage: var('x1,x2')
-        (x1, x2)
-        sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1}, base_ring=QQ)
-        sage: S
+        sage: x1, x2 = var('x1,x2')
+        sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1}, base_ring=QQ); S
         A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
     """
     def __init__(self, data, coefficients=(), base_ring=ZZ) -> None:
@@ -194,7 +187,7 @@ class LPASeed(SageObject):
         self._laurent_polys = self._exchange_polys.copy()
         self._compute_laurent()
 
-    def _test_seed(self):
+    def _test_seed(self, tester=None, **options):
         r"""
         Perform some mathematical checks on this seed.
 
@@ -205,8 +198,7 @@ class LPASeed(SageObject):
 
         TESTS::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: LPASeed({x1: 1})
             Traceback (most recent call last):
             ...
@@ -224,8 +216,7 @@ class LPASeed(SageObject):
 
         for i in range(self._rank):
             currPoly = self._exchange_polys[i]
-            varList = currPoly.variables()
-            if self._names[i] in varList:
+            if self._names[i] in currPoly.variables():
                 raise ValueError("(LP1) fail: %s depends on %s" %
                                  (self._exchange_polys[i], self._names[i]))
 
@@ -242,8 +233,8 @@ class LPASeed(SageObject):
                                  % (f, self._base_ring))
 
             # check not divisible by any variable
-            for var in self._names:
-                if f % self._polynomial_ring(var) == 0:
+            for v in self._names:
+                if f % self._polynomial_ring(v) == 0:
                     raise ValueError("(LP2) fail: %s divides %s" % (var, f))
 
     # a private method to compute the exchange Laurent polynomials of `self`
@@ -256,8 +247,7 @@ class LPASeed(SageObject):
 
         This should leave the seed invariant::
 
-            sage: var('x1, x2, a')
-            (x1, x2, a)
+            sage: x1, x2, a = var('x1, x2, a')
             sage: S = LPASeed({x1: a, x2: a}, coefficients=[a])
             sage: S._compute_laurent()
             sage: S.laurent_polys()
@@ -270,10 +260,10 @@ class LPASeed(SageObject):
         for i in range(self._rank):
 
             # this is the exchange polynomial we are
-            # finding laurent polynomial for
+            # finding Laurent polynomial for
             current_poly = exchange_polys[i]
 
-            # we build the laurent polynomial from scratch by iterating
+            # we build the Laurent polynomial from scratch by iterating
             # through the other variables, dividing by appropriate variable
             # if necessary
             for j in range(self._rank):
@@ -286,18 +276,19 @@ class LPASeed(SageObject):
 
                     # calculate maximal power of exchange_polys[j] that
                     # divides sub_poly
-                    counter = -1
-                    r = 1  # a generic value to run the loop
-                    while r != 0:
-                        counter += 1
+                    counter = 0
+                    while True:
                         q, r = sub_poly.quo_rem(
-                            exchange_polys[j]**counter)
+                            exchange_polys[j]**(counter + 1))
+                        if r:
+                            break
+                        counter += 1
 
                     # divide exchange polynomial by this maximal power
                     laurent_polys[i] = laurent_polys[i] / (
-                        self._polynomial_ring(self._names[j]) ** counter)
+                        self._polynomial_ring(self._names[j])**counter)
 
-        # after performing all substitutions, set internal laurent polynomials
+        # after performing all substitutions, set internal Laurent polynomials
         self._laurent_polys = laurent_polys
 
     # mutates self at ith variable
@@ -318,18 +309,16 @@ class LPASeed(SageObject):
 
         We mutate a rank-two Laurent phenomenon algebra at the first index::
 
-            sage: var('x1,x2,a0,a2,b0,b1')
-            (x1, x2, a0, a2, b0, b1)
+            sage: V = var('x1,x2,a0,a2,b0,b1')
             sage: S = LPASeed({x1: a0 + a2*x2, x2: b0 + b1*x1}, coefficients=[a0,a2,b0,b1])
             sage: S
             A seed with cluster variables [x1, x2] and exchange polynomials [x2*a2 + a0, x1*b1 + b0]
             sage: S.mutate(0, inplace=True)
-            A seed with cluster variables [(x2*a2 + a0)/x1, x2] and exchange polynomials [x2*a2 + a0, x1*b0 + a0*b1]
+            A seed with cluster variables [(x2*a2 + a0)/x1, x2] and exchange polynomials [x2*a2 + a0, x1*b0 + b1*a0]
 
         Mutating at the same index is an involution::
 
-            sage: var('x1,x2,x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1,x2,x3')
             sage: S = LPASeed({x1: 1 + x2*x3, x2: 1 + x1^2 + x3^2, x3: 1 + x1 + x2})
             sage: T = S.mutate([2,2], inplace=False)
             sage: T == S
@@ -358,8 +347,8 @@ class LPASeed(SageObject):
 
         # get the new cluster variable by applying exchange relation
         # need to cast names as polynomials for subs method
-        d = {str(self._names[j]): self._cluster_vars[j] for j in range(
-            self._rank)}
+        d = {str(self._names[j]): self._cluster_vars[j]
+             for j in range(self._rank)}
         exchange_laurent_poly = self._laurent_polys[i].subs(**d)
         self._cluster_vars[i] = exchange_laurent_poly / self._cluster_vars[i]
 
@@ -382,7 +371,7 @@ class LPASeed(SageObject):
                 H = 1  # this will be G with all common factors with h removed
                 for factor in G_factors:
                     if gcd(self._ambient_field(h).numerator(), factor[0]) == 1:
-                        H = H * (factor[0]) ** (factor[1])
+                        H = H * (factor[0])**(factor[1])
 
                 # NORMALISATION:
                 self._exchange_polys[j] = H.numerator()
@@ -390,7 +379,7 @@ class LPASeed(SageObject):
         # after completing all transformations, update the sequence of mutations
         self._mutation_sequence.append(i)
 
-        # make sure we have up-to-date laurent polynomials
+        # make sure we have up-to-date Laurent polynomials
         self._compute_laurent()
 
         return self
@@ -486,8 +475,7 @@ class LPASeed(SageObject):
 
         We can print computational statistics when computing examples::
 
-            sage: var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
-            (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
+            sage: V = var('x1,x2,x3,a0,a2,a3,b0,b1,b3,c0,c1,c2')
             sage: S = LPASeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2})
             sage: t = S.mutation_class_iter(verbose=True)
             sage: for seed in t: None
@@ -504,12 +492,10 @@ class LPASeed(SageObject):
             return self._mutation_class_iter_dfs(
                 depth=depth, verbose=verbose, return_paths=return_paths)
 
-        raise ValueError('nonsupported search algorithm: %s' % (algorithm))
+        raise ValueError(f'nonsupported search algorithm: {algorithm}')
 
     def _mutation_class_iter_bfs(self, depth=infinity, verbose=False,
                                  return_paths=False):
-
-        # initialise
 
         n = self._rank
         seeds_found = [self]
@@ -524,16 +510,13 @@ class LPASeed(SageObject):
             nr += ' ' * (10 - len(nr))
             print("depth: %s found: %s" % (dc, nr))
 
-        if return_paths:
-            yield (self, [])
-        else:
-            yield self
+        yield (self, []) if return_paths else self
 
         new_seeds_found = True
 
         while new_seeds_found and current_depth < depth:
-
             current_depth += 1
+            new_seeds_found = False
             new_seeds = []  # reset new seed list
 
             for seed in seeds_to_check:
@@ -550,14 +533,17 @@ class LPASeed(SageObject):
 
                     seed2 = seed.mutate(i, inplace=False)
                     if seed2 not in seeds_found:
-                        new_seeds += [seed2]
-                        seeds_found += [seed2]
+                        new_seeds.append(seed2)
+                        seeds_found.append(seed2)
                         if return_paths:
                             yield (seed2, seed2.mutation_sequence())
                         else:
                             yield seed2
 
             seeds_to_check = new_seeds
+
+            if new_seeds:
+                new_seeds_found = True
 
             if new_seeds and verbose:
                 dc = str(current_depth)
@@ -666,8 +652,7 @@ class LPASeed(SageObject):
 
         We validate the possible sizes of mutation classes in rank two::
 
-            sage: var('x1,x2,A,B,C,D,E,F');
-            (x1, x2, A, B, C, D, E, F)
+            sage: V = var('x1,x2,A,B,C,D,E,F');
             sage: S = LPASeed({x1: C, x2: C}, coefficients=[C])
             sage: len(S.mutation_class())
             3
@@ -794,8 +779,7 @@ class LPASeed(SageObject):
         We define a simple iterator for the denominators of seeds in the
         mutation class::
 
-            sage: var('x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2')
-            (x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2)
+            sage: V = var('x1, x2, x3, a0, a2, a3, b0, b1, b3, c0, c1, c2')
             sage: S = LPASeed({x1: a0 + a2*x2 + a3*x3, x2: b0 + b1*x1 + b3*x3, x3: c0 + c1*x1 + c2*x2})
             sage: t = S.variable_class_iter()
             sage: for variable in t: print(variable.denominator()) # long time
@@ -820,7 +804,7 @@ class LPASeed(SageObject):
                     var_class.add(x)
                     yield x
 
-    def variable_class(self, depth=infinity):
+    def variable_class(self, depth=infinity) -> list:
         r"""
         Return all cluster variables in the mutation class of ``self``.
 
@@ -838,8 +822,7 @@ class LPASeed(SageObject):
 
         We find the generators for various LP algebras::
 
-            sage: var('x1,x2,x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1,x2,x3')
             sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
             sage: S.variable_class()
             [(x1 + x2 + 1)/(x1*x2), (x2 + 1)/x1, (x1 + 1)/x2, x2, x1]
@@ -847,8 +830,7 @@ class LPASeed(SageObject):
             sage: S.variable_class()
             [(x1 + x2 + x3 + 1)/(x1*x2*x3), (x2 + x3 + 1)/x1, (x1 + x3 + 1)/x2, (x1 + x2 + 1)/x3, x3, x2, x1]
         """
-        var_iter = self.variable_class_iter(depth=depth)
-        return sorted(var_iter)
+        return sorted(self.variable_class_iter(depth=depth))
 
     def is_equivalent(self, other) -> bool:
         r"""
@@ -867,28 +849,29 @@ class LPASeed(SageObject):
 
         Mutating this rank two example five times yields an equivalent seed::
 
-            sage: var('x1,x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1,x2')
             sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
             sage: S.is_equivalent(S.mutate([0,1,0,1,0], inplace=False))
             True
         """
         if not isinstance(other, LPASeed):
-            raise ValueError('%s is not a seed!' % (other))
-
-        if self._rank != other._rank:
-            return False
+            raise ValueError(f'{other} is not a seed!')
 
         n = self._rank
-        L = []
-        for i in range(n):
-            for j in range(n):
-                x = other.cluster()[j]
-                y = self.cluster()[i]
+        if n != other._rank:
+            return False
+
+        free = list(range(n))
+        s_cluster = self.cluster()
+        o_cluster = other.cluster()
+        for y in s_cluster:
+            for j in free:
+                x = o_cluster[j]
                 t = self._ambient_field(x / y)
                 if t.numerator().is_unit() and t.denominator().is_unit():
-                    L.append(j)
-        return len(L) == n
+                    free.remove(j)
+                    break
+        return not free
 
     def exchange_graph(self):
         r"""
@@ -898,8 +881,7 @@ class LPASeed(SageObject):
 
         We work out the exchange graph for a rank-two example::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: LPASeed({x1: 1 + x2, x2: 1 + x1}).exchange_graph()
             Graph on 5 vertices
 
@@ -911,8 +893,7 @@ class LPASeed(SageObject):
 
         A rank three example::
 
-            sage: var('x1, x2, x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1, x2, x3')
             sage: LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2}).exchange_graph()
             Graph on 10 vertices
 
@@ -922,8 +903,6 @@ class LPASeed(SageObject):
             G = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2}).exchange_graph()
             sphinx_plot(G)
         """
-        # initialise
-
         covers = []
         n = self.rank()
         stack = [self]
@@ -951,8 +930,7 @@ class LPASeed(SageObject):
 
         Get the cluster variables after performing a mutation::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
             sage: S.mutate(0)
             A seed with cluster variables [(x2 + 1)/x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
@@ -969,8 +947,7 @@ class LPASeed(SageObject):
 
         Get the exchange polynomials after performing a mutation::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: S = LPASeed({x1: 3 + 4*x2, x2: 5 + 6*x1})
             sage: S.mutate(0)
             A seed with cluster variables [(4*x2 + 3)/x1, x2] and exchange polynomials [4*x2 + 3, 5*x1 + 18]
@@ -987,8 +964,7 @@ class LPASeed(SageObject):
 
         This seed has non-trivial exchange Laurent polynomials::
 
-            sage: var('x1, x2, x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1, x2, x3')
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x3, x3: 1 + x2})
             sage: S.laurent_polys()
             [(x2 + x3 + 1)/(x2*x3), x3 + 1, x2 + 1]
@@ -1004,8 +980,7 @@ class LPASeed(SageObject):
 
         The rank is the number of cluster variables in the seed::
 
-            sage: var('x1,x2,x3,x4')
-            (x1, x2, x3, x4)
+            sage: x1, x2, x3, x4 = var('x1,x2,x3,x4')
             sage: LPASeed({x1: 1 + x2, x2: 1 + x1, x3: 1 + x4, x4: 1 + x1}).rank()
             4
         """
@@ -1026,8 +1001,7 @@ class LPASeed(SageObject):
 
         Check that randomly mutating a seed keeps it within the mutation class::
 
-            sage: var('x1,x2,x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1,x2,x3')
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
             sage: T = LPASeed(S)
             sage: S.randomly_mutate(5) # random
@@ -1036,12 +1010,9 @@ class LPASeed(SageObject):
         """
         import random
         indices = [random.randint(0, self._rank - 1) for _ in range(depth)]
+        return self.mutate(indices, inplace)
 
-        self = self.mutate(indices, inplace)
-
-        return self
-
-    def mutation_sequence(self):
+    def mutation_sequence(self) -> list:
         r"""
         Return the list of indices we have mutated ``self`` at.
 
@@ -1050,8 +1021,7 @@ class LPASeed(SageObject):
         We look at the mutation sequences computed by the mutation class
         iterator::
 
-            sage: var('x1, x2, x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = var('x1, x2, x3')
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
             sage: t = S.mutation_class_iter(algorithm='BFS')
             sage: for seed in t: print(seed.mutation_sequence())
@@ -1090,14 +1060,12 @@ class LPASeed(SageObject):
 
         TESTS::
 
-            sage: var('x1')
-            x1
+            sage: x1 = var('x1')
             sage: S = LPASeed({x1:2},base_ring=ZZ)
             sage: T = S.mutate(0, inplace=False)
-            sage: T==S
+            sage: T == S
             False
         """
-
         # we check if cluster variables are is_equivalent of each other,
         # up to unit multiple. Since clusters determine the seed,
         # this is sufficient
@@ -1126,14 +1094,13 @@ class LPASeed(SageObject):
 
         TESTS::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: print(LPASeed({x1: 1 + x2, x2: 1 + x1}))
             A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
         """
-        return ("A seed with cluster variables {0}"
-                " and exchange polynomials {1}").format(self.cluster(),
-                                                        self.exchange_polys())
+        return (f"A seed with cluster variables {self.cluster()}"
+                f" and exchange polynomials {self.exchange_polys()}")
+
 
     def __hash__(self) -> int:
         """
@@ -1143,8 +1110,7 @@ class LPASeed(SageObject):
 
         We check that two seeds with the same hash are equal::
 
-            sage: var('x1,x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1,x2')
             sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
             sage: T = LPASeed(S)
             sage: S.mutate([0,1,0])
@@ -1164,17 +1130,14 @@ class LPASeed(SageObject):
 
         TESTS::
 
-            sage: var('x1, x2')
-            (x1, x2)
+            sage: x1, x2 = var('x1, x2')
             sage: latex(LPASeed({x1: 1 + x2, x2: 1 + x1}))
             \left(\left(x_{1}, x_{2} + 1\right), \left(x_{2}, x_{1} + 1\right)\right)
         """
         cvars = self.cluster()
         polys = self.exchange_polys()
-        cvar_poly_pairs = list()
-        for i in range(self.rank()):
-            cvar_poly_pairs.append(latex(tuple([cvars[i], polys[i]])))
-
+        cvar_poly_pairs = [latex((cvars[i], polys[i]))
+                           for i in range(self.rank())]
         return latex(tuple(cvar_poly_pairs))
 
     def are_laurent_polys_trivial(self) -> bool:
@@ -1205,9 +1168,9 @@ class LPASeed(SageObject):
 
             for poly in seed.exchange_polys():  # type: ignore
 
-                for var in poly.variables():
+                for v in poly.variables():
 
-                    if poly.degree(var) > MAX_DEGREE:
+                    if poly.degree(v) > MAX_DEGREE:
                         if give_reason:
                             print("Fails polynomial degree finiteness check after mutating at indices %s" % (
                                 seed.mutation_sequence()))
@@ -1216,7 +1179,7 @@ class LPASeed(SageObject):
         # if we managed to iterate through everything, then it must be finite
 
         if give_reason:
-            print("Mutation finite, has %s seeds in mutation class" % (counter))
+            print(f"Mutation finite, has {counter} seeds in mutation class")
         return False
 
     def passes_rank_two_check(self) -> bool:
@@ -1241,10 +1204,10 @@ class LPASeed(SageObject):
 
     @staticmethod
     def create_generic_seed(vars, polys):
-        for i in range(len(polys)):
+        for i, pi in enumerate(polys):
             coefficients = []
-            M = polys[i].monomials()
-            new_coeffs = list(SR.var('a_%d%d' % (i, j) for j in range(len(M))))
+            M = pi.monomials()
+            new_coeffs = list(var('a_%d%d' % (i, j) for j in range(len(M))))
             coefficients += new_coeffs
             new_poly = 0
             for j in range(len(M)):
@@ -1263,8 +1226,7 @@ def _remove_repeat_indices(L) -> list:
 
     TESTS::
 
-        sage: var('x1, x2, x3, x4, x5')
-        (x1, x2, x3, x4, x5)
+        sage: V = var('x1, x2, x3, x4, x5')
         sage: S = LPASeed({x1:x2+x3,x2:x1+x4,x3:x1+x2,x4:x1+x3,x5:x1+x4})
         sage: S.mutate([0,1,1,3,2,4,4,2,3])
         A seed with cluster variables [(x2 + x3)/x1, x2, x3, x4, x5] and exchange polynomials [x2 + x3, x1*x4 + x3, x1 + 1, x1*x3 + x2 + x3, x1*x4 + x2 + x3]
