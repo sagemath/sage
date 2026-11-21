@@ -24,6 +24,7 @@
 
 ### :hourglass: Dependencies
 
+<!-- This second may be omitted if the PR has no dependencies. -->
 <!-- List all open PRs that this PR logically depends on. For example, -->
 <!-- - #12345: short description why this is a dependency -->
 <!-- - #34567: ... -->
