@@ -599,74 +599,17 @@ def is_homomorphism(G, H, mapping):
 
     # Every vertex of G must be in mapping and map to a vertex of H
     for u in G:
-        if u not in mapping:
-            return False
-        if mapping[u] not in H:
+        if u not in mapping or mapping[u] not in H:
             return False
 
     # Every edge of G must map to an edge in H
-    for u, v in G.edges(sort=False, labels=False):
-        if not H.has_edge(mapping[u], mapping[v]):
-            return False
-
-    return True
-
-
-def _vertex_ordering(C):
-    r"""
-    Return a vertex ordering of connected graph ``C`` for backtracking search.
-
-    The ordering ensures that each vertex after the first has at least one
-    neighbor among earlier vertices in the ordering.
-
-    TESTS:
-
-    Verify ordering property on a connected cycle::
-
-        sage: from sage.graphs.morphisms import _vertex_ordering
-        sage: C = graphs.CycleGraph(5)
-        sage: order = _vertex_ordering(C)
-        sage: len(order) == 5 and set(order) == set(C)
-        True
-        sage: all(any(C.has_edge(order[i], order[j]) for j in range(i))
-        ....:     for i in range(1, len(order)))
-        True
-        sage: _vertex_ordering(Graph())
-        Traceback (most recent call last):
-        ...
-        ValueError: graph must be non-empty and connected
-        sage: _vertex_ordering(graphs.PathGraph(2) + graphs.PathGraph(2))
-        Traceback (most recent call last):
-        ...
-        ValueError: graph must be non-empty and connected
-    """
-    if not C or not C.is_connected():
-        raise ValueError("graph must be non-empty and connected")
-
-    n = C.order()
-    if n == 1:
-        return list(C)
-
-    u0 = max(C, key=lambda v: (C.degree(v), str(v)))
-    order = [u0]
-    visited = {u0}
-    frontier = set(C.neighbors(u0))
-
-    while len(order) < n:
-        v = max(frontier, key=lambda u: (sum(1 for w in C.neighbors(u) if w in visited), C.degree(u), str(u)))
-        order.append(v)
-        visited.add(v)
-        frontier.remove(v)
-        for w in C.neighbors(v):
-            if w not in visited:
-                frontier.add(w)
-
-    return order
+    return all(H.has_edge(mapping[u], mapping[v])
+               for u, v in G.edges(sort=False, labels=False))
 
 
 def _homomorphisms_connected(C, H):
     r"""
-    Yield homomorphisms from connected graph C to H.
+    Yield homomorphisms from connected graph ``C`` to ``H``.
     """
     if not C:
         yield {}
@@ -679,24 +622,19 @@ def _homomorphisms_connected(C, H):
             yield {u: v}
         return
 
-    order = _vertex_ordering(C)
+    order = list(C.breadth_first_search(next(iter(C))))
     n = len(order)
     pos = {u: i for i, u in enumerate(order)}
-    pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
+    pred = [[p for p in C.neighbors(u) if pos[p] < i] for i, u in enumerate(order)]
 
     adj_H = {v: set(H.neighbors(v)) for v in H}
-
-    u0_deg = C.degree(order[0])
-    if u0_deg > 0:
-        init_cand = [v for v in H if H.degree(v) > 0]
-    else:
-        init_cand = list(H)
+    init_cand = [v for v in H if H.degree(v)]
 
     current_phi = [None] * n
 
     def backtrack(idx):
         if idx == n:
-            yield {order[i]: current_phi[i] for i in range(n)}
+            yield dict(zip(order, current_phi))
             return
 
         if idx == 0:
@@ -716,7 +654,7 @@ def _homomorphisms_connected(C, H):
 
 def _homomorphisms_generator(G, H):
     r"""
-    Internal generator yielding homomorphisms from G to H.
+    Internal generator yielding homomorphisms from ``G`` to ``H``.
     """
     if not G:
         yield {}
@@ -743,8 +681,7 @@ def _homomorphisms_generator(G, H):
             for k in phi:
                 del current_mapping[k]
 
-    current_mapping = {}
-    yield from combine(0, current_mapping)
+    yield from combine(0, {})
 
 
 def homomorphisms(G, H, max_count=None):
@@ -756,7 +693,7 @@ def homomorphisms(G, H, max_count=None):
     `\{u, v\} \in E(G)`, `\{\phi(u), \phi(v)\} \in E(H)`.
 
     This function returns an iterator that searches for homomorphisms
-    using depth-first backtracking with degree-ordered connected vertex
+    using depth-first backtracking with breadth-first search connected vertex
     traversal and connected component factorization. Mappings are yielded
     lazily as they are found. The enumeration order is unspecified and
     depends on internal vertex orderings.
@@ -772,7 +709,7 @@ def homomorphisms(G, H, max_count=None):
     `|V(H)|^{|V(G)|}`. Backtracking can explore exponentially many partial
     mappings before finding a solution or certifying non-existence. Actual
     running time depends heavily on the structure of `G` and `H`, pruning
-    efficiency from degree-ordered neighbor constraints, and the total size of
+    efficiency from neighbor constraints, and the total size of
     the output. While counting can exploit component factorization without
     materializing product combinations, enumeration runtime is necessarily
     lower-bounded by the number of homomorphisms yielded.
@@ -921,6 +858,8 @@ def homomorphisms(G, H, max_count=None):
             raise TypeError("max_count must be a non-negative integer or None")
         if max_count < 0:
             raise ValueError("max_count must be a non-negative integer or None")
+        if not max_count:
+            return iter([])
 
     gen = _homomorphisms_generator(G, H)
     if max_count is None:
@@ -931,51 +870,9 @@ def homomorphisms(G, H, max_count=None):
 
 def _homomorphism_count_connected(C, H):
     r"""
-    Return the number of homomorphisms from connected graph C to H.
+    Return the number of homomorphisms from connected graph ``C`` to ``H``.
     """
-    if not C:
-        return 1
-    if not H:
-        return 0
-    if C.order() == 1:
-        return H.order()
-
-    order = _vertex_ordering(C)
-    n = len(order)
-    pos = {u: i for i, u in enumerate(order)}
-    pred = [[p for p in C.neighbors(order[i]) if pos[p] < i] for i in range(n)]
-
-    adj_H = {v: set(H.neighbors(v)) for v in H}
-
-    u0_deg = C.degree(order[0])
-    if u0_deg > 0:
-        init_cand = [v for v in H if H.degree(v) > 0]
-    else:
-        init_cand = list(H)
-
-    current_phi = [None] * n
-    total = 0
-
-    def backtrack(idx):
-        nonlocal total
-        if idx == n:
-            total += 1
-            return
-
-        if idx == 0:
-            candidates = init_cand
-        else:
-            p_list = pred[idx]
-            candidates = adj_H[current_phi[pos[p_list[0]]]]
-            if len(p_list) > 1:
-                candidates = candidates.intersection(*(adj_H[current_phi[pos[p]]] for p in p_list[1:]))
-
-        for v in candidates:
-            current_phi[idx] = v
-            backtrack(idx + 1)
-
-    backtrack(0)
-    return total
+    return sum(1 for _ in _homomorphisms_connected(C, H))
 
 
 def homomorphism_count(G, H):
@@ -1175,7 +1072,7 @@ def homomorphism_count(G, H):
         else:
             subG = G.subgraph(c)
             c_count = _homomorphism_count_connected(subG, H)
-            if c_count == 0:
+            if not c_count:
                 return Integer(0)
             total_count *= c_count
 
