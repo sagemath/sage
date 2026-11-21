@@ -569,7 +569,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             tuples are convertible into polynomials, and rational
             functions and symbolic expressions are callable.  All
             conversion phases therefore precede the phase interpreting
-            the input as a coefficient function.
+            the input as a coefficient function.  A list or tuple
+            denotes the coefficients of the terms starting from the
+            ``valuation``; the graded completions therefore do not
+            convert it into a basis element in phase 3.  For the other
+            families, a list convertible into the flat data ring is
+            exact data in phase 3 instead (leading zeros are then
+            dropped, as in ``L([0, 0, 2, 3], valuation=-4)``).
 
         EXAMPLES::
 
@@ -1060,7 +1066,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     def _is_coefficient_function(self, x):
         r"""
         Return whether ``x`` may be interpreted as a coefficient
-        function or an iterator of coefficients.
+        function, a list of coefficients, or an iterator of coefficients.
+
+        A list or tuple gives the coefficients of the terms starting
+        from the ``valuation``.
 
         EXAMPLES::
 
@@ -1068,9 +1077,70 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L._is_coefficient_function(lambda i: i)
             True
             sage: L._is_coefficient_function([1, 2])
-            False
+            True
         """
-        return callable(x) or isinstance(x, (GeneratorType, map, filter))
+        return (callable(x)
+                or isinstance(x, (GeneratorType, map, filter, tuple, list)))
+
+    def _series_from_coefficient_list(self, f, valuation, degree, constant):
+        r"""
+        Return the series whose finitely many coefficients are given
+        by the list or tuple ``f``, starting at ``valuation``.
+
+        The coefficients form the finite initial segment of an exact
+        stream.  Trailing zeros are absorbed into the constant tail:
+        an omitted ``degree`` defaults to one past the last nonzero
+        coefficient, and the constant tail (``constant``, zero by
+        default) starts at ``degree`` at the latest; entries equal to
+        the constant are absorbed as well.  Each coefficient is
+        validated eagerly by :meth:`_check_finite_coefficient`, the
+        data being materialized.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L._series_from_coefficient_list([0, 1, 2], 0, None, None)
+            z + 2*z^2
+
+            sage: L._series_from_coefficient_list([1, 2, 3, 0, 0], 0, None, 2)
+            1 + 2*z + 3*z^2 + 2*z^3 + 2*z^4 + 2*z^5 + O(z^6)
+        """
+        BR = self._stream_coefficient_ring
+        if constant is None:
+            constant = BR.zero()
+        p = [BR(e) for e in f]
+        # trailing zeros carry no information; dropping them matches the
+        # polynomial route (phase 3), where the constant tail starts
+        # right after the last nonzero coefficient
+        while p and not p[-1]:
+            p.pop()
+        for i, e in enumerate(p, valuation):
+            self._check_finite_coefficient(e, i)
+        # NOTE: the zero guard relies on truthiness; a coefficient ring
+        # whose zero is truthy defeats it and the zero series is then
+        # represented exactly instead
+        if not any(p) and not constant:
+            return self.zero()
+        if degree is not None and degree < valuation + len(p):
+            raise ValueError("the degree must be greater than the degree of the data")
+        coeff_stream = Stream_exact(p, order=valuation, constant=constant,
+                                    degree=degree)
+        return self.element_class(self, coeff_stream)
+
+    def _check_finite_coefficient(self, e, i):
+        r"""
+        Check the coefficient ``e`` of degree ``i`` of a coefficient
+        list.
+
+        The base implementation imposes no constraint; the multivariate
+        rings and the graded completions override this to check
+        homogeneity.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ, 'z')
+            sage: L._check_finite_coefficient(1, 5)
+        """
 
     def _series_from_coefficient_function(self, f, valuation, degree,
                                            constant, check=None):
@@ -1094,6 +1164,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         BR = self._stream_coefficient_ring
         if valuation is None:
             raise ValueError("the valuation must be specified")
+        if isinstance(f, (tuple, list)):
+            # a list supplies its own degree (``valuation + len(f)``),
+            # so ``constant`` may be given without ``degree`` (cf. the
+            # ``constant=`` examples in the class docstring)
+            return self._series_from_coefficient_list(f, valuation, degree,
+                                                       constant)
         if degree is None:
             if constant is not None:
                 raise ValueError("constant may only be specified if the degree is specified")
@@ -3669,7 +3745,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L([1, 2, 3]);
             Traceback (most recent call last):
             ...
-            ValueError: unable to convert [1, 2, 3] into a lazy Taylor series
+            ValueError: coefficient 2 at degree 1 is not a homogeneous polynomial
 
             sage: L(lambda n: n, degree=3);
             Traceback (most recent call last):
@@ -3884,7 +3960,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
         initial segment of an exact stream; its representation requires
         each coefficient to be homogeneous of the correct degree, which
         is therefore validated irrespective of ``check`` (for arity
-        greater than one).
+        greater than one).  A list supplies its own degree
+        (``valuation + len(f)``), so ``constant`` is honoured and the
+        coefficients are always validated, irrespective of ``check``.
         """
         if not self._is_coefficient_function(f):
             self._unable_to_convert(f)
@@ -3892,27 +3970,16 @@ class LazyPowerSeriesRing(LazySeriesRing):
         BR = self._stream_coefficient_ring
         if valuation is None:
             valuation = 0
+        if isinstance(f, (tuple, list)):
+            return self._series_from_coefficient_list(f, valuation, degree,
+                                                       constant)
         if degree is not None:
-            if constant is None:
-                constant = BR.zero()
             if callable(f):
                 p = [f(i) for i in range(valuation, degree)]
             else:
                 p = [c for c, _ in zip(_skip_leading_zeros(f), range(valuation, degree))]
-            p = [BR(c) for c in p]
-            if self._arity > 1:
-                for i, e in enumerate(p, valuation):
-                    if e and not (e.is_homogeneous() and e.degree() == i):
-                        raise ValueError("coefficient %s at degree %s is not a homogeneous polynomial" % (e, i))
-            if not any(p) and not constant:
-                return self.zero()
-            if degree < valuation:
-                raise ValueError("the degree must be greater than the degree of the data")
-            coeff_stream = Stream_exact(p,
-                                        order=valuation,
-                                        constant=constant,
-                                        degree=degree)
-            return self.element_class(self, coeff_stream)
+            return self._series_from_coefficient_list(p, valuation, degree,
+                                                       constant)
         if check and self._arity > 1:
             if callable(f):
                 def y(n):
@@ -3936,6 +4003,30 @@ class LazyPowerSeriesRing(LazySeriesRing):
             coeff_stream = Stream_iterator(map(BR, _skip_leading_zeros(f)), valuation)
         return self.element_class(self, coeff_stream)
 
+    def _check_finite_coefficient(self, e, i):
+        r"""
+        Check the coefficient ``e`` of degree ``i`` of a coefficient
+        list.
+
+        For multivariate rings (arity greater than one), ``e`` must be
+        a homogeneous polynomial of degree ``i``; for univariate rings
+        the coefficients are scalars and there is nothing to check.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(QQ, 'x, y')
+            sage: R = L._stream_coefficient_ring
+            sage: x, y = R.gens()
+            sage: L._check_finite_coefficient(x^2 + y^2, 2)
+            sage: L._check_finite_coefficient(x, 1)
+            sage: L._check_finite_coefficient(x, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficient x at degree 2 is not a homogeneous polynomial
+        """
+        if self._arity > 1 and e and not (e.is_homogeneous() and e.degree() == i):
+            raise ValueError("coefficient %s at degree %s is not a homogeneous polynomial" % (e, i))
+
     def _unable_to_convert(self, x):
         r"""
         Raise the error for input that cannot be converted.
@@ -3943,10 +4034,10 @@ class LazyPowerSeriesRing(LazySeriesRing):
         EXAMPLES::
 
             sage: L = LazyPowerSeriesRing(QQ, 'x, y')
-            sage: L([1, 2, 3])
+            sage: L('q')
             Traceback (most recent call last):
             ...
-            ValueError: unable to convert [1, 2, 3] into a lazy Taylor series
+            ValueError: unable to convert q into a lazy Taylor series
         """
         raise ValueError(f"unable to convert {x} into a lazy Taylor series")
 
@@ -4623,30 +4714,47 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             return ret.shift(valuation - x._coeff_stream.order())
         return None
 
-    def _is_coefficient_function(self, x):
+    def _convert_to_exact_data(self, x):
         r"""
-        Return whether ``x`` may be interpreted as a coefficient
-        function, a list of coefficients, or an iterator of coefficients.
+        Return ``x`` viewed as an element of the exact-data ring of
+        this ring, or ``None`` if ``x`` cannot be so viewed.
 
-        For completions, a list gives the coefficients in the basis (the
-        empty list is the zero series); note that a list may also be
-        interpreted as a single basis element by the exact-data
-        conversion -- for example ``m([])`` is the empty partition, so
-        ``L([])`` is the constant series ``1`` for symmetric functions.
+        A list or tuple is never exact data for a graded completion:
+        it always denotes the coefficients of the terms starting from
+        the ``valuation``.  In particular, a list that happens to
+        index a basis element -- a partition, say -- is not silently
+        reinterpreted as such; use the basis instead.
 
         EXAMPLES::
 
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
-            sage: L._is_coefficient_function(lambda i: i)
-            True
-            sage: L._is_coefficient_function((m[1], m[2]))
-            True
-            sage: L._is_coefficient_function(filter(None, NN))
+            sage: L._convert_to_exact_data(m[2, 1])
+            m[2, 1]
+            sage: L._convert_to_exact_data([2, 1]) is None
             True
         """
-        return (callable(x)
-                or isinstance(x, (tuple, list, GeneratorType, map, filter)))
+        if isinstance(x, (list, tuple)):
+            return None
+        return super()._convert_to_exact_data(x)
+
+    def _check_finite_coefficient(self, e, i):
+        r"""
+        Check the coefficient ``e`` of degree ``i`` of a coefficient
+        list: a graded completion requires homogeneity of the correct
+        degree.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(ZZ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: L._check_finite_coefficient(m[1], 1)
+            sage: L._check_finite_coefficient(m[2], 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficient m[2] should be an element of homogeneous degree 1 but has degree 2
+        """
+        self._check_homogeneous(e, i)
 
     def _check_homogeneous(self, f, d):
         r"""
@@ -4728,16 +4836,19 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         R = self._stream_coefficient_ring
 
         if isinstance(f, (tuple, list)):
-            if degree is None:
-                degree = valuation + len(f)
-            p = [R(e) for e in f]
-        elif degree is not None:
+            # ``constant`` is silently ignored (no constant tail)
+            return self._series_from_coefficient_list(f, valuation, degree,
+                                                       None)
+        if degree is not None:
+            # ``constant`` is silently ignored (no constant tail)
             if callable(f):
-                p = [R(f(i)) for i in range(valuation, degree)]
+                p = [f(i) for i in range(valuation, degree)]
             else:
-                p = [R(c) for c, _ in zip(_skip_leading_zeros(f),
-                                          range(valuation, degree))]
-        elif callable(f):
+                p = [c for c, _ in zip(_skip_leading_zeros(f),
+                                       range(valuation, degree))]
+            return self._series_from_coefficient_list(p, valuation, degree,
+                                                       None)
+        if callable(f):
             if check:
                 def y(n):
                     e = R(f(n))
@@ -4760,18 +4871,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             else:
                 coeff_stream = Stream_iterator(_skip_leading_zeros(f), valuation)
             return self.element_class(self, coeff_stream)
-
-        for i, e in enumerate(p, valuation):
-            self._check_homogeneous(e, i)
-        if not any(p):
-            return self.zero()
-        if degree < valuation + len(p):
-            raise ValueError("the degree must be greater than the degree of the data")
-        coeff_stream = Stream_exact(p,
-                                    order=valuation,
-                                    constant=R.zero(),
-                                    degree=degree)
-        return self.element_class(self, coeff_stream)
 
     def _unable_to_convert(self, x):
         r"""
@@ -5666,9 +5765,12 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 ######################################################################
 
 
-def _skip_leading_zeros(iterator):
+def _skip_leading_zeros(iterable):
     """
     Return an iterator which discards all leading zeros.
+
+    A finite iterator is exhausted cleanly (an all-zero iterable yields
+    nothing).
 
     EXAMPLES::
 
@@ -5677,6 +5779,13 @@ def _skip_leading_zeros(iterator):
         sage: [x for x, _ in zip(_skip_leading_zeros(it), range(10))]
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
+        sage: list(_skip_leading_zeros([0, 0, 1, 2]))
+        [1, 2]
+
+        sage: L = LazyLaurentSeriesRing(QQ, 'z')
+        sage: L(coefficients=filter(None, [0, 0]), valuation=0, degree=3)
+        0
+
         sage: it = map(GF(3), NN)
         sage: [x for x, _ in zip(it, range(10))]
         [0, 1, 2, 0, 1, 2, 0, 1, 2, 0]
@@ -5684,9 +5793,11 @@ def _skip_leading_zeros(iterator):
         sage: [x for x, _ in zip(_skip_leading_zeros(it), range(10))]
         [1, 2, 0, 1, 2, 0, 1, 2, 0, 1]
     """
-    while True:
-        c = next(iterator)
+    iterator = iter(iterable)
+    for c in iterator:
         if c:
             yield c
             break
+    else:
+        return
     yield from iterator

@@ -7222,7 +7222,10 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         """
         if self.valuation() != 2:
             raise ValueError("only for series of valuation 2")
-        p1 = self.parent()([1])
+        P = self.parent()
+        # the basis element p[1] as a series (a bare list would be a
+        # list of coefficients)
+        p1 = P(P._flat_data_ring([1]))
         derived_p1 = self.derivative_with_respect_to_p1()
         return (p1 * derived_p1 - self).plethysm(derived_p1.revert())
 
