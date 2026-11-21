@@ -44,7 +44,7 @@ from sage.misc.misc import (
     newton_method_sizes, compose, nest
 )
 
-from sage.misc.banner import version
+from sage.version import banner as version
 
 from sage.misc.dev_tools import import_statements
 
