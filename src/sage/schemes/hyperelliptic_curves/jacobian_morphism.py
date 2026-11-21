@@ -57,6 +57,16 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian()
             sage: D = J(x^2 + 14*x + 16, 3*x + 4); D # indirect doctest
             (x^2 + 14*x + 16, 3*x + 4)
+
+        Non-monic ``u`` is rejected (see :issue:`43180`)::
+
+            sage: x = polygen(GF(419))
+            sage: H = HyperellipticCurve(x**5 + 1, 0)
+            sage: J = H.jacobian()
+            sage: J(42, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: Mumford coordinate u=42 must be monic
         """
         SchemeMorphism.__init__(self, parent)
 
@@ -69,6 +79,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         # Ensure the divisor is valid
         if check:
+            if not u.is_monic():
+                raise ValueError(f"Mumford coordinate u={u} must be monic")
             f, h = parent.curve().hyperelliptic_polynomials()
             assert (v**2 + v * h - f) % u == 0, (
                 f"u={u}, v={v} do not define a divisor on the Jacobian"
