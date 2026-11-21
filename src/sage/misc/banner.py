@@ -146,7 +146,7 @@ def version_dict() -> VersionDict:
         sage: version_dict()['major'] == int(sage.version.version.split('.')[0])
         True
     """
-    v = cast("str", SAGE_VERSION).split('.')
+    v = SAGE_VERSION.split('.')
     version_info: VersionDict = {
         'major': int(v[0]),
         'minor': int(v[1]),
