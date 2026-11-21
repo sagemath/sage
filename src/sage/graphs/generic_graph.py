@@ -19269,6 +19269,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: d4 = g.shortest_path_lengths((0,0), algorithm='Bellman-Ford_Boost')
             sage: d1 == d2 == d3 == d4                                                  # needs networkx
             True
+
+        Single-vertex graphs return a length of 0, not a path list
+        (see :issue:`43186`)::
+
+            sage: Graph(1).shortest_path_lengths(0, algorithm='Dijkstra_NetworkX')      # needs networkx
+            {0: 0}
         """
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
@@ -19286,7 +19292,7 @@ class GenericGraph(GenericGraph_pyx):
             import networkx
             # If this is not present, an error might be raised by NetworkX
             if self.n_vertices() == 1 and next(self.vertex_iterator()) == u:
-                return {u: [u]}
+                return {u: 0}
             if by_weight:
                 if self.is_directed():
                     G = networkx.DiGraph([(e[0], e[1], {'weight': weight_function(e)}) for e in self.edge_iterator()])
