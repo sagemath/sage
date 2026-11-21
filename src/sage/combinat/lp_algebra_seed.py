@@ -30,10 +30,9 @@ AUTHORS:
 # ****************************************************************************
 from copy import copy
 
-from sage.arith.misc import factor, gcd
+from sage.arith.misc import gcd
 from sage.graphs.graph import Graph
 from sage.misc.latex import latex
-from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ, IntegerRing_class
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -161,7 +160,7 @@ class LPASeed(SageObject):
         self._polynomial_ring = PolynomialRing(self._base_ring,
                                                names=variables)
 
-        self._ambient_field = FractionField(self._polynomial_ring)
+        self._ambient_field = self._polynomial_ring.fraction_field()
 
         self._rank = len(self._names)
 
@@ -227,7 +226,7 @@ class LPASeed(SageObject):
             # check irreducibility
             if f == 0:
                 raise ValueError("(LP2) fail: exchange polynomial is zero")
-            L = list(factor(f))
+            L = list(f.factor())
             if len(L) > 1 or f.is_unit():
                 raise ValueError("(LP2) fail: %s is not irreducible over %s"
                                  % (f, self._base_ring))
@@ -369,9 +368,9 @@ class LPASeed(SageObject):
                 # CANCELLATION:
                 G_factors = list(G.factor())
                 H = 1  # this will be G with all common factors with h removed
-                for factor in G_factors:
-                    if gcd(self._ambient_field(h).numerator(), factor[0]) == 1:
-                        H = H * (factor[0])**(factor[1])
+                for fac in G_factors:
+                    if gcd(self._ambient_field(h).numerator(), fac[0]) == 1:
+                        H = H * (fac[0])**(fac[1])
 
                 # NORMALISATION:
                 self._exchange_polys[j] = H.numerator()
@@ -1101,7 +1100,6 @@ class LPASeed(SageObject):
         return (f"A seed with cluster variables {self.cluster()}"
                 f" and exchange polynomials {self.exchange_polys()}")
 
-
     def __hash__(self) -> int:
         """
         Return a hash of ``self``.
@@ -1211,8 +1209,7 @@ class LPASeed(SageObject):
             coefficients += new_coeffs
             new_poly = 0
             for j in range(len(M)):
-                new_poly += new_coeffs[j]*M[j]
-
+                new_poly += new_coeffs[j] * M[j]
             polys[i] = new_poly
 
         return LPASeed(dict(zip(vars, polys)), coefficients=coefficients)
