@@ -2523,9 +2523,8 @@ class DiGraph(GenericGraph):
             ...
             ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
 
-        A single vertex always returns a scalar, and a list (including a
-        one-element list or ``None``) always returns a list, independent of
-        the graph order and algorithm::
+        Check that the method returns a scalar when ``v`` is a vertex,
+        and otherwise a list (see :issue:`43186`)::
 
             sage: DiGraph(1).eccentricity()
             [0]

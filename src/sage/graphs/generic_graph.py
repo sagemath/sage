@@ -19270,7 +19270,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: d1 == d2 == d3 == d4                                                  # needs networkx
             True
 
-        Single-vertex graphs return a length of 0, not a path list::
+        Single-vertex graphs return a length of 0, not a path list
+        (see :issue:`43186`)::
 
             sage: Graph(1).shortest_path_lengths(0, algorithm='Dijkstra_NetworkX')      # needs networkx
             {0: 0}
