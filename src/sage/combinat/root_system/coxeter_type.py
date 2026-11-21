@@ -386,16 +386,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             def val(x):
                 if x > -1:
                     return (E(2*x) + ~E(2*x)) / R(-2)
-                else:
-                    return R(x)
+                return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
             E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x > -1:
                     return R((E(2*x) + ~E(2*x)).to_cyclotomic_field()) / R(-2)
-                else:
-                    return R(x)
+                return R(x)
         else:
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
@@ -404,8 +402,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             def val(x):
                 if x > -1:
                     return -R(cos(pi / SR(x)))
-                else:
-                    return R(x)
+                return R(x)
 
         entries = [SparseEntry(i, j, val(mat[i, j]))
                    for i in range(n) for j in range(n)

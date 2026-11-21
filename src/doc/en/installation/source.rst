@@ -38,7 +38,7 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-linux.yml --name sage-dev
+            $ mamba env create --file environment-3.13-linux.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: macOS
@@ -112,8 +112,33 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
-Using system package manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note::
+
+    If you edit Cython files, starting Sage will then recompile those
+    files and all their dependencies, which may take some time.  If
+    you want to see a message whenever this is happening, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true --no-build-isolation --editable .
+
+    instead.  Another convenient option is to skip building the
+    documentation.  To do so, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
+
+
+To rebuild the documentation after editing it, see
+:ref:`Building the manuals <section-building-manuals>` in the Sage Developer's
+Guide.
+
+
+.. _system_package_manager:
+
+Using the system package manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also install the dependencies via your system package manager.
 Note, however, that not all dependencies may be available for your system,
@@ -127,7 +152,7 @@ Depending on your distribution, install the following packages:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+    Not yet (fully) supported.
 
 .. tab:: Fedora
 
@@ -151,6 +176,9 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
+.. tab:: Homebrew (macOS)
+
+    Not yet (fully) supported.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
@@ -168,17 +196,7 @@ To compile and install Sage in editable install, then just use:
 
   .. code-block:: console
 
-    $ uv venv
-    $ uv pip install \
-        meson-python \
-        "cypari2 >=2.2.1" \
-        "cython >=3.0, != 3.0.3, != 3.1.0" \
-        "gmpy2 >=2.1.5" \
-        memory_allocator \
-        "numpy >=1.25" \
-        "ninja >=1.8.2" \
-        jinja2 \
-        setuptools
+    $ uv sync --frozen --inexact --no-install-project
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
@@ -222,20 +240,13 @@ Remarks
 
 .. note::
 
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
-
-.. note::
-
   You can update the conda lock files by running ``tools/update-conda.py``.
   In order to update the conda environment afterwards use::
 
-    $ mamba env update --file environment-3.12-linux.yml --name sage-dev
+    $ mamba env update --file environment-3.13-linux.yml --name sage-dev
 
+
+.. _section-meson-build-directory:
 
 Background information
 ======================

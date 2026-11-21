@@ -696,10 +696,9 @@ def SL2R_to_SO21(A):
     #B = B.apply_map(attrcall('real'))
     if A.det() > 0:
         return B
-    else:
-        # Orientation-reversing isometries swap the nappes of
-        #  the lightcone.  This fixes that issue.
-        return -B
+    # Orientation-reversing isometries swap the nappes of
+    #  the lightcone.  This fixes that issue.
+    return -B
 
 
 def SO21_to_SL2R(M):

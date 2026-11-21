@@ -272,8 +272,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
                 raise TypeError("the polyhedron is not integral; do a base extension ``self.base_extend(QQ)``")
         if index is None:
             return self._Vrepresentation
-        else:
-            return self._Vrepresentation[index]
+        return self._Vrepresentation[index]
 
     def _init_Vrepresentation_from_ppl(self, minimize):
         """
@@ -386,8 +385,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
             self._init_Hrepresentation_from_ppl(True)
         if index is None:
             return self._Hrepresentation
-        else:
-            return self._Hrepresentation[index]
+        return self._Hrepresentation[index]
 
     def _init_empty_polyhedron(self):
         """
@@ -441,12 +439,10 @@ class Polyhedron_ppl(Polyhedron_mutable):
         d = LCM_list([denominator(v_i) for v_i in v])
         if d.is_one():
             return ob(Linear_Expression(v, 0))
-        else:
-            dv = [ d*v_i for v_i in v ]
-            if typ == VERTEX:
-                return ob(Linear_Expression(dv, 0), d)
-            else:
-                return ob(Linear_Expression(dv, 0))
+        dv = [ d*v_i for v_i in v ]
+        if typ == VERTEX:
+            return ob(Linear_Expression(dv, 0), d)
+        return ob(Linear_Expression(dv, 0))
 
     @staticmethod
     def _convert_generators_to_ppl(vertices, rays, lines):
@@ -509,8 +505,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
         A = dc[1:]
         if typ == INEQUALITY:
             return Linear_Expression(A, b) >= 0
-        else:
-            return Linear_Expression(A, b) == 0
+        return Linear_Expression(A, b) == 0
 
     @staticmethod
     def _convert_constraints_to_ppl(ieqs, eqns):

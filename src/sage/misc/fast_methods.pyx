@@ -28,7 +28,6 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
-from sage.misc.constant_function import ConstantFunction
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -180,7 +179,7 @@ cdef class WithEqualityById:
 
         if op == Py_EQ:
             return self is other
-        elif op == Py_NE:
+        if op == Py_NE:
             return self is not other
         return NotImplemented
 
@@ -194,7 +193,7 @@ cdef class FastHashable_class:
         This is for internal use only. The class has a cdef attribute
         ``_hash``, that needs to be assigned (for example, by calling
         the init method, or by a direct assignment using
-        cython). This is slower than using :func:`provide_hash_by_id`,
+        cython). This is slower than using ``provide_hash_by_id``,
         but has the advantage that the hash can be prescribed, by
         assigning a cdef attribute ``_hash``.
 
@@ -293,6 +292,9 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
             sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
             True
         """
+        # local import to avoid circular initialization issues in `CartesianProductFunctor`
+        from sage.misc.constant_function import ConstantFunction
+
         assert cls.mro()[1] == Singleton, "{} is not a direct subclass of {}".format(cls, Singleton)
         res = typecall(cls)
         cf = ConstantFunction(res)

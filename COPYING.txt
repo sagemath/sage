@@ -959,7 +959,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 matplotlib:
-(from http://matplotlib.sourceforge.net/users/license.html)
+(from https://matplotlib.org/stable/users/project/license.html)
 
 Matplotlib only uses BSD compatible code, and its license is based on
 the PSF license. See the Open Source Initiative licenses page for

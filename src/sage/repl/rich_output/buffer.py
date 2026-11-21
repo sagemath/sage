@@ -130,6 +130,27 @@ class OutputBuffer(SageObject):
             sage: import os, stat
             sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
             0
+
+        TESTS:
+
+        A file that is already read-only is left alone, so this also works
+        on a read-only file system::
+
+            sage: from unittest import mock
+            sage: with mock.patch('os.chmod') as chmod:
+            ....:     OutputBuffer._chmod_readonly(tmp)
+            sage: chmod.called
+            False
+
+        Failing to change the permissions is not an error::
+
+            sage: import errno
+            sage: tmp = sage.misc.temporary_file.tmp_filename()
+            sage: with open(tmp, 'wb') as f:
+            ....:    _ = f.write(b'file content')
+            sage: erofs = OSError(errno.EROFS, 'Read-only file system')
+            sage: with mock.patch('os.chmod', side_effect=erofs):
+            ....:     OutputBuffer._chmod_readonly(tmp)
         """
         from sage.env import SAGE_SRC
         filename = os.path.abspath(filename)
@@ -138,15 +159,20 @@ class OutputBuffer(SageObject):
             # files, as it will cause trouble when upgrading Sage
             return
         import stat
-        mode = os.stat(filename).st_mode
-        mode = stat.S_IMODE(mode) & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
-        # The file may already be read only for that user
+        old_mode = stat.S_IMODE(os.stat(filename).st_mode)
+        mode = old_mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
+        if mode == old_mode:
+            # Already read only. Calling chmod anyway would fail on a
+            # read-only file system.
+            return
+        # We may not own the file (EPERM), or it may be on a read-only
+        # file system (EROFS)
         try:
             os.chmod(filename, mode)
-        except PermissionError:
+        except OSError:
             pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -158,13 +184,13 @@ class OutputBuffer(SageObject):
             sage: OutputBuffer('test1234')
             buffer containing 8 bytes
         """
-        return 'buffer containing {0} bytes'.format(len(self.get()))
+        return f'buffer containing {len(self.get())} bytes'
 
     def get(self):
         """
         Return the buffer content.
 
-        OUTPUT: bytes; string in Python 2.x
+        OUTPUT: bytes
 
         EXAMPLES::
 
@@ -182,35 +208,15 @@ class OutputBuffer(SageObject):
                 self._data = f.read()
         return self._data
 
-    def get_unicode(self):
+    def get_str(self) -> str:
         """
-        Return the buffer content as string.
+        Return the buffer content as a ``str`` object.
 
-        OUTPUT:
+        This returns a unicode ``str`` with the buffer content
+        decoded from UTF-8.
 
-        String. Unicode in Python 2.x. Raises a :exc:`UnicodeEncodeError`
-        if the data is not valid utf-8.
-
-        EXAMPLES::
-
-            sage: from sage.repl.rich_output.buffer import OutputBuffer
-            sage: OutputBuffer('test1234').get().decode('ascii')
-            'test1234'
-            sage: OutputBuffer('test1234').get_unicode()
-            'test1234'
-        """
-        return self.get().decode('utf-8')
-
-    def get_str(self):
-        """
-        Return the buffer content as a ``str`` object for the current Python
-        version.
-
-        That is, returns a Python 2-style encoding-agnostic ``str`` on Python
-        2, and returns a unicode ``str`` on Python 3 with the buffer content
-        decoded from UTF-8.  In other words, this is equivalent to
-        ``OutputBuffer.get`` on Python 2 and ``OutputBuffer.get_unicode`` on
-        Python 3.  This is useful in some cases for cross-compatible code.
+        This raises a :exc:`UnicodeEncodeError` if the data is not
+        valid UTF-8.
 
         OUTPUT: a ``str`` object
 
@@ -224,8 +230,18 @@ class OutputBuffer(SageObject):
             sage: c = OutputBuffer('été').get_str()
             sage: type(c) is str
             True
+
+        TESTS::
+
+            sage: from sage.repl.rich_output.buffer import OutputBuffer
+            sage: OutputBuffer('test1234').get().decode('ascii')
+            'test1234'
+            sage: OutputBuffer('test1234').get_unicode()
+            'test1234'
         """
-        return self.get_unicode()
+        return self.get().decode('utf-8')
+
+    get_unicode = get_str
 
     def filename(self, ext=None):
         """

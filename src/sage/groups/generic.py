@@ -115,15 +115,20 @@ Some examples in the group of points of an elliptic curve over a finite field:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from copy import copy
 import operator
 
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
-import sage.rings.integer_ring as integer_ring
+from sage.rings import integer_ring
 import sage.rings.integer
 from sage.structure.element import parent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -496,8 +501,7 @@ class multiples:
         self.Q = self.op(self.Q, self.P)
         if self.indexed:
             return (i, val)
-        else:
-            return val
+        return val
 
     next = __next__
 
@@ -508,7 +512,7 @@ class multiples:
         return self
 
 
-def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
+def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None) -> Integer:
     r"""
     Totally generic discrete baby-step giant-step function.
 
@@ -605,10 +609,22 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         sage: b = Mod(2,37);  a = b^20
         sage: bsgs(b, a, (0r, 36r))
         20
+
+    BSGS works with immutable matrices whose products may be mutable
+    (:issue:`42378`)::
+
+        sage: # needs sage.rings.finite_rings
+        sage: m = Matrix(GF(101), [[1, 1], [1, 2]])
+        sage: n = m^17
+        sage: m.set_immutable()
+        sage: n.set_immutable()
+        sage: bsgs(m, n, (0, 50))
+        17
     """
     Z = integer_ring.ZZ
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
+    mut = hasattr(a, 'set_immutable')
 
     lb, ub = bounds
     lb = Z(lb)
@@ -642,12 +658,16 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         i = lb + i0
         if identity == d:        # identity == b^(-1)*a^i, so return i
             return Z(i)
+        if mut:
+            d.set_immutable()
         table[d] = i
         d = op(d, a)
 
     c = op(c, inverse(d))     # this is now a**(-m)
     d = identity
     for i in xsrange(m):
+        if mut:
+            d.set_immutable()
         j = table.get(d)
         if j is not None:  # then d == b*a**(-i*m) == a**j
             return Z(i * m + j)
@@ -656,7 +676,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     raise ValueError("log of %s to the base %s does not exist in %s" % (b, a, bounds))
 
 
-def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash):
+def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=None, op=None, hash_function=hash) -> Integer:
     """
     Pollard Rho algorithm for computing discrete logarithm in cyclic
     group of prime order.
@@ -806,8 +826,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
                     res = sage.rings.integer.Integer((ay - ax) / (bx - by))
                     if power(base, res) == a:
                         return res
-                    else:
-                        break
+                    break
             # should we remember this value?
             elif i >= nextsigma:
                 if sigma[i0][1] is not None:
@@ -829,8 +848,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``a`` -- group element
     - ``base`` -- group element (the base)
     - ``ord`` -- integer (multiple of order of base, ``None``, or
-      :mod:`oo <sage.rings.infinity>``); if this is
-      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      :data:`oo <sage.rings.infinity.infinity>`);
+      if this is :data:`oo <sage.rings.infinity.infinity>`, then it explicitly does
       not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
@@ -1067,9 +1086,9 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         if ord == Infinity:
             if algorithm == 'bsgs':
                 return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
-            elif algorithm == 'lambda':
+            if algorithm == 'lambda':
                 return discrete_log_lambda(base, a, bounds, inverse=inverse, identity=identity, op=op, operation=operation)
-            elif algorithm == 'rho':
+            if algorithm == 'rho':
                 raise ValueError('pollard rho algorithm does not work with infinite order elements')
             else:
                 raise ValueError(f"unknown algorithm {algorithm}")
@@ -1450,25 +1469,24 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             if Q != identity:
                 e0 += 1
             return p**e0
-        else:
-            # try to split the list wisely
-            sum_left = 0
-            for k in range(l):
-                p, e = L[k]
-                # multiplying by p**e require roughly 'e log_2(p) / 2' additions
-                v = e * sage.functions.log.log(float(p))
-                if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
-                    break
-                sum_left += v
-            if not 0 < k < l:
-                k = l // 2
-            L1 = L[:k]
-            L2 = L[k:]
-            # recursive calls
-            o1 = _order_from_multiple_helper(
-                _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
-            o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
-            return o1 * o2
+        # try to split the list wisely
+        sum_left = 0
+        for k in range(l):
+            p, e = L[k]
+            # multiplying by p**e require roughly 'e log_2(p) / 2' additions
+            v = e * sage.functions.log.log(float(p))
+            if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
+                break
+            sum_left += v
+        if not 0 < k < l:
+            k = l // 2
+        L1 = L[:k]
+        L2 = L[k:]
+        # recursive calls
+        o1 = _order_from_multiple_helper(
+            _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
+        o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
+        return o1 * o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
 

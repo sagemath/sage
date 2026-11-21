@@ -3,18 +3,11 @@ Common combinatorial tools
 
 REFERENCES:
 
-.. [NCSF] Gelfand, Krob, Lascoux, Leclerc, Retakh, Thibon,
-   *Noncommutative Symmetric Functions*, Adv. Math. 112 (1995), no. 2, 218-348.
+- [NCSF]_
 
-.. [QSCHUR] Haglund, Luoto, Mason, van Willigenburg,
-   *Quasisymmetric Schur functions*, J. Comb. Theory Ser. A 118 (2011), 463-490.
-   http://www.sciencedirect.com/science/article/pii/S0097316509001745 ,
-   :arxiv:`0810.2489v2`.
+- [QSCHUR]_
 
-.. [Tev2007] Lenny Tevlin,
-   *Noncommutative Analogs of Monomial Symmetric Functions,
-   Cauchy Identity, and Hall Scalar Product*,
-   :arxiv:`0712.2201v1`.
+- [Tev2007]_
 """
 from sage.misc.misc_c import prod
 from sage.arith.misc import factorial
@@ -207,7 +200,7 @@ def m_to_s_stat(R, I, K):
         if I.is_finer(J) and K.is_finer(J):
             pvec = [0] + Composition(I).refinement_splitting_lengths(J).partial_sums()
             pp = prod( R( len(I) - pvec[i] ) for i in range( len(pvec)-1 ) )
-            stat += R((-1)**(len(I)-len(K)) / pp * coeff_lp(K, J))
+            stat += R((-1)**(len(I)-len(K))) * coeff_lp(K, J) / pp
     return stat
 
 
@@ -239,8 +232,7 @@ def number_of_fCT(content_comp, shape_comp):
     if content_comp.to_partition().length() == 1:
         if shape_comp.to_partition().length() == 1:
             return 1
-        else:
-            return 0
+        return 0
     C = Compositions(content_comp.size()-content_comp[-1], outer=list(shape_comp))
     s = 0
     for x in C:
@@ -290,8 +282,7 @@ def number_of_SSRCT(content_comp, shape_comp):
     if len(content_comp) == 1:
         if len(shape_comp) == 1:
             return ZZ.one()
-        else:
-            return ZZ.zero()
+        return ZZ.zero()
     s = ZZ.zero()
     cond = lambda al, be: all(al[j] <= be_val
                               and not any(al[i] <= k <= be[i]

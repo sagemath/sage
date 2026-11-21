@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Affine nilTemperley Lieb Algebra of type A
 """
@@ -97,7 +96,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         """
         Return the unit of the underlying Weyl group, which index
         the one of this algebra, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -256,7 +255,6 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         redword = t.reduced_word()
         if len(redword) == 0:
             return "1"
-        elif short_display:
+        if short_display:
             return "*".join("%s%d" % (self._prefix, i) for i in redword)
-        else:
-            return "*".join("%s[%d]" % (self._prefix, i) for i in redword)
+        return "*".join("%s[%d]" % (self._prefix, i) for i in redword)

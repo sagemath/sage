@@ -45,7 +45,7 @@
   the result is a vector [r,s,v], where
     r is a lower bound for the rank,
     s is the rank of the 2-Selmer group
-    v is a set of independant points in E(Q)/2E(Q).
+    v is a set of independent points in E(Q)/2E(Q).
 
   Example:
 
@@ -523,14 +523,14 @@ if( DEBUGLEVEL_ell >= 5, print("     starting polrealrootsisolate with pol = ",p
   st = polsturm(pol);
   if( !st, return([]));
   a = 1;
-  while( polsturm(pol,-a,a) < st, a <<= 1);
+  while( polsturm(pol,[-a,a]) < st, a <<= 1);
   res = [[-a,a,st]];
   ind = 1;
   while( #res < st,
     while( res[ind][3] == 1, ind++);
     a = res[ind][1]; b = res[ind][2]; stab = res[ind][3];
     c = (a+b)/2;
-    stac = polsturm(pol,a,c);
+    stac = polsturm(pol,[a,c]);
     if( stac == 0, res[ind][1] = c; next);
     if( stac == stab, res[ind][2] = c; next);
     res[ind] = [a,c,stac];
@@ -1043,7 +1043,7 @@ if( DEBUGLEVEL_ell >= 4, print("    change of basis 1 = ",U));
 
 if( DEBUGLEVEL_ell >= 3, print("   infinite order points = ",listgen));
 
-\\ Now, the points should be of infinite order and independant
+\\ Now, the points should be of infinite order and independent
 \\ Reducing the points of infinite order
 
   if( d > 1,
@@ -1193,7 +1193,7 @@ if( DEBUGLEVEL_ell >= 5, print("     Computing the sign of elt = ",elt));
     st = 1;
     compt = 0;
     while( st,
-      st = polsturm(elt2,rootapprox[1],rootapprox[2]);
+      st = polsturm(elt2,[rootapprox[1],rootapprox[2]]);
       if( st,
         rootapprox = polrealrootsimprove(component(gen[i],1),rootapprox);
 \\        rootapprox = polrealrootsimprove(gen[i].mod,rootapprox);
@@ -1641,7 +1641,7 @@ if( DEBUGLEVEL_ell >= 3, print("   end of ellQ_ellrank"));
 \\ Returns [r,s,v] with
 \\   r is a lower bound for the rank of E(Q)
 \\   s is the rank of Selmer[2]
-\\   v is a system of independant points on E(Q)/2E(Q)
+\\   v is a system of independent points on E(Q)/2E(Q)
 
 \\ e1, e2, e3 must be integers.
 \\ help is a list of known points on E.
@@ -2112,7 +2112,7 @@ if( DEBUGLEVEL_ell >= 3, print("   end of ell2descent_viaisog"));
   addhelp(ell2descent_viaisog,
     "ell2descent_viaisog(E,help=[]): E is an elliptic curve of the form [0,a,0,b,0], with a, b integers. Performs a 2-descent via isogeny on E. See ?ellQ_ellrank for the format of the output.");
   addhelp(ellQ_ellrank,
-    "ellQ_ellrank(E,help=[]): E is any elliptic curve defined over Q. Returns a vector [r,s,v], where r is a lower bound for the rank of E, s is the rank of its 2-Selmer group and v is a list of independant points in E(Q)/2E(Q). If help is a vector of nontrivial points on E, the result might be faster. This function might be used in conjunction with elltors2(E). See also ?default_ellQ");
+    "ellQ_ellrank(E,help=[]): E is any elliptic curve defined over Q. Returns a vector [r,s,v], where r is a lower bound for the rank of E, s is the rank of its 2-Selmer group and v is a list of independent points in E(Q)/2E(Q). If help is a vector of nontrivial points on E, the result might be faster. This function might be used in conjunction with elltors2(E). See also ?default_ellQ");
   addhelp(ellhalf,
     "ellhalf(E,P): returns the vector of all points Q on the elliptic curve E such that 2Q = P");
   addhelp(ellredgen,

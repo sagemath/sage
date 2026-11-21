@@ -97,7 +97,7 @@ class ManinSymbolList(Parent):
             x = x.tuple()
         return self.element_class(self, x)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         """
         Comparison function for ManinSymbolList objects.
 
@@ -114,10 +114,10 @@ class ManinSymbolList(Parent):
             sage: m1 < m3
             False
         """
-        if not isinstance(right, ManinSymbolList):
+        if not isinstance(other, ManinSymbolList):
             return NotImplemented
         return richcmp((self._weight, self._symbol_list),
-                       (right._weight, right._symbol_list), op)
+                       (other._weight, other._symbol_list), op)
 
     def symbol_list(self):
         """
@@ -536,8 +536,7 @@ class ManinSymbolList_group(ManinSymbolList):
         k = self.index((i, -u, v))
         if i % 2 == 0:
             return k, 1
-        else:
-            return k, -1
+        return k, -1
 
     def apply_T(self, j):
         """
@@ -1043,8 +1042,7 @@ class ManinSymbolList_character(ManinSymbolList):
         k, s = self.index((self._weight - 2 - i, v, -u))
         if i % 2 == 0:
             return k, s
-        else:
-            return k, -s
+        return k, -s
 
     def _apply_S_only_0pm1(self):
         """
@@ -1094,8 +1092,7 @@ class ManinSymbolList_character(ManinSymbolList):
         k, s = self.index((i, -u, v))
         if i % 2 == 0:
             return k, s
-        else:
-            return k, -s
+        return k, -s
 
     def apply_T(self, j):
         """

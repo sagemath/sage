@@ -97,7 +97,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # to create a morphism of algebras with basis instead
                 # should there be a method self.coproduct_homset_category?
                 return Hom(self, tensor([self, self]), ModulesWithBasis(self.base_ring()))(on_basis=self.coproduct_on_basis)
-            elif hasattr(self, "coproduct_by_coercion"):
+            if hasattr(self, "coproduct_by_coercion"):
                 return self.coproduct_by_coercion
 
         @abstract_method(optional=True)
@@ -146,7 +146,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if self.counit_on_basis is not NotImplemented:
                 return self.module_morphism(self.counit_on_basis,codomain=self.base_ring())
-            elif hasattr(self, "counit_by_coercion"):
+            if hasattr(self, "counit_by_coercion"):
                 return self.counit_by_coercion
 
     class ElementMethods:

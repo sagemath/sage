@@ -631,8 +631,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         if self._prec_cap > 1:
             return self([2, 1])
-        else:
-            return self([1])
+        return self([1])
 
 
 class Symk_class(OverconvergentDistributions_abstract):

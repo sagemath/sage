@@ -1,7 +1,7 @@
 """
 Support Python's numbers abstract base class
 
-.. SEEALSO:: :pep:`3141` for more information about :class:`numbers`.
+.. SEEALSO:: :pep:`3141` for more information about :mod:`numbers`.
 
 TESTS::
 

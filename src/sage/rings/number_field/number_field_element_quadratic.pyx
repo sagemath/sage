@@ -1004,7 +1004,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (-a-2).sign()
             -1
 
-            sage: # needs sage.symbolic
             sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^2 + 2*x + 7, 'b', embedding=CC(-1,-sqrt(6)))
             sage: b.sign()
@@ -2419,12 +2418,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         test = 2 * (self - n)
         if test < 1:
             return n
-        elif test > 1:
+        if test > 1:
             return n + 1
-        elif n % 2 == 0:
+        if n % 2 == 0:
             return n
-        else:
-            return n + 1
+        return n + 1
 
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):

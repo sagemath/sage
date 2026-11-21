@@ -111,10 +111,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
         n = self.dimension()
         if i == n:
             return self.sum(self.monomial(j) for j in range(n)) / 2
-        elif i == n - 1:
+        if i == n - 1:
             return (self.sum(self.monomial(j) for j in range(n-1)) - self.monomial(n-1)) / 2
-        else:
-            return self.sum(self.monomial(j) for j in range(i))
+        return self.sum(self.monomial(j) for j in range(i))
 
 
 from sage.misc.cachefunc import cached_method
@@ -180,7 +179,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
     def is_atomic(self):
         """
-        Implement :meth:`CartanType_abstract.is_atomic`.
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`.
 
         `D_2` is atomic, like all `D_n`, despite being non irreducible.
 

@@ -1,7 +1,7 @@
-from sage.rings.ring cimport CommutativeRing, Ring
+from sage.rings.ring cimport Ring
 from sage.structure.parent cimport Parent
 
-cdef class MPolynomialRing_base(CommutativeRing):
+cdef class MPolynomialRing_base(Ring):
     cdef object _ngens
     cdef object _term_order
     cdef public object _indices

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras
 

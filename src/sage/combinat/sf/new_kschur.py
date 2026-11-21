@@ -176,8 +176,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         if self.t == 1:
             return [self.kschur(), self.ksplit(), self.khomogeneous(),
                 self.K_kschur()]
-        else:
-            return [self.kschur(), self.ksplit()]
+        return [self.kschur(), self.ksplit()]
 
     def kschur(self):
         r"""
@@ -228,11 +227,9 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [Morse11] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-           Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+        - [Morse11]_
 
-        .. [LamSchillingShimozono10] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-           Compositio Math. 146 (2010), 811-852.
+        - [LamSchillingShimozono10]_
 
         EXAMPLES::
 
@@ -344,8 +341,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             if x in R:
                 if x == 0:
                     return self.zero()
-                else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             # x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
@@ -1126,7 +1122,7 @@ class kSchur(CombinatorialFreeModule):
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
+        If `t=1`, then the product calls ``_product_on_basis_via_rectangles``.
 
         INPUT:
 
@@ -1406,11 +1402,9 @@ class K_kSchur(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [Morse2011] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-        Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+    - [Morse2011]_
 
-    .. [LamSchillingShimozono2010] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-        Compositio Math. 146 (2010), 811-852.
+    - [LamSchillingShimozono2010]_
     """
 
     def __init__(self, kBoundedRing):

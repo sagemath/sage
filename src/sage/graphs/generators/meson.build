@@ -1,5 +1,6 @@
 py.install_sources(
   '__init__.py',
+  'luw_graphs.py',
   'all.py',
   'basic.py',
   'chessboard.py',
@@ -34,4 +35,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
-

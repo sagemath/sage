@@ -362,7 +362,6 @@ def attach(*files):
         ipy = get_ipython()
     except NameError:
         ipy = None
-    global attached
     for filename in files:
         if ipy:
             code = load_wrap(filename, attach=True)
@@ -382,7 +381,7 @@ def add_attached_file(filename):
     INPUT:
 
     - ``filename`` -- string (the fully qualified file name)
-      or :class:`Path` object
+      or :class:`~pathlib.Path` object
 
     EXAMPLES::
 
@@ -420,7 +419,6 @@ def attached_files() -> list:
         sage: af == [t]
         True
     """
-    global attached
     return sorted(str(f) for f in attached)
 
 
@@ -433,7 +431,8 @@ def detach(filename):
     INPUT:
 
     - ``filename`` -- string, a list of strings or a tuple of strings
-      or a :class:`Path`, a list of :class:`Path` or a tuple of :class:`Path`
+      or a :class:`~pathlib.Path`, a list of :class:`~pathlib.Path`
+      or a tuple of :class:`~pathlib.Path`
 
     EXAMPLES::
 
@@ -488,7 +487,6 @@ def detach(filename):
     else:
         filelist = [Path(x) for x in filename]
 
-    global attached
     for filename in filelist:
         fpath = filename.expanduser()
         if not fpath.is_absolute():
@@ -555,7 +553,6 @@ def modified_file_iterator():
         sage: list(modified_file_iterator())
         [(PosixPath('/.../tmp_....py'), time.struct_time(...))]
     """
-    global attached
     modified = {}
     for filename in list(attached):
         old_tm = attached[filename]

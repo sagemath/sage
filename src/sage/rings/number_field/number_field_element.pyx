@@ -93,38 +93,14 @@ from sage.rings.cc import CC
 TUNE_CHARPOLY_NF = 25
 
 
-def is_NumberFieldElement(x):
-    """
-    Return ``True`` if `x` is of type :class:`NumberFieldElement`, i.e., an element of
-    a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
-        sage: is_NumberFieldElement(2)
-        doctest:warning...
-        DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
-        See https://github.com/sagemath/sage/issues/34931 for details.
-        False
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^7 + 17*x + 1)
-        sage: is_NumberFieldElement(a+1)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34931,
-                'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
-    return isinstance(x, NumberFieldElement)
-
-
 def _inverse_mod_generic(elt, I):
     r"""
-    Return an inverse of ``elt`` modulo the given ideal. This is a separate
-    function called from each of the ``OrderElement_xxx`` classes, since
-    otherwise we'd have to have the same code three times over (there
-    is no ``OrderElement_generic`` class - no multiple inheritance). See
+    Return an inverse of ``elt`` modulo the given ideal ``I``.
+
+    This is a separate function called from each of the
+    ``OrderElement_xxx`` classes, since otherwise we'd have to have
+    the same code three times over (there is no
+    ``OrderElement_generic`` class - no multiple inheritance). See
     :issue:`4190`.
 
     EXAMPLES::
@@ -369,8 +345,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if new_parent.degree() == 2:
             if rel == 1:
                 return new_parent._element_class(new_parent, self)
-            else:
-                return self.polynomial()(new_parent.gen()**rel)
+            return self.polynomial()(new_parent.gen()**rel)
 
         cdef type t = type(self)
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
@@ -483,7 +458,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
@@ -538,7 +512,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
             sage: F.gen()._libgap_()
             E(8)
@@ -549,6 +522,55 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             E(8)+3/2*E(8)^2-100*E(8)^3
             sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
+
+            sage: K.<a> = QuadraticField(3)
+            sage: libgap(a)                                                              # needs sage.libs.gap
+            a
+            sage: libgap(a + 2)                                                          # needs sage.libs.gap
+            a+2
+            sage: libgap(a)^2                                                            # needs sage.libs.gap
+            !3
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - a)
+            sage: libgap(b)                                                              # needs sage.libs.gap
+            b
+            sage: libgap(a*b + 2)                                                        # needs sage.libs.gap
+            a*b+!2
+
+        The relative generator need not be a primitive element of the
+        absolute field (here ``b`` does not generate ``L`` over ``QQ``)::
+
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 2)
+            sage: libgap(a*b)                                                            # needs sage.libs.gap
+            a*b
+            sage: L(libgap(a*b)) == a*b                                                  # needs sage.libs.gap
+            True
+            sage: L(libgap(a + b)) == a + b                                              # needs sage.libs.gap
+            True
+
+        Reusing a printed generator name below the immediate base field is
+        unambiguous because conversion uses power-basis coordinates::
+
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 3)
+            sage: T.<z> = L[]
+            sage: M.<a> = L.extension(z^2 - 5)
+            sage: top = M.gen()
+            sage: bottom = M(K.gen())
+            sage: all(M(libgap(v)) == v for v in (top, bottom, top + bottom))             # needs sage.libs.gap
+            True
+
+        Unicode generator names do not need special parsing::
+
+            sage: N = L.extension(z^2 - 5, 'λ')
+            sage: all(N(libgap(v)) == v for v in N.gens())                               # needs sage.libs.gap
+            True
 
         Check that :issue:`15276` is fixed::
 
@@ -562,10 +584,21 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         P = self.parent()
-        if not isinstance(P, NumberField_cyclotomic):
-            raise NotImplementedError("libgap conversion is only implemented for cyclotomic fields")
-
         from sage.libs.gap.libgap import libgap
+        if not isinstance(P, NumberField_cyclotomic):
+            gap_field = libgap(P)
+            E = gap_field.GeneratorsOfField()[0]
+            # For a relative field, ``self.list()`` gives the coordinates in
+            # the relative power basis; ``self.polynomial()`` instead uses the
+            # absolute primitive element.
+            coefficients = self.polynomial().list() if P.is_absolute() else self.list()
+            total = gap_field.Zero()
+            power = gap_field.One()
+            for coeff in coefficients:
+                total += libgap(coeff) * power
+                power *= E
+            return total
+
         E = libgap(P).GeneratorsOfField()[0]
         n = P._n()
         if n % 4 == 2:
@@ -578,7 +611,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.zero()._pari_polynomial('x')
@@ -610,7 +642,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K(1).__pari__()
@@ -1414,7 +1445,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         - ``P`` -- a prime ideal of the parent of ``self``
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :func:`~sage.rings.real_mpfr.RealField` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1618,7 +1650,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ALGORITHM:
 
-        Uses PARI's :pari:`rnfisnorm`. See :meth:`_rnfisnorm`.
+        Uses PARI's :pari:`rnfisnorm`. See ``_rnfisnorm``.
 
         EXAMPLES::
 
@@ -1872,8 +1904,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         if self.parent().coerce_embedding() is None:
             return R(self.base_ring()(self))
-        else:
-            return R(R.complex_field()(self))
+        return R(R.complex_field()(self))
 
     def _acb_(self, R):
         r"""
@@ -2217,10 +2248,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if root:
             if t:
                 return t, v[0]
-            else:
-                return False, None
-        else:
-            return t
+            return False, None
+        return t
 
     def is_padic_square(self, P, check=True):
         r"""
@@ -2912,7 +2941,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QuadraticField(2)
             sage: SR(a)         # indirect doctest
             sqrt(2)
@@ -3415,7 +3443,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             +Infinity
             sage: K(0).additive_order()
             1
-            sage: K.ring_of_integers().characteristic()  # implicit doctest
+            sage: K.ring_of_integers().characteristic()  # indirect doctest
             0
         """
         return ZZ.one() if not self else infinity
@@ -3855,8 +3883,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             from sage.rings.number_field.number_field_base import NumberField
             if isinstance(base, NumberField):
                 return self._matrix_over_base(base)
-            else:
-                return self._matrix_over_base_morphism(base)
+            return self._matrix_over_base_morphism(base)
         # Multiply each power of field generator on
         # the left by this element; make matrix
         # whose rows are the coefficients of the result,
@@ -3954,7 +3981,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         - ``P`` -- a prime ideal of the parent of ``self``
 
-        - ``prec`` -- integer; (default: default :class:`RealField` precision);
+        - ``prec`` -- integer; (default: default
+          :func:`~sage.rings.real_mpfr.RealField` precision);
           desired floating point precision
 
         - ``weighted`` -- boolean (default: ``False``); if ``True``, apply local
@@ -3994,8 +4022,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             from sage.rings.real_mpfr import RealField
             if prec is None:
                 return RealField().zero()
-            else:
-                return RealField(prec).zero()
+            return RealField(prec).zero()
         ht = self.abs_non_arch(P, prec).log()
         if not weighted:
             return ht
@@ -4011,7 +4038,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - ``i`` -- integer in ``range(r+s)`` where `(r,s)` is the signature of
           the parent field (so `n=r+2s` is the degree)
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :func:`~sage.rings.real_mpfr.RealField` precision);
           desired floating point precision
 
         - ``weighted`` -- boolean (default: ``False``); if ``True``, apply local
@@ -4046,10 +4074,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
             sage: [(b + c).local_height_arch(i) for i in range(4)]
-            [1.238223390757884911842206617439,
-            0.02240347229957875780769746914391,
-            0.780028961749618,
-            1.16048938497298]
+            [1.238223390757884911842206617260,
+             0.02240347229957875780769746914391,
+             0.780028961749618,
+             1.16048938497298]
         """
         K = self.number_field()
         emb = K.places(prec=prec)[i]
@@ -4122,7 +4150,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :func:`~sage.rings.real_mpfr.RealField` precision);
           desired floating point precision
 
         OUTPUT:
@@ -4149,7 +4178,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :func:`~sage.rings.real_mpfr.RealField` precision);
           desired floating point precision
 
         OUTPUT:
@@ -4885,11 +4915,14 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         The algorithm first checks that ``self`` is not a strictly
         complex number. Then if ``self`` is not zero, by approximation
         more and more precise, the method answers ``True`` if the
-        number is positive. Using :class:`RealInterval`, the result is
+        number is positive. Using
+        :func:`~sage.rings.real_mpfi.RealInterval`, the result is
         guaranteed to be correct.
 
-        For :class:`CyclotomicField`, the embedding is the natural one
-        sending ``zetan`` on `\cos(2*\pi/n)`.
+        For :class:`CyclotomicField
+        <sage.rings.number_field.number_field.CyclotomicFieldFactory>`,
+        the embedding is the natural one sending ``zetan`` on
+        `\cos(2*\pi/n)`.
 
         EXAMPLES::
 
@@ -4919,15 +4952,12 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         """
         if self != self.conjugate() or self.is_zero():
             return False
-        else:
-            approx = RealInterval(self.n(min_prec).real())
-            if approx.lower() > 0:
-                return True
-            else:
-                if approx.upper() < 0:
-                    return False
-                else:
-                    return self.is_real_positive(min_prec+20)
+        approx = RealInterval(self.n(min_prec).real())
+        if approx.lower() > 0:
+            return True
+        if approx.upper() < 0:
+            return False
+        return self.is_real_positive(min_prec+20)
 
 cdef class NumberFieldElement_relative(NumberFieldElement):
     r"""

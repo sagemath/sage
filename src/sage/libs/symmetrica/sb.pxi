@@ -8,8 +8,8 @@ cdef extern from 'symmetrica/def.h':
     INT scalarproduct_schubert(OP a, OP b, OP c)
     INT divdiff_schubert(OP a, OP schub, OP res)
 
-    INT t_2SCHUBERT_POLYNOM(OP a,OP b)
-    INT mult_schubert_polynom(OP a,OP b,OP c)
+    INT t_2SCHUBERT_POLYNOM(OP a, OP b)
+    INT mult_schubert_polynom(OP a, OP b, OP c)
 
 
 cdef object _check_schubert(object a, OP ca):

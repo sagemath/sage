@@ -464,7 +464,7 @@ cdef class SliceDecomposition(SageObject):
             sage: SD3 = graphs.CompleteGraph(3).slice_decomposition()
             sage: SD1 == SD3  # same lexBFS but different slice for 1
             False
-            sage: SD4 = Graph([(0,1), (0,2)]).slice_decomposition()
+            sage: SD4 = Graph([(0, 1), (0, 2)]).slice_decomposition()
             sage: SD3 == SD4  # same lexBFS and slices but different active edges
             False
         """
@@ -474,8 +474,8 @@ cdef class SliceDecomposition(SageObject):
         cdef SliceDecomposition sd = <SliceDecomposition>other
 
         return self.sigma_inv == sd.sigma_inv \
-                and self.lex_label == sd.lex_label \
-                and self.xslice_len == sd.xslice_len
+            and self.lex_label == sd.lex_label \
+            and self.xslice_len == sd.xslice_len
 
     def __hash__(self):
         r"""
@@ -525,7 +525,7 @@ cdef class SliceDecomposition(SageObject):
 
         ::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.xslice_data('a')
             {'active_edges': [('a', 'b'),
@@ -665,7 +665,7 @@ cdef class SliceDecomposition(SageObject):
 
         ::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.slice('a')
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
@@ -718,7 +718,7 @@ cdef class SliceDecomposition(SageObject):
 
         ::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.xslice_sequence('x')
             [['x'], ['a', 'b', 'c', 'd', 'e', 'f', 'g'], ['u', 'y', 'z'], ['v', 'w']]
@@ -792,7 +792,7 @@ cdef class SliceDecomposition(SageObject):
 
         EXAMPLES::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.lexicographic_label('f')
             ['x', 'a', 'c', 'd']
@@ -836,7 +836,7 @@ cdef class SliceDecomposition(SageObject):
 
         ::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.xslice_sequence('a')
             [['a'], ['b', 'c', 'd', 'e', 'f'], ['g']]
@@ -901,7 +901,7 @@ cdef class SliceDecomposition(SageObject):
         cdef size_t j = idx + 1
         cdef size_t lj
 
-        S = [ [self.sigma[idx]] ]
+        S = [[self.sigma[idx]]]
         while j < idx + l:
             lj = self.xslice_len[j]
             S.append(list(self.sigma[j:j+lj]))
@@ -969,7 +969,7 @@ cdef class SliceDecomposition(SageObject):
 
         ::
 
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x')
             sage: SD.underlying_graph() == G
             True
@@ -1001,7 +1001,7 @@ cdef class SliceDecomposition(SageObject):
         if not hasattr(self, '_underlying_graph'):
             vertices = self.sigma
             edges = [(u, v) for i, v in enumerate(self.sigma)
-                            for u in self.lex_label[i]]
+                     for u in self.lex_label[i]]
             data = [vertices, edges]
             Gclass = self._graph_class
             self._underlying_graph = Gclass(data, format='vertices_and_edges',
@@ -1017,7 +1017,7 @@ cdef class SliceDecomposition(SageObject):
             sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
             sage: repr(SD)
             '[0[1[4[5]]] [2[6]] [3] [9] [7] [8]]'
-            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz',inplace=False)
+            sage: G = Graph('L~mpn~Nrv{^o~_').relabel('abcdefguvwxyz', inplace=False)
             sage: SD = G.slice_decomposition(initial_vertex='x'); repr(SD)
             '[x[a[b[c[d]] [e[f]]] [g]] [u[y[z]]] [v[w]]]'
         """
@@ -1069,10 +1069,10 @@ cdef class SliceDecomposition(SageObject):
         latex.add_to_preamble(r"\usegdlibrary{trees}")
 
         # Call latex() on all vertices
-        sigma_latex = [ latex(v) for v in self.sigma ]
+        sigma_latex = [latex(v) for v in self.sigma]
         slices = [[] for _ in self.sigma]
 
-        lines = [ r"\begin{tikzpicture}" ]
+        lines = [r"\begin{tikzpicture}"]
         lines.append(r"\graph [tree layout,level distance=0,level sep=1em,"
                      r"sibling distance=0,sibling sep=0.6em,"
                      r"tail anchor=center,head anchor=north,"

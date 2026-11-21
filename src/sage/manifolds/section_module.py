@@ -226,9 +226,8 @@ class SectionModule(UniqueRepresentation, Parent):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {} ".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {} ".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -281,8 +280,7 @@ class SectionModule(UniqueRepresentation, Parent):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -636,9 +634,8 @@ class SectionFreeModule(FiniteRankFreeModule):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {}".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {}".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -668,8 +665,7 @@ class SectionFreeModule(FiniteRankFreeModule):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -826,5 +822,44 @@ class SectionFreeModule(FiniteRankFreeModule):
                           symbol_dual=symbol_dual,
                           latex_symbol_dual=latex_symbol_dual)
 
-    set_default_frame = FiniteRankFreeModule.set_default_basis
-    default_frame = FiniteRankFreeModule.default_basis
+    def set_default_frame(self, frame):
+        r"""
+        Set the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.set_default_basis`.
+
+        INPUT:
+
+        - ``frame`` -- a local frame on ``self``
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: f = C0.basis('f')
+            sage: C0.set_default_frame(f)
+            sage: C0.default_frame()
+            Local frame (E|_M, (f_0,f_1))
+        """
+        self.set_default_basis(frame)
+
+    def default_frame(self):
+        r"""
+        Return the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.default_basis`.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: C0.default_frame()
+            Local frame (E|_M, (e_0,e_1))
+        """
+        return self.default_basis()

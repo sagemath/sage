@@ -215,7 +215,7 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
         try:
             if comp.is_trivial_zero():
                 return self.zero()
-            elif (comp - 1).is_trivial_zero():
+            if (comp - 1).is_trivial_zero():
                 return self.one()
         except AttributeError:
             if comp == 0:

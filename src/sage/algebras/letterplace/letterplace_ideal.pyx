@@ -41,14 +41,9 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.rings.noncommutative_ideals import Ideal_nc
-from sage.libs.singular.function import lib
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace, FreeAlgebra_letterplace_libsingular
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
 from sage.rings.infinity import Infinity
-
-#####################
-# Define some singular functions
-lib("freegb.lib")
 
 
 class LetterplaceIdeal(Ideal_nc):

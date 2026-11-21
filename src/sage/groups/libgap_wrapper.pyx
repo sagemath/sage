@@ -149,8 +149,7 @@ class ParentLibGAP(SageObject):
         """
         if self._ambient is None:
             return self
-        else:
-            return self._ambient
+        return self._ambient
 
     def is_subgroup(self):
         """
@@ -388,7 +387,7 @@ class ParentLibGAP(SageObject):
 
     generators = gens
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the `i`-th generator of ``self``.
 
@@ -407,10 +406,18 @@ class ParentLibGAP(SageObject):
         EXAMPLES::
 
             sage: G = FreeGroup('a, b')
-            sage: G.gen(0)
+            sage: G.gen()
             a
             sage: G.gen(1)
             b
+
+        TESTS::
+
+            sage: G = FreeGroup('a, b, c')
+            sage: G.gen(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: i must be in range(ngens)
         """
         if not (0 <= i < self.ngens()):
             raise ValueError('i must be in range(ngens)')
@@ -447,8 +454,7 @@ class ParentLibGAP(SageObject):
         gens = self.gens()
         if gens:
             return prod(gens)
-        else:
-            return self.one()
+        return self.one()
 
 
 cdef class ElementLibGAP(MultiplicativeGroupElement):
@@ -588,8 +594,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         """
         if self.is_one():
             return '1'
-        else:
-            return self._libgap._repr_()
+        return self._libgap._repr_()
 
     def _latex_(self):
         r"""

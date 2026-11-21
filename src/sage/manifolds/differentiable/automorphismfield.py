@@ -485,7 +485,7 @@ class AutomorphismField(TensorField):
                     raise TypeError("the argument must be a vector field")
                 dom = self._domain.intersection(vector._domain)
                 return vector.restrict(dom)
-            elif len(arg) == 2:
+            if len(arg) == 2:
                 # self acting as a type-(1,1) tensor on a pair
                 # (1-form, vector field), returning a scalar field:
                 oneform = arg[0]
@@ -493,8 +493,7 @@ class AutomorphismField(TensorField):
                 dom = self._domain.intersection(
                                   oneform._domain).intersection(vector._domain)
                 return oneform.restrict(dom)(vector.restrict(dom))
-            else:
-                raise TypeError("wrong number of arguments")
+            raise TypeError("wrong number of arguments")
         # Generic case
         if len(arg) == 1:
             # The field of automorphisms acting on a vector field:
@@ -758,8 +757,7 @@ class AutomorphismField(TensorField):
         """
         if isinstance(other, AutomorphismField):
             return self._mul_(other)  # general linear group law
-        else:
-            return TensorField.__mul__(self, other)  # tensor product
+        return TensorField.__mul__(self, other)  # tensor product
 
     def __imul__(self, other):
         r"""
@@ -1120,7 +1118,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             dom = self._domain.intersection(vector._domain)
             return FreeModuleAutomorphism.__call__(self.restrict(dom),
                                                    vector.restrict(dom))
-        elif len(arg) == 2:
+        if len(arg) == 2:
             # the automorphism acting as a type (1,1) tensor on a pair
             # (1-form, vector field), returning a scalar field:
             oneform = arg[0]
@@ -1130,8 +1128,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             return FreeModuleAutomorphism.__call__(self.restrict(dom),
                                                    oneform.restrict(dom),
                                                    vector.restrict(dom))
-        else:
-            raise TypeError("wrong number of arguments")
+        raise TypeError("wrong number of arguments")
 
     def __invert__(self):
         r"""

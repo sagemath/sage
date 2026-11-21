@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra quotient elements
 
@@ -59,10 +58,10 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         if isinstance(x, (Integer, int)):
             self.__vector = Q.module().gen(0) * x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() is Q.module():
+        if isinstance(x, FreeModuleElement) and x.parent() is Q.module():
             self.__vector = x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() == A.module():
+        if isinstance(x, FreeModuleElement) and x.parent() == A.module():
             self.__vector = x
             return
         R = A.base_ring()
@@ -141,7 +140,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         """
         return self.__vector
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
         Compare two quotient algebra elements; done by comparing the
         underlying vector representatives.
@@ -158,7 +157,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             sage: i + j == j + i
             True
         """
-        return richcmp(self.vector(), right.vector(), op)
+        return richcmp(self.vector(), other.vector(), op)
 
     def __neg__(self):
         """

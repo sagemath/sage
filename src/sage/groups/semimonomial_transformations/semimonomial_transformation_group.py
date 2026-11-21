@@ -216,20 +216,19 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
                     raise TypeError('%s of type %s' % (autom, type(autom)) +
                                     ' is not coerceable to an automorphism')
             return self.Element(self, v, perm, autom)
-        else:
-            try:
-                if arg1.parent() is self:
-                    return arg1
-            except AttributeError:
-                pass
-            try:
-                from sage.rings.integer import Integer
-                if Integer(arg1) == 1:
-                    return self()
-            except TypeError:
-                pass
-            raise TypeError('the first argument must be an integer' +
-                            ' or an element of this group')
+        try:
+            if arg1.parent() is self:
+                return arg1
+        except AttributeError:
+            pass
+        try:
+            from sage.rings.integer import Integer
+            if Integer(arg1) == 1:
+                return self()
+        except TypeError:
+            pass
+        raise TypeError('the first argument must be an integer' +
+                        ' or an element of this group')
 
     def base_ring(self):
         r"""

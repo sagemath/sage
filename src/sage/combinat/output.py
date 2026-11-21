@@ -348,9 +348,8 @@ def tex_from_array_tuple(a_tuple, with_lines=True) -> str:
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, ','.join(
             r'\emptyset' if not comp else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
-    else:
-        return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if not comp else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
+    return '{%s\n%s\n}' % (lr, ','.join(
+        r'\emptyset' if not comp else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
 
 
 def tex_from_skew_array(array, with_lines=False, align='b') -> str:
@@ -401,7 +400,7 @@ def tex_from_skew_array(array, with_lines=False, align='b') -> str:
             # in a slightly unpythonic way, we label the lines as 0, 1, ..., len(array)
             if r == 0:
                 return r'\cline{%s-%s}' % (nones[0], len(array[0]))
-            elif r == len(array):
+            if r == len(array):
                 start = nones[r-1]
                 finish = len(array[r-1])
             else:
@@ -654,16 +653,14 @@ def ascii_art_table(data, use_unicode=False, convention='English'):
 
     if convention == "English":
         return "\n".join(matr)
-    else:
-        output = "\n".join(reversed(matr))
-        if use_unicode:
-            tr = {
-                ord(dl): ul, ord(dr): ur,
-                ord(ul): dl, ord(ur): dr,
-                ord(dh): uh, ord(uh): dh}
-            return output.translate(tr)
-        else:
-            return output
+    output = "\n".join(reversed(matr))
+    if use_unicode:
+        tr = {
+            ord(dl): ul, ord(dr): ur,
+            ord(ul): dl, ord(ur): dr,
+            ord(dh): uh, ord(uh): dh}
+        return output.translate(tr)
+    return output
 
 
 def ascii_art_table_russian(data, use_unicode=False, compact=False):

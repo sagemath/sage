@@ -468,15 +468,14 @@ class RationalFunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation
             # Step 4:
             if r == 0:
                 return e
-            else:
-                # Step 5:
-                lambdas = prime_power_representation(e, x)
-                # Step 6 and 7:
-                der = 0
-                for i in range(p):
-                    mu = derive(lambdas[i], r)
-                    der += mu**p * x**i
-                return der
+            # Step 5:
+            lambdas = prime_power_representation(e, x)
+            # Step 6 and 7:
+            der = 0
+            for i in range(p):
+                mu = derive(lambdas[i], r)
+                der += mu**p * x**i
+            return der
 
         return derive(f, i)
 

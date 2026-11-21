@@ -31,7 +31,7 @@ import weakref
 import re
 
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
+from sage.modular import dirichlet
 from sage.rings.integer import Integer
 from sage.rings.rational_field import Q as QQ
 from sage.categories.commutative_rings import CommutativeRings
@@ -403,9 +403,8 @@ def EisensteinForms(group=1,
     if weight == 1:
         return ModularForms(group, weight, base_ring,
                         use_cache=use_cache, eis_only=True, prec=prec).eisenstein_submodule()
-    else:
-        return ModularForms(group, weight, base_ring,
-                        use_cache=use_cache, prec=prec).eisenstein_submodule()
+    return ModularForms(group, weight, base_ring,
+                    use_cache=use_cache, prec=prec).eisenstein_submodule()
 
 
 def Newforms(group, weight=2, base_ring=None, names=None):

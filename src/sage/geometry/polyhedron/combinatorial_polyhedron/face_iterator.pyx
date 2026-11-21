@@ -1,5 +1,5 @@
 # distutils: extra_compile_args = OPENMP_CFLAGS
-# distutils: extra_link_args = OPENMP_CFLAGS
+# distutils: extra_link_args = OPENMP_LDFLAGS
 r"""
 Face iterator for polyhedra
 
@@ -639,7 +639,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -679,8 +678,7 @@ cdef class FaceIterator_base(SageObject):
                    if not (self._n_facets <= i < self._n_facets + self._n_equations)]
         if self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def join_of_Vrep(self, *indices):
         r"""
@@ -725,7 +723,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -810,8 +807,7 @@ cdef class FaceIterator_base(SageObject):
         """
         if not self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def _meet_of_coatoms(self, *indices):
         r"""
@@ -850,7 +846,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._meet_of_coatoms(1,2)
@@ -960,7 +955,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -976,7 +970,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._join_of_atoms(1,2)
@@ -1582,12 +1575,12 @@ cdef class FaceIterator(FaceIterator_base):
         r"""
         EXAMPLES::
 
-            sage: P = polytopes.associahedron(['A',3])                                  # needs sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
-            sage: C.face_generator()                                                    # needs sage.combinat
+            sage: P = polytopes.associahedron(['A',3])
+            sage: C = CombinatorialPolyhedron(P)
+            sage: C.face_generator()
             Iterator over the proper faces of a 3-dimensional combinatorial polyhedron
 
-            sage: C.face_generator(1)                                                   # needs sage.combinat
+            sage: C.face_generator(1)
             Iterator over the 1-faces of a 3-dimensional combinatorial polyhedron
         """
         if self.structure.output_dimension != -2:
@@ -1853,11 +1846,11 @@ cdef class FaceIterator_geom(FaceIterator_base):
         r"""
         EXAMPLES::
 
-            sage: P = polytopes.associahedron(['A',3])                                  # needs sage.combinat
-            sage: P.face_generator()                                                    # needs sage.combinat
+            sage: P = polytopes.associahedron(['A',3])
+            sage: P.face_generator()
             Iterator over the faces of a 3-dimensional polyhedron in QQ^3
 
-            sage: P.face_generator(1)                                                   # needs sage.combinat
+            sage: P.face_generator(1)
             Iterator over the 1-faces of a 3-dimensional polyhedron in QQ^3
         """
         if self._requested_dim is not None:
@@ -1907,7 +1900,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
     def current(self):
         r"""
-        Retrieve the last value of :meth:`__next__`.
+        Retrieve the last value of ``__next__``.
 
         EXAMPLES::
 

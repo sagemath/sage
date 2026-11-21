@@ -22,7 +22,6 @@ from .linear_extensions import LinearExtensionsOfPosetWithHooks
 from .lattices import FiniteJoinSemilattice
 from collections import deque
 from sage.rings.integer_ring import ZZ
-from sage.misc.misc_c import prod
 
 
 class DCompletePoset(FiniteJoinSemilattice):
@@ -47,7 +46,7 @@ class DCompletePoset(FiniteJoinSemilattice):
     _desc = "Finite d-complete poset"
 
     @lazy_attribute
-    def _hooks(self):
+    def _hooks(self) -> dict:
         r"""
         The hook lengths of the elements of the d-complete poset.
 
@@ -178,4 +177,4 @@ class DCompletePoset(FiniteJoinSemilattice):
         if not self._hasse_diagram:
             return ZZ.one()
 
-        return ZZ(prod(self._hooks.values()))
+        return ZZ.prod(self._hooks.values())

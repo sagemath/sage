@@ -19,7 +19,7 @@ cdef class CategoryObject(SageObject):
     cdef public _names
     cdef public _factory_data
     cdef object __weakref__
-    cdef long _hash_value
+    cdef Py_hash_t _hash_value
 
     cdef getattr_from_category(self, name)
 

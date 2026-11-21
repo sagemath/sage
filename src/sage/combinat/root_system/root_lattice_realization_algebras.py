@@ -197,8 +197,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lascoux2003] Alain Lascoux, Symmetric functions and combinatorial operators on polynomials,
-               CBMS Regional Conference Series in Mathematics, 99, 2003.
+            - [Lascoux2003]_
             """
             P = self.basis().keys()  # the root lattice realization
             n = weight.scalar(P.simple_coroot(i))
@@ -231,8 +230,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Kumar1987] \S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
-               Invent. Math. 89 (1987), no. 2, 395-423.
+            - [Kumar1987]_
 
             EXAMPLES:
 
@@ -336,7 +334,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             EXAMPLES::
 
@@ -386,8 +386,7 @@ class Algebras(AlgebrasCategory):
             result = (q1+q2) * pi_on_weight - self.term(weight.simple_reflection(i), q2)
             if convention == "dominant":
                 return result.map_support(operator.neg)
-            else:
-                return result
+            return result
 
         def demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
@@ -434,12 +433,9 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lusztig1985] \G. Lusztig,
-               *Equivariant K-theory and representations of Hecke algebras*,
-               Proc. Amer. Math. Soc. 94 (1985), no. 2, 337-342.
+            - [Lusztig1985]_
 
-            .. [Cherednik1995] \I. Cherednik,
-               *Nonsymmetric Macdonald polynomials*. IMRN 10, 483-515 (1995).
+            - [Cherednik1995]_
 
             EXAMPLES::
 
@@ -606,7 +602,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             .. TODO::
 
@@ -668,9 +666,9 @@ class Algebras(AlgebrasCategory):
 
             .. SEEALSO::
 
-                - :meth:`demazure_lusztig_operators`.
-                - :meth:`demazure_lusztig_operator_on_classical_on_basis`.
-                - :meth:`q_project`
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operator_on_classical_on_basis`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.q_project`
 
             EXAMPLES::
 
@@ -769,7 +767,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Haiman06] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
+            - [Haiman06]_
 
             .. WARNING::
 
@@ -1011,9 +1009,8 @@ class Algebras(AlgebrasCategory):
                 if convention != "dominant":
                     raise NotImplementedError("The twisted Demazure-Lusztig operator T_0 is only implemented in the dominant convention")
                 return self.T0_check_on_basis(q1, q2, convention=convention)(weight)
-            else:
-                L = self.classical()
-                return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
+            L = self.classical()
+            return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
 
         def twisted_demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""

@@ -1,24 +1,192 @@
-name: Release distributions and wheels
+# The single entry point for builds, tests, documentation and releases.
+# Keep this filename and the publishing jobs here: PyPI Trusted Publishing
+# identifies release.yml and does not support configuring reusable workflows.
+# Keep event/path selection in select-workflows.cjs; lint runs once for all jobs.
+name: CI
 
 on:
-  push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   pull_request:
-    paths:
-      - '.github/workflows/dist.yml'
+  merge_group:
+  push:
+    branches: [master, develop]
+    tags: ['*']
+  schedule:
+    # Recover failed Docker Hub builds on Tuesday and Thursday.
+    - cron: '0 1 * * 2,4'
   workflow_dispatch:
-    # Allow to run manually
+    inputs:
+      target:
+        description: CI workflow to run after lint
+        type: choice
+        default: standard
+        options:
+          - standard
+          - build
+          - distro
+          - meson
+          - minimal
+          - optional
+          - uv
+          - doc_html
+          - doc_pdf
+          - livedoc
+          - homebrew
+          - docker
+          - release
+          - types
+      platform:
+        description: Platform for build
+        type: string
+        default: ubuntu-resolute-standard
+      docker_tag:
+        description: Docker tag for build
+        type: string
+        default: dev
+      packages:
+        description: Comma-separated package list (required for optional)
+        type: string
+      sage_repository:
+        description: Optional Sage repository for homebrew
+        type: string
+      sage_ref:
+        description: Optional branch, tag, commit or PR ref for homebrew
+        type: string
+      suite:
+        description: Homebrew doctest suite (pytest tests always run)
+        type: choice
+        default: smoke
+        options: [smoke, all]
+      doctest_paths:
+        description: Optional space-separated src/sage paths for homebrew
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+concurrency:
+  # Separate manual targets and events; a scheduled build must not cancel CI.
+  group: sage-ci-${{ github.event_name }}-${{ github.ref }}-${{ inputs.target || 'automatic' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || (github.event_name == 'push' && github.ref_type == 'branch') }}
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    with:
+      sage_repository: ${{ inputs.target == 'homebrew' && inputs.sage_repository || '' }}
+      sage_ref: ${{ inputs.target == 'homebrew' && inputs.sage_ref || '' }}
+
+  select:
+    name: Select CI workflows
+    needs: lint
+    runs-on: ubuntu-26.04
+    outputs:
+      build: ${{ steps.select.outputs.build }}
+      distro: ${{ steps.select.outputs.distro }}
+      meson: ${{ steps.select.outputs.meson }}
+      minimal: ${{ steps.select.outputs.minimal }}
+      optional: ${{ steps.select.outputs.optional }}
+      uv: ${{ steps.select.outputs.uv }}
+      doc_html: ${{ steps.select.outputs.doc_html }}
+      doc_pdf: ${{ steps.select.outputs.doc_pdf }}
+      livedoc: ${{ steps.select.outputs.livedoc }}
+      homebrew: ${{ steps.select.outputs.homebrew }}
+      docker: ${{ steps.select.outputs.docker }}
+      release: ${{ steps.select.outputs.release }}
+      types: ${{ steps.select.outputs.types }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test workflow selection
+        run: node --test build/test/ci/select-workflows.test.cjs
+      - name: Select workflows for this event
+        id: select
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const select = require('./.github/workflows/select-workflows.cjs');
+            await select({github, context, core});
+
+  build:
+    needs: [lint, select]
+    if: needs.select.outputs.build == 'true'
+    uses: ./.github/workflows/build.yml
+
+  distro:
+    needs: [lint, select]
+    if: needs.select.outputs.distro == 'true'
+    uses: ./.github/workflows/ci-distro.yml
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+      packages: write
+
+  meson:
+    needs: [lint, select]
+    if: needs.select.outputs.meson == 'true'
+    uses: ./.github/workflows/ci-meson.yml
+
+  minimal:
+    needs: [lint, select]
+    if: needs.select.outputs.minimal == 'true'
+    uses: ./.github/workflows/ci-minimal.yml
+
+  optional:
+    needs: [lint, select]
+    if: needs.select.outputs.optional == 'true'
+    uses: ./.github/workflows/ci-optional-packages.yml
+
+  uv:
+    needs: [lint, select]
+    if: needs.select.outputs.uv == 'true'
+    uses: ./.github/workflows/ci.yml
+
+  doc_html:
+    needs: [lint, select]
+    if: needs.select.outputs.doc_html == 'true'
+    uses: ./.github/workflows/doc-build.yml
+
+  doc_pdf:
+    needs: [lint, select]
+    if: needs.select.outputs.doc_pdf == 'true'
+    uses: ./.github/workflows/doc-build-pdf.yml
+
+  livedoc:
+    needs: [lint, select]
+    if: needs.select.outputs.livedoc == 'true'
+    uses: ./.github/workflows/doc-build-livedoc.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: read
+      actions: read
+
+  homebrew:
+    needs: [lint, select]
+    if: needs.select.outputs.homebrew == 'true'
+    uses: ./.github/workflows/homebrew-bottles.yml
+    with:
+      sage_repository: ${{ inputs.sage_repository || '' }}
+      sage_ref: ${{ inputs.sage_ref || '' }}
+      suite: ${{ inputs.suite || 'smoke' }}
+      doctest_paths: ${{ inputs.doctest_paths || '' }}
+
+  docker:
+    needs: [lint, select]
+    if: needs.select.outputs.docker == 'true'
+    uses: ./.github/workflows/push_to_docker_hub.yml
+    secrets: inherit
+
+  types:
+    needs: [lint, select]
+    if: needs.select.outputs.types == 'true'
+    uses: ./.github/workflows/types.yml
+
 
   release_dist:
+    needs: [lint, select]
+    if: needs.select.outputs.release == 'true'
 
     # This job first checks whether "configure --enable-download-from-upstream-url"
     # (the default since #32390) is needed.
@@ -31,37 +199,31 @@ jobs:
     # tarball has been uploaded to the Sage server at the time
     # of pushing a release tag.
 
-    runs-on: ubuntu-latest
+    # Use distro Python 3.14 with the matching apt-installed prerequisites.
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
-      - name: make dist (--disable-download-from-upstream-url)
-        id: make_dist
+      - name: Configure with --enable-download-from-upstream-url
         run: |
-          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
-        env:
-          MAKE: make -j8
-      - name: make download (--disable-download-from-upstream-url)
-        id: make_download
-        run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
-        env:
-          MAKE: make -j8
-      - name: Reconfigure with --enable-download-from-upstream-url
-        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
-        run: |
-          ./configure
+          # Run "bootstrap -s" so that the configure tarball
+          # (configure-$(git rev-parse HEAD).tar.gz) is generated and saved
+          # locally to upstream/. Otherwise "make dist" below tries to
+          # download it from the Sage mirrors / GitHub release assets, which
+          # fails for unreleased commits (e.g. on workflow_dispatch / PR runs).
+          ./bootstrap -s
+          ./configure --with-python=/usr/bin/python3
       - name: make dist (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        id: make_dist
         run: |
           make dist
         env:
           MAKE: make -j8
       - name: make download (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_download.outcome != 'success'
+        if: (success() || failure()) && steps.make_dist.outcome != 'success'
         run: |
           make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
         env:
@@ -70,7 +232,7 @@ jobs:
         if: success() || failure()
         run: |
           rm -f upstream/*do-not-distribute*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
           path: |
@@ -79,23 +241,28 @@ jobs:
           name: release_dist
 
   sdists:
+    needs: [lint, select]
+    if: needs.select.outputs.release == 'true'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
-          python-version: 3.12
+          python-version: 3.13
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
           activate-environment: sage-dev
-          environment-file: environment-3.12-linux.yml
+          environment-file: environment-3.13-linux.yml
 
       - name: Create source distribution
         shell: bash -l {0}
@@ -104,31 +271,29 @@ jobs:
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: "dist/*.tar.gz"
           name: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
 
   release:
-    needs: [release_dist, sdists]
-    runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
+    needs: [lint, select, release_dist, sdists]
+    runs-on: ubuntu-26.04
+    if: needs.select.outputs.release == 'true' && github.ref_type == 'tag'
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: release_dist
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -152,8 +317,9 @@ jobs:
           echo "$release_notes" > release_notes
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.4
         with:
+          preserve_order: true
           files: |
             dist/*
             upstream/*
@@ -166,11 +332,11 @@ jobs:
     if: false
     name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
-    needs: sdists
+    needs: [lint, select, sdists]
     strategy:
       fail-fast: false
       matrix:
-        os:      [ubuntu-latest]
+        os:      [ubuntu-26.04]
         arch:    [x86_64, i686, aarch64]
         build:   [manylinux, musllinux]
         include:
@@ -181,7 +347,6 @@ jobs:
             arch: arm64
             build: macosx
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
@@ -192,31 +357,31 @@ jobs:
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.12, <3.13"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.13, <3.15"
       # Environment during wheel build
       CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up QEMU
         if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: all
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         # As of 2024-02-03, the macOS M1 runners do not have preinstalled python or pipx.
         # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
         id: python
         with:
-          python-version: "3.12 - 3.13"
+          python-version: "3.13 - 3.14"
           update-environment: false
 
       - name: Bootstrap
@@ -247,20 +412,24 @@ jobs:
               (cd unpacked && tar xfz - ) < $sdist
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
 
   upload_wheels:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
-    needs: build_wheels
-    runs-on: ubuntu-latest
+    needs: [lint, select, build_wheels]
+    if: needs.select.outputs.release == 'true'
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: "*-*-*-wheels"
           path: wheelhouse
@@ -268,8 +437,6 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           packages-dir: wheelhouse/
           skip-existing: true
           verbose: true

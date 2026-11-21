@@ -388,13 +388,12 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
                 except ValueError:  # not a codeword of this code
                     pass
             return l
-        else:
-            try:
-                cw = vector([sec(c) for c in result])
-            except ValueError:  # not a codeword of this code
-                raise DecodingError("Original decoder does not output a subfield codeword. "
-                                    "You may have exceeded the decoding radius.")
-            return cw
+        try:
+            cw = vector([sec(c) for c in result])
+        except ValueError:  # not a codeword of this code
+            raise DecodingError("Original decoder does not output a subfield codeword. "
+                                "You may have exceeded the decoding radius.")
+        return cw
 
     def decoding_radius(self, **kwargs):
         r"""

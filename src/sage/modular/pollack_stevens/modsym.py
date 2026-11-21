@@ -1099,16 +1099,15 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             psi = K.hom([K.gen()], L)
             embedded_sym = self.parent().element_class(self._map.apply(psi, codomain=Dist, to_moments=True), V, construct=True)
             return [embedded_sym, psi]
-        else:
-            roots = [r[0] for r in v]
-            ans = []
-            V = self.parent().change_ring(Qp(p, M))
-            Dist = V.coefficient_module()
-            for r in roots:
-                psi = K.hom([r], Qp(p, M))
-                embedded_sym = self.parent().element_class(self._map.apply(psi, codomain=Dist, to_moments=True), V, construct=True)
-                ans.append((embedded_sym, psi))
-            return ans
+        roots = [r[0] for r in v]
+        ans = []
+        V = self.parent().change_ring(Qp(p, M))
+        Dist = V.coefficient_module()
+        for r in roots:
+            psi = K.hom([r], Qp(p, M))
+            embedded_sym = self.parent().element_class(self._map.apply(psi, codomain=Dist, to_moments=True), V, construct=True)
+            ans.append((embedded_sym, psi))
+        return ans
 
     def lift(self, p=None, M=None, alpha=None, new_base_ring=None,
              algorithm=None, eigensymbol=False, check=True):
@@ -1250,8 +1249,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             Phi = _iterate_Up(Phi, p, newM, alpha, q, aq, check)
             Phi = Phi.reduce_precision(M)
             return Phi._normalize(include_zeroth_moment=True)
-        else:
-            return self._lift_to_OMS(p, M, new_base_ring, algorithm)
+        return self._lift_to_OMS(p, M, new_base_ring, algorithm)
 
     def _lift_to_OMS(self, p, M, new_base_ring, algorithm='greenberg'):
         r"""

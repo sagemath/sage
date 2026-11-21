@@ -2,11 +2,12 @@ name: Publish live documentation
 
 on:
   workflow_run:
-    workflows: "Build live documentation"
+    workflows: ["CI", "Sage CI", "Build live documentation"]
     types:
       - completed
 
 permissions:
+  actions: read
   statuses: write
   checks: write
   pull-requests: write
@@ -27,12 +28,25 @@ permissions:
 jobs:
   publish-live-doc:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion != 'cancelled'
     env:
       CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
+      # Another CI job may fail after documentation builds successfully.
+      # Only deploy if this run actually produced the documentation artifact.
+      - name: Check for documentation artifact
+        id: artifact
+        uses: actions/github-script@v9
+        if: env.CAN_DEPLOY == 'true'
+        with:
+          script: |
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              ...context.repo, run_id: context.payload.workflow_run.id, per_page: 100,
+            });
+            core.setOutput('available', artifacts.some(a => a.name === 'livedoc' && !a.expired));
+
       - name: Get information about workflow origin
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         id: source-run-info
         with:
           script: |
@@ -47,11 +61,11 @@ jobs:
 
             core.setOutput('sourceEvent', event);
             core.setOutput('branchName', branchName);
-        if: env.CAN_DEPLOY == 'true'
+        if: steps.artifact.outputs.available == 'true'
 
       - name: Download live doc
         id: download-doc
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: livedoc
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -76,7 +90,7 @@ jobs:
 
       - name: Deploy to netlify with doc-TAG alias
         id: deploy-netlify
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
@@ -87,7 +101,7 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to netlify with doc-release alias
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message doc-release --alias doc-release
         env:

@@ -520,10 +520,9 @@ class MPolynomialMult(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def macaulay2(self):
         """
@@ -722,10 +721,9 @@ class MPolynomialMult2(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def magma(self):
         """

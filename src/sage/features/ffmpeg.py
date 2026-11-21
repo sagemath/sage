@@ -94,7 +94,8 @@ class FFmpeg(Executable):
         from subprocess import run
         for cmd in commands:
             try:
-                result = run(cmd, cwd=base, capture_output=True, text=True)
+                result = run(cmd, cwd=base, capture_output=True, text=True,
+                             check=False)
             except OSError as e:
                 return FeatureTestResult(self, False, reason='Running command "{}" '
                             'raised an OSError "{}" '.format(' '.join(cmd), e))

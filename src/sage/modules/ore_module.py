@@ -83,7 +83,8 @@ basis `e_0, e_1, \ldots`::
     sage: A.basis()
     [e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10]
 
-Do not forget to use the method :meth:`inject_variables` to get the
+Do not forget to use the method
+:meth:`~sage.structure.category_object.CategoryObject.inject_variables` to get the
 `e_i` in your namespace::
 
     sage: e0
@@ -183,8 +184,7 @@ AUTHOR:
 
 import operator
 
-from sage.misc.latex import latex
-from sage.misc.latex import latex_variable_name
+from sage.misc.latex import latex, latex_variable_name
 from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
@@ -256,7 +256,7 @@ class OreAction(Action):
             sage: X*e0  # indirect doctest
             e1
         """
-        ans = P[0]*x
+        ans = P[0] * x
         y = x
         for i in range(1, P.degree() + 1):
             y = y.image()
@@ -324,7 +324,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
     """
     Element = OreModuleElement
 
-    def __classcall_private__(cls, mat, twist, denominator=None, names=None, category=None):
+    def __classcall_private__(cls, mat, twist, denominator=None,
+                              names=None, category=None):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
@@ -434,8 +435,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         rank = mat.nrows()
         FreeModule_ambient.__init__(self, base, rank, category=category)
         self.register_action(ScalarAction(base, self, True, operator.mul))
+        self.register_action(OreAction(ore, self, True, operator.mul))
         self._ore = ore
-        self._ore_category = category
+        self._category = category
         self._names = names
         if names is not None:
             self._latex_names = [latex_variable_name(name) for name in names]
@@ -471,6 +473,13 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             (t, 0)
             sage: M(v)
             (t, 0)
+
+        TESTS::
+
+            sage: M(0)
+            (0, 0)
+            sage: N(0)
+            (0, 0)
         """
         if isinstance(x, OreModuleElement):
             M = x.parent()._pushout_(self)
@@ -601,7 +610,6 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
               From: Ore module of rank 1 over Finite Field in z of size 5^3 twisted by z |--> z^5
               To:   Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
         """
-        pass
 
     def is_zero(self) -> bool:
         r"""
@@ -696,7 +704,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         names = normalize_names(names, rank)
         cls = self.__class__
         M = cls.__classcall__(cls, self._pseudohom._matrix, self._ore,
-                              self._denominator, names, self._ore_category)
+                              self._denominator, names, self._category)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -747,8 +755,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         if self._denominator is None:
             return self._pseudohom
-        else:
-            return self.over_fraction_field().pseudohom()
+        return self.over_fraction_field().pseudohom()
 
     def ore_ring(self, names='x', action=True):
         r"""
@@ -800,7 +807,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                 'Ore Polynomial Ring in U over Finite Field in a of size 5^3 twisted by a |--> a^5' and
                 'Ore module <e1, e2> over Finite Field in a of size 5^3 twisted by a |--> a^5'
         """
-        S = self._ore_category.ore_ring(names)
+        S = self._category.ore_ring(names)
         if action:
             self._unset_coercions_used()
             self.register_action(OreAction(S, self, True, operator.mul))
@@ -897,7 +904,12 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         mat = self._pseudohom.matrix()
         if self._denominator is not None:
-            mat /= self._denominator.value()
+            base = self.base_ring()
+            scalar = self._denominator.value().inverse()
+            scalar = base.fraction_field()(scalar)
+            if scalar in base:
+                scalar = base(scalar)
+            mat *= scalar
         return mat
 
     def over_fraction_field(self):
@@ -1340,8 +1352,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             v
         """
         H = self.Hom(self)
-        one = self.base_ring().one()
-        return H(one)
+        return H(self.base_ring().one())
 
     def _span(self, gens):
         r"""
@@ -1400,16 +1411,16 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                         rows.append(self(x).list())
             else:
                 rows.append(self(gen).list())
-        if len(rows) < 2*rank:
+        if len(rows) < 2 * rank:
             zero = rank * [base.zero()]
-            rows += (2*rank - len(rows)) * [zero]
+            rows += (2 * rank - len(rows)) * [zero]
         M = matrix(base, rows)
         if hasattr(M, 'popov_form'):
             def normalize(M):
                 N = M.popov_form()
                 for i in range(N.nrows()):
                     for j in range(N.ncols()):
-                        M[i,j] = N[i,j]
+                        M[i, j] = N[i, j]
         else:
             normalize = M.__class__.echelonize
         g = f
@@ -1423,7 +1434,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                     break
                 v = g(v).list()
                 for j in range(rank):
-                    M[i+rank, j] = v[j]
+                    M[i + rank, j] = v[j]
                 r += 1
             normalize(M)
             if M.list() == sM:
@@ -1650,7 +1661,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
     quo = quotient
 
-    def ambient_modules(self):
+    def ambient_modules(self) -> list:
         r"""
         Return the list of modules in which this module naturally lives.
 
@@ -1731,7 +1742,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                 if M in ambients:
                     return M
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``other`` is included in this module;
         ``False`` otherwise.
@@ -1842,10 +1853,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         denom = No._fitting_index()
         if denom:
             return Ns._fitting_index() / denom
-        else:
-            return Infinity
+        return Infinity
 
-    def covers(self):
+    def covers(self) -> list:
         r"""
         Return the list of modules of which this module is a quotient.
 
@@ -1937,7 +1947,7 @@ class OreSubmodule(OreModule):
     r"""
     Class for submodules of Ore modules.
     """
-    def __classcall_private__(cls, ambient, gens, saturate, names):
+    def __classcall__(cls, ambient, gens, saturate, names):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
@@ -1987,7 +1997,7 @@ class OreSubmodule(OreModule):
             basis = matrix(base, gens)
             submodule = SubmoduleHelper(basis, saturate)
         names = normalize_names(names, submodule.rank)
-        return cls.__classcall__(cls, ambient, submodule, names)
+        return super().__classcall__(cls, ambient, submodule, names)
 
     def __init__(self, ambient, submodule, names) -> None:
         r"""
@@ -2026,7 +2036,7 @@ class OreSubmodule(OreModule):
         ambient._general_class.__init__(
             self, matrix(base, rows),
             ambient.ore_ring(action=False),
-            ambient._denominator, names, ambient._ore_category)
+            ambient._denominator, names, ambient._category)
         coerce = self.hom(submodule.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
@@ -2110,7 +2120,7 @@ class OreSubmodule(OreModule):
         """
         return self._ambient
 
-    def ambient_modules(self):
+    def ambient_modules(self) -> list:
         r"""
         Return the list of modules in which this module naturally lives.
 
@@ -2349,8 +2359,7 @@ class OreSubmodule(OreModule):
         """
         rank = self.rank()
         names = normalize_names(names, rank)
-        cls = self.__class__
-        M = cls.__classcall__(cls, self._ambient, self._submodule, names)
+        M = super().__classcall__(self.__class__, self._ambient, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -2376,8 +2385,7 @@ class OreSubmodule(OreModule):
         submodule = self._submodule
         if submodule.rank != self._ambient.rank():
             return self.base_ring().zero()
-        else:
-            return submodule.basis.determinant()
+        return submodule.basis.determinant()
 
     def injection_morphism(self):
         r"""
@@ -2474,8 +2482,6 @@ class OreSubmodule(OreModule):
         """
         if f.codomain() is not self._ambient:
             raise ValueError("the codomain of the morphism must be the ambient space")
-        rows = []
-        C = self._submodule.coordinates
         try:
             im_gens = [self(f(x)) for x in f.domain().basis()]
         except ValueError:
@@ -2493,7 +2499,7 @@ class OreQuotientModule(OreModule):
     r"""
     Class for quotients of Ore modules.
     """
-    def __classcall_private__(cls, cover, gens, remove_torsion, names):
+    def __classcall__(cls, cover, gens, remove_torsion, names):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
@@ -2544,7 +2550,7 @@ class OreQuotientModule(OreModule):
         if not submodule.is_saturated:
             raise NotImplementedError("torsion Ore modules are not implemented")
         names = normalize_names(names, cover.rank() - submodule.rank)
-        return cls.__classcall__(cls, cover, submodule, names)
+        return super().__classcall__(cls, cover, submodule, names)
 
     def __init__(self, cover, submodule, names) -> None:
         r"""
@@ -2583,9 +2589,9 @@ class OreQuotientModule(OreModule):
         f = cover._pseudohom
         images = [f(x) for x in submodule.complement.rows()]
         cover._general_class.__init__(
-            self, matrix(base, d-rank, d, images) * coerce,
+            self, matrix(base, d - rank, d, images) * coerce,
             cover.ore_ring(action=False),
-            cover._denominator, names, cover._ore_category)
+            cover._denominator, names, cover._category)
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         section = self._section = OreModuleSection(self, cover)
@@ -2722,7 +2728,7 @@ class OreQuotientModule(OreModule):
         """
         return self._cover
 
-    def covers(self):
+    def covers(self) -> list:
         r"""
         Return the list of modules of which this module is a quotient.
 
@@ -2895,8 +2901,7 @@ class OreQuotientModule(OreModule):
         """
         rank = self.rank()
         names = normalize_names(names, rank)
-        cls = self.__class__
-        M = cls.__classcall__(cls, self._cover, self._submodule, names)
+        M = super().__classcall__(self.__class__, self._cover, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)

@@ -299,7 +299,7 @@ class CactusGroup(UniqueRepresentation, Group):
         """
         if isinstance(G, CactusGroup):
             return G._n <= self._n
-        elif isinstance(G, PureCactusGroup):
+        if isinstance(G, PureCactusGroup):
             return G.n() <= self._n
         return super()._coerce_map_from_(G)
 
@@ -924,7 +924,7 @@ class PureCactusGroup(KernelSubgroup):
         """
         return self.ambient().n()
 
-    def gen(self, i):
+    def gen(self, i=0):
         r"""
         Return the ``i``-th generator of ``self``.
 

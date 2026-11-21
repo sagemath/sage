@@ -75,7 +75,6 @@ Construct multivariate power series rings over various base rings.
 
 - Use angle-bracket notation::
 
-    sage: # needs sage.rings.finite_rings
     sage: S.<x,y> = PowerSeriesRing(GF(65537)); S
     Multivariate Power Series Ring in x, y over Finite Field of size 65537
     sage: s = -30077*x + 9485*x*y - 6260*y^3 + 12870*x^2*y^2 - 20289*y^4 + S.O(5); s
@@ -160,7 +159,6 @@ Coercion from polynomial ring in subset of variables::
 
 Coercion from symbolic ring::
 
-    sage: # needs sage.symbolic
     sage: x,y = var('x,y')
     sage: S = PowerSeriesRing(GF(11),2,'x,y'); S
     Multivariate Power Series Ring in x, y over Finite Field of size 11
@@ -203,7 +201,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
@@ -225,46 +223,6 @@ _IntegralDomains = IntegralDomains()
 
 lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing',
                                             'LazyLaurentSeriesRing'))
-
-
-def is_MPowerSeriesRing(x):
-    """
-    Return ``True`` if input is a multivariate power series ring.
-
-    TESTS::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        sage: M = PowerSeriesRing(ZZ, 4, 'v')
-        sage: is_PowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_MPowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_MPowerSeriesRing is deprecated;
-        use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        True
-        sage: T = PowerSeriesRing(RR, 'v')
-        sage: is_PowerSeriesRing(T)
-        True
-        sage: is_MPowerSeriesRing(T)
-        False
-        sage: L = LazyPowerSeriesRing(QQ, 'x')
-        sage: is_MPowerSeriesRing(L)
-        True
-        sage: L = LazyPowerSeriesRing(QQ, 'x, y')
-        sage: is_MPowerSeriesRing(L)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_MPowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.")
-    return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
 
 class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
@@ -609,71 +567,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             return self.base_ring()
         return PowerSeriesRing(self.base_ring(), names=vars)
 
-    # this is defined in PowerSeriesRing_generic
-    # def __call__(self, f, prec=infinity):
-    #     """
-    #     Coerce object to this multivariate power series ring.
-    #     """
-    #     return
-
-    def _coerce_impl(self, f):
-        """
-        Return the canonical coercion of ``f`` into this multivariate power
-        series ring, if one is defined, or raise a :exc:`TypeError`.
-
-        The rings that canonically coerce to this multivariate power series
-        ring are:
-
-            - this ring itself
-
-            - a polynomial or power series ring in the same variables or a
-              subset of these variables (possibly empty), over any base
-              ring that canonically coerces into the base ring of this ring
-
-        EXAMPLES::
-
-            sage: R.<t,u,v> = PowerSeriesRing(QQ); R
-            Multivariate Power Series Ring in t, u, v over Rational Field
-            sage: S1.<t,v> = PolynomialRing(ZZ); S1
-            Multivariate Polynomial Ring in t, v over Integer Ring
-            sage: f1 = -t*v + 2*v^2 + v; f1
-            -t*v + 2*v^2 + v
-            sage: R(f1)
-            v - t*v + 2*v^2
-            sage: S2.<u,v> = PowerSeriesRing(ZZ); S2
-            Multivariate Power Series Ring in u, v over Integer Ring
-            sage: f2 = -2*v^2 + 5*u*v^2 + S2.O(6); f2
-            -2*v^2 + 5*u*v^2 + O(u, v)^6
-            sage: R(f2)
-            -2*v^2 + 5*u*v^2 + O(t, u, v)^6
-
-            sage: R2 = R.change_ring(GF(2))
-            sage: R2(f1)
-            v + t*v
-            sage: R2(f2)
-            u*v^2 + O(t, u, v)^6
-
-        TESTS::
-
-            sage: R.<t,u,v> = PowerSeriesRing(QQ)
-            sage: S1.<t,v> = PolynomialRing(ZZ)
-            sage: f1 = S1.random_element()
-            sage: g1 = R._coerce_impl(f1)
-            sage: f1.parent() == R
-            False
-            sage: g1.parent() == R
-            True
-        """
-        P = f.parent()
-        if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base,
-                          PowerSeriesRing_generic, MPowerSeriesRing_generic,
-                          LazyPowerSeriesRing)):
-            if set(P.variable_names()).issubset(set(self.variable_names())):
-                if self.has_coerce_map_from(P.base_ring()):
-                    return self(f)
-        else:
-            return self(self.base_ring().coerce(f))
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
         Replacement for method of PowerSeriesRing_generic.
@@ -722,7 +615,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         You must either give a base map or there must be a coercion
         from the base ring to the codomain::
 
-            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
             sage: K.<i> = NumberField(t^2 + 1)
             sage: Q8.<z> = CyclotomicField(8)
@@ -738,14 +630,15 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         except TypeError:
             raise TypeError("The given generator images do not coerce to codomain.")
 
-        if len(im_gens) is not self.ngens():
-            raise ValueError("You must specify the image of each generator.")
+        if len(im_gens) != self.ngens():
+            raise ValueError("you must specify the image of each generator")
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         if all(v == 0 for v in im_gens):
             return True
 
-        if isinstance(codomain, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing,
+        if isinstance(codomain, (PowerSeriesRing_generic,
+                                 MPowerSeriesRing_generic, LazyPowerSeriesRing,
                                  LaurentSeriesRing, LazyLaurentSeriesRing)):
             try:
                 B = all(v.valuation() > 0 or v.is_nilpotent() for v in im_gens)
@@ -773,7 +666,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(17)[['x','y']]
             sage: A.has_coerce_map_from(ZZ)
             True
@@ -841,6 +733,36 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
     def _element_constructor_(self, f, prec=None):
         """
+        Construct a multivariate power series from ``f``.
+
+        INPUT:
+
+        - ``f`` -- data used to the define a series
+        - ``prec`` -- the total-degree precision
+
+        EXAMPLES::
+
+            sage: R.<t,u,v> = PowerSeriesRing(QQ); R
+            Multivariate Power Series Ring in t, u, v over Rational Field
+            sage: S1.<t,v> = PolynomialRing(ZZ); S1
+            Multivariate Polynomial Ring in t, v over Integer Ring
+            sage: f1 = -t*v + 2*v^2 + v; f1
+            -t*v + 2*v^2 + v
+            sage: R(f1)
+            v - t*v + 2*v^2
+            sage: S2.<u,v> = PowerSeriesRing(ZZ); S2
+            Multivariate Power Series Ring in u, v over Integer Ring
+            sage: f2 = -2*v^2 + 5*u*v^2 + S2.O(6); f2
+            -2*v^2 + 5*u*v^2 + O(u, v)^6
+            sage: R(f2)
+            -2*v^2 + 5*u*v^2 + O(t, u, v)^6
+
+            sage: R2 = R.change_ring(GF(2))
+            sage: R2(f1)
+            v + t*v
+            sage: R2(f2)
+            u*v^2 + O(t, u, v)^6
+
         TESTS::
 
             sage: M = PowerSeriesRing(ZZ,5,'t')
@@ -866,6 +788,15 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             1 + x + y + x^2 + 2*x*y + y^2 + O(x, y, z)^3
             sage: R(x + y^2)
             x + y^2
+
+            sage: R.<t,u,v> = PowerSeriesRing(QQ)
+            sage: S1.<t,v> = PolynomialRing(ZZ)
+            sage: f1 = S1.random_element()
+            sage: g1 = R(f1)
+            sage: f1.parent() == R
+            False
+            sage: g1.parent() == R
+            True
         """
         if prec is None:
             try:

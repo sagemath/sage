@@ -129,6 +129,173 @@ class Submodule_free_ambient(Module_free_ambient):
         w = [C(self, x.list(), coerce=False, copy=False) for x in gens if x]
         self.__gens = basis_seq(self, w)
 
+    def _groebner_basis_contains(self, v):
+        r"""
+        Check membership of ``v`` in ``self`` using Gröbner bases.
+
+        This works for submodules over polynomial rings and quotient rings
+        of polynomial rings. The algorithm lifts elements to the covering
+        polynomial ring (if necessary), augments the generator matrix with
+        the ideal relation generators, computes a Gröbner basis for the
+        resulting submodule of the free module over the polynomial ring,
+        and then uses Singular's ``reduce`` to test if `v` reduces to zero.
+
+        INPUT:
+
+        - ``v`` -- a vector in the ambient free module
+
+        OUTPUT: ``True`` if ``v`` is in the submodule, ``False`` otherwise
+
+        EXAMPLES::
+
+            sage: P.<a,b> = PolynomialRing(QQ, 2)
+            sage: q = P.quotient([a^11, b^10])
+            sage: M = FreeModule(q, 10)
+            sage: s = M.submodule([M.0])
+            sage: s._groebner_basis_contains(M.0)
+            True
+            sage: s._groebner_basis_contains(M.1)
+            False
+
+        Over a polynomial ring (no quotient)::
+
+            sage: S.<x,y,z> = PolynomialRing(QQ)
+            sage: M = S**2
+            sage: N = M.submodule([vector([x - y, z]), vector([y*z, x*z])])
+            sage: N._groebner_basis_contains(vector([x - y, z]))
+            True
+            sage: N._groebner_basis_contains(vector([1, 0]))
+            False
+
+        When the ambient module is a quotient module (subquotient)::
+
+            sage: S.<x,y,z> = PolynomialRing(QQ)
+            sage: M = S**2
+            sage: N = M.submodule([vector([x - y, z]), vector([y*z, x*z])])
+            sage: Q = M.quotient_module(N)
+            sage: NQ = Q.submodule([Q([1, x])])
+            sage: NQ._groebner_basis_contains(Q([1, x]).list())
+            True
+            sage: NQ._groebner_basis_contains(Q([0, 1]).list())
+            False
+
+        TESTS::
+
+            sage: P.<a,b> = PolynomialRing(QQ, 2)
+            sage: q = P.quotient([a^11, b^10])
+            sage: M = FreeModule(q, 3)
+            sage: s = M.submodule([M.0, M.1])
+            sage: s._groebner_basis_contains(M.0 + M.1)
+            True
+            sage: s._groebner_basis_contains(M.2)
+            False
+        """
+        from sage.libs.singular.function import singular_function
+        from sage.libs.singular.option import opt_verb
+        from sage.matrix.constructor import matrix
+        from sage.rings.quotient_ring import QuotientRing_generic
+        from sage.structure.element import Vector
+
+        R = self.base_ring()
+        n = self.degree()
+
+        # Determine the polynomial ring and ideal generators
+        if isinstance(R, QuotientRing_generic):
+            poly_ring = R.cover_ring()
+            ideal_gens = R.defining_ideal().gens()
+            do_lift = True
+        else:
+            from sage.rings.polynomial.multi_polynomial_ring_base import \
+                MPolynomialRing_base
+            if isinstance(R, MPolynomialRing_base):
+                poly_ring = R
+                ideal_gens = []
+                do_lift = False
+            else:
+                raise NotImplementedError(
+                    "Gröbner basis membership test is not implemented for "
+                    "modules over {}".format(R)
+                )
+
+        # Suppress "_ is no standard basis" warning from Singular
+        opt_verb['not_warn_sb'] = True
+
+        std = singular_function('std')
+        reduce_func = singular_function('reduce')
+
+        # Lift generators of self to the polynomial ring
+        gen_rows = []
+        for g in self.gens():
+            if do_lift:
+                row = [c.lift() for c in g]
+            else:
+                row = list(g)
+            gen_rows.append(row)
+
+        # Add ideal relation generators: for each ideal generator f and
+        # each standard basis vector e_j, add f * e_j as a row
+        for f in ideal_gens:
+            for j in range(n):
+                row = [poly_ring.zero()] * n
+                row[j] = f
+                gen_rows.append(row)
+
+        if not gen_rows:
+            # Zero submodule: only zero vector is contained
+            if isinstance(v, (list, tuple, Vector)):
+                return all(c == 0 for c in v)
+            return v == 0
+
+        # Build the matrix and compute Gröbner basis
+        # Singular's std() for modules expects the matrix transposed
+        # (columns = generators)
+        gen_matrix = matrix(poly_ring, gen_rows).transpose()
+        gb = std(gen_matrix, ring=poly_ring)
+
+        # Lift the target vector
+        if do_lift:
+            v_lifted = matrix(poly_ring, [[c.lift() for c in v]]).transpose()
+        else:
+            v_lifted = matrix(poly_ring, [list(v)]).transpose()
+
+        # Reduce v modulo the Gröbner basis; zero result means v is in the submodule
+        remainder = reduce_func(v_lifted, gb, ring=poly_ring)
+        return matrix(remainder).is_zero()
+
+    def _check_element_membership(self, x):
+        r"""
+        Check that ``x`` belongs to this submodule using Gröbner bases.
+
+        This overrides the no-op in the base class to verify actual submodule
+        membership. For rings where Gröbner basis computation is not
+        implemented, this falls back to no check.
+
+        EXAMPLES::
+
+            sage: P.<a,b> = PolynomialRing(QQ, 2)
+            sage: q = P.quotient([a^11, b^10])
+            sage: M = FreeModule(q, 10)
+            sage: s = M.submodule([M.0])
+            sage: s._check_element_membership(M.0.list())  # no error
+            sage: s._check_element_membership(M.1.list())
+            Traceback (most recent call last):
+            ...
+            TypeError: element (0, 1, 0, 0, 0, 0, 0, 0, 0, 0) is not in this submodule
+        """
+        try:
+            if not self._groebner_basis_contains(x):
+                raise ArithmeticError
+        except NotImplementedError:
+            # For rings where we can't do the Gröbner basis check,
+            # fall back to no check (old behavior)
+            pass
+        except ArithmeticError:
+            raise TypeError(
+                "element {} is not in this submodule".format(
+                    tuple(x)
+                )
+            )
+
     def _repr_(self):
         """
         Return a string representation of ``self``.

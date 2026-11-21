@@ -307,7 +307,7 @@ class CalculusMethod(SageObject):
             method = self._current
         if method == 'SR':
             return expression.is_trivial_zero()
-        elif method == 'sympy':
+        if method == 'sympy':
             # we have to test SymPy's is_zero because it could be 'NoneType'
             return bool(expression.is_zero)
 

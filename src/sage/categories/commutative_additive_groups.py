@@ -92,9 +92,8 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
                 orders = [x.additive_order() for x in self.cartesian_factors()]
                 if any(o is Infinity for o in orders):
                     return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
+                from sage.arith.functions import LCM_list
+                return LCM_list(orders)
 
     class Algebras(AlgebrasCategory):
         pass

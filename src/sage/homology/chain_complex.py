@@ -49,23 +49,22 @@ AUTHORS:
 from copy import copy
 from functools import reduce
 
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement, Vector, coercion_model
+from sage.homology.homology_group import HomologyGroup
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix0 import Matrix
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.integer_ring import ZZ
+from sage.misc.latex import latex
+from sage.misc.persist import register_unpickle_override
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.matrix.matrix0 import Matrix
-from sage.matrix.constructor import matrix
-from sage.misc.latex import latex
 from sage.rings.fast_arith import prime_range
-from sage.homology.homology_group import HomologyGroup
-from sage.misc.persist import register_unpickle_override
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import ModuleElement, Vector, coercion_model
+from sage.structure.parent import Parent
 
 
 def _latex_module(R, m):
-    """
+    r"""
     LaTeX string representing a free module over ``R`` of rank ``m``.
 
     INPUT:
@@ -1267,8 +1266,7 @@ class ChainComplex_class(Parent):
             for deg in self.nonzero_degrees():
                 answer[deg] = self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
             return answer
-        else:
-            return self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
+        return self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
 
     def _homology_in_degree(self, deg, base_ring, verbose, generators, algorithm):
         """
@@ -1283,8 +1281,7 @@ class ChainComplex_class(Parent):
         if deg not in self.nonzero_degrees():
             if generators:
                 return []
-            else:
-                return HomologyGroup(0, base_ring)
+            return HomologyGroup(0, base_ring)
         if verbose:
             print('Computing homology of the chain complex in dimension %s...' % deg)
 
@@ -1309,10 +1306,8 @@ class ChainComplex_class(Parent):
                 if kernel_basis:
                     return [(HomologyGroup(1, base_ring), self({deg: gen}))
                             for gen in d_out.right_kernel().basis()]
-                else:
-                    return []
-            else:
-                return HomologyGroup(d_out_nullity, base_ring)
+                return []
+            return HomologyGroup(d_out_nullity, base_ring)
 
         if generators:
             orders, gens = self._homology_generators_snf(d_in, d_out, d_out_rank)
@@ -1321,35 +1316,34 @@ class ChainComplex_class(Parent):
                           for order, gen in zip(orders, gens)]
             else:
                 answer = []
-        else:
-            if base_ring.is_field():
-                d_in_rank = self.rank(deg-differential, ring=base_ring)
-                answer = HomologyGroup(d_out_nullity - d_in_rank, base_ring)
-            elif base_ring == ZZ:
-                if d_in.ncols() == 0:
-                    all_divs = [0] * d_out_nullity
-                else:
-                    if algorithm in ['auto', 'no_chomp']:
-                        if ((d_in.ncols() > 300 and d_in.nrows() > 300)
-                            or (min(d_in.ncols(), d_in.nrows()) > 100 and
-                                d_in.ncols() + d_in.nrows() > 600)):
-                            algorithm = 'dhsw'
-                        else:
-                            algorithm = 'pari'
-                    if algorithm == 'dhsw':
-                        from sage.homology.matrix_utils import dhsw_snf
-                        all_divs = dhsw_snf(d_in, verbose=verbose)
-                    elif algorithm == 'pari':
-                        all_divs = d_in.elementary_divisors(algorithm)
-                    else:
-                        raise ValueError('unsupported algorithm')
-                all_divs = all_divs[:d_out_nullity]
-                # divisors equal to 1 produce trivial
-                # summands, so filter them out
-                divisors = [x for x in all_divs if x != 1]
-                answer = HomologyGroup(len(divisors), base_ring, divisors)
+        elif base_ring.is_field():
+            d_in_rank = self.rank(deg-differential, ring=base_ring)
+            answer = HomologyGroup(d_out_nullity - d_in_rank, base_ring)
+        elif base_ring == ZZ:
+            if d_in.ncols() == 0:
+                all_divs = [0] * d_out_nullity
             else:
-                raise NotImplementedError('only base rings ZZ and fields are supported')
+                if algorithm in ['auto', 'no_chomp']:
+                    if ((d_in.ncols() > 300 and d_in.nrows() > 300)
+                        or (min(d_in.ncols(), d_in.nrows()) > 100 and
+                            d_in.ncols() + d_in.nrows() > 600)):
+                        algorithm = 'dhsw'
+                    else:
+                        algorithm = 'pari'
+                if algorithm == 'dhsw':
+                    from sage.homology.matrix_utils import dhsw_snf
+                    all_divs = dhsw_snf(d_in, verbose=verbose)
+                elif algorithm == 'pari':
+                    all_divs = d_in.elementary_divisors(algorithm)
+                else:
+                    raise ValueError('unsupported algorithm')
+            all_divs = all_divs[:d_out_nullity]
+            # divisors equal to 1 produce trivial
+            # summands, so filter them out
+            divisors = [x for x in all_divs if x != 1]
+            answer = HomologyGroup(len(divisors), base_ring, divisors)
+        else:
+            raise NotImplementedError('only base rings ZZ and fields are supported')
         return answer
 
     def _homology_generators_snf(self, d_in, d_out, d_out_rank):
@@ -1384,7 +1378,7 @@ class ChainComplex_class(Parent):
         (N, P, Q) = d_in_induced.smith_form()
         all_divs = [self.base_ring().zero()]*N.nrows()
         non_triv = 0
-        for i in range(0, N.nrows()):
+        for i in range(N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
@@ -1444,8 +1438,7 @@ class ChainComplex_class(Parent):
         if isinstance(H, dict):
             return {deg: homology_group.dimension()
                     for deg, homology_group in H.items()}
-        else:
-            return H.dimension()
+        return H.dimension()
 
     def torsion_list(self, max_prime, min_prime=2):
         r"""
@@ -1686,8 +1679,7 @@ class ChainComplex_class(Parent):
             C_n = self.free_module(n)
             if C_n.rank() == 0:
                 return AsciiArt([' 0 '])
-            else:
-                return AsciiArt([' C_{0} '.format(n)])
+            return AsciiArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():
@@ -1749,8 +1741,7 @@ class ChainComplex_class(Parent):
             C_n = self.free_module(n)
             if not C_n.rank():
                 return UnicodeArt([' 0 '])
-            else:
-                return UnicodeArt([' C_{0} '.format(n)])
+            return UnicodeArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():
@@ -1769,7 +1760,7 @@ class ChainComplex_class(Parent):
         return concatenated
 
     def _latex_(self):
-        """
+        r"""
         LaTeX print representation.
 
         EXAMPLES::

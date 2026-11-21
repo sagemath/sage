@@ -25,11 +25,6 @@ The same integer tuple but for the non-reduced case::
 .. TODO::
 
     The code for plotting is extremely slow.
-
-REFERENCES:
-
-.. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
-   to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Salvatore Stella <sstella@ncsu.edu>
@@ -528,7 +523,7 @@ class SineGordonYsystem(SageObject):
                             radius_arc * sin(t) + center[1])
                 return parametric_plot(f(t), (t, center_angle_p,
                                               center_angle_q), **opts)
-            elif self.type() == 'D':
+            if self.type() == 'D':
                 if p >= q:
                     q += self.r()
                 px = -2 * pi * p / self.r() + pi / 2

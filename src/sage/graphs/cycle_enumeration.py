@@ -599,6 +599,16 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         sage: for cycle in g.all_cycles_iterator(algorithm='A', simple=True):
         ....:     print(cycle)
         [0, 1, 2, 0]
+
+    TESTS:
+
+    Both algorithms support immutable graphs (:issue:`41488`)::
+
+        sage: g = graphs.CompleteGraph(3, immutable=True)
+        sage: next(g.all_cycles_iterator(algorithm='A'))
+        [0, 1, 0]
+        sage: next(g.all_cycles_iterator(algorithm='B', simple=True))
+        [0, 1, 2, 0]
     """
     if algorithm == 'B':
         if not simple:
@@ -664,10 +674,10 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
                                                        report_weight=True)
         if self.is_directed():
             def decompose(hh):
-                return hh.strongly_connected_components_subgraphs()
+                return [hh.subgraph(c, immutable=False) for c in hh.strongly_connected_components()]
         else:
             def decompose(hh):
-                return hh.biconnected_components_subgraphs()
+                return [hh.subgraph(c, immutable=False) for c in hh.biconnected_components()]
 
         components = decompose(self)
         iterators = dict()

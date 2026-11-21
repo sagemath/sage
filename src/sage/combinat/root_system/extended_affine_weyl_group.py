@@ -89,13 +89,9 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     REFERENCES:
 
-    .. [Iwahori] Iwahori,
-       *Generalized Tits system (Bruhat decomposition) on p-adic semisimple groups*.
-       1966 Algebraic Groups and Discontinuous
-       Subgroups (AMS Proc. Symp. Pure Math.., 1965) pp. 71-83 Amer. Math. Soc.,
-       Providence, R.I.
+    - [Iwahori]_
 
-    .. [Bour] Bourbaki, *Lie Groups and Lie Algebras* IV.2
+    - [Bour]_
 
     - [Ka1990]_
 
@@ -1406,8 +1402,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 s = self.parent().simple_reflection(i)
                 if side == 'right':
                     return self*s
-                else:
-                    return s*self
+                return s*self
 
             def apply_simple_projection(self, i, side='right', length_increasing=True):
                 r"""
@@ -2094,9 +2089,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             if i == 0:
                 return self.S0()
-            else:
-                E = self.realization_of()
-                return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
+            E = self.realization_of()
+            return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
 
         @cached_method
         def simple_reflections(self):

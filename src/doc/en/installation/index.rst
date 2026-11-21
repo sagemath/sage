@@ -12,6 +12,12 @@ If you are planning to do development on SageMath, please refer instead to the
 `Sage Developer's Guide <../developer/walkthrough.html>`_ for instructions on
 obtaining the source code and building SageMath.
 
+Local installation options
+==========================
+
+Depending on your operating system, various installation options are available. Select from the
+options below to find instructions for your operating system.
+
 .. tab:: Linux
 
   .. tab:: Conda
@@ -67,6 +73,11 @@ obtaining the source code and building SageMath.
     If you are on an older version of your distribution and a recent
     version of SageMath is only available on a newer version of the
     distribution, consider upgrading your distribution.
+
+    Alternatively, the 3-manifolds project provides a `SageMath AppImage <https://github.com/3-manifolds/sage_appimage>`_.
+    It provides a self-contained binary distribution of SageMath that should be able to run on a wide variety of Linux
+    systems. Beware that it is not packaged with Cython, so building certain sagemath programs or installing certain
+    optional packages is not possible.
 
 .. tab:: macOS 
 

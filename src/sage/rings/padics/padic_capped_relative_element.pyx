@@ -229,11 +229,10 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         if exactzero(self.ordp):
             return pari.zero()
-        else:
-            return new_gen_from_padic(self.ordp, self.relprec,
-                                      self.prime_pow.prime.value,
-                                      self.prime_pow.pow_mpz_t_tmp(self.relprec),
-                                      self.unit)
+        return new_gen_from_padic(self.ordp, self.relprec,
+                                  self.prime_pow.prime.value,
+                                  self.prime_pow.pow_mpz_t_tmp(self.relprec),
+                                  self.unit)
 
     def _integer_(self, Z=None):
         r"""
@@ -326,7 +325,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         cdef Integer selfvalue, modulus
         cdef long aprec
@@ -532,7 +531,6 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm='newton')   # indirect doctest

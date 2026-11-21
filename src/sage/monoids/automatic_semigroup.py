@@ -641,8 +641,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         """
         if self._constructed:
             return iter(self._elements)
-        else:
-            return self._iter_concurrent()
+        return self._iter_concurrent()
 
     def _iter_concurrent(self):
         """

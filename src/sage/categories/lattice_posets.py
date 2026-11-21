@@ -7,6 +7,7 @@ Lattice posets
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from typing import Any
 
 from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -253,7 +254,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -300,6 +301,160 @@ class LatticePosets(Category):
                 """
                 return True
 
+            def kappa(self, a):
+                r"""
+                Return the maximum element greater than the element covered
+                by ``a`` but not greater than ``a``.
+
+                Define `\kappa(a)` as the maximum element of
+                `(\uparrow a_*) \setminus (\uparrow a)`, where `a_*` is the element
+                covered by `a`. It is always a meet-irreducible element, if it exists.
+
+                INPUT:
+
+                - ``a`` -- a join-irreducible element of the lattice
+
+                .. WARNING::
+
+                    Element ``a`` is expected to be join-irreducible, and
+                    this is *not* checked.
+
+                OUTPUT:
+
+                the element `\kappa(a)`
+
+                This will raise a :exc:`ValueError` if there is not
+                a unique greatest element with given constraints.
+
+                EXAMPLES::
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: [(a, L.kappa(a)) for a in L.join_irreducibles()]
+                    [(0, 1), (2, 0), (3, 4), (1, 3)]
+                """
+                H = self._hasse_diagram
+                k = H.kappa(self._element_to_vertex(a))
+                return self._vertex_to_element(k)
+
+            def kappa_dual(self, a):
+                r"""
+                Return the minimum element smaller than the element covering
+                ``a`` but not smaller than ``a``.
+
+                Define `\kappa^*(a)` as the minimum element of
+                `(\downarrow a_*) \setminus (\downarrow a)`, where `a_*` is the element
+                covering `a`. It is always a join-irreducible element, if it exists.
+
+                INPUT:
+
+                - ``a`` -- a meet-irreducible element of the lattice
+
+                .. WARNING::
+
+                    Element ``a`` is expected to be meet-irreducible, and
+                    this is *not* checked.
+
+                OUTPUT:
+
+                the element `\kappa^*(a)`
+
+                This will raise a :exc:`ValueError` if there is not
+                a unique greatest element with given constraints.
+
+                EXAMPLES::
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: [(a, L.kappa_dual(a)) for a in L.meet_irreducibles()]
+                    [(0, 2), (3, 1), (1, 0), (4, 3)]
+                """
+                H = self._hasse_diagram
+                k = H.kappa_dual(self._element_to_vertex(a))
+                return self._vertex_to_element(k)
+
+            def rowmotion_semidistributive(self, a):
+                r"""
+                Return the image of the element ``a`` under
+                semidistributive rowmotion in ``self``.
+
+                Classical rowmotion is usually defined as an
+                automorphism on the set of order ideals `J(P)` of a
+                finite poset `P`.  It is a special case of
+                semidistributive rowmotion because every distributive
+                lattice is isomorphic to `J(P)` for some `P` by
+                Birkhoff's representation theorem.
+
+                .. SEEALSO::
+
+                    If the image of rowmotion of several elements is needed,
+                    ``semidistributive_rowmotion()`` from
+                    ``sage.dynamics.finite_dynamical_system_catalog`` is much
+                    more efficient.
+
+                EXAMPLES::
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: L.rowmotion_semidistributive(0)
+                    2
+
+                    sage: L = posets.TamariLattice(3)
+                    sage: row = L.rowmotion_semidistributive
+                    sage: DS = DiscreteDynamicalSystem(L, row)
+                    sage: sorted([sorted([DyckWord(x[:-1]) for x in c]) for c in DS.cycles()])
+                    [[[1, 0, 1, 0, 1, 0], [1, 1, 1, 0, 0, 0]],
+                     [[1, 0, 1, 1, 0, 0], [1, 1, 0, 0, 1, 0], [1, 1, 0, 1, 0, 0]]]
+                    sage: L = posets.TamariLattice(4)
+                    sage: L.rowmotion_semidistributive((1,1,0,1,1,0,0,0,0))
+                    (1, 0, 1, 1, 0, 0, 1, 0, 0)
+
+                Check that classical rowmotion is a special case of
+                semidistributive rowmotion::
+
+                    sage: T = posets.TamariLattice(3)
+                    sage: L = T.order_ideals_lattice()
+                    sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
+                    True
+
+                    sage: P = posets.UpDownPoset(10)
+                    sage: L = T.order_ideals_lattice()
+                    sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
+                    True
+                """
+                kd = [self.kappa_dual(e) for e in self.canonical_meetands(a)]
+                return self.join(kd)
+
+            def spine(self):
+                """
+                Return the spine of ``self``.
+
+                For a semidistributive lattice `L`, the *spine* of `L` is
+                the distributive lattice constructed as the subposet
+                on the union of longest maximal chains.
+
+                EXAMPLES::
+
+                    sage: P = posets.TamariLattice(4)
+                    sage: S = P.spine(); S
+                    Finite lattice containing 8 elements
+                    sage: S.category()
+                    Category of facade finite enumerated distributive lattices
+                """
+                from sage.combinat.posets.lattices import LatticePoset
+                subset_H, _ = self._hasse_diagram.spine()
+                subset = [self._vertex_to_element(v) for v in subset_H]
+
+                H = self.hasse_diagram()
+                covers = [(x, y) for x in subset for y in H.neighbors_in(x)
+                          if y in subset]
+                cat = LatticePosets().Finite().Distributive()
+                return LatticePoset([subset, covers],
+                                    cover_relations=True, category=cat)
+
     class CongruenceUniform(CategoryWithAxiom):
         """
         The category of congruence uniform lattices.
@@ -317,7 +472,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -339,6 +494,98 @@ class LatticePosets(Category):
                 """
                 return True
 
+            def brick_coloring(self) -> dict[tuple, Any]:
+                """
+                Return the coloring of edges by join-irreducible elements.
+
+                This is defined for all congruence uniform lattices in
+                the article [Muhle2017]_.
+
+                .. SEEALSO:: :meth:`core_label_order`
+
+                EXAMPLES::
+
+                    sage: P = posets.PentagonPoset()
+                    sage: P.brick_coloring()
+                    {(0, 1): 1, (0, 2): 2, (1, 4): 2, (2, 3): 3, (3, 4): 1}
+                """
+                # precomputation for speedup
+                self._hasse_diagram._leq_storage
+
+                H = self.hasse_diagram()
+                JoinIrr_covers = [(next(H.neighbor_in_iterator(j)), j)
+                                  for j in self.join_irreducibles()]
+
+                def perspective(i, j, u, v):
+                    if self.join(j, u) == v and self.meet(j, u) == i:
+                        return True
+                    return self.join(v, i) == j and self.meet(v, i) == u
+
+                return {uv: next(j for i, j in JoinIrr_covers
+                                 if perspective(i, j, *uv))
+                        for uv in H.edges(labels=False)}
+
+            def core_label_order(self):
+                """
+                Return the core-label order of this lattice.
+
+                This is a partial order on the same underlying set
+                whose relations are determined by the canonical
+                brick-coloring of the edges of the Hasse diagram.
+                This is defined for all congruence uniform lattices in
+                the article [Muhle2017]_.
+
+                This is also known as the shard intersection order,
+                in the terminology of Reading.
+
+                .. SEEALSO:: :meth:`brick_coloring`
+
+                EXAMPLES::
+
+                    sage: P = posets.PentagonPoset()
+                    sage: Q = P.core_label_order(); Q
+                    Finite poset containing 5 elements
+                    sage: Q.relations_number()
+                    12
+                    sage: Q.is_graded()
+                    True
+
+                    sage: P = posets.TamariLattice(4)
+                    sage: PQ = posets.NoncrossingPartitions(SymmetricGroup(4))
+                    sage: P.core_label_order().is_isomorphic(PQ)
+                    True
+
+                TESTS::
+
+                    sage: P = Poset({0:[1,2]}).order_ideals_lattice(); P
+                    Finite lattice containing 5 elements
+                    sage: P.core_label_order().bottom()
+                    {}
+                """
+                from sage.combinat.posets.all import Poset
+                from sage.graphs.traversals import BFS_with_condition
+
+                color = self.brick_coloring()
+                dg = self.hasse_diagram()
+
+                dico_face = {}
+                for x in dg:
+                    x_down = self.meet([x] + dg.neighbors_in(x))
+                    dico_face[x] = set(self.interval(x_down, x))
+
+                shard_sets: dict[Any, set] = {x: set() for x in dg}
+                for x in dg:
+                    def inface(y):
+                        return y in dico_face[x]
+
+                    for w, v in BFS_with_condition(dg, x, inface,
+                                                   backward=True):
+                        shard_sets[x].add(color[(v, w)])
+
+                data = {elt: frozenset(s) for elt, s in shard_sets.items()}
+                return Poset([list(self),
+                              lambda U, V: U != V and data[U].issubset(data[V])])
+
     class Stone(CategoryWithAxiom):
         """
         The category of Stone lattices.
@@ -357,7 +604,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -428,6 +675,22 @@ class DistributiveLattices(CategoryWithAxiom):
     """
     _base_category_class_and_axiom = (LatticePosets.Trim,
                                       "ChainGraded")
+
+    @cached_method
+    def extra_super_categories(self) -> list:
+        r"""
+        Return a list of the super categories of ``self``.
+
+        These encode implications between properties.
+
+        EXAMPLES::
+
+            sage: LatticePosets().Distributive().super_categories()
+            [Category of congruence uniform lattice posets,
+             Category of trim lattice posets,
+             Category of chain graded lattice posets]
+        """
+        return [LatticePosets().CongruenceUniform()]
 
     class Finite(CategoryWithAxiom):
         pass

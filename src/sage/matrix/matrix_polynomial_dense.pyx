@@ -285,8 +285,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             :meth:`sage.rings.polynomial.polynomial_element.Polynomial.is_constant`
         """
-        return all([self[i,j].is_constant()
-            for j in range(self.ncols()) for i in range(self.nrows())])
+        return all(self[i, j].is_constant()
+                   for j in range(self.ncols()) for i in range(self.nrows()))
 
     def coefficient_matrix(self, d, row_wise=True):
         r"""
@@ -972,10 +972,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             precA = 1+self.degree()
             if isinstance(B, Vector):
                 BB = B.row()
-                X = B.row().parent().zero().__copy__()
+                MS = BB.parent()
             else:
                 BB = B.__copy__()
-                X = B.parent().zero().__copy__()
+                MS = B.parent()
+            X = MS.element_class(MS, None, False, False)
             inv_self = self.inverse_series_trunc(precA)
             for k in range(0,(d/precA).ceil()):
                 # compute XX = BB * invA mod x^precA
@@ -2074,11 +2075,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:    [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
             sage: P, U = M.weak_popov_form(transformation=True)
             sage: P
-            [              4             x^2   6*x^2 + x + 2]
+            [              0         3*x + 6   6*x^2 + x + 6]
             [              2 4*x^2 + 2*x + 4               5]
             sage: U
-            [2*x^2 + 1       4*x]
-            [      4*x         1]
+            [2*x^2 + 6*x + 1         4*x + 5]
+            [            4*x               1]
             sage: P.is_weak_popov() and U.is_invertible() and U*M == P
             True
 
@@ -2088,15 +2089,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [2, 1]
             sage: PP = M.weak_popov_form(ordered=True); PP
             [              2 4*x^2 + 2*x + 4               5]
-            [              4             x^2   6*x^2 + x + 2]
+            [              0         3*x + 6   6*x^2 + x + 6]
             sage: PP.leading_positions()
             [1, 2]
 
         Demonstrating shifts::
 
             sage: P = M.weak_popov_form(shifts=[0,2,4]); P
-            [            6*x^2 + 6*x + 4 5*x^4 + 4*x^3 + 5*x^2 + 5*x                     2*x + 2]
-            [                          2             4*x^2 + 2*x + 4                           5]
+            [                6*x^2 + x + 6 5*x^4 + x^3 + 4*x^2 + 4*x + 4                             0]
+            [                            2               4*x^2 + 2*x + 4                             5]
             sage: P == M.weak_popov_form(shifts=[-10,-8,-6])
             True
 
@@ -2108,20 +2109,19 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Zero vectors can be discarded::
 
             sage: M.weak_popov_form(row_wise=False)
-            [x + 4     6     0]
-            [    5     1     0]
+            [4*x + 1       3       0]
+            [      0       4       0]
 
-            sage: # needs sage.combinat
             sage: P, U = M.weak_popov_form(transformation=True,
             ....:                          row_wise=False,
             ....:                          include_zero_vectors=False)
             sage: P
-            [x + 4     6]
-            [    5     1]
+            [4*x + 1       3]
+            [      0       4]
             sage: U
-            [                5*x + 2         5*x^2 + 4*x + 4 3*x^3 + 3*x^2 + 2*x + 4]
-            [                      1                       1                 2*x + 1]
-            [                5*x + 5                       2                       6]
+            [  x^3 + 6*x^2 + 6*x + 4 5*x^3 + 4*x^2 + 3*x + 4 2*x^3 + 2*x^2 + 6*x + 5]
+            [                3*x + 3                   x + 1                 6*x + 3]
+            [                6*x + 3                       4                       4]
             sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()
             True
 
@@ -2154,8 +2154,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A = matrix(R, [[x^3 + x, 0, 0], [2*x^2, x, 0], [x, 0, x], [x^2 + 1, x^2 + 1, 0], [2*x + 2, 2*x + 2, x], [x^2 + x + 1, x^2 + 2*x + 1, 2*x^3 + 2*x^2], [0, 0, x^2 + 1], [x^2 + x, x^2 + 2*x, 2*x^3 + 2*x^2 + 2*x + 2], [2*x^4 + x^3 + 2*x^2 + 2, 2*x^4 + x^2 + 2, x^5 + 2*x^4 + x^3 + x^2 + 2*x + 1]])
             sage: A.weak_popov_form(ordered=True, include_zero_vectors=False)
             [x + 2     2     2]
-            [    0   2*x     1]
-            [    x     0     x]
+            [    0     x     2]
+            [    1 x + 1     x]
+
+        For an ordered weak Popov form, zero rows are placed below the nonzero
+        rows even when there are more columns than rows, in which case a leading
+        position may exceed the number of rows (see :issue:`39514`)::
+
+            sage: pR.<x> = GF(7)[]
+            sage: M = matrix(pR, [[1, x, x^2, x^3], [2, 2*x, 2*x^2, 2*x^3]])
+            sage: P = M.weak_popov_form(ordered=True); P
+            [  1   x x^2 x^3]
+            [  0   0   0   0]
+            sage: P.leading_positions()
+            [3, -1]
+            sage: P.is_weak_popov(ordered=True)
+            True
         """
         # if column-wise, call the algorithm on transpose
         if not row_wise:
@@ -2167,8 +2181,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return (W[0].T, W[1].T) if transformation else W.T
 
         # --> now, below, we are working row-wise
-        # row dimension:
+        # row and column dimensions:
         m = self.nrows()
+        n = self.ncols()
         # make shift nonnegative, required by main call _weak_popov_form
         self._check_shift_dimension(shifts, row_wise=True)
         if shifts is None:
@@ -2204,8 +2219,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if ordered:
             lpos = M[:nnzr, :].leading_positions(nonnegative_shifts)
             if include_zero_vectors:
-                # --> insert max value for zero rows so that they remain at the bottom
-                lpos.extend(m for i in range(m - nnzr))
+                # --> insert, for each zero row, a value strictly larger than
+                # any possible leading position (which is at most n-1) so that
+                # the zero rows remain at the bottom
+                lpos.extend(n for i in range(m - nnzr))
             # apply permutation to weak Popov form
             sorted_lpos = sorted([(lpos[i], i+1) for i in range(len(lpos))])
             row_permutation = Permutation([elt[1] for elt in sorted_lpos])
@@ -2215,7 +2232,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 if not include_zero_vectors:
                     # --> extend with virtual zero rows in M so that the
                     # corresponding rows of U remain at the bottom
-                    lpos.extend(m for i in range(m - nnzr))
+                    lpos.extend(n for i in range(m - nnzr))
                     sorted_lpos = sorted([(lpos[i], i+1) for i in range(len(lpos))])
                     row_permutation = Permutation([elt[1] for elt in sorted_lpos])
                 U.permute_rows(row_permutation)
@@ -2232,7 +2249,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2^4, 'a')
             sage: PF.<x> = F[]
             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],
@@ -2257,14 +2273,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M = A.__copy__()
             sage: U = M._weak_popov_form(transformation=True, shifts=[16,8,0])
             sage: M
-            [               x              x^2              x^3]
-            [               0         -x^2 + x       -x^4 + x^3]
-            [               0                0 -x^5 + x^4 + x^3]
+            [              x             x^2             x^3]
+            [              0               0 x^5 - x^4 - x^3]
+            [              0        -x^2 + x      -x^4 + x^3]
             sage: U * A == M
             True
         """
         cdef Py_ssize_t i, j
-        cdef Py_ssize_t c, d, best, bestp
+        cdef Py_ssize_t c, c2, d, best, bestp
 
         cdef Py_ssize_t m = self.nrows()
         cdef Py_ssize_t n = self.ncols()
@@ -2275,13 +2291,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         cdef list to_row, conflicts
 
         R = self.base_ring()
-        one = R.one()
 
         if transformation:
             from sage.matrix.constructor import matrix
             U = matrix.identity(R, m)
 
-        # initialise to_row and conflicts list
+        # For each column c, to_row[c] collects the rows whose (shifted)
+        # leading position is c, stored as ``(shifted_degree, row_index)`` and
+        # kept sorted by increasing shifted degree (so the two highest-degree
+        # rows are at the end of the list).  A column is a "conflict" as soon
+        # as it holds at least two rows.
+        from bisect import insort
         to_row = [[] for i in range(n)]
         conflicts = []
         for i in range(m):
@@ -2298,46 +2318,54 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                     best = d
 
             if best >= 0:
-                to_row[bestp].append((i,best))
-                if len(to_row[bestp]) > 1:
+                insort(to_row[bestp], (best, i))
+                if len(to_row[bestp]) == 2:
                     conflicts.append(bestp)
 
-        # while there is a conflict, do a simple transformation
+        # While there is a conflict, fully resolve it by repeatedly reducing the
+        # two rows of highest shifted degree that share this leading position.
+        # Reducing the highest-degree row by the *second* highest keeps the
+        # degree ``ideg - jdeg`` of the quotient minimal; this avoids the
+        # intermediate degree growth (and the resulting blow-up in running time)
+        # that occurs for unbalanced shifts when an arbitrary pair is reduced
+        # instead (see :issue:`39514`).  We subtract the whole polynomial
+        # quotient of the two entries in the pivot column at once, rather than a
+        # single leading term, which lowers the number of row operations.
         while conflicts:
             c = conflicts.pop()
             row = to_row[c]
-            i,ideg = row.pop()
-            j,jdeg = row.pop()
+            while len(row) > 1:
+                _, i = row.pop()        # row of highest shifted degree, to reduce
+                _, j = row[len(row)-1]  # row of second-highest degree, the pivot
 
-            if jdeg > ideg:
-                i,j = j,i
-                ideg,jdeg = jdeg,ideg
+                s = - (M.get_unsafe(i,c) // M.get_unsafe(j,c))
 
-            coeff = - M.get_unsafe(i,c).lc() / M.get_unsafe(j,c).lc()
-            s = coeff * one.shift(ideg - jdeg)
+                M.add_multiple_of_row_c(i, j, s, 0)
+                if transformation:
+                    U.add_multiple_of_row_c(i, j, s, 0)
 
-            M.add_multiple_of_row_c(i, j, s, 0)
-            if transformation:
-                U.add_multiple_of_row_c(i, j, s, 0)
+                # the pair (shifted row degree, leading position) of row i has
+                # strictly decreased; recompute its leading position and
+                # re-dispatch it to the relevant column.
+                bestp = -1
+                best = -1
+                for c2 in range(n):
+                    d = M.get_unsafe(i,c2).degree()
 
-            row.append((j,jdeg))
+                    if shifts and d >= 0:
+                        d += shifts[c2]
 
-            bestp = -1
-            best = -1
-            for c in range(n):
-                d = M.get_unsafe(i,c).degree()
+                    if d >= best:
+                        bestp = c2
+                        best = d
 
-                if shifts and d >= 0:
-                    d += shifts[c]
-
-                if d >= best:
-                    bestp = c
-                    best = d
-
-            if best >= 0:
-                to_row[bestp].append((i,best))
-                if len(to_row[bestp]) > 1:
-                    conflicts.append(bestp)
+                if best >= 0:
+                    if bestp == c:
+                        insort(row, (best, i))
+                    else:
+                        insort(to_row[bestp], (best, i))
+                        if len(to_row[bestp]) == 2:
+                            conflicts.append(bestp)
 
         if transformation:
             return U
@@ -2393,7 +2421,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:     [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:     [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
 
-            sage: # needs sage.combinat
             sage: P, U = M.popov_form(transformation=True)
             sage: P
             [            4 x^2 + 4*x + 1             3]
@@ -2406,7 +2433,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Demonstrating shifts and specific case of Hermite form::
 
-            sage: # needs sage.combinat
             sage: P = M.popov_form(shifts=[0,2,4]); P
             [              4*x^2 + 3*x + 4 x^4 + 3*x^3 + 5*x^2 + 5*x + 5                             0]
             [                            6               5*x^2 + 6*x + 5                             1]
@@ -2429,7 +2455,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 2     6     0]
             [    0     1     0]
 
-            sage: # needs sage.combinat
             sage: P, U = M.popov_form(transformation=True,
             ....:                     row_wise=False,
             ....:                     include_zero_vectors=False)
@@ -2437,9 +2462,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 2     6]
             [    0     1]
             sage: U
-            [        3*x^2 + 6*x + 3         5*x^2 + 4*x + 4 3*x^3 + 3*x^2 + 2*x + 4]
-            [                      3                       1                 2*x + 1]
-            [                5*x + 2                       2                       6]
+            [2*x^3 + 5*x^2 + 5*x + 1   3*x^3 + x^2 + 6*x + 1 2*x^3 + 2*x^2 + 6*x + 5]
+            [                6*x + 6                 2*x + 2                 6*x + 3]
+            [                5*x + 6                       1                       4]
             sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()
             True
 
@@ -2593,9 +2618,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: R.is_reduced()
             True
             sage: R2 = A.reduced_form(shifts=[6,3,0]); R2
-            [                x               x^2               x^3]
-            [                0         2*x^2 + x       2*x^4 + x^3]
-            [                0                 0 2*x^5 + x^4 + x^3]
+            [                  x                 x^2                 x^3]
+            [                  0                   0 x^5 + 2*x^4 + 2*x^3]
+            [                  0           2*x^2 + x         2*x^4 + x^3]
             sage: R2.is_reduced(shifts=[6,3,0])
             True
             sage: R2.is_reduced()
@@ -2637,7 +2662,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         The last example shows the usage of the transformation parameter::
 
-            sage: # needs sage.rings.finite_rings
             sage: Fq.<a> = GF(2^3)
             sage: pR.<x> = Fq[]
             sage: A = matrix(pR, [[x^2+a,  x^4+a],
@@ -2792,7 +2816,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdegR = R.row_degrees(); rdegB = B[:2,:].row_degrees()
             sage: A[:2,:] == B[:2,:]*Q+R
             True
-            sage: all([rdegR[i] < rdegB[i] for i in range(len(rdegR))])
+            sage: all(rdegR[i] < rdegB[i] for i in range(len(rdegR)))
             True
 
             sage: A.left_quo_rem(B[:,:2])
@@ -2887,7 +2911,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [              1 5*x^2 + 2*x + 3         6*x + 3]
             )
             sage: cdegR = R.column_degrees(); cdegB = B.column_degrees()
-            sage: A == Q*B+R and all([cdegR[i] < cdegB[i] for i in range(3)])
+            sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
         With a nonsingular but also non-reduced matrix, there exists a
@@ -3012,9 +3036,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # (compute normal form w.r.t a well-chosen shift and check degrees
             # are as expected)
             s = [-d for d in B.column_degrees()]
-            (Q,R) = self.reduce(B,shifts=s,return_quotient=True)
+            Q, R = self.reduce(B, shifts=s, return_quotient=True)
             cdeg = R.column_degrees()
-            if all([cdeg[i] + s[i] < 0 for i in range(B.ncols())]):
+            if all(cdeg[i] + s[i] < 0 for i in range(B.ncols())):
                 return (Q, R)
             raise ValueError("division of these matrices does not admit a "
                              "remainder with the required degree property")
@@ -3075,7 +3099,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         cdeg = B.column_degrees()  # all nonnegative since column reduced
         d = -1 if B.nrows() == 0 else max([cdegA[i]-cdeg[i]+1 for i in range(B.nrows())])
         if d<=0: # A already reduced modulo B, quotient is zero
-            return (self.parent().zero().__copy__(), self)
+            MS = self.parent()
+            return (MS.element_class(MS, None, False, False), self)
         # Step 1: reverse input matrices
         # Brev = B(1/x) diag(x^(cdeg[i]))
         # Arev = A(1/x) diag(x^(d+cdeg[i]-1))
@@ -3131,7 +3156,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: B.is_reduced(row_wise=False)
             True
             sage: cdegR = R.column_degrees(); cdegB = B.column_degrees()
-            sage: A == Q*B+R and all([cdegR[i] < cdegB[i] for i in range(3)])
+            sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
         With a nonsingular but also non-reduced matrix, there exists a solution
@@ -3362,7 +3387,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 # A_{*,J} = Q B_{*,J} + R0
                 Q,R0 = self[:,lpos]._right_quo_rem_reduced(B[:,lpos])
                 # other columns are given by A_{*,not J} - Q B_{*, not J}
-                R = self.parent().zero().__copy__()
+                MS = self.parent()
+                R = MS.element_class(MS, None, False, False)
                 R[:,lpos] = R0
                 R[:,non_lpos] = self[:,non_lpos] - Q * B[:,non_lpos]
                 return (Q,R) if return_quotient else R
@@ -3373,7 +3399,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 Q = Q.T
                 R0 = R0.T
                 # other columns are given by A_{not I,*} - B_{not I,*} Q
-                R = self.parent().zero().__copy__()
+                MS = self.parent()
+                R = MS.element_class(MS, None, False, False)
                 R[lpos,:] = R0
                 R[non_lpos,:] = self[non_lpos,:] - B[non_lpos,:] * Q
                 return (Q,R) if return_quotient else R
@@ -4796,8 +4823,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # extract sought basis and return
         if row_wise:
             return kbas[:m,:m]
-        else:
-            return kbas[:n,:n]
+        return kbas[:n,:n]
 
     def _basis_completion_via_reversed_approx(self):
         r"""
@@ -5172,8 +5198,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             if rk == 0:
                 if row_wise:
                     return matrix.identity(ring, n)
-                else:
-                    return matrix.identity(ring, m)
+                return matrix.identity(ring, m)
 
             # now, matrix is nonzero (and nonempty)
             if row_wise:

@@ -240,7 +240,7 @@ class Sha(SageObject):
 
             sage: EllipticCurve('11a').sha().an_numerical()
             1.00000000000000
-            sage: EllipticCurve('37a').sha().an_numerical()
+            sage: EllipticCurve('37a').sha().an_numerical() # abs tol 1e-12
             1.00000000000000
             sage: EllipticCurve('389a').sha().an_numerical()
             1.00000000000000
@@ -256,13 +256,13 @@ class Sha(SageObject):
 
         A rank 5 curve::
 
-            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)  # long time (22s on sage.math, 2011)
+            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(proof=False)  # long time (22s on sage.math, 2011) # abs tol 1e-12
             1.0
 
         See :issue:`1115`::
 
             sage: sha = EllipticCurve('37a1').sha()
-            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013)
+            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013) # abs tol 1e-12
             [1.0000000000,
              1.0000000000000,
              1.0000000000000000,
@@ -279,8 +279,8 @@ class Sha(SageObject):
             an = self.__an_numerical
             if an.parent().precision() >= prec:
                 return RR(an)
-            else:  # cached precision too low
-                pass
+            # cached precision too low
+            pass
         except AttributeError:
             pass
         # it's critical to switch to the minimal model.
@@ -433,27 +433,27 @@ class Sha(SageObject):
             self.__an = Sha
             return Sha
 
-        else:  # rank > 0  (Not provably correct)
-            L1, error_bound = E.lseries().deriv_at1(10 * sqrt(E.conductor()) + 10)
-            if abs(L1) < error_bound:
-                s = self.an_numerical()
-                E.__an = s
-                self.__an = s
-                return s
+        # rank > 0  (Not provably correct)
+        L1, error_bound = E.lseries().deriv_at1(10 * sqrt(E.conductor()) + 10)
+        if abs(L1) < error_bound:
+            s = self.an_numerical()
+            E.__an = s
+            self.__an = s
+            return s
 
-            regulator = E.regulator(use_database=use_database, descent_second_limit=descent_second_limit)
-            T = E.torsion_subgroup().order()
-            omega = E.period_lattice().omega()
-            Sha = ((L1 * T * T) / (E.tamagawa_product() * regulator * omega)).round()
-            try:
-                Sha = Integer(Sha)
-            except ValueError:
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer." % Sha)
-            if not arith.is_square(Sha):
-                raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square." % Sha)
-            E.__an = Sha
-            self.__an = Sha
-            return Sha
+        regulator = E.regulator(use_database=use_database, descent_second_limit=descent_second_limit)
+        T = E.torsion_subgroup().order()
+        omega = E.period_lattice().omega()
+        Sha = ((L1 * T * T) / (E.tamagawa_product() * regulator * omega)).round()
+        try:
+            Sha = Integer(Sha)
+        except ValueError:
+            raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not an integer." % Sha)
+        if not arith.is_square(Sha):
+            raise RuntimeError("There is a bug in an, since the computed conjectural order of Sha is %s, which is not a square." % Sha)
+        E.__an = Sha
+        self.__an = Sha
+        return Sha
 
     def an_padic(self, p, prec=0, use_twists=True):
         r"""

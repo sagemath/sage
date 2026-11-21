@@ -147,8 +147,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
             L = cmodp_rep(rep.unit, self.unit, smallest_mode if use_smallest_mode else simple_mode, return_list, self.prime_pow)
         if return_list:
             return rep, L
-        else:
-            return rep
+        return rep
 
     def __hash__(self):
         r"""

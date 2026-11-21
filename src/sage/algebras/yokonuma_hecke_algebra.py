@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 """
 Yokonuma-Hecke Algebras
 
@@ -18,14 +17,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 
 
@@ -600,7 +600,10 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
             if not self:
                 raise ZeroDivisionError
             if len(self) != 1:
-                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                raise NotImplementedError(
+                    "inverse only implemented for basis elements "
+                    f"(monomials in the generators): {self}"
+                )
             H = self.parent()
             t, w = self.support_of_term()
             c = ~self.coefficients()[0]
@@ -713,7 +716,6 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             sage: latex(Y)
             \mathcal{Y}_{5,E_6}(q)
         """
-        from sage.misc.latex import latex
         return "\\mathcal{Y}_{%s,%s}(%s)" % (self._d, latex(self._cartan_type), self._q)
 
     def _repr_term(self, m) -> str:
@@ -1011,7 +1013,10 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             if not self:
                 raise ZeroDivisionError
             if len(self) != 1:
-                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                raise NotImplementedError(
+                    "inverse only implemented for basis elements "
+                    f"(monomials in the generators): {self}"
+                )
             H = self.parent()
             t, w = self.support_of_term()
             c = ~self.coefficients()[0]

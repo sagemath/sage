@@ -294,13 +294,13 @@ See Cohen's new GTM 239 for complete details.
 
 The complexity grows exponentially in the rank of the curve. We can
 do the above calculation, but with the first known curve of rank
-:math:`4`, and it finishes in about a minute (and outputs 64
+:math:`4`, and it finishes in less than 10 seconds (and outputs 64
 points).
 
 ::
 
     sage: E = elliptic_curves.rank(4)[0]
-    sage: E.integral_points(both_signs=True)   # about a minute
+    sage: E.integral_points(both_signs=True)   # about 10 seconds
     [(-10 : 3 : 1), (-10 : 7 : 1), ...
      (19405 : -2712802 : 1), (19405 : 2693397 : 1)]
 
@@ -327,8 +327,7 @@ on the complex plane using Sage (via code of Tim Dokchitser).
 ::
 
     sage: E = EllipticCurve('389a1')
-    sage: L = E.lseries()
-    sage: L
+    sage: L = E.lseries(); L
     Complex L-series of the Elliptic Curve defined by
            y^2 + y = x^3 + x^2 - 2*x over Rational Field
     sage: L(1) #random due to numerical noise
@@ -341,17 +340,15 @@ on the complex plane using Sage (via code of Tim Dokchitser).
 Taylor Series
 ~~~~~~~~~~~~~
 
-We can also compute the
-Taylor series of :math:`L` about any point, thanks to Tim
-Dokchitser's code.
-
-::
+We can also compute the Taylor series of :math:`L` about any point::
 
     sage: E = EllipticCurve('389a1')
     sage: L = E.lseries()
     sage: Ld = L.dokchitser()
     sage: Ld.taylor_series(1,4) #random due to numerical noise
     -1.28158145691931e-23 + (7.26268290635587e-24)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
+
+This is currently calling PARI's implementation.
 
 GRH
 ~~~

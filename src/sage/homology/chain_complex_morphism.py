@@ -489,7 +489,7 @@ class ChainComplexMorphism(Morphism):
         EXAMPLES::
 
             sage: # needs sage.graphs
-            sage: S = SimplicialComplex(is_mutable=False)
+            sage: S = SimplicialComplex(immutable=True)
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism(); x
@@ -515,7 +515,7 @@ class ChainComplexMorphism(Morphism):
         EXAMPLES::
 
             sage: # needs sage.graphs
-            sage: S = SimplicialComplex(is_mutable=False)
+            sage: S = SimplicialComplex(immutable=True)
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism()

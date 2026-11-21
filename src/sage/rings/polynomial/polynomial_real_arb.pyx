@@ -200,7 +200,6 @@ cdef class Polynomial_real_arb(Polynomial):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: Pol.<x> = RealBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))

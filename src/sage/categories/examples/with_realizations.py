@@ -81,12 +81,15 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         Defining In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
         Defining Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
 
-    Accessing the basis elements is done with :meth:`basis()` method::
+    Accessing the basis elements is done with the
+    :meth:`basis() <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis>`
+    method::
 
         sage: F.basis().list()
         [F[{}], F[{1}], F[{2}], F[{3}], F[{1, 2}], F[{1, 3}], F[{2, 3}], F[{1, 2, 3}]]
 
-    To access a particular basis element, you can use the :meth:`from_set`
+    To access a particular basis element, you can use the
+    :meth:`~sage.categories.examples.with_realizations.SubsetAlgebra.Bases.ParentMethods.from_set`
     method::
 
         sage: F.from_set(2,3)
@@ -344,8 +347,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                 from sage.rings.integer import Integer
                 if isinstance(s, Integer):
                     return self.from_set(*(s,))
-                else:
-                    return self.from_set(*s)
+                return self.from_set(*s)
 
             # This could go in the super category VectorSpaces().Realizations()
             def _repr_(self):
@@ -411,7 +413,8 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
         def product_on_basis(self, left, right):
             r"""
-            Product of basis elements, as per :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+            Product of basis elements, as per
+            :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
             INPUT:
 

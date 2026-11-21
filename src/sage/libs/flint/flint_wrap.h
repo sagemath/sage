@@ -1,7 +1,3 @@
-/* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
- * src/sage_setup/autogen/flint/templates/flint_wrap.h.template
- * please make sure that you are modifying the correct file! */
-
 #ifndef SAGE_FLINT_WRAP_H
 #define SAGE_FLINT_WRAP_H
 /* Using flint headers together in the same module as headers from
@@ -44,6 +40,7 @@
 #define slong mp_limb_signed_t
 #endif
 
+
 #include <flint/acb.h>
 #include <flint/acb_calc.h>
 #include <flint/acb_dft.h>
@@ -53,7 +50,9 @@
 #include <flint/acb_mat.h>
 #include <flint/acb_modular.h>
 #include <flint/acb_poly.h>
+#include <flint/acb_types.h>
 #include <flint/acf.h>
+#include <flint/acf_types.h>
 #include <flint/aprcl.h>
 #include <flint/arb.h>
 #include <flint/arb_calc.h>
@@ -62,7 +61,9 @@
 #include <flint/arb_hypgeom.h>
 #include <flint/arb_mat.h>
 #include <flint/arb_poly.h>
+#include <flint/arb_types.h>
 #include <flint/arf.h>
+#include <flint/arf_types.h>
 #include <flint/arith.h>
 #include <flint/bernoulli.h>
 #include <flint/bool_mat.h>
@@ -88,6 +89,7 @@
 #include <flint/fmpq_mpoly.h>
 #include <flint/fmpq_mpoly_factor.h>
 #include <flint/fmpq_poly.h>
+#include <flint/fmpq_types.h>
 #include <flint/fmpq_vec.h>
 #include <flint/fmpz.h>
 #include <flint/fmpz_extras.h>
@@ -100,6 +102,7 @@
 #include <flint/fmpz_mod_mpoly_factor.h>
 #include <flint/fmpz_mod_poly.h>
 #include <flint/fmpz_mod_poly_factor.h>
+#include <flint/fmpz_mod_types.h>
 #include <flint/fmpz_mod_vec.h>
 #include <flint/fmpz_mpoly.h>
 #include <flint/fmpz_mpoly_factor.h>
@@ -108,6 +111,7 @@
 #include <flint/fmpz_poly_factor.h>
 #include <flint/fmpz_poly_mat.h>
 #include <flint/fmpz_poly_q.h>
+#include <flint/fmpz_types.h>
 #include <flint/fmpz_vec.h>
 #include <flint/fmpzi.h>
 #include <flint/fq.h>
@@ -124,15 +128,20 @@
 #include <flint/fq_nmod_mpoly_factor.h>
 #include <flint/fq_nmod_poly.h>
 #include <flint/fq_nmod_poly_factor.h>
+#include <flint/fq_nmod_types.h>
 #include <flint/fq_nmod_vec.h>
 #include <flint/fq_poly.h>
 #include <flint/fq_poly_factor.h>
+#include <flint/fq_types.h>
 #include <flint/fq_vec.h>
 #include <flint/fq_zech.h>
 #include <flint/fq_zech_embed.h>
 #include <flint/fq_zech_mat.h>
+#include <flint/fq_zech_mpoly.h>
+#include <flint/fq_zech_mpoly_factor.h>
 #include <flint/fq_zech_poly.h>
 #include <flint/fq_zech_poly_factor.h>
+#include <flint/fq_zech_types.h>
 #include <flint/fq_zech_vec.h>
 #include <flint/gr.h>
 #include <flint/gr_generic.h>
@@ -142,14 +151,13 @@
 #include <flint/gr_special.h>
 #include <flint/gr_vec.h>
 #include <flint/hypgeom.h>
+#include <flint/limb_types.h>
 #include <flint/long_extras.h>
+#include <flint/longlong.h>
 #include <flint/mag.h>
-#if __FLINT_RELEASE < __FLINT_RELEASE_NUM(3,4,0)
-#include <flint/mpfr_mat.h>
-#include <flint/mpfr_vec.h>
-#endif
-#include <flint/mpn_extras.h>
 #include <flint/mpoly.h>
+#include <flint/mpoly_types.h>
+#include <flint/n_poly.h>
 #include <flint/nf.h>
 #include <flint/nf_elem.h>
 #include <flint/nmod.h>
@@ -166,13 +174,51 @@
 #include <flint/padic_poly.h>
 #include <flint/partitions.h>
 #include <flint/perm.h>
-#include <flint/profiler.h>
 #include <flint/qadic.h>
 #include <flint/qfb.h>
 #include <flint/qqbar.h>
 #include <flint/qsieve.h>
 #include <flint/thread_pool.h>
+#include <flint/thread_support.h>
 #include <flint/ulong_extras.h>
+
+
+#if __FLINT_RELEASE <= __FLINT_RELEASE_NUM(3,0,1)
+#include <flint/exception.h>
+#include <flint/gmpcompat.h>
+#include <flint/hashmap.h>
+#include <flint/mpf_mat.h>
+#include <flint/mpf_vec.h>
+#endif
+
+#if __FLINT_RELEASE > __FLINT_RELEASE_NUM(3,0,1)
+#include <flint/acb_theta.h>
+#include <flint/n_poly_types.h>
+#include <flint/padic_types.h>
+#endif
+
+#if __FLINT_RELEASE > __FLINT_RELEASE_NUM(3,1,3)
+#include <flint/ca_types.h>
+#include <flint/gr_types.h>
+#include <flint/mpn_mod.h>
+#include <flint/nfloat.h>
+#endif
+
+#if __FLINT_RELEASE <= __FLINT_RELEASE_NUM(3,3,1)
+#include <flint/mpfr_mat.h>
+#include <flint/mpfr_vec.h>
+#endif
+
+#if __FLINT_RELEASE > __FLINT_RELEASE_NUM(3,3,1)
+#include <flint/fmpz_mod_mpoly_q.h>
+#include <flint/gr_series.h>
+#endif
+
+#if __FLINT_RELEASE > __FLINT_RELEASE_NUM(3,4,0)
+#include <flint/gr_ore_poly.h>
+#include <flint/radix.h>
+#endif
+
 
 #undef ulong
 #undef slong

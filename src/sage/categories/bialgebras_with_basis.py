@@ -69,7 +69,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                :meth:`sage.categories.bialgebras.ElementMethods.convolution_product`
+                :meth:`sage.categories.bialgebras_with_basis.BialgebrasWithBasis.ElementMethods.convolution_product`
 
             AUTHORS:
 
@@ -165,7 +165,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                :meth:`sage.categories.bialgebras.ElementMethods.convolution_product`
+                :meth:`sage.categories.bialgebras_with_basis.BialgebrasWithBasis.ParentMethods.convolution_product`
 
             .. TODO::
 

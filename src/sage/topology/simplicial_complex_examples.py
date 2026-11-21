@@ -75,7 +75,6 @@ from sage.sets.set import Set
 from sage.misc.functional import is_even
 from sage.combinat.subset import Subsets
 import sage.misc.prandom as random
-from sage.misc.superseded import deprecated_function_alias
 
 # Miscellaneous utility functions.
 
@@ -190,10 +189,9 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
     INPUT:
 
-    - the inputs are the same as for a :class:`SimplicialComplex`,
-      with one addition and two exceptions. The exceptions are that
-      ``is_mutable`` and ``is_immutable`` are ignored: all instances
-      of this class are immutable. The addition:
+    - the inputs are the same as for a :class:`SimplicialComplex`, with one
+      addition and one exception. The exception is that ``immutable`` is
+      ignored: all instances of this class are immutable. The addition:
 
     - ``name`` -- string (optional); the string representation for this complex
 
@@ -253,15 +251,13 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
         TESTS::
 
             sage: from sage.topology.simplicial_complex_examples import UniqueSimplicialComplex
-            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], is_mutable=True).is_mutable()
+            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], immutable=False).is_mutable()
             False
         """
-        if 'is_mutable' in kwds:
-            del kwds['is_mutable']
-        if 'is_immutable' in kwds:
-            del kwds['is_immutable']
+        if 'immutable' in kwds:
+            del kwds['immutable']
         self._name = name
-        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, is_mutable=False, **kwds)
+        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, immutable=True, **kwds)
 
     def _repr_(self):
         """
@@ -700,7 +696,8 @@ def RealProjectiveSpace(n):
     of the symmetric group `S_{16}`.  Then the set of all facets
     is the `G`-orbit of the two given facets.  This is implemented
     here by explicitly listing all of the facets; the facets
-    can be computed by the function :func:`~sage.homology.simplicial_complex.facets_for_RP4`, but
+    can be computed by the function
+    :func:`~sage.topology.simplicial_complex_examples.facets_for_RP4`, but
     running the function takes a few seconds.
 
     For `n > 4`, the construction is as follows: let `S` denote
@@ -861,7 +858,8 @@ def K3Surface():
 
     This simplicial complex is implemented just by listing all 288
     facets. The list of facets can be computed by the function
-    :func:`~sage.homology.simplicial_complex.facets_for_K3`, but running the function takes a few
+    :func:`~sage.topology.simplicial_complex_examples.facets_for_K3`,
+    but running the function takes a few
     seconds.
     """
     return UniqueSimplicialComplex(
@@ -1254,13 +1252,12 @@ def RandomComplex(n, d, p=0.5):
     """
     if d+1 > n:
         return Simplex(n-1)
-    else:
-        vertices = range(n)
-        facets = Subsets(vertices, d).list()
-        maybe = Subsets(vertices, d+1)
-        facets.extend([f for f in maybe if random.random() <= p])
-        return UniqueSimplicialComplex(facets,
-                                       name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
+    vertices = range(n)
+    facets = Subsets(vertices, d).list()
+    maybe = Subsets(vertices, d+1)
+    facets.extend([f for f in maybe if random.random() <= p])
+    return UniqueSimplicialComplex(facets,
+                                   name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
 
 
 def SumComplex(n, A):
@@ -1404,7 +1401,7 @@ def RandomTwoSphere(n):
     in a simplicial complex.
 
     This algorithm is implemented in
-    :meth:`~sage.graphs.generators.random.RandomTriangulation`, which
+    :func:`~sage.graphs.generators.random.RandomTriangulation`, which
     creates an embedded graph. The triangles of the simplicial
     complex are recovered from this embedded graph.
 
@@ -1616,7 +1613,7 @@ def FareyMap(p):
         x, y = pair
         if x != 0 and p - x < x:
             return ((-x) % p, (-y) % p)
-        elif x == 0 and p - y < y:
+        if x == 0 and p - y < y:
             return (0, (-y) % p)
         return (x, y)
 
@@ -1663,10 +1660,7 @@ def GenusSix():
 
     REFERENCES:
 
-    .. [ABS96] Amos Altshule, Jürgen Bokowski and Peter Schuchert,
-               *Neighborly 2-Manifolds with 12 Vertices*,
-               Journal of Combinatorial Theory, Series A, 75, 148-162 (1996),
-               :doi:`10.1006/jcta.1996.0069`
+    - [ABS96]_
     """
     L = ["014", "018", "023", "027", "036", "049",
          "056", "05b", "07a", "08a", "09b",

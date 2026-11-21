@@ -94,11 +94,13 @@ py.install_sources(
   'positive_integer_semigroup_test.py',
   'q_analogues.py',
   'q_bernoulli.pyx',
+  'quasi_ribbon_tableau.py',
   'quickref.py',
   'ranker.py',
   'recognizable_series.py',
   'regular_sequence.py',
   'regular_sequence_bounded.py',
+  'regular_sequence_test.py',
   'restricted_growth.py',
   'ribbon.py',
   'ribbon_shaped_tableau.py',
@@ -135,6 +137,7 @@ py.install_sources(
   'tableau_residues.py',
   'tableau_tuple.py',
   'tamari_lattices.py',
+  'tamari_blossoming_tree.py',
   'tiling.py',
   'tools.py',
   'triangles_FHM.py',
@@ -192,4 +195,5 @@ subdir('rigged_configurations')
 subdir('root_system')
 install_subdir('sf', install_dir: sage_install_dir / 'combinat')
 install_subdir('species', install_dir: sage_install_dir / 'combinat')
+install_subdir('super_sf', install_dir: sage_install_dir / 'combinat')
 subdir('words')

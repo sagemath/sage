@@ -317,7 +317,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         underlying `R`-module of ``self``.
 
         See
-        :meth:`sage.categories.lie_algebras.LieAlgebras.module` for
+        :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module` for
         an explanation.
 
         In this particular example, this returns the module `M`
@@ -346,7 +346,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
 
         Implement this if you implement :meth:`module`; see the
         documentation of
-        :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+        :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
         for how this is to be done.
 
         EXAMPLES::

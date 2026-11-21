@@ -41,7 +41,7 @@ def all_features():
 
 def module_feature(module_name):
     r"""
-    Find a top-level :class:`Feature` that provides the Python module of the given ``module_name``.
+    Find a top-level :class:`~sage.features.Feature` that provides the Python module of the given ``module_name``.
 
     Only features known to :func:`all_features` are considered.
 
@@ -49,7 +49,7 @@ def module_feature(module_name):
 
     - ``module_name`` -- string
 
-    OUTPUT: a :class:`Feature` or ``None``
+    OUTPUT: a :class:`~sage.features.Feature` or ``None``
 
     EXAMPLES::
 
@@ -82,7 +82,7 @@ def module_feature(module_name):
 
 def name_feature(name, toplevel=None):
     r"""
-    Find a top-level :class:`Feature` that provides the top-level ``name``.
+    Find a top-level :class:`~sage.features.Feature` that provides the top-level ``name``.
 
     Only features known to :func:`all_features` are considered.
 
@@ -92,7 +92,7 @@ def name_feature(name, toplevel=None):
 
     - ``toplevel`` -- a module or other namespace
 
-    OUTPUT: a :class:`Feature` or ``None``
+    OUTPUT: a :class:`~sage.features.Feature` or ``None``
 
     EXAMPLES::
 

@@ -25,7 +25,7 @@ AUTHORS:
 # ****************************************************************************
 
 
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.modules.matrix_morphism import MatrixMorphism
 from sage.categories.morphism import Morphism
 

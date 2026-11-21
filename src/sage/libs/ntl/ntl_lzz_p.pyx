@@ -85,22 +85,22 @@ cdef class ntl_zz_p():
         else:
             p_sage = Integer(self.c.p)
 
-        #self.c.restore_c()   ## This was done in __new__
+        # self.c.restore_c()   # This was done in __new__
 
         if isinstance(a, IntegerMod_int):
-            if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
+            if (self.c.p == (<IntegerMod_int>a)._modulus.int32):  # this is slow
                 self.x = (<IntegerMod_int>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_int64):
-            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
+            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64):  # this is slow
                 self.x = (<IntegerMod_int64>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_gmp):
-            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
+            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger):  # this is slow
                 self.x = mpz_get_si((<IntegerMod_gmp>a).value)
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
@@ -109,7 +109,7 @@ cdef class ntl_zz_p():
             self.x = mpz_get_si((<Integer>a).value) % self.c.p
 
         elif isinstance(a, int):
-            ## we're lucky that python int is no larger than long
+            # we are lucky that python int is no larger than long
             self.x = (<long>a) % self.c.p
         else:
             a = Integer(a)
@@ -118,18 +118,18 @@ cdef class ntl_zz_p():
         return
 
     def __cinit__(self, v=None, modulus=None):
-        #################### WARNING ###################
-        ## Before creating a zz_p, you must create a  ##
-        ## zz_pContext, and restore it.  In Python,   ##
-        ## the error checking in __init__ will prevent##
-        ## you from constructing a zz_p               ##
-        ## inappropriately.  However, from Cython, you##
-        ## could do r = ntl_zz_p.__new__(ntl_zz_p) without
-        ## first restoring a zz_pContext, which could ##
-        ## have unfortunate consequences.  See _new  ##
-        ## defined below for an example of the right  ##
-        ## way to short-circuit __init__ (or just call##
-        ## _new in your own code).                    ##
+        ################### WARNING ####################
+        # Before creating a zz_p, you must create a    #
+        # zz_pContext, and restore it.  In Python,     #
+        # the error checking in __init__ will prevent  #
+        # you from constructing a zz_p                 #
+        # inappropriately.  However, from Cython, you  #
+        # could do r = ntl_zz_p.__new__(ntl_zz_p) without
+        # first restoring a zz_pContext, which could   #
+        # have unfortunate consequences.  See _new     #
+        # defined below for an example of the right    #
+        # way to short-circuit __init__ (or just call  #
+        # _new in your own code).                      #
         ################################################
         if modulus is None:
             return

@@ -309,7 +309,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
             coloring = [[] for _ in range(n)]
             used_colors = set()
             if count_only:
-                used_colors = set(colormap[x][1] for x in a if x in colormap)
+                used_colors = {colormap[x][1] for x in a if x in colormap}
             else:
                 for x in a:
                     if x in colormap:
@@ -553,7 +553,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
         if not g.order():
             if value_only:
                 return 0
-            elif hex_colors:
+            if hex_colors:
                 return dict()
             return []
         # - Independent set
@@ -585,8 +585,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
             if tmp is not False:
                 if value_only:
                     return k
-                else:
-                    return tmp
+                return tmp
             k += 1
     else:
         # Is the graph empty?
@@ -895,9 +894,9 @@ def fractional_chromatic_index(G, solver='PPL', verbose_constraints=False, verbo
     solvers::
 
         sage: g = graphs.PetersenGraph()
-        sage: g.fractional_chromatic_index(solver='GLPK')       # known bug             # needs sage.numerical.mip
-        3.0
-        sage: g.fractional_chromatic_index(solver='PPL')                                # needs sage.numerical.mip
+        sage: g.fractional_chromatic_index()
+        3
+        sage: g.fractional_chromatic_index(solver='PPL')
         3
     """
     G._scream_if_not_simple()
@@ -1380,12 +1379,11 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     The Petersen graph has chromatic index 4::
 
-        sage: # needs sage.numerical.mip
         sage: from sage.graphs.graph_coloring import edge_coloring
         sage: g = graphs.PetersenGraph()
-        sage: edge_coloring(g, value_only=True, solver='GLPK')
+        sage: edge_coloring(g, value_only=True)
         4
-        sage: color_classes = edge_coloring(g, value_only=False, solver='GLPK')
+        sage: color_classes = edge_coloring(g, value_only=False)
         sage: len(color_classes)
         4
         sage: len(set(frozenset(e) for C in color_classes for e in C)) == g.size()
@@ -1395,7 +1393,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
         sage: all(len(Graph(C).matching()) == len(C) for C in color_classes)            # needs networkx
         True
         sage: color_classes = edge_coloring(g, value_only=False,
-        ....:                               hex_colors=True, solver='GLPK')
+        ....:                               hex_colors=True)
         sage: sorted(color_classes.keys())
         ['#00ffff', '#7f00ff', '#7fff00', '#ff0000']
 
@@ -1614,7 +1612,7 @@ def _vizing_edge_coloring(g):
         fan_center, rear = edge
         cdef set rear_colors = colors_of(rear)
         cdef list neighbors = [n for n in g.neighbor_iterator(fan_center)
-                                   if e_colors[frozenset((n, fan_center))] is not None]
+                               if e_colors[frozenset((n, fan_center))] is not None]
         cdef list fan = [rear]
         cdef bint can_extend_fan = True
         while can_extend_fan:
@@ -2038,22 +2036,24 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = graphs.CompleteGraph(8)
-        sage: colors = acyclic_edge_coloring(g)                                         # needs sage.numerical.mip
+        sage: colors = acyclic_edge_coloring(g)  # long time
 
     Each color class is of course a matching ::
 
-        sage: all(max(gg.degree()) <= 1 for gg in colors)                               # needs sage.numerical.mip
+        sage: all(max(gg.degree()) <= 1 for gg in colors)  # long time
         True
 
-    These matchings being a partition of the edge set::
+    These matchings being a partition of the edge set ::
 
-        sage: all(any(gg.has_edge(e) for gg in colors)                                  # needs sage.numerical.mip
+        sage: all(any(gg.has_edge(e) for gg in colors)  # long time
         ....:     for e in g.edge_iterator(labels=False))
         True
 
     Besides, the union of any two of them is a forest ::
 
-        sage: all(g1.union(g2).is_forest() for g1 in colors for g2 in colors)           # needs sage.numerical.mip
+        sage: all(g1.union(g2).is_forest()  # long time
+        ....:     for g1 in colors
+        ....:     for g2 in colors)
         True
 
     If one wants to acyclically color a cycle on `4` vertices, at least 3 colors
@@ -2120,8 +2120,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
                 return {} if hex_colors else []
             if hex_colors:
                 return format_coloring([[] for _ in range(k)], hex_colors=True)
-            else:
-                return [copy(g) for _ in range(k)]
+            return [copy(g) for _ in range(k)]
 
     if k is None:
         k = max(g.degree())

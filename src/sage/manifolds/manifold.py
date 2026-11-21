@@ -643,23 +643,21 @@ class TopologicalManifold(ManifoldSubset):
                 return "{}-dimensional {} manifold {}".format(self._dim,
                                                           self._structure.name,
                                                           self._name)
-            elif self._field_type == 'complex':
+            if self._field_type == 'complex':
                 if isinstance(self._structure, DifferentialStructure):
                     return "{}-dimensional complex manifold {}".format(
                                                                     self._dim,
                                                                     self._name)
-                else:
-                    return "Complex {}-dimensional {} manifold {}".format(
-                                                          self._dim,
-                                                          self._structure.name,
-                                                          self._name)
+                return "Complex {}-dimensional {} manifold {}".format(
+                                                      self._dim,
+                                                      self._structure.name,
+                                                      self._name)
             return "{}-dimensional {} manifold {} over the {}".format(
                                                           self._dim,
                                                           self._structure.name,
                                                           self._name,
                                                           self._field)
-        else:
-            return "Open subset {} of the {}".format(self._name, self._manifold)
+        return "Open subset {} of the {}".format(self._name, self._manifold)
 
     def _an_element_(self):
         r"""
@@ -3000,7 +2998,7 @@ def Manifold(
                                    latex_name=latex_name,
                                    start_index=start_index,
                                    unique_tag=unique_tag())
-    elif structure in ['differentiable', 'diff', 'smooth']:
+    if structure in ['differentiable', 'diff', 'smooth']:
         if 'diff_degree' in extra_kwds:
             diff_degree = extra_kwds['diff_degree']
             if structure == 'smooth' and diff_degree != infinity:
@@ -3025,7 +3023,7 @@ def Manifold(
                                       latex_name=latex_name,
                                       start_index=start_index,
                                       unique_tag=unique_tag())
-    elif structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
+    if structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
         diff_degree = extra_kwds.get('diff_degree', infinity)
         metric_name = extra_kwds.get('metric_name', None)
         metric_latex_name = extra_kwds.get('metric_latex_name', None)

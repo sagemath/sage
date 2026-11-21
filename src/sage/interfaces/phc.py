@@ -33,7 +33,7 @@ AUTHORS:
 import os
 import re
 import pexpect
-from random import random
+from random import random as _random
 
 from sage.misc.temporary_file import tmp_filename
 from sage.rings.real_mpfr import RR
@@ -703,7 +703,7 @@ class PHC:
             r_color = {}
             for a_var in input_ring.gens():
                 var_name = str(a_var)
-                r_color[var_name] = (random(), random(), random())
+                r_color[var_name] = (_random(), _random(), _random())
         for a_sol in paths:
             for a_var in input_ring.gens():
                 var_name = str(a_var)
@@ -722,8 +722,7 @@ class PHC:
                     sol_pts.append(point([a_sol[0][var_name].real(), a_sol[0][var_name].imag()]))
                     sol_pts.append(point([a_sol[-1][var_name].real(), a_sol[-1][var_name].imag()]))
             return sum(sol_pts) + sum(path_lines)
-        else:
-            return sum(path_lines)
+        return sum(path_lines)
 
     def mixed_volume(self, polys, verbose=False):
         """
@@ -917,10 +916,9 @@ class PHC:
 
         # Was there an error?
         if e:
-            from sage.misc.sage_ostools import have_program
-            if not have_program('phc'):
-                print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
-                raise RuntimeError
+            from sage.features import Executable
+            phc_executable = Executable(name='phc', executable='phc')
+            phc_executable.require()
             # todo -- why? etc.
             with open(log_filename) as f:
                 msg = f.read()

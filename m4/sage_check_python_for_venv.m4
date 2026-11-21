@@ -85,12 +85,14 @@ AC_DEFUN([SAGE_PYTHON_CHECK_DISTUTILS], [
     m4_pushdef([COMMANDS_IF_DISTUTILS_GOOD], [$2])
     m4_pushdef([COMMANDS_IF_DISTUTILS_NOT_GOOD], [$3])
     SAGE_PYTHON_DISTUTILS_C_CONFTEST
+    dnl Run the test in conftest.dir to avoid reading the main pyproject.toml
     dnl (echo "***ENV***:"; env; echo "***SYSCONFIG***"; conftest_venv/bin/python3 -m sysconfig) >& AS_MESSAGE_LOG_FD
-    echo PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD
-    AS_IF([PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1 ], [
+    conftest_python_exe_abs="$PWD/conftest_venv/bin/python3"
+    echo "(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build)" >& AS_MESSAGE_LOG_FD
+    AS_IF([(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build) >& AS_MESSAGE_LOG_FD 2>&1 ], [
         SAGE_PYTHON_DISTUTILS_CXX_CONFTEST
-        echo PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1
-        AS_IF([PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1 ], [
+        echo "(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build)" >& AS_MESSAGE_LOG_FD 2>&1
+        AS_IF([(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build) >& AS_MESSAGE_LOG_FD 2>&1 ], [
             COMMANDS_IF_DISTUTILS_GOOD], [
             reason="distutils cannot build a C++ 11 extension"
             COMMANDS_IF_DISTUTILS_NOT_GOOD
@@ -104,9 +106,10 @@ AC_DEFUN([SAGE_PYTHON_CHECK_DISTUTILS], [
     m4_popdef([COMMANDS_IF_DISTUTILS_NOT_GOOD])
 ])
 
-dnl Write conftest.py and conftest.c
+dnl Write conftest.py and conftest.c in conftest.dir directory
 AC_DEFUN([SAGE_PYTHON_DISTUTILS_C_CONFTEST], [
-                                rm -rf conftest.*
+                                rm -rf conftest.dir
+                                mkdir -p conftest.dir
                                 AC_LANG_PUSH([C])
                                 AC_LANG_CONFTEST([
                                     AC_LANG_SOURCE([[
@@ -134,7 +137,8 @@ PyInit_spam(void)
                                     ]])
                                 ])
                                 AC_LANG_POP([C])
-                                cat > conftest.py <<EOF
+                                mv conftest.c conftest.dir/
+                                cat > conftest.dir/conftest.py <<EOF
 
 from $distutils_core import setup
 from $distutils_extension import Extension
@@ -145,9 +149,10 @@ exit(0)
 EOF
 ])
 
-dnl Write conftest.py and conftest.cpp
+dnl Write conftest.py and conftest.cpp in conftest.dir directory
 AC_DEFUN([SAGE_PYTHON_DISTUTILS_CXX_CONFTEST], [
-                                    rm -rf conftest.*
+                                    rm -rf conftest.dir
+                                    mkdir -p conftest.dir
                                     AC_LANG_PUSH([C++])
                                     AC_LANG_CONFTEST([
                                         AC_LANG_SOURCE([[
@@ -188,7 +193,8 @@ PyInit_spam(void)
                                         ]])
                                     ])
                                     AC_LANG_POP([C++])
-                                    cat > conftest.py <<EOF
+                                    mv conftest.cpp conftest.dir/
+                                    cat > conftest.dir/conftest.py <<EOF
 
 from $distutils_core import setup
 from $distutils_extension import Extension

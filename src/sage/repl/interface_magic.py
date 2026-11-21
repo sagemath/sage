@@ -121,9 +121,9 @@ class InterfaceMagic:
             ...
             ('maxima', 'line')
             ('maxima', 'cell')
-            sage: 'gap' in MockShell.magics                                             # needs sage.libs.gap
+            sage: 'gap' in MockShell.magics
             True
-            sage: 'maxima' in MockShell.magics                                          # needs sage.symbolic
+            sage: 'maxima' in MockShell.magics
             True
         """
         if shell is None:
@@ -156,7 +156,7 @@ class InterfaceMagic:
         EXAMPLES::
 
             sage: from sage.repl.interface_magic import InterfaceMagic
-            sage: InterfaceMagic.find('gap')                                            # needs sage.libs.gap
+            sage: InterfaceMagic.find('gap')
             <sage.repl.interface_magic.InterfaceMagic object at 0x...>
         """
         for magic in cls.all_iter():
@@ -180,7 +180,7 @@ class InterfaceMagic:
         EXAMPLES::
 
             sage: from sage.repl.interface_magic import InterfaceMagic
-            sage: InterfaceMagic.find('gap')                                            # needs sage.libs.gap
+            sage: InterfaceMagic.find('gap')
             <sage.repl.interface_magic.InterfaceMagic object at 0x...>
         """
         self._name = name
@@ -194,7 +194,6 @@ class InterfaceMagic:
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: from sage.repl.interface_magic import InterfaceMagic
             sage: line_magic = InterfaceMagic.find('gap').line_magic_factory()
             sage: output = line_magic('1+1')
@@ -207,9 +206,9 @@ class InterfaceMagic:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('%gap 1+1')                                            # needs sage.libs.gap
+            sage: shell.run_cell('%gap 1+1')
             2
-            sage: shell.run_cell('%gap?')                                               # needs sage.libs.gap
+            sage: shell.run_cell('%gap?')
             Docstring:
             Interact with gap
             <BLANKLINE>
@@ -221,11 +220,10 @@ class InterfaceMagic:
         def line_magic(line):
             if line:
                 return self._interface(line)
+            if terminal:
+                self._interface.interact()
             else:
-                if terminal:
-                    self._interface.interact()
-                else:
-                    raise SyntaxError('{0} command required'.format(self._name))
+                raise SyntaxError('{0} command required'.format(self._name))
         line_magic.__doc__ = LINE_DOCSTRING.format(name=self._name)
         return line_magic
 
@@ -237,7 +235,6 @@ class InterfaceMagic:
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: from sage.repl.interface_magic import InterfaceMagic
             sage: cell_magic = InterfaceMagic.find('gap').cell_magic_factory()
             sage: output = cell_magic('', '1+1;')
@@ -253,15 +250,15 @@ class InterfaceMagic:
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('%%gap\nG:=SymmetricGroup(5);\n1+1;Order(G);')         # needs sage.libs.gap
+            sage: shell.run_cell('%%gap\nG:=SymmetricGroup(5);\n1+1;Order(G);')
             Sym( [ 1 .. 5 ] )
             2
             120
-            sage: shell.run_cell('%%gap foo\n1+1;\n')                                   # needs sage.libs.gap
+            sage: shell.run_cell('%%gap foo\n1+1;\n')
             ...File...<string>...
             SyntaxError: Interface magics have no options, got "foo"
             <BLANKLINE>
-            sage: shell.run_cell('%%gap?')                                              # needs sage.libs.gap
+            sage: shell.run_cell('%%gap?')
             Docstring:
             Interact with gap
             <BLANKLINE>

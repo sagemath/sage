@@ -82,6 +82,7 @@ pairs = [("J", None),
          ("S", 8)]
 
 
+@pytest.mark.long
 @pytest.mark.parametrize("ff,max_runs", pairs)
 def test_function_field_testsuite(ff, max_runs, request) -> None:
     r"""

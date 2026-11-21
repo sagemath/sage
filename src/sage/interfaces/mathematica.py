@@ -593,8 +593,7 @@ remote connection to a server running Mathematica -- for hints, type
         s = Expect.eval(self, code, **kwds)
         if strip:
             return AsciiArtString(clean_output(s))
-        else:
-            return AsciiArtString(s)
+        return AsciiArtString(s)
 
     def set(self, var, value):
         """
@@ -1011,8 +1010,9 @@ class MathematicaElement(ExpectElement):
 
         OUTPUT:
 
-        This method does not return anything. Use :meth:`save` if you
-        want to save the figure as an image.
+        This method does not return anything. Use
+        :meth:`~sage.interfaces.mathematica.MathematicaElement.save_image` if
+        you want to save the figure as an image.
 
         EXAMPLES::
 
@@ -1038,9 +1038,9 @@ class MathematicaElement(ExpectElement):
         P = self.parent()
         if P.eval("%s < %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, -1)
-        elif P.eval("%s > %s" % (self.name(), other.name())).strip() == 'True':
+        if P.eval("%s > %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, 1)
-        elif P.eval("%s == %s" % (self.name(), other.name())).strip() == 'True':
+        if P.eval("%s == %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, 0)
         return NotImplemented
 
@@ -1113,9 +1113,8 @@ def mathematica_console(readline=True):
     if not readline:
         os.system('math')
         return
-    else:
-        os.system('math-readline')
-        return
+    os.system('math-readline')
+    return
 
 
 # some tools for online interface
@@ -1146,13 +1145,13 @@ def request_wolfram_alpha(input, verbose=False):
          'id',
          'inputstring',
          'numpods',
+         'parseidserver',
          'parsetimedout',
          'parsetiming',
          'pods',
          'recalculate',
          'related',
          'server',
-         'sponsorCategories',
          'success',
          'timedout',
          'timedoutpods',
