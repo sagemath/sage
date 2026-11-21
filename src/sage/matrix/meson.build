@@ -10,6 +10,7 @@ py.install_sources(
   'args.pyx',
   'benchmark.py',
   'berlekamp_massey.py',
+  'block_ldlt_test.py',
   'change_ring.pyx',
   'compute_J_ideal.py',
   'constructor.pyx',
