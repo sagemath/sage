@@ -4840,7 +4840,34 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'DHV' works only if all eccentricities are needed
+
+        A single vertex always returns a scalar, and a list (including a
+        one-element list or ``None``) always returns a list, independent of
+        the graph order and algorithm::
+
+            sage: Graph(1).eccentricity()
+            [0]
+            sage: Graph(1).eccentricity(by_weight=True)
+            [0]
+            sage: Graph(1).eccentricity(0)
+            0
+            sage: Graph(1).radius(algorithm='Dijkstra_Boost')
+            0
+            sage: Graph(1).diameter(algorithm='Dijkstra_Boost')
+            0
+            sage: graphs.PetersenGraph().eccentricity([0], algorithm='Dijkstra_Boost')
+            [2]
+            sage: Graph(1).eccentricity(algorithm='Dijkstra_NetworkX')                  # needs networkx
+            [0]
         """
+        if v is not None and not isinstance(v, list):
+            # a single vertex is given: return a single value
+            ecc = self.eccentricity(v=[v], by_weight=by_weight, algorithm=algorithm,
+                                    weight_function=weight_function,
+                                    check_weight=check_weight, dist_dict=dist_dict,
+                                    with_labels=with_labels)
+            return ecc if with_labels else ecc[0]
+
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
@@ -4861,8 +4888,6 @@ class Graph(GenericGraph):
             weight_function = None
 
         if v is not None:
-            if not isinstance(v, list):
-                v = [v]
             v_set = set(v)
 
         if v is None or all(u in v_set for u in self):
@@ -4925,10 +4950,6 @@ class Graph(GenericGraph):
 
         if with_labels:
             return ecc
-        if len(ecc) == 1:
-            # return single value
-            v, = ecc.values()
-            return v
         return [ecc[u] for u in v]
 
     @doc_index("Distances")
