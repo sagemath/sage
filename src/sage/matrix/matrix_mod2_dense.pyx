@@ -2591,7 +2591,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             TypeError: this matrix is immutable;
              use inplace=False or apply to a mutable copy.
 
-        The algorithm works collectly for a matrix with nrows=0 or ncols=0::
+        The algorithm works correctly for a matrix with nrows=0 or ncols=0::
 
             sage: A = Matrix(GF(2), 0, 2, [])
             sage: A.doubly_lexical_ordering()
@@ -2716,7 +2716,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         TESTS:
 
-        The algorithm works collectly for larger matrices::
+        The algorithm works correctly for larger matrices::
 
             sage: A = Matrix(GF(2), [[1, 0, 1],
             ....:                    [0, 0, 0],
