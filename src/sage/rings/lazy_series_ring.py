@@ -137,6 +137,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         - ``coefficients`` -- (optional) a callable that defines the
           coefficients of the series; must be ``None`` if ``x`` is provided;
           see note below
+        - ``check`` -- (optional) whether coefficients computed lazily
+          from a function or an iterator are validated by
+          ``_check_coefficient``
 
         If ``valuation`` is specified and ``x`` is convertible into
         an element of the ``_flat_data_ring`` or ``x``
@@ -478,8 +481,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         1. ``None``: an uninitialized series (``_undefined``),
         2. the ``coefficients`` keyword: coefficient data
            (``_series_from_coefficient_function``),
-        3. an element of the ``_flat_data_ring`` (``_convert_to_flat_data``
-           and ``_series_from_flat_data``),
+        3. data convertible into an element of the ``_flat_data_ring``
+           (``_convert_to_flat_data`` and ``_series_from_flat_data``),
         4. a lazy element of a supported source parent
            (``_series_from_lazy_element``),
         5. a rational function (``_convert_to_fraction_field``; only
@@ -493,10 +496,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         unpacks the tuple forms of ``degree`` and ``constant`` as
         declared by the flags ``_unpacks_constant_tuple`` and
         ``_unpacks_degree_tuple``, and ``_convert_constant`` converts
-        ``constant`` into the coefficient ring.  The finite cases of
+        ``constant`` into the coefficient ring.  The list cases of
         ``_series_from_coefficient_function`` share the
         ``_series_from_coefficient_list`` tail, which validates each
-        coefficient with ``_check_coefficient``.
+        coefficient with ``_check_coefficient``; the power series and
+        completion families route their finite cases through it as
+        well.
 
         .. WARNING::
 
@@ -556,7 +561,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         if coefficients is not None:
             if not _is_coefficient_data(coefficients):
-                self._unable_to_convert(coefficients)
+                return self._unable_to_convert(coefficients)
             return self._series_from_coefficient_function(coefficients,
                                                           valuation, degree,
                                                           constant, check)
@@ -603,15 +608,18 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     #   (``None`` if there is no such bound); it is the default
     #   valuation of :meth:`undefined` and bounds ``valuation`` in
     #   :meth:`_check_valuation`, which raises ``_valuation_error_message``
-    #   below it.
+    #   below it.  The two attributes are set together: the message is
+    #   required whenever the bound is.
     _minimal_valuation = None
     _valuation_error_message = None
 
     def _check_valuation(self, valuation):
         r"""
         Check the ``valuation`` constructor argument, which is not
-        ``None``: ``_element_constructor_`` only calls this hook when a
-        valuation is given.
+        ``None``: ``_element_constructor_`` and :meth:`undefined` call
+        this hook when a valuation is given (the default of
+        ``undefined()`` equals ``_minimal_valuation`` and passes by
+        construction).
 
         The valuation must be an integer; a ring with a minimal
         valuation also validates the range.
@@ -669,7 +677,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     #   LazyDirichletSeriesRing(QQ, 's'): QQ[z] (sage has no ring of
     #                              finite Dirichlet polynomials; it merely
     #                              stores list inputs, the coefficient of
-    #                              z^(n-1) being the coefficient at n)
+    #                              z^n being the coefficient at n)
     #
     # - ``_stream_exact_ring`` -- the univariate (Laurent) polynomial
     #   ring over ``_stream_coefficient_ring`` in which a stream with
@@ -693,6 +701,20 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     @lazy_attribute
     def _stream_exact_ring(self):
+        r"""
+        Return the ring in which a stream with finitely many entries
+        is written as a polynomial: the flat data ring, unless the
+        stream coefficients are themselves the flat data, in which
+        case a polynomial ring in a dummy variable over it.
+
+        The derivation reads ``_stream_coefficient_ring``,
+        ``_flat_data_ring`` and ``_sparse``, so a concrete subclass
+        must assign these attributes before the first read -- in
+        particular before ``Parent.__init__``, whose category hooks
+        may construct elements -- and never mutate them afterwards.
+        A family without an exact-stream ring (the Dirichlet series)
+        shadows this attribute with ``None``.
+        """
         if self._stream_coefficient_ring is self._flat_data_ring:
             return PolynomialRing(self._flat_data_ring, "DUMMY_VARIABLE",
                                   sparse=self._sparse)
@@ -702,7 +724,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     # piece, such as polynomials) rather than scalars; this drives the
     # flattening of ``coefficients()`` and the descent of
     # ``map_coefficients`` into the entries.  The multivariate power
-    # series assign it per instance (``self._arity > 1``).  The
+    # series assign it per instance (``self._arity != 1``).  The
     # pseudo-differential operators override the default: their stream
     # entries are polynomials in the base ring, although the base ring
     # itself is the stream coefficient ring.
@@ -923,7 +945,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             ret = self(coeffs,
                        degree=stream._degree,
                        constant=CR(stream._constant),
-                        valuation=x_val)
+                       valuation=x_val)
             if valuation is None:
                 return ret
             return ret.shift(valuation - x_val)
@@ -1002,12 +1024,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             stream = x._coeff_stream
             if isinstance(stream, Stream_zero):
                 return self.zero()
-            if x.parent()._arity > 1:
+            if x.parent()._arity != 1:
                 # Special case for constant series
                 if isinstance(stream, Stream_exact) and stream._degree == 1:
                     return self(self._stream_coefficient_ring(stream[0]),
                                 valuation=valuation)
-                self._unable_to_convert(x)
+                return self._unable_to_convert(x)
             return self._series_from_lazy_power_stream(stream, valuation,
                                                        x.parent().base_ring())
 
@@ -1245,13 +1267,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             ValueError: the valuation must be a positive integer
         """
         if valuation is None:
-            # the minimal valuation, or ``None`` (the valuation of an
-            # uninitialized Laurent series or pseudo-differential
-            # operator is only determined by ``define()``)
+            # the default equals ``_minimal_valuation`` and therefore
+            # passes the check by construction; ``None`` means that
+            # the valuation of the uninitialized series is only
+            # determined by ``define()`` (Laurent series and
+            # pseudo-differential operators)
             valuation = self._minimal_valuation
         else:
-            # the default valuation equals ``_minimal_valuation`` and
-            # therefore passes the check by construction
             self._check_valuation(valuation)
         coeff_stream = Stream_uninitialized(valuation, name=name)
         return self.element_class(self, coeff_stream)
@@ -2199,7 +2221,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
             :class:`TestSuite`
         """
-        if not hasattr(self.element_class, "revert") or self._arity > 1:
+        if not hasattr(self.element_class, "revert") or self._arity != 1:
             return
         tester = self._tester(**options)
 
@@ -3399,15 +3421,15 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         self._sparse = sparse
         self._arity = len(names)
-        if self._arity > 1:
+        if self._arity != 1:
             self._flat_data_ring = self._stream_coefficient_ring = PolynomialRing(base_ring, names)
         else:
             self._flat_data_ring = PolynomialRing(base_ring, names, sparse=sparse)
             self._stream_coefficient_ring = base_ring
-        self._structured_coefficients = self._arity > 1
+        self._structured_coefficients = self._arity != 1
         category = Algebras(base_ring.category())
         mixin_gcd = False
-        if self._arity > 1:
+        if self._arity != 1:
             if base_ring in Fields():
                 category &= UniqueFactorizationDomains()
                 mixin_gcd = True
@@ -3447,7 +3469,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
              Sparse Univariate Polynomial Ring in t over Integer Ring)
         """
         from sage.categories.pushout import CompletionFunctor
-        if self._arity > 1:
+        if self._arity != 1:
             return (CompletionFunctor(self._names, infinity),
                     self._flat_data_ring)
         return (CompletionFunctor(self._names[0], infinity),
@@ -3517,7 +3539,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: m[0].parent()
             Multivariate Polynomial Ring in x, y over Univariate Polynomial Ring in z over Rational Field
         """
-        if self._arity > 1:
+        if self._arity != 1:
             return [m.change_ring(R)
                     for m in self._stream_coefficient_ring.monomials_of_degree(n)]
         return [R.one()]
@@ -3818,8 +3840,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         The coefficients are the homogeneous components of ``x`` for
         multivariate rings and the coefficients of ``x`` otherwise.  If
-        ``valuation`` is given, it is the valuation of the result: the
-        series is shifted accordingly.
+        ``valuation`` is given, it is the valuation of the result for
+        univariate rings: the series is shifted accordingly (the
+        multivariate rings ignore it).
 
         EXAMPLES::
 
@@ -3839,7 +3862,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
                                             constant=constant)
                 return self.element_class(self, coeff_stream)
 
-            if self._arity > 1:
+            if self._arity != 1:
                 p_dict = x.homogeneous_components()
                 v = min(p_dict.keys())
                 d = max(p_dict.keys())
@@ -3986,7 +4009,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L.an_element()
             x
         """
-        if self._arity > 1:
+        if self._arity != 1:
             return self(self._flat_data_ring.an_element())
         return self(self._flat_data_ring.an_element(),
                     constant=self.base_ring().an_element())
@@ -4004,7 +4027,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         BR = self.base_ring()
         if BR not in Fields():
             raise TypeError("the base ring is not a field")
-        if self._arity > 1:
+        if self._arity != 1:
             raise TypeError("the arity must be one")
         return self.gen()
 
@@ -4021,7 +4044,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         BR = self.base_ring()
         if BR not in Fields():
             raise TypeError("the base ring is not a field")
-        if self._arity > 1:
+        if self._arity != 1:
             raise TypeError("the arity must be one")
         return BR
 
@@ -4045,7 +4068,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if self not in IntegralDomains():
             raise TypeError("must be an integral domain")
         BR = self.base_ring()
-        if self._arity > 1 or BR not in Fields():
+        if self._arity != 1 or BR not in Fields():
             raise NotImplementedError("the fraction field is not yet implemented")
         return LazyLaurentSeriesRing(BR, names=self.variable_names())
 
@@ -4079,7 +4102,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         z = self.gen(0)
         elts = [self.zero(), self.one(), self.an_element()]
-        if self._arity > 1:
+        if self._arity != 1:
             R = self._flat_data_ring
             sum_gens = R.sum(R.gens())
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: sum_gens**n)])
@@ -4145,7 +4168,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         except (ValueError, TypeError):
             pass
 
-        if self._arity > 1:
+        if self._arity != 1:
             R = self._flat_data_ring
             BR = R.base_ring()
             args = f.arguments()
@@ -4281,9 +4304,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             category = category.Finite()
         else:
             category = category.Infinite()
-        Parent.__init__(self, base=base_ring, category=category)
+        # the ring attributes must precede ``Parent.__init__``: its
+        # category hooks may construct elements, which would trigger
+        # the ``_stream_exact_ring`` derivation too early
         self._sparse = sparse
         self._flat_data_ring = self._stream_coefficient_ring = basis
+        Parent.__init__(self, base=base_ring, category=category)
 
     def _repr_(self):
         """
@@ -4360,7 +4386,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         from sage.categories.tensor import tensor
         B = self._stream_coefficient_ring
         B = B.change_ring(R)
-        if self._arity > 1:
+        if self._arity != 1:
             return [tensor(m)
                     for c in IntegerVectors(n, self._arity)
                     for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
@@ -4566,7 +4592,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             coeff_stream = Stream_zero()
         else:
             p_dict = {}
-            if self._arity > 1:
+            if self._arity != 1:
                 for f in x.terms():
                     try:
                         d = f.degree()
@@ -4672,7 +4698,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         """
         if not e:
             return
-        if self._arity > 1:
+        if self._arity != 1:
             for m in e.monomials():
                 try:
                     d1 = m.degree()
@@ -5206,9 +5232,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
     _valuation_error_message = "the valuation must be a positive integer"
 
     # Rational functions are callable and therefore converted pointwise,
-    # evaluated at the positive integers; the fraction-field route of the
-    # rational-function route of ``_element_constructor_`` is
-    # never taken.
+    # evaluated at the positive integers; the rational-function route
+    # of ``_element_constructor_`` is never taken.
     _accepts_fraction_field = False
 
     # A Dirichlet series has no exact-stream polynomial ring: its
@@ -5323,7 +5348,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
         - :wikipedia:`Polylogarithm`
         """
-        if self._arity > 1:
+        if self._arity != 1:
             raise ValueError("must has arity 1")
         return self(coefficients=lambda n: z ** n)
 
