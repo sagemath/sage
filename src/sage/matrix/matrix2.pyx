@@ -15263,8 +15263,10 @@ cdef class Matrix(Matrix1):
         # either A_kj or A_rj.
         cdef RingElement A_ij, A_ij_abs
 
-        # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
-        cdef RingElement alpha = (one + ring(17).sqrt()) / ring(8)
+        # The magic constant used by Bunch-Kaufman. We use a rational
+        # approximation (rounded down a tad) to avoid the square root
+        # our ring would need for (1 + sqrt(17))/8.
+        cdef RingElement alpha = ring(3201941)/ring(5000000)
 
         # Row/column maxima that determine row/column swaps.
         cdef RingElement omega_1, omega_r
