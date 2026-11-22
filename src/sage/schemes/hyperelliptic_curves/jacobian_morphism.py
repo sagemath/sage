@@ -67,6 +67,13 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             (1, 0)
             sage: J(42, 0).is_zero()
             True
+
+        The zero polynomial is not a valid Mumford coordinate::
+
+            sage: J(x.parent().zero(), x.parent().zero())
+            Traceback (most recent call last):
+            ...
+            ValueError: Mumford coordinate u=0 must be nonzero
         """
         SchemeMorphism.__init__(self, parent)
 
@@ -79,8 +86,10 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         # Mumford representatives are unique with monic u; only the vanishing
         # locus of u matters, so scale by units (see :issue:`43180`).
-        if not u.is_zero():
-            u = u.monic()
+        # The zero polynomial is invalid (would later fail with ZeroDivisionError).
+        if u.is_zero():
+            raise ValueError(f"Mumford coordinate u={u} must be nonzero")
+        u = u.monic()
 
         # Ensure the divisor is valid
         if check:
