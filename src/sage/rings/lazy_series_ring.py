@@ -950,14 +950,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 return ret
             return ret.shift(valuation - x_val)
         # inexact source
-        shift = None
-        if valuation is not None:
-            shift = valuation - stream.order()
-        stream = self._convert_stream_lazily(stream, source_base_ring)
-        ret = self.element_class(self, stream)
-        if shift is None:
+        stream_converted = self._convert_stream_lazily(stream, source_base_ring)
+        ret = self.element_class(self, stream_converted)
+        if valuation is None:
             return ret
-        return ret.shift(shift)
+        return ret.shift(valuation - stream.order())
 
     def _series_from_lazy_element(self, x, valuation, degree, constant):
         r"""
