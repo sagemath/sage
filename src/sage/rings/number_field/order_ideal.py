@@ -127,10 +127,10 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             sage: I.norm()
             13
 
-        TESTS::
+        TESTS:
 
         Make sure the constructor accepts both lists as well as arbitrary
-        arguments.
+        arguments::
 
             sage: R.<x> = QQ[]
             sage: K.<t> = NumberField(x^3 - 40)
