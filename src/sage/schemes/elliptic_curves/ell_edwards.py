@@ -65,7 +65,7 @@ Scalar multiplication ``n * P`` is computed in extended homogeneous
 coordinates ``(X : Y : Z : T)`` with ``x = X/Z``, ``y = Y/Z`` and
 ``T = XY/Z``, using the complete addition law of Hisil--Wong--Carter--Dawson.
 Only a single field inversion is performed, when the affine coordinates of
-the result are reconstructed.  Over inexact base rings such as ``RDF`` the
+the result are reconstructed.  Over ``QQ`` and inexact base rings such as ``RDF`` the
 affine formulas are used instead: the extended coordinates carry a common
 projective scale, which can underflow to zero when many doublings are
 chained in floating-point arithmetic.  Over prime fields ``GF(p)`` the
@@ -117,13 +117,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from operator import mul
+
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.padics.precision_error import PrecisionError
+from sage.rings.rational_field import QQ
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.structure.element import AdditiveGroupElement, Element
+from sage.structure.coerce_actions import ActedUponAction
+from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
@@ -235,12 +241,12 @@ def _edwards_mul_windowed_int(point, k, p):
     ``[j]P``, ``1 <= j < 16``, and performs one inversion at the end.
     """
     C = point.parent()
-    a = int(C.a().lift())
-    d = int(C.d().lift())
+    a = int(C.a())
+    d = int(C.d())
     neg_a = (a == p - 1)
     one_a = (a == 1)
-    x0 = int(point._x.lift())
-    y0 = int(point._y.lift())
+    x0 = int(point._x)
+    y0 = int(point._y)
     base = (x0, y0, 1, x0 * y0 % p)
 
     k = int(k)
@@ -268,29 +274,28 @@ def _edwards_mul_windowed_int(point, k, p):
     return C.element_class(C, (X * zinv % p, Y * zinv % p), check=False)
 
 
-def _edwards_build_comb(point, p, bits):
+def _edwards_build_comb(point, p, positions):
     """Build the fixed-base comb table for ``point`` over ``GF(p)``.
 
-    Returns ``(bits, rows, p, a, d, neg_a, one_a)`` where
-    ``rows[i][j]`` stores the affine triple ``(x, y, x + y)`` together with
-    ``d * x * y`` for the point ``[j * 16^i]P``.  All inversions are batched
+    Returns ``(rows, p, a, d, neg_a, one_a)`` where
+    ``rows[i][j]`` stores the affine data ``(x, y, x + y, d * x * y)``
+    for the point ``[j * 256^i]P``.  All inversions are batched
     with Montgomery's trick, so building the table costs a single modular
     inversion per row.
     """
     C = point.parent()
-    a = int(C.a().lift())
-    d = int(C.d().lift())
+    a = int(C.a())
+    d = int(C.d())
     neg_a = (a == p - 1)
     one_a = (a == 1)
-    x0 = int(point._x.lift())
-    y0 = int(point._y.lift())
+    x0 = int(point._x)
+    y0 = int(point._y)
 
-    positions = max(1, (bits + _EDWARDS_COMB_WINDOW - 1) // _EDWARDS_COMB_WINDOW)
     radix = 1 << _EDWARDS_COMB_WINDOW
     rows = []
     cur = (x0, y0, 1, x0 * y0 % p)
     for _ in range(positions):
-        # Extended-coordinate multiples [j]([16^i]P) for j = 1..15.
+        # Extended-coordinate multiples [j]([256^i]P) for j = 1..255.
         ext = [(0, 1, 1, 0)]
         for j in range(1, radix):
             ext.append(_edwards_ext_add_int(p, a, d, neg_a, one_a, ext[j - 1], cur))
@@ -314,17 +319,17 @@ def _edwards_build_comb(point, p, bits):
         rows.append(row)
         for _ in range(_EDWARDS_COMB_WINDOW):
             cur = _edwards_ext_dbl_int(p, a, neg_a, one_a, cur)
-    return (bits, rows, p, a, d, neg_a, one_a)
+    return (rows, p, a, d, neg_a, one_a)
 
 
 def _edwards_comb_mul(point, k, comb):
     """Evaluate ``[k]point`` from a fixed-base comb table built by
     :func:`_edwards_build_comb`.
 
-    Every nonzero base-16 digit of ``k`` contributes one mixed addition with
+    Every nonzero base-256 digit of ``k`` contributes one mixed addition with
     an affine table entry, so no doublings are needed at evaluation time.
     """
-    bits, rows, p, a, d, neg_a, one_a = comb
+    rows, p, a, d, neg_a, one_a = comb
     k = int(k)
     X, Y, Z, T = 0, 1, 1, 0
     pos = 0
@@ -374,6 +379,14 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         self._y = R(y)
         if check and not parent.is_on_curve(self._x, self._y):
             raise ValueError("the coordinates do not define a point on the curve")
+
+    def __getstate__(self):
+        """Return the point state without transient multiplication caches."""
+        parent, state = super().__getstate__()
+        state = state.copy()
+        state.pop("_edwards_mult_count", None)
+        state.pop("_edwards_comb", None)
+        return parent, state
 
     def _richcmp_(self, other, op):
         if op == op_EQ:
@@ -464,15 +477,12 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         default of the coercion model.  The computation uses the complete
         extended-coordinate addition law, performs a single field inversion
         at the very end, and over prime fields caches a fixed-base comb
-        table on points that are multiplied repeatedly.  Over inexact base
-        rings the affine addition formulas are used instead; see
+        table on points that are multiplied repeatedly.  Over ``QQ`` and inexact
+        base rings the affine addition formulas are used instead; see
         :meth:`_edwards_mul_affine`.
 
-        Scalars must coerce canonically into ``ZZ``: Python and Sage
-        integers are accepted, while rational or finite-field elements are
-        rejected with a :exc:`TypeError` rather than silently truncated to
-        an integer (a rational action cached by the coercion model must not
-        turn later fractional scalars into a silent ``None`` result).
+        Scalars must coerce canonically into ``ZZ``.  Otherwise return
+        ``None`` so that the coercion model can try the other operand's action.
 
         EXAMPLES::
 
@@ -541,25 +551,44 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: 256 * P == C.zero()
             True
 
-        Non-integer scalars are rejected::
+        Over the rational field, affine arithmetic also avoids growth
+        of the common scale on torsion points::
 
-            sage: QQ(1/2) * P
+            sage: Cq = TwistedEdwardsCurve(QQ, 1, -8)
+            sage: Pq = Cq(QQ(1)/2, QQ(1)/2)
+            sage: 2^100 * Pq == Cq.zero()
+            True
+
+        Actions supplied by the other operand still work::
+
+            sage: from sage.groups.misc_gps.argument_groups import SignGroup
+            sage: s = SignGroup()(-1)
+            sage: Pq * s == s * Pq == -Pq
+            True
+
+        Unsupported scalar parents are rejected on either side::
+
+            sage: QQ(1/2) * Pq
             Traceback (most recent call last):
             ...
-            TypeError: scalar multiplication of a twisted Edwards point requires an integer scalar, got an element of Rational Field
-            sage: GF(3)(2) * P
+            TypeError: unsupported operand parent(s) for *: ...
+            sage: Pq * QQ(2)
             Traceback (most recent call last):
             ...
-            TypeError: scalar multiplication of a twisted Edwards point requires an integer scalar, got an element of Finite Field of size 3
+            TypeError: unsupported operand parent(s) for *: ...
+            sage: GF(3)(2) * Pq
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
+            sage: Pq * GF(3)(2)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         try:
             k = ZZ.coerce(other)
         except TypeError:
-            if not isinstance(other, Element):
-                return None
-            raise TypeError(
-                "scalar multiplication of a twisted Edwards point requires "
-                "an integer scalar, got an element of %s" % other.parent())
+            return None
         if k == 1:
             return self
         if k == 0:
@@ -579,8 +608,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         The birational map :meth:`to_elliptic_curve` is a group
         isomorphism, so the order is computed on the Weierstrass model
         (where Sage's optimized algorithms are available) and cached on
-        this point.  Points of order dividing 8 -- the cofactor torsion
-        shared by all complete twisted Edwards curves -- are detected
+        this point.  Points of order dividing 8 (the cofactor of Ed25519,
+        not a general cofactor for twisted Edwards curves) are detected
         directly without touching the Weierstrass model, and scalar
         multiplications propagate a cached order to their result using
         Lagrange's theorem, mirroring the behaviour of Weierstrass
@@ -605,6 +634,8 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: (3 * P).order()
             4
             sage: E = C.to_elliptic_curve()
+            sage: E.cardinality()
+            20
             sage: all(Q.to_elliptic_curve().order() == Q.order()
             ....:     for Q in C.some_elements())
             True
@@ -619,6 +650,20 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: (2 * Pq).order()
             +Infinity
 
+        Equality with the identity at finite p-adic precision does not
+        prove torsion::
+
+            sage: K = Qp(5, 1)
+            sage: P = TwistedEdwardsCurve(K, 1, K(1)/3)(2, 3)
+            sage: P.order()
+            Traceback (most recent call last):
+            ...
+            PrecisionError: cannot determine point order at finite p-adic precision
+            sage: (2 * P).order()
+            Traceback (most recent call last):
+            ...
+            PrecisionError: cannot determine point order at finite p-adic precision
+
         The Ed25519 base point has prime order ``L``::
 
             sage: from sage.crypto.ed25519 import ED25519_SUBGROUP_ORDER, Ed25519BasePoint
@@ -629,6 +674,9 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
             sage: C25(0, -1).order()
             2
         """
+        if isinstance(self.parent().base_ring(), pAdicGeneric):
+            raise PrecisionError("cannot determine point order at finite p-adic precision")
+
         o = self.__dict__.get("_order")
         if o is not None:
             return o
@@ -660,15 +708,38 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         path for prime base fields, and manages the per-point fixed-base
         comb table.
 
-        The comb table is built the second time the same point is
-        multiplied, as a one-time cost: for a 255-bit scalar it takes on
-        the order of 50 ms and a few megabytes of memory.  It pays off
-        after roughly a hundred multiplications of the same point; one-shot
-        multiplications of many different points stay on the windowed path,
-        which costs about a millisecond per multiplication.
+        The comb table is built after actual reuse and its capacity is
+        measured in rows, not in the exact bit length of the last scalar.
+
+        TESTS:
+
+        Givaro prime fields support both the windowed and the cached path.
+        The first multiplication is not counted twice by action discovery,
+        and crossing a bit boundary within the same row does not replace
+        the table::
+
+            sage: from sage.schemes.elliptic_curves.ell_edwards import TwistedEdwardsCurve
+            sage: F = GF(19, implementation='givaro')
+            sage: C = TwistedEdwardsCurve(F, 1, 2)
+            sage: P = C(1, 0)
+            sage: 3 * P
+            (18 : 0)
+            sage: '_edwards_comb' in P.__dict__
+            False
+            sage: P * 3
+            (18 : 0)
+            sage: table = P._edwards_comb
+            sage: 131 * P == -P
+            True
+            sage: P._edwards_comb is table
+            True
+            sage: Q = loads(dumps(P))
+            sage: Q == P and '_edwards_comb' not in Q.__dict__ and '_edwards_mult_count' not in Q.__dict__
+            True
         """
         C = self.parent()
-        if not C.base_ring().is_exact():
+        R = C.base_ring()
+        if R is QQ or not R.is_exact():
             return self._edwards_mul_affine(k)
         p = C._edwards_prime_modulus()
         if p is None:
@@ -681,8 +752,9 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
         if count < _EDWARDS_COMB_THRESHOLD:
             return _edwards_mul_windowed_int(self, k, p)
         comb = self.__dict__.get("_edwards_comb")
-        if comb is None or comb[0] < bits:
-            comb = _edwards_build_comb(self, p, bits)
+        positions = (bits + _EDWARDS_COMB_WINDOW - 1) // _EDWARDS_COMB_WINDOW
+        if comb is None or len(comb[0]) < positions:
+            comb = _edwards_build_comb(self, p, positions)
             self.__dict__["_edwards_comb"] = comb
         return _edwards_comb_mul(self, k, comb)
 
@@ -728,14 +800,15 @@ class TwistedEdwardsPoint(AdditiveGroupElement):
     def _edwards_mul_affine(self, k):
         r"""Return ``[k]self`` using the affine addition formulas.
 
-        Used over inexact base rings.  The extended coordinates of
+        Used over ``QQ`` and inexact base rings.  The extended coordinates of
         :meth:`_edwards_mul_field` and the integer fast path carry a common
         projective scale ``Z``, which is only removed by the final
         inversion; over an inexact field such as ``RDF`` that scale can
         underflow to zero when many doublings are chained, and the final
         inversion then produces ``NaN`` coordinates.  Each affine addition
         here divides the coordinates back to scale one, so no such
-        underflow accumulates.
+        underflow accumulates.  Over ``QQ`` it also avoids growth of the
+        numerators and denominators due to the common scale.
 
         EXAMPLES::
 
@@ -878,6 +951,12 @@ class TwistedEdwardsCurve(UniqueRepresentation, Parent):
         return self._d
 
     @cached_method
+    def _get_action_(self, other, op, self_on_left):
+        """Register the integer action without evaluating a sample product."""
+        if other is ZZ and op is mul:
+            return ActedUponAction(ZZ, self, not self_on_left, check=False)
+        return None
+
     def _edwards_prime_modulus(self):
         r"""Return the integer ``p`` if the base ring is ``GF(p)``, else ``None``.
 
