@@ -15265,8 +15265,10 @@ cdef class Matrix(Matrix1):
 
         # The magic constant used by Bunch-Kaufman. We use a rational
         # approximation (rounded down a tad) to avoid the square root
-        # our ring would need for (1 + sqrt(17))/8.
-        cdef RingElement alpha = ring(3201941)/ring(5000000)
+        # our ring would need for (1 + sqrt(17))/8. The absolute value
+        # ensures a real parent; in UCF = UniversalCyclotomicField(),
+        # UCF(1) < UCF(2) works, but UFC(1) < UCF(2).abs() does not.
+        cdef RingElement alpha = (ring(3201941)/ring(5000000)).abs()
 
         # Row/column maxima that determine row/column swaps.
         cdef RingElement omega_1, omega_r
@@ -15337,8 +15339,9 @@ cdef class Matrix(Matrix1):
             # kth column. This occurs prior to Step (1) in Higham,
             # but is part of Step (1) in Bunch and Kaufman. We adopt
             # Higham's "omega" notation instead of B&K's "lambda"
-            # because "lambda" can lead to some confusion.
-            omega_1 = zero
+            # because "lambda" can lead to some confusion. The abs()
+            # ensures a real parent -- see the definition of alpha.
+            omega_1 = zero.abs()
 
             # We set r = j > k >= 0 in the loop if we find a nonzero
             # subdiagonal entry. If r is still zero at the end, that
@@ -15449,8 +15452,9 @@ cdef class Matrix(Matrix1):
             # off-diagonal entry (in magnitude) in column "r" of the
             # active submatrix. Since the matrix is Hermitian, we search
             # row "r", whose corresponding entries have the same
-            # magnitudes.
-            omega_r = zero
+            # magnitudes. The abs() ensures a real parent -- see the
+            # definition of alpha.
+            omega_r = zero.abs()
             for j in range(k, n):
                 if j == r:
                     continue
