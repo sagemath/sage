@@ -428,7 +428,7 @@ def _get_json(url, **kwargs):
         sage: _get_json(FINDSTAT_API_MAPS + "?fields=yyy")                      # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E018: Unknown fields in Map, Combinatorial map: to semistandard tableau via monotone triangles: ['yyy']
+        ValueError: E018: Unknown fields in Map, Combinatorial map: to semistandard tableau via monotone triangles: [&#39;yyy&#39;]
     """
     response = requests.get(url)
     if response.ok:
@@ -452,7 +452,7 @@ def _post_json(url, data, **kwargs):
         sage: _post_json(FINDSTAT_API_STATISTICS, {"fields": "yyy"})            # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E018: Unknown fields in Statistic, Combinatorial statistic: St000001: ['yyy']
+        ValueError: E018: Unknown fields in Statistic, Combinatorial statistic: St000001: [&#39;yyy&#39;]
     """
     response = requests.post(url, data=data)
     if response.ok:
@@ -1001,7 +1001,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
         ...
         ValueError: E016: The statistic finder was unable to perform a search on your data. The following errors have occured:
         <BLANKLINE>
-        You passed too few elements (0 < 3) to FindStat!
+        You passed too few elements (0 &lt; 3) to FindStat!
 
     Finally, we can also retrieve all statistics with a given domain::
 
@@ -2313,9 +2313,10 @@ class FindStatStatistic(Element,
                 return len(x.nestings())
 
             sage: print(findstat(118).code())                                   # optional -- internet
-            (* in Mathematica *)
-            tree = {{{{}, {}}, {{}, {}}}, {{{}, {}}, {{}, {}}}};
-            Count[tree, {{___}, {{___}, {{___}, {___}}}}, {0, Infinity}]
+            ...
+            # (* in Mathematica *)
+            # tree = {{{{}, {}}, {{}, {}}}, {{{}, {}}, {{}, {}}}};
+            # Count[tree, {{___}, {{___}, {{___}, {___}}}}, {0, Infinity}]
         """
         return self._data()["Code"]
 
