@@ -154,6 +154,36 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return hash((NumberFieldOrderIdeal_generic, self.ring(), self._module))
 
+    def __and__(self, other):
+        r"""
+        Implement intersection of ideals with other ideals of the same order or,
+        with suborders of the parent order.
+        """
+        # check if the other is an ideal of the same order
+        if isinstance(other, NumberFieldOrderIdeal_generic):
+            if self.ring() != other.ring():
+                raise ValueError("ideals must belong to the same order")
+            R = self.ring()
+
+        # check if the other is a suborder of ring that this ideal lives in
+        # so we intersect down from an ideal of a bigger order O into a smaller
+        # order O' i.e. I \cap O'
+        elif isinstance(other, sage.rings.number_field.order.Order):
+            if not other.is_suborder(self.ring()):
+                raise ValueError("")
+            R = other
+
+        else:
+            # give a nicer error message than ``unsupported operand type for &''
+            raise TypeError("can only intersect with an ideal of the same order or a suborder")
+
+        basis = self.free_module().intersection(other.free_module()).gens()
+        # the result is then an ideal, not an order
+        return R.ideal(basis)
+
+    __rand__ = __and__
+
+
     def _richcmp_(self, other, op):
         r"""
         Implement comparison of ideals of number-field orders.
@@ -288,6 +318,9 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             191
         """
         return self.free_module().index_in(self.ring().free_module())
+
+    def intersection(self, other):
+        return self & other
 
 
 def _positive_sqrt(R, D):
