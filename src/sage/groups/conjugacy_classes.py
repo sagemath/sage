@@ -442,6 +442,21 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._libgap_().Size().sage()
 
+    def __iter__(self):
+        r"""
+        Iterate over the elements of this conjugacy class.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(2)
+            sage: H = G.subgroup([])
+            sage: list(H.conjugacy_class(H.one())) == [H.one()]
+            True
+        """
+        if self.cardinality() == 1:
+            return iter((self._representative,))
+        return super().__iter__()
+
     def __contains__(self, g) -> bool:
         r"""
         Containment test.
