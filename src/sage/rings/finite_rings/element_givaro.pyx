@@ -1043,7 +1043,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise,
           raise a :exc:`ValueError` if the root is not in the base ring.
 
@@ -1092,13 +1092,54 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: all(a.sqrt()*a.sqrt() == a for a in K if a.is_square())
             True
             sage: K.<a> = FiniteField(9)
-            sage: a.sqrt(extend = False, all = True)
+            sage: a.sqrt(extend=False, all=True)
             []
+
+        Check that :issue:`42719` is fixed::
+
+            sage: K.<a> = GF(9)
+            sage: a.is_square()
+            False
+            sage: a.sqrt(extend=True, all=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: a.sqrt(extend=True, all=False)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: a.sqrt(extend=False, all=True)
+            []
+            sage: a.sqrt(extend=False, all=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: must be a perfect square
+
+        Square elements with ``extend=True`` do not require extension support::
+
+            sage: GF(9).one().sqrt(extend=True)
+            1
+            sage: GF(9).one().sqrt(extend=True, all=True)
+            [1, 2]
+            sage: K(2).sqrt(extend=True) in (2*a + 6, a + 3)
+            True
+            sage: set(K(2).sqrt(extend=True, all=True)) == {2*a + 6, a + 3}
+            True
+
+        Characteristic 2 where every element is a square::
+
+            sage: K2.<b> = GF(8)
+            sage: b.sqrt(extend=True) == b^4
+            True
+            sage: b.sqrt(extend=True, all=True) == [b^4]
+            True
         """
         if all:
             if self.is_square():
                 a = self.sqrt()
                 return [a, -a] if -a != a else [a]
+            if extend:
+                raise NotImplementedError  # TODO: use RingExtension or GF(p^(2*e))
             return []
         cdef Cache_givaro cache = <Cache_givaro>self._cache
         if self.element == cache.objectptr.one:
