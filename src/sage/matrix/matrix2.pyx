@@ -15238,7 +15238,7 @@ cdef class Matrix(Matrix1):
         cdef Matrix A  # A copy of the input matrix
         cdef Matrix E  # Top-left diagonal block
 
-        if self.base_ring() == ring:
+        if self.base_ring() is ring:
             A = self.__copy__()
         else:
             # Changing the ring of a large matrix can take a loooong
