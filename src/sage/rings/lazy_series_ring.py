@@ -5192,25 +5192,15 @@ class LazyDirichletSeriesRing(LazySeriesRing):
                     x = p
                 else:
                     x = p.shift(1)
-        else:
-            if coefficients is not None:
-                if valuation is None:
-                    valuation = 1
-                return super()._element_constructor_(x, valuation,
-                                                     degree=degree,
-                                                     constant=constant,
-                                                     coefficients=coefficients)
-
+        elif coefficients is None:
             BR = self.base_ring()
             if x in BR:
                 if valuation is None:
                     valuation = 1
                 x = BR(x)
-
             elif not isinstance(x, LazyDirichletSeries):
                 if valuation is None:
                     valuation = 1
-
                 if isinstance(x, LazyModuleElement) or callable(x):
                     coefficients = x
                     # x is now "omitted" (0 is the sentinel that
@@ -5218,6 +5208,9 @@ class LazyDirichletSeriesRing(LazySeriesRing):
                     # argument); passing ``None`` would trigger the
                     # undefined-series route of the constructor
                     x = 0
+        elif valuation is None:
+            # ``coefficients`` is given: only the default valuation remains
+            valuation = 1
 
         return super()._element_constructor_(x, valuation,
                                              degree=degree,
