@@ -72,7 +72,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         the message. :meth:`sign` and :meth:`verify` take the integer that the
         standard calls the message digest, so to reproduce a standard signature
         the caller must hash the message first, as the known answer test below
-        does. For a scheme that can apply the hash itself, see
+        does. For an implementation that can apply the hash itself, see
         :class:`~sage.crypto.public_key.digital_signature.ecdsa.ECDSA`.
 
     EXAMPLES::
