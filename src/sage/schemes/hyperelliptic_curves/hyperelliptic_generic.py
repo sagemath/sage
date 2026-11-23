@@ -1004,6 +1004,32 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             return self.point([X, Y_inv])
         raise ValueError("the point P has to be normalized")
 
+    def __reduce__(self):
+        r"""
+        Return the data defining this curve for pickling.
+
+        The distinguished point is stored as a tuple to resolve a
+        cyclic dependency of the curve on its own point homset.
+
+        TESTS:
+
+        Check that :issue:`43205` is resolved::
+
+            sage: x = polygen(GF(419))
+            sage: H = HyperellipticCurve(x^5 + x)
+            sage: J = H.jacobian()
+            sage: D = J.random_element(fast=True)
+            sage: import pickle
+            sage: pickle.loads(pickle.dumps(H)) == H
+            True
+            sage: pickle.loads(pickle.dumps(D)) == D
+            True
+        """
+        from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        f, h = self._hyperelliptic_polynomials
+        P0 = tuple(getattr(self, '_distinguished_point', ())) or None
+        return HyperellipticCurve, (f, h, self._names, False, P0)
+
     def distinguished_point(self):
         r"""
         Return the distinguished point of the hyperelliptic curve.
