@@ -6926,10 +6926,11 @@ def _raise_variables(c, n, variables):
     from sage.rings.polynomial.infinite_polynomial_ring import (InfinitePolynomialRing_dense,
                                                                  InfinitePolynomialRing_sparse)
     if isinstance(c, InfinitePolynomialElement):
-        # An element of an infinite polynomial ring: the variables may be
-        # generators of the ring itself (substituted directly) or elements
-        # of its base ring (raised in the coefficients of the underlying
-        # polynomial).
+        # An element of an infinite polynomial ring: recurse into base-ring
+        # variables in the underlying polynomial.  Own-ring generators
+        # are stretched only when they have been selected explicitly as
+        # weights; they are never inferred as weights by default.  The
+        # solver's unknown-coefficient generators therefore stay psi fixed.
         P = c.parent()
         own = {str(g): g ** n for g in variables if g.parent() is P}
         other = [g for g in variables if g.parent() is not P]
