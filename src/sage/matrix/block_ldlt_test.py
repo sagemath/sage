@@ -109,6 +109,13 @@ def test_reconstruction_is_accurate(A):
         assert(difference.is_zero())
     else:
         assert(difference.norm() < tolerance)
+        return
+
+    # Bunch-Kaufman should also work in exact rings, it's just slower
+    # than necessary.
+    P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
+    difference = P.T*A*P - L*D*L.H
+    assert(difference.is_zero())
 
 def test_base_rings_of_factors_are_unchanged(A):
     r"""
