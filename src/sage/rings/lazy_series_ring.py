@@ -720,14 +720,21 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                                   sparse=self._sparse)
         return self._flat_data_ring
 
-    # Whether the stream entries are structured (elements of a graded
-    # piece, such as polynomials) rather than scalars; this drives the
-    # flattening of ``coefficients()`` and the descent of
-    # ``map_coefficients`` into the entries.  The multivariate power
-    # series assign it per instance (``self._arity != 1``).  The
-    # pseudo-differential operators override the default: their stream
-    # entries are polynomials in the base ring, although the base ring
-    # itself is the stream coefficient ring.
+    # Whether a stream entry represents a graded piece (rather than a
+    # coefficient in the base ring).
+    #
+    # If True, the entries contain the coefficients of the series, and
+    # ``coefficients()`` extracts them from the entries, while
+    # ``map_coefficients`` applies its function to them. The entries must
+    # therefore support both operations themselves.
+    #
+    # This is True for multivariate power series (whose entries are
+    # homogeneous polynomials), and for completions of graded algebras,
+    # such as lazy symmetric functions and combinatorial species (whose
+    # entries are homogeneous elements).
+    #
+    # Multivariate power series set this attribute per instance
+    # (``self._arity != 1``).
     _structured_coefficients = False
 
     def _convert_constant(self, constant):
@@ -5446,11 +5453,6 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
     """
     _twisted_base_ring_multiplication = True
     Element = LazyPseudoDifferentialOperator
-
-    # The stream entries are polynomials in the base ring, although
-    # the base ring itself is the stream coefficient ring (an override
-    # of the default, which would treat base-ring elements as scalars).
-    _structured_coefficients = True
 
     @staticmethod
     def __classcall_private__(cls, variable, sparse=True, base_ring=None):
