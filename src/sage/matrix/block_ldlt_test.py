@@ -10,9 +10,13 @@ from sage.rings.qqbar import AA, QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
+from sage.rings.universal_cyclotomic_field import (
+    UniversalCyclotomicField
+)
 from sage.symbolic.ring import SR
 
 QF = QuadraticField(-1, 'I')
+UCF = UniversalCyclotomicField()
 
 # A list of suitable rings to test. The first component is the ring
 # itself, the second is a friendly name, and the third component is
@@ -22,6 +26,7 @@ rings = [(ZZ,    "ZZ",    5),
          (AA,    "AA",    2),  # Can be ungodly slow
          (QQbar, "QQbar", 2),  # Can be ungodly slow
          (QF,    "QQ(I)", 5),
+         (UCF,   "UCF",   5),
          (RDF,   "RDF",   5),
          (RR,    "RR",    5),
          (CDF,   "CDF",   5),
