@@ -10,7 +10,7 @@ Crystal of Bernstein-Zelevinsky multisegments
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -190,7 +190,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
         An element in a BZ multisegments crystal.
         """
 
-        def __init__(self, parent, value):
+        def __init__(self, parent, value) -> None:
             """
             Initialize ``self``.
 
@@ -206,7 +206,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
             value = [(k, ZM(i)) for k,i in value]
             ElementWrapper.__init__(self, parent, tuple(sorted(value, key=sort_key)))
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -235,7 +235,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
                 d[x] = d.get(x, 0) + 1
             return " + ".join(seg(x) for x in sorted(d.items(), key=sort_key))
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 

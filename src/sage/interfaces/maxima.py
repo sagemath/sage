@@ -31,13 +31,14 @@ AUTHORS:
 
 There is also an ECL-based version of the Maxima interface in
 :mod:`sage.interfaces.maxima_lib`.
-That ECL interface is used for all internal symbolic calculations in SageMath,
+That ECL interface is the default ``maxima`` interface and is used for
+internal symbolic calculations in SageMath,
 providing a more direct and efficient connection to Maxima's core functionality.
 The Pexpect interface defined here is isolated from the ECL-based interface:
 it communicates with Maxima via a subprocess and text-based interaction, and is
-primarily intended for interactive use.
+available when a separate Maxima session is needed.
 
-This is the interface used by the maxima object::
+To select the Pexpect interface explicitly::
 
     sage: from sage.interfaces.maxima import maxima
     sage: type(maxima)
@@ -554,7 +555,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima == loads(dumps(maxima))
             True
 
-        Unpickling a Maxima Pexpect interface gives the default interface::
+        Unpickling a Maxima Pexpect interface gives the shared Pexpect interface::
 
             sage: m = Maxima()
             sage: maxima == loads(dumps(m))
@@ -620,27 +621,6 @@ class Maxima(MaximaAbstract, Expect):
 
         self._error_re = re.compile('(Principal Value|debugmode|incorrect syntax|Maxima encountered a Lisp error)')
         self._display2d = False
-
-    def set_seed(self, seed=None):
-        """
-        http://maxima.sourceforge.net/docs/manual/maxima_10.html
-        make_random_state (n) returns a new random state object created from an
-        integer seed value equal to n modulo 2^32. n may be negative.
-
-        EXAMPLES::
-
-            sage: from sage.interfaces.maxima import Maxima
-            sage: m = Maxima()
-            sage: m.set_seed(1)
-            1
-            sage: [m.random(100) for i in range(5)]
-            [45, 39, 24, 68, 63]
-        """
-        if seed is None:
-            seed = self.rand_seed()
-        self.set_random_state(self.make_random_state(seed))
-        self._seed = seed
-        return seed
 
     def _start(self):
         """
@@ -1017,6 +997,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.lisp("(+ 2 17)")   # random formatted output
              :lisp (+ 2 17)
             19
@@ -1043,6 +1024,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.set('xxxxx', '2')
             sage: maxima.get('xxxxx')
             '2'
@@ -1065,6 +1047,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.set('xxxxx', '2')
             sage: maxima.get('xxxxx')
             '2'
@@ -1083,6 +1066,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.set('xxxxx', '2')
             sage: maxima.get('xxxxx')
             '2'
@@ -1095,6 +1079,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._function_class()
             <class 'sage.interfaces.interface.InterfaceFunction'>
         """
@@ -1118,6 +1103,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._function_element_class()
             <class 'sage.interfaces.interface.InterfaceFunctionElement'>
         """
@@ -1166,6 +1152,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
     Elements of this class should not be created directly.
     The targeted parent should be used instead::
 
+        sage: from sage.interfaces.maxima import maxima
         sage: maxima(3)
         3
         sage: maxima(cos(x)+e^234)
@@ -1179,6 +1166,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
 
         EXAMPLES::
 
+           sage: from sage.interfaces.maxima import maxima
            sage: maxima(zeta(7))
            zeta(7)
 
@@ -1201,6 +1189,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: F = maxima('x^5 - y^5').factor()
             sage: F.display2d()
                                    4      3    2  2    3      4
@@ -1236,6 +1225,7 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
     Elements of this class should not be created directly.
     The method ``function`` of the targeted parent should be used instead::
 
+        sage: from sage.interfaces.maxima import maxima
         sage: maxima.function('x,y','h(x)*y')
         h(x)*y
     """
@@ -1247,6 +1237,7 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.function('x,y','cos(x)+y')
             cos(x)+y
 
@@ -1256,7 +1247,7 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
             sage: f == loads(dumps(f))
             True
 
-        Unpickling a Maxima Pexpect interface gives the default interface::
+        Unpickling a Maxima Pexpect interface gives the shared Pexpect interface::
 
             sage: from sage.interfaces.maxima import Maxima
             sage: m = Maxima()
@@ -1296,7 +1287,7 @@ def reduce_load_Maxima_function(parent, defn, args, latex):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.maxima import reduce_load_Maxima_function
+        sage: from sage.interfaces.maxima import maxima, reduce_load_Maxima_function
         sage: f = maxima.function('x,y','sin(x+y)')
         sage: _,args = f.__reduce__()
         sage: g = reduce_load_Maxima_function(*args)

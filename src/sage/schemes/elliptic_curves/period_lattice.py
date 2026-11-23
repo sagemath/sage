@@ -484,6 +484,17 @@ class PeriodLattice_ell(PeriodLattice):
             False
             sage: tau = w1/w2; tau
             0.387694505032876 + 1.30821088214407*I
+
+        TESTS:
+
+        The ``pari`` algorithm also gives `\Im(\omega_2)>0` (:issue:`38478`)::
+
+            sage: L = EllipticCurve(QQ, [2, 3]).period_lattice()
+            sage: L.basis(algorithm='pari')
+            (3.13807354504303, 1.56903677252151 + 1.09820401412526*I)
+            sage: L = EllipticCurve(QQ, [-1, 0]).period_lattice()
+            sage: L.basis(algorithm='pari')
+            (2.62205755429212, 2.62205755429212*I)
         """
         # We divide into two cases: (1) Q, or a number field with a
         # real embedding; (2) a number field with a complex embedding.
@@ -695,7 +706,7 @@ class PeriodLattice_ell(PeriodLattice):
             1.9072648860892725468182549468 + 1.3404778596244020196600112394*I)
             sage: Ls[2]._compute_periods_real(100, algorithm='pari')
             (3.8145297721785450936365098936,
-            1.9072648860892725468182549468 - 1.3404778596244020196600112394*I)
+            1.9072648860892725468182549468 + 1.3404778596244020196600112394*I)
         """
         if prec is None:
             prec = self._compute_default_prec()
@@ -710,7 +721,7 @@ class PeriodLattice_ell(PeriodLattice):
             # The precision for omega() is determined by ellinit()
             E_pari = pari.ellinit(ainvs, precision=prec)
             w1, w2 = E_pari.omega()
-            return R(w1), C(w2)
+            return R(w1), C(w2).conjugate()
 
         if algorithm != 'sage':
             raise ValueError("invalid value of 'algorithm' parameter")
@@ -1130,7 +1141,7 @@ class PeriodLattice_ell(PeriodLattice):
         EXAMPLES::
 
             sage: EllipticCurve('389a1').period_lattice().sigma(CC(2,1))
-            2.60912163570108 - 0.200865080824587*I
+            2.60912163570... - 0.200865080824...*I
         """
         if prec is None:
             prec = self._compute_default_prec()
@@ -1955,7 +1966,7 @@ class PeriodLattice_ell(PeriodLattice):
             (0.0000142854026029 - 49.9960001066650*I
              : 249.520141250950 + 250.019855549131*I : 1.00000000000000)
             sage: L.elliptic_exponential(CDF(.1,.1), to_curve=False)
-            (0.0000142854026029447 - 49.9960001066650*I,
+            (0.00001428540260294... - 49.9960001066650*I,
              500.040282501900 + 500.039711098263*I)
 
         `z=0` is treated as a special case::

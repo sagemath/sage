@@ -4,6 +4,7 @@ py.install_sources(
   'dancing_links.pyx',
   'dlxcpp.py',
   'hadamard_matrix.py',
+  'hadamard_matrix_test.py',
   'latin.py',
   subdir: 'sage/combinat/matrices',
 )
@@ -21,4 +22,3 @@ foreach name, pyx : extension_data_cpp
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
-

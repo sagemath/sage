@@ -227,11 +227,9 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [Morse11] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-           Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+        - [Morse11]_
 
-        .. [LamSchillingShimozono10] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-           Compositio Math. 146 (2010), 811-852.
+        - [LamSchillingShimozono10]_
 
         EXAMPLES::
 
@@ -1404,11 +1402,9 @@ class K_kSchur(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [Morse2011] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-        Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+    - [Morse2011]_
 
-    .. [LamSchillingShimozono2010] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-        Compositio Math. 146 (2010), 811-852.
+    - [LamSchillingShimozono2010]_
     """
 
     def __init__(self, kBoundedRing):

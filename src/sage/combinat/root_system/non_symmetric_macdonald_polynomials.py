@@ -355,18 +355,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     REFERENCES:
 
-    .. [HaimanICM] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics,
-       Proceedings of the International Congress of Mathematicians,
-       Madrid 2006, Vol. III, 843-872.
+    - [HaimanICM]_
 
-    .. [HHL06] \J. Haglund, M. Haiman and N. Loehr,
-       A combinatorial formula for nonsymmetric Macdonald polynomials,
-       Amer. J. Math. 130, No. 2 (2008), 359-383.
+    - [HHL06]_
 
-    .. [LNSSS12] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, M. Shimozono,
-       A uniform model for Kirillov-Reshetikhin crystals I: Lifting
-       the parabolic quantum Bruhat graph, preprint :arxiv:`1211.2042`
-       [math.QA]
+    - [LNSSS12]_
 
     .. RUBRIC:: More examples
 

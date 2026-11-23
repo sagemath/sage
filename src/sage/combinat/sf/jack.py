@@ -987,10 +987,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
         REFERENCES:
 
-        .. [Mc1995] \I. G. Macdonald, Symmetric functions and Hall
-           polynomials, second ed., The Clarendon Press, Oxford
-           University Press, New York, 1995, With contributions by
-           A. Zelevinsky, Oxford Science Publications.
+        - [Mc1995]_
 
         EXAMPLES::
 

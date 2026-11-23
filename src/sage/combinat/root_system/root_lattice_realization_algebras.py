@@ -197,8 +197,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lascoux2003] Alain Lascoux, Symmetric functions and combinatorial operators on polynomials,
-               CBMS Regional Conference Series in Mathematics, 99, 2003.
+            - [Lascoux2003]_
             """
             P = self.basis().keys()  # the root lattice realization
             n = weight.scalar(P.simple_coroot(i))
@@ -231,8 +230,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Kumar1987] \S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
-               Invent. Math. 89 (1987), no. 2, 395-423.
+            - [Kumar1987]_
 
             EXAMPLES:
 
@@ -435,12 +433,9 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lusztig1985] \G. Lusztig,
-               *Equivariant K-theory and representations of Hecke algebras*,
-               Proc. Amer. Math. Soc. 94 (1985), no. 2, 337-342.
+            - [Lusztig1985]_
 
-            .. [Cherednik1995] \I. Cherednik,
-               *Nonsymmetric Macdonald polynomials*. IMRN 10, 483-515 (1995).
+            - [Cherednik1995]_
 
             EXAMPLES::
 
@@ -772,7 +767,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Haiman06] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
+            - [Haiman06]_
 
             .. WARNING::
 

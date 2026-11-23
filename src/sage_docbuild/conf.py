@@ -29,7 +29,7 @@ from sage.env import MATHJAX_DIR, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
-from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
+from sage.misc.sagedoc_conf import *  # Load documentation configuration and helpers
 
 logger = sphinx_logging.getLogger(__name__)
 
@@ -764,14 +764,12 @@ nitpick_ignore = []
 
 
 
-# This replaces the setup() in sage.misc.sagedoc_conf.  Everything that is not
-# tied to a configuration value of this file lives in an extension module of
-# sage_docbuild.ext, listed in ``extensions`` above.
+# Everything that is not tied to a configuration value of this file lives in
+# an extension module of sage_docbuild.ext, listed in ``extensions`` above.
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
     app.connect('autodoc-process-docstring', process_directives)
     app.connect('autodoc-process-docstring', process_docstring_module_title)
-    app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
     app.connect('autodoc-process-docstring', process_docstring_aliases)
     if os.environ.get('SAGE_SKIP_TESTS_BLOCKS', False):

@@ -41,7 +41,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     # split case) also accept an explicit weight, so they override this to 3.
     _max_constructor_args = 2
 
-    def __init__(self, Y, X, **kwds):
+    def __init__(self, Y, X, **kwds) -> None:
         r"""
         Create the Hom-set of a Jacobian.
 
@@ -54,7 +54,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         - ``Y`` -- domain (Spec(K) where K is the field of definition)
         - ``X`` -- codomain (the Jacobian)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import HyperellipticJacobianHomset
             sage: R.<x> = QQ[]
@@ -91,8 +91,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
         return the curve `H`.
 
-        NOTE:
-        The base field of `H` is not extended to `L`.
+        .. NOTE:: The base field of `H` is not extended to `L`.
 
         EXAMPLES::
 

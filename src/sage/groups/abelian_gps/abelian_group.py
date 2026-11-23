@@ -151,14 +151,11 @@ the underlying representation is lists of integer exponents::
 
 REFERENCES:
 
-.. [Cohen1] \H. Cohen, Advanced topics in computational number theory,
-  Springer, 2000.
+- [Cohen1]_
 
-.. [Cohen2] \H. Cohen, A course in computational algebraic number theory,
-  Springer, 1996.
+- [Cohen2]_
 
-.. [Rotman] \J. Rotman, An introduction to the theory of
-  groups, 4th ed, Springer, 1995.
+- [Rotman]_
 
 .. WARNING::
 
