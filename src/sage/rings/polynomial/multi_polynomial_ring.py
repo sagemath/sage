@@ -408,6 +408,16 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: R = QQbar['s,t']                                                      # needs sage.rings.number_field
             sage: type(R({(1,2): 3}).coefficients()[0])
             <class 'sage.rings.qqbar.AlgebraicNumber'>
+
+        Check that conversion into a ring with additional variables at
+        the front embeds the exponent vectors (see :issue:`34422`)::
+
+            sage: A.<a> = PolynomialRing(QQ)
+            sage: R = PolynomialRing(A, ['y', 'z'])
+            sage: S = PolynomialRing(A, ['x', 'y', 'z'])
+            sage: f = a*R.gen(0)*R.gen(1) + R.gen(1)**2
+            sage: S(f) == a*S.gen(1)*S.gen(2) + S.gen(2)**2
+            True
         """
         from sage.rings.polynomial import polynomial_element
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
@@ -433,6 +443,20 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             if P == self:
                 return MPolynomial_polydict(self, x.element().dict())
+
+            if self.base_ring() is P.base_ring():
+                # fast path: if all of the variables of P also occur in
+                # self, in the same order at the end of the variable
+                # list (P grew at the front), embed the exponent
+                # vectors instead of extracting them by name
+                P_names = P.variable_names()
+                shift = self.ngens() - P.ngens()
+                if shift > 0 and self.variable_names()[shift:] == P_names:
+                    from sage.rings.polynomial.polydict import ETuple
+                    zero = ETuple(shift * (0,))
+                    return MPolynomial_polydict(
+                        self, {zero + monom: coeff
+                                for monom, coeff in x.monomial_coefficients().items()})
 
             if self.base_ring().has_coerce_map_from(P):
                 # it might be in the base ring (i.e. a poly ring over a poly ring)

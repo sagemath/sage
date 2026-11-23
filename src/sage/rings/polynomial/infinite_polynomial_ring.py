@@ -1348,6 +1348,12 @@ class InfinitePolynomialRing_sparse(Ring):
         if not R.has_coerce_map_from(self._underlying_ring):
             raise TypeError("we cannot tensor with " + repr(R))
         B = self.base_ring()
+        if R.has_coerce_map_from(B):
+            # R already contains the base ring: the tensor product
+            # merely replaces it; in particular, tensoring with the
+            # fraction field of the base ring must not add a spurious
+            # copy of its variables
+            return InfinitePolynomialRing(R, self._names, self._order, implementation='sparse')
         if hasattr(B, 'tensor_with_ring'):
             return InfinitePolynomialRing(B.tensor_with_ring(R), self._names, self._order, implementation='sparse')
         if hasattr(B, 'change_ring'):  # e.g., polynomial rings
@@ -1876,6 +1882,12 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
         if not R.has_coerce_map_from(self._underlying_ring):
             raise TypeError("we cannot tensor with " + repr(R))
         B = self.base_ring()
+        if R.has_coerce_map_from(B):
+            # R already contains the base ring: the tensor product
+            # merely replaces it; in particular, tensoring with the
+            # fraction field of the base ring must not add a spurious
+            # copy of its variables
+            return InfinitePolynomialRing(R, self._names, self._order, implementation='dense')
         if hasattr(B, 'tensor_with_ring'):
             return InfinitePolynomialRing(B.tensor_with_ring(R), self._names, self._order, implementation='dense')
         if hasattr(B, 'change_ring'):  # e.g., polynomial rings

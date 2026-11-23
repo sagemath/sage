@@ -733,6 +733,26 @@ class InfinitePolynomial(CommutativePolynomial,
         P = self.parent()
         return [InfinitePolynomial(P, m) for m in self._p.monomials()]
 
+    def coefficients(self):
+        """
+        Return the list of nonzero coefficients of ``self``, in the
+        same order as the monomials returned by :meth:`monomials`.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ['q'])
+            sage: q = X.base_ring().gen()
+            sage: p = q*x[1] + 3*x[0]^2 + 2
+            sage: p.monomials()
+            [x_1, x_0^2, 1]
+            sage: p.coefficients()
+            [q, 3, 2]
+            sage: all(p.monomial_coefficient(m) == c
+            ....:        for m, c in zip(p.monomials(), p.coefficients()))
+            True
+        """
+        return [self.monomial_coefficient(m) for m in self.monomials()]
+
     def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values
@@ -945,7 +965,7 @@ class InfinitePolynomial(CommutativePolynomial,
         if not x.variables():
             p = self.base_ring()(x._p)
             divisor = self.base_ring().one() / p  # use induction
-            OUTP = self.parent().tensor_with_ring(divisor.base_ring())
+            OUTP = self.parent().tensor_with_ring(divisor.parent())
             return OUTP(self) * OUTP(divisor)
         from sage.rings.fraction_field_element import FractionFieldElement
         field = self.parent().fraction_field()

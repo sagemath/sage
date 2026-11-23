@@ -6903,7 +6903,49 @@ def _raise_variables(c, n, variables):
         sage: S.<t> = R[]
         sage: _raise_variables(2*a + 3*b*t, 2, [a, t])
         3*b*t^2 + 2*a^2
+
+    The substitution is recursive: in an element of an infinite
+    polynomial ring, the variables are raised in the coefficients of
+    the underlying polynomial, and in a fraction, in numerator and
+    denominator::
+
+        sage: from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        sage: C = InfinitePolynomialRing(S)
+        sage: x = C.gen()
+        sage: f = x[0] * (a + 1)
+        sage: _raise_variables(f, 2, [a, t])
+        (a^2 + 1)*x_0
+        sage: PF = C.fraction_field()
+        sage: _raise_variables(PF(f) / (t + 1), 2, [a, t])
+        ((a^2 + 1)*x_0)/(t^2 + 1)
     """
+    if n == 1 or not variables:
+        return c
+    from sage.rings.fraction_field import FractionField_generic
+    from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial as InfinitePolynomialElement
+    from sage.rings.polynomial.infinite_polynomial_ring import (InfinitePolynomialRing_dense,
+                                                                 InfinitePolynomialRing_sparse)
+    if isinstance(c, InfinitePolynomialElement):
+        # An element of an infinite polynomial ring: the variables may be
+        # generators of the ring itself (substituted directly) or elements
+        # of its base ring (raised in the coefficients of the underlying
+        # polynomial).
+        P = c.parent()
+        own = {str(g): g ** n for g in variables if g.parent() is P}
+        other = [g for g in variables if g.parent() is not P]
+        if other:
+            c = P(c.polynomial().map_coefficients(
+                lambda r: _raise_variables(r, n, other)))
+        if own:
+            try:
+                c = c.subs(**own)
+            except AttributeError:
+                pass
+        return c
+    P = c.parent()
+    if isinstance(P, FractionField_generic) and isinstance(
+            P.base(), (InfinitePolynomialRing_dense, InfinitePolynomialRing_sparse)):
+        return P(_raise_variables(c.numerator(), n, variables)) / P(_raise_variables(c.denominator(), n, variables))
     try:
         return c.subs(**{str(g): g ** n for g in variables})
     except AttributeError:
