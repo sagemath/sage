@@ -1912,18 +1912,25 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             +Infinity
             sage: ZZ.quo(1024)(16).valuation(4)
             2
+            sage: Mod(4, 8).valuation(4)
+            1
+            sage: Mod(0, 8).valuation(4)
+            +Infinity
         """
         p=self._modulus.sageInteger.gcd(p)
         if p==1:
             raise ValueError("Valuation with respect to a unit is not defined.")
+        n = self._modulus.sageInteger
+        a = self.lift()
         r = 0
-        power = p
-        while not (self % power): # self % power == 0
-            r += 1
-            power *= p
-            if not power.divides(self._modulus.sageInteger):
+        g = p
+        while a % g == 0:
+            next_g = (g * p).gcd(n)
+            if next_g == g:
                 from sage.rings.infinity import infinity
                 return infinity
+            r += 1
+            g = next_g
         return r
 
     cpdef _floordiv_(self, right):
