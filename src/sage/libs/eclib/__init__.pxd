@@ -10,6 +10,7 @@ from libcpp.map cimport map
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 from sage.libs.ntl.types cimport ZZ_c
+from sage.libs.gmp.types cimport mpz_ptr, mpz_srcptr
 
 
 # NOTE: eclib used to have specific dependencies, so that they had to
@@ -17,6 +18,8 @@ from sage.libs.ntl.types cimport ZZ_c
 # case, we start by listing all relevant include files in the correct
 # order.
 
+cdef extern from "<signal.h>": pass
+cdef extern from "<setjmp.h>": pass
 cdef extern from "eclib/vector.h": pass
 cdef extern from "eclib/xmod.h": pass
 cdef extern from "eclib/svector.h": pass
@@ -39,7 +42,8 @@ cdef extern from "eclib/newforms.h": pass
 
 # Now the actual declarations, where the order no longer matters
 cdef extern from "eclib/vector.h":
-    ctypedef int scalar
+    cdef cppclass scalar:
+        pass
 
     cdef cppclass vec:
         scalar operator[](long)
@@ -73,8 +77,9 @@ cdef extern from "eclib/smatrix.h":
         scalar elem(int, int) const
         svec row(int) const
 
+ctypedef ZZ_c bigint
+
 cdef extern from "eclib/interface.h":
-    ctypedef ZZ_c bigint
     int I2int(bigint)
 
 cdef extern from "eclib/rat.h":
@@ -119,19 +124,21 @@ cdef extern from "eclib/descent.h":
     cdef cppclass mw:
         mw(Curvedata* curve, int verb, int pp, int maxr)
 
-cdef extern from "eclib/homspace.h":
-    cdef cppclass homspace:
-        long modulus
-        int plusflag  # sign
+cdef extern from "sage/libs/eclib/eclib_compat.h" namespace "sage_eclib":
+    void scalar_to_mpz(mpz_ptr out, const scalar& value) noexcept
+    scalar scalar_from_mpz(mpz_srcptr value) except +
+    newforms* make_newforms(long level, int verbose)
+
+    cdef cppclass homspace "sage_eclib::Homspace":
+        int plusflag
         int cuspidal
-
-        homspace(long n, int hp, int hcusp, int verbose)
-
-        int h1dim()
-        int h1cuspdim()
-        mat heckeop(long p, int dual, int display)
-        vec heckeop_col(long p, int j, int display)
-        smat s_heckeop(long p, int dual, int display)
+        homspace(long level, int sign, int cuspidal, int verbose)
+        long level() const
+        long h1dim() const
+        long h1cuspdim() const
+        mat heckeop(long p, int dual, int verbose) const
+        vec heckeop_col(long p, int j, int verbose) const
+        smat s_heckeop(long p, int dual, int verbose) const
         long h1ncusps()
 
 cdef extern from "eclib/newforms.h":
@@ -142,8 +149,6 @@ cdef extern from "eclib/newforms.h":
         long maxdepth
         long cuspidal
         long sign
-
-        newforms(long n, int disp)
 
         void createfromcurve(int sign, CurveRed CR, int nap)
         void display()

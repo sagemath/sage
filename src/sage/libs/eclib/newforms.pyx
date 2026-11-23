@@ -215,7 +215,7 @@ cdef class ECModularSymbol:
             raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
         self.sign = sign
 
-        self.nfs = new newforms(n, 0)
+        self.nfs = make_newforms(n, 0)
         self.nfs.createfromcurve(sign, CR, nap)
         sig_off()
 

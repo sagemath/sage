@@ -3,6 +3,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'constructor.py',
+  'eclib_compat.h',
   'homspace.pxd',
   'homspace.pyx',
   'interface.py',
@@ -28,7 +29,14 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/libs/eclib',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_ntl,
+      inc_rings,
+      inc_src,
+    ],
     dependencies: [py_dep, cysignals, ec, ecl, flint, gmp, ntl],
   )
 endforeach

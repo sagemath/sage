@@ -22,7 +22,7 @@ class EclibMesonTestCase(unittest.TestCase):
                         arguments=(), windows=False, succeeds=True):
         source = Path(__file__).resolve().parents[2]
         dependency = re.search(
-            r'^ec = dependency\(\n.*?^\)',
+            r'^ec = disabler\(\)\n.*?^if not ec\.found\(\)\n.*?^endif$',
             (source / 'src/meson.build').read_text(), re.M | re.S,
         ).group()
         wrap = configparser.ConfigParser()
@@ -70,17 +70,17 @@ endif
 
     def test_compatible_system(self):
         # Include the old version reported by some compatible conda packages.
-        for version in ('20231211', '20250122', '20250627'):
+        for version in ('20231211', '20250122', '20250627', '20261021'):
             with self.subTest(version=version):
                 self.check_selection(version, 'pkgconfig ' + version)
 
     def test_incompatible_or_missing_system(self):
-        for version in ('20231210', '20260422', '20260707', None):
+        for version in ('20231210', '20260422', '20260707', '20261022', None):
             with self.subTest(version=version):
                 self.check_selection(version, 'internal 20250627')
 
     def test_disabled(self):
-        for version in ('20250627', '20260707', None):
+        for version in ('20250627', '20260707', '20261021', None):
             with self.subTest(version=version):
                 self.check_selection(version, 'disabled', option='disabled')
 
@@ -88,8 +88,10 @@ endif
         self.check_selection('20260707', 'internal 20250627', option='enabled')
 
     def test_forced_fallback(self):
-        self.check_selection('20250627', 'internal 20250627',
-                             arguments=('--force-fallback-for=eclib',))
+        for version in ('20250627', '20261021'):
+            for arguments in (('--force-fallback-for=eclib',), ('--wrap-mode=forcefallback',)):
+                with self.subTest(version=version, arguments=arguments):
+                    self.check_selection(version, 'internal 20250627', arguments=arguments)
 
     def test_no_fallback(self):
         self.check_selection('20260707', 'disabled',

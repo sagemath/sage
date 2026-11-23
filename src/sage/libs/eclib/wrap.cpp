@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
+#include <NTL/ZZ.h>
 using namespace std;
+typedef NTL::ZZ bigint;
 
 /**************** Miscellaneous functions ****************/
 
@@ -128,7 +130,7 @@ int mw_process(struct Curvedata* curve, struct mw* m,
                       const bigint* x, const bigint* y,
                       const bigint* z, int sat)
 {
-  Point P(*curve, *x, *y, *z);
+  Point P(curve, *x, *y, *z);
   if (!P.isvalid())
     return 1;
   m->process(P, sat);
