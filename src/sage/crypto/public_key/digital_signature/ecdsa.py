@@ -175,6 +175,13 @@ class ECDSA(DigitalSignatureBase):
         sage: toy_sha == ecdsa
         True
 
+    ``hash_function`` must be callable::
+
+        sage: digital_signature.ECDSA(Etoy, Gtoy, order=ntoy, hash_function=5)
+        Traceback (most recent call last):
+        ...
+        TypeError: hash_function must be callable
+
     The base point must have prime order. Otherwise `\Zmod{n}` is not a
     field, and signing fails with an obscure ``ZeroDivisionError`` instead::
 
@@ -251,6 +258,10 @@ class ECDSA(DigitalSignatureBase):
             raise ValueError(f'{G} does not have order {self._n}')
 
         self._R = IntegerModRing(self._n)
+
+        if hash_function is not None and not callable(hash_function):
+            raise TypeError('hash_function must be callable')
+
         self._hash_function = hash_function
 
     def secret_key(self) -> IntegerMod_abstract:
