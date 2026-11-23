@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Self
 
-from sage.misc.prandom import randint
+from sage.misc.prandom import getrandbits, randint
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
@@ -38,6 +38,8 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from .digital_signature_base import DigitalSignatureBase
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
     from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
     from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
@@ -56,6 +58,19 @@ class ECDSA(DigitalSignatureBase):
     - ``order`` -- (default: ``None``) the order `n` of ``G``. If ``None``, the
       order is computed, which is expensive for cryptographic size curves. When
       given, it is checked against ``G`` rather than trusted blindly.
+
+    - ``hash_function`` -- (default: ``None``) the hash function applied to a
+      message before signing it. If ``None``, no hashing is done and a message
+      is an integer mod `n`, so the caller is assumed to have hashed the message
+      already. Otherwise this should be a hash constructor from :mod:`hashlib`,
+      such as ``hashlib.sha256``, and a message is then :class:`bytes`.
+
+    .. NOTE::
+
+        ``hash_function`` is how a message is encoded as an integer, and is not
+        considered part of the parameter set returned by :meth:`parameters`.
+        Two instances that differ only in their hash function therefore compare
+        as equal.
 
     REFERENCES:
 
@@ -119,11 +134,45 @@ class ECDSA(DigitalSignatureBase):
         sage: p256.verify(Q, (r, s), z2)
         False
 
+    Passing ``hash_function`` makes the scheme hash the message itself, so that
+    a message is :class:`bytes` rather than an integer. Signing the raw message
+    ``b'sample'`` under SHA-256 reproduces the very same published signature::
+
+        sage: E256, G256, n256 = p256.parameters()
+        sage: p256_sha = digital_signature.ECDSA(E256, G256, order=n256,
+        ....:                                    hash_function=hashlib.sha256)
+        sage: (r2, s2), _ = p256_sha.sign(b'sample', d, nonce=k)
+        sage: (r2, s2) == (r, s)
+        True
+        sage: p256_sha.verify(Q, (r2, s2), b'sample')
+        True
+        sage: p256_sha.verify(Q, (r2, s2), b'test')
+        False
+
+    Hashing works for the toy curve too, where the 5-bit order `n` is much
+    shorter than the digest::
+
+        sage: Etoy, Gtoy, ntoy = ecdsa.parameters()
+        sage: toy_sha = digital_signature.ECDSA(Etoy, Gtoy, order=ntoy,
+        ....:                                   hash_function=hashlib.sha256)
+        sage: public_key, secret_key = toy_sha.key_generation()
+        sage: signature, message = toy_sha.sign(b'a toy message', secret_key)
+        sage: toy_sha.verify(public_key, signature, b'a toy message')
+        True
+
     TESTS::
 
         sage: TestSuite(ecdsa).run()
         sage: TestSuite(digital_signature.ECDSA.named_parameter_set('toy')).run()
         sage: ecdsa == digital_signature.ECDSA.named_parameter_set('toy')
+        True
+        sage: TestSuite(toy_sha).run()
+        sage: TestSuite(p256_sha).run()
+
+    An instance that differs only in its hash function still compares equal,
+    since the hash function is not part of :meth:`parameters`::
+
+        sage: toy_sha == ecdsa
         True
 
     The base point must have prime order. Otherwise `\Zmod{n}` is not a
@@ -177,6 +226,7 @@ class ECDSA(DigitalSignatureBase):
         E: EllipticCurve_finite_field,
         G: EllipticCurvePoint_finite_field,
         order: Integer | int | None = None,
+        hash_function: Callable[[bytes], Any] | None = None,
     ) -> None:
         K = E.base_field()
         if not K.is_finite() or not K.is_prime_field():
@@ -201,6 +251,7 @@ class ECDSA(DigitalSignatureBase):
             raise ValueError(f'{G} does not have order {self._n}')
 
         self._R = IntegerModRing(self._n)
+        self._hash_function = hash_function
 
     def secret_key(self) -> IntegerMod_abstract:
         r"""
@@ -239,13 +290,65 @@ class ECDSA(DigitalSignatureBase):
         """
         return Integer(secret_key) * self._G
 
+    def _message_to_integer(self, message) -> IntegerMod_abstract:
+        r"""
+        Return the element of `\Zmod{n}` that is actually signed for ``message``.
+
+        If no hash function was given, ``message`` is simply coerced into
+        `\Zmod{n}`. Otherwise ``message`` is hashed and the leftmost
+        `\min(N, \mathrm{outlen})` bits of the digest are used, where `N` is the
+        bit length of `n` and `\mathrm{outlen}` is the bit length of the digest.
+
+        TESTS::
+
+            sage: import hashlib
+            sage: ecdsa = digital_signature.ECDSA.named_parameter_set('toy')
+            sage: ecdsa._message_to_integer(13)
+            13
+
+        For the toy curve `n` has only 5 bits, so almost all of a SHA-256
+        digest is dropped::
+
+            sage: E, G, n = ecdsa.parameters()
+            sage: toy_sha = digital_signature.ECDSA(E, G, order=n,
+            ....:                                   hash_function=hashlib.sha256)
+            sage: e = ZZ(int.from_bytes(hashlib.sha256(b'sage').digest(), 'big'))
+            sage: toy_sha._message_to_integer(b'sage') == Zmod(19)(e >> (256 - 5))
+            True
+
+        For P-256 the SHA-256 digest is exactly as long as `n`, so no bits are
+        dropped and hashing agrees with reducing the digest mod `n`::
+
+            sage: p256 = digital_signature.ECDSA.named_parameter_set('P-256')
+            sage: E, G, n = p256.parameters()
+            sage: p256_sha = digital_signature.ECDSA(E, G, order=n,
+            ....:                                    hash_function=hashlib.sha256)
+            sage: z = ZZ(int.from_bytes(hashlib.sha256(b'sample').digest(), 'big'))
+            sage: p256_sha._message_to_integer(b'sample') == Zmod(n)(z)
+            True
+        """
+        if self._hash_function is None:
+            return self._R(message)
+
+        digest = self._hash_function(message).digest()
+        e = Integer(int.from_bytes(digest, 'big'))
+
+        # Use the leftmost min(N, outlen) bits of the digest, where N is the bit
+        # length of n.
+        excess = 8 * len(digest) - self._n.nbits()
+        if excess > 0:
+            e >>= excess
+
+        return self._R(e)
+
     def sign(self, message, secret_key, nonce=None) -> tuple[tuple[Any, Any], Any]:
         """
         Return the ECDSA (signature, message) pair signed by ``secret_key``.
 
         INPUT:
 
-        - ``message`` -- the message to be signed; an integer mod `n`
+        - ``message`` -- the message to be signed. This is an integer mod `n`
+          if the instance has no hash function, and :class:`bytes` otherwise.
         - ``secret_key`` -- the secret key of the ECDSA instance
         - ``nonce`` -- (default: ``None``) the per-signature nonce `k`. If
           ``None``, a fresh random nonce is used. An explicit nonce must never be
@@ -273,7 +376,7 @@ class ECDSA(DigitalSignatureBase):
             ...
             ValueError: nonce must not be zero
         """
-        z = self._R(message)
+        z = self._message_to_integer(message)
         d = self._R(secret_key)
 
         while True:
@@ -302,7 +405,8 @@ class ECDSA(DigitalSignatureBase):
 
         - ``public_key`` -- the public key of the ECDSA signature
         - ``signature`` -- a candidate ECDSA signature, a pair ``(r, s)``
-        - ``message`` -- the message that was signed
+        - ``message`` -- the message that was signed, in the same form that
+          :meth:`sign` accepts
 
         OUTPUT:
 
@@ -336,7 +440,7 @@ class ECDSA(DigitalSignatureBase):
 
         r = self._R(r)
         s = self._R(s)
-        z = self._R(message)
+        z = self._message_to_integer(message)
 
         u_1 = z / s
         u_2 = r / s
@@ -359,6 +463,23 @@ class ECDSA(DigitalSignatureBase):
              19)
         """
         return (self._E, self._G, self._n)
+
+    def _test_signature(self, **options) -> None:
+        """
+        Test that the signature scheme verifies a correct signature.
+
+        When a hash function is set a message is :class:`bytes` rather than an
+        integer, so the random integer message used by the base class does not
+        apply and a random byte string is signed instead.
+        """
+        if self._hash_function is None:
+            return super()._test_signature(**options)
+
+        tester = self._tester(**options)
+        length = randint(1, 64)
+        message = getrandbits(8 * length).to_bytes(length, 'big')
+        *_, result = self.do_signature(message)
+        tester.assertTrue(result)
 
     @classmethod
     def named_parameter_set(cls, name: str) -> Self:

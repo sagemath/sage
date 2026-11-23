@@ -29,9 +29,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Self
 
+from sage.groups.generic import has_order
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
+from sage.structure.factorization import Factorization
 
 from .digital_signature_base import DigitalSignatureBase
 
@@ -63,6 +65,15 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
     REFERENCES:
 
     For more information, see Chapter 11 of [MvOV1996]_.
+
+    .. NOTE::
+
+        This implementation deviates from [FIPS186-2]_ in that it does not hash
+        the message. :meth:`sign` and :meth:`verify` take the integer that the
+        standard calls the message digest, so to reproduce a standard signature
+        the caller must hash the message first, as the known answer test below
+        does. For a scheme that can apply the hash itself, see
+        :class:`~sage.crypto.public_key.digital_signature.ecdsa.ECDSA`.
 
     EXAMPLES::
 
@@ -159,7 +170,10 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         if self._generator == 1:
             raise ValueError('generator must not be equal to one')
 
-        if self._generator**self._q != 1:
+        # q was proved prime above, so pass its factorization rather than
+        # letting has_order() factor it again.
+        if not has_order(self._generator, Factorization([(self._q, 1)]),
+                         operation='*'):
             raise ValueError('generator must have order q')
 
     def secret_key(self) -> IntegerMod_abstract:
@@ -205,7 +219,9 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
 
         INPUT:
 
-        - ``message`` -- integer message value to be signed
+        - ``message`` -- the message digest to be signed, an integer. This is
+          `H(m)` in the standard, not the message `m` itself; see the note in
+          the class documentation.
         - ``secret_key`` -- the secret key that only the signer has
         - ``nonce`` -- (default: ``None``) the per-signature nonce `k`. If
           ``None``, a fresh random nonce is used. An explicit nonce must never be
@@ -258,8 +274,8 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
 
         - ``public_key`` -- the public key that the signature is checked against
         - ``signature`` -- a candidate DSA signature, a pair ``(r, s)``
-        - ``message`` -- the message that was signed; assumed to be an integer
-          for the test suite
+        - ``message`` -- the message digest that was signed, an integer. As in
+          :meth:`sign`, this is `H(m)` rather than the message itself.
 
         OUTPUT:
 
