@@ -306,7 +306,7 @@ class SymmetricIdeal(Ideal_generic):
             OUT = self * OUT
         return OUT
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
         Answer whether ``self`` is a maximal ideal.
 

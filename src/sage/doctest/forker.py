@@ -1484,6 +1484,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             '...17'
             sage: sage0.eval("quit")
             'Returning to doctests...TestResults(failed=1, attempted=2)'
+            sage: sage0.quit()
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
@@ -1644,6 +1645,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: sage0._prompt = old_prompt
             sage: sage0.eval("quit")
             'TestResults(failed=1, attempted=1)'
+            sage: sage0.quit()
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
