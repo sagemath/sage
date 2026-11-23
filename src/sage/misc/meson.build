@@ -110,7 +110,6 @@ py.install_sources(
   'search.pyx',
   'session.pyx',
   'sh.py',
-  'sphinxify.py',
   'stopgap.pyx',
   'superseded.py',
   'table.py',

@@ -1725,9 +1725,9 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
 
         raise ValueError("no classical embedding defined")
 
-    # ----------------------------------------------------------------------------------
-    # as_refection_group
-    # ----------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # as_reflection_group
+    # ---------------------------------------------------------------------
     def as_reflection_group(self):
         r"""
         Return an isomorphic image of ``self`` as irreducible complex

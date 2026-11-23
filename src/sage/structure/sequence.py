@@ -792,7 +792,7 @@ class Sequence_generic(SageObject, list):
         """
         self._is_immutable = True
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         """
         Return ``True`` if this object is immutable (can not be changed)
         and ``False`` if it is not.
@@ -816,7 +816,7 @@ class Sequence_generic(SageObject, list):
         except AttributeError:
             return False
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         EXAMPLES::
 
