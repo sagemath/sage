@@ -9,7 +9,7 @@ on:
         type: string
       suite:
         type: string
-        default: smoke
+        default: all
       doctest_paths:
         type: string
 
@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   sagelib:
-    name: sagelib / ${{ matrix.platform }} / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'smoke' }}
+    name: sagelib / ${{ matrix.platform }} / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'all' }}
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +50,7 @@ jobs:
       VECLIB_MAXIMUM_THREADS: 1
       MAKE: make -j4
       CI_JOBS: 4
-      CI_SUITE: ${{ inputs.suite || 'smoke' }}
+      CI_SUITE: ${{ inputs.suite || 'all' }}
       CI_DOCTEST_PATHS: ${{ inputs.doctest_paths }}
 
     steps:

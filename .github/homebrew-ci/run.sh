@@ -4,10 +4,10 @@ set -euo pipefail
 : "${CI_SOURCE:?}" "${CI_RESULTS:?}" "${CI_RUN_DIR:?}" "${CI_HELPERS:?}"
 if [[ $RUNNER_OS == Linux ]]; then
     brew_prefix=/home/linuxbrew/.linuxbrew
-    export UV_PYTHON_DOWNLOADS=never
 else
     brew_prefix=/opt/homebrew
 fi
+export UV_PYTHON_DOWNLOADS=never
 export PATH="$brew_prefix/bin:$brew_prefix/sbin:$PATH"
 export DOT_SAGE="$CI_RUN_DIR/dot-sage"
 export SAGE_DATA_PATH="$CI_RUN_DIR/data"
@@ -33,14 +33,6 @@ activate() {
     fi
 }
 
-pip_install() {
-    if [[ $RUNNER_OS == Linux ]]; then
-        uv pip install --python "$VIRTUAL_ENV/bin/python" --no-sources "$@"
-    else
-        python -m pip install "$@"
-    fi
-}
-
 case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
     dependencies)
         brew tap dimpase/tap
@@ -57,7 +49,7 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
             fi
         done
         bundles=(dimpase/tap/sagemath-deps dimpase/tap/sagemath-docbuild-deps)
-        brew install --force-bottle "${bundles[@]}"
+        brew install --force-bottle dimpase/tap/cypari2 "${bundles[@]}"
         # On the persistent runner brew install can skip already-installed bundles
         # even when a dependency such as gmp-ecm has been removed.
         if [[ $RUNNER_OS == macOS ]] && ! brew missing "${bundles[@]}"; then
@@ -76,16 +68,12 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
         ;;
     venv)
         python314="$(brew --prefix python@3.14)/bin/python3.14"
-        if [[ $RUNNER_OS == Linux ]]; then
-            uv venv --python "$python314" --system-site-packages "$CI_RUN_DIR/venv"
-        else
-            "$python314" -m venv --system-site-packages "$CI_RUN_DIR/venv"
-        fi
+        uv venv --python "$python314" --system-site-packages "$CI_RUN_DIR/venv"
         activate
         # Freeze the bottled Python dependencies so adding pytest cannot upgrade them.
         python -m pip freeze --all --exclude sagemath > "$CI_RESULTS/bottled-python.txt"
         python "$CI_HELPERS/check.py" requirements > "$CI_RESULTS/test-requirements.txt"
-        pip_install --only-binary=:all: -c "$CI_RESULTS/bottled-python.txt" \
+        uv pip install --python "$VIRTUAL_ENV/bin/python" --no-sources --only-binary=:all: -c "$CI_RESULTS/bottled-python.txt" \
             -r "$CI_RESULTS/test-requirements.txt"
         python "$CI_HELPERS/check.py" data | tee "$CI_RESULTS/data-paths.json"
         python -m pip list --format=json > "$CI_RESULTS/python-packages.json"
@@ -93,10 +81,6 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
     build)
         activate
         setup_args=(-Dbuild-docs=false -Ddefer_feature_checks=true --wrap-mode=nofallback)
-        if [[ $RUNNER_OS == Linux ]]; then
-            # PARI headers use POSIX sigjmp_buf in the Meson compiler probe.
-            setup_args+=(-Dc_std=gnu17)
-        fi
         for feature in bliss brial coxeter3 eclib libbraiding libhomfly mcqd meataxe rankwidth sirocco tdlib; do
             setup_args+=("-D$feature=enabled")
         done
@@ -104,7 +88,7 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
         for arg in "${setup_args[@]}"; do
             config_args+=("-Csetup-args=$arg")
         done
-        pip_install --no-build-isolation --no-deps --editable . -v \
+        uv pip install --python "$VIRTUAL_ENV/bin/python" --no-sources --no-build-isolation --no-deps --editable . -v \
             "-Cbuild-dir=$CI_RUN_DIR/build" \
             "-Ccompile-args=-j${CI_JOBS:-4}" "${config_args[@]}"
         ;;
@@ -120,7 +104,7 @@ case "${1:?Expected dependencies, venv, build, verify, pytest, or doctest}" in
         ;;
     doctest)
         activate
-        python "$CI_HELPERS/check.py" doctest
+        SAGE_SRC="$CI_SOURCE/src" SAGE_DOC_SRC="$CI_SOURCE/src/doc" python "$CI_HELPERS/check.py" doctest
         ;;
     *)
         echo "Unknown phase: $1" >&2
