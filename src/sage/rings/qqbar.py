@@ -6560,6 +6560,16 @@ class AlgebraicNumberPowQQAction(Action):
             sage: n = 19
             sage: A = matrix(QQbar, [[1/(i+j+1) for i in range(n)] for j in range(n)])
             sage: ignore = A.QR()  # ensure there's no error
+
+        A fast interval may be unbounded even when the exact value is finite::
+
+            sage: p, q = 1, 0
+            sage: for _ in range(60):
+            ....:     p, q = p + 2*q, p + q
+            sage: radicand = 1 / (QQ(p)/q - AA(2).sqrt())
+            sage: root = radicand.sqrt()
+            sage: root^2 == radicand
+            True
         """
         if not x:
             return x
@@ -6590,6 +6600,9 @@ class AlgebraicNumberPowQQAction(Action):
             pow_n = x._pow_int(n)
             poly = AAPoly.gen()**d - pow_n
             range = pow_n.interval_fast(RIF)
+            if range.lower().is_infinity() or range.upper().is_infinity():
+                # ANRoot needs a finite interval to refine the root.
+                range = pow_n.interval(RIF)
             if d % 2 == 0:
                 result_min = 0
             else:
