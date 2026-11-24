@@ -70,7 +70,7 @@ class MPolynomialSystemGenerator(SageObject):
 
             sage: from sage.crypto.mq.mpolynomialsystemgenerator import MPolynomialSystemGenerator
             sage: msg = MPolynomialSystemGenerator()
-            sage: msg.varstrs('K', i)                                                   # needs sage.all
+            sage: msg.varstrs('K', i)
             Traceback (most recent call last):
             ...
             NotImplementedError
