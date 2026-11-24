@@ -262,6 +262,7 @@ from sage.data_structures.stream import (
     Stream_dirichlet_convolve,
     Stream_dirichlet_invert,
     Stream_plethysm,
+    Stream_plethysm_multi,
     Stream_pseudo_diff_mul
 )
 
@@ -6931,6 +6932,45 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
              + (s[]#s[6]+s[1]#s[5]+s[2]#s[4]+s[3]#s[3]+s[4]#s[2]+s[5]#s[1]+s[6]#s[])
              + O^7
 
+        Multisort plethysm of a tensor outer series uses one argument per
+        tensor factor::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: L = LazySymmetricFunctions(tensor([p, p]))
+            sage: X = tensor([p[1], p[[]]])
+            sage: Y = tensor([p[[]], p[1]])
+            sage: L(tensor([p[1], p[1]]))(L(X), L(Y))[2]
+            p[1] # p[1]
+            sage: L(X+Y)(p[1], p[1])
+            2*p[1]
+            sage: L(tensor([p[2], p[1]]))(2, 3)
+            6
+
+        Weight variables are passed to each factor plethysm::
+
+            sage: R.<q> = QQ[]
+            sage: p = SymmetricFunctions(R).p()
+            sage: L = LazySymmetricFunctions(tensor([p, p]))
+            sage: F = L(tensor([p[2], p[[]]]))
+            sage: S = LazySymmetricFunctions(p)
+            sage: F(S(q), S.one(), include=[])[0]
+            q*p[]
+
+        An argument with nonzero constant term is allowed if the outer
+        function has finite support.  The higher powers needed here are
+        reread as an implicit argument is refined::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: S = LazySymmetricFunctions(p)
+            sage: L = LazySymmetricFunctions(tensor([p, p]))
+            sage: F = L(tensor([p[[1]*8], p[[]]]))
+            sage: A = S.undefined(0)
+            sage: z = S(p[1])
+            sage: S.define_implicitly([(A, [p[[]]])],
+            ....:     [A - S(QQ(15)/16) - z - F(A,z)/16])
+            sage: A[:5]
+            [p[], 2*p[1], 14*p[1, 1], 252*p[1, 1, 1], 5530*p[1, 1, 1, 1]]
+
         TESTS::
 
             sage: s = SymmetricFunctions(QQ).s()
@@ -7048,7 +7088,53 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             )
             return P.element_class(P, coeff_stream)
 
-        raise NotImplementedError("only implemented for arity 1")
+        from sage.rings.lazy_series_ring import LazySymmetricFunctions
+        fR = fP._stream_coefficient_ring
+        ps = tensor([B.realization_of().p() for B in fR.tensor_factors()])
+        ps_factors = ps.tensor_factors()
+        f_is_polynomial = (isinstance(self._coeff_stream, Stream_exact)
+                           and not self._coeff_stream._constant)
+        if not isinstance(P, LazySymmetricFunctions):
+            if f_is_polynomial:
+                args = [P(g) for g in args]
+                ret = P.zero()
+                for k in range(self._coeff_stream._approximate_order,
+                               self._coeff_stream._degree):
+                    fk = self[k]
+                    if not fk:
+                        continue
+                    for la, c in ps(fk):
+                        product = [ps_factors[i][mu](args[i],
+                                                     include=include,
+                                                     exclude=exclude)
+                                   for i, mu in enumerate(la)]
+                        ret += P(c) * P.prod(product) if product else P(c)
+                return ret
+            P = LazySymmetricFunctions(P)
+        args = [P(g) for g in args]
+        R = P._stream_coefficient_ring
+
+        if not f_is_polynomial:
+            # see the arity-one case: an inner argument of valuation
+            # zero requires finite support of the outer function
+            for g in args:
+                if g._coeff_stream._approximate_order == 0:
+                    if not g._coeff_stream.is_uninitialized() and g[0]:
+                        raise ValueError("can only compose with a positive "
+                                         "valuation series")
+                    g._coeff_stream._approximate_order = 1
+        if P._arity == 1:
+            target_ps = R.realization_of().p()
+        else:
+            target_ps = tensor([B.realization_of().p()
+                                for B in R.tensor_factors()])
+        coeff_stream = Stream_plethysm_multi(
+            self._coeff_stream,
+            tuple(g._coeff_stream for g in args),
+            P.is_sparse(), target_ps, R, p_outer=ps,
+            include=include, exclude=exclude,
+        )
+        return P.element_class(P, coeff_stream)
 
     plethysm = __call__
 
