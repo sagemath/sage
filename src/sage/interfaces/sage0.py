@@ -376,7 +376,7 @@ class Sage(ExtraTabCompletion, Expect):
 
             sage: sage0.version()
             'SageMath version ..., Release Date: ...'
-            sage: sage0.version() == version()
+            sage: sage0.version() == version
             True
         """
         return sage0_version()
@@ -592,7 +592,7 @@ def sage0_version():
     EXAMPLES::
 
         sage: from sage.interfaces.sage0 import sage0_version
-        sage: sage0_version() == version()
+        sage: sage0_version() == version
         True
     """
-    return str(sage0('version()'))
+    return str(sage0('version'))
