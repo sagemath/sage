@@ -5235,12 +5235,13 @@
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LJCR] La Jolla Covering Repository,
+   https://dmgordon.org/cover
+
 .. [LK2025] \S. London and I. Kotsireas,
             *New Turyn-type sequences*.
             Cryptography and Communications **17** (2025), 1601--1610.
             :doi:`10.1007/s12095-025-00829-z`
-.. [LJCR] La Jolla Covering Repository,
-   https://dmgordon.org/cover
 
 .. [LKOL2002] Hyeong-Ok Lee, Jong-Seok Kim, Eunseuk Oh and Hyeong-Seok Lim,
               *Hyper-Star Graph: A New Interconnection Network Improving the
@@ -6684,13 +6685,6 @@
              for computations*. Resenhas IME-USP 5 (2), 113-137
              (2001). https://inmabb.criba.edu.ar/gente/mredondo/crasp.pdf
 
-.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
-              (2026). Records the four length-166 sequences extracted from
-              Levent Alpöge's public payload and their bordered-array construction.
-              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
-              Seed data:
-              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
-
 .. [Rees00] Rolf S. Rees,
    Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side `n`,
    Journal of Combinatorial Theory, Series A 90.2 (2000): 257-266.
@@ -6698,6 +6692,13 @@
 .. [Rees93] Rolf S. Rees,
    Two new direct product-type constructions for resolvable group-divisible designs,
    Journal of Combinatorial Designs 1.1 (1993): 15-26.
+
+.. [Reff2026] Nathan Reff, *hadamard-search: The Verified Order-668 Construction*
+              (2026). Records the four length-166 sequences extracted from
+              Levent Alpöge's public payload and their bordered-array construction.
+              https://github.com/nreff/hadamard-search/blob/main/docs/research/hm-668-construction.md
+              Seed data:
+              https://github.com/nreff/hadamard-search/blob/main/fixtures/known/hm-668/spence-sequences.txt
 
 .. [Reg09] Oded Regev. *On Lattices, Learning with Errors, Random
            Linear Codes, and Cryptography*. in Journal of the ACM

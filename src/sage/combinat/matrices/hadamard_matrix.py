@@ -128,6 +128,8 @@ def normalise_hadamard(H, skew=False):
     If ``skew`` is ``True`` but the Hadamard matrix is not skew, the matrix returned
     need not be normalized::
 
+        sage: from sage.combinat.matrices.hadamard_matrix import (
+        ....:     williamson_hadamard_matrix_smallcases)
         sage: H = normalise_hadamard(williamson_hadamard_matrix_smallcases(92), skew=True)
         sage: is_hadamard_matrix(H, normalized=True)
         False
