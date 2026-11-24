@@ -3284,6 +3284,39 @@ def _epoch_if_changed(stream):
     return epoch is not None
 
 
+def _outer_bound(degree_f, n, inner_order, inner_constant):
+    r"""
+    Return the exclusive bound on outer degrees needed to compute
+    degree ``n`` of a composition.
+
+    Every outer degree contributes to every output degree when the inner
+    constant term is nonzero, so only a finite-support outer series is
+    allowed in that case.  Otherwise the bound is supplied by the inner
+    approximate order, clamped to at least 1.
+
+    In particular, a nonzero constant inner term does not mean that the
+    bound can be truncated to the queried output degree.  This example
+    checks plethysm computed with an ordinary truncated symmetric
+    function::
+
+        sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
+        sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).s())
+        sage: f = L(SymmetricFunctions(QQ).s()([2,1]))
+        sage: g = L(lambda n: SymmetricFunctions(QQ).s()([n])
+        ....:       if n else SymmetricFunctions(QQ).s()([]), valuation=0)
+        sage: C = f(g)
+        sage: bounded = sum(SymmetricFunctions(QQ).s()([k]) for k in range(4))
+        sage: all(C[n] == f.symmetric_function()(bounded).homogeneous_component(n)
+        ....:     for n in range(4))
+        True
+    """
+    if inner_constant:
+        if degree_f is None:
+            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
+        return degree_f
+    return n // max(inner_order, 1) + 1
+
+
 def _powersum_realization(P):
     r"""
     Return the powersum realization of a symmetric function algebra,
@@ -3422,6 +3455,18 @@ class Stream_compose(Stream_inexact):
             sage: c = Stream_compose(f, Psi, True)
             sage: c.input_streams() == [f, Psi._coeff_stream]
             True
+
+        Cached powers are also returned, once created.  Each returned
+        stream can contain coefficients which become stale::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: z = L.gen()
+            sage: c = Stream_compose(f, z, True)
+            sage: c[2]
+            7
+            sage: len(c.input_streams()) > 2
+            True
         """
         return ([self._stream, self._input._coeff_stream]
                 + [h._coeff_stream for h in getattr(self, "_pos_powers", [])[1:]]
@@ -3504,7 +3549,6 @@ class Stream_compose(Stream_inexact):
             # We need this for the case so self._neg_powers[0][n] => 0.
             self._neg_powers = [self._input.parent().zero(), ginv]
             for i in range(1, -self._stream._approximate_order):
-                # TODO: possibly we always want a dense cache here?
                 self._neg_powers.append(self._neg_powers[-1] * ginv)
         # placeholder None to make this 1-based.
         self._pos_powers = [self._input.parent().one(), self._input]
@@ -3570,7 +3614,8 @@ class Stream_compose(Stream_inexact):
         # When the inner argument has a nonzero constant term and the
         # outer stream has finite support, every outer degree must be
         # considered.  This is the same bound as for plethysm.
-        K = self._degree_f if self._input._coeff_stream[0] else n // gv + 1
+        K = _outer_bound(self._degree_f, n, gv,
+                         self._input._coeff_stream[0])
         while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
         ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
@@ -3638,6 +3683,21 @@ class Stream_cauchy_compose(Stream_binary):
         r"""
         Return the left and right streams, together with the power
         streams created for composition.
+
+        These are all the streams whose cached coefficients can become
+        stale, not only the original input streams.  In particular, new
+        streams appear after evaluating a coefficient using a power::
+
+            sage: from sage.data_structures.stream import Stream_cauchy_compose, Stream_exact
+            sage: f = Stream_exact([0, 1], order=1)
+            sage: g = Stream_exact([1], order=1)
+            sage: len(Stream_cauchy_compose(f, g, True).input_streams())
+            2
+            sage: h = Stream_cauchy_compose(f, g, True)
+            sage: h[2]
+            1
+            sage: len(h.input_streams()) > 2
+            True
         """
         return ([self._left, self._right]
                 + getattr(self, "_pos_powers", [])[1:]
@@ -3670,7 +3730,6 @@ class Stream_cauchy_compose(Stream_binary):
             # We need this for the case so self._neg_powers[0][n] => 0.
             self._neg_powers = [Stream_zero(), ginv]
             for i in range(1, -self._left._approximate_order):
-                # TODO: possibly we always want a dense cache here?
                 self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1], ginv, self._is_sparse))
         # placeholder None to make this 1-based.
         self._pos_powers = [None, self._right]
@@ -3695,6 +3754,17 @@ class Stream_cauchy_compose(Stream_binary):
             527
             sage: [h[i] for i in range(10)]  # indirect doctest
             [0, 1, 6, 28, 124, 527, 2172, 8755, 34704, 135772]
+
+        A finite-support Laurent outer also uses positive as well as
+        inverse powers of the inner series, when the latter has a
+        nonzero constant term::
+
+            sage: from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+            sage: z = LazyLaurentSeriesRing(QQ, 'z').gen()
+            sage: h = Stream_cauchy_compose((z**-1+z)._coeff_stream,
+            ....:                             (1+z)._coeff_stream, True)
+            sage: [h[n] for n in (-1,0,1,2,3,4)]
+            [0, 2, 0, 1, -1, 1]
         """
         if _epoch_if_changed(self):
             self._pos_powers = [None, self._right]
@@ -3703,16 +3773,16 @@ class Stream_cauchy_compose(Stream_binary):
                                     Stream_cauchy_invert(self._right)]
         fv = self._left._approximate_order
         gv = self._right._approximate_order
-        if self._right[0]:
-            # if the inner argument has a nonzero constant term, every
-            # degree of a finite-support outer series contributes
-            K = self._degree_f
-        else:
-            K = n // gv + 1
+        K = _outer_bound(self._degree_f, n, gv, self._right[0])
         if n < 0:
-            return ZZ.sum(l * self._neg_powers[-k][n]
-                          for k in range(fv, K)
-                          if (l := self._left[k]))
+            # Negative outer powers use inverse terms of the inner
+            # series, positive outer powers use its positive powers.
+            negative_terms = ZZ.sum(
+                l * self._neg_powers[-k][n]
+                for k in range(fv, 0) if (l := self._left[k]))
+            return negative_terms + ZZ.sum(
+                l * self._pos_powers[k][n]
+                for k in range(0, K) if (l := self._left[k]))
         # n > 0
         while len(self._pos_powers) < K:
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
@@ -3844,7 +3914,6 @@ class Stream_plethysm(Stream_binary):
         else:
             self._basis = ring
         self._p = p
-        self._inner_is_exact = isinstance(g, Stream_exact)
         g = Stream_map_coefficients(
             g, lambda x: _to_powersum(x, self._basis), is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
@@ -3921,15 +3990,8 @@ class Stream_plethysm(Stream_binary):
         """
         self._ensure_current_powers()
 
-        if not n:  # special case of 0
-            if self._right[0]:
-                if self._degree_f is None:
-                    raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
-                K = self._degree_f
-            else:
-                K = 1
-        else:
-            K = n + 1
+        K = _outer_bound(self._degree_f, n,
+                         self._right._approximate_order, self._right[0])
 
         return sum((c * self.compute_product(n, la)
                     for k in range(self._left._approximate_order, K)
@@ -4047,7 +4109,6 @@ class Stream_plethysm(Stream_binary):
         """
         # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
-            # TODO: possibly we always want a dense cache here?
             self._powers.append(Stream_cauchy_mul(self._powers[-1],
                                                   self._powers[0],
                                                   self._is_sparse))
@@ -4205,12 +4266,10 @@ class Stream_plethysm_multi(Stream_inexact):
             # Stream_plethysm.get_coefficient; repeat the cache-reset
             # invariant for dynamically refined inner streams there
             h._ensure_current_powers()
-        if any(g[0] for g in self._arguments):
-            if self._degree_f is None:
-                raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
-            stop = self._degree_f
-        else:
-            stop = n + 1
+        stop = _outer_bound(
+            self._degree_f, n,
+            min(g._approximate_order for g in self._arguments),
+            any(g[0] for g in self._arguments))
         return self._basis.sum(c * self._compute_product(n, tuple(la), 0, {})
                                for k in range(self._left._approximate_order, stop)
                                for fk in [self._left[k]] if fk
