@@ -841,9 +841,16 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             return False
         return coeff_stream[1].is_singleton()
 
-    def __call__(self, *args):
-        """
+    def __call__(self, *args, include=None, exclude=None):
+        r"""
         Evaluate ``self`` at ``*args``.
+
+        INPUT:
+
+        - ``include`` -- list of weight variables treated as degree one
+          by the Adams operations
+        - ``exclude`` -- list of weight variables fixed by the Adams
+          operations; mutually exclusive with ``include``
 
         EXAMPLES::
 
@@ -874,6 +881,15 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E1 = E.restrict(1)
             sage: E(q*E1)[4]
             (q^4+q)*E_4 + q^2*E_2(E_2) + q^2*X*E_3 + q^3*E_2^2
+
+        The Adams convention can be chosen consistently for the
+        molecular composition and its cycle index::
+
+            sage: Y = L(SymmetricGroup(1))
+            sage: E(q*Y, include=[])[2]
+            q*E_2 + (1/2*q^2-1/2*q)*X^2
+            sage: E(q*Y, include=[]).cycle_index_series()[2]
+            1/2*q^2*p[1, 1] + 1/2*q*p[2]
 
         TESTS::
 
@@ -915,6 +931,8 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: Omega[1]  # not tested
         """
         fP = self.parent()
+        if include is not None and exclude is not None:
+            raise ValueError("include and exclude cannot be specified together")
         if len(args) != fP._arity:
             raise ValueError("arity of must be equal to the number of arguments provided")
         # Find a good parent for the result
@@ -942,7 +960,8 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
                 return P(c)
             return P(c.coefficients()[0])
 
-        return CompositionSpeciesElement(self, *args)
+        return CompositionSpeciesElement(self, *args,
+                                         include=include, exclude=exclude)
 
     def revert(self):
         r"""
@@ -2149,9 +2168,15 @@ class DifferenceSpeciesElement(LazyCombinatorialSpeciesElement):
 
 class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
                                 LazyCombinatorialSpeciesElement):
-    def __init__(self, left, *args):
+    def __init__(self, left, *args, include=None, exclude=None):
         r"""
         Initialize the composition of species.
+
+        INPUT:
+
+        - ``include`` and ``exclude`` -- optional weight-variable
+          selections, forwarded to the Adams action in the cycle-index
+          computation
 
         TESTS::
 
@@ -2261,9 +2286,9 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                                          for d, (M, _) in zip(alpha, g_flat) if d]
                             non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
                             names = ["X%s" % i for i in range(len(molecules))]
-                            FX = F._compose_with_weighted_singletons(names,
-                                                                     multiplicities,
-                                                                     non_zero_degrees)
+                            FX = F._compose_with_weighted_singletons(
+                                names, multiplicities, non_zero_degrees,
+                                include=self._include, exclude=self._exclude)
                             FG = [(M(*molecules), c) for M, c in FX]
                             result += R.sum_of_terms(FG)
                 return result
@@ -2272,6 +2297,8 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         super().__init__(P, coeff_stream)
         self._left = left
         self._args = args
+        self._include = include
+        self._exclude = exclude
 
     def structures(self, *labels):
         r"""
@@ -2363,7 +2390,9 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             sage: F.cycle_index_series()[5]
             h[2, 2, 1] - h[3, 1, 1] + 3*h[3, 2] + 2*h[4, 1] + 2*h[5]
         """
-        return self._left.cycle_index_series()(*[G.cycle_index_series() for G in self._args])
+        return self._left.cycle_index_series()(
+            *[G.cycle_index_series() for G in self._args],
+            include=self._include, exclude=self._exclude)
 
 
 class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
