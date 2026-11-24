@@ -309,7 +309,7 @@ class Polyhedron_base6(Polyhedron_base5):
           points in each parameter; an integer for an edge, a pair of
           integers for a triangular patch of a face (center to edge).
           Only the first value is used in 2D plots;
-          see :func:`~sage.plot.plot3d.plot3d.parametric_plot3d`
+          see :func:`~sage.plot.plot3d.parametric_plot3d.parametric_plot3d`
 
         - ``reparameterization`` -- (optional) parametric smoothing for edges
           and faces. See the NOTE below on when disabling helps for severe
