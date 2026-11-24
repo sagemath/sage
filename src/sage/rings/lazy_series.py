@@ -6947,6 +6947,19 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L(tensor([p[2], p[1]]))(2, 3)
             6
 
+        For an ordinary common alphabet, the individual factors combine
+        in that alphabet.  Symmetric-function arguments of different
+        arities are rejected instead of being mapped implicitly::
+
+            sage: S = LazySymmetricFunctions(p)
+            sage: z = S(p[1])
+            sage: L(X + Y)(z, z)[1]
+            2*p[1]
+            sage: L(tensor([p[1], p[1]]))(L(X), z)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot mix symmetric-function arguments of different arities: all such arguments must either use matching tensor parents or have the same alphabet; scalar arguments are unrestricted
+
         Weight variables are passed to each factor plethysm::
 
             sage: R.<q> = QQ[]
@@ -7026,6 +7039,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
+        lazy_arities = set(g.parent()._arity for g in args
+                           if isinstance(g, LazySymmetricFunction))
+        if len(lazy_arities) > 1:
+            raise TypeError("cannot mix symmetric-function arguments of different arities: "
+                            "all such arguments must either use matching tensor parents "
+                            "or have the same alphabet; scalar arguments are unrestricted")
+
         cm = get_coercion_model()
         P = cm.common_parent(self.base_ring(), *[parent(h) for h in args])
 
