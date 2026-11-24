@@ -69,6 +69,30 @@ lazy_import('mpmath',
                  '_mpmath_ei', '_mpmath_li', '_mpmath_shi', '_mpmath_si'])
 
 
+def _evalf_method_or_mpmath(name, z, function, parent, **kwds):
+    r"""
+    Return ``z.name()`` if ``z`` has such a method, and otherwise evaluate
+    the mpmath ``function`` at ``z``.
+
+    Real and complex balls, as well as real intervals, implement the
+    exponential integrals with rigorous error bounds, which mpmath does
+    not provide.
+
+    EXAMPLES::
+
+        sage: from sage.functions.exp_integral import _evalf_method_or_mpmath
+        sage: from mpmath import li
+        sage: _evalf_method_or_mpmath('log_integral', RIF(3), li, RIF)
+        2.16358859466720?
+        sage: _evalf_method_or_mpmath('log_integral', RR(3), li, RR)            # needs mpmath
+        2.16358859466719
+    """
+    method = getattr(z, name, None)
+    if method is not None:
+        return method()
+    return _mpmath_utils_call(function, z, parent=parent, **kwds)
+
+
 class Function_exp_integral_e(BuiltinFunction):
     r"""
     The generalized complex exponential integral `E_n(z)` defined by
@@ -485,7 +509,7 @@ class Function_log_integral(BuiltinFunction):
             sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
         """
-        return _mpmath_utils_call(_mpmath_li, z, parent=parent)
+        return _evalf_method_or_mpmath('log_integral', z, _mpmath_li, parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -677,7 +701,8 @@ class Function_log_integral_offset(BuiltinFunction):
             sage: li(4.5) - li(2.0) - Li(4.5)                                           # needs mpmath
             0.000000000000000
         """
-        return _mpmath_utils_call(_mpmath_li, z, offset=True, parent=parent)
+        return _evalf_method_or_mpmath('log_integral_offset', z, _mpmath_li,
+                                       parent, offset=True)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -866,7 +891,7 @@ class Function_sin_integral(BuiltinFunction):
             sage: sin_integral(-1e23)                                                   # needs mpmath
             -1.57079632679490
         """
-        return _mpmath_utils_call(_mpmath_si, z, parent=parent)
+        return _evalf_method_or_mpmath('sin_integral', z, _mpmath_si, parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1007,7 +1032,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
             0.83786694098020824089467857944 + 1.5707963267948966192313216916*I
         """
-        return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
+        return _evalf_method_or_mpmath('cos_integral', z, _mpmath_ci, parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1154,7 +1179,7 @@ class Function_sinh_integral(BuiltinFunction):
             sage: sinh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.94608307036718301494135331382*I
         """
-        return _mpmath_utils_call(_mpmath_shi, z, parent=parent)
+        return _evalf_method_or_mpmath('sinh_integral', z, _mpmath_shi, parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1278,7 +1303,7 @@ class Function_cosh_integral(BuiltinFunction):
             sage: cosh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.33740392290096813466264620389 + 1.5707963267948966192313216916*I
         """
-        return _mpmath_utils_call(_mpmath_chi, z, parent=parent)
+        return _evalf_method_or_mpmath('cosh_integral', z, _mpmath_chi, parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1384,7 +1409,7 @@ class Function_exp_integral(BuiltinFunction):
                                                   fricas='Ei'))
 
     def _evalf_(self, x, parent=None, algorithm=None):
-        """
+        r"""
         EXAMPLES::
 
             sage: # needs sage.symbolic
@@ -1396,8 +1421,23 @@ class Function_exp_integral(BuiltinFunction):
             0.337403922900968 + 2.51687939716208*I
             sage: Ei(3+I).n()
             7.82313467600158 + 6.09751978399231*I
+
+        TESTS:
+
+        Evaluation in real intervals is rigorous. Since `\operatorname{li}(3)
+        = \operatorname{Ei}(\log(3))`, the enclosures of both sides overlap::
+
+            sage: # needs sage.symbolic
+            sage: a = RIF(Ei(log(3))); a
+            2.16358859466719?
+            sage: a.diameter() > 0
+            True
+            sage: a.overlaps(RIF(log_integral(3)))
+            True
+            sage: RealIntervalField(200)(Ei(1)).diameter() < 1e-55
+            True
         """
-        return _mpmath_utils_call(_mpmath_ei, x, parent=parent)
+        return _evalf_method_or_mpmath('Ei', x, _mpmath_ei, parent)
 
     def _derivative_(self, x, diff_param=None):
         """
