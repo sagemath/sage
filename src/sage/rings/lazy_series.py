@@ -263,6 +263,7 @@ from sage.data_structures.stream import (
     Stream_dirichlet_invert,
     Stream_plethysm,
     Stream_plethysm_multi,
+    _finite_support_degree,
     Stream_pseudo_diff_mul
 )
 
@@ -7092,8 +7093,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         fR = fP._stream_coefficient_ring
         ps = tensor([B.realization_of().p() for B in fR.tensor_factors()])
         ps_factors = ps.tensor_factors()
-        f_is_polynomial = (isinstance(self._coeff_stream, Stream_exact)
-                           and not self._coeff_stream._constant)
+        f_is_polynomial = (_finite_support_degree(self._coeff_stream) is not None)
         if not isinstance(P, LazySymmetricFunctions):
             if f_is_polynomial:
                 args = [P(g) for g in args]

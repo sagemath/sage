@@ -105,6 +105,7 @@ from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_it
 from sage.categories.action import Action
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.tensor import tensor
+from sage.rings.rational_field import QQ
 from sage.categories.quotient_fields import QuotientFields
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
@@ -1970,6 +1971,9 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
+        global _SUBSTITUTION_EPOCH
+        _SUBSTITUTION_EPOCH += 1
+
         def subs(c, var, val):
             P = self._P.polynomial_ring()
             num = P(c.numerator()._p).subs({P(var._p): val})
@@ -3237,6 +3241,110 @@ class Stream_pseudo_diff_mul(Stream_binary):
         return self._left.is_nonzero() and self._right.is_nonzero()
 
 
+_PLETHYSM_VALUATION_ZERO_MESSAGE = (
+    "can only compute plethysm with a series of valuation 0 for symmetric "
+    "functions of finite support")
+
+
+def _finite_support_degree(f):
+    r"""
+    Return the degree of ``f`` if ``f`` has finite support, and ``None``
+    otherwise.
+
+    A nonzero constant tail has infinite support, even for a
+    :class:`Stream_exact`.
+    """
+    if isinstance(f, Stream_exact) and not f._constant:
+        return f._degree
+    return None
+
+
+_SUBSTITUTION_EPOCH = 0
+
+
+def _epoch_if_changed(stream):
+    r"""
+    Return whether ``stream`` was last used before the latest coefficient
+    substitution, and mark its cached powers stale in that case.
+
+    Only substitution can invalidate cached coefficient products.  This
+    deliberately does not compute a dependency fingerprint: stream graphs
+    can be cyclic, and cached powers are not necessarily in the frozen
+    input-stream snapshot.  Each class rebuilds its own base prefix at
+    the next evaluation.
+    """
+    epoch = getattr(stream, '_powers_epoch', None)
+    if epoch == _SUBSTITUTION_EPOCH:
+        return False
+    if hasattr(stream, 'stretched_power_restrict_degree'):
+        # This derived @cached_method is outside the snapshot traversed
+        # during substitution, so it must also be cleared.
+        stream.stretched_power_restrict_degree.clear_cache()
+    stream._powers_epoch = _SUBSTITUTION_EPOCH
+    return epoch is not None
+
+
+def _powersum_realization(P):
+    r"""
+    Return the powersum realization of a symmetric function algebra,
+    factorwise when ``P`` is a tensor product of such algebras.
+    """
+    if HopfAlgebrasWithBasis(P.base_ring()).TensorProducts() in P.categories():
+        return tensor([B.realization_of().p() for B in P._sets])
+    return P.realization_of().p()
+
+
+def _to_powersum(x, scalar_basis=None):
+    r"""
+    Convert ``x`` to the powersum realization of its algebra.
+
+    The result reflects the base ring of the coefficients of ``x``, not
+    just the base ring of a previously chosen basis.  If ``x`` is only a
+    scalar coefficient from a base ring, ``scalar_basis`` supplies the
+    algebra into which it should first be lifted.  The conversion uses
+    denominator-extended coefficients when necessary.
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import _to_powersum
+        sage: h = SymmetricFunctions(ZZ).h()
+        sage: p = SymmetricFunctions(QQ).p()
+        sage: c = _to_powersum(h[2])
+        sage: c == 1/2*p[1,1] + 1/2*p[2]
+        True
+        sage: c.parent().base_ring() is QQ
+        True
+
+        sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
+        sage: hq = SymmetricFunctions(QQ).h()
+        sage: L = LazySymmetricFunctions(hq)
+        sage: X = L(hq[1])
+        sage: p2 = L(p[2])
+        sage: U = L.undefined(1)
+        sage: L.define_implicitly([U], [U-X])
+        sage: g = -L.one() + U
+        sage: [p2(g)[i] for i in range(2)]
+        [-h[], 0]
+    """
+    # Only combine a genuine scalar base-ring coefficient into the algebra.
+    # Tensor-valued data must be converted factorwise, not coerced into a
+    # one-factor parent merely because its realization hook is absent.
+    if (not hasattr(x.parent(), 'realization_of')
+            and scalar_basis is not None
+            and HopfAlgebrasWithBasis(
+                x.parent().base_ring()).TensorProducts()
+                not in x.parent().categories()):
+        x = scalar_basis(x)
+    try:
+        return _powersum_realization(x.parent())(x)
+    except TypeError:
+        # Basis conversion may require denominators absent from the
+        # coefficient ring (e.g. Schur -> powersum over ZZ).
+        from sage.categories.pushout import pushout
+        Qx = x.parent().change_ring(pushout(x.parent().base_ring(), QQ))
+        return _powersum_realization(Qx)(Qx(x))
+
+
 class Stream_compose(Stream_inexact):
     r"""
     Return ``f`` composed by ``g``.
@@ -3289,10 +3397,7 @@ class Stream_compose(Stream_inexact):
             [2, 1, 0, 0]
         """
         gs = g._coeff_stream
-        if isinstance(f, Stream_exact) and not f._constant:
-            self._degree_f = f._degree
-        else:
-            self._degree_f = None
+        self._degree_f = _finite_support_degree(f)
         if (gs._true_order and gs._approximate_order < 0
             or (gs._true_order and gs._approximate_order == 0
                 and self._degree_f is None)):
@@ -3411,8 +3516,19 @@ class Stream_compose(Stream_inexact):
 
         return self._stream._approximate_order * self._input._coeff_stream._approximate_order
 
-    def get_coefficient(self, n):
+    def _ensure_current_powers(self):
+        r"""
+        Recreate composition powers after a coefficient substitution.
+
+        See :func:`_epoch_if_changed` for the precise invalidation event.
         """
+        if _epoch_if_changed(self):
+            self._pos_powers = [self._input.parent().one(), self._input]
+            if hasattr(self, '_neg_powers'):
+                self._neg_powers = [self._input.parent().zero(), ~self._input]
+
+    def get_coefficient(self, n):
+        r"""
         Return the ``n``-th coefficient of ``self``.
 
         INPUT:
@@ -3444,6 +3560,7 @@ class Stream_compose(Stream_inexact):
             sage: [c[i] for i in range(-2, 5)]  # indirect doctest
             [0, 0, 0, 10, 20, 84, 504]
         """
+        self._ensure_current_powers()
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
         if n < 0:
@@ -3509,10 +3626,7 @@ class Stream_cauchy_compose(Stream_binary):
             sage: [h[n] for n in range(4)]
             [2, 1, 0, 0]
         """
-        if isinstance(f, Stream_exact) and not f._constant:
-            self._degree_f = f._degree
-        else:
-            self._degree_f = None
+        self._degree_f = _finite_support_degree(f)
         if (g._true_order and g._approximate_order < 0
             or (g._true_order and g._approximate_order == 0
                 and self._degree_f is None)):
@@ -3582,6 +3696,11 @@ class Stream_cauchy_compose(Stream_binary):
             sage: [h[i] for i in range(10)]  # indirect doctest
             [0, 1, 6, 28, 124, 527, 2172, 8755, 34704, 135772]
         """
+        if _epoch_if_changed(self):
+            self._pos_powers = [None, self._right]
+            if hasattr(self, '_neg_powers'):
+                self._neg_powers = [Stream_zero(),
+                                    Stream_cauchy_invert(self._right)]
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if self._right[0]:
@@ -3715,13 +3834,10 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
         """
-        if isinstance(f, Stream_exact) and not f._constant:
-            self._degree_f = f._degree
-        else:
-            self._degree_f = None
+        self._degree_f = _finite_support_degree(f)
 
         if g._true_order and g._approximate_order == 0 and self._degree_f is None:
-            raise ValueError("can only compute plethysm with a series of valuation 0 for symmetric functions of finite support")
+            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
 
         if ring is None:
             self._basis = p
@@ -3729,67 +3845,8 @@ class Stream_plethysm(Stream_binary):
             self._basis = ring
         self._p = p
         self._inner_is_exact = isinstance(g, Stream_exact)
-        def to_powersum(x):
-            r"""
-            Convert the symmetric function ``x`` to the powersum basis
-            of the algebra of ``x``.
-
-            In particular, the base ring of the result is the ring of
-            the coefficients of ``x``, which may be larger than the
-            base ring of ``self._p`` (e.g. when solving an implicit
-            equation, the coefficients contain additional variables).
-
-            If the base ring does not contain the rational numbers, the
-            conversion may not be possible over this ring (e.g. from
-            the homogeneous to the powersum basis over the integers);
-            in this case we convert over the base ring extended by the
-            rational numbers, from which the result is retracted when
-            a coefficient of the lazy series is computed.
-
-            .. WARNING::
-
-                Converting with ``self._p(x)`` instead would silently
-                return an element whose coefficients do not lie in the
-                base ring of its parent.
-
-            Scalar coefficients are lifted into the algebra of symmetric
-            functions, which is necessary when an implicit series is
-            added to a constant::
-
-                sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).h())
-                sage: X = L(SymmetricFunctions(QQ).h()([1]))
-                sage: p2 = L(SymmetricFunctions(QQ).p()([2]))
-                sage: U = L.undefined(1)
-                sage: L.define_implicitly([U], [U-X])
-                sage: g = -L.one() + U
-                sage: [p2(g)[i] for i in range(2)]
-                [-h[], 0]
-            """
-            from sage.categories.pushout import pushout
-            Px = x.parent()
-            if not hasattr(Px, "realization_of"):
-                # sums of a symmetric function with a scalar can have
-                # coefficients that still live in its base ring
-                # (e.g. while substituting an implicit series).  Lift
-                # such scalars to the algebra before changing basis.
-                x = self._basis(x)
-                Px = x.parent()
-            if HopfAlgebrasWithBasis(Px.base_ring()).TensorProducts() in Px.categories():
-                p_basis = tensor([s.realization_of().p() for s in Px._sets])
-                x_basis = tensor([s for s in Px._sets])
-            else:
-                p_basis = Px.realization_of().p()
-                x_basis = Px
-            try:
-                return p_basis(x)
-            except TypeError:
-                # The conversion may need denominators which do not
-                # exist in the base ring; convert over the base ring
-                # extended by the rational numbers.
-                Qx = x_basis.change_ring(pushout(Px.base_ring(), QQ))
-                return p_basis.change_ring(Qx.base_ring())(Qx(x))
-
-        g = Stream_map_coefficients(g, to_powersum, is_sparse)
+        g = Stream_map_coefficients(
+            g, lambda x: _to_powersum(x, self._basis), is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
@@ -3821,11 +3878,19 @@ class Stream_plethysm(Stream_binary):
             [0, p[1], 2*p[2], 2*p[3], 3*p[4]]
         """
         # this is very likely not the true order
-#        if self._right._approximate_order == 0 and self._degree_f is None:
-#            raise ValueError("can only compute plethysm with a series of "
-#                             " valuation 0 for symmetric functions of finite "
-#                             " support")
         return self._left._approximate_order * self._right._approximate_order
+
+    def _ensure_current_powers(self):
+        r"""
+        Discard cached powers when the inner stream is not exact.
+
+        Cached products of an inexact inner stream can retain old values
+        of coefficients that have since been replaced.  Keep only the
+        powersum-converted inner stream and create higher powers on
+        demand.  Exact inputs keep their caches.
+        """
+        if _epoch_if_changed(self):
+            self._powers = self._powers[:1]
 
     def get_coefficient(self, n):
         r"""
@@ -3854,16 +3919,12 @@ class Stream_plethysm(Stream_binary):
              3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4],
              4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]]
         """
-        if not self._inner_is_exact:
-            # Cached powers of a dynamically refined inner stream would
-            # retain the multiplication products of its older,
-            # undetermined coefficients.  Rebuild them at each requested
-            # degree, so those products see the substituted coefficients.
-            self._powers = self._powers[:1]
+        self._ensure_current_powers()
 
         if not n:  # special case of 0
             if self._right[0]:
-                assert self._degree_f is not None, "the plethysm with a lazy symmetric function of valuation 0 is defined only for symmetric functions of finite support"
+                if self._degree_f is None:
+                    raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
                 K = self._degree_f
             else:
                 K = 1
@@ -4104,33 +4165,17 @@ class Stream_plethysm_multi(Stream_inexact):
         if len(gs) != len(p_outer.tensor_factors()):
             raise ValueError("the number of arguments must match the outer tensor power")
 
-        if isinstance(f, Stream_exact) and not f._constant:
-            self._degree_f = f._degree
-        else:
-            self._degree_f = None
+        self._degree_f = _finite_support_degree(f)
         if (self._degree_f is None
             and any(g._true_order and g._approximate_order == 0 for g in gs)):
-            raise ValueError("can only compute plethysm with a series of valuation 0 for symmetric functions of finite support")
+            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
 
         self._basis = ring
         self._p = p
         self._arguments = gs
 
-        def to_powersum(x):
-            Px = x.parent()
-            if (HopfAlgebrasWithBasis(Px.base_ring()).TensorProducts()
-                    in Px.categories()):
-                target = tensor([B.realization_of().p() for B in Px._sets])
-                try:
-                    return target(x)
-                except TypeError:
-                    # analogously to Stream_plethysm: the basis change
-                    # may require denominators unavailable in the base
-                    Qx = x.parent().change_ring(pushout(Px.base_ring(), QQ))
-                    return Qx.parent().realization_of().p()(Qx)
-            raise TypeError("the outer coefficients are not tensor products of symmetric functions")
-
-        self._left = Stream_map_coefficients(f, lambda x: to_powersum(x), is_sparse)
+        self._left = Stream_map_coefficients(
+            f, lambda x: _to_powersum(x, self._basis), is_sparse)
         if HopfAlgebrasWithBasis(p.base_ring()).TensorProducts() in p.categories():
             factor_basis = p._sets[0]
         else:
@@ -4159,10 +4204,10 @@ class Stream_plethysm_multi(Stream_inexact):
             # this calls compute_product directly, bypassing
             # Stream_plethysm.get_coefficient; repeat the cache-reset
             # invariant for dynamically refined inner streams there
-            if not h._inner_is_exact:
-                h._powers = h._powers[:1]
+            h._ensure_current_powers()
         if any(g[0] for g in self._arguments):
-            assert self._degree_f is not None
+            if self._degree_f is None:
+                raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
             stop = self._degree_f
         else:
             stop = n + 1
