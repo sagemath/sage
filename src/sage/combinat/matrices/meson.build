@@ -5,6 +5,7 @@ py.install_sources(
   'dlxcpp.py',
   'hadamard_matrix.py',
   'hadamard_matrix_test.py',
+  'hadamard_paley_t_test.py',
   'latin.py',
   subdir: 'sage/combinat/matrices',
 )

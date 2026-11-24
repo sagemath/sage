@@ -1759,6 +1759,104 @@ def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
     return is_hadamard_matrix(M, skew=True, normalized=normalized, verbose=verbose)
 
 
+# Direct dispatcher entries from Kumar's Paley-block table. Keep existing
+# constructions ahead of these entries.
+_PALEY_T_PARAMETERS = {
+    3156: (1051, 3), 5260: (1051, 5), 6036: (2011, 3), 6356: (907, 7),
+    6756: (2251, 3), 7364: (1051, 7), 7660: (1531, 5), 8620: (1723, 5),
+    10060: (2011, 5), 10644: (3547, 3), 10932: (3643, 3), 11260: (2251, 5),
+    11572: (1051, 11), 11804: (907, 13),
+}
+
+
+def _paley_t_sequences(q, t):
+    r"""
+    Return four Goethals--Seidel sequences from Paley blocks and T-sequences.
+
+    Here `q \equiv 3 \pmod{8}` is a prime power and `t` is a length
+    supported by :func:`~sage.combinat.t_sequences.T_sequences_smallcases`,
+    coprime to `s = (q+1)/4`. The returned sequences have length `st`.
+
+    Multiplication by an element of order `s` in the norm-one subgroup of
+    `\mathbb{F}_{q^2}^\times` splits the projective line into four orbits. Use
+    the actual vector iterates, not normalized projective representatives,
+    so that the determinant between two iterates depends only on the
+    difference of their indices. The Paley matrix then has sixteen circulant
+    blocks `N_{ij}`, and their first rows suffice.
+
+    Write `T_i` for the circulant matrices of the T-sequences and set
+    `A_j = \sum_i T_i \otimes N_{ij}`. Block row orthogonality in the
+    Paley matrix and the T-matrix identity give
+    `\sum_j A_j A_j^{\mathsf{T}} = 4st I`. The matrices have entries
+    in `\{-1,1\}` by disjointness of the T-sequence supports. The Chinese
+    remainder theorem makes each `A_j` circulant.
+
+    This combination and the order list are from
+    `Kishan Kumar's Paley-block construction
+    <https://github.com/vatskishan03/Hadamard/blob/d885022/hadamard/PALEY_BLOCKS.md>`_.
+    The product step is Seberry and Yamada, *On the products of Hadamard
+    matrices, Williamson matrices and other orthogonal matrices using
+    M-structures*, J. Combin. Math. Combin. Comput. **7** (1990), 97--137,
+    Theorem 4.
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import _paley_t_sequences
+        sage: [len(row) for row in _paley_t_sequences(27, 3)]
+        [21, 21, 21, 21]
+    """
+    from math import gcd
+
+    from sage.rings.finite_rings.finite_field_constructor import GF
+
+    if q % 8 != 3 or not is_prime_power(q):
+        raise ValueError("q must be a prime power congruent to 3 modulo 8")
+    s = (q + 1) // 4
+    if gcd(s, t) != 1:
+        raise ValueError("s and t must be coprime")
+    t_rows = T_sequences_smallcases(t, check=False)
+
+    field = GF(q**2, 'z')
+    z = field.multiplicative_generator()
+    g = z**(4 * (q - 1))
+    g_inv = ~g
+    seeds = [z**i for i in range(4)]
+    conjugates = [u**q for u in seeds]
+    inv_denominator = ~(conjugates[1] - z)
+
+    # Modulo GF(q)^*, the exponent step of g is -8 modulo 4*s.
+    # Since s is odd, z^0,...,z^3 represent the four orbits.
+    # The determinant in the GF(q)-basis (1,z) uses the q-Frobenius.
+    # Take its quadratic character in GF(q), not in the extension field.
+    half = (q - 1) // 2
+    blocks = [[[] for _ in range(4)] for _ in range(4)]
+    for j, (v, v_bar) in enumerate(zip(seeds, conjugates)):
+        for k in range(s):
+            for i, (u, u_bar) in enumerate(zip(seeds, conjugates)):
+                det = (u * v_bar - u_bar * v) * inv_denominator
+                blocks[i][j].append(-1 if det and det**half == -1 else 1)
+            v *= g
+            v_bar *= g_inv
+
+    rows = [[0] * (s * t) for _ in range(4)]
+    for k in range(s * t):
+        for i, t_row in enumerate(t_rows):
+            coefficient = t_row[k % t]
+            if coefficient:
+                for j, row in enumerate(rows):
+                    row[k] = coefficient * blocks[i][j][k % s]
+                break
+    return rows
+
+
+def _hadamard_matrix_paley_t(q, t):
+    """
+    Build the normalized Hadamard matrix from Paley blocks and T-sequences.
+    """
+    rows = _paley_t_sequences(q, t)
+    return normalise_hadamard(_construction_goethals_seidel_matrix(*map(matrix.circulant, rows)))
+
+
 @matrix_method
 def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
@@ -1949,6 +2047,10 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = hadamard_matrix_from_symmetric_conference_matrix(n, check=False)
+    elif n in _PALEY_T_PARAMETERS:
+        if existence:
+            return report_name("Paley blocks and T-sequences: " + name)
+        M = _hadamard_matrix_paley_t(*_PALEY_T_PARAMETERS[n])
     else:
         if existence:
             return Unknown
