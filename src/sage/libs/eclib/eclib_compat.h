@@ -11,8 +11,7 @@
 
 namespace sage_eclib {
 
-// The 2026 homspace headers include modulus.h. Test the headers actually in
-// use: a newer system install can coexist with the older Meson subproject.
+// External installations through 20250627 use the homspace API without modulus.h.
 #ifdef _ECLIB_MODULUS_H
 
 class Homspace : public ::homspace {

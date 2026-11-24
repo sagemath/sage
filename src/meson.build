@@ -193,26 +193,20 @@ if not mtx.found()
 endif
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-# Probe the October 2026 API separately from the legacy range. Intermediate
-# development snapshots changed the modular-symbols API several times.
 ec = disabler()
-if (
-  not get_option('eclib').disabled()
-  and get_option('wrap_mode') != 'forcefallback'
-  and 'eclib' not in get_option('force_fallback_for')
-)
+if not get_option('eclib').disabled()
+  # Some conda packages report 20231211 for a compatible later release.
+  # https://github.com/conda-forge/eclib-feedstock/issues/48
   ec = dependency(
     'eclib',
-    version: '==20261021',
+    version: ['>=20231211', '<=20250627'],
     required: false,
-    allow_fallback: false,
   )
 endif
 if not ec.found()
   ec = dependency(
     'eclib',
-    # Some compatible conda packages report 20231211 in their pkg-config file.
-    version: ['>=20231211', '<=20250627'],
+    version: '==20261021',
     required: get_option('eclib'),
     allow_fallback: not is_windows,
     disabler: true,

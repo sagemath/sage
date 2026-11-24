@@ -39,7 +39,7 @@ class EclibMesonTestCase(unittest.TestCase):
             fallback.mkdir(parents=True)
             shutil.copy2(source / 'subprojects/eclib.wrap', root / 'subprojects')
             (fallback / 'meson.build').write_text("""
-project('eclib', version: '20250627')
+project('eclib', version: '20261021')
 eclib_dep = declare_dependency(version: meson.project_version())
 meson.override_dependency('eclib', eclib_dep)
 """)
@@ -75,9 +75,9 @@ endif
                 self.check_selection(version, 'pkgconfig ' + version)
 
     def test_incompatible_or_missing_system(self):
-        for version in ('20231210', '20260422', '20260707', '20261022', None):
+        for version in ('20231210', '20260422', '20260707', '20261019', '20261022', None):
             with self.subTest(version=version):
-                self.check_selection(version, 'internal 20250627')
+                self.check_selection(version, 'internal 20261021')
 
     def test_disabled(self):
         for version in ('20250627', '20260707', '20261021', None):
@@ -85,13 +85,13 @@ endif
                 self.check_selection(version, 'disabled', option='disabled')
 
     def test_enabled(self):
-        self.check_selection('20260707', 'internal 20250627', option='enabled')
+        self.check_selection('20260707', 'internal 20261021', option='enabled')
 
     def test_forced_fallback(self):
         for version in ('20250627', '20261021'):
             for arguments in (('--force-fallback-for=eclib',), ('--wrap-mode=forcefallback',)):
                 with self.subTest(version=version, arguments=arguments):
-                    self.check_selection(version, 'internal 20250627', arguments=arguments)
+                    self.check_selection(version, 'internal 20261021', arguments=arguments)
 
     def test_no_fallback(self):
         self.check_selection('20260707', 'disabled',

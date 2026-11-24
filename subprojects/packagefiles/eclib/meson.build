@@ -1,7 +1,7 @@
 project(
   'eclib',
   'cpp',
-  version: '20250627',
+  version: '20261021',
   license: 'GPL-2.0-or-later',
   default_options: ['cpp_std=c++17'],
 )
@@ -24,7 +24,11 @@ deps = [
 # directory are templates included by these sources, not compilation units.
 sources = files(
   'libsrc/interface.cc',
+  'libsrc/int.cc',
+  'libsrc/pari_init.cc',
+  'libsrc/convert.cc',
   'libsrc/unimod.cc',
+  'libsrc/modulus.cc',
   'libsrc/arith.cc',
   'libsrc/marith.cc',
   'libsrc/compproc.cc',
@@ -34,6 +38,7 @@ sources = files(
   'libsrc/kbessel.cc',
   'libsrc/svector.cc',
   'libsrc/smatrix.cc',
+  'libsrc/ssubspace.cc',
   'libsrc/smatrix_elim.cc',
   'libsrc/xsplit.cc',
   'libsrc/conic.cc',
@@ -45,12 +50,15 @@ sources = files(
   'libsrc/cubic.cc',
   'libsrc/polys.cc',
   'libsrc/realroots.cc',
-  'libsrc/parifact.cc',
+  'libsrc/pari_interface.cc',
   'libsrc/p2points.cc',
   'libsrc/gf.cc',
   'libsrc/xsplit_data.cc',
   'libsrc/threadpool.cc',
   'libsrc/logger.cc',
+  'libsrc/polred.cc',
+  'libsrc/field.cc',
+  'libsrc/qvecmat.cc',
   'libsrc/curve.cc',
   'libsrc/curvedata.cc',
   'libsrc/curvered.cc',
@@ -95,12 +103,11 @@ sources = files(
   'libsrc/homspace.cc',
   'libsrc/cusp.cc',
   'libsrc/oldforms.cc',
-  'libsrc/fixc6.cc',
   'libsrc/periods.cc',
   'libsrc/moddata.cc',
   'libsrc/pcprocs.cc',
-  'libsrc/nfd.cc',
   'libsrc/curvesort.cc',
+  'libsrc/newspace.cc',
 )
 
 # As in the SPKG, use FLINT and NTL multiprecision, without Boost threading.
@@ -110,7 +117,7 @@ ec_lib = shared_library(
   sources,
   include_directories: include_directories('libsrc'),
   dependencies: deps,
-  cpp_args: ['-DFLINT=1', '-DVERSION="' + meson.project_version() + '"'],
+  cpp_args: ['-DVERSION="' + meson.project_version() + '"'],
   install: true,
 )
 
