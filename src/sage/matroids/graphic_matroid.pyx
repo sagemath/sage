@@ -86,7 +86,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import Counter
+from collections import Counter, defaultdict
 from copy import copy
 from itertools import combinations
 
@@ -1013,66 +1013,74 @@ cdef class GraphicMatroid(Matroid):
             sage: O = Matroid(range(6), graphs.CycleGraph(6))
             sage: M._is_isomorphic(O)
             False
-            
-        ::
 
-            sage: M2 = matroids.catalog.K4()
+        TESTS:
+
+        Check that :issue:`42556` is fixed::
+
+            sage: M = matroids.catalog.K4()
             sage: G = Graph(multiedges=True)
             sage: G.add_vertices(range(4))
             sage: G.add_edges([(0,1),(0,1),(0,2),(0,3),(1,2),(1,3),(2,3)])
-            sage: M = Matroid(G)
-            sage: M.is_isomorphic(M2)
-            False
-            sage: M2.is_isomorphic(M)
+            sage: M2 = Matroid(G)
+            sage: M.is_isomorphic(M2) or M2.is_isomorphic(M)
             False
         """
-        # 1. Ground set size check
         if self.size() != other.size():
-            if certificate:
-                return False, None
-            return False
+            return (False, None) if certificate else False
 
-        # 2. Direct invariants check for small ground sets (|E| < 4)
-        #if self.size() < 4:
-        #    if len(self.loops()) != len(other.loops()) or self.simplify().size() != other.simplify().size():
-        #        return (False, None) if certificate else False
-
-        #    if certificate:
-        #        cert = dict(zip(self.groundset(), other.groundset()))
-        #        return (True, cert)
-        #    return True
-        # Check for 3-connectivity so we don't have to worry about Whitney twists
         if isinstance(other, GraphicMatroid):
             G = self.graph()
             H = other.graph()
-
-            # Check if both graphs are loopless and 3-connected
             G_valid = (not G.has_loops()) and G.is_triconnected()
             H_valid = (not H.has_loops()) and H.is_triconnected()
 
-            # Both are loopless and 3-connected -> Compare graphs directly
+            # Check for 3-connectivity so we don't have to worry about Whitney twists
+            # Both are loopless and 3-connected; reduce to graph isomorphism
             if G_valid and H_valid:
-                if not certificate:
-                    return G.is_isomorphic(H, certificate=False)
+                result = G.is_isomorphic(H, certificate=certificate)
+                if not certificate or result[0] is False:
+                    return result
 
-                # For certificate=True, delegate to regular_matroid to ensure
-                # edge label mappings match matroid groundsets cleanly
-                pass
+                # If they are isomorphic and the user wants a certificate,
+                # result[1] is a dictionary of vertices.
+                # We need to translate this to edge labels.
+                vertex_certif = result[1]
+                elt_certif = {}
+                # Group edge labels by unordered endpoints to handle multigraphs
+                G_edges = defaultdict(list)
+                H_edges = defaultdict(list)
+                for u, v, l in G.edge_iterator():
+                    G_edges[frozenset({u, v})].append(l)
+                for u, v, l in H.edge_iterator():
+                    H_edges[frozenset({u, v})].append(l)
+                for (u, v), g_labels in G_edges.items():
+                    hu, hv = vertex_certif[u], vertex_certif[v]
+                    h_labels = H_edges[frozenset({hu, hv})]
+                    # Pair up parallel edges arbitrarily
+                    for gl, hl in zip(g_labels, h_labels):
+                        elt_certif[gl] = hl
+                return (True, elt_certif)
 
-            # Exactly one is loopless and 3-connected -> Matroids cannot be isomorphic
+            # Exactly one is loopless and 3-connected; not isomorphic
             elif G_valid or H_valid:
                 return (False, None) if certificate else False
 
-        # 3. Fallback - general matroid isomorphism test
+        # Fallback
         M = self.regular_matroid()
         if isinstance(other, GraphicMatroid):
             other = other.regular_matroid()
         if certificate:
+            # iso0: isomorphism from M and self -- in this order,
+            # to prevent an infinite recursion.
             iso0 = M._is_isomorphic(self, certificate=certificate)[1]
+            # Now invert iso0 to get iso1, an isomorphism from self to M.
             iso1 = {iso0[e]: e for e in iso0}
+            # iso2: isomorphism from M and other.
             isomorphic, iso2 = M._is_isomorphic(other, certificate=certificate)
             if not isomorphic:
                 return (False, None)
+            # Compose iso1 and iso2, to go from self to other.
             return (True, {e: iso2[iso1[e]] for e in iso1})
         return M._is_isomorphic(other)
 
