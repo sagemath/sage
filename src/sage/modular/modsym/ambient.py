@@ -481,7 +481,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: M.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta4 to a rational
+            TypeError: no conversion of this number field element to a rational
 
         Similarly with :meth:`~sage.modules.module.Module.base_extend`::
 
