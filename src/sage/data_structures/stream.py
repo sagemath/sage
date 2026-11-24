@@ -3607,15 +3607,15 @@ class Stream_compose(Stream_inexact):
         self._ensure_current_powers()
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
+        K = _outer_bound(self._degree_f, n, gv,
+                         self._input._coeff_stream[0])
         if n < 0:
             return sum(l * self._neg_powers[-k][n]
-                       for k in range(fv, n // gv + 1)
+                       for k in range(fv, K)
                        if (l := self._stream[k]))
         # When the inner argument has a nonzero constant term and the
         # outer stream has finite support, every outer degree must be
         # considered.  This is the same bound as for plethysm.
-        K = _outer_bound(self._degree_f, n, gv,
-                         self._input._coeff_stream[0])
         while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
         ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
