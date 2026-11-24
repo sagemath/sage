@@ -1,7 +1,8 @@
-[wrap-git]
-url = https://github.com/flintlib/flint.git
-revision = main
-depth = 1
+[wrap-file]
+directory = flint-3.6.0
+source_url = https://github.com/flintlib/flint/releases/download/v3.6.0/flint-3.6.0.tar.gz
+source_filename = flint-3.6.0.tar.gz
+source_hash = b95e2c7792f5eea4a1c8d2d42c4098434756832e57a094b295eb5dfdc9b4c36b
 patch_directory = flint
 diff_files = flint/cmakelinux.patch
 method = cmake

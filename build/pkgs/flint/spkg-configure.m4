@@ -1,24 +1,20 @@
 SAGE_SPKG_CONFIGURE([flint], [
     SAGE_SPKG_DEPCHECK([mpfr], [
-        AC_CHECK_HEADERS([flint/flint.h flint/padic.h], [dnl
-          dnl gr_get_fexpr appears in Flint 3.0
-          AC_SEARCH_LIBS([gr_get_fexpr], [flint], [dnl
-            dnl Assume Flint 3.7 is too new
-            AC_MSG_CHECKING([whether FLINT version is >= 3.7.0])
-            AC_COMPILE_IFELSE([dnl
-              AC_LANG_PROGRAM([[#include <flint/flint.h>
-                                #if __FLINT_RELEASE > 30699
-                                # error "FLINT 3.7 is too new"
-                                #endif
-                              ]])
-            ], [dnl
-              AC_MSG_RESULT([no])
-            ], [dnl
-              AC_MSG_RESULT([yes; too new])
-              sage_spkg_install_flint=yes
-            ])
-          ], [sage_spkg_install_flint=yes])
-        ], [sage_spkg_install_flint=yes])
+        AC_MSG_CHECKING([whether FLINT headers are >= 3.5.0 and < 3.7.0])
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+            #include <flint/flint.h>
+            #include <flint/padic.h>
+            #if __FLINT_RELEASE < 30500 || __FLINT_RELEASE >= 30700
+            # error "unsupported FLINT version"
+            #endif
+        ]])], [
+            AC_MSG_RESULT([yes])
+            dnl eclib 20261021 uses fmpz_mat_snf_transform, added in FLINT 3.5.
+            AC_SEARCH_LIBS([fmpz_mat_snf_transform], [flint], [], [sage_spkg_install_flint=yes])
+        ], [
+            AC_MSG_RESULT([no])
+            sage_spkg_install_flint=yes
+        ])
     ])
 ], [], [], [dnl
      if test x$sage_spkg_install_flint = xyes; then

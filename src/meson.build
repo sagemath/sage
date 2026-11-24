@@ -123,7 +123,7 @@ if is_windows
   # TODO: Reenable the following once conda's python is fixed
   # https://github.com/conda-forge/python-feedstock/pull/770
   # # In its currently released version, flint is not working on Windows; thus always use subproject
-  # #flint = dependency('flint', version: '>=3.1.3')
+  # #flint = dependency('flint', version: '>=3.5.0')
   # cmake = import('cmake')
   # cmake_opts = cmake.subproject_options()
   # cmake_opts.add_cmake_defines({'BUILD_SHARED_LIBS': 'OFF'})
@@ -132,12 +132,7 @@ if is_windows
   # meson.override_dependency('flint', flint)
   flint = disabler()
 else
-  flint = dependency('flint', version: '>=3.0.0')
-  if flint.version().version_compare('<3.1')
-    # In older versions of flint, pkg-config file is broken, so we manually use find_library
-    # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
-    flint = cc.find_library('flint')
-  endif
+  flint = dependency('flint', version: '>=3.5.0')
 endif
 
 blas_order = []

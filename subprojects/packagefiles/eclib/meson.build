@@ -7,11 +7,7 @@ project(
 )
 
 cpp = meson.get_compiler('cpp')
-flint = dependency('flint', version: '>=3.0.0')
-if flint.version().version_compare('<3.1')
-  # Match Sage's workaround for the older, broken pkg-config file.
-  flint = cpp.find_library('flint')
-endif
+flint = dependency('flint', version: '>=3.5.0')
 deps = [
   flint,
   dependency('gmp'),
