@@ -279,7 +279,7 @@ cdef class GraphicMatroid(Matroid):
             [v for _, v, _ in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
-        for u, v, l in edges:
+        for u, v, _ in edges:
             DS_vertices.union(u, v)
         return len(vertices) - DS_vertices.number_of_subsets()
 
@@ -650,7 +650,7 @@ cdef class GraphicMatroid(Matroid):
         cdef list all_vertices = self._G.vertices(sort=False)
         cdef list not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
         DS_vertices = DisjointSet_of_hashables(all_vertices)
-        for u, v, l in not_our_edges:
+        for u, v, _ in not_our_edges:
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - 1)
 
@@ -2006,7 +2006,7 @@ cdef class GraphicMatroid(Matroid):
             True
         """
         from sage.matroids.constructor import Matroid as ConstructorMatroid
-        X = [l for u, v, l in self._G.edge_iterator()]
+        X = [l for _, _, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
 
     cpdef relabel(self, mapping):
