@@ -628,7 +628,7 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:     type(u.plot(nonlinear_transformation=lambda v:vector(v)))
             <class 'sage.plot.graphics.Graphics'>
 
-        plot_points='automatic' is supported for 3D plots but not for 2D plots
+        plot_points='automatic' is supported for 3D plots but not for 2D plots::
 
             sage: # needs sage.plot
             sage: p2 = polytopes.hypercube(2)
