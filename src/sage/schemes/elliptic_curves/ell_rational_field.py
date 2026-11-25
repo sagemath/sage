@@ -5173,7 +5173,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         G.set_vertices({v: isocls[v] for v in G.vertices(sort=False)})
         v = G.shortest_path_lengths(0, by_weight=True)
         # Now exponentiate and round to get degrees of isogenies
-        v = {i: j.exp().round() if j else 0 for i,j in v.items()}
+        v = {i: RR(j).exp().round() if j else 0 for i,j in v.items()}
         return isocls.curves, v
 
     def _multiple_of_degree_of_isogeny_to_optimal_curve(self):
