@@ -1612,13 +1612,13 @@ class Stream_uninitialized(Stream):
             0
         """
         if hasattr(self, '_pool'):
-            # self._good_cache[0] is a lower bound
+            # self._good_cache is a lower bound
             if self._coefficient_ring == self._base_ring:
-                for c in self._cache[self._good_cache[0]:]:
+                for c in self._cache[self._good_cache:]:
                     if c.parent() is self._PF:
                         self._pool.del_variable(c.numerator())
             else:
-                for c in self._cache[self._good_cache[0]:]:
+                for c in self._cache[self._good_cache:]:
                     for c0 in c.coefficients():
                         if c0.parent() is self._PF:
                             self._pool.del_variable(c0.numerator())
@@ -1727,6 +1727,7 @@ class Stream_uninitialized(Stream):
         self._eqs = equations
         self._series = series
         self._terms_of_degree = terms_of_degree
+        self._good_cache = self._compute_good_cache([self])[0]
         # currently name is used only for error messages
         if self._name is None:
             # if used for something global (e.g. an expression tree)
@@ -1736,19 +1737,15 @@ class Stream_uninitialized(Stream):
                 self._name += str(self._series.index(self))
         self._max_lookahead = max_lookahead
 
-    @lazy_attribute
-    def _input_streams(self):
+    def _traverse_dependencies(self):
         r"""
-        Return the list of streams which have a cache and an implicitly
-        defined ``self`` depends on.
+        Return the cached streams on which an implicitly defined
+        ``self`` depends, computed by a fresh traversal.
 
-        ``self`` is the first stream in this list.
-
-        This is a dependency snapshot.  It is refreshed, together with
-        :meth:`_good_cache`, at each call to
-        :meth:`_subs_in_caches` on actual dummy replacement.  Power
-        streams created after an earlier snapshot will therefore become
-        visible at the next dummy replacement.
+        ``self`` is the first stream in this list.  The traversal follows
+        :meth:`input_streams` and is identity based, so cycles are safe.
+        Streams created since an earlier traversal, notably the powers of
+        an inner stream, are included.
 
         EXAMPLES:
 
@@ -1759,7 +1756,7 @@ class Stream_uninitialized(Stream):
             sage: M = Stream_map_coefficients(C, lambda c: c, True)
             sage: S = Stream_shift(M, -1)
             sage: C.define(S)
-            sage: C._input_streams == [C, M]
+            sage: C._traverse_dependencies() == [C, M]
             True
 
             sage: terms_of_degree = lambda n, R: [R.one()]
@@ -1768,23 +1765,8 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C._input_streams
-            [<sage.data_structures.stream.Stream_uninitialized object at 0x...>,
-             <sage.data_structures.stream.Stream_sub object at 0x...>,
-             <sage.data_structures.stream.Stream_add object at 0x...>,
-             <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
-        """
-        return self._traverse_dependencies()
-
-    def _traverse_dependencies(self):
-        r"""
-        Perform the identity-based, cycle-safe dependency traversal.
-
-        This is the single traversal implementation.  The
-        :meth:`_input_streams` lazy attribute is a cached view of its
-        result; :meth:`_subs_in_caches` reassigns that attribute from a
-        fresh call to this method on every dummy replacement, so power
-        streams created after an earlier snapshot are included.
+            sage: len(C._traverse_dependencies())
+            4
         """
         known = [self]
         visited = [self]
@@ -1800,19 +1782,15 @@ class Stream_uninitialized(Stream):
                     known.append(y)
         return known
 
-    @lazy_attribute
-    def _good_cache(self):
+    def _compute_good_cache(self, streams):
         r"""
-        The number of coefficients in each :meth:`_input_streams` - in
-        the same order - that are free of undetermined coefficients.
+        Return the number of leading coefficients of each stream in
+        ``streams`` that are free of undetermined coefficients.
 
         This is used in :meth:`_subs_in_caches` to only substitute
-        items that may contain undetermined coefficients.
-
-        .. TODO::
-
-            It might be an better to share this across all uninitialized
-            series in one system.
+        items that may contain undetermined coefficients.  Only the
+        number for ``self`` itself, :attr:`_good_cache`, is retained
+        between substitutions.
 
         EXAMPLES::
 
@@ -1823,20 +1801,14 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C._good_cache
+            sage: C._compute_good_cache(C._traverse_dependencies())
             [0, 0, 0, 0]
             sage: C[1]
             1
-            sage: C._good_cache
+            sage: C._compute_good_cache(C._traverse_dependencies())
             [1, 0, 1, 0]
-        """
-        return self._compute_good_cache(self._input_streams)
-
-    def _compute_good_cache(self, streams):
-        r"""
-        Return the prefix of known valid cached coefficients for each
-        stream in ``streams``, aligned with ``streams``.
-        Newly discovered streams start with their current prefix.
+            sage: C._good_cache
+            1
         """
         g = []
         for c in streams:
@@ -1938,13 +1910,13 @@ class Stream_uninitialized(Stream):
         # define_implicitly
         if self._eqs is None:
             raise ValueError("stream is not yet defined")
-        if self._good_cache[0] > n - self._approximate_order:
+        if self._good_cache > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
         if self._uncomputed:
             for f in self._series:
                 f._uncomputed = False
-            while self._good_cache[0] < n - self._approximate_order + 1:
+            while self._good_cache < n - self._approximate_order + 1:
                 self._compute()
             for f in self._series:
                 f._uncomputed = True
@@ -2015,7 +1987,7 @@ class Stream_uninitialized(Stream):
                 return retract(subs(e, var, val))
             return e
 
-        def fix_cache(j, s, ao):
+        def fix_cache(good_cache, j, s, ao):
             if s._cache[ao]:
                 # TODO: perhaps, if not
                 # self._coefficient_ring.has_coerce_map_from(s._cache[ao].parent())
@@ -2026,59 +1998,64 @@ class Stream_uninitialized(Stream):
                     s._true_order = True
                 return False
             del s._cache[ao]
-            self._good_cache[j] -= 1
+            good_cache[j] -= 1
             return True
 
-        # Rebuild the dependency graph and its known-good prefix on every
-        # actual dummy replacement.  Power streams constructed since the
-        # previous snapshot are included now.
-        self._input_streams = self._traverse_dependencies()
-        self._good_cache = self._compute_good_cache(self._input_streams)
+        # Rebuild the dependency graph and its known-good prefixes on
+        # every actual dummy replacement.  Power streams constructed
+        # since the previous traversal are included now.  Only the
+        # prefix of ``self`` is retained between substitutions.
+        streams = self._traverse_dependencies()
+        good_cache = self._compute_good_cache(streams)
+        try:
+            self._good_cache = good_cache[0]
 
-        for j, s in enumerate(self._input_streams):
-            m = len(s._cache) - self._good_cache[j]
-            if s._is_sparse:
-                # we traverse the cache beginning with the last
-                # element added, because only the last m elements
-                # added can contain variables
-                indices = reversed(s._cache)
-            else:
-                indices = range(-1, -m-1, -1)
-            # substitute variable and determine last good element
-            good = m
-            for i0, i in enumerate(indices):
-                c = s._cache[i]
-                if c.parent() == self._PF:
-                    c = retract(subs(c, var, val))
-                    if c.parent() is not self._base_ring:
-                        good = m - i0 - 1
-                elif c.parent() == self._U:
-                    c = c.map_coefficients(lambda e: subs(e, var, val))
-                    try:
-                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
-                    except TypeError:
-                        good = m - i0 - 1
-                elif isinstance(c, IndexedFreeModuleElement):
-                    # Values in other free modules, notably powersum
-                    # realizations, are constructed directly from
-                    # their coefficients, which may be undetermined
-                    # without being coerced into their parent.
-                    mc = {mon: subs_coefficient(e)
-                           for mon, e in c.monomial_coefficients().items()}
-                    c = c.parent().element_class(c.parent(), mc)
-                    if any(e.parent() is self._PF for e in mc.values()):
-                        good = m - i0 - 1
-                s._cache[i] = c
-            self._good_cache[j] += good
-            # fix approximate_order and true_order
-            ao = s._approximate_order
-            if s._is_sparse:
-                while ao in s._cache and fix_cache(j, s, ao):
-                    ao += 1
-            else:
-                while s._cache and fix_cache(j, s, 0):
-                    ao += 1
-            s._approximate_order = ao
+            for j, s in enumerate(streams):
+                m = len(s._cache) - good_cache[j]
+                if s._is_sparse:
+                    # we traverse the cache beginning with the last
+                    # element added, because only the last m elements
+                    # added can contain variables
+                    indices = reversed(s._cache)
+                else:
+                    indices = range(-1, -m-1, -1)
+                # substitute variable and determine last good element
+                good = m
+                for i0, i in enumerate(indices):
+                    c = s._cache[i]
+                    if c.parent() == self._PF:
+                        c = retract(subs(c, var, val))
+                        if c.parent() is not self._base_ring:
+                            good = m - i0 - 1
+                    elif c.parent() == self._U:
+                        c = c.map_coefficients(lambda e: subs(e, var, val))
+                        try:
+                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                        except TypeError:
+                            good = m - i0 - 1
+                    elif isinstance(c, IndexedFreeModuleElement):
+                        # Values in other free modules, notably powersum
+                        # realizations, are constructed directly from
+                        # their coefficients, which may be undetermined
+                        # without being coerced into their parent.
+                        mc = {mon: subs_coefficient(e)
+                              for mon, e in c.monomial_coefficients().items()}
+                        c = c.parent().element_class(c.parent(), mc)
+                        if any(e.parent() is self._PF for e in mc.values()):
+                            good = m - i0 - 1
+                    s._cache[i] = c
+                good_cache[j] += good
+                # fix approximate_order and true_order
+                ao = s._approximate_order
+                if s._is_sparse:
+                    while ao in s._cache and fix_cache(good_cache, j, s, ao):
+                        ao += 1
+                else:
+                    while s._cache and fix_cache(good_cache, j, s, 0):
+                        ao += 1
+                s._approximate_order = ao
+        finally:
+            self._good_cache = good_cache[0]
 
         self._pool.del_variable(var)
 
