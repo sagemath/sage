@@ -270,20 +270,6 @@ class Stream:
         return []
 
 
-    def _on_coefficient_substitution(self, changed_streams):
-        r"""
-        Notify this stream that coefficients of input streams changed.
-
-        ``changed_streams`` is a set of ``id(stream)`` values for streams
-        whose cached inputs were actually modified or removed.  It is called
-        only by :meth:`Stream_uninitialized._subs_in_caches`, after those raw
-        streams have been updated, and also on a partially failed
-        substitution attempt.  By default there is nothing to do: ordinary
-        stream-valued power caches are already updated by substitution.
-        """
-        pass
-
-
 class Stream_inexact(Stream):
     """
     An abstract base class for the stream when we do not know it is
@@ -2006,8 +1992,6 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
-        changed_streams = set()
-
         def subs(c, var, val):
             P = self._P.polynomial_ring()
             num = P(c.numerator()._p).subs({P(var._p): val})
@@ -2041,7 +2025,6 @@ class Stream_uninitialized(Stream):
                 if s._cache[ao] in self._coefficient_ring:
                     s._true_order = True
                 return False
-            changed_streams.add(id(s))
             del s._cache[ao]
             self._good_cache[j] -= 1
             return True
@@ -2052,62 +2035,50 @@ class Stream_uninitialized(Stream):
         self._input_streams = self._traverse_dependencies()
         self._good_cache = self._compute_good_cache(self._input_streams)
 
-        try:
-            for j, s in enumerate(self._input_streams):
-                m = len(s._cache) - self._good_cache[j]
-                if s._is_sparse:
-                    # we traverse the cache beginning with the last
-                    # element added, because only the last m elements
-                    # added can contain variables
-                    indices = reversed(s._cache)
-                else:
-                    indices = range(-1, -m-1, -1)
-                # substitute variable and determine last good element
-                good = m
-                for i0, i in enumerate(indices):
-                    before = c = s._cache[i]
-                    if c.parent() == self._PF:
-                        c = retract(subs(c, var, val))
-                        if c.parent() is not self._base_ring:
-                            good = m - i0 - 1
-                    elif c.parent() == self._U:
-                        c = c.map_coefficients(lambda e: subs(e, var, val))
-                        try:
-                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
-                        except TypeError:
-                            good = m - i0 - 1
-                    elif isinstance(c, IndexedFreeModuleElement):
-                        # Values in other free modules, notably powersum
-                        # realizations, are constructed directly from
-                        # their coefficients, which may be undetermined
-                        # without being coerced into their parent.
-                        mc = {mon: subs_coefficient(e)
-                               for mon, e in c.monomial_coefficients().items()}
-                        c = c.parent().element_class(c.parent(), mc)
-                        if any(e.parent() is self._PF for e in mc.values()):
-                            good = m - i0 - 1
-                    if before != c:
-                        changed_streams.add(id(s))
-                    s._cache[i] = c
-                self._good_cache[j] += good
-                # fix approximate_order and true_order
-                ao = s._approximate_order
-                if s._is_sparse:
-                    while ao in s._cache and fix_cache(j, s, ao):
-                        ao += 1
-                else:
-                    while s._cache and fix_cache(j, s, 0):
-                        ao += 1
-                s._approximate_order = ao
-
-        finally:
-            # Newly created power streams are refreshed before this loop.
-            # This applies to non-stream derived caches too, including
-            # a partially completed substitution.
-            for s in self._input_streams:
-                if id(s) in changed_streams:
-                    s._on_coefficient_substitution(changed_streams)
-
+        for j, s in enumerate(self._input_streams):
+            m = len(s._cache) - self._good_cache[j]
+            if s._is_sparse:
+                # we traverse the cache beginning with the last
+                # element added, because only the last m elements
+                # added can contain variables
+                indices = reversed(s._cache)
+            else:
+                indices = range(-1, -m-1, -1)
+            # substitute variable and determine last good element
+            good = m
+            for i0, i in enumerate(indices):
+                c = s._cache[i]
+                if c.parent() == self._PF:
+                    c = retract(subs(c, var, val))
+                    if c.parent() is not self._base_ring:
+                        good = m - i0 - 1
+                elif c.parent() == self._U:
+                    c = c.map_coefficients(lambda e: subs(e, var, val))
+                    try:
+                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                    except TypeError:
+                        good = m - i0 - 1
+                elif isinstance(c, IndexedFreeModuleElement):
+                    # Values in other free modules, notably powersum
+                    # realizations, are constructed directly from
+                    # their coefficients, which may be undetermined
+                    # without being coerced into their parent.
+                    mc = {mon: subs_coefficient(e)
+                           for mon, e in c.monomial_coefficients().items()}
+                    c = c.parent().element_class(c.parent(), mc)
+                    if any(e.parent() is self._PF for e in mc.values()):
+                        good = m - i0 - 1
+                s._cache[i] = c
+            self._good_cache[j] += good
+            # fix approximate_order and true_order
+            ao = s._approximate_order
+            if s._is_sparse:
+                while ao in s._cache and fix_cache(j, s, ao):
+                    ao += 1
+            else:
+                while s._cache and fix_cache(j, s, 0):
+                    ao += 1
+            s._approximate_order = ao
 
         self._pool.del_variable(var)
 
@@ -3957,6 +3928,7 @@ class Stream_plethysm(Stream_binary):
         g = Stream_map_coefficients(
             g, lambda x: _to_powersum(x, self._basis), is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
+        self._stretched = {}  # a cache for the streams of stretched powers
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
@@ -3991,17 +3963,6 @@ class Stream_plethysm(Stream_binary):
         """
         # this is very likely not the true order
         return self._left._approximate_order * self._right._approximate_order
-
-    def _on_coefficient_substitution(self, changed_streams):
-        r"""
-        Clear memoized coefficient results when relevant powers change.
-
-        Ordinary power caches are updated by the substitution walk.  This
-        only clears the separate non-stream cache of results computed by
-        :meth:`stretched_power_restrict_degree`.
-        """
-        if any(id(stream) in changed_streams for stream in self._powers):
-            self.stretched_power_restrict_degree.clear_cache()
 
     def get_coefficient(self, n):
         r"""
@@ -4096,12 +4057,12 @@ class Stream_plethysm(Stream_binary):
         exp.reverse()
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
             # prod does not short-cut zero, therefore
-            # ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
+            # ret += prod(self.stretched(i, m)[rao * m + d]
             #             for i, m, d in zip(wgt, exp, k))
             # is expensive
             lf = []
             for i, m, d in zip(wgt, exp, k):
-                f = self.stretched_power_restrict_degree(i, m, rao * m + d)
+                f = self.stretched(i, m)[rao * m + d]
                 if not f:
                     break
                 lf.append(f)
@@ -4110,16 +4071,16 @@ class Stream_plethysm(Stream_binary):
 
         return ret
 
-    @cached_method
-    def stretched_power_restrict_degree(self, i, m, d):
+    def stretched(self, i, m):
         r"""
-        Return the degree ``d*i`` part of ``p([i]*m)(g)`` in
-        terms of ``self._basis``.
+        Return the stream of the stretched powers ``p([i]*m)(g)``.
+
+        Its ``d``-th coefficient is the degree ``i*d`` part of
+        ``p([i]*m)(self._right)``, in terms of ``self._basis``.
 
         INPUT:
 
         - ``i``, ``m`` -- positive integers
-        - ``d`` -- integer
 
         EXAMPLES::
 
@@ -4130,7 +4091,7 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
+            sage: A = h.stretched(2, 3)[6]
             sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
             True
 
@@ -4140,7 +4101,7 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
             ....:                                   for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
+            sage: A = h.stretched(2, 3)[6]
             sage: B = p[2,2,2](sum(g[n] for n in range(7)))     # long time
             sage: B = p2.element_class(p2, {m: c for m, c in B  # long time
             ....:                           if sum(mu.size() for mu in m) == 12})
@@ -4152,23 +4113,26 @@ class Stream_plethysm(Stream_binary):
             self._powers.append(Stream_cauchy_mul(self._powers[-1],
                                                   self._powers[0],
                                                   self._is_sparse))
-        power_d = self._powers[m-1][d]
-        # we have to check power_d for zero because it might be an
-        # integer and not a symmetric function
-        if power_d:
-            # _raise_variables(c, i, self._degree_one) cannot vanish
-            # because i is positive and c is nonzero
-            if self._tensor_power is None:
-                terms = {mon.stretch(i):
-                         _raise_variables(c, i, self._degree_one)
-                         for mon, c in power_d}
-            else:
-                terms = {tuple(mu.stretch(i) for mu in mon):
-                         _raise_variables(c, i, self._degree_one)
-                         for mon, c in power_d}
-            return self._basis(self._p.element_class(self._p, terms))
-
-        return self._basis.zero()
+        if (i, m) not in self._stretched:
+            def stretched(power_d, i=i):
+                # power_d might be an integer and not a symmetric
+                # function
+                if power_d:
+                    # _raise_variables(c, i, self._degree_one) cannot
+                    # vanish because i is positive and c is nonzero
+                    if self._tensor_power is None:
+                        terms = {mon.stretch(i):
+                                 _raise_variables(c, i, self._degree_one)
+                                 for mon, c in power_d}
+                    else:
+                        terms = {tuple(mu.stretch(i) for mu in mon):
+                                 _raise_variables(c, i, self._degree_one)
+                                 for mon, c in power_d}
+                    return self._basis(self._p.element_class(self._p, terms))
+                return self._basis.zero()
+            self._stretched[(i, m)] = Stream_map_coefficients(
+                self._powers[m-1], stretched, self._is_sparse)
+        return self._stretched[(i, m)]
 
     def input_streams(self):
         r"""
@@ -4190,10 +4154,10 @@ class Stream_plethysm(Stream_binary):
              1/2*p[1, 1] - 1/2*p[2],
              1/3*p[1, 1, 1] - 1/3*p[3],
              1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
-            sage: len(h.input_streams())
-            3
+            sage: len(h.input_streams()) > 3
+            True
         """
-        return [self._left] + self._powers
+        return [self._left] + self._powers + list(self._stretched.values())
 
 
 class Stream_plethysm_multi(Stream_inexact):
@@ -4342,9 +4306,9 @@ class Stream_plethysm_multi(Stream_inexact):
         r"""
         Return the outer stream and each factor plethysm.
 
-        Each factor participates in the substitution lifecycle for its
-        own non-stream result cache; it can also rebuild coefficients
-        from its inner stream cache after dummy replacement.
+        The factor plethysms own the power and stretched power streams
+        of their arguments, which are reachable through their own
+        ``input_streams``.
 
         EXAMPLES::
 
