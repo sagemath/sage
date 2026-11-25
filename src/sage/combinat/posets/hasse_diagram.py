@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 lazy_import('sage.combinat.posets.hasse_cython_flint',
             ['moebius_matrix_fast', 'coxeter_matrix_fast',
-             'chain_poly'])
+             'chain_poly', 'max_chain_poly'])
 lazy_import('sage.matrix.constructor', 'matrix')
 lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
@@ -2409,6 +2409,22 @@ class HasseDiagram(DiGraph):
             q^3 + 3*q^2 + 3*q + 1
         """
         return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
+
+    def max_chain_polynomial(self):
+        """
+        Return the max-restricted chain polynomial of the poset.
+
+        The coefficient of `q^k` is the number of chains of `k`
+        elements in the poset, whose maximal element is a maximum.
+
+        EXAMPLES::
+
+            sage: P = Poset({0: [1, 2]})
+            sage: H = P._hasse_diagram
+            sage: t = H.max_chain_polynomial(); t
+            2*q^2 + 2*q
+        """
+        return max_chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
     def linear_intervals_count(self) -> Iterator[int]:
         """
