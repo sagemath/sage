@@ -123,7 +123,7 @@ if is_windows
   # TODO: Reenable the following once conda's python is fixed
   # https://github.com/conda-forge/python-feedstock/pull/770
   # # In its currently released version, flint is not working on Windows; thus always use subproject
-  # #flint = dependency('flint', version: '>=3.1.3')
+  # #flint = dependency('flint', version: '>=3.5.0')
   # cmake = import('cmake')
   # cmake_opts = cmake.subproject_options()
   # cmake_opts.add_cmake_defines({'BUILD_SHARED_LIBS': 'OFF'})
@@ -132,12 +132,7 @@ if is_windows
   # meson.override_dependency('flint', flint)
   flint = disabler()
 else
-  flint = dependency('flint', version: '>=3.0.0')
-  if flint.version().version_compare('<3.1')
-    # In older versions of flint, pkg-config file is broken, so we manually use find_library
-    # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
-    flint = cc.find_library('flint')
-  endif
+  flint = dependency('flint', version: '>=3.5.0')
 endif
 
 blas_order = []
@@ -193,18 +188,25 @@ if not mtx.found()
 endif
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-# We actually want >= 20250122, but the version number is not updated in the pkgconfig
-# https://github.com/conda-forge/eclib-feedstock/issues/48
-# Later releases change scalar and the modular-symbols API used by our bindings.
-# Use the bundled version until the bindings support that API.
-ec = dependency(
-  'eclib',
-  version: ['>=20231211', '<=20250627'],
-  required: get_option('eclib'),
-  # The fallback requires PARI, which is unavailable in our Windows build.
-  allow_fallback: not is_windows,
-  disabler: true,
-)
+ec = disabler()
+if not get_option('eclib').disabled()
+  # Some conda packages report 20231211 for a compatible later release.
+  # https://github.com/conda-forge/eclib-feedstock/issues/48
+  ec = dependency(
+    'eclib',
+    version: ['>=20231211', '<=20250627'],
+    required: false,
+  )
+endif
+if not ec.found()
+  ec = dependency(
+    'eclib',
+    version: '==20261021',
+    required: get_option('eclib'),
+    allow_fallback: not is_windows,
+    disabler: true,
+  )
+endif
 ecm = cc.find_library('ecm', required: false, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(

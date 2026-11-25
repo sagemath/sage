@@ -36,14 +36,13 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
         Finished 3-term relations: numrel = 16 ( maxnumrel = 32)
         relmat has 42 nonzero entries (density = 0.0596591)
         Computing kernel...
-        time to compute kernel =  (... seconds)
-        rk = 7
+        ...
         Number of cusps is 2
-        ncusps = 2
+        ...
         About to compute matrix of delta
-        delta matrix done: size 2x7.
+        delta matrix done: size 2x7...
         About to compute kernel of delta
-        done
+        done...
         Finished constructing homspace.
         sage: M
         Cremona Modular Symbols space of dimension 7 for Gamma_0(43) of weight 2 with sign 0

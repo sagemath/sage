@@ -1,15 +1,13 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8d959fb..5dcbf6e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -12,10 +12,6 @@
- 
- cmake_minimum_required(VERSION 3.22)
- 
+@@ -27,10 +27,6 @@
+   DESCRIPTION "Fast Library for Number Theory"
+   HOMEPAGE_URL https://flintlib.org/
+   LANGUAGES C CXX)
+-
 -if(NOT WIN32)
 -    message(FATAL_ERROR "Detected system is not Windows.  Please use the Autotools configuration along with the Makefile instead as it is more up-to-date.  Read INSTALL.md.")
 -endif()
--
- include(CheckCCompilerFlag)
- include(CheckCSourceRuns)
- include(CheckIPOSupported)
+
+ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/configure.ac" CONFIGURE_CONTENTS)
+ foreach(version in MAJOR MINOR PATCH)

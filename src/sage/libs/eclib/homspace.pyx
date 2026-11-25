@@ -6,7 +6,7 @@ from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
 
 from sage.libs.eclib cimport svec, mat, smat
-from sage.libs.eclib.mat cimport MatrixFactory
+from sage.libs.eclib.mat cimport MatrixFactory, scalar_to_integer
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
@@ -87,7 +87,7 @@ cdef class ModularSymbols:
             sage: M.level()
             1234
         """
-        return self.H.modulus
+        return self.H.level()
 
     # cpdef int dimension(self):
     def dimension(self):
@@ -277,7 +277,7 @@ cdef class ModularSymbols:
             sv = M.row(i+1)
             it = sv.begin()
             while it != sv.end():
-                d[(i, deref(it).first-1)] = deref(it).second
+                d[(i, deref(it).first-1)] = scalar_to_integer(deref(it).second)
                 inc(it)
         MS = MatrixSpace(base_ring, n, sparse=True)
         # The next step is the bottleneck.

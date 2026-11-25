@@ -3,7 +3,7 @@
 Cremona matrices
 """
 
-from sage.libs.eclib cimport scalar, addscalar
+from sage.libs.eclib cimport addscalar, scalar_from_mpz
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
@@ -93,7 +93,7 @@ cdef class Matrix:
         if self.M:
             i, j = ij
             if 0 < i <= self.M[0].nrows() and 0 < j <= self.M[0].ncols():
-                return self.M.sub(i, j)
+                return int(scalar_to_integer(self.M.sub(i, j)))
             raise IndexError("matrix indices out of range")
         raise IndexError("cannot index into an undefined matrix")
 
@@ -149,7 +149,7 @@ cdef class Matrix:
 ##         """
 ##         return rank(self.M[0])
 
-    def add_scalar(self, scalar s):
+    def add_scalar(self, s):
         """
         Return new matrix obtained by adding `s` to each diagonal entry of ``self``.
 
@@ -162,8 +162,19 @@ cdef class Matrix:
             sage: w = t.add_scalar(3); print(w.str())
             [3 1]
             [1 2]
+
+        eclib builds with machine-integer entries raise an overflow error for
+        a scalar outside their range. Multiprecision builds preserve it::
+
+            sage: try:
+            ....:     w = t.add_scalar(2**100)
+            ....: except OverflowError:
+            ....:     pass
+            ....: else:
+            ....:     assert w[2, 2] == 2**100 - 1
         """
-        return new_Matrix(addscalar(self.M[0], s))
+        cdef Integer value = Integer(s)
+        return new_Matrix(addscalar(self.M[0], scalar_from_mpz(value.value)))
 
     def charpoly(self, var='x'):
         """
@@ -223,7 +234,7 @@ cdef class Matrix:
             Ts = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    Mij = Integer(self.M.sub(i+1,j+1))
+                    Mij = scalar_to_integer(self.M.sub(i+1,j+1))
                     if Mij:
                         Ts.set_unsafe(i, j, Mij)
             return Ts
@@ -232,7 +243,7 @@ cdef class Matrix:
             Td = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    Mij = Integer(self.M.sub(i+1,j+1))
+                    Mij = scalar_to_integer(self.M.sub(i+1,j+1))
                     if Mij:
                         Td.set_unsafe(i, j, Mij)
             return Td

@@ -1,8 +1,8 @@
 [wrap-file]
-directory = eclib-20250627
-source_url = https://github.com/JohnCremona/eclib/releases/download/20250627/eclib-20250627.tar.bz2
-source_filename = eclib-20250627.tar.bz2
-source_hash = b88d4b52612e491c5415946d9e35f2062ca1015ee7fbbe0b61f158fa74cb4bc9
+directory = eclib-20261021
+source_url = https://github.com/JohnCremona/eclib/releases/download/v20261021/eclib-20261021.tar.bz2
+source_filename = eclib-20261021.tar.bz2
+source_hash = c5d9ffcbd47af4beb70e1f83c2204f5da2bb59b2002e2de7cb5db1dbc39b60b7
 patch_directory = eclib
 
 [provide]
