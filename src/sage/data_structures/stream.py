@@ -3278,6 +3278,30 @@ def _finite_support_degree(f):
     return None
 
 
+def _check_valuation(g, degree_f, message):
+    r"""
+    Check that the inner stream ``g`` of a composition is admissible.
+
+    A stream of negative true order is rejected.  A stream of true
+    valuation zero is admissible only with an outer series of finite
+    support, since then all of its degrees contribute to every degree
+    of the result.
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_exact, _check_valuation
+        sage: f = Stream_exact([1], order=0)
+        sage: _check_valuation(f, None, "message")
+        Traceback (most recent call last):
+        ...
+        ValueError: message
+        sage: _check_valuation(f, 2, "message")
+    """
+    if (g._true_order and g._approximate_order <= 0
+            and (g._approximate_order < 0 or degree_f is None)):
+        raise ValueError(message)
+
+
 def _outer_bound(degree_f, n, inner_order, inner_constant):
     r"""
     Return the exclusive bound on outer degrees needed to compute
@@ -3425,11 +3449,10 @@ class Stream_compose(Stream_inexact):
         """
         gs = g._coeff_stream
         self._degree_f = _finite_support_degree(f)
-        if (gs._true_order and gs._approximate_order < 0
-            or (gs._true_order and gs._approximate_order == 0
-                and self._degree_f is None)):
-            raise ValueError("can only compose with a series of positive valuation, "
-                             "or of valuation zero if the outer series has finite support")
+        _check_valuation(
+            gs, self._degree_f,
+            "can only compose with a series of positive valuation, "
+            "or of valuation zero if the outer series has finite support")
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
         super().__init__(is_sparse, False)
@@ -3586,20 +3609,30 @@ class Stream_compose(Stream_inexact):
             sage: c = Stream_compose(f, g, False)
             sage: [c[i] for i in range(-2, 5)]  # indirect doctest
             [0, 0, 0, 10, 20, 84, 504]
+
+        An inner stream whose order is only bounded below uses its
+        positive powers also for negative degrees::
+
+            sage: from sage.data_structures.stream import Stream_exact
+            sage: Lz = LazyLaurentSeriesRing(QQ, 'z')
+            sage: g = Lz(lambda n: 1 if n in (-2, 0) else 0, valuation=-2)
+            sage: f = Stream_exact([1, 1], order=1)
+            sage: c = Stream_compose(f, g, True)
+            sage: c.get_coefficient(-1)
+            0
         """
+        self._approximate_order
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
         K = _outer_bound(self._degree_f, n, gv,
                          self._input._coeff_stream[0])
-        if n < 0:
-            return sum(l * self._neg_powers[-k][n]
-                       for k in range(fv, K)
-                       if (l := self._stream[k]))
         # When the inner argument has a nonzero constant term and the
         # outer stream has finite support, every outer degree must be
         # considered.  This is the same bound as for plethysm.
         while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
+        # Negative outer degrees use inverse powers of the inner
+        # element, nonnegative degrees use its positive powers.
         ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                   if (l := self._stream[k]))
 
@@ -3654,11 +3687,10 @@ class Stream_cauchy_compose(Stream_binary):
             [2, 1, 0, 0]
         """
         self._degree_f = _finite_support_degree(f)
-        if (g._true_order and g._approximate_order < 0
-            or (g._true_order and g._approximate_order == 0
-                and self._degree_f is None)):
-            raise ValueError("can only compose with a series of positive valuation, "
-                             "or of valuation zero if the outer series has finite support")
+        _check_valuation(
+            g, self._degree_f,
+            "can only compose with a series of positive valuation, "
+            "or of valuation zero if the outer series has finite support")
         super().__init__(f, g, is_sparse)
 
     def input_streams(self):
@@ -3747,24 +3779,26 @@ class Stream_cauchy_compose(Stream_binary):
             ....:                             (1+z)._coeff_stream, True)
             sage: [h[n] for n in (-1,0,1,2,3,4)]
             [0, 2, 0, 1, -1, 1]
+
+        Requesting a negative degree directly also extends the positive
+        powers first::
+
+            sage: h = Stream_cauchy_compose((z+z**2+z**3)._coeff_stream,
+            ....:                             (1+z)._coeff_stream, True)
+            sage: [h.get_coefficient(n) for n in (-1,0,1,2)]
+            [0, 3, 6, 4]
         """
+        self._approximate_order
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         K = _outer_bound(self._degree_f, n, gv, self._right[0])
-        if n < 0:
-            # Negative outer powers use inverse terms of the inner
-            # series, positive outer powers use its positive powers.
-            negative_terms = ZZ.sum(
-                l * self._neg_powers[-k][n]
-                for k in range(fv, 0) if (l := self._left[k]))
-            return negative_terms + ZZ.sum(
-                l * self._pos_powers[k][n]
-                for k in range(0, K) if (l := self._left[k]))
-        # n > 0
         while len(self._pos_powers) < K:
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
                                                       self._right,
                                                       self._is_sparse))
+        # Negative outer degrees use inverse powers of the inner
+        # series, nonnegative degrees use its positive powers.  The
+        # constant outer term contributes only to degree zero.
         ret = ZZ.sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                      if (l := self._left[k]))
 
@@ -3893,9 +3927,7 @@ class Stream_plethysm(Stream_binary):
             1/2*p[1, 1] + 1/2*p[2]
         """
         self._degree_f = _finite_support_degree(f)
-
-        if g._true_order and g._approximate_order == 0 and self._degree_f is None:
-            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
+        _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
 
         if ring is None:
             self._basis = p
@@ -4207,9 +4239,8 @@ class Stream_plethysm_multi(Stream_inexact):
             raise ValueError("the number of arguments must match the outer tensor power")
 
         self._degree_f = _finite_support_degree(f)
-        if (self._degree_f is None
-            and any(g._true_order and g._approximate_order == 0 for g in gs)):
-            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
+        for g in gs:
+            _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
 
         self._basis = ring
         self._p = p
