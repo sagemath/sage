@@ -223,7 +223,25 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: P.<x,y> = ProjectiveSpace(R)
         sage: P.gens() == R.gens()
         True
+
+    Creating a space from a ring with another term order does not change
+    an existing space (:issue:`42951`)::
+
+        sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+        sage: R = PolynomialRing(QQ, 'x,y,z', order='lex')
+        sage: Q = ProjectiveSpace(R)
+        sage: Q.coordinate_ring() is R
+        True
+        sage: P.coordinate_ring().term_order()
+        Degree reverse lexicographic term order
+        sage: P is Q
+        False
+        sage: ProjectiveSpace(R) is Q
+        True
+        sage: loads(dumps(Q)) is Q
+        True
     """
+    coordinate_ring = None
     if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
@@ -234,8 +252,13 @@ def ProjectiveSpace(n, R=None, names=None):
                 raise NameError("variable names passed to ProjectiveSpace conflict with names in ring")
         A = ProjectiveSpace(n.ngens() - 1, n.base_ring(),
                             names=n.variable_names())
-        A._coordinate_ring = n
-        return A
+        if A.coordinate_ring() is n:
+            return A
+        # n is not the default ring, so make a new space instead of changing A
+        coordinate_ring = n
+        R = n.base_ring()
+        names = n.variable_names()
+        n = n.ngens() - 1
     if names is None:
         names = 'x'
     if isinstance(R, (Integer, int)):
@@ -244,12 +267,12 @@ def ProjectiveSpace(n, R=None, names=None):
         R = ZZ  # default is the integers
     if R in _Fields:
         if isinstance(R, FiniteField):
-            return ProjectiveSpace_finite_field(n, R, names)
+            return ProjectiveSpace_finite_field(n, R, names, coordinate_ring)
         if isinstance(R, RationalField):
-            return ProjectiveSpace_rational_field(n, R, names)
-        return ProjectiveSpace_field(n, R, names)
+            return ProjectiveSpace_rational_field(n, R, names, coordinate_ring)
+        return ProjectiveSpace_field(n, R, names, coordinate_ring)
     if R in _CommRings:
-        return ProjectiveSpace_ring(n, R, names)
+        return ProjectiveSpace_ring(n, R, names, coordinate_ring)
     raise TypeError("R (=%s) must be a commutative ring" % R)
 
 
@@ -305,7 +328,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         False
     """
     @staticmethod
-    def __classcall__(cls, n, R=ZZ, names=None):
+    def __classcall__(cls, n, R=ZZ, names=None, coordinate_ring=None):
         """
         EXAMPLES::
 
@@ -313,9 +336,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             True
         """
         normalized_names = normalize_names(n + 1, names)
-        return super().__classcall__(cls, n, R, normalized_names)
+        return super().__classcall__(cls, n, R, normalized_names, coordinate_ring)
 
-    def __init__(self, n, R=ZZ, names=None):
+    def __init__(self, n, R=ZZ, names=None, coordinate_ring=None):
         """
         Initialization function.
 
@@ -326,6 +349,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         AmbientSpace.__init__(self, n, R)
         self._assign_names(names)
+        if coordinate_ring is not None:
+            self._coordinate_ring = coordinate_ring
 
     def ngens(self):
         """
