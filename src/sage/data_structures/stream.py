@@ -269,6 +269,20 @@ class Stream:
         return []
 
 
+    def _on_coefficient_substitution(self, changed_streams):
+        r"""
+        Notify this stream that coefficients of input streams changed.
+
+        ``changed_streams`` is a set of ``id(stream)`` values for streams
+        whose cached inputs were actually modified or removed.  It is called
+        only by :meth:`Stream_uninitialized._subs_in_caches`, after those raw
+        streams have been updated, and also on a partially failed
+        substitution attempt.  By default there is nothing to do: ordinary
+        stream-valued power caches are already updated by substitution.
+        """
+        pass
+
+
 class Stream_inexact(Stream):
     """
     An abstract base class for the stream when we do not know it is
@@ -1743,11 +1757,11 @@ class Stream_uninitialized(Stream):
 
         ``self`` is the first stream in this list.
 
-        .. WARNING::
-
-            All caches must have been created before this is called.
-            Currently, the first invocation is via
-            :meth:`_good_cache` in :meth:`__getitem__`.
+        This is a dependency snapshot.  It is refreshed, together with
+        :meth:`_good_cache`, at each call to
+        :meth:`_subs_in_caches` on actual dummy replacement.  Power
+        streams created after an earlier snapshot will therefore become
+        visible at the next dummy replacement.
 
         EXAMPLES:
 
@@ -1772,6 +1786,18 @@ class Stream_uninitialized(Stream):
              <sage.data_structures.stream.Stream_sub object at 0x...>,
              <sage.data_structures.stream.Stream_add object at 0x...>,
              <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
+        """
+        return self._traverse_dependencies()
+
+    def _traverse_dependencies(self):
+        r"""
+        Perform the identity-based, cycle-safe dependency traversal.
+
+        This is the single traversal implementation.  The
+        :meth:`_input_streams` lazy attribute is a cached view of its
+        result; :meth:`_subs_in_caches` reassigns that attribute from a
+        fresh call to this method on every dummy replacement, so power
+        streams created after an earlier snapshot are included.
         """
         known = [self]
         visited = [self]
@@ -1817,8 +1843,16 @@ class Stream_uninitialized(Stream):
             sage: C._good_cache
             [1, 0, 1, 0]
         """
+        return self._compute_good_cache(self._input_streams)
+
+    def _compute_good_cache(self, streams):
+        r"""
+        Return the prefix of known valid cached coefficients for each
+        stream in ``streams``, aligned with ``streams``.
+        Newly discovered streams start with their current prefix.
+        """
         g = []
-        for c in self._input_streams:
+        for c in streams:
             if c._is_sparse:
                 vals = c._cache.values()
             else:
@@ -1971,8 +2005,7 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
-        global _SUBSTITUTION_EPOCH
-        _SUBSTITUTION_EPOCH += 1
+        changed_streams = set()
 
         def subs(c, var, val):
             P = self._P.polynomial_ring()
@@ -1998,45 +2031,64 @@ class Stream_uninitialized(Stream):
                 if s._cache[ao] in self._coefficient_ring:
                     s._true_order = True
                 return False
+            changed_streams.add(id(s))
             del s._cache[ao]
             self._good_cache[j] -= 1
             return True
 
-        for j, s in enumerate(self._input_streams):
-            m = len(s._cache) - self._good_cache[j]
-            if s._is_sparse:
-                # we traverse the cache beginning with the last
-                # element added, because only the last m elements
-                # added can contain variables
-                indices = reversed(s._cache)
-            else:
-                indices = range(-1, -m-1, -1)
-            # substitute variable and determine last good element
-            good = m
-            for i0, i in enumerate(indices):
-                c = s._cache[i]
-                if self._coefficient_ring == self._base_ring:
-                    if c.parent() == self._PF:
-                        c = retract(subs(c, var, val))
-                        if c.parent() is not self._base_ring:
+        # Rebuild the dependency graph and its known-good prefix on every
+        # actual dummy replacement.  Power streams constructed since the
+        # previous snapshot are included now.
+        self._input_streams = self._traverse_dependencies()
+        self._good_cache = self._compute_good_cache(self._input_streams)
+
+        try:
+            for j, s in enumerate(self._input_streams):
+                m = len(s._cache) - self._good_cache[j]
+                if s._is_sparse:
+                    # we traverse the cache beginning with the last
+                    # element added, because only the last m elements
+                    # added can contain variables
+                    indices = reversed(s._cache)
+                else:
+                    indices = range(-1, -m-1, -1)
+                # substitute variable and determine last good element
+                good = m
+                for i0, i in enumerate(indices):
+                    before = c = s._cache[i]
+                    if self._coefficient_ring == self._base_ring:
+                        if c.parent() == self._PF:
+                            c = retract(subs(c, var, val))
+                            if c.parent() is not self._base_ring:
+                                good = m - i0 - 1
+                    elif c.parent() == self._U:
+                        c = c.map_coefficients(lambda e: subs(e, var, val))
+                        try:
+                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                        except TypeError:
                             good = m - i0 - 1
-                elif c.parent() == self._U:
-                    c = c.map_coefficients(lambda e: subs(e, var, val))
-                    try:
-                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
-                    except TypeError:
-                        good = m - i0 - 1
-                s._cache[i] = c
-            self._good_cache[j] += good
-            # fix approximate_order and true_order
-            ao = s._approximate_order
-            if s._is_sparse:
-                while ao in s._cache and fix_cache(j, s, ao):
-                    ao += 1
-            else:
-                while s._cache and fix_cache(j, s, 0):
-                    ao += 1
-            s._approximate_order = ao
+                    if before != c:
+                        changed_streams.add(id(s))
+                    s._cache[i] = c
+                self._good_cache[j] += good
+                # fix approximate_order and true_order
+                ao = s._approximate_order
+                if s._is_sparse:
+                    while ao in s._cache and fix_cache(j, s, ao):
+                        ao += 1
+                else:
+                    while s._cache and fix_cache(j, s, 0):
+                        ao += 1
+                s._approximate_order = ao
+
+        finally:
+            # Newly created power streams are refreshed before this loop.
+            # This applies to non-stream derived caches too, including
+            # a partially completed substitution.
+            for s in self._input_streams:
+                if id(s) in changed_streams:
+                    s._on_coefficient_substitution(changed_streams)
+
 
         self._pool.del_variable(var)
 
@@ -3259,31 +3311,6 @@ def _finite_support_degree(f):
     return None
 
 
-_SUBSTITUTION_EPOCH = 0
-
-
-def _epoch_if_changed(stream):
-    r"""
-    Return whether ``stream`` was last used before the latest coefficient
-    substitution, and mark its cached powers stale in that case.
-
-    Only substitution can invalidate cached coefficient products.  This
-    deliberately does not compute a dependency fingerprint: stream graphs
-    can be cyclic, and cached powers are not necessarily in the frozen
-    input-stream snapshot.  Each class rebuilds its own base prefix at
-    the next evaluation.
-    """
-    epoch = getattr(stream, '_powers_epoch', None)
-    if epoch == _SUBSTITUTION_EPOCH:
-        return False
-    if hasattr(stream, 'stretched_power_restrict_degree'):
-        # This derived @cached_method is outside the snapshot traversed
-        # during substitution, so it must also be cleared.
-        stream.stretched_power_restrict_degree.clear_cache()
-    stream._powers_epoch = _SUBSTITUTION_EPOCH
-    return epoch is not None
-
-
 def _outer_bound(degree_f, n, inner_order, inner_constant):
     r"""
     Return the exclusive bound on outer degrees needed to compute
@@ -3560,17 +3587,6 @@ class Stream_compose(Stream_inexact):
 
         return self._stream._approximate_order * self._input._coeff_stream._approximate_order
 
-    def _ensure_current_powers(self):
-        r"""
-        Recreate composition powers after a coefficient substitution.
-
-        See :func:`_epoch_if_changed` for the precise invalidation event.
-        """
-        if _epoch_if_changed(self):
-            self._pos_powers = [self._input.parent().one(), self._input]
-            if hasattr(self, '_neg_powers'):
-                self._neg_powers = [self._input.parent().zero(), ~self._input]
-
     def get_coefficient(self, n):
         r"""
         Return the ``n``-th coefficient of ``self``.
@@ -3604,7 +3620,6 @@ class Stream_compose(Stream_inexact):
             sage: [c[i] for i in range(-2, 5)]  # indirect doctest
             [0, 0, 0, 10, 20, 84, 504]
         """
-        self._ensure_current_powers()
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
         K = _outer_bound(self._degree_f, n, gv,
@@ -3766,11 +3781,6 @@ class Stream_cauchy_compose(Stream_binary):
             sage: [h[n] for n in (-1,0,1,2,3,4)]
             [0, 2, 0, 1, -1, 1]
         """
-        if _epoch_if_changed(self):
-            self._pos_powers = [None, self._right]
-            if hasattr(self, '_neg_powers'):
-                self._neg_powers = [Stream_zero(),
-                                    Stream_cauchy_invert(self._right)]
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         K = _outer_bound(self._degree_f, n, gv, self._right[0])
@@ -3949,17 +3959,16 @@ class Stream_plethysm(Stream_binary):
         # this is very likely not the true order
         return self._left._approximate_order * self._right._approximate_order
 
-    def _ensure_current_powers(self):
+    def _on_coefficient_substitution(self, changed_streams):
         r"""
-        Discard cached powers when the inner stream is not exact.
+        Clear memoized coefficient results when relevant powers change.
 
-        Cached products of an inexact inner stream can retain old values
-        of coefficients that have since been replaced.  Keep only the
-        powersum-converted inner stream and create higher powers on
-        demand.  Exact inputs keep their caches.
+        Ordinary power caches are updated by the substitution walk.  This
+        only clears the separate non-stream cache of results computed by
+        :meth:`stretched_power_restrict_degree`.
         """
-        if _epoch_if_changed(self):
-            self._powers = self._powers[:1]
+        if any(id(stream) in changed_streams for stream in self._powers):
+            self.stretched_power_restrict_degree.clear_cache()
 
     def get_coefficient(self, n):
         r"""
@@ -3988,8 +3997,6 @@ class Stream_plethysm(Stream_binary):
              3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4],
              4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]]
         """
-        self._ensure_current_powers()
-
         K = _outer_bound(self._degree_f, n,
                          self._right._approximate_order, self._right[0])
 
@@ -4261,11 +4268,6 @@ class Stream_plethysm_multi(Stream_inexact):
 
     def get_coefficient(self, n):
         r"""Return the coefficient of total degree ``n``."""
-        for h in self._plethysms:
-            # this calls compute_product directly, bypassing
-            # Stream_plethysm.get_coefficient; repeat the cache-reset
-            # invariant for dynamically refined inner streams there
-            h._ensure_current_powers()
         stop = _outer_bound(
             self._degree_f, n,
             min(g._approximate_order for g in self._arguments),
@@ -4306,11 +4308,26 @@ class Stream_plethysm_multi(Stream_inexact):
 
     def input_streams(self):
         r"""
-        Return the outer stream and every argument stream and cached
-        power used by the factor plethysms.
+        Return the outer stream and each factor plethysm.
+
+        Each factor participates in the substitution lifecycle for its
+        own non-stream result cache; it can also rebuild coefficients
+        from its inner stream cache after dummy replacement.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_plethysm_multi
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: X = tensor([p[1], p[[]]])
+            sage: Y = tensor([p[[]], p[1]])
+            sage: f = Stream_exact([X+Y], order=1)
+            sage: g = Stream_exact([p[1]], order=1)
+            sage: h = Stream_plethysm_multi(f, (g,g), True, p, p,
+            ....:                           p_outer=tensor([p, p]))
+            sage: len(h.input_streams())
+            3
         """
-        return ([self._left]
-                + [stream for h in self._plethysms for stream in h._powers])
+        return [self._left] + list(self._plethysms)
 
 
 #####################################################################
