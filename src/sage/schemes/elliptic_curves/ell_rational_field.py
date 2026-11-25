@@ -31,6 +31,8 @@ AUTHORS:
   numbers of higher level
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
+
+- Maya Lin (2026): Added sturm_bound and optimized is_isogenous
 """
 
 ##############################################################################
@@ -111,6 +113,26 @@ CMJ = { 0: -3, 54000: -12, -12288000: -27, 1728: -4, 287496: -16,
       -3375: -7, 16581375: -28, 8000: -8, -32768: -11, -884736: -19,
       -884736000: -43, -147197952000: -67, -262537412640768000: -163}
 
+def sturm_bound(N: Integer) -> Integer:
+    r"""
+    Helper function for
+    :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_isogenous`.
+
+    INPUT:
+
+    - ``N`` -- a positive integer
+
+    EXAMPLE::
+
+        sage: from sage.schemes.elliptic_curves.ell_rational_field import sturm_bound
+        sage: sturm_bound(14)
+        4
+    """
+    N_pdiv = N.prime_divisors()
+    a = N*prod(q+1 for q in N_pdiv)
+    b = prod(q for q in N_pdiv)
+
+    return a.divide_knowing_divisible_by(b) // 6
 
 class EllipticCurve_rational_field(EllipticCurve_number_field):
     r"""
@@ -4757,36 +4779,25 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 i += 1
             return isogs
 
-    def is_isogenous(self, other, proof=True, maxp=200) -> bool:
+    def is_isogenous(self, other: EllipticCurve_generic, *args, **kwds) -> bool:
         r"""
-        Return whether or not ``self`` is isogenous to other.
+        Return whether or not ``self`` is isogenous to ``other``.
 
         INPUT:
 
         - ``other`` -- another elliptic curve
 
-        - ``proof`` -- boolean (default: ``True``); if ``False``, the function
-          will return ``True`` whenever the two curves have the same
-          conductor and are isogenous modulo `p` for `p` up to ``maxp``;
-          otherwise this test is followed by a rigorous test (which
-          may be more time-consuming)
+        - ``*args`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
-        - ``maxp`` -- (default: 200) the maximum prime `p` for
-          which isogeny modulo `p` will be checked
-
-        OUTPUT:
-
-        boolean; ``True`` if there is an isogeny from curve ``self`` to
-        curve ``other``.
+        - ``**kwds`` -- does nothing (only for backwards compatibility, will be removed in the future)
 
         ALGORITHM:
 
-        First the conductors are compared as well as the Traces of
-        Frobenius for good primes up to ``maxp``.  If any of these
-        tests fail, ``False`` is returned.  If they all pass and
-        ``proof`` is ``False`` then ``True`` is returned, otherwise a
-        complete set of curves isogenous to ``self`` is computed and
-        ``other`` is checked for isomorphism with any of these,
+        First the `a_p` values are compared one by one for primes up to 20.
+        If any `a_p` value does not match, ``False`` is returned. If they all match
+        up to 20 and the conductors are equal, the Sturm bound is computed and
+        the `a_p` values are compared for all primes up to the Sturm bound.
+        See Theorem 9.21 of [St2007]_.
 
         EXAMPLES::
 
@@ -4810,29 +4821,21 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             False
         """
         if not isinstance(other, EllipticCurve_generic):
-            raise ValueError("Second argument is not an Elliptic Curve.")
+            raise ValueError("second argument must be an elliptic curve.")
         if other.base_field() is not QQ:
-            raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
+            raise ValueError("the base field of the second elliptic curve must be the rationals")
 
-        if self.is_isomorphic(other):
-            return True
-
-        E1 = self.minimal_model()
-        E2 = other.minimal_model()
-        D1 = E1.discriminant()
-        D2 = E2.discriminant()
-
-        if any(E1.change_ring(GF(p)).cardinality() != E2.change_ring(GF(p)).cardinality()
-               for p in prime_range(2, maxp)
-               if D1.valuation(p) == 0 and D2.valuation(p) == 0):
+        if any(self.ap(p) != other.ap(p) for p in prime_range(2, 20)):
             return False
 
-        if E1.conductor() != E2.conductor():
+        N = self.conductor()
+
+        if N != other.conductor():
             return False
 
-        if not proof:
-            return True
-        return E2 in E1.isogeny_class().curves
+        maxp = sturm_bound(N)
+
+        return self.aplist(maxp, python_ints=True) == other.aplist(maxp, python_ints=True)
 
     def isogeny_degree(self, other):
         r"""
