@@ -623,15 +623,26 @@ wheels = [
 
 [[package]]
 name = "cypari2"
-version = "2.2.6"
-source = { url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" }
+version = "2.2.9"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cysignals" },
 ]
-sdist = { hash = "sha256:cffe0c4c54f3b1cd97cceb8f91bb6c3ac2afe5a872193d40cdbc9a0f318ea91e" }
-
-[package.metadata]
-requires-dist = [{ name = "cysignals", specifier = ">=1.13.0" }]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/39/3245e5e89e9b08a35646f5cc78b3337d08455084fb859bc64d3e423df9ec/cypari2-2.2.9.tar.gz", hash = "sha256:92f5af711fc070fec84fde8a425167005a83e0ea07686c36c4d2ac8cafe089cf", size = 708676, upload-time = "2026-11-22T04:11:12.714Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/77/ef/949fbd32fd6f28e651b32e18ad29b151e1b6ee976f51824ff1bcd8c6e444/cypari2-2.2.9-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:d778fe180f378a1832d73143f440f14869b00f254f4fb09e1a9cff3b9719a794", size = 7197857, upload-time = "2026-11-22T04:10:30.951Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/1c/3b475fd545585dba074c8db927a88d111079bea3370eef4247f01a245e9f/cypari2-2.2.9-cp313-cp313-macosx_15_0_x86_64.whl", hash = "sha256:ebcda5db50050487f41287784b512c913884cc76e8141270f0b52037d77309ec", size = 7875030, upload-time = "2026-11-22T04:10:32.874Z" },
+    { url = "https://files.pythonhosted.org/packages/45/38/541150f38e08bfa7cf2f73686fdb4bf657ccba07335049f6d58fd05d79ed/cypari2-2.2.9-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0983a810fd737a9bcd5a63745fd29b76ea82df9565b45304dadf6633393dec1f", size = 9074879, upload-time = "2026-11-22T04:10:34.868Z" },
+    { url = "https://files.pythonhosted.org/packages/36/0b/a1be84d8d5e0a2d006af99b0546e42e5a54e98b676837301fd516d7cd60c/cypari2-2.2.9-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c9fca7c5489799d4d4bb4fd6a6a0c9fde8eb733b6b169d8e523e5815de7a453c", size = 10194943, upload-time = "2026-11-22T04:10:37.289Z" },
+    { url = "https://files.pythonhosted.org/packages/15/88/bf4adcbe0d24553609ae15e96af6666742fad13b1eeaabafc4da92342a17/cypari2-2.2.9-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:12817f2776452dfbccde99cec4615608e584918d1f8cf67f89efc3df68203cc6", size = 9186501, upload-time = "2026-11-22T04:10:39.756Z" },
+    { url = "https://files.pythonhosted.org/packages/12/04/dba84abf10a5737c616b110d50a3be5582f0dec00ba438fbca0528a3a634/cypari2-2.2.9-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:0e5769f1426ec90a8a09902463d380244b05ad2333142457459ae758f623d122", size = 10170986, upload-time = "2026-11-22T04:10:42.483Z" },
+    { url = "https://files.pythonhosted.org/packages/13/49/4475431eacf1038017f6a4dd465841ffd87ab85545d40e5ee454f8ec95c1/cypari2-2.2.9-cp314-cp314-macosx_15_0_arm64.whl", hash = "sha256:f75f91efee0a8c1ce18b55bad6cc48b19b89435c5be0f95060f8f9a7c29e18a9", size = 7214126, upload-time = "2026-11-22T04:10:44.684Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/d5/932faac3edd33ecd101dcb45ecc7e21e9306cb062308601e7d13c168cffa/cypari2-2.2.9-cp314-cp314-macosx_15_0_x86_64.whl", hash = "sha256:281f1542a17946f447a9813c8905d6da8d25f3c5cb58a089cc48afac4c37c827", size = 7885656, upload-time = "2026-11-22T04:10:47.087Z" },
+    { url = "https://files.pythonhosted.org/packages/f0/50/3e5970e4f4c1ebccce02b5a0e885a9797b0856c81ecb9f8749b1b48e956f/cypari2-2.2.9-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b09c984090bf67e474f24d15d205f8f23a801ebfb3927b2ead20f8a89a209c1b", size = 9096596, upload-time = "2026-11-22T04:10:49.272Z" },
+    { url = "https://files.pythonhosted.org/packages/47/45/1f72a74fa81023a1c96b7ec95e675d734a372694a4b2a8aa91d9a0d697b1/cypari2-2.2.9-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d85d2caced7925cc7ff1d5800971e315bf463c56c1540f120eb58a9945b847c1", size = 10217906, upload-time = "2026-11-22T04:10:52.159Z" },
+    { url = "https://files.pythonhosted.org/packages/73/c3/220e0f1bd6bd3d0c7b81a6c0b1f3bb0838f6abace04e64e1d26c52c7cfc5/cypari2-2.2.9-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:0976b747cbf90fb1d233e0b65d54aa73b2b42fc28a975854f1b1f7b5f1434dbe", size = 9214624, upload-time = "2026-11-22T04:10:54.848Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/58/cd8feaef9b9b5d5c92299855f542ab57f51c6051dad2a76affff64d56390/cypari2-2.2.9-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:6f702e907da2ed3d058131358aa8d1fe0af3b2ac5418f0bd866949f3f9ff21cf", size = 10194636, upload-time = "2026-11-22T04:10:57.056Z" },
+]
 
 [[package]]
 name = "cysignals"
@@ -2891,7 +2902,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "conway-polynomials", specifier = ">=0.8" },
-    { name = "cypari2", marker = "sys_platform != 'win32'", url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" },
+    { name = "cypari2", marker = "sys_platform != 'win32'", specifier = ">=2.2.1,!=2.2.7,!=2.2.8" },
     { name = "cysignals", specifier = ">=1.12.1" },
     { name = "cython", specifier = ">=3.1.0" },
     { name = "fpylll", marker = "sys_platform != 'win32'", specifier = ">=0.5.9" },
@@ -2929,7 +2940,7 @@ provides-extras = ["r", "extra", "test"]
 [package.metadata.requires-dev]
 dev = [
     { name = "cibuildwheel" },
-    { name = "cypari2", marker = "sys_platform != 'win32'", url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" },
+    { name = "cypari2", marker = "sys_platform != 'win32'", specifier = ">=2.2.1,!=2.2.7,!=2.2.8" },
     { name = "cysignals", specifier = ">=1.12.1" },
     { name = "cython", specifier = ">=3.1.0" },
     { name = "gmpy2", specifier = ">=2.1.5" },

@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
-  'cypari2 >=2.2.1; sys_platform != "win32"',
+  'cypari2 >=2.2.1, !=2.2.7, !=2.2.8; sys_platform != "win32"',
   'meson >=1.11.2',
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
@@ -43,7 +43,7 @@ classifiers = [
 ]
 dependencies = [
   'conway-polynomials >=0.8',
-  'cypari2 >=2.2.1; sys_platform != "win32"',
+  'cypari2 >=2.2.1, !=2.2.7, !=2.2.8; sys_platform != "win32"',
   'six >=1.15.0',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
@@ -232,7 +232,7 @@ dev = [
   "ty >=0.0.90",
   "uv",
   "virtualenv >=21.14.13",
-  'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
+  'cypari2 >=2.2.1, !=2.2.7, !=2.2.8; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
   'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
   'gmpy2 >=2.1.5', # Duplicate build-system requirement to fix editable installs with uv
@@ -749,7 +749,3 @@ ignore = ["E501", "E741"]
 no-build-isolation-package = ["sagemath"]
 # Build these packages from source instead of installing pre-built wheels.
 no-binary-package = ["cypari2", "pplpy", "primecountpy"]
-
-[tool.uv.sources]
-# Match build/pkgs/cypari and dimpase/tap/cypari2 for PARI 2.19 compatibility.
-cypari2 = { url = "https://github.com/sagemath/cypari2/archive/3d7553e63d88ccafc445fa5cf577dad65a056d88.tar.gz" }
