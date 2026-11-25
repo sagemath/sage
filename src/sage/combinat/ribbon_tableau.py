@@ -893,7 +893,7 @@ def graph_implementation_rec(skp, weight, length, function, cache=None):
         retire = [(val + ell - (i + 1) - perm[i]) for i, val in enumerate(partp)]
         retire.sort(reverse=True)
         retire = [val - ell + (i + 1) for i, val in enumerate(retire)]
-        retire = Partition(retire).conjugate()
+        retire = _Partitions(retire).conjugate()
 
         # Cutting branches if the retired partition has a line strictly included into the inner one
         if len(retire) >= outer_len:
