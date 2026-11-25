@@ -3565,7 +3565,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
-        TypeError: Unable to coerce I + 2 to a rational
+        TypeError: no conversion of this number field element to a rational
 
     Diagonal matrices must be square::
 

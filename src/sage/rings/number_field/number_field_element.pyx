@@ -1883,7 +1883,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: RR(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (a^2)._mpfr_(RR)
             -1.00000000000000
 
@@ -1895,7 +1895,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: RR(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: K.<a> = NumberField(x^3 + 2, embedding=-1.25)
             sage: RR(a)
             -1.25992104989487
@@ -1926,7 +1926,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: CBF(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         from sage.rings.complex_arb import ComplexBallField
         if self.parent().coerce_embedding() is None:
@@ -1962,7 +1962,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: float(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (a^2).__float__()
             -1.0
             sage: k.<a> = NumberField(x^2 + 1,embedding=I)
@@ -2854,12 +2854,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (~I)._integer_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce -I to an integer
+            TypeError: no conversion of this number field element to an integer
             sage: (2*I*I)._integer_()
             -2
         """
         if ZZX_deg(self._numerator) >= 1:
-            raise TypeError("Unable to coerce %s to an integer" % self)
+            raise TypeError("no conversion of this number field element to an integer")
         return ZZ(self._rational_())
 
     def _rational_(self):
@@ -2873,12 +2873,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (~I)._rational_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce -I to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (I*I/2)._rational_()
             -1/2
         """
         if ZZX_deg(self._numerator) >= 1:
-            raise TypeError("Unable to coerce %s to a rational" % self)
+            raise TypeError("no conversion of this number field element to a rational")
         cdef Integer num = Integer.__new__(Integer)
         ZZX_getitem_as_mpz(num.value, &self._numerator, 0)
         cdef Integer den = Integer.__new__(Integer)
