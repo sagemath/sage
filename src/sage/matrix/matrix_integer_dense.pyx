@@ -79,6 +79,7 @@ from sage.misc.verbose import verbose, get_verbose
 from sage.arith.misc import previous_prime
 from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power
+from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element
 from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
@@ -5579,13 +5580,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
             Traceback (most recent call last):
             ...
             TypeError: number of rows must be the same, not 2 != 3
+
+        The result is over a common ring (:issue:`17595`)::
+
+            sage: A = matrix(ZZ, [[1]])
+            sage: A.augment(matrix(QQ, [[1/2]]))
+            [  1 1/2]
         """
         if not isinstance(right, Matrix) and hasattr(right, '_vector_'):
             right = right.column()
         if self._nrows != right.nrows():
             raise TypeError('number of rows must be the same, not {0} != {1}'.format(self._nrows, right.nrows()))
-        if not (self._base_ring is right.base_ring()):
-            right = right.change_ring(self._base_ring)
+        if self._base_ring is not right.base_ring():
+            R = coercion_model.common_parent(self._base_ring, right.base_ring())
+            if R is not self._base_ring:
+                return self.change_ring(R).augment(right, subdivide)
+            right = right.change_ring(R)
 
         cdef Matrix_integer_dense other = right.dense_matrix()
         m = self._nrows
