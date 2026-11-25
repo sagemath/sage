@@ -173,14 +173,19 @@ def _assert_hadamard_by_hamming(H):
     # For sign rows, the inner product is n minus twice the Hamming distance.
     # Each row has squared norm n, and every distinct pair must be orthogonal.
     for j, row in enumerate(packed):
-        assert all((row ^ other).bit_count() == n // 2 for other in packed[:j])
+        assert all(2 * (row ^ other).bit_count() == n for other in packed[:j])
 
 
 def test_hadamard_hamming_verifier():
     """Check the exact verifier against valid and corrupted small matrices."""
     from sage.matrix.constructor import matrix
 
+    _assert_hadamard_by_hamming(matrix([[1]]))
     _assert_hadamard_by_hamming(matrix([[1, 1], [1, -1]]))
+    # One minus sign in each row gives distance 2, but inner product 1.
+    odd_rows = [[-1 if i == j else 1 for j in range(5)] for i in range(5)]
+    with pytest.raises(AssertionError):
+        _assert_hadamard_by_hamming(matrix(odd_rows))
     for rows in ([[1, 1], [1, 1]], [[1, 1], [1, 0]], [[1, 1, 1], [1, -1, 1]]):
         with pytest.raises(AssertionError):
             _assert_hadamard_by_hamming(matrix(rows))
