@@ -3913,6 +3913,17 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
+
+        Outer coefficients whose powersum expansion requires denominators
+        are converted through the fraction field::
+
+            sage: sz = SymmetricFunctions(ZZ).s()
+            sage: pz = SymmetricFunctions(ZZ).p()
+            sage: f = Stream_exact([sz[2]], order=2)
+            sage: g = Stream_exact([pz[1]], order=1)
+            sage: h = Stream_plethysm(f, g, True, pz)
+            sage: h[2]
+            1/2*p[1, 1] + 1/2*p[2]
         """
         self._degree_f = _finite_support_degree(f)
 
@@ -3932,11 +3943,14 @@ class Stream_plethysm(Stream_binary):
 
         if HopfAlgebrasWithBasis(R).TensorProducts() in p.categories():
             self._tensor_power = len(p._sets)
+            # the outer coefficients live in the first tensor factor
             p_f = p._sets[0]
-            f = Stream_map_coefficients(f, lambda x: p_f(x), is_sparse)
+            f = Stream_map_coefficients(
+                f, lambda x: _to_powersum(x, p_f), is_sparse)
         else:
             self._tensor_power = None
-            f = Stream_map_coefficients(f, lambda x: p(x), is_sparse)
+            f = Stream_map_coefficients(
+                f, lambda x: _to_powersum(x, p), is_sparse)
         super().__init__(f, g, is_sparse)
 
     @lazy_attribute
@@ -4150,18 +4164,17 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: h.input_streams()
-            [<sage.data_structures.stream.Stream_map_coefficients object at ...>]
+            sage: len(h.input_streams())
+            2
             sage: [h[i] for i in range(1, 5)]
             [0,
              1/2*p[1, 1] - 1/2*p[2],
              1/3*p[1, 1, 1] - 1/3*p[3],
              1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
-            sage: h.input_streams()
-            [<sage.data_structures.stream.Stream_map_coefficients object at ...>,
-             <sage.data_structures.stream.Stream_cauchy_mul object at ...>]
+            sage: len(h.input_streams())
+            3
         """
-        return self._powers
+        return [self._left] + self._powers
 
 
 class Stream_plethysm_multi(Stream_inexact):
