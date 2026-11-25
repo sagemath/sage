@@ -106,7 +106,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
             return UntwistedAffineLieAlgebra(g, kac_moody=kac_moody)
         return TwistedAffineLieAlgebra(arg0, cartan_type, kac_moody=kac_moody)
 
-    def __init__(self, g, cartan_type, names, kac_moody):
+    def __init__(self, g, cartan_type, names, kac_moody) -> None:
         """
         Initialize ``self``.
 
@@ -241,7 +241,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
 
     lower_central_series = derived_series
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``False`` as ``self`` is semisimple.
 
@@ -578,7 +578,7 @@ class UntwistedAffineLieAlgebra(AffineLieAlgebra):
         sage: D.d()
         0
     """
-    def __init__(self, g, kac_moody):
+    def __init__(self, g, kac_moody) -> None:
         """
         Initialize ``self``.
 
@@ -671,7 +671,7 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
     weights in this representation with the roots of type `B_n` and
     the double all of its short roots.
     """
-    def __init__(self, R, cartan_type, kac_moody):
+    def __init__(self, R, cartan_type, kac_moody) -> None:
         """
         Initialize ``self``.
 
@@ -838,10 +838,9 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
         tester = self._tester(**options)
         B = self.basis()
         roots = set(self._g._Q.roots())
-        ac = list(self._g._Q.simple_coroots())
         from sage.misc.misc import some_tuples
         for r, s in some_tuples(roots, 2, tester._max_runs):
-            ret = B[r,0].bracket(B[s,0])
+            ret = B[r, 0].bracket(B[s, 0])
             if r + s in roots:
                 tester.assertEqual(list(ret.support()), [(r+s, 0)], f"obtained [{r}, {s}] == {ret}")
             elif r == -s:
@@ -966,7 +965,7 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
         else:
 
             def basis_map(r):
-                return self._basic._from_dict({s: one for s in self._root_mapping[r]}, remove_zeros=False)
+                return self._basic._from_dict(dict.fromkeys(self._root_mapping[r], one), remove_zeros=False)
 
         if self._cartan_type.dual().type() == 'G':
             zeta3 = self._basic.base_ring().gen()
@@ -1108,7 +1107,7 @@ class TwistedAffineIndices(UniqueRepresentation, Set_generic):
             raise ValueError("the Cartan type must be a twisted affine type")
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -1125,7 +1124,6 @@ class TwistedAffineIndices(UniqueRepresentation, Set_generic):
             Q = finite_ct.relabel({n-i: i for i in range(n)}).root_system().root_lattice()
             self._roots = tuple(Q.roots())
             self._ac = tuple(Q.simple_coroots())
-            CP = cartesian_product([range(3)] * n)
             if cartan_type.rank() == 2:
                 self._short_roots = self._roots + tuple(2*r for r in Q.roots())
             else:
@@ -1143,7 +1141,7 @@ class TwistedAffineIndices(UniqueRepresentation, Set_generic):
         from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
         super().__init__(facade=facade, category=InfiniteEnumeratedSets())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return if ``x`` is contained in ``self``.
 
@@ -1200,7 +1198,6 @@ class TwistedAffineIndices(UniqueRepresentation, Set_generic):
             finite_ct = finite_ct.relabel({n-i: i for i in range(n)})
         else:
             finite_ct = self._cartan_type.classical()
-        Q = finite_ct.root_system().root_lattice()
         P = self._facade_for[0]
         for i in ZZ:
             if i % 2:

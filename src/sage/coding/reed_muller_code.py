@@ -186,8 +186,7 @@ def ReedMullerCode(base_field, order, num_of_var):
     q = base_field.cardinality()
     if q == 2:
         return BinaryReedMullerCode(order, num_of_var)
-    else:
-        return QAryReedMullerCode(base_field, order, num_of_var)
+    return QAryReedMullerCode(base_field, order, num_of_var)
 
 
 class QAryReedMullerCode(AbstractLinearCode):
@@ -396,11 +395,22 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     EXAMPLES:
 
-    A binary Reed-Muller code can be constructed by simply giving the order of the code and the number of variables::
+    A binary Reed-Muller code can be constructed by simply giving the order of
+    the code and the number of variables::
 
         sage: C = codes.BinaryReedMullerCode(2, 4)
         sage: C
         Binary Reed-Muller Code of order 2 and number of variables 4
+
+    Very large Reed-Muller codes can be constructed without building
+    the generator matrix or elements of the code (fixes :issue:`33229`,
+    see also :issue:`39110`)::
+
+        sage: C = codes.BinaryReedMullerCode(16, 32)
+        sage: C
+        Binary Reed-Muller Code of order 16 and number of variables 32
+        sage: C.dimension(), C.length()
+        (2448023843, 4294967296)
     """
 
     _registered_encoders = {}
@@ -584,16 +594,11 @@ class ReedMullerVectorEncoder(Encoder):
             ...
             ValueError: the code has to be a Reed-Muller code
         """
-        if not (
-            isinstance(
-                code,
-                QAryReedMullerCode) or isinstance(
-                code,
-                BinaryReedMullerCode)):
+        if not isinstance(code, (QAryReedMullerCode, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -775,9 +780,7 @@ class ReedMullerPolynomialEncoder(Encoder):
             ...
             ValueError: The Polynomial ring should be on Finite Field of size 59 and should have 3 variables
         """
-        if not (
-            isinstance(code, QAryReedMullerCode)
-                or isinstance(code, BinaryReedMullerCode)):
+        if not isinstance(code, (QAryReedMullerCode, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
         super().__init__(code)
         if polynomial_ring is None:
@@ -840,7 +843,8 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transform the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of
+        :meth:`~sage.coding.encoder.Encoder.code`.
 
         INPUT:
 
@@ -896,11 +900,11 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         Use this method with caution: it does not check if ``c``
         belongs to the code, and if this is not the case, the output is
-        unspecified. Instead, use :meth:`unencode`.
+        unspecified. Instead, use :meth:`~sage.coding.encoder.Encoder.unencode`.
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`
+        - ``c`` -- a codeword of :meth:`~sage.coding.encoder.Encoder.code`
 
         OUTPUT:
 

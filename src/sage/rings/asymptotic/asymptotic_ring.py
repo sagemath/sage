@@ -428,7 +428,7 @@ from .misc import WithLocals
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
-lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
@@ -1515,7 +1515,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: 2^(x + 1/x)
             2^x + log(2)*2^x*x^(-1) + 1/2*log(2)^2*2^x*x^(-2) + ... + O(2^x*x^(-20))
             sage: _.parent()
-            Asymptotic Ring <QQ^x * x^SR * log(x)^QQ * Signs^x> over Symbolic Ring
+            Asymptotic Ring <QQ^x * x^SR * log(x)^ZZ * Signs^x> over Symbolic Ring
 
         ::
 
@@ -1603,9 +1603,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent == 0:
                 return self.parent().one()
-            elif exponent > 0:
+            if exponent > 0:
                 return self.parent().zero()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError('Cannot take %s to the negative exponent %s.' %
                                         (self, exponent))
             else:
@@ -1749,7 +1749,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             - 11/24*2^s*s^(-4) + 11/120*2^s*s^(-5)
             + 271/720*2^s*s^(-6) + O(2^s*s^(-7))
             sage: _.parent()
-            Asymptotic Ring <QQ^s * s^QQ * Signs^s> over Rational Field
+            Asymptotic Ring <QQ^s * s^ZZ * Signs^s> over Rational Field
 
             sage: S.<s> = AsymptoticRing(growth_group='(QQ_+)^s * s^ZZ', coefficient_ring=QQ)
             sage: (2 + 2/s^2).__pow_number__(s, precision=7)
@@ -1757,14 +1757,14 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             - 11/24*2^s*s^(-4) + 11/120*2^s*s^(-5)
             + 271/720*2^s*s^(-6) + O(2^s*s^(-7))
             sage: _.parent()
-            Asymptotic Ring <QQ^s * s^QQ> over Rational Field
+            Asymptotic Ring <QQ^s * s^ZZ> over Rational Field
         """
         if not self.summands:
             if exponent > 0:
                 return self.parent().zero()
-            elif exponent.is_zero():
+            if exponent.is_zero():
                 return self.parent().one()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError(
                     'Cannot take {} to the negative '
                     'exponent {}.'.format(self, exponent))
@@ -1874,7 +1874,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         .. SEEALSO::
 
             :func:`sage.rings.power_series_ring.PowerSeriesRing`,
-            :func:`sage.rings.laurent_series_ring.LaurentSeriesRing`.
+            :class:`~sage.rings.laurent_series_ring.LaurentSeriesRing`.
 
         TESTS::
 
@@ -1906,7 +1906,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: an asymptotic expansion
 
@@ -2093,7 +2093,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: an asymptotic expansion
 
@@ -2210,13 +2210,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             sage: R.<n> = AsymptoticRing('n^ZZ', QQ)
             sage: ex = 2*n^2 + n + O(1/n)
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x
             1/2*n^(-1) + O(n^(-3))
             sage: ex = 2*n^2 + n
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x
@@ -2260,8 +2260,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if return_inverse_main_term:
             return (imax_elem, x)
-        else:
-            return (max_elem, x)
+        return (max_elem, x)
 
     @staticmethod
     def _power_series_(coefficients, start, ratio, ratio_start, precision):
@@ -2450,7 +2449,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: (e^x * x^2 + log(x)).subs(x=2*x)
             4*(e^x)^2*x^2 + log(x) + log(2)
             sage: _.parent()
-            Asymptotic Ring <(e^x)^QQ * x^QQ * log(x)^QQ> over Symbolic Ring
+            Asymptotic Ring <(e^x)^QQ * x^ZZ * log(x)^ZZ> over Symbolic Ring
 
         ::
 
@@ -2817,15 +2816,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             else:
                 raise NotImplementedError(f"unsupported error term: {error}")
             error_growth = error_terms[0].growth
-            points = list(
-                (k, ring((main.subs({variable: k}) - function(k)) /
-                         (error_coeff * error_growth._substitute_(
-                             {str(variable): k, '_one_': ZZ.one()}))))
-                for k in values)
+            points = [(k, ring((main.subs({variable: k}) - function(k)) /
+                               (error_coeff * error_growth._substitute_(
+                                   {str(variable): k, '_one_': ZZ.one()}))))
+                      for k in values]
         else:
-            points = list(
-                (k, ring(main.subs({variable: k}) - function(k)))
-                for k in values)
+            points = [(k, ring(main.subs({variable: k}) - function(k)))
+                      for k in values]
 
         return points
 
@@ -2971,8 +2968,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             from sage.symbolic.ring import SR
             R = SR
 
-        return self.substitute(dict((g, R(R.var(str(g))))
-                                    for g in self.parent().gens()),
+        return self.substitute({g: R(R.var(str(g)))
+                                for g in self.parent().gens()},
                                domain=R)
 
     _symbolic_ = symbolic_expression  # will be used by SR._element_constructor_
@@ -3021,8 +3018,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 if c.is_zero():
                     return None
                 return T(term.growth, coefficient=c)
-            else:
-                return T(term.growth)
+            return T(term.growth)
 
         P = self.parent().change_parameter(coefficient_ring=new_coefficient_ring)
         S = self.summands.copy()
@@ -3123,10 +3119,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             P = cm.common_parent(self, S)
             return S.subs({var: P.coerce(self)})
 
-        else:
-            raise ValueError(
-                'Cannot build the factorial of {} since it is not '
-                'univariate.'.format(self))
+        raise ValueError(
+            'Cannot build the factorial of {} since it is not '
+            'univariate.'.format(self))
 
     def variable_names(self):
         r"""
@@ -3272,20 +3267,19 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             :meth:`is_little_o_of_one`
         """
-        non_o_one_terms = list(
-            term for term in self.summands
-            if not term.is_little_o_of_one()
-        )
+        non_o_one_terms = [term for term in self.summands
+                           if not term.is_little_o_of_one()]
         if not non_o_one_terms:
             return self.parent().base_ring()(0)
-        elif (
+
+        if (
             len(non_o_one_terms) == 1
             and non_o_one_terms[0].growth.is_one()
             and non_o_one_terms[0].is_exact()
         ):
             return non_o_one_terms[0].coefficient
-        else:
-            raise ValueError("Cannot determine limit of {}".format(self))
+
+        raise ValueError(f"Cannot determine limit of {self}")
 
     def B(self, valid_from=0):
         r"""
@@ -3362,7 +3356,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
     - ``locals`` -- dictionary which may contain the following keys and values:
 
       - ``'log'`` -- value: a function. If not given, then the usual
-        :class:`log <sage.functions.log.Function_log>` is taken.
+        :class:`log <sage.functions.log.Function_log1>` is taken.
         (See also :meth:`AsymptoticExpansion.log`.)
 
     EXAMPLES:
@@ -4013,7 +4007,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                                        (data, self)), e)
                 return sum(summands, self.zero())
 
-        elif isinstance(P, PolynomialRing_general):
+        elif isinstance(P, PolynomialRing_generic):
             p = P.gen()
             try:
                 return sum(iter(self.create_summand('exact', growth=p**i,
@@ -4105,7 +4099,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return True
         if self.growth_group.has_coerce_map_from(R):
             return True
-        elif isinstance(R, AsymptoticRing):
+        if isinstance(R, AsymptoticRing):
             if self.growth_group.has_coerce_map_from(R.growth_group) and \
                     self.coefficient_ring.has_coerce_map_from(R.coefficient_ring):
                 return True
@@ -4317,6 +4311,16 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             ....:    'n', precision=5))
             True
 
+        Positive and negative singularities::
+
+            sage: def permutations_odd_cycles(z):
+            ....:     return sqrt((1+z) / (1-z))
+            sage: ex = B.coefficients_of_generating_function(
+            ....:     permutations_odd_cycles, (1, -1,), precision=2,
+            ....: ); ex
+            sqrt(2)/sqrt(pi)*n^(-1/2) - 1/2*sqrt(1/2)/sqrt(pi)*n^(-3/2)*(-1)^n
+            + O(n^(-5/2))
+
         .. WARNING::
 
             Once singular expansions around points other than infinity
@@ -4383,8 +4387,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return SingularityAnalysisResult(
                 asymptotic_expansion=result,
                 singular_expansions=singular_expansions)
-        else:
-            return result
+        return result
 
     def create_summand(self, type, data=None, **kwds):
         r"""

@@ -121,7 +121,7 @@ class Algebras(AlgebrasCategory):
             """
             L = self.basis().keys()
             return self.sum_of_terms((L.from_vector(vector(t)), c)
-                                     for (t,c) in p.dict().items())
+                                     for t, c in p.monomial_coefficients().items())
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
@@ -197,8 +197,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lascoux2003] Alain Lascoux, Symmetric functions and combinatorial operators on polynomials,
-               CBMS Regional Conference Series in Mathematics, 99, 2003.
+            - [Lascoux2003]_
             """
             P = self.basis().keys()  # the root lattice realization
             n = weight.scalar(P.simple_coroot(i))
@@ -231,8 +230,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Kumar1987] \S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
-               Invent. Math. 89 (1987), no. 2, 395-423.
+            - [Kumar1987]_
 
             EXAMPLES:
 
@@ -336,7 +334,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             EXAMPLES::
 
@@ -349,7 +349,7 @@ class Algebras(AlgebrasCategory):
                 sage: KL.demazure_lusztig_operator_on_basis(L((3,0)), 1, q1, q2)
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
                 sage: KL.demazure_lusztig_operator_on_basis(L((0,3)), 1, q1, q2)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q2)*B[(3, 0)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - q2*B[(3, 0)]
 
             At `q_1=1` and `q_2=0` we recover the action of the isobaric divided differences `\pi_i`::
 
@@ -386,8 +386,7 @@ class Algebras(AlgebrasCategory):
             result = (q1+q2) * pi_on_weight - self.term(weight.simple_reflection(i), q2)
             if convention == "dominant":
                 return result.map_support(operator.neg)
-            else:
-                return result
+            return result
 
         def demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
@@ -434,12 +433,9 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lusztig1985] \G. Lusztig,
-               *Equivariant K-theory and representations of Hecke algebras*,
-               Proc. Amer. Math. Soc. 94 (1985), no. 2, 337-342.
+            - [Lusztig1985]_
 
-            .. [Cherednik1995] \I. Cherednik,
-               *Nonsymmetric Macdonald polynomials*. IMRN 10, 483-515 (1995).
+            - [Cherednik1995]_
 
             EXAMPLES::
 
@@ -455,14 +451,14 @@ class Algebras(AlgebrasCategory):
                 sage: T[1](x)
                 (q1+q2)*B[(1, 2)] + (q1+q2)*B[(2, 1)] + (q1+q2)*B[(3, 0)] + q1*B[(0, 3)]
                 sage: Tbar[1](x)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q1-2*q2)*B[(0, 3)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - (q1+2*q2)*B[(0, 3)]
                 sage: Tbar[1](x) + T[1](x)
-                (q1+q2)*B[(3, 0)] + (-2*q2)*B[(0, 3)]
+                (q1+q2)*B[(3, 0)] - 2*q2*B[(0, 3)]
                 sage: Tdominant[1](x)
-                (-q1-q2)*B[(1, 2)] + (-q1-q2)*B[(2, 1)] + (-q2)*B[(0, 3)]
+                -(q1+q2)*B[(1, 2)] - (q1+q2)*B[(2, 1)] - q2*B[(0, 3)]
 
                 sage: Tdominant.Tw_inverse(1)(KL.monomial(-L.simple_root(1)))
-                ((-q1-q2)/(q1*q2))*B[(0, 0)] - 1/q2*B[(1, -1)]
+                -((q1+q2)/(q1*q2))*B[(0, 0)] - 1/q2*B[(1, -1)]
 
             We repeat similar computation in the affine setting::
 
@@ -480,14 +476,13 @@ class Algebras(AlgebrasCategory):
                 (q1+q2)*B[e[0] + 2*e[1]] + (q1+q2)*B[2*e[0] + e[1]]
                  + (q1+q2)*B[3*e[0]] + q1*B[3*e[1]]
                 sage: Tbar[1](x)
-                (-q1-q2)*B[e[0] + 2*e[1]] + (-q1-q2)*B[2*e[0] + e[1]]
-                 + (-q1-2*q2)*B[3*e[1]]
+                -(q1+q2)*B[e[0] + 2*e[1]] - (q1+q2)*B[2*e[0] + e[1]] - (q1+2*q2)*B[3*e[1]]
                 sage: Tbar[1](x) + T[1](x)
-                (q1+q2)*B[3*e[0]] + (-2*q2)*B[3*e[1]]
+                (q1+q2)*B[3*e[0]] - 2*q2*B[3*e[1]]
                 sage: Tdominant[1](x)
-                (-q1-q2)*B[e[0] + 2*e[1]] + (-q1-q2)*B[2*e[0] + e[1]] + (-q2)*B[3*e[1]]
+                -(q1+q2)*B[e[0] + 2*e[1]] - (q1+q2)*B[2*e[0] + e[1]] - q2*B[3*e[1]]
                 sage: Tdominant.Tw_inverse(1)(KL.monomial(-L.simple_root(1)))
-                ((-q1-q2)/(q1*q2))*B[0] - 1/q2*B[e[0] - e[1]]
+                -((q1+q2)/(q1*q2))*B[0] - 1/q2*B[e[0] - e[1]]
 
             One can obtain iterated operators by passing a reduced
             word or an element of the Weyl group::
@@ -544,19 +539,19 @@ class Algebras(AlgebrasCategory):
                 sage: Y[alphacheck[0]](KL.one())
                 q2^2/q1^2*B[0]
                 sage: Y[alphacheck[1]](x)
-                ((-q2^2)/(-q1^2))*B[e[0] - e['delta']]
+                -(q2^2/(-q1^2))*B[e[0] - e['delta']]
                 sage: Y[alphacheck[2]](x)
                 (q1/(-q2))*B[e[0]]
                 sage: KL.q_project(Y[alphacheck[1]](x),q)
-                ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
+                -(q2^2/(-q*q1^2))*B[(1, 0, 0)]
 
                 sage: # needs sage.graphs
                 sage: KL.q_project(x, q)
                 B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[0]](x),q)
-                ((-q*q1)/q2)*B[(1, 0, 0)]
+                -q*q1/q2*B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[1]](x),q)
-                ((-q2^2)/(-q*q1^2))*B[(1, 0, 0)]
+                -(q2^2/(-q*q1^2))*B[(1, 0, 0)]
                 sage: KL.q_project(Y[alphacheck[2]](x),q)
                 (q1/(-q2))*B[(1, 0, 0)]
 
@@ -607,7 +602,9 @@ class Algebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring
             - ``convention`` -- ``'antidominant'``, ``'bar'``, or ``'dominant'`` (default: ``'antidominant'``)
 
-            See :meth:`demazure_lusztig_operators` for the details.
+            See
+            :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`
+            for the details.
 
             .. TODO::
 
@@ -646,7 +643,7 @@ class Algebras(AlgebrasCategory):
                 q1*B[(2, 2)]
                 sage: KL.demazure_lusztig_operator_on_classical_on_basis(L0((3,0)),     # needs sage.graphs
                 ....:                                                    0, q, q1, q2)
-                (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
+                -(q^2*q1+q^2*q2)*B[(1, 2)] - (q*q1+q*q2)*B[(2, 1)] - q^3*q2*B[(0, 3)]
             """
             L = self.basis().keys()
             weight = L.embed_at_level(weight, 0)
@@ -669,9 +666,9 @@ class Algebras(AlgebrasCategory):
 
             .. SEEALSO::
 
-                - :meth:`demazure_lusztig_operators`.
-                - :meth:`demazure_lusztig_operator_on_classical_on_basis`.
-                - :meth:`q_project`
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operators`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.demazure_lusztig_operator_on_classical_on_basis`.
+                - :meth:`~sage.combinat.root_system.root_lattice_realization_algebras.Algebras.ParentMethods.q_project`
 
             EXAMPLES::
 
@@ -695,7 +692,7 @@ class Algebras(AlgebrasCategory):
             is mapped to `q`::
 
                 sage: T[0](x)                                                           # needs sage.graphs
-                (-q^2*q1-q^2*q2)*B[(1, 2)] + (-q*q1-q*q2)*B[(2, 1)] + (-q^3*q2)*B[(0, 3)]
+                -(q^2*q1+q^2*q2)*B[(1, 2)] - (q*q1+q*q2)*B[(2, 1)] - q^3*q2*B[(0, 3)]
 
             Note that there is no translation part, and in particular
             1 is an eigenvector for all `T_i`'s::
@@ -708,7 +705,7 @@ class Algebras(AlgebrasCategory):
                 sage: Y = T.Y()
                 sage: alphacheck = Y.keys().simple_roots()
                 sage: Y[alphacheck[0]](KL0.one())
-                ((-q2)/(q*q1))*B[(0, 0)]
+                -q2/(q*q1)*B[(0, 0)]
 
             Matching with Ion Bogdan's hand calculations from 3/15/2013::
 
@@ -746,7 +743,7 @@ class Algebras(AlgebrasCategory):
                 sage: T0(KL0.monomial(-omega[1]))
                 1/(q*u)*B[Lambda[1]]
                 sage: T0(KL0.monomial(-2*omega[1]))
-                ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
+                -((u^2-1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
             """
             # In type BC dual we used q^2 and q elsewhere
             # Not sure this is the right thing to do or just a workaround ...
@@ -770,7 +767,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Haiman06] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
+            - [Haiman06]_
 
             .. WARNING::
 
@@ -992,10 +989,10 @@ class Algebras(AlgebrasCategory):
                 sage: Lambda = L.classical().fundamental_weights()
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
                 ....:     Lambda[1] + 2*Lambda[2], 1, q1, q2, convention='dominant')
-                (-q2)*B[(2, 3, 0, 0)]
+                -q2*B[(2, 3, 0, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
                 ....:     Lambda[1] + 2*Lambda[2], 2, q1, q2, convention='dominant')
-                (-q1-q2)*B[(3, 1, 1, 0)] + (-q2)*B[(3, 0, 2, 0)]
+                -(q1+q2)*B[(3, 1, 1, 0)] - q2*B[(3, 0, 2, 0)]
                 sage: KL.twisted_demazure_lusztig_operator_on_basis(
                 ....:     Lambda[1] + 2*Lambda[2], 3, q1, q2, convention='dominant')
                 q1*B[(3, 2, 0, 0)]
@@ -1012,9 +1009,8 @@ class Algebras(AlgebrasCategory):
                 if convention != "dominant":
                     raise NotImplementedError("The twisted Demazure-Lusztig operator T_0 is only implemented in the dominant convention")
                 return self.T0_check_on_basis(q1, q2, convention=convention)(weight)
-            else:
-                L = self.classical()
-                return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
+            L = self.classical()
+            return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
 
         def twisted_demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
@@ -1060,7 +1056,7 @@ class Algebras(AlgebrasCategory):
                 sage: T.Ti_inverse_on_basis(L0.zero(), 1)
                 1/q1*B[(0, 0)]
                 sage: T.Ti_on_basis(alpha[1], 1)
-                (-q1-q2)*B[(0, 0)] + (-q2)*B[(-1, 1)]
+                -(q1+q2)*B[(0, 0)] - q2*B[(-1, 1)]
                 sage: T.Ti_inverse_on_basis(alpha[1], 1)
                 ((q1+q2)/(q1*q2))*B[(0, 0)] + 1/q1*B[(-1, 1)] + ((q1+q2)/(q1*q2))*B[(1, -1)]
                 sage: T.Ti_on_basis(L0.zero(), 0)                                       # needs sage.graphs
@@ -1141,7 +1137,7 @@ class Algebras(AlgebrasCategory):
                 sage: def T0c(*l0): return T0_check_on_basis(L0(l0))
 
                 sage: T0(0,0,1)                                 # not double checked    # needs sage.graphs
-                ((-t+1)/q)*B[(1, 0, 0)] + 1/q^2*B[(2, 0, -1)]
+                -((t-1)/q)*B[(1, 0, 0)] + 1/q^2*B[(2, 0, -1)]
                 sage: T0c(0,0,1)                                                        # needs sage.graphs
                 (t^2-t)*B[(1, 0, 0)] + (t^2-t)*B[(1, 1, -1)] + t^2*B[(2, 0, -1)] + (t-1)*B[(0, 0, 1)]
             """

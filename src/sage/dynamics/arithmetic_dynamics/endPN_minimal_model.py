@@ -66,12 +66,13 @@ def bCheck(c, v, p, b):
         sage: bCheck(11664*b^2 + 70227*b + 76059, 15/2, 3, b)
         -1
     """
-    val = (v+1).floor()
+    val = (v + 1).floor()
     deg = c.degree()
     coeffs = c.coefficients(sparse=False)
     lcoeff = coeffs[deg]
     coeffs.remove(lcoeff)
-    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i) for i in range(0,len(coeffs)) if coeffs[i] != 0]
+    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i)
+              for i in range(len(coeffs)) if coeffs[i] != 0]
     check2 = (val - lcoeff.valuation(p))/deg
     check1.append(check2)
     bval = min(check1)
@@ -473,6 +474,8 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
 ###################################################
 
 #modification of Bruin-Molnar for all representatives
+
+
 def BM_all_minimal(vp, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal
@@ -590,7 +593,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     for M in all_M:
         new_map = mp.conjugate(M)
         new_map.normalize_coordinates()
-        if not [new_map, M] in all_maps:
+        if [new_map, M] not in all_maps:
             all_maps.append([new_map, M])
 
     #Split into conjugacy classes
@@ -615,14 +618,15 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 
     if return_transformation:
         return classes
-    else:
-        return [funct for funct, matr in classes]
+    return [funct for funct, matr in classes]
 
 ###################################################
 # enumerative algorithms from Hutz-Stoll
 ###################################################
 
 #find minimal model
+
+
 def HS_minimal(f, return_transformation=False, D=None):
     r"""
     Compute a minimal model for the given projective dynamical system.
@@ -713,6 +717,8 @@ def HS_minimal(f, return_transformation=False, D=None):
     return F
 
 #find all representatives of orbits for one prime
+
+
 def HS_all_minimal_p(p, f, m=None, return_transformation=False):
     r"""
     Find a representative in each distinct `SL(2,\ZZ)` orbit with
@@ -769,8 +775,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
         # nothing to do if the prime doesn't divide the resultant
         if return_transformation:
             return [[f, m]]
-        else:
-            return [f]
+        return [f]
     to_do = [[F, m, prev]] # repns left to check
     reps = [[F, m]] # orbit representatives for f
     while to_do:
@@ -810,10 +815,11 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
 
     if return_transformation:
         return reps
-    else:
-        return [funct for funct, matr in reps]
+    return [funct for funct, matr in reps]
 
 #find all representatives of orbits
+
+
 def HS_all_minimal(f, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal resultant.
@@ -883,8 +889,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
         #there is only one orbit for even degree
         if return_transformation:
             return [[f, m]]
-        else:
-            return [f]
+        return [f]
     if D is None:
         res = ZZ(F.resultant())
         D = res.prime_divisors()
@@ -897,14 +902,14 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 
     if return_transformation:
         return M
-    else:
-        return [funct for funct, matr in M]
+    return [funct for funct, matr in M]
 
 #######################
 #functionality for smallest coefficients
 #
 # Ben Hutz July 2018
 #####################################3
+
 
 def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
     """
@@ -1038,20 +1043,20 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         N = len(pts)
         if N == 0:
             return [item]
-        elif N == 1:
+        if N == 1:
             if item[index] > pts[0][index]:
                 pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else:  # binary insertion
-            left = 1
-            right = N
-            mid = (left + right) // 2  # these are ints so this is .floor()
-            if item[index] > pts[mid][index]: # item goes into first half
-                return insert_item(pts[:mid], item, index) + pts[mid:N]
-            else: # item goes into second half
-                return pts[:mid] + insert_item(pts[mid:N], item, index)
+        # binary insertion
+        left = 1
+        right = N
+        mid = (left + right) // 2  # these are ints so this is .floor()
+        if item[index] > pts[mid][index]: # item goes into first half
+            return insert_item(pts[:mid], item, index) + pts[mid:N]
+        # item goes into second half
+        return pts[:mid] + insert_item(pts[mid:N], item, index)
 
     def coshdelta(z):
         # The cosh of the hyperbolic distance from z = t+uj to j

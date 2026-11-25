@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Configuration
 
@@ -7,37 +6,37 @@ TESTS:
 We check that Sage stdin can be piped in even if stdout is a tty; In that case
 the IPython simple prompt is being used::
 
+    sage: # needs pexpect
     sage: cmd = 'print([sys.stdin.isatty(), sys.stdout.isatty()])'
-    sage: import pexpect                                                                # needs pexpect
-    sage: output = pexpect.run(                                                         # needs pexpect
-    ....:     'bash -c \'echo "{0}" | sage\''.format(cmd),
+    sage: import pexpect
+    sage: output = pexpect.run(
+    ....:     f'sh -c \'echo "{cmd}" | python3 -m sage.cli\''
     ....: ).decode('utf-8', 'surrogateescape')
-    sage: 'sage: [False, True]' in output                                               # needs pexpect
+    sage: 'sage: [False, True]' in output
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
-import sys
 import copy
+import sys
+
 from traitlets.config.loader import Config
 
 from sage.repl.prompts import SagePrompts
-
 
 # Name of the Sage IPython extension
 SAGE_EXTENSION = 'sage'
 
 
-class SageIpythonConfiguration():
+class SageIpythonConfiguration:
 
     def _doctest_mode(self):
         """
@@ -73,7 +72,7 @@ class SageIpythonConfiguration():
         """
         Return the IPython color palette.
 
-        This returns ``'NoColor'`` during doctests to avoid ANSI escape
+        This returns ``'nocolor'`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
@@ -83,7 +82,7 @@ class SageIpythonConfiguration():
             True
         """
         if not self._allow_ansi():
-            return 'NoColor'
+            return 'nocolor'
         from sage.repl.interpreter import SageTerminalInteractiveShell
         return SageTerminalInteractiveShell.colors.default()
 

@@ -104,8 +104,16 @@ def classical_modular_polynomial(l, j=None):
         sage: l = random_prime(50)
         sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
         True
+
+    ::
+
+        sage: classical_modular_polynomial(1)
+        X - Y
     """
     l = ZZ(l)
+
+    if l.is_one() and l not in _cache:
+        _cache[l] = ZZ['X,Y']({(1, 0): 1, (0, 1): -1})
 
     if j is None:
         # We are supposed to return the generic modular polynomial. First
@@ -118,12 +126,13 @@ def classical_modular_polynomial(l, j=None):
 
         try:
             Phi = ZZ['X,Y'](_db[l])
-        except ValueError:
+        except (FileNotFoundError, ValueError):
             try:
                 pari_Phi = pari.polmodular(l)
             except PariError:
                 raise NotImplementedError('modular polynomial is not in database and computing it on the fly is not yet implemented')
-            d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
+            d = {(i, j): c for i, f in enumerate(pari_Phi)
+                 for j, c in enumerate(f)}
             Phi = ZZ['X,Y'](d)
 
         if l <= _cache_bound:
@@ -140,7 +149,7 @@ def classical_modular_polynomial(l, j=None):
         return _cache[l](j, Y)
     try:
         Phi = _db[l]
-    except ValueError:
+    except (ValueError, FileNotFoundError):
         pass
     else:
         if l <= _cache_bound:

@@ -45,14 +45,14 @@ REFERENCES:
 - \K. Conrad: *Exterior powers* [Con2013]_
 - Chap. 19 of S. Lang: *Algebra* [Lan2002]_
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
@@ -679,9 +679,8 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
                 for basis, comp in tensor._components.items():
                     resu._components[basis] = comp.copy()
                 return resu
-            else:
-                raise TypeError("cannot coerce the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot coerce the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)

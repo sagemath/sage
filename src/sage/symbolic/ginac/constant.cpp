@@ -20,7 +20,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #include <Python.h>
 #include "py_funcs.h"
 #include "constant.h"
@@ -223,8 +222,8 @@ int constant::compare_same_type(const basic & other) const
 
 	if (serial == o.serial)
 		return 0;
-	
-		return serial < o.serial ? -1 : 1;
+
+	return serial < o.serial ? -1 : 1;
 }
 
 bool constant::is_equal_same_type(const basic & other) const

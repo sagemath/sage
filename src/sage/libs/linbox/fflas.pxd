@@ -29,7 +29,11 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
         FflasTrans
 
     ctypedef enum FFLAS_SIDE:
+        FflasLeft
         FflasRight
+
+    ctypedef enum FFLAS_DIAG:
+        FflasUnit
 
     # double
     Modular_double.Element* fgemv (Modular_double F, FFLAS_TRANSPOSE transA,
@@ -80,6 +84,18 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
              size_t C_stride, size_t numthreads)
 
 cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
+    ctypedef enum FFPACK_LU_TAG:
+        FfpackTileRecursive
+
+    void RankProfileFromLU (size_t* P, size_t N, size_t R,
+                            size_t* rkprofile, FFPACK_LU_TAG LuTag)
+
+    void PLUQtoEchelonPermutation (size_t N, size_t R, size_t * P, size_t * outPerm)
+
+    void MathPerm2LAPACKPerm (size_t * LapackP, size_t * MathP, size_t N)
+
+    void LAPACKPerm2MathPerm (size_t * MathP, const size_t * LapackP, size_t N)
+
     # double
     bint IsSingular (Modular_double F,
                      size_t nrows, size_t ncols, Modular_double.Element* A,
@@ -102,23 +118,30 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
               size_t nrows, size_t ncols,
               Modular_double.Element *A, size_t lda, size_t numthreads)
 
+    size_t LUdivine (Modular_double F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_double.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
+
     size_t ReducedRowEchelonForm (Modular_double F, size_t a, size_t b,
                                   Modular_double.Element* matrix,
-                                  size_t s, size_t* P, size_t* Q)
+                                  size_t s, size_t* P, size_t* Q,
+                                  bool transform, FFPACK_LU_TAG LuTag)
 
     size_t pReducedRowEchelonForm (Modular_double F, size_t a, size_t b,
                                   Modular_double.Element* matrix,
-                                  size_t s, size_t* P, size_t* Q, bool transform, size_t numthreads)
+                                  size_t s, size_t* P, size_t* Q,
+                                  bool transform, size_t numthreads,
+                                  FFPACK_LU_TAG LuTag)
 
     Modular_double.Element* Solve (Modular_double F, size_t M,
-           Modular_double.Element*  A, size_t lda,
-           Modular_double.Element*  x, int incx,
-           Modular_double.Element*  b, int incb)
+           Modular_double.Element* A, size_t lda,
+           Modular_double.Element* x, int incx,
+           Modular_double.Element* b, int incb)
 
     Modular_double.Element* pSolve (Modular_double F, size_t M,
-           Modular_double.Element*  A, size_t lda,
-           Modular_double.Element*  x, int incx,
-           Modular_double.Element*  b, int incb, size_t numthreads)
+           Modular_double.Element* A, size_t lda,
+           Modular_double.Element* x, int incx,
+           Modular_double.Element* b, int incb, size_t numthreads)
 
     void applyP (Modular_double F,
                  FFLAS_SIDE s, FFLAS_TRANSPOSE tr,
@@ -156,23 +179,30 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
               size_t nrows, size_t ncols,
               Modular_float.Element *A, size_t lda, size_t numthreads)
 
+    size_t LUdivine (Modular_float F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_float.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
+
     size_t ReducedRowEchelonForm (Modular_float F, size_t a, size_t b,
                                   Modular_float.Element* matrix,
-                                  size_t s, size_t* P, size_t* Q)
+                                  size_t s, size_t* P, size_t* Q,
+                                  bool transform, FFPACK_LU_TAG LuTag)
 
     size_t pReducedRowEchelonForm (Modular_float F, size_t a, size_t b,
                                   Modular_float.Element* matrix,
-                                  size_t s, size_t* P, size_t* Q, bool transform, size_t numthreads)
+                                  size_t s, size_t* P, size_t* Q,
+                                  bool transform, size_t numthreads,
+                                  FFPACK_LU_TAG LuTag)
 
     Modular_float.Element* Solve (Modular_float F, size_t M,
-           Modular_float.Element*  A, size_t lda,
-           Modular_float.Element*  x, int incx,
-           Modular_float.Element*  b, int incb)
+           Modular_float.Element* A, size_t lda,
+           Modular_float.Element* x, int incx,
+           Modular_float.Element* b, int incb)
 
     Modular_float.Element* pSolve (Modular_float F, size_t M,
-           Modular_float.Element*  A, size_t lda,
-           Modular_float.Element*  x, int incx,
-           Modular_float.Element*  b, int incb, size_t numthreads)
+           Modular_float.Element* A, size_t lda,
+           Modular_float.Element* x, int incx,
+           Modular_float.Element* b, int incb, size_t numthreads)
 
     void applyP (Modular_float F,
                  FFLAS_SIDE s, FFLAS_TRANSPOSE tr,

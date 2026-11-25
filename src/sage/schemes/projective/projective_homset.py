@@ -13,7 +13,7 @@ done by :class:`SchemeHomset_points` and its subclasses.
 .. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
-    :meth:`~sage.structure.parent.Hom` method that is inherited by all
+    :meth:`~sage.structure.parent.Parent.Hom` method that is inherited by all
     schemes.
 
 AUTHORS:
@@ -277,19 +277,17 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
                 from sage.schemes.projective.projective_rational_point import sieve
                 return sieve(X, B)
-            else:
-                from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
-                return enum_projective_rational_field(self, B)
-        elif R in NumberFields():
+            from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
+            return enum_projective_rational_field(self, B)
+        if R in NumberFields():
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_number_field
             return enum_projective_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif isinstance(R, FiniteField):
+        if isinstance(R, FiniteField):
             from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
             return enum_projective_finite_field(self.extended_codomain())
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -462,6 +460,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             raise NotImplementedError('numerical approximation of points only for dimension 0 subschemes')
 
 
+# TODO: Should this inherit from the weighted projective class?
 class SchemeHomset_points_projective_ring(SchemeHomset_points):
     """
     Set of rational points of a projective variety over a commutative ring.
@@ -524,8 +523,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
             return enum_projective_rational_field(self,B)
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
 
 class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):
@@ -640,6 +638,8 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         """
         if len(v) == 1:
             v = v[0]
+        if v == 0:
+            return self.zero()
         return self.codomain()._point(self.extended_codomain(), v, **kwds)
 
     def _repr_(self):
@@ -688,6 +688,23 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             raise NotImplementedError('Abelian variety point sets are not '
                             'implemented as modules over rings other than ZZ')
         return self
+
+    def zero(self):
+        r"""
+        Return the neutral element in this group of points.
+
+        EXAMPLES::
+
+            sage: S = EllipticCurve(GF(5), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+            sage: S = EllipticCurve(Zmod(15), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+        """
+        return self.codomain()(0)
+
+    _an_element_ = zero
 
 
 from sage.misc.persist import register_unpickle_override

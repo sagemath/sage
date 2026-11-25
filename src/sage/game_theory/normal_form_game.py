@@ -157,11 +157,11 @@ playing strategy number `i` is given by the matrix/vector multiplication
 `(Ay)_i`, ie element in position `i` of the matrix/vector multiplication
 `Ay`) ::
 
-    sage: y = var('y')                                                                  # needs sage.symbolic
+    sage: y = var('y')
     sage: A = matrix([[1, -1], [-1, 1]])
-    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',                  # needs sage.symbolic
+    sage: p = plot((A * vector([y, 1 - y]))[0], y, 0, 1, color='blue',
     ....:          legend_label='$u_1(r_1, (y, 1-y))$', axes_labels=['$y$', ''])
-    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',                  # needs sage.symbolic
+    sage: p += plot((A * vector([y, 1 - y]))[1], y, 0, 1, color='red',
     ....:           legend_label='$u_1(r_2, (y, 1-y))$'); p
     Graphics object consisting of 2 graphics primitives
 
@@ -221,10 +221,10 @@ currently available:
 
 * ``'lp'``: A solver for constant sum 2 player games using linear
   programming. This constructs a
-  :mod:`MixedIntegerLinearProgram <sage.numerical.MILP>` using the
+  :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>` using the
   solver which was passed in with ``solver`` to solve the linear
   programming representation of the game. See
-  :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
+  :class:`~sage.numerical.mip.MixedIntegerLinearProgram` for more on MILP solvers in Sage.
 
 * ``'lrs'``: Reverse search vertex enumeration for 2 player games. This
   algorithm uses the optional 'lrslib' package. To install it, type
@@ -445,8 +445,8 @@ It is also possible to generate a Normal form game from a gambit Game::
      (1, 0): [10.0, 2.0],
      (1, 1): [5.0, 5.0]}
 
-For more information on using Gambit in Sage see: :mod:`Using Gambit in
-Sage<sage.game_theory.gambit_docs>`. This includes how to access Gambit
+For more information on using Gambit in Sage see ``Using Gambit in
+Sage``. This includes how to access Gambit
 directly using the version of iPython shipped with Sage and an explanation
 as to why the ``int`` calls are needed to handle the Sage preparser.
 
@@ -495,7 +495,7 @@ the value of their suitcase is 2.
 
 Several standard Normal Form Games have also been implemented.
 For more information on how to access these, see:
-:mod:`Game Theory Catalog<sage.game_theory.catalog>`.
+:mod:`Game Theory Catalog<sage.game_theory.catalog_normal_form_games>`.
 Included is information on the situation each Game models.
 For example::
 
@@ -890,7 +890,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         return len(self.utilities)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the strategy_profiles of the game.
 
@@ -909,7 +909,7 @@ class NormalFormGame(SageObject, MutableMapping):
         base_str = "Normal Form Game with the following utilities: {}"
         return base_str.format(pformat(self.utilities))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX code representing the ``NormalFormGame``.
 
@@ -1161,7 +1161,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     g[strategy_profile][i] = sgn * Decimal(float(self.utilities[strategy_profile][i]))
         return g
 
-    def is_constant_sum(self):
+    def is_constant_sum(self) -> bool:
         r"""
         Check if the game is constant sum.
 
@@ -1194,7 +1194,7 @@ class NormalFormGame(SageObject, MutableMapping):
             return False
         m1, m2 = self.payoff_matrices()
         c = m1 + m2
-        t = c[0,0]
+        t = c[0, 0]
 
         for row in c:
             for i in row:
@@ -1462,8 +1462,7 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``solver`` -- (optional) see :class:`MixedIntegerLinearProgram`
           for more information on the MILP solvers in Sage, may also
           be ``'gambit'`` to use the MILP solver included with the gambit
-          library. Note that ``None`` means to use the default Sage LP solver,
-          normally GLPK.
+          library. Note that ``None`` means to use the default Sage LP solver.
 
         EXAMPLES:
 
@@ -1552,7 +1551,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: A = matrix([[2, 1], [1, 3]])
             sage: cg = NormalFormGame([A])
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
+            sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - sage_numerical_backends_coin
@@ -1566,7 +1565,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[1, 2, 1], [1, 1, 2], [2, 1, 1]])
             sage: B = matrix([[2, 1, 2], [2, 2, 1], [1, 2, 2]])
             sage: cg = NormalFormGame([A, B])
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
+            sage: ne = cg.obtain_nash(algorithm='lp')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
             sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin')              # optional - sage_numerical_backends_coin
@@ -1589,7 +1588,7 @@ class NormalFormGame(SageObject, MutableMapping):
         game generates a :exc:`ValueError`::
 
             sage: cg = NormalFormGame([A, A])
-            sage: cg.obtain_nash(algorithm='lp', solver='glpk')
+            sage: cg.obtain_nash(algorithm='lp')
             Traceback (most recent call last):
             ...
             ValueError: Input game needs to be a two player constant sum game
@@ -1619,16 +1618,16 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs')  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', solver='glpk')
-            [[(1.0, 0.0), (1.0, 0.0)]]
+            sage: gg.obtain_nash(algorithm='lp')
+            [[(0.0, 1.0), (0.0, 1.0)]]
             sage: gg.obtain_nash(algorithm='LCP')  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
             sage: gg.obtain_nash(algorithm='enumeration', maximization=False)
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lrs', maximization=False)  # optional - lrs
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
-            sage: gg.obtain_nash(algorithm='lp', solver='glpk', maximization=False)
-            [[(1.0, 0.0), (1.0, 0.0)]]
+            sage: gg.obtain_nash(algorithm='lp', maximization=False)
+            [[(0.0, 1.0), (0.0, 1.0)]]
             sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - gambit
             [[(1.0, 0.0), (1.0, 0.0)]]
 
@@ -1669,7 +1668,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
-            ValueError: 'solver' should be set to 'GLPK', ..., None
+            ValueError: 'solver' should be set to ..., None
              (in which case the default one is used), or a callable.
         """
         if len(self.players) > 2:
@@ -1818,7 +1817,7 @@ class NormalFormGame(SageObject, MutableMapping):
         nasheq = Parser(output).format_gambit(g)
         return sorted(nasheq)
 
-    def _solve_LP(self, solver='glpk', maximization=True):
+    def _solve_LP(self, solver=None, maximization=True):
         r"""
         Solve a constant sum :class:`NormalFormGame` using
         the specified LP solver.
@@ -1827,7 +1826,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         - ``solver`` -- the solver to be used to solve the LP:
 
-          * ``'gambit'`` -- his uses the solver included within the gambit
+          * ``'gambit'`` -- this uses the solver included within the gambit
             library to create and solve the LP
 
           * for further possible values, see :class:`MixedIntegerLinearProgram`
@@ -1989,7 +1988,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: c._solve_enumeration()
             [[(0, 1), (1, 0)]]
 
-        Testing against an error in `_is_NE`.  Note that 1 equilibrium is
+        Testing against an error in ``_is_NE``.  Note that 1 equilibrium is
         missing: ``[(2/3, 1/3), (0, 1)]``, however this equilibrium has
         supports of different sizes. This only occurs in degenerate games
         and is not supported in the `enumeration` algorithm::
@@ -2021,7 +2020,7 @@ class NormalFormGame(SageObject, MutableMapping):
                                powerset(range(player.num_strategies))]
                               for player in self.players]
 
-        potential_support_pairs = [pair for pair in product(*potential_supports) if len(pair[0]) == len(pair[1])]
+        potential_support_pairs = (pair for pair in product(*potential_supports) if len(pair[0]) == len(pair[1]))
 
         equilibria = []
         for pair in potential_support_pairs:
@@ -2230,98 +2229,12 @@ class NormalFormGame(SageObject, MutableMapping):
         p2_payoffs = [sum(v * col[j] for j, v in enumerate(a))
                       for col in M2.columns()]
 
-        #if p1_payoffs.index(max(p1_payoffs)) not in p1_support:
+        # if p1_payoffs.index(max(p1_payoffs)) not in p1_support:
         if not any(i in p1_support for i, x in enumerate(p1_payoffs)
                    if x == max(p1_payoffs)):
             return False
-        if not any(i in p2_support for i, x in enumerate(p2_payoffs)
-                   if x == max(p2_payoffs)):
-            return False
-
-        return True
-
-    def _Hrepresentation(self, m1, m2):
-        r"""
-        Create the H-representation strings required to use ``lrsnash``.
-
-        Since lrslib 6.1, this format is referred to as "legacy format".
-
-        This method is deprecated.
-
-        EXAMPLES::
-
-            sage: A = matrix([[1, 2], [3, 4]])
-            sage: B = matrix([[3, 3], [1, 4]])
-            sage: C = NormalFormGame([A, B])
-            sage: print(C._Hrepresentation(A, B)[0])
-            doctest:warning...
-            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
-            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://github.com/sagemath/sage/issues/27745 for details.
-            H-representation
-            linearity 1 5
-            begin
-            5 4 rational
-            0 1 0 0
-            0 0 1 0
-            0 -3 -1 1
-            0 -3 -4 1
-            -1 1 1 0
-            end
-            <BLANKLINE>
-            sage: print(C._Hrepresentation(A, B)[1])
-            H-representation
-            linearity 1 5
-            begin
-            5 4 rational
-            0 -1 -2 1
-            0 -3 -4 1
-            0 1 0 0
-            0 0 1 0
-            -1 1 1 0
-            end
-            <BLANKLINE>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(27745,
-                    "NormalFormGame._Hrepresentation is deprecated as it "
-                    "creates the legacy input format. "
-                    "Use NormalFormGame._lrs_nash_format instead")
-
-        from sage.geometry.polyhedron.misc import _to_space_separated_string
-        m = self.players[0].num_strategies
-        n = self.players[1].num_strategies
-        midentity = list(matrix.identity(m))
-        nidentity = list(matrix.identity(n))
-
-        s = 'H-representation\n'
-        s += 'linearity 1 ' + str(m + n + 1) + '\n'
-        s += 'begin\n'
-        s += str(m + n + 1) + ' ' + str(m + 2) + ' rational\n'
-        for f in list(midentity):
-            s += '0 ' + _to_space_separated_string(f) + ' 0 \n'
-        for e in list(m2.transpose()):
-            s += '0 ' + _to_space_separated_string(-e) + '  1 \n'
-        s += '-1 '
-        for g in range(m):
-            s += '1 '
-        s += '0 \n'
-        s += 'end\n'
-
-        t = 'H-representation\n'
-        t += 'linearity 1 ' + str(m + n + 1) + '\n'
-        t += 'begin\n'
-        t += str(m + n + 1) + ' ' + str(n + 2) + ' rational\n'
-        for e in list(m1):
-            t += '0 ' + _to_space_separated_string(-e) + '  1 \n'
-        for f in list(nidentity):
-            t += '0 ' + _to_space_separated_string(f) + ' 0 \n'
-        t += '-1 '
-        for g in range(n):
-            t += '1 '
-        t += '0 \n'
-        t += 'end\n'
-        return s, t
+        return any(i in p2_support for i, x in enumerate(p2_payoffs)
+                   if x == max(p2_payoffs))
 
     def _lrs_nash_format(self, m1, m2):
         r"""
@@ -2346,53 +2259,24 @@ class NormalFormGame(SageObject, MutableMapping):
             4 3
             <BLANKLINE>
 
-            sage: legacy_format = C._Hrepresentation(A, B)
-            doctest:warning...
-            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
-            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://github.com/sagemath/sage/issues/27745 for details.
-            sage: print('*game: player 1\n', legacy_format[0])
-            *game: player 1
-            H-representation
-            linearity 1 6
-            begin
-            6 5 rational
-            0 1 0 0 0
-            0 0 1 0 0
-            0 0 0 1 0
-            0 -1 0 -4  1
-            0 0 -2 -3  1
-            -1 1 1 1 0
-            end
-            <BLANKLINE>
-            sage: print('*game: player 2\n', legacy_format[1])
-            *game: player 2
-            H-representation
-            linearity 1 6
-            begin
-            6 4 rational
-            0 0 -6  1
-            0 -2 -5  1
-            0 -3 -3  1
-            0 1 0 0
-            0 0 1 0
-            -1 1 1 0
-            end
+        .. NOTE::
+
+            The former legacy format has been removed in :issue:`39464`.
         """
         from sage.geometry.polyhedron.misc import _to_space_separated_string
         m = self.players[0].num_strategies
         n = self.players[1].num_strategies
         s = f'{m} {n}\n\n'
-        for r in m1.rows():
-            s += _to_space_separated_string(r) + '\n'
+        s += '\n'.join(_to_space_separated_string(r) for r in m1.rows())
+        s += '\n\n'
+        s += '\n'.join(_to_space_separated_string(r) for r in m2.rows())
         s += '\n'
-        for r in m2.rows():
-            s += _to_space_separated_string(r) + '\n'
         return s
 
-    def is_degenerate(self, certificate=False):
+    def is_degenerate(self, certificate=False) -> bool:
         """
         A function to check whether the game is degenerate or not.
+
         Will return a boolean.
 
         A two-player game is called nondegenerate if no mixed strategy of
@@ -2575,20 +2459,17 @@ class NormalFormGame(SageObject, MutableMapping):
                 if strat and len(self.best_responses(strat, player=0)) > len(pair[0]):
                     if certificate:
                         return True, (strat, 0)
-                    else:
-                        return True
+                    return True
             elif len(pair[1]) < len(pair[0]):
                 strat = self._solve_indifference(pair[1], pair[0], M1.transpose())
                 if strat and len(self.best_responses(strat, player=0)) > len(pair[1]):
                     if certificate:
                         return True, (strat, 1)
-                    else:
-                        return True
+                    return True
 
         if certificate:
             return False, ()
-        else:
-            return False
+        return False
 
     def best_responses(self, strategy, player):
         """
@@ -2769,8 +2650,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     strat = [0 for k in range(M1.nrows())]
                     strat[i] = 1
                     return True, (tuple(strat), 0)
-                else:
-                    return True
+                return True
 
         for j, col in enumerate(M1.columns()):
             if list(col).count(max(col)) > 1:
@@ -2778,12 +2658,11 @@ class NormalFormGame(SageObject, MutableMapping):
                     strat = [0 for k in range(M1.ncols())]
                     strat[j] = 1
                     return True, (tuple(strat), 1)
-                else:
-                    return True
+                return True
         return False
 
 
-class _Player():
+class _Player:
     def __init__(self, num_strategies):
         r"""
         TESTS::

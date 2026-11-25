@@ -151,10 +151,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
     - :wikipedia:`Dynkin_diagram#Folding`
 
-    .. [OSShimo03] \M. Okado, A. Schilling, M. Shimozono.
-       "Virtual crystals and fermionic formulas for type `D_{n+1}^{(2)}`,
-       `A_{2n}^{(2)}`, and `C_n^{(1)}`". Representation Theory. **7** (2003).
-       101-163. :doi:`10.1.1.192.2095`, :arxiv:`0810.5067`.
+    - [OSShimo03]_
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, virtual, orbit):
@@ -292,9 +289,9 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
                 return root.leading_coefficient() / coroot.leading_coefficient()
             index_set = self._cartan_type.index_set()
             min_f = min(f(j) for j in index_set)
-            return Family(dict( (i, int(f(i) / min_f)) for i in index_set ))
-        elif self._cartan_type.is_affine():
+            return Family({i: int(f(i) / min_f) for i in index_set})
+        if self._cartan_type.is_affine():
             c = self._cartan_type.translation_factors()
             cmax = max(c)
-            return Family(dict( (i, int(cmax / c[i]))
-                                for i in self._cartan_type.index_set() ))
+            return Family({i: int(cmax / c[i])
+                           for i in self._cartan_type.index_set()})

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 "Global proof preferences"
 
 from sage.structure.sage_object import SageObject
@@ -225,14 +224,14 @@ def get_flag(t=None, subsystem=None):
         False
     """
     if t is None:
-        if subsystem in ["arithmetic", "elliptic_curve", "linear_algebra", "number_field","polynomial"]:
+        if subsystem in ["arithmetic", "elliptic_curve",
+                         "linear_algebra", "number_field", "polynomial"]:
             return _proof_prefs._require_proof[subsystem]
-        else:
-            return _proof_prefs._require_proof["other"]
+        return _proof_prefs._require_proof["other"]
     return t
 
 
-class WithProof():
+class WithProof:
     """
     Use :class:`WithProof` to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set

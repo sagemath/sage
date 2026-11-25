@@ -25,10 +25,16 @@ letter, see chapter 3 of the book [BR2010b]_::
     sage: w[10000000]                                                                   # needs sage.modules
     'b'
 """
+from __future__ import annotations
+from itertools import chain
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modules.free_module_element', 'vector')
 
@@ -38,7 +44,8 @@ class WordDatatype_morphic(WordDatatype_callable):
     Datatype for a morphic word defined by a morphism, a starting letter
     and a coding.
     """
-    def __init__(self, parent, morphism, letter, coding=None, length=Infinity):
+    def __init__(self, parent, morphism, letter,
+                 coding=None, length=Infinity) -> None:
         r"""
         INPUT:
 
@@ -127,7 +134,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         else:
             self._coding = coding
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         r"""
         EXAMPLES::
 
@@ -156,7 +163,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         return self.__class__, (self._parent, self._morphism, self._letter,
                                 self._coding, self._len)
 
-    def representation(self, n):
+    def representation(self, n) -> list:
         r"""
         Return the representation of the integer n in the numeration system
         associated to the morphism.
@@ -201,16 +208,16 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w.representation(5)                                                   # needs sage.modules
             [1, 0, 0, 0]
         """
-        letters_to_int = {a:i for (i,a) in enumerate(self._alphabet)}
+        letters_to_int = {a: i for i, a in enumerate(self._alphabet)}
         position = letters_to_int[self._letter]
         M = self._morphism.incidence_matrix()
-        vMk = vector([1]*len(self._alphabet))
+        vMk = vector([1] * len(self._alphabet))
         length_of_images = []
         while vMk[position] <= n:
             length_of_images.append(vMk)
-            vMk_next = vMk*M
+            vMk_next = vMk * M
             if vMk[position] == vMk_next[position]:
-                raise IndexError('index (={}) out of range, the fixed point is finite and has length {}'.format(n,vMk[position]))
+                raise IndexError(f'index (={n}) out of range, the fixed point is finite and has length {vMk[position]}')
             vMk = vMk_next
         k = len(length_of_images)
         letter_k = self._letter
@@ -223,10 +230,10 @@ class WordDatatype_morphic(WordDatatype_callable):
             while S <= n_k:
                 a = m_letter_k[j]
                 i = letters_to_int[a]
-                pile_length = length_of_images[k-1][i]
+                pile_length = length_of_images[k - 1][i]
                 S += pile_length
                 j += 1
-            path.append(j-1)
+            path.append(j - 1)
             n_k -= S - pile_length
             letter_k = a
             k -= 1
@@ -269,11 +276,9 @@ class WordDatatype_morphic(WordDatatype_callable):
         letter = self._letter
         for a in self.representation(key):
             letter = (self._morphism(letter))[a]
-        if key == 0:
-            return self._coding[letter]
         return self._coding[letter]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         Return an iterator of the letters of the fixed point of ``self``
         starting with ``letter``.
@@ -338,14 +343,12 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: (s^7).reversal().fixed_points()
             []
         """
-        from itertools import chain
         w = iter(self._morphism.image(self._letter))
         while True:
             try:
                 for a in self._morphism.image(next(w)):
                     yield self._coding[a]
-                else:
-                    next_w = next(w)
-                    w = chain([next_w], w, self._morphism.image(next_w))
+                next_w = next(w)
+                w = chain([next_w], w, self._morphism.image(next_w))
             except StopIteration:
                 return

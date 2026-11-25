@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Utility functions for pretty-printing
 
@@ -16,7 +15,7 @@ methods elsewhere.
 # ****************************************************************************
 
 
-class TallListFormatter():
+class TallListFormatter:
     """
     Special representation for lists with tall entries (e.g. matrices).
 
@@ -74,7 +73,7 @@ class TallListFormatter():
         TESTS::
 
             sage: from sage.repl.display.util import format_list
-            sage: print(format_list.try_format(                                         # needs sage.modules
+            sage: print(format_list.try_format(
             ....:        [matrix([[1, 2, 3, 4], [5, 6, 7, 8]]) for i in range(7)]))
             [
             [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]

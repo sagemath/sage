@@ -53,6 +53,7 @@ AUTHORS:
 
 from sage.matroids.matroid import Matroid
 
+
 class DualMatroid(Matroid):
     r"""
     Dual of a matroid.
@@ -82,7 +83,7 @@ class DualMatroid(Matroid):
 
     def __init__(self, matroid):
         """
-        See class definition for documentation.
+        See the class definition for documentation.
 
         EXAMPLES::
 
@@ -331,8 +332,8 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos().dual()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Dual of 'M / {'b', 'c'} \ {'a'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
@@ -399,9 +400,9 @@ class DualMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -542,16 +543,19 @@ class DualMatroid(Matroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        M = self._matroid.relabel(mapping).dual()
-        return M
+        return self._matroid.relabel(mapping).dual()
 
-    def is_valid(self):
+    def is_valid(self, certificate=False) -> bool | tuple:
         """
         Test if ``self`` obeys the matroid axioms.
 
         For a :class:`DualMatroid`, we check its dual.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -564,4 +568,10 @@ class DualMatroid(Matroid):
             sage: M.dual().is_valid()
             False
         """
+        if certificate:
+            v, c = self._matroid.is_valid(certificate)
+            if v:
+                return True, {}
+            c["error"] = "the dual matroid is not valid: " + c["error"]
+            return v, c
         return self._matroid.is_valid()

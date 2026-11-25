@@ -93,9 +93,10 @@ cdef class SatSolver:
         Reads in DIMAC formatted lines (lazily) from a file or file object and
         adds the corresponding clauses into this solver instance. Note that the
         DIMACS format is not well specified, see
-        http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html,
-        http://www.satcompetition.org/2009/format-benchmarks2009.html, and
-        http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
+
+        - https://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html
+        - https://web.archive.org/web/20090305015900/http://www.satcompetition.org/2009/format-benchmarks2009.html
+        - https://equaeghe.github.io/ecyglpki/cnfsat.html
 
         The differences were summarized in the discussion on the issue
         :issue:`16924`. This method assumes the following DIMACS format:
@@ -139,9 +140,9 @@ cdef class SatSolver:
 
             sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.sat_lp import SatLP                             # needs sage.numerical.mip
-            sage: solver = SatLP()                                                      # needs sage.numerical.mip
-            sage: solver.read(file_object)                                              # needs sage.numerical.mip
+            sage: from sage.sat.solvers.sat_lp import SatLP
+            sage: solver = SatLP()
+            sage: solver.read(file_object)
             Traceback (most recent call last):
             ...
             NotImplementedError: the solver "an ILP-based SAT Solver" does not support xor clauses
@@ -338,7 +339,7 @@ def SAT(solver=None, *args, **kwds):
 
     EXAMPLES::
 
-        sage: SAT(solver='LP')                                                          # needs sage.numerical.mip
+        sage: SAT(solver='LP')
         an ILP-based SAT Solver
 
     TESTS::

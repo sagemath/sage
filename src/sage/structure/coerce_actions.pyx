@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Coerce actions
 """
@@ -214,8 +213,7 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     if y is None:
         if isinstance(Y, Parent):
             raise RuntimeError("an_element() for %s returned None" % Y)
-        else:
-            return # don't know how to make elements of this type...
+        return # don't know how to make elements of this type...
 
     # element x defining _lmul_ or _rmul_
     if isinstance(x, ModuleElement) and isinstance(y, Element):
@@ -370,18 +368,18 @@ cdef class ModuleAction(Action):
         # At this point, we can assert it is safe to call _Xmul_
         the_ring = G if self.connecting is None else self.connecting.codomain()
         the_set = S if self.extended_base is None else self.extended_base
-        assert the_ring is the_set.base(), "BUG in coercion model\n    Apparently there are two versions of\n        %s\n    in the cache."%the_ring
+        assert the_ring is the_set.base(), "BUG in coercion model\n    Apparently there are two versions of\n        %s\n    in the cache." % the_ring
 
         if not check:
             return
         if g is None:
             g = G.an_element()
         if parent(g) is not G:
-            raise CoercionException("The parent of %s is not %s but %s"%(g,G,parent(g)))
+            raise CoercionException("The parent of %s is not %s but %s" % (g, G, parent(g)))
         if a is None:
             a = S.an_element()
         if parent(a) is not S:
-            raise CoercionException("The parent of %s is not %s but %s"%(a,S,parent(a)))
+            raise CoercionException("The parent of %s is not %s but %s" % (a, S, parent(a)))
         if not isinstance(g, Element) or not isinstance(a, ModuleElement):
             raise CoercionException("not an Element acting on a ModuleElement")
         res = self.act(g, a)
@@ -684,7 +682,7 @@ cdef class IntegerAction(Action):
 
     - ``Z`` -- a type or parent representing integers
 
-    For the other arguments, see :class:`Action`.
+    For the other arguments, see :class:`~sage.categories.action.Action`.
 
     .. NOTE::
 
@@ -759,7 +757,7 @@ cdef class IntegerMulAction(IntegerAction):
     def __init__(self, Z, M, is_left=True, m=None):
         if m is None:
             m = M.an_element()
-        test = m + (-m)  # make sure addition and negation is allowed
+        _ = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
     cpdef _act_(self, nn, a):
@@ -801,10 +799,8 @@ cdef class IntegerMulAction(IntegerAction):
 
             sage: # needs sage.schemes
             sage: P = E([2,1,1])
-            sage: alarm(0.001); 2^(10^8) * P
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.001): 2^(10^8) * P
 
         Verify that cysignals correctly detects that the above
         exception has been handled::

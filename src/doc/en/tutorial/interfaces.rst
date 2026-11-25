@@ -32,9 +32,9 @@ primary focus is number theory. There are two very distinct
 interfaces that you can use in Sage:
 
 
--  ``gp`` -- the "**G** o **P** ARI" interpreter, and
+-  ``gp`` -- the **PARI** interpreter, and
 
--  ``pari`` -- the PARI C library.
+-  ``pari`` -- the **PARI** C library.
 
 
 For example, the following are two ways of doing the same thing.
@@ -195,8 +195,8 @@ Singular (do not type the ``....:``):
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C
@@ -251,6 +251,12 @@ of any degree. Maxima also knows about a wide range of special
 functions, has plotting capabilities via gnuplot, and has methods to
 solve and manipulate matrices (such as row reduction, eigenvalues and
 eigenvectors), and polynomial equations.
+
+The default ``maxima`` interface loads Maxima into Sage through the ECL
+library, using the same session as Sage's symbolic calculus. Maxima settings
+and assumptions are shared with that session. For an independent Maxima
+process, use ``from sage.interfaces.maxima import Maxima`` followed by
+``m = Maxima()``.
 
 We illustrate the Sage/Maxima interface by constructing the matrix
 whose :math:`i,j` entry is :math:`i/j`, for

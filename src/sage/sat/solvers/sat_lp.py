@@ -1,14 +1,13 @@
-# sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming
 
 The class defined here is a :class:`~sage.sat.solvers.satsolver.SatSolver` that
 solves its instance using :class:`MixedIntegerLinearProgram`. Its performance
 can be expected to be slower than when using
-:class:`~sage.sat.solvers.cryptominisat.cryptominisat.CryptoMiniSat`.
+:class:`~sage.sat.solvers.cryptominisat.CryptoMiniSat`.
 """
-from .satsolver import SatSolver
-from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
+from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
+from sage.sat.solvers.satsolver import SatSolver
 
 
 class SatLP(SatSolver):
@@ -57,7 +56,7 @@ class SatLP(SatSolver):
         nvars = n = self._LP.number_of_variables()
         while nvars == self._LP.number_of_variables():
             n += 1
-            self._vars[n] # creates the variable if needed
+            self._vars[n]  # creates the variable if needed
         return n
 
     def nvars(self):
@@ -143,7 +142,7 @@ class SatLP(SatSolver):
 
         b = self._LP.get_values(self._vars, convert=bool, tolerance=self._integrality_tolerance)
         n = max(b)
-        return [None]+[b.get(i, False) for i in range(1,n+1)]
+        return [None] + [b.get(i, False) for i in range(1, n + 1)]
 
     def __repr__(self):
         """

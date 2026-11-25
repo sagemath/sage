@@ -24,9 +24,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
+
 
 class AutomorphismField(TensorField):
     r"""
@@ -484,7 +485,7 @@ class AutomorphismField(TensorField):
                     raise TypeError("the argument must be a vector field")
                 dom = self._domain.intersection(vector._domain)
                 return vector.restrict(dom)
-            elif len(arg) == 2:
+            if len(arg) == 2:
                 # self acting as a type-(1,1) tensor on a pair
                 # (1-form, vector field), returning a scalar field:
                 oneform = arg[0]
@@ -492,8 +493,7 @@ class AutomorphismField(TensorField):
                 dom = self._domain.intersection(
                                   oneform._domain).intersection(vector._domain)
                 return oneform.restrict(dom)(vector.restrict(dom))
-            else:
-                raise TypeError("wrong number of arguments")
+            raise TypeError("wrong number of arguments")
         # Generic case
         if len(arg) == 1:
             # The field of automorphisms acting on a vector field:
@@ -757,8 +757,7 @@ class AutomorphismField(TensorField):
         """
         if isinstance(other, AutomorphismField):
             return self._mul_(other)  # general linear group law
-        else:
-            return TensorField.__mul__(self, other)  # tensor product
+        return TensorField.__mul__(self, other)  # tensor product
 
     def __imul__(self, other):
         r"""
@@ -1119,7 +1118,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             dom = self._domain.intersection(vector._domain)
             return FreeModuleAutomorphism.__call__(self.restrict(dom),
                                                    vector.restrict(dom))
-        elif len(arg) == 2:
+        if len(arg) == 2:
             # the automorphism acting as a type (1,1) tensor on a pair
             # (1-form, vector field), returning a scalar field:
             oneform = arg[0]
@@ -1129,8 +1128,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             return FreeModuleAutomorphism.__call__(self.restrict(dom),
                                                    oneform.restrict(dom),
                                                    vector.restrict(dom))
-        else:
-            raise TypeError("wrong number of arguments")
+        raise TypeError("wrong number of arguments")
 
     def __invert__(self):
         r"""
@@ -1167,9 +1165,9 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             sage: b is ~a
             True
         """
+        from sage.manifolds.differentiable.vectorframe import CoordFrame
         from sage.matrix.constructor import matrix
         from sage.tensor.modules.comp import Components
-        from sage.manifolds.differentiable.vectorframe import CoordFrame
         if self._is_identity:
             return self
         if self._inverse is None:
@@ -1198,7 +1196,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
                 if isinstance(frame, CoordFrame):
                     chart = frame._chart
                 else:
-                    chart = self._domain._def_chart #!# to be improved
+                    chart = self._domain._def_chart  # ! # to be improved
                 try:
                     # TODO: do the computation without the 'SR' enforcement
                     mat_self = matrix(
@@ -1369,7 +1367,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
         if dest_map.is_identity():
             amb_point = point
         else:
-            amb_point = dest_map(point)  #  "ambient" point
+            amb_point = dest_map(point)  # "ambient" point
         ts = amb_point._manifold.tangent_space(amb_point)
         if self._is_identity:
             return ts.identity_map()

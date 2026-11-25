@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Möbius Algebras
+Möbius algebras
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>,
@@ -81,20 +81,11 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
     REFERENCES:
 
-    .. [Solomon67] Louis Solomon.
-       *The Burnside Algebra of a Finite Group*.
-       Journal of Combinatorial Theory, **2**, 1967.
-       :doi:`10.1016/S0021-9800(67)80064-4`.
+    - [Solomon67]_
 
-    .. [Greene73] Curtis Greene.
-       *On the Möbius algebra of a partially ordered set*.
-       Advances in Mathematics, **10**, 1973.
-       :doi:`10.1016/0001-8708(73)90106-0`.
+    - [Greene73]_
 
-    .. [Etienne98] Gwihen Etienne.
-       *On the Möbius algebra of geometric lattices*.
-       European Journal of Combinatorics, **19**, 1998.
-       :doi:`10.1006/eujc.1998.0227`.
+    - [Etienne98]_
     """
     def __init__(self, R, L) -> None:
         """
@@ -113,7 +104,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
         self._category = cat
         Parent.__init__(self, base=R, category=self._category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -411,7 +402,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
         self._category = cat
         Parent.__init__(self, base=R, category=self._category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -508,7 +499,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             j = L.join(x, y)
             return self.sum_of_terms((z, moebius(a, z) * q**(R - rank(a)))
                                      for z in L.order_filter([j])
-                                     for a in L.closed_interval(j, z))
+                                     for a in L.interval(j, z))
 
         @cached_method
         def one(self):
@@ -592,7 +583,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             L = M._lattice
 
             def poly(x, y):
-                return L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
+                return L.interval_as_poset(x, y).characteristic_polynomial()
+
             return N.sum_of_terms((y, poly(x, y)(q=q))
                                   for y in L.order_filter([x]))
 
@@ -693,7 +685,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
         sage: M.E() in bases
         True
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -724,7 +716,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
         return [self.base()._category, Realizations(self.base())]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of a Möbius algebra.
 

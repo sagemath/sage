@@ -310,15 +310,14 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
     if resolvable:
         if existence:
             return orthogonal_array(k,n,resolvable=True,existence=True)
-        else:
-            OA = orthogonal_array(k,n,resolvable=True,check=False)
-            # the call to TransversalDesign will sort the block so we can not
-            # rely on the order *after* the call
-            blocks = [[i*n+c for i,c in enumerate(B)] for B in OA]
-            classes = [blocks[i:i+n] for i in range(0,n*n,n)]
-            TD = TransversalDesign(blocks,k,n,check=check,copy=False)
-            TD._classes = classes
-            return TD
+        OA = orthogonal_array(k,n,resolvable=True,check=False)
+        # the call to TransversalDesign will sort the block so we can not
+        # rely on the order *after* the call
+        blocks = [[i*n+c for i,c in enumerate(B)] for B in OA]
+        classes = [blocks[i:i+n] for i in range(0,n*n,n)]
+        TD = TransversalDesign(blocks,k,n,check=check,copy=False)
+        TD._classes = classes
+        return TD
 
     # Is k is None we find the largest available
     if k is None:
@@ -392,7 +391,7 @@ class TransversalDesign(GroupDivisibleDesign):
         sage: designs.transversal_design(None,36)
         Transversal Design TD(10,36)
     """
-    def __init__(self, blocks, k=None,n=None,check=True,**kwds):
+    def __init__(self, blocks, k=None, n=None, check=True, **kwds):
         r"""
         Constructor of the class.
 
@@ -473,7 +472,7 @@ def is_transversal_design(B, k, n, verbose=False):
     return is_orthogonal_array([[x % n for x in R] for R in B],k,n,verbose=verbose)
 
 
-def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
+def wilson_construction(OA, k, r, m, u, check=True, explain_construction=False):
     r"""
     Return a `OA(k,rm+\sum_i u_i)` from a truncated `OA(k+s,r)` by Wilson's
     construction.
@@ -537,9 +536,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
 
     REFERENCE:
 
-    .. [HananiBIBD] Balanced incomplete block designs and related designs,
-      Haim Hanani,
-      Discrete Mathematics 11.3 (1975) pages 255-369.
+    - [HananiBIBD]_
 
     EXAMPLES::
 
@@ -589,15 +586,14 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     if explain_construction:
         if not u:
             return ("Product of orthogonal arrays n={}.{}").format(r,m)
-        elif all(len(uu) == 1 and uu[0][0] == 1 for uu in u):
+        if all(len(uu) == 1 and uu[0][0] == 1 for uu in u):
             return ("Wilson's construction n={}.{}+{} with master design OA({}+{},{})"
                     .format(r, m, "+".join(str(x) for ((_,x),) in u), k, n_trunc, r))
-        else:
-            return ("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})"
-                    .format(r, m,
-                            "+".join("(" + "+".join(str(x)+"."+str(mul) for mul,x in uu) + ")"
-                                     for uu in u),
-                            k, n_trunc, r))
+        return ("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})"
+                .format(r, m,
+                        "+".join("(" + "+".join(str(x)+"."+str(mul) for mul,x in uu) + ")"
+                                 for uu in u),
+                        k, n_trunc, r))
 
     if OA is None:
         master_design = orthogonal_array(k+n_trunc,r,check=False)
@@ -678,7 +674,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     return OA
 
 
-def TD_product(k,TD1,n1,TD2,n2, check=True):
+def TD_product(k, TD1, n1, TD2, n2, check=True):
     r"""
     Return the product of two transversal designs.
 
@@ -726,7 +722,7 @@ def TD_product(k,TD1,n1,TD2,n2, check=True):
     return TD
 
 
-def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explain_construction=False):
+def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, explain_construction=False):
     r"""
     Return an orthogonal array of parameters `k,n,t`.
 
@@ -845,7 +841,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
     if k is None:
         if existence:
             return largest_available_k(n,t)
-        elif n == 0 or n == 1:
+        if n == 0 or n == 1:
             raise ValueError("there is no upper bound on k when 0<=n<=1")
         else:
             k = largest_available_k(n,t)
@@ -944,14 +940,13 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "the database contains {} MOLS of order {}".format(MOLS_constructions[n][0],n)
-        else:
-            construction = MOLS_constructions[n][1]
-            mols = construction()
-            OA = [[i,j]+[m[i,j] for m in mols]
-                  for i in range(n) for j in range(n)]
-            OA = OA_from_wider_OA(OA,k)
+        construction = MOLS_constructions[n][1]
+        mols = construction()
+        OA = [[i,j]+[m[i,j] for m in mols]
+              for i in range(n) for j in range(n)]
+        OA = OA_from_wider_OA(OA,k)
 
     # Constructions from the database III (Quasi-difference matrices)
     elif (may_be_available and
@@ -965,7 +960,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
                 (orthogonal_array(k,u,existence=True) is True)):
                 if existence:
                     return True
-                elif explain_construction:
+                if explain_construction:
                     return "the database contains a ({},{};{},{};{})-quasi difference matrix".format(nn,k,lmbda,mu,u)
                 G,M = f()
                 M = [R[:k] for R in M]
@@ -995,7 +990,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         _OA_cache_set(k,n,Unknown)
         if existence:
             return Unknown
-        elif explain_construction:
+        if explain_construction:
             return "No idea"
         raise NotImplementedError("I don't know how to build an OA({},{})!".format(k,n))
 
@@ -1040,13 +1035,12 @@ def largest_available_k(n, t=2):
     if n == 0 or n == 1:
         from sage.rings.infinity import Infinity
         return Infinity
-    elif t == 2:
+    if t == 2:
         if projective_plane(n,existence=True) is True:
             return n+1
-        else:
-            k = 1
-            while _OA_cache_construction_available(k+1,n) is True:
-                k = k+1
+        k = 1
+        while _OA_cache_construction_available(k+1,n) is True:
+            k = k+1
     else:
         k = t-1
 
@@ -1055,7 +1049,7 @@ def largest_available_k(n, t=2):
     return k
 
 
-def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
+def incomplete_orthogonal_array(k, n, holes, resolvable=False, existence=False):
     r"""
     Return an `OA(k,n)-\sum_{1\leq i\leq x} OA(k,s_i)`.
 
@@ -1263,7 +1257,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         return OA[:-n]
 
     # Easy case
-    elif max_hole == 1 and number_of_holes <= 1:
+    if max_hole == 1 and number_of_holes <= 1:
         if existence:
             return orthogonal_array(k,n,existence=True)
         OA = orthogonal_array(k,n)
@@ -1582,7 +1576,7 @@ def OA_standard_label(OA):
     return [[mapping[element] for element in row] for row in OA]
 
 
-def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
+def OA_n_times_2_pow_c_from_matrix(k, c, G, A, Y, check=True):
     r"""
     Return an `OA(k, |G| \cdot 2^c)` from a constrained `(G,k-1,2)`-difference
     matrix.
@@ -1723,7 +1717,8 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
         for i in range(len(B)):
             for j in range(i):
                 g_to_col_indices = {g: [] for g in G}
-                Hij = set([(Y[i] - Y[j]) * v for v in H])
+                YY = Y[i] - Y[j]
+                Hij = {YY * v for v in H}
                 for s in range(2 * G_card):
                     g_to_col_indices[B[i][s] - B[j][s]].append(s)
                 for s1, s2 in g_to_col_indices.values():
@@ -1740,7 +1735,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     return OA_from_quasi_difference_matrix(list(zip(*Mb)),GG,add_col=True)
 
 
-def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
+def OA_from_quasi_difference_matrix(M, G, add_col=True, fill_hole=True):
     r"""
     Return an Orthogonal Array from a Quasi-Difference matrix.
 
@@ -1860,7 +1855,7 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
     return new_M
 
 
-def OA_from_Vmt(m,t,V):
+def OA_from_Vmt(m, t, V):
     r"""
     Return an Orthogonal Array from a `V(m,t)`.
 
@@ -1884,7 +1879,7 @@ def OA_from_Vmt(m,t,V):
     return OA_from_quasi_difference_matrix(M,Fq,add_col=False)
 
 
-def QDM_from_Vmt(m,t,V):
+def QDM_from_Vmt(m, t, V):
     r"""
     Return a QDM from a `V(m,t)`.
 
@@ -1948,7 +1943,7 @@ def QDM_from_Vmt(m,t,V):
     return Fq, M
 
 
-def OA_from_PBD(k,n,PBD, check=True):
+def OA_from_PBD(k, n, PBD, check=True):
     r"""
     Return an `OA(k,n)` from a PBD.
 
@@ -2031,7 +2026,7 @@ def OA_from_PBD(k,n,PBD, check=True):
     return OA
 
 
-def OA_from_wider_OA(OA,k):
+def OA_from_wider_OA(OA, k):
     r"""
     Return the first `k` columns of `OA`.
 
@@ -2116,7 +2111,7 @@ class OAMainFunctions:
         ...
         NotImplementedError: I don't know how to build an OA(12,20)!
     """
-    def __init__(self,*args,**kwds):
+    def __init__(self, *args, **kwds):
         r"""
         There is nothing here.
 
@@ -2132,7 +2127,7 @@ class OAMainFunctions:
     largest_available_k = staticmethod(largest_available_k)
 
     @staticmethod
-    def explain_construction(k,n,t=2):
+    def explain_construction(k, n, t=2):
         r"""
         Return a string describing how to builds an `OA(k,n)`.
 
@@ -2150,7 +2145,7 @@ class OAMainFunctions:
         return orthogonal_array(k,n,t,explain_construction=True)
 
     @staticmethod
-    def build(k,n,t=2,resolvable=False):
+    def build(k, n, t=2, resolvable=False):
         r"""
         Return an `OA(k,n)` of strength `t`.
 
@@ -2191,7 +2186,7 @@ class OAMainFunctions:
         return orthogonal_array(k,n,t,resolvable=resolvable)
 
     @staticmethod
-    def exists(k,n,t=2):
+    def exists(k, n, t=2):
         r"""
         Return the existence status of an `OA(k,n)`.
 
@@ -2220,7 +2215,7 @@ class OAMainFunctions:
         return orthogonal_array(k,n,t,existence=True)
 
     @staticmethod
-    def is_available(k,n,t=2):
+    def is_available(k, n, t=2):
         r"""
         Return whether Sage can build an `OA(k,n)`.
 

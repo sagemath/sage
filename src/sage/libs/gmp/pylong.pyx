@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Various functions to deal with conversion mpz <-> Python int/long
 
@@ -15,7 +14,7 @@ AUTHORS:
   ``mpz_export`` and ``mpz_import`` (:issue:`17853`)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,23 +22,17 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
-from sage.cpython.pycore_long cimport (ob_digit, _PyLong_IsNegative,
-    _PyLong_DigitCount, _PyLong_SetSignAndDigitCount)
+from sage.cpython.pycore_long cimport (
+    ob_digit, _PyLong_IsNegative,
+    _PyLong_DigitCount, _PyLong_SetSignAndDigitCount
+)
 from sage.libs.gmp.mpz cimport *
 
 cdef extern from *:
-    """
-    /* Compatibility for python 3.8, can be removed later */
-    #if PY_VERSION_HEX < 0x030900A4 && !defined(Py_SET_SIZE)
-    static inline void _Py_SET_SIZE(PyVarObject *ob, Py_ssize_t size)
-    { ob->ob_size = size; }
-    #define Py_SET_SIZE(ob, size) _Py_SET_SIZE((PyVarObject*)(ob), size)
-    #endif
-    """
     void Py_SET_SIZE(object, Py_ssize_t)
     int hash_bits """
         #ifdef _PyHASH_BITS

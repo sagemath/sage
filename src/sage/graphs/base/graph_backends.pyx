@@ -35,8 +35,8 @@ Any graph backend must redefine the following methods (for which
     :meth:`~GenericGraphBackend.loops` | Get/set whether or not ``self`` allows loops.
     :meth:`~GenericGraphBackend.multiple_edges` | Get/set whether or not ``self`` allows multiple edges.
     :meth:`~GenericGraphBackend.name` | Get/set name of ``self``.
-    :meth:`~GenericGraphBackend.num_edges` | The number of edges in ``self``
-    :meth:`~GenericGraphBackend.num_verts` | The number of vertices in ``self``
+    :meth:`~GenericGraphBackend.n_edges` | The number of edges in ``self``
+    :meth:`~GenericGraphBackend.n_vertices` | The number of vertices in ``self``
     :meth:`~GenericGraphBackend.relabel` | Relabel the vertices of ``self`` by a permutation.
     :meth:`~GenericGraphBackend.set_edge_label` | Label the edge `(u,v)` by `l`.
 
@@ -90,7 +90,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.add_edge(1,2,'a',True)
+            sage: G.add_edge(1, 2, 'a', True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -112,7 +112,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.add_edges([],True)
+            sage: G.add_edges([], True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -157,7 +157,7 @@ cdef class GenericGraphBackend(SageObject):
         EXAMPLES::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.add_vertices([1,2,3])
+            sage: G.add_vertices([1, 2, 3])
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -234,7 +234,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.del_edge(1,2,'a',True)
+            sage: G.del_edge(1, 2, 'a', True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -270,7 +270,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.del_vertices([1,2,3])
+            sage: G.del_vertices([1, 2, 3])
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -292,7 +292,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.get_edge_label(1,2)
+            sage: G.get_edge_label(1, 2)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -313,7 +313,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.has_edge(1,2,'a')
+            sage: G.has_edge(1, 2, 'a')
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -362,7 +362,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.iterator_edges([],True)
+            sage: G.iterator_edges([], True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -387,7 +387,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.iterator_in_edges([],True)
+            sage: G.iterator_in_edges([], True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -414,7 +414,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.iterator_out_edges([],True)
+            sage: G.iterator_out_edges([], True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -583,7 +583,7 @@ cdef class GenericGraphBackend(SageObject):
         """
         raise NotImplementedError()
 
-    def num_edges(self, directed):
+    def n_edges(self, directed):
         """
         Return the number of edges in ``self``.
 
@@ -594,30 +594,34 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.num_edges(True)
+            sage: G.n_edges(True)
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: G.num_edges(False)
+            sage: G.n_edges(False)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError()
 
-    def num_verts(self):
+    num_edges = n_edges
+
+    def n_vertices(self):
         """
         Return the number of vertices in ``self``.
 
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.num_verts()
+            sage: G.n_vertices()
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError()
+
+    num_verts = n_vertices
 
     def relabel(self, perm, directed):
         """
@@ -631,7 +635,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.relabel([],False)
+            sage: G.relabel([], False)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -651,7 +655,7 @@ cdef class GenericGraphBackend(SageObject):
         TESTS::
 
             sage: G = sage.graphs.base.graph_backends.GenericGraphBackend()
-            sage: G.set_edge_label(1,2,'a',True)
+            sage: G.set_edge_label(1, 2, 'a', True)
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -667,6 +671,8 @@ cdef class GenericGraphBackend(SageObject):
         This function returns a pair ``(f, args)`` such that ``f(*args)``
         produces a copy of ``self``. The function returned is always
         :func:`unpickle_graph_backend`.
+
+        EXAMPLES:
 
         Pickling of the static graph backend makes pickling of immutable
         graphs and digraphs work::
@@ -703,20 +709,30 @@ cdef class GenericGraphBackend(SageObject):
             sage: gi = g.copy(immutable=True)
             sage: loads(dumps(gi)) == gi
             True
+
+        TESTS:
+
+        Check that :issue:`38900` is fixed::
+
+            sage: from itertools import product
+            sage: for sparse, immutable in product([True, False], [True, False]):
+            ....:     G = Graph([[0, 1, 2], [(0, 1)]], sparse=sparse, immutable=immutable)
+            ....:     H = loads(dumps(G))
+            ....:     if type(G._backend) != type(H._backend):
+            ....:         print(sparse, immutable, type(G._backend), type(H._backend))
         """
         from sage.graphs.base.static_sparse_backend import StaticSparseBackend
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
 
-        # implementation, data_structure, multiedges, directed, loops
+        # data_structure, multiedges, directed, loops
         if isinstance(self, CGraphBackend):
-            implementation = "c_graph"
             if isinstance(self, SparseGraphBackend):
                 data_structure = "sparse"
             elif isinstance(self, DenseGraphBackend):
                 data_structure = "dense"
             elif isinstance(self, StaticSparseBackend):
-                implementation = "static_sparse"
+                data_structure = "static_sparse"
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
@@ -735,7 +751,8 @@ cdef class GenericGraphBackend(SageObject):
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
-                  'multiedges': multiedges}))
+                  'multiedges': multiedges,
+                  'data_structure': data_structure}))
 
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
@@ -779,6 +796,5 @@ def unpickle_graph_backend(directed, vertices, edges, kwds):
     else:
         from sage.graphs.graph import Graph as constructor
 
-    G = constructor(data=edges, **kwds)
-    G.add_vertices(vertices)
+    G = constructor(data=[vertices, edges], format='vertices_and_edges', **kwds)
     return G._backend

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -197,23 +196,23 @@ key.
 We consider the smallest poset describing a class hierarchy admitting
 no MRO whatsoever::
 
-    sage: P = Poset({10: [9,8,7], 9: [6,1], 8: [5,2], 7: [4,3],                         # needs sage.graphs
+    sage: P = Poset({10: [9,8,7], 9: [6,1], 8: [5,2], 7: [4,3],
     ....:            6: [3,2], 5: [3,1], 4: [2,1]},
     ....:           linear_extension=True, facade=True)
 
 And build a :class:`HierarchyElement` from it::
 
     sage: from sage.misc.c3_controlled import HierarchyElement
-    sage: x = HierarchyElement(10, P)                                                   # needs sage.graphs
+    sage: x = HierarchyElement(10, P)
 
 Here are its bases::
 
-    sage: HierarchyElement(10, P)._bases                                                # needs sage.graphs
+    sage: HierarchyElement(10, P)._bases
     [9, 8, 7]
 
 Using the standard ``C3`` algorithm fails::
 
-    sage: x.mro_standard                                                                # needs sage.graphs
+    sage: x.mro_standard
     Traceback (most recent call last):
     ...
     ValueError: Cannot merge the items 3, 3, 2.
@@ -223,13 +222,12 @@ extension. For easy relabelling, we first need to set an appropriate
 default linear extension for `P`::
 
     sage: linear_extension = list(reversed(IntegerRange(1, 11)))
-    sage: P = P.with_linear_extension(linear_extension)                                 # needs sage.graphs
-    sage: list(P)                                                                       # needs sage.graphs
+    sage: P = P.with_linear_extension(linear_extension)
+    sage: list(P)
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 Now we play with a specific linear extension of `P`::
 
-    sage: # needs sage.graphs
     sage: Q = P.linear_extension([10, 9, 8, 7, 6, 5, 4, 1, 2, 3]).to_poset()
     sage: Q.cover_relations()
     [[10, 9], [10, 8], [10, 7], [9, 6], [9, 3], [8, 5], [8, 2], [7, 4],
@@ -243,43 +241,43 @@ Now we play with a specific linear extension of `P`::
 On the other hand, both the instrumented ``C3`` algorithm, and the
 controlled ``C3`` algorithm give the desired MRO::
 
-    sage: x.mro                                                                         # needs sage.graphs
+    sage: x.mro
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    sage: x.mro_controlled                                                              # needs sage.graphs
+    sage: x.mro_controlled
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 The above checks, and more, can be run with::
 
-    sage: x._test_mro()                                                                 # needs sage.graphs
+    sage: x._test_mro()
 
 In practice, the control was achieved by adding the following bases::
 
-    sage: x._bases                                                                      # needs sage.graphs
+    sage: x._bases
     [9, 8, 7]
-    sage: x._bases_controlled                                                           # needs sage.graphs
+    sage: x._bases_controlled
     [9, 8, 7, 6, 5]
 
 Altogether, four bases were added for control::
 
-    sage: sum(len(HierarchyElement(q, Q)._bases) for q in Q)                            # needs sage.graphs
+    sage: sum(len(HierarchyElement(q, Q)._bases) for q in Q)
     15
-    sage: sum(len(HierarchyElement(q, Q)._bases_controlled) for q in Q)                 # needs sage.graphs
+    sage: sum(len(HierarchyElement(q, Q)._bases_controlled) for q in Q)
     19
 
 This information can also be recovered with::
 
-    sage: x.all_bases_len()                                                             # needs sage.graphs
+    sage: x.all_bases_len()
     15
-    sage: x.all_bases_controlled_len()                                                  # needs sage.graphs
+    sage: x.all_bases_controlled_len()
     19
 
 We now check that the ``C3`` algorithm fails for all linear extensions
 `l` of this poset, whereas both the instrumented and controlled ``C3``
 algorithms succeed; along the way, we collect some statistics::
 
-    sage: L = P.linear_extensions()                                                     # needs sage.graphs
+    sage: L = P.linear_extensions()
     sage: stats = []
-    sage: for l in L:                                                                   # needs sage.graphs sage.modules
+    sage: for l in L:
     ....:     x = HierarchyElement(10, l.to_poset())
     ....:     try: # Check that x.mro_standard always fails with a ValueError
     ....:         x.mro_standard
@@ -296,7 +294,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.combinat sage.graphs sage.modules
+    sage: sorted(Word(stats).evaluation_sparse())
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -320,9 +318,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    72
+    74
     sage: x.all_bases_controlled_len()
-    76
+    78
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -341,7 +339,7 @@ list below does not change radically, it's fine to just update this
 doctest::
 
     sage: from sage.categories.category import category_sample
-    sage: sorted([C for C in category_sample()                                          # needs sage.combinat sage.graphs sage.modules sage.rings.number_field
+    sage: sorted([C for C in category_sample()
     ....:         if len(C._super_categories_for_classes) != len(C.super_categories())],
     ....:        key=str)
     [Category of affine Weyl groups,
@@ -380,7 +378,7 @@ cdef tuple atoms = ("FacadeSets",
                     "MagmasAndAdditiveMagmas", "Rngs", "Domains", "HopfAlgebras")
 
 
-cdef dict flags = { atom: 1 << i for i,atom in enumerate(atoms) }
+cdef dict flags = {atom: 1 << i for i, atom in enumerate(atoms)}
 
 cdef class CmpKey:
     r"""
@@ -574,7 +572,7 @@ cdef class CmpKeyNamed:
             return result
         except KeyError:
             pass
-        result = _cmp_key.__get__(inst,cls)
+        result = _cmp_key.__get__(inst, cls)
         D[key] = result
         return result
 
@@ -615,9 +613,9 @@ def C3_merge(list lists):
     cdef list tail, l
     cdef set tailset
 
-    cdef list tails    = [l[::-1]              for l in lists if l]
-    cdef list heads    = [tail.pop()             for tail in tails]
-    cdef list tailsets = [set(O for O in tail) for tail in tails] # <size_t><void *>
+    cdef list tails = [l[::-1] for l in lists if l]
+    cdef list heads = [tail.pop() for tail in tails]
+    cdef list tailsets = [set(O for O in tail) for tail in tails]  # <size_t><void *>
 
     cdef int i, j, nbheads
     nbheads = len(heads)
@@ -632,7 +630,7 @@ def C3_merge(list lists):
                 if j == i:
                     continue
                 tailset = tailsets[j]
-                if O in tailset: # <size_t><void *>O
+                if O in tailset:  # <size_t><void *>O
                     next_item_found = False
                     break
             if next_item_found:
@@ -641,13 +639,13 @@ def C3_merge(list lists):
                 # if the tail is already empty.
                 # j goes down so that ``del heads[j]`` does not screw up the numbering
                 for j in range(nbheads-1, -1, -1):
-                    if heads[j] == O: # is O
+                    if heads[j] == O:  # is O
                         tail = tails[j]
                         if tail:
                             X = tail.pop()
                             heads[j] = X
                             tailset = tailsets[j]
-                            tailset.remove(X) # <size_t><void *>X)
+                            tailset.remove(X)  # <size_t><void *>X)
                         else:
                             del heads[j]
                             del tails[j]
@@ -656,7 +654,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
+            raise ValueError("Cannot merge the items %s." % ', '.join(repr(head) for head in heads))
     return out
 
 
@@ -792,7 +790,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     lists = list(lists)
     if not lists:
         raise ValueError("The input should be a non empty list of lists (or iterables)")
-    #for l in lists:
+    # for l in lists:
     #    assert sorted(l, key = key, reverse=True) == l,\
     #        "Each input list should be sorted %s"%l
 
@@ -819,10 +817,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     cdef list tail, l
     cdef set tailset
 
-    cdef list tails    = [l[::-1]                 for l in lists if l]
-    cdef list heads    = [tail.pop()                for tail in tails]
+    cdef list tails = [l[::-1] for l in lists if l]
+    cdef list heads = [tail.pop() for tail in tails]
     cdef set tmp_set
-    cdef list tailsets = [] # remove closure [set(key(O) for O in tail) for tail in tails]
+    cdef list tailsets = []  # remove closure [set(key(O) for O in tail) for tail in tails]
     for tail in tails:
         tmp_set = set()
         for O in tail:
@@ -855,10 +853,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
     #             "keys should be distinct"%(tails[i])
 
     while nbheads:
-        #print_state()
-        #check_state()
+        # print_state()
+        # check_state()
         # Find the position of the largest head which will become the next item
-        max_i   = 0
+        max_i = 0
         max_key = key(heads[0])
         for i in range(1, nbheads):
             O = heads[i]
@@ -883,7 +881,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                     break
             if cont:
                 continue
-            for j from i<j<nbheads:
+            for j in range(i + 1, nbheads):
                 if O_key in tailsets[j]:
                     cont = True
                     break
@@ -915,10 +913,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 # Use a heap or something for fast sorted insertion?
                 # Since Python uses TimSort, that's probably not so bad.
                 tails[-1].append(O)
-                tails[-1].sort(key = key)
+                tails[-1].sort(key=key)
                 tailsets[-1].add(O_key)
             suggestion.add(O)
-            #check_state()
+            # check_state()
 
         # Insert max_value in the last list, if needed to hold off the bad items
         if max_bad is not None:
@@ -927,10 +925,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 if last_head is not None and last_head != max_bad:
                     tails[-1].append(last_head)
                     tailsets[-1].add(key(last_head))
-                    #check_state()
+                    # check_state()
                 heads[-1] = max_value
                 holder[max_bad] = max_value
-                #check_state()
+                # check_state()
 
         out.append(max_value)
         # Clear O from other heads, removing the line altogether
@@ -951,10 +949,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                     nbheads -= 1
                     if last_list_non_empty and j == nbheads:
                         last_list_non_empty = False
-                #check_state()
+                # check_state()
     suggestion.update(holder.values())
-    cdef list suggestion_list = sorted(suggestion, key = key, reverse=True)
-    #assert C3_merge(lists[:-1]+[suggestion_list]) == out
+    cdef list suggestion_list = sorted(suggestion, key=key, reverse=True)
+    # assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 
 
@@ -995,7 +993,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     :class:`HopfAlgebrasWithBasis`::
 
         sage: from sage.misc.c3_controlled import HierarchyElement
-        sage: G = DiGraph({                                                             # needs sage.graphs
+        sage: G = DiGraph({
         ....:     44 :  [43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         ....:     43 :  [42, 41, 40, 36, 35, 39, 38, 37, 33, 32, 31, 30, 29, 28, 27, 26, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         ....:     42 :  [36, 35, 37, 30, 29, 28, 27, 26, 15, 14, 12, 11, 9, 8, 5, 3, 2, 1, 0],
@@ -1043,7 +1041,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         ....:     0 :  [],
         ....:     })
 
-        sage: # needs sage.combinat sage.graphs
         sage: x = HierarchyElement(44, G)
         sage: x.mro
         [44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
@@ -1057,7 +1054,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         """
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: x = HierarchyElement(10, P)
@@ -1102,7 +1098,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         """
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: x = HierarchyElement(10, P)
@@ -1113,16 +1108,16 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: x._bases
             [5, 2]
             sage: x._key
-            <built-in function identity>
+            <cyfunction identity at ...>
             sage: x._key(10)
             10
 
         The ``_from_value`` attribute is a function that can be used
         to reconstruct an element of the hierarchy from its value::
 
-            sage: x._from_value                                                         # needs sage.graphs
-            Cached version of <cyfunction HierarchyElement.__classcall__.<locals>.f at ...>
-            sage: x._from_value(x.value) is x                                           # needs sage.graphs
+            sage: x._from_value
+            Cached version of <...__classcall__...>
+            sage: x._from_value(x.value) is x
             True
         """
         self.value = value
@@ -1137,9 +1132,9 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # needs sage.graphs
-            sage: x = HierarchyElement(10, P)                                           # needs sage.graphs
-            sage: x                                                                     # needs sage.graphs
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
+            sage: x = HierarchyElement(10, P)
+            sage: x
             10
         """
         return repr(self.value)
@@ -1155,7 +1150,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: x = HierarchyElement(10, P)
@@ -1177,7 +1171,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_sorted_merge, identity
             sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)
             sage: x = HierarchyElement(5, P)
@@ -1190,12 +1183,12 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: x.mro
             [7, 6, 5, 4, 3, 2, 1]
 
-            sage: C3_sorted_merge([[6, 4, 3], [5, 2, 1], [6, 5]], identity)             # needs sage.graphs
+            sage: C3_sorted_merge([[6, 4, 3], [5, 2, 1], [6, 5]], identity)
             ([6, 5, 4, 3, 2, 1], [6, 5, 4])
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro)                     # needs sage.graphs
+            sage: assert all(isinstance(v, Integer) for v in x.mro)
         """
         bases = self._bases
         result, suggestion = C3_sorted_merge([base.mro for base in bases]+[[base.value for base in bases]], key=self._key)
@@ -1214,7 +1207,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)
             sage: x = HierarchyElement(7, P)
@@ -1235,7 +1227,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_merge
 
-            sage: # needs sage.graphs
             sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)
             sage: x = HierarchyElement(5, P)
             sage: x.mro_standard
@@ -1252,7 +1243,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro_standard)            # needs sage.graphs
+            sage: assert all(isinstance(v, Integer) for v in x.mro_standard)
         """
         bases = self._bases
         return [self.value] + C3_merge([base.mro_standard for base in bases]+[[base.value for base in bases]])
@@ -1267,7 +1258,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
             sage: from sage.misc.c3_controlled import HierarchyElement, C3_merge
 
-            sage: # needs sage.graphs
             sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)
             sage: x = HierarchyElement(5, P)
             sage: x.mro_controlled
@@ -1290,7 +1280,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         TESTS::
 
-            sage: assert all(isinstance(v, Integer) for v in x.mro_controlled)          # needs sage.graphs
+            sage: assert all(isinstance(v, Integer) for v in x.mro_controlled)
         """
         return [self.value] + C3_merge([base.mro_controlled for base in self._bases]+[self._bases_controlled])
 
@@ -1312,9 +1302,9 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)             # needs sage.graphs
-            sage: x = HierarchyElement(7, P)                                            # needs sage.graphs
-            sage: x._test_mro()                                                         # needs sage.graphs
+            sage: P = Poset({7: [5, 6], 5: [1, 2], 6: [3, 4]}, facade=True)
+            sage: x = HierarchyElement(7, P)
+            sage: x._test_mro()
         """
         for b in self._bases:
             b._test_mro()
@@ -1336,7 +1326,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: x = HierarchyElement(1, P)
@@ -1353,7 +1342,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
             super_classes = (object,)
-        return dynamic_class("%s.cls"%self, super_classes)
+        return dynamic_class("%s.cls" % self, super_classes)
 
     @cached_method
     def all_bases(self):
@@ -1363,7 +1352,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: from sage.misc.c3_controlled import HierarchyElement
             sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
             sage: HierarchyElement(1, P).all_bases()
@@ -1373,7 +1361,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: sorted([x.value for x in HierarchyElement(10, P).all_bases()])
             [1, 2, 5, 10]
         """
-        return {self} | { x for base in self._bases for x in base.all_bases()  }
+        return {self} | {x for base in self._bases for x in base.all_bases()}
 
     def all_bases_len(self):
         """
@@ -1382,11 +1370,11 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # needs sage.graphs
-            sage: HierarchyElement(30, P).all_bases_len()                               # needs sage.graphs
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
+            sage: HierarchyElement(30, P).all_bases_len()
             12
         """
-        return sum( len(x._bases) for x in self.all_bases())
+        return sum(len(x._bases) for x in self.all_bases())
 
     def all_bases_controlled_len(self):
         """
@@ -1395,8 +1383,8 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.c3_controlled import HierarchyElement
-            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)     # needs sage.graphs
-            sage: HierarchyElement(30, P).all_bases_controlled_len()                    # needs sage.graphs
+            sage: P = Poset((divisors(30), lambda x, y: y.divides(x)), facade=True)
+            sage: HierarchyElement(30, P).all_bases_controlled_len()
             13
         """
-        return sum( len(x._bases_controlled) for x in self.all_bases())
+        return sum(len(x._bases_controlled) for x in self.all_bases())

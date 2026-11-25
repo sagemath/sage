@@ -131,6 +131,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             else:
                 raise TypeError("elt should be a vector, a matrix, " +
                                 "or an element of the base field")
+        self._vector.set_immutable()
 
     def __reduce__(self):
         """
@@ -204,6 +205,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             table = <tuple> A.table()
             ret = sum(self._vector[0, i] * table[i] for i in range(A.degree()))
             self.__matrix = MatrixSpace(A.base_ring(), A.degree())(ret)
+        self.__matrix.set_immutable()
         return self.__matrix
 
     def vector(self):
@@ -239,7 +241,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._matrix
 
-    def monomial_coefficients(self, copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True):
         """
         Return a dictionary whose keys are indices of basis elements in
         the support of ``self`` and whose values are the corresponding
@@ -256,9 +258,10 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: elt = B(Matrix([[1,1], [-1,1]]))
             sage: elt.monomial_coefficients()
             {0: 1, 1: 1}
+            sage: B.one().monomial_coefficients()
+            {0: 1}
         """
-        cdef Py_ssize_t i
-        return {i: self._vector[0, i] for i in range(self._vector.ncols())}
+        return {k[1]: c for k, c in self._vector._dict().items()}
 
     def left_matrix(self):
         """
@@ -280,7 +283,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         return sum([self._vector[0, i] * A.left_table()[i] for
                     i in range(A.degree())])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -334,6 +337,23 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         from sage.misc.latex import latex
         return latex(self.matrix())
 
+    def __hash__(self):
+        """
+        Return the hash value for ``self``.
+
+        EXAMPLES::
+
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: a = A([1,2])
+            sage: b = A([2,3])
+            sage: hash(a) == hash(A([1,2]))
+            True
+            sage: hash(a) == hash(b)
+            False
+        """
+        return hash(self._vector)
+
     def __getitem__(self, m):
         """
         Return the `m`-th coefficient of ``self``.
@@ -350,6 +370,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __len__(self):
         """
+        Return the number of coefficients of ``self``,
+        including the zero coefficients.
+
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
@@ -357,11 +380,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: len(A([2,1/4,3]))
             3
+            sage: len(A([2,0,3/4]))
+            3
         """
         return self._vector.ncols()
 
     # (Rich) comparison
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -394,7 +419,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: A(1) <= 0
             False
         """
-        return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
+        return richcmp(self._vector, <FiniteDimensionalAlgebraElement>other._vector, op)
 
     cpdef _add_(self, other):
         """
@@ -504,7 +529,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.inverse()
 
-    def is_invertible(self):
+    def is_invertible(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         inverse.
@@ -592,7 +617,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             raise ZeroDivisionError("element is not invertible")
         return self._inverse
 
-    def is_zerodivisor(self):
+    def is_zerodivisor(self) -> bool:
         """
         Return ``True`` if ``self`` is a left or right zero-divisor.
 
@@ -607,7 +632,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.matrix().det() == 0 or self.left_matrix().det() == 0
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``True`` if ``self`` is nilpotent.
 
@@ -638,12 +663,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).minimal_polynomial()                                             # needs sage.libs.pari
+            sage: B(0).minimal_polynomial()
             x
             sage: b = B.random_element()
-            sage: f = b.minimal_polynomial(); f  # random                               # needs sage.libs.pari
+            sage: f = b.minimal_polynomial(); f  # random
             x^3 + 1/2*x^2 - 7/16*x + 1/16
-            sage: f(b) == 0                                                             # needs sage.libs.pari
+            sage: f(b) == 0
             True
         """
         A = self.parent()
@@ -669,12 +694,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).characteristic_polynomial()                                      # needs sage.libs.pari
+            sage: B(0).characteristic_polynomial()
             x^3
             sage: b = B.random_element()
-            sage: f = b.characteristic_polynomial(); f  # random                        # needs sage.libs.pari
+            sage: f = b.characteristic_polynomial(); f  # random
             x^3 - 8*x^2 + 16*x
-            sage: f(b) == 0                                                             # needs sage.libs.pari
+            sage: f(b) == 0
             True
         """
         return self.matrix().characteristic_polynomial()

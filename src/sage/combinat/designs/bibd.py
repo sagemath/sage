@@ -1,5 +1,5 @@
 r"""
-Balanced Incomplete Block Designs (BIBD)
+Balanced incomplete block designs (BIBD)
 
 This module gathers everything related to Balanced Incomplete Block Designs. One can build a
 BIBD (or check that it can be built) with :func:`balanced_incomplete_block_design`::
@@ -38,12 +38,8 @@ possible cases of `(v,4,1)`-BIBD.
 
 **Construction of BIBD when** `k=5`
 
-Decompositions of `K_v` into `K_4` (i.e. `(v,4,1)`-BIBD) are built following
+Decompositions of `K_v` into `K_5 (i.e. `(v,5,1)`-BIBD) are built following
 Clayton Smith's construction [ClaytonSmith]_.
-
-.. [ClaytonSmith] On the existence of `(v,5,1)`-BIBD.
-  http://www.argilo.net/files/bibd.pdf
-  Clayton Smith
 
 
 Functions
@@ -334,11 +330,10 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                     return False
                 raise EmptySetError(f"there exists no ({v},{k},{lambd})-BIBD")
             B = B.incidence_structure()
-            if B.num_blocks() == expected_n_of_blocks:
+            if B.n_blocks() == expected_n_of_blocks:
                 if existence:
                     return True
-                else:
-                    return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
+                return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
 
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
@@ -359,8 +354,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     if existence:
         return Unknown
-    else:
-        raise NotImplementedError("I don't know how to build a ({},{},{})-BIBD!".format(v, k, lambd))
+    raise NotImplementedError("I don't know how to build a ({},{},{})-BIBD!".format(v, k, lambd))
 
 
 def BruckRyserChowla_check(v, k, lambd):
@@ -430,12 +424,12 @@ def BruckRyserChowla_check(v, k, lambd):
     g = 1 if v % 4 == 1 else -1
     C = Conic(QQ, [1, lambd - k, -g * lambd])
 
-    (flag, sol) = C.has_rational_point(point=True)
+    flag, sol = C.has_rational_point(point=True)
 
     return flag
 
 
-def steiner_triple_system(n):
+def steiner_triple_system(n, algorithm=None, seed=None, check=True):
     r"""
     Return a Steiner Triple System.
 
@@ -447,14 +441,28 @@ def steiner_triple_system(n):
     It can alternatively be thought of as a factorization of
     the complete graph `K_n` with triangles.
 
-    A Steiner Triple System of a `n`-set exists if and only if
+    A Steiner Triple System of an `n`-set exists if and only if
     `n \equiv 1 \pmod 6` or `n \equiv 3 \pmod 6`, in which case
     one can be found through Bose's and Skolem's constructions,
-    respectively [AndHonk97]_.
+    respectively [AndHonk97]_. A randomized construction using Stinson's
+    algorithm [KreherStinson98]_ is also available.
 
     INPUT:
 
     - ``n`` -- return a Steiner Triple System of `\{0,...,n-1\}`
+
+    - ``algorithm`` -- string (default: ``None``); can be one of the following:
+
+      - ``None`` or ``"bose-skolem"`` -- use Bose and Skolem's deterministic
+        construction
+
+      - ``"stinson"`` -- use Stinson's randomized algorithm
+
+    - ``seed`` -- (default: ``None``) a seed for the random number generator;
+      only used when ``algorithm="stinson"``
+
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      output of Stinson's randomized algorithm has the correct BIBD parameters
 
     EXAMPLES:
 
@@ -473,6 +481,12 @@ def steiner_triple_system(n):
         sage: sts.is_t_design(return_parameters=True)
         (True, (2, 9, 3, 1))
 
+    A Steiner Triple System using Stinson's randomized algorithm ::
+
+        sage: sts = designs.steiner_triple_system(9, algorithm='stinson', seed=0)
+        sage: sts.is_t_design(return_parameters=True)
+        (True, (2, 9, 3, 1))
+
     An exception is raised for invalid values of ``n`` ::
 
         sage: designs.steiner_triple_system(10)
@@ -480,13 +494,26 @@ def steiner_triple_system(n):
         ...
         EmptySetError: Steiner triple systems only exist for n = 1 mod 6 or n = 3 mod 6
 
-    REFERENCE:
+    TESTS::
 
-    .. [AndHonk97] A short course in Combinatorial Designs,
-      Ian Anderson, Iiro Honkala,
-      Internet Editions, Spring 1997,
-      http://www.utu.fi/~honkala/designs.ps
+        sage: (designs.steiner_triple_system(9, algorithm='bose-skolem').blocks()
+        ....:  == designs.steiner_triple_system(9).blocks())
+        True
+        sage: designs.steiner_triple_system(1, algorithm='stinson').n_blocks()
+        0
+        sage: designs.steiner_triple_system(10, algorithm='stinson')
+        Traceback (most recent call last):
+        ...
+        EmptySetError: Steiner triple systems only exist for n = 1 mod 6 or n = 3 mod 6
+        sage: designs.steiner_triple_system(9, algorithm='unknown')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown algorithm: 'unknown'
     """
+    if algorithm == "stinson":
+        return _stinson_steiner_triple_system(n, seed=seed, check=check)
+    if algorithm not in (None, "bose-skolem"):
+        raise ValueError("unknown algorithm: {!r}".format(algorithm))
 
     name = "Steiner Triple System on "+str(n)+" elements"
 
@@ -513,7 +540,8 @@ def steiner_triple_system(n):
             [[(i,k),(j,k),(L(i,j),(k+1) % 3)] for k in [0,1,2] for i in N for j in N if i < j]
 
     else:
-        raise EmptySetError("Steiner triple systems only exist for n = 1 mod 6 or n = 3 mod 6")
+        raise EmptySetError("Steiner triple systems only exist "
+                            "for n = 1 mod 6 or n = 3 mod 6")
 
     # apply T and remove duplicates
     sts = set(frozenset(T(xx) for xx in x) for x in sts)
@@ -521,7 +549,86 @@ def steiner_triple_system(n):
     return BIBD(n, sts, name=name,check=False)
 
 
-def BIBD_from_TD(v,k,existence=False):
+def _stinson_steiner_triple_system(n, seed=None, check=True):
+    r"""
+    Return a Steiner Triple System using Stinson's randomized algorithm.
+
+    The distribution of the resulting systems is not claimed to be uniform.
+    """
+    if n % 6 not in (1, 3):
+        raise EmptySetError("Steiner triple systems only exist "
+                            "for n = 1 mod 6 or n = 3 mod 6")
+
+    n = int(n)
+    name = f"Randomized Steiner Triple System on {n} elements"
+    if n == 1:
+        return BIBD(n, [], name=name, check=False)
+
+    import random
+    if seed is not None and hasattr(seed, "__index__"):
+        seed = int(seed)
+    rand = random.Random(seed)
+
+    other = [[-1] * n for _ in range(n)]
+    live_pairs = [set(range(n)) - {x} for x in range(n)]
+    live_points = set(range(n))
+    num_blocks = 0
+
+    def insert_pair(x, y):
+        if not live_pairs[x]:
+            live_points.add(x)
+        live_pairs[x].add(y)
+
+    def delete_pair(x, y):
+        live_pairs[x].remove(y)
+        if not live_pairs[x]:
+            live_points.remove(x)
+
+    def add_block(x, y, z):
+        other[x][y] = other[y][x] = z
+        other[x][z] = other[z][x] = y
+        other[y][z] = other[z][y] = x
+        delete_pair(x, y)
+        delete_pair(y, x)
+        delete_pair(x, z)
+        delete_pair(z, x)
+        delete_pair(y, z)
+        delete_pair(z, y)
+
+    def exchange_block(x, y, z, w):
+        other[x][y] = other[y][x] = z
+        other[x][z] = other[z][x] = y
+        other[y][z] = other[z][y] = x
+        other[w][y] = other[y][w] = -1
+        other[w][z] = other[z][w] = -1
+        insert_pair(w, y)
+        insert_pair(y, w)
+        insert_pair(w, z)
+        insert_pair(z, w)
+        delete_pair(x, y)
+        delete_pair(y, x)
+        delete_pair(x, z)
+        delete_pair(z, x)
+
+    target_blocks = n * (n - 1) // 6
+    while num_blocks < target_blocks:
+        x = rand.choice(list(live_points))
+        y, z = rand.sample(list(live_pairs[x]), 2)
+        if other[y][z] == -1:
+            add_block(x, y, z)
+            num_blocks += 1
+        else:
+            exchange_block(x, y, z, other[y][z])
+
+    blocks = [[x, y, z]
+             for x in range(n)
+             for y in range(x+1, n)
+             if (z := other[x][y]) > y]
+
+    return BIBD(n, blocks, k=3, lambd=1, name=name, check=check, copy=False)
+
+
+def BIBD_from_TD(v, k, existence=False):
     r"""
     Return a BIBD through TD-based constructions.
 
@@ -613,7 +720,7 @@ def BIBD_from_TD(v,k,existence=False):
 
         BIBD = TDkv._blocks
         for i in range(k):
-            BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
+            BIBD.extend([x+i*v for x in B] for B in BIBDvk)
 
     # Second construction
     elif ((v-1) % k == 0 and
@@ -630,7 +737,7 @@ def BIBD_from_TD(v,k,existence=False):
         inf = v*k
         BIBD = TDkv
         for i in range(k):
-            BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
+            BIBD.extend([inf if x == v else x+i*v for x in B] for B in BIBDv1k)
 
     # Third construction
     elif ((v-k) % k == 0 and
@@ -650,7 +757,8 @@ def BIBD_from_TD(v,k,existence=False):
         BIBDvpkk = [B for B in BIBDvpkk if min(B) < v]
 
         for i in range(k):
-            BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
+            BIBD.extend([(x-v)+inf if x >= v else x+i*v for x in B]
+                        for B in BIBDvpkk)
 
         BIBD.append(list(range(k * v, v * k + k)))
 
@@ -658,8 +766,7 @@ def BIBD_from_TD(v,k,existence=False):
     else:
         if existence:
             return Unknown
-        else:
-            raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
+        raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
 
     return BIBD
 
@@ -894,7 +1001,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
     return bibd
 
 
-def _relabel_bibd(B,n,p=None):
+def _relabel_bibd(B, n, p=None):
     r"""
     Relabel the BIBD on `n` points and blocks of size k such that
     `\{0,...,k-2,n-1\},\{k-1,...,2k-3,n-1\},...,\{n-k,...,n-2,n-1\}` are blocks
@@ -1092,7 +1199,6 @@ def _get_t_u(v):
     """
     # Table 7.1
     v = int(v)
-    global table_7_1
     d = table_7_1[v % 48]
     s = v//48
     if s < d['s']:
@@ -1223,7 +1329,7 @@ def _get_r_s_t_u(v):
     return r,s,t,u
 
 
-def PBD_from_TD(k,t,u):
+def PBD_from_TD(k, t, u):
     r"""
     Return a `(kt,\{k,t\})`-PBD if `u=0` and a `(kt+u,\{k,k+1,t,u\})`-PBD otherwise.
 
@@ -1277,14 +1383,14 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     d = (q-1)//4
     B = []
-    F = FiniteField(q,'x')
+    F = FiniteField(q, 'x')
     a = F.primitive_element()
-    L = {b:i for i,b in enumerate(F)}
-    for b in L:
-        B.append([i*q + L[b] for i in range(5)])
+    L = {b: i for i, b in enumerate(F)}
+    for b, Lb in L.items():
+        B.append([i*q + Lb for i in range(5)])
         for i in range(5):
             for j in range(d):
-                B.append([        i*q + L[b          ],
+                B.append([        i*q + Lb,
                           ((i+1) % 5)*q + L[ a**j+b    ],
                           ((i+1) % 5)*q + L[-a**j+b    ],
                           ((i+4) % 5)*q + L[ a**(j+d)+b],
@@ -1294,7 +1400,7 @@ def BIBD_5q_5_for_q_prime_power(q):
     return B
 
 
-def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
+def BIBD_from_arc_in_desarguesian_projective_plane(n, k, existence=False):
     r"""
     Return a `(n,k,1)`-BIBD from a maximal arc in a projective plane.
 
@@ -1346,13 +1452,6 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
         Traceback (most recent call last):
         ...
         ValueError: This function cannot produce a (7,3,1)-BIBD
-
-    REFERENCE:
-
-    .. [Denniston69] \R. H. F. Denniston,
-       Some maximal arcs in finite projective planes.
-       Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
-       :doi:`10.1016/S0021-9800(69)80095-5`
     """
     q = (n-1)//(k-1)-1
     if (k % 2 or
@@ -1430,7 +1529,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
       modified in place (each block is sorted, and the whole list is
       sorted). Your ``blocks`` object will become the instance's internal data.
     """
-    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True,**kwds):
+    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True, **kwds):
         r"""
         Constructor.
 
@@ -1466,7 +1565,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
             (13,3,1)-Balanced Incomplete Block Design
         """
         bsizes = list(frozenset(self.block_sizes()))
-        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.num_points(), bsizes)
+        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.n_points(), bsizes)
 
 
 class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
@@ -1498,7 +1597,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         sage: b=designs.balanced_incomplete_block_design(9,3); b
         (9,3,1)-Balanced Incomplete Block Design
     """
-    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True,**kwds):
+    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True, **kwds):
         r"""
         Constructor.
 
@@ -1525,10 +1624,10 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: b=designs.balanced_incomplete_block_design(9,3); b
             (9,3,1)-Balanced Incomplete Block Design
         """
-        v = self.num_points()
+        v = self.n_points()
         k = len(self._blocks[0]) if self._blocks else 0
         l = self._lambd
-        return "({},{},{})-Balanced Incomplete Block Design".format(v,k,l)
+        return f"({v},{k},{l})-Balanced Incomplete Block Design"
 
     def arc(self, s=2, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -1633,7 +1732,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         # trivial cases
         if s <= 0:
             return []
-        elif s >= max(self.block_sizes()):
+        if s >= max(self.block_sizes()):
             return self._points[:]
 
         # integer linear program

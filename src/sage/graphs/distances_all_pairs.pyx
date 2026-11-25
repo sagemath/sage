@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Distances/shortest paths between all pairs of vertices
 
@@ -122,7 +121,6 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.data_structures.binary_matrix cimport *
 from libc.string cimport memset
 from libc.stdint cimport uint64_t, UINT64_MAX
 from libc.stdint cimport uint32_t, INT32_MAX, UINT32_MAX
@@ -130,9 +128,11 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
+from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
-
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    init_short_digraph,
                                                    init_reverse,
@@ -446,15 +446,15 @@ def distances_all_pairs(G):
         sage: g = graphs.PetersenGraph()
         sage: distances_all_pairs(g)
         {0: {0: 0, 1: 1, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 2},
-        1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 2, 5: 2, 6: 1, 7: 2, 8: 2, 9: 2},
-        2: {0: 2, 1: 1, 2: 0, 3: 1, 4: 2, 5: 2, 6: 2, 7: 1, 8: 2, 9: 2},
-        3: {0: 2, 1: 2, 2: 1, 3: 0, 4: 1, 5: 2, 6: 2, 7: 2, 8: 1, 9: 2},
-        4: {0: 1, 1: 2, 2: 2, 3: 1, 4: 0, 5: 2, 6: 2, 7: 2, 8: 2, 9: 1},
-        5: {0: 1, 1: 2, 2: 2, 3: 2, 4: 2, 5: 0, 6: 2, 7: 1, 8: 1, 9: 2},
-        6: {0: 2, 1: 1, 2: 2, 3: 2, 4: 2, 5: 2, 6: 0, 7: 2, 8: 1, 9: 1},
-        7: {0: 2, 1: 2, 2: 1, 3: 2, 4: 2, 5: 1, 6: 2, 7: 0, 8: 2, 9: 1},
-        8: {0: 2, 1: 2, 2: 2, 3: 1, 4: 2, 5: 1, 6: 1, 7: 2, 8: 0, 9: 2},
-        9: {0: 2, 1: 2, 2: 2, 3: 2, 4: 1, 5: 2, 6: 1, 7: 1, 8: 2, 9: 0}}
+         1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 2, 5: 2, 6: 1, 7: 2, 8: 2, 9: 2},
+         2: {0: 2, 1: 1, 2: 0, 3: 1, 4: 2, 5: 2, 6: 2, 7: 1, 8: 2, 9: 2},
+         3: {0: 2, 1: 2, 2: 1, 3: 0, 4: 1, 5: 2, 6: 2, 7: 2, 8: 1, 9: 2},
+         4: {0: 1, 1: 2, 2: 2, 3: 1, 4: 0, 5: 2, 6: 2, 7: 2, 8: 2, 9: 1},
+         5: {0: 1, 1: 2, 2: 2, 3: 2, 4: 2, 5: 0, 6: 2, 7: 1, 8: 1, 9: 2},
+         6: {0: 2, 1: 1, 2: 2, 3: 2, 4: 2, 5: 2, 6: 0, 7: 2, 8: 1, 9: 1},
+         7: {0: 2, 1: 2, 2: 1, 3: 2, 4: 2, 5: 1, 6: 2, 7: 0, 8: 2, 9: 1},
+         8: {0: 2, 1: 2, 2: 2, 3: 1, 4: 2, 5: 1, 6: 1, 7: 2, 8: 0, 9: 2},
+         9: {0: 2, 1: 2, 2: 2, 3: 2, 4: 1, 5: 2, 6: 1, 7: 1, 8: 2, 9: 0}}
     """
     from sage.rings.infinity import Infinity
 
@@ -543,7 +543,7 @@ def is_distance_regular(G, parameters=False):
 
         sage: graphs.PathGraph(2).is_distance_regular(parameters=True)
         ([1, None], [None, 1])
-        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # needs networkx
+        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
     """
     cdef int i, u, v, d, b, c, k
@@ -1806,6 +1806,17 @@ def diameter(G, algorithm=None, source=None):
         sage: G = graphs.PathGraph(1)
         sage: diameter(G, algorithm='iFUB')
         0
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .5)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: diameter(G, algorithm='iFUB') == diameter(H, algorithm='iFUB')
+        True
     """
     cdef uint32_t n = G.order()
     if n <= 1:
@@ -1832,9 +1843,16 @@ def diameter(G, algorithm=None, source=None):
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd  # to store copy of sd with edges reversed
 
     # and we map the source to an int in [0,n-1]
@@ -1849,7 +1867,8 @@ def diameter(G, algorithm=None, source=None):
         bitset_init(seen, n)
         tab = <uint32_t*> sig_malloc(2* n * sizeof(uint32_t))
         if not tab:
-            free_short_digraph(sd)
+            if not isinstance(G, StaticSparseBackend):
+                free_short_digraph(sd)
             bitset_free(seen)
             raise MemoryError()
 
@@ -1875,7 +1894,8 @@ def diameter(G, algorithm=None, source=None):
     else:  # algorithm == 'iFUB'
         LB = diameter_iFUB(sd, isource)
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     if LB < 0 or LB > n:
         from sage.rings.infinity import Infinity
@@ -1926,6 +1946,17 @@ def radius_DHV(G):
         Traceback (most recent call last):
         ...
         TypeError: this method works for unweighted undirected graphs only
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .5)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: radius_DHV(G) == radius_DHV(H)
+        True
     """
     if G.is_directed():
         raise TypeError("this method works for unweighted undirected graphs only")
@@ -1934,9 +1965,16 @@ def radius_DHV(G):
     if n <= 1:
         return 0
 
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef uint32_t source, ecc_source
     cdef uint32_t antipode, ecc_antipode
@@ -1946,6 +1984,8 @@ def radius_DHV(G):
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef uint32_t * distances = <uint32_t *>mem.malloc(3 * n * sizeof(uint32_t))
     if not distances:
+        if not isinstance(G, StaticSparseBackend):
+            free_short_digraph(sd)
         raise MemoryError()
 
     cdef uint32_t * waiting_list = distances + n
@@ -1976,7 +2016,8 @@ def radius_DHV(G):
         # vertex visited in simple_BFS), and compute its BFS distances.
         # By definition of antipode, we have ecc_antipode >= ecc_source.
         antipode = waiting_list[n-1]
-        ecc_antipode = simple_BFS(sd, antipode, distances, NULL, waiting_list, seen)
+        ecc_antipode = simple_BFS(sd, antipode, distances,
+                                  NULL, waiting_list, seen)
 
         # 3) Use distances from antipode to improve eccentricity lower bounds.
         # We also determine the next source
@@ -1987,7 +2028,8 @@ def radius_DHV(G):
                 LB = ecc_lower_bound[v]
                 source = v  # vertex with minimum eccentricity lower bound
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(seen)
     if UB == UINT32_MAX:
         from sage.rings.infinity import Infinity
@@ -2041,6 +2083,19 @@ def wiener_index(G):
         Traceback (most recent call last):
         ...
         ValueError: Wiener index is not defined for the empty graph
+
+    TESTS:
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .5)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.wiener_index() == H.wiener_index()
+        True
     """
     if not G:
         raise ValueError("Wiener index is not defined for the empty graph")
@@ -2052,8 +2107,13 @@ def wiener_index(G):
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors.  This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
 
     # allocated some data structures
     cdef bitset_t seen
@@ -2074,7 +2134,8 @@ def wiener_index(G):
         for v in range(0 if G.is_directed() else (u + 1), n):
             s += distances[v]
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(seen)
 
     if s == UINT64_MAX:
@@ -2342,6 +2403,18 @@ def szeged_index(G, algorithm=None):
         Traceback (most recent call last):
         ...
         ValueError: the 'low' algorithm cannot be used on digraphs
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .3)
+        sage: G.add_edges(graphs.RandomTree(10).edges())
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: szeged_index(G) == szeged_index(H)
+        True
     """
     if not G.is_connected():
         raise ValueError("the Szeged index is defined for connected graphs only")
@@ -2364,8 +2437,14 @@ def szeged_index(G, algorithm=None):
     if G.order() <= 1:
         return 0
 
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+
     cdef uint64_t s
 
     if algorithm == "low":
@@ -2373,7 +2452,8 @@ def szeged_index(G, algorithm=None):
     else:
         s = c_szeged_index_high_memory(sd)
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     return s
 
 
@@ -2441,13 +2521,31 @@ def distances_distribution(G):
         sage: D = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
         sage: D.distances_distribution()                                                # needs sage.combinat
         {1: 1/4, 2: 11/28, 3: 5/14}
+
+    TESTS:
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .5)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.distances_distribution() == H.distances_distribution()
+        True
     """
     cdef size_t n = G.order()
     if n <= 1:
         return {}
 
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef uint32_t * distances = <uint32_t *> mem.allocarray(2 * n, sizeof(uint32_t))
@@ -2470,7 +2568,8 @@ def distances_distribution(G):
             for v in range(n):
                 count[distances[v]] += 1
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(seen)
 
     from sage.rings.infinity import Infinity
@@ -2491,7 +2590,7 @@ def distances_distribution(G):
 # Antipodal graph #
 ###################
 
-def antipodal_graph(G):
+def antipodal_graph(G, immutable=None):
     r"""
     Return the antipodal graph of `G`.
 
@@ -2507,9 +2606,16 @@ def antipodal_graph(G):
 
     The drawback of this method is that some BFS distances may be computed
     twice, one time to determine the eccentricities and another time is the
-    vertex has eccentricity equal to the diameter. However, in practive, this is
-    much more efficient. See the documentation of method
-    :meth:`c_eccentricity_DHV`.
+    vertex has eccentricity equal to the diameter. However, in practice, this is
+    much more efficient. See :func:`eccentricity` with ``algorithm='DHV'``.
+
+    INPUT:
+
+    - ``G`` -- a :class:`~sage.graphs.graph.Graph`
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its antipodal graph will behave the same way.
 
     EXAMPLES:
 
@@ -2518,23 +2624,25 @@ def antipodal_graph(G):
         sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.Grid2dGraph(5, 5)
         sage: A = antipodal_graph(G)
+        sage: A
+        Antipodal graph of 2D Grid Graph for [5, 5]: Graph on 25 vertices
         sage: A.order(), A.size()
         (25, 2)
 
-    The antipodal graph of a disjoint union of cliques is its complement::
+    The antipodal graph of a disconnected graph is its complement::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
-        sage: G = graphs.CompleteGraph(3) * 3
-        sage: A = antipodal_graph(G)
-        sage: A.is_isomorphic(G.complement())
+        sage: G = Graph(5)
+        sage: H = G.antipodal_graph()
+        sage: H
+        Antipodal graph of Graph on 5 vertices: Graph on 5 vertices
+        sage: H.is_isomorphic(G.complement())
         True
 
     The antipodal graph can also be constructed as the
-    :meth:`sage.graphs.generic_graph.distance_graph` for diameter distance::
+    :meth:`~sage.graphs.graph.Graph.distance_graph` for diameter distance::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.RandomGNP(10, .2)
-        sage: A = antipodal_graph(G)
+        sage: A = G.antipodal_graph()
         sage: B = G.distance_graph(G.diameter())
         sage: A.is_isomorphic(B)
         True
@@ -2554,6 +2662,25 @@ def antipodal_graph(G):
         Antipodal graph of Graph on 1 vertex: Looped graph on 1 vertex
         sage: antipodal_graph(Graph(2)).edges(sort=True, labels=False)
         [(0, 1)]
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .5)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: antipodal_graph(G).is_isomorphic(antipodal_graph(H))
+        True
+        sage: antipodal_graph(G).is_immutable()
+        False
+        sage: antipodal_graph(G, immutable=True).is_immutable()
+        True
+        sage: antipodal_graph(H).is_immutable()
+        True
+        sage: antipodal_graph(H, immutable=False).is_immutable()
+        False
     """
     if not G:
         raise ValueError("the antipodal graph of the empty graph is not defined")
@@ -2564,22 +2691,32 @@ def antipodal_graph(G):
 
     cdef uint32_t n = G.order()
     name = f"Antipodal graph of {G}"
-    if n == 1:
-        return Graph(list(zip(G, G)), loops=True, name=name)
-
     import copy
-    A = Graph(name=name, pos=copy.deepcopy(G.get_pos()))
+    cdef dict pos = copy.deepcopy(G.get_pos())
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    if n == 1:
+        return Graph(list(zip(G, G)), format="list_of_edges", loops=True,
+                     name=name, pos=pos, immutable=immutable)
 
     if not G.is_connected():
-        import itertools
+        from itertools import chain, combinations, product
         CC = G.connected_components(sort=False)
-        for c1, c2 in itertools.combinations(CC, 2):
-            A.add_edges(itertools.product(c1, c2))
-        return A
+        return Graph(chain(*(product(a, b) for a, b in combinations(CC, 2))),
+                     format="list_of_edges", name=name, pos=pos,
+                     immutable=immutable)
 
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef uint32_t * distances = <uint32_t *> mem.allocarray(2 * n, sizeof(uint32_t))
@@ -2596,21 +2733,26 @@ def antipodal_graph(G):
             diam = ecc[i]
 
     cdef uint32_t ui, vj, j
-    for ui in range(n):
-        if ecc[ui] == diam:
-            _ = simple_BFS(sd, ui, distances, NULL, waiting_list, seen)
-            u = int_to_vertex[ui]
-            j = n - 1
-            while distances[waiting_list[j]] == diam:
-                vj = waiting_list[j]
-                if ui < vj:  # avoid adding twice the same edge
-                    A.add_edge(u, int_to_vertex[vj])
-                j -= 1
 
-    free_short_digraph(sd)
+    def edges():
+        for ui in range(n):
+            if ecc[ui] == diam:
+                _ = simple_BFS(sd, ui, distances, NULL, waiting_list, seen)
+                u = int_to_vertex[ui]
+                j = n - 1
+                while distances[waiting_list[j]] == diam:
+                    vj = waiting_list[j]
+                    if ui < vj:  # avoid adding twice the same edge
+                        yield (u, int_to_vertex[vj])
+                    j -= 1
+
+    A = Graph([G, edges()], format="vertices_and_edges",
+              name=name, pos=pos, immutable=immutable)
+
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     bitset_free(seen)
 
-    A.add_vertices(G)
     return A
 
 

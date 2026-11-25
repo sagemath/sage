@@ -190,19 +190,19 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import \
-    DegenerateManifold
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
-from sage.rings.infinity import infinity
-from sage.matrix.constructor import matrix
-from sage.functions.other import factorial
-from sage.symbolic.ring import SR
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
 from queue import Queue
+
+from sage.functions.other import factorial
+from sage.manifolds.differentiable.degenerate import DegenerateManifold
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.symbolic.ring import SR
 
 
 class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
@@ -819,8 +819,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             ....:                              atan2(-y,-x)+pi)
             Check of the inverse coordinate transformation:
               the == 2*arctan(sqrt(-cos(the) + 1)/sqrt(cos(the) + 1))  **failed**
-              phi == pi + arctan2(sin(phi)*sin(the)/(cos(the) - 1),
-                                  cos(phi)*sin(the)/(cos(the) - 1))  **failed**
+              phi == phi  *passed*
               x == x  *passed*
               y == y  *passed*
             NB: a failed report can reflect a mere lack of simplification.

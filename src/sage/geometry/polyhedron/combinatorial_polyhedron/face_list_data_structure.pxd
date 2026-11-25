@@ -147,7 +147,7 @@ cdef inline void face_list_delete_faces_by_array(face_list_t faces, bint *delete
 cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face) noexcept:
     r"""
     Remove all faces such that the ``i``-th bit in ``face`` is not set
-    descreasing ``faces.n_faces``.
+    decreasing ``faces.n_faces``.
 
     .. WARNING::
 
@@ -207,8 +207,7 @@ cdef inline size_t find_face(face_t face, face_list_t faces) noexcept:
             return middle + start
     if face_cmp(face, faces_pt[start]) == 0:
         return start
-    else:
-        return -1
+    return -1
 
 cdef inline bint is_contained_in_one_fused(face_t face, face_list_t faces, algorithm_variant algorithm) noexcept nogil:
     """

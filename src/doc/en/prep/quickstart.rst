@@ -19,7 +19,7 @@ reference manual.
 
 Finally, the last tutorial is a special one introducing the reader to
 creation of interactive material in Sage.  It's highly recommended that
-you study the :doc:`Programming tutorial <Programming>` before tackling
+you study the :doc:`Programming tutorial <programming>` before tackling
 this one.
 
 Contents:
@@ -27,12 +27,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   Abstract Algebra <Quickstarts/Abstract-Algebra>
-   Differential Equations <Quickstarts/Differential-Equations>
-   Graph Theory/Discrete Math <Quickstarts/Graphs-and-Discrete>
-   Linear Algebra <Quickstarts/Linear-Algebra>
-   Multivariable Calculus <Quickstarts/Multivariable-Calculus>
-   Numerical Analysis <Quickstarts/NumAnalysis>
-   Number Theory/Cryptography <Quickstarts/Number-Theory>
-   Statistics and Distributions <Quickstarts/Statistics-and-Distributions>
-   Creating Interacts <Quickstarts/Interact>
+   Abstract Algebra <quickstarts/abstract-algebra>
+   Differential Equations <quickstarts/differential-equations>
+   Graph Theory/Discrete Math <quickstarts/graphs-and-discrete>
+   Linear Algebra <quickstarts/linear-algebra>
+   Multivariable Calculus <quickstarts/multivariable-calculus>
+   Numerical Analysis <quickstarts/numerical-analysis>
+   Number Theory/Cryptography <quickstarts/number-theory>
+   Statistics and Distributions <quickstarts/statistics-and-distributions>
+   Creating Interacts <quickstarts/interact>

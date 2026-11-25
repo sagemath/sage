@@ -47,7 +47,8 @@ element contains the following data:
   ``ZZ_pX_conv_modulus`` gives a semi-safe way to convert between
   different moduli without having to pass through ``ZZX``.
 
-- ``prime_pow`` (some subclass of :class:`PowComputer_ZZ_pX`) -- a class,
+- ``prime_pow`` (some subclass of
+  :class:`~sage.rings.padics.pow_computer_ext.PowComputer_ZZ_pX`) -- a class,
   identical among all elements with the same parent, holding common
   data.
 
@@ -201,7 +202,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.libs.pari.all import pari_gen
+from cypari2.gen cimport Gen as pari_gen
 from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
@@ -223,7 +224,7 @@ cdef inline int check_ordp(long a) except -1:
 
 
 cdef class pAdicZZpXCRElement(pAdicZZpXElement):
-    def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
+    def __init__(self, parent, x, absprec=infinity, relprec=infinity, empty=False):
         r"""
         Create an element of a capped relative precision, unramified
         or Eisenstein extension of `\ZZ_p` or `\QQ_p`.
@@ -346,10 +347,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 x = Rational(x)
             elif x.type() == 't_POLMOD' or x.type == 't_POL':
                 # This code doesn't check to see if the primes are the same.
-                L = []
                 x = x.lift().lift()
-                for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoef(i)))
+                L = [Integer(x.polcoef(i)) for i in range(x.poldegree() + 1)]
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
@@ -462,9 +461,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     else:
                         poly = x._ntl_rep_abs()[0]
                         if absprec is infinity:
-                            self._set_from_ZZ_pX_rel(&(<ntl_ZZ_pX>poly).x,(<ntl_ZZ_pX>poly).c, rprec)
+                            self._set_from_ZZ_pX_rel(&(<ntl_ZZ_pX>poly).x,
+                                                     (<ntl_ZZ_pX>poly).c, rprec)
                         else:
-                            self._set_from_ZZ_pX_both(&(<ntl_ZZ_pX>poly).x,(<ntl_ZZ_pX>poly).c, aprec, rprec)
+                            self._set_from_ZZ_pX_both(&(<ntl_ZZ_pX>poly).x,
+                                                      (<ntl_ZZ_pX>poly).c, aprec, rprec)
             elif x.parent() is parent.fraction_field():
                 _x = <pAdicZZpXCRElement>x
                 if _x.relprec < 0:
@@ -535,13 +536,12 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self._is_exact_zero():
             return (self.parent(), 0)
-        elif self._is_inexact_zero():
+        if self._is_inexact_zero():
             return (self.parent(), 0, self.valuation())
-        else:
-            return (self.parent(),
-                    tuple(tuple(c) if isinstance(c, list) else c
-                          for c in self.unit_part().expansion()),
-                    self.valuation(), self.precision_relative())
+        return (self.parent(),
+                tuple(tuple(c) if isinstance(c, list) else c
+                      for c in self.unit_part().expansion()),
+                self.valuation(), self.precision_relative())
 
     cdef int _set_inexact_zero(self, long absprec) except -1:
         """
@@ -646,8 +646,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self.ordp == maxordp:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
@@ -681,8 +680,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         if self.relprec == 0:
             return not self._is_exact_zero()
-        else:
-            return False
+        return False
 
     cdef int _set(self, ZZ_pX_c* unit, long ordp, long relprec) except -1:
         """
@@ -963,7 +961,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             mpz_set(tmp_m, den_unit)
             mpz_to_ZZ(&den_zz, tmp_m)
             mpz_clear(tmp_m)
-            #The context has been restored in setting self.relprec
+            # The context has been restored in setting self.relprec
             ZZ_p_div(tmp_zp, ZZ_to_ZZ_p(num_zz), ZZ_to_ZZ_p(den_zz))
             ZZ_pX_SetCoeff(self.unit, 0, tmp_zp)
             self.ordp = 0
@@ -1062,13 +1060,15 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         cdef long curval
         cdef ZZ_c tmp_z
         while mini == -1:
-            if not ZZ_IsZero(ZZX_coeff(poly,i)):
-                minval = ZZ_remove(tmp_z, ZZX_coeff(poly, i), self.prime_pow.pow_ZZ_tmp(1)[0])
+            if not ZZ_IsZero(ZZX_coeff(poly, i)):
+                minval = ZZ_remove(tmp_z, ZZX_coeff(poly, i),
+                                   self.prime_pow.pow_ZZ_tmp(1)[0])
                 mini = i
             i += 1
         while i <= deg:
-            if not ZZ_IsZero(ZZX_coeff(poly,i)):
-                curval = ZZ_remove(tmp_z, ZZX_coeff(poly, i), self.prime_pow.pow_ZZ_tmp(1)[0])
+            if not ZZ_IsZero(ZZX_coeff(poly, i)):
+                curval = ZZ_remove(tmp_z, ZZX_coeff(poly, i),
+                                   self.prime_pow.pow_ZZ_tmp(1)[0])
                 if curval < minval:
                     minval = curval
                     mini = i
@@ -1970,7 +1970,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 raise NotImplementedError("negative valuation exponents not yet supported")
             # checks to see if the residue of self.unit is in the prime field.
             if self.prime_pow.e == 1:
-                for i from 1 <= i <= ZZ_pX_deg(self.unit):
+                for i in range(ZZ_pX_deg(self.unit) + 1):
                     if not ZZ_divide_test(ZZ_p_rep(ZZ_pX_coeff(self.unit, i)), self.prime_pow.pow_ZZ_tmp(1)[0]):
                         raise ValueError("in order to raise to a p-adic exponent, base must reduce to an element of F_p mod the uniformizer")
             # compute the "level"
@@ -2327,7 +2327,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ZZ_to_mpz(ans.value, &tmp_z)
         return ans
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Return whether the valuation of this element is at least
         ``absprec``.  If ``absprec`` is ``None``, checks if this element
@@ -2544,8 +2544,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         e = self.parent().e()
         if e == 1:
             return [R(c, prec-k) << k for c in L]
-        else:
-            return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
+        return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
 
     def polynomial(self, var='x'):
         """
@@ -2585,7 +2584,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         return ZZ_pX_ConstTerm((<pAdicZZpXCRElement>self).unit)
 
-    def is_equal_to(self, right, absprec = None):
+    def is_equal_to(self, right, absprec=None):
         """
         Return whether this element is equal to ``right`` modulo ``self.uniformizer()^absprec``.
 
@@ -2703,7 +2702,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(rprec).x)
         return ans
 
-    def expansion(self, n = None, lift_mode = 'simple'):
+    def expansion(self, n=None, lift_mode='simple'):
         """
         Return a list giving a series representation of ``self``.
 
@@ -2823,7 +2822,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
-        :class:`IntegerMod` elements, defined modulo `p^{N / e}` where `N` is
+        :func:`~sage.rings.finite_rings.integer_mod.IntegerMod` elements,
+        defined modulo `p^{N / e}` where `N` is
         the absolute precision of this element (unless this element is
         zero to arbitrary precision; in that case the entries are
         integer zeros.)
@@ -2877,7 +2877,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
-#     def matrix(self, base = None):
+#     def matrix(self, base=None):
 #         """
 #         If base is None, return the matrix of right multiplication by
 #         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
@@ -2915,7 +2915,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return a list [`a_0`, `a_1`,..., `a_n`] such that:
 
@@ -2978,7 +2978,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             v = self._new_c(rp)
         cdef pAdicZZpXCRElement u = self.unit_part()
         cdef long goal
-        if n is not None: goal = rp - n + self.ordp
+        if n is not None:
+            goal = rp - n + self.ordp
         while u.relprec > 0:
             v = self._new_c(rp)
             self.prime_pow.teichmuller_set_c(&v.unit, &u.unit, rp)
@@ -2987,11 +2988,13 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.unit, u.unit, v.unit)
             u.relprec = -u.relprec
             u._normalize()
-            if u.relprec == 0: break
+            if u.relprec == 0:
+                break
             rp -= 1
             u.ordp -= 1
             while u.ordp > 0:
@@ -3060,7 +3063,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         else:
             self.prime_pow.teichmuller_set_c(&self.unit, &self.unit, self.relprec)
 
-#    def padded_list(self, n, lift_mode = 'simple'):
+#    def padded_list(self, n, lift_mode='simple'):
 #        """
 #        Return a list of coefficients of pi starting with `pi^0` up to
 #        `pi^n` exclusive (padded with zeros if needed)
@@ -3130,7 +3133,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.relprec)
         return ans
 
-#    def residue(self, n = 1):
+#    def residue(self, n=1):
 #        """
 #        Reduces this element modulo pi^n.
 #        """

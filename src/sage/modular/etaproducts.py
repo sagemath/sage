@@ -31,6 +31,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from __future__ import annotations
+from typing import Any
 
 from sage.arith.misc import divisors, prime_divisors, euler_phi, is_square, gcd
 from sage.categories.groups import Groups
@@ -52,7 +53,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 import weakref
 
-_cache = {}
+_cache: dict[int, Any] = {}
 
 
 def EtaGroup(level):
@@ -83,7 +84,7 @@ def EtaGroup(level):
 
 class EtaGroupElement(Element):
 
-    def __init__(self, parent, rdict):
+    def __init__(self, parent, rdict) -> None:
         r"""
         Create an eta product object. Usually called implicitly via
         EtaGroup_class.__call__ or the EtaProduct factory function.
@@ -107,10 +108,10 @@ class EtaGroupElement(Element):
 
         if rdict == 1:
             rdict = {}
+
         # Check Ligozat criteria
         sumR = sumDR = sumNoverDr = 0
         prod = 1
-
         for d in list(rdict):
             if N % d:
                 raise ValueError("%s does not divide %s" % (d, N))
@@ -120,7 +121,7 @@ class EtaGroupElement(Element):
                 continue
             sumR += rdict[d]
             sumDR += rdict[d] * d
-            sumNoverDr += rdict[d] * N / d
+            sumNoverDr += rdict[d] * (N // d)
             prod *= (N // d)**rdict[d]
 
         if sumR != 0:
@@ -202,7 +203,7 @@ class EtaGroupElement(Element):
         """
         return not self._rdict
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -418,7 +419,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Create the group of eta products of a given level, which must be a
         positive integer.
@@ -541,8 +542,8 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         for di in divs:
             # generate a row of relation matrix
             row = [Mod(di, 24) - Mod(N, 24), Mod(N // di, 24) - Mod(1, 24)]
-            for p in primedivs:
-                row.append(Mod(12 * (N // di).valuation(p), 24))
+            row.extend(Mod(12 * (N // di).valuation(p), 24)
+                       for p in primedivs)
             rows.append(row)
 
         M = matrix(IntegerModRing(24), rows)
@@ -556,7 +557,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             good_vects.append((vect * 24 / gcd(nf, 24)).list())
         for v in good_vects:
             v.append(-sum(list(v)))
-        dicts = []
+        dicts: list[dict] = []
         for v in good_vects:
             dicts.append({})
             for i in range(s):
@@ -564,8 +565,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             dicts[-1][N] = v[-1]
         if reduce:
             return self.reduce_basis([self(d) for d in dicts])
-        else:
-            return [self(d) for d in dicts]
+        return [self(d) for d in dicts]
 
     def reduce_basis(self, long_etas) -> list:
         r"""
@@ -661,7 +661,7 @@ def EtaProduct(level, dic) -> EtaGroupElement:
     return EtaGroup(level)(dic)
 
 
-def num_cusps_of_width(N, d) -> Integer:
+def n_cusps_of_width(N, d) -> Integer:
     r"""
     Return the number of cusps on `X_0(N)` of width ``d``.
 
@@ -673,13 +673,21 @@ def num_cusps_of_width(N, d) -> Integer:
 
     EXAMPLES::
 
-        sage: from sage.modular.etaproducts import num_cusps_of_width
-        sage: [num_cusps_of_width(18,d) for d in divisors(18)]
+        sage: from sage.modular.etaproducts import n_cusps_of_width
+        sage: [n_cusps_of_width(18,d) for d in divisors(18)]
         [1, 1, 2, 2, 1, 1]
-        sage: num_cusps_of_width(4,8)
+        sage: n_cusps_of_width(4,8)
         Traceback (most recent call last):
         ...
         ValueError: N and d must be positive integers with d|N
+
+    TESTS:
+
+    The old method name is kept as an alias::
+
+        sage: from sage.modular.etaproducts import num_cusps_of_width
+        sage: [num_cusps_of_width(6,d) for d in divisors(6)]
+        [1, 1, 1, 1]
     """
     N = ZZ(N)
     d = ZZ(d)
@@ -689,9 +697,12 @@ def num_cusps_of_width(N, d) -> Integer:
     return euler_phi(d.gcd(N // d))
 
 
+num_cusps_of_width = n_cusps_of_width
+
+
 def AllCusps(N) -> list:
     r"""
-    Return a list of CuspFamily objects corresponding to the cusps of
+    Return a list of :class:`CuspFamily` objects corresponding to the cusps of
     `X_0(N)`.
 
     INPUT:
@@ -713,12 +724,12 @@ def AllCusps(N) -> list:
 
     c = []
     for d in divisors(N):
-        n = num_cusps_of_width(N, d)
+        n = n_cusps_of_width(N, d)
         if n == 1:
             c.append(CuspFamily(N, d))
         elif n > 1:
-            for i in range(n):
-                c.append(CuspFamily(N, d, label=str(i + 1)))
+            c.extend(CuspFamily(N, d, label=str(i + 1))
+                     for i in range(n))
     return c
 
 
@@ -727,7 +738,7 @@ class CuspFamily(SageObject):
     r"""
     A family of elliptic curves parametrising a region of `X_0(N)`.
     """
-    def __init__(self, N, width, label=None):
+    def __init__(self, N, width, label=None) -> None:
         r"""
         Create the cusp of width d on X_0(N) corresponding to the family
         of Tate curves `(\CC_p/q^d, \langle \zeta q\rangle)`.
@@ -750,9 +761,9 @@ class CuspFamily(SageObject):
         self._width = width
         if N % width:
             raise ValueError("bad width")
-        if num_cusps_of_width(N, width) > 1 and label is None:
-            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (num_cusps_of_width(N, width), width, N))
-        if num_cusps_of_width(N, width) == 1 and label is not None:
+        if n_cusps_of_width(N, width) > 1 and label is None:
+            raise ValueError("there are %s > 1 cusps of width %s on X_0(%s): specify a label" % (n_cusps_of_width(N, width), width, N))
+        if n_cusps_of_width(N, width) == 1 and label is not None:
             raise ValueError("there is only one cusp of width %s on X_0(%s): no need to specify a label" % (width, N))
         self.label = label
 
@@ -848,7 +859,7 @@ class CuspFamily(SageObject):
         """
         if self.width() == 1:
             return "(Inf)"
-        elif self.width() == self.level():
+        if self.width() == self.level():
             return "(0)"
         return "(c_{%s%s})" % (self.width(), ((self.label and ("," + self.label)) or ""))
 
@@ -1036,9 +1047,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     if verbose:
         print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 
-    rows = []
-    for j in range(qexp_terms):
-        rows.append([])
+    rows: list[list] = [[] for _ in range(qexp_terms)]
     for i in indices:
         func = (eta1**i[0] * eta2**i[1]).qexp(qexp_terms)
         for j in range(qexp_terms):

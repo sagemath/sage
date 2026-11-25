@@ -4,6 +4,9 @@ if [ -n "$SAGE_GMP_PREFIX" ]; then
    GMP_CONFIGURE="--with-extra-includes=$SAGE_GMP_PREFIX/include --with-extra-libs=$SAGE_GMP_PREFIX/lib"
 fi
 
+# Need std::auto_ptr removed in C++17
+export CXXFLAGS="$CXXFLAGS -std=c++11"
+
 sdh_configure --with-arithmetic=gmp \
               $GMP_CONFIGURE \
               --enable-shared=yes --enable-static=no

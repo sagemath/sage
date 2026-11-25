@@ -1,7 +1,9 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy format strings
 """
+
+
+from typing import Self
 
 
 class LazyFormat(str):
@@ -19,7 +21,7 @@ class LazyFormat(str):
 
     EXAMPLES:
 
-    Under normal circumstances, :class:`Lazyformat` strings behave as usual::
+    Under normal circumstances, :class:`LazyFormat` strings behave as usual::
 
         sage: from sage.misc.lazy_format import LazyFormat
         sage: LazyFormat("Got `%s`; expected a list")%3
@@ -82,7 +84,7 @@ class LazyFormat(str):
         AssertionError: ...
     """
 
-    def __mod__(self, args):
+    def __mod__(self, args) -> Self:
         """
         Bind the lazy format string with its parameters.
 
@@ -100,7 +102,7 @@ class LazyFormat(str):
         self._args = args
         return self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([iniconfig], [SAGE_PYTHON_PACKAGE_CHECK([iniconfig])])

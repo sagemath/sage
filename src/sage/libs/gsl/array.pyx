@@ -14,7 +14,7 @@ cdef class GSLDoubleArray:
         sage: a[:6:2]
         [0.0, 1.0, 1.0]
     """
-    def __init__(self, size_t n, size_t stride = 1, data = None):
+    def __init__(self, size_t n, size_t stride=1, data=None):
         """
         EXAMPLES::
 

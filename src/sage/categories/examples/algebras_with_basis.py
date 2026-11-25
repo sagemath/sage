@@ -1,14 +1,13 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat
 r"""
 Examples of algebras with basis
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -50,7 +49,8 @@ class FreeAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         """
         Return the empty word, which index the one of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -65,7 +65,7 @@ class FreeAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, w1, w2):
         r"""
         Product of basis elements, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         EXAMPLES::
 
@@ -74,7 +74,7 @@ class FreeAlgebra(CombinatorialFreeModule):
             sage: Words = A.basis().keys()
             sage: A.product_on_basis(Words("acb"), Words("cba"))
             B[word: acbcba]
-            sage: (a,b,c) = A.algebra_generators()
+            sage: a, b, c = A.algebra_generators()
             sage: a * (1-b)^2 * c
             B[word: abbc] - 2*B[word: abc] + B[word: ac]
         """

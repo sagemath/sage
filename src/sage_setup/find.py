@@ -19,13 +19,13 @@ Recursive Directory Contents
 
 import importlib.machinery
 import importlib.util
-
 import os
-
 from collections import defaultdict
 
-from sage.misc.package_dir import is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir
-from sage.misc.package_dir import read_distribution, SourceDistributionFilter
+from sage.misc.package_dir import SourceDistributionFilter, read_distribution
+from sage.misc.package_dir import (
+    is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir,
+)
 
 assert read_distribution  # unused in this file, re-export for compatibility
 
@@ -115,11 +115,6 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         sage: ['sage.ext_data.nbconvert.postprocess' in L for L in (py_packages, py_modules)]
         [False, False]
 
-    Filtering by distribution (distribution package)::
-
-        sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
-        ([], [], [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
-
     Benchmarking::
 
         sage: timeit('find_python_sources(SAGE_SRC)',         # random output
@@ -172,6 +167,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         os.chdir(cwd)
     return python_packages, python_modules, cython_modules
 
+
 def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
     """
     Find all Cython modules in the given source directory that belong to the
@@ -187,28 +183,6 @@ def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
       ``distributions``.
 
     OUTPUT: list of absolute paths to Cython files (``*.pyx``)
-
-    EXAMPLES::
-
-        sage: from sage.env import SAGE_SRC
-        sage: from sage_setup.find import filter_cython_sources
-        sage: cython_modules = filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])
-
-    Cython module relying on tdlib::
-
-        sage: any(f.endswith('sage/graphs/graph_decompositions/tdlib.pyx') for f in cython_modules)
-        True
-
-    Cython module not relying on tdlib::
-
-        sage: any(f.endswith('sage/structure/sage_object.pyx') for f in cython_modules)
-        False
-
-    Benchmarking::
-
-        sage: timeit('filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])', # random output
-        ....:        number=1, repeat=1)
-        1 loops, best of 1: 850 ms per loop
     """
     files: list[str] = []
     distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
@@ -220,6 +194,7 @@ def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
                 files.append(filepath)
 
     return files
+
 
 def _cythonized_dir(src_dir=None, editable_install=None):
     """
@@ -245,6 +220,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     """
     from importlib import import_module
     from pathlib import Path
+
     from sage.env import SAGE_ROOT, SAGE_SRC
     if editable_install is None:
         if src_dir is None:
@@ -257,8 +233,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     if editable_install:
         # Editable install: Cython generates files in the source tree
         return src_dir
-    else:
-        return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
+    return Path(SAGE_ROOT) / "build" / "pkgs" / "sagelib" / "src" / "build" / "cythonized"
 
 
 def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
@@ -342,6 +317,93 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
         os.chdir(cwd)
 
     return data_files
+
+
+def installed_files_by_module(site_packages, modules=('sage',)):
+    """
+    Find all currently installed files
+
+    INPUT:
+
+    - ``site_packages`` -- string. The root Python path where the Sage
+      library is being installed. If the path doesn't exist, returns
+      an empty dictionary.
+
+    - ``modules`` -- list/tuple/iterable of strings (default:
+      ``('sage',)``). The top-level directory name(s) in
+      ``site_packages``.
+
+    OUTPUT:
+
+    A dictionary whose keys are module names (``'sage.module.foo'``)
+    and values are list of corresponding file names
+    ``['sage/module/foo.py', 'sage/module/foo.pyc']`` relative to
+    ``site_packages``.
+
+    EXAMPLES::
+
+        sage: site_packages = os.path.dirname(os.path.dirname(os.path.dirname(sage.cpython.__file__)))
+        sage: from sage_setup.find import installed_files_by_module
+        sage: files_by_module = installed_files_by_module(site_packages)
+        sage: (f,) = files_by_module['sage.structure.sage_object']; f
+        'sage/structure/sage_object...'
+        sage: (f1, f2) = sorted(files_by_module['sage.structure'])
+        sage: f1
+        'sage/structure/__init__.py'
+        sage: f2
+        'sage/structure/....pyc'
+
+    This takes about 30ms with warm cache::
+
+        sage: timeit('installed_files_by_module(site_packages)',       # random output
+        ....:        number=1, repeat=1)
+        1 loops, best of 1: 29.6 ms per loop
+    """
+
+    module_files = defaultdict(set)
+    module_exts = get_extensions()
+
+    def add(module, filename, dirpath):
+        # Find the longest extension that matches the filename
+        best_ext = ''
+
+        for ext in module_exts:
+            if filename.endswith(ext) and len(ext) > len(best_ext):
+                best_ext = ext
+
+        if not best_ext:
+            return
+
+        base = filename[:-len(best_ext)]
+        filename = os.path.join(dirpath, filename)
+
+        if base != '__init__':
+            module += '.' + base
+
+        module_files[module].add(filename)
+
+        cache_filename = importlib.util.cache_from_source(filename)
+        if os.path.exists(cache_filename):
+            module_files[module].add(cache_filename)
+
+    cwd = os.getcwd()
+    try:
+        os.chdir(site_packages)
+    except OSError:
+        return module_files
+    try:
+        for module in modules:
+            for dirpath, dirnames, filenames in os.walk(module):
+                module_dir = '.'.join(dirpath.split(os.path.sep))
+
+                if os.path.basename(dirpath) == '__pycache__':
+                    continue
+
+                for filename in filenames:
+                    add(module_dir, filename, dirpath)
+    finally:
+        os.chdir(cwd)
+    return module_files
 
 
 def get_extensions(type=None):

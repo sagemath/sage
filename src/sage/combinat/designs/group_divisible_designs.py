@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.rings.finite_rings
 r"""
-Group-Divisible Designs (GDD)
+Group-divisible designs (GDD)
 
 This module gathers everything related to Group-Divisible Designs. The
 constructions defined here can be accessed through ``designs.<tab>``::
@@ -52,7 +52,7 @@ def group_divisible_design(v, K, G, existence=False, check=False):
     - `\mathcal G\cup \mathcal B` is a `(v,K\cup G)`-PBD
 
     For more information, see the documentation of
-    :class:`~sage.combinat.designs.incidence_structures.GroupDivisibleDesign` or
+    :class:`~sage.combinat.designs.group_divisible_designs.GroupDivisibleDesign` or
     :class:`~sage.combinat.designs.bibd.PairwiseBalancedDesign`.
 
     INPUT:
@@ -292,7 +292,7 @@ class GroupDivisibleDesign(IncidenceStructure):
 
         if check or groups is None:
             is_gdd = is_group_divisible_design(self._groups, self._blocks,
-                                               self.num_points(), G, K,
+                                               self.n_points(), G, K,
                                                lambd, verbose=1)
             assert is_gdd
             if groups is None:
@@ -331,8 +331,7 @@ class GroupDivisibleDesign(IncidenceStructure):
         """
         if self._point_to_index is None:
             return [list(g) for g in self._groups]
-        else:
-            return [[self._points[i] for i in g] for g in self._groups]
+        return [[self._points[i] for i in g] for g in self._groups]
 
     def __repr__(self):
         r"""
@@ -355,6 +354,6 @@ class GroupDivisibleDesign(IncidenceStructure):
         if not gdd_type:
             gdd_type = "1^0"
 
-        v = self.num_points()
+        v = self.n_points()
 
         return "Group Divisible Design on {} points of type {}".format(v, gdd_type)

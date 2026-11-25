@@ -1,5 +1,5 @@
 r"""
-Non-Decreasing Parking Functions
+Non-decreasing parking functions
 
 A *non-decreasing parking function* of size `n` is a non-decreasing
 function `f` from `\{1,\dots,n\}` to itself such that for all `i`, one
@@ -117,8 +117,7 @@ def NonDecreasingParkingFunctions(n=None):
     """
     if n is None:
         return NonDecreasingParkingFunctions_all()
-    else:
-        return NonDecreasingParkingFunctions_n(n)
+    return NonDecreasingParkingFunctions_n(n)
 
 
 def is_a(x, n=None) -> bool:
@@ -629,6 +628,5 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
             return
         for res in iterator_rec(self.n):
             yield NonDecreasingParkingFunction(res)
-        return
 
     Element = NonDecreasingParkingFunction

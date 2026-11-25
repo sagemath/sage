@@ -68,7 +68,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     a quadratic number field when possible.
 
     For more on creating Coxeter groups, see
-    :meth:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
+    :func:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
 
     .. TODO::
 
@@ -285,8 +285,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return E(2 * x) + ~E(2 * x)
+                return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
@@ -295,22 +294,20 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+                return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
                 if x == -1:
                     return 2
-                elif x == 1:
+                if x == 1:
                     return -2
-                elif x == 2:
+                if x == 2:
                     return 0
-                elif x == 3:
+                if x == 3:
                     return 1
-                else:
-                    from sage.functions.trig import cos
-                    from sage.symbolic.constants import pi
-                    return base_ring(2 * cos(pi / x))
+                from sage.functions.trig import cos
+                from sage.symbolic.constants import pi
+                return base_ring(2 * cos(pi / x))
         gens = [one + MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])
                 for i in range(n)]
@@ -417,7 +414,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         """
         return self._matrix.bilinear_form(self.base_ring().fraction_field())
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if this group is finite.
 
@@ -448,7 +445,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         # the category of ``self``.
         return "Finite" in self.category().axioms()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return whether ``self`` is commutative.
 
@@ -546,6 +543,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             [-1  1]  [ 0 -1]  [ 1  0]
             [ 0  1], [-1  0], [ 1 -1]
             ]
+
+        TESTS::
+
+            sage: W = CoxeterGroup(CoxeterType(['A', 2]).relabel({1: 'r', 2: 's'}))
+            sage: F = W._positive_roots_reflections()
+            sage: F.keys()
+            [(1, 0), (1, 1), (0, 1)]
+            sage: list(F)
+            [
+            [-1  1]  [ 0 -1]  [ 1  0]
+            [ 0  1], [-1  0], [ 1 -1]
+            ]
         """
         if not self.is_finite():
             raise NotImplementedError('not available for infinite groups')
@@ -557,13 +566,14 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         simple_roots = FreeModule(self.base_ring(), self.ngens()).gens()
 
         refls = self.simple_reflections()
+        refls_index = {refl_i[1]: refl_i[0] for refl_i in enumerate(refls.keys())}
         resu = []
         d = {}
         for i in range(1, N + 1):
             segment = word[:i]
             last = segment.pop()
             ref = refls[last]
-            rt = simple_roots[last - 1]
+            rt = simple_roots[refls_index[last]]
             while segment:
                 last = segment.pop()
                 cr = refls[last]
@@ -632,7 +642,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         norm.
 
         The positive roots are listed first, then the negative roots
-        in the same order. The order is the one given by :meth:`roots`.
+        in the same order. The order is the one given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -666,7 +677,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         Return the index of the simple root `\alpha_i`.
 
         This is the position of `\alpha_i` in the list of all roots
-        as given be :meth:`roots`.
+        as given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -721,7 +733,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         def first_descent(self, side='right', index_set=None, positive=False):
             """
             Return the first left (resp. right) descent of ``self``, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`descents` for a description of the options.
 
@@ -797,7 +809,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 return [I[i] for i in index_set if not _matrix_test_right_descent(M, i, n, zero)]
             return [I[i] for i in index_set if _matrix_test_right_descent(M, i, n, zero)]
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             r"""
             Return whether ``i`` is a right descent of ``self``.
 
@@ -851,7 +863,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             """
             Return the action on the set of roots.
 
-            The roots are ordered as in the output of the method :meth:`roots`.
+            The roots are ordered as in the output of the method
+            :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
             EXAMPLES::
 
@@ -908,6 +921,6 @@ def _matrix_test_right_descent(M, i, n, zero):
         c = M[j, i]
         if c < zero:
             return True
-        elif c > zero:
+        if c > zero:
             return False
     raise AssertionError('a zero column, so there must be a bug')

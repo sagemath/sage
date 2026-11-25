@@ -18,14 +18,14 @@ AUTHORS:
 - Ben Hutz (July 2017): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Ben Hutz <bn4941@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 
@@ -165,7 +165,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
         if domain is not None:
-            if isinstance(domain, AffineSpace_generic) or isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if isinstance(domain, (AffineSpace_generic,
+                                   AlgebraicScheme_subscheme_affine)):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
             if isinstance(domain, Berkovich_Cp):
@@ -312,13 +313,14 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         Given a family of maps defined over a polynomial ring. A
         specialization is a particular member of that family. The
         specialization can be specified either by a dictionary or
-        a :class:`SpecializationMorphism`.
+        a :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
         - ``D`` -- (optional) dictionary
 
-        - ``phi`` -- (optional) SpecializationMorphism
+        - ``phi`` -- (optional)
+          :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`
 
         - ``homset`` -- (optional) homset of specialized map
 
@@ -411,8 +413,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))
-            else:
-                return K
+            return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         f,g = ds[0].numerator(), ds[0].denominator()
@@ -424,19 +425,16 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         poly = (g*CR(f).derivative(x) - f*CR(g).derivative(x)).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ,ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K
 
     def field_of_definition_periodic(self, n, formal=False, return_embedding=False, simplify_all=False, names='a'):
         r"""
@@ -530,8 +528,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))
-            else:
-                return K
+            return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         CR = space.coordinate_ring()
@@ -548,19 +545,16 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             poly = (f - g*x).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ,ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K
 
     def field_of_definition_preimage(self, point, n, return_embedding=False, simplify_all=False, names='a'):
         r"""
@@ -646,16 +640,13 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         poly = (f*point[1] - g*CR(point[0])).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ, ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ, ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K

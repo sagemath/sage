@@ -1,6 +1,7 @@
-# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
+
+.. automethod:: sage.categories.category_types::Category_over_base._test_category_over_bases
 
 This is placed in a separate file from categories.py to avoid circular imports
 (as morphisms must be very low in the hierarchy with the new coercion model).
@@ -202,12 +203,13 @@ class Category_over_base(CategoryWithParameters):
         """
         tester = self._tester(**options)
         from sage.categories.category_singleton import Category_singleton
-
+        from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
         from .bimodules import Bimodules
         from .schemes import Schemes
         for cat in self.super_categories():
             tester.assertTrue(isinstance(cat, (Category_singleton, Category_over_base,
-                                            Bimodules, Schemes)),
+                                               CategoryWithAxiom_over_base_ring,
+                                               Bimodules, Schemes)),
                            "The super categories of a category over base should"
                            " be a category over base (or the related Bimodules)"
                            " or a singleton category")
@@ -228,11 +230,9 @@ class Category_over_base(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-             and Category of euclidean domains
+            Join of Category of euclidean domains
              and Category of noetherian rings
-             and Category of infinite enumerated sets
-             and Category of metric spaces
+             and Category of infinite enumerated sets and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
             Join of Category of number fields
              and Category of quotient fields
@@ -323,8 +323,7 @@ class Category_over_base(CategoryWithParameters):
 #         from sage.categories.homset import Homset, HomsetWithBase
 #         if X._base is not X and X._base is not None: # does this ever fail?
 #             return HomsetWithBase(X, Y, self)
-#         else:
-#             return Homset(X, Y, self)
+#         return Homset(X, Y, self)
 
 #############################################################
 # Category of objects over some base ring
@@ -332,7 +331,7 @@ class Category_over_base(CategoryWithParameters):
 
 
 class AbelianCategory(Category):
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` as ``self`` is an abelian category.
 
@@ -458,7 +457,7 @@ class Category_over_base_ring(Category_over_base):
             ....:            VectorSpaces(GF(3)).parent_class)
             True
 
-        Check that :issue:`16618` is fixed: this `_subcategory_hook_`
+        Check that :issue:`16618` is fixed: this ``_subcategory_hook_``
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 
@@ -491,7 +490,7 @@ class Category_over_base_ring(Category_over_base):
             return C.base() in base_ring
         return False
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is an object of this category.
 
@@ -522,10 +521,8 @@ class Category_over_base_ring(Category_over_base):
                issubclass(x.category().parent_class, self.parent_class):
                 if isinstance(self.base(), Category):
                     return True
-                else:
-                    return x.base_ring() is self.base_ring()
-            else:
-                return super().__contains__(x)
+                return x.base_ring() is self.base_ring()
+            return super().__contains__(x)
         except AttributeError:
             return False
 
@@ -605,7 +602,7 @@ class Category_ideal(Category_in_ambient):
         """
         return self.ambient()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

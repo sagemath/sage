@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy strings
 
@@ -25,13 +24,13 @@ Note that the function is recomputed each time::
     l'2'
 """
 
-#Copyright (c) 2009 by Armin Ronacher.
+# Copyright (c) 2009 by Armin Ronacher.
 #
-#Some rights reserved.
+# Some rights reserved.
 #
-#Redistribution and use in source and binary forms, with or without
-#modification, are permitted provided that the following conditions are
-#met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
 #    * Redistributions of source code must retain the above copyright
 #      notice, this list of conditions and the following disclaimer.
@@ -45,17 +44,17 @@ Note that the function is recomputed each time::
 #      promote products derived from this software without specific
 #      prior written permission.
 #
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-#"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-#LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-#A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-#OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-#DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-#THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
@@ -341,8 +340,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() + other
-        else:
-            return self + (<_LazyString>other).val()
+        return self + (<_LazyString>other).val()
 
     def __mod__(self, other):
         """
@@ -361,8 +359,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() % other
-        else:
-            return self % (<_LazyString>other).val()
+        return self % (<_LazyString>other).val()
 
     def __mul__(self, other):
         """
@@ -378,8 +375,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() * other
-        else:
-            return self * (<_LazyString>other).val()
+        return self * (<_LazyString>other).val()
 
     def __richcmp__(_LazyString self, other, int op):
         """
@@ -520,7 +516,6 @@ cdef class _LazyString():
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.misc.lazy_string import lazy_string
             sage: def f(op, A, B):
             ....:     return "unsupported operand parent(s) for %s: '%s' and '%s'" % (op, A, B)
@@ -532,12 +527,12 @@ cdef class _LazyString():
 
         Apparently, the lazy string got changed in-place::
 
-            sage: D                                                                     # needs sage.rings.finite_rings
+            sage: D
             l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 
-            sage: D.update_lazy_string(None, None)                                      # needs sage.rings.finite_rings
+            sage: D.update_lazy_string(None, None)
             Traceback (most recent call last):
             ...
             TypeError: Expected tuple, got NoneType

@@ -460,7 +460,7 @@ cdef class RelaxedElement(pAdicGenericElement):
 
         .. SEEALSO::
 
-            :meth:`digit`, :meth:`slice`
+            ``digit``, ``slice``
 
         TESTS::
 
@@ -1570,8 +1570,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             ans = element_get_sage(digits, self.prime_pow) * self.prime_pow(self._valuation)
         if field and absprec == 1:
             return self._parent.residue_class_field()(ans)
-        else:
-            return self._parent.residue_ring(absprec)(ans)
+        return self._parent.residue_ring(absprec)(ans)
 
     def lift(self, absprec=None):
         r"""
@@ -1659,15 +1658,14 @@ cdef class RelaxedElement(pAdicGenericElement):
             964*997^4 + 572*997^5 + 124*997^6 + ...
         """
         cdef long start
-        cdef long shift = long(s)
+        cdef long shift = s
         if shift:
             if (<RelaxedElement>self)._parent.is_field():
                 start = -maxordp
             else:
                 start = shift
             return element_class_slice((<pAdicRelaxedElement>self)._parent, self, start, maxordp, shift)
-        else:
-            return self
+        return self
 
     def __lshift__(self, s):
         r"""
@@ -1817,8 +1815,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         if isinstance(other, RelaxedElement_one):
             if self.prime_pow.in_field:
                 return self
-            else:
-                return element_class_bound(self._parent.fraction_field(), self)
+            return element_class_bound(self._parent.fraction_field(), self)
         return element_class_div(self._parent.fraction_field(), self, <RelaxedElement>other, -maxordp)
 
     def __invert__(self):
@@ -1918,8 +1915,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         if self.prime_pow.in_field:
             return element_class_div(self._parent, self._parent.one(), self, -maxordp)
-        else:
-            return element_class_div(self._parent, self._parent.one(), self, 0)
+        return element_class_div(self._parent, self._parent.one(), self, 0)
 
     def sqrt(self):
         r"""
@@ -2750,8 +2746,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
         cdef long j = i + self._shift
         if j < self._start or j >= self._stop:
             return digit_zero
-        else:
-            return self._x._getdigit_absolute(j)
+        return self._x._getdigit_absolute(j)
 
     cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""

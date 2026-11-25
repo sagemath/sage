@@ -70,9 +70,11 @@ from sage.plot.plot3d.transform cimport Transformation
 
 cdef inline format_tachyon_texture(color_c rgb):
     cdef char rs[200]
-    cdef Py_ssize_t cr = sprintf_3d(rs,
-                                   "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
-                                   rgb.r, rgb.g, rgb.b)
+    cdef Py_ssize_t cr = sprintf_3d(
+        rs,
+        "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
+        rgb.r, rgb.g, rgb.b
+    )
     return bytes_to_str(PyBytes_FromStringAndSize(rs, cr))
 
 
@@ -83,7 +85,7 @@ cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
                                    "TRI V0 %g %g %g V1 %g %g %g V2 %g %g %g",
                                    P.x, P.y, P.z,
                                    Q.x, Q.y, Q.z,
-                                   R.x, R.y, R.z )
+                                   R.x, R.y, R.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 
@@ -93,8 +95,7 @@ cdef inline format_json_vertex(point_c P):
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 cdef inline format_json_face(face_c face):
-    s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
-    return s
+    return "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
 
 cdef inline format_obj_vertex(point_c P):
     cdef char ss[100]
@@ -571,7 +572,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                         face = faces[j]
                         point_counts[i] -= 1
                         if j != point_counts[i]:
-                            faces[j] = faces[point_counts[i]] # swap
+                            faces[j] = faces[point_counts[i]]  # swap
                             faces[point_counts[i]] = face
                 if any:
                     ix += 1
@@ -582,7 +583,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                 except MemoryError:
                     sig_free(point_counts)
                     sig_free(point_faces)
-                    self.vcount = self.fcount = self.icount = 0 # so we don't get segfaults on bad points
+                    self.vcount = self.fcount = self.icount = 0  # so we don't get segfaults on bad points
                     sig_off()
                     raise
                 ix = self.vcount
@@ -661,7 +662,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                  for j in range(self._faces[i].n)]
                 for i in range(self.fcount)]
 
-    def has_local_colors(self):
+    def has_local_colors(self) -> bool:
         """
         Return ``True`` if and only if every face has an individual color.
 
@@ -682,7 +683,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S.has_local_colors()
             False
         """
-        return not(self.global_texture)
+        return not self.global_texture
 
     def index_faces_with_colors(self):
         """
@@ -868,25 +869,23 @@ cdef class IndexFaceSet(PrimitiveObject):
         points = ",".join("%r %r %r" % (vs[i].x, vs[i].y, vs[i].z)
                           for i in range(self.vcount))
         coord_idx = ",-1,".join(",".join(repr(fs[i].vertices[j])
-                                          for j in range(fs[i].n))
+                                         for j in range(fs[i].n))
                                 for i in range(self.fcount))
         if not self.global_texture:
             color_idx = ",".join('%r %r %r' % (fs[i].color.r, fs[i].color.g, fs[i].color.b)
                                  for i in range(self.fcount))
-            # Note: Don't use f-strings, since Sage on Python 2 still expects
-            # this to return a plain str instead of a unicode
-            return dedent("""
+            return dedent(f"""
                 <IndexedFaceSet solid='False' colorPerVertex='False' coordIndex='{coord_idx},-1'>
                   <Coordinate point='{points}'/>
                   <Color color='{color_idx}' />
                 </IndexedFaceSet>
-            """.format(coord_idx=coord_idx, points=points, color_idx=color_idx))
+            """)
 
-        return dedent("""
+        return dedent(f"""
             <IndexedFaceSet coordIndex='{coord_idx},-1'>
               <Coordinate point='{points}'/>
             </IndexedFaceSet>
-        """.format(coord_idx=coord_idx, points=points))
+        """)
 
     def bounding_box(self):
         r"""
@@ -907,7 +906,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             ((0.0, 0.0, 0.0), (6.283185307179586, 6.283185307179586, 0.9991889981715697))
         """
         if self.vcount == 0:
-            return ((0,0,0),(0,0,0))
+            return ((0, 0, 0), (0, 0, 0))
 
         cdef Py_ssize_t i
         cdef point_c low
@@ -963,7 +962,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             count[0] += 1
             count[1] += face.n
         all = {}
-        for part, count in part_counts.iteritems():
+        for part, count in part_counts.items():
             face_set = IndexFaceSet([])
             face_set.realloc(self.vcount, count[0], count[1])
             memcpy(face_set.vs, self.vs, sizeof(point_c) * self.vcount)
@@ -1012,7 +1011,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: var('x,y,z')                                                          # needs sage.symbolic
             (x, y, z)
             sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))                       # needs sage.symbolic
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return bool(x*x+y*y+z*z <= Integer(1))
             sage: R = P.add_condition(condi, 20); R                                     # needs sage.symbolic
             Graphics3d Object
@@ -1021,13 +1020,13 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))
-            def condi(x,y,z):
+            def condi(x, y, z):
                 return bool(x*x+y*y+z*z <= Integer(1))
             sphinx_plot(P.add_condition(condi,40))
 
         An example with colors::
 
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return bool(x*x+y*y <= 1.1)
             sage: cm = colormaps.hsv
             sage: cf = lambda x,y,z: float(x+y) % 1
@@ -1039,7 +1038,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         .. PLOT::
 
             x,y,z = var('x,y,z')
-            def condi(x,y,z):
+            def condi(x, y, z):
                 return bool(x*x+y*y <= 1.1)
             cm = colormaps.hsv
             cf = lambda x,y,z: float(x+y) % 1
@@ -1050,7 +1049,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),   # needs sage.symbolic
             ....:                     alpha=0.3)
-            sage: def cut(a,b,c):
+            sage: def cut(a, b, c):
             ....:     return a*a+c*c > 2
             sage: Q = P.add_condition(cut,40); Q                                        # needs sage.symbolic
             Graphics3d Object
@@ -1059,7 +1058,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
-            def cut(a,b,c):
+            def cut(a, b, c):
                 return a*a+c*c > 2
             sphinx_plot(P.add_condition(cut,40))
 
@@ -1067,7 +1066,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),       # needs sage.symbolic
             ....:            color='gold')
-            sage: def cut(x,y,z):
+            sage: def cut(x, y, z):
             ....:     return x*x+y*y < 1
             sage: Q = P.add_condition(cut);Q                                            # needs sage.symbolic
             Graphics3d Object
@@ -1076,7 +1075,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),color='gold')
-            def cut(x,y,z):
+            def cut(x, y, z):
                 return x*x+y*y < 1
             sphinx_plot(P.add_condition(cut))
 
@@ -1087,7 +1086,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: P = plot3d(cos(x*y),(x,-2,2),(y,-2,2),color='red',opacity=0.1)
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return not(x*x+y*y <= 1)
             sage: Q = P.add_condition(condi, 40)
             sage: L = Q.json_repr(Q.default_render_params())
@@ -1097,7 +1096,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         A test that this works with polygons::
 
             sage: p = polygon3d([[2,0,0], [0,2,0], [0,0,3]])
-            sage: def f(x,y,z):
+            sage: def f(x, y, z):
             ....:     return bool(x*x+y*y+z*z<=5)
             sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()                  # needs sage.symbolic
             [[(0.556128491210302, 0.0, 2.165807263184547),
@@ -1308,7 +1307,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         opacity = float(self._extra_kwds.get('opacity', 1))
 
         if self.global_texture:
-            color_str = '"#{}"'.format(self.texture.hex_rgb())
+            color_str = f'"#{self.texture.hex_rgb()}"'
             json = ['{{"vertices":{}, "faces":{}, "color":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
         else:
@@ -1646,7 +1645,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         dual.realloc(self.fcount, self.vcount, self.icount)
 
         # is using dicts overly-heavy?
-        dual_faces = [{} for i in range(self.vcount)]
+        dual_faces = [{} for _ in range(self.vcount)]
 
         for i in range(self.fcount):
             sig_check()
@@ -1676,10 +1675,10 @@ cdef class IndexFaceSet(PrimitiveObject):
             sig_check()
             face = &dual._faces[i]
             face.n = len(dd)
-            if face.n == 0: # skip unused vertices
+            if face.n == 0:  # skip unused vertices
                 continue
             face.vertices = &dual.face_indices[ix]
-            ff, next_ = next(iter(dd.itervalues()))
+            ff, next_ = next(iter(dd.values()))
             face.vertices[0] = ff
             for j in range(1, face.n):
                 ff, next_ = dd[next_]

@@ -58,7 +58,8 @@ from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber
 from sage.rings.real_mpfi cimport RealIntervalFieldElement
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen cimport Gen as pari_gen
 from sage.structure.factorization import Factorization
 from sage.structure.element import coerce_binop
 
@@ -157,8 +158,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: PolynomialRing(ZZ, 'x', implementation='NTL')({sys.maxsize>>1: 1})
             Traceback (most recent call last):
             ...
-            OverflowError: Dense NTL integer polynomials have a maximum degree of 268435455    # 32-bit
-            OverflowError: Dense NTL integer polynomials have a maximum degree of 1152921504606846975    # 64-bit
+            OverflowError: Dense NTL integer polynomials have a maximum degree of ...
+
         """
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
@@ -618,7 +619,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         since they need not exist.  Instead, over the integers, we
         first multiply `g` by a divisor of the resultant of `a/g` and
         `b/g`, up to sign, and return ``g, u, v`` such that
-        ``g = s*self + s*right``.  But note that this `g` may be a
+        ``g = u*self + v*right``.  But note that this `g` may be a
         multiple of the gcd.
 
         If ``self`` and ``right`` are coprime as polynomials over the

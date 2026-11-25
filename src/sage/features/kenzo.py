@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``kenzo``
 """
@@ -17,6 +16,7 @@ Feature for testing the presence of ``kenzo``
 
 
 from . import Feature, FeatureTestResult
+
 
 class Kenzo(Feature):
     r"""

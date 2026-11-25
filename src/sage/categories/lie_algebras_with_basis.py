@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lie Algebras With Basis
 
@@ -92,7 +91,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             underlying `R`-module of ``self``.
 
             See
-            :meth:`sage.categories.lie_algebras.LieAlgebras.module` for
+            :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module` for
             an explanation.
 
             EXAMPLES::
@@ -116,7 +115,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Implement this if you implement :meth:`module`; see the
             documentation of
-            :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::
@@ -204,7 +203,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ``self``).
 
             Implement this if you implement ``g.module()``.
-            See :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            See :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::

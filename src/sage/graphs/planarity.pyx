@@ -1,9 +1,8 @@
-# distutils: libraries = planarity
 """
 Wrapper for Boyer's (C) planarity algorithm
 """
 
-cdef extern from "planarity/graph.h":
+cdef extern from "planarity-compat.h":
     ctypedef struct vertexRec:
         int link[2]
         int index
@@ -24,13 +23,13 @@ cdef extern from "planarity/graph.h":
 
     cdef graphP gp_New()
     cdef void gp_Free(graphP *pGraph)
-    cdef int gp_InitGraph(graphP theGraph, int N)
+    cdef int gp_EnsureVertexCapacity(graphP theGraph, int N)
     cdef int gp_AddEdge(graphP theGraph, int u, int ulink, int v, int vlink)
     cdef int gp_Embed(graphP theGraph, int embedFlags)
     cdef int gp_SortVertices(graphP theGraph)
 
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, immutable=None):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -54,6 +53,11 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     - ``set_embedding`` -- boolean (default: ``False``); whether to record the
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that
+      the graph and the Kuratowski subgraph will behave the same way.
+      This parameter is ignored when ``kuratowski=False``.
 
     EXAMPLES::
 
@@ -94,6 +98,21 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
             ....:     assert is_planar(G, set_embedding=set_embedding, set_pos=set_pos)
             ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.is_planar(kuratowski=True)
+        (False, Kuratowski subgraph of (Petersen graph): Graph on 9 vertices)
+        sage: G.is_planar(kuratowski=True)[1].is_immutable()
+        False
+        sage: G.is_planar(kuratowski=True, immutable=True)[1].is_immutable()
+        True
+        sage: G = G.copy(immutable=True)
+        sage: G.is_planar(kuratowski=True)[1].is_immutable()
+        True
+        sage: G.is_planar(kuratowski=True, immutable=False)[1].is_immutable()
+        False
     """
     g._scream_if_not_simple()
     if set_pos and not g.is_connected():
@@ -124,9 +143,9 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     cdef graphP theGraph
     theGraph = gp_New()
     cdef int status
-    status = gp_InitGraph(theGraph, g.order())
+    status = gp_EnsureVertexCapacity(theGraph, g.order())
     if status != OK:
-        raise RuntimeError("gp_InitGraph status is not ok")
+        raise RuntimeError("gp_EnsureVertexCapacity status is not ok")
     for u, v in g.edge_iterator(labels=False):
         status = gp_AddEdge(theGraph, ffrom[u], 0, ffrom[v], 0)
         if status == NOTOK:
@@ -137,7 +156,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
                 gp_Free(&theGraph)
                 return False
             # With just the current edges, we have a nonplanar graph,
-            # so to isolate a kuratowski subgraph, just keep going.
+            # so to isolate a Kuratowski subgraph, just keep going.
             break
 
     status = gp_Embed(theGraph, EMBEDFLAGS_PLANAR)
@@ -161,11 +180,14 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
                 j = theGraph.E[j].link[1]
             if linked_list:
                 g_dict[to[i]] = linked_list
+        if immutable is None:
+            immutable = g.is_immutable()
         gp_Free(&theGraph)
         G = g.__class__(data=g_dict, weighted=g._weighted,
                         loops=g.allows_loops(),
                         multiedges=g.allows_multiple_edges(),
-                        name="Kuratowski subgraph of (%s)" % g.name())
+                        name="Kuratowski subgraph of (%s)" % g.name(),
+                        immutable=immutable)
         if g.get_pos():
             G.set_pos({u: g._pos[u] for u in g_dict})
         return (False, G)

@@ -255,7 +255,7 @@ def function(s, **kwds):
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds): print("{} {}".format(args, kwds)); return args[kwds['diff_param']]^2
+        sage: def deriv(self, *args, **kwds): print("{} {}".format(args, kwds)); return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)
         sage: foo(x,y).derivative(y)
         (x, y) {'diff_param': 1}
@@ -324,7 +324,8 @@ def function(s, **kwds):
         sage: 2*f(x)
         2*f(x)
 
-    Since Sage 4.0, you need to use :meth:`substitute_function` to
+    Since Sage 4.0, you need to use
+    :meth:`~sage.symbolic.expression.Expression.substitute_function` to
     replace all occurrences of a function with another::
 
         sage: var('a, b')

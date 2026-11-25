@@ -38,11 +38,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.structure.mutability import Mutability
+from sage.manifolds.differentiable.vector_bundle import DifferentiableVectorBundle
 from sage.rings.integer import Integer
-from sage.manifolds.differentiable.vector_bundle import \
-    DifferentiableVectorBundle
+from sage.structure.mutability import Mutability
+from sage.structure.sage_object import SageObject
 
 
 class BundleConnection(SageObject, Mutability):
@@ -1119,9 +1118,8 @@ class BundleConnection(SageObject, Mutability):
             if indices.start is None and indices.stop is None:
                 return [[self.connection_form(i, j, frame=frame)
                          for j in vb.irange()] for i in vb.irange()]
-            else:
-                raise NotImplementedError("[start:stop] syntax not "
-                                          "implemented")
+            raise NotImplementedError("[start:stop] syntax not "
+                                      "implemented")
         if len(indices) != 2:
             raise ValueError("index must be a pair of integers")
         (i, j) = indices

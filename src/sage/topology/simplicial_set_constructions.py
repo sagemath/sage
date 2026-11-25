@@ -346,7 +346,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = PullbackOfSimplicialSets_finite([f.n_skeleton(n) for f in self._maps])
         self._n_skeleton = (n, ans)
@@ -910,7 +910,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = n_skel(ProductOfSimplicialSets_finite([X.n_skeleton(n) for X in self._factors]), n)
         self._n_skeleton = (n, ans)
@@ -1329,7 +1329,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = PushoutOfSimplicialSets_finite([f.n_skeleton(n) for f in self._maps],
                                              vertex_name=self._vertex_name)
@@ -1818,7 +1818,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ambient = self.ambient().n_skeleton(n)
         subcomplex = ambient.subsimplicial_set(self.subcomplex().nondegenerate_simplices(n))
@@ -2268,7 +2268,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = DisjointUnionOfSimplicialSets_finite(tuple([X.n_skeleton(n)
                                                           for X in self._factors]))
@@ -2430,7 +2430,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = ConeOfSimplicialSet_finite(self._base.n_skeleton(n)).n_skeleton(n)
         self._n_skeleton = (n, ans)
@@ -2621,7 +2621,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = ReducedConeOfSimplicialSet_finite(self._base.n_skeleton(n)).n_skeleton(n)
         self._n_skeleton = (n, ans)
@@ -2815,7 +2815,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
         ans = SuspensionOfSimplicialSet_finite(self._base.n_skeleton(n)).n_skeleton(n)
         self._n_skeleton = (n, ans)
@@ -2864,8 +2864,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
             exp = '^{}'
         if idx > 1:
             return ('{}' + exp + '({})').format(symbol, idx, base)
-        else:
-            return ('{}({})').format(symbol, base)
+        return ('{}({})').format(symbol, base)
 
     def _repr_(self):
         r"""

@@ -1,6 +1,5 @@
 from sage.matroids.matroid cimport Matroid
 
-
 cdef class MatroidUnion(Matroid):
     cdef list matroids
     cdef frozenset _groundset

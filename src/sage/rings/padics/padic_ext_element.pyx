@@ -377,7 +377,8 @@ cdef class pAdicExtElement(pAdicGenericElement):
         R = self.parent()
         if R.absolute_e() != 1:
             raise NotImplementedError("Frobenius automorphism only implemented for unramified extensions")
-        if self.is_zero(): return self
+        if self.is_zero():
+            return self
         L = self.teichmuller_expansion()
         ppow = R.uniformizer_pow(self.valuation())
         if arithmetic:
@@ -385,7 +386,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         else:
             exp = R.prime()**(R.absolute_degree()-1)
         ans = ppow * L[0]**exp
-        for m in range(1,len(L)):
+        for m in range(1, len(L)):
             ppow = ppow << 1
             ans += ppow * L[m]**exp
         return ans
@@ -440,7 +441,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         Unramified case::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -465,7 +465,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: K = Qp(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -474,7 +473,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
             ...
             ValueError: element must have nonnegative valuation in order to compute residue
 
-            sage: # needs sage.libs.flint
             sage: R = ZpFM(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 3)
@@ -504,7 +502,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         if absprec == 0:
             from sage.rings.finite_rings.integer_mod import Mod
-            return Mod(0,1)
+            return Mod(0, 1)
         elif absprec == 1:
             return R.residue_field()(self.expansion(0))
         else:

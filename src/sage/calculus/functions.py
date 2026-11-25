@@ -137,14 +137,27 @@ def jacobian(functions, variables):
         [    x^3*cos(y)   3*x^2*sin(y)]
         [ cos(x)*cos(y) -sin(x)*sin(y)]
         [             0            e^x]
+
+    We verify Alpoge's counterexample to the Jacobian conjecture::
+
+        sage: x,y,z = var('x,y,z')
+        sage: l = [(1+x*y)^3*z + y^2*(1+x*y)*(4+3*x*y), y+3*x*(1+x*y)^2*z + 3*x*y^2*(4+3*x*y), 2*x-3*x^2*y-x^3*z]
+        sage: M = jacobian(l, (x,y,z))
+        sage: M.det().expand()
+        -2
+        sage: [f(x=0,y=0,z=-1/4) for f in l]
+        [-1/4, 0, 0]
+        sage: [f(x=1,y=-3/2,z=13/2) for f in l]
+        [-1/4, 0, 0]
+
     """
     if isinstance(functions, Matrix) and (functions.nrows() == 1
-                                 or functions.ncols() == 1):
+                                          or functions.ncols() == 1):
         functions = functions.list()
-    elif not (isinstance(functions, (tuple, list)) or isinstance(functions, Vector)):
+    elif not isinstance(functions, (tuple, list, Vector)):
         functions = [functions]
 
-    if not isinstance(variables, (tuple, list)) and not isinstance(variables, Vector):
+    if not isinstance(variables, (tuple, list, Vector)):
         variables = [variables]
 
     return matrix([[diff(f, v) for v in variables] for f in functions])

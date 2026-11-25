@@ -80,7 +80,7 @@ Classes and Methods
 ===================
 """
 
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -88,8 +88,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.factory import UniqueFactory
 
@@ -253,6 +253,8 @@ CartesianProductGrowthGroups = CartesianProductFactory('CartesianProductGrowthGr
 
 from sage.combinat.posets.cartesian_product import CartesianProductPoset
 from .growth_group import GenericGrowthGroup
+
+
 class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
     r"""
     A Cartesian product of growth groups.
@@ -477,7 +479,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if data == 1:
             return self.one()
 
-        elif data is None:
+        if data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
         elif type(data) is self.element_class and data.parent() == self:
@@ -493,7 +495,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if P is self:
                 return data
 
-            elif P is SR:
+            if P is SR:
                 from sage.symbolic.operators import mul_vararg
                 if data.operator() == mul_vararg:
                     return convert_factors(data.operands(), data)
@@ -640,7 +642,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if CartesianProductPoset.has_coerce_map_from(self, S):
             return True
 
-        elif isinstance(S, GenericProduct):
+        if isinstance(S, GenericProduct):
             factors = S.cartesian_factors()
         else:
             factors = (S,)
@@ -834,7 +836,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         return pushout(cartesian_product(newS), cartesian_product(newO))
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth group.
 
@@ -1023,7 +1025,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
               values:
 
               - ``'log'`` -- value: a function; if not used, then the usual
-                :class:`log <sage.functions.log.Function_log>` is taken
+                :class:`log <sage.functions.log.Function_log1>` is taken
 
             OUTPUT:
 
@@ -1293,9 +1295,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                         var=var, zeta=zeta, alpha=a.exponent,
                         beta=ZZ(b.exponent), delta=0,
                         precision=precision, normalized=False)
-                else:
-                    raise NotImplementedError(
-                        'singularity analysis of {} not implemented'.format(self))
+                raise NotImplementedError(
+                    'singularity analysis of {} not implemented'.format(self))
             else:
                 raise NotImplementedError(
                     'singularity analysis of {} not yet implemented '

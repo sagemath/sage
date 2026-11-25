@@ -1,6 +1,7 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Magmas
+
+.. automethod:: sage.categories.magmas::Magmas.ParentMethods.__init_extra__
 """
 # ****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -78,7 +79,7 @@ class Magmas(Category_singleton):
             Return the full subcategory of the associative objects
             of ``self``.
 
-            A (multiplicative) :class:`magma Magmas` `M` is
+            A (multiplicative) :class:`magma <Magmas>` `M` is
             *associative* if, for all `x,y,z\in M`,
 
             .. MATH:: x * (y * z) = (x * y) * z
@@ -104,7 +105,7 @@ class Magmas(Category_singleton):
             Return the full subcategory of the commutative objects
             of ``self``.
 
-            A (multiplicative) :class:`magma Magmas` `M` is
+            A (multiplicative) :class:`magma <Magmas>` `M` is
             *commutative* if, for all `x,y\in M`,
 
             .. MATH:: x * y = y * x
@@ -131,7 +132,7 @@ class Magmas(Category_singleton):
             r"""
             Return the subcategory of the unital objects of ``self``.
 
-            A (multiplicative) :class:`magma Magmas` `M` is *unital*
+            A (multiplicative) :class:`magma <Magmas>` `M` is *unital*
             if it admits an element `1`, called *unit*, such that for
             all `x\in M`,
 
@@ -274,16 +275,18 @@ class Magmas(Category_singleton):
               and :class:`AdditiveMagmas`
 
             Given that Sage does not yet know that the category
-            :class:`MagmasAndAdditiveMagmas` is the intersection of
+            :class:`~sage.categories.magmas_and_additive_magmas.MagmasAndAdditiveMagmas`
+            is the intersection of
             the categories :class:`Magmas` and
             :class:`AdditiveMagmas`, the method
-            :meth:`MagmasAndAdditiveMagmas.SubcategoryMethods.Distributive`
+            :meth:`~sage.categories.magmas_and_additive_magmas.MagmasAndAdditiveMagmas.SubcategoryMethods.Distributive`
             is not available, as would be desirable, for this intersection.
 
             This method is a workaround. It checks that ``self`` is a
             subcategory of both :class:`Magmas` and
             :class:`AdditiveMagmas` and upgrades it to a subcategory
-            of :class:`MagmasAndAdditiveMagmas` before applying the
+            of :class:`~sage.categories.magmas_and_additive_magmas.MagmasAndAdditiveMagmas`
+            before applying the
             axiom. It complains otherwise, since the ``Distributive``
             axiom does not make sense for a plain magma.
 
@@ -375,11 +378,12 @@ class Magmas(Category_singleton):
             return [MagmaticAlgebras(self.base_ring())]
 
         class ParentMethods:
+
             def is_field(self, proof=True):
                 r"""
                 Return ``True`` if ``self`` is a field.
 
-                For a magma algebra `RS` this is always false unless
+                For a magma algebra `R S` this is always false unless
                 `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
@@ -390,15 +394,18 @@ class Magmas(Category_singleton):
                     False
                     sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
+                    sage: Magmas().example().algebra(QQ).is_field()
+                    False
+
                 """
                 if not self.base_ring().is_field(proof):
                     return False
-                return (self.basis().keys().cardinality() == 1)
+                return self.basis().keys().cardinality() == 1
 
     class Commutative(CategoryWithAxiom):
 
         class ParentMethods:
-            def is_commutative(self):
+            def is_commutative(self) -> bool:
                 """
                 Return ``True``, since commutative magmas are commutative.
 
@@ -461,7 +468,7 @@ class Magmas(Category_singleton):
             additional structure, namely the unit of the magma which
             shall be preserved by morphisms.
 
-            .. SEEALSO:: :meth:`Category.additional_structure`
+            .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
             EXAMPLES::
 
@@ -839,9 +846,9 @@ class Magmas(Category_singleton):
 
             .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
-              :meth:`~sage.matrix.operation_table.OperationTable.list`
+              :meth:`~sage.matrix.operation_table.OperationTable.column_keys`
               method.  The association can also be retrieved with the
-              :meth:`~sage.matrix.operation_table.OperationTable.dict`
+              :meth:`~sage.matrix.operation_table.OperationTable.translation`
               method.
 
             INPUT:

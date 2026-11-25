@@ -129,7 +129,9 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: [w.reduced_word_in_reflections() for w in W]      # optional - gap3
             [[], ['A'], ['B'], ['C'], ['D']]
 
-        .. SEEALSO:: :meth:`reduced_word`
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.reflection_group_element.ComplexReflectionGroupElement.reduced_word`
         """
         if self.is_one():
             return []
@@ -725,7 +727,9 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
              (['b', 'a'], ['A', 'C']),
              (['a', 'b', 'a'], ['C'])]
 
-        .. SEEALSO:: :meth:`reduced_word`
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.reflection_group_element.ComplexReflectionGroupElement.reduced_word`
         """
         if self.is_one():
             return []
@@ -812,10 +816,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             False
         """
         if not isinstance(positive, bool):
-            raise TypeError("%s is not a boolean" % (bool))
+            raise TypeError(f"{positive} is not a boolean")
 
         if i not in self._parent.index_set():
-            raise ValueError("the given index %s is not in the index set" % i)
+            raise ValueError(f"the given index {i} is not in the index set")
 
         negative = not positive
 

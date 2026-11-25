@@ -8,7 +8,7 @@ AUTHORS:
 - David Lucas, ported the original implementation in Sage
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #                     2015 Johan S. R. Nielsen <jsrn@jsrn.dk>
 #
@@ -16,12 +16,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.arith.misc import integer_floor as floor
-from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
@@ -103,8 +101,7 @@ def gilt(x):
     """
     if x in ZZ:
         return Integer(x - 1)
-    else:
-        return floor(x)
+    return floor(x)
 
 
 def solve_degree2_to_integer_range(a, b, c):
@@ -140,8 +137,7 @@ def solve_degree2_to_integer_range(a, b, c):
     mini, maxi = (ligt(minx), gilt(maxx))
     if mini > maxi:
         return (-2,-1)
-    else:
-        return (mini,maxi)
+    return (mini,maxi)
 
 
 def _degree_of_vector(v, shifts=None):
@@ -170,8 +166,7 @@ def _degree_of_vector(v, shifts=None):
     """
     if not shifts:
         return max(vi.degree() for vi in v)
-    else:
-        if v.is_zero():
-            return -1
-        return max(degi + si for (degi, si) in zip([vi.degree() for vi in v ], shifts)
-                   if degi > -1)
+    if v.is_zero():
+        return -1
+    return max(degi + si for (degi, si) in zip([vi.degree() for vi in v ], shifts)
+               if degi > -1)

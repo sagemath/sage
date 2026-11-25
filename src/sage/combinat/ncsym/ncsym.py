@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symmetric Functions in Non-Commuting Variables
+Symmetric functions in non-commuting variables
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -193,27 +193,15 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [BZ05] \N. Bergeron, M. Zabrocki. *The Hopf algebra of symmetric
-       functions and quasisymmetric functions in non-commutative variables
-       are free and cofree*. (2005). :arxiv:`math/0509265v3`.
+    - [BZ05]_
 
-    .. [BHRZ06] \N. Bergeron, C. Hohlweg, M. Rosas, M. Zabrocki.
-       *Grothendieck bialgebras, partition lattices, and symmetric
-       functions in noncommutative variables*. Electronic Journal of
-       Combinatorics. **13** (2006).
+    - [BHRZ06]_
 
-    .. [RS06] \M. Rosas, B. Sagan. *Symmetric functions in noncommuting
-       variables*. Trans. Amer. Math. Soc. **358** (2006). no. 1, 215-232.
-       :arxiv:`math/0208168`.
+    - [RS06]_
 
-    .. [BRRZ08] \N. Bergeron, C. Reutenauer, M. Rosas, M. Zabrocki.
-       *Invariants and coinvariants of the symmetric group in noncommuting
-       variables*. Canad. J. Math. **60** (2008). 266-296.
-       :arxiv:`math/0502082`
+    - [BRRZ08]_
 
-    .. [BT13] \N. Bergeron, N. Thiem. *A supercharacter table decomposition
-       via power-sum symmetric functions*. Int. J. Algebra Comput. **23**,
-       763 (2013). :doi:`10.1142/S0218196713400171`. :arxiv:`1112.4901`.
+    - [BT13]_
 
     EXAMPLES:
 
@@ -293,7 +281,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         -4*p[] + 2*p[1] + p[2, 2]
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -309,7 +297,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         category = GradedHopfAlgebras(R).Cocommutative()
         Parent.__init__(self, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -331,7 +319,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         """
         return self.powersum()
 
-    _shorthands = tuple(['chi', 'cp', 'm', 'e', 'h', 'p', 'rho', 'x'])
+    _shorthands = ('chi', 'cp', 'm', 'e', 'h', 'p', 'rho', 'x')
 
     def dual(self):
         r"""
@@ -399,10 +387,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                for p in s:
-                    if len([z for z in t if z.intersection(p)]) != 1:
-                        return False
-                return True
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P = Poset((A.coarsenings(), lt))
@@ -440,12 +426,16 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             Return the image of the symmetric function ``f`` in ``self``.
 
             This is performed by converting to the monomial basis and
-            extending the method :meth:`sum_of_partitions` linearly.  This is a
+            extending the method
+            :meth:`~sage.combinat.ncsym.ncsym.SymmetricFunctionsNonCommutingVariables.monomial.sum_of_partitions`
+            linearly.  This is a
             linear map from the symmetric functions to the symmetric functions
             in non-commuting variables that does not preserve the product or
             coproduct structure of the Hopf algebra.
 
-            .. SEEALSO:: :meth:`~Element.to_symmetric_function`
+            .. SEEALSO::
+
+                :meth:`~sage.combinat.ncsym.ncsym.SymmetricFunctionsNonCommutingVariables.monomial.Element.to_symmetric_function`
 
             INPUT:
 
@@ -1273,7 +1263,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             m = self.realization_of().m()
             one = self.base_ring().one()
-            return m._from_dict({B: one for B in A.coarsenings()}, remove_zeros=False)
+            return m._from_dict(dict.fromkeys(A.coarsenings(), one), remove_zeros=False)
 
         @cached_method
         def _p_to_e_on_basis(self, A):
@@ -1348,7 +1338,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             x = self.realization_of().x()
             one = self.base_ring().one()
-            return x._from_dict({B: one for B in A.refinements()}, remove_zeros=False)
+            return x._from_dict(dict.fromkeys(A.refinements(), one), remove_zeros=False)
 
         # Note that this is the same as the monomial coproduct_on_basis
         def coproduct_on_basis(self, A):
@@ -1665,7 +1655,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             """
             m = self.realization_of().m()
             one = self.base_ring().one()
-            return m._from_dict({B: one for B in A.strict_coarsenings()},
+            return m._from_dict(dict.fromkeys(A.strict_coarsenings(), one),
                                 remove_zeros=False)
 
     cp = coarse_powersum
@@ -1733,10 +1723,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                for p in s:
-                    if len([z for z in t if z.intersection(p)]) != 1:
-                        return False
-                return True
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P_refine = Poset((A.refinements(), lt))

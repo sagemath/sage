@@ -28,10 +28,10 @@ The implementation works over any exact field that is embedded in
 `\RR`, for example::
 
     sage: from sage.geometry.polyhedron.double_description import StandardAlgorithm
-    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),            # needs sage.rings.number_field
+    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),
     ....:                 (-AA(3).sqrt(),-AA(2).sqrt(),1)])
     sage: alg = StandardAlgorithm(A)
-    sage: alg.run().R                                                                   # needs sage.rings.number_field
+    sage: alg.run().R
     [(-0.4177376677004119?, 0.5822623322995881?, 0.4177376677004119?),
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),
      (0.07665629029830300?, 0.07665629029830300?, 0.2411809548974793?),
@@ -114,7 +114,8 @@ class DoubleDescriptionPair:
         .. warning::
 
             You should use the :meth:`Problem.initial_pair` or
-            :meth:`Problem.run` to generate double description pairs
+            :meth:`~sage.geometry.polyhedron.double_description.StandardAlgorithm.run`
+            to generate double description pairs
             for a set of inequalities, and not generate
             ``DoubleDescriptionPair`` instances directly.
 
@@ -269,9 +270,8 @@ class DoubleDescriptionPair:
 
         if not self.A:
             return Polyhedron(vertices=[[0] * self.problem.dim()], backend='ppl')
-        else:
-            ieqs = [[0] + list(a) for a in self.A]
-            return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
+        ieqs = [[0] + list(a) for a in self.A]
+        return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
 
     def verify(self):
         r"""
@@ -393,7 +393,9 @@ class DoubleDescriptionPair:
         of ``self``.
 
         These matrix spaces are cached to avoid their creation in the very
-        demanding :meth:`add_inequality` and more precisely :meth:`are_adjacent`.
+        demanding
+        :meth:`~sage.geometry.polyhedron.double_description.StandardDoubleDescriptionPair.add_inequality`
+        and more precisely :meth:`are_adjacent`.
 
         EXAMPLES::
 
@@ -405,7 +407,6 @@ class DoubleDescriptionPair:
             sage: DD.matrix_space(3,2)
             Full MatrixSpace of 3 by 2 dense matrices over Rational Field
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()
@@ -584,9 +585,9 @@ class Problem:
 
         EXAMPLES::
 
-            sage: A = matrix(AA, [(1, 1), (-1, 1)])                                     # needs sage.rings.number_field
+            sage: A = matrix(AA, [(1, 1), (-1, 1)])
             sage: from sage.geometry.polyhedron.double_description import Problem
-            sage: Problem(A).base_ring()                                                # needs sage.rings.number_field
+            sage: Problem(A).base_ring()
             Algebraic Real Field
         """
         return self._field
@@ -703,6 +704,7 @@ class StandardDoubleDescriptionPair(DoubleDescriptionPair):
             R_new.append(r)
         self.R = R_pos + R_nul + R_new
         self.A.append(a)
+
 
 class StandardAlgorithm(Problem):
     """

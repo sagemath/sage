@@ -23,22 +23,22 @@ AUTHORS:
 # ****************************************************************************
 
 
+import logging
 import os
 import re
-import logging
+
 log = logging.getLogger()
 
 from collections import defaultdict
 
-from sage_bootstrap.package import Package
-from sage_bootstrap.tarball import Tarball, FileNotMirroredError
-from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 from sage_bootstrap.creator import PackageCreator
-from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
-from sage_bootstrap.fileserver import FileServer
-from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.env import SAGE_DISTFILES
-
+from sage_bootstrap.expand_class import PackageClass
+from sage_bootstrap.fileserver import FileServer
+from sage_bootstrap.package import Package
+from sage_bootstrap.pypi import PyPiError, PyPiNotFound, PyPiVersion
+from sage_bootstrap.tarball import FileNotMirroredError, Tarball
+from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 
 # Approximation of https://peps.python.org/pep-0508/#names dependency specification
 dep_re = re.compile('^ *([-A-Z0-9._]+)', re.IGNORECASE)
@@ -68,7 +68,7 @@ class Application(object):
         _bootstrap
         _develop
         [...]
-        zlib
+        zipp
 
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
@@ -78,7 +78,7 @@ class Application(object):
         _develop
         _prereq
         [...]
-        zlib
+        zeromq
         """
         log.debug('Listing packages')
         pc = PackageClass(*package_classes, **filters)
@@ -181,7 +181,7 @@ class Application(object):
                             # Dependencies like $(BLAS)
                             print(indent2 + "- {0}".format(dep))
                         elif format == 'rst' and Package(dep).has_file('SPKG.rst'):
-                            # This RST label is set in src/doc/bootstrap
+                            # This RST label is set in tools/bootstrap-docs.py
                             print(indent2 + "- :ref:`spkg_{0}`".format(dep))
                         else:
                             print(indent2 + "- {0}".format(dep))
@@ -220,7 +220,7 @@ class Application(object):
         Did you mean: cython, ipython, python2, python3, patch?
         """
         log.debug('Apropos for %s', incorrect_name)
-        from sage_bootstrap.levenshtein import Levenshtein, DistanceExceeded
+        from sage_bootstrap.levenshtein import DistanceExceeded, Levenshtein
         levenshtein = Levenshtein(5)
         names = []
         for pkg in Package.all():
@@ -430,9 +430,9 @@ class Application(object):
                     tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
                 if not version:
                     version = pypi_version.version
-                # Use a URL from pypi.io instead of the specific URL received from the PyPI query
+                # Use a URL from files.pythonhosted.org instead of the specific URL received from the PyPI query
                 # because it follows a simple pattern.
-                upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
+                upstream_url = 'https://files.pythonhosted.org/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             elif source == 'wheel':
                 if not tarball:
                     tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
@@ -459,7 +459,7 @@ class Application(object):
                                 self.create(dep, pkg_type=pkg_type)
                                 dep = Package(dep).name
                             dependencies.append(dep)
-                upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
+                upstream_url = 'https://files.pythonhosted.org/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
                 description = pypi_version.summary
             if not license:

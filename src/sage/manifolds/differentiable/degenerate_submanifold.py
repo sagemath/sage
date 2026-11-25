@@ -156,21 +156,22 @@ REFERENCES:
 # *****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import (DegenerateManifold,
-                                                      TangentTensor)
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
+from sage.manifolds.differentiable.degenerate import DegenerateManifold, TangentTensor
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
 from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.rings.infinity import infinity
 from sage.matrix.constructor import matrix
+from sage.rings.infinity import infinity
 from sage.symbolic.expression import Expression
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
+
 
 class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
     r"""
@@ -550,9 +551,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         if name in self._screens:
             if list(screen) == self._screens[name]._screen and list(rad) == self._screens[name]._rad:
                 return self._screens[name]
-            else:
-                raise ValueError("a different screen distribution with the "
-                                 "same name had already been set")
+            raise ValueError("a different screen distribution with the "
+                             "same name had already been set")
         if len(screen)+len(rad) != self._dim:
             raise ValueError("total length screen+rad must be {}".format(self._dim))
         frame = self.default_frame()
@@ -1290,7 +1290,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
                                                             ).along(self.immersion())
                 v[frame, :] = list(eigen_vector) + [0]
                 res.append((TangentTensor(v, self.immersion()), self.scalar_field(
-                  {chart: eigen_space[0] for chart in self.top_charts()})))
+                  dict.fromkeys(self.top_charts(), eigen_space[0]))))
                 #res[-1][0].set_name("e_{}".format(next(counter)))
         self._principal_directions[screen._name] = res
         return res
@@ -1393,10 +1393,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         for u in rad:
             if not g.along(im)(u.along(im),v).is_zero():
                 return False
-        for u in normal:
-            if not g.along(im)(u.along(im),v).is_zero():
-                return False
-        return True
+        return all(g.along(im)(u.along(im), v).is_zero() for u in normal)
 
 
 #**************************************************************************************
@@ -1619,8 +1616,7 @@ class Screen(VectorFieldModule):
             xi = rad[0]
             xi.set_name(name='xi', latex_name=r'\xi')
             return xi
-        else:
-            return rad
+        return rad
 
     def rigging(self):
         r"""

@@ -15,7 +15,7 @@ from sage.combinat.root_system.cartan_type import CartanType_abstract, CartanTyp
 from sage.matrix.constructor import block_diagonal_matrix
 from sage.sets.family import Family
 from . import ambient_space
-import sage.combinat.root_system as root_system
+from sage.combinat import root_system
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, rich_to_bool
 
@@ -53,7 +53,7 @@ class CartanType(SageObject, CartanType_abstract):
         False
 
     This is implemented by inserting the appropriate abstract
-    super classes (see :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract._add_abstract_superclass`)::
+    super classes (see ``CartanType_abstract._add_abstract_superclass``)::
 
         sage: t.__class__.mro()
         [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <class 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <class 'object'>]
@@ -90,7 +90,7 @@ class CartanType(SageObject, CartanType_abstract):
              ((1, 0), 5), ((1, 1), 6), ((1, 2), 7), ((1, 3), 8), ((1, 4), 9), ((1, 5), 10),
              ((2, 1), 11), ((2, 2), 12), ((2, 3), 13)]
 
-        Similarly, the attribute `_shifts` specifies by how much the
+        Similarly, the attribute ``_shifts`` specifies by how much the
         indices of the bases of the ambient spaces of the components
         are shifted in the ambient space of this Cartan type::
 
@@ -116,11 +116,12 @@ class CartanType(SageObject, CartanType_abstract):
         """
         self._types = types
         self.affine = False
-        indices = (None,) + tuple( (i, j)
-                                   for i in range(len(types))
-                                   for j in types[i].index_set() )
+        indices = (None,) + tuple((i, j)
+                                  for i in range(len(types))
+                                  for j in types[i].index_set())
         self._indices = indices
-        self._index_relabelling = dict((indices[i], i) for i in range(1, len(indices)))
+        self._index_relabelling = {indices[i]: i
+                                   for i in range(1, len(indices))}
 
         self._spaces = [t.root_system().ambient_space() for t in types]
         if all(l is not None for l in self._spaces):
@@ -130,9 +131,9 @@ class CartanType(SageObject, CartanType_abstract):
         self.tools = root_system.type_reducible
         # a direct product of finite Cartan types is again finite;
         # idem for simply laced and crystallographic.
-        super_classes = tuple( cls
-                               for cls in (CartanType_finite, CartanType_simply_laced, CartanType_crystallographic)
-                               if all(isinstance(t, cls) for t in types) )
+        super_classes = tuple(cls
+                              for cls in (CartanType_finite, CartanType_simply_laced, CartanType_crystallographic)
+                              if all(isinstance(t, cls) for t in types))
         self._add_abstract_superclass(super_classes)
 
     def _repr_(self, compact=True):  # We should make a consistent choice here
@@ -417,7 +418,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return CartanType([t.dual() for t in self._types])
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Report that this reducible Cartan type is not affine.
 
@@ -525,7 +526,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(1, 1, 0, 0, 0), (0, 0, 0, 1/2, 1/2)]
         """
         shift = self.root_system.cartan_type()._shifts[i]
-        return self._from_dict( dict([(shift+k, c) for (k,c) in v ]))
+        return self._from_dict({shift + k: c for k, c in v})
 
     @cached_method
     def simple_root(self, i):
@@ -540,7 +541,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if i not in self.index_set():
             raise ValueError("{} is not in the index set".format(i))
-        (i, j) = self.cartan_type()._indices[i]
+        i, j = self.cartan_type()._indices[i]
         return self.inject_weights(i, self.ambient_spaces()[i].simple_root(j))
 
     @cached_method
@@ -556,10 +557,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if i not in self.index_set():
             raise ValueError("{} is not in the index set".format(i))
-        (i, j) = self.cartan_type()._indices[i]
+        i, j = self.cartan_type()._indices[i]
         return self.inject_weights(i, self.ambient_spaces()[i].simple_coroot(j))
 
-    def positive_roots(self):
+    def positive_roots(self) -> list:
         """
         EXAMPLES::
 
@@ -568,10 +569,11 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         res = []
         for i, ambient_sp in enumerate(self.ambient_spaces()):
-            res.extend(self.inject_weights(i, v) for v in ambient_sp.positive_roots())
+            res.extend(self.inject_weights(i, v)
+                       for v in ambient_sp.positive_roots())
         return res
 
-    def negative_roots(self):
+    def negative_roots(self) -> list:
         """
         EXAMPLES::
 
@@ -580,7 +582,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         ret = []
         for i, ambient_sp in enumerate(self.ambient_spaces()):
-            ret.extend(self.inject_weights(i, v) for v in ambient_sp.negative_roots())
+            ret.extend(self.inject_weights(i, v)
+                       for v in ambient_sp.negative_roots())
         return ret
 
     def fundamental_weights(self):
@@ -592,8 +595,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         fw = []
         for i, ambient_sp in enumerate(self.ambient_spaces()):
-            fw.extend(self.inject_weights(i, v) for v in ambient_sp.fundamental_weights())
-        return Family(dict([i,fw[i-1]] for i in range(1,len(fw)+1)))
+            fw.extend(self.inject_weights(i, v)
+                      for v in ambient_sp.fundamental_weights())
+        return Family({i: fw[i - 1] for i in range(1, len(fw) + 1)})
 
 
 CartanType.AmbientSpace = AmbientSpace

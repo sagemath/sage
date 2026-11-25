@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Spanning trees
 
@@ -337,8 +336,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
         if not G.is_connected():
             return
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             yield from G.edge_iterator()
             return
 
@@ -828,8 +826,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         if not G.is_connected():
             return []
         # G is now assumed to be a nonempty connected graph
-        if G.num_verts() == G.num_edges() + 1:
-            # G is a tree
+        if G.is_tree():
             return G.edges(sort=False)
 
     by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
@@ -950,7 +947,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
 
     .. SEEALSO::
 
-        :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+        :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
         and :meth:`~sage.graphs.graph.Graph.spanning_trees`
 
     EXAMPLES::
@@ -1099,17 +1096,17 @@ def spanning_trees(g, labels=False):
         sage: G = Graph([(1,2),(1,2),(1,3),(1,3),(2,3),(1,4)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         8
-        sage: G.spanning_trees_count()                                                  # needs sage.modules
+        sage: G.number_of_spanning_trees()                                              # needs sage.modules
         8
         sage: G = Graph([(1,2),(2,3),(3,1),(3,4),(4,5),(4,5),(4,6)], multiedges=True)
         sage: len(list(G.spanning_trees()))
         6
-        sage: G.spanning_trees_count()                                                  # needs sage.modules
+        sage: G.number_of_spanning_trees()                                              # needs sage.modules
         6
 
     .. SEEALSO::
 
-        - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_spanning_trees`
           -- counts the number of spanning trees
 
         - :meth:`~sage.graphs.graph.Graph.random_spanning_tree`
@@ -1317,6 +1314,18 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         sage: F = G.edge_disjoint_spanning_trees(k=2)
         sage: len(F)
         2
+
+    The number of trees can reach the minimum degree of the graph::
+
+        sage: G = graphs.CompleteGraph(7)
+        sage: G.add_edges([(7, 0), (7, 1), (7, 2)])
+        sage: F = edge_disjoint_spanning_trees(G, 3)
+        sage: [f.is_tree() for f in F]
+        [True, True, True]
+        sage: len(set(frozenset(e) for f in F for e in f.edge_iterator(labels=False)))
+        21
+        sage: len(G.edge_disjoint_spanning_trees())
+        3
     """
     if G.is_directed():
         raise ValueError("this method is for undirected graphs only")
@@ -1334,7 +1343,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
         if not E and G.order() != 1:
             raise EmptySetError(msg_no_solution)
         return [Graph([G, E], format='vertices_and_edges')]
-    elif k > 1 + min(G.degree()) // 2:
+    elif k > min(G.degree()) or k * (G.order() - 1) > G.size():
         raise EmptySetError(msg_no_solution)
 
     # Initialization of data structures

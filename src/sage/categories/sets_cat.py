@@ -1,6 +1,9 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Sets
+
+.. automethod:: sage.categories.sets_cat::Sets.ParentMethods._test_elements_eq_symmetric
+
+.. automethod:: sage.categories.sets_cat::Sets.ParentMethods._test_elements_eq_transitive
 """
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
@@ -36,9 +39,9 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.misc.lazy_format import LazyFormat
+# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.quotients import QuotientsCategory
@@ -56,7 +59,7 @@ def print_compare(x, y):
     """
     Helper method used in
     :meth:`Sets.ParentMethods._test_elements_eq_symmetric`,
-    :meth:`Sets.ParentMethods._test_elements_eq_tranisitive`.
+    :meth:`Sets.ParentMethods._test_elements_eq_transitive`.
 
     INPUT:
 
@@ -74,8 +77,7 @@ def print_compare(x, y):
     """
     if x == y:
         return LazyFormat("%s == %s") % (x, y)
-    else:
-        return LazyFormat("%s != %s") % (x, y)
+    return LazyFormat("%s != %s") % (x, y)
 
 
 class EmptySetError(ValueError):
@@ -288,17 +290,16 @@ class Sets(Category_singleton):
         if choice is None:
             from sage.categories.examples.sets_cat import PrimeNumbers
             return PrimeNumbers()
-        elif choice == "inherits":
+        if choice == "inherits":
             from sage.categories.examples.sets_cat import PrimeNumbers_Inherits
             return PrimeNumbers_Inherits()
-        elif choice == "facade":
+        if choice == "facade":
             from sage.categories.examples.sets_cat import PrimeNumbers_Facade
             return PrimeNumbers_Facade()
-        elif choice == "wrapper":
+        if choice == "wrapper":
             from sage.categories.examples.sets_cat import PrimeNumbers_Wrapper
             return PrimeNumbers_Wrapper()
-        else:
-            raise ValueError("unknown choice")
+        raise ValueError("unknown choice")
 
     class SubcategoryMethods:
 
@@ -311,7 +312,7 @@ class Sets(Category_singleton):
             .. SEEALSO::
 
                 - :class:`.cartesian_product.CartesianProductFunctor`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -453,7 +454,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Quotients`, :meth:`Subobjects`, :meth:`IsomorphicObjects`
                 - :class:`.subquotients.SubquotientsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             TESTS::
 
@@ -482,7 +483,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.quotients.QuotientsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -539,7 +540,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.subobjects.SubobjectsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             EXAMPLES::
 
@@ -662,7 +663,7 @@ class Sets(Category_singleton):
 
                 - :meth:`Subquotients` for background
                 - :class:`.isomorphic_objects.IsomorphicObjectsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`
 
             TESTS::
 
@@ -811,7 +812,7 @@ class Sets(Category_singleton):
             <category-primer-parents-elements-categories>`, and their
             elements know which distinguished set they belong to. For
             example, the ring of integers `\ZZ` is modelled by the
-            parent :obj:`ZZ`, and integers know that they belong to
+            parent ``ZZ``, and integers know that they belong to
             this set::
 
                 sage: ZZ
@@ -929,9 +930,10 @@ class Sets(Category_singleton):
 
             A parent which is a facade must either:
 
-            - call :meth:`Parent.__init__` using the ``facade`` parameter to
-              specify a parent, or tuple thereof.
-            - overload the method :meth:`~Sets.Facade.ParentMethods.facade_for`.
+            - call :class:`~sage.structure.parent.Parent` initialization using
+              the ``facade`` parameter to specify a parent, or tuple thereof.
+            - overload the method
+              :meth:`~sage.categories.facade_sets.FacadeSets.ParentMethods.facade_for`.
 
             .. NOTE::
 
@@ -985,8 +987,7 @@ class Sets(Category_singleton):
             """
             if hasattr(self, "element_class"):
                 return self._element_constructor_from_element_class
-            else:
-                return NotImplemented
+            return NotImplemented
 
         def _element_constructor_from_element_class(self, *args, **keywords):
             """
@@ -1026,7 +1027,8 @@ class Sets(Category_singleton):
                 sage: S.is_parent_of(2/1)
                 False
 
-            This method differs from :meth:`__contains__` because it
+            This method differs from
+            :meth:`~sage.structure.parent.Parent.__contains__` because it
             does not attempt any coercion::
 
                 sage: 2/1 in S, S.is_parent_of(2/1)
@@ -1038,7 +1040,7 @@ class Sets(Category_singleton):
             return parent(element) == self
 
         @abstract_method
-        def __contains__(self, x):
+        def __contains__(self, x) -> bool:
             """
             Test whether the set ``self`` contains the object ``x``.
 
@@ -1063,9 +1065,9 @@ class Sets(Category_singleton):
             set ``self`` is empty, :meth:`an_element` should raise the exception
             :exc:`EmptySetError`.
 
-            This default implementation calls :meth:`_an_element_` and
+            This default implementation calls ``_an_element_`` and
             caches the result. Any parent should implement either
-            :meth:`an_element` or :meth:`_an_element_`.
+            :meth:`an_element` or ``_an_element_``.
 
             EXAMPLES::
 
@@ -1539,7 +1541,7 @@ class Sets(Category_singleton):
             - ``category`` -- (default: ``None``) the category the
               Cartesian product belongs to. If ``None`` is passed,
               then
-              :meth:`~sage.categories.covariant_functorial_construction.CovariantFactorialConstruction.category_from_parents`
+              :meth:`~sage.categories.covariant_functorial_construction.CovariantFunctorialConstruction.category_from_parents`
               is used to determine the category.
 
             - ``extra_category`` -- (default: ``None``) a category
@@ -1750,8 +1752,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     class ElementMethods:
         ## Should eventually contain the basic operations which are no math
         ## latex, hash, ...
-        ##def equal(x,y):
-        ##def =(x,y):
+        ##def equal(x, y):
+        ##def =(x, y):
 
         # Used by Element._test_category
         _dummy_attribute = None
@@ -1889,6 +1891,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
@@ -1942,7 +1959,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for subquotients of sets.
 
-        .. SEEALSO:: :meth:`Sets().Subquotients`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Subquotients`
 
         EXAMPLES::
 
@@ -2018,7 +2036,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     :class:`Sets.SubcategoryMethods.Subquotients` for
                     the specifications, :meth:`.ambient`, :meth:`.retract`,
-                    and also :meth:`Sets.Subquotients.ElementMethods.lift`.
+                    and also
+                    :meth:`~sage.categories.sets_cat.Sets.Subquotients.ElementMethods.lift`.
                 """
 
             @abstract_method
@@ -2033,8 +2052,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 .. SEEALSO::
 
                     :class:`Sets.SubcategoryMethods.Subquotients` for
-                    the specifications, :meth:`.ambient`, :meth:`.retract`,
-                    and also :meth:`Sets.Subquotients.ElementMethods.retract`.
+                    the specifications, :meth:`.ambient`, :meth:`.lift`,
+                    and the element method
+                    :meth:`~sage.categories.sets_cat.Sets.Subquotients.ElementMethods.lift`.
 
                 EXAMPLES::
 
@@ -2071,7 +2091,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for quotients of sets.
 
-        .. SEEALSO:: :meth:`Sets().Quotients`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Quotients`
 
         EXAMPLES::
 
@@ -2115,7 +2136,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
         """
         A category for subobjects of sets.
 
-        .. SEEALSO:: :meth:`Sets().Subobjects`
+        .. SEEALSO::
+            :meth:`~sage.categories.sets_cat.Sets.SubcategoryMethods.Subobjects`
 
         EXAMPLES::
 
@@ -2373,8 +2395,32 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([S1,S2,S1]).is_empty()
                     True
+
+                Even when some parent did not implement ``is_empty``,
+                as long as one element is nonempty, the result can be determined::
+
+                    sage: C = ConditionSet(QQ, lambda x: x > 0)
+                    sage: C.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([C,[]]).is_empty()
+                    True
+                    sage: cartesian_product([C,C]).is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
                 """
-                return any(c.is_empty() for c in self.cartesian_factors())
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if c.is_empty():
+                            return True
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return False
 
             def is_finite(self):
                 r"""
@@ -2391,18 +2437,70 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([ZZ, Set(), ZZ]).is_finite()
                     True
+
+                TESTS:
+
+                This should still work even if some parent does not implement
+                ``is_finite``::
+
+                    sage: known_infinite_set = ZZ
+                    sage: unknown_infinite_set = Set([1]) + ConditionSet(QQ, lambda x: x > 0)
+                    sage: unknown_infinite_set.is_empty()
+                    False
+                    sage: unknown_infinite_set.is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([unknown_infinite_set, known_infinite_set]).is_finite()
+                    False
+                    sage: unknown_empty_set = ConditionSet(QQ, lambda x: False)
+                    sage: cartesian_product([known_infinite_set, unknown_empty_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+                    sage: cartesian_product([unknown_infinite_set, Set([])]).is_finite()
+                    True
+                    sage: cartesian_product([Set([1, 2, 3]), Set([4, 5])]).is_finite()
+                    True
+                    sage: cartesian_product([unknown_infinite_set, unknown_infinite_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+
+                Coverage test when one factor has emptiness unknown but result is finite::
+
+                    sage: s = ConditionSet(RR, lambda x: x^2 == 2, category=Sets().Finite())
+                    sage: s.is_finite()
+                    True
+                    sage: s.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([s, Set([1, 2, 3])]).is_finite()
+                    True
                 """
-                f = self.cartesian_factors()
                 try:
                     # Note: some parent might not implement "is_empty". So we
                     # carefully isolate this test.
-                    test = any(c.is_empty() for c in f)
+                    if self.is_empty():
+                        return True
                 except (AttributeError, NotImplementedError):
-                    pass
-                else:
-                    if test:
-                        return test
-                return all(c.is_finite() for c in f)
+                    # it is unknown whether some set may be empty
+                    if all(c.is_finite() for c in self.cartesian_factors()):
+                        return True
+                    raise NotImplementedError
+
+                # in this case, all sets are definitely nonempty
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if not c.is_finite():
+                            return False
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return True
 
             def cardinality(self):
                 r"""
@@ -2441,7 +2539,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     if is_empty:
                         from sage.rings.integer_ring import ZZ
                         return ZZ.zero()
-                    elif any(c in Sets().Infinite() for c in f):
+                    if any(c in Sets().Infinite() for c in f):
                         from sage.rings.infinity import Infinity
                         return Infinity
 
@@ -2472,11 +2570,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: c2 = C.random_element(4,7)
                     sage: c2                   # random
                     (6, 5, 6, 4, 5, 6, 6, 4, 5, 5)
-                    sage: all(4 <= i < 7 for i in c2)
+                    sage: all(4 <= i <= 7 for i in c2)
                     True
                 """
                 return self._cartesian_product_of_elements(
-                        c.random_element(*args) for c in self.cartesian_factors())
+                    c.random_element(*args) for c in self.cartesian_factors())
 
             @abstract_method
             def _sets_keys(self):
@@ -2704,9 +2802,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 if hasattr(self, "_name"):
                     return self._name + " over {}".format(self.base_ring())
-                else:
-                    return 'Algebra of {} over {}'.format(self.basis().keys(),
-                                                          self.base_ring())
+                return 'Algebra of {} over {}'.format(self.basis().keys(),
+                                                      self.base_ring())
 
     class WithRealizations(WithRealizationsCategory):
 
@@ -2890,6 +2987,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                       irreducible symmetric group character basis
                     Defining w as shorthand for
                      Symmetric Functions over Integer Ring in the Witt basis
+                    Defining xt as shorthand for
+                     Symmetric Functions over Integer Ring in the irreducible rook monoid character basis
 
                 The messages can be silenced by setting ``verbose=False``::
 
@@ -3041,7 +3140,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return self.a_realization().an_element()
 
             # TODO: maybe this could be taken care of by Sets.Facade()?
-            def __contains__(self, x):
+            def __contains__(self, x) -> bool:
                 r"""
                 Test whether ``x`` is in ``self``, that is if it is an
                 element of some realization of ``self``.

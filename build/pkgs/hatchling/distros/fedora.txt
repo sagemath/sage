@@ -1,1 +1,1 @@
-python3-hatchling
+python-hatchling

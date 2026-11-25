@@ -43,6 +43,7 @@ if TYPE_CHECKING:
     from sage.manifolds.point import ManifoldPoint
     from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
 
+
 class DiffMap(ContinuousMap):
     r"""
     Differentiable map between two differentiable manifolds.
@@ -871,7 +872,8 @@ class DiffMap(ContinuousMap):
           pullback of `T` by `\Phi`
         - (if the input is a manifold subset `S`)
           a :class:`~sage.manifolds.subset.ManifoldSubset` that is the
-          preimage `\Phi^{-1}(S)`; same as :meth:`preimage`
+          preimage `\Phi^{-1}(S)`; same as
+          :meth:`~sage.manifolds.continuous_map.ContinuousMap.preimage`
 
         EXAMPLES:
 

@@ -5,7 +5,9 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
+- Sebastian Oehms (2018-07-19): added
+  :meth:`~sage.rings.finite_rings.element_base.FinitePolyExtElement.conjugate`
+  (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -22,32 +24,7 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
 
-
-def is_FiniteFieldElement(x):
-    """
-    Return ``True`` if ``x`` is a finite field element.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.element_base import is_FiniteFieldElement
-        sage: is_FiniteFieldElement(1)
-        doctest:...: DeprecationWarning: the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead
-        See https://github.com/sagemath/sage/issues/32664 for details.
-        False
-        sage: is_FiniteFieldElement(IntegerRing())
-        False
-        sage: is_FiniteFieldElement(GF(5)(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32664, "the function is_FiniteFieldElement is deprecated; use isinstance(x, sage.structure.element.FieldElement) and x.parent().is_finite() instead")
-
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    return isinstance(x, Element) and isinstance(x.parent(), FiniteField)
 
 
 cdef class FiniteRingElement(CommutativeRingElement):
@@ -88,14 +65,13 @@ cdef class FiniteRingElement(CommutativeRingElement):
         gcd = n.gcd(q-1)
         if self.is_one():
             if gcd == 1:
-                if all: return [self]
-                else: return self
-            else:
-                nthroot = K.zeta(gcd)
-                return [nthroot**a for a in range(gcd)] if all else nthroot
+                return [self] if all else self
+            nthroot = K.zeta(gcd)
+            return [nthroot**a for a in range(gcd)] if all else nthroot
         if gcd == q-1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            raise ValueError("no nth root")
         gcd, alpha, _ = n.xgcd(q-1)  # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
@@ -103,8 +79,9 @@ cdef class FiniteRingElement(CommutativeRingElement):
         n = gcd
         q1overn = (q-1)//n
         if self**q1overn != 1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            raise ValueError("no nth root")
         self = self**alpha
         if cunningham:
             from sage.rings.factorint import factor_cunningham
@@ -134,12 +111,11 @@ cdef class FiniteRingElement(CommutativeRingElement):
             if all:
                 nthroot = K.zeta(n)
                 L = [self]
-                for i in range(1,n):
+                for i in range(1, n):
                     self *= nthroot
                     L.append(self)
                 return L
-            else:
-                return self
+            return self
         else:
             raise ValueError("unknown algorithm")
 
@@ -164,8 +140,111 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: a.to_bytes(byteorder='little')
             b'\x16"\x00'
         """
-        length = (self.parent().order().nbits() + 7) // 8
+        order = self.parent().order()
+        length = ((order - 1).nbits() + 7) // 8
         return int(self).to_bytes(length=length, byteorder=byteorder)
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Implemented here because not all finite field elements inherit from FieldElement.
+
+        EXAMPLES::
+
+            sage: GF(7)(1).canonical_associate()
+            (1, 1)
+            sage: GF(7)(3).canonical_associate()
+            (1, 3)
+            sage: GF(7)(0).canonical_associate()
+            (0, 1)
+            sage: IntegerModRing(15)(7).canonical_associate()
+            NotImplemented
+        """
+        R = self.parent()
+        if R.is_field():
+            if self.is_zero():
+                return (R.zero(), R.one())
+            return (R.one(), self)
+        return NotImplemented
+
+    def minpoly_over(self, F, var='x'):
+        r"""
+        Return the minimal polynomial of this finite-field element over
+        the given base field, which must be a subfield of the parent of
+        this element.
+
+        EXAMPLES::
+
+            sage: f = GF(101^2).gen().minpoly_over(GF(101^2)); f
+            x + 100*z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = GF(101^4).gen().minpoly_over(GF(101^2)); f
+            x^2 + (31*z2 + 39)*x + z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: GF(101^3).gen().minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field in z3 of size 101^3
+
+        ::
+
+            sage: f = GF(101)(42).minpoly_over(GF(101)); f
+            x + 59
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: GF(101)(42).minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101^2)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^100).minpoly_over(GF(101)); f
+            x^2 + 95*x + 1
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+        """
+        # workaround for #34907: if this element lies in F, then .minpoly() for extensions is buggy
+        try:
+            emb = F.hom(self.parent())
+        except TypeError:
+            raise ValueError(f'{F} does not embed into {self.parent()}')
+        try:
+            a = emb.section()(self)
+        except ValueError:
+            ext = self.parent().over(F)
+            return ext(self).minpoly(var=var)
+        else:
+            from sage.rings.polynomial.polynomial_ring import polygen
+            return polygen(F, var) - a
+
+
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -202,7 +281,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             f = Cx([base_map(c) for c in f])
         return codomain(f(im_gens[0]))
 
-    def minpoly(self,var='x',algorithm='pari'):
+    def minpoly(self, var='x', algorithm='pari'):
         """
         Return the minimal polynomial of this element
         (over the corresponding prime subfield).
@@ -241,10 +320,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().minpoly('x').lift())
-        elif algorithm == 'matrix':
+
+        if algorithm == 'matrix':
             return self.matrix().minpoly(var)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
     # We have two names for the same method
     # for compatibility with sage.matrix
@@ -292,7 +372,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
             sage: a = F.random_element()
             sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
@@ -333,7 +412,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: R.<x> = GF(17)[]
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
@@ -363,40 +441,37 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             Traceback (most recent call last):
             ...
             StopIteration
-            sage: list(a)   # implicit doctest
+            sage: list(a)   # indirect doctest
             [5, 7]
-            sage: tuple(a)  # implicit doctest
+            sage: tuple(a)  # indirect doctest
             (5, 7)
             sage: b = F(11)
-            sage: list(b)   # implicit doctest
+            sage: list(b)   # indirect doctest
             [11, 0]
-            sage: tuple(b)  # implicit doctest
+            sage: tuple(b)  # indirect doctest
             (11, 0)
             sage: list(b.polynomial())
             [11]
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
-            sage: list(a) == a.list()  # implicit doctest
+            sage: list(a) == a.list()  # indirect doctest
             True
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
         """
         return iter(self.list())
@@ -460,7 +535,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
             sage: vector(a*b) == a.matrix() * vector(b)
@@ -503,8 +577,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if self.parent().degree()>1:
             return self.polynomial()._latex_()
-        else:
-            return str(self)
+        return str(self)
 
     def __pari__(self, var=None):
         r"""
@@ -624,10 +697,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().charpoly('x').lift())
-        elif algorithm == 'matrix':
+
+        if algorithm == 'matrix':
             return self.matrix().charpoly(var)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
     def norm(self):
         """
@@ -657,10 +731,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         f = self.charpoly('x')
         n = f[0]
-        if f.degree() % 2:
-            return -n
-        else:
-            return n
+        return -n if f.degree() % 2 else n
 
     def trace(self):
         """
@@ -702,7 +773,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: S(0).multiplicative_order()
             Traceback (most recent call last):
             ...
-            ArithmeticError: Multiplicative order of 0 not defined.
+            ArithmeticError: multiplicative order of 0 not defined
         """
         if self.is_zero():
             raise ArithmeticError("Multiplicative order of 0 not defined.")
@@ -741,15 +812,15 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl='givaro', modulus='primitive')            # needs sage.libs.linbox
+            sage: k.<a> = FiniteField(9, implementation='givaro', modulus='primitive')            # needs sage.libs.linbox
             sage: a.is_square()                                                         # needs sage.libs.linbox
             False
             sage: (a**2).is_square()                                                    # needs sage.libs.linbox
             True
-            sage: k.<a> = FiniteField(4, impl='ntl', modulus='primitive')               # needs sage.libs.ntl
+            sage: k.<a> = FiniteField(4, implementation='ntl', modulus='primitive')               # needs sage.libs.ntl
             sage: (a**2).is_square()                                                    # needs sage.libs.ntl
             True
-            sage: k.<a> = FiniteField(17^5, impl='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
+            sage: k.<a> = FiniteField(17^5, implementation='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
             sage: a.is_square()                                                         # needs sage.libs.pari
             False
             sage: (a**2).is_square()                                                    # needs sage.libs.pari
@@ -799,7 +870,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             3
             sage: F(4).square_root()
             2
-            sage: K = FiniteField(7^3, 'alpha', impl='pari_ffelt')
+            sage: K = FiniteField(7^3, 'alpha', implementation='pari_ffelt')
             sage: K(3).square_root()
             Traceback (most recent call last):
             ...
@@ -817,12 +888,14 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         EXAMPLES::
 
             sage: k.<a> = GF(3^17)
-            sage: (a^3 - a - 1).sqrt()
+            sage: (a^3 - a - 1).sqrt() # random - depends on pari version
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
+            sage: _^2 == a^3 - a - 1
+            True
         """
         return self.square_root(extend=extend, all=all)
 
-    def nth_root(self, n, extend = False, all = False, algorithm=None, cunningham=False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -922,26 +995,28 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if self.is_zero():
             if n <= 0:
-                if all: return []
-                else: raise ValueError
-            if all: return [self]
-            else: return self
+                if all:
+                    return []
+                raise ValueError
+            return [self] if all else self
         if n < 0:
             self = ~self
             n = -n
         elif n == 0:
             if self == 1:
-                if all: return [a for a in self.parent().list() if a != 0]
-                else: return self
+                if all:
+                    return [a for a in self.parent().list() if a != 0]
+                return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
         if extend:
             raise NotImplementedError
         n = Integer(n)
         return self._nth_root_common(n, all, algorithm, cunningham)
 
-    def pth_power(self, int k = 1):
+    def pth_power(self, int k=1):
         """
         Return the `(p^k)`-th power of self, where `p` is the
         characteristic of the field.
@@ -975,7 +1050,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     frobenius = pth_power
 
-    def pth_root(self, int k = 1):
+    def pth_root(self, int k=1):
         """
         Return the `(p^k)`-th root of self, where `p` is the characteristic
         of the field.
@@ -1027,7 +1102,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         Check that :issue:`26761` is fixed::
 
-            sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
             sage: g1, g2 = G32.gens()
             sage: m1 = g1.matrix()
@@ -1079,7 +1153,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))
@@ -1103,8 +1176,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         if reverse:
             f = f.reverse(self.parent().degree() - 1)
         return f(p)
-
-    integer_representation = deprecated_function_alias(33941, to_integer)
 
     def to_bytes(self, byteorder='big'):
         r"""
@@ -1131,8 +1202,18 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: a = 136*z3^2 + 10*z3 + 125
             sage: a.to_bytes()
             b'7)\xa3'
+
+        TESTS:
+
+        Check that :issue:`41545` is fixed::
+
+            sage: F.<z2> = GF(2^8)
+            sage: a = F.from_integer(137)
+            sage: a.to_bytes()
+            b'\x89'
         """
-        length = (self.parent().order().nbits() + 7) // 8
+        order = self.parent().order()
+        length = ((order - 1).nbits() + 7) // 8
         return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):

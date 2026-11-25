@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Graded modules with basis
 """
@@ -92,7 +91,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
-            :meth:`echelonize`, and reindexed by `0,1,...`.
+            :meth:`~sage.matrix.matrix2.Matrix.echelonize`, and reindexed by `0,1,...`.
 
             .. WARNING::
 
@@ -109,7 +108,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             .. SEEALSO::
 
-                 - :meth:`ModulesWithBasis.FiniteDimensional.ParentMethods.quotient_module`
+                 - :meth:`~sage.categories.graded_modules_with_basis.GradedModulesWithBasis.ParentMethods.quotient_module`
                  - :class:`sage.modules.with_basis.subquotient.SubmoduleWithBasis`
 
             EXAMPLES:
@@ -214,7 +213,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
               something that can be turned into one via
               ``self.submodule(submodule)``
             - ``check``, ``already_echelonized`` -- passed down to
-              :meth:`ModulesWithBasis.ParentMethods.submodule`
+              :meth:`~sage.categories.graded_modules_with_basis.GradedModulesWithBasis.ParentMethods.submodule`
             - ``category`` -- (optional) the category of the quotient module
 
             .. WARNING::
@@ -239,7 +238,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             .. SEEALSO::
 
-                 - :meth:`Modules.WithBasis.ParentMethods.submodule`
+                 - :meth:`~sage.categories.graded_modules_with_basis.GradedModulesWithBasis.ParentMethods.submodule`
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """

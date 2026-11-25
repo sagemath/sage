@@ -167,7 +167,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
     return wp(z*u) * u**2
 
 
-def compute_wp_pari(E,prec):
+def compute_wp_pari(E, prec):
     r"""
     Compute the Weierstrass `\wp`-function with the ``ellwp`` function
     from PARI.

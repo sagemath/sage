@@ -1,7 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Parallelogram Polyominoes
-=========================
+Parallelogram polyominoes
 
 The goal of this module is to give some tools to manipulate the
 parallelogram polyominoes.
@@ -311,8 +310,7 @@ class LocalOptions:
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)
@@ -696,7 +694,7 @@ class _drawing_tool:
 
             The rotated position.
             """
-            [x, y] = pos
+            x, y = pos
             return [x*cos(angle) - y*sin(angle), x*sin(angle) + y*cos(angle)]
 
         def mirror(pos, axe):
@@ -771,8 +769,8 @@ class _drawing_tool:
             color = self._color_line
         if size is None:
             size = self._line_size
-        [x1, y1] = self.XY(v1)
-        [x2, y2] = self.XY(v2)
+        x1, y1 = self.XY(v1)
+        x2, y2 = self.XY(v2)
         return "\n  \\draw[color=%s, line width=%s] (%f, %f) -- (%f, %f);" % (
             color, size, float(x1), float(y1), float(x2), float(y2)
         )
@@ -845,14 +843,14 @@ class _drawing_tool:
             color = self._color_point
         if size is None:
             size = self._point_size
-        [x1, y1] = self.XY(p1)
+        x1, y1 = self.XY(p1)
         return "\n  \\filldraw[color=%s] (%f, %f) circle (%spt);" % (
             color, float(x1), float(y1), size
         )
 
 
 class ParallelogramPolyomino(ClonableList,
-        metaclass=InheritComparisonClasscallMetaclass):
+                             metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Parallelogram Polyominoes.
 
@@ -1545,7 +1543,7 @@ class ParallelogramPolyomino(ClonableList,
         This last bijection is described in [DerZak1980]_ (see page 12 and
         Figure 3.1 of page 13).
 
-        See :meth:`_to_dyck_delest_viennot` for the exact references.
+        See ``_to_dyck_delest_viennot`` for the exact references.
         See also :meth:`to_ordered_tree()`.
 
         EXAMPLES::
@@ -1691,7 +1689,7 @@ class ParallelogramPolyomino(ClonableList,
         Different bijections can be specified.
 
         The bijection 'via dyck and Delest-Viennot' is the composition of
-        :meth:`_to_dyck_delest_viennot` and the classical bijection between
+        ``_to_dyck_delest_viennot`` and the classical bijection between
         dyck paths and ordered trees.
 
         The bijection between Dyck Word and ordered trees is described
@@ -2219,7 +2217,7 @@ class ParallelogramPolyomino(ClonableList,
 
         if h >= len(widths) or h < 0:
             return 0
-        if lower_widths[h] <= w and w < lower_widths[h] + widths[h]:
+        if lower_widths[h] <= w < lower_widths[h] + widths[h]:
             return 1
         return 0
 
@@ -2409,8 +2407,7 @@ class ParallelogramPolyomino(ClonableList,
             """
             if self.is_outside():
                 return "The (outside) row %s of the parallelogram" % (self.row)
-            else:
-                return str(self.polyomino.get_array()[self.row])
+            return str(self.polyomino.get_array()[self.row])
 
     def __getitem__(self, row):
         r"""
@@ -2676,7 +2673,7 @@ class ParallelogramPolyomino(ClonableList,
         Return all the tikz options permitting to draw the parallelogram
         polyomino.
 
-        See :class:`LocalOption` to have more informations about the
+        See :class:`~sage.combinat.parallelogram_polyomino.LocalOptions` to have more informations about the
         modification of those options.
 
         EXAMPLES::
@@ -3043,7 +3040,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box_position`` -- the position of the statring cell
+        - ``box_position`` -- the position of the starting cell
 
         - ``direction`` -- the direction (0 or 1)
 
@@ -3144,9 +3141,7 @@ class ParallelogramPolyomino(ClonableList,
             return False
         if self[pos[0] - 1][pos[1]] == 0:
             return True
-        if self[pos[0]][pos[1] - 1] == 0:
-            return True
-        return False
+        return self[pos[0]][pos[1] - 1] == 0
 
     def box_is_root(self, box) -> bool:
         r"""
@@ -4077,7 +4072,7 @@ class ParallelogramPolyominoes_size(
         """
         return "Parallelogram polyominoes of size %s" % (self._size)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of a parallelogram polyomino of a given size.
 

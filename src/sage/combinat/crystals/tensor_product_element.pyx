@@ -1,18 +1,18 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Tensor Products of Crystal Elements
+Tensor products of crystal elements
 
 AUTHORS:
 
-- Anne Schilling, Nicolas Thiery (2007): Initial version
-- Ben Salisbury, Travis Scrimshaw (2013): Refactored tensor products to handle
+- Anne Schilling, Nicolas Thiery (2007): initial version
+- Ben Salisbury, Travis Scrimshaw (2013): refactored tensor products to handle
   non-regular crystals and created new subclass to take advantage of
   the regularity
-- Travis Scrimshaw (2017): Cythonized element classes
-- Franco Saliola (2017): Tensor products for crystal of super algebras
-- Anne Schilling (2018): Tensor products for crystals of queer super algebras
+- Travis Scrimshaw (2017): cythonized element classes
+- Franco Saliola (2017): tensor products for crystal of super algebras
+- Anne Schilling (2018): tensor products for crystals of queer super algebras
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                     2017 Franco Saliola <saliola@gmail.com>
@@ -28,7 +28,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#****************************************************************************
+# **************************************************************************
 
 from sage.structure.parent cimport Parent
 
@@ -86,7 +86,7 @@ cdef class ImmutableListWithParent(ClonableArray):
             sage: list(b._set_index(1, 4))
             [1, 4, 1]
         """
-        cdef list l = list(self._list) # Make a (shallow) copy
+        cdef list l = list(self._list)  # Make a (shallow) copy
         l[k] = value
         return type(self)(self._parent, list=l)
 
@@ -440,8 +440,9 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
         """
         N = len(self._list) + 1
         for k in range(1, N):
-            if all(self._sig(i,k) > self._sig(i,j) for j in range(1, k)) and \
-                   all(self._sig(i,k) >= self._sig(i,j) for j in range(k+1, N)):
+            s_ik = self._sig(i, k)
+            if all(s_ik > self._sig(i, j) for j in range(1, k)) and \
+                    all(s_ik >= self._sig(i, j) for j in range(k+1, N)):
                 crystal = self._list[-k].e(i)
                 if crystal is None:
                     return None
@@ -476,8 +477,9 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
         """
         N = len(self._list) + 1
         for k in range(1, N):
-            if all(self._sig(i,k) >= self._sig(i,j) for j in range(1, k)) and \
-                   all(self._sig(i,k) > self._sig(i,j) for j in range(k+1, N)):
+            s_ik = self._sig(i, k)
+            if all(s_ik >= self._sig(i, j) for j in range(1, k)) and \
+                    all(s_ik > self._sig(i, j) for j in range(k+1, N)):
                 crystal = self._list[-k].f(i)
                 if crystal is None:
                     return None
@@ -608,7 +610,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
         unmatched_minus = None
         height = 0
         cdef int j
-        for j,elt in enumerate(self):
+        for j, elt in enumerate(self):
             plus = elt.epsilon(i)
             minus = elt.phi(i)
             if height - minus < 0:
@@ -663,7 +665,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
         if reverse:
             self = type(self)(self._parent, list(reversed(self._list)))
         if not dual:
-            for j,elt in enumerate(self):
+            for j, elt in enumerate(self):
                 minus = elt.phi(i)
                 plus = elt.epsilon(i)
                 if height-minus < 0:
@@ -672,7 +674,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
                 else:
                     height = height - minus + plus
         else:
-            for j,elt in enumerate(self):
+            for j, elt in enumerate(self):
                 plus = elt.epsilon(i)
                 minus = elt.phi(i)
                 if height-plus < 0:
@@ -869,9 +871,9 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         if not self._list:
             return Tableau([])._unicode_art_()
         cdef list lst = self._list
-        cdef list tab = [ [lst[0]] ]
+        cdef list tab = [[lst[0]]]
         cdef int i
-        for i in range(1,len(self)):
+        for i in range(1, len(self)):
             if lst[i-1] < lst[i] or (lst[i-1].value != 0 and lst[i-1] == lst[i]):
                 tab.append([lst[i]])
             else:
@@ -900,8 +902,8 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         if not self._list:
             return "{\\emptyset}"
 
-        tab = [ [self[0]] ]
-        for i in range(1,len(self)):
+        tab = [[self[0]]]
+        for i in range(1, len(self)):
             if self[i-1] < self[i] or (self[i-1].value != 0 and self[i-1] == self[i]):
                 tab.append([self[i]])
             else:
@@ -955,9 +957,9 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         if not self._list:
             return Tableau([])
         cdef list lst = self._list
-        cdef list tab = [ [lst[0].value] ]
+        cdef list tab = [[lst[0].value]]
         cdef int i
-        for i in range(1,len(self)):
+        for i in range(1, len(self)):
             if lst[i-1] < lst[i] or (lst[i-1].value != 0 and lst[i-1] == lst[i]):
                 tab.append([lst[i].value])
             else:
@@ -1034,7 +1036,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         return crystal(self.to_tableau().promotion_inverse(cartan_type.rank()))
 
 cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
-    def e(self,i):
+    def e(self, i):
         r"""
         Return the action of `\widetilde{e}_i` on ``self``.
 
@@ -1068,7 +1070,7 @@ cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 
@@ -1109,7 +1111,7 @@ cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
         ret = <InfinityCrystalOfTableauxElement>(self._set_index(k, self._list[k].f(i)))
         if k+i > len(self._list):
             return ret
-        for j in reversed(range(1,i+1)):
+        for j in reversed(range(1, i+1)):
             if self._list[k+i-j].value != j:
                 return ret
         # We've found a full column, so we'll need to add a new column
@@ -1153,7 +1155,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 
@@ -1238,7 +1240,7 @@ cdef class TensorProductOfSuperCrystalsElement(TensorProductOfRegularCrystalsEle
             k = len(self._list) - k - 1
             return self._set_index(k, self._list[k].e(i))
         # Otherwise i == 0
-        for k,elt in enumerate(self._list):
+        for k, elt in enumerate(self._list):
             if elt.f(i) is not None:
                 return None
             x = elt.e(i)
@@ -1269,7 +1271,7 @@ cdef class TensorProductOfSuperCrystalsElement(TensorProductOfRegularCrystalsEle
             k = len(self._list) - k - 1
             return self._set_index(k, self._list[k].f(i))
         # Otherwise i == 0
-        for k,elt in enumerate(self._list):
+        for k, elt in enumerate(self._list):
             if elt.e(i) is not None:
                 return None
             x = elt.f(i)
@@ -1450,7 +1452,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         tab = [[None]*row for row in sh]
         cur = 0
         lst = list(reversed(self._list))
-        for r,row_len in enumerate(sh):
+        for r, row_len in enumerate(sh):
             for c in reversed(range(row_len)):
                 tab[r][c] = lst[cur]
                 cur += 1
@@ -1546,8 +1548,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.e(self, i)
-            else:
-                return TensorProductOfCrystalsElement.e(self, i)
+            return TensorProductOfCrystalsElement.e(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)
@@ -1606,8 +1607,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.f(self, i)
-            else:
-                return TensorProductOfCrystalsElement.f(self, i)
+            return TensorProductOfCrystalsElement.f(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)
@@ -1929,7 +1929,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
 
 cdef Py_ssize_t count_leading(list row, letter) noexcept:
     cdef Py_ssize_t i
-    for i in range(len(row)-1,-1,-1):
+    for i in range(len(row)-1, -1, -1):
         if row[i] != letter:
             return len(row) - 1 - i
     return len(row)

@@ -45,7 +45,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 import sage.modules.matrix_morphism
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix import matrix_space
 
 from .finite_subgroup import TorsionPoint
 
@@ -117,7 +117,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             iM, denom = iM._clear_denom()
         return Morphism(self.parent().reversed(), iM)
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         """
         Return ``True`` if this morphism is an isogeny of abelian varieties.
 
@@ -405,9 +405,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t3(E11a0)
             Abelian subvariety of dimension 1 of J0(33)
             sage: t3(E11a0).decomposition()
-            [
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)
-            ]
+            [Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)]
             sage: t3(E11a0) == E11a1
             True
             sage: t2(E11a0) == E11a0
@@ -442,12 +440,11 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         from .finite_subgroup import FiniteSubgroup
         if isinstance(X, TorsionPoint):
             return self._image_of_element(X)
-        elif isinstance(X, ModularAbelianVariety_abstract):
+        if isinstance(X, ModularAbelianVariety_abstract):
             return self._image_of_abvar(X)
-        elif isinstance(X, FiniteSubgroup):
+        if isinstance(X, FiniteSubgroup):
             return self._image_of_finite_subgroup(X)
-        else:
-            raise TypeError("X must be an abelian variety or finite subgroup")
+        raise TypeError("X must be an abelian variety or finite subgroup")
 
     def _image_of_element(self, x):
         """

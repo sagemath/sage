@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -201,7 +200,7 @@ class Monoids(CategoryWithAxiom):
 
             - ``generators`` -- a finite family of elements of
               ``self``, or a list, iterable, ... that can be converted
-              into one (see :class:`Family`).
+              into one (see :func:`~sage.sets.family.Family`).
 
             - ``category`` -- a category
 
@@ -274,7 +273,7 @@ class Monoids(CategoryWithAxiom):
             """
             return left * ~right
 
-        def is_one(self):
+        def is_one(self) -> bool:
             r"""
             Return whether ``self`` is the one of the monoid.
 
@@ -504,13 +503,32 @@ class Monoids(CategoryWithAxiom):
 
         class ParentMethods:
 
+            def is_field(self, proof=True) -> bool:
+                r"""
+                Return ``True`` if ``self`` is a field.
+
+                For a monoid algebra `R S` this is always false unless
+                `S` is trivial and the base ring `R` is a field.
+
+                EXAMPLES::
+
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    True
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                """
+                if not self.base_ring().is_field(proof):
+                    return False
+                return self.basis().keys().cardinality() == 1
+
             @cached_method
             def one_basis(self):
                 """
                 Return the unit of the monoid, which indexes the unit of
                 this algebra, as per
-                :meth:`AlgebrasWithBasis.ParentMethods.one_basis()
-                <sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.one_basis>`.
+                :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
                 EXAMPLES::
 
@@ -583,7 +601,7 @@ class Monoids(CategoryWithAxiom):
 
         class ElementMethods:
 
-            def is_central(self):
+            def is_central(self) -> bool:
                 r"""
                 Return whether the element ``self`` is central.
 
@@ -697,9 +715,8 @@ class Monoids(CategoryWithAxiom):
                 orders = [x.multiplicative_order() for x in self.cartesian_factors()]
                 if any(o is Infinity for o in orders):
                     return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
+                from sage.arith.functions import LCM_list
+                return LCM_list(orders)
 
             def __invert__(self):
                 """

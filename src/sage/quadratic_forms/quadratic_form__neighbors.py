@@ -47,8 +47,7 @@ def find_primitive_p_divisible_vector__random(self, p):
         a = self(v)
         if a in ZZ and (a % p == 0) and (v != 0):
             return v
-        else:
-            v[ZZ.random_element(n)] = ZZ.random_element(p)
+        v[ZZ.random_element(n)] = ZZ.random_element(p)
             # Replace a random entry and try again.
     raise RuntimeError("unable to find a p divisible vector")
 
@@ -327,7 +326,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=None,
         def p_divisible_vectors(Q, max_neighbors):
             yield from iter(v.lift() for v in Q.orbits_lines_mod_p(p)
                             if v != 0 and Q(v.lift()).valuation(p) > 0)
-            return
+
     elif algorithm == 'exhaustion':
         def p_divisible_vectors(Q, max_neighbors):
             k = 0

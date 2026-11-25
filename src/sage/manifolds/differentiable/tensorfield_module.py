@@ -38,20 +38,23 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
-from sage.tensor.modules.tensor_free_module import TensorFreeModule
+from sage.manifolds.differentiable.automorphismfield import (
+    AutomorphismField,
+    AutomorphismFieldParal,
+)
+from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
+from sage.manifolds.differentiable.multivectorfield import (
+    MultivectorField,
+    MultivectorFieldParal,
+)
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
-from sage.manifolds.differentiable.diff_form import (DiffForm,
-                                                     DiffFormParal)
-from sage.manifolds.differentiable.multivectorfield import (MultivectorField,
-                                                            MultivectorFieldParal)
-from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
-                                                             AutomorphismFieldParal)
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
+from sage.tensor.modules.tensor_free_module import TensorFreeModule
 
 
 class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
@@ -380,9 +383,8 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
                 and self._domain.is_subset(comp._domain)
                 and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {}".format(comp) +
-                                " to an element of {}".format(self))
+            raise TypeError("cannot convert the {}".format(comp) +
+                            " to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -442,12 +444,11 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             sage: T11._coerce_map_from_(M.automorphism_field_group())
             True
         """
-        from sage.manifolds.differentiable.diff_form_module import \
-                                                          DiffFormModule
-        from sage.manifolds.differentiable.multivector_module import \
-                                                       MultivectorModule
-        from sage.manifolds.differentiable.automorphismfield_group \
-                                           import AutomorphismFieldGroup
+        from sage.manifolds.differentiable.automorphismfield_group import (
+            AutomorphismFieldGroup,
+        )
+        from sage.manifolds.differentiable.diff_form_module import DiffFormModule
+        from sage.manifolds.differentiable.multivector_module import MultivectorModule
         if isinstance(other, (TensorFieldModule, TensorFieldFreeModule)):
             # coercion by domain restriction
             return (self._tensor_type == other._tensor_type
@@ -513,8 +514,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def base_module(self):
         r"""
@@ -586,6 +586,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
         return resu
 
 #***********************************************************************
+
 
 class TensorFieldFreeModule(TensorFreeModule):
     r"""
@@ -860,9 +861,8 @@ class TensorFieldFreeModule(TensorFreeModule):
                 and self._ambient_domain.is_subset(
                                                  comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {}".format(comp) +
-                                " to an element of {}".format(self))
+            raise TypeError("cannot convert the {}".format(comp) +
+                            " to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -900,12 +900,13 @@ class TensorFieldFreeModule(TensorFreeModule):
             sage: T11._coerce_map_from_(M.automorphism_field_group())
             True
         """
-        from sage.manifolds.differentiable.diff_form_module import \
-                                                      DiffFormFreeModule
-        from sage.manifolds.differentiable.multivector_module import \
-                                                   MultivectorFreeModule
-        from sage.manifolds.differentiable.automorphismfield_group \
-                                      import AutomorphismFieldParalGroup
+        from sage.manifolds.differentiable.automorphismfield_group import (
+            AutomorphismFieldParalGroup,
+        )
+        from sage.manifolds.differentiable.diff_form_module import DiffFormFreeModule
+        from sage.manifolds.differentiable.multivector_module import (
+            MultivectorFreeModule,
+        )
         if isinstance(other, (TensorFieldModule, TensorFieldFreeModule)):
             # coercion by domain restriction
             return (self._tensor_type == other._tensor_type

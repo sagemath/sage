@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of package systems ``sage_spkg``, ``conda``, ``pip``, ``debian``, ``fedora`` etc.
 """
@@ -69,7 +68,7 @@ class PackageSystem(Feature):
             sage: fedora.spkg_installation_hint('openblas')  # optional - SAGE_ROOT
             'To install openblas using the fedora package manager, you can try to run:\n!sudo yum install openblas-devel'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         lines = []
         system = self.name
         try:
@@ -184,12 +183,19 @@ class PipPackageSystem(PackageSystem):
         EXAMPLES::
 
             sage: from sage.features.pkg_systems import PipPackageSystem
-            sage: bool(PipPackageSystem().is_present())    # indirect doctest
+            sage: bool(PipPackageSystem().is_present())    # indirect doctest, needs pip
             True
         """
         from subprocess import run, DEVNULL, CalledProcessError
         try:
-            run('sage -pip --version', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
+            # The command below is missing the arguments to pip, but
+            # when run from within the sage distribution, it will
+            # still succeed. If, on the other hand, "sage" is the
+            # script provided by a minimal sage library installation,
+            # then the command will fail regardless of whether or not
+            # pip is installed. This is fine: the PackageSystem
+            # concept is helpful only within the sage distribution.
+            run('sage -pip', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
             return True
         except CalledProcessError:
             return False

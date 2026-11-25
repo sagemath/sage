@@ -5,8 +5,9 @@ This file provides the backend for \class{Polynomial_zmod_flint} via
 templating.
 
 AUTHOR:
-    -- Martin Albrecht (2009-01) another initial implementation
-    -- Burcin Erocal (2008-11) initial implementation
+
+- Martin Albrecht (2009-01) another initial implementation
+- Burcin Erocal (2008-11) initial implementation
 """
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
@@ -14,7 +15,7 @@ AUTHOR:
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
@@ -126,6 +127,22 @@ cdef inline int celement_set_si(nmod_poly_t res, long i, unsigned long n) except
     """
     while i < 0:
         i += n
+    nmod_poly_zero(res)
+    if i:
+        nmod_poly_set_coeff_ui(res, 0, <unsigned long>i)
+
+cdef inline int celement_set_ui(nmod_poly_t res, unsigned long i, unsigned long n) except -2:
+    """
+    EXAMPLES::
+
+        sage: P.<x> = GF(18446744073709551557)[]
+        sage: P(18446744073709551557)
+        0
+        sage: P(18446744073709551558)
+        1
+        sage: P(-4)
+        18446744073709551553
+    """
     nmod_poly_zero(res)
     if i:
         nmod_poly_set_coeff_ui(res, 0, <unsigned long>i)
@@ -326,7 +343,7 @@ cdef inline int celement_mul_scalar(nmod_poly_t res, nmod_poly_t p,
         sage: (p*9836).coefficients() == [x*9836 for x in p.coefficients()]
         True
     """
-    nmod_poly_scalar_mul_nmod(res, p, (<unsigned long>c)%n)
+    nmod_poly_scalar_mul_nmod(res, p, (<unsigned long>c) % n)
 
 cdef inline int celement_mul(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
@@ -362,6 +379,20 @@ cdef inline int celement_truncate(nmod_poly_t res, nmod_poly_t a, long len, unsi
     nmod_poly_set(res, a)
     nmod_poly_truncate(res, len)
 
+cdef inline int _check_leading_coefficient_invertible(nmod_poly_t b) except -1:
+    """
+    Raise a :exc:`ValueError` if the leading coefficient of ``b`` is not
+    invertible modulo the modulus of ``b``.
+
+    Division by ``b`` with remainder needs the inverse of its leading
+    coefficient; FLINT aborts the process if it does not exist.
+    """
+    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
+    cdef unsigned long modulus = nmod_poly_modulus(b)
+    if leadcoeff > 1 and n_gcd(modulus, leadcoeff) != 1:
+        raise ValueError("Leading coefficient of a must be invertible.")
+    return 0
+
 cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
     EXAMPLES::
@@ -385,7 +416,25 @@ cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b,
         x + 2
         sage: (x^2 + 3*x + 2)//(x + 2)
         x + 1
+
+    TESTS:
+
+    Ensure that a non-invertible leading coefficient does not crash Sage
+    (:issue:`38591`)::
+
+        sage: R.<x> = Zmod(6)[]
+        sage: x // 2
+        Traceback (most recent call last):
+        ...
+        ValueError: Leading coefficient of a must be invertible.
+        sage: (x^2 + 1) // (3*x + 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: Leading coefficient of a must be invertible.
+        sage: (x^2 + 1) // (5*x + 1)
+        5*x + 5
     """
+    _check_leading_coefficient_invertible(b)
     nmod_poly_div(res, a, b)
 
 cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
@@ -421,14 +470,9 @@ cdef inline int celement_mod(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         ZeroDivisionError
     """
     cdef nmod_poly_t q
-    cdef unsigned long leadcoeff, modulus
 
+    _check_leading_coefficient_invertible(b)
     nmod_poly_init(q, n)
-    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
-    modulus = nmod_poly_modulus(b)
-    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
-        raise ValueError("Leading coefficient of a must be invertible.")
-
     nmod_poly_divrem(q, res, a, b)
     nmod_poly_clear(q)
 
@@ -456,13 +500,7 @@ cdef inline int celement_quorem(nmod_poly_t q, nmod_poly_t r, nmod_poly_t a, nmo
         ...
         ZeroDivisionError
     """
-    cdef unsigned long leadcoeff, modulus
-
-    leadcoeff = nmod_poly_get_coeff_ui(b, nmod_poly_degree(b))
-    modulus = nmod_poly_modulus(b)
-    if (leadcoeff > 1 and n_gcd(modulus,leadcoeff) != 1):
-        raise ValueError("Leading coefficient of a must be invertible.")
-
+    _check_leading_coefficient_invertible(b)
     nmod_poly_divrem(q, r, a, b)
 
 cdef inline int celement_inv(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
@@ -536,10 +574,8 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
     Make sure that exponentiation can be interrupted, see :issue:`17470`::
 
         sage: n = 2^23
-        sage: alarm(0.2); x^n; cancel_alarm()
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.2): (x^n).degree()
     """
     if modulus != NULL:
         sig_on()
@@ -577,18 +613,37 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         True
         sage: (G//d)*d == G
         True
+
+    Check that we catch a case where FLINT fails.  These generate the unit
+    ideal, so their GCD should be 1 (or another unit)::
+
+        sage: R.<x> = Integers(121)[]
+        sage: f = 11*x^2 + 1
+        sage: f - 61*x*f.derivative()
+        1
+        sage: gcd(f, f.derivative())
+        Traceback (most recent call last):
+        ...
+        RuntimeError: FLINT gcd calculation failed
     """
     if celement_is_zero(b, n):
         nmod_poly_set(res, a)
         return 0
 
-    # A check that the leading coefficients are invertible is *not* sufficient
+    # FLINT provides no interface for detecting errors here
     try:
         sig_on()
-        nmod_poly_gcd(res, a, b)
-        sig_off()
+        try:
+            nmod_poly_gcd(res, a, b)
+        finally:
+            sig_off()
     except RuntimeError:
-        raise ValueError("non-invertible elements encountered during GCD")
+        raise RuntimeError("FLINT gcd calculation failed")
+
+    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
+    cdef unsigned long modulus = nmod_poly_modulus(res)
+    if n_gcd(modulus, leadcoeff) == 1:
+        nmod_poly_make_monic(res, res)
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """

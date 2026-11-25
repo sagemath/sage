@@ -91,7 +91,7 @@ cpdef fibers(f, domain):
     for x in domain:
         y = f(x)
         result.setdefault(y, set()).add(x)
-    for x, v in result.iteritems():
+    for x, v in result.items():
         result[x] = Set_object_enumerated(v)
     return result
 
@@ -249,7 +249,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         OUTPUT: none
 
-        .. NOTE:: if you need speed, please use instead :meth:`_setimage`
+        .. NOTE:: if you need speed, please use instead ``_setimage``
 
         EXAMPLES::
 
@@ -274,7 +274,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i`` -- any object
 
-        .. NOTE:: if you need speed, please use instead :meth:`_getimage`
+        .. NOTE:: if you need speed, please use instead ``_getimage``
 
         EXAMPLES::
 
@@ -355,7 +355,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         n = self._parent._n
         assert self._len == m, "Wrong number of values"
         for i in range(m):
-            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i"%(i, self._list[i])
+            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i" % (i, self._list[i])
         if hasattr(self._parent, 'check_element'):
             self._parent.check_element(self)
 
@@ -621,11 +621,10 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
             sage: F([1, 0, 2]) * F([2, 1, 0])
             [1, 2, 0]
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """
@@ -679,11 +678,10 @@ cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
             sage: g * f
             map: a -> c, b -> c, c -> c
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """

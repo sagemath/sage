@@ -69,11 +69,11 @@ class table(SageObject):
         \end{tabular}
         sage: table(rows=rows, frame=True)
         ┌─────┬───┬────┐
-        │ a   | b | c  |
+        │ a   │ b │ c  │
         ├─────┼───┼────┤
-        │ 100 | 2 | 3  |
+        │ 100 │ 2 │ 3  │
         ├─────┼───┼────┤
-        │ 4   | 5 | 60 |
+        │ 4   │ 5 │ 60 │
         └─────┴───┴────┘
         sage: latex(table(rows=rows, frame=True))
         \begin{tabular}{|l|l|l|} \hline
@@ -83,11 +83,11 @@ class table(SageObject):
         \end{tabular}
         sage: table(rows, header_column=True, frame=True)
         ┌─────╥───┬────┐
-        │ a   ║ b | c  |
+        │ a   ║ b │ c  │
         ├─────╫───┼────┤
-        │ 100 ║ 2 | 3  |
+        │ 100 ║ 2 │ 3  │
         ├─────╫───┼────┤
-        │ 4   ║ 5 | 60 |
+        │ 4   ║ 5 │ 60 │
         └─────╨───┴────┘
         sage: latex(table(rows, header_row=True, frame=True))
         \begin{tabular}{|l|l|l|} \hline
@@ -106,51 +106,51 @@ class table(SageObject):
     information.  The same goes for ``header_column``. Passing lists
     for both arguments simultaneously is not supported. ::
 
-        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]],                          # needs sage.symbolic
+        sage: table([(x,n(sin(x), digits=2)) for x in [0..3]],
         ....:       header_row=["$x$", r"$\sin(x)$"], frame=True)
         ┌─────┬───────────┐
-        │ $x$ | $\sin(x)$ |
+        │ $x$ │ $\sin(x)$ │
         ╞═════╪═══════════╡
-        │ 0   | 0.00      |
+        │ 0   │ 0.00      │
         ├─────┼───────────┤
-        │ 1   | 0.84      |
+        │ 1   │ 0.84      │
         ├─────┼───────────┤
-        │ 2   | 0.91      |
+        │ 2   │ 0.91      │
         ├─────┼───────────┤
-        │ 3   | 0.14      |
+        │ 3   │ 0.14      │
         └─────┴───────────┘
 
     You can create the transpose of this table in several ways, for
     example, "by hand," that is, changing the data defining the table::
 
-        sage: table(rows=[[x for x in [0..3]],                                          # needs sage.symbolic
+        sage: table(rows=[[x for x in [0..3]],
         ....:             [n(sin(x), digits=2) for x in [0..3]]],
         ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         ┌───────────╥──────┬──────┬──────┬──────┐
-        │ $x$       ║ 0    | 1    | 2    | 3    |
+        │ $x$       ║ 0    │ 1    │ 2    │ 3    │
         ├───────────╫──────┼──────┼──────┼──────┤
-        │ $\sin(x)$ ║ 0.00 | 0.84 | 0.91 | 0.14 |
+        │ $\sin(x)$ ║ 0.00 │ 0.84 │ 0.91 │ 0.14 │
         └───────────╨──────┴──────┴──────┴──────┘
 
     or by passing the original data as the ``columns`` of the table
     and using ``header_column`` instead of ``header_row``::
 
-        sage: table(columns=[(x, n(sin(x), digits=2)) for x in [0..3]],                 # needs sage.symbolic
+        sage: table(columns=[(x, n(sin(x), digits=2)) for x in [0..3]],
         ....:       header_column=['$x$', r'$\sin(x)$'], frame=True)
         ┌───────────╥──────┬──────┬──────┬──────┐
-        │ $x$       ║ 0    | 1    | 2    | 3    |
+        │ $x$       ║ 0    │ 1    │ 2    │ 3    │
         ├───────────╫──────┼──────┼──────┼──────┤
-        │ $\sin(x)$ ║ 0.00 | 0.84 | 0.91 | 0.14 |
+        │ $\sin(x)$ ║ 0.00 │ 0.84 │ 0.91 │ 0.14 │
         └───────────╨──────┴──────┴──────┴──────┘
 
     or by taking the :meth:`transpose` of the original table::
 
-        sage: table(rows=[(x, n(sin(x), digits=2)) for x in [0..3]],                    # needs sage.symbolic
+        sage: table(rows=[(x, n(sin(x), digits=2)) for x in [0..3]],
         ....:       header_row=['$x$', r'$\sin(x)$'], frame=True).transpose()
         ┌───────────╥──────┬──────┬──────┬──────┐
-        │ $x$       ║ 0    | 1    | 2    | 3    |
+        │ $x$       ║ 0    │ 1    │ 2    │ 3    │
         ├───────────╫──────┼──────┼──────┼──────┤
-        │ $\sin(x)$ ║ 0.00 | 0.84 | 0.91 | 0.14 |
+        │ $\sin(x)$ ║ 0.00 │ 0.84 │ 0.91 │ 0.14 │
         └───────────╨──────┴──────┴──────┴──────┘
 
     In either plain text or LaTeX, entries in tables can be aligned to the
@@ -166,16 +166,15 @@ class table(SageObject):
           4    5   60
         sage: table(rows, align='right', frame=True)
         ┌─────┬───┬────┐
-        │   a | b |  c |
+        │   a │ b │  c │
         ├─────┼───┼────┤
-        │ 100 | 2 |  3 |
+        │ 100 │ 2 │  3 │
         ├─────┼───┼────┤
-        │   4 | 5 | 60 |
+        │   4 │ 5 │ 60 │
         └─────┴───┴────┘
 
     To generate HTML you should use ``html(table(...))``::
 
-        sage: # needs sage.symbolic
         sage: data = [["$x$", r"$\sin(x)$"]] + [(x, n(sin(x), digits=2))
         ....:                                   for x in [0..3]]
         sage: output = html(table(data, header_row=True, frame=True))
@@ -240,7 +239,7 @@ class table(SageObject):
 
     TESTS::
 
-        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +                                 # needs sage.symbolic
+        sage: TestSuite(table([["$x$", r"$\sin(x)$"]] +
         ....:                  [(x, n(sin(x), digits=2)) for x in [0..3]],
         ....:                 header_row=True, frame=True)).run()
 
@@ -253,7 +252,7 @@ class table(SageObject):
 
             sage: table([1,2,3], frame=True)
             ┌───┬───┬───┐
-            │ 1 | 2 | 3 |
+            │ 1 │ 2 │ 3 │
             └───┴───┴───┘
         """
         # If both rows and columns are set, raise an error.
@@ -293,7 +292,6 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.plot sage.symbolic
             sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]
             sage: T = table(rows, header_row=True)
             sage: T2 = table(rows, header_row=True)
@@ -342,20 +340,20 @@ class table(SageObject):
             sage: T = table([[1,2,3], [4,5,6]], header_row=['a', 'b', 'c'], frame=True)
             sage: T
             ┌───┬───┬───┐
-            │ a | b | c |
+            │ a │ b │ c │
             ╞═══╪═══╪═══╡
-            │ 1 | 2 | 3 |
+            │ 1 │ 2 │ 3 │
             ├───┼───┼───┤
-            │ 4 | 5 | 6 |
+            │ 4 │ 5 │ 6 │
             └───┴───┴───┘
             sage: T.options(header_row=False)
             sage: T
             ┌───┬───┬───┐
-            │ a | b | c |
+            │ a │ b │ c │
             ├───┼───┼───┤
-            │ 1 | 2 | 3 |
+            │ 1 │ 2 │ 3 │
             ├───┼───┼───┤
-            │ 4 | 5 | 6 |
+            │ 4 │ 5 │ 6 │
             └───┴───┴───┘
 
         If you do specify a list for ``header_row``, an error is raised::
@@ -398,11 +396,11 @@ class table(SageObject):
             sage: T = table([[1,2,3], [4,5,6]], header_row=['x', 'y', 'z'], frame=True)
             sage: T.transpose()
             ┌───╥───┬───┐
-            │ x ║ 1 | 4 |
+            │ x ║ 1 │ 4 │
             ├───╫───┼───┤
-            │ y ║ 2 | 5 |
+            │ y ║ 2 │ 5 │
             ├───╫───┼───┤
-            │ z ║ 3 | 6 |
+            │ z ║ 3 │ 6 │
             └───╨───┴───┘
         """
         return table(list(zip(*self._rows)),
@@ -478,7 +476,8 @@ class table(SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See :class:`~sage.repl.rich_output.display_manager.DisplayManager`
+        for details.
 
         EXAMPLES::
 
@@ -508,7 +507,7 @@ class table(SageObject):
             '   1 │   2       3\n├────┼─────┼───────┤\n'
             sage: T.options(frame=True)
             sage: T._str_table_row([1,2,3], False)
-            '│  1 ║   2 |     3 |\n├────╫─────┼───────┤\n'
+            '│  1 ║   2 │     3 │\n├────╫─────┼───────┤\n'
 
         Check that :issue:`14601` has been fixed::
 
@@ -552,7 +551,7 @@ class table(SageObject):
         for entry, width in zip(row, widths):
             s += ("{!s:" + align_char + str(width) + "}").format(entry)
             if frame:
-                s += " | "
+                s += " │ "
             else:
                 s += "   "
         s = s.rstrip(' ')
@@ -580,9 +579,9 @@ class table(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.table import table
-            sage: a = [[r'$\sin(x)$', '$x$', 'text'],                                   # needs sage.modules
+            sage: a = [[r'$\sin(x)$', '$x$', 'text'],
             ....:      [1, 34342, 3], [identity_matrix(2), 5, 6]]
-            sage: latex(table(a))  # indirect doctest                                   # needs sage.modules
+            sage: latex(table(a))  # indirect doctest
             \begin{tabular}{lll}
             $\sin(x)$ & $x$ & text \\
             $1$ & $34342$ & $3$ \\
@@ -591,7 +590,7 @@ class table(SageObject):
             0 & 1
             \end{array}\right)$ & $5$ & $6$ \\
             \end{tabular}
-            sage: latex(table(a, frame=True, align='center'))                           # needs sage.modules
+            sage: latex(table(a, frame=True, align='center'))
             \begin{tabular}{|c|c|c|} \hline
             $\sin(x)$ & $x$ & text \\ \hline
             $1$ & $34342$ & $3$ \\ \hline
@@ -658,11 +657,11 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: T = table([[r'$\sin(x)$', '$x$', 'text'],                             # needs sage.modules
+            sage: T = table([[r'$\sin(x)$', '$x$', 'text'],
             ....:            [1, 34342, 3], [identity_matrix(2), 5, 6]])
-            sage: T._html_()                                                            # needs sage.modules
+            sage: T._html_()
             '<div.../div>'
-            sage: print(T._html_())                                                     # needs sage.modules
+            sage: print(T._html_())
             <div class="notruncate">
             <table  class="table_form">
             <tbody>
@@ -691,22 +690,22 @@ class table(SageObject):
         Note that calling ``html(table(...))`` has the same effect as
         calling ``table(...)._html_()``::
 
-            sage: T = table([["$x$", r"$\sin(x)$"]]                                     # needs sage.symbolic
+            sage: T = table([["$x$", r"$\sin(x)$"]]
             ....:            + [(x,n(sin(x), digits=2)) for x in [0..3]],
             ....:           header_row=True, frame=True)
-            sage: T                                                                     # needs sage.symbolic
+            sage: T
             ┌─────┬───────────┐
-            │ $x$ | $\sin(x)$ |
+            │ $x$ │ $\sin(x)$ │
             ╞═════╪═══════════╡
-            │ 0   | 0.00      |
+            │ 0   │ 0.00      │
             ├─────┼───────────┤
-            │ 1   | 0.84      |
+            │ 1   │ 0.84      │
             ├─────┼───────────┤
-            │ 2   | 0.91      |
+            │ 2   │ 0.91      │
             ├─────┼───────────┤
-            │ 3   | 0.14      |
+            │ 3   │ 0.14      │
             └─────┴───────────┘
-            sage: print(html(T))                                                        # needs sage.symbolic
+            sage: print(html(T))
             <div class="notruncate">
             <table border="1" class="table_form">
             <tbody>
@@ -804,7 +803,7 @@ class table(SageObject):
         import types
 
         try:
-            from sage.plot.all import Graphics
+            from sage.plot.graphics import Graphics
         except ImportError:
             Graphics = ()
 

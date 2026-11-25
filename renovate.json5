@@ -1,0 +1,10 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    'config:best-practices',
+    // Update uv.lock: https://docs.renovatebot.com/presets-default/#maintainlockfilesmonthly
+    ':maintainLockFilesMonthly',
+    // Disable dashboard: https://docs.renovatebot.com/key-concepts/dashboard/
+    ':disableDependencyDashboard',
+  ],
+}

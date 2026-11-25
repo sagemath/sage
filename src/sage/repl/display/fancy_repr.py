@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Representations of objects
 """
@@ -24,7 +23,7 @@ from sage.repl.display.util import format_list
 _baseclass_reprs = (object.__repr__,)
 
 
-class ObjectReprABC():
+class ObjectReprABC:
     """
     The abstract base class of an object representer.
 
@@ -94,8 +93,7 @@ class ObjectReprABC():
         if ok:
             p.flush()
             return stream.getvalue()
-        else:
-            return '--- object not handled by representer ---'
+        return '--- object not handled by representer ---'
 
 
 class SomeIPythonRepr(ObjectReprABC):
@@ -120,7 +118,7 @@ class SomeIPythonRepr(ObjectReprABC):
         self._type_repr = type_repr
 
     def __call__(self, obj, p, cycle):
-        """
+        r"""
         Format object.
 
         INPUT:
@@ -142,7 +140,17 @@ class SomeIPythonRepr(ObjectReprABC):
             sage: pp = SomeIPythonRepr()
             sage: pp.format_string(set([1, 2, 3]))
             '{1, 2, 3}'
+
+        TESTS::
+
+            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
+            '[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],\n [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]]'
         """
+        if hasattr(type(obj), '_repr_pretty_'):
+            # standard method for classes to extend pretty library
+            # see https://ipython.readthedocs.io/en/stable/api/generated/IPython.lib.pretty.html#extending
+            obj._repr_pretty_(p, cycle)
+            return True
         try:
             pretty_repr = self._type_repr[type(obj)]
         except KeyError:
@@ -177,7 +185,6 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: from sage.repl.display.fancy_repr import LargeMatrixHelpRepr
             sage: M = identity_matrix(40)
             sage: pp = LargeMatrixHelpRepr()
@@ -188,9 +195,9 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         Leads to::
 
-            sage: M                                                                     # needs sage.modules
+            sage: M
             40 x 40 dense matrix over Integer Ring (use the '.str()' method...)
-            sage: [M, M]                                                                # needs sage.modules
+            sage: [M, M]
             [40 x 40 dense matrix over Integer Ring,
              40 x 40 dense matrix over Integer Ring]
         """
@@ -218,7 +225,7 @@ class PlainPythonRepr(ObjectReprABC):
 
     def __call__(self, obj, p, cycle):
         r"""
-        Format matrix.
+        Format object.
 
         INPUT:
 
@@ -309,7 +316,7 @@ class TallListRepr(ObjectReprABC):
 
             sage: from sage.repl.display.fancy_repr import TallListRepr
             sage: format_list = TallListRepr().format_string
-            sage: format_list([1, 2, identity_matrix(2)])                               # needs sage.modules
+            sage: format_list([1, 2, identity_matrix(2)])
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
         Check that :issue:`18743` is fixed::

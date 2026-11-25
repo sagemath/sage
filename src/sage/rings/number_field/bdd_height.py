@@ -231,12 +231,18 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: bdd_norm_pr_ideal_gens(K, [1])
         {1: [1]}
 
-    ::
+    The choice of generators depends on the PARI version and platform,
+    but the absolute norms are the same::
 
-        sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
+        sage: from sage.rings.number_field.bdd_height import (
+        ....:     bdd_norm_pr_ideal_gens
+        ....: )
         sage: K.<g> = QuadraticField(123)
-        sage: bdd_norm_pr_ideal_gens(K, range(5))
+        sage: d = bdd_norm_pr_ideal_gens(K, range(5))
+        sage: d  # random
         {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}
+        sage: {n: [abs(a.norm()) for a in gens] for n, gens in d.items()}
+        {0: [0], 1: [1], 2: [2], 3: [], 4: [4]}
 
     ::
 
@@ -608,8 +614,8 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
         u_height = sum([max(u_log[k], 0) for k in range(r + 1)])
         unit_height_dict[u] = u_height
         if u_height < inter_bound:
-                U0.append(u)
-        if inter_bound <= u_height and u_height < b - (t/12):
+            U0.append(u)
+        if inter_bound <= u_height < b - (t/12):
             U0_tilde.append(u)
         if u_height > t/12 + d_tilde:
             U_copy.remove(u)

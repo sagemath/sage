@@ -142,19 +142,13 @@ and check that the first relation holds::
 
 REFERENCES:
 
-.. [Brown2012] Francis C. S. Brown, *On the decomposition of motivic
-   multiple zeta values*, Advanced Studies in Pure Mathematics 63,
-   2012. Galois-Teichmuller Theory and Arithmetic Geometry.
+- [Brown2012]_
 
-.. [Brown2019] Francis C. S. Brown, *From the Deligne-Ihara conjecture to
-   multiple modular values*, :arxiv:`1904.00179`
+- [Brown2019]_
 
-.. [Deli2012] Pierre Deligne, *Multizêtas, d’après Francis Brown*,
-   Séminaire Bourbaki, janvier 2012. http://www.bourbaki.ens.fr/TEXTES/1048.pdf
+- [Deli2012]_
 
-.. [Stie2020] \S. Stieberger, *Periods and Superstring Amplitudes*,
-   Periods in Quantum Field Theory and Arithmetic, Springer Proceedings
-   in Mathematics and Statistics 314, 2020
+- [Stie2020]_
 """
 # ****************************************************************************
 #       Copyright (C) 2020     Frédéric Chapoton
@@ -167,7 +161,6 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton
@@ -194,21 +187,29 @@ from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
+from typing import TYPE_CHECKING
 
-lazy_import('sage.libs.pari.all', 'pari')
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+lazy_import('sage.libs.pari', 'pari')
 
 
 # multiplicative generators for weight <= 17
 # using the following convention
 # (3, 5) <---> (sign) * [1,0,0,1,0,0,0,0]
 # taken from the Maple implementation by F. Brown
-B_data = [[], [], [(2,)], [(3,)], [], [(5,)], [], [(7,)], [(3, 5)], [(9,)],
-          [(3, 7)], [(11,), (3, 3, 5)], [(5, 7), (5, 3, 2, 2)],
-          [(13,), (3, 5, 5), (3, 3, 7)], [(5, 9), (3, 11), (3, 3, 3, 5)],
-          [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
-          [(11, 5), (13, 3), (5, 5, 3, 3), (7, 3, 3, 3), (7, 5, 2, 2)],
-          [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3), (11, 3, 3),
-           (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
+B_data: list[list[tuple]] = [[], [], [(2,)], [(3,)], [], [(5,)], [],
+                             [(7,)], [(3, 5)], [(9,)],
+                             [(3, 7)], [(11,), (3, 3, 5)],
+                             [(5, 7), (5, 3, 2, 2)],
+                             [(13,), (3, 5, 5), (3, 3, 7)],
+                             [(5, 9), (3, 11), (3, 3, 3, 5)],
+                             [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
+                             [(11, 5), (13, 3), (5, 5, 3, 3),
+                              (7, 3, 3, 3), (7, 5, 2, 2)],
+                             [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3),
+                              (11, 3, 3), (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
 
 Words10 = Words((1, 0), infinite=False)
 
@@ -416,7 +417,7 @@ class MultizetaValues(Singleton):
         sage: parent(M((2,3,4,5), prec=128))
         Real Field with 128 bits of precision
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         When first called, pre-compute up to weight 8 at precision 1024.
 
@@ -439,7 +440,7 @@ class MultizetaValues(Singleton):
         """
         return f"Cached multiple zeta values at precision {self.prec} up to weight {self.max_weight}"
 
-    def reset(self, max_weight=8, prec=1024):
+    def reset(self, max_weight=8, prec=1024) -> None:
         r"""
         Reset the cache to its default values or to given arguments.
 
@@ -460,7 +461,7 @@ class MultizetaValues(Singleton):
         self.max_weight = int(max_weight)
         self._data = pari.zetamultall(self.max_weight, precision=self.prec)
 
-    def update(self, max_weight, prec):
+    def update(self, max_weight, prec) -> None:
         """
         Compute and store more values if needed.
 
@@ -488,7 +489,7 @@ class MultizetaValues(Singleton):
             sage: from sage.modular.multiple_zeta import MultizetaValues
             sage: M = MultizetaValues()
             sage: [M.pari_eval((n,)) for n in range(2,20)]
-            [1.64493406684823, 1.20205690315959, 1.08232323371114, 1.03692775514337, ... 1.00000381729326, 1.00000190821272]
+            [1.64493406684..., 1.20205690315..., 1.08232323371..., 1.03692775514..., ...1.00000381729..., 1.00000190821...]
         """
         weight = sum(index)
         index = list(reversed(index))
@@ -546,7 +547,7 @@ class MultizetaValues(Singleton):
 Values = MultizetaValues()
 
 
-def extend_multiplicative_basis(B, n) -> Iterator:
+def extend_multiplicative_basis(B, n) -> Iterator[tuple]:
     """
     Extend a multiplicative basis into a basis.
 
@@ -643,7 +644,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: z
         ζ(1,2,3)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -722,7 +723,7 @@ class Multizetas(CombinatorialFreeModule):
         """
         return self([]), self([2]), self([3]), self([4]), self((1, 2))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of the algebra.
 
@@ -1050,19 +1051,19 @@ class Multizetas(CombinatorialFreeModule):
         dim = len(self((d,)).phi_as_vector())
         V = VectorSpace(QQ, dim)
         U = V.subspace([])
-        basis = []
+        basis: list = []
         k = 1
         while len(basis) < dim:
             for c in Compositions(d, length=k):
                 if reverse:
                     if c[-1] == 1:
                         continue
-                    c = tuple(c)
+                    cc = tuple(c)
                 else:
                     if c[0] == 1:
                         continue
-                    c = c[::-1]
-                mon_c = self._monomial(W(c, check=False))
+                    cc = c[::-1]
+                mon_c = self._monomial(W(cc, check=False))
                 v = mon_c.phi_as_vector()
                 if v in U:
                     continue
@@ -1249,7 +1250,7 @@ class Multizetas(CombinatorialFreeModule):
                 raise TypeError('invalid comparison for multizetas')
             return self.iterated()._richcmp_(other.iterated(), op)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             """
             Return the hash of ``self``.
 
@@ -1289,7 +1290,7 @@ class Multizetas(CombinatorialFreeModule):
             Return the image of ``self`` by the morphism ``phi`` as a vector.
 
             The morphism ``phi`` sends multiple zeta values to the algebra
-            :func:`F_ring`. Then the image is expressed as a vector in
+            ``F_ring``. Then the image is expressed as a vector in
             a fixed basis of one graded component of this algebra.
 
             This is only defined for homogeneous elements.
@@ -1323,7 +1324,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: M = Multizetas(QQ)
                 sage: a = M((3,2)) - 2*M((7,))
                 sage: a._numerical_approx_pari()
-                -1.30513235721327
+                -1.30513235721...
                 sage: type(a._numerical_approx_pari())
                 <class 'cypari2.gen.Gen'>
             """
@@ -1400,7 +1401,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         sage: M((1,0))*M((1,0,0))
         6*I(11000) + 3*I(10100) + I(10010)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -1799,16 +1800,14 @@ class Multizetas_iterated(CombinatorialFreeModule):
         compo = tuple(iterated_to_composition(w))
         if compo in B_data[N]:
             # do not forget the sign
-            result_QQ = (-1)**len(compo) * phi_on_multiplicative_basis(compo)
-            return result_QQ
+            return (-1)**len(compo) * phi_on_multiplicative_basis(compo)
         u = compute_u_on_basis(w)
         rho_inverse_u = rho_inverse(u)
         xi = self.composition_on_basis(w, QQ)
         c_xi = (xi - rho_inverse_u)._numerical_approx_pari()
         c_xi /= Multizeta(N)._numerical_approx_pari()
         c_xi = c_xi.bestappr().sage()  # in QQ
-        result_QQ = u + c_xi * f(N)
-        return result_QQ
+        return u + c_xi * f(N)
 
     @lazy_attribute
     def phi(self):
@@ -2063,7 +2062,7 @@ class All_iterated(CombinatorialFreeModule):
         sage: x.regularise()
         -I(10)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -2404,7 +2403,7 @@ def phi_on_multiplicative_basis(compo):
 
     - ``compo`` -- a composition (in the hardcoded multiplicative base)
 
-    OUTPUT: an element in :func:`F_ring` with rational coefficients
+    OUTPUT: an element in ``F_ring`` with rational coefficients
 
     EXAMPLES::
 
@@ -2436,7 +2435,7 @@ def phi_on_basis(L):
 
     This encodes a product of multiple zeta values.
 
-    OUTPUT: an element in :func:`F_ring`
+    OUTPUT: an element in ``F_ring``
 
     EXAMPLES::
 
@@ -2504,7 +2503,7 @@ def compute_u_on_compo(compo):
 
     - ``compo`` -- a composition
 
-    OUTPUT: an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of ``F_ring`` over `\QQ`
 
     EXAMPLES::
 
@@ -2528,7 +2527,7 @@ def compute_u_on_basis(w):
 
     - ``w`` -- a word in 0,1
 
-    OUTPUT: an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of ``F_ring`` over `\QQ`
 
     EXAMPLES::
 

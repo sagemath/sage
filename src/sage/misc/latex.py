@@ -14,6 +14,9 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
+
+.. autofunction:: _default_engine
+.. autofunction:: _latex_file_
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -23,6 +26,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+from __future__ import annotations
 
 import os
 import random
@@ -79,7 +84,7 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # needs sage.modules
+        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest
         ....:        Matrix(ZZ, 3, range(9))])
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
@@ -259,7 +264,6 @@ def dict_function(x):
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: from sage.misc.latex import dict_function
         sage: x,y,z = var('x,y,z')
         sage: print(dict_function({x/2: y^2}))
@@ -342,9 +346,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
+        sage: latex(x^20 + 1)
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # needs sage.symbolic
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -357,18 +361,18 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)                                                       # needs sage.symbolic
-        sage: L                                                                         # needs sage.symbolic
+        sage: L = latex(x^20 + 1)
+        sage: L
         x^{20} + 1
-        sage: type(L)                                                                   # needs sage.symbolic
+        sage: type(L)
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))                                                      # needs sage.symbolic
+        sage: str(latex(x^20 + 1))
         'x^{20} + 1'
     """
-    def __add__(self, other):
+    def __add__(self, other) -> LatexExpr:
         r"""
         Add a LatexExpr and another LatexExpr (or a string).
 
@@ -405,7 +409,7 @@ class LatexExpr(str):
             pass
         return LatexExpr(left + right)
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> LatexExpr:
         r"""
         Add a string and a LatexExpr.
 
@@ -450,7 +454,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))                                        # needs sage.modules
+        sage: has_latex_attr(identity_matrix(3))
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -458,7 +462,6 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
-        sage: # needs sage.modules
         sage: T = type(identity_matrix(3)); T
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         sage: hasattr(T, '_latex_')
@@ -477,9 +480,13 @@ def has_latex_attr(x) -> bool:
 def default_engine():
     """
     Return the default latex engine and the official name of the engine.
-
     This is determined by availability of the popular engines on the user's
     system. It is assumed that at least latex is available.
+
+    This function is deprecated as part of the public API. There is
+    instead an internal counterpart
+    :func:`~sage.misc.latex._default_engine`, but no
+    stability promises are made with regards to its interface.
 
     EXAMPLES::
 
@@ -487,6 +494,9 @@ def default_engine():
         sage: default_engine()  # random
         ('lualatex', 'LuaLaTeX')
     """
+    from sage.misc.superseded import deprecation
+    deprecation(39351, "default_engine is being removed from the public API and replaced with the internal function _default_engine")
+
     from sage.features.latex import pdflatex, xelatex, lualatex
     if lualatex().is_present():
         return 'lualatex', 'LuaLaTeX'
@@ -495,6 +505,48 @@ def default_engine():
     if pdflatex().is_present():
         return 'pdflatex', 'pdfLaTeX'
     return 'latex', 'LaTeX'
+
+
+@cached_function
+def _default_engine():
+    r"""
+    Return the name of the default latex engine.
+
+    This is determined by availability of the popular engines on the
+    user's system. It is assumed that at least "latex" is available.
+
+    EXAMPLES::
+
+        sage: from sage.misc.latex import _default_engine
+        sage: _default_engine()  # random
+        'lualatex'
+
+    TESTS:
+
+    Ensure that this (expensive) function is not necessary to obtain
+    the latex representation of a matrix (doing so probes the latex
+    options dict for the delimiters)::
+
+        sage: import sage.misc.latex
+        sage: real_de = sage.misc.latex._default_engine
+        sage: def crash():
+        ....:     raise ValueError
+        sage: sage.misc.latex._default_engine = crash
+        sage: latex(matrix.identity(QQ, 2))
+        \left(\begin{array}{rr}
+        1 & 0 \\
+        0 & 1
+        \end{array}\right)
+        sage: sage.misc.latex._default_engine = real_de
+    """
+    from sage.features.latex import pdflatex, xelatex, lualatex
+    if lualatex().is_present():
+        return 'lualatex'
+    if xelatex().is_present():
+        return 'xelatex'
+    if pdflatex().is_present():
+        return 'pdflatex'
+    return 'latex'
 
 
 class _Latex_prefs_object(SageObject):
@@ -520,6 +572,9 @@ class _Latex_prefs_object(SageObject):
         self.__option["macros"] = ""
         self.__option["preamble"] = ""
 
+        # If None, the _default_engine() will be used.
+        self.__option["engine"] = None
+
     @lazy_attribute
     def _option(self):
         """
@@ -528,18 +583,16 @@ class _Latex_prefs_object(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.latex import _Latex_prefs_object
-            sage: _Latex_prefs_object()._option  # random
-            {'blackboard_bold': False,
-             'matrix_delimiters': ['(', ')'],
-             'vector_delimiters': ['(', ')'],
-             'matrix_column_alignment': 'r',
-             'macros': '',
-             'preamble': '',
-             'engine': 'lualatex',
-             'engine_name': 'LuaLaTeX'}
+            sage: sorted(_Latex_prefs_object()._option.items())
+            [('blackboard_bold', False),
+             ('engine', None),
+             ('macros', ''),
+             ('matrix_column_alignment', 'r'),
+             ('matrix_delimiters', ['(', ')']),
+             ('preamble', ''),
+             ('vector_delimiters', ['(', ')'])]
+
         """
-        self.__option["engine"] = default_engine()[0]
-        self.__option["engine_name"] = default_engine()[1]
         return self.__option
 
 
@@ -551,7 +604,7 @@ def latex_extra_preamble():
     Return the string containing the user-configured preamble,
     ``sage_latex_macros``, and any user-configured macros.  This is
     used in the :meth:`~Latex.eval` method for the :class:`Latex`
-    class, and in :func:`_latex_file_`; it follows either
+    class, and in :func:`~sage.misc.latex._latex_file_`; it follows either
     ``LATEX_HEADER`` or ``SLIDE_HEADER`` (defined at the top of this
     file) which is a string containing the documentclass and standard
     usepackage commands.
@@ -649,6 +702,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     """
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
 
     if not engine or engine == "latex":
         from sage.features.latex import latex
@@ -694,7 +749,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             print("http://www.imagemagick.org to download these programs.")
             return "Error"
         # if png output + [pdf|xe|lua]latex, check to see if magick/convert is installed.
-        elif engine in ["pdflatex", "xelatex", "lualatex"]:
+        if engine in ["pdflatex", "xelatex", "lualatex"]:
             ImageMagick().require()
     # check_validity: check to see if the dvi file is okay by trying
     # to convert to a png file.  if this fails, return_suffix will be
@@ -859,12 +914,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x, 2]))                                                  # needs sage.symbolic
+            sage: print(latex([x, 2]))
             \left[x, 2\right]
 
         Check that :issue:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)                                        # needs sage.symbolic
+            sage: latex((x,2), combine_all=True)
             x 2
         """
         if has_latex_attr(x):
@@ -903,9 +958,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
+        sage: latex(x^20 + 1)
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))                                                # needs sage.rings.finite_rings
+        sage: latex(FiniteField(25,'a'))
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -915,7 +970,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, engine=None):
@@ -1025,7 +1080,6 @@ class Latex(LatexCall):
             ''
             sage: latex.eval(r"\ThisIsAnInvalidCommand", {}) # optional -- latex ImageMagick
             An error occurred...
-            No pages of output...
         """
         MACROS = latex_extra_preamble()
 
@@ -1062,10 +1116,12 @@ class Latex(LatexCall):
 
             O.close()
             if engine is None:
-                if self.__engine is None:
+                engine = self.__engine
+                if engine is None:
                     engine = _Latex_prefs._option["engine"]
-                else:
-                    engine = self.__engine
+                    if engine is None:
+                        engine = _default_engine()
+
             e = _run_latex_(os.path.join(base, filename + ".tex"),
                             debug=debug,
                             density=density,
@@ -1153,7 +1209,6 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: a = matrix(1, 1, [17])
             sage: latex(a)
             \left(\begin{array}{r}
@@ -1178,11 +1233,10 @@ class Latex(LatexCall):
         """
         if left is None and right is None:
             return _Latex_prefs._option['matrix_delimiters']
-        else:
-            if left is not None:
-                _Latex_prefs._option['matrix_delimiters'][0] = left
-            if right is not None:
-                _Latex_prefs._option['matrix_delimiters'][1] = right
+        if left is not None:
+            _Latex_prefs._option['matrix_delimiters'][0] = left
+        if right is not None:
+            _Latex_prefs._option['matrix_delimiters'][1] = right
 
     def vector_delimiters(self, left=None, right=None):
         r"""nodetex
@@ -1215,7 +1269,6 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: a = vector(QQ, [1,2,3])
             sage: latex(a)
             \left(1,\,2,\,3\right)
@@ -1234,11 +1287,10 @@ class Latex(LatexCall):
         """
         if left is None and right is None:
             return _Latex_prefs._option['vector_delimiters']
-        else:
-            if left is not None:
-                _Latex_prefs._option['vector_delimiters'][0] = left
-            if right is not None:
-                _Latex_prefs._option['vector_delimiters'][1] = right
+        if left is not None:
+            _Latex_prefs._option['vector_delimiters'][0] = left
+        if right is not None:
+            _Latex_prefs._option['vector_delimiters'][1] = right
 
     def matrix_column_alignment(self, align=None):
         r"""nodetex
@@ -1261,7 +1313,6 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: a = matrix(1, 1, [42])
             sage: latex(a)
             \left(\begin{array}{r}
@@ -1284,8 +1335,7 @@ class Latex(LatexCall):
         """
         if align is None:
             return _Latex_prefs._option['matrix_column_alignment']
-        else:
-            _Latex_prefs._option['matrix_column_alignment'] = align
+        _Latex_prefs._option['matrix_column_alignment'] = align
 
     @cached_method
     def has_file(self, file_name) -> bool:
@@ -1370,8 +1420,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         """
         if macros is None:
             return _Latex_prefs._option['macros']
-        else:
-            _Latex_prefs._option['macros'] = macros
+        _Latex_prefs._option['macros'] = macros
 
     def add_macro(self, macro):
         r"""nodetex
@@ -1425,8 +1474,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         """
         if s is None:
             return _Latex_prefs._option['preamble']
-        else:
-            _Latex_prefs._option['preamble'] = s
+        _Latex_prefs._option['preamble'] = s
 
     def add_to_preamble(self, s):
         r"""nodetex
@@ -1531,22 +1579,15 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
             'pdflatex'
         """
         if e is None:
-            return _Latex_prefs._option["engine"]
+            e = _Latex_prefs._option["engine"]
+            if e is None:
+                return _default_engine()
+            return e
 
-        if e == "latex":
-            _Latex_prefs._option["engine"] = "latex"
-            _Latex_prefs._option["engine_name"] = "LaTeX"
-        elif e == "pdflatex":
-            _Latex_prefs._option["engine"] = "pdflatex"
-            _Latex_prefs._option["engine_name"] = "PDFLaTeX"
-        elif e == "xelatex":
-            _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "XeLaTeX"
-        elif e == "lualatex":
-            _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "LuaLaTeX"
-        else:
+        if e not in ["latex", "pdflatex", "xelatex", "luatex"]:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
+
+        _Latex_prefs._option["engine"] = e
 
 
 # Note: latex used to be a separate function, which by default was
@@ -1565,7 +1606,7 @@ latex.__doc__ = Latex.__call__.__doc__
 def _latex_file_(objects, title='SAGE', debug=False,
                  sep='', tiny=False, math_left='\\[',
                  math_right='\\]',
-                 extra_preamble=''):
+                 extra_preamble='', preview=False):
     r"""nodetex
     Produce a string to be used as a LaTeX file, containing a
     representation of each object in objects.
@@ -1588,6 +1629,9 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands;
       inserted before ``'\\begin{document}'``
+
+    - ``preview`` -- boolean (default: ``False``); whether the ``preview``
+      package captures ``page`` environments
 
     This creates a string intended to be a LaTeX file containing the
     LaTeX representations of objects. It contains the following:
@@ -1637,6 +1681,21 @@ def _latex_file_(objects, title='SAGE', debug=False,
         x
         sage: s = sage.misc.latex._latex_file_(blah())
         coucou
+
+    Check that PGF output is captured by ``preview``, while TikZ output keeps
+    the math mode in which it was previously rendered::
+
+        sage: from sage.misc.latex import LatexExpr, _preview_latex_options
+        sage: options = _preview_latex_options()
+        sage: pgf = LatexExpr(r'\begin{pgfpicture}\end{pgfpicture}')
+        sage: pgf_file = _latex_file_(pgf, **options)
+        sage: r'\end{lrbox}\begin{page}' in pgf_file
+        True
+        sage: tikz = LatexExpr(
+        ....:     r'\vcenter{\hbox{$\begin{tikzpicture}\end{tikzpicture}$}}')
+        sage: tikz_file = _latex_file_(tikz, **options)
+        sage: r'\begin{page}$\vcenter' in tikz_file
+        True
     """
     process = True
     if has_latex_attr(objects):
@@ -1665,7 +1724,15 @@ def _latex_file_(objects, title='SAGE', debug=False,
                 s += r'\begin{lrbox}{\pgffigure}' + '\n'
                 s += '%s' % L
                 s += r'\end{lrbox}'
-                s += r'\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{\usebox{\pgffigure}}' + '\n'
+                rbox = (r'\resizebox{'
+                        r'\ifdim\width>\textwidth\textwidth'
+                        r'\else\width'
+                        r'\fi}'
+                        r'{!}{\usebox{\pgffigure}}' + '\n')
+                if preview:
+                    s += '\\begin{page}\n' + rbox + '\\end{page}\n'
+                else:
+                    s += rbox
             elif '\\begin{verbatim}' not in L:
                 s += '%s%s%s' % (math_left, L, math_right)
             else:
@@ -1683,9 +1750,60 @@ def _latex_file_(objects, title='SAGE', debug=False,
     s = LATEX_HEADER + '\n' + MACROS + s + '\n\\end{document}'
 
     if debug:
+        print('----')
         print(s)
+        print('----')
 
     return s
+
+
+def _preview_latex_options(margin=None):
+    r"""
+    Return the LaTeX options used to crop output with ``preview``.
+
+    LuaTeX 0.85 renamed the PDF primitives used by the ``preview`` package.
+    Define only the compatibility aliases that ``preview`` needs, instead of
+    requiring the optional ``luatex85`` package.
+
+    INPUT:
+
+    - ``margin`` -- float or ``None`` (default: ``None``); width of the border
+      in millimetres
+
+    TESTS::
+
+        sage: from sage.misc.latex import _preview_latex_options
+        sage: options = _preview_latex_options(5)
+        sage: options['preview']
+        True
+        sage: r'\let\pdfoutput\outputmode' in options['extra_preamble']
+        True
+        sage: r'\setlength\PreviewBorder{5.000000mm}' in options['extra_preamble']
+        True
+    """
+    if margin is None:
+        margin_str = ""
+    else:
+        margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
+
+    lua_compat = r'''\ifdefined\pdfvariable
+\let\pdfoutput\outputmode
+\let\pdfpagewidth\pagewidth
+\let\pdfpageheight\pageheight
+\protected\edef\pdfhorigin{\pdfvariable horigin}
+\protected\edef\pdfvorigin{\pdfvariable vorigin}
+\fi
+'''
+    return {
+        'extra_preamble': (
+            lua_compat
+            + '\\usepackage[tightpage,active]{preview}\n'
+            + '\\PreviewEnvironment{page}%s' % margin_str
+        ),
+        'math_left': '\\begin{page}$',
+        'math_right': '$\\end{page}',
+        'preview': True,
+    }
 
 
 def view(objects, title='Sage', debug=False, sep='', tiny=False,
@@ -1827,17 +1945,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         ...
         ValueError: Unsupported LaTeX engine.
     """
-
     if tightpage:
-        if margin is None:
-            margin_str = ""
-        else:
-            margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
-        latex_options = {'extra_preamble':
-                         '\\usepackage[tightpage,active]{preview}\n' +
-                         '\\PreviewEnvironment{page}%s' % margin_str,
-                         'math_left': '\\begin{page}$',
-                         'math_right': '$\\end{page}'}
+        latex_options = _preview_latex_options(margin)
         title = None
     else:
         latex_options = {}
@@ -1845,6 +1954,9 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
     # command line or notebook with viewer
@@ -1870,16 +1982,16 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         tmp.cleanup()
         return
     output_file = os.path.join(tmp.name, "sage." + suffix)
-    # this should get changed if we switch the stuff in misc.viewer to
-    # producing lists
+
     if debug:
-        print('viewer: "{}"'.format(viewer))
+        print(f'temporary file: "{output_file}"')
+        print(f'viewer: "{viewer}"')
 
     # Return immediately but only clean up the temporary file after
     # the viewer has closed. This function is synchronous and waits
     # for the process to complete...
     def run_viewer():
-        run([viewer, output_file], capture_output=True)
+        run([*viewer.split(), output_file], capture_output=True, check=False)
         tmp.cleanup()
 
     # ...but we execute it asynchronously so that view() completes
@@ -1890,7 +2002,73 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     t.daemon = True
     t.start()
 
-    return
+
+def pdf(x, filename, tiny=False, tightpage=True, margin=None, engine=None, debug=False):
+    """
+    Create an image from the latex representation of ``x`` and save it as a pdf
+    file with the given filename.
+
+    INPUT:
+
+    - ``x`` -- a Sage object
+
+    - ``filename`` -- the filename with which to save the image
+
+    - ``tiny`` -- boolean (default: ``False``); if ``True``, use a tiny font
+
+    - ``tightpage`` -- boolean (default: ``True``); use the LaTeX package
+      ``preview`` with the 'tightpage' option
+
+    - ``margin`` -- float (default: no margin); width of border, only effective
+      with 'tight page'
+
+    - ``engine`` -- (default: ``None``) ``'latex'``, ``'pdflatex'``,
+      ``'xelatex'`` or ``'lualatex'``; if ``None``, the value defined in the
+      LaTeX global preferences ``latex.engine()`` is used
+
+    - ``debug`` -- boolean (default: ``False``); if ``True``, print verbose output
+
+    EXAMPLES::
+
+        sage: # optional - latex
+        sage: from sage.misc.latex import pdf
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile(suffix=".pdf") as f:  # random
+        ....:     pdf(ZZ[x], f.name)
+    """
+    from sage.plot.graphics import Graphics
+    if isinstance(x, Graphics):
+        x.save(filename)
+        return
+
+    if tightpage:
+        latex_options = _preview_latex_options(margin)
+    else:
+        latex_options = {}
+
+    # create a string of latex code to write in a file
+    s = _latex_file_([x], title='', tiny=tiny, debug=debug, **latex_options)
+    if engine is None:
+        engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
+    # path name for permanent pdf output
+    abs_path_to_pdf = os.path.abspath(filename)
+    # temporary directory to store stuff
+    with TemporaryDirectory() as tmp:
+        tex_file = os.path.join(tmp, "sage.tex")
+        pdf_file = os.path.join(tmp, "sage.pdf")
+        # write latex string to file
+        with open(tex_file, 'w') as file:
+            file.write(s)
+        # run latex on the file
+        e = _run_latex_(tex_file, debug=debug, engine=engine)
+        if e == 'pdf':
+            # if no errors, copy pdf_file to the appropriate place
+            shutil.copy(pdf_file, abs_path_to_pdf)
+        else:
+            print("Latex error or no pdf was generated.")
 
 
 def png(x, filename, density=150, debug=False,
@@ -1919,14 +2097,15 @@ def png(x, filename, density=150, debug=False,
 
     EXAMPLES::
 
-        sage: # optional - imagemagick latex, needs sage.plot
+        sage: # optional - imagemagick latex
         sage: from sage.misc.latex import png
         sage: import tempfile
         sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:  # random
         ....:     png(ZZ[x], f.name)
     """
-    import sage.plot.all
-    if isinstance(x, sage.plot.graphics.Graphics):
+    from sage.plot.graphics import Graphics
+
+    if isinstance(x, Graphics):
         x.save(filename)
         return
     # if not graphics: create a string of latex code to write in a file
@@ -1935,6 +2114,9 @@ def png(x, filename, density=150, debug=False,
                      extra_preamble='\\textheight=2\\textheight')
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
@@ -1973,7 +2155,7 @@ def coeff_repr(c):
         sage: from sage.misc.latex import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
+        sage: coeff_repr(-x^2)
         '\\left(-x^{2}\\right)'
     """
     try:
@@ -2019,9 +2201,9 @@ def repr_lincomb(symbols, coeffs):
     Verify that :issue:`17299` (latex representation of modular symbols)
     is fixed::
 
-        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]
         sage: from sage.misc.latex import repr_lincomb
-        sage: latex(x.modular_symbol_rep())                                             # needs sage.schemes
+        sage: latex(x.modular_symbol_rep())
         \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
 
     Verify that it works when the symbols are numbers::
@@ -2036,45 +2218,36 @@ def repr_lincomb(symbols, coeffs):
         sage: latex(x)
         \text{\texttt{x}} + 2\text{\texttt{y}}
     """
-    s = ""
-    first = True
-    i = 0
-
     from sage.rings.cc import CC
+    terms = []
+    for c, sym in zip(coeffs, symbols):
+        if c == 0:
+            continue
+        if c == 1:
+            coeff = ""
+        elif c == -1:
+            coeff = "-"
+        else:
+            coeff = coeff_repr(c)
 
-    for c in coeffs:
-        bv = symbols[i]
-        b = latex(bv)
-        if c != 0:
-            if c == 1:
-                if first:
-                    s += b
-                else:
-                    s += " + %s" % b
+        b = latex(sym)
+        # this is a hack: I want to say that if the symbol happens to
+        # be a number, then we should put a multiplication sign in
+        try:
+            if sym in CC and coeff not in ("", "-"):
+                term = f"{coeff}\\cdot {b}"
             else:
-                coeff = coeff_repr(c)
-                if coeff == "-1":
-                    coeff = "-"
-                if first:
-                    coeff = str(coeff)
-                else:
-                    coeff = " + %s" % coeff
-                # this is a hack: i want to say that if the symbol
-                # happens to be a number, then we should put a
-                # multiplication sign in
-                try:
-                    if bv in CC:
-                        s += r"%s\cdot %s" % (coeff, b)
-                    else:
-                        s += "%s%s" % (coeff, b)
-                except Exception:
-                    s += "%s%s" % (coeff, b)
-            first = False
-        i += 1
-    if first:
-        s = "0"
-    s = s.replace("+ -", "- ")
-    return s
+                term = f"{coeff}{b}"
+        except Exception:
+            term = f"{coeff}{b}"
+
+        terms.append(term)
+
+    if not terms:
+        return "0"
+
+    s = " + ".join(terms)
+    return s.replace("+ -", "- ")
 
 
 common_varnames = ['alpha',
@@ -2148,20 +2321,19 @@ def latex_varify(a, is_fname=False):
 
     TESTS:
 
-        sage: abc = var('abc')                                                          # needs sage.symbolic
-        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # needs sage.symbolic
+        sage: abc = var('abc')
+        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870
         \frac{\frac{\mathit{abc}}{\mathit{abc} + 1} + 42}{\mathit{abc} - 1}
     """
     if a in common_varnames:
         return "\\" + a
-    elif len(a) == 0:
+    if len(a) == 0:
         return ''
-    elif len(a) == 1:
+    if len(a) == 1:
         return a
-    elif is_fname is True:
+    if is_fname is True:
         return '{\\rm %s}' % a
-    else:
-        return '\\mathit{%s}' % a
+    return '\\mathit{%s}' % a
 
 
 def latex_variable_name(x, is_fname=False):
@@ -2220,12 +2392,12 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # trac #16007                                  # needs sage.symbolic
+        sage: latex_variable_name('_C')  # trac #16007
         'C'
-        sage: latex_variable_name('_K1')                                                # needs sage.symbolic
+        sage: latex_variable_name('_K1')
         'K_{1}'
 
-        sage: latex_variable_name('5')                                                  # needs sage.symbolic
+        sage: latex_variable_name('5')
         '5'
     """
     # if x is an integer (it might be the case for padics), we return x
@@ -2257,8 +2429,7 @@ def latex_variable_name(x, is_fname=False):
         if suffix.strip("1234567890") != "":
             suffix = latex_variable_name(suffix, is_fname)  # recurse to deal with recursive subscripts
         return '%s_{%s}' % (latex_varify(prefix, is_fname), suffix)
-    else:
-        return latex_varify(prefix, is_fname)
+    return latex_varify(prefix, is_fname)
 
 
 class LatexExamples:

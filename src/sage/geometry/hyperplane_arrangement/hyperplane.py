@@ -249,7 +249,7 @@ class Hyperplane(LinearExpression):
                 max_value = values[i]
         return max_pos
 
-    def __contains__(self, q):
+    def __contains__(self, q) -> bool:
         r"""
         Test whether the point ``q`` is in the hyperplane.
 
@@ -353,10 +353,7 @@ class Hyperplane(LinearExpression):
             sage: p2 = h.linear_part_projection([3,4,5]);  p2
             (8/7, 2/7)
             sage: h.linear_part().basis()
-            [
-            (1, 0, -1/3),
-            (0, 1, -2/3)
-            ]
+            [(1, 0, -1/3), (0, 1, -2/3)]
             sage: p3 = h.linear_part_projection([1,1,1]);  p3
             (4/7, 1/7)
         """
@@ -386,7 +383,6 @@ class Hyperplane(LinearExpression):
             sage: h.point() in h
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
             sage: h = 2*x + y + z + 1
             sage: h.point()
@@ -537,7 +533,6 @@ class Hyperplane(LinearExpression):
 
         Check that :issue:`30078` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: R.<sqrt2> = QuadraticField(2)
             sage: H.<x,y> = HyperplaneArrangements(base_ring=R)
             sage: B = H([1,1,0], [2,2,0], [sqrt2,sqrt2,0])
@@ -546,7 +541,6 @@ class Hyperplane(LinearExpression):
 
         Check that :issue:`30749` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: tau = (1+AA(5).sqrt()) / 2
             sage: ncn = [[2*tau+1,2*tau,tau],[2*tau+2,2*tau+1,tau+1]]
             sage: ncn += [[tau+1,tau+1,tau],[2*tau,2*tau,tau],[tau+1,tau+1,1]]
@@ -623,7 +617,7 @@ class Hyperplane(LinearExpression):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: (x + y - 2).plot()                                                    # needs sage.plot
+            sage: (x + y - 2).plot()
             Graphics object consisting of 2 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot_hyperplane

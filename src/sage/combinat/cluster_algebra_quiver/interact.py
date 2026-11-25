@@ -1,3 +1,6 @@
+"""
+Interactive display of quivers
+"""
 import ipywidgets as widgets
 from sage.misc.latex import latex
 from sage.repl.rich_output.pretty_print import pretty_print
@@ -10,8 +13,11 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     Only in *Jupyter notebook mode*.
 
-    Not to be called directly. Use the :meth:`interact` methods
-    of :class:`ClusterSeed` and :class:`ClusterQuiver` instead.
+    Not to be called directly. Use the
+    :meth:`~sage.combinat.cluster_algebra_quiver.cluster_seed.ClusterSeed.interact`
+    and
+    :meth:`~sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver.interact`
+    methods instead.
 
     INPUT:
 
@@ -45,8 +51,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
                                          description="Show last mutation vertex")
 
     mut_buttons = widgets.ToggleButtons(options=list(range(self._n)),
-                                       style={'button_width':'initial'},
-                                       description='Mutate at: ')
+                                        style={'button_width': 'initial'},
+                                        description='Mutate at: ')
 
     which_plot = widgets.Dropdown(options=['circular', 'spring'],
                                   value='circular' if circular else "spring",

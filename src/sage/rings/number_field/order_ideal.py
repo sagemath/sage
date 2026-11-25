@@ -62,15 +62,11 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
 
 import sage.rings.number_field.order
-
-#TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
 
 
 def NumberFieldOrderIdeal(O, *args, **kwds):
@@ -210,6 +206,38 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         x = self.ring()(x)
         return vector(QQ, x.list()) in self._module
+
+    def _acted_upon_(self, other, self_on_left):
+        r"""
+        Multiply this ideal by an element of the number field.
+
+        Multiplying by such an element on the right (``I*u``) already works
+        through :meth:`~sage.rings.ideal.Ideal_generic.__mul__`. This lets
+        the coercion framework handle multiplication on the left (``u*I``)
+        in the same way.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 7)
+            sage: O = K.order(3*a)
+            sage: I = O.ideal(3)
+            sage: u = I.ring().number_field()(5)
+            sage: u * I == I * u
+            True
+
+        TESTS:
+
+        Ideals of orders in quadratic fields work the same way::
+
+            sage: K.<i> = QuadraticField(-1)
+            sage: O = K.order(5*i)
+            sage: J = O.ideal([13, 5*i - 1])
+            sage: K(2) * J == J * 2
+            True
+        """
+        if self.ring().number_field().has_coerce_map_from(other.parent()):
+            return self * other
 
     def free_module(self):
         r"""
@@ -399,7 +427,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         conj_gens = [g.conjugate() for g in self.gens()]
         return NumberFieldOrderIdeal(self.ring(), conj_gens)
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         r"""
         Express this ideal using exactly two generators, the first of
         which is a generator for the intersection of the ideal with `\ZZ`.
@@ -458,7 +486,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             alpha = 0
         return tuple(map(O, (N, alpha)))
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Determine whether or not this ideal is principal.
 
@@ -466,7 +494,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
 
             To find a generator, use :meth:`gens_reduced`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: K.<a> = QuadraticField(-163)
             sage: O = K.order(7*a)
@@ -506,7 +534,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sol = f.solve_integer(-1)
         return sol is not None
 
-    def gens_reduced(self):
+    def gens_reduced(self) -> tuple:
         r"""
         Express this ideal in terms of at most two generators,
         and one if possible (i.e., if the ideal is principal).
@@ -550,11 +578,11 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sol = f.solve_integer(-1)
         if sol is None:
             return self.gens_two()
-        gen = sum(c*g for c,g in zip(sol, bas))
+        gen = sum(c * g for c, g in zip(sol, bas))
         assert NumberFieldOrderIdeal(self.ring(), gen) == self
         return (gen,)
 
-    def is_equivalent(self, other, narrow=False):
+    def is_equivalent(self, other, narrow=False) -> bool:
         r"""
         Determine whether this ideal is equivalent to another ideal
         in the same order.
@@ -619,7 +647,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert len(gs) in (1,2)
         if len(gs) > 1:
             return False
-        elif narrow:
+        if narrow:
             return gs[0].norm() > 0
         return True
 
@@ -656,7 +684,9 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.quadratic_form`
+            The analogous ``NumberFieldFractionalIdeal._quadratic_form()``
+            implementation for
+            :class:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal`.
 
         EXAMPLES::
 
@@ -776,9 +806,8 @@ def _random_for_testing():
     from sage.rings.number_field.number_field import QuadraticField
     from sage.arith.misc import primes
     from sage.rings.finite_rings.integer_mod_ring import Zmod
-    from sage.misc.misc_c import prod
     while True:
-        d = ZZ(choice((-1,+1)) * randrange(1,10**5))
+        d = ZZ(choice((-1, +1)) * randrange(1, 10**5))
         if not d.is_square():
             break
     K,t = QuadraticField(d).objgen()

@@ -118,10 +118,9 @@ from sage.data_structures.bitset_base cimport *
 cdef inline int agcl_cmp(int a, int b) noexcept:
     if a < b:
         return -1
-    elif a == b:
+    if a == b:
         return 0
-    else:
-        return 1
+    return 1
 
 # Functions
 
@@ -308,7 +307,7 @@ cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
     output.relabeling = <int *> sig_malloc(n*sizeof(int))
     output.generators = <int *> sig_malloc(2*n*n*sizeof(int))
     output.size_of_generator_array = 2*n*n
-    if output.group      is NULL or \
+    if output.group is NULL or \
        output.relabeling is NULL or \
        output.generators is NULL:
         deallocate_agcl_output(output)
@@ -529,12 +528,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     orbits_of_permutation              = work_space.orbits_of_permutation
 
     current_indicators                 = work_space.int_array
-    first_indicators                   = work_space.int_array +   n
-    permutation                        = work_space.int_array + 2*n
-    id_perm                            = work_space.int_array + 3*n
-    cells_to_refine_by                 = work_space.int_array + 4*n
-    vertices_determining_current_stack = work_space.int_array + 5*n
-    label_perm                         = work_space.int_array + 6*n
+    first_indicators                   = work_space.int_array + n
+    permutation                        = work_space.int_array + 2 * n
+    id_perm                            = work_space.int_array + 3 * n
+    cells_to_refine_by                 = work_space.int_array + 4 * n
+    vertices_determining_current_stack = work_space.int_array + 5 * n
+    label_perm                         = work_space.int_array + 6 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr

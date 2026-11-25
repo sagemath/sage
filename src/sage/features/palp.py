@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``palp``
 """
@@ -43,6 +42,7 @@ class PalpExecutable(Executable):
                                 executable=f"{palpprog}.x",
                                 spkg='palp', type='standard')
 
+
 class Palp(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`PALP <spkg_palp>`.
@@ -60,6 +60,7 @@ class Palp(JoinFeature):
                               for palpprog in ("poly", "class", "nef", "cws")
                               for suff in (None, 4, 5, 6, 11)],
                              description='PALP')
+
 
 def all_features():
     return [Palp()]

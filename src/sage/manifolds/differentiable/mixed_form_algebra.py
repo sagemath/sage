@@ -28,14 +28,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.chain_complexes import ChainComplexes
+from sage.categories.graded_algebras import GradedAlgebras
+from sage.categories.morphism import SetMorphism
+from sage.manifolds.differentiable.mixed_form import MixedForm
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.categories.graded_algebras import GradedAlgebras
-from sage.categories.chain_complexes import ChainComplexes
-from sage.categories.morphism import SetMorphism
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.symbolic.ring import SR
-from sage.manifolds.differentiable.mixed_form import MixedForm
+
 
 class MixedFormAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -214,7 +215,7 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
         try:
             if comp.is_trivial_zero():
                 return self.zero()
-            elif (comp - 1).is_trivial_zero():
+            if (comp - 1).is_trivial_zero():
                 return self.one()
         except AttributeError:
             if comp == 0:
@@ -493,7 +494,9 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             De Rham cohomology ring on the 3-dimensional differentiable
              manifold M
         """
-        from .de_rham_cohomology import DeRhamCohomologyRing
+        from sage.manifolds.differentiable.de_rham_cohomology import (
+            DeRhamCohomologyRing,
+        )
         return DeRhamCohomologyRing(self)
 
     homology = cohomology

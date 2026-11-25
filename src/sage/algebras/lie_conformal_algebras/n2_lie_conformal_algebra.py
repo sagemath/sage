@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules sage.rings.number_field
 r"""
 N=2 Super Lie Conformal Algebra
 
@@ -30,7 +29,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class N2LieConformalAlgebra(GradedLieConformalAlgebra):
@@ -73,14 +74,14 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.bracket(G)
         {0: 2*L, 2: 2/3*C}
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
         TESTS::
 
             sage: V = lie_conformal_algebras.N2(QQ)
-            sage: TestSuite(V).run()
+            sage: TestSuite(V).run()  # long time (:issue:`39569`)
         """
         n2dict = {('L', 'L'): {0: {('L', 1): 1},
                                1: {('L', 0): 2},
@@ -104,7 +105,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
                                            central_elements=('C',),
                                            weights=weights, parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

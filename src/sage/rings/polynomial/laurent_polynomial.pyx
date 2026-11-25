@@ -13,7 +13,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.rings.infinity import minus_infinity
 
@@ -109,7 +109,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: L.<a, b> = LaurentPolynomialRing(QQ)
             sage: L(42)._integer_(ZZ)
             42
@@ -150,7 +149,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: L.<a, b> = LaurentPolynomialRing(QQ)
             sage: L(42)._rational_()
             42
@@ -179,7 +177,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Check that :issue:`22277` is fixed::
 
-            sage: # needs sage.modules
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: a = 2*x^2 + 3*x^3 + 4*x^-1
             sage: a.change_ring(GF(3))
@@ -218,7 +215,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Abstract ``dict`` method.
 
@@ -226,12 +223,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
-            sage: LaurentPolynomial.dict(x)
+            sage: LaurentPolynomial.monomial_coefficients(x)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
+
+    dict = monomial_coefficients
 
     def map_coefficients(self, f, new_base_ring=None):
         """
@@ -251,7 +250,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<x> = LaurentPolynomialRing(k)
             sage: f = x*a + a
@@ -264,7 +262,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Examples with different base ring::
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<r> = GF(9); S.<s> = GF(81)
             sage: h = Hom(R, S)[0]; h
             Ring morphism:
@@ -294,7 +291,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k, f(v)) for (k, v) in self.dict().items()]))
+        return R({k: f(v) for k, v in self.monomial_coefficients().items()})
 
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
@@ -331,7 +328,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: S.<s> = LaurentPolynomialRing(GF(5))
             sage: T.<t> = PolynomialRing(pAdicRing(5))
             sage: S(t)
@@ -426,7 +422,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         if self.__n < 0:
             raise ValueError("Laurent polynomial with negative valuation cannot be converted to polynomial")
 
-        if isinstance(R, PolynomialRing_general):
+        if isinstance(R, PolynomialRing_generic):
             return R(self.__u) << self.__n
         elif self.__n == 0:
             return R(self.__u)
@@ -513,7 +509,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         You can specify a map on the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -597,6 +592,29 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         s = s.replace(" 1*", " ")
         s = s.replace(" -1*", " -")
         return s[1:]
+
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = LaurentPolynomialRing(ZZ)
+            sage: p = v^(-3) + 3*v + 5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Laurent: 3 x + 5 + x^-3>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
+        """
+        from sage.rings.integer_ring import ZZ
+        try:
+            return regina.Laurent(int(self.valuation()), [ZZ(c) for c in self])
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
 
     def _latex_(self):
         r"""
@@ -784,7 +802,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f.number_of_terms()
             101
 
-        The method :meth:`hamming_weight` is an alias::
+        The method :meth:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial.hamming_weight`
+        is an alias::
 
             sage: f.hamming_weight()
             101
@@ -815,7 +834,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + 2/x
             sage: g = f._symbolic_(SR); g
@@ -838,7 +856,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         d = {repr(g): R.var(g) for g in self._parent.gens()}
         return self.subs(**d)
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Return a dictionary representing ``self``.
 
@@ -848,11 +866,18 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: Q.<t> = LaurentPolynomialRing(R)
             sage: f = (x^3 + y/t^3)^3 + t^2; f
             y^3*t^-9 + 3*x^3*y^2*t^-6 + 3*x^6*y*t^-3 + x^9 + t^2
+            sage: f.monomial_coefficients()
+            {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
         """
-        cdef dict d = self.__u.dict()
-        return {k+self.__n: d[k] for k in d}
+        cdef dict d = self.__u.monomial_coefficients()
+        return {k + self.__n: d[k] for k in d}
+
+    dict = monomial_coefficients
 
     def coefficients(self):
         """
@@ -867,7 +892,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u.coefficients()
 
-    def exponents(self):
+    def exponents(self) -> list:
         """
         Return the exponents appearing in ``self`` with nonzero coefficients.
 
@@ -879,6 +904,58 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             [-2, 1, 2, 3]
         """
         return [i + self.__n for i in self.__u.exponents()]
+
+    def gradient(self) -> list:
+        r"""
+        Return a list of partial derivatives of this Laurent polynomial,
+        ordered by the variables of ``self.parent()``.
+
+        EXAMPLES::
+
+           sage: P.<x> = LaurentPolynomialRing(ZZ)
+           sage: f = x + 1/x
+           sage: f.gradient()
+           [-x^-2 + 1]
+        """
+        return [self.derivative()]
+
+    def jacobian_ideal(self):
+        r"""
+        Return the Jacobian ideal of the Laurent polynomial ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: f = x^3 + 1/x
+            sage: f.jacobian_ideal()
+            Ideal (-x^-2 + 3*x^2) of Univariate Laurent Polynomial Ring in x
+            over Integer Ring
+        """
+        return self.parent().ideal(self.derivative())
+
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: f = 1 + x + 33 * x^-3
+            sage: P = f.newton_polytope(); P                                            # needs sage.geometry.polyhedron
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
+
+        TESTS::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: R(0).newton_polytope()                                                # needs sage.geometry.polyhedron
+            The empty polyhedron in ZZ^0
+            sage: R(1).newton_polytope()                                                # needs sage.geometry.polyhedron
+            A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.rings.integer_ring import ZZ
+        return Polyhedron(vertices=[(e,) for e in self.exponents()],
+                          base_ring=ZZ)
 
     def __setitem__(self, n, value):
         """
@@ -1126,7 +1203,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u.is_monomial()
 
-    def __pow__(_self, r, dummy):
+    def __pow__(_self, r, mod):
         """
         EXAMPLES::
 
@@ -1145,9 +1222,21 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             x^-8
             sage: (5*x^-4)^-3
             5*x^12
+
+        Check that using third argument raises an error::
+
+            sage: L.<x> = LaurentPolynomialRing(R)
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef LaurentPolynomial_univariate self = _self
         cdef long right = r
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if right != r:
             raise ValueError("exponent must be an integer")
         try:
@@ -1770,7 +1859,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         The answer is dependent of the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: S.<u> = LaurentPolynomialRing(QQbar)
             sage: (2 + 4*t + 2*t^2).is_square()
             False
@@ -1837,7 +1925,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           ``_derivative()``
 
         EXAMPLES::
 
@@ -1897,7 +1985,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         Check that :issue:`28187` is fixed::
 
-            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: p = 1/x + 1 + x
             sage: x,y = var("x, y")
@@ -2029,8 +2116,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             f = self.subs(**kwds)
             if x:  # If there are non-keyword arguments
                 return f(*x)
-            else:
-                return f
+            return f
 
         if not x:
             return self
@@ -2124,7 +2210,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             Multivariate Polynomial Ring in t, tinv over Rational Field
         """
         dres = {}
-        for (e, c) in self.dict().items():
+        for e, c in self.monomial_coefficients().items():
             if e > 0:
                 dres[(e, 0)] = c
             else:
@@ -2135,6 +2221,12 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
     def divides(self, other):
         r"""
         Return ``True`` if ``self`` divides ``other``.
+
+        .. NOTE::
+
+            This method is only implemented for Laurent polynomials over
+            integral domains. For rings with zero divisors, a
+            :exc:`NotImplementedError` is raised.
 
         EXAMPLES::
 
@@ -2149,11 +2241,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
             sage: R(0).divides(R(0))
             True
-            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
-            sage: p = 4*x + 3*x^-1
-            sage: q = 5*x^2 + x + 2*x^-2
-            sage: p.divides(q)
-            False
+            sage: (x^2).divides(x)
+            True
 
             sage: R.<x,y> = GF(2)[]
             sage: S.<z> = LaurentPolynomialRing(R)
@@ -2161,7 +2250,22 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: q = (y^2-x^2) * z**-2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+
+        TESTS:
+
+        Check that :issue:`40372` is fixed::
+
+            sage: R.<y> = LaurentPolynomialRing(Zmod(4))
+            sage: a = 2+y
+            sage: a.divides(a)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
         """
-        p = self.polynomial_construction()[0]
-        q = other.polynomial_construction()[0]
-        return p.divides(q)
+        if self.base_ring().is_integral_domain() is True:
+            p = self.polynomial_construction()[0]
+            q = other.polynomial_construction()[0]
+            return p.divides(q)
+        else:
+            raise NotImplementedError("divisibility test not implemented for Laurent"
+                                      " polynomials over non-integral domains")

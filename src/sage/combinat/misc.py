@@ -1,7 +1,7 @@
 r"""
 Miscellaneous
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,11 +13,11 @@ Miscellaneous
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.misc_c import prod
-
+from sage.rings.infinity import Infinity
 
 class DoublyLinkedList:
     """
@@ -127,7 +127,7 @@ class DoublyLinkedList:
         self.next_value[self.prev_value[i]] = self.next_value[i]
         self.prev_value[self.next_value[i]] = self.prev_value[i]
 
-    def unhide(self,i):
+    def unhide(self, i):
         """
         TESTS::
 
@@ -379,8 +379,8 @@ def check_integer_list_constraints(l, **kwargs):
 
     filters = {}
     filters['length'] = lambda x: len(x) == length
-    filters['min_part'] = lambda x: min(x) >= min_part
-    filters['max_part'] = lambda x: max(x) <= max_part
+    filters['min_part'] = lambda x: min(x, default=Infinity) >= min_part
+    filters['max_part'] = lambda x: max(x, default=-Infinity) <= max_part
     filters['min_length'] = lambda x: len(x) >= min_length
     filters['max_length'] = lambda x: len(x) <= max_length
     filters['min_slope'] = lambda x: min((x[i + 1] - x[i] for i in range(len(x) - 1)), default=min_slope + 1) >= min_slope

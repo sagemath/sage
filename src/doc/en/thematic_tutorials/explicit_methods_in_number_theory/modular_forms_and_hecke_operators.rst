@@ -142,13 +142,11 @@ and :math:`k` is the weight.
     sage: S = CuspForms(Gamma0(25),4, prec=15); S
     Cuspidal subspace of dimension 5 of Modular Forms space ...
     sage: S.basis()
-    [
-    q + q^9 - 8*q^11 - 8*q^14 + O(q^15),
-    q^2 - q^7 - q^8 - 7*q^12 + 7*q^13 + O(q^15),
-    q^3 + q^7 - 2*q^8 - 6*q^12 - 5*q^13 + O(q^15),
-    q^4 - q^6 - 3*q^9 + 5*q^11 - 2*q^14 + O(q^15),
-    q^5 - 4*q^10 + O(q^15)
-    ]
+    [q + q^9 - 8*q^11 - 8*q^14 + O(q^15),
+     q^2 - q^7 - q^8 - 7*q^12 + 7*q^13 + O(q^15),
+     q^3 + q^7 - 2*q^8 - 6*q^12 - 5*q^13 + O(q^15),
+     q^4 - q^6 - 3*q^9 + 5*q^11 - 2*q^14 + O(q^15),
+     q^5 - 4*q^10 + O(q^15)]
 
 Dimension Formulas
 ~~~~~~~~~~~~~~~~~~
@@ -200,9 +198,7 @@ described later.
 ::
 
     sage: CuspForms(DirichletGroup(5).0, 5).basis()
-    [
-    q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - ... + O(q^6)
-    ]
+    [q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)]
 
 
 Dirichlet Characters
@@ -296,12 +292,10 @@ Hecke operator :math:`T_n`, and to compute the subspace
 
     sage: M = ModularForms(Gamma0(11),4)
     sage: M.basis()
-    [
-    q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6),
-    q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6),
-    1 + O(q^6),
-    q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)
-    ]
+    [q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6),
+     q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6),
+     1 + O(q^6),
+     q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)]
     sage: M.hecke_matrix(2)
     [0 2 0 0]
     [1 2 0 0]

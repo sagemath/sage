@@ -28,7 +28,7 @@ cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
 
     # We round up the precision to the nearest multiple of wordsize.
     cdef int rounded_prec
-    rounded_prec = (self.prec() + wordsize - 1) & ~(wordsize - 1)
+    rounded_prec = nbits2prec(self.prec())
 
     # Yes, assigning to self works fine, even in Cython.
     if rounded_prec > prec:
@@ -48,7 +48,7 @@ cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
         exponent = mpfr_get_z_exp(mantissa, self.value)
 
         # Create a PARI REAL
-        pari_float = cgetr(2 + rounded_prec / wordsize)
+        pari_float = cgetr(rounded_prec)
         pari_float[1] = evalexpo(exponent + rounded_prec - 1) + evalsigne(mpfr_sgn(self.value))
         mpz_export(&pari_float[2], NULL, 1, wordsize // 8, 0, 0, mantissa)
         mpz_clear(mantissa)
@@ -62,11 +62,11 @@ cpdef bint set_real_mpfr_element_from_gen(RealNumber self, Gen x) noexcept:
 
         sage: rt2 = sqrt(pari('2.0'))
         sage: rt2
-        1.41421356237310
+        1.41421356237...
         sage: rt2.sage()
-        1.41421356237309505
-        sage: rt2.sage().prec()
-        64
+        1.41421356237...
+        sage: rt2.sage().prec() == rt2.bitprecision()
+        True
         sage: pari(rt2.sage()) == rt2
         True
         sage: for i in range(100, 200):

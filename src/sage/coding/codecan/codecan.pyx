@@ -14,7 +14,7 @@ by units) and zero columns. Hence, we can suppose that the input for the algorit
 developed here is a set of points in `PG(k-1, q)`.
 
 The implementation is based on the class
-:class:`sage.groups.perm_gps.partn_ref2.refinement_generic.PartitionRefinement_generic`.
+:class:`~sage.groups.perm_gps.partn_ref2.refinement_generic.PartitionRefinement_generic`.
 See the description of this algorithm in
 :mod:`sage.groups.perm_gps.partn_ref2.refinement_generic`.
 In the language given there, we have to implement the group action of
@@ -32,18 +32,19 @@ and methods to compute the applied group elements in `G \rtimes S_n`.
 
 The algorithm also uses Jeffrey Leon's idea of maintaining an
 invariant set of codewords which is computed in the beginning, see
-:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode._init_point_hyperplane_incidence`.
+``PartitionRefinementLinearCode._init_point_hyperplane_incidence``.
 An example for such a set is the set of all codewords of weight `\leq w` for
 some uniquely defined `w`. In our case, we interpret the codewords as a set of
 hyperplanes (via the corresponding information word) and compute invariants of
 the bipartite, colored derived subgraph of the point-hyperplane incidence graph,
-see :meth:`PartitionRefinementLinearCode._point_refine` and
-:meth:`PartitionRefinementLinearCode._hyp_refine`.
+see ``PartitionRefinementLinearCode._point_refine`` and
+``PartitionRefinementLinearCode._hyp_refine``.
 
 Since we are interested in subspaces (linear codes) instead of matrices, our
 group elements returned in
-:meth:`PartitionRefinementLinearCode.get_transporter` and
-:meth:`PartitionRefinementLinearCode.get_autom_gens`
+:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode.get_transporter`
+and
+:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode.get_autom_gens`
 will be elements in the group
 `({\GF{q}^*}^n  \rtimes Aut(\GF{q})) \rtimes S_n =
 ({\GF{q}^*}^n  \rtimes (Aut(\GF{q}) \times S_n)`.
@@ -84,14 +85,14 @@ is returned by generators::
     True
 """
 
-#*******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2012 Thomas Feulner <thomas.feulner@uni-bayreuth.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*******************************************************************************
+# *****************************************************************************
 from itertools import repeat
 from copy import copy
 from cysignals.memory cimport check_allocarray, sig_free
@@ -292,7 +293,7 @@ cdef class InnerGroup:
 
             d, _ = self.minimize_by_row_mult(factor * act_col)
             d.pop(first_nz_rep)
-            if len(d):  # there is at least one more multiplication
+            if d:  # there is at least one more multiplication
                 group_changed[0] = True
                 for i in range(self.rank):
                     factor = d.get(self.get_rep(i))
@@ -361,8 +362,10 @@ cdef class InnerGroup:
     cdef SemimonomialTransformation get_transporter(self):
         r"""
         Return the group element we have applied. Should only be called if
-        we passed an element in
-        :meth:`sage.coding.codecan.codecan.InnerGroup.__cinit__`.
+        we passed a :class:`transporter element
+        <sage.groups.semimonomial_transformations.semimonomial_transformation.SemimonomialTransformation>`
+        to
+        :class:`InnerGroup <sage.coding.codecan.codecan.InnerGroup>`.
         """
         return self.transporter
 
@@ -377,8 +380,9 @@ cdef class InnerGroup:
             6 -> 6 7 -> 7 8 -> 8 9 -> 9
         """
         return r"Subgroup of (GL(k,q) times \GF{q}^n ) rtimes Aut(\GF{q}) " + \
-            "with rank = %s, frobenius power = %s and partition =%s" % (self.rank,
-            self.frob_pow, OP_string(self.row_partition))
+            "with rank = %s, frobenius power = %s and partition =%s" % (
+                self.rank,
+                self.frob_pow, OP_string(self.row_partition))
 
     cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept:
         r"""
@@ -619,7 +623,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         S = SemimonomialTransformationGroup(self._matrix.base_ring(), self._n)
         S_n = SymmetricGroup(self._n)
 
-        self._transporter = S(perm= S_n(self._to_best.sage()))
+        self._transporter = S(perm=S_n(self._to_best.sage()))
         self._transporter, self._best_candidate, remaining_inner_group = self._compute_group_element(self._transporter, algorithm_type)
 
         # compute the other components of the automorphism group generators
@@ -636,7 +640,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         else:
             P = remaining_inner_group.column_blocks(self._best_candidate)
             for p in P:
-                x = S(v=[ F.primitive_element() if i in p else F.one()  for i in range(self._n) ])
+                x = S(v=[F.primitive_element() if i in p else F.one()
+                         for i in range(self._n)])
                 self._autom_group_generators.append(transp_inv * x * self._transporter)
             self._inner_group_stabilizer_order = (len(F) - 1) ** len(P)
 
@@ -755,10 +760,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         This graph will be later used in the refinement procedures.
         """
         cdef FFSS_projPoint iter = FFSS_projPoint(self._matrix)
-        cdef mp_bitcnt_t i,j
+        cdef mp_bitcnt_t i, j
 
         ambient_space = (self._matrix.base_ring()) ** (self._n)
-        weights2size = [0] * (self.len() + 1)
         W = [[] for _ in repeat(None, self.len() + 1)]
         span = [ambient_space.zero_subspace()] * (self.len() + 1)
         min_weight = self.len()
@@ -813,8 +817,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef bint _minimization_allowed_on_col(self, int pos) noexcept:
         r"""
         Decide if we are allowed to perform the inner minimization on position
-        ``pos`` which is supposed to be a singleton. For linear codes over finite
-        fields, we can always return ``True``.
+        ``pos`` which is supposed to be a singleton.
+
+        For linear codes over finite fields, we can always return ``True``.
         """
         return True
 
@@ -833,8 +838,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         - ``True`` if and only if the actual node compares less or equal
           to the candidate for the canonical form.
         """
-        self._matrix = self._inner_group.minimize_matrix_col(self._matrix, pos,
-                            self._fixed_minimized, inner_group_changed)
+        self._matrix = self._inner_group.minimize_matrix_col(
+            self._matrix, pos,
+            self._fixed_minimized, inner_group_changed)
 
         # finally compare the new column with the best candidate
         if self._is_candidate_initialized:
@@ -911,7 +917,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         - ``False`` only if the image under this homomorphism of group actions
           compares larger than the image of the candidate for the canonical form.
         """
-        cdef int i, j, res, stab_pow, apply_pow
+        cdef int i, res, stab_pow, apply_pow
 
         if self._inner_group.rank < 2:
             return True
@@ -989,7 +995,9 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         cdef long * best_vals = self._point_refine_vals.get_row(self._nr_of_point_refine_calls)
         self._nr_of_point_refine_calls += 1
         cdef bint ret_val = self._one_refinement(best_vals, 0, self._n,
-            inner_stab_changed, changed_partition, "point_refine")
+                                                 inner_stab_changed,
+                                                 changed_partition,
+                                                 "point_refine")
 
         if not changed_partition[0]:
             self._part.depth -= 1
@@ -1032,8 +1040,10 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._nr_of_hyp_refine_calls += 1
 
         cdef tuple ret_val = PS_refinement(self._hyp_part,
-            self._hyp_refine_vals_scratch, best_vals, 0, self._hyp_part.degree,
-            &self._is_candidate_initialized, changed_partition)
+                                           self._hyp_refine_vals_scratch,
+                                           best_vals, 0, self._hyp_part.degree,
+                                           &self._is_candidate_initialized,
+                                           changed_partition)
 
         if not changed_partition[0]:
             self._hyp_part.depth -= 1
@@ -1094,11 +1104,11 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             else:
                 self._latex_debug_string += " & "
 
-        permuted_matrix = self._matrix.matrix_from_columns([self._part.entries[i] for i in range(self._n) ])
+        permuted_matrix = self._matrix.matrix_from_columns([self._part.entries[i] for i in range(self._n)])
 
         # Now we will finally print the matrix.
-        for i from 0 <= i < self._k:
-            for j from 0 <= j < (self._n - 1):
+        for i in range(self._k):
+            for j in range(self._n - 1):
                 self._latex_debug_string += "$" + permuted_matrix[i, j]._latex_() + "$ & "
             self._latex_debug_string += "$" + permuted_matrix[i, self._n - 1]._latex_() + "$ \\\\\n"
 

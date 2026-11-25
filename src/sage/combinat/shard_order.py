@@ -20,17 +20,6 @@ but can be easily converted from and to permutations::
 
     A general implementation for all finite Coxeter groups is available as
     :meth:`~sage.categories.finite_coxeter_groups.FiniteCoxeterGroups.ParentMethods.shard_poset`
-
-REFERENCES:
-
-.. [Banc2011] \E. E. Bancroft, *Shard Intersections and Cambrian Congruence
-   Classes in Type A.*, Ph.D. Thesis, North Carolina State University. 2011.
-
-.. [Pete2013] \T. Kyle Petersen, *On the shard intersection order of
-   a Coxeter group*, SIAM J. Discrete Math. 27 (2013), no. 4, 1880-1912.
-
-.. [Read2011] \N. Reading, *Noncrossing partitions and the shard intersection
-   order*, J. Algebraic Combin., 33 (2011), 483-530.
 """
 from sage.combinat.posets.posets import Poset
 from sage.graphs.digraph import DiGraph
@@ -88,7 +77,7 @@ class ShardPosetElement(tuple):
             Digraph on 3 vertices
         """
         self.runs = p.decreasing_runs(as_tuple=True)
-        self.run_indices = [None] * (len(p) + 1)
+        self.run_indices = [0] * (len(p) + 1)
         for i, bloc in enumerate(self.runs):
             for j in bloc:
                 self.run_indices[j] = i
@@ -127,7 +116,7 @@ class ShardPosetElement(tuple):
             sage: e1 <= e0
             False
         """
-        if type(self) is not type(other) or len(self) != len(other):
+        if not isinstance(other, ShardPosetElement) or len(self) != len(other):
             raise TypeError("these are not comparable")
         if self.runs == other.runs:
             return True

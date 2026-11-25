@@ -33,7 +33,7 @@ cdef class PowComputer_flint(PowComputer_class):
         sage: PowComputer_flint(5, 20, 20, 20, False)
         FLINT PowComputer for 5
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
         Memory initialization.
 
@@ -157,9 +157,11 @@ cdef class PowComputer_flint(PowComputer_class):
         """
         Return ceil(n / e).
         """
-        if self.e == 1: return n
-        if n == 0: return 0
-        return (n-1) / self.e + 1
+        if self.e == 1:
+            return n
+        if n == 0:
+            return 0
+        return (n - 1) / self.e + 1
 
     def polynomial(self, n=None, var='x'):
         """
@@ -603,7 +605,7 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
       ``ram_prec_cap`` and ``prec_cap`` is that
       ``prec_cap = ceil(n/e)``
 
-    - ``in_field`` -- (boolean) whether the associated ring is
+    - ``in_field`` -- boolean; whether the associated ring is
       actually a field
 
     - ``poly`` -- the polynomial defining the extension

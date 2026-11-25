@@ -394,7 +394,7 @@ class Huffman(SageObject):
             'Sage is my most favorite general purpose computer algebra system'
         """
         if self._character_to_code:
-            return "".join((self._character_to_code[x] for x in string))
+            return "".join(self._character_to_code[x] for x in string)
 
     def decode(self, string):
         r"""
@@ -538,15 +538,12 @@ class Huffman(SageObject):
             sage: T.edges(sort=True, labels=None)  # indirect doctest                   # needs sage.graphs
             [('0', 'S: 00'), ('0', 'a: 01'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
         """
-        if parent == "":
-            u = "root"
-        else:
-            u = parent
+        u = "root" if parent == "" else parent
         s = "".join([parent, bit])
         try:
             left = self._generate_edges(tree[0], parent=s, bit='0')
             right = self._generate_edges(tree[1], parent=s, bit='1')
-            L = [(u, s)] if s != "" else []
+            L = [(u, s)] if s else []
             return left + right + L
         except TypeError:
             return [(u, "".join([self.decode(s), ": ", s]))]

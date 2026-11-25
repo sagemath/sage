@@ -16,6 +16,7 @@ The Sage Category Framework
    :maxdepth: 1
 
    sage/categories/primer
+   sage/categories/basic
    sage/categories/category
    sage/categories/category_with_axiom
    sage/categories/functor
@@ -48,11 +49,13 @@ Individual Categories
    sage/categories/algebra_modules
    sage/categories/algebras
    sage/categories/algebras_with_basis
+   sage/categories/anderson_motives
    sage/categories/aperiodic_semigroups
    sage/categories/associative_algebras
    sage/categories/bialgebras
    sage/categories/bialgebras_with_basis
    sage/categories/bimodules
+   sage/categories/chain_complexes
    sage/categories/classical_crystals
    sage/categories/coalgebras
    sage/categories/coalgebras_with_basis
@@ -70,15 +73,18 @@ Individual Categories
    sage/categories/coxeter_groups
    sage/categories/crystals
    sage/categories/cw_complexes
+   sage/categories/dedekind_domains
    sage/categories/discrete_valuation
    sage/categories/distributive_magmas_and_additive_magmas
    sage/categories/division_rings
    sage/categories/domains
+   sage/categories/drinfeld_modules
    sage/categories/enumerated_sets
    sage/categories/euclidean_domains
    sage/categories/fields
    sage/categories/filtered_algebras
    sage/categories/filtered_algebras_with_basis
+   sage/categories/filtered_hopf_algebras_with_basis
    sage/categories/filtered_modules
    sage/categories/filtered_modules_with_basis
    sage/categories/finite_complex_reflection_groups
@@ -137,6 +143,7 @@ Individual Categories
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
    sage/categories/kac_moody_algebras
+   sage/categories/kahler_algebras
    sage/categories/lambda_bracket_algebras
    sage/categories/lambda_bracket_algebras_with_basis
    sage/categories/lattice_posets
@@ -159,8 +166,10 @@ Individual Categories
    sage/categories/modules_with_basis
    sage/categories/monoid_algebras
    sage/categories/monoids
+   sage/categories/noetherian_rings
    sage/categories/number_fields
    sage/categories/objects
+   sage/categories/ore_modules
    sage/categories/partially_ordered_monoids
    sage/categories/permutation_groups
    sage/categories/pointed_sets
@@ -268,6 +277,7 @@ Examples of parents using categories
    sage/categories/examples/posets
    sage/categories/examples/semigroups
    sage/categories/examples/semigroups_cython
+   sage/categories/examples/semirings
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations

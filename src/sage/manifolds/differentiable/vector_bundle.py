@@ -20,22 +20,22 @@ AUTHORS:
 - Michael Jung (2019) : initial version
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung at uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# ****************************************************************************
 
 from sage.categories.vector_bundles import VectorBundles
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
+from sage.rings.cc import CC
 from sage.rings.infinity import infinity
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+
 
 class DifferentiableVectorBundle(TopologicalVectorBundle):
     r"""
@@ -87,7 +87,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         True
     """
     def __init__(self, rank, name, base_space, field='real', latex_name=None,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a differentiable vector bundle.
 
@@ -117,7 +117,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
                                          category=category)
         self._diff_degree = diff_degree  # Override diff degree
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -157,7 +157,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             Further examples can be found in
             :class:`~sage.manifolds.differentiable.bundle_connection.BundleConnection`.
         """
-        from .bundle_connection import BundleConnection
+        from sage.manifolds.differentiable.bundle_connection import BundleConnection
         return BundleConnection(self, name, latex_name)
 
     def characteristic_cohomology_class_ring(self, base=QQ):
@@ -185,7 +185,9 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             Characteristic cohomology class (1 + p_1)(TM) of the Tangent bundle
              TM over the 4-dimensional differentiable manifold M
         """
-        from .characteristic_cohomology_class import CharacteristicCohomologyClassRing
+        from sage.manifolds.differentiable.characteristic_cohomology_class import (
+            CharacteristicCohomologyClassRing,
+        )
 
         return CharacteristicCohomologyClassRing(base, self)
 
@@ -265,13 +267,11 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         .. SEEALSO::
 
             More examples can be found in
-            :class:`~sage.manifolds.differentiable.characteristic_class.CharacteristicClass`.
+            :mod:`sage.manifolds.differentiable.characteristic_cohomology_class`.
         """
         base_ring = kwargs.get('base_ring', QQ)
         R = self.characteristic_cohomology_class_ring(base_ring)
         return R(*args, **kwargs)
-
-    characteristic_class = deprecated_function_alias(29581, characteristic_cohomology_class)
 
     def diff_degree(self):
         r"""
@@ -314,24 +314,27 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: M = Manifold(3, 'M')
             sage: E = M.vector_bundle(2, 'E')
             sage: E.total_space()
-            6-dimensional differentiable manifold E
+            5-dimensional differentiable manifold E
         """
         if self._total_space is None:
             from sage.manifolds.manifold import Manifold
             base_space = self._base_space
-            dim = base_space._dim * self._rank
+            dim = base_space._dim + self._rank
             sindex = base_space.start_index()
-            self._total_space = Manifold(dim, self._name,
-                                latex_name=self._latex_name,
-                                field=self._field, structure='differentiable',
-                                diff_degree=self._diff_degree,
-                                start_index=sindex)
+            self._total_space = Manifold(
+                dim, self._name,
+                latex_name=self._latex_name,
+                field=self._field, structure='differentiable',
+                diff_degree=self._diff_degree,
+                start_index=sindex
+            )
 
         # TODO: if update_atlas: introduce charts via self._atlas
 
         return self._total_space
 
 # *****************************************************************************
+
 
 class TensorBundle(DifferentiableVectorBundle):
     r"""
@@ -424,7 +427,7 @@ class TensorBundle(DifferentiableVectorBundle):
         sage: R_tensor_module is PhiTM.section_module()
         True
     """
-    def __init__(self, base_space, k, l, dest_map=None):
+    def __init__(self, base_space, k, l, dest_map=None) -> None:
         r"""
         Construct a tensor bundle.
 
@@ -487,7 +490,7 @@ class TensorBundle(DifferentiableVectorBundle):
         """
         self._def_frame = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -630,9 +633,10 @@ class TensorBundle(DifferentiableVectorBundle):
             base_space = self.base_space()
             return base_space.tensor_field_module(self._tensor_type,
                                                   dest_map=self._dest_map)
-        else:
-            return domain.tensor_field_module(self._tensor_type,
-                                      dest_map=self._dest_map.restrict(domain))
+        return domain.tensor_field_module(
+            self._tensor_type,
+            dest_map=self._dest_map.restrict(domain)
+        )
 
     def section(self, *args, **kwargs):
         r"""
@@ -965,13 +969,12 @@ class TensorBundle(DifferentiableVectorBundle):
         """
         if self._dest_map.is_identity():
             return self._base_space.frames()
-        else:
-            # Filter out all frames with respect to dest_map:
-            frames = []
-            for frame in self._base_space.frames():
-                if frame._dest_map == self._dest_map:
-                    frames.append(frame)
-            return frames
+        # Filter out all frames with respect to dest_map:
+        frames = []
+        for frame in self._base_space.frames():
+            if frame._dest_map == self._dest_map:
+                frames.append(frame)
+        return frames
 
     def coframes(self):
         r"""
@@ -1013,13 +1016,12 @@ class TensorBundle(DifferentiableVectorBundle):
         """
         if self._dest_map.is_identity():
             return self._base_space.coframes()
-        else:
-            # Filter out all coframes with respect to dest_map:
-            coframes = []
-            for coframe in self._base_space.coframes():
-                if coframe._dest_map == self._dest_map:
-                    coframes.append(coframe)
-            return coframes
+        # Filter out all coframes with respect to dest_map:
+        coframes = []
+        for coframe in self._base_space.coframes():
+            if coframe._dest_map == self._dest_map:
+                coframes.append(coframe)
+        return coframes
 
     def trivialization(self, coordinates='', names=None, calc_method=None):
         r"""
@@ -1291,17 +1293,13 @@ class TensorBundle(DifferentiableVectorBundle):
         if self._dest_map.is_identity():
             # The standard case:
             return self._base_space.is_manifestly_parallelizable()
-        else:
-            # If the ambient domain is manifestly trivial, the pullback bundle
-            # is certainly trivial:
-            if self._ambient_domain.is_manifestly_parallelizable():
-                return True
-            # Otherwise check whether a global frame on the pullback bundle is
-            # defined:
-            for frame in self.frames():
-                if frame._domain is self._base_space:
-                    return True
-            return False
+        # If the ambient domain is manifestly trivial, the pullback bundle
+        # is certainly trivial:
+        if self._ambient_domain.is_manifestly_parallelizable():
+            return True
+        # Otherwise check whether a global frame on the pullback bundle is
+        # defined:
+        return any(frame._domain is self._base_space for frame in self.frames())
 
     def local_frame(self, *args, **kwargs):
         r"""
@@ -1457,7 +1455,7 @@ class TensorBundle(DifferentiableVectorBundle):
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.differentiable.diff_map.DifferentialMap`
+        - a :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
           representing the destination map
 
         EXAMPLES::

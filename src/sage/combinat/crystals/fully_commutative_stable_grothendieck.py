@@ -222,7 +222,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
         """
         return isinstance(self, type(other)) and self.value == other.value
 
-    def __lt__(self,other):
+    def __lt__(self, other):
         """
         Return ``True`` if ``self`` comes before ``other`` and ``False``
         otherwise.
@@ -825,14 +825,15 @@ def _check_containment(t, parent):
         factors = len(t)
         max_value = parent.max_value
         from sage.monoids.hecke_monoid import HeckeMonoid
-        H = HeckeMonoid(SymmetricGroup(max_value+1))
+        H = HeckeMonoid(SymmetricGroup(max_value + 1))
         w = tuple(H.from_reduced_word(x for factor in t for x in factor).reduced_word())
         excess = sum(len(l) for l in t) - len(w)
 
     if factors != parent.factors:
         raise ValueError("number of factors do not match")
     if w != parent.w:
-            raise ValueError("self and parent must be specified based on equivalent words")
+        raise ValueError("self and parent must be specified based "
+                         "on equivalent words")
     if excess != parent.excess:
         raise ValueError("number of excess letters do not match")
 

@@ -120,7 +120,8 @@ The Chern character is then given by::
      manifold M
 
 The corresponding characteristic form w.r.t. the bundle connection can be
-obtained via :meth:`get_form`::
+obtained via
+:meth:`~sage.manifolds.differentiable.characteristic_cohomology_class.CharacteristicCohomologyClassRingElement.get_form`::
 
     sage: ch_form = ch.get_form(nab); ch_form.display_expansion()
     ch(E, nabla^E) = 1 + 1/2*d(A)/dt/pi dt∧dx
@@ -281,17 +282,17 @@ that our form actually represents the Euler class appropriately.
 # *****************************************************************************
 
 from sage.algebras.finite_gca import FiniteGCAlgebra
-from sage.combinat.free_module import IndexedFreeModuleElement
-from sage.misc.fast_methods import Singleton
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
+from sage.manifolds.differentiable.affine_connection import AffineConnection
+from sage.manifolds.differentiable.bundle_connection import BundleConnection
+from sage.manifolds.differentiable.levi_civita_connection import LeviCivitaConnection
 from sage.misc.abstract_method import abstract_method
-from .affine_connection import AffineConnection
-from .bundle_connection import BundleConnection
-from .levi_civita_connection import LeviCivitaConnection
-from sage.symbolic.expression import Expression
+from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import Singleton
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
 
 
 class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
@@ -311,7 +312,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
     :class:`CharacteristicCohomologyClassRing`.
 
     To construct a characteristic cohomology class, please use
-    :func:`CharacteristicCohomologyClass`.
+    :meth:`~sage.manifolds.differentiable.vector_bundle.DifferentiableVectorBundle.characteristic_cohomology_class`.
 
     EXAMPLES::
 
@@ -795,7 +796,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             Characteristic cohomology class pontr(TM) of the Tangent bundle
              TM over the 8-dimensional differentiable manifold M
         """
-        if isinstance(x, (str, Expression)) or isinstance(x, Polynomial):
+        if isinstance(x, (str, Expression, Polynomial)):
             return self._build_element(x, **kwargs)
 
         R = self.base_ring()
@@ -894,7 +895,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
 
         # predefined classes accessible via class names
         if isinstance(val, str):
-            from sage.arith.misc import factorial, bernoulli
+            from sage.arith.misc import bernoulli, factorial
 
             P = PolynomialRing(base_ring, 'x')
             x = P.gen()
@@ -920,7 +921,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = r'\mathrm{ch}'
                 class_type = 'additive'
-                coeff = [1 / factorial(k) for k in
+                coeff = [base_ring.one() / factorial(k) for k in
                          range(dim // 2 + 1)]  # exp(x)
                 val = P(coeff)
             elif val == 'Todd':
@@ -933,8 +934,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 class_type = 'multiplicative'
                 val = 1 + x / 2
                 for k in range(1, dim // 2 + 1):
-                    val += (-1) ** (k + 1) / factorial(2 * k) * bernoulli(
-                        2 * k) * x ** (2 * k)
+                    val += (-1)**(k + 1) * bernoulli(2*k) * x**(2*k) / factorial(2*k)
             elif val == 'Hirzebruch':
                 if vbundle._field_type != 'real':
                     raise ValueError(f'Hirzebruch class not defined on {vbundle}')
@@ -943,7 +943,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = 'L'
                 class_type = 'multiplicative'
-                coeff = [2 ** (2 * k) * bernoulli(2 * k) / factorial(2 * k)
+                coeff = [2**(2*k) * bernoulli(2*k) / factorial(2*k)
                          for k in range(dim // 4 + 1)]
                 val = P(coeff)
             elif val == 'AHat':
@@ -954,8 +954,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 if latex_name is None:
                     latex_name = r'\hat{A}'
                 class_type = 'multiplicative'
-                coeff = [- (2 ** (2 * k) - 2) / 2 ** (2 * k) * bernoulli(
-                    2 * k) / factorial(2 * k)
+                coeff = [- (2**(2*k) - 2) * bernoulli(2*k) / (factorial(2*k) * 2**(2*k))
                          for k in range(dim // 4 + 1)]
                 val = P(coeff)
             elif val == 'Euler':
@@ -1004,7 +1003,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 val = P([(-1) ** k * val[2 * k + 1] for k in range(n + 1)])
                 sym = multiplicative_sequence(val, n)
             else:
-                raise AttributeError('unkown class type')
+                raise AttributeError('unknown class type')
 
             d = {}
             w_vec = self._weighted_vectors
@@ -1085,8 +1084,8 @@ def multiplicative_sequence(q, n=None):
         e[] + e[1] - e[1, 1] + 3*e[2] - e[2, 1] + e[2, 2] + 4*e[3] - 3*e[3, 1]
          + e[3, 2] + 7*e[4] - 4*e[4, 1] + 11*e[5]
     """
-    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.combinat.partition import Partitions
+    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.misc.misc_c import prod
 
     if n is None:
@@ -1140,8 +1139,8 @@ def additive_sequence(q, k, n=None):
         sage: sym_1 = additive_sequence(f, 2, 1); sym_1
         2*e[] + e[1]
     """
-    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.combinat.partition import Partitions
+    from sage.combinat.sf.sf import SymmetricFunctions
 
     if n is None:
         n = q.degree()
@@ -1185,7 +1184,7 @@ def fast_wedge_power(form, n):
     """
     if n == 0:
         return form._domain._one_scalar_field
-    elif n < 0:
+    if n < 0:
         raise ValueError("'n' must be nonnegative")
     val = form
     while not (n & 1):
@@ -1427,7 +1426,7 @@ class ChernAlgorithm(Singleton, Algorithm_generic):
             sage: algorithm.get_local(cmat)
             [2-form on the 2-dimensional Lorentzian manifold M]
         """
-        from sage.symbolic.constants import pi, I
+        from sage.symbolic.constants import I, pi
 
         dom = cmat[0][0]._domain
         rk = len(cmat)

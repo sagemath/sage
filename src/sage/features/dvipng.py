@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``dvipng``
 """
@@ -13,6 +12,7 @@ Feature for testing the presence of ``dvipng``
 # ****************************************************************************
 
 from . import Executable
+
 
 class dvipng(Executable):
     r"""

@@ -3,8 +3,8 @@ Enumerated set from iterator
 
 EXAMPLES:
 
-We build a set from the iterator :obj:`graphs` that returns a canonical
-representative for each isomorphism class of graphs::
+We build a set from the iterator :data:`graphs <sage.graphs.graph_generators.graphs>`
+that returns a canonical representative for each isomorphism class of graphs::
 
     sage: # needs sage.graphs
     sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
@@ -39,7 +39,7 @@ The module also provides decorator for functions and methods::
     sage: from sage.sets.set_from_iterator import set_from_method
     sage: class A:
     ....:     @set_from_method
-    ....:     def f(self,n):
+    ....:     def f(self, n):
     ....:         return xsrange(n)
     sage: a = A()
     sage: a.f(3)
@@ -450,7 +450,7 @@ class EnumeratedSetFromIterator(Parent):
 
 # TODO: move it in sage.misc ?
 @instancedoc
-class Decorator():
+class Decorator:
     r"""
     Abstract class that manage documentation and sources of the wrapped object.
 
@@ -697,16 +697,16 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
                 return EnumeratedSetFromIterator(self.f, args, kwds, name=name, **self.options)
             return EnumeratedSetFromIterator(self.f, args, kwds, **self.options)
 
-        else:  # potential global options
-            if args == ():
-                f, = kwds.values()
-            else:
-                assert len(args) == 1
-                f = args[0]
-            return EnumeratedSetFromIterator_function_decorator(
-                f,
-                name=getattr(self, 'name', None),
-                **self.options)
+        # potential global options
+        if args == ():
+            f, = kwds.values()
+        else:
+            assert len(args) == 1
+            f = args[0]
+        return EnumeratedSetFromIterator_function_decorator(
+            f,
+            name=getattr(self, 'name', None),
+            **self.options)
 
 
 set_from_function = EnumeratedSetFromIterator_function_decorator
@@ -748,11 +748,12 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
         But not the enumerated set::
 
-            sage: loads(dumps(d.f()))
-            Traceback (most recent call last):
-            ...
-            _pickle.PicklingError: Can't pickle <function DummyExampleForPicklingTest.f at ...>:
-            it's not the same object as sage.sets.set_from_iterator.DummyExampleForPicklingTest.f
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     loads(dumps(d.f()))
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
         """
         self.inst = inst
         self.f = f
@@ -776,7 +777,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             sage: from sage.sets.set_from_iterator import set_from_method
             sage: class A:
             ....:  @set_from_method(name = lambda self,n: str(self)*n)
-            ....:  def f(self,n):
+            ....:  def f(self, n):
             ....:      return xsrange(n)
             ....:  def __repr__(self):
             ....:      return "A"
@@ -838,7 +839,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             **self.options)
 
 
-class EnumeratedSetFromIterator_method_decorator():
+class EnumeratedSetFromIterator_method_decorator:
     r"""
     Decorator for enumerated set built from a method.
 

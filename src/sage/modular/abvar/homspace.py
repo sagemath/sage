@@ -12,10 +12,8 @@ nontrivially in J0(37).
 
     sage: J = J0(37)
     sage: D = J.decomposition() ; D
-    [
-    Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
-    Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)
-    ]
+    [Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
+     Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)]
     sage: D[0].intersection(D[1])
     (Finite subgroup with invariants [2, 2] over QQ of
       Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
@@ -101,11 +99,9 @@ The images of the two degeneracy maps are, of course, isogenous.
     sage: J = J0(33)
     sage: D = J.decomposition()
     sage: D
-    [
-    Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
-    ]
+    [Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)]
     sage: Hom(D[0],D[1]).gens()
     (Abelian variety morphism:
       From: Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
@@ -122,10 +118,8 @@ one endomorphism ring for the newform 33a (since it is again
 ::
 
     sage: DD = J.decomposition(simple=False) ; DD
-    [
-    Abelian subvariety of dimension 2 of J0(33),
-    Abelian subvariety of dimension 1 of J0(33)
-    ]
+    [Abelian subvariety of dimension 2 of J0(33),
+     Abelian subvariety of dimension 1 of J0(33)]
     sage: A, B = DD
     sage: A == D[0] + D[1]
     True
@@ -161,6 +155,15 @@ of T in its saturation, which is 1 in this case.
     sage: T.index_in_saturation()
     1
 
+TESTS::
+
+    sage: J = J0(37) ; J.Hom(J)(matrix(ZZ,4,[5..20]))
+    Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
+    sage: K = J0(11) * J0(11) ; J.Hom(K)(matrix(ZZ,4,[5..20]))
+    Abelian variety morphism:
+      From: Abelian variety J0(37) of dimension 2
+      To:   Abelian variety J0(11) x J0(11) of dimension 2
+
 AUTHORS:
 
 - William Stein (2007-03)
@@ -182,7 +185,7 @@ AUTHORS:
 from copy import copy
 
 from sage.categories.homset import HomsetWithBase
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -350,7 +353,7 @@ class Homspace(HomsetWithBase):
         if isinstance(M, morphism.Morphism):
             if M.parent() is self:
                 return M
-            elif M.domain() == self.domain() and M.codomain() == self.codomain():
+            if M.domain() == self.domain() and M.codomain() == self.codomain():
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
@@ -368,24 +371,6 @@ class Homspace(HomsetWithBase):
         else:
             raise TypeError("can only coerce in matrices or morphisms")
         return self.element_class(self, M, side)
-
-    def _coerce_impl(self, x):
-        """
-        Coerce x into self, if possible.
-
-        EXAMPLES::
-
-            sage: J = J0(37) ; J.Hom(J)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
-            sage: K = J0(11) * J0(11) ; J.Hom(K)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety morphism:
-              From: Abelian variety J0(37) of dimension 2
-              To:   Abelian variety J0(11) x J0(11) of dimension 2
-        """
-        if self.matrix_space().has_coerce_map_from(parent(x)):
-            return self(x)
-        else:
-            return HomsetWithBase._coerce_impl(self, x)
 
     def _repr_(self):
         """
@@ -448,10 +433,9 @@ class Homspace(HomsetWithBase):
 
         if isinstance(g, morphism.Morphism):
             return g.matrix()
-        elif hasattr(g, 'list'):
+        if hasattr(g, 'list'):
             return self.matrix_space()(g.list())
-        else:
-            return self.matrix_space()(g)
+        return self.matrix_space()(g)
 
     def free_module(self):
         r"""
@@ -514,7 +498,7 @@ class Homspace(HomsetWithBase):
         self.calculate_generators()
         return len(self._gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return tuple of generators for this endomorphism ring.
 
@@ -670,12 +654,10 @@ class Homspace(HomsetWithBase):
             [1 1]
             ]
             sage: J = J0(11) * J0(33) ; J.decomposition()
-            [
-            Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)
-            ]
+            [Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)]
             sage: J[0].Hom(J[1])._calculate_simple_gens()
             [
             [ 0 -1]
@@ -700,9 +682,7 @@ class Homspace(HomsetWithBase):
         ::
 
             sage: J = J0(23) ; J.decomposition()
-            [
-            Simple abelian variety J0(23) of dimension 2
-            ]
+            [Simple abelian variety J0(23) of dimension 2]
             sage: J[0].Hom(J[0])._calculate_simple_gens()
             [
             [1 0 0 0]  [ 0  1 -1  0]
@@ -785,7 +765,7 @@ class EndomorphismSubring(Homspace):
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
         :issue:`16275` removed the custom ``__reduce__`` method, since
-        :meth:`Homset.__reduce__` already implements appropriate
+        ``Homset.__reduce__`` already implements appropriate
         unpickling by construction::
 
             sage: E.__reduce__.__module__
@@ -828,8 +808,7 @@ class EndomorphismSubring(Homspace):
         """
         if self._is_full_ring:
             return "Endomorphism ring of %s" % self._A
-        else:
-            return "Subring of endomorphism ring of %s" % self._A
+        return "Subring of endomorphism ring of %s" % self._A
 
     def abelian_variety(self):
         """

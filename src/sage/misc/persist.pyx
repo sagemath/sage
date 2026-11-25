@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -27,6 +26,10 @@ save member functions and commands.
    correctly or work correctly.
 
 -  Objects are zlib compressed for space efficiency.
+
+.. autoclass:: sage.misc.persist::_BasePickler
+
+.. autoclass:: sage.misc.persist::_BaseUnpickler
 """
 
 import io
@@ -44,7 +47,8 @@ comp = zlib
 comp_other = bz2
 
 from sage.misc.sage_unittest import TestSuite
-
+from sage.misc.superseded import deprecation
+from sage.misc.lazy_import cimport LazyImport
 
 # We define two global dictionaries `already_pickled` and
 # `already_unpickled`, which are intended to help you to implement
@@ -57,7 +61,7 @@ from sage.misc.sage_unittest import TestSuite
 # Apart from this, you are free to use these variables as you like.
 #
 # However, the standard utilisation is the following.
-# The pickling method (namely `__reduce__`) checks if the id of the
+# The pickling method (namely ``__reduce__``) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
 # pickled by adding the entry { id: True } to `already_pickled`.
@@ -72,8 +76,8 @@ from sage.misc.sage_unittest import TestSuite
 # `already_unpickled` and finally returns the element.
 #
 # For a working example, see sage.rings.padics.lazy_template.LazyElement_unknown
-already_pickled = { }
-already_unpickled = { }
+already_pickled = {}
+already_unpickled = {}
 
 
 cdef _normalize_filename(s):
@@ -92,7 +96,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     an ``.sobj`` extension added if it doesn't have one.  Or, if the input
     is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
     ``.f``, ``.f90`` or ``.m``, load that file into the current running
-    session.
+    session using :func:`sage.repl.load.load`.
 
     Loaded files are not loaded into their own namespace, i.e., this is
     much more like Python's ``execfile`` than Python's ``import``.
@@ -159,6 +163,16 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage: load(t)                                                                   # needs numpy
         sage: hello                                                                     # needs numpy
         <fortran ...>
+
+    Path objects are supported::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
     import sage.repl.load
     if len(filename) != 1:
@@ -171,12 +185,15 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         return
 
     filename = filename[0]
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if sage.repl.load.is_loadable_filename(filename):
         sage.repl.load.load(filename, globals())
         return
 
-    ## Check if filename starts with "http://" or "https://"
+    # Check if filename starts with "http://" or "https://"
     lower = filename.lower()
     if lower.startswith("http://") or lower.startswith("https://"):
         from sage.misc.remote_file import get_remote_file
@@ -186,7 +203,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         tmpfile_flag = False
         filename = _normalize_filename(filename)
 
-    ## Load file by absolute filename
+    # Load file by absolute filename
     with open(filename, 'rb') as fobj:
         X = loads(fobj.read(), compress=compress, **kwargs)
     try:
@@ -194,7 +211,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     except AttributeError:
         pass
 
-    ## Delete the tempfile, if it exists
+    # Delete the tempfile, if it exists
     if tmpfile_flag:
         os.unlink(filename)
 
@@ -212,7 +229,9 @@ def _base_save(obj, filename, compress=True):
     Otherwise this is equivalent to :func:`_base_dumps` just with the resulting
     pickle data saved to a ``.sobj`` file.
     """
-
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
     filename = _normalize_filename(filename)
 
     with open(filename, 'wb') as fobj:
@@ -240,15 +259,14 @@ def save(obj, filename, compress=True, **kwargs):
 
         sage: import tempfile
         sage: d = tempfile.TemporaryDirectory()
-        sage: a = matrix(2, [1,2, 3,-5/2])                                              # needs sage.modules
+        sage: a = matrix(2, [1,2, 3,-5/2])
         sage: objfile = os.path.join(d.name, 'test.sobj')
         sage: objfile_short = os.path.join(d.name, 'test')
-        sage: save(a, objfile)                                                          # needs sage.modules
-        sage: load(objfile_short)                                                       # needs sage.modules
+        sage: save(a, objfile)
+        sage: load(objfile_short)
         [   1    2]
         [   3 -5/2]
 
-        sage: # needs sage.plot sage.schemes
         sage: E = EllipticCurve([-1,0])
         sage: P = plot(E)
         sage: save(P, objfile_short)   # saves the plot to "test.sobj"
@@ -277,7 +295,20 @@ def save(obj, filename, compress=True, **kwargs):
         ....:     save((1,1), f.name)
         ....:     load(f.name)
         (1, 1)
+
+    Check that Path objects work::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if not os.path.splitext(filename)[1] or not hasattr(obj, 'save'):
         filename = _normalize_filename(filename)
@@ -303,7 +334,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }
+    already_pickled = {}
 
     if compress:
         return comp.compress(gherkin)
@@ -331,10 +362,13 @@ def dumps(obj, compress=True):
     if make_pickle_jar:
         picklejar(obj)
     try:
-        ans = obj.dumps(compress)
+        type_obj = type(obj)
+        if type_obj is LazyImport:
+            type_obj = type((<LazyImport>obj).get_object())
+        ans = type_obj.dumps(obj, compress)
     except (AttributeError, RuntimeError, TypeError):
         ans = _base_dumps(obj, compress=compress)
-    already_pickled = { }
+    already_pickled = {}
     return ans
 
 
@@ -379,22 +413,22 @@ def register_unpickle_override(module, name, callable, call_name=None):
     associated objects. The python pickle protocol is described in detail on the
     web and, in particular, in the `python pickling documentation`_. For example, the
     following excerpt from this documentation shows that the unpickling of
-    classes is controlled by their :meth:`__setstate__` method.
+    classes is controlled by their ``__setstate__`` method.
 
     ::
 
         object.__setstate__(state)
 
-            Upon unpickling, if the class also defines the method :meth:`__setstate__`, it is
-            called with the unpickled state. If there is no :meth:`__setstate__` method,
+            Upon unpickling, if the class also defines the method ``__setstate__``, it is
+            called with the unpickled state. If there is no ``__setstate__`` method,
             the pickled state must be a dictionary and its items are assigned to the new
-            instance's dictionary. If a class defines both :meth:`__getstate__` and
-            :meth:`__setstate__`, the state object needn't be a dictionary and these methods
+            instance's dictionary. If a class defines both ``__getstate__`` and
+            ``__setstate__``, the state object needn't be a dictionary and these methods
             can do what they want.
 
     .. _python pickling documentation: https://docs.python.org/library/pickle.html#pickle-protocol
 
-    By implementing a :meth:`__setstate__` method for a class it should be
+    By implementing a ``__setstate__`` method for a class it should be
     possible to fix any unpickling problems for the class. As an example of what
     needs to be done, we show how to unpickle a :class:`CombinatorialObject`
     object using a class which also inherits from
@@ -421,10 +455,10 @@ def register_unpickle_override(module, name, callable, call_name=None):
         KeyError: 0
 
     The problem is that the ``SweetPickle`` has inherited a
-    :meth:`~sage.structure.element.Element.__setstate__` method from
+    ``sage.structure.element.Element.__setstate__`` method from
     :class:`~sage.structure.element.Element` which is not compatible with
     unpickling for :class:`CombinatorialObject`. We can fix this by explicitly
-    defining a new :meth:`__setstate__` method::
+    defining a new ``__setstate__`` method::
 
         sage: class SweeterPickle(CombinatorialObject, Element):
         ....:     def __setstate__(self, state):
@@ -441,12 +475,12 @@ def register_unpickle_override(module, name, callable, call_name=None):
         ....:             self.__dict__ = D
         sage: __main__.SweeterPickle = SweeterPickle
         sage: register_unpickle_override('__main__', 'SourPickle', SweeterPickle)
-        sage: loads(gherkin)                                                            # needs sage.combinat
+        sage: loads(gherkin)
         [1, 2, 3]
         sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle
         [1, 2, 3]
 
-    The ``state`` passed to :meth:`__setstate__` will usually be something like
+    The ``state`` passed to ``__setstate__`` will usually be something like
     the instance dictionary of the pickled object, however, with some older
     classes such as :class:`CombinatorialObject` it will be a tuple. In general,
     the ``state`` can be any python object.  ``Sage`` provides a special tool,
@@ -456,14 +490,14 @@ def register_unpickle_override(module, name, callable, call_name=None):
     ::
 
         sage: class A():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.original_attribute = value
         ....:    def __repr__(self):
         ....:        return 'A(%s)' % self.original_attribute
         sage: class B():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.new_attribute = value
-        ....:    def __setstate__(self,state):
+        ....:    def __setstate__(self, state):
         ....:        try:
         ....:            self.new_attribute = state['new_attribute']
         ....:        except KeyError:      # an old pickle
@@ -494,10 +528,10 @@ def register_unpickle_override(module, name, callable, call_name=None):
     Pickling for python classes and extension classes, such as cython, is
     different -- again this is discussed in the `python pickling
     documentation`_. For the unpickling of extension classes you need to write
-    a :meth:`__reduce__` method which typically returns a tuple ``(f,
+    a ``__reduce__`` method which typically returns a tuple ``(f,
     args,...)`` such that ``f(*args)`` returns (a copy of) the original object.
     The following code snippet is the
-    :meth:`~sage.rings.integer.Integer.__reduce__` method from
+    ``sage.rings.integer.Integer.__reduce__`` method from
     :class:`sage.rings.integer.Integer`.
 
     .. code-block:: cython
@@ -579,7 +613,7 @@ def unpickle_global(module, name):
     Test that :func:`register_unpickle_override` calls in lazily imported modules
     are respected::
 
-        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')      # needs sage.modules
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')
         <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
@@ -588,8 +622,7 @@ def unpickle_global(module, name):
 
     def error():
         raise ImportError("cannot import {1} from {0}, call "
-            "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(
-                module, name))
+                          "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(module, name))
 
     mod = sys.modules.get(module)
     if mod is not None:
@@ -624,9 +657,9 @@ class _BasePickler(pickle.Pickler):
     """
 
     def __init__(self, file_obj, protocol=None, persistent_id=None, *,
-                    fix_imports=True):
+                 fix_imports=True):
         super(_BasePickler, self).__init__(file_obj, protocol,
-                                            fix_imports=fix_imports)
+                                           fix_imports=fix_imports)
         self._persistent_id = persistent_id
 
         def persistent_id(self, obj):
@@ -825,7 +858,7 @@ class SagePickler(_BasePickler):
         buf = io.BytesIO()
         pickler = cls(buf, **kwargs)
         pickler.dump(obj)
-        already_pickled = { }
+        already_pickled = {}
         return buf.getvalue()
 
 
@@ -918,9 +951,9 @@ def loads(s, compress=True, **kwargs):
 
     EXAMPLES::
 
-        sage: a = matrix(2, [1,2, 3,-4/3])                                              # needs sage.modules
-        sage: s = dumps(a)                                                              # needs sage.modules
-        sage: loads(s)                                                                  # needs sage.modules
+        sage: a = matrix(2, [1,2, 3,-4/3])
+        sage: s = dumps(a)
+        sage: loads(s)
         [   1    2]
         [   3 -4/3]
 
@@ -988,7 +1021,7 @@ def loads(s, compress=True, **kwargs):
     unpickler = SageUnpickler(io.BytesIO(s), **kwargs)
     global already_unpickled
     ans = unpickler.load()
-    already_unpickled = { }
+    already_unpickled = {}
     return ans
 
 
@@ -1060,7 +1093,7 @@ def picklejar(obj, dir=None):
 
     global already_pickled
     s = comp.compress(SagePickler.dumps(obj))
-    already_pickled = { }
+    already_pickled = {}
 
     typ = str(type(obj))
     name = ''.join([x if (x.isalnum() or x == '_') else '_' for x in typ])
@@ -1114,7 +1147,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
        You must only pass trusted data to this function, including tar
        archives. We use the "data" filter from PEP 706 if possible
        while extracting the archive, but even that is not a perfect
-       solution, and it is only available since Python 3.11.4.
+       solution.
 
     EXAMPLES::
 
@@ -1135,14 +1168,10 @@ def unpickle_all(target, debug=False, run_test_suite=False):
     if os.path.isfile(target) and tarfile.is_tarfile(target):
         import tempfile
         with tempfile.TemporaryDirectory() as T:
-            # Extract the tarball to a temporary directory. The "data"
-            # filter only became available in python-3.11.4. See PEP
+            # Extract the tarball to a temporary directory. See PEP
             # 706 for background.
             with tarfile.open(target) as tf:
-                if hasattr(tarfile, "data_filter"):
-                    tf.extractall(T, filter='data')
-                else:
-                    tf.extractall(T)
+                tf.extractall(T, filter='data')
 
             # Ensure that the tarball contained exactly one thing, a
             # directory.
@@ -1202,7 +1231,7 @@ def make_None(*args, **kwds):
     EXAMPLES::
 
         sage: from sage.misc.persist import make_None
-        sage: print(make_None(42, pi, foo='bar'))                                       # needs sage.symbolic
+        sage: print(make_None(42, pi, foo='bar'))
         None
     """
     return None
@@ -1231,8 +1260,10 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     from sage.misc.misc import SAGE_DB
-    return load('%s/%s'%(SAGE_DB,name))
+    return load('%s/%s' % (SAGE_DB, name))
 
 
 def db_save(x, name=None):
@@ -1241,8 +1272,10 @@ def db_save(x, name=None):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     try:
         x.db(name)
     except AttributeError:
         from sage.misc.misc import SAGE_DB
-        save(x, '%s/%s'%(SAGE_DB,name))
+        save(x, '%s/%s' % (SAGE_DB, name))

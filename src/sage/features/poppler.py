@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Check for poppler features
 
@@ -32,6 +31,7 @@ Currently we only check for the presence of ``pdftocairo``.
 
 from . import Executable
 
+
 class pdftocairo(Executable):
     r"""
     A :class:`sage.features.Feature` describing the presence of
@@ -53,6 +53,7 @@ class pdftocairo(Executable):
         """
         Executable.__init__(self, "pdftocairo", executable='pdftocairo',
                             url='https://poppler.freedesktop.org/')
+
 
 def all_features():
     return [pdftocairo()]

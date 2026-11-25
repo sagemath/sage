@@ -17,6 +17,7 @@ whereas others have multiple bases.
    sage/rings/polynomial/polynomial_ring
    sage/rings/polynomial/polynomial_ring_homomorphism
 
+   sage/rings/polynomial/commutative_polynomial
    sage/rings/polynomial/polynomial_element
    sage/rings/polynomial/polynomial_element_generic
    sage/rings/polynomial/polynomial_gf2x
@@ -41,7 +42,10 @@ whereas others have multiple bases.
    sage/rings/polynomial/polynomial_quotient_ring
    sage/rings/polynomial/polynomial_quotient_ring_element
 
+   sage/rings/polynomial/weil/weil_polynomials
+
    sage/rings/polynomial/polynomial_compiled
    sage/rings/polynomial/polynomial_fateman
 
    sage/rings/polynomial/integer_valued_polynomials
+   sage/rings/polynomial/q_integer_valued_polynomials

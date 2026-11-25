@@ -42,15 +42,17 @@ from copy import copy
 from collections import deque
 
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
+from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
 from sage.modular.dirichlet import DirichletGroup
 from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -66,7 +68,7 @@ lazy_import("sage.plot.colors", "rainbow")
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
 lazy_import('sage.graphs.graph', 'Graph')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.plot.colors', 'rainbow')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
@@ -223,9 +225,7 @@ class DoubleCosetReduction(SageObject):
             return False
         if self._t_prec != other._t_prec:
             return False
-        if self._igamma_prec != other._igamma_prec:
-            return False
-        return True
+        return self._igamma_prec == other._igamma_prec
 
     def __ne__(self, other):
         """
@@ -275,8 +275,7 @@ class DoubleCosetReduction(SageObject):
         """
         if self.parity == 0:
             return 1
-        else:
-            return -1
+        return -1
 
     def igamma(self, embedding=None, scale=1):
         r"""
@@ -464,9 +463,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
             # then the normalized target vertex is also M and we save some
             # row reductions with a simple return
             return e
-        else:
-            # must normalize the target vertex representative
-            return self.vertex(e)
+        # must normalize the target vertex representative
+        return self.vertex(e)
 
     def origin(self, e, normalized=False):
         r"""
@@ -664,7 +662,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         except AttributeError:
             p = self._p
             self._edges_leaving_origin = [self.edge(self._Mat_22([0, -1, p, 0]))]
-            self._edges_leaving_origin.extend([self.edge(self._Mat_22([p, i, 0, 1])) for i in range(p)])
+            self._edges_leaving_origin.extend(self.edge(self._Mat_22([p, i, 0, 1])) for i in range(p))
             return self._edges_leaving_origin
 
     def edge_between_vertices(self, v1, v2, normalized=False):
@@ -824,14 +822,13 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
             return []
         if level == 0:
             return [self._Mat_22(edge) for edge in edgelist]
-        else:
-            newEgood = []
-            for edge in edgelist:
-                edge = self._Mat_22(edge)
-                origin = self.origin(edge)
-                newE = self.leaving_edges(self.target(edge))
-                newEgood.extend([e for e in newE if self.target(e) != origin])
-            return self.subdivide(newEgood, level - 1)
+        newEgood = []
+        for ed in edgelist:
+            edge = self._Mat_22(ed)
+            origin = self.origin(edge)
+            newE = self.leaving_edges(self.target(edge))
+            newEgood.extend(e for e in newE if self.target(e) != origin)
+        return self.subdivide(newEgood, level - 1)
 
     def get_balls(self, center=1, level=1):
         r"""
@@ -1186,9 +1183,7 @@ class Vertex(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1325,9 +1320,7 @@ class Edge(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1555,9 +1548,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         if self._Nplus != other._Nplus:
             return False
-        if self._character != other._character:
-            return False
-        return True
+        return self._character == other._character
 
     def __ne__(self, other):
         r"""
@@ -1713,7 +1704,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        Details to be found in Theorem 9 of [FM2014]_.
+        Details to be found in Theorem 3.8 of [FM2014]_.
 
         EXAMPLES::
 
@@ -1954,7 +1945,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             for _, r in ZZ(N).factor():
                 if r > 2:
                     return ZZ.zero()
-                elif r == 1:
+                if r == 1:
                     p *= -2
             return ZZ(p)
         return sum([mumu(lev // d) * GH(d * Nplus, kernel).dimension_cusp_forms(k) for d in lev.divisors()])
@@ -2119,7 +2110,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         my_args.update(kwargs)
         return S.plot(*args, **my_args)
 
-    def is_admissible(self, D):
+    def is_admissible(self, D) -> bool:
         r"""
         Test whether the imaginary quadratic field of
         discriminant `D` embeds in the quaternion algebra. It
@@ -2143,15 +2134,15 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         for f in self.level().factor():
             if kronecker_symbol(disc, f[0]) != -1:
                 return False
-        for f in self._Nplus.factor():
-            if kronecker_symbol(disc, f[0]) != 1:
-                return False
-        return True
+        return all(kronecker_symbol(disc, f[0]) == 1 for f in self._Nplus.factor())
 
     def _local_splitting_map(self, prec):
         r"""
         Return an embedding of the definite quaternion algebra
         into the algebra of 2x2 matrices with coefficients in `\QQ_p`.
+
+        It returns an optimal embedding for the maximal order: the image
+        of the maximal order lies inside `M_2(\ZZ_p)`
 
         INPUT:
 
@@ -2180,6 +2171,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Find an embedding of the definite quaternion algebra
         into the algebra of 2x2 matrices with coefficients in `\QQ_p`.
 
+        It returns an optimal embedding for the maximal order: the image
+        of the maximal order lies inside `M_2(\ZZ_p)`
+
         INPUT:
 
         - ``prec`` -- integer; the precision of the splitting
@@ -2193,6 +2187,14 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: B.<i,j,k> = QuaternionAlgebra(3)
             sage: phi(i)**2 == QQ(i**2)*phi(B(1))
             True
+
+        TESTS:
+
+        Check that :issue:`40209` is solved::
+
+            sage: X = BruhatTitsQuotient(7, 5*17*13)
+            sage: X.genus_no_formula()
+            385
         """
         assert not self._use_magma
         if prec <= self._prec:
@@ -2201,14 +2203,15 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         A = self.get_quaternion_algebra()
 
         ZZp = Zp(self._p, prec)
+        QQp = Qp(self._p, prec)
         v = A.invariants()
         a = ZZp(v[0])
         b = ZZp(v[1])
-        if (A.base_ring() != QQ):
+        if A.base_ring() != QQ:
             raise ValueError("must be rational quaternion algebra")
-        if (A.discriminant() % self._p == 0):
+        if not A.discriminant() % self._p:
             raise ValueError("p (=%s) must be an unramified prime" % self._p)
-        M = MatrixSpace(ZZp, 2)
+        M = MatrixSpace(QQp, 2)
 
         if a.is_square():
             alpha = a.sqrt()
@@ -2226,6 +2229,53 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 else:
                     z += 1
         self._KK = self._II * self._JJ
+
+        def phi(q):
+            v = q.coefficient_tuple()
+            return M(v[0] + self._II * v[1] + self._JJ * v[2] + self._KK * v[3])
+
+        # Get basis of the maximal order and compute their action on vector (1, 0)
+        B = self.get_maximal_order().basis()
+        col_vectors = [phi(b).column(0) for b in B]
+        mat = column_matrix(col_vectors)
+
+        def select_best_basis(mat):
+            """
+            Given a 2x4 matrix over Qp, return a pair of linearly independent columns
+            whose determinant has minimal p-adic valuation.
+            """
+            best_val = None
+            best_pair = None
+
+            for i in range(4):
+                for j in range(i + 1, 4):
+                    u = mat.column(i)
+                    v = mat.column(j)
+                    det = u[0] * v[1] - u[1] * v[0]
+                    if det != 0:
+                        val = det.valuation()
+                        if best_val is None or val < best_val:
+                            best_val = val
+                            best_pair = (u, v)
+
+            if best_pair is None:
+                raise ValueError("no linearly independent pair found")
+
+            return column_matrix(best_pair)
+
+        m = select_best_basis(mat)
+
+        # Normalize m so that it lies in GL_2(Z_p)
+        min_val = min(x.valuation() for x in m.list())
+        m = (self._p**(-min_val)) * m
+
+        # Conjugate to ensure the image of the maximal order lies in M_2(Z_p)
+        g = self._BT.vertex(m)
+        g_inv = g.inverse()
+        self._II = M(g_inv * self._II * g)
+        self._JJ = M(g_inv * self._JJ * g)
+        self._KK = self._II * self._JJ
+
         return self._II, self._JJ, self._KK
 
     def _compute_embedding_matrix(self, prec, force_computation=False):
@@ -2269,12 +2319,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                          for jj in range(1, 3)
                                          for kk in range(4)]
             return Matrix(Zmod(self._pN), 4, 4, self._cached_Iota0_matrix)
-        else:
-            phi = self._local_splitting_map(prec)
-            B = self.get_eichler_order_basis()
-            return Matrix(Zmod(self._p ** prec), 4, 4,
-                          [phi(B[kk])[ii, jj] for ii in range(2)
-                           for jj in range(2) for kk in range(4)])
+        phi = self._local_splitting_map(prec)
+        B = self.get_eichler_order_basis()
+        return column_matrix(Zmod(self._p ** prec), 4, 4, [phi(b).list() for b in B])
 
     @cached_method
     def get_extra_embedding_matrices(self):
@@ -2307,7 +2354,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             [1 0 2 0]
             [0 0 2 0]
             [0 0 0 0]
-            [1 0 2 2]
+            [1 2 2 0]
             ]
         """
         if not self._use_magma or len(self._extra_level) == 0:
@@ -2440,12 +2487,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 verbose('self._prec = %s, prec = %s' % (self._prec, prec))
                 Iotamod = self._compute_embedding_matrix(prec)
                 self._Iotainv_lift = Iotamod.inverse().lift()
-                self._Iota = Matrix(self._R, 4, 4, [Iotamod[ii, jj]
-                                                    for ii in range(4)
-                                                    for jj in range(4)])
+                self._Iota = Matrix(self._R, Iotamod)
 
             self._prec = prec
-            self._Iotainv = self._Mat_44([self._Iotainv_lift[ii, jj] % self._pN for ii in range(4) for jj in range(4)])
+            self._Iotainv = self._Mat_44(self._Iotainv_lift.apply_map(lambda x: x % self._pN))
             return self._Iota
 
     def embed_quaternion(self, g, exact=False, prec=None):
@@ -2454,7 +2499,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` -- a row vector of size `4` whose entries represent a
+        - ``g`` -- a column vector of size `4` whose entries represent a
           quaternion in our basis
 
         - ``exact`` -- boolean (default: ``False``); if True, tries to embed
@@ -2490,9 +2535,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if exact:
             return Matrix(self.get_splitting_field(), 2, 2,
                           (self.get_embedding_matrix(exact=True) * g).list())
-        else:
-            A = self.get_embedding_matrix(prec=prec) * g
-            return Matrix(self._R, 2, 2, A.list())
+        A = self.get_embedding_matrix(prec=prec) * g
+        return Matrix(self._R, 2, 2, A.list())
 
     embed = embed_quaternion
 
@@ -2646,13 +2690,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                     pass
             self._init_order()
             return self._Omagma
-        else:
-            try:
-                return self._O
-            except AttributeError:
-                pass
-            self._init_order()
+        try:
             return self._O
+        except AttributeError:
+            pass
+        self._init_order()
+        return self._O
 
     def get_maximal_order(self, magma=False, force_computation=False):
         r"""
@@ -2675,13 +2718,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                     pass
             self._init_order()
             return self._OMaxmagma
-        else:
-            try:
-                return self._OMax
-            except AttributeError:
-                pass
-            self._init_order()
+        try:
             return self._OMax
+        except AttributeError:
+            pass
+        self._init_order()
+        return self._OMax
 
     def get_splitting_field(self):
         r"""
@@ -2700,7 +2742,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,11,use_magma=True) # optional - magma
             sage: X.get_splitting_field() # optional - magma
-            Number Field in a with defining polynomial X1^2 + 11
+            Number Field in a with defining polynomial x^2 + 11
         """
         if not self._use_magma:
             raise NotImplementedError('Sage does not know yet how to work with the kind of orders that you are trying to use. Try installing Magma first and set it up so that Sage can use it.')
@@ -2914,7 +2956,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         while not V:
             V = [g for g in self._find_elements_in_order(l * p ** nninc)
                  if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
-                          / self._character((p ** (nninc // 2)))
+                          / self._character(p ** (nninc // 2))
                           for v in self.get_extra_embedding_matrices()]) == 1]
             if not V:
                 nninc += 2
@@ -2927,31 +2969,29 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         letters = self.get_nontorsion_generators()
         letters += [g for g in self._find_elements_in_order(1)
                     if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
-                             / self._character((p ** (nninc // 2)))
+                             / self._character(p ** (nninc // 2))
                              for v in self.get_extra_embedding_matrices()]) == 1]
-        n_iters = 0
 
         def enumerate_words(v, n=None):
             if n is None:
                 n = []
             while True:
                 add_new = True
-                for jj in range(len(n)):
-                    n[jj] += 1
-                    if n[jj] != len(v):
+                for j in range(len(n)):
+                    n[j] += 1
+                    if n[j] != len(v):
                         add_new = False
                         break
-                    else:
-                        n[jj] = 0
+                    n[j] = 0
                 if add_new:
                     n.append(0)
                 yield [v[x] for x in n]
 
-        for wd in enumerate_words([self._conv(x) for x in letters]):
+        conv_list = [self._conv(x) for x in letters]
+        for n_iters, wd in enumerate(enumerate_words(conv_list)):
             if len(T) == l + 1:
                 break
             v = prod(wd)
-            n_iters += 1
             v0 = v * alpha0
             vinv = self.get_quaternion_algebra()(v0 ** (-1))
             new = True
@@ -3097,8 +3137,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             Vertex of Bruhat-Tits tree for p = 3
         """
         try:
-            tmp = self._cached_paths[v1]
-            return tmp
+            return self._cached_paths[v1]
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())
@@ -3152,8 +3191,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v1adj = v1.adjugate()
         R = self._Mat_44
         vecM = [v2 * X[ii] * v1adj for ii in range(4)]
-        M = self._Iotainv * R([[vecM[ii][jj, kk] for ii in range(4)]
-                               for jj in range(2) for kk in range(2)])
+        M = self._Iotainv * column_matrix(4, 4, [m.list() for m in vecM])
         M = M.augment(R(self._pN)).transpose()
         E = M.echelon_form().submatrix(0, 0, 4, 4)
         Et = E.transpose()
@@ -3203,8 +3241,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                     stabs.append([g, m, x != p ** m])
         if len(stabs) <= 1:
             return [[self.B_one(), 0, False]]
-        else:
-            return stabs
+        return stabs
 
     def _nebentype_check(self, vec, twom, E, A, flag=2):
         r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.structure.factorization import Factorization
 
 from sage.structure.sequence import Sequence, seq
@@ -21,10 +20,10 @@ from sage.structure.parent_gens import localvars
 
 from sage.structure.proof import all as proof
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.structure.formal_sum', ['FormalSums', 'FormalSum'])
-del lazy_import
-
 from sage.structure.mutability import Mutability
 
 from sage.structure.element_wrapper import ElementWrapper
+
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.structure.formal_sum', ['FormalSums', 'FormalSum'])
+del lazy_import

@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Dual Symmetric Functions in Non-Commuting Variables
+Dual symmetric functions in non-commuting variables
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (2013-08-04): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -444,9 +444,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
                 REFERENCES:
 
-                .. [HNT06] \F. Hivert, J.-C. Novelli, J.-Y. Thibon.
-                   *Commutative combinatorial Hopf algebras*. (2006).
-                   :arxiv:`0605262v1`.
+                - [HNT06]_
 
                 EXAMPLES::
 

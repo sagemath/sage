@@ -110,7 +110,7 @@ ask the category (TODO: find a slicker idiom for this)::
 
     The result above is not yet necessarily complete; many required
     methods in the categories are not yet marked as
-    :func:`abstract_methods`. We also recommend browsing the
+    :func:`~sage.misc.abstract_method.abstract_method`. We also recommend browsing the
     documentation of this category: :class:`AlgebrasWithBasis`.
 
 Adding these methods, here is the minimal implementation of the group algebra::
@@ -147,7 +147,7 @@ Some notes about this implementation:
   present as in ``E``.
 
 * The purpose of ``**keywords`` is to pass down options like
-  ``prefix`` to :class:`CombinatorialFreeModules`.
+  ``prefix`` to :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
 
 Let us do some calculations::
@@ -398,7 +398,7 @@ Triangular module_morphisms are also invertible, even if ``X`` and
 
 For details, see
 :meth:`ModulesWithBasis.ParentMethods.module_morphism` (and also
-:class:`sage.categories.modules_with_basis.TriangularModuleMorphism`)::
+:class:`sage.modules.with_basis.morphism.TriangularModuleMorphism`)::
 
     sage: A.module_morphism?                      # not tested
 
@@ -433,7 +433,7 @@ Coercions
 Once we have defined a morphism from `X \to Y`, we can register it as
 a coercion.  This will allow Sage to apply the morphism automatically
 whenever we combine elements of `X` and `Y` together. See
-http://sagemath.com/doc/reference/coercion.html for more
+https://doc.sagemath.org/html/en/reference/coercion/index.html for more
 information. As a training step, let us first define a morphism `X` to
 `Y`, and register it as a coercion::
 
@@ -494,7 +494,20 @@ with respect to `h`; namely, we set `X_\lambda = \sum_{\mu\geq \lambda, |\mu|=|\
     ....:     """
     ....:
     ....:     def __init__(self, R, *args, **kwargs):
-    ....:         """ TODO: Informative doc-string and examples """
+    ....:         """
+    ....:         Initialize the basis.
+    ....:
+    ....:         INPUT:
+    ....:
+    ....:         - ``R`` -- the base ring
+    ....:         - ``*args``, ``**kwargs`` -- optional arguments passed to the
+    ....:           :class:`CombinatorialFreeModule` constructor
+    ....:
+    ....:         EXAMPLE::
+    ....:
+    ....:             sage: X = MySFBasis(QQ, prefix='x')
+    ....:             sage: TestSuite(X).run()
+    ....:         """
     ....:         CombinatorialFreeModule.__init__(self, R, Partitions(), category=AlgebrasWithBasis(R), *args, **kwargs)
     ....:         self._h = SymmetricFunctions(R).homogeneous()
     ....:         self._to_h = self.module_morphism( self._to_h_on_basis, triangular='lower', unitriangular=True, codomain=self._h)
@@ -669,11 +682,11 @@ particular, this construction says that they are:
 
 .. NOTE::
 
-    Inheriting from :class:`BindableCass` just provides syntactic
+    Inheriting from :class:`~sage.misc.bindable_class.BindableClass` just provides syntactic
     sugar: it makes ``MyAlgebras().FirstBasis()`` a shorthand for
     ``MyAlgebras.FirstBasis(MyAlgebras().FirstBasis())`` (binding
     behavior). The class ``Bases`` inherits this binding behavior from
-    :class:`Category_realization_of_parent` , which is why we can
+    :class:`~sage.categories.realizations.Category_realization_of_parent` , which is why we can
     write ``MyAlgebras().Bases`` instead of
     ``MyAlgebras.Bases(MyAlgebras())``
 

@@ -89,20 +89,16 @@ REFERENCES:
 # ****************************************************************************
 
 
-from sage.misc.repr import repr_lincomb
-from sage.structure.richcmp import richcmp_method, richcmp
-
-import sage.modules.free_module as free_module
-from sage.modules.free_module_element import FreeModuleElement
-
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.cusps as cusps
-import sage.modular.dirichlet as dirichlet
 import sage.modular.hecke.all as hecke
-from sage.modular.modsym.manin_symbol import ManinSymbol
-
-from sage.rings.rational_field import Q as QQ
 from sage.categories.rings import Rings
+from sage.misc.repr import repr_lincomb
+from sage.modular import cusps, dirichlet
+from sage.modular.modsym.manin_symbol import ManinSymbol
+from sage.modules import free_module
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.rational_field import Q as QQ
+from sage.structure.richcmp import richcmp, richcmp_method
 
 from . import element
 
@@ -299,7 +295,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
         - ``sign`` -- integer; either -1, 0, or 1
 
-        - ``base_ring`` -- rings.Ring (defaults to the rational numbers)
+        - ``base_ring`` -- commutative ring (defaults to the rational numbers)
 
         EXAMPLES::
 
@@ -344,7 +340,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                        (other.group(), other.weight(), other.character()),
                        op)
 
-    def _known_cusps(self):
+    def _known_cusps(self) -> list:
         """
         Return the list of non-vanishing cusps found so far.
 
@@ -359,7 +355,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         """
         return list(self._known_gens)
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if ``self`` is a space of boundary symbols
         associated to an ambient space of modular symbols.
@@ -431,7 +427,9 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.gen(0)
             Traceback (most recent call last):
             ...
-            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
+            ValueError: only 0 generators known for
+            Space of Boundary Modular Symbols for
+            Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
             sage: B(Cusp(1/3))
             [1/3]
             sage: B.gen(0)
@@ -512,10 +510,9 @@ class BoundarySpace(hecke.HeckeModule_generic):
             return self(alpha) - self(beta)
         if i == 0:
             return self(alpha)
-        elif i == self.weight() - 2:
+        if i == self.weight() - 2:
             return -self(beta)
-        else:
-            return self(0)
+        return self(0)
 
     def __call__(self, x):
         """
@@ -543,13 +540,13 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if isinstance(x, int) and x == 0:
             return BoundarySpaceElement(self, {})
 
-        elif isinstance(x, cusps.Cusp):
+        if isinstance(x, cusps.Cusp):
             return self._coerce_cusp(x)
 
-        elif isinstance(x, ManinSymbol):
+        if isinstance(x, ManinSymbol):
             return self._coerce_in_manin_symbol(x)
 
-        elif isinstance(x, element.ModularSymbolsElement):
+        if isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
@@ -561,7 +558,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                 return self(0)
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
-        elif isinstance(x, FreeModuleElement):
+        if isinstance(x, FreeModuleElement):
             y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 
@@ -699,8 +696,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
             if i2 != -1:
                 if i2 == -2:
                     return self(0)
-                else:
-                    return BoundarySpaceElement(self, {i2: sign})
+                return BoundarySpaceElement(self, {i2: sign})
 
         # found a new cusp class
         g = self._known_gens
@@ -895,16 +891,14 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         if i != -1:
             if i == -2:
                 return self(0)
-            else:
-                return BoundarySpaceElement(self, {i: eps**k})
+            return BoundarySpaceElement(self, {i: eps**k})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
             if i2 != -1:
                 if i2 == -2:
                     return self(0)
-                else:
-                    return BoundarySpaceElement(self, {i2: sign * (eps**k)})
+                return BoundarySpaceElement(self, {i2: sign * (eps**k)})
 
         # found a new cusp class
         g = self._known_gens
@@ -942,7 +936,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
                 self._zero_cusps.append(c)
                 del self._known_gens[-1]
                 return self(0)
-            elif (not c.is_infinity() and not c.is_zero()):
+            if (not c.is_infinity() and not c.is_zero()):
                 t, eps = self._is_equiv(c, -c)
                 if t and ((eps == 1 and sign == -1) or
                           (eps == -1 and sign != (-1)**self.weight())):
@@ -1142,16 +1136,14 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
         if i != -1:
             if i == -2:
                 return self(0)
-            else:
-                return BoundarySpaceElement(self, {i: eps**k})
+            return BoundarySpaceElement(self, {i: eps**k})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
             if i2 != -1:
                 if i2 == -2:
                     return self(0)
-                else:
-                    return BoundarySpaceElement(self, {i2: sign * (eps**k)})
+                return BoundarySpaceElement(self, {i2: sign * (eps**k)})
 
         # found a new cusp class
         g = self._known_gens
@@ -1193,7 +1185,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
                 self._zero_cusps.append(c)
                 del self._known_gens[-1]
                 return self(0)
-            elif (not c.is_infinity() and not c.is_zero()):
+            if (not c.is_infinity() and not c.is_zero()):
                 t, eps = self._is_equiv(c, -c)
                 if t and ((eps == 1 and sign == -1) or
                           (eps == -1 and sign != (-1)**self.weight())):
@@ -1363,16 +1355,14 @@ class BoundarySpace_wtk_eps(BoundarySpace):
         if i != -1:
             if i == -2:
                 return self(0)
-            else:
-                return BoundarySpaceElement(self, {i: eps})
+            return BoundarySpaceElement(self, {i: eps})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
             if i2 != -1:
                 if i2 == -2:
                     return self(0)
-                else:
-                    return BoundarySpaceElement(self, {i2: sign * eps})
+                return BoundarySpaceElement(self, {i2: sign * eps})
 
         # found a new cusp class
         g = self._known_gens

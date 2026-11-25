@@ -23,12 +23,15 @@ cdef class Integer(EuclideanDomainElement):
     cdef _or(Integer self, Integer other)
     cdef _xor(Integer self, Integer other)
 
-    cpdef size_t _exact_log_log2_iter(self,Integer m) noexcept
-    cpdef size_t _exact_log_mpfi_log(self,m) noexcept
+    cpdef size_t _exact_log_log2_iter(self, Integer m) noexcept
+    cpdef size_t _exact_log_mpfi_log(self, m) noexcept
     cpdef RingElement _valuation(Integer self, Integer p)
     cdef object _val_unit(Integer self, Integer p)
     cdef Integer _divide_knowing_divisible_by(Integer self, Integer right)
     cdef bint _is_power_of(Integer self, Integer n) noexcept
+
+    cpdef bint is_even(self) noexcept
+    cpdef bint is_odd(self) noexcept
 
     cdef bint _pseudoprime_is_prime(self, proof) except -1
 

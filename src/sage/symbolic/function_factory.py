@@ -10,7 +10,6 @@ Factory for symbolic functions
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import annotations
-from typing import Union
 
 from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
                                     unpickle_wrapper)
@@ -150,7 +149,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
     return function_factory(*args)
 
 
-def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
+def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
     r"""
     Create a formal symbolic function with the name *s*.
 
@@ -200,7 +199,8 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         sage: foo(x, y) + foo(y, z)^2
         foo(y, z)^2 + foo(x, y)
 
-    You need to use :meth:`substitute_function` to
+    You need to use
+    :meth:`~sage.symbolic.expression.Expression.substitute_function` to
     replace all occurrences of a function with another::
 
         sage: g.substitute_function(cr, cos)
@@ -270,7 +270,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds):
+        sage: def deriv(self, *args, **kwds):
         ....:     print("{} {}".format(args, kwds))
         ....:     return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)

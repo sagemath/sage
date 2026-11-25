@@ -16,7 +16,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer cimport Integer
 
 
@@ -50,10 +50,9 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
 
     Check that PARI's debug level is properly reset (:issue:`18792`)::
 
-        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
-        Traceback (most recent call last):
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): factor(2^1000 - 1, verbose=5)
         ...
-        AlarmInterrupt
         sage: pari.get_debug_level()
         0
     """
@@ -71,8 +70,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
         p, e = n.__pari__().factor(proof=proof)
         if int_:
             return [(int(p[i]), int(e[i])) for i in range(len(p))]
-        else:
-            return [(Integer(p[i]), int(e[i])) for i in range(len(p))]
+        return [(Integer(p[i]), int(e[i])) for i in range(len(p))]
     finally:
         if prev != debug_level:
             pari.set_debug_level(prev)

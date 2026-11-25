@@ -74,6 +74,7 @@ from sage.functions.other import real, imag
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
 
+
 class HyperbolicPoint(Element):
     r"""
     Abstract base class for hyperbolic points.  This class should never
@@ -324,14 +325,13 @@ class HyperbolicPoint(Element):
         """
         if isinstance(other, HyperbolicIsometry):
             return other(self)
-        elif isinstance(other, Matrix):
+        if isinstance(other, Matrix):
             # TODO: Currently the __mul__ from the matrices gets called first
             #    and returns an error instead of calling this method
             A = self.parent().get_isometry(other)
             return A(self)
-        else:
-            raise TypeError("unsupported operand type(s) for *:"
-                            "{0} and {1}".format(self, other))
+        raise TypeError("unsupported operand type(s) for *:"
+                        "{0} and {1}".format(self, other))
 
     #######################
     # Setters and Getters #
@@ -508,11 +508,11 @@ class HyperbolicPoint(Element):
 
         EXAMPLES::
 
-            sage: HyperbolicPlane().PD().get_point(0).show()                            # needs sage.plot
+            sage: HyperbolicPlane().PD().get_point(0).show()
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().KM().get_point((0,0)).show()                        # needs sage.plot
+            sage: HyperbolicPlane().KM().get_point((0,0)).show()
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()                      # needs sage.plot
+            sage: HyperbolicPlane().HM().get_point((0,0,1)).show()
             Graphics3d Object
         """
         p = self.coordinates()
@@ -587,7 +587,7 @@ class HyperbolicPointUHP(HyperbolicPoint):
 
             sage: HyperbolicPlane().UHP().get_point(I).show()
             Graphics object consisting of 2 graphics primitives
-            sage: HyperbolicPlane().UHP().get_point(0).show()                           # needs sage.plot
+            sage: HyperbolicPlane().UHP().get_point(0).show()
             Graphics object consisting of 2 graphics primitives
             sage: HyperbolicPlane().UHP().get_point(infinity).show()
             Traceback (most recent call last):

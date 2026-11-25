@@ -1,12 +1,12 @@
 r"""
 Subsets whose elements satisfy a predicate pairwise
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.sets.set import Set_object_enumerated
@@ -39,7 +39,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
     elements are pairwise relatively prime::
 
         sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        sage: def predicate(x,y): return gcd(x,y) == 1
+        sage: def predicate(x, y): return gcd(x, y) == 1
         sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
         An enumerated set with a forest structure
         sage: P.list()
@@ -91,7 +91,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: import __main__; __main__.predicate = predicate
@@ -113,7 +113,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: P == P
@@ -131,7 +131,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         EXAMPLES::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: Set([5,8,9]) in P
@@ -150,7 +150,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: P.post_process( ((4,5), (9)) )
@@ -160,24 +160,25 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         """
         return self._element_class(subset_rest[0])
 
-    def children(self, subset_rest):
+    def children(self, subset_rest) -> list:
         """
         Return the children of a node in the tree.
 
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [3,5,7,11,14], predicate); P
             An enumerated set with a forest structure
             sage: list(P.children( ((3,5), [14,11,7]) ))
             [((3, 5, 7), (11,)), ((3, 5, 11), (14,)), ((3, 5, 14), ())]
         """
-        (subset, rest) = subset_rest
+        subset, rest = subset_rest
         predicate = self._predicate
         result = []
         rest = list(rest)
         while rest:
             x = rest.pop()
-            result.append((subset+(x,), tuple( y for y in rest if predicate(x,y) )))
+            result.append((subset + (x,),
+                           tuple(y for y in rest if predicate(x, y))))
         return result

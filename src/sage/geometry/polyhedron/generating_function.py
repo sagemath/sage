@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat
 r"""
 Generating Function of Polyhedron's Integral Points
 
@@ -6,7 +5,7 @@ This module provides :func:`generating_function_of_integral_points` which
 computes the generating function of the integral points of a polyhedron.
 
 The main function is accessible via
-:meth:`sage.geometry.polyhedron.base.Polyhedron_base.generating_function_of_integral_points`
+:meth:`sage.geometry.polyhedron.base2.Polyhedron_base2.generating_function_of_integral_points`
 as well.
 
 Various
@@ -311,7 +310,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
     .. SEEALSO::
 
         This function is accessible via
-        :meth:`sage.geometry.polyhedron.base.Polyhedron_base.generating_function_of_integral_points`
+        :meth:`sage.geometry.polyhedron.base2.Polyhedron_base2.generating_function_of_integral_points`
         as well. More examples can be found there.
 
     TESTS::
@@ -477,8 +476,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = Factorization([], unit=0)
         if result_as_tuple:
             return (result,)
-        else:
-            return result
+        return result
 
     if polyhedron.base_ring() not in (ZZ, QQ):
         raise TypeError('base ring {} of the polyhedron not '
@@ -507,11 +505,10 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = _generating_function_of_integral_points_(polyhedron, name=name, **kwds)
         if result_as_tuple:
             return result
-        else:
-            if len(result) != 1:
-                raise ValueError("cannot unpack result "
-                                 "(set 'result_as_tuple=True')")
-            return result[0]
+        if len(result) != 1:
+            raise ValueError("cannot unpack result "
+                             "(set 'result_as_tuple=True')")
+        return result[0]
 
     if d <= 1:
         raise ValueError('cannot do splitting with only '
@@ -680,11 +677,11 @@ def __generating_function_of_integral_points__(
 
     if sort_factors:
         def key(t):
-            D = t.dict().popitem()[0]
+            D = t.monomial_coefficients().popitem()[0]
             return (-sum(abs(d) for d in D), D)
         terms = sorted(terms, key=key, reverse=True)
     return Factorization([(numerator, 1)] +
-                         list((1-t, -1) for t in terms),
+                         [(1 - t, -1) for t in terms],
                          sort=Factorization_sort,
                          simplify=Factorization_simplify)
 
@@ -748,7 +745,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
     logger.debug('terms denominator %s', terms)
 
     def decode_factor(factor):
-        D = factor.dict()
+        D = factor.monomial_coefficients()
         assert len(D) == 1
         exponent, coefficient = next(iter(D.items()))
         return coefficient, exponent
@@ -764,7 +761,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
                       lambda factor: factor[1] == 0)
         other_factors = tuple(factor[0] for factor in other_factors)
         numerator, factors_denominator = \
-            _Omega_(numerator.dict(), tuple(decoded_factors))
+            _Omega_(numerator.monomial_coefficients(), tuple(decoded_factors))
         terms = other_factors + factors_denominator
 
     return _simplify_(numerator, terms)
@@ -1178,8 +1175,8 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
                 inequalities_extra.append(tuple(coeffs))
         T = matrix(ZZ, dim, dim, D)
 
-        self.inequalities = (list(tuple(T*vector(ieq))
-                                  for ieq in inequalities_filtered)
+        self.inequalities = ([tuple(T * vector(ieq))
+                              for ieq in inequalities_filtered]
                              + inequalities_extra)
 
         rules_pre = ((y, B({tuple(row[1:]): 1}))
@@ -1465,8 +1462,8 @@ class _TransformMod(_TransformHrepresentation):
         self.factor = next(rules_pre)[1]
         self.rules = dict(rules_pre)
 
-        self.inequalities = list(tuple(vector(e)*T) for e in self.inequalities)
-        self.equations = list(tuple(vector(e)*T) for e in self.equations)
+        self.inequalities = [tuple(vector(e) * T) for e in self.inequalities]
+        self.equations = [tuple(vector(e) * T) for e in self.equations]
 
     @staticmethod
     def generate_mods(equations):

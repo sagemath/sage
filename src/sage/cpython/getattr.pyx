@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Variants of getattr()
 """
@@ -422,7 +421,7 @@ def dir_with_other_class(self, *cls):
 
     Check that :issue:`13043` is fixed::
 
-        sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
+        sage: len(dir(RIF))==len(set(dir(RIF)))
         True
     """
     ret = set()

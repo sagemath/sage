@@ -97,7 +97,7 @@ cdef class TimeSeries:
 
         This implicitly calls init::
 
-            sage: stats.TimeSeries([pi, 3, 18.2])                                       # needs sage.symbolic
+            sage: stats.TimeSeries([pi, 3, 18.2])
             [3.1416, 3.0000, 18.2000]
 
         Conversion from a NumPy 1-D array, which is very fast::
@@ -307,10 +307,10 @@ cdef class TimeSeries:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join(format%x for x in v0) + ' ... ' + \
-                         ', '.join(format%x for x in v1) + ']'
+            return '[' + ', '.join(format % x for x in v0) + ' ... ' + \
+                         ', '.join(format % x for x in v1) + ']'
         else:
-            return '[' + ', '.join(format%x for x in self) + ']'
+            return '[' + ', '.join(format % x for x in self) + ']'
 
     def __len__(self):
         r"""
@@ -465,7 +465,7 @@ cdef class TimeSeries:
         """
         cdef Py_ssize_t i
         cdef TimeSeries t = new_time_series(self._length)
-        memcpy(t._values, self._values , sizeof(double)*self._length)
+        memcpy(t._values, self._values, sizeof(double)*self._length)
         return t
 
     def __add__(left, right):
@@ -557,7 +557,7 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-    def autoregressive_fit(self,M):
+    def autoregressive_fit(self, M):
         r"""
         This method fits the time series to an autoregressive process
         of order ``M``. That is, we assume the process is given by
@@ -782,7 +782,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i] if self._values[i] >= 0 else -self._values[i]
         return t
 
-    def diffs(self, Py_ssize_t k = 1):
+    def diffs(self, Py_ssize_t k=1):
         r"""
         Return the new time series got by taking the differences of
         successive terms in the time series.  So if ``self`` is the time
@@ -1003,7 +1003,7 @@ cdef class TimeSeries:
 
         Draw a plot of a time series::
 
-            sage: stats.TimeSeries([1..10]).show()                                      # needs sage.plot
+            sage: stats.TimeSeries([1..10]).show()
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot(*args, **kwds)
@@ -1029,7 +1029,6 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: # needs sage.plot
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.plot()
@@ -1041,7 +1040,8 @@ cdef class TimeSeries:
             sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)
             Graphics object consisting of 2 graphics primitives
         """
-        from sage.plot.all import line, point
+        from sage.plot.line import line
+        from sage.plot.point import point
         cdef Py_ssize_t s
 
         if self._length < plot_points:
@@ -1533,8 +1533,7 @@ cdef class TimeSeries:
             s += a * a
         if bias:
             return s / self._length
-        else:
-            return s / (self._length - 1)
+        return s / (self._length - 1)
 
     def standard_deviation(self, bias=False):
         r"""
@@ -1662,8 +1661,7 @@ cdef class TimeSeries:
         if len(v0) == 1:
             return v1[0]/v0[0]
         import numpy
-        if int(numpy.version.short_version[0]) > 1:
-            numpy.set_printoptions(legacy="1.25")
+        numpy.set_printoptions(legacy="1.25")
         coeffs = numpy.polyfit(v0,v1,1)
         return coeffs[0]
 
@@ -1703,8 +1701,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def max(self, bint index=False):
         r"""
@@ -1740,8 +1737,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def clip_remove(self, min=None, max=None):
         r"""
@@ -1902,15 +1898,15 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: v = stats.TimeSeries([1..50])
-            sage: v.plot_histogram(bins=10)                                             # needs sage.plot
+            sage: v.plot_histogram(bins=10)
             Graphics object consisting of 10 graphics primitives
 
         ::
 
-            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)               # needs sage.plot
+            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)
             Graphics object consisting of 3 graphics primitives
         """
-        from sage.plot.all import polygon
+        from sage.plot.polygon import polygon
         counts, intervals = self.histogram(bins, normalize=normalize)
         s = 0
         kwds.setdefault('aspect_ratio','automatic')
@@ -1944,10 +1940,12 @@ cdef class TimeSeries:
         Here we look at the candlestick plot for Brownian motion::
 
             sage: v = stats.TimeSeries(1000).randomize()
-            sage: v.plot_candlestick(bins=20)                                           # needs sage.plot
+            sage: v.plot_candlestick(bins=20)
             Graphics object consisting of 40 graphics primitives
         """
-        from sage.plot.all import line, polygon, Graphics
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.graphics import Graphics
 
         cdef TimeSeries t = new_time_series(self._length)
         cdef TimeSeries s
@@ -1971,7 +1969,7 @@ cdef class TimeSeries:
             mid   = n + bin_size/2
             right = n + 2*bin_size/3
 
-            rgbcolor =  'blue' if open < close else 'red'
+            rgbcolor = 'blue' if open < close else 'red'
 
             p += line([(mid, low), (mid, high)], rgbcolor=rgbcolor)
             p += polygon([(left, open), (right, open), (right, close), (left, close)], rgbcolor=rgbcolor)
@@ -2305,7 +2303,7 @@ cdef class TimeSeries:
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('lognormal').mean()
             1.647351973...
-            sage: exp(0.5)                                                              # needs sage.symbolic
+            sage: exp(0.5)
             1.648721270...
 
         A log-normal distribution can be simply thought of as the logarithm
@@ -2475,7 +2473,6 @@ cdef new_time_series(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_time_series_v1(bytes v, Py_ssize_t n):
     r"""
     Version 1 unpickle method.

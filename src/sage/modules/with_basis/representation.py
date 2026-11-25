@@ -21,11 +21,11 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules import Modules
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
+
 
 class Representation_abstract:
     """
@@ -211,7 +211,7 @@ class Representation_abstract:
         INPUT:
 
         - ``chi`` -- list/tuple of character values or an instance
-          of :class:`~sage.groups.class_function.ClassFunction_gap`
+          of :class:`~sage.groups.class_function.ClassFunction`
         - ``G`` -- a finitely-generated semigroup (default: the semigroup
           this is a representation of)
 
@@ -685,8 +685,8 @@ class Representation_abstract:
             5
         """
         if not is_closed and gens:
-            R = self.base_ring()
-            repr_mats = [self.representation_matrix(g) for g in self._semigroup.gens()]
+            repr_mats = [self.representation_matrix(g)
+                         for g in self._semigroup.gens()]
             amb_dim = self.dimension()
             SM = matrix([v._vector_() for v in gens])
             SM.echelonize()
@@ -742,28 +742,27 @@ class Representation_abstract:
             sage: CS, CF = R._composition_series_data()
             sage: [[R(b) for b in F.basis()] for F in CS]
             [[(),
-              (1,2,3,4,5,6),
-              (1,3,5)(2,4,6),
-              (1,4)(2,5)(3,6),
-              (1,5,3)(2,6,4),
-              (1,6,5,4,3,2)],
-             [() + 2*(1,6,5,4,3,2),
-              (1,2,3,4,5,6) + 2*(1,6,5,4,3,2),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2),
-              (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
-              (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             [() + (1,5,3)(2,6,4) + (1,6,5,4,3,2),
-              (1,2,3,4,5,6) + 2*(1,5,3)(2,6,4),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2),
-              (1,4)(2,5)(3,6) + (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
-             [() + 2*(1,4)(2,5)(3,6),
-              (1,2,3,4,5,6) + 2*(1,5,3)(2,6,4),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2)],
-             [() + 2*(1,3,5)(2,4,6) + 2*(1,4)(2,5)(3,6) + (1,6,5,4,3,2),
-              (1,2,3,4,5,6) + (1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             [() + 2*(1,2,3,4,5,6) + (1,3,5)(2,4,6) + 2*(1,4)(2,5)(3,6)
-              + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             []]
+             (1,2,3,4,5,6),
+             (1,3,5)(2,4,6),
+             (1,4)(2,5)(3,6),
+             (1,5,3)(2,6,4),
+             (1,6,5,4,3,2)],
+            [() + (1,6,5,4,3,2),
+             (1,2,3,4,5,6) + 2*(1,6,5,4,3,2),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2),
+             (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
+             (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            [() + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2),
+             (1,2,3,4,5,6) + (1,5,3)(2,6,4),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2),
+             (1,4)(2,5)(3,6) + 2*(1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            [() + (1,4)(2,5)(3,6),
+             (1,2,3,4,5,6) + (1,5,3)(2,6,4),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2)],
+            [() + 2*(1,3,5)(2,4,6) + (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
+             (1,2,3,4,5,6) + 2*(1,3,5)(2,4,6) + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
+            [() + (1,2,3,4,5,6) + (1,3,5)(2,4,6) + (1,4)(2,5)(3,6) + (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            []]
             sage: [F.dimension() for F in CF]
             [1, 1, 1, 1, 1, 1]
         """
@@ -870,11 +869,11 @@ class Representation_abstract:
             sage: len(CS)
             3
             sage: [[R(b) for b in F.basis()] for F in CS]
-            [[e1, e2, e3, e4, e5], [e1 + e5, e2 + e5, e3 + e5, e4 + e5], []]
+            [[e1, e2, e3, e4, e5], [e1 + e2 + e3 + e4 + e5], []]
             sage: [F.brauer_character() for F in CS]
-            [(5, 0, 0), (4, -1, -1), (0, 0, 0)]
+            [(5, 0, 0), (1, 1, 1), (0, 0, 0)]
             sage: [F.brauer_character() for F in R.composition_factors()]
-            [(1, 1, 1), (4, -1, -1)]
+            [(4, -1, -1), (1, 1, 1)]
             sage: Reg = G.regular_representation(GF(2))
             sage: simple_brauer_chars = set([F.brauer_character()
             ....:                            for F in Reg.composition_factors()])
@@ -911,7 +910,7 @@ class Representation_abstract:
             sage: v = CF[1].an_element(); v
             2*B[0] + 2*B[1]
             sage: x * v
-            B[1] + B[2]
+            B[0] + B[3]
 
         We reproduce the decomposition matrix for `S_5` over `\GF{2}`::
 
@@ -944,7 +943,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation()
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: 2 * x
                 4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
@@ -956,7 +955,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation(side='right')
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: x * s1
                 2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
@@ -969,7 +968,7 @@ class Representation_abstract:
                 Integer Ring
                 sage: A = G.algebra(ZZ)
                 sage: s1,s2 = A.algebra_generators()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: s1 * x
                 2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
@@ -1894,7 +1893,7 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
         R = rep.base_ring()
         dim = rep.dimension()
         if degree not in ZZ or degree < 0:
-            raise ValueError(f"the degree must be a nonnegative integer")
+            raise ValueError("the degree must be a nonnegative integer")
         self._symalg = PolynomialRing(R, 'e', dim)
         self._basis_order = list(rep.basis().keys())
         G = self._symalg.gens()
@@ -2515,7 +2514,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
         sage: V = G.sign_representation()
         sage: TestSuite(V).run()
 
-        sage: # optional - gap3
+        sage: # optional - coxeter3
         sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
         sage: S = W.sign_representation()
         sage: TestSuite(S).run()
@@ -2536,7 +2535,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             sage: V._default_sign(elem)
             1
 
-            sage: # optional - gap3
+            sage: # optional - coxeter3
             sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
             sage: S = W.sign_representation()
             sage: elem = W.an_element()
@@ -2741,8 +2740,7 @@ class SchurFunctorRepresentation(Subrepresentation):
     *Schur functor* for a partition `\lambda` of size `k` is the functor
     `\mathbb{S}_{\lambda}` that sends `V` to the `G`-subrepresentation of
     `V^{\otimes k}` spanned by `(v_1 \otimes \cdots \otimes v_k) c_{\lambda}`,
-    where `c_{\lambda}` is the :meth:`Young symmetrizer
-    <sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra.young_symmetrizer>`
+    where `c_{\lambda}` is the :meth:`Young symmetrizer <sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.young_symmetrizer>`
     corresponding to `\lambda`. When `G = GL_n(F)`, the Schur functor image
     `\mathbb{S}_{\lambda} F^n` is the (irreducible when `F` has characteristic
     `0`) highest representation of shape `\lambda`.
@@ -2878,7 +2876,6 @@ class SchurFunctorRepresentation(Subrepresentation):
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         from sage.categories.tensor import tensor
-        from sage.matrix.matrix_space import MatrixSpace
 
         R = V.base_ring()
         self._shape = shape
@@ -2892,7 +2889,6 @@ class SchurFunctorRepresentation(Subrepresentation):
             keys = list(V.basis().keys())
 
         ambient = tensor([V]*d)
-        I = ambient.indices()
         cla = SymmetricGroupAlgebra(R, SymmetricGroup(d)).young_symmetrizer(shape)
         mc = cla.monomial_coefficients(copy=False)
         gens = [ambient.sum_of_terms((tuple([k[i-1] for i in p.tuple()]), coeff)

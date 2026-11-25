@@ -19,11 +19,12 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.element import ModuleElementWithMutability
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
+
 
 class Section(ModuleElementWithMutability):
     r"""
@@ -340,8 +341,7 @@ class Section(ModuleElementWithMutability):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def _init_derived(self):
         r"""
@@ -1841,39 +1841,39 @@ class Section(ModuleElementWithMutability):
             if other == 0:
                 return self.is_zero()
             return False
-        elif not isinstance(other, Section):
+        if not isinstance(other, Section):
             return False
-        else: # other is another section
-            if other._smodule != self._smodule:
-                return False
-            # Non-trivial open covers of the domain:
-            for oc in self._domain.open_covers(trivial=False):
-                resu = True
-                for dom in oc:
-                    try:
-                        resu = resu and \
-                                bool(self.restrict(dom) == other.restrict(dom))
-                    except ValueError:
-                        break
-                else:
-                    # If this point is reached, no exception has occurred; hence
-                    # the result is valid and can be returned:
-                    return resu
-            # If this point is reached, the comparison has not been possible
-            # on any open cover; we then compare the restrictions to
-            # subdomains:
-            if not self._restrictions:
-                return False  # self is not initialized
-            if len(self._restrictions) != len(other._restrictions):
-                return False  # the restrictions are not on the same subdomains
+        # other is another section
+        if other._smodule != self._smodule:
+            return False
+        # Non-trivial open covers of the domain:
+        for oc in self._domain.open_covers(trivial=False):
             resu = True
-            for dom, rst in self._restrictions.items():
-                if dom in other._restrictions:
-                    resu = resu and bool(rst == other._restrictions[dom])
-                else:
-                    return False  # the restrictions are not on the same
-                                  # subdomains
-            return resu
+            for dom in oc:
+                try:
+                    resu = resu and \
+                            bool(self.restrict(dom) == other.restrict(dom))
+                except ValueError:
+                    break
+            else:
+                # If this point is reached, no exception has occurred; hence
+                # the result is valid and can be returned:
+                return resu
+        # If this point is reached, the comparison has not been possible
+        # on any open cover; we then compare the restrictions to
+        # subdomains:
+        if not self._restrictions:
+            return False  # self is not initialized
+        if len(self._restrictions) != len(other._restrictions):
+            return False  # the restrictions are not on the same subdomains
+        resu = True
+        for dom, rst in self._restrictions.items():
+            if dom in other._restrictions:
+                resu = resu and bool(rst == other._restrictions[dom])
+            else:
+                return False  # the restrictions are not on the same
+                              # subdomains
+        return resu
 
     def __ne__(self, other):
         r"""
@@ -2212,8 +2212,10 @@ class Section(ModuleElementWithMutability):
             return self.copy()
         ###
         # General case:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst
@@ -2249,6 +2251,7 @@ class Section(ModuleElementWithMutability):
         super().set_immutable()
 
 #******************************************************************************
+
 
 class TrivialSection(FiniteRankFreeModuleElement, Section):
     r"""
@@ -3043,12 +3046,12 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s^2 = 1/4*u^2 - 1/4*v^2
         """
         if frame is None:
-                frame = self._smodule.default_basis()
+            frame = self._smodule.default_basis()
         if chart is None:
             chart = self._domain.default_chart()
         return FiniteRankFreeModuleElement.display_comp(self, basis=frame,
-                                                      format_spec=chart,
-                                                      only_nonzero=only_nonzero)
+                                                        format_spec=chart,
+                                                        only_nonzero=only_nonzero)
 
     def at(self, point):
         r"""

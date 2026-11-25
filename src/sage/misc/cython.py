@@ -22,16 +22,52 @@ AUTHORS:
 import builtins
 import os
 import re
-import sys
 import shutil
+import sys
+import webbrowser
+from pathlib import Path
 
-from sage.env import (SAGE_LOCAL, cython_aliases,
-                      sage_include_directories)
+from sage.env import SAGE_LOCAL, cython_aliases
+from sage.misc.cachefunc import cached_function
+from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
-from sage.misc.sage_ostools import restore_cwd, redirection
-from sage.cpython.string import str_to_bytes
-from sage.misc.cachefunc import cached_function
+
+
+def get_include_dirs() -> list[Path]:
+    """
+    Return a list of directories to be used as include directories
+    when compiling Cython extensions that depend on Sage.
+
+    Headers should be included with the prefix "sage/", e.g.,
+    ``#include <sage/cpython/cython_metaclass.h>``.
+
+    EXAMPLES::
+
+        sage: from sage.misc.cython import get_include_dirs
+        sage: get_include_dirs()  # random
+        [
+            WindowsPath('<python>/site-packages'),
+            WindowsPath('<path_to_sage>/src'),
+            WindowsPath('<path_to_sage>/build/cp312/src'),
+            WindowsPath('<python>/site-packages/numpy/core/include')
+        ]
+    """
+    from sage import __path__ as sage_path
+    dirs: list[Path] = [p
+                        for d in sage_path
+                        if (p := Path(d).parent)
+                        if p.is_dir()]
+
+    from sage.features.meson_editable import MesonEditable
+    from sage.config import MESON_BUILD_ROOT, MESON_SOURCE_ROOT
+    if  MesonEditable().is_present():
+        dirs.extend([p
+                     for d in (MESON_BUILD_ROOT, MESON_SOURCE_ROOT)
+                     if d  # Path() turns "" into "."
+                     if (p := Path(d).resolve() / "src")
+                     if p.is_dir() ])
+    return dirs
 
 
 @cached_function
@@ -49,16 +85,21 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = cython_aliases()
-    standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
-        'ec', 'gsl',
-    ] + aliases["CBLAS_LIBRARIES"] + [
-        'ntl']
+    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m"]
+    from sage.features.eclib import Eclib
+    if Eclib().is_present():
+        # eclib is an optional dependency of the sage library
+        # and may not even be installed. The order of -l flags
+        # can be important; this is why we stop in the middle
+        # of the list to check for / append it.
+        standard_libs.append("ec")
+    standard_libs += ["gsl", "ntl"]
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
-    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = sage_include_directories() + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(aliases["NTL_LIBDIR"])
+    standard_libdirs.extend(aliases["GSL_LIBDIR"])
+    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"] + aliases["GSL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
@@ -78,9 +119,16 @@ def _standard_libs_libdirs_incdirs_aliases():
 sequence_number = {}
 
 
+def _webbrowser_open_file(path):
+    """
+    Open a html file in a web browser.
+    """
+    webbrowser.open(Path(path).as_uri())
+
+
 def cython(filename, verbose=0, compile_message=False,
-           use_cache=False, create_local_c_file=False, annotate=True, sage_namespace=True,
-           create_local_so_file=False):
+           use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
+           view_annotate_callback=None, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -109,6 +157,15 @@ def cython(filename, verbose=0, compile_message=False,
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
+
+    - ``view_annotate`` -- boolean (default: ``False``); if ``True``, open the
+      annotated html file in a web browser
+
+    - ``view_annotate_callback`` -- function; a function that takes a string
+      being the path to the html file. This can be overridden to change
+      what to do with the annotated html file. Have no effect unless
+      ``view_annotate`` is ``True``. By default, the html file is opened in a
+      web browser.
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -226,18 +283,38 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
-    In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :issue:`35322`::
+    Test ``view_annotate``::
 
         sage: cython('''
-        ....: from sage.misc cimport cachefunc
-        ....: ''')
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True)  # optional -- webbrowser
+
+    ::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, annotate=False)
         Traceback (most recent call last):
         ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found
+        ValueError: cannot view annotated file without creating it
+
+    ::
+
+        sage: collected_paths = []
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, view_annotate_callback=collected_paths.append)
+        sage: collected_paths
+        ['...']
+        sage: len(collected_paths)
+        1
     """
+    if view_annotate_callback is None:
+        # needed because of https://github.com/sagemath/sage/pull/38946#issuecomment-2656329774
+        view_annotate_callback = _webbrowser_open_file
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
 
@@ -296,7 +373,6 @@ def cython(filename, verbose=0, compile_message=False,
     if create_local_so_file:
         name = base
     else:
-        global sequence_number
         if base not in sequence_number:
             sequence_number[base] = 0
         name = '%s_%s' % (base, sequence_number[base])
@@ -318,20 +394,13 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    from distutils.log import set_verbosity
+
+    import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-    import Cython.Compiler.Options
-
-    try:
-        from setuptools.dist import Distribution
-        from setuptools.extension import Extension
-    except ImportError:
-        # Fall back to distutils (stdlib); note that it is deprecated
-        # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.dist import Distribution
-        from distutils.core import Extension
-
-    from distutils.log import set_verbosity
+    from setuptools.dist import Distribution
+    from setuptools.extension import Extension
     set_verbosity(verbose)
 
     Cython.Compiler.Options.annotate = annotate
@@ -380,7 +449,7 @@ def cython(filename, verbose=0, compile_message=False,
         cython_messages = re.sub(
             "^.*The keyword 'nogil' should appear at the end of the function signature line. "
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
-            "", cython_messages, 0, re.MULTILINE)
+            "", cython_messages, flags=re.MULTILINE)
 
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
@@ -391,6 +460,11 @@ def cython(filename, verbose=0, compile_message=False,
         if annotate:
             shutil.copy(os.path.join(target_dir, name + ".html"),
                         os.curdir)
+
+    if view_annotate:
+        if not annotate:
+            raise ValueError("cannot view annotated file without creating it")
+        view_annotate_callback(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options
     #
@@ -578,6 +652,9 @@ def cython_import_all(filename, globals, **kwds):
 
     - ``filename`` -- string; name of a file that contains Cython
       code
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
     """
     m = cython_import(filename, **kwds)
     for k, x in m.__dict__.items():
@@ -618,8 +695,11 @@ def compile_and_load(code, **kwds):
     r"""
     INPUT:
 
-    - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook
+    - ``code`` -- string containing code that could be in a ``.pyx`` file
+      that is attached or put in a ``%%cython`` block
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
 
     OUTPUT: a module, which results from compiling the given code and
     importing it

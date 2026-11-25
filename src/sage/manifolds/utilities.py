@@ -27,14 +27,16 @@ AUTHORS:
 # ****************************************************************************
 
 from operator import pow as _pow
+
+from sage.functions.other import abs_symbolic
+from sage.functions.trig import cos, sin
+from sage.misc.functional import sqrt
+from sage.misc.latex import latex, latex_variable_name
+from sage.rings.rational import Rational
+from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
-from sage.symbolic.constants import pi
-from sage.functions.other import abs_symbolic
-from sage.misc.functional import sqrt
-from sage.functions.trig import cos, sin
-from sage.rings.rational import Rational
 
 
 class SimplifySqrtReal(ExpressionTreeWalker):
@@ -224,10 +226,10 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
         sage: a = abs(cos(x)) + abs(sin(x))
 
     The method :meth:`~sage.symbolic.expression.Expression.simplify_full()`
-    is ineffective on such an expression::
+    works on such an expression::
 
         sage: a.simplify_full()
-        abs(cos(x)) + abs(sin(x))
+        -cos(x) + sin(x)
 
     We construct a :class:`SimplifyAbsTrig` object ``s`` from the symbolic
     expression ``a``::
@@ -435,9 +437,9 @@ def simplify_abs_trig(expr):
 
         sage: s = abs(sin(x)) + abs(sin(y)) + abs(sin(3*z))
         sage: s.simplify_trig()
-        abs(4*cos(-z)^2 - 1)*abs(sin(-z)) + abs(sin(x)) + abs(sin(y))
+        -4*sin(-z)^3 + abs(sin(x)) + sin(y) + 3*sin(-z)
         sage: s.simplify_full()
-        abs(4*cos(-z)^2 - 1)*abs(sin(-z)) + abs(sin(x)) + abs(sin(y))
+        -4*sin(-z)^3 + abs(sin(x)) + sin(y) + 3*sin(-z)
 
     despite the following assumptions hold::
 
@@ -570,10 +572,10 @@ def simplify_chain_real(expr):
         sage: s = abs(sin(pi*x))
         sage: simplify_chain_real(s)  # correct output since x in (0,1)
         sin(pi*x)
-        sage: s.simplify_real()  # unsimplified output
-        abs(sin(pi*x))
-        sage: s.simplify_full()  # unsimplified output
-        abs(sin(pi*x))
+        sage: s.simplify_real()  # simplified output with maxima>=5.48
+        sin(pi*x)
+        sage: s.simplify_full()  # simplified output with maxima>=5.48
+        sin(pi*x)
 
     ::
 
@@ -672,6 +674,7 @@ def simplify_chain_generic(expr):
     expr = expr.expand_sum()
     return expr
 
+
 def simplify_chain_generic_sympy(expr):
     r"""
     Apply a chain of simplifications to a sympy expression.
@@ -683,10 +686,10 @@ def simplify_chain_generic_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 
@@ -731,6 +734,7 @@ def simplify_chain_generic_sympy(expr):
     expr = expr.simplify()
     return expr
 
+
 def simplify_chain_real_sympy(expr):
     r"""
     Apply a chain of simplifications to a sympy expression, assuming the
@@ -743,12 +747,12 @@ def simplify_chain_real_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
     #. :func:`simplify_sqrt_real`
     #. :func:`simplify_abs_trig`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 
@@ -803,6 +807,7 @@ def simplify_chain_real_sympy(expr):
     return expr
 
 #******************************************************************************
+
 
 class ExpressionNice(Expression):
     r"""
@@ -968,12 +973,10 @@ class ExpressionNice(Expression):
                     strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
-            occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i) > 1) else strv[i])
-                       for i in diffargs)
+            occ = {i: strv[i] + "^" + str(D) if (D := diffargs.count(i)) > 1
+                   else strv[i] for i in diffargs}
 
-            res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                occ.values())
+            res = f"d{numargs}({funcname})/d" + "d".join(occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -988,6 +991,7 @@ class ExpressionNice(Expression):
             d = d.replace(o, res)
 
         import re
+
         from sage.manifolds.manifold import TopologicalManifold
         if TopologicalManifold.options.omit_function_arguments:
             list_f = []
@@ -1039,8 +1043,6 @@ class ExpressionNice(Expression):
             \frac{\partial\,f}{\partial \left( x + y \right)}
              - \frac{\partial\,f}{\partial \left( x - y \right)}
         """
-        from sage.misc.latex import latex
-
         d = self._parent._latex_element_(self)
 
         # find all occurrences of diff
@@ -1141,7 +1143,7 @@ def _list_derivatives(ex, list_d, exponent=0):
     operands = ex.operands()
 
     import operator
-    from sage.misc.latex import latex, latex_variable_name
+
     from sage.symbolic.operators import FDerivativeOperator
 
     if op:
@@ -1202,8 +1204,6 @@ def _list_functions(ex, list_f):
     op = ex.operator()
     operands = ex.operands()
 
-    from sage.misc.latex import latex, latex_variable_name
-
     if op:
         # FIXME: This hack is needed because the NewSymbolicFunction is
         #   a class defined inside of the *function* function_factory().
@@ -1228,6 +1228,7 @@ def _list_functions(ex, list_f):
             _list_functions(operand, list_f)
 
 #******************************************************************************
+
 
 def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     r"""
@@ -1277,6 +1278,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     graph += text3d('  ' + ylabel, (xmin1, y1, zmin1), **kwds)
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
+
 
 def exterior_derivative(form):
     r"""

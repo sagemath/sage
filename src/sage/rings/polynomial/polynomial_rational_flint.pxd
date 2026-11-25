@@ -1,10 +1,10 @@
-###############################################################################
+# ############################################################################
 #          Copyright (C) 2010 Sebastian Pancratz <sfp@pancratz.org>           #
 #                                                                             #
 #     Distributed under the terms of the GNU General Public License (GPL)     #
 #                                                                             #
-#                        http://www.gnu.org/licenses/                         #
-###############################################################################
+#                        https://www.gnu.org/licenses/                        #
+# ############################################################################
 
 from sage.libs.flint.types cimport fmpq_poly_t
 
@@ -17,4 +17,3 @@ cdef class Polynomial_rational_flint(Polynomial):
     cpdef _mod_(self, right)
     cpdef _unsafe_mutate(self, unsigned long n, value)
     cpdef Polynomial truncate(self, long n)
-

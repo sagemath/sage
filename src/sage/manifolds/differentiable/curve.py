@@ -32,10 +32,11 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.latex import latex
-from sage.misc.decorators import options
-from sage.manifolds.point import ManifoldPoint
 from sage.manifolds.differentiable.diff_map import DiffMap
+from sage.manifolds.point import ManifoldPoint
+from sage.misc.decorators import options
+from sage.misc.latex import latex
+
 
 class DifferentiableCurve(DiffMap):
     r"""
@@ -465,7 +466,7 @@ class DifferentiableCurve(DiffMap):
               x == x  *passed*
               y == y  *passed*
               r == r  *passed*
-              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              ph == -2*pi*ceil(-1/2*(pi - ph)/pi) + ph  **failed**
             NB: a failed report can reflect a mere lack of simplification.
             sage: R.<t> = manifolds.RealLine()
             sage: c = U.curve({c_spher: (1,t)}, (t, 0, 2*pi), name='c')
@@ -870,9 +871,9 @@ class DifferentiableCurve(DiffMap):
             g = c.plot(parameters={a: 2, b: -3}, aspect_ratio=1)
             sphinx_plot(g)
         """
-        from sage.rings.infinity import Infinity
-        from sage.misc.functional import numerical_approx
         from sage.manifolds.chart import RealChart
+        from sage.misc.functional import numerical_approx
+        from sage.rings.infinity import Infinity
 
         #
         # Get the @options from kwds
@@ -994,9 +995,9 @@ class DifferentiableCurve(DiffMap):
             sage: graph._extra_kwds['axes_labels'] == l
             True
         """
+        from sage.manifolds.utilities import set_axes_labels
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
-        from sage.manifolds.utilities import set_axes_labels
 
         #
         # The plot

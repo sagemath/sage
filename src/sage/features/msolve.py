@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of msolve
 
@@ -21,6 +20,7 @@ Feature for testing the presence of msolve
 import subprocess
 from . import Executable
 from . import FeatureTestResult
+
 
 class msolve(Executable):
     r"""
@@ -53,16 +53,18 @@ class msolve(Executable):
             sage: msolve().is_functional()  # optional - msolve
             FeatureTestResult('msolve', True)
         """
-        msolve_out = subprocess.run(["msolve", "-h"], capture_output=True)
+        msolve_out = subprocess.run(["msolve", "-h"], capture_output=True,
+                                    check=False)
 
 #        if msolve_out.returncode != 0:
 #            return FeatureTestResult(self, False, reason="msolve -h returned "
 #                                f"nonzero exit status {msolve_out.returncode}")
-        if (msolve_out.stdout[:46] !=
-              b'\nmsolve library for polynomial system solving\n'):
+        if (msolve_out.stdout[:45] !=
+              b'\nmsolve library for polynomial system solving'):
             return FeatureTestResult(self, False,
                                      reason="output of msolve -h not recognized")
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [msolve()]

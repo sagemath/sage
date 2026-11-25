@@ -26,13 +26,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.rings.infinity import infinity
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.misc.cachefunc import cached_method
 from sage.categories.modules import Modules
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.manifolds.section import Section, TrivialSection
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+
 
 class SectionModule(UniqueRepresentation, Parent):
     r"""
@@ -225,9 +226,8 @@ class SectionModule(UniqueRepresentation, Parent):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {} ".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {} ".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -280,8 +280,7 @@ class SectionModule(UniqueRepresentation, Parent):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -466,7 +465,7 @@ class SectionModule(UniqueRepresentation, Parent):
             sage: C0.default_frame().domain()
             Open subset U of the 3-dimensional topological manifold M
         """
-        from .local_frame import LocalFrame
+        from sage.manifolds.local_frame import LocalFrame
         if not isinstance(basis, LocalFrame):
             raise ValueError("the argument is not a local frame")
         elif not basis._domain.is_subset(self._domain):
@@ -475,6 +474,7 @@ class SectionModule(UniqueRepresentation, Parent):
         self._def_frame = basis
 
 #******************************************************************************
+
 
 class SectionFreeModule(FiniteRankFreeModule):
     r"""
@@ -585,7 +585,7 @@ class SectionFreeModule(FiniteRankFreeModule):
             True
             sage: TestSuite(C0).run()
         """
-        from .scalarfield import ScalarField
+        from sage.manifolds.scalarfield import ScalarField
         self._domain = domain
         name = "C^0({};{})".format(domain._name, vbundle._name)
         latex_name = r'C^0({};{})'.format(domain._latex_name,
@@ -634,9 +634,8 @@ class SectionFreeModule(FiniteRankFreeModule):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {}".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {}".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -666,8 +665,7 @@ class SectionFreeModule(FiniteRankFreeModule):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -824,5 +822,44 @@ class SectionFreeModule(FiniteRankFreeModule):
                           symbol_dual=symbol_dual,
                           latex_symbol_dual=latex_symbol_dual)
 
-    set_default_frame = FiniteRankFreeModule.set_default_basis
-    default_frame = FiniteRankFreeModule.default_basis
+    def set_default_frame(self, frame):
+        r"""
+        Set the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.set_default_basis`.
+
+        INPUT:
+
+        - ``frame`` -- a local frame on ``self``
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: f = C0.basis('f')
+            sage: C0.set_default_frame(f)
+            sage: C0.default_frame()
+            Local frame (E|_M, (f_0,f_1))
+        """
+        self.set_default_basis(frame)
+
+    def default_frame(self):
+        r"""
+        Return the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.default_basis`.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: C0.default_frame()
+            Local frame (E|_M, (e_0,e_1))
+        """
+        return self.default_basis()

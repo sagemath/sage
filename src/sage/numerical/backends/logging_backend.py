@@ -7,18 +7,19 @@ backend methods in one of three ways.
 See :class:`LoggingBackendFactory` for more information.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.numerical.backends.generic_backend import GenericBackend
+
 
 def _format_function_call(fn_name, *v, **k):
     """
@@ -30,8 +31,9 @@ def _format_function_call(fn_name, *v, **k):
         sage: _format_function_call('foo', 17, hellooooo='goodbyeeee')
         "foo(17, hellooooo='goodbyeeee')"
     """
-    args = [ repr(a) for a in v ] + [ "%s=%r" % (arg,val) for arg, val in k.items() ]
+    args = [repr(a) for a in v] + ["%s=%r" % (arg, val) for arg, val in k.items()]
     return "{}({})".format(fn_name, ", ".join(args))
+
 
 def _make_wrapper(backend, attr):
     """
@@ -43,7 +45,7 @@ def _make_wrapper(backend, attr):
 
         sage: from sage.numerical.backends.generic_backend import get_solver
         sage: from sage.numerical.backends.logging_backend import _make_wrapper, LoggingBackend
-        sage: backend = get_solver(solver='GLPK')
+        sage: backend = get_solver(solver='Highs')
         sage: w = _make_wrapper(backend, 'ncols')
         sage: logging_backend = LoggingBackend(backend)
         sage: w(logging_backend)
@@ -74,7 +76,7 @@ def _make_wrapper(backend, attr):
         else:
             if self._printing:
                 print("# result: {}".format(result))
-            if self._doctest:
+            if self._doctest and result is not None:
                 self._doctest.write("        {}\n".format(result))
             if self._test_method:
                 if result is None:
@@ -90,6 +92,7 @@ def _make_wrapper(backend, attr):
     update_wrapper(m, getattr(backend, attr))
     return m
 
+
 class LoggingBackend(GenericBackend):
     """
     See :class:`LoggingBackendFactory` for documentation.
@@ -99,7 +102,7 @@ class LoggingBackend(GenericBackend):
         sage: import sage.numerical.backends.logging_backend
         sage: from sage.numerical.backends.logging_backend import LoggingBackend
         sage: from sage.numerical.backends.generic_backend import get_solver
-        sage: b = get_solver(solver = "GLPK")
+        sage: b = get_solver(solver = "Highs")
         sage: lb = LoggingBackend(backend=b)
         sage: lb.add_variable(obj=42, name='Helloooooo')
         # p.add_variable(obj=42, name='Helloooooo')
@@ -123,7 +126,7 @@ class LoggingBackend(GenericBackend):
             sage: import sage.numerical.backends.logging_backend
             sage: from sage.numerical.backends.logging_backend import LoggingBackend
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: b = get_solver(solver = "GLPK")
+            sage: b = get_solver(solver = "Highs")
             sage: lb = LoggingBackend(backend=b)
         """
         self._backend = backend
@@ -145,9 +148,9 @@ class LoggingBackend(GenericBackend):
             sage: import sage.numerical.backends.logging_backend
             sage: from sage.numerical.backends.logging_backend import LoggingBackend
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: b = get_solver(solver = "GLPK")
+            sage: b = get_solver(solver = "Highs")
             sage: lb = LoggingBackend(backend=b)
-            sage: lb.print_ranges
+            sage: lb.problem_name
             <bound method ...>
         """
         _a = getattr(self._backend, attr)
@@ -158,27 +161,26 @@ class LoggingBackend(GenericBackend):
             # cache it
             setattr(self, attr, _mm)
             return _mm
-        else:
-            return _a
+        return _a
 
     def base_ring(self):
         """
         Return the base ring.
 
         The backend's base ring can be overridden.  It is best to run
-        the tests with GLPK and override the base ring to ``QQ``.  Then
+        the tests with Highs and override the base ring to ``QQ``.  Then
         default input to backend methods, prepared by
         :class:`MixedIntegerLinearProgram`, depends on the base ring.
         This way input will be rational and so suitable for both exact
         and inexact methods; whereas output will be float and will thus
-        trigger :func:`assertAlmostEqual` tests.
+        trigger ``assertAlmostEqual`` tests.
 
         EXAMPLES::
 
             sage: import sage.numerical.backends.logging_backend
             sage: from sage.numerical.backends.logging_backend import LoggingBackend
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: b = get_solver(solver = "GLPK")
+            sage: b = get_solver(solver = "Highs")
             sage: lb = LoggingBackend(backend=b)
             sage: lb.base_ring()
             Real Double Field
@@ -189,8 +191,7 @@ class LoggingBackend(GenericBackend):
         """
         if self._base_ring is not None:
             return self._base_ring
-        else:
-            return self._backend.base_ring()
+        return self._backend.base_ring()
 
 
 # Override all methods that we inherited from GenericBackend
@@ -232,6 +233,7 @@ r'''
 
 from sage.rings.rational_field import QQ
 
+
 def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_method_file=None,
                           test_method=None, base_ring=QQ):
     """
@@ -246,9 +248,9 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
     Assume that we have the following function that does some
     computation using :class:`MixedIntegerLinearProgram` (or MIP
     backend methods), and suppose we have observed that it works with
-    the GLPK backend, but not with the COIN backend::
+    the Highs backend, but not with the COIN backend::
 
-        sage: def compute_something(solver='GLPK'):
+        sage: def compute_something(solver='Highs'):
         ....:     from sage.numerical.mip import MIPSolverException
         ....:     mip = MixedIntegerLinearProgram(solver=solver)
         ....:     lb = mip.get_backend()
@@ -266,17 +268,17 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
 
         sage: import sage.numerical.backends.logging_backend
         sage: from sage.numerical.backends.logging_backend import LoggingBackendFactory
-        sage: compute_something(solver = LoggingBackendFactory(solver='GLPK'))
-        # p = get_solver(solver='GLPK')
+        sage: compute_something(solver = LoggingBackendFactory(solver='Highs'))
+        # p = get_solver(solver='Highs')
         # p.add_variable(obj=42, name='Helloooooo')
         # result: 0
         # p.add_variable(obj=1789)
         # result: 1
         # p.solve()
-        # exception: GLPK: The LP (relaxation) problem has no dual feasible solution
+        # exception: HiGHS: Problem is unbounded
         4711
 
-    By replacing 'GLPK' by 'COIN' above, we can then compare the two
+    By replacing 'Highs' by 'COIN' above, we can then compare the two
     logs and see where they differ.
 
     Imagine that we have now fixed the bug in the COIN backend, and we
@@ -288,12 +290,13 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
     :class:`LoggingBackend` in its doctest-writing mode::
 
         sage: fname = tmp_filename()
-        sage: compute_something(solver = LoggingBackendFactory(solver='GLPK', printing=False,
+        sage: compute_something(solver = LoggingBackendFactory(solver='Highs', printing=False,
         ....:                                                  doctest_file=fname))
         4711
         sage: with open(fname) as f:
         ....:     for line in f.readlines(): _ = sys.stdout.write('|{}'.format(line))
-        |        sage: p = get_solver(solver='GLPK')
+        |        sage: from sage.numerical.backends.generic_backend import get_solver
+        |        sage: p = get_solver(solver='Highs')
         |        sage: p.add_variable(obj=42, name='Helloooooo')
         |        0
         |        sage: p.add_variable(obj=1789)
@@ -301,10 +304,38 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         |        sage: p.solve()
         |        Traceback (most recent call last):
         |        ...
-        |        MIPSolverException: GLPK: The LP (relaxation) problem has no dual feasible solution
+        |        MIPSolverException: HiGHS: Problem is unbounded
 
     We then copy from the generated file and paste into the source
     code of the COIN backend.
+
+    The generated doctest is self-contained and omits results equal to
+    ``None``, but retains zero results (:issue:`24145`)::
+
+        sage: fname = tmp_filename()
+        sage: solver = LoggingBackendFactory(solver='Highs', printing=False,
+        ....:                                doctest_file=fname)
+        sage: backend = solver()
+        sage: backend.set_sense(1)
+        sage: _ = backend.ncols()
+        sage: with open(fname) as f:
+        ....:     transcript = f.read()
+        sage: for line in transcript.splitlines():
+        ....:     print('|' + line)
+        |        sage: from sage.numerical.backends.generic_backend import get_solver
+        |        sage: p = get_solver(solver='Highs')
+        |        sage: p.set_sense(1)
+        |        sage: p.ncols()
+        |        0
+
+    Replay the generated transcript in an empty namespace::
+
+        sage: import doctest
+        sage: test = doctest.DocTestParser().get_doctest(
+        ....:     transcript.replace('sage: ', '>>> '), {},
+        ....:     'logging_backend', None, 0)
+        sage: doctest.DocTestRunner().run(test)
+        TestResults(failed=0, attempted=4)
 
     If this test seems valuable enough that all backends should be
     tested against it, we should create a test method instead of a
@@ -314,7 +345,7 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
     :class:`LoggingBackend` in its test-method-writing mode::
 
         sage: fname = tmp_filename()
-        sage: compute_something(solver= LoggingBackendFactory(solver='GLPK', printing=False,
+        sage: compute_something(solver= LoggingBackendFactory(solver='Highs', printing=False,
         ....:                                                 test_method_file=fname,
         ....:                                                 test_method='something'))
         4711
@@ -355,15 +386,16 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
             # Construct output file name from method name.
             test_method_file = "test_{}.py".format(test_method)
     else:
-        test_method = 'CHANGE'  # Will have to be edited by user in
-                                # generated file.
+        test_method = 'CHANGE'
+        # Will have to be edited by user in generated file.
 
     if doctest_file is not None:
-        doctest = open(doctest_file, "w", 1) #line-buffered
+        doctest = open(doctest_file, "w", 1)  # line-buffered
+        doctest.write("        sage: from sage.numerical.backends.generic_backend import get_solver\n")
     else:
         doctest = None
     if test_method_file is not None:
-        test_method_output = open(test_method_file, "w", 1) #line-buffered
+        test_method_output = open(test_method_file, "w", 1)  # line-buffered
     else:
         test_method_output = None
 

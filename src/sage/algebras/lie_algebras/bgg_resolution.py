@@ -133,13 +133,13 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
             sage: L = g.simple_module(La[1])
             sage: res = L.bgg_resolution()
-            sage: [res.module_order(i) for i in range(7)]
+            sage: [sorted(res.module_order(i)) for i in range(7)]
             [[1],
              [s2, s1],
              [s2*s1, s1*s2],
-             [s1*s2*s1, s2*s1*s2],
-             [s1*s2*s1*s2, s2*s1*s2*s1],
-             [s1*s2*s1*s2*s1, s2*s1*s2*s1*s2],
+             [s2*s1*s2, s1*s2*s1],
+             [s2*s1*s2*s1, s1*s2*s1*s2],
+             [s2*s1*s2*s1*s2, s1*s2*s1*s2*s1],
              [s2*s1*s2*s1*s2*s1]]
         """
         if i not in self._module_order:
@@ -171,7 +171,7 @@ def build_differentials(W):
         sage: D, O = build_differentials(W)
         sage: D
         {0: [],
-         1: [-1  1],
+         1: [ 1 -1],
          2: [1 1]
             [1 1],
          3: [ 1 -1]
@@ -181,16 +181,16 @@ def build_differentials(W):
          5: []}
         sage: O
         {0: [1],
-         1: [s2, s1],
-         2: [s2*s1, s1*s2],
-         3: [s2*s1*s2, s1*s2*s1],
+         1: [s1, s2],
+         2: [s1*s2, s2*s1],
+         3: [s1*s2*s1, s2*s1*s2],
          4: [s2*s1*s2*s1]}
     """
     from itertools import combinations
     w0 = W.long_element()
     maxlen = w0.length()
     module_order = {i: [] for i in range(maxlen+1)}
-    for w in W:
+    for w in sorted(W):
         module_order[w.length()].append(w)
 
     one = ZZ.one()

@@ -37,11 +37,14 @@ defined, and ``["GF", 4]`` would have raised an error, because to
 define the field with four elements in Sage, you also need to specify
 the name of a generator.)
 
-To see evidence of the results of the code here, run ``sage --docbuild
-tutorial latex`` (for example), and look at the resulting LaTeX file in
-``SAGE_DOC/latex/en/tutorial/``.  The preamble should
-contain '\newcommand' lines for each of the entries in ``macros``.
+To see evidence of the results of the code here, run ``meson compile -C
+builddir doc-pdf-other-en-tutorial`` (for example), where ``builddir`` is the
+Meson build directory, and look at the resulting LaTeX file in
+``builddir/src/doc/latex/en/tutorial/``.  The preamble should contain
+'\newcommand' lines for each of the entries in ``macros``.
 """
+
+import importlib
 
 
 def produce_latex_macro(name, *sample_args):
@@ -69,7 +72,7 @@ def produce_latex_macro(name, *sample_args):
          sage: produce_latex_macro('GF', 37)
          '\\newcommand{\\GF}[1]{\\Bold{F}_{#1}}'
 
-    If the Sage object is not in the global name space, describe it
+    If the Sage object is not in the global namespace, describe it
     like so::
 
          sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)
@@ -84,22 +87,16 @@ def produce_latex_macro(name, *sample_args):
     else:
         module, real_name = names_split
     newcommand = '\\newcommand{\\' + real_name + '}'
-    count = 0
-    args = "("
-    for x in sample_args:
-        count += 1
-        args += str(x) + ','
-    args += ')'
-    exec('from ' + module + ' import ' + real_name)
-    if count:
-        defn = '[' + str(count) + ']{'
-        defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
+    sage_object = getattr(importlib.import_module(module), real_name)
+    if sample_args:
+        defn = '[' + str(len(sample_args)) + ']{'
+        defn += str(LatexCall()(sage_object(*sample_args))) + '}'
     else:
-        defn = '{' + eval('str(LatexCall()(' + real_name + '))') + '}'
-    count = 0
-    for x in sample_args:
-        count += 1
-        defn = defn.replace(str(x), "#" + str(count))
+        defn = '{' + str(LatexCall()(sage_object)) + '}'
+    for i, x in enumerate(sample_args):
+        s = str(x)
+        assert s in defn
+        defn = defn.replace(s, "#" + str(i+1))
     return newcommand + defn
 
 
@@ -139,8 +136,7 @@ def convert_latex_macro_to_mathjax(macro):
     defn = macro[start_defn + 1: end_defn]
     if num_args == 0:
         return name, defn
-    else:
-        return name, [defn, num_args]
+    return name, [defn, num_args]
 
 
 # To add a new macro for use in the Sage documentation, add a list or
@@ -148,10 +144,10 @@ def convert_latex_macro_to_mathjax(macro):
 # form [name, arguments], which will be passed to the function
 # produce_latex_macro: see that for more documentation.
 #
-# To see the results of this, run 'sage --docbuild tutorial latex' (for
-# example -- you could replace 'tutorial' with your favorite piece of
-# documentation), and look at the resulting tex file in
-# SAGE_DOC/latex/en/tutorial.  The preamble should contain
+# To see the results of this, run
+# 'meson compile -C builddir doc-pdf-other-en-tutorial', where builddir is
+# the Meson build directory, and look at the resulting tex file in
+# builddir/src/doc/latex/en/tutorial.  The preamble should contain
 # \newcommand's for each of the entries here.
 macros = [["ZZ"],
           ["NN"],

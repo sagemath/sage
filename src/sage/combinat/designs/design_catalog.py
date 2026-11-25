@@ -14,7 +14,7 @@ Or a Steiner Triple System on 19 points::
 
 **La Jolla Covering Repository**
 
-The La Jolla Covering Repository (LJCR, see [1]_) is an online database of
+The La Jolla Covering Repository (LJCR, see [LJCR]_) is an online database of
 covering designs. As it is frequently updated, it is not included in Sage, but
 one can query it through :meth:`designs.best_known_covering_design_from_LJCR
 <sage.combinat.designs.covering_design.best_known_covering_design_www>`::
@@ -58,7 +58,7 @@ This module gathers the following designs:
     :meth:`~sage.combinat.designs.bibd.steiner_triple_system`
     :meth:`~sage.combinat.designs.steiner_quadruple_systems.steiner_quadruple_system`
     :meth:`~sage.combinat.designs.block_design.projective_plane`
-    :meth:`~sage.combinat.designs.biplane`
+    :func:`~sage.combinat.designs.bibd.biplane`
     :meth:`~sage.combinat.designs.gen_quadrangles_with_spread`
 
 And the :meth:`designs.best_known_covering_design_from_LJCR
@@ -71,8 +71,7 @@ which queries the LJCR.
 
 REFERENCES:
 
-.. [1] La Jolla Covering Repository,
-  https://math.ccrwest.org/cover.html
+- [LJCR]_
 """
 from sage.misc.lazy_import import lazy_import
 
@@ -118,4 +117,6 @@ lazy_import('sage.combinat.designs.orthogonal_arrays',
             'OAMainFunctions', as_='orthogonal_arrays')
 
 lazy_import('sage.combinat.designs.gen_quadrangles_with_spread',
-            ('generalised_quadrangle_with_spread', 'generalised_quadrangle_hermitian_with_ovoid'))
+            ('generalised_quadrangle_with_spread',
+             'generalised_quadrangle_symplectic_with_spread',
+             'generalised_quadrangle_hermitian_with_ovoid'))

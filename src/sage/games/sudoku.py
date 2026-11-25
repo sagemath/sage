@@ -468,9 +468,9 @@ class Sudoku(SageObject):
         for row in range(nsquare):
             for col in range(nsquare):
                 entry = next(gen)
-                array.append((str(entry) if entry else ' '))
-                array.append(('' if col == nsquare - 1 else '&'))
-            array.append(('\\\\\n' if (row+1) % n else '\\\\\\hline\n'))
+                array.append(str(entry) if entry else ' ')
+                array.append('' if col == nsquare - 1 else '&')
+            array.append('\\\\\n' if (row+1) % n else '\\\\\\hline\n')
         array.append('\\end{array}')
         return ''.join(array)
 
@@ -503,7 +503,7 @@ class Sudoku(SageObject):
         by a similar factor, with the potential to be orders of magnitude
         slower.  See the docstrings for the
         :meth:`~sage.games.sudoku.Sudoku.dlx` and
-        :meth:`~sage.games.sudoku.Sudoku.backtrack_all`
+        :meth:`~sage.games.sudoku.Sudoku.backtrack`
         methods for further discussions and examples of performance.
         Note that the backtrack algorithm is limited to puzzles of
         size `16\times 16` or smaller.
@@ -815,7 +815,7 @@ class Sudoku(SageObject):
 
         So here, we code the notion of a Sudoku puzzle, and the
         hints already present, into such a `0-1` matrix.  Then the
-        :class:`sage.combinat.matrices.dlxcpp.DLXCPP` solver makes
+        :func:`~sage.combinat.matrices.dlxcpp.DLXCPP` solver makes
         the choices for the blank entries.
         """
         from sage.combinat.matrices.dlxcpp import DLXCPP

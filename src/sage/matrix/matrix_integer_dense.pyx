@@ -48,7 +48,7 @@ TESTS::
     []
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006,2007 William Stein
 #       Copyright (C) 2014 Marc Masdeu
 #       Copyright (C) 2014 Jeroen Demeyer
@@ -58,13 +58,13 @@ TESTS::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.stdint cimport int64_t
 from libc.string cimport strcpy, strlen
 
-from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from cysignals.signals cimport sig_check, sig_on, sig_str, sig_off
 from cysignals.memory cimport sig_malloc, sig_free, check_allocarray
@@ -83,8 +83,8 @@ from sage.structure.element cimport Element
 from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 #########################################################
 # PARI C library
@@ -94,7 +94,8 @@ from cypari2.paridecl cimport *
 from sage.libs.pari import pari
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
 from sage.libs.pari.convert_flint cimport (_new_GEN_from_fmpz_mat_t,
-           _new_GEN_from_fmpz_mat_t_rotate90, integer_matrix)
+                                           _new_GEN_from_fmpz_mat_t_rotate90,
+                                           integer_matrix)
 from sage.libs.pari.convert_sage_matrix import gen_to_sage_matrix
 #########################################################
 
@@ -114,6 +115,7 @@ from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_int
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import Vector
 
+from sage.matrix.matrix_modn_dense_flint cimport Matrix_modn_dense_flint
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
 from sage.matrix.matrix_modn_dense_double cimport Matrix_modn_dense_double
@@ -126,20 +128,23 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.matrix.matrix2 import decomp_seq
 
 from sage.matrix.matrix cimport Matrix
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 
 cimport sage.structure.element
 
 import sage.matrix.matrix_space as matrix_space
+import sys
 
 ################
 # Used for modular HNF
 from sage.rings.fast_arith cimport arith_int
 cdef arith_int ai = arith_int()
+from sage.libs.flint.nmod_mat cimport nmod_mat_set_entry
 
-######### linbox interface ##########
+# ######## linbox interface ##########
 from sage.libs.linbox.linbox_flint_interface cimport *
 
-########## iml -- integer matrix library ###########
+# ######### iml -- integer matrix library ###########
 from sage.libs.iml cimport *
 
 fplll_fp_map = {None: None,
@@ -151,7 +156,7 @@ fplll_fp_map = {None: None,
 
 cdef inline mpz_t * fmpz_mat_to_mpz_array(fmpz_mat_t m) except? NULL:
     cdef mpz_t * entries = <mpz_t *>check_allocarray(fmpz_mat_nrows(m), sizeof(mpz_t) * fmpz_mat_ncols(m))
-    cdef size_t i, j
+    cdef slong i, j
     cdef size_t k = 0
     sig_on()
     for i in range(fmpz_mat_nrows(m)):
@@ -200,9 +205,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ...
         TypeError: mutable matrices are unhashable
         sage: a.set_immutable()
-        sage: hash(a)
-        1846857684291126914  # 64-bit
-        1591707266           # 32-bit
+        sage: hash32 = 1591707266
+        sage: hash64 = 1846857684291126914
+        sage: hash(a) in [hash32, hash64]
+        True
     """
     def __cinit__(self):
         """
@@ -304,6 +310,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: v.parent()
             Full MatrixSpace of 1 by 100000 dense matrices over Integer Ring
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpz_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Integer z
         for t in ma.iter(coerce, True):
@@ -476,6 +489,48 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_is_zero(fmpz_mat_entry(self._matrix, i,j))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+
+        The object ``src`` must be of type ``Matrix_integer_dense`` and have
+        the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_integer_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(ZZ,3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_integer_dense _src = <Matrix_integer_dense> src
+        fmpz_set(fmpz_mat_entry(self._matrix, iDst, jDst), fmpz_mat_entry(_src._matrix, iSrc, jSrc))
+
     def _pickle(self):
         """
         EXAMPLES::
@@ -497,9 +552,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: matrix(ZZ,1,3,[1,193,15])._pickle() == (b'1 61 f', 0)   # indirect doctest
             True
         """
-        return str_to_bytes(self._export_as_string(32), 'ascii')
+        return self._export_as_string(32).encode('ascii')
 
-    cpdef _export_as_string(self, int base=10):
+    cpdef _export_as_string(self, int base=10, bint comma=False):
         """
         Return space separated string of the entries in this matrix, in the
         given base. This is optimized for speed.
@@ -508,24 +563,32 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``base`` -- integer <= 36; (default: 10)
 
+        - ``comma`` -- boolean; (default: ``False``)
+          to select comma as separator instead of space
+
         EXAMPLES::
 
             sage: m = matrix(ZZ,2,3,[1,2,-3,1,-2,-45])
             sage: m._export_as_string(10)
             '1 2 -3 1 -2 -45'
-            sage: m._export_as_string(16)
-            '1 2 -3 1 -2 -2d'
+            sage: m._export_as_string(10)
+            '1 2 -3 1 -2 -45'
+            sage: m._export_as_string(comma=True)
+            '1,2,-3,1,-2,-45'
         """
         # TODO: *maybe* redo this to use mpz_import and mpz_export
         # from sec 5.14 of the GMP manual. ??
-        cdef int i, j, len_so_far, m, n
+        cdef Py_ssize_t i, j, len_so_far
+        cdef int m, n
         cdef char *s
         cdef char *t
         cdef char *tmp
+        cdef char sep
 
         if self._nrows == 0 or self._ncols == 0:
             data = ''
         else:
+            sep = <char>44 if comma else <char>32
             n = self._nrows*self._ncols*10
             s = <char*> sig_malloc(n * sizeof(char))
             t = s
@@ -544,12 +607,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
                         sig_free(s)
                         s = tmp
                         t = s + len_so_far
-                    #endif
+                    # endif
                     fmpz_get_str(t, base, fmpz_mat_entry(self._matrix,i,j))
                     m = strlen(t)
                     len_so_far = len_so_far + m + 1
                     t = t + m
-                    t[0] = <char>32
+                    t[0] = sep
                     t[1] = <char>0
                     t = t + 1
             sig_off()
@@ -581,18 +644,18 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 self._unpickle_matrix_2x2_version0(data)
             else:
                 raise RuntimeError("invalid pickle data")
+
         else:
-            raise RuntimeError("unknown matrix version (=%s)"%version)
+            raise RuntimeError(f"unknown matrix version (={version})")
 
     cdef _unpickle_version0(self, data):
-        cdef Py_ssize_t i, j, n, k
+        cdef Py_ssize_t i, j, k
         data = data.split()
-        n = self._nrows * self._ncols
-        if len(data) != n:
+        if len(data) != self._nrows * self._ncols:
             raise RuntimeError("invalid pickle data")
         k = 0
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
+        for i in range(self._nrows):
+            for j in range(self._ncols):
                 s = data[k]
                 k += 1
                 if fmpz_set_str(fmpz_mat_entry(self._matrix, i, j), s, 32):
@@ -780,8 +843,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ....:         raise RuntimeError("ERROR\nm1=\n{}\nm2=\n{}\nans_flint=\n{}\nans_linbox=\n{}".format(
             ....:                 m1.str(), m2.str(), ans_flint.str(), ans_linbox.str()))
         """
-        if self._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right.")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Py_ssize_t i, j, k, nr, nc, snc
         cdef object parent
@@ -817,17 +879,76 @@ cdef class Matrix_integer_dense(Matrix_dense):
         fmpz_clear(s)
         return M
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
-        cdef Matrix_integer_dense M
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using FLINT.
 
-        if self._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right.")
+        ``fmpz_mat_mul`` takes the destination as its first argument and
+        chooses the multiplication algorithm itself, so the product is written
+        straight into the destination's FLINT storage.  This is the shared core
+        of :meth:`_matrix_times_matrix_` and of :meth:`set_to_product`.
 
-        M = self._new(self._nrows, right._ncols)
+        FLINT handles a zero inner dimension by zeroing the destination, so no
+        special case is needed here.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = matrix(ZZ, 2, 3, range(6))
+            sage: B = matrix(ZZ, 3, 2, range(6))
+            sage: C = matrix(ZZ, 2, 2)
+            sage: C.set_to_product(A, B)
+            sage: C
+            [10 13]
+            [28 40]
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination::
+
+            sage: C = matrix(ZZ, 3, 3, 1)
+            sage: C.set_to_product(matrix(ZZ, 3, 0), matrix(ZZ, 0, 3))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_integer_dense _left = <Matrix_integer_dense>left
+        cdef Matrix_integer_dense _right = <Matrix_integer_dense>right
 
         sig_on()
-        fmpz_mat_mul(M._matrix, self._matrix, (<Matrix_integer_dense>right)._matrix)
+        fmpz_mat_mul(self._matrix, _left._matrix, _right._matrix)
         sig_off()
+
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+        r"""
+        Return the product ``self * right``.
+
+        The result matrix is allocated and then written by
+        :meth:`_set_to_product`.
+
+        EXAMPLES::
+
+            sage: a = matrix(ZZ, 2, 3, range(6))
+            sage: b = matrix(ZZ, 3, 2, range(6))
+            sage: a * b  # indirect doctest
+            [10 13]
+            [28 40]
+        """
+        cdef Matrix_integer_dense M
+        cdef Matrix_integer_dense _right = <Matrix_integer_dense>right
+
+        check_matrix_multiplication_sizes(self, _right)
+
+        M = self._new(self._nrows, _right._ncols)
+
+        M._set_to_product(self, _right)
         return M
 
     cpdef _lmul_(self, Element right):
@@ -868,7 +989,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 9 11 13]
             [ 9 11 13]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_add(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -888,7 +1009,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [-2  0  2]
             [ 4  6  8]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_sub(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -1015,9 +1136,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
-        Compare ``self`` with ``right``, examining entries in
+        Compare ``self`` with ``other``, examining entries in
         lexicographic (row major) ordering.
 
         EXAMPLES::
@@ -1037,14 +1158,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_on()
         for i in range(self._nrows):
             for j in range(self._ncols):
-                k = fmpz_cmp(fmpz_mat_entry(self._matrix,i,j),
-                             fmpz_mat_entry((<Matrix_integer_dense>right)._matrix,i,j))
+                k = fmpz_cmp(fmpz_mat_entry(self._matrix, i, j),
+                             fmpz_mat_entry((<Matrix_integer_dense>other)._matrix, i, j))
                 if k:
                     sig_off()
-                    if k < 0:
-                        return rich_to_bool(op, -1)
-                    else:
-                        return rich_to_bool(op, 1)
+                    return rich_to_bool(op, -1 if k < 0 else 1)
         sig_off()
         return rich_to_bool(op, 0)
 
@@ -1173,12 +1291,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
         # computation over integers and reset positive entries to 1 to
         # avoid coefficient blowup.
 
-        cdef long dim = fmpz_mat_nrows(self._matrix)
+        cdef slong dim = fmpz_mat_nrows(self._matrix)
         if dim != fmpz_mat_ncols(self._matrix):
             raise ValueError("not a square matrix")
 
         cdef int s, diag, zero
-        cdef size_t i,j, N
+        cdef slong i, j, N
         cdef fmpz_mat_t m
 
         try:
@@ -1368,14 +1486,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
             fmpz_mat_charpoly(g._poly, self._matrix)
             sig_off()
         elif algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_charpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_charpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1 and g.degree() == self._nrows:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.charpoly(self, var)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         self.cache(cache_key, g)
         return g
@@ -1445,20 +1566,23 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if algorithm is None:
             algorithm = 'linbox'
 
-        key = 'minpoly_%s'%(algorithm)
+        key = 'minpoly_%s' % (algorithm)
         g = self.fetch(key)
         if g is not None:
             return g.change_variable_name(var)
 
         if algorithm == 'linbox':
-            g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
-            sig_on()
-            linbox_fmpz_mat_minpoly(g._poly, self._matrix)
-            sig_off()
+            while True:  # linbox is unreliable, see :issue:`37068`
+                g = (<Polynomial_integer_dense_flint> PolynomialRing(ZZ, names=var).gen())._new()
+                sig_on()
+                linbox_fmpz_mat_minpoly(g._poly, self._matrix)
+                sig_off()
+                if g.lc() == 1:
+                    break
         elif algorithm == 'generic':
             g = Matrix_dense.minpoly(self, var)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         self.cache(key, g)
         return g
@@ -1530,7 +1654,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         cdef Integer h
         cdef Matrix_integer_dense left = <Matrix_integer_dense>self
-        cdef int i, k
+        cdef Py_ssize_t i, k
 
         nr = left._nrows
         nc = right._ncols
@@ -1538,7 +1662,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef Matrix_integer_dense result
 
         h = left.height() * right.height() * left.ncols()
-        verbose('multiplying matrices of height %s and %s'%(left.height(),right.height()))
+        verbose('multiplying matrices of height %s and %s' % (left.height(),
+                                                              right.height()))
         mm = MultiModularBasis(h)
         res = left._reduce(mm)
         res_right = right._reduce(mm)
@@ -1546,7 +1671,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         for i in range(k):  # yes, I could do this with zip, but to conserve memory...
             t = cputime()
             res[i] *= res_right[i]
-            verbose('multiplied matrices modulo a prime (%s/%s)'%(i+1,k), t)
+            verbose('multiplied matrices modulo a prime (%s/%s)' % (i+1, k), t)
         result = left.new_matrix(nr,nc)
         _lift_crt(result, res, mm)  # changes result
         return result
@@ -1565,11 +1690,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [     1      2]
             [999998      3]
         """
-        cdef mod_int c = modulus
-        if int(c) != modulus:
-            raise OverflowError
-        else:
-            return self._mod_int_c(modulus)
+        if modulus > sys.maxsize:
+            raise ValueError("p too large")
+        return self._mod_int_c(modulus)
 
     cdef _mod_two(self):
         """
@@ -1586,8 +1709,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return Matrix_mod2_dense(MS, self, True, True)
 
     cdef _mod_int_c(self, mod_int p):
-        from sage.matrix.matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
-        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
+        from sage.matrix.matrix_modn_dense_flint import MAX_MODULUS as MAX_MODULUS_FLINT
 
         cdef Py_ssize_t i, j
 
@@ -1597,9 +1719,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef double* res_row_d
         cdef Matrix_modn_dense_double res_d
 
+        parent = matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False)
+
         if p == 2:
             return self._mod_two()
-        elif p < MAX_MODULUS_FLOAT:
+        elif parent.Element is Matrix_modn_dense_float:
             res_f = Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
                                                     matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
@@ -1608,7 +1732,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                     res_row_f[j] = <float>fmpz_fdiv_ui(fmpz_mat_entry(self._matrix,i,j), p)
             return res_f
 
-        elif p < MAX_MODULUS_DOUBLE:
+        elif parent.Element is Matrix_modn_dense_double:
             res_d = Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
                                                      matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False), None, None, None, zeroed_alloc=False)
             for i from 0 <= i < self._nrows:
@@ -1616,12 +1740,21 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for j from 0 <= j < self._ncols:
                     res_row_d[j] = <double>fmpz_fdiv_ui(fmpz_mat_entry(self._matrix,i,j), p)
             return res_d
-        else:
-            raise ValueError("p to big.")
+        elif p > MAX_MODULUS_FLINT:
+            raise ValueError("p too large")
+        cdef Matrix_modn_dense_flint ans = Matrix_modn_dense_flint.__new__(Matrix_modn_dense_flint, parent)
+        ans._parent = parent
+        # useless: cdef double pinv = n_precompute_inverse(p)
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                nmod_mat_set_entry(
+                    ans._matrix, i, j,
+                    fmpz_fdiv_ui(fmpz_mat_entry(self._matrix, i, j), p))
+        return ans
 
     def _reduce(self, moduli):
-        from sage.matrix.matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
         from sage.matrix.matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
+        from sage.matrix.matrix_modn_dense_flint import MAX_MODULUS as MAX_MODULUS_FLINT
 
         if isinstance(moduli, (int, Integer)):
             return self._mod_int(moduli)
@@ -1633,18 +1766,26 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         res = []
         for p in mm:
-            if p < MAX_MODULUS_FLOAT:
-                res.append( Matrix_modn_dense_float.__new__(Matrix_modn_dense_float,
-                                                            matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                            None, None, None, zeroed_alloc=False) )
-            elif p < MAX_MODULUS_DOUBLE:
-                res.append( Matrix_modn_dense_double.__new__(Matrix_modn_dense_double,
-                                                             matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
-                                                             None, None, None, zeroed_alloc=False) )
+            parent = matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False)
+            if parent.Element is Matrix_modn_dense_float:
+                res.append(Matrix_modn_dense_float.__new__(
+                    Matrix_modn_dense_float,
+                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
+                    None, None, None, zeroed_alloc=False))
+            elif parent.Element is Matrix_modn_dense_double and p < MAX_MODULUS_DOUBLE:
+                res.append(Matrix_modn_dense_double.__new__(
+                    Matrix_modn_dense_double,
+                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
+                    None, None, None, zeroed_alloc=False))
+            elif p <= MAX_MODULUS_FLINT:
+                res.append(Matrix_modn_dense_flint.__new__(
+                    Matrix_modn_dense_flint,
+                    matrix_space.MatrixSpace(IntegerModRing(p), self._nrows, self._ncols, sparse=False),
+                    None, None, None, zeroed_alloc=False))
             else:
-                raise ValueError("p=%d too big."%p)
+                raise ValueError("p=%d too big" % p)
 
-        cdef size_t i, k, n
+        cdef Py_ssize_t i, j, k, n
         cdef Py_ssize_t nr, nc
         cdef mpz_t tmp
         mpz_init(tmp)
@@ -1664,9 +1805,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 mm.mpz_reduce(tmp, entry_list)
                 for k from 0 <= k < n:
                     if isinstance(res[k], Matrix_modn_dense_float):
-                        (<Matrix_modn_dense_float>res[k])._matrix[i][j] = (<float>entry_list[k])%(<Matrix_modn_dense_float>res[k]).p
+                        (<Matrix_modn_dense_float>res[k])._matrix[i][j] = (<float>entry_list[k]) % mm.moduli[k]
+                    elif isinstance(res[k], Matrix_modn_dense_double):
+                        (<Matrix_modn_dense_double>res[k])._matrix[i][j] = (<double>entry_list[k]) % mm.moduli[k]
                     else:
-                        (<Matrix_modn_dense_double>res[k])._matrix[i][j] = (<double>entry_list[k])%(<Matrix_modn_dense_double>res[k]).p
+                        nmod_mat_set_entry((<Matrix_modn_dense_flint>res[k])._matrix, i, j, entry_list[k] % mm.moduli[k])
         sig_off()
         mpz_clear(tmp)
         sig_free(entry_list)
@@ -1687,16 +1830,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         EXAMPLES::
 
+            sage: # optional - magma
             sage: m = matrix(ZZ,2,3,[1,2,-3,1,-2,-45])
             sage: m._magma_init_(magma)
-            'Matrix(IntegerRing(),2,3,StringToIntegerSequence("1 2 -3 1 -2 -45"))'
-            sage: magma(m)                                               # optional - magma
+            'Matrix(IntegerRing(),2,3,[1,2,-3,1,-2,-45])'
+            sage: magma(m)
             [  1   2  -3]
             [  1  -2 -45]
         """
-        w = self._export_as_string(base=10)
-        return 'Matrix(IntegerRing(),%s,%s,StringToIntegerSequence("%s"))'%(
-            self.nrows(), self.ncols(), w)
+        w = self._export_as_string(comma=True)
+        return f'Matrix(IntegerRing(),{self._nrows},{self._ncols},[{w}])'
 
     def symplectic_form(self):
         r"""
@@ -1998,7 +2141,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: H == U*m
             True
         """
-        key = 'hnf-%s-%s'%(include_zero_rows,transformation)
+        key = 'hnf-%s-%s' % (include_zero_rows, transformation)
         ans = self.fetch(key)
         if ans is not None:
             return ans
@@ -2053,8 +2196,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
                     H_m = H_m[:r]
                     U = U[:r]
             else:
-                H_m, pivots = matrix_integer_dense_hnf.hnf(self,
-                                   include_zero_rows=include_zero_rows, proof=proof)
+                H_m, pivots = matrix_integer_dense_hnf.hnf(
+                    self, include_zero_rows=include_zero_rows, proof=proof
+                )
         elif transformation:
             raise ValueError("transformation matrix only available with p-adic algorithm")
         elif algorithm in ["pari", "pari0", "pari1", "pari4"]:
@@ -2065,14 +2209,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
 
             import sage.libs.ntl.ntl_mat_ZZ
-            v =  sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
+            v = sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
             for i from 0 <= i < self._nrows:
                 for j from 0 <= j < self._ncols:
                     v[i,j] = self.get_unsafe(nr-i-1,nc-j-1)
 
             try:
                 w1 = v.HNF(D=D)
-            except RuntimeError: # HNF may fail if a nxm matrix has rank < m
+            except RuntimeError:  # HNF may fail if a nxm matrix has rank < m
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
 
             if include_zero_rows:
@@ -2267,7 +2411,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         self.cache('pivots', p)
         return p
 
-    #### Elementary divisors
+    # Elementary divisors
 
     def elementary_divisors(self, algorithm='pari'):
         """
@@ -2349,7 +2493,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if i > 0:
                 d = d[i:] + [d[0]]*i
         else:
-            raise ValueError("algorithm (='%s') unknown"%algorithm)
+            raise ValueError("algorithm (='%s') unknown" % algorithm)
 
         self.cache('elementary_divisors', d)
         return d[:]
@@ -2535,8 +2679,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1].sage())
             return F, B
 
-    frobenius = deprecated_function_alias(36396, frobenius_form)
-
     def _right_kernel_matrix(self, **kwds):
         r"""
         Return a pair that includes a matrix of basis vectors
@@ -2686,7 +2828,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             K = self._rational_kernel_iml().transpose().saturation(proof=proof)
             format = 'computed-iml-int'
         else:
-            raise ValueError('unknown algorithm: %s'%algorithm)
+            raise ValueError('unknown algorithm: %s' % algorithm)
         tm = verbose("done computing right kernel matrix over the integers for %sx%s matrix" % (self.nrows(), self.ncols()),level=1, t=tm)
         return (format, K)
 
@@ -2795,8 +2937,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``precision`` -- (default: ``0`` for automatic choice) bit
           precision to use if ``fp='rr'`` is set
 
-        - ``**kwds`` -- keywords to be passed to :mod:`fpylll`; see
-          :class:`fpylll.BKZ.Param` for details
+        - ``**kwds`` -- keywords to be passed to ``fpylll``; see
+          ``fpylll.BKZ.Param`` for details
 
         Also, if the verbose level is at least `2`, some output
         is printed during the computation.
@@ -2934,6 +3076,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
                           precision=precision)
 
             R = A.to_matrix(self.new_matrix())
+
+        else:
+            raise ValueError("unknown algorithm")
+
         return R
 
     def LLL(self, delta=None, eta=None, algorithm='fpLLL:wrapper', fp=None, prec=0, early_red=False, use_givens=False, use_siegel=False, transformation=False, **kwds):
@@ -3002,8 +3148,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``transformation`` -- boolean (default: ``False``); also return transformation
           matrix
 
-        - ``**kwds`` -- keywords to be passed to :mod:`fpylll`; see
-          :meth:`fpylll.LLL.reduction` for details
+        - ``**kwds`` -- keywords to be passed to ``fpylll``; see
+          :meth:`fpylll.LLL.reduction <fpylll.fplll.lll.LLL.reduction>`
+          for details
 
         Also, if the verbose level is at least `2`, some output
         is printed during the computation.
@@ -3021,6 +3168,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``'fpLLL:wrapper'`` -- fpLLL's automatic choice (default)
 
         - ``'pari'`` -- pari's qflll
+
+        - ``'flatter'`` -- external executable ``flatter``, requires manual install
+          from https://github.com/keeganryan/flatter.
+          When the input matrix does not have full row rank,
+          versions before https://github.com/keeganryan/flatter/pull/23 would error out,
+          versions after that might work but remove zero rows, unlike ``'fplll'`` algorithm.
+          Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see :pari:`qflll`.
 
         OUTPUT: a matrix over the integers
 
@@ -3145,33 +3299,75 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         .. NOTE::
 
-            See :mod:`sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ.LLL` and
+            See ``sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ.LLL`` and
             :mod:`fpylll.fplll.lll` for details on the algorithms used.
 
             Although LLL is a deterministic algorithm, the output for
             different implementations and CPUs (32-bit vs. 64-bit) may
             vary, while still being correct.
+
+        Check ``flatter``::
+
+            sage: # needs flatter
+            sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: L = M.LLL(algorithm="flatter")
+            sage: abs(M.det()) == abs(L.det())
+            True
+            sage: L = M.LLL(algorithm="flatter", delta=0.99)
+            sage: abs(M.det()) == abs(L.det())
+            True
+
+        In sufficiently new versions of flatter, the following works::
+
+            sage: # needs flatter
+            sage: matrix.identity(3).stack(matrix.identity(3)).LLL(algorithm="flatter")
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: matrix.identity(4)[:,:1].LLL(algorithm="flatter")
+            [1]
+            sage: matrix.zero(1, 2).LLL(algorithm="flatter")
+            []
+            sage: matrix.zero(2, 1).LLL(algorithm="flatter")
+            []
         """
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
             if transformation:
                 return self, self.new_matrix(0,0)
-            else:
-                return self
+            return self
 
         r = None  # rank
         cdef Matrix_integer_dense R = None  # LLL-reduced matrix
         cdef Matrix_integer_dense U = None  # transformation matrix
 
-        tm = verbose("LLL of %sx%s matrix (algorithm %s)"%(self.nrows(), self.ncols(), algorithm))
-        import sage.libs.ntl.all
-        ntl_ZZ = sage.libs.ntl.all.ZZ
+        tm = verbose("LLL of %sx%s matrix (algorithm %s)" % (self.nrows(),
+                                                             self.ncols(),
+                                                             algorithm))
+        from sage.libs.ntl.ntl_ZZ import ntl_ZZ
 
         verb = get_verbose() >= 2
 
         if prec < 0:
             raise TypeError("precision prec must be >= 0")
         prec = int(prec)
+
+        if algorithm == 'flatter':
+            import subprocess
+            cmd = ["flatter"]
+            if fp is not None or early_red or use_givens or transformation or eta is not None or use_siegel:
+                raise TypeError("flatter does not support fp, early_red, use_givens, transformation, eta or use_siegel")
+            if kwds:
+                raise TypeError("flatter does not support additional keywords")
+            if delta is not None:
+                cmd += ["-delta", str(delta)]
+            stdout = subprocess.run(
+                    cmd, input="[" + "\n".join('[' + ' '.join(str(x) for x in row) + ']' for row in self) + "]",
+                    text=True, encoding="utf-8", stdout=subprocess.PIPE, check=True).stdout
+            entries = [[ZZ(x) for x in row.strip('[] ').split()] for row in stdout.strip('[] \n').split('\n')]
+            if len(entries) == 1 and not entries[0]:  # e.g. stdout = '[]\n'
+                return self.new_matrix(nrows=0)
+            return self.new_matrix(entries=entries, nrows=len(entries))
 
         if algorithm == 'NTL:LLL':
             if fp is None:
@@ -3211,9 +3407,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise TypeError("eta must be >= 0.5")
 
         if algorithm.startswith('NTL:'):
+            from sage.libs.ntl.ntl_mat_ZZ import ntl_mat_ZZ as mat_ZZ
 
-            A = sage.libs.ntl.all.mat_ZZ(self.nrows(),self.ncols(),
-                    [ntl_ZZ(z) for z in self.list()])
+            A = mat_ZZ(self.nrows(),self.ncols(),
+                       [ntl_ZZ(z) for z in self.list()])
 
             if algorithm == "NTL:LLL":
                 if transformation:
@@ -3241,7 +3438,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 else:
                     r = A.LLL_XD(delta, verbose=verb, return_U=transformation)
             else:
-                raise TypeError("algorithm %s not supported"%algorithm)
+                raise TypeError("algorithm %s not supported" % algorithm)
 
             if isinstance(r, tuple):
                 r, UNTL = r
@@ -3286,7 +3483,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             R = U * self
 
         else:
-            raise TypeError("algorithm %s not supported"%algorithm)
+            raise TypeError("algorithm %s not supported" % algorithm)
 
         verbose("LLL finished", tm)
         if r is not None:
@@ -3294,10 +3491,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             R.cache("rank", r)
         if transformation:
             return R, U
-        else:
-            return R
+        return R
 
-    def is_LLL_reduced(self, delta=None, eta=None):
+    def is_LLL_reduced(self, delta=None, eta=None, algorithm='fpLLL'):
         r"""
         Return ``True`` if this lattice is `(\delta, \eta)`-LLL reduced.
         See ``self.LLL`` for a definition of LLL reduction.
@@ -3308,6 +3504,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``eta`` -- (default: `0.501`) parameter `\eta` as described above
 
+        - ``algorithm`` -- either ``'fpLLL'`` (default) or ``'sage'``
+
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 10, 10)
@@ -3316,6 +3514,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
             sage: L.is_LLL_reduced()
             True
+
+        The ``'sage'`` algorithm currently does not work for matrices with
+        linearly dependent rows::
+
+            sage: A = matrix(ZZ, [[1, 2, 3], [2, 4, 6]])
+            sage: A.is_LLL_reduced(algorithm='sage')
+            Traceback (most recent call last):
+            ...
+            ValueError: linearly dependent input for module version of Gram-Schmidt
         """
         if eta is None:
             eta = 0.501
@@ -3330,20 +3537,27 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if eta < 0.5:
             raise TypeError("eta must be >= 0.5")
 
-        # this is pretty slow
-        import sage.modules.misc
-        G, mu = sage.modules.misc.gram_schmidt(self.rows())
-        #For any $i>j$, we have $|mu_{i, j}| <= \eta$
-        for e in mu.list():
-            if e.abs() > eta:
-                return False
+        if algorithm == 'fpLLL':
+            from fpylll import LLL, IntegerMatrix
+            A = IntegerMatrix.from_matrix(self)
+            return LLL.is_reduced(A, delta=delta, eta=eta)
+        elif algorithm == 'sage':
+            # This is pretty slow
+            import sage.modules.misc
+            G, mu = sage.modules.misc.gram_schmidt(self.rows())
+            # For any $i>j$, we have $|mu_{i, j}| <= \eta$
+            for e in mu.list():
+                if e.abs() > eta:
+                    return False
 
-        #For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
-        norms = [G[i].norm()**2 for i in range(len(G))]
-        for i in range(1,self.nrows()):
-            if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
-                return False
-        return True
+            # For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
+            norms = [G[i].norm()**2 for i in range(len(G))]
+            for i in range(1,self.nrows()):
+                if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
+                    return False
+            return True
+        else:
+            raise ValueError("algorithm must be one of 'fpLLL' or 'sage'")
 
     def prod_of_row_sums(self, cols):
         """
@@ -3513,7 +3727,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 num_per_row = int(density * nc)
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < num_per_row:
-                        k = rstate.c_random()%nc
+                        k = rstate.c_random() % nc
                         the_integer_ring._randomize_mpz(tmp,
                                                         x, y, distribution)
                         self.set_unsafe_mpz(i,k,tmp)
@@ -3524,17 +3738,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
             # each entry is set until it's nonzero.
             sig_on()
             if density == 1:
-                for i from 0 <= i < self._nrows:
-                    for j from 0 <= j < self._ncols:
+                for i in range(self._nrows):
+                    for j in range(self._ncols):
                         while fmpz_sgn(fmpz_mat_entry(self._matrix,i,j)) == 0:
                             the_integer_ring._randomize_mpz(tmp,
-                                x, y, distribution)
+                                                            x, y, distribution)
                             self.set_unsafe_mpz(i,j,tmp)
             else:
                 nc = self._ncols
                 num_per_row = int(density * nc)
-                for i from 0 <= i < self._nrows:
-                    for j from 0 <= j < num_per_row:
+                for i in range(self._nrows):
+                    for _ in range(num_per_row):
                         k = rstate.c_random() % nc
                         while fmpz_sgn(fmpz_mat_entry(self._matrix,i,k)) == 0:
                             the_integer_ring._randomize_mpz(tmp,
@@ -3544,7 +3758,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sig_off()
         mpz_clear(tmp)
 
-    #### Rank
+    # Rank
 
     def rank(self, algorithm='modp'):
         """
@@ -3640,7 +3854,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         A = self._mod_int_c(p)
         return A.rank()
 
-    #### Determinant
+    # Determinant
 
     def determinant(self, algorithm='default', proof=None, stabilize=2):
         r"""
@@ -3657,8 +3871,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
           - ``'padic'`` -- uses a `p`-adic / multimodular
             algorithm that relies on code in IML and linbox
 
-          - ``'linbox'`` -- calls linbox det (you *must* set
-            proof=False to use this!)
+          - ``'linbox'`` -- deprecated; calls linbox det (you *must*
+            set proof=False to use this!). This algorithm is slower
+            than the default algorithm and unstable: it is not
+            guaranteed to return the correct determinant.
 
           - ``'ntl'`` -- calls NTL's det function
 
@@ -3713,6 +3929,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             RuntimeError: you must pass the proof=False option to the determinant command to use LinBox's det algorithm
             sage: A.determinant(algorithm='linbox', proof=False)
+            doctest:warning...
+            DeprecationWarning: algorithm='linbox' for integer matrix determinants is deprecated...
+            See https://github.com/sagemath/sage/issues/42086 for details.
             -21
             sage: A._clear_cache()
             sage: A.determinant()
@@ -3734,7 +3953,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: A = random_matrix(ZZ,30)
             sage: d = A.determinant()
             sage: A._clear_cache()
-            sage: A.determinant(algorithm='linbox',proof=False) == d
+            sage: A.determinant(algorithm='flint',proof=False) == d
             True
 
         TESTS:
@@ -3803,7 +4022,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         elif algorithm == 'ntl':
             d = self._det_ntl()
         else:
-            raise TypeError("algorithm '%s' not known"%(algorithm))
+            raise TypeError("algorithm '%s' not known" % (algorithm))
 
         self.cache('det', d)
         return d
@@ -3815,8 +4034,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
         TESTS::
 
             sage: matrix(ZZ, 0)._det_linbox()
+            doctest:warning...
+            DeprecationWarning: algorithm='linbox' for integer matrix determinants is deprecated...
+            See https://github.com/sagemath/sage/issues/42086 for details.
             1
         """
+        from sage.misc.superseded import deprecation_cython
+        deprecation_cython(
+            42086,
+            "algorithm='linbox' for integer matrix determinants is deprecated "
+            "because it is slower than the default algorithm and may return "
+            "incorrect results; use the default algorithm instead")
         if self._nrows != self._ncols:
             raise ArithmeticError("self must be a square matrix")
         if self._nrows == 0:
@@ -3905,10 +4133,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return self.matrix_space(self._ncols, 0).zero_matrix()
 
-        cdef long dim
-        cdef unsigned long i,j,k
+        cdef long dim, j
+        cdef Py_ssize_t i
+        cdef size_t k
         cdef mpz_t *mp_N
-        time = verbose('computing null space of %s x %s matrix using IML'%(self._nrows, self._ncols))
+        time = verbose('computing null space of %s x %s matrix using IML' % (self._nrows, self._ncols))
         cdef mpz_t * m = fmpz_mat_to_mpz_array(self._matrix)
         sig_on()
         dim = nullspaceMP(self._nrows, self._ncols, m, &mp_N)
@@ -3953,7 +4182,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return self.matrix_space(self._ncols, 0).zero_matrix()
 
-        cdef long dim
+        cdef slong dim
         cdef fmpz_mat_t M0
         sig_on()
         fmpz_mat_init(M0, self._ncols, self._ncols)
@@ -3961,7 +4190,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         # Now read the answer as a matrix.
         cdef Matrix_integer_dense M = self._new(self._ncols, dim)
-        cdef size_t i,j
+        cdef Py_ssize_t i
+        cdef slong j
         for i in range(self._ncols):
             for j in range(dim):
                 fmpz_set(fmpz_mat_entry(M._matrix, i, j), fmpz_mat_entry(M0, i, j))
@@ -4014,7 +4244,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise TypeError("self must be a square matrix.")
 
         P = self.parent()
-        time = verbose('computing inverse of %s x %s matrix using IML'%(self._nrows, self._ncols))
+        time = verbose('computing inverse of %s x %s matrix using IML' % (self._nrows, self._ncols))
         if use_nullspace:
             A = self.augment(P.identity_matrix())
             K = A._rational_kernel_iml()
@@ -4073,7 +4303,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef fmpz_t fden
         fmpz_init(fden)
         M = self._new(self._nrows,self._ncols)
-        verbose('computing inverse of %s x %s matrix using FLINT'%(self._nrows, self._ncols))
+        verbose('computing inverse of %s x %s matrix using FLINT' % (self._nrows, self._ncols))
         sig_on()
         res = fmpz_mat_inv(M._matrix,fden,self._matrix)
         fmpz_get_mpz(den.value,fden)
@@ -4083,8 +4313,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ZeroDivisionError('matrix must be nonsingular')
         if den < 0:
             return -M, -den
-        else:
-            return M, den
+        return M, den
 
     def __invert__(self):
         r"""
@@ -4146,7 +4375,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ArithmeticError("non-invertible matrix")
         return A
 
-    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm = 'iml'):
+    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm='iml'):
         r"""
         If ``self`` is a matrix `A` of full rank, then this function
         returns a vector or matrix `X` such that `A X = B`.
@@ -4254,15 +4483,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise NotFullRankError
 
         if not self.is_square():
-            raise NotImplementedError("the input matrix must be square.")
+            raise NotImplementedError("the input matrix must be square")
 
         if isinstance(B, Vector):
             if self.nrows() != B.degree():
-                raise ValueError("number of rows of self must equal degree of B.")
+                raise ValueError("number of rows of self must equal degree of B")
         elif self.nrows() != B.nrows():
-                raise ValueError("number of rows of self must equal number of rows of B.")
+            raise ValueError("number of rows of self must equal number of rows of B")
 
-        if self.nrows() == 0:
+        if not self.nrows():
             return B
 
         matrix = True
@@ -4282,16 +4511,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         if algorithm == 'flint':
             X, d = self._solve_flint(C, right=True)
-        elif algorithm == 'iml': # iml
+        elif algorithm == 'iml':  # iml
             X, d = self._solve_iml(C, right = True)
         else:
-            raise ValueError("Unknown algorithm '%s'"%algorithm)
+            raise ValueError("Unknown algorithm '%s'" % algorithm)
         if d != 1:
             X = (1/d) * X
         if not matrix:
             # Convert back to a vector
             X = (X.base_ring() ** X.nrows())(X.list())
-        verbose('finished solve_right via %s'%algorithm, t)
+        verbose('finished solve_right via %s' % algorithm, t)
         return X
 
     def _solve_iml(self, Matrix_integer_dense B, right=True):
@@ -4367,14 +4596,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_iml(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)
 
         ALGORITHM: Uses IML.
 
@@ -4382,7 +4605,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - Martin Albrecht
         """
-        cdef unsigned long i, j, k
+        cdef Py_ssize_t i, j
+        cdef long k, n, m
         cdef mpz_t *mp_N
         cdef mpz_t mp_D
         cdef Matrix_integer_dense M
@@ -4413,7 +4637,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             solu_pos = RightSolu
 
-        else: # left
+        else:  # left
             if self._nrows != B._ncols:
                 raise ArithmeticError("B's number of columns must match self's number of rows")
 
@@ -4431,7 +4655,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         sig_check()
         verbose("Initializing mp_N and mp_D")
-        mp_N = <mpz_t *> sig_malloc( n * m * sizeof(mpz_t) )
+        mp_N = <mpz_t *> sig_malloc(n * m * sizeof(mpz_t))
         for i in range(n * m):
             mpz_init(mp_N[i])
         mpz_init(mp_D)
@@ -4439,7 +4663,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef mpz_t * mself = fmpz_mat_to_mpz_array(self._matrix)
         cdef mpz_t * mB = fmpz_mat_to_mpz_array(B._matrix)
         try:
-            verbose('Calling solver n = %s, m = %s'%(n,m))
+            verbose('Calling solver n = %s, m = %s' % (n, m))
             sig_on()
             nonsingSolvLlhsMM(solu_pos, n, m, mself, mB, mp_N, mp_D)
             sig_off()
@@ -4531,14 +4755,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_flint(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)
 
         AUTHORS:
 
@@ -4575,7 +4793,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sig_off()
             return M,den
 
-        else: # left
+        else:  # left
             if self._nrows != B._ncols:
                 raise ArithmeticError("B's number of columns must match self's number of rows")
 
@@ -4588,7 +4806,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             M,d = self.transpose()._solve_flint(B.transpose(), right=True)
             return M.transpose(),d
 
-    def _rational_echelon_via_solve(self, solver = 'iml'):
+    def _rational_echelon_via_solve(self, solver='iml'):
         r"""
         Compute information that gives the reduced row echelon form (over
         QQ!) of a matrix with integer entries.
@@ -4740,12 +4958,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             pivots_ = set(pivots)
             non_pivots = [i for i in range(B.ncols()) if i not in pivots_]
             D = B.matrix_from_columns(non_pivots)
-            t = verbose('calling %s solver'%solver, level=2, caller_name='p-adic echelon')
+            t = verbose('calling %s solver' % solver,
+                        level=2, caller_name='p-adic echelon')
             if solver == 'iml':
                 X, d = C._solve_iml(D, right=True)
             else:
                 X, d = C._solve_flint(D, right=True)
-            t = verbose('finished %s solver'%solver, level=2, caller_name='p-adic echelon', t=t)
+            t = verbose('finished %s solver' % solver,
+                        level=2, caller_name='p-adic echelon', t=t)
 
             # Step 6: Verify that we had chosen the correct pivot columns.
             pivots_are_right = True
@@ -4757,7 +4977,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for j in reversed(range(X.nrows())):
                     if X[j,z] != 0:
                         if j < np:
-                            break # we're good -- go on to next column of X
+                            break  # we're good -- go on to next column of X
                         else:
                             pivots_are_right = False
                             break
@@ -4795,14 +5015,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: w.charpoly().factor()
             (x - 3) * (x + 2)
             sage: w.decomposition()
-            [
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 5 -2], True),
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1], True)
-            ]
+            [(Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [ 5 -2],
+              True),
+             (Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [0 1],
+              True)]
         """
         F = self.charpoly().factor()
         if len(F) == 1:
@@ -4936,11 +5156,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 row_i = A.row(i)
                 row_n = A.row(n)
 
-                ag = a//g
-                bg = b//g
+                ag = a // g
+                bg = b // g
 
-                new_top = s*row_i  +  t*row_n
-                new_bot = bg*row_i - ag*row_n
+                new_top = s * row_i + t * row_n
+                new_bot = bg * row_i - ag * row_n
 
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
@@ -4964,7 +5184,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         new_pivots = list(pivots)
         if v != 0:
             i = v.nonzero_positions()[0]
-            assert not (i in pivots), 'WARNING: bug in add_row -- i (=%s) should not be a pivot'%i
+            assert not (i in pivots), 'WARNING: bug in add_row -- i (=%s) should not be a pivot' % i
 
             # If pivot entry is negative negate this row.
             if v[i] < 0:
@@ -5011,13 +5231,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
         t = verbose('hermite mod %s' % D, caller_name='matrix_integer_dense')
         if self._nrows != self._ncols:
             raise ValueError("matrix is not square")
-        cdef Matrix_integer_dense res = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense res = self._new(self._nrows, self._ncols)
         self._hnf_modn(res, D)
         verbose('finished hnf mod', t, caller_name='matrix_integer_dense')
         return res
 
     cdef int _hnf_modn(Matrix_integer_dense self, Matrix_integer_dense res,
-            unsigned int det) except -1:
+                       unsigned int det) except -1:
         """
         Puts ``self`` into HNF form modulo det. Changes ``self`` in place.
         """
@@ -5032,7 +5252,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_free(res_l)
 
     cdef int* _hnf_modn_impl(Matrix_integer_dense self, unsigned int det,
-            Py_ssize_t nrows, Py_ssize_t ncols) except NULL:
+                             Py_ssize_t nrows, Py_ssize_t ncols) except NULL:
         # NOTE: det should be at most 2^31-1, such that anything modulo
         # det fits in a 32-bit signed integer. To avoid overflow, we
         # need 64-bit arithmetic for some intermediate computations.
@@ -5107,7 +5327,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for k from 0 <= k < i:
                     res_rows[i][k] = 0
                 for k from i <= k < ncols:
-                    t = ((<int64_t>u)*T_rows[i][k])%R
+                    t = ((<int64_t>u)*T_rows[i][k]) % R
                     if t < 0:
                         t += R
                     res_rows[i][k] = t
@@ -5117,7 +5337,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 for j from 0 <= j < i:
                     q = res_rows[j][i]/d
                     for k from i <= k < ncols:
-                        u = (res_rows[j][k] - (<int64_t>q)*res_rows[i][k])%R
+                        u = (res_rows[j][k] - (<int64_t>q)*res_rows[i][k]) % R
                         if u < 0:
                             u += R
                         res_rows[j][k] = u
@@ -5126,7 +5346,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 i += 1
                 j = i
                 if i == nrows:
-                    break # return res
+                    break  # return res
                 if T_rows[i][i] == 0:
                     T_rows[i][i] = R
                 continue
@@ -5140,11 +5360,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
             d = ai.c_xgcd_int(T_i_i, T_j_i, &u, &v)
             if d != T_i_i:
                 for k from i <= k < ncols:
-                    B[k] = ((<int64_t>u)*T_rows[i][k] + (<int64_t>v)*T_rows[j][k])%R
+                    B[k] = ((<int64_t>u)*T_rows[i][k] + (<int64_t>v)*T_rows[j][k]) % R
             c1 = T_i_i/d
             c2 = -T_j_i/d
             for k from i <= k < ncols:
-                T_rows[j][k] = ((<int64_t>c1)*T_rows[j][k] + (<int64_t>c2)*T_rows[i][k])%R
+                T_rows[j][k] = ((<int64_t>c1)*T_rows[j][k] + (<int64_t>c2)*T_rows[i][k]) % R
             if d != T_i_i:
                 for k from i <= k < ncols:
                     T_rows[i][k] = B[k]
@@ -5417,6 +5637,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  3   4   5]
             [  6   7   8]
             [  1   5 -10]
+
+        TESTS:
+
+        Ensure that :issue:`11328` is fixed::
+
+            sage: m = matrix([[int(1),int(1)],[int(1),int(1)]])
+            sage: m.insert_row(1,[int(2),int(3)])
+            [1 1]
+            [2 3]
+            [1 1]
         """
         cdef Matrix_integer_dense res = self._new(self._nrows + 1, self._ncols)
         cdef Py_ssize_t j
@@ -5432,7 +5662,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             for i from 0 <= i < index:
                 fmpz_init_set(fmpz_mat_entry(res._matrix,i,j), fmpz_mat_entry(self._matrix,i,j))
 
-            z = row[j]
+            z = ZZ(row[j])
+
             fmpz_set_mpz(zflint,z.value)
             fmpz_init_set(fmpz_mat_entry(res._matrix,index,j), zflint)
 
@@ -5614,7 +5845,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         name = singular._next_var_name()
         values = str(self.list())[1:-1]
-        singular.eval("intmat %s[%d][%d] = %s"%(name, self.nrows(), self.ncols(), values))
+        singular.eval("intmat %s[%d][%d] = %s" % (name, self.nrows(),
+                                                  self.ncols(), values))
 
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)
@@ -5707,9 +5939,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ri = nr
         for i from 0 <= i < nr:
             rj = nc
-            ri =  ri-1
+            ri -= 1
             for j from 0 <= j < nc:
-                rj = rj-1
+                rj -= 1
                 fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
                               fmpz_mat_entry(self._matrix, i, j))
         sig_off()
@@ -5721,7 +5953,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return A
 
     def __pari__(self):
-        """
+        r"""
         Return PARI C-library version of this matrix.
 
         EXAMPLES::
@@ -5733,6 +5965,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [1, 2; 3, 4]
             sage: type(pari(a))
             <class 'cypari2.gen.Gen'>
+
+        A PARI ``t_MAT`` is a vector of columns, so a matrix with no columns
+        has nowhere to record its number of rows.  The row count is therefore
+        lost for such a matrix::
+
+            sage: matrix(ZZ, 2, 0).__pari__()
+            [;]
+            sage: matrix(ZZ, 2, 0).__pari__().sage().dimensions()
+            (0, 0)
+
+        The number of columns is preserved when there are no rows::
+
+            sage: matrix(ZZ, 0, 3).__pari__()
+            matrix(0,3)
+            sage: matrix(ZZ, 0, 3).__pari__().sage().dimensions()
+            (0, 3)
         """
         return integer_matrix(self._matrix, 0)
 
@@ -6046,8 +6294,8 @@ cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None):
         [-1  0  1  0  0  1  1  0  0  0 -1 -2]
     """
 
-    cdef size_t i, j, k
-    cdef Py_ssize_t nr, n
+    cdef Py_ssize_t i, j, k
+    cdef Py_ssize_t nr, nc, n
     cdef mpz_t *tmp = <mpz_t *>sig_malloc(sizeof(mpz_t) * M._ncols)
     n = len(residues)
     if n == 0:   # special case: obviously residues[0] wouldn't make sense here.
@@ -6059,14 +6307,13 @@ cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None):
         moduli = MultiModularBasis([m.base_ring().order() for m in residues])
     else:
         if len(residues) != len(moduli):
-            raise IndexError("Number of residues (%s) does not match number of moduli (%s)"%(len(residues), len(moduli)))
+            raise IndexError("Number of residues (%s) does not match number of moduli (%s)" % (len(residues), len(moduli)))
 
     cdef MultiModularBasis mm
     mm = moduli
 
     for b in residues:
-        if not (isinstance(b, Matrix_modn_dense_float) or
-                isinstance(b, Matrix_modn_dense_double)):
+        if not isinstance(b, (Matrix_modn_dense_double, Matrix_modn_dense_float, Matrix_modn_dense_flint)):
             raise TypeError("Can only perform CRT on list of matrices mod n.")
 
     cdef mod_int **row_list
@@ -6085,10 +6332,14 @@ cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None):
 
     for i in range(nr):
         for k in range(n):
-            (<Matrix_modn_dense_template>residues[k])._copy_row_to_mod_int_array(row_list[k],i)
+            mat = residues[k]
+            if isinstance(mat, Matrix_modn_dense_template):
+                (<Matrix_modn_dense_template>mat)._copy_row_to_mod_int_array(row_list[k], i)
+            else:
+                (<Matrix_modn_dense_flint>mat)._copy_row_to_mod_int_array(row_list[k], i)
         mm.mpz_crt_vec(tmp, row_list, nc)
         for j in range(nc):
-            M.set_unsafe_mpz(i,j,tmp[j])
+            M.set_unsafe_mpz(i, j, tmp[j])
 
     for k in range(n):
         sig_free(row_list[k])

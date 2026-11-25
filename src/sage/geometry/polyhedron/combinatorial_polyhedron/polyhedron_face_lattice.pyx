@@ -17,11 +17,11 @@ Terminology in this module:
 - Coatoms -- the faces from which all others are constructed in the face
   iterator. This will be facets or Vrep.  In non-dual mode, faces are
   constructed as intersections of the facets. In dual mode, the are constructed
-  theoretically as joins of vertices.  The coatoms are repsented as incidences
+  theoretically as joins of vertices.  The coatoms are represented as incidences
   with the atoms they contain.
 
 - Atoms -- facets or Vrep depending on application of algorithm.  Atoms are
-  repsented as incidences of coatoms they are contained in.
+  represented as incidences of coatoms they are contained in.
 
 - Vrepresentation -- represents a face by a list of Vrep it contains
 
@@ -85,21 +85,21 @@ cdef class PolyhedronFaceLattice:
 
     INPUT:
 
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.baseCombinatorialPolyhedron`
+    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`
 
     .. SEEALSO::
 
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._record_all_faces`,
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._record_all_faces_helper`,
+        ``CombinatorialPolyhedron._record_all_faces``,
+        ``CombinatorialPolyhedron._record_all_faces_helper``,
         :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron.face_lattice`,
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._compute_face_lattice_incidences`.
+        ``CombinatorialPolyhedron._compute_face_lattice_incidences``.
 
     EXAMPLES::
 
         sage: P = polytopes.Birkhoff_polytope(3)
         sage: C = CombinatorialPolyhedron(P)
         sage: C._record_all_faces()  # indirect doctests
-        sage: C.face_lattice()                                                          # needs sage.combinat
+        sage: C.face_lattice()
         Finite lattice containing 50 elements
 
     ALGORITHM:
@@ -213,7 +213,7 @@ cdef class PolyhedronFaceLattice:
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
             sage: C._record_all_faces() # indirect doctests
-            sage: C.face_lattice()                                                      # needs sage.combinat
+            sage: C.face_lattice()
             Finite lattice containing 28 elements
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice.PolyhedronFaceLattice).run()

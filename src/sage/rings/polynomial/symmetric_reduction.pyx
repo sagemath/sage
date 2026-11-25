@@ -247,16 +247,15 @@ cdef class SymmetricReductionStrategy:
         if not isinstance(other, SymmetricReductionStrategy):
             if op in [Py_NE, Py_EQ]:
                 return (op == Py_NE)
-            else:
-                return NotImplemented
+            return NotImplemented
         cdef SymmetricReductionStrategy left = self
         cdef SymmetricReductionStrategy right = other
         return richcmp((left._parent, left._lm, left._tail),
                        (right._parent, right._lm, right._tail), op)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return the list of Infinite Polynomials modulo which ``self`` reduces.
+        Return the tuple of Infinite Polynomials modulo which ``self`` reduces.
 
         EXAMPLES::
 
@@ -269,9 +268,9 @@ cdef class SymmetricReductionStrategy:
                 y_2*y_1^2,
                 y_2^2*y_1
             sage: S.gens()
-            [y_2*y_1^2, y_2^2*y_1]
+            (y_2*y_1^2, y_2^2*y_1)
         """
-        return self._lm
+        return tuple(self._lm)
 
     def setgens(self, L):
         """
@@ -442,7 +441,6 @@ cdef class SymmetricReductionStrategy:
         polynomial. This can be avoided by specifying the optional
         parameter 'good_input'::
 
-            sage: # needs sage.combinat
             sage: S.add_generator(y[2] + y[1]*x[2])
             sage: S
             Symmetric Reduction Strategy in

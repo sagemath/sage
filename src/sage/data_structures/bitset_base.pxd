@@ -18,14 +18,14 @@ AUTHORS:
   the size of the given bitsets (:issue:`15820`)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #     Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 # This file declares the bitset types and the (inline functions).
 # Few functions that are not inline are in the `pyx` file.
@@ -324,7 +324,7 @@ cdef inline bint mpn_equal_bits_shifted(mp_srcptr b1, mp_srcptr b2, mp_bitcnt_t 
 
     cdef mp_limb_t b1h = b1[nlimbs]
     tmp_limb = (b2[i2] >> bit_offset)
-    if (n%GMP_LIMB_BITS)+bit_offset > GMP_LIMB_BITS:
+    if (n % GMP_LIMB_BITS) + bit_offset > GMP_LIMB_BITS:
         # Need bits from the next limb of b2
         tmp_limb |= (b2[preinc(i2)] << neg_bit_offset)
     return (b1h ^ tmp_limb) & mask == 0
@@ -390,8 +390,7 @@ cdef inline int bitset_lex_cmp(fused_bitset_t a, fused_bitset_t b) noexcept:
         return 0
     if bitset_in(a, i):
         return 1
-    else:
-        return -1
+    return -1
 
 cdef inline bint bitset_issubset(fused_bitset_t a, fused_bitset_t b) noexcept nogil:
     """
@@ -402,8 +401,7 @@ cdef inline bint bitset_issubset(fused_bitset_t a, fused_bitset_t b) noexcept no
     """
     if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
         return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, SUBSET)
-    else:
-        return _bitset_cmp(a.bits, b.bits, a.limbs, SUBSET)
+    return _bitset_cmp(a.bits, b.bits, a.limbs, SUBSET)
 
 cdef inline bint bitset_issuperset(fused_bitset_t a, fused_bitset_t b) noexcept nogil:
     """
@@ -422,8 +420,7 @@ cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcep
     """
     if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
         return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, DISJOINT)
-    else:
-        return _bitset_cmp(a.bits, b.bits, a.limbs, DISJOINT)
+    return _bitset_cmp(a.bits, b.bits, a.limbs, DISJOINT)
 
 
 #############################################################################

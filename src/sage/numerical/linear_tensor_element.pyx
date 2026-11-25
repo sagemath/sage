@@ -23,14 +23,14 @@ from cpython.object cimport *
 
 from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.element cimport ModuleElement, Element
-from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
+from sage.numerical.linear_functions cimport LinearFunction
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Elements of linear functions tensored with a free module
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearTensor(ModuleElement):
     r"""
@@ -100,9 +100,8 @@ cdef class LinearTensor(ModuleElement):
             sage: lt[1]
             2*x_0 + 5*x_3
         """
-        f = dict([key, value[indices]] for key, value in self._f.items())
         LF = self.parent().linear_functions()
-        return LF(f)
+        return LF({key: value[indices] for key, value in self._f.items()})
 
     def dict(self):
         r"""
@@ -275,7 +274,7 @@ cdef class LinearTensor(ModuleElement):
             (16.0, 16.0) + (1.0, 2.0)*x_0 + (5.0, 6.0)*x_2 + (-5.0, -10.0)*x_3
         """
         result = dict(self._f)
-        for key, coeff in b.dict().iteritems():
+        for key, coeff in b.dict().items():
             result[key] = self._f.get(key, 0) + coeff
         return self.parent()(result)
 
@@ -317,7 +316,7 @@ cdef class LinearTensor(ModuleElement):
             (-16.0, -16.0) + (1.0, 2.0)*x_0 + (-7.0, -8.0)*x_3
         """
         result = dict(self._f)
-        for key, coeff in b.dict().iteritems():
+        for key, coeff in b.dict().items():
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 
@@ -421,7 +420,7 @@ cdef class LinearTensor(ModuleElement):
         elif op == Py_GE:
             return LC(right, left, False)
         else:
-            assert(False)   # unreachable
+            assert False   # unreachable
 
     def __hash__(self):
         r"""

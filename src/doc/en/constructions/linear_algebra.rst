@@ -4,6 +4,93 @@
 Linear algebra
 **************
 
+.. index::
+   pair: matrix; base ring
+
+.. _section-base-ring:
+
+Choosing the base ring: exact vs. numerical
+===========================================
+
+Every vector or matrix in Sage is defined over a *base ring*, and the
+same computation can behave very differently depending on which one you
+choose. The most common choices are:
+
+================  ==========================================================
+Base ring         When to use it
+================  ==========================================================
+``ZZ``            Integers: exact. Determinants, Smith/Hermite normal
+                  forms, lattice problems.
+``QQ``            Rationals: exact. The default for structural questions:
+                  rank, kernel, echelon form, inverse, exact solving.
+``GF(q)``         Finite fields: exact modular arithmetic, e.g. for
+                  coding theory and cryptography.
+``RR``, ``CC``    Floating-point with adjustable precision (53 bits by
+                  default, any precision via ``RealField(prec)``), but
+                  without fast matrix decompositions.
+``RDF``, ``CDF``  Hardware double-precision floats: fast numerical
+                  linear algebra via LAPACK (SVD, QR, Cholesky, Schur,
+                  ...).
+``RBF``, ``CBF``  Ball arithmetic: floating-point intervals with
+                  certified error bounds.
+================  ==========================================================
+
+Exact rings give exact answers::
+
+    sage: A = matrix(QQ, [[1, 1/2], [1/3, 1/4]])
+    sage: A.det()
+    1/12
+    sage: A.inverse()
+    [ 3 -6]
+    [-4 12]
+
+The same matrix over ``RDF`` computes with floating-point rounding::
+
+    sage: A = matrix(QQ, [[1, 1/2], [1/3, 1/4]])
+    sage: Ad = A.change_ring(RDF)
+    sage: Ad.det()  # abs tol 1e-15
+    0.08333333333333334
+
+so exact equality tests that hold over ``QQ`` can fail over ``RDF``::
+
+    sage: matrix(QQ, [[1/10]]) * 3 == matrix(QQ, [[3/10]])
+    True
+    sage: matrix(RDF, [[0.1]]) * 3 == matrix(RDF, [[0.3]])
+    False
+
+Over an exact ring, eigenvalues are returned as exact algebraic numbers
+(the trailing ``?`` marks an element of ``QQbar``, printed to its known
+precision); over ``RDF`` they are ordinary floats::
+
+    sage: B = matrix(QQ, [[0, 1], [2, 0]])
+    sage: B.eigenvalues()
+    [-1.414213562373095?, 1.414213562373095?]
+    sage: sorted(B.change_ring(RDF).eigenvalues())  # abs tol 1e-14
+    [-1.414213562373095, 1.4142135623730951]
+
+Over ``RDF`` and ``CDF``, numerical decompositions such as ``SVD``, ``QR``,
+``cholesky`` and ``schur`` are computed by optimized LAPACK routines, and
+some of them (``SVD``, ``schur``) are available over no other ring::
+
+    sage: Ad = matrix(RDF, [[1, 1/2], [1/3, 1/4]])
+    sage: U, S, V = Ad.SVD()
+    sage: S.diagonal()  # abs tol 1e-14
+    [1.1910987498956362, 0.0699634126394936]
+
+For floating-point results carrying rigorous error bounds, use the ball
+fields ``RBF``/``CBF``::
+
+    sage: M = matrix(RBF, [[1, 1/3], [1/3, 1]])
+    sage: M.det()
+    [0.888888888888889 +/- ...]
+
+As a rule of thumb: start with ``QQ`` when you want exact structural
+answers; switch to ``RDF``/``CDF`` for speed on large matrices and for
+the numerical decompositions; use ``RR``/``CC`` when you need a
+nondefault precision; and use ``RBF``/``CBF`` when you need
+floating-point answers you can certify.
+
+
 .. index:
    pair: vector space; basis
    pair: vector space; subspace
@@ -22,10 +109,7 @@ one can create a subspace. Note the basis computed by Sage is
     sage: V = VectorSpace(GF(2),8)
     sage: S = V.subspace([V([1,1,0,0,0,0,0,0]),V([1,0,0,0,0,1,1,0])])
     sage: S.basis()
-    [
-    (1, 0, 0, 0, 0, 1, 1, 0),
-    (0, 1, 0, 0, 0, 1, 1, 0)
-    ]
+    [(1, 0, 0, 0, 0, 1, 1, 0), (0, 1, 0, 0, 0, 1, 1, 0)]
     sage: S.dimension()
     2
 
@@ -205,26 +289,21 @@ gives matrices :math:`D` and :math:`P` such that :math:`AP=PD` (resp.
     sage: A.eigenvalues()
     [3, 2, 1]
     sage: A.eigenvectors_right()
-    [(3, [
-    (0, 0, 1)
-    ], 1), (2, [
-    (1, 1, 0)
-    ], 1), (1, [
-    (1, 0, 0)
-    ], 1)]
+    [(3, [(0, 0, 1)], 1), (2, [(1, 1, 0)], 1), (1, [(1, 0, 0)], 1)]
 
     sage: A.eigenspaces_right()
-    [
-    (3, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [0 0 1]),
-    (2, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [1 1 0]),
-    (1, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [1 0 0])
-    ]
+    [(3,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [0 0 1]),
+     (2,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [1 1 0]),
+     (1,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [1 0 0])]
 
     sage: D, P = A.eigenmatrix_right()
     sage: D
@@ -256,20 +335,19 @@ floating point entries (over ``CDF`` and ``RDF``) can be obtained with the
     sage: MS = MatrixSpace(QQ, 2, 2)
     sage: A = MS([1,-4,1, -1])
     sage: A.eigenspaces_left(format='all')
-    [
-    (-1.732050807568878?*I, Vector space of degree 2 and dimension 1 over Algebraic Field
-    User basis matrix:
-    [                        1 -1 - 1.732050807568878?*I]),
-    (1.732050807568878?*I, Vector space of degree 2 and dimension 1 over Algebraic Field
-    User basis matrix:
-    [                        1 -1 + 1.732050807568878?*I])
-    ]
+    [(-1.732050807568878?*I,
+      Vector space of degree 2 and dimension 1 over Algebraic Field
+      User basis matrix:
+      [                        1 -1 - 1.732050807568878?*I]),
+     (1.732050807568878?*I,
+      Vector space of degree 2 and dimension 1 over Algebraic Field
+      User basis matrix:
+      [                        1 -1 + 1.732050807568878?*I])]
     sage: A.eigenspaces_left(format='galois')
-    [
-    (a0, Vector space of degree 2 and dimension 1 over Number Field in a0 with defining polynomial x^2 + 3
-    User basis matrix:
-    [     1 a0 - 1])
-    ]
+    [(a0,
+      Vector space of degree 2 and dimension 1 over Number Field in a0 with defining polynomial x^2 + 3
+      User basis matrix:
+      [     1 a0 - 1])]
 
 Another approach is to use the interface with Maxima:
 

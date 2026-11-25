@@ -9,12 +9,13 @@ This file contains some utility functions for the interface with dot2tex
 # ****************************************************************************
 
 import re
-from sage.misc.latex import latex
+
 from sage.misc.cachefunc import cached_function
+from sage.misc.latex import latex
 
 
 @cached_function
-def have_dot2tex():
+def have_dot2tex() -> bool:
     """
     Return whether ``dot2tex`` >= 2.8.7 and graphviz are installed
     and functional.
@@ -68,7 +69,7 @@ for installation instructions.
 
 
 def quoted_latex(x):
-    """
+    r"""
     Strips the latex representation of ``x`` to make it suitable for a
     ``dot2tex`` string.
 

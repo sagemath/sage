@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Dynamic documentation for instances of classes
 
@@ -6,8 +5,8 @@ The functionality in this module allows to define specific docstrings
 of *instances* of a class, which are different from the class docstring.
 A typical use case is given by cached methods: the documentation of a
 cached method should not be the documentation of the class
-:class:`CachedMethod`; it should be the documentation of the underlying
-method.
+:class:`~sage.misc.cachefunc.CachedMethod`; it should be the documentation of
+the underlying method.
 
 In order to use this, define a class docstring as usual. Also define a
 method ``def _instancedoc_(self)`` which should return the docstring of
@@ -37,7 +36,7 @@ EXAMPLES::
 For a Cython ``cdef class``, a decorator cannot be used. Instead, call
 :func:`instancedoc` as a function after defining the class::
 
-    sage: cython(                                                                       # needs sage.misc.cython
+    sage: cython(
     ....: '''
     ....: from sage.misc.instancedoc import instancedoc
     ....: cdef class Y:
@@ -46,9 +45,9 @@ For a Cython ``cdef class``, a decorator cannot be used. Instead, call
     ....:         return "Instance docstring"
     ....: instancedoc(Y)
     ....: ''')
-    sage: Y.__doc__                                                                     # needs sage.misc.cython
+    sage: Y.__doc__
     'File:...\nClass docstring'
-    sage: Y().__doc__                                                                   # needs sage.misc.cython
+    sage: Y().__doc__
     'Instance docstring'
 
 One can still add a custom ``__doc__`` attribute on a particular
@@ -61,7 +60,7 @@ instance::
 
 This normally does not work on extension types::
 
-    sage: Y().__doc__ = "Very special doc"                                              # needs sage.misc.cython
+    sage: Y().__doc__ = "Very special doc"
     Traceback (most recent call last):
     ...
     AttributeError: attribute '__doc__' of 'Y' objects is not writable
@@ -108,7 +107,7 @@ Check that inheritance works (after passing the subclass to
     'Instance docstring'
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -116,7 +115,7 @@ Check that inheritance works (after passing the subclass to
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cpython.object cimport PyObject, PyTypeObject
 

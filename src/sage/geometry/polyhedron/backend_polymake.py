@@ -96,8 +96,8 @@ class Polyhedron_polymake(Polyhedron_base):
 
     Quadratic fields work::
 
-        sage: V = polytopes.dodecahedron().vertices_list()                              # needs sage.groups sage.rings.number_field
-        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake, needs sage.groups sage.rings.number_field
+        sage: V = polytopes.dodecahedron().vertices_list()
+        sage: Polyhedron(vertices=V, backend='polymake')        # optional - jupymake
         A 3-dimensional polyhedron
          in (Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?)^3
@@ -315,11 +315,10 @@ class Polyhedron_polymake(Polyhedron_base):
                         POINTS=(  [ [1] + list(v) for v in vertices ]
                                 + [ [0] + list(r) for r in rays ]),
                         INPUT_LINEALITY=[ [0] + list(l) for l in lines ])
-        else:
-            return dict(CONE_AMBIENT_DIM=1+self.parent().ambient_dim(),
-                        VERTICES=(  [ [1] + list(v) for v in vertices ]
-                                  + [ [0] + list(r) for r in rays ]),
-                        LINEALITY_SPACE=[ [0] + list(l) for l in lines ])
+        return dict(CONE_AMBIENT_DIM=1+self.parent().ambient_dim(),
+                    VERTICES=(  [ [1] + list(v) for v in vertices ]
+                              + [ [0] + list(r) for r in rays ]),
+                    LINEALITY_SPACE=[ [0] + list(l) for l in lines ])
 
     def _init_from_Hrepresentation(self, ieqs, eqns, minimize=True, verbose=False):
         r"""
@@ -393,9 +392,8 @@ class Polyhedron_polymake(Polyhedron_base):
         if not minimal:
             return dict(EQUATIONS=eqns,
                         INEQUALITIES=ieqs)
-        else:
-            return dict(AFFINE_HULL=eqns,
-                        FACETS=ieqs)
+        return dict(AFFINE_HULL=eqns,
+                    FACETS=ieqs)
 
     def _init_from_Vrepresentation_and_Hrepresentation(self, Vrep, Hrep):
         """
@@ -553,7 +551,6 @@ class Polyhedron_polymake(Polyhedron_base):
         if parent is None:
             from .parent import Polyhedra
             from sage.rings.rational_field import QQ
-            from sage.rings.qqbar import AA
             if polymake_polytope.typeof()[0] == 'Polymake::polytope::Polytope__Rational':
                 base_ring = QQ
             else:
@@ -660,7 +657,7 @@ class Polyhedron_polymake(Polyhedron_base):
             sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)
             sage: P._test_polymake_pickling(other=P2)
 
-            sage: # optional - jupymake, needs sage.rings.number_field
+            sage: # optional - jupymake
             sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')
             Possible output...
             sage: P1 = loads(dumps(P))
@@ -724,6 +721,8 @@ class Polyhedron_polymake(Polyhedron_base):
         tester.assertEqual(P.AFFINE_HULL, P1.AFFINE_HULL)
 
 #########################################################################
+
+
 class Polyhedron_QQ_polymake(Polyhedron_polymake, Polyhedron_QQ):
     r"""
     Polyhedra over `\QQ` with polymake.

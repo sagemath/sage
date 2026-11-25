@@ -436,7 +436,7 @@ cdef void late_import() noexcept:
     prod = sage.misc.all.prod
 
     import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
+    PolynomialRing = sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
 
     import sage.rings.all
     QQ = sage.rings.all.QQ
@@ -1111,8 +1111,7 @@ cdef object _py_matrix(OP a):
     #return res
     if res == [] or res is None:
         return res
-    else:
-        return matrix_constructor(res)
+    return matrix_constructor(res)
 
 
 cdef void* _op_matrix(object a, OP res) noexcept:
@@ -1162,8 +1161,7 @@ cdef object _py_tableau(OP t):
     #return res
     if is_skew:
         return SkewTableau(res)
-    else:
-        return Tableau(res)
+    return Tableau(res)
 
 
 def start():

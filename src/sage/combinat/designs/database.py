@@ -40,19 +40,11 @@ This module implements:
 
 REFERENCES:
 
-.. [DesignHandbook] Handbook of Combinatorial Designs (2ed)
-  Charles Colbourn, Jeffrey Dinitz
-  Chapman & Hall/CRC
-  2012
+- [DesignHandbook]_
 
-.. [Aschbacher71] \M. Aschbacher,
-  On collineation groups of symmetric block designs.
-  J. Combinatorial Theory Ser. A 11 (1971), pp. 272–281.
+- [Aschbacher71]_
 
-.. [Hall71] \M. Hall, Jr.,
-  Combinatorial designs and groups.
-  Actes du Congrès International des Mathématiciens (Nice, 1970),
-  v.3, pp. 217–222. Gauthier-Villars, Paris, 1971.
+- [Hall71]_
 
 Functions
 ---------
@@ -69,7 +61,7 @@ from .orthogonal_arrays import wilson_construction
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
 
 
-def _MOLS_from_string(s,k):
+def _MOLS_from_string(s, k):
     r"""
     Return MOLS from a string.
 
@@ -191,9 +183,7 @@ def MOLS_14_4():
 
     REFERENCE:
 
-    .. [Todorov12] \D.T. Todorov,
-      Four mutually orthogonal Latin squares of order 14,
-      Journal of Combinatorial Designs 2012, vol.20 n.8 pp.363-367
+    - [Todorov12]_
     """
     M = """
         bjihgkecalnfmd  bfmcenidgjhalk  bcdefghijklmna  bcdefghijklmna
@@ -1058,8 +1048,8 @@ def OA_11_185():
     assert all(len(B) in (11,13) or set(B) == set(special_set) for B in PBD)
 
     OA = OA_from_PBD(11,185,[B for B in PBD if len(B) < 17],check=False)[:-185]
-    OA.extend([[i]*11 for i in range(185) if i not in special_set])
-    OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
+    OA.extend([i]*11 for i in range(185) if i not in special_set)
+    OA.extend([special_set[x] for x in B] for B in orthogonal_array(11,17))
     return OA
 
 
@@ -1110,7 +1100,8 @@ def OA_10_205():
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
     pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
-    baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
+    baer_subplane = {i * pplane_size / baer_subplane_size
+                     for i in range(baer_subplane_size)}
 
     p = list(baer_subplane)[0]
 
@@ -1126,7 +1117,7 @@ def OA_10_205():
     GDD = [[relabel[xx] for xx in B if xx in relabel] for B in pplane if p not in B]
 
     # We turn the GDD into a PBD by extending the groups with a new point 204.
-    GDD.extend([[relabel[xx] for xx in G]+[204] for G in groups])
+    GDD.extend([relabel[xx] for xx in G]+[204] for G in groups)
 
     # We build the OA, knowing that the blocks of size 9 are disjoint
     blocks_of_size_9 = [B for B in GDD if len(B) == 9]
@@ -1134,13 +1125,13 @@ def OA_10_205():
 
     OA = OA_from_PBD(10,205,[B for B in GDD if len(B) != 9],check=False)[:-205]
 
-    OA.extend([[B[xx] for xx in R]
-               for R in orthogonal_array(10,9)
-               for B in blocks_of_size_9])
+    OA.extend([B[xx] for xx in R]
+              for R in orthogonal_array(10,9)
+              for B in blocks_of_size_9)
 
     # The missing [i,i,...] blocks
-    OA.extend([[i]*10
-               for i in set(range(205)).difference(blocks_of_size_9_union)])
+    OA.extend([i]*10
+              for i in set(range(205)).difference(blocks_of_size_9_union))
 
     return OA
 
@@ -1529,8 +1520,8 @@ def OA_17_560():
     # We remove all elements except those from F_{p^alpha} in the last three
     # columns
 
-    elements_of_subgroup = set([x for x in G_set if x.polynomial().degree() < beta])
-    relabel = {G_to_int[v]:i for i,v in enumerate(elements_of_subgroup)}
+    elements_of_subgroup = {x for x in G_set if x.polynomial().degree() < beta}
+    relabel = {G_to_int[v]: i for i, v in enumerate(elements_of_subgroup)}
     for x in range(p**alpha):
         if x not in relabel:
             relabel[x] = None
@@ -1627,7 +1618,8 @@ def OA_10_796():
     OA = OA_relabel(OA,17,47,blocks=[OA[0]]) # making sure [46]*17 is a block
     PBD = [[i*47+x for i,x in enumerate(B) if (x < 46 or i < 13)] for B in OA]
     extra_point = 10000
-    PBD.extend([list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point] for i in range(17)]) # Adding the columns
+    PBD.extend(list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point]
+               for i in range(17))  # Adding the columns
 
     rel = {v:i for i,v in enumerate(set(range(17*47)).difference([(i+1)*47-1 for i in range(13,17)]))}
     rel[extra_point] = len(rel)
@@ -1645,7 +1637,7 @@ def OA_10_796():
     for B in PBD:
         if len(B) >= 47:
             B.sort(key=lambda x:int(x == extra_point))
-            OA.extend([[B[i] for i in BB] for BB in iOA[len(B)]])
+            OA.extend([B[i] for i in BB] for BB in iOA[len(B)])
             span.update(B[:-1])
         else:
             others.append(B)
@@ -2374,11 +2366,11 @@ def QDM_35_7_1_1_7():
     M = [
         [None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0],
-        [  18, -18,  11, -11,   5,  -5,   4],
+        [  18, -18,  11, -11,   5, -5,   4],
         [  26, -26,  10, -10,  30, -30,  23],
-        [  20, -20,   3,  -3,  33, -33,  23],
-        [   5,  -5,  25, -25,  24, -24,   4],
-        [  17, -17,   4,  -4,  22, -22,   0]
+        [  20, -20,   3, -3,  33, -33,  23],
+        [   5, -5,  25, -25,  24, -24,   4],
+        [  17, -17,   4, -4,  22, -22,   0]
         ]
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
@@ -2415,10 +2407,10 @@ def QDM_45_7_1_1_9():
     M = [
         [None,None,None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0,   0,   0],
-        [   1,  27,  16,   7,  -1, -27, -16,  -7,   3],
-        [  24,  40,   1,  35, -24, -40,  -1, -35,   7],
+        [   1,  27,  16,   7, -1, -27, -16, -7,   3],
+        [  24,  40,   1,  35, -24, -40, -1, -35,   7],
         [  10,  30,  22,  44, -10, -30, -22, -44,   7],
-        [   5,  18,  14,  33,  -5, -18, -14, -33,   3],
+        [   5,  18,  14,  33, -5, -18, -14, -33,   3],
         [  30,  16,  33,  27, -30, -16, -33, -27,   0],
         ]
 
@@ -3143,15 +3135,58 @@ DF = {
            [0,2,13,18,28,30,44,48,50,51,57,61],
            [0,4,21,26,29,33,35,36,47,55,56,60]]},
 
-# a 133-cyclic set from Ken Smith database
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
+# a (133,33,8)-cyclic difference set
+# see https://dmgordon.org/diffset
 (133,33, 8):
-  {(133,): [[0,4,7,8,15,17,19,22,24,25,29,30,38,
-             47,49,50,55,58,61,62,71,73,76,77,78,
-             82,95,111,113,114,121,123,127]]},
+  {(133,): [[1,5,14,22,25,27,29,32,34,38,
+             46,64,65,66,76,78,81,82,84,89,
+             92,93,99,103,104,106,107,112,113,122,
+             126,128,129]]},
 
-# a 901-cyclic
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
+# a (144,66,30) non-cyclic difference set in AbelianGroup([2,8,3,3])
+# given in unpublished paper by Kroeger, Miller, Mooney, Shepard and Smith
+# see https://dmgordon.org/diffset
+(144,66,30):
+  {(2,8,3,3): [[(0,1,0,0),(0,7,0,2),(0,5,0,1),(0,3,0,0),(0,6,0,1),
+                (0,1,0,2),(0,4,0,0),(0,2,0,2),(0,6,0,0),(0,1,0,1),
+                (0,4,0,2),(0,2,0,1),(1,2,2,0),(1,3,2,0),(1,4,2,0),
+                (1,5,2,0),(1,6,2,0),(1,7,2,0),(0,6,1,2),(0,1,1,0),
+                (0,4,1,1),(0,3,1,0),(0,1,1,2),(0,4,1,0),(0,7,1,1),
+                (0,2,1,2),(0,6,1,0),(0,1,1,1),(0,2,1,1),(0,5,1,2),
+                (1,0,0,0),(1,6,0,2),(1,1,0,0),(1,4,0,1),(1,7,0,2),
+                (1,2,0,0),(1,5,0,1),(1,0,0,2),(1,3,0,0),(1,1,0,2),
+                (1,0,0,1),(1,1,0,1),(0,0,2,0),(0,6,2,2),(0,4,2,1),
+                (0,0,2,2),(0,3,2,0),(0,6,2,1),(0,2,2,2),(0,5,2,0),
+                (0,0,2,1),(0,4,2,2),(0,7,2,0),(0,2,2,1),(1,0,1,0),
+                (1,1,1,0),(1,2,1,0),(1,0,1,2),(1,3,1,0),(1,6,1,1),
+                (1,1,1,2),(1,7,1,1),(1,0,1,1),(1,1,1,1),(1,4,1,2),
+                (1,5,1,2)]]},
+
+# a (320,88,24) non-cyclic difference set in AbelianGroup([4,4,4,5]),
+# given in Arasu and Chen, Designs, Codes and Cryptography 2001
+# see https://dmgordon.org/diffset
+(320,88,24):
+    {(4,4,4,5): [[(3,3,3,0),(2,3,2,0),(3,1,3,0),(2,2,3,0),(1,3,3,0),
+                  (3,2,1,0),(2,2,2,0),(2,2,1,0),(2,1,2,0),(0,3,2,0),
+                  (2,0,3,0),(1,1,3,0),(0,2,3,0),(3,0,1,0),(1,2,1,0),
+                  (2,0,2,0),(0,2,2,0),(2,0,1,0),(0,2,1,0),(0,1,2,0),
+                  (0,0,3,0),(1,0,1,0),(0,0,2,0),(0,0,1,0),(3,3,3,1),
+                  (3,3,1,1),(3,0,3,1),(0,3,3,1),(3,0,1,1),(0,3,1,1),
+                  (1,1,2,1),(1,0,2,1),(0,1,2,1),(0,0,3,1),(1,1,0,1),
+                  (0,0,2,1),(1,0,0,1),(0,1,0,1),(0,0,1,1),(0,0,0,1),
+                  (1,1,3,2),(3,1,1,2),(2,3,3,2),(2,2,3,2),(0,3,2,2),
+                  (0,3,1,2),(0,2,1,2),(3,2,2,2),(3,1,2,2),(3,0,3,2),
+                  (2,3,0,2),(2,0,2,2),(1,2,0,2),(1,1,0,2),(1,0,1,2),
+                  (0,0,0,2),(1,1,1,3),(1,3,3,3),(3,2,1,3),(2,2,3,3),
+                  (3,0,0,3),(3,0,3,3),(1,3,0,3),(2,0,1,3),(3,2,2,3),
+                  (2,3,2,3),(0,3,3,3),(1,1,2,3),(0,2,2,3),(2,1,0,3),
+                  (0,1,1,3),(0,0,0,3),(2,0,3,4),(1,1,2,4),(0,2,1,4),
+                  (0,1,3,4),(3,2,3,4),(3,2,2,4),(2,3,2,4),(3,1,3,4),
+                  (3,3,0,4),(2,3,1,4),(1,0,1,4),(2,2,2,4),(1,3,1,4),
+                  (1,0,0,4),(0,1,0,4),(0,0,0,4)]]},
+
+# a (901,225,56)-cyclic difference set
+# see https://dmgordon.org/diffset
 (901,225,56):
   {(901,): [[  0,  1,  5,  9, 12, 13, 14, 16, 22, 25, 41, 43,
               45, 47, 53, 59, 60, 65, 69, 70, 71, 79, 80, 81,
@@ -3201,10 +3236,7 @@ def DM_12_6_1():
 
     REFERENCES:
 
-    .. [Hanani75] Haim Hanani,
-      Balanced incomplete block designs and related designs,
-      :doi:`10.1016/0012-365X(75)90040-0`,
-      Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369.
+    - [Hanani75]_
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(2).cartesian_product(AdditiveCyclic(6))
@@ -3786,13 +3818,13 @@ def DM_52_6_1():
 
     from itertools import product
 
-    def t1(i,R):
+    def t1(i, R):
         if i > 1:
             return t1(1,t1(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
         return [(z*x3, 3*y3), (z*x1, 3*y1), (z*x2, 3*y2), (z*x6, 3*y6), (z*x4, 3*y4), (z*x5, 3*y5)]
 
-    def t2(i,R):
+    def t2(i, R):
         if i > 1:
             return t2(1,t2(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
@@ -3934,10 +3966,7 @@ def DM_60_6_1():
 
     REFERENCES:
 
-    .. [JulianAbel13] Existence of Five MOLS of Orders 18 and 60
-      R. Julian R. Abel
-      Journal of Combinatorial Designs
-      2013
+    - [JulianAbel13]_
 
     http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
 
@@ -4230,11 +4259,7 @@ def BIBD_45_9_8(from_code=False):
 
     REFERENCE:
 
-    .. [HT95] \W. Huffman and V. Tonchev,
-       The existence of extremal self-dual `[50, 25, 10]` codes and
-       quasi-symmetric `2-(49, 9, 6)` designs,
-       Designs, Codes and Cryptography
-       September 1995, Volume 6, Issue 2, pp 97-106
+    - [HT95]_
     """
     if from_code:
         from sage.coding.code_constructions import ExtendedQuadraticResidueCode
@@ -4283,7 +4308,7 @@ def BIBD_66_6_1():
     Return a (66,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4307,7 +4332,7 @@ def BIBD_76_6_1():
     Return a (76,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4331,7 +4356,7 @@ def BIBD_96_6_1():
     Return a (96,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4569,10 +4594,7 @@ def HigmanSimsDesign():
 
     REFERENCE:
 
-    .. [KY04] \S. Klee and L. Yates,
-       Tight Subdesigns of the Higman-Sims Design,
-       Rose-Hulman Undergraduate Math. J 5.2 (2004).
-       https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf
+    - [KY04]_
     """
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
@@ -5566,4 +5588,4 @@ __doc__ = __doc__.format(
     LIST_OF_EDS=LIST_OF_EDS,
     LIST_OF_CA_CONSTRUCTIONS=LIST_OF_CA_CONSTRUCTIONS)
 del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD, LIST_OF_CA_CONSTRUCTIONS
-del PolynomialRing, ZZ, a,
+del PolynomialRing, ZZ, a, f,

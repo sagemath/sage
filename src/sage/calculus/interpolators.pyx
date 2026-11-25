@@ -27,8 +27,7 @@ Development supported by NSF award No. 0702939.
 import numpy as np
 cimport numpy as np
 
-if int(np.version.short_version[0]) > 1:
-    np.set_printoptions(legacy="1.25")
+np.set_printoptions(legacy="1.25")
 
 from math import pi
 cdef double TWOPI = 2*pi
@@ -223,7 +222,7 @@ cdef class CCSpline:
     cdef int N
     cdef np.ndarray avec, bvec, cvec, dvec
 
-    #standard cubic interpolation method
+    # standard cubic interpolation method
     def __init__(self, pts):
         """
         TESTS::

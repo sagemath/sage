@@ -242,7 +242,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         """
         for i in range(len(coeff)):
             self.objective_function[i] = coeff[i]
-        obj_constant_term = d
+        self.obj_constant_term = d
 
     cpdef add_linear_constraint(self, coefficients, name=None):
         """
@@ -367,8 +367,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         """
         if self.is_maximize == 1:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef problem_name(self, name=None):
         """

@@ -273,7 +273,7 @@ cdef get_reduced_hexagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             he = req_cy(basis, r_matrix, fvars, _Nk_ij, id_anyon, sextuple)
             if he:
-                red = reduce_poly_dict(he.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(he.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -341,7 +341,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             pe = feq_cy(basis, fvars, _Nk_ij, id_anyon, zero, nonuple, prune=True)
             if pe:
-                red = reduce_poly_dict(pe.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(pe.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -462,7 +462,8 @@ cpdef executor(tuple params):
 
     - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
-      is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
+      is the ``id`` of the :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix`
+      object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.
 
     .. NOTE::

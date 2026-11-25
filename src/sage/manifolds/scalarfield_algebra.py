@@ -30,13 +30,14 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.topological_spaces import TopologicalSpaces
-from sage.symbolic.ring import SymbolicRing, SR
 from sage.manifolds.scalarfield import ScalarField
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.symbolic.ring import SR, SymbolicRing
+
 
 class ScalarFieldAlgebra(UniqueRepresentation, Parent):
     r"""
@@ -451,7 +452,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         try:
             if coord_expression.is_trivial_zero():
                 return self.zero()
-            elif (coord_expression - 1).is_trivial_zero():
+            if (coord_expression - 1).is_trivial_zero():
                 return self.one()
         except AttributeError:
             if coord_expression == 0:
@@ -517,18 +518,17 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: CU._coerce_map_from_(CM)
             True
         """
-        from .chart_func import ChartFunctionRing
+        from sage.manifolds.chart_func import ChartFunctionRing
         if isinstance(other, SymbolicRing):
             return True  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
                          # the coercion map
-        elif isinstance(other, ScalarFieldAlgebra):
+        if isinstance(other, ScalarFieldAlgebra):
             return self._domain.is_subset(other._domain)
-        elif isinstance(other, ChartFunctionRing):
+        if isinstance(other, ChartFunctionRing):
             return self._domain.is_subset(other._chart.domain())
-        else:
-            return False
+        return False
 
     #### End of methods required for any Parent
 

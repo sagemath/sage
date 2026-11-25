@@ -5,11 +5,11 @@ Galois Groups
 -------------
 
 We can compute the Galois group of a number field using the ``galois_group``
-function, which by default calls Pari (http://pari.math.u-bordeaux.fr/). You do
-not have to worry about installing Pari, since *Pari is part of Sage*.  In
-fact, despite appearances much of the difficult algebraic number theory in Sage
-is actually done by the Pari C library (be sure to also cite Pari in papers
-that use Sage).
+function, which by default calls PARI (https://pari.math.u-bordeaux.fr/). You
+do not have to worry about installing PARI, since it is part of Sage. In fact,
+despite appearances much of the difficult algebraic number theory in Sage is
+actually done by the PARI C library (be sure to also cite PARI in papers that
+use Sage).
 
 ::
 
@@ -101,20 +101,18 @@ You can also enumerate all complex embeddings of a number field:
 ::
 
     sage: K.complex_embeddings()
-    [
-    Ring morphism:
-      From: Number Field in a with defining polynomial x^3 - 2
-      To:   Complex Field with 53 bits of precision
-      Defn: a |--> -0.629960524947437 - 1.09112363597172*I,
-    Ring morphism:
-      From: Number Field in a with defining polynomial x^3 - 2
-      To:   Complex Field with 53 bits of precision
-      Defn: a |--> -0.629960524947437 + 1.09112363597172*I,
-    Ring morphism:
-      From: Number Field in a with defining polynomial x^3 - 2
-      To:   Complex Field with 53 bits of precision
-      Defn: a |--> 1.25992104989487
-    ]
+    [Ring morphism:
+       From: Number Field in a with defining polynomial x^3 - 2
+       To:   Complex Field with 53 bits of precision
+       Defn: a |--> -0.629960524947437 - 1.09112363597172*I,
+     Ring morphism:
+       From: Number Field in a with defining polynomial x^3 - 2
+       To:   Complex Field with 53 bits of precision
+       Defn: a |--> -0.629960524947437 + 1.09112363597172*I,
+     Ring morphism:
+       From: Number Field in a with defining polynomial x^3 - 2
+       To:   Complex Field with 53 bits of precision
+       Defn: a |--> 1.25992104989487]
 
 
 Class Numbers and Class Groups

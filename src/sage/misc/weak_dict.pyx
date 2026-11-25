@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Fast and safe weak value dictionary
 
@@ -105,6 +104,52 @@ Note that Sage's weak value dictionary is actually an instance of
     sage: issubclass(sage.misc.weak_dict.WeakValueDictionary, dict)
     True
 
+TESTS:
+
+Reading a weak value must not leak a strong reference (:issue:`43054`)::
+
+    sage: from sage.misc.weak_dict import WeakValueDictionary
+    sage: from sys import getrefcount
+    sage: class Value: pass
+    sage: value = Value()
+    sage: D = WeakValueDictionary({0: value})
+    sage: count = getrefcount(value)
+    sage: for _ in range(10):
+    ....:     assert D[0] is value
+    ....:     assert D.get(0) is value
+    ....:     assert D.setdefault(0, None) is value
+    ....:     assert 0 in D
+    sage: getrefcount(value) == count
+    True
+
+A suspended iterator must not keep its last value alive. Dead references
+awaiting removal must still behave like missing entries::
+
+    sage: for method in ('__iter__', 'values', 'items'):
+    ....:     value = Value()
+    ....:     value_ref = weakref.ref(value)
+    ....:     D = WeakValueDictionary({0: value})
+    ....:     it = getattr(D, method)()
+    ....:     entry = next(it)
+    ....:     del entry, value
+    ....:     assert value_ref() is None
+    ....:     assert 0 not in D
+    ....:     assert D.get(0, 'missing') == 'missing'
+    ....:     for get_value in (D.__getitem__, D.pop):
+    ....:         try:
+    ....:             get_value(0)
+    ....:         except KeyError:
+    ....:             pass
+    ....:         else:
+    ....:             raise AssertionError('dead value was returned')
+    ....:     assert list(D.values()) == []
+    ....:     assert list(D.items()) == []
+    ....:     replacement = Value()
+    ....:     assert D.setdefault(0, replacement) is replacement
+    ....:     it.close()
+    ....:     assert D.pop(0) is replacement
+    ....:     assert len(D) == 0
+
 See :issue:`13394` for a discussion of some of the design considerations.
 """
 # ****************************************************************************
@@ -125,18 +170,22 @@ from copy import deepcopy
 from cpython.dict cimport PyDict_SetItem, PyDict_Next
 from cpython.tuple cimport PyTuple_GET_SIZE, PyTuple_New
 from cpython.weakref cimport PyWeakref_NewRef
-from cpython.ref cimport Py_INCREF
+from cpython.ref cimport Py_INCREF, Py_DECREF
 from sage.cpython.dict_del_by_value cimport *
 
-from sage.misc.superseded import deprecation
 
 cdef extern from "Python.h":
-    PyObject* Py_None
-    # we need this redefinition because we want to be able to call
-    # PyWeakref_GetObject with borrowed references. This is the recommended
-    # strategy according to Cython/Includes/cpython/__init__.pxd
-    PyObject* PyWeakref_GetObject(PyObject *ref)
+    int PyWeakref_GetRef(object ref, PyObject** pobj) except -1
     int PyTuple_SetItem(PyObject *op, Py_ssize_t i, PyObject *newitem) except -1
+
+
+cdef inline object _from_owned_reference(PyObject* obj):
+    """
+    Transfer a non-NULL owned reference to a Cython-managed object.
+    """
+    value = <object>obj
+    Py_DECREF(value)
+    return value
 
 
 cdef class WeakValueDictEraser:
@@ -207,7 +256,7 @@ cdef class WeakValueDictEraser:
             sage: len(D)  # indirect doctest
             0
         """
-        cdef WeakValueDictionary D = <object> PyWeakref_GetObject(<PyObject*> self.D)
+        cdef WeakValueDictionary D = self.D()
         if D is None:
             return
         # The situation is the following:
@@ -339,7 +388,6 @@ cdef class WeakValueDictionary(dict):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: import sage.misc.weak_dict
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -366,7 +414,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
             sage: D[1] = QQ
             sage: D[2] = ZZ
-            sage: D[None] = CC                                                          # needs sage.rings.real_mpfr
+            sage: D[None] = CC
             sage: E = copy(D)    # indirect doctest
             sage: set(E.items()) == set(D.items())
             True
@@ -404,7 +452,7 @@ cdef class WeakValueDictionary(dict):
             True
         """
         out = WeakValueDictionary()
-        for k,v in self.items():
+        for k, v in self.items():
             out[deepcopy(k, memo)] = v
         return out
 
@@ -429,7 +477,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(L)
             sage: len(D)
@@ -437,7 +484,6 @@ cdef class WeakValueDictionary(dict):
 
         The value for an existing key is returned and not overridden::
 
-            sage: # needs sage.libs.pari
             sage: D.setdefault(5, ZZ)
             Finite Field of size 5
             sage: D[5]
@@ -445,7 +491,6 @@ cdef class WeakValueDictionary(dict):
 
         For a non-existing key, the default value is stored and returned::
 
-            sage: # needs sage.libs.pari
             sage: 4 in D
             False
             sage: D.setdefault(4, ZZ)
@@ -463,16 +508,16 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.setdefault(matrix([]), ZZ)                                          # needs sage.modules
+            sage: D.setdefault(matrix([]), ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr != NULL:
-            out = PyWeakref_GetObject(wr)
-            if out != Py_None:
-                return <object>out
+            out = (<object>wr)()
+            if out is not None:
+                return out
         self._set_item(k, default)
         return default
 
@@ -537,7 +582,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])] = ZZ                                                    # needs sage.modules
+            sage: D[matrix([])] = ZZ
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -563,7 +608,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [GF(p) for p in prime_range(10^3)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: 20 in D
@@ -583,20 +627,19 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.pop(matrix([]))                                                     # needs sage.modules
+            sage: D.pop(matrix([]))
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
             raise KeyError(k)
-        cdef PyObject* outref = PyWeakref_GetObject(wr)
-        if outref == Py_None:
+        out = (<object>wr)()
+        if out is None:
             raise KeyError(k)
-        # we turn the output into a new reference before deleting the item,
-        # because the deletion can cause any kind of havoc.
-        out = <object>outref
+        # Keep a strong reference while deleting the item, because the
+        # deletion can cause any kind of havoc.
         del self[k]
         return out
 
@@ -624,7 +667,7 @@ cdef class WeakValueDictionary(dict):
             ...
             KeyError: 'popitem(): weak value dictionary is empty'
         """
-        for k,v in self.items():
+        for k, v in self.items():
             del self[k]
             return k, v
         raise KeyError('popitem(): weak value dictionary is empty')
@@ -639,7 +682,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [GF(p) for p in prime_range(10^3)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: 100 in D
@@ -658,21 +700,19 @@ cdef class WeakValueDictionary(dict):
         Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
-            sage: # needs sage.libs.pari
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.get(matrix([]))                                                     # needs sage.modules
+            sage: D.get(matrix([]))
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject * wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
             return d
-        out = PyWeakref_GetObject(wr)
-        if out == Py_None:
+        out = (<object>wr)()
+        if out is None:
             return d
-        else:
-            return <object>out
+        return out
 
     def __getitem__(self, k):
         """
@@ -699,18 +739,18 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])]                                                         # needs sage.modules
+            sage: D[matrix([])]
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
         if wr == NULL:
             raise KeyError(k)
-        out = PyWeakref_GetObject(wr)
-        if out == Py_None:
+        out = (<object>wr)()
+        if out is None:
             raise KeyError(k)
-        return <object>out
+        return out
 
     def __contains__(self, k):
         """
@@ -742,13 +782,13 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: matrix([]) in D                                                       # needs sage.modules
+            sage: matrix([]) in D
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
         """
         cdef PyObject* wr = PyDict_GetItemWithError(self, k)
-        return (wr != NULL) and (PyWeakref_GetObject(wr) != Py_None)
+        return (wr != NULL) and ((<object>wr)() is not None)
 
     # def __len__(self):
     # since GC is not deterministic, neither is the length of a WeakValueDictionary,
@@ -787,7 +827,7 @@ cdef class WeakValueDictionary(dict):
                 # this check does not really say anything: by the time
                 # the key makes it to the customer, it may have already turned
                 # invalid. It's a cheap check, though.
-                if PyWeakref_GetObject(wr)!=Py_None:
+                if (<object>wr)() is not None:
                     yield <object>key
         finally:
             self._exit_iter()
@@ -812,24 +852,6 @@ cdef class WeakValueDictionary(dict):
             [0, 1, 2, 3, 5, 6, 7, 8, 9]
         """
         return list(iter(self))
-
-    def itervalues(self):
-        """
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.itervalues())
-            doctest:warning...:
-            DeprecationWarning: use values instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use values instead")
-        return self.values()
 
     def values(self):
         """
@@ -876,13 +898,15 @@ cdef class WeakValueDictionary(dict):
         """
         cdef PyObject *key
         cdef PyObject *wr
+        cdef PyObject *out
         cdef Py_ssize_t pos = 0
         try:
             self._enter_iter()
             while PyDict_Next(self, &pos, &key, &wr):
-                out = PyWeakref_GetObject(wr)
-                if out != Py_None:
-                    yield <object>out
+                if PyWeakref_GetRef(<object>wr, &out):
+                    # Transfer the reference directly to the yielded value so
+                    # that the suspended generator does not keep it alive.
+                    yield _from_owned_reference(out)
         finally:
             self._exit_iter()
 
@@ -917,22 +941,6 @@ cdef class WeakValueDictionary(dict):
             [<0>, <1>, <3>, <4>, <6>, <7>, <8>, <9>]
         """
         return list(self.values())
-
-    def iteritems(self):
-        """
-        EXAMPLES::
-
-            sage: import sage.misc.weak_dict
-            sage: class Vals(): pass
-            sage: L = [Vals() for _ in range(10)]
-            sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
-            sage: T = list(D.iteritems())
-            doctest:warning...:
-            DeprecationWarning: use items instead
-            See https://github.com/sagemath/sage/issues/34488 for details.
-        """
-        deprecation(34488, "use items instead")
-        return self.items()
 
     def items(self):
         """
@@ -994,13 +1002,14 @@ cdef class WeakValueDictionary(dict):
         """
         cdef PyObject *key
         cdef PyObject *wr
+        cdef PyObject *out
         cdef Py_ssize_t pos = 0
         try:
             self._enter_iter()
             while PyDict_Next(self, &pos, &key, &wr):
-                out = PyWeakref_GetObject(wr)
-                if out != Py_None:
-                    yield <object>key, <object>out
+                if PyWeakref_GetRef(<object>wr, &out):
+                    # As in values(), do not retain the value across yield.
+                    yield <object>key, _from_owned_reference(out)
         finally:
             self._exit_iter()
 
@@ -1192,13 +1201,13 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         EXAMPLES::
 
-            sage: L = [(p, GF(p)) for p in prime_range(10)]                             # needs sage.libs.pari
+            sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: from sage.misc.weak_dict import CachedWeakValueDictionary
             sage: D = CachedWeakValueDictionary()
             sage: len(D)
             0
-            sage: D = CachedWeakValueDictionary(L)                                      # needs sage.libs.pari
-            sage: len(D) == len(L)                                                      # needs sage.libs.pari
+            sage: D = CachedWeakValueDictionary(L)
+            sage: len(D) == len(L)
             True
 
         A :class:`CachedWeakValueDictionary` with a cache size of zero

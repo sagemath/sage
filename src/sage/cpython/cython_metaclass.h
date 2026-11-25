@@ -5,15 +5,8 @@
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 2 of the License, or
 * (at your option) any later version.
-*                  http://www.gnu.org/licenses/
+*                  https://www.gnu.org/licenses/
 *****************************************************************************/
-
-/* Compatibility for python 3.8, can be removed later */
-#if PY_VERSION_HEX < 0x030900A4 && !defined(Py_SET_TYPE)
-static inline void _Py_SET_TYPE(PyObject *ob, PyTypeObject *type)
-{ ob->ob_type = type; }
-#define Py_SET_TYPE(ob, type) _Py_SET_TYPE((PyObject*)(ob), type)
-#endif
 
 /* Tuple (None, None, None), initialized as needed */
 static PyObject* NoneNoneNone;
@@ -40,6 +33,10 @@ static CYTHON_INLINE PyObject* PyMethodDescr_CallSelf(PyMethodDescrObject* desc,
     return meth->ml_meth(self, NULL);
 }
 
+#if defined(CYTHON_HEX_VERSION) && CYTHON_HEX_VERSION >= 0x03030000
+static int __Pyx_InitAfterSharedUtility(void);
+#endif
+
 /*
  * This function calls PyType_Ready(t) and then calls
  * t.__getmetaclass__(None) (if that method exists) which should
@@ -52,7 +49,12 @@ static CYTHON_INLINE int Sage_PyType_Ready(PyTypeObject* t)
     if (r < 0)
         return r;
 
-#if PY_VERSION_HEX >= 0x03050000
+#if defined(CYTHON_HEX_VERSION) && CYTHON_HEX_VERSION >= 0x03030000
+    // Ensure Cython function types are initialized before calling metaclass methods.
+    if (__Pyx_InitAfterSharedUtility() < 0)
+        return -1;
+#endif
+
     // Cython 3 sets Py_TPFLAGS_HEAPTYPE before calling PyType_Ready,
     // and resets just after the call. We need to reset it earlier,
     // since otherwise the call to metaclass.__init__ below may have
@@ -60,7 +62,6 @@ static CYTHON_INLINE int Sage_PyType_Ready(PyTypeObject* t)
     // See also:
     // https://github.com/cython/cython/issues/3603
     t->tp_flags &= ~Py_TPFLAGS_HEAPTYPE;
-#endif
 
     /* Set or get metaclass (the type of t) */
     PyTypeObject* metaclass;

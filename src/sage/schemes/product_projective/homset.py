@@ -195,7 +195,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 points = set()
                 # find points from all possible affine patches
                 for I in xmrange([n + 1 for n in X.ambient_space().dimension_relative_components()]):
-                    [Y,phi] = X.affine_patch(I, True)
+                    Y, phi = X.affine_patch(I, True)
                     aff_points = Y.rational_points()
                     for PP in aff_points:
                         points.add(phi(PP))
@@ -212,17 +212,15 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 if isinstance(X, AlgebraicScheme_subscheme) and B**N > 5000:
                     from sage.schemes.product_projective.rational_point import sieve
                     return sieve(X, B)
-                else:
-                    from sage.schemes.product_projective.rational_point import enum_product_projective_rational_field
-                    return enum_product_projective_rational_field(self, B)
-            elif alg == 'sieve':
-                from sage.schemes.product_projective.rational_point import sieve
-                return sieve(X, B)
-            elif alg == 'enumerate':
                 from sage.schemes.product_projective.rational_point import enum_product_projective_rational_field
                 return enum_product_projective_rational_field(self, B)
-            else:
-                raise ValueError("algorithm must be 'sieve' or 'enumerate'")
+            if alg == 'sieve':
+                from sage.schemes.product_projective.rational_point import sieve
+                return sieve(X, B)
+            if alg == 'enumerate':
+                from sage.schemes.product_projective.rational_point import enum_product_projective_rational_field
+                return enum_product_projective_rational_field(self, B)
+            raise ValueError("algorithm must be 'sieve' or 'enumerate'")
         elif R in NumberFields():
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)

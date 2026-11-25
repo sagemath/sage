@@ -36,6 +36,7 @@ from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
 
+
 class GroupLibGAP(GroupMixinLibGAP, Group, ParentLibGAP):
 
     Element = ElementLibGAP

@@ -205,6 +205,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m.set_immutable()
         return m
 
+
 class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
                                         Group,
@@ -403,9 +404,10 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
         """
         if not isinstance(G, AbelianGroupAutomorphismGroup_gap):
             raise ValueError("input must be an instance of AbelianGroup_gap")
-        if not self.ambient() is G.ambient():
+        if self.ambient() is not G.ambient():
             return False
         return G.gap().IsSubsemigroup(self).sage()
+
 
 class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
     r"""
@@ -466,6 +468,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
             sage: aut = G.automorphism_group()
         """
         return "Full group of automorphisms of %s" % self.domain()
+
 
 class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     r"""

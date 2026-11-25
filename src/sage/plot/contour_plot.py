@@ -210,8 +210,6 @@ class ContourPlot(GraphicPrimitive):
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
-            if fill and label_options is None:
-                label_options['inline'] = False
             subplot.clabel(CS, **label_options)
         if options.get('colorbar', False):
             colorbar_options = options['colorbar_options']
@@ -237,6 +235,17 @@ def contour_plot(f, xrange, yrange, **options):
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``contour_plot(f, (xmin,xmax), (ymin,ymax), ...)``
+
+    The default for ``label_inline`` depends on whether contours are filled::
+
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=False, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        True
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=True, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        False
 
     INPUT:
 
@@ -415,7 +424,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2))
         sphinx_plot(g)
 
@@ -427,7 +436,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2, 2), (-2, 2), contours=2, cmap=[(1,0,0), (0,1,0), (0,0,1)])
         sphinx_plot(g)
 
@@ -440,7 +449,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), contours=(0.1,1.0,1.2,1.4), cmap='hsv')
         sphinx_plot(g)
 
@@ -452,7 +461,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), contours=(1.0,), fill=False)
         sphinx_plot(g)
 
@@ -475,7 +484,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), fill=False, linewidths=10)
         sphinx_plot(g)
 
@@ -488,7 +497,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), fill=False, linestyles='dashdot')
         sphinx_plot(g)
 
@@ -667,7 +676,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), labels=True, label_colors='red')
         sphinx_plot(g)
 
@@ -680,7 +689,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True)
         sphinx_plot(g)
 
@@ -692,7 +701,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True, colorbar_orientation='horizontal')
         sphinx_plot(g)
 
@@ -704,7 +713,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],
                         colorbar=True)
         sphinx_plot(g)
@@ -718,7 +727,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],
                          colorbar=True, colorbar_spacing='uniform')
         sphinx_plot(g)
@@ -732,7 +741,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[0,2,3,6],
                          colorbar=True, colorbar_format='%.3f')
         sphinx_plot(g)
@@ -747,7 +756,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), labels=True,
                          label_colors='red', contours=[0,2,3,6],
                          colorbar=True)
@@ -762,7 +771,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), cmap='winter',
                          contours=20, fill=False, colorbar=True)
         sphinx_plot(g)
@@ -793,7 +802,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return cos(x) + sin(y)
+        def f(x, y): return cos(x) + sin(y)
         g = contour_plot(f, (0,pi), (0,pi), axes=True)
         sphinx_plot(g)
 
@@ -819,7 +828,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return cos(x) + sin(y)
+        def f(x, y): return cos(x) + sin(y)
         g = contour_plot(f, (-pi,pi), (-pi,pi), fill=False, axes=True)
         sphinx_plot(g)
 
@@ -881,7 +890,7 @@ def contour_plot(f, xrange, yrange, **options):
         sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
 
     region = options.pop('region')
@@ -1025,6 +1034,9 @@ def contour_plot(f, xrange, yrange, **options):
 
         xy_data_array[mask] = numpy.ma.masked
 
+    if options['label_options']['inline'] is None:
+        options['label_options']['inline'] = not options['fill']
+
     g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
 
     return g
@@ -1132,7 +1144,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), fill=True, plot_points=500)
         sphinx_plot(g)
 
@@ -1143,7 +1155,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), linewidth=6)
         sphinx_plot(g)
 
@@ -1155,7 +1167,7 @@ def implicit_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x, y =var("x y")
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), linestyle='dashdot')
         sphinx_plot(g)
 
@@ -1168,7 +1180,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), color='red', fill=True, fillcolor='green',
                                              plot_points=500)
         sphinx_plot(g)
@@ -1237,7 +1249,7 @@ def implicit_plot(f, xrange, yrange, **options):
         ....:     z = 0
         ....:     for i in range(n):
         ....:         z = z*z + c
-        ....:     def f(x,y):
+        ....:     def f(x, y):
         ....:         val = z(CDF(x, y))
         ....:         return val.norm() - 4
         ....:     return f
@@ -1254,7 +1266,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f
@@ -1273,7 +1285,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f
@@ -1296,7 +1308,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f
@@ -1382,12 +1394,11 @@ def implicit_plot(f, xrange, yrange, **options):
                            borderstyle=linestyles,
                            incol=incol, bordercol=bordercol,
                            **options)
-    elif options['fill'] is False:
+    if options['fill'] is False:
         options.pop('fillcolor', None)
         return contour_plot(f, xrange, yrange, linewidths=linewidths,
                             linestyles=linestyles, **options)
-    else:
-        raise ValueError("fill=%s is not supported" % options['fill'])
+    raise ValueError("fill=%s is not supported" % options['fill'])
 
 
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,
@@ -1650,7 +1661,7 @@ def region_plot(f, xrange, yrange, **options):
         sage: region_plot([x^2 + y^2 == 1, x < y], (x,-1,1), (y,-1,1))
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.structure.element import Expression
     from warnings import warn
@@ -1780,7 +1791,7 @@ def equify(f):
         sage: f(2, 1)
         -1
     """
-    from sage.calculus.all import symbolic_expression
+    from sage.calculus.expr import symbolic_expression
     from sage.structure.element import Expression
     if not isinstance(f, Expression):
         return lambda x, y: -1 if f(x, y) else 1

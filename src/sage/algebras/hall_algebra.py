@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall Algebras
 
@@ -255,7 +254,7 @@ class HallAlgebra(CombinatorialFreeModule):
         M.register_as_coercion()
         (~M).register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -380,7 +379,7 @@ class HallAlgebra(CombinatorialFreeModule):
         if all(x == 1 for x in la):
             r = len(la)
             q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
-            return self._from_dict({p: q for p in Partitions(r)})
+            return self._from_dict(dict.fromkeys(Partitions(r), q))
 
         I = HallAlgebraMonomials(self.base_ring(), self._q)
         return self(I(self.monomial(la)).antipode())
@@ -623,7 +622,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         H = HallAlgebra(self.base_ring(), self._q)
         return reduce(lambda cur,r: cur * H.monomial(Partition([1]*r)), a, H.one())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -715,7 +714,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         cur = self.one()
         for r in a:
             q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
-            cur *= self(H._from_dict({p: q for p in Partitions(r)}))
+            cur *= self(H._from_dict(dict.fromkeys(Partitions(r), q)))
         return cur
 
     def counit(self, x):

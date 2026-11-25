@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Additive magmas
 """
@@ -9,16 +8,18 @@ Additive magmas
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.lazy_import import LazyImport
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.category_singleton import Category_singleton
+from typing import Self
+
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category_singleton import Category_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.homsets import HomsetsCategory
-from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.sets_cat import Sets
+from sage.categories.with_realizations import WithRealizationsCategory
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class AdditiveMagmas(Category_singleton):
@@ -384,8 +385,9 @@ class AdditiveMagmas(Category_singleton):
                 y| y z x
                 z| z x y
             """
-            from sage.matrix.operation_table import OperationTable
             import operator
+
+            from sage.matrix.operation_table import OperationTable
             return OperationTable(self, operation=operator.add,
                                   names=names, elements=elements)
 
@@ -596,7 +598,7 @@ class AdditiveMagmas(Category_singleton):
 
     class AdditiveUnital(CategoryWithAxiom):
 
-        def additional_structure(self):
+        def additional_structure(self) -> Self:
             r"""
             Return whether ``self`` is a structure category.
 
@@ -622,7 +624,7 @@ class AdditiveMagmas(Category_singleton):
                 of ``self``.
 
                 An inverse :class:`additive magma <AdditiveMagmas>` is
-                a :class:`unital additive magma <AdditiveMagmas.Unital>`
+                a :class:`unital additive magma <AdditiveMagmas.AdditiveUnital>`
                 such that every element admits both an additive
                 inverse on the left and on the right. Such an additive
                 magma is also called an *additive loop*.
@@ -971,8 +973,8 @@ class AdditiveMagmas(Category_singleton):
                     [Category of unital magmas]
 
                     sage: C.super_categories()
-                    [Category of unital algebras with basis over Rational Field,
-                     Category of additive magma algebras over Rational Field]
+                    [Category of additive magma algebras over Rational Field,
+                     Category of unital algebras with basis over Rational Field]
                 """
                 from sage.categories.magmas import Magmas
                 return [Magmas().Unital()]
@@ -984,8 +986,7 @@ class AdditiveMagmas(Category_singleton):
                     """
                     Return the zero of this additive magma, which index the
                     one of this algebra, as per
-                    :meth:`AlgebrasWithBasis.ParentMethods.one_basis()
-                    <sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.one_basis>`.
+                    :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
                     EXAMPLES::
 

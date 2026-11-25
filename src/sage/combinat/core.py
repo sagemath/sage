@@ -102,7 +102,7 @@ class Core(CombinatorialElement):
             raise ValueError("%s is not a %s-core" % (part, k))
         CombinatorialElement.__init__(self, parent, core)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -123,7 +123,7 @@ class Core(CombinatorialElement):
                     self.parent().k == other.parent().k)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for un-equality.
 
@@ -169,7 +169,7 @@ class Core(CombinatorialElement):
             self._hash = hash(tuple(self._list)) + hash(self.parent().k)
         return self._hash
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Output the LaTeX representation of this core as a partition.
 
@@ -349,7 +349,7 @@ class Core(CombinatorialElement):
         - ``w`` -- tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
           If transposition is set to be ``True``, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
-          (see :meth:`_transposition_to_reduced_word`).
+          (see ``_transposition_to_reduced_word``).
 
         - ``transposition`` -- boolean (default: ``False``)
 
@@ -412,11 +412,10 @@ class Core(CombinatorialElement):
             raise ValueError("t_0 and t_1 cannot be equal mod k")
         if t[0] > t[1]:
             return self._transposition_to_reduced_word([t[1], t[0]])
-        else:
-            resu = [i % k for i in range(t[0], t[1] - (t[1] - t[0]) // k)]
-            resu += [(t[1] - (t[1] - t[0]) // k - 2 - i) % k
-                     for i in range(t[1] - (t[1] - t[0]) // k - t[0] - 1)]
-            return resu
+        resu = [i % k for i in range(t[0], t[1] - (t[1] - t[0]) // k)]
+        resu += [(t[1] - (t[1] - t[0]) // k - 2 - i) % k
+                 for i in range(t[1] - (t[1] - t[0]) // k - t[0] - 1)]
+        return resu
 
     def weak_le(self, other):
         r"""
@@ -449,7 +448,7 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
@@ -504,14 +503,14 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
             other = Core(other, self.k())
         return other.contains(self)
 
-    def contains(self, other):
+    def contains(self, other) -> bool:
         r"""
         Check whether ``self`` contains ``other``.
 
@@ -727,7 +726,8 @@ class Cores_size(UniqueRepresentation, Parent):
         r"""
         Convert the partition ``part`` into a core (as the identity map).
 
-        This is the inverse method to :meth:`to_partition`.
+        This is the inverse method to
+        :meth:`~sage.combinat.core.Core.to_partition`.
 
         EXAMPLES::
 

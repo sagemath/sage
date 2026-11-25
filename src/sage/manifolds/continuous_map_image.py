@@ -19,6 +19,7 @@ subset of `N`.
 
 from sage.manifolds.subset import ManifoldSubset
 
+
 class ImageManifoldSubset(ManifoldSubset):
     r"""
     Subset of a topological manifold that is a continuous image of a manifold subset.
@@ -38,7 +39,9 @@ class ImageManifoldSubset(ManifoldSubset):
       ``map``
     """
 
-    def __init__(self, map, inverse=None, name=None, latex_name=None, domain_subset=None):
+    def __init__(
+        self, map, inverse=None, name=None, latex_name=None, domain_subset=None
+    ):
         r"""
         Construct a manifold subset that is the image of a continuous map.
 
@@ -99,8 +102,7 @@ class ImageManifoldSubset(ManifoldSubset):
         """
         if self._domain_subset is self._map.domain():
             return f"Image of the {self._map}"
-        else:
-            return f"Image of the {self._domain_subset} under the {self._map}"
+        return f"Image of the {self._domain_subset} under the {self._map}"
 
     def _an_element_(self):
         r"""

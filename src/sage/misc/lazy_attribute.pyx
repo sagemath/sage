@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -6,6 +5,8 @@ AUTHORS:
 
 - Nicolas Thiery (2008): Initial version
 - Nils Bruin (2013-05): Cython version
+
+.. autoclass:: sage.misc.lazy_attribute::_lazy_attribute
 """
 
 # ****************************************************************************
@@ -66,12 +67,12 @@ cdef class _lazy_attribute():
 
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
-            sage: Parent.element_class.__doc__[91:147]
-            'The (default) class for the elements of this parent.\n\n   '
+            sage: "The (default) class for the elements of this parent" in Parent.element_class.__doc__
+            True
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__
-            'sage.misc.lazy_attribute'
+            'sage.structure.parent'
         """
         raise NotImplementedError("Only instantiate wrapper python class")
 
@@ -85,9 +86,9 @@ cdef class _lazy_attribute():
             sage: g = lazy_attribute(sage.misc.banner.banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def banner() -> None:\n'
             sage: lines
-            87
+            102
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -107,7 +108,7 @@ cdef class _lazy_attribute():
         """
         cdef CM
         cdef result
-        if a is None: # when doing cls.x for cls a class and x a lazy attribute
+        if a is None:  # when doing cls.x for cls a class and x a lazy attribute
             return self
         try:
             # _cached_methods is supposed to be a public Cython attribute.
@@ -132,7 +133,7 @@ cdef class _lazy_attribute():
             for supercls in cls.__mro__:
                 if self.__name__ in supercls.__dict__ and self is supercls.__dict__[self.__name__]:
                     cls = supercls
-            return getattr(super(cls, a),self.__name__)
+            return getattr(super(cls, a), self.__name__)
         try:
             setattr(a, self.__name__, result)
         except AttributeError:
@@ -354,9 +355,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
-        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: P = MyParent(category=Rings())
+        sage: P.element_class    # indirect doctest
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications
@@ -497,11 +498,11 @@ class lazy_attribute(_lazy_attribute):
         self.f = f
         if hasattr(f, "__doc__"):
             self.__doc__ = f.__doc__
-        elif hasattr(f, "__doc__"): # Needed to handle Cython methods
+        elif hasattr(f, "__doc__"):  # Needed to handle Cython methods
             self.__doc__ = f.__doc__
         if hasattr(f, "__name__"):
             self.__name__ = f.__name__
-        elif hasattr(f, "__name__"): # Needed to handle Cython methods
+        elif hasattr(f, "__name__"):  # Needed to handle Cython methods
             self.__name__ = f.__name__
         if hasattr(f, "__module__"):
             self.__module__ = f.__module__

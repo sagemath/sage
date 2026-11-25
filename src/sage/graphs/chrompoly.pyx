@@ -1,4 +1,3 @@
-# cython: binding=True
 # sage.doctest: needs sage.libs.flint sage.graphs
 """
 Chromatic polynomial
@@ -10,8 +9,9 @@ AUTHORS:
 
 REFERENCE:
 
-    Ronald C Read, An improved method for computing the chromatic polynomials of
-    sparse graphs.
+    See [Rea1968]_ and the :wikipedia:`Chromatic_polynomial` for more details
+    on this notion in graphs.
+
 """
 
 # ****************************************************************************
@@ -31,7 +31,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport Ring
+from sage.structure.parent cimport Parent
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -41,7 +41,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     Compute the chromatic polynomial of the graph G.
 
     The algorithm used is a recursive one, based on the following observations
-    of Read:
+    of Read [Rea1968]_:
 
         - The chromatic polynomial of a tree on n vertices is x(x-1)^(n-1).
 
@@ -140,6 +140,12 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         Traceback (most recent call last):
         ...
         ValueError: algorithm must be "C" or "Python"
+
+    Check the behavior with immutable graphs::
+
+        sage: G = Graph([(0, 1), (0, 1)], multiedges=True, immutable=True)
+        sage: G.chromatic_polynomial()
+        x^2 - x
     """
     algorithm = algorithm.lower()
     if algorithm not in ['c', 'python']:
@@ -156,7 +162,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         return R.prod(chromatic_polynomial(g, algorithm='C') for g in G.connected_components_subgraphs())
     x = R.gen()
     if G.is_tree():
-        return x * (x - 1) ** (G.num_verts() - 1)
+        return x * (x - 1) ** (G.n_vertices() - 1)
 
     cdef int nverts, nedges, i, j, u, v, top, bot, num_chords, next_v
     cdef int *queue
@@ -167,11 +173,10 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     cdef mpz_t m, coeff
     cdef mpz_t *tot
     cdef mpz_t *coeffs
-    G = G.relabel(inplace=False)
+    G = G.relabel(inplace=False, immutable=False)
     G.remove_multiple_edges()
-    G.remove_loops()
-    nverts = G.num_verts()
-    nedges = G.num_edges()
+    nverts = G.n_vertices()
+    nedges = G.n_edges()
 
     cdef MemoryAllocator mem = MemoryAllocator()
     queue = <int *> mem.allocarray(nverts, sizeof(int))
@@ -435,8 +440,14 @@ def chromatic_polynomial_with_cache(G, cache=None):
         Traceback (most recent call last):
         ...
         TypeError: parameter cache must be a dictionary or None
+
+    Check the behavior with immutable graphs::
+
+        sage: G = Graph([(0, 1), (0, 1)], multiedges=True, immutable=True)
+        sage: chromatic_polynomial_with_cache(G)
+        x^2 - x
     """
-    cdef Ring R = PolynomialRing(ZZ, "x", implementation="FLINT")
+    cdef Parent R = PolynomialRing(ZZ, "x", implementation="FLINT")
     cdef Polynomial_integer_dense_flint one = R.one()
     cdef Polynomial_integer_dense_flint zero = R.zero()
     cdef Polynomial_integer_dense_flint x = R.gen()
@@ -447,7 +458,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         return zero
 
     # Make a copy of the input graph and ensure that it's labeled [0..n-1]
-    G = G.relabel(inplace=False)
+    G = G.relabel(inplace=False, immutable=False)
     G.remove_multiple_edges()
 
     # We use a cache to avoid computing twice the chromatic polynomial of

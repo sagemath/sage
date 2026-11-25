@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Factory for Character-Based Art
 """
@@ -37,8 +36,7 @@ class CharacterArtFactory(SageObject):
         - ``art_type`` -- type of the character art (i.e. a subclass of
           :class:`~sage.typeset.character_art.CharacterArt`)
 
-        - ``string_type`` -- type of strings (the lines in the
-          character art, e.g. ``str`` or ``unicode``)
+        - ``string_type`` -- ignored (always ``str``)
 
         - ``magic_method_name`` -- name of the Sage magic method (e.g.
           ``'_ascii_art_'`` or ``'_unicode_art_'``)
@@ -60,8 +58,6 @@ class CharacterArtFactory(SageObject):
             <class 'sage.typeset.character_art_factory.CharacterArtFactory'>
         """
         self.art_type = art_type
-        assert isinstance(string_type('a'), str)
-        self.string_type = string_type
         assert magic_method_name in ['_ascii_art_', '_unicode_art_']
         self.magic_method_name = magic_method_name
         self.left_parenthesis, self.right_parenthesis = parenthesis
@@ -123,14 +119,13 @@ class CharacterArtFactory(SageObject):
             baseline = 0
         if isinstance(obj, tuple):
             return self.build_tuple(obj, baseline)
-        elif isinstance(obj, dict):
+        if isinstance(obj, dict):
             return self.build_dict(obj, baseline)
-        elif isinstance(obj, list):
+        if isinstance(obj, list):
             return self.build_list(obj, baseline)
-        elif isinstance(obj, set):
+        if isinstance(obj, set):
             return self.build_set(obj, baseline)
-        else:
-            return self.build_from_string(obj, baseline)
+        return self.build_from_string(obj, baseline)
 
     def build_empty(self):
         """
@@ -204,13 +199,11 @@ class CharacterArtFactory(SageObject):
             bb
             ccc
         """
-        if self.string_type is str and not isinstance(obj, str):
+        if not isinstance(obj, str):
             if isinstance(obj, bytes):
                 obj = obj.decode('utf-8')
             else:
                 obj = str(obj)
-        if self.string_type is bytes and not isinstance(obj, bytes):
-            obj = str(obj).encode('utf-8')
         return self.art_type(obj.splitlines(), baseline=baseline)
 
     def build_container(self, content, left_border, right_border, baseline=0):
@@ -263,7 +256,7 @@ class CharacterArtFactory(SageObject):
         left_border = left_border.character_art(h)
         right_border = right_border.character_art(h)
         lines = []
-        pad = self.string_type(' ')
+        pad = ' '
         for left, line, right in zip(left_border, matrix, right_border):
             lines.append(left + pad + line.ljust(w) + pad + right)
         shift = len(left_border) + len(pad)
@@ -295,7 +288,7 @@ class CharacterArtFactory(SageObject):
             {            /\    /\      /\/\    /  \  }
             { /\/\/\, /\/  \, /  \/\, /    \, /    \ }
         """
-        comma = self.art_type([self.string_type(', ')], baseline=0)
+        comma = self.art_type([', '], baseline=0)
         repr_elems = self.concatenate(s, comma, nested=True)
         return self.build_container(
             repr_elems, self.left_curly_brace, self.right_curly_brace,
@@ -323,10 +316,10 @@ class CharacterArtFactory(SageObject):
             sage: ascii_art({'a': '', '': ''})
             { a:, : }
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
-        colon = self.art_type([self.string_type(':')], baseline=0)
+        colon = self.art_type([':'], baseline=0)
 
         def concat_no_breakpoint(k, v):
             k = self.build(k)
@@ -378,7 +371,7 @@ class CharacterArtFactory(SageObject):
               22, 23, 24, 25 ], [ 1, 2, 3, 4, 5 ],\n\n
               [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ] ]'
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
         repr_elems = self.concatenate(l, comma, nested=True)
@@ -397,7 +390,7 @@ class CharacterArtFactory(SageObject):
             (            /\    /\      /\/\    /  \  )
             ( /\/\/\, /\/  \, /  \/\, /    \, /    \ )
         """
-        comma = self.art_type([self.string_type(', ')],
+        comma = self.art_type([', '],
                               baseline=0,
                               breakpoints=[1])
         repr_elems = self.concatenate(t, comma, nested=True)
@@ -479,9 +472,8 @@ class CharacterArtFactory(SageObject):
             top1 = obj._h - bot1
             if i >= top1 or i < -bot1:
                 return ' ' * obj._l
-            else:
-                line = obj._matrix[top1 - 1 - i]
-                return line + ' ' * (obj._l - len(line))
+            line = obj._matrix[top1 - 1 - i]
+            return line + ' ' * (obj._l - len(line))
 
         # Note that this scales linearly with the length of the string
         new_matrix = [padded_line(separator, i).join(

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Evaluating a String in Sage
 """
@@ -25,7 +24,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     - ``source`` -- string or object with a ``_sage_``
       method
 
-    - ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
+    - ``locals`` -- evaluate in namespace of ``sage.all`` plus
       the locals dictionary
 
     - ``cmds`` -- string; sequence of commands to be run
@@ -64,7 +63,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         36
         sage: eval('bernoulli(6)')
         36
-        sage: sage_eval('bernoulli(6)')                                                 # needs sage.libs.flint
+        sage: sage_eval('bernoulli(6)')
         1/42
 
     ::
@@ -108,7 +107,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     ::
 
-        sage: sage_eval(('f(x) = x^2', 'f(3)'))                                         # needs sage.symbolic
+        sage: sage_eval(('f(x) = x^2', 'f(3)'))
         9
         sage: vars = {'rt2': sqrt(2.0)}
         sage: sage_eval(('rt2 += 1', 'rt2', vars))
@@ -120,7 +119,6 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     useful when evaluating the output of other computer algebra
     systems::
 
-        sage: # needs sage.libs.gap
         sage: R.<x> = PolynomialRing(RationalField())
         sage: gap.eval('R:=PolynomialRing(Rationals,["x"]);')
         'Rationals[x]'
@@ -184,8 +182,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     if cmds:
         exec(cmd_seq, sage.all.__dict__, locals)
         return locals['_sage_eval_returnval_']
-    else:
-        return eval(source, sage.all.__dict__, locals)
+    return eval(source, sage.all.__dict__, locals)
 
 
 def sageobj(x, vars=None):
@@ -202,7 +199,7 @@ def sageobj(x, vars=None):
 
     EXAMPLES::
 
-        sage: type(sageobj(gp('34/56')))                                                # needs sage.libs.pari
+        sage: type(sageobj(gp('34/56')))
         <class 'sage.rings.rational.Rational'>
 
         sage: n = 5/2
@@ -215,7 +212,6 @@ def sageobj(x, vars=None):
 
     This illustrates interfaces::
 
-        sage: # needs sage.libs.pari
         sage: f = gp('2/3')
         sage: type(f)
         <class 'sage.interfaces.gp.GpElement'>
@@ -224,7 +220,6 @@ def sageobj(x, vars=None):
         sage: type(f._sage_())
         <class 'sage.rings.rational.Rational'>
 
-        sage: # needs sage.libs.gap
         sage: a = gap(939393/2433)
         sage: a._sage_()
         313131/811

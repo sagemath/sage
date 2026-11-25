@@ -20,7 +20,8 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.stdio import flush
-from sage_bootstrap.compat import urllib
+import urllib
+from urllib.request import build_opener, install_opener, urlretrieve
 
 
 class ProgressBar(object):
@@ -120,16 +121,17 @@ class Download(object):
             self.progress_bar.error_stop()
     
     def run(self):
-        opener = urllib.FancyURLopener()
+        opener = build_opener()
+        install_opener(opener)
+
         opener.http_error_default = self.http_error_default
         self.start_progress_bar()
         try:
             if self.progress:
-                filename, info = opener.retrieve(
-                    self.url, self.destination, self.progress_bar)
+                urlretrieve(self.url, self.destination, reporthook=self.progress_bar)
             else:
-                filename, info = opener.retrieve(
-                    self.url, self.destination)
+                urlretrieve(self.url, self.destination)
+
         except IOError as error:
             self.error_progress_bar()
             log.error(error)

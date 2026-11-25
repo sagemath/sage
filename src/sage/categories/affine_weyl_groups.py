@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Affine Weyl groups
 """
@@ -24,7 +23,8 @@ class AffineWeylGroups(Category_singleton):
     .. SEEALSO::
 
         - :wikipedia:`Affine_weyl_group`
-        - :class:`WeylGroups`, :class:`WeylGroup`
+        - :class:`WeylGroups`,
+          :func:`~sage.combinat.root_system.weyl_group.WeylGroup`
 
     EXAMPLES::
 
@@ -64,7 +64,8 @@ class AffineWeylGroups(Category_singleton):
 
         .. SEEALSO:: :meth:`Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+           :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 
@@ -130,13 +131,13 @@ class AffineWeylGroups(Category_singleton):
                     if (length < k and i == u1.first_descent(side='left') and
                             u1.is_affine_grassmannian()):
                         yield (u1, length + 1)
-                return
+
             return RecursivelyEnumeratedSet_forest(((self.one(), 0),), succ, algorithm='breadth',
                                                    category=FiniteEnumeratedSets(),
                                                    post_process=select_length)
 
     class ElementMethods:
-        def is_affine_grassmannian(self):
+        def is_affine_grassmannian(self) -> bool:
             """
             Test whether ``self`` is affine Grassmannian.
 

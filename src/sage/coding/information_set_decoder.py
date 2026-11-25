@@ -107,7 +107,7 @@ class InformationSetAlgorithm(SageObject):
         ....:     def __init__(self, code, decoding_interval):
         ....:         super().__init__(code, decoding_interval, "MinimalISD")
         ....:     def calibrate(self):
-        ....:         self._parameters = { } # calibrate parameters here
+        ....:         self._parameters = {}  # calibrate parameters here
         ....:         self._time_estimate = 10.0  # calibrated time estimate
         ....:     def decode(self, r):
         ....:         # decoding algorithm here
@@ -157,10 +157,10 @@ class InformationSetAlgorithm(SageObject):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -382,7 +382,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
       algorithm as described above. Usually a small number. It has to be at most
       the largest allowed number of errors. A good choice will be approximated
       if this option is not set; see
-      :meth:`sage.coding.LeeBrickellISDAlgorithm.calibrate`
+      :meth:`sage.coding.information_set_decoder.LeeBrickellISDAlgorithm.calibrate`
       for details.
 
     EXAMPLES::
@@ -435,23 +435,23 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         The Lee-Brickell algorithm as described in the class doc.
 
         Note that either parameters must be given at construction time or
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.calibrate()`
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.calibrate`
         should be called before calling this method.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in the ambient space of
-          :meth:`decoder.Decoder.code`
+          :meth:`sage.coding.decoder.Decoder.code`
 
         OUTPUT: a codeword whose distance to `r` satisfies ``self.decoding_interval()``.
 
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -520,9 +520,9 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         We don't explicitly estimate `\rho`.
 
         OUTPUT: does not output anything but sets private fields used by
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters()`
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters`
         and
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate()`.
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate`.
 
         EXAMPLES::
 
@@ -569,7 +569,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 I = sample(range(n), k)
                 Gi = G.matrix_from_columns(I)
                 try:
-                    Gi_inv = Gi.inverse()
+                    Gi.inverse()
                 except ZeroDivisionError:
                     continue
                 return process_time() - before
@@ -581,7 +581,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                              for s in range(100) ]
             before = process_time()
             for m in scalars:
-                e = y - sum(m[i]*g[i] for i in range(p))
+                _ = y - sum(m[i]*g[i] for i in range(p))
             return (process_time() - before) / 100.
         T = sum([ time_information_set_steps() for s in range(5) ]) / 5.
         P = [ time_search_loop(p) for p in range(tau+1) ]
@@ -695,7 +695,7 @@ class LinearCodeInformationSetDecoder(Decoder):
     EXAMPLES:
 
     The principal way to access this class is through the
-    :meth:`sage.code.linear_code.AbstractLinearCode.decoder` method::
+    :meth:`sage.coding.abstract_code.AbstractCode.decoder` method::
 
         sage: C = codes.GolayCode(GF(3))
         sage: D = C.decoder('InformationSet', 2); D
@@ -892,8 +892,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         """
         if dictionary:
             return LinearCodeInformationSetDecoder._known_algorithms
-        else:
-            return LinearCodeInformationSetDecoder._known_algorithms.keys()
+        return LinearCodeInformationSetDecoder._known_algorithms.keys()
 
     def algorithm(self):
         r"""
@@ -922,17 +921,18 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a vector in the ambient space of :meth:`decoder.Decoder.code`
+        - ``r`` -- a vector in the ambient space of
+          :meth:`sage.coding.decoder.Decoder.code`
 
-        OUTPUT: a codeword of :meth:`decoder.Decoder.code`
+        OUTPUT: a codeword of :meth:`sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1,0,0,0,0,0,1,0,1,0,1,1,0,0,1],\
-                                     [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
-                                     [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
-                                     [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
-                                     [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
+            ....:                    [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
+            ....:                    [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
+            ....:                    [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
+            ....:                    [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
             sage: C = LinearCode(M)
             sage: c = C.random_element()
             sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), 2)

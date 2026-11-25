@@ -216,12 +216,12 @@ std::pair<ex,ex> quo_rem(const ex &a, const ex &b, const ex &x, bool check_args)
         }
         for (size_t i=0; i<qvec.size(); ++i)
                 if (not qvec[i].is_zero())
-                        qvec[i] = qvec[i] * power(x, numeric(i));
+                        qvec[i] = qvec[i] * power(x, numeric(static_cast<int>(i)));
         if (avec.size() > bdeg)
                 avec.resize(bdeg);
         for (size_t i=0; i<bdeg; ++i)
                 if (not avec[i].is_zero())
-                        avec[i] = avec[i] * power(x, numeric(i));
+                        avec[i] = avec[i] * power(x, numeric(static_cast<int>(i)));
         return std::make_pair(add(qvec), add(avec));
 }
 
@@ -240,7 +240,7 @@ ex decomp_rational(const ex &a, const ex &x)
         try {
         	q = quo(numer, denom, x);
         }
-        catch (std::logic_error) {
+        catch (const std::logic_error&) {
 		return a;
         }
 	return q + rem(numer, denom, x) / denom;
@@ -536,7 +536,7 @@ ex parfrac(const ex & a, const ex & x)
         	// Convert N(x)/D(x) -> Q(x) + R(x)/D(x), so degree(R) < degree(D)
                 qr = quo_rem(numer, denom, x, true);
         }
-        catch (std::logic_error) {
+        catch (const std::logic_error&) {
                 return a;
         }
 	// Factorize denominator and compute cofactors
@@ -565,7 +565,7 @@ ex parfrac(const ex & a, const ex & x)
                                         return a;
                                 size_t expo = ex_to<numeric>(ee).to_int();
                                 for (size_t j=1; j<=expo; ++j) {
-                                        ex eee = power(e.op(0), numeric(j));
+                                        ex eee = power(e.op(0), numeric(static_cast<int>(j)));
                                         factor.push_back(eee);
                                         cofac.push_back((facmul/eee).expand());
                                 }
@@ -582,7 +582,7 @@ ex parfrac(const ex & a, const ex & x)
                         return a;
                 size_t expo = ex_to<numeric>(facmul.op(1)).to_int();
                 for (size_t j=1; j<=expo; ++j) {
-                        ex ee = power(facmul.op(0), numeric(j));
+                        ex ee = power(facmul.op(0), numeric(static_cast<int>(j)));
                         factor.push_back(ee);
                         cofac.push_back((facmul/ee).expand());
                 }

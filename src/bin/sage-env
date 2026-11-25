@@ -383,12 +383,15 @@ if [ -n "$SAGE_LOCAL" ]; then
        # "Toolchains/XcodeDefault.xctoolchain/usr/bin/".  (See #37237.)
        if [ -z "$LD" ]; then
 	   # Running xcode-select on a system with no toolchain writes an
-	   # error message to stderr, so redirect stderr to /dev/null. 
+	   # error message to stderr, so redirect stderr to /dev/null.
 	   XCODE_PATH=$(/usr/bin/xcode-select -p 2> /dev/null)
 	   if [ -n $XCODE_PATH ]; then
                if [ -x "$XCODE_PATH/usr/bin/ld-classic" -o \
 		       -x "$XCODE_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic" ]; then
-		   LDFLAGS="$LDFLAGS -Wl,-ld_classic"
+                   # Add -ld_classic only if -ld_classic is not deprecated.
+                   if [ -z "$(ld -ld_classic 2>&1 | grep 'ld_classic is deprecated')" ]; then
+		       LDFLAGS="$LDFLAGS -Wl,-ld_classic"
+                   fi
                fi
            else
                # On a macOS system with no toolchain we don't want this script
@@ -477,6 +480,10 @@ fi
 if [ -n "$SAGE_BROWSER" ]; then
     export BROWSER="$SAGE_BROWSER"
 fi
+
+# Let interrupts cancel OpenMP parallel loops, e.g. in M4RI. The OpenMP
+# runtime only reads this at startup.
+export OMP_CANCELLATION="${OMP_CANCELLATION:-true}"
 
 ############ compilation flags
 
@@ -577,7 +584,7 @@ case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in
         # First, figure out the right values for SAGE_NUM_THREADS (default
         # number of threads) and SAGE_NUM_THREADS_PARALLEL (default number of
         # threads when parallel execution is asked explicitly).
-        sage_num_threads_array=$(sage-num-threads.py 2>/dev/null || echo 1 2 1)
+        sage_num_threads_array=$("$(dirname "$0")"/sage-num-threads.py 2>/dev/null || echo 1 2 1)
         sage_num_threads_array="${sage_num_threads_array% *}" # strip third item
         SAGE_NUM_THREADS="${sage_num_threads_array% *}" # keep first item
         SAGE_NUM_THREADS_PARALLEL="${sage_num_threads_array#* }" # keep second item

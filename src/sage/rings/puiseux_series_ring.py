@@ -277,6 +277,33 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
     Element = PuiseuxSeries
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: R = PuiseuxSeriesRing(QQ, 'y')
+            sage: R._magma_init_(magma)
+            'SageCreateWithNames(PuiseuxSeriesRing(_sage_ref...),["y"])'
+            sage: S = magma(R)
+            sage: S
+            Puiseux series field in y over Rational Field
+            sage: S.1
+            y
+            sage: S.sage() == R
+            True
+
+            sage: # optional - magma
+            sage: magma(PuiseuxSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
+            Puiseux series field in x over GF(7)
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        s = 'PuiseuxSeriesRing(%s)' % (Bref)
+        return magma._with_names(s, self.variable_names())
+
     def _element_constructor_(self, x, e=1, prec=infinity):
         r"""
         Construct a Puiseux series from ``x``.
@@ -394,6 +421,25 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
         # if (is_PuiseuxSeriesRing(P) and
         #     P.variable_name() == self.variable_name()):
         #     return True
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: P = PuiseuxSeriesRing(R, 'z')
+            sage: P.variable_names_recursive()
+            ('x', 'z')
+            sage: P.variable_names_recursive(1)
+            ('z',)
+        """
+        return self._laurent_series_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):

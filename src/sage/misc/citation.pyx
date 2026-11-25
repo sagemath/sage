@@ -4,13 +4,13 @@ Dependency usage tracking for citations
 """
 
 from sage.misc.temporary_file import tmp_filename
-from sage.env import SAGE_LOCAL, SAGE_VENV
+from sage.env import SAGE_LOCAL
 
 systems = {}
 systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
 systems['Singular'] = ['sage.interfaces.singular', '_libsingular',
                        'sage.libs.singular']
-systems['Maxima'] = ['sage.interfaces.maxima']
+systems['Maxima'] = ['sage.interfaces.maxima_lib']
 systems['GAP'] = ['sage.interfaces.gap']
 systems['Magma'] = ['sage.interfaces.magma', 'sage.interfaces.magma_free']
 systems['Axiom'] = ['sage.interfaces.axiom']
@@ -71,14 +71,10 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
+        sage: integrate(x^2, x)  # Priming coercion model
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
+        sage: get_systems('integrate(x^2, x)')
         ['Maxima', 'ginac']
-        sage: R.<x,y,z> = QQ[]
-        sage: I = R.ideal(x^2+y^2, z^2+y)
-        sage: get_systems('I.primary_decomposition()')
-        ['Singular']
     """
     import cProfile
     import pstats
@@ -97,24 +93,22 @@ def get_systems(cmd):
     from sage.repl.preparse import preparse
     cmd = preparse(cmd)
 
-    #Run the command and get the stats
+    # Run the command and get the stats
     filename = tmp_filename()
     cProfile.runctx(cmd, globals(), {}, filename)
     stats = pstats.Stats(filename)
 
-    #Strings is a list of method names and modules which get run
+    # Strings is a list of method names and modules which get run
     def string_from_stat(a):
         s = a[0]
         if SAGE_LOCAL:
             s = s.replace(SAGE_LOCAL, "")
-        if SAGE_VENV:
-            s = s.replace(SAGE_VENV, "")
         return s + " " + a[2]
 
     strings = [string_from_stat(a)
                for a in stats.stats]
 
-    #Remove trivial functions
+    # Remove trivial functions
     bad_res = [re.compile(r'is_.*Element'), re.compile("is_[a-z_]*_type")]
     for bad_re in bad_res:
         i = 0

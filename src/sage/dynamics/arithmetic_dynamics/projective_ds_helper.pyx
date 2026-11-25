@@ -70,10 +70,10 @@ cpdef _fast_possible_periods(self, return_points=False):
 
         - More space efficient hash/point-table.
     """
-    cdef int i, k, N
+    cdef int i, N
     cdef int hash_p, hash_q
     cdef int index, startindex
-    cdef list pointslist, points_periods
+    cdef list points_periods
     cdef list P, Q
     cdef set periods, lorders, rvalues
 
@@ -88,7 +88,7 @@ cpdef _fast_possible_periods(self, return_points=False):
     p = PS.base_ring().order()
     N = int(PS.dimension_relative())
 
-    point_table = [[0,0] for i in range(p**(N + 1))]
+    point_table = [[0, 0] for i in range(p**(N + 1))]
     index = 1
     periods = set()
     points_periods = []
@@ -149,8 +149,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     if not return_points:
         return sorted(periods)
-    else:
-        return points_periods
+    return points_periods
 
 
 def _enum_points(int prime, int dimension):
@@ -237,8 +236,7 @@ cdef inline int _mod_inv(int num, int prime) noexcept:
 
     if y < 0:
         return y + prime
-    else:
-        return y
+    return y
 
 cpdef _normalize_coordinates(list point, int prime, int len_points):
     """

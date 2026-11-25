@@ -100,7 +100,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
         sage: TestSuite(H).run() # long time
     """
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         TESTS::
 
@@ -187,7 +187,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         """
         return "Discrete pseudo-valuations on %r" % (self.domain(),)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return whether ``x`` is a valuation in this space.
 
@@ -293,7 +293,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             sage: m = H.__make_element_class__(DiscretePseudoValuation)(H)
             sage: m._test_category()
         """
-        def is_discrete_pseudo_valuation(self):
+        def is_discrete_pseudo_valuation(self) -> bool:
             r"""
             Return whether this valuation is a discrete pseudo-valuation.
 
@@ -317,7 +317,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 True
             """
 
-        def is_negative_pseudo_valuation(self):
+        def is_negative_pseudo_valuation(self) -> bool:
             r"""
             Return whether this valuation is a discrete pseudo-valuation that
             does attain `-\infty`, i.e., it is non-trivial and its domain
@@ -331,12 +331,12 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             from sage.categories.fields import Fields
             if self.is_discrete_valuation():
                 return False
-            elif self.domain() in Fields():
+            if self.domain() in Fields():
                 return True
             raise NotImplementedError
 
         @cached_method
-        def is_trivial(self):
+        def is_trivial(self) -> bool:
             r"""
             Return whether this valuation is trivial, i.e., whether it is
             constant `\infty` or constant zero for everything but the zero
@@ -354,10 +354,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             if self(self.domain().one()) is infinity:
                 # the constant infinity
                 return True
-            if self(self.uniformizer()) != 0:
-                # not constant on the nonzero elements
-                return False
-            return True
+            return self(self.uniformizer()) == 0
 
         @abstract_method
         def uniformizer(self):
@@ -515,8 +512,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             from sage.categories.fields import Fields
             if ret in Fields():
                 return ret
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            if isinstance(ret, PolynomialRing_general):
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            if isinstance(ret, PolynomialRing_generic):
                 from sage.rings.function_field.constructor import FunctionField
                 return FunctionField(ret.base_ring().fraction_field(), names=(ret.variable_name(),))
             return ret.fraction_field()
@@ -895,16 +892,15 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             s = ZZ(s / self.value_group().gen())
             if s > 0:
                 return x * self.uniformizer()**s
-            else:  # s < 0
-                if ~self.uniformizer() in self.domain():
-                    return self.domain()(x / self.uniformizer()**(-s))
-                else:
-                    for i in range(-s):
-                        if self(x) < 0:
-                            raise NotImplementedError("cannot compute general shifts over non-fields which contain elements of negative valuation")
-                        x -= self.lift(self.reduce(x))
-                        x //= self.uniformizer()
-                    return x
+            # s < 0
+            if ~self.uniformizer() in self.domain():
+                return self.domain()(x / self.uniformizer()**(-s))
+            for i in range(-s):
+                if self(x) < 0:
+                    raise NotImplementedError("cannot compute general shifts over non-fields which contain elements of negative valuation")
+                x -= self.lift(self.reduce(x))
+                x //= self.uniformizer()
+            return x
 
         def simplify(self, x, error=None, force=False):
             r"""
@@ -1214,14 +1210,16 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: v = QQ.valuation(5)
                 sage: v._test_mul()
             """
+            from sage.rings.infinity import infinity
+            from itertools import product
             tester = self._tester(**options)
             S = self.domain().some_elements()
-            from itertools import product
+            infis = {infinity, -infinity}
+
             for x, y in tester.some_elements(product(S, S)):
-                from sage.rings.infinity import infinity
-                if set([self(x), self(y)]) == set([infinity, -infinity]):
+                if {Sx := self(x), Sy := self(y)} == infis:
                     continue
-                tester.assertEqual(self(x * y), self(x) + self(y))
+                tester.assertEqual(self(x * y), Sx + Sy)
 
         def _test_no_infinite_units(self, **options):
             r"""

@@ -32,13 +32,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
-                                       MultivectorField, MultivectorFieldParal)
+    MultivectorField,
+    MultivectorFieldParal,
+)
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 
 
 class MultivectorModule(UniqueRepresentation, Parent):
@@ -310,9 +312,8 @@ class MultivectorModule(UniqueRepresentation, Parent):
                    and self._ambient_domain.is_subset(
                                                  comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -436,8 +437,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def base_module(self):
         r"""
@@ -488,6 +488,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         return self._degree
 
 #***********************************************************************
+
 
 class MultivectorFreeModule(ExtPowerFreeModule):
     r"""
@@ -725,9 +726,8 @@ class MultivectorFreeModule(ExtPowerFreeModule):
                     and self._ambient_domain.is_subset(
                                                  comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to a multivector field in {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to a multivector field in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))

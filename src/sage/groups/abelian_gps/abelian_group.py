@@ -151,14 +151,11 @@ the underlying representation is lists of integer exponents::
 
 REFERENCES:
 
-.. [Cohen1] \H. Cohen, Advanced topics in computational number theory,
-  Springer, 2000.
+- [Cohen1]_
 
-.. [Cohen2] \H. Cohen, A course in computational algebraic number theory,
-  Springer, 1996.
+- [Cohen2]_
 
-.. [Rotman] \J. Rotman, An introduction to the theory of
-  groups, 4th ed, Springer, 1995.
+- [Rotman]_
 
 .. WARNING::
 
@@ -365,6 +362,13 @@ def _normalize(n, gens_orders=None, names='f'):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 's' to an integer
+
+    Verify that :issue:`38967` is fixed::
+
+        sage: AbelianGroup([-4])
+        Traceback (most recent call last):
+        ...
+        ValueError: orders of generators cannot be negative but they are (-4,)
     """
     if gens_orders is None:
         if isinstance(n, (list, tuple)):
@@ -376,6 +380,8 @@ def _normalize(n, gens_orders=None, names='f'):
     if len(gens_orders) < n:
         gens_orders = [0] * (n - len(gens_orders)) + list(gens_orders)
     gens_orders = tuple(ZZ(i) for i in gens_orders)
+    if any(i < 0 for i in gens_orders):
+        raise ValueError(f'orders of generators cannot be negative but they are {gens_orders}')
     if len(gens_orders) > n:
         raise ValueError('gens_orders (='+str(gens_orders)+') must have length n (='+str(n)+')')
     if isinstance(names, list):
@@ -446,29 +452,6 @@ def AbelianGroup(n, gens_orders=None, names='f'):
     gens_orders, names = _normalize(n, gens_orders, names)
     M = AbelianGroup_class(gens_orders, names)
     return M
-
-
-def is_AbelianGroup(x):
-    """
-    Return ``True`` if ``x`` is an Abelian group.
-
-    EXAMPLES::
-
-        sage: from sage.groups.abelian_gps.abelian_group import is_AbelianGroup
-        sage: F = AbelianGroup(5,[5,5,7,8,9], names=list("abcde")); F
-        Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
-        sage: is_AbelianGroup(F)
-        doctest:warning...
-        DeprecationWarning: the function is_AbelianGroup is deprecated;
-        use 'isinstance(..., AbelianGroup_class)' instead
-        See https://github.com/sagemath/sage/issues/37898 for details.
-        True
-        sage: is_AbelianGroup(AbelianGroup(7, [3]*7))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37898, "the function is_AbelianGroup is deprecated; use 'isinstance(..., AbelianGroup_class)' instead")
-    return isinstance(x, AbelianGroup_class)
 
 
 class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
@@ -598,10 +581,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: H < G
             False
         """
-        for l in left.gens():
-            if l not in right:
-                return False
-        return True
+        return all(l in right for l in left.gens())
 
     __le__ = is_subgroup
 
@@ -875,7 +855,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return libgap.AbelianPcpGroup(self.gens_orders())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string that defines corresponding abelian group in GAP.
 
@@ -901,6 +881,18 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # Make sure to LoadPackage("Polycyclic") in gap
         GapPackage("polycyclic", spkg='gap_packages').require()
         return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
+
+    def _snappy_(self, snappy):
+        r"""
+        Return ``self`` as in interface wrapper object for SnapPy.
+
+        EXAMPLES::
+
+           sage: A = AbelianGroup([5,15,0,0])
+           sage: snappy(A)                      # optional snappy
+           Z/5 + Z/15 + Z + Z
+        """
+        return snappy.AbelianGroup(elementary_divisors=list(self.gens_orders()))
 
     def gen(self, i=0):
         """
@@ -1033,7 +1025,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.gens_orders()
 
-    def is_cyclic(self):
+    def is_cyclic(self) -> bool:
         """
         Return ``True`` if the group is a cyclic group.
 
@@ -1173,7 +1165,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             order = g.order()
             if order is infinity:
                 order = 42  # infinite order; randomly chosen maximum
-            result *= g ** (randint(0, order))
+            result *= g ** randint(0, order-1)
         return result
 
     def _repr_(self) -> str:
@@ -1301,10 +1293,26 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1,)
             sage: list(G)
             [1]
+
+        We can also iterate over infinite groups::
+
+            sage: A = AbelianGroup([3,0,5,0])
+            sage: for a in A:
+            ....:   if a^2 == A([1, 2, 3, 4]):
+            ....:       print(a, a^2)
+            ....:       break
+            f0^2*f1*f2^4*f3^2 f0*f1^2*f2^3*f3^4
         """
         invs = self.gens_orders()
-        for t in mrange(invs):
-            yield self(t)
+        if 0 not in invs:
+            # The group is finite
+            yield from map(self, mrange(invs))
+        else:
+            # A similar approach works for infinite groups.
+            # (This would also work for finite groups, but is more complicated.)
+            from sage.misc.mrange import cantor_product
+            yield from map(self, cantor_product(*[range(n) if n
+                                                  else ZZ for n in invs]))
 
     def number_of_subgroups(self, order=None):
         r"""
@@ -1370,9 +1378,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         if not self.is_finite():
             if order is None:
                 return infinity
-            else:
-                # Finite order subgroups are all contained in the torsion subgroup
-                return self.torsion_subgroup().number_of_subgroups(order=order)
+            # Finite order subgroups are all contained in the torsion subgroup
+            return self.torsion_subgroup().number_of_subgroups(order=order)
 
         from itertools import chain
         from collections import defaultdict
@@ -1382,7 +1389,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         # The group order is prod(p^e for (p,e) in primary_factors)
         primary_factors = list(chain.from_iterable(
-                        factor(ed) for ed in self.elementary_divisors()))
+            factor(ed) for ed in self.elementary_divisors()))
         sylow_types = defaultdict(list)
         for p, e in primary_factors:
             sylow_types[p].append(e)
@@ -1719,7 +1726,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             category = Groups().Commutative().Subobjects()
         AbelianGroup_class.__init__(self, invs, names, category=category)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``x`` is an element of this subgroup.
 
@@ -1771,7 +1778,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
                 [g.list() for g in self._gens]
             )
             return (vector(ZZ, x.list())
-                in inv_basis.stack(gens_basis).row_module())
+                    in inv_basis.stack(gens_basis).row_module())
         return False
 
     def ambient_group(self):
@@ -1836,7 +1843,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             return left.is_isomorphic(right)
         if left_ambient is not right_ambient:
             return False
-        return left <= right and right <= left
+        return left <= right <= left
 
     __eq__ = equals
 
@@ -1880,7 +1887,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         return self._gens
 
-    def gen(self, n):
+    def gen(self, n=0):
         """
         Return the `n`-th generator of this subgroup.
 

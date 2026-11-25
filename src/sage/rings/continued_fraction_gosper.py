@@ -3,7 +3,6 @@ Gosper iterator for homographic transformations
 
 EXAMPLES::
 
-    sage: # needs sage.symbolic
     sage: from sage.rings.continued_fraction_gosper import gosper_iterator
     sage: x = continued_fraction(pi)
     sage: it = iter(gosper_iterator(3,2,3,1,x))
@@ -36,7 +35,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 
 
-class gosper_iterator():
+class gosper_iterator:
     r"""
     Iterable for the partial quotients of `(a*x+b)/(c*x+d)`, where `a, b, c, d`
     are integers, and `x` is a continued fraction.
@@ -145,8 +144,7 @@ class gosper_iterator():
             if ub == lb and s < 1:
                 self.emit(ub)
                 return Integer(ub)
-            else:
-                self.ingest()
+            self.ingest()
 
     def emit(self, q):
         """
@@ -215,5 +213,4 @@ class gosper_iterator():
         """
         if not d:
             return +Infinity
-        else:
-            return n // d
+        return n // d

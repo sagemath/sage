@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Products of graphs
 
@@ -120,6 +119,16 @@ Methods
 -------
 """
 
+
+from libc.stdint cimport uint32_t
+from sage.groups.perm_gps.partn_ref.data_structures cimport (
+    OrbitPartition, OP_new, OP_join, OP_find, OP_dealloc
+)
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend, StaticSparseCGraph
+from sage.graphs.base.static_sparse_graph cimport short_digraph, simple_BFS
+from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free
+from memory_allocator cimport MemoryAllocator
+
 # ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #
@@ -130,8 +139,7 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-def is_cartesian_product(g, certificate=False, relabeling=False):
+def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None):
     r"""
     Test whether the graph is a Cartesian product.
 
@@ -148,9 +156,13 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
       product graph. If `g` is not a Cartesian product, ``None`` is returned
       instead.
 
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its factors will behave the same way.
+
     .. SEEALSO::
 
-        - :meth:`sage.graphs.generic_graph.GenericGraph.cartesian_product`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.cartesian_product`
 
         - :mod:`~sage.graphs.graph_decompositions.graph_products` -- a module on
           graph products
@@ -172,8 +184,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     A 2d grid is the product of paths::
 
-        sage: g = graphs.Grid2dGraph(5,5)
-        sage: p1, p2 = is_cartesian_product(g, certificate = True)
+        sage: g = graphs.Grid2dGraph(5, 5)
+        sage: p1, p2 = is_cartesian_product(g, certificate=True)
         sage: p1.is_isomorphic(graphs.PathGraph(5))
         True
         sage: p2.is_isomorphic(graphs.PathGraph(5))
@@ -182,7 +194,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     Forgetting the graph's labels, then finding them back::
 
         sage: g.relabel()
-        sage: b,D = g.is_cartesian_product(g, relabeling=True)
+        sage: b, D = g.is_cartesian_product(g, relabeling=True)
         sage: b
         True
         sage: D  # random isomorphism
@@ -196,26 +208,56 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     product::
 
         sage: g = graphs.PetersenGraph().cartesian_product(graphs.CycleGraph(3))
-        sage: g1, g2 = is_cartesian_product(g, certificate = True)
-        sage: any( x.is_isomorphic(graphs.PetersenGraph()) for x in [g1,g2])
+        sage: g1, g2 = is_cartesian_product(g, certificate=True)
+        sage: any(x.is_isomorphic(graphs.PetersenGraph()) for x in [g1, g2])
         True
-        sage: any( x.is_isomorphic(graphs.CycleGraph(3)) for x in [g1,g2])
+        sage: any(x.is_isomorphic(graphs.CycleGraph(3)) for x in [g1, g2])
         True
 
     TESTS:
 
     Wagner's Graph (:issue:`13599`)::
 
-        sage: g = graphs.WagnerGraph()                                                  # needs networkx
-        sage: g.is_cartesian_product()                                                  # needs networkx
+        sage: g = graphs.WagnerGraph()
+        sage: g.is_cartesian_product()
         False
 
     Empty and one-element graph (:issue:`19546`)::
 
         sage: Graph().is_cartesian_product()
         False
-        sage: Graph({0:[]}).is_cartesian_product()
+        sage: Graph({0: []}).is_cartesian_product()
         False
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: G = graphs.Grid2dGraph(3, 3)
+        sage: any(f.is_immutable() for f in G.is_cartesian_product(certificate=True))
+        False
+        sage: all(f.is_immutable() for f in G.is_cartesian_product(certificate=True, immutable=True))
+        True
+        sage: G = G.copy(immutable=True)
+        sage: all(f.is_immutable() for f in G.is_cartesian_product(certificate=True))
+        True
+        sage: any(f.is_immutable() for f in G.is_cartesian_product(certificate=True, immutable=False))
+        False
+
+    Disconnected graphs are rejected::
+
+        sage: graphs.CycleGraph(3).disjoint_union(graphs.CycleGraph(3)).is_cartesian_product()
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: recognition of Cartesian product is not implemented for disconnected graphs
+
+    Hashable list-like vertex labels are handled correctly (:issue:`39979`)::
+
+        sage: from sage.structure.sequence import Sequence
+        sage: g = graphs.CycleGraph(4)
+        sage: g.relabel({0: Sequence([17, 18], immutable=True)})
+        sage: g.is_cartesian_product()
+        True
+        sage: g.copy(immutable=True).is_cartesian_product()
+        True
     """
     g._scream_if_not_simple()
     if g.is_directed():
@@ -236,91 +278,151 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     # As we need the vertices of g to be linearly ordered, we copy the graph and
     # relabel it
-    cdef list int_to_vertex = list(g)
-    cdef dict vertex_to_int = {vert: i for i, vert in enumerate(int_to_vertex)}
-    g_int = g.relabel(perm=vertex_to_int, inplace=False)
+    # Work with an immutable graph so its backend holds a short_digraph
+    cdef object g_imm = g if g.is_immutable() else g.copy(immutable=True)
+    cdef StaticSparseBackend bck = <StaticSparseBackend> g_imm._backend
+    cdef StaticSparseCGraph cg   = <StaticSparseCGraph> bck._cg
+    cdef short_digraph sd
+    sd = <short_digraph> cg.g
+    cdef list int_to_vertex      = bck._vertex_to_labels
+    cdef dict vertex_to_int      = bck._vertex_to_int
+    cdef Py_ssize_t n = sd.n
+
+    # Allocate the distance array. It is filled by the BFS in the main loop
+    # below: by the time that loop finishes, all-pairs distances are available.
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t* distances = <uint32_t*> mem.allocarray(<size_t>n * <size_t>n, sizeof(uint32_t))
+    cdef bitset_t seen
+    bitset_init(seen, n)
 
     # Reorder the vertices of an edge
     def r(x, y):
         return (x, y) if x < y else (y, x)
 
-    cdef int x, y, u, v
-    cdef set un, intersect
+    # Build the edge list directly from the short_digraph neighbors,
+    # working only with integer vertex IDs (no dictionary lookups, and
+    # any hashable vertex label including NaN is handled correctly)
+    cdef list edge_list = []
+    cdef uint32_t ev
+    cdef uint32_t* p_uv
+    cdef uint32_t* p_end
+    cdef Py_ssize_t idx
+    for idx in range(n):
+        p_uv = sd.neighbors[idx]
+        p_end = sd.neighbors[idx + 1]
+        while p_uv < p_end:
+            ev = p_uv[0]
+            if idx < ev:
+                edge_list.append((idx, ev))
+            p_uv += 1
+    cdef dict edge_to_idx = {e: k for k, e in enumerate(edge_list)}
+    cdef Py_ssize_t n_edges = len(edge_list)
 
-    # The equivalence graph on the edges of g
-    h = Graph()
-    h.add_vertices(r(x, y) for x, y in g_int.edge_iterator(labels=False))
+    # The equivalence classes of the edges of g
+    # Initialize OrbitPartition with all edges
+    cdef OrbitPartition *op = OP_new(n_edges)
+    if op == NULL:
+        raise MemoryError("Failed to allocate OrbitPartition")
 
+    # Main equivalence-class computation.
     # For all pairs of vertices u,v of G, according to their number of common
     # neighbors... See the module's documentation !
-    for u in g_int:
-        un = set(g_int.neighbor_iterator(u))
-        for v in g_int.breadth_first_search(u):
-
-            # u and v are different
-            if u == v:
-                continue
-
-            # List of common neighbors
-            intersect = un & set(g_int.neighbor_iterator(v))
-
-            # If u and v have no neighbors and uv is not an edge then their
-            # distance is at least 3. As we enumerate the vertices in a
+    # Work entirely with integer vertex IDs and the short_digraph, so any
+    # hashable vertex label (including NaN or list-like objects) is handled
+    # correctly — no Python-level vertex-label lookups are needed here.
+    cdef int u, v, x, y
+    cdef set un, intersect
+    cdef uint32_t* dist_u
+    cdef uint32_t* bfs_order = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
+    for u in range(n):
+        # BFS from u to fill row u of the distance matrix
+        dist_u = distances + <size_t>u * <size_t>n
+        simple_BFS(sd, u, dist_u, NULL, bfs_order, seen)
+        # Neighbors of u as a set of integer IDs
+        un = set()
+        p_uv = sd.neighbors[u]
+        p_end = sd.neighbors[u + 1]
+        while p_uv < p_end:
+            un.add(p_uv[0])
+            p_uv += 1
+        # Iterate v in BFS order (skip u itself at index 0)
+        for idx in range(1, n):
+            v = bfs_order[idx]
+            # Common neighbors of u and v, as integer IDs
+            intersect = set()
+            p_uv = sd.neighbors[v]
+            p_end = sd.neighbors[v + 1]
+            while p_uv < p_end:
+                intersect.add(p_uv[0])
+                p_uv += 1
+            intersect &= un
+            # If u and v have no common neighbors and uv is not an edge then
+            # their distance is at least 3. As we enumerate the vertices in a
             # breadth-first search, it means that we already checked all the
             # vertices at distance less than two from u, and we are done with
             # this loop !
             if not intersect:
-                if g_int.has_edge(u, v):
+                if dist_u[v] == 1:
                     continue
                 else:
                     break
-
-            # If uv is an edge
-            if g_int.has_edge(u, v):
-                h.add_path([r(u, x) for x in intersect] + [r(v, x) for x in intersect])
-
-            # Only one common neighbor
-            elif len(intersect) == 1:
-                x = intersect.pop()
-                h.add_edge(r(u, x), r(v, x))
-
-            # Exactly 2 neighbors
-            elif len(intersect) == 2:
+            # Special case: uv is not an edge and exactly 2 common neighbors
+            if len(intersect) == 2 and dist_u[v] != 1:
                 x, y = intersect
-                h.add_edge(r(u, x), r(v, y))
-                h.add_edge(r(v, x), r(u, y))
-            # More
+                OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
+                OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
+            # All other cases: union with all common neighbors
             else:
-                h.add_path([r(u, x) for x in intersect] + [r(v, x) for x in intersect])
+                for x in intersect:
+                    OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, x)])
+
+    bitset_free(seen)
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
 
-    cdef list edges = list(g_int.edges(labels=False, sort=False))
-    cdef dict d = g_int.distance_all_pairs()
-    cdef int uu, vv
-    for i, (u, v) in enumerate(edges):
-        du = d[u]
-        dv = d[v]
-        for j in range(i + 1, g_int.size()):
-            uu, vv = edges[j]
-            if du[uu] + dv[vv] != du[vv] + dv[uu]:
-                h.add_edge(r(u, v), r(uu, vv))
+    # Distance loop using the C distance array
+    cdef Py_ssize_t i, j
+    cdef uint32_t uu, vv
+    cdef uint32_t* dist_v
+    for i in range(n_edges):
+        u, v = edge_list[i]
+        dist_u = distances + <size_t>u * <size_t>n
+        dist_v = distances + <size_t>v * <size_t>n
+        for j in range(i + 1, n_edges):
+            uu, vv = edge_list[j]
+            if dist_u[uu] + dist_v[vv] != dist_u[vv] + dist_v[uu]:
+                # edge_to_idx[r(u, v)] == i and edge_to_idx[r(uu, vv)] == j
+                OP_join(op, i, j)
+
+    # Only one connected component ? Check before building edges
+    if op.num_cells == 1:
+        OP_dealloc(op)
+        return (False, None) if relabeling else False
 
     # Gathering the connected components, relabeling the vertices on-the-fly
-    edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in h.connected_components(sort=False)]
+    cdef dict comp_map = {}
+    for i in range(n_edges):
+        root = OP_find(op, i)
+        if root not in comp_map:
+            comp_map[root] = []
+        comp_map[root].append(edge_list[i])
+    components = list(comp_map.values())
+    edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc] for cc in components]
 
-    # Only one connected component ?
-    if len(edges) == 1:
-        return (False, None) if relabeling else False
+    if immutable is None:
+        immutable = g.is_immutable()
 
     # Building the list of factors
     cdef list factors = []
+    cdef object tmp
     for cc in edges:
-        tmp = Graph()
-        tmp.add_edges(cc)
-        factors.append(tmp.subgraph(vertices=tmp.connected_components(sort=False)[0]))
+        tmp = Graph(cc, format='list_of_edges', immutable=immutable)
+        comps = tmp.connected_components(sort=False)
+        if len(comps) == 1:
+            factors.append(tmp)
+        else:
+            factors.append(tmp.subgraph(vertices=comps[0]))
 
     # Computing the product of these graphs
     answer = factors[0]
@@ -331,17 +433,19 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     isiso, dictt = g.is_isomorphic(answer, certificate=True)
     if not isiso:
         raise ValueError("something weird happened during the algorithm... "
-                         "Please report the bug and give us the graph instance"
-                         " that made it fail !")
+                         "Please report the bug and give us the graph instance "
+                         "that made it fail !")
+    OP_dealloc(op)
+
     if relabeling:
         return isiso, dictt
     if certificate:
         return factors
-    else:
-        return True
+
+    return True
 
 
-def rooted_product(G, H, root=None):
+def rooted_product(G, H, root=None, immutable=None):
     r"""
     Return the rooted product of `G` and `H`.
 
@@ -362,11 +466,20 @@ def rooted_product(G, H, root=None):
 
     .. SEEALSO::
 
-        - :meth:`~sage.graphs.generic_graph.cartesian_product`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.cartesian_product`
           -- return the cartesian product of two graphs
 
         - :mod:`~sage.graphs.graph_decompositions.graph_products`
           -- a module on graph products
+
+    INPUT:
+
+    - ``G, H`` -- two (di)graphs
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable (di)graph. When ``immutable=None`` (default) the rooted
+      product will be mutable if one of ``G`` or ``H`` is mutable and immutable
+      otherwise.
 
     EXAMPLES:
 
@@ -432,30 +545,49 @@ def rooted_product(G, H, root=None):
         Traceback (most recent call last):
         ...
         TypeError: the graphs should be both directed or both undirected
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: G = graphs.CycleGraph(4)
+        sage: H = graphs.PathGraph(3)
+        sage: G.rooted_product(H).is_immutable()
+        False
+        sage: G.rooted_product(H, immutable=True).is_immutable()
+        True
+        sage: G = G.copy(immutable=True)
+        sage: G.rooted_product(H).is_immutable()
+        False
+        sage: G.rooted_product(H, immutable=True).is_immutable()
+        True
+        sage: H = H.copy(immutable=True)
+        sage: G.rooted_product(H).is_immutable()
+        True
+        sage: G.rooted_product(H, immutable=False).is_immutable()
+        False
     """
     G._scream_if_not_simple(allow_loops=True)
-    if G._directed and H._directed:
-        from sage.graphs.digraph import DiGraph
-        R = DiGraph(loops=(G.has_loops() or H.has_loops()))
-    elif (not G._directed) and (not H._directed):
-        from sage.graphs.graph import Graph
-        R = Graph(loops=(G.has_loops() or H.has_loops()))
-    else:
+    if G._directed is not H._directed:
         raise TypeError('the graphs should be both directed or both undirected')
 
-    R.name(f'Rooted product of {G} and {H}')
+    loops = G.has_loops() or H.has_loops()
+    name = f'Rooted product of {G} and {H}'
+    if immutable is None:
+        immutable = G.is_immutable() and H.is_immutable()
 
     if not G or not H:
-        return R
+        return G.parent()(loops=loops, name=name, immutable=immutable)
     if root is None:
         root = next(H.vertex_iterator())
     elif root not in H:
         raise ValueError("the specified root is not a vertex of H")
 
-    R.add_vertices((u, x) for u in G for x in H)
-    for u, v in G.edge_iterator(labels=False):
-        R.add_edge((u, root), (v, root))
-    for x, y in H.edge_iterator(labels=False):
-        R.add_edges(((u, x), (u, y)) for u in G)
+    vertices = ((u, x) for u in G for x in H)
 
-    return R
+    def edges():
+        for u, v in G.edge_iterator(labels=False):
+            yield ((u, root), (v, root))
+        for x, y in H.edge_iterator(labels=False):
+            yield from (((u, x), (u, y)) for u in G)
+
+    return G.parent()([vertices, edges()], format='vertices_and_edges',
+                      name=name, loops=loops, immutable=immutable)

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``latte_int``
 """
@@ -59,7 +58,7 @@ class Latte_integrate(Executable):
 
 class Latte(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of excecutables
+    A :class:`~sage.features.Feature` describing the presence of executables
     from :ref:`LattE integrale <spkg_latte_int>`.
 
     EXAMPLES::

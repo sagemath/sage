@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Semigroups
 """
@@ -85,8 +84,7 @@ class Semigroups(CategoryWithAxiom):
         import sage.categories.examples.semigroups as examples
         if choice == "leftzero":
             return examples.LeftZeroSemigroup(**kwds)
-        else:
-            return examples.FreeSemigroup(**kwds)
+        return examples.FreeSemigroup(**kwds)
 
     class ParentMethods:
 
@@ -208,7 +206,7 @@ class Semigroups(CategoryWithAxiom):
                 ....:          vertex_colors={(1,1,1): G.vertices(sort=True)},
                 ....:          bgcolor=(0,0,0), color_by_label=True,
                 ....:          xres=700, yres=700, iterations=200)
-                sage: G.num_edges()
+                sage: G.n_edges()
                 120
 
                 sage: # needs sage.combinat sage.graphs sage.groups
@@ -221,7 +219,7 @@ class Semigroups(CategoryWithAxiom):
 
                 sage: # needs sage.graphs sage.groups
                 sage: G = A5.cayley_graph(generators=[A5.gens()[0]])
-                sage: G.num_edges()
+                sage: G.n_edges()
                 60
                 sage: g = PermutationGroup([(i + 1, j + 1)
                 ....:                       for i in range(5)
@@ -242,7 +240,7 @@ class Semigroups(CategoryWithAxiom):
                 ....:             for w in sum((list(Words(M.semigroup_generators(), k))
                 ....:                           for k in range(4)), [])]
                 sage: G = M.cayley_graph(elements=elements)
-                sage: G.num_verts(), G.num_edges()
+                sage: G.n_vertices(), G.n_edges()
                 (85, 84)
                 sage: G.show3d(color_by_label=True, edge_size=0.001, vertex_size=0.01)  # needs sage.plot
 
@@ -372,7 +370,7 @@ class Semigroups(CategoryWithAxiom):
 
             - ``generators`` -- a finite family of elements of
               ``self``, or a list, iterable, ... that can be converted
-              into one (see :class:`Family`).
+              into one (see :func:`~sage.sets.family.Family`).
 
             - ``one`` -- a unit for the subsemigroup, or ``None``
 
@@ -382,7 +380,8 @@ class Semigroups(CategoryWithAxiom):
             the semigroup, and the right Cayley graph relations
             between them, and uses the latter as an automaton.
 
-            See :class:`~sage.sets.monoids.AutomaticSemigroup` for details.
+            See :class:`~sage.monoids.automatic_semigroup.AutomaticSemigroup`
+            for details.
 
             EXAMPLES::
 
@@ -434,19 +433,6 @@ class Semigroups(CategoryWithAxiom):
             TESTS::
 
                 sage: TestSuite(M).run()                                                # needs sage.combinat
-                Failure in _test_inverse:
-                Traceback (most recent call last):
-                ...
-                The following tests failed: _test_inverse
-
-            .. TODO::
-
-                - Fix the failure in TESTS by providing a default
-                  implementation of ``__invert__`` for finite groups
-                  (or even finite monoids).
-                - Provide a default implementation of ``one`` for a
-                  finite monoid, so that we would not need to specify
-                  it explicitly?
             """
             from sage.monoids.automatic_semigroup import AutomaticSemigroup
             return AutomaticSemigroup(generators, ambient=self, one=one,
@@ -511,6 +497,7 @@ class Semigroups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: G = CyclicPermutationGroup(3)
                 sage: M = algebras.Exterior(QQ, 'x', 3)
                 sage: def on_basis(g, m):  # cyclically permute generators
@@ -1059,6 +1046,7 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
+                    sage: # needs sage.groups
                     sage: G = groups.permutation.Dihedral(5)
                     sage: CFM = CombinatorialFreeModule(GF(2), [1, 2, 3, 4, 5])
                     sage: A = G.algebra(GF(2))

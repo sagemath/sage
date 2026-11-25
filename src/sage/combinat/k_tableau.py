@@ -188,12 +188,11 @@ def WeakTableau(t, k, inner_shape=[], representation='core'):
     """
     if representation == "core":
         return WeakTableau_core(t, k)
-    elif representation == "bounded":
+    if representation == "bounded":
         return WeakTableau_bounded(t, k)
-    elif representation == "factorized_permutation":
+    if representation == "factorized_permutation":
         return WeakTableau_factorized_permutation(t, k, inner_shape=inner_shape)
-    else:
-        raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
+    raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
 
 
 def WeakTableaux(k, shape , weight, representation='core'):
@@ -253,12 +252,11 @@ def WeakTableaux(k, shape , weight, representation='core'):
     """
     if representation == "core":
         return WeakTableaux_core(k, shape, weight)
-    elif representation == "bounded":
+    if representation == "bounded":
         return WeakTableaux_bounded(k, shape, weight)
-    elif representation == "factorized_permutation":
+    if representation == "factorized_permutation":
         return WeakTableaux_factorized_permutation(k, shape, weight)
-    else:
-        raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
+    raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
 
 #Abstract class for the elements of weak tableau
 
@@ -400,8 +398,7 @@ class WeakTableau_abstract(ClonableList,
         """
         if self.parent()._representation in ['core', 'bounded']:
             return intermediate_shapes(self)
-        else:
-            return intermediate_shapes(self.to_core_tableau())
+        return intermediate_shapes(self.to_core_tableau())
 
     def pp(self):
         r"""
@@ -444,8 +441,7 @@ class WeakTableau_abstract(ClonableList,
         """
         if self.parent()._representation in ['core', 'bounded']:
             return hash(tuple(tuple(x) for x in self)) + hash(self.parent().k)
-        else:
-            return super().__hash__()
+        return super().__hash__()
 
     def _latex_(self):
         r"""
@@ -477,8 +473,7 @@ class WeakTableau_abstract(ClonableList,
             t = [[chi(x) for x in row] for row in self]
             from .output import tex_from_array
             return tex_from_array(t)
-        else:
-            return "["+"".join(self[i]._latex_()+',' for i in range(len(self)-1))+self[len(self)-1]._latex_()+"]"
+        return "["+"".join(self[i]._latex_()+',' for i in range(len(self)-1))+self[len(self)-1]._latex_()+"]"
 
     def representation(self, representation='core'):
         r"""
@@ -519,12 +514,11 @@ class WeakTableau_abstract(ClonableList,
             t = t.to_core_tableau()
         if representation == 'core':
             return t
-        elif representation == 'bounded':
+        if representation == 'bounded':
             return t.to_bounded_tableau()
-        elif representation == 'factorized_permutation':
+        if representation == 'factorized_permutation':
             return t.to_factorized_permutation_tableau()
-        else:
-            raise ValueError("The representation must be one of 'core', 'bounded', or 'factorized_permutation'")
+        raise ValueError("The representation must be one of 'core', 'bounded', or 'factorized_permutation'")
 
 #Abstract class for the parents of weak tableaux
 
@@ -605,8 +599,7 @@ class WeakTableaux_abstract(UniqueRepresentation, Parent):
         """
         if self._representation == 'bounded':
             return self._outer_shape.size() - self._inner_shape.size()
-        else:
-            return self._outer_shape.length() - self._inner_shape.length()
+        return self._outer_shape.length() - self._inner_shape.length()
 
     def representation(self, representation='core'):
         r"""
@@ -1023,7 +1016,7 @@ class WeakTableau_core(WeakTableau_abstract):
             r = self[0].count(1) - i - 1
             for v in range(1,mu[i]):
                 D = self.dictionary_of_coordinates_at_residues(v+1)
-                new_D = {a: b for (a, b) in D.items()
+                new_D = {a: b for a, b in D.items()
                          if all(x not in already_used for x in b)}
                 r = (r - min([self.k+1 - (x-r) % (self.k+1) for x in new_D])) % (self.k+1)
                 standard_cells.append(new_D[r][-1])
@@ -1625,12 +1618,12 @@ class WeakTableau_bounded(WeakTableau_abstract):
             [[None, 2], [3]]
         """
         t = SkewTableau(list(t))
-        shapes = [ Core(p, k+1).to_bounded_partition() for p in intermediate_shapes(t) ]#.to_chain() ]
+        shapes = [ Core(p, k+1).to_bounded_partition() for p in intermediate_shapes(t) ]  # .to_chain() ]
         if t.inner_shape() == Partition([]):
             l = []
         else:
             l = [[None]*i for i in shapes[0]]
-        for i in range(1,len(shapes)):
+        for i in range(1, len(shapes)):
             p = shapes[i]
             if len(l) < len(p):
                 l += [[]]
@@ -2068,8 +2061,10 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             [s0*s3, s2*s1]
         """
         t = SkewTableau(list(t))
-        shapes = [ Core(p, k+1).to_grassmannian() for p in intermediate_shapes(t) ] #t.to_chain() ]
-        perms = [ shapes[i]*(shapes[i-1].inverse()) for i in range(len(shapes)-1,0,-1)]
+        shapes = [Core(p, k + 1).to_grassmannian()
+                  for p in intermediate_shapes(t)]  # t.to_chain() ]
+        perms = [shapes[i] * (shapes[i - 1].inverse())
+                 for i in range(len(shapes) - 1, 0, -1)]
         return cls(perms, k, inner_shape=t.inner_shape())
 
     def k_charge(self, algorithm='I'):
@@ -2377,9 +2372,8 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
             T = StrongTableaux.transpositions_to_standard_strong( tijseq, k, [[None]*r for r in inner_shape] ) # build from scratch
             T = T.set_weight( count_marks )
             return T
-        else:
-            if weight is not None:
-                count_marks = tuple(weight) # in the case that it is standard + weight
+        if weight is not None:
+            count_marks = tuple(weight) # in the case that it is standard + weight
         return StrongTableaux.__classcall__(StrongTableaux, k, (outer_shape, inner_shape), count_marks)(T)
 
     def check(self):
@@ -2563,7 +2557,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Tsizes = [Core(lam, self.k + 1).length() for lam in Tshapes]
         return all(Tsizes[i] == Tsizes[i+1]-1 for i in range(len(Tsizes)-1))
 
-    def is_column_strict_with_weight( self, mu ):
+    def is_column_strict_with_weight(self, mu) -> bool:
         """
         Test if ``self`` is a column strict tableau with respect to the weight ``mu``.
 
@@ -2957,8 +2951,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         dout = self.cells_head_dictionary()
         if v in dout:
             return dout[v]
-        else:
-            return []
+        return []
 
     def contents_of_heads(self, v):
         r"""
@@ -3431,8 +3424,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
             # f is a function which maps v or -v to the weight value corresponding to the partition mu
             if v is None:
                 return None
-            else:
-                return sgn(v)*min([i for i in range(len(self.weight())+1) if sum(self.weight()[:i]) >= abs(v)])
+            return sgn(v)*min([i for i in range(len(self.weight())+1) if sum(self.weight()[:i]) >= abs(v)])
         return [[f(v) for v in row] for row in self.to_standard_list()]
 
     def to_unmarked_list( self ):
@@ -3653,8 +3645,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         """
         if sum(mu) != self.size() or self.is_column_strict_with_weight( mu ):
             return StrongTableaux.__classcall__(StrongTableaux, self.k, (self.outer_shape(), self.inner_shape()), tuple(mu))(self.to_standard_list())
-        else:
-            raise ValueError("%s is not a semistandard strong tableau with respect to the partition %s" % (self, mu))
+        raise ValueError("%s is not a semistandard strong tableau with respect to the partition %s" % (self, mu))
 
     def left_action( self, tij ):
         r"""
@@ -3926,7 +3917,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
     options = Tableaux.options
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return the first generated element of the class of ``StrongTableaux``.
 
@@ -4179,11 +4170,10 @@ class StrongTableaux(UniqueRepresentation, Parent):
             sage: StrongTableaux.add_marking([], [], 2, [])
             []
         """
-        def msgn(c,v):
+        def msgn(c, v):
             if c in marking:
                 return -v
-            else:
-                return v
+            return v
         return StrongTableau([[msgn((i,j),unmarkedT[i][j]) for j in range(len(unmarkedT[i]))] for i in range(len(unmarkedT))], k, weight )
 
     @classmethod
@@ -4222,16 +4212,16 @@ class StrongTableaux(UniqueRepresentation, Parent):
         """
         innershape = Core([len(r) for r in Tlist], k + 1)
         outershape = innershape.affine_symmetric_group_action(tij, transposition=True)
-        if outershape.length() == innershape.length()+1:
+        if outershape.length() == innershape.length() + 1:
             for c in SkewPartition([outershape.to_partition(),innershape.to_partition()]).cells():
                 while c[0] >= len(Tlist):
                     Tlist.append([])
-                Tlist[c[0]].append( v )
+                Tlist[c[0]].append(v)
                 if len(Tlist[c[0]])-c[0] == tij[1]:
-                    Tlist[c[0]][-1] = -Tlist[c[0]][-1]  #mark the cell that is on the j-1 diagonal
+                    Tlist[c[0]][-1] = -Tlist[c[0]][-1]  # mark the cell that is on the j-1 diagonal
             return Tlist
-        else:
-            raise ValueError("%s is not a single step up in the strong lattice" % tij)
+
+        raise ValueError("%s is not a single step up in the strong lattice" % tij)
 
     @classmethod
     def follows_tableau_unsigned_standard( cls, Tlist, k ):
@@ -4442,11 +4432,11 @@ class StrongTableaux(UniqueRepresentation, Parent):
             # a valid or invalid transposition?
             if msh.length() == sh.length() - 1:
                 # if applying t_{j-l,j+1} reduces the size of the shape by 1
-                valcells = [] # values in all the cells except content j
-                regcells = [] # values in the cells with content j
+                valcells = []  # values in all the cells except content j
+                regcells = []  # values in the cells with content j
                 valid = True
-                for (x,y) in SkewPartition([P, mP]).cells():
-                    if y-x != j:
+                for x, y in SkewPartition([P, mP]).cells():
+                    if y - x != j:
                         if LL[x][y] != m:
                             valid = False
                             break
@@ -4457,7 +4447,8 @@ class StrongTableaux(UniqueRepresentation, Parent):
                     # if all labels that are not content j are v and the label
                     # with content j = -m
                     mcells = mP.cells()
-                    MM = [[LL[a][b] for b in range(len(LL[a])) if (a,b) in mcells]
+                    MM = [[LL[a][b] for b in range(len(LL[a]))
+                           if (a, b) in mcells]
                           for a in range(len(mP))]
                     transeq = self.marked_CST_to_transposition_sequence(MM, k)
                     if transeq is not None:
@@ -4529,8 +4520,7 @@ def nabs(v):
     """
     if v is None:
         return v
-    else:
-        return abs(v)
+    return abs(v)
 
 
 def intermediate_shapes(t):

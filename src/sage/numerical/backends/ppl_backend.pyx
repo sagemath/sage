@@ -49,7 +49,7 @@ cdef class PPLBackend(GenericBackend):
     # Common denominator for objective function in self.mip (not for the constant term)
     cdef Integer obj_denominator
 
-    def __cinit__(self, maximization = True, base_ring = None):
+    def __cinit__(self, maximization=True, base_ring=None):
         """
         Constructor.
 
@@ -838,8 +838,7 @@ cdef class PPLBackend(GenericBackend):
         """
         if self.is_maximize == 1:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef problem_name(self, name=None):
         """

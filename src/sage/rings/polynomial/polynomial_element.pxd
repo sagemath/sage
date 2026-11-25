@@ -56,9 +56,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
     pass
 
-cpdef is_Polynomial(f)
 cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec)
 cpdef list _dict_to_list(dict x, zero)
 
 cpdef bint polynomial_is_variable(x) noexcept
-

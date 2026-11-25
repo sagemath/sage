@@ -62,7 +62,8 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.set_system cimport SetSystem
-from sage.matroids.utilities import setprint_s, cmp_elements_key
+from sage.matroids.utilities import setprint_s
+
 
 cdef class CircuitClosuresMatroid(Matroid):
     r"""
@@ -126,7 +127,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
     def __init__(self, M=None, groundset=None, circuit_closures=None):
         """
-        Initialization of the matroid. See class docstring for full
+        Initialization of the matroid. See the class docstring for full
         documentation.
 
         EXAMPLES::
@@ -426,9 +427,9 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should
-            (and in Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -549,7 +550,6 @@ cdef class CircuitClosuresMatroid(Matroid):
         CC = {}
         for i in self.circuit_closures():
             CC[i] = [[d[y] for y in x] for x in self._circuit_closures[i]]
-        M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-        return M
+        return CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
 
 # todo: customized minor, extend methods.

@@ -23,8 +23,8 @@ AUTHORS:
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import AlgebraElement, ModuleElementWithMutability
 from sage.rings.integer import Integer
+from sage.structure.element import AlgebraElement, ModuleElementWithMutability
 
 
 class MixedForm(AlgebraElement, ModuleElementWithMutability):
@@ -342,8 +342,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         """
         if self._name is None:
             return r'\text{' + repr(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def _new_instance(self, name=None, latex_name=None):
         r"""
@@ -413,9 +412,8 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             F = x dx + (2*x^2 - 2*y^2) dx∧dy
         """
         from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import FormattedExpansion, is_atomic
         from sage.typeset.unicode_characters import unicode_wedge
-        from sage.tensor.modules.format_utilities import (is_atomic,
-                                                          FormattedExpansion)
         # In case, no frame is given:
         if frame is None:
             frame = self._domain._def_frame
@@ -601,7 +599,8 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         To rename a homogeneous component individually, we simply access the
         homogeneous component and use its
-        :meth:`~sage.manifolds.differentiable.tensorfield.set_name` method::
+        :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.set_name`
+        method::
 
             sage: F[0].set_name(name='g'); F.display()
             eta = g + F_1 + F_2 + F_3 + F_4
@@ -711,10 +710,10 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             sage: F.parent().zero() == 0
             True
         """
-        from sage.structure.richcmp import op_NE, op_EQ
+        from sage.structure.richcmp import op_EQ, op_NE
         if op == op_NE:
             return not self == other
-        elif op == op_EQ:
+        if op == op_EQ:
             # Compare all elements separately:
             return all(self[j] == other[j] for j in self.irange())
         # Fall back on default implementation:
@@ -979,9 +978,11 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         resu._comp = [sum(self[k].wedge(other[j - k]) for k in range(j + 1))
                       for j in self.irange()]
         # Compose name:
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         from sage.typeset.unicode_characters import unicode_wedge
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
         resu._name = format_mul_txt(self._name, unicode_wedge, other._name)
         resu._latex_name = format_mul_latex(self._latex_name, r'\wedge ',
                                             other._latex_name)
@@ -1032,9 +1033,11 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         resu._comp = [other * form for form in self]
         # Compose name:
         from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         from sage.typeset.unicode_characters import unicode_wedge
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
         resu._name = format_mul_txt(repr(other), unicode_wedge, self._name)
         resu._latex_name = format_mul_latex(latex(other), r'\wedge ',
                                             self._latex_name)
@@ -1100,8 +1103,10 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         resu[1:] = [self[j].exterior_derivative()
                     for j in range(self._max_deg)]
         # Compose name:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('d', self._name)
         resu._latex_name = format_unop_latex(r'\mathrm{d}', self._latex_name)
         return resu

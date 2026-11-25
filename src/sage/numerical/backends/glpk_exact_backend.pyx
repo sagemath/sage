@@ -5,6 +5,14 @@ GLPK/exact Backend (simplex method in exact rational arithmetic)
 AUTHORS:
 
 - Matthias Koeppe (2016-03)
+
+TESTS:
+
+This module is deprecated::
+
+    sage: import sage.numerical.backends.glpk_exact_backend
+    ...DeprecationWarning...
+
 """
 
 ##############################################################################
@@ -13,6 +21,10 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+
+from sage.misc.superseded import deprecation
+
+deprecation(42802, "The GLPK backends are obsolete and will be removed, use HiGHs instead")
 
 cdef class GLPKExactBackend(GLPKBackend):
     """
@@ -28,7 +40,7 @@ cdef class GLPKExactBackend(GLPKBackend):
 
     There is no support for integer variables.
     """
-    def __cinit__(self, maximization = True):
+    def __cinit__(self, maximization=True):
         """
         Constructor.
 

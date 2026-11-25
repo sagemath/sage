@@ -58,9 +58,8 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()})
-        else:
-            return P([f(b) for b in x])
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()})
+        return P([f(b) for b in x])
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
@@ -76,7 +75,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: F(2 * x, check=True)
             2*x
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(49, 'z')
             sage: A = PolynomialRing(GF(7), 'x', sparse=True)
             sage: B = PolynomialRing(k, 'x', sparse=True)
@@ -88,7 +86,8 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()}, *args, **kwds)
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()},
+                     *args, **kwds)
         else:
             return P([f(b) for b in x], *args, **kwds)
 

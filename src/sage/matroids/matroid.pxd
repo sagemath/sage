@@ -105,7 +105,7 @@ cdef class Matroid(SageObject):
     cpdef is_coclosed(self, X)
 
     # verification
-    cpdef bint is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)
 
     # enumeration
     cpdef SetSystem circuits(self, k=*)
@@ -121,7 +121,7 @@ cdef class Matroid(SageObject):
     cpdef SetSystem dependent_sets(self, long k)
     cpdef list _extend_flags(self, list flags)
     cpdef list _flags(self, long k)
-    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem flats(self, long k=*)
     cpdef SetSystem coflats(self, long k)
     cpdef SetSystem hyperplanes(self)
     cpdef list f_vector(self)
@@ -148,7 +148,6 @@ cdef class Matroid(SageObject):
     cpdef minor(self, contractions=*, deletions=*)
     cpdef contract(self, X)
     cpdef delete(self, X)
-    cpdef _backslash_(self, X)
     cpdef dual(self)
     cpdef truncation(self)
     cpdef has_minor(self, N, bint certificate=*)
@@ -195,6 +194,7 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef bint is_quaternary(self) noexcept
     cpdef bint is_regular(self) noexcept
     cpdef bint is_graphic(self) noexcept
 
@@ -225,6 +225,7 @@ cdef class Matroid(SageObject):
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
     cpdef characteristic_polynomial(self, la=*)
+    cpdef beta_invariant(self)
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*)
 
     # misc
@@ -234,9 +235,9 @@ cdef class Matroid(SageObject):
     cpdef broken_circuit_complex(self, ordering=*)
 
     # visualization
-    cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
-    cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)
-    cpdef _fix_positions(self,pos_dict=*,lineorders=*)
+    cpdef plot(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*)
+    cpdef show(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*, lims=*)
+    cpdef _fix_positions(self, pos_dict=*, lineorders=*)
 
     # construction
     cpdef direct_sum(self, matroids)

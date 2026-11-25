@@ -11,7 +11,6 @@ from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.rings.integer cimport Integer
 
-
 cdef class Matrix:
     """
     A Cremona Matrix.
@@ -49,7 +48,7 @@ cdef class Matrix:
             [-1  1  1 -1  0]
             [ 0 -1  0  0  0]
         """
-        return "%s x %s Cremona matrix over Rational Field"%(self.nrows(), self.ncols())
+        return "%s x %s Cremona matrix over Rational Field" % (self.nrows(), self.ncols())
 
     def str(self):
         r"""
@@ -92,8 +91,8 @@ cdef class Matrix:
         cdef long i, j
         if self.M:
             i, j = ij
-            if 0<i and i<=self.M[0].nrows() and 0<j and j<=self.M[0].ncols():
-                return self.M.sub(i,j)
+            if 0 < i <= self.M[0].nrows() and 0 < j <= self.M[0].ncols():
+                return self.M.sub(i, j)
             raise IndexError("matrix indices out of range")
         raise IndexError("cannot index into an undefined matrix")
 
@@ -212,30 +211,29 @@ cdef class Matrix:
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         cdef long n = self.nrows()
-        cdef long i, j, k
-        cdef scalar* v = <scalar*> self.M.get_entries()   # coercion needed to deal with const
+        cdef long i, j
 
         cdef Matrix_integer_dense Td
         cdef Matrix_integer_sparse Ts
 
         # Ugly code...
         if sparse:
-            Ts = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
-            k = 0
+            MS = MatrixSpace(ZZ, n, sparse=sparse)
+            Ts = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    if v[k]:
-                        Ts.set_unsafe(i, j, Integer(v[k]))
-                    k += 1
+                    Mij = Integer(self.M.sub(i+1,j+1))
+                    if Mij:
+                        Ts.set_unsafe(i, j, Mij)
             return Ts
         else:
-            Td = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
-            k = 0
+            MS = MatrixSpace(ZZ, n, sparse=sparse)
+            Td = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    if v[k]:
-                        Td.set_unsafe(i, j, Integer(v[k]))
-                    k += 1
+                    Mij = Integer(self.M.sub(i+1,j+1))
+                    if Mij:
+                        Td.set_unsafe(i, j, Mij)
             return Td
 
 

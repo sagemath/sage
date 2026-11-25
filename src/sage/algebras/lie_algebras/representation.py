@@ -474,7 +474,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
 class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation_abstract):
     r"""
-    Return a faithful reprensetation of a nilpotent Lie algebra
+    Return a faithful representation of a nilpotent Lie algebra
     constructed using the PBW basis.
 
     Let `L` be a `k`-step nilpotent Lie algebra. Define a weight function
@@ -628,7 +628,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
 
             def as_exp(s):
                 sm = s._monomial
-                return tuple([sm[i] if i in sm else 0 for i in I])
+                return tuple([sm.get(i, 0) for i in I])
 
             def test_ideal(m, X):
                 elt = self._pbw.element_class(self._pbw, {monoid(list(zip(I, m))): one})
@@ -706,13 +706,13 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         if self._minimal:
             for m, c in elt._monomial_coefficients.items():
                 mm = m._monomial
-                vec = tuple([mm[i] if i in mm else 0 for i in I])
+                vec = tuple([mm.get(i, 0) for i in I])
                 if vec in self._indices:
                     ret[self._indices(vec)] = c
         else:
             for m, c in elt._monomial_coefficients.items():
                 mm = m._monomial
-                vec = [mm[i] if i in mm else 0 for i in I]
+                vec = [mm.get(i, 0) for i in I]
                 if sum(e * d for e, d in zip(vec, self._degrees)) <= self._step:
                     ret[self._indices(vec)] = c
         return self.element_class(self, ret)

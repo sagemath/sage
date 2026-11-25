@@ -22,7 +22,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.number_fields import NumberFields
-from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism_point, SchemeMorphism
 from sage.structure.sequence import Sequence
@@ -203,8 +202,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             return R(max(H, 1)).log()
         if self.domain().base_ring() in _NumberFields or isinstance(self.domain().base_ring(), sage.rings.abc.Order):
             return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
-        else:
-            raise NotImplementedError("must be over a number field or a number field Order")
+        raise NotImplementedError("must be over a number field or a number field Order")
 
     def homogenize(self, n):
         r"""

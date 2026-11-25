@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Quasi-symmetric functions
+Free quasi-symmetric functions
 
 AUTHORS:
 
@@ -160,13 +160,11 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             phi = R.module_morphism(G_to_G_on_basis, codomain=G)
             if self is G:
                 return phi
-            else:
-                return self.coerce_map_from(G) * phi
+            return self.coerce_map_from(G) * phi
 
         return super()._coerce_map_from_(R)
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -364,8 +362,14 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: F = algebras.FQSym(QQ)
             sage: TestSuite(F).run() # long time (3s)
+
+            sage: F = algebras.FQSym(ZZ).F()
+            sage: F.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
         # Bases
@@ -401,7 +405,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.F()
 
-    _shorthands = tuple(['F', 'G', 'M'])
+    _shorthands = ('F', 'G', 'M')
 
     class F(FQSymBasis_abstract):
         r"""
@@ -689,7 +693,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                     raise ValueError("n must be at least the maximal degree")
 
                 SGA = SymmetricGroupAlgebra(self.base_ring(), n)
-                return SGA._from_dict({Permutations(n)(key): c for (key, c) in self})
+                return SGA._from_dict({Permutations(n)(key): c for key, c in self})
 
     class G(FQSymBasis_abstract):
         r"""
@@ -873,7 +877,8 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         The M-basis of `FQSym`.
 
         This is the Monomial basis `(\mathcal{M}_w)`, with `w` ranging
-        over all permutations. See the documentation of :class:`FQSym`
+        over all permutations. See the documentation of
+        :class:`~sage.combinat.fqsym.FreeQuasisymmetricFunctions`
         for details.
 
         EXAMPLES::
@@ -1193,12 +1198,13 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`FQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`omega_involution`, :meth:`psi_involution`
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
                 EXAMPLES::
 
@@ -1219,7 +1225,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 # See the FQSymBases.ElementMethods.star_involution doc
                 # for the formula we're using here.
                 M = self.parent()
-                return M._from_dict({w.complement().reverse(): c for (w, c) in self},
+                return M._from_dict({w.complement().reverse(): c for w, c in self},
                                     remove_zeros=False)
 
 
@@ -1336,8 +1342,7 @@ class FQSymBases(Category_realization_of_parent):
             from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
-            else:
-                return Family(Permutations(degree), self.monomial)
+            return Family(Permutations(degree), self.monomial)
 
         def is_field(self, proof=True):
             """
@@ -1350,18 +1355,6 @@ class FQSymBases(Category_realization_of_parent):
                 False
             """
             return False
-
-        def is_commutative(self):
-            """
-            Return whether this `FQSym` is commutative.
-
-            EXAMPLES::
-
-                sage: F = algebras.FQSym(ZZ).F()
-                sage: F.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
 
         def some_elements(self):
             """
@@ -1523,7 +1516,7 @@ class FQSymBases(Category_realization_of_parent):
                 sage: A.from_symmetric_group_algebra(SGA4.zero())
                 0
             """
-            return self._from_dict({Permutation(key): c for (key, c) in x})
+            return self._from_dict({Permutation(key): c for key, c in x})
 
     class ElementMethods:
         def omega_involution(self):
@@ -1578,7 +1571,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`psi_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1634,7 +1628,7 @@ class FQSymBases(Category_realization_of_parent):
             # componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.reverse(): coeff for (I, coeff) in F(self)}
+            dct = {I.reverse(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def psi_involution(self):
@@ -1688,7 +1682,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1736,7 +1731,7 @@ class FQSymBases(Category_realization_of_parent):
             # componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.complement(): coeff for (I, coeff) in F(self)}
+            dct = {I.complement(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def star_involution(self):
@@ -1792,7 +1787,7 @@ class FQSymBases(Category_realization_of_parent):
             (:meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.star_involution`)
             with `\pi : NSym \to FQSym` being the canonical inclusion
             and the word quasisymmetric functions
-            (:meth:`~sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions.Bases.ElementMethods.star_involution`)
+            (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`)
             with `\pi : FQSym \to WQSym` the canonical inclusion.
 
             .. TODO::
@@ -1801,7 +1796,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`psi_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
             EXAMPLES::
 
@@ -1856,7 +1852,7 @@ class FQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             F = parent.realization_of().F()
-            dct = {I.complement().reverse(): coeff for (I, coeff) in F(self)}
+            dct = {I.complement().reverse(): coeff for I, coeff in F(self)}
             return parent(F._from_dict(dct, remove_zeros=False))
 
         def to_symmetric_group_algebra(self, n=None):

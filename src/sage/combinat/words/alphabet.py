@@ -28,7 +28,7 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import collections.abc
@@ -42,17 +42,17 @@ from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
 
 
 set_of_letters = {
-    'lower'       : "abcdefghijklmnopqrstuvwxyz",
-    'upper'       : "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    'space'       : " ",
-    'underscore'  : "_",
-    'punctuation' : " ,.;:!?",
-    'printable'   : "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-    'binary'      : "01",
-    'octal'       : "01234567",
-    'decimal'     : "0123456789",
-    'hexadecimal' : "0123456789abcdef",
-    'radix64'     : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"}
+    'lower': "abcdefghijklmnopqrstuvwxyz",
+    'upper': "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    'space': " ",
+    'underscore': "_",
+    'punctuation': " ,.;:!?",
+    'printable': "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+    'binary': "01",
+    'octal': "01234567",
+    'decimal': "0123456789",
+    'hexadecimal': "0123456789abcdef",
+    'radix64': "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"}
 
 
 def build_alphabet(data=None, names=None, name=None):

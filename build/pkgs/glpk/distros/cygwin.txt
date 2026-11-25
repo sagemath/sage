@@ -1,2 +1,0 @@
-glpk
-libglpk-devel

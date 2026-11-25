@@ -1,4 +1,5 @@
-"""Symbolic Integration via External Software
+"""
+Symbolic Integration via External Software
 
 TESTS::
 
@@ -30,12 +31,7 @@ def maxima_integrator(expression, v, a=None, b=None):
     Check that :issue:`25817` is fixed::
 
         sage: maxima_integrator(log(e^x*log(x)*sin(x))/x^2, x)
-        1/2*(x*(Ei(-log(x)) + conjugate(Ei(-log(x))))
-        - 2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2
-        + 2*x*cos(x) + x), x) + 2*x*integrate(sin(x)/(x*cos(x)^2
-        + x*sin(x)^2 - 2*x*cos(x) + x), x) + 2*x*log(x) + 2*log(2)
-        - log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1) - log(cos(x)^2
-        + sin(x)^2 - 2*cos(x) + 1) - 2*log(log(x)))/x
+        -1/2*(2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2 + 2*x*cos(x) + x), x) - 2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2 - 2*x*cos(x) + x), x) - 2*x*log(x) - 2*x*real_part(Ei(-log(x))) - 2*log(2) + log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1) + log(cos(x)^2 + sin(x)^2 - 2*cos(x) + 1) + 2*log(log(x)))/x
     """
     from sage.calculus.calculus import maxima
     if not isinstance(expression, Expression):
@@ -214,70 +210,31 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
     return result
 
 
-def giac_integrator(expression, v, a=None, b=None):
-    r"""
-    Integration using Giac.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.integration.external import giac_integrator
-        sage: giac_integrator(sin(x), x)
-        -cos(x)
-        sage: giac_integrator(1/(x^2+6), x, -oo, oo)
-        1/6*sqrt(6)*pi
-
-    TESTS::
-
-        sage: giac_integrator(e^(-x^2)*log(x), x)
-        integrate(e^(-x^2)*log(x), x)
-
-    Check that :issue:`30133` is fixed::
-
-        sage: ee = SR.var('e')
-        sage: giac_integrator(ee^x, x)
-        e^x/log(e)
-        sage: y = SR.var('π')
-        sage: giac_integrator(cos(y), y)
-        sin(π)
-
-    Check that :issue:`29966` is fixed::
-
-        sage: giac_integrator(sqrt(x + sqrt(x)), x)
-        1/12*(2*sqrt(x)*(4*sqrt(x) + 1) - 3)*sqrt(x + sqrt(x))...
-    """
-    ex = expression._giac_()
-    if a is None:
-        result = ex.integrate(v._giac_())
-    else:
-        result = ex.integrate(v._giac_(), a._giac_(), b._giac_())
-    if 'integrate' in format(result) or 'integration' in format(result):
-        return expression.integrate(v, a, b, hold=True)
-    return result._sage_()
-
-
 def libgiac_integrator(expression, v, a=None, b=None):
     r"""
     Integration using libgiac.
 
     EXAMPLES::
 
+        sage: # needs sage.libs.giac
         sage: import sage.libs.giac
         ...
         sage: from sage.symbolic.integration.external import libgiac_integrator
         sage: libgiac_integrator(sin(x), x)
         -cos(x)
         sage: libgiac_integrator(1/(x^2+6), x, -oo, oo)
-        No checks were made for singular points of antiderivative...
         1/6*sqrt(6)*pi
 
     TESTS::
 
+        sage: # needs sage.libs.giac
         sage: libgiac_integrator(e^(-x^2)*log(x), x)
         integrate(e^(-x^2)*log(x), x)
 
     The following integral fails with the Giac Pexpect interface, but works
     with libgiac (:issue:`31873`)::
 
+        sage: # needs sage.libs.giac
         sage: a, x = var('a,x')
         sage: f = sec(2*a*x)
         sage: F = libgiac_integrator(f, x)
@@ -285,17 +242,23 @@ def libgiac_integrator(expression, v, a=None, b=None):
         sage: (F.derivative(x) - f).simplify_trig()
         0
     """
-    from sage.libs.giac import libgiac
+    try:
+        from sage.libs.giac import libgiac
+    except ImportError:
+        # If libgiac is not available, return a symbolic answer
+        # (without actually integrating anything). This is essentially
+        # the failure case of any integration: see below for what we
+        # do if libgiac is *available* but unable to do much.
+        return expression.integrate(v, a, b, hold=True)
+
     from sage.libs.giac.giac import Pygen
-    # We call Pygen on first argument because otherwise some expressions
-    # involving derivatives result in doctest failures in interfaces/sympy.py
-    # -- related to the fixme note in sage.libs.giac.giac.GiacFunction.__call__
-    # regarding conversion of lists.
+    # We call Pygen on first argument because otherwise some
+    # expressions involving derivatives result in doctest failures in
+    # sage/interfaces/sympy.py
     if a is None:
         result = libgiac.integrate(Pygen(expression), v)
     else:
         result = libgiac.integrate(Pygen(expression), v, a, b)
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result.sage()
+    return result.sage()

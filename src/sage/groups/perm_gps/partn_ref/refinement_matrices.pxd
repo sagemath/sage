@@ -28,4 +28,3 @@ cdef class MatrixStruct:
 cdef int refine_matrix(PartitionStack *, void *, int *, int) noexcept
 cdef int compare_matrices(int *, int *, void *, void *, int) noexcept
 cdef bint all_matrix_children_are_equivalent(PartitionStack *, void *) noexcept
-

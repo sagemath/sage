@@ -15,18 +15,21 @@ overridden by subclasses.
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
+from operator import add, eq, mul, neg, pow, truediv
 
-import sage.rings.abc
-
+from sage.functions.log import exp
 from sage.misc.lazy_import import lazy_import
-from sage.symbolic.ring import SR
-from sage.structure.element import Expression
-from sage.functions.all import exp
-from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.structure.element import Expression, InfinityElement
+from sage.symbolic.operators import (
+    FDerivativeOperator,
+    add_vararg,
+    arithmetic_operators,
+    mul_vararg,
+    relation_operators,
+)
+from sage.symbolic.ring import SR
 
 lazy_import('sage.symbolic.expression_conversion_sympy', ['SympyConverter', 'sympy_converter'])
 lazy_import('sage.symbolic.expression_conversion_algebraic', ['AlgebraicConverter', 'algebraic'])
@@ -210,14 +213,13 @@ class Converter:
                 div = self.get_fake_div(ex)
                 return self.arithmetic(div, div.operator())
             return self.arithmetic(ex, operator)
-        elif operator in relation_operators:
+        if operator in relation_operators:
             return self.relation(ex, operator)
-        elif isinstance(operator, FDerivativeOperator):
+        if isinstance(operator, FDerivativeOperator):
             return self.derivative(ex, operator)
-        elif operator == tuple:
+        if operator is tuple:
             return self.tuple(ex)
-        else:
-            return self.composition(ex, operator)
+        return self.composition(ex, operator)
 
     def get_fake_div(self, ex):
         """
@@ -257,16 +259,15 @@ class Converter:
             if len(n) == 2 and "-1" in repr_n:
                 a = n[0] if repr_n[1] == "-1" else n[1]
                 return FakeExpression([a], neg)
-            else:
-                return ex
-        elif len_d == 1:
+            return ex
+        if len_d == 1:
             d = d[0]
         else:
             d = FakeExpression(d, mul)
 
         if len(n) == 0:
             return FakeExpression([SR.one(), d], truediv)
-        elif len(n) == 1:
+        if len(n) == 1:
             n = n[0]
         else:
             n = FakeExpression(n, mul)
@@ -444,9 +445,31 @@ class InterfaceInit(Converter):
 
             sage: ii.pyobject(pi, pi.pyobject())
             'Pi'
+
+        Python complex numbers need to be converted through a Sage complex
+        field instead of being represented using Python's ``j`` notation
+        (:issue:`42608`)::
+
+            sage: z = SR(complex(1, 2))
+            sage: (z * x)._maxima_init_()
+            '(_SAGE_VAR_x)*(1.0000000000000000 + 2.0000000000000000*%i)'
+
+        In particular, this fixes symbolic matrix inversion after NumPy has
+        converted complex scalars to Python objects::
+
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.eye(2, dtype=complex)
+            sage: matrix(x * a).inverse()[0, 0].simplify_full()
+            1.0/x
         """
+        if isinstance(obj, complex):
+            from sage.rings.complex_double import CDF
+            obj = CDF(obj)
         if (self.interface.name() in ['pari', 'gp'] and isinstance(obj, NumberFieldElement_base)):
-            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+            from sage.rings.number_field.number_field_element_quadratic import (
+                NumberFieldElement_gaussian,
+            )
             if isinstance(obj, NumberFieldElement_gaussian):
                 return repr(obj)
         try:
@@ -528,19 +551,21 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=exp(x)); a
             D[0](f)(e^x)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = %e^_SAGE_VAR_x)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = %e^_SAGE_VAR_x)
             sage: bool(b.sage() == a)
             True
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=4); a
             D[0](f)(4)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -557,19 +582,21 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4); a
             D[0](f)(4, y)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4).subs(y=8); a
             D[0](f)(4, 8)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -646,8 +673,7 @@ class InterfaceInit(Converter):
         # FIXME: consider stripping pyobjects() in ops
         if hasattr(operator, self.name_init + "evaled_"):
             return getattr(operator, self.name_init + "evaled_")(*ops)
-        else:
-            ops = [self(_) for _ in ops]
+        ops = [self(_) for _ in ops]
         try:
             op = getattr(operator, self.name_init)()
         except (TypeError, AttributeError):
@@ -710,7 +736,7 @@ class FriCASConverter(InterfaceInit):
             sage: asin(pi)._fricas_()                                           # optional - fricas
             asin(%pi)
 
-            sage: I._fricas_().domainOf()                                   # optional - fricas
+            sage: I._fricas_().domainOf()                                       # optional - fricas
             Complex(Integer...)
 
             sage: SR(I)._fricas_().domainOf()                                   # optional - fricas
@@ -727,6 +753,11 @@ class FriCASConverter(InterfaceInit):
             sage: (ex^2)._fricas_()                                             # optional - fricas
                        +-+
             (4 + 2 %i)\|2  + 5 + 4 %i
+
+        Check that :issue:`40101` is fixed::
+
+            sage: SR(-oo)._fricas_().domainOf()                                 # optional - fricas
+            OrderedCompletion(Integer)
         """
         try:
             result = getattr(obj, self.name_init)()
@@ -734,9 +765,14 @@ class FriCASConverter(InterfaceInit):
             result = repr(obj)
         else:
             if isinstance(obj, NumberFieldElement_base):
-                from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+                from sage.rings.number_field.number_field_element_quadratic import (
+                    NumberFieldElement_gaussian,
+                )
                 if isinstance(obj, NumberFieldElement_gaussian):
                     return "((%s)::EXPR COMPLEX INT)" % result
+            elif isinstance(obj, InfinityElement):
+                # in this case, we leave the decision about the domain best to FriCAS
+                return result
         return "((%s)::EXPR INT)" % result
 
     def symbol(self, ex):
@@ -1008,7 +1044,7 @@ class PolynomialConverter(Converter):
         """
         if not any(repr(v) in self.varnames for v in ex.variables()):
             return self.base_ring(ex)
-        elif operator == pow:
+        if operator == pow:
             from sage.rings.integer import Integer
             base, exp = ex.operands()
             return self(base)**Integer(exp)
@@ -1102,7 +1138,9 @@ class LaurentPolynomialConverter(PolynomialConverter):
         super().__init__(ex, base_ring, ring)
 
         if ring is None and base_ring is not None:
-            from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+            from sage.rings.polynomial.laurent_polynomial_ring import (
+                LaurentPolynomialRing,
+            )
             self.ring = LaurentPolynomialRing(self.base_ring,
                                               names=self.varnames)
 
@@ -1245,10 +1283,10 @@ class FastCallableConverter(Converter):
             exponent = operands[1]
             if exponent == -1:
                 return self.etb.call(truediv, 1, operands[0])
-            elif exponent == 0.5:
+            if exponent == 0.5:
                 from sage.misc.functional import sqrt
                 return self.etb.call(sqrt, operands[0])
-            elif exponent == -0.5:
+            if exponent == -0.5:
                 from sage.misc.functional import sqrt
                 return self.etb.call(truediv, 1, self.etb.call(sqrt, operands[0]))
         elif operator is neg:
@@ -1531,8 +1569,7 @@ class ExpressionTreeWalker(Converter):
         from sage.symbolic.function import Function
         if isinstance(operator, Function):
             return operator(*map(self, ex.operands()), hold=True)
-        else:
-            return operator(*map(self, ex.operands()))
+        return operator(*map(self, ex.operands()))
 
     def derivative(self, ex, operator):
         """
@@ -1614,8 +1651,7 @@ class SubstituteFunction(ExpressionTreeWalker):
         new = self.substitutions.get(operator)
         if new is not None:
             return new(*[self(_) for _ in ex.operands()])
-        else:
-            return super().composition(ex, operator)
+        return super().composition(ex, operator)
 
     def derivative(self, ex, operator):
         """
@@ -1641,8 +1677,7 @@ class SubstituteFunction(ExpressionTreeWalker):
         new = self.substitutions.get(operator.function())
         if new is not None:
             return operator.change_function(new)(*[self(_) for _ in ex.operands()])
-        else:
-            return operator(*[self(_) for _ in ex.operands()])
+        return operator(*[self(_) for _ in ex.operands()])
 
 
 class Exponentialize(ExpressionTreeWalker):
@@ -1650,11 +1685,10 @@ class Exponentialize(ExpressionTreeWalker):
     # reference in the code using it, therefore avoiding rebuilding
     # the same canned results dictionary at each call.
     from sage.calculus.var import function
-    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.log import exp
-    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.functions.hyperbolic import cosh, coth, csch, sech, sinh, tanh
+    from sage.functions.trig import cos, cot, csc, sec, sin, tan
     from sage.rings.integer import Integer
-    from sage.symbolic.constants import e, I
+    from sage.symbolic.constants import I, e
     from sage.symbolic.ring import SR
     half = Integer(1) / Integer(2)
     two = Integer(2)
@@ -1716,7 +1750,7 @@ class DeMoivre(ExpressionTreeWalker):
     def __init__(self, ex, force=False):
         r"""
         A class that walks a symbolic expression tree and replaces
-        occurences of complex exponentials (optionally, all
+        occurrences of complex exponentials (optionally, all
         exponentials) by their respective trigonometric expressions.
 
         INPUT:
@@ -1749,15 +1783,14 @@ class DeMoivre(ExpressionTreeWalker):
             sage: s.composition(q, q.operator())
             (cos(b) + I*sin(b))*e^a
         """
-        from sage.functions.log import exp
         if op is not exp:
             # return super().composition(ex, op)
             return op(*[self(oper) for oper in ex.operands()])
 
+        from sage.functions.hyperbolic import cosh, sinh
+        from sage.functions.trig import cos, sin
         from sage.rings.imaginary_unit import I
         from sage.symbolic.ring import SR
-        from sage.functions.hyperbolic import sinh, cosh
-        from sage.functions.trig import sin, cos
         arg = self(ex.operands()[0])()
         w0, w1 = (SR.wild(u) for u in range(2))
         D = arg.match(w0 + I*w1)
@@ -1784,8 +1817,8 @@ class HalfAngle(ExpressionTreeWalker):
     """
     # Code executed once at first class reference: create canned formulae.
     from sage.calculus.var import function
-    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.functions.hyperbolic import cosh, coth, csch, sech, sinh, tanh
+    from sage.functions.trig import cos, cot, csc, sec, sin, tan
     from sage.rings.integer import Integer
     from sage.symbolic.ring import SR
     x = SR.var("x")
@@ -1886,8 +1919,8 @@ class HoldRemover(ExpressionTreeWalker):
             sage: h()
             0
         """
-        from sage.calculus.calculus import symbolic_sum, symbolic_product
-        from sage.functions.other import Function_sum, Function_prod
+        from sage.calculus.calculus import symbolic_product, symbolic_sum
+        from sage.functions.other import Function_prod, Function_sum
         if not operator:
             return self
         if isinstance(operator, Function_sum):
@@ -1896,5 +1929,4 @@ class HoldRemover(ExpressionTreeWalker):
             return symbolic_product(*map(self, ex.operands()))
         if operator in self._exclude:
             return operator(*map(self, ex.operands()), hold=True)
-        else:
-            return operator(*map(self, ex.operands()))
+        return operator(*map(self, ex.operands()))

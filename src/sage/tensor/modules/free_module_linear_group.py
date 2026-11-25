@@ -19,14 +19,14 @@ REFERENCES:
 
 - Chap. 15 of R. Godement : *Algebra* [God1968]_
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
@@ -374,11 +374,10 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                 try:
                     resu.inverse()
                 except (ZeroDivisionError, TypeError):
-                    raise TypeError("the {} is not invertible ".format(tens))
+                    raise TypeError(f"the {tens} is not invertible ")
                 return resu
-            else:
-                    raise TypeError("the {} cannot be converted ".format(tens)
-                                    + "to an automorphism.")
+            raise TypeError(f"the {tens} cannot be converted "
+                            + "to an automorphism.")
         if isinstance(comp, FiniteRankFreeModuleMorphism):
             # Conversion of an endomorphism to an automorphism
             endo = comp  # for readability
@@ -393,9 +392,8 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                 except (ZeroDivisionError, TypeError):
                     raise TypeError("the {} is not invertible ".format(endo))
                 return resu
-            else:
-                raise TypeError("cannot coerce the {}".format(endo) +
-                                " to an element of {}".format(self))
+            raise TypeError("cannot coerce the {}".format(endo) +
+                            " to an element of {}".format(self))
 
         # standard construction
         resu = self.element_class(self._fmodule, name=name,

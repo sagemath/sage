@@ -216,11 +216,15 @@ class SphericalHarmonic(BuiltinFunction):
 
         sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14                   # needs sage.symbolic
         0.345494149471335
-        sage: from scipy.special import sph_harm  # NB: arguments x and y are swapped   # needs scipy
         sage: import numpy as np                                                        # needs scipy
-        sage: if int(np.version.short_version[0]) > 1:                                  # needs scipy
-        ....:     np.set_printoptions(legacy="1.25")                                    # needs scipy
-        sage: sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                       # needs scipy sage.symbolic
+        sage: _ = np.set_printoptions(legacy="1.25")                                    # needs scipy
+        sage: import scipy.version
+        sage: if scipy.version.version < '1.15.0':
+        ....:     from scipy.special import sph_harm # NB: arguments x and y are swapped   # needs scipy
+        ....:     sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                   # needs scipy sage.symbolic
+        ....: else:
+        ....:     from scipy.special import sph_harm_y                                  # needs scipy
+        ....:     sph_harm_y(1, 1, (pi/2).n(), pi.n()).item()  # abs tol 1e-9           # needs scipy sage.symbolic
         (0.3454941494713355-4.231083042742082e-17j)
 
     Note that this convention differs from the one in Maxima, as revealed by
@@ -453,7 +457,7 @@ def elliptic_j(z, prec=53):
             z = CC(z)
         except ValueError:
             raise ValueError("elliptic_j only defined for complex arguments.")
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return CC(pari(z).ellj())
 
 
@@ -563,9 +567,9 @@ class EllipticE(BuiltinFunction):
         """
         if z == 0:
             return Integer(0)
-        elif z == pi / 2:
+        if z == pi / 2:
             return elliptic_ec(m)
-        elif m == 0:
+        if m == 0:
             return z
 
     def _evalf_(self, z, m, parent=None, algorithm=None):
@@ -601,7 +605,7 @@ class EllipticE(BuiltinFunction):
         """
         if diff_param == 0:
             return sqrt(Integer(1) - m * sin(z) ** Integer(2))
-        elif diff_param == 1:
+        if diff_param == 1:
             return (elliptic_e(z, m) - elliptic_f(z, m)) / (Integer(2) * m)
 
     def _print_latex_(self, z, m):
@@ -678,7 +682,7 @@ class EllipticEC(BuiltinFunction):
         """
         if x == 0:
             return pi / Integer(2)
-        elif x == 1:
+        if x == 1:
             return Integer(1)
 
     def _evalf_(self, x, parent=None, algorithm=None):
@@ -786,7 +790,7 @@ class EllipticEU(BuiltinFunction):
         if diff_param == 0:
             return (sqrt(-m * jacobi('sn', u, m) ** Integer(2) +
                          Integer(1)) * jacobi('dn', u, m))
-        elif diff_param == 1:
+        if diff_param == 1:
             return (Integer(1) / Integer(2) *
                     (elliptic_eu(u, m) - elliptic_f(jacobi_am(u, m), m)) / m -
                     Integer(1) / Integer(2) * sqrt(-m * jacobi('sn', u, m) **
@@ -920,9 +924,9 @@ class EllipticF(BuiltinFunction):
         """
         if m == 0:
             return z
-        elif z == 0:
+        if z == 0:
             return Integer(0)
-        elif z == pi / 2:
+        if z == pi / 2:
             return elliptic_kc(m)
 
     def _evalf_(self, z, m, parent=None, algorithm=None):
@@ -953,7 +957,7 @@ class EllipticF(BuiltinFunction):
         """
         if diff_param == 0:
             return Integer(1) / sqrt(Integer(1) - m * sin(z) ** Integer(2))
-        elif diff_param == 1:
+        if diff_param == 1:
             return (elliptic_e(z, m) / (Integer(2) * (Integer(1) - m) * m) -
                     elliptic_f(z, m) / (Integer(2) * m) -
                     (sin(Integer(2) * z) /
@@ -1045,8 +1049,7 @@ class EllipticKC(BuiltinFunction):
         """
         if z == 0:
             return pi / 2
-        else:
-            return None
+        return None
 
     def _evalf_(self, z, parent=None, algorithm=None):
         """
@@ -1179,11 +1182,11 @@ class EllipticPi(BuiltinFunction):
                     (n * sqrt(Integer(1) - m * sin(z) ** Integer(2)) *
                      sin(Integer(2) * z)) /
                     (Integer(2) * (Integer(1) - n * sin(z) ** Integer(2)))))
-        elif diff_param == 1:
+        if diff_param == 1:
             return (Integer(1) /
                     (sqrt(Integer(1) - m * sin(z) ** Integer(Integer(2))) *
                      (Integer(1) - n * sin(z) ** Integer(2))))
-        elif diff_param == 2:
+        if diff_param == 2:
             return ((Integer(1) / (Integer(2) * (n - m))) *
                     (elliptic_e(z, m) / (m - Integer(1)) +
                      elliptic_pi(n, z, m) - (m * sin(Integer(2) * z)) /

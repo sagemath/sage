@@ -1,15 +1,5 @@
 r"""
-Linear Extensions of Posets
-
-This module defines two classes:
-
-- :class:`LinearExtensionOfPoset`
-- :class:`LinearExtensionsOfPoset`
-- :class:`LinearExtensionsOfPosetWithHooks`
-- :class:`LinearExtensionsOfForest`
-
-Classes and methods
--------------------
+Linear extensions of posets
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -130,7 +120,7 @@ class LinearExtensionOfPoset(ClonableArray,
             return linear_extension
         return LinearExtensionsOfPoset(poset)(linear_extension)
 
-    def check(self):
+    def check(self) -> None:
         r"""
         Check whether ``self`` is indeed a linear extension of the underlying poset.
 
@@ -161,7 +151,7 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         return self.parent().poset()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex string for ``self``.
 
@@ -217,12 +207,12 @@ class LinearExtensionOfPoset(ClonableArray,
             True
         """
         P = self.parent().poset()
-        old = [P.unwrap(x) for x in self]
+        old = (P.unwrap(x) for x in self)
         new = [P.unwrap(x) for x in P]
         relabelling = dict(zip(old, new))
         return P.relabel(relabelling).with_linear_extension(new)
 
-    def is_greedy(self):
+    def is_greedy(self) -> bool:
         r"""
         Return ``True`` if the linear extension is greedy.
 
@@ -256,7 +246,7 @@ class LinearExtensionOfPoset(ClonableArray,
                         return False
         return True
 
-    def is_supergreedy(self):
+    def is_supergreedy(self) -> bool:
         r"""
         Return ``True`` if the linear extension is supergreedy.
 
@@ -389,7 +379,9 @@ class LinearExtensionOfPoset(ClonableArray,
 
         For more details see [Stan2009]_.
 
-        .. SEEALSO:: :meth:`tau`, :meth:`evacuation`
+        .. SEEALSO::
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`,
+            :meth:`evacuation`
 
         EXAMPLES::
 
@@ -414,7 +406,9 @@ class LinearExtensionOfPoset(ClonableArray,
         `\pi (\tau_1 \cdots \tau_{n-1}) (\tau_1 \cdots \tau_{n-2}) \cdots (\tau_1)`.
         For more details see [Stan2009]_.
 
-        .. SEEALSO:: :meth:`tau`, :meth:`promotion`
+        .. SEEALSO::
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`
 
         EXAMPLES::
 
@@ -430,7 +424,7 @@ class LinearExtensionOfPoset(ClonableArray,
                 self = self.tau(j)
         return self
 
-    def jump_count(self):
+    def jump_count(self) -> int:
         r"""
         Return the number of jumps in the linear extension.
 
@@ -550,7 +544,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             facade = (list,)
         Parent.__init__(self, category=FiniteEnumeratedSets(), facade=facade)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -627,12 +621,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         for x in range(n):
             # Use the existing Jup table to compute all covering
             # relations in J(P) for things that are above loc(x).
-            K = [[loc[x]]]
+            K0 = [[loc[x]]]
             j = 0
-            while K[j]:
-                K.append([b for a in K[j] for b in Jup[a]])
+            while K0[j]:
+                K0.append([b for a in K0[j] for b in Jup[a]])
                 j += 1
-            K = sorted({item for sublist in K for item in sublist})
+            K = sorted({item for sublist in K0 for item in sublist})
             for j in range(len(K)):
                 i = m + j + 1
                 Jup[i] = [m + K.index(a) + 1 for a in Jup[K[j]]]
@@ -709,7 +703,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         return (isinstance(obj, (list, tuple)) and
                 self.poset().is_linear_extension(obj))
 
-    def markov_chain_digraph(self, action='promotion', labeling='identity'):
+    def markov_chain_digraph(self, action='promotion', labeling='identity') -> DiGraph:
         r"""
         Return the digraph of the action of generalized promotion or tau on ``self``.
 
@@ -725,8 +719,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         This method creates a graph with vertices being the linear extensions of a given finite
         poset and an edge from `\pi` to `\pi'` if `\pi' = \pi \partial_i` where `\partial_i` is
-        the promotion operator (see :meth:`promotion`) if ``action`` is set to ``promotion``
-        and `\tau_i` (see :meth:`tau`) if ``action`` is set to ``tau``. The label of the edge
+        the promotion operator (see
+        :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`)
+        if ``action`` is set to ``promotion``
+        and `\tau_i` (see
+        :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`)
+        if ``action`` is set to ``tau``. The label of the edge
         is `i` (resp. `\pi_i`) if ``labeling`` is set to ``identity`` (resp. ``source``).
 
         EXAMPLES::
@@ -777,7 +775,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
              ([2, 1, 4, 3], [1, 2, 4, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 2)]
             sage: view(G) # optional - dot2tex graphviz, not tested (opens external window)
 
-        .. SEEALSO:: :meth:`markov_chain_transition_matrix`, :meth:`promotion`, :meth:`tau`
+        .. SEEALSO:: :meth:`markov_chain_transition_matrix`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`
 
         TESTS::
 
@@ -858,7 +858,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [           x0             0             0      -x1 - x2            x3]
             [            0            x0             0            x2      -x1 - x3]
 
-        .. SEEALSO:: :meth:`markov_chain_digraph`, :meth:`promotion`, :meth:`tau`
+        .. SEEALSO:: :meth:`markov_chain_digraph`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
@@ -907,11 +909,10 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             lst = list(lst)
         if not isinstance(lst, (list, tuple)):
             raise TypeError("input should be a list or tuple")
-        lst = [self._poset(_) for _ in lst]
+        lst = [self._poset(e) for e in lst]
         if self._is_facade:
             return lst
-        else:
-            return self.element_class(self, lst, check)
+        return self.element_class(self, lst, check)
 
     Element = LinearExtensionOfPoset
 

@@ -38,14 +38,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.tensor.modules.reflexive_module import ReflexiveModule_abstract
 
 
@@ -344,9 +344,8 @@ class DiffFormModule(UniqueRepresentation, Parent):
                    and self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         if isinstance(comp, TensorField):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -357,9 +356,8 @@ class DiffFormModule(UniqueRepresentation, Parent):
                 for dom, rst in tensor._restrictions.items():
                     resu._restrictions[dom] = dom.diff_form_module(1)(rst)
                 return resu
-            else:
-                raise TypeError("cannot convert the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -490,8 +488,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def base_module(self):
         r"""
@@ -569,6 +566,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         return self._degree
 
 # *****************************************************************************
+
 
 class DiffFormFreeModule(ExtPowerDualFreeModule):
     r"""
@@ -805,9 +803,8 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                     and self._domain.is_subset(comp._domain)
                     and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to a differential form in {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to a differential form in {}".format(self))
         if isinstance(comp, TensorFieldParal):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -818,9 +815,8 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                 for frame, comp in tensor._components.items():
                     resu._components[frame] = comp.copy()
                 return resu
-            else:
-                raise TypeError("cannot convert the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -862,7 +858,9 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                     and self._domain.is_subset(other._domain)
                     and self._ambient_domain.is_subset(other._ambient_domain))
 
-        from sage.manifolds.differentiable.tensorfield_module import TensorFieldFreeModule
+        from sage.manifolds.differentiable.tensorfield_module import (
+            TensorFieldFreeModule,
+        )
         if isinstance(other, TensorFieldFreeModule):
             # coercion of a type-(0,1) tensor to a linear form
             return (self._fmodule is other._fmodule and self._degree == 1

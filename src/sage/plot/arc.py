@@ -221,9 +221,9 @@ class Arc(GraphicPrimitive):
 
         if s < twopi - epsilon:  # bb determined by the sector
             def is_cyclic_ordered(x1, x2, x3):
-                return ((x1 < x2 and x2 < x3) or
-                        (x2 < x3 and x3 < x1) or
-                        (x3 < x1 and x1 < x2))
+                return ((x1 < x2 < x3) or
+                        (x2 < x3 < x1) or
+                        (x3 < x1 < x2))
 
             x1 = cos_angle * r1 * cos(s1) - sin_angle * r2 * sin(s1)
             x2 = cos_angle * r1 * cos(s2) - sin_angle * r2 * sin(s2)
@@ -272,7 +272,7 @@ class Arc(GraphicPrimitive):
             sage: Arc(2,3,2.2,2.2,0,2,3,{})._matplotlib_arc()
             <matplotlib.patches.Arc object at ...>
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         p = patches.Arc((self.x, self.y),
                         2. * self.r1,
                         2. * self.r2,
@@ -475,7 +475,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
         ...
         NotImplementedError
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
     # Otherwise matplotlib complains.
@@ -499,5 +499,5 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
             sector[0], sector[1],
             options))
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         raise NotImplementedError

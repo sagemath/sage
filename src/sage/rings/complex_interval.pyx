@@ -74,29 +74,6 @@ from sage.rings.convert.mpfi cimport mpfi_set_sage
 from sage.rings.infinity import infinity
 
 
-def is_ComplexIntervalFieldElement(x):
-    """
-    Check if ``x`` is a :class:`ComplexIntervalFieldElement`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_interval import is_ComplexIntervalFieldElement as is_CIFE
-        sage: is_CIFE(CIF(2))
-        doctest:warning...
-        DeprecationWarning: The function is_ComplexIntervalFieldElement is deprecated;
-        use 'isinstance(..., ComplexIntervalFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_CIFE(CC(2))
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_ComplexIntervalFieldElement is deprecated; "
-                       "use 'isinstance(..., ComplexIntervalFieldElement)' instead.")
-    return isinstance(x, ComplexIntervalFieldElement)
-
-
 cdef class ComplexIntervalFieldElement(FieldElement):
     """
     A complex interval.
@@ -125,7 +102,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         mpfi_init2(self.__re, self._prec)
         mpfi_init2(self.__im, self._prec)
 
-    def __init__(self, parent, real, imag=None, int base=10):
+    def __init__(self, parent, real, imag=None, int base=10) -> None:
         """
         Initialize a complex number (interval).
 
@@ -168,7 +145,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         return self.str(10)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash value of ``self``.
 
@@ -243,21 +220,21 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         .. SEEALSO::
 
-            - :meth:`RealIntervalFieldElement.str`
+            - :meth:`~sage.rings.real_mpfi.RealIntervalFieldElement.str`
         """
         s = ""
         if not self.real().is_zero():
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
-            y  =  self.imag()
-            if s!="":
+            y  = self.imag()
+            if s:
                 if y < 0:
-                    s = s+" - "
+                    s += " - "
                     y = -y
                 else:
-                    s = s+" + "
-            s = s+"%s*I"%y.str(base=base, style=style)
-        if len(s) == 0:
+                    s += " + "
+            s += "%s*I" % y.str(base=base, style=style)
+        if not s:
             s = "0"
         return s
 
@@ -298,13 +275,11 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Exact and nearly exact points are still visible::
 
-            sage: # needs sage.plot sage.symbolic
             sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
             Graphics object consisting of 6 graphics primitives
 
         A demonstration that `z \mapsto z^2` acts chaotically on `|z|=1`::
 
-            sage: # needs sage.plot sage.symbolic
             sage: z = CIF(0, 2*pi/1000).exp()
             sage: g = Graphics()
             sage: for i in range(40):
@@ -321,7 +296,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         g = polygon2d([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)],
                 thickness=pointsize/4, **kwds)
         # Nearly empty polygons don't show up.
-        g += self.center().plot(pointsize= pointsize, **kwds)
+        g += self.center().plot(pointsize=pointsize, **kwds)
         return g
 
     def _latex_(self):
@@ -361,7 +336,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             (2.50000000000000, 3.00000000000000)
             (-4.50000000000000, -4.00000000000000)
 
-            sage: # needs sage.symbolic
             sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))
             sage: a, b, c, d = z.bisection()
             sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())
@@ -664,7 +638,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         return center
 
-    def __contains__(self, other):
+    def __contains__(self, other) -> bool:
         """
         Test whether ``other`` is totally contained in ``self``.
 
@@ -1165,7 +1139,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         - [RL1971]_
         """
-        cdef ComplexIntervalFieldElement result
         x = self._new()
 
         if mpfi_nan_p(self.__re) or mpfi_nan_p(self.__im):
@@ -1407,7 +1380,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         return complex(self.real().n(self._prec),
                        self.imag().n(self._prec))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if ``self`` is not known to be exactly zero.
 
@@ -1545,22 +1518,22 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         i = mpfr_cmp(&left.__re.left, &(<ComplexIntervalFieldElement>right).__re.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__re.right, &(<ComplexIntervalFieldElement>right).__re.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.left, &(<ComplexIntervalFieldElement>right).__im.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.right, &(<ComplexIntervalFieldElement>right).__im.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         return 0
 
@@ -1891,8 +1864,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             x = ComplexIntervalFieldElement(self._parent, rho*theta.cos(), rho*theta.sin())
         if all:
             return [x, -x]
-        else:
-            return x
+        return x
 
     def is_square(self):
         r"""
@@ -2218,7 +2190,7 @@ cdef _circle_invert_standard(
     # crosses the x-Axis, the north east or south east diagonal, respectively.
     #
     # Given standard form, the input also has to cross the north east
-    # diagonal and x-Axis if it corsses the south east diagonal.
+    # diagonal and x-Axis if it crosses the south east diagonal.
     #
     # Thus, we are left with five cases:
     #
@@ -2237,7 +2209,7 @@ cdef _circle_invert_standard(
     # Consider the images
     #          f(xmin + ymin * I), ..., f(xmax + ymax * I)
     # of the four corners of the input rect under inversion f.
-    # Now consider the the axis-parallel rectangle R that these images span.
+    # Now consider the axis-parallel rectangle R that these images span.
     # In general, the image of the input rect might not be contained in R.
     # In case 1, however, (and only in case 1) it is and we furthermore know
     # which image is mapped to which edge of R. Thus, we have:

@@ -1,3 +1,5 @@
+.. _section-command-line:
+
 The Sage Command Line
 =====================
 
@@ -5,8 +7,8 @@ The Sage Read-Eval-Print-Loop (REPL) is based on IPython. In this
 document, you'll find how the IPython integration works. You should
 also be familiar with the documentation for IPython.
 
-For more details about using the Sage command line, see the Sage
-tutorial.
+For more details about using the Sage command line, see `the Sage
+tutorial <../../tutorial/index.html>`_.
 
 Running Sage
 ------------
@@ -71,6 +73,7 @@ Display Backend Infrastructure
    sage/repl/rich_output/pretty_print
    sage/repl/rich_output/buffer
    sage/repl/rich_output/output_basic
+   sage/repl/rich_output/output_browser
    sage/repl/rich_output/output_graphics
    sage/repl/rich_output/output_graphics3d
    sage/repl/rich_output/output_video
@@ -92,6 +95,7 @@ Miscellaneous
    sage/repl/interface_magic
    sage/repl/ipython_kernel/interact
    sage/repl/ipython_kernel/widgets
+   sage/repl/ipython_kernel/widgets_sagenb
    sage/repl/ipython_kernel/install
    sage/repl/ipython_kernel/kernel
    sage/repl/ipython_tests

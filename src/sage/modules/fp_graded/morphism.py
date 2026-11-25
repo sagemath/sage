@@ -61,9 +61,9 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
     OUTPUT:
 
     - ``block_matrix`` -- list of lists representing a matrix of linear
-      transformations `(T_{ij})`.  Each transformtion `T_{ij}` is the linear map
-      representing multiplication by the coefficient `r_{ij}` restricted to
-      the module elements of degree ``source_degs[j]``.
+      transformations `(T_{ij})`.  Each transformation `T_{ij}` is the
+      linear map representing multiplication by the coefficient
+      `r_{ij}` restricted to the module elements of degree ``source_degs[j]``.
     - ``R`` -- a matrix representing ``block_matrix`` as a single linear
       transformation
 
@@ -128,7 +128,7 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
         total_target_dim += row[0].codomain().dimension()
     if total_source_dim == 0:
         return block_matrix, matrix(total_target_dim, 0)
-    elif total_target_dim == 0:
+    if total_target_dim == 0:
         return block_matrix, matrix(0, total_source_dim)
 
     # Create a matrix from the matrix of linear transformations.
@@ -611,7 +611,7 @@ class FPModuleMorphism(Morphism):
         return homset([self(g(x)) for x in g.domain().generators()])
 
     @cached_method
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Decide if ``self`` is the zero homomorphism.
 
@@ -647,7 +647,7 @@ class FPModuleMorphism(Morphism):
     __bool__ = is_zero
 
     @cached_method
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Decide if ``self`` is the identity endomorphism.
 
@@ -1138,7 +1138,7 @@ class FPModuleMorphism(Morphism):
         M = f.domain()
 
         # It is an error to call this function with incompatible arguments.
-        if not f.codomain() is N:
+        if f.codomain() is not N:
             raise ValueError('the codomains of this homomorphism and the homomorphism '
                              'we are lifting over are different')
 
@@ -1217,8 +1217,7 @@ class FPModuleMorphism(Morphism):
                           'are respected: %s' % error)
 
                 return None
-            else:
-                raise ValueError(error)
+            raise ValueError(error)
 
         # Interpret the solution vector as a vector in the direct sum
         # $ K_1\oplus K_2\oplus \ldots \oplus K_n $.
@@ -1583,7 +1582,7 @@ class FPModuleMorphism(Morphism):
         # its image equals im(self)
         return Hom(I, j0.codomain())(j0._values)
 
-    def is_injective(self, top_dim=None, verbose=False):
+    def is_injective(self, top_dim=None, verbose=False) -> bool:
         r"""
         Return ``True`` if and only if ``self`` has a trivial kernel.
 
@@ -1614,7 +1613,7 @@ class FPModuleMorphism(Morphism):
         j0 = self._resolve_kernel(top_dim, verbose)
         return j0.domain().is_trivial()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` has a trivial cokernel.
 

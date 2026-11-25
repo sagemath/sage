@@ -26,7 +26,7 @@ cdef class SetSystem:
     cdef _distinguish(self, Py_ssize_t v)
     cpdef is_connected(self)
 
-    cdef initial_partition(self, SetSystem P=*, E=*)
+    cdef SetSystem initial_partition(self, SetSystem P=*, E=*)
     cpdef _equitable_partition(self, SetSystem P=*, EP=*)
     cpdef _heuristic_partition(self, SetSystem P=*, EP=*)
     cpdef _isomorphism(self, SetSystem other, SetSystem SP=*, SetSystem OP=*)

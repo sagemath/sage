@@ -805,17 +805,17 @@ def Matroid(groundset=None, data=None, **kwds):
         if isinstance(data, Graph):
             key = 'graph'
         elif isinstance(data, Matrix) or (
-             isinstance(data, tuple) and isinstance(data[0], Matrix)):
+                isinstance(data, tuple) and isinstance(data[0], Matrix)):
             key = 'matrix'
         elif isinstance(data, sage.modules.with_basis.morphism.ModuleMorphism) or (
-             isinstance(data, tuple) and
-             isinstance(data[0], sage.modules.with_basis.morphism.ModuleMorphism)):
+                isinstance(data, tuple) and
+                isinstance(data[0], sage.modules.with_basis.morphism.ModuleMorphism)):
             key = 'morphism'
         elif isinstance(data, sage.matroids.matroid.Matroid):
             key = 'matroid'
         elif isinstance(data, str):
             key = 'revlex'
-        elif isinstance(data, dict) or isinstance(data, FiniteLatticePoset):
+        elif isinstance(data, (dict, FiniteLatticePoset)):
             key = 'flats'
         elif data is None:
             raise TypeError("no input data given for Matroid()")
@@ -908,7 +908,7 @@ def Matroid(groundset=None, data=None, **kwds):
         else:
             G = Graph(data)
         # Decide on the groundset
-        m = G.num_edges()
+        m = G.n_edges()
         if groundset is None:
             # 1. Attempt to use edge labels.
             sl = G.edge_labels()
@@ -926,13 +926,11 @@ def Matroid(groundset=None, data=None, **kwds):
             # 1) we would need to fix the loops anyway
             # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices(sort=True)
-            n = G.num_verts()
+            n = G.n_vertices()
             A = matrix(ZZ, n, m, 0)
-            mm = 0
-            for i, j, k in G.edge_iterator():
+            for mm, (i, j, k) in enumerate(G.edge_iterator()):
                 A[V.index(i), mm] = -1
                 A[V.index(j), mm] += 1  # So loops get 0
-                mm += 1
             M = RegularMatroid(matrix=A, groundset=groundset)
             want_regular = False  # Save some time, since result is already regular
         else:
@@ -1032,11 +1030,9 @@ def Matroid(groundset=None, data=None, **kwds):
         subsets = sorted(combinations(range(N), rk), key=revlex_sort_key)
         if len(data) != len(subsets):
             raise ValueError("expected string of length %s (%s choose %s), got %s" %
-                (len(subsets), N, rk, len(data)))
-        bases = []
-        for i, x in enumerate(data):
-            if x != '0':
-                bases.append([groundset[c] for c in subsets[i]])
+                             (len(subsets), N, rk, len(data)))
+        bases = [[groundset[c] for c in subsets[i]]
+                 for i, x in enumerate(data) if x != '0']
         M = BasisMatroid(groundset=groundset, bases=bases)
 
     # Circuit closures:

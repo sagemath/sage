@@ -1,16 +1,16 @@
 """
-(Non-negative) Integer vectors
+Nonnegative integer vectors
 
 AUTHORS:
 
-* Mike Hansen (2007) - original module
-* Nathann Cohen, David Joyner (2009-2010) - Gale-Ryser stuff
-* Nathann Cohen, David Joyner (2011) - Gale-Ryser bugfix
-* Travis Scrimshaw (2012-05-12) - Updated doc-strings to tell the user of
-  that the class's name is a misnomer (that they only contains non-negative
+- Mike Hansen (2007): original module
+- Nathann Cohen, David Joyner (2009-2010): Gale-Ryser stuff
+- Nathann Cohen, David Joyner (2011): Gale-Ryser bugfix
+- Travis Scrimshaw (2012-05-12): updated docstrings to tell the user of
+  that the class's name is a misnomer (that they only contains nonnegative
   entries).
-* Federico Poloni (2013) - specialized ``rank()``
-* Travis Scrimshaw (2013-02-04) - Refactored to use ``ClonableIntArray``
+- Federico Poloni (2013): specialized ``rank()``
+- Travis Scrimshaw (2013-02-04): refactored to use ``ClonableIntArray``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -28,23 +28,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import product
-from collections.abc import Sequence
 import numbers
+from collections.abc import Sequence
+from itertools import product
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.list_clone import ClonableArray
-from sage.misc.classcall_metaclass import ClasscallMetaclass
-
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.rings.infinity import PlusInfinity
 from sage.arith.misc import binomial
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def is_gale_ryser(r, s):
@@ -358,26 +357,25 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
         A0 = A0.matrix_from_rows_and_columns(r_permutation, s_permutation)
         return A0
 
-    elif algorithm == "gale":
+    if algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
         k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
-        for (i, c) in enumerate(p1):
+        for i, c in enumerate(p1):
             p.add_constraint(p.sum([b[i, j] for j in range(k2)]) == c)
-        for (i, c) in enumerate(p2):
+        for i, c in enumerate(p2):
             p.add_constraint(p.sum([b[j, i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
         b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
-        M = [[0]*k2 for i in range(k1)]
+        M = [[0] * k2 for _ in range(k1)]
         for i in range(k1):
             for j in range(k2):
                 M[i][j] = b[i, j]
         return matrix(M)
 
-    else:
-        raise ValueError('the only two algorithms available are "gale" and "ryser"')
+    raise ValueError('the only two algorithms available are "gale" and "ryser"')
 
 
 def _default_function(l, default, i):
@@ -436,9 +434,8 @@ def list2func(l, default=None):
     """
     if default is None:
         return lambda i: l[i]
-    else:
-        from functools import partial
-        return partial(_default_function, l, default)
+    from functools import partial
+    return partial(_default_function, l, default)
 
 
 class IntegerVector(ClonableArray):
@@ -716,10 +713,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
         if isinstance(k, numbers.Integral):
             return IntegerVectors_nk(n, k)
-        elif isinstance(k, (tuple, list)):
+        if isinstance(k, (tuple, list)):
             return IntegerVectors_nnondescents(n, tuple(k))
-        else:
-            raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
+        raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
     def __init__(self, category=None):
         """
@@ -812,6 +808,24 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 rtn[ptr-1] += 1
             else:
                 return self._element_constructor_(rtn)
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors().is_finite()
+            False
+            sage: IntegerVectors(3).is_finite()
+            False
+            sage: IntegerVectors(length=5).is_finite()
+            False
+            sage: IntegerVectors(3, 5).is_finite()
+            True
+        """
+        from sage.rings.infinity import Infinity
+        return self.cardinality() < Infinity
 
 
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
@@ -1043,8 +1057,19 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
              [2, 1],
              [1, 2],
              [0, 3]]
+
+        TESTS:
+
+        Check corner case::
+
+            sage: IV = IntegerVectors(k=0)
+            sage: list(IV)
+            [[]]
         """
         n = 0
+        if self.k == 0:  # special case
+            yield self.element_class(self, [], check=False)
+            return
         while True:
             for iv in integer_vectors_nk_fast_iter(n, self.k):
                 yield self.element_class(self, iv, check=False)
@@ -1299,10 +1324,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if sum(x) != self.n:
             return False
 
-        if len(x) > 0 and min(x) < 0:
-            return False
-
-        return True
+        return not x or min(x) >= 0
 
     def rank(self, x):
         """
@@ -1363,6 +1385,21 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(3,5).is_finite()
+            True
+            sage: IntegerVectors(99, 3).is_finite()
+            True
+            sage: IntegerVectors(2*10^9, 10^9).is_finite()
+            True
+        """
+        return True
 
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
@@ -1600,6 +1637,11 @@ class IntegerVectorsConstraints(IntegerVectors):
 
             sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
+
+            sage: [] in IntegerVectors(max_part=0)
+            True
+            sage: [] in IntegerVectors(max_length=0)
+            True
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
             return True
@@ -1613,8 +1655,20 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.n is not None and sum(x) != self.n:
             return False
 
+        # Reject vectors that violate conflicting length constraints
+        length = self.constraints.get('length')
+        if length is not None:
+            if (self.constraints.get('min_length') is not None
+                    and length < self.constraints['min_length']):
+                return False
+            if (self.constraints.get('max_length') is not None
+                    and length > self.constraints['max_length']):
+                return False
+
         from sage.combinat.misc import check_integer_list_constraints
-        return check_integer_list_constraints(x, singleton=True, **self.constraints)
+        return check_integer_list_constraints(
+            x, singleton=True, **self.constraints
+        ) is not None
 
     def cardinality(self):
         """
@@ -1634,7 +1688,58 @@ class IntegerVectorsConstraints(IntegerVectors):
             27
             sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
             16
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: P.cardinality()
+            1
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: Q.cardinality()
+            1
+            sage: list(Q)
+            [[]]
+            sage: P = IntegerVectors(1, length=1, max_length=0, max_part=1)
+            sage: [1] in P
+            False
+            sage: P.cardinality()
+            0
+            sage: list(P)
+            []
+            sage: Q = IntegerVectors(max_length=0, min_length=1)
+            sage: [] in Q
+            False
+            sage: Q.cardinality()
+            0
+            sage: list(Q)
+            []
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: [] in R
+            False
+            sage: R.cardinality()
+            0
+            sage: list(R)
+            []
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
+                    return Integer(0)
+                return Integer(1)
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
+                    return Integer(0)
+                return Integer(1)
+
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
@@ -1716,7 +1821,38 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: iv = [ IntegerVectors(x[0], x[1], max_part=x[2]-1) for x in essai ]
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: list(Q)
+            [[]]
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: list(R)
+            []
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+
         from sage.combinat.integer_lists import IntegerListsLex
 
         if self.n is None:
@@ -1798,9 +1934,3 @@ def integer_vectors_nk_fast_iter(n, k):
             cur[pos] = rem  # Guaranteed to be at least 1
             rem = zero
             yield list(cur)
-
-
-# October 2012: fixing outdated pickles which use classes being deprecated
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nconstraints', IntegerVectorsConstraints)
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nkconstraints', IntegerVectorsConstraints)

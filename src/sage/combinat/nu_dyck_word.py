@@ -1,17 +1,17 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-`\nu`-Dyck Words
+`\nu`-Dyck words
 
 A class of the `\nu`-Dyck word, see [PRV2017]_ for details.
-
-AUTHORS:
-
-- Aram Dermenjian (2020-09-26)
 
 This file is based off the class
 :func:`DyckWords<sage.combinat.dyck_word.DyckWord>` written by Mike Hansen, Dan
 Drake, Florent Hivert, Christian Stump, Mike Zabrocki, Jean--Baptiste Priez
-and Travis Scrimshaw
+and Travis Scrimshaw.
+
+AUTHORS:
+
+- Aram Dermenjian (2020-09-26)
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Aram Dermenjian <aram.dermenjian@gmail.com>,
@@ -1079,7 +1079,7 @@ class NuDyckWord(CombinatorialElement):
             return j
         return False
 
-    def mutate(self, i) -> None | NuDyckWord:
+    def mutate(self, i) -> NuDyckWord | None:
         r"""
         Return a new `\nu`-Dyck Word if possible.
 
@@ -1156,9 +1156,9 @@ class NuDyckWords(Parent):
 
     Element = NuDyckWord
 
-    def __init__(self, nu=()):
+    def __init__(self, nu=()) -> None:
         """
-        Intialize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -1435,7 +1435,7 @@ def path_weakly_above_other(path, other) -> bool:
     r"""
     Test if ``path`` is weakly above ``other``.
 
-    A path `P` is wealy above another path `Q` if `P` and `Q` are the same
+    A path `P` is weakly above another path `Q` if `P` and `Q` are the same
     length and if any prefix of length `n` of `Q` contains more North steps
     than the prefix of length `n` of `P`.
 

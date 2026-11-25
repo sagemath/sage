@@ -4,7 +4,7 @@ Fast calculation of cyclotomic polynomials
 This module provides a function :func:`cyclotomic_coeffs`, which calculates the
 coefficients of cyclotomic polynomials. This is not intended to be invoked
 directly by the user, but it is called by the method
-:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_general.cyclotomic_polynomial`
+:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.cyclotomic_polynomial`
 method of univariate polynomial ring objects and the top-level
 :func:`~sage.misc.functional.cyclotomic_polynomial` function.
 """
@@ -36,7 +36,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
 
 try:
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 except ImportError:
     pass
 
@@ -86,7 +86,7 @@ def cyclotomic_coeffs(nn, sparse=None):
          0, -1, 0, -1, 0, -1, 0, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1, -1, -2,
          -1, -1, 0, 0, 1, 1, 1]
 
-    In fact the height is not bounded by any polynomial in `n` (Erdos),
+    In fact the height is not bounded by any polynomial in `n` (Erdős),
     although takes a while just to exceed linear::
 
         sage: v = cyclotomic_coeffs(1181895)
@@ -272,7 +272,6 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
 
-        sage: # needs sage.libs.pari
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
         sage: cyclotomic_value(15, t)
         0
@@ -328,8 +327,7 @@ def cyclotomic_value(n, x):
         # if n is prime, return n
         if L == 1:
             return n * x  # in case the parent of x has nonzero characteristic
-        else:
-            return x
+        return x
     xd = [x]  # the x^d for d | n
     cdef char mu
     cdef char* md = <char*>sig_malloc(sizeof(char) * (1 << L))  # the mu(d) for d | n

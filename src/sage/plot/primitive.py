@@ -146,7 +146,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
 
     def set_options(self, new_options):
         """
-        Change the options to `new_options`.
+        Change the options to ``new_options``.
 
         EXAMPLES::
 
@@ -179,10 +179,10 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             A = self._allowed_options()
             t = False
             K = list(A) + ['xmin', 'xmax', 'ymin', 'ymax', 'axes']
-            for k in O.keys():
+            for k, Ok in O.items():
                 if k not in K:
                     do_verify = False
-                    verbose(f"WARNING: Ignoring option '{k}'={O[k]}",
+                    verbose(f"WARNING: Ignoring option '{k}'={Ok}",
                             level=0)
                     t = True
             if t:
@@ -195,8 +195,8 @@ class GraphicPrimitive(WithEqualityById, SageObject):
 
         if 'hue' in O:
             t = O['hue']
-            if not isinstance(t, (tuple,list)):
-                t = [t,1,1]
+            if not isinstance(t, (tuple, list)):
+                t = [t, 1, 1]
             O['rgbcolor'] = hue(*t)
             del O['hue']
         return O

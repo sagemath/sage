@@ -1,7 +1,7 @@
 """
-Recursive Species
+Recursive species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +14,7 @@ Recursive Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from sage.combinat.species.species import GenericCombinatorialSpecies
 from sage.combinat.species.structure import SpeciesStructureWrapper
 from sage.rings.rational_field import QQ
@@ -30,6 +30,9 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: F = CombinatorialSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: loads(dumps(F))
             Combinatorial species
 
@@ -156,8 +159,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         """
         if hasattr(self, "_reference"):
             return (self.__class__,) + self._reference._unique_info()
-        else:
-            return (self.__class__,)
+        return (self.__class__,)
 
     def __getstate__(self):
         """
@@ -297,11 +299,10 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
         if hasattr(self, "_weight_ring_been_called"):
             return QQ
-        else:
-            self._weight_ring_been_called = True
-            res = self._reference.weight_ring()
-            del self._weight_ring_been_called
-            return res
+        self._weight_ring_been_called = True
+        res = self._reference.weight_ring()
+        del self._weight_ring_been_called
+        return res
 
     def define(self, x):
         """

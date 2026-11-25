@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``singular`` and the SageMath interfaces to it
 """
@@ -24,7 +23,7 @@ class Singular(Executable):
 
     .. SEEALSO::
 
-        :class:`Feature sage.libs.singular <~sage.features.sagemath.sage__libs__singular>`
+        :class:`Feature sage.libs.singular <sage.features.sagemath.sage__libs__singular>`
 
     EXAMPLES::
 

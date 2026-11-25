@@ -82,7 +82,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
         MS = MatrixSpace(R, 2)
         zero = R.zero()
-        gens = [ MS([zeta, zero, zero, ~zeta]), MS([zero, i, i, zero]) ]
+        gens = [MS([zeta, zero, zero, ~zeta]), MS([zero, i, i, zero])]
 
         from sage.libs.gap.libgap import libgap
         gap_gens = [libgap(matrix_gen) for matrix_gen in gens]

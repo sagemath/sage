@@ -121,18 +121,12 @@ TESTS::
     algebras with different term orderings, yet.
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.singular.function import lib, singular_function
 from sage.libs.singular.function cimport RingWrap
 from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 from sage.categories.algebras import Algebras
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.plural cimport new_CRing
 from sage.misc.cachefunc import cached_method
-
-#####################
-# Define some singular functions
-lib("freegb.lib")
-freeAlgebra = singular_function("freeAlgebra")
 
 # unfortunately we cannot set Singular attributes for MPolynomialRing_libsingular
 # Hence, we must constantly work around Letterplace's sanity checks,
@@ -189,7 +183,7 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
     cdef list names = list(names0)
     for i in range(1, blocks):
         T += T0
-        names.extend([x + '_' + str(i) for x in names0])
+        names.extend(f'{x}_{i}' for x in names0)
     return PolynomialRing(base_ring.base_ring(), names, order=T,
                           implementation='singular')
 
@@ -349,7 +343,7 @@ cdef class FreeAlgebra_letterplace(Parent):
             p *= self._current_ring.gen(j)
         return FreeAlgebraElement_letterplace(self, p)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -418,10 +412,30 @@ cdef class FreeAlgebra_letterplace(Parent):
         return self._commutative_ring.term_order()
 
     def generator_degrees(self):
+        r"""
+        Return the degrees of the algebra's generators.
+
+        For a letterplace free algebra, this is always a tuple of ones,
+        one for each variable/generator.
+
+        OUTPUT:
+
+        A tuple of non-negative integers.
+
+        EXAMPLES::
+
+            sage: A = FreeAlgebra(QQ, 3, 'x', implementation='letterplace')
+            sage: A.generator_degrees()
+            (1, 1, 1)
+
+            sage: B = FreeAlgebra(ZZ, 'a,b', implementation='letterplace')
+            sage: B.generator_degrees()
+            (1, 1)
+        """
         return self._degrees
 
     # Some basic properties of this ring
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Tell whether this free algebra is a field.
 
@@ -438,7 +452,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return (not (self._ngens - self._nb_slackvars)) and self._base.is_field(proof=proof)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -454,7 +468,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         """
         return "Free Associative Unital Algebra on %d generators %s over %s" % (self._ngens - self._nb_slackvars, self.gens(), self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Representation of this free algebra in LaTeX.
 
@@ -479,7 +493,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         EXAMPLES:
 
-        In order to avoid we get a free algebras from the cache that
+        To avoid getting a free algebra from the cache that
         was created in another doctest and has a different degree
         bound, we choose a base ring that does not appear in other tests::
 
@@ -818,7 +832,7 @@ cdef class FreeAlgebra_letterplace(Parent):
         cdef dict out = {}
         self.set_degbound(l // self._ngens)
         cdef Py_ssize_t n = self._current_ring.ngens()
-        for e, c in D.iteritems():
+        for e, c in D.items():
             out[tuple(e) + (0,) * (n - l)] = c
         return FreeAlgebraElement_letterplace(self, self._current_ring(out),
                                               check=check)
@@ -892,6 +906,16 @@ cdef class FreeAlgebra_letterplace_libsingular():
 
     def __cinit__(self, MPolynomialRing_libsingular commutative_ring,
                   int degbound):
+        """
+        Cython initializer.
+
+        TESTS::
+
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+        """
+        from sage.libs.singular.function import singular_function, lib
+        lib("freegb.lib")
+        freeAlgebra = singular_function("freeAlgebra")
         cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
         self._lp_ring = singular_ring_reference(rw._ring)
         # `_lp_ring` viewed as `MPolynomialRing_libsingular` with additional
@@ -900,6 +924,15 @@ cdef class FreeAlgebra_letterplace_libsingular():
         self._commutative_ring = commutative_ring
 
     def __init__(self, commutative_ring, degbound):
+        """
+        Initialize the Python object.
+
+        TESTS::
+
+            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+            sage: F.ngens()
+            3
+        """
         self._ngens = commutative_ring.ngens() * degbound
 
     def __dealloc__(self):

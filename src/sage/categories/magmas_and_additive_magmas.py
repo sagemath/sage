@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Magmas and Additive Magmas
 """
@@ -19,7 +18,7 @@ from sage.categories.magmas import Magmas
 
 class MagmasAndAdditiveMagmas(Category_singleton):
     """
-    The category of sets `(S,+,*)` with an additive operation '+' and
+    The category of sets `(S, +, *)` with an additive operation '+' and
     a multiplicative operation `*`
 
     EXAMPLES::

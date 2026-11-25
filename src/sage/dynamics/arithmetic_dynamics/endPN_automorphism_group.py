@@ -335,6 +335,7 @@ def height_bound(polynomial):
 
     return (6*(L2norm_sq)**3)
 
+
 def PGL_repn(rational_function):
     r"""
     Take a linear fraction transformation and represent it as a 2x2 matrix.
@@ -360,10 +361,10 @@ def PGL_repn(rational_function):
     F = K.base_ring()
     if not K.is_field():
         return matrix(F, 2, [rational_function[1], rational_function[0], 0, 1])
-    else:
-        f = rational_function.numerator()
-        g = rational_function.denominator()
-        return matrix(F, 2, [f[1], f[0], g[1], g[0]])
+    f = rational_function.numerator()
+    g = rational_function.denominator()
+    return matrix(F, 2, [f[1], f[0], g[1], g[0]])
+
 
 def PGL_order(A):
     r"""
@@ -401,6 +402,7 @@ def PGL_order(A):
         B = AA*B
 
     return n
+
 
 def CRT_helper(automorphisms, moduli):
     r"""
@@ -449,6 +451,7 @@ def CRT_helper(automorphisms, moduli):
 
     return autos, modulus*moduli[0]
 
+
 def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
     r"""
     Compute a maximal list of automorphisms over `Zmod(M)`.
@@ -494,6 +497,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     # get list of CRT'ed automorphisms
     return CRT_helper(degree_d_autos, moduli)
+
 
 def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
                         return_functions=False):
@@ -761,67 +765,66 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # or if the gcd is equal to the number of automorphisms we have
             if (len(elements) == gcd(orderaut + [24])) or \
                 (gcd(orderaut + [24]) == 24 and
-                (len(elements) == 12 or len(elements) == 8)):
-                    if iso_type:
-                        return elements, which_group(elements)
-                    return elements
-            else:
-                N = gcd(orderaut + [12])  # all orders of elements divide N
-                for order in divisors(N):
-                    if order in badorders:
-                        continue
-                    # range over all orders
-                    # that are possible over QQ such that we haven't already
-                    # found all elements of that order
+                    (len(elements) == 12 or len(elements) == 8)):
+                if iso_type:
+                    return elements, which_group(elements)
+                return elements
+            N = gcd(orderaut + [12])  # all orders of elements divide N
+            for order in divisors(N):
+                if order in badorders:
+                    continue
+                # range over all orders
+                # that are possible over QQ such that we haven't already
+                # found all elements of that order
 
-                    # First count number of elements of particular order
-                    numeltsoffixedorder = []
-                    for L in orderelts:
-                        numeltsoffixedorder.append(L.count(order))
-                    numelts = min(numeltsoffixedorder)
-                    # Have some elts of fixed order mod p for each p
-                    if numelts != 0:
-                        # CRT order d elements together and check if
-                        # they are an automorphism
-                        autos, M = CRT_automorphisms(automorphisms,
-                                orderelts, order, primepowers)
-                        temp = valid_automorphisms(autos, phi, MaxH, M,
-                                            return_functions)
-                        elements.extend(temp)
+                # First count number of elements of particular order
+                numeltsoffixedorder = []
+                for L in orderelts:
+                    numeltsoffixedorder.append(L.count(order))
+                numelts = min(numeltsoffixedorder)
+                # Have some elts of fixed order mod p for each p
+                if numelts != 0:
+                    # CRT order d elements together and check if
+                    # they are an automorphism
+                    autos, M = CRT_automorphisms(automorphisms,
+                            orderelts, order, primepowers)
+                    temp = valid_automorphisms(autos, phi, MaxH, M,
+                                        return_functions)
+                    elements.extend(temp)
 
-                        if (len(elements) == gcd(orderaut + [24])):
-                            #found enough automorphisms
-                                if iso_type:
-                                    return elements, which_group(elements)
-                                return elements
-                        elif numelts <= (len(temp)):
-                            badorders.append(order)
-                            # found all elements of order 'order;
-                        elif len(temp) != 0:
-                            # found some elements of order 'order'
-                            # if an element of Aut_{F_p} has been lifted to QQ
-                            # remove that element from Aut_{F_p} so we don't
-                            # attempt to lift that element again unnecessarily
-                            automorphisms = remove_redundant_automorphisms(automorphisms,
-                                orderelts, primepowers, temp)
-                            if order == 4: #have some elements of order 4
-                                # so possible aut group is Z/4 or D_4
-                                badorders.extend([3, 6])
-                            elif order == 3 or order == 6:#have some elements of
-                                # order 3 or 6 so possible aut groups are Z/3,
-                                # D_3, Z/6, or D_6
-                                badorders.append(4)
-                    else: #no elements of order d in some F_v
-                        for m in divisors(N):
-                            if m % order == 0:
-                                badorders.append(m)
-                                #no elements of that order or any order that
-                                # is a multiple of it
-                if all(order in badorders for order in divisors(N)):
-                    #found all elements of every possible order
+                    if (len(elements) == gcd(orderaut + [24])):
+                        # found enough automorphisms
                         if iso_type:
-                            return (elements, which_group(elements))
+                            return elements, which_group(elements)
                         return elements
+                    if numelts <= len(temp):
+                        badorders.append(order)
+                        # found all elements of order 'order;
+                    elif len(temp) != 0:
+                        # found some elements of order 'order'
+                        # if an element of Aut_{F_p} has been lifted to QQ
+                        # remove that element from Aut_{F_p} so we don't
+                        # attempt to lift that element again unnecessarily
+                        automorphisms = remove_redundant_automorphisms(automorphisms,
+                            orderelts, primepowers, temp)
+                        if order == 4:  # have some elements of order 4
+                            # so possible aut group is Z/4 or D_4
+                            badorders.extend([3, 6])
+                        elif order == 3 or order == 6:#have some elements of
+                            # order 3 or 6 so possible aut groups are Z/3,
+                            # D_3, Z/6, or D_6
+                            badorders.append(4)
+                else:  # no elements of order d in some F_v
+                    for m in divisors(N):
+                        if m % order == 0:
+                            badorders.append(m)
+                            #no elements of that order or any order that
+                            # is a multiple of it
+            if all(order in badorders for order in divisors(N)):
+                # found all elements of every possible order
+                if iso_type:
+                    return (elements, which_group(elements))
+                return elements
             congruence = congruence * p
 
         p = primes.next(p)
@@ -899,10 +902,10 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
 
     if not iso_type:
         return G
-    elif not absolute:
+    if not absolute:
         return G, which_group(G)
-    else:
-        return G, which_group(G[1])
+    return G, which_group(G[1])
+
 
 def field_descent(sigma, y):
     r"""
@@ -947,19 +950,18 @@ def field_descent(sigma, y):
     quotient, remainder = g.quo_rem(f)
     if not remainder.is_constant():
         return
-    else:
-        x = x + F(remainder)
+    x = x + F(remainder)
 
     steps = 1
     while not quotient.is_constant():
         quotient, remainder = quotient.quo_rem(f)
         if not remainder.is_constant():
             return
-        else:
-            x = x + F(remainder)*a**(steps)
-            steps += 1
+        x = x + F(remainder)*a**(steps)
+        steps += 1
 
     return x + F(quotient)*a**(steps)
+
 
 def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
     r"""
@@ -1056,8 +1058,8 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     if g == [R(1)]:
         return S_polys([sigma(a) for a in f]) # allows for coercion of polynomials
-    else:
-        return S_polys([sigma(a) for a in f]) / S_polys([sigma(b) for b in g])
+    return S_polys([sigma(a) for a in f]) / S_polys([sigma(b) for b in g])
+
 
 def rational_function_reduce(rational_function):
     r"""
@@ -1083,6 +1085,7 @@ def rational_function_reduce(rational_function):
     G = phi.denominator()
     comm_factor = gcd(F,G)
     return (F.quo_rem(comm_factor)[0]) / (G.quo_rem(comm_factor)[0])
+
 
 def three_stable_points(rational_function, invariant_list):
     r"""
@@ -1156,6 +1159,7 @@ def three_stable_points(rational_function, invariant_list):
             if s(phi(z)) == phi(s(z)) and s not in automorphisms:
                 automorphisms.append(s)
     return automorphisms
+
 
 def automorphism_group_FF_alg2(rational_function):
     r"""
@@ -1455,6 +1459,7 @@ def order_p_automorphisms(rational_function, pre_image):
 
     return automorphisms_p
 
+
 def automorphisms_fixing_pair(rational_function, pair, quad):
     r"""
     Compute the set of automorphisms with order prime to the characteristic
@@ -1534,6 +1539,7 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
                     automorphisms_prime_to_p.append(rational_function_reduce(s))
 
     return list(set(automorphisms_prime_to_p))
+
 
 def automorphism_group_FF_alg3(rational_function):
     r"""
@@ -1798,10 +1804,9 @@ def which_group(list_of_elements):
     # Treat sporadic cases
     if n == 12:
         return ['A_4']
-    elif n == 24:
+    if n == 24:
         return ['S_4']
-    else:
-        return ['A_5']
+    return ['A_5']
 
 
 def conjugating_set_initializer(f, g):
@@ -1908,7 +1913,7 @@ def conjugating_set_initializer(f, g):
         repeated = len(mult_to_point_L[mult_L])
         if mult_L not in mult_to_point_K:
             return []
-        elif len(mult_to_point_K[mult_L]) != repeated:
+        if len(mult_to_point_K[mult_L]) != repeated:
             return []
         if repeated not in repeated_mult_L:
             repeated_mult_L[repeated] = [mult_to_point_L[mult_L]]
@@ -2125,6 +2130,7 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
                 if len(source) == n+2:
                     return source, corresponding
 
+
 def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
     r"""
     Return the set of elements in PGL over the base ring
@@ -2269,6 +2275,7 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
     else:
         Conj = find_conjugations_subset(product(*subset_iterators))
     return Conj
+
 
 def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
     r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -9,13 +8,13 @@ AUTHORS:
 - Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
@@ -27,10 +26,11 @@ from sage.categories.tensor import tensor, TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.homset import Homset
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.map import Map
-from sage.structure.element import Element, parent
+from sage.structure.element import Element, Matrix, parent
 
 
 lazy_import('sage.modules.with_basis.morphism',
@@ -40,6 +40,140 @@ lazy_import('sage.modules.with_basis.morphism',
              'DiagonalModuleMorphism',
              'TriangularModuleMorphismByLinearity',
              'TriangularModuleMorphismFromFunction'])
+
+
+class ModulesWithBasisHomset(Homset):
+    r"""
+    The homset of morphisms between two modules with a distinguished basis.
+
+    This behaves like a generic :class:`~sage.categories.homset.Homset`,
+    except that a matrix is interpreted as the matrix of the morphism in the
+    distinguished bases of the domain and codomain, by delegating to
+    :meth:`~ModulesWithBasis.ParentMethods.module_morphism`.
+
+    This makes
+    :func:`~sage.modules.vector_space_morphism.linear_transformation`
+    (and ``Hom(X, Y)(some_matrix)``) work for vector spaces built from a
+    combinatorial basis.
+
+    .. NOTE::
+
+        The matrix is interpreted with the same convention as
+        :func:`~sage.modules.vector_space_morphism.linear_transformation`
+        and :class:`~sage.modules.vector_space_homspace.VectorSpaceHomspace`:
+        the rows of the matrix are the images of the basis of the domain
+        (``side='left'`` there). This corresponds to ``side='right'`` of
+        :meth:`~ModulesWithBasis.ParentMethods.module_morphism`. A different
+        convention can be requested by passing ``side`` explicitly.
+
+    EXAMPLES::
+
+        sage: # needs sage.modules
+        sage: from sage.categories.modules_with_basis import ModulesWithBasisHomset
+        sage: X = CombinatorialFreeModule(QQ, [1, 2])
+        sage: Y = CombinatorialFreeModule(QQ, [1, 2, 3])
+        sage: H = Hom(X, Y)
+        sage: isinstance(H, ModulesWithBasisHomset)
+        True
+
+    TESTS:
+
+    Check that :issue:`40847` is fixed::
+
+        sage: # needs sage.modules
+        sage: V = VectorSpace(QQ, [0, 1, 2])
+        sage: phi = linear_transformation(V, V, identity_matrix(3))
+        sage: phi(V.basis()[0])
+        B[0]
+    """
+    def _element_constructor_(self, x=None, check=None, matrix=None, **options):
+        r"""
+        Construct a morphism in this homset from ``x``.
+
+        If a matrix is given (either as ``x`` or via the ``matrix`` keyword),
+        it is interpreted as the matrix of the morphism in the distinguished
+        bases of the domain and codomain, with the rows being the images of
+        the basis of the domain (see the note in
+        :class:`ModulesWithBasisHomset`). Otherwise the generic construction
+        of :meth:`sage.categories.homset.Homset._element_constructor_` is used.
+
+        EXAMPLES:
+
+        A matrix is interpreted in the distinguished bases, with rows being
+        the images of the basis of the domain::
+
+            sage: # needs sage.modules
+            sage: X = CombinatorialFreeModule(QQ, [1, 2]); X.rename('X')
+            sage: Y = CombinatorialFreeModule(QQ, [3, 4]); Y.rename('Y')
+            sage: H = Hom(X, Y)
+            sage: m = matrix([[1, 2], [3, 5]])
+            sage: psi = H(m)
+            sage: psi.parent() is H
+            True
+            sage: psi(X.monomial(1))
+            B[3] + 2*B[4]
+            sage: psi(X.monomial(2))
+            3*B[3] + 5*B[4]
+
+        This works for rectangular matrices, exactly as
+        :func:`~sage.modules.vector_space_morphism.linear_transformation`
+        does for ordinary vector spaces::
+
+            sage: # needs sage.modules
+            sage: Z = CombinatorialFreeModule(QQ, [5, 6, 7]); Z.rename('Z')
+            sage: H = Hom(X, Z)
+            sage: psi = H(matrix([[1, 2, 0], [0, 3, 4]]))
+            sage: psi(X.monomial(1))
+            B[5] + 2*B[6]
+
+        The positional and keyword matrix forms agree, and the underlying
+        matrix can be recovered with the matching ``side``::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y)
+            sage: H(m) == H(matrix=m)
+            True
+            sage: H(m).matrix(side='right') == m
+            True
+
+        As for a generic homset, the ``check`` argument is accepted (and
+        ignored), both for the matrix and the generic construction::
+
+            sage: # needs sage.modules
+            sage: H(m, check=False) == H(m)
+            True
+            sage: H(lambda v: Y.zero(), check=False)(X.monomial(1))
+            0
+
+        Explicit homset categories are preserved::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y, Modules(QQ))
+            sage: H(m).parent() is H
+            True
+
+        The other ways of constructing a morphism are unaffected; in
+        particular, if the argument is not a matrix it should be a
+        callable, which is then applied directly to elements::
+
+            sage: # needs sage.modules
+            sage: H = Hom(X, Y)
+            sage: phi = H(on_basis=lambda i: Y.monomial(i + 2))
+            sage: phi(X.monomial(1))
+            B[3]
+            sage: f = H(lambda v: Y.zero())
+            sage: f(X.monomial(1))
+            0
+        """
+        if matrix is None and isinstance(x, Matrix):
+            matrix, x = x, None
+        if matrix is not None:
+            options.setdefault('side', 'right')
+            options.setdefault('category', self.homset_category())
+            return self.domain().module_morphism(matrix=matrix,
+                                                 codomain=self.codomain(),
+                                                 **options)
+        return super()._element_constructor_(x, check=check, **options)
 
 
 class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
@@ -178,7 +312,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -205,6 +339,42 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
     #   - On the element class, monomial_coefficients().
 
     class ParentMethods:
+        def _Hom_(self, Y, category):
+            r"""
+            Return the homset from ``self`` to ``Y`` in the category ``category``.
+
+            This returns a :class:`ModulesWithBasisHomset`, so that a matrix
+            is interpreted as the matrix of the morphism in the distinguished
+            bases (see :issue:`40847`). Free modules and vector spaces that
+            provide their own ``_Hom_`` (returning a
+            :class:`~sage.modules.free_module_homspace.FreeModuleHomspace`
+            or :class:`~sage.modules.vector_space_homspace.VectorSpaceHomspace`)
+            are unaffected, as their hook takes precedence.
+
+            This method is not meant to be called directly; use
+            :func:`~sage.categories.homset.Hom` instead.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: from sage.categories.modules_with_basis import ModulesWithBasisHomset
+                sage: C = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: H = Hom(C, C)
+                sage: isinstance(H, ModulesWithBasisHomset)
+                True
+
+            ::
+
+                sage: # needs sage.modules
+                sage: D = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
+                sage: C._Hom_(D, category=ModulesWithBasis(QQ))
+                Set of Morphisms from Free module generated by {'a', 'b'}
+                 over Rational Field to Free module generated by {'a', 'b', 'c'}
+                 over Rational Field in Category of vector spaces with basis
+                 over Rational Field
+            """
+            return ModulesWithBasisHomset(self, Y, category=category)
+
         @cached_method
         def basis(self):
             """
@@ -573,17 +743,15 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         domain=self, on_basis=on_basis,
                         triangular=triangular, unitriangular=unitriangular,
                         **keywords)
-                else:
-                    return TriangularModuleMorphismFromFunction(
-                        domain=self, function=function,
-                        triangular=triangular, unitriangular=unitriangular,
-                        **keywords)
+                return TriangularModuleMorphismFromFunction(
+                    domain=self, function=function,
+                    triangular=triangular, unitriangular=unitriangular,
+                    **keywords)
             if on_basis is not None:
                 return ModuleMorphismByLinearity(
                     domain=self, on_basis=on_basis, **keywords)
-            else:
-                return ModuleMorphismFromFunction(  # Or just SetMorphism?
-                    domain=self, function=function, **keywords)
+            return ModuleMorphismFromFunction(  # Or just SetMorphism?
+                domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
 
@@ -750,7 +918,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
-            :meth:`echelonize`, and reindexed by `0,1,...`.
+            :meth:`~sage.matrix.matrix2.Matrix.echelonize`, and reindexed by `0,1,...`.
 
             .. WARNING::
 
@@ -767,7 +935,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`ModulesWithBasis.FiniteDimensional.ParentMethods.quotient_module`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module`
                  - :class:`sage.modules.with_basis.subquotient.SubmoduleWithBasis`
 
             EXAMPLES:
@@ -927,7 +1095,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               ``self.submodule(submodule)``
 
             - ``check``, ``already_echelonized`` -- passed down to
-              :meth:`ModulesWithBasis.ParentMethods.submodule`
+              :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
 
             .. WARNING::
 
@@ -963,7 +1131,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`Modules.WithBasis.ParentMethods.submodule`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """
@@ -1270,12 +1438,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 mc = x.monomial_coefficients(copy=False)
                 return codomain.linear_combination((on_basis(key), coeff)
                                                    for key, coeff in mc.items())
-            else:
-                return_sum = codomain.zero()
-                mc = x.monomial_coefficients(copy=False)
-                for key, coeff in mc.items():
-                    return_sum += coeff * on_basis(key)
-                return return_sum
+            return_sum = codomain.zero()
+            mc = x.monomial_coefficients(copy=False)
+            for key, coeff in mc.items():
+                return_sum += coeff * on_basis(key)
+            return return_sum
 
         def _apply_module_endomorphism(self, x, on_basis):
             """
@@ -1308,6 +1475,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
+
+        def rank(self):
+            """
+            Return the rank of ``self``.
+
+            Since there is a (distinguished) basis, the rank of ``self``
+            is equal to the cardinality of the basis (which equals
+            the :meth:`dimension` of ``self``).
+
+            EXAMPLES::
+
+                sage: A.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: A.rank()                                                          # needs sage.modules
+                +Infinity
+
+                sage: R.<x,y> = QQ[]
+                sage: R.rank()
+                +Infinity
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: F.rank()
+                3
+            """
+            return self.dimension()
 
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
@@ -1395,7 +1586,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             we can find a random element in a trivial module::
 
                 sage: class Foo(CombinatorialFreeModule):                               # needs sage.modules
-                ....:     def _element_constructor_(self,x):
+                ....:     def _element_constructor_(self, x):
                 ....:         if x in self:
                 ....:             return x
                 ....:         else:
@@ -1407,24 +1598,34 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
-            a = self.zero()
-            if not indices.is_empty():
-                for i in range(n):
-                    a += self.term(indices.random_element(),
-                                   self.base_ring().random_element())
-            return a
+            if not indices:
+                return self.zero()
+
+            # Some container types (list, tuple, etc.) won't have
+            # a random_element() method.
+            if hasattr(indices, "random_element"):
+                random_element = lambda c: c.random_element()
+            else:
+                from random import choice
+                random_element = choice
+
+            return self.sum(
+                self.term(random_element(indices),
+                          self.base_ring().random_element())
+                for _ in range(n)
+            )
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
         # subclasses).  These methods should be consistent with those on
         # polynomials.
 
-#         def _neg_(self):
-#             """
-#             Default implementation of negation by trying to multiply by -1.
-#             TODO: doctest
-#             """
-#             return self._lmul_(-self.parent().base_ring().one(), self)
+        # def _neg_(self):
+        #     """
+        #     Default implementation of negation by trying to multiply by -1.
+        #     TODO: doctest
+        #     """
+        #     return self._lmul_(-self.parent().base_ring().one(), self)
 
         @abstract_method
         def monomial_coefficients(self, copy=True):
@@ -1514,8 +1715,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             res = self.monomial_coefficients(copy=False).get(m)
             if res is None:
                 return self.base_ring().zero()
-            else:
-                return res
+            return res
 
         def coefficient(self, m):
             """
@@ -1546,11 +1746,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: z.coefficient([1,2])
                 Traceback (most recent call last):
                 ...
-                AssertionError: [1, 2] should be an element of Partitions
+                ValueError: [1, 2] should be an element of Partitions
                 sage: z.coefficient(Composition([2,1]))
                 Traceback (most recent call last):
                 ...
-                AssertionError: [2, 1] should be an element of Partitions
+                ValueError: [2, 1] should be an element of Partitions
 
             Test that ``coefficient`` also works for those parents that do
             not have an ``element_class``::
@@ -1567,11 +1767,35 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             # NT: coefficient_fast should be the default, just with appropriate assertions
             # that can be turned on or off
             C = self.parent().basis().keys()
-            # TODO: This should raise a ValueError - TS
-            assert m in C, "%s should be an element of %s" % (m, C)
+            if m not in C:
+                raise ValueError("%s should be an element of %s" % (m, C))
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]
+
+        def items(self):
+            r"""
+            Return a list of pairs ``(i, c)``, where ``c`` is the
+            ``i``-th coefficient of ``i`` in the standard basis.
+
+
+            EXAMPLES::
+
+                sage: # needs sage.algebras
+                sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+                ....:                                   Matrix([[0,1], [-1,0]])])
+                sage: elt = B(Matrix([[1,2], [-2,1]]))
+                sage: elt.items()
+                dict_items([(0, 1), (1, 2)])
+
+            ::
+
+                sage: # needs sage.combinat sage.modules
+                sage: h = SymmetricFunctions(QQ).h()
+                sage: (h[2]+3*h[3]).items()
+                dict_items([([2], 1), ([3], 3)])
+            """
+            return self.monomial_coefficients(copy=False).items()
 
         def is_zero(self):
             """
@@ -1768,7 +1992,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             mc = self.monomial_coefficients(copy=False)
             if not sort:
-                return [value for key, value in mc.items() if value != zero]
+                return [value for value in mc.values() if value != zero]
 
             v = sorted([(key, value) for key, value in mc.items()
                         if value != zero])
@@ -1796,8 +2020,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if len(self) == 1:
                 return self.support()[0]
-            else:
-                raise ValueError("{} is not a single term".format(self))
+            raise ValueError("{} is not a single term".format(self))
 
         def leading_support(self, *args, **kwds):
             r"""
@@ -1860,6 +2083,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.leading_item()                                                  # needs sage.combinat sage.modules
                 ([3], -5)
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_item()
+                ((0, 4, 0), 1)
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_item()
+                ((1, 2, 0), 3)
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_item()
+                ((0, 1, 3), 2)
             """
             k = self.leading_support(*args, **kwds)
             return k, self[k]
@@ -1890,6 +2125,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.leading_monomial()                                              # needs sage.combinat sage.modules
                 s[3]
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_monomial()
+                y^4
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_monomial()
+                x*y^2
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_monomial()
+                y*z^3
             """
             return self.parent().monomial(self.leading_support(*args, **kwds))
 
@@ -1919,6 +2166,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.leading_coefficient()                                           # needs sage.combinat sage.modules
                 -5
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_coefficient()
+                1
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_coefficient()
+                3
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_coefficient()
+                2
             """
             return self.leading_item(*args, **kwds)[1]
 
@@ -1948,6 +2207,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.leading_term()                                                  # needs sage.combinat sage.modules
                 -5*s[3]
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_term()
+                y^4
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_term()
+                3*x*y^2
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_term()
+                2*y*z^3
             """
             return self.parent().term(*self.leading_item(*args, **kwds))
 
@@ -2005,6 +2276,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.trailing_item()                                                 # needs sage.combinat sage.modules
                 ([1], 2)
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_item()
+                ((1, 1, 1), 4)
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_item()
+                ((0, 1, 3), 2)
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_item()
+                ((1, 2, 0), 3)
             """
             k = self.trailing_support(*args, **kwds)
             return k, self[k]
@@ -2035,6 +2318,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.trailing_monomial()                                             # needs sage.combinat sage.modules
                 s[1]
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_monomial()
+                x*y*z
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_monomial()
+                y*z^3
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_monomial()
+                x*y^2
             """
             return self.parent().monomial(self.trailing_support(*args, **kwds))
 
@@ -2064,6 +2359,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.trailing_coefficient()                                          # needs sage.combinat sage.modules
                 2
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_coefficient()
+                4
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_coefficient()
+                2
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_coefficient()
+                3
             """
             return self.trailing_item(*args, **kwds)[1]
 
@@ -2093,8 +2400,60 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.trailing_term()                                                 # needs sage.combinat sage.modules
                 2*s[1]
+
+            The term ordering of polynomial rings is taken into account::
+
+                sage: R.<x,y,z> = QQ[]
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_term()
+                4*x*y*z
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_term()
+                2*y*z^3
+                sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+                sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_term()
+                3*x*y^2
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
+
+        def change_ring(self, R):
+            r"""
+            Return this element with its coefficients converted to ``R``.
+
+            INPUT:
+
+            - ``R`` -- the new base ring
+
+            EXAMPLES::
+
+                sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: B = F.basis()
+                sage: x = B['a'] + 2*B['b']
+                sage: y = x.change_ring(ZZ)
+                sage: y
+                B['a'] + 2*B['b']
+                sage: y.parent().base_ring()
+                Integer Ring
+
+            If the base ring is unchanged, return the same element::
+
+                sage: x.change_ring(QQ) is x
+                True
+
+            Coefficients that become zero are removed::
+
+                sage: (7*B['a'] + B['b']).change_ring(GF(7))                            # needs sage.rings.finite_rings
+                B['b']
+
+            The coefficients must be convertible to the new base ring::
+
+                sage: (1/2*B['a']).change_ring(ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+            """
+            if R is self.base_ring():
+                return self
+            return self.map_coefficients(lambda c: c, new_base_ring=R)
 
         def map_coefficients(self, f, new_base_ring=None):
             """
@@ -2215,7 +2574,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms((f(m), c) for m, c in self)
+            return self.parent().sum_of_terms((f(m), c) for m, c in self.items())
 
         def map_support_skip_none(self, f):
             """
@@ -2250,7 +2609,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             return self.parent().sum_of_terms((fm, c)
-                                              for fm, c in ((f(m), c) for m, c in self)
+                                              for fm, c in ((f(m), c) for m, c in self.items())
                                               if fm is not None)
 
         def map_item(self, f):
@@ -2285,7 +2644,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms(f(m, c) for m, c in self)
+            return self.parent().sum_of_terms(f(m, c) for m, c in self.items())
 
         def tensor(*elements):
             """
@@ -2464,7 +2823,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
                     sage: ABA = cartesian_product((A, B, A))
                     sage: ABA.an_element()  # indirect doctest
-                    2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
+                    2*B[(0, word: )] + 2*B[(1, ())] + 3*B[(1, (1,3,2))]
                 """
                 from .cartesian_product import cartesian_product
                 return cartesian_product([module.an_element() for module in self.modules])
@@ -2535,7 +2894,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 and `f` the bilinear morphism `(a,b) \mapsto b \otimes a`
                 from `A \times B` to `B \otimes A`::
 
-                    sage: def f(a,b):
+                    sage: def f(a, b):
                     ....:     return tensor([b,a])
 
                 Now, calling applying `f` on `a \otimes b` returns the same
@@ -2564,7 +2923,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Mind the `0` in the sums above; otherwise `f` would
                 not return `0` in `\ZZ`::
 
-                    sage: def f(a,b):
+                    sage: def f(a, b):
                     ....:     return sum(a.coefficients()) * sum(b.coefficients())
                     sage: type(f(A.zero(), B.zero()))                                   # needs sage.modules
                     <... 'int'>
@@ -2623,12 +2982,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 if codomain in ModulesWithBasis(K):
                     return codomain.linear_combination((f(*[module.monomial(t)
                                                             for module, t in zip(modules, m)]), c)
-                                                       for m, c in self)
-                else:
-                    return sum((c * f(*[module.monomial(t)
-                                        for module, t in zip(modules, m)])
-                                for m, c in self),
-                               codomain.zero())
+                                                       for m, c in self.items())
+                return sum((c * f(*[module.monomial(t)
+                                    for module, t in zip(modules, m)])
+                            for m, c in self.items()),
+                           codomain.zero())
 
     class DualObjects(DualObjectsCategory):
 

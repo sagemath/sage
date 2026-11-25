@@ -14,7 +14,7 @@ AUTHORS:
 - David Lucas, ported the original implementation in Sage
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #                     2015 Johan S. R. Nielsen <jsrn@jsrn.dk>
 #
@@ -22,10 +22,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -311,8 +310,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (mins,maxs) = solve_degree2_to_integer_range(n, n-2*(l+1)*(n-tau), (k-1)*l*(l+1))
             if maxs > 0 and maxs >= mins:
                 return max(1, mins)
-            else:
-                return None
+            return None
         s, l = None, 0
         while s is None:
             l += 1
@@ -375,7 +373,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         """
         n,k = n_k_params(C, n_k)
 
-        def get_tau(s,l):
+        def get_tau(s, l):
             "Return the decoding radius given this s and l"
             if s <= 0 or l <= 0:
                 return -1
@@ -389,16 +387,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
         # Either s or l is set, but not both. First a shared local function
         def find_integral_max(real_max, f):
             """Given a real (local) maximum of a function `f`, return that of
-            the integers around `real_max` which gives the (local) integral
+            the integers around ``real_max`` which gives the (local) integral
             maximum, and the value of at that point."""
             if real_max in ZZ:
                 int_max = ZZ(real_max)
                 return (int_max, f(int_max))
-            else:
-                x_f = floor(real_max)
-                x_c = x_f + 1
-                f_f, f_c = f(x_f), f(x_c)
-                return (x_f, f_f) if f_f >= f_c else (x_c, f_c)
+            x_f = floor(real_max)
+            x_c = x_f + 1
+            f_f, f_c = f(x_f), f(x_c)
+            return (x_f, f_f) if f_f >= f_c else (x_c, f_c)
 
         if s is not None:
             # maximising tau under condition
@@ -761,13 +758,14 @@ class GRSGuruswamiSudanDecoder(Decoder):
     def decode_to_message(self, r):
         r"""
         Decode ``r`` to the list of polynomials whose encoding by
-        :meth:`self.code()` is within Hamming distance
-        :meth:`self.decoding_radius` of ``r``.
+        :meth:`~sage.coding.decoder.Decoder.code` is within Hamming distance
+        :meth:`~sage.coding.decoder.Decoder.decoding_radius` of ``r``.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`
+          the base field respectively length of
+          :meth:`~sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 
@@ -807,12 +805,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Return the list of all codeword within radius :meth:`self.decoding_radius` of the received word `r`.
+        Return the list of all codeword within radius
+        :meth:`~sage.coding.decoder.Decoder.decoding_radius` of the received
+        word `r`.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`
+          the base field respectively length of
+          :meth:`~sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 
@@ -849,15 +850,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
         s = self.multiplicity()
         l = self.list_size()
         tau = self.decoding_radius()
-        ## SETUP INTERPOLATION PROBLEM
+        # SETUP INTERPOLATION PROBLEM
         wy = k-1
-        points = [(alphas[i], r[i]/colmults[i]) for i in range(0,len(alphas))]
-        ## SOLVE INTERPOLATION
+        points = [(alphas[i], r[i]/colmults[i]) for i in range(len(alphas))]
+        # SOLVE INTERPOLATION
         try:
             Q = self.interpolation_algorithm()(points, tau, (s,l), wy)
         except TypeError:
             raise ValueError("The provided interpolation algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.interpolation_algorithm()` for details")
-        ## EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
+        # EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
         try:
             polynomials = self.rootfinding_algorithm()(Q, maxd=wy)
         except TypeError:

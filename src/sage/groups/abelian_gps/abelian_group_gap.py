@@ -39,6 +39,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.groups import Groups
 
+
 class AbelianGroupElement_gap(ElementLibGAP):
     r"""
     An element of an abelian group via libgap.
@@ -184,6 +185,7 @@ class AbelianGroupElement_gap(ElementLibGAP):
         """
         return self.gap().Order().sage()
 
+
 class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
     r"""
     An element of an abelian group using the GAP package ``Polycyclic``.
@@ -219,6 +221,7 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
             (12345, 123456789, 0)
         """
         return tuple(self.gap().Exponents().sage())
+
 
 class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, AbelianGroupBase):
     r"""
@@ -441,7 +444,8 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         r"""
         Return the elementary divisors of this group.
 
-        See :meth:`sage.groups.abelian_gps.abelian_group_gap.elementary_divisors`.
+        See
+        :meth:`~sage.groups.abelian_gps.abelian_group.AbelianGroup_class.elementary_divisors`.
 
         EXAMPLES::
 
@@ -530,7 +534,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         """
         if not isinstance(G, AbelianGroup_gap):
             raise ValueError("input must be an instance of AbelianGroup_gap")
-        if not self.ambient() is G.ambient():
+        if self.ambient() is not G.ambient():
             return False
         return G.gap().IsSubsemigroup(self).sage()
 
@@ -619,6 +623,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         """
         gens = tuple([self(g) for g in gens])
         return AbelianGroupSubgroup_gap(self.ambient(), gens)
+
 
 class AbelianGroupGap(AbelianGroup_gap):
     r"""
@@ -730,6 +735,7 @@ class AbelianGroupGap(AbelianGroup_gap):
         """
         return AbelianGroupGap, (self.gens_orders(),)
 
+
 class AbelianGroupSubgroup_gap(AbelianGroup_gap):
     r"""
     Subgroups of abelian groups with GAP.
@@ -742,7 +748,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
     .. NOTE::
 
         Do not construct this class directly. Instead use
-        :meth:`~sage.groups.abelian_groups.AbelianGroupGap.subgroup`.
+        :meth:`~sage.groups.abelian_gps.abelian_group_gap.AbelianGroup_gap.subgroup`.
 
     EXAMPLES::
 
@@ -879,13 +885,15 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
         """
         return self(x)
 
+
 class AbelianGroupQuotient_gap(AbelianGroup_gap):
     r"""
     Quotients of abelian groups by a subgroup.
 
     .. NOTE::
 
-        Do not call this directly. Instead use :meth:`quotient`.
+        Do not call this directly. Instead use
+        :meth:`~sage.groups.abelian_gps.abelian_group_gap.AbelianGroup_gap.quotient`.
 
     EXAMPLES::
 

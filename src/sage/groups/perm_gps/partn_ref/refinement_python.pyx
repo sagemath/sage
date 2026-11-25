@@ -51,7 +51,7 @@ cdef class PythonPartitionStack:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
-            sage: P = PythonPartitionStack(7) # implicit doctest
+            sage: P = PythonPartitionStack(7) # indirect doctest
         """
         self.c_ps = PS_new(n, 1)
 
@@ -63,7 +63,7 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: del(P) # implicit doctest
+            sage: del(P) # indirect doctest
         """
         PS_dealloc(self.c_ps)
 
@@ -75,10 +75,10 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: P # implicit doctest
+            sage: P # indirect doctest
             PythonPartitionStack of degree 7 and depth 0.
         """
-        return "PythonPartitionStack of degree %d and depth %d."%(self.c_ps.degree, self.c_ps.depth)
+        return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
 
     def display(self):
         """
@@ -200,7 +200,7 @@ cdef class PythonPartitionStack:
             [7, 7, 7, 7, 7, 7, -1]
         """
         cdef int i
-        return [self.c_ps.entries[i] for i from 0 <= i < self.c_ps.degree]
+        return [self.c_ps.entries[i] for i in range(self.c_ps.degree)]
 
     def set_entry(self, int i, int entry):
         """
@@ -230,7 +230,7 @@ cdef class PythonPartitionStack:
         """
         return self.c_ps.entries[i]
 
-    def levels(self):
+    def levels(self) -> list:
         """
         Return the levels array as a Python list of ints.
 
@@ -243,7 +243,7 @@ cdef class PythonPartitionStack:
             sage: P.levels()
             [7, 7, 7, 7, 7, 7, -1]
         """
-        return [self.c_ps.levels[i] for i from 0 <= i < self.c_ps.degree]
+        return [self.c_ps.levels[i] for i in range(self.c_ps.degree)]
 
     def set_level(self, int i, int level):
         """
@@ -325,7 +325,7 @@ cdef class PythonPartitionStack:
         """
         cdef int i
         cdef list partition = [], cell = []
-        for i from 0 <= i < self.c_ps.degree:
+        for i in range(self.c_ps.degree):
             cell.append(self.c_ps.entries[i])
             if self.c_ps.levels[i] <= k:
                 partition.append(cell)
@@ -345,14 +345,14 @@ class PythonObjectWrapper:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: def acae(a,b):
+            sage: def acae(a, b):
             ....:  return 0
-            sage: def rari(a,b,c):
+            sage: def rari(a, b, c):
             ....:  return 0
-            sage: def cs(a,b,c,d,e):
+            sage: def cs(a, b, c, d, e):
             ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
+            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # indirect doctest
             sage: P.obj
             sage: P.degree
             7
@@ -387,7 +387,7 @@ cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *ce
     cdef object S_obj = <object> S
     PS_copy_from_to(PS, Py_PS.c_ps)
     cdef int i
-    cdef list ctrb_py = [cells_to_refine_by[i] for i from 0 <= i < ctrb_len]
+    cdef list ctrb_py = [cells_to_refine_by[i] for i in range(ctrb_len)]
     return S_obj.rari_fn(Py_PS, S_obj.obj, ctrb_py)
 
 cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
@@ -396,8 +396,8 @@ cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S
     """
     cdef int i
     cdef object S1_obj = <object> S1, S2_obj = <object> S2
-    cdef list gamma_1_py = [gamma_1[i] for i from 0 <= i < degree]
-    cdef list gamma_2_py = [gamma_2[i] for i from 0 <= i < degree]
+    cdef list gamma_1_py = [gamma_1[i] for i in range(degree)]
+    cdef list gamma_2_py = [gamma_2[i] for i in range(degree)]
     return S1_obj.cs_fn(gamma_1_py, gamma_2_py, S1_obj.obj, S2_obj.obj, degree)
 
 
@@ -434,11 +434,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import aut_gp_and_can_lab_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:  return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:  return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:  return 0
         sage: aut_gp_and_can_lab_python(None, [[0,1,2,3],[4,5]], 6, acae, rari, cs, True, True, True)
         ([[0, 1, 3, 2, 4, 5],
@@ -473,7 +473,8 @@ def aut_gp_and_can_lab_python(S, partition, n,
     if canonical_label:
         return_tuple.append([output.relabeling[i] for i in range(n)])
     if base:
-        return_tuple.append([output.group.base_orbits[i][0] for i from 0 <= i < output.group.base_size])
+        return_tuple.append([output.group.base_orbits[i][0]
+                             for i in range(output.group.base_size)])
     if order:
         I = Integer()
         SC_order(output.group, 0, I.value)
@@ -482,8 +483,7 @@ def aut_gp_and_can_lab_python(S, partition, n,
     deallocate_agcl_output(output)
     if len(return_tuple) == 1:
         return return_tuple[0]
-    else:
-        return tuple(return_tuple)
+    return tuple(return_tuple)
 
 
 def double_coset_python(S1, S2, partition1, ordering2, n,
@@ -513,16 +513,16 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import double_coset_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:     return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:     return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:     return 0
         sage: double_coset_python(None, None, [[0,1,2,3],[4,5]], [2,3,1,5,0,4], 6, acae, rari, cs)
         [1, 2, 3, 5, 0, 4]
 
-        sage: def compare_lists(p1,p2,l1,l2,deg):
+        sage: def compare_lists(p1, p2, l1, l2, deg):
         ....:     for i in range(len(l1)):
         ....:         a1 = l1[p1[i]]
         ....:         a2 = l2[p2[i]]
@@ -544,7 +544,7 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
         sig_free(ordering)
         sig_free(output)
         raise MemoryError
-    for i from 0 <= i < n:
+    for i in range(n):
         ordering[i] = ordering2[i]
 
     cdef bint isomorphic = double_coset(<void *> obj_wrapper1, <void *> obj_wrapper2,
@@ -556,7 +556,7 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     PS_dealloc(part)
     sig_free(ordering)
     if isomorphic:
-        output_py = [output[i] for i from 0 <= i < n]
+        output_py = [output[i] for i in range(n)]
     else:
         output_py = False
     sig_free(output)

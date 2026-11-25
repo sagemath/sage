@@ -26,7 +26,7 @@ from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
 
 class FpT(FractionField_1poly_field):
     r"""
-    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^31-1}`.
+    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^{31}-1}`.
 
     EXAMPLES::
 
@@ -370,8 +370,7 @@ cdef class FpTElement(FieldElement):
         """
         if nmod_poly_degree(self._denom) == 0 and nmod_poly_get_coeff_ui(self._denom, 0) == 1:
             return self.numer()._latex_()
-        else:
-            return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
+        return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
 
     cpdef _richcmp_(self, other, int op):
         """
@@ -571,6 +570,35 @@ cdef class FpTElement(FieldElement):
         nmod_poly_mul(x._denom, self._denom, other._numer)
         normalize(x._numer, x._denom, self.p)
         return x
+
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        r"""
+        Return the image of this element in ``codomain`` under the
+        map that sends the image of the generator of the parent to
+        the element in ``im_gens``.
+
+        INPUT:
+
+        - ``codomain`` -- a ring; where the image is computed
+
+        - ``im_gens`` -- a list containing the image of the
+          generator of the parent as unique element
+
+        - ``base_map`` -- a morphism (default: ``None``);
+          the action on the underlying base ring
+
+        EXAMPLES::
+
+            sage: A.<T> = GF(5)[]
+            sage: K.<T> = Frac(A)
+            sage: f = K.hom([T^2])
+            sage: f(1/T)
+            1/T^2
+        """
+        nden = self.denom()._im_gens_(codomain, im_gens, base_map=base_map)
+        invden = nden.inverse_of_unit()
+        nnum = self.numer()._im_gens_(codomain, im_gens, base_map=base_map)
+        return nnum * invden
 
     cpdef FpTElement next(self):
         """
@@ -793,16 +821,12 @@ cdef class FpTElement(FieldElement):
         if s is None:
             if extend:
                 raise NotImplementedError("function fields not yet implemented")
-            else:
-                raise ValueError("not a perfect square")
-        else:
-            if all:
-                if not s:
-                    return [s]
-                else:
-                    return [s, -s]
-            else:
-                return s
+            raise ValueError("not a perfect square")
+        if all:
+            if not s:
+                return [s]
+            return [s, -s]
+        return s
 
     def __pow__(FpTElement self, Py_ssize_t e, dummy):
         r"""

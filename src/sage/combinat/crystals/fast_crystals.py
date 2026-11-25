@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Fast Rank Two Crystals
+Fast rank two crystals
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
@@ -34,7 +34,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     An alternative implementation of rank 2 crystals. The root
     operators are implemented in memory by table lookup. This means
     that in comparison with the
-    :class:`~sage.combinat.crystals.tensor_product.CrystalsOfTableaux`, these
+    :class:`~sage.combinat.crystals.tensor_product.CrystalOfTableaux`, these
     crystals are slow to instantiate but faster for computation. Implemented
     for types `A_2`, `B_2`, and `C_2`.
 
@@ -220,9 +220,9 @@ class FastCrystal(UniqueRepresentation, Parent):
             4
         """
         if self._cartan_type[0] == 'B':
-            [m1, m2] = [l1+l2, l1-l2]
+            m1, m2 = l1 + l2, l1 - l2
         else:
-            [m1, m2] = [l1, l2]
+            m1, m2 = l1, l2
         for b in range(m2,-1,-1):
             for a in range(m1,m2-1,-1):
                 for c in range(b,a+1):
@@ -271,7 +271,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         return self._digraph
 
-    def cmp_elements(self, x,y):
+    def cmp_elements(self, x, y):
         r"""
         Return ``True`` if and only if there is a path from `x` to `y` in the
         crystal graph.
@@ -295,10 +295,9 @@ class FastCrystal(UniqueRepresentation, Parent):
         assert x.parent() == self and y.parent() == self
         if self._digraph_closure.has_edge(x,y):
             return -1
-        elif self._digraph_closure.has_edge(y,x):
+        if self._digraph_closure.has_edge(y,x):
             return 1
-        else:
-            return 0
+        return 0
 
     class Element(Element):
         def __init__(self, parent, value, format):
@@ -336,11 +335,11 @@ class FastCrystal(UniqueRepresentation, Parent):
             delpat = self.parent().delpat[self.value]
             if self.parent()._cartan_type[0] == 'A':
                 delpat = delpat + [0,]
-            [alpha1, alpha2] = self.parent().weight_lattice_realization().simple_roots()
+            alpha1, alpha2 = self.parent().weight_lattice_realization().simple_roots()
             hwv = sum(self.parent().shape[i]*self.parent().weight_lattice_realization().monomial(i) for i in range(2))
             return hwv - (delpat[0]+delpat[2])*alpha1 - (delpat[1]+delpat[3])*alpha2
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             EXAMPLES::
 
@@ -350,12 +349,11 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             if self.format == "string":
                 return repr(self.parent().delpat[self.value])
-            elif self.format == "dual_string":
+            if self.format == "dual_string":
                 return repr(self.parent().gampat[self.value])
-            elif self.format == "simple":
+            if self.format == "simple":
                 return repr(self.value)
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
 
         def __hash__(self):
             r"""

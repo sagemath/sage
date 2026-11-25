@@ -49,37 +49,31 @@ cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noex
 cdef object binary_tree_get(binary_tree_node *self, int key):
     if self.key == key:
         return <object>self.value
-    elif self.key > key:
+    if self.key > key:
         if self.left == NULL:
             return None
-        else:
-            return binary_tree_get(self.left, key)
-    else:
-        if self.right == NULL:
-            return None
-        else:
-            return binary_tree_get(self.right, key)
+        return binary_tree_get(self.left, key)
+    if self.right == NULL:
+        return None
+    return binary_tree_get(self.right, key)
 
 cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
     if self.key > key:
         if self.left == NULL:
             return None
-        elif self.left.key == key:
+        if self.left.key == key:
             t = <object>self.left.value
             self.left = binary_tree_left_excise(self.left)
             return t
-        else:
-            return binary_tree_delete(self.left, key)
-    else:
-        if self.right == NULL:
-            return None
-        elif self.right.key == key:
-            t = <object>self.right.value
-            self.right = binary_tree_right_excise(self.right)
-            return t
-        else:
-            return binary_tree_delete(self.right, key)
+        return binary_tree_delete(self.left, key)
+    if self.right == NULL:
+        return None
+    if self.right.key == key:
+        t = <object>self.right.value
+        self.right = binary_tree_right_excise(self.right)
+        return t
+    return binary_tree_delete(self.right, key)
 
 cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *left
@@ -145,7 +139,7 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
 
 
 cdef int LIST_PREORDER, LIST_POSTORDER, LIST_INORDER, LIST_KEYS, LIST_VALUES
-LIST_PREORDER  = 1
+LIST_PREORDER = 1
 LIST_INORDER = 2
 LIST_POSTORDER = 4
 LIST_KEYS = 8
@@ -288,9 +282,9 @@ cdef class BinaryTree:
 
             sage: from sage.misc.binary_tree import BinaryTree
             sage: t = BinaryTree()
-            sage: t.insert(0, Matrix([[0,0], [1,1]]))                                   # needs sage.modules
+            sage: t.insert(0, Matrix([[0,0], [1,1]]))
             sage: t.insert(0, 1)
-            sage: t.get(0)                                                              # needs sage.modules
+            sage: t.get(0)
             [0 0]
             [1 1]
         """
@@ -491,7 +485,7 @@ class Test:
     def random(self):
         self.binary_tree()
 
-    def binary_tree(self, values = 100, cycles = 100000):
+    def binary_tree(self, values=100, cycles=100000):
         """
         Perform a sequence of random operations, given random inputs
         to stress test the binary tree structure.

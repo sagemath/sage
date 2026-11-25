@@ -1,1 +1,1 @@
-devel/py-importlib-resources
+devel/py-prompt_toolkit

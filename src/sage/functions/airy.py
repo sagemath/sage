@@ -137,8 +137,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
                 return airy_ai_prime(x)
             if alpha == 2:
                 return x*airy_ai_simple(x)
-        else:
-            return None
+        return None
 
     def _evalf_(self, alpha, x, parent=None, algorithm=None):
         """
@@ -241,7 +240,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[0]
                 if parent is None:
@@ -251,10 +250,9 @@ class FunctionAiryAiSimple(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airyai, x, parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 class FunctionAiryAiPrime(BuiltinFunction):
@@ -341,7 +339,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[1]
                 if parent is None:
@@ -351,11 +349,10 @@ class FunctionAiryAiPrime(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airyai, x, derivative=1,
                                      parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 airy_ai_general = FunctionAiryAiGeneral()
@@ -478,11 +475,11 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         return airy_ai_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_ai_general(alpha, x, **kwds)
-    elif alpha == 0:
+    if alpha == 0:
         return airy_ai_simple(x, **kwds)
-    elif alpha == 1:
+    if alpha == 1:
         return airy_ai_prime(x, **kwds)
-    elif alpha > 1:
+    if alpha > 1:
         # We use a different variable here because if x is a
         # particular value, we would be differentiating a constant
         # which would return 0. What we want is the value of
@@ -490,8 +487,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         # a particular value of the function.
         v = SR.symbol()
         return derivative(airy_ai_simple(v, **kwds), v, alpha).subs({v: x})
-    else:
-        return airy_ai_general(alpha, x, **kwds)
+    return airy_ai_general(alpha, x, **kwds)
 
 ########################################################################
 ########################################################################
@@ -680,7 +676,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[2]
                 if parent is None:
@@ -690,12 +686,11 @@ class FunctionAiryBiSimple(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             import mpmath
             from sage.libs.mpmath import utils as mpmath_utils
             return _mpmath_utils_call(_mpmath_airybi, x, parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 class FunctionAiryBiPrime(BuiltinFunction):
@@ -782,7 +777,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[3]
                 if parent is None:
@@ -792,11 +787,10 @@ class FunctionAiryBiPrime(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airybi, x, derivative=1,
                                      parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 airy_bi_general = FunctionAiryBiGeneral()
@@ -920,11 +914,11 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         return airy_bi_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_bi_general(alpha, x, **kwds)
-    elif alpha == 0:
+    if alpha == 0:
         return airy_bi_simple(x, **kwds)
-    elif alpha == 1:
+    if alpha == 1:
         return airy_bi_prime(x, **kwds)
-    elif alpha > 1:
+    if alpha > 1:
         # We use a different variable here because if x is a
         # particular value, we would be differentiating a constant
         # which would return 0. What we want is the value of
@@ -932,5 +926,4 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         # a particular value of the function.
         v = SR.symbol()
         return derivative(airy_bi_simple(v, **kwds), v, alpha).subs({v: x})
-    else:
-        return airy_bi_general(alpha, x, **kwds)
+    return airy_bi_general(alpha, x, **kwds)

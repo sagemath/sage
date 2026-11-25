@@ -87,10 +87,11 @@ for the comparison::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import Element
 from sage.misc.decorators import options
-from sage.symbolic.expression import Expression
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import Element
+from sage.symbolic.expression import Expression
+
 
 class ManifoldPoint(Element):
     r"""
@@ -121,7 +122,7 @@ class ManifoldPoint(Element):
 
         sage: M = Manifold(2, 'M', structure='topological')
         sage: c_xy.<x,y> = M.chart()
-        sage: (a, b) = var('a b') # generic coordinates for the point
+        sage: a, b = var('a b')  # generic coordinates for the point
         sage: p = M.point((a, b), name='P'); p
         Point P on the 2-dimensional topological manifold M
         sage: p.coordinates()  # coordinates of P in the subset's default chart
@@ -328,7 +329,7 @@ class ManifoldPoint(Element):
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: c_xy.<x,y> = M.chart()
-            sage: (a, b) = var('a b') # generic coordinates for the point
+            sage: a, b = var('a b')  # generic coordinates for the point
             sage: P = M.point((a, b), name='P')
 
         Coordinates of ``P`` in the manifold's default chart::
@@ -680,7 +681,7 @@ class ManifoldPoint(Element):
                         pass
         if common_chart is None:
             return False
-            #!# Another option would be:
+            # Another option would be:
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
         periods = common_chart.periods()
@@ -689,12 +690,12 @@ class ManifoldPoint(Element):
             diff = xs - xo
             period = periods[ind]
             if period is not None:
-                if not (diff/period in ZZ):
+                if diff/period not in ZZ:
                     return False
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
-                elif not (diff == 0):
+                if not (diff == 0):
                     return False
         return True
 
@@ -934,11 +935,11 @@ class ManifoldPoint(Element):
             gX = X.plot(X, ambient_coords=(y,z))
             sphinx_plot(g+gX)
         """
-        from sage.plot.point import point2d
-        from sage.plot.text import text
+        from sage.manifolds.chart import Chart
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes2 import point3d, text3d
-        from sage.manifolds.chart import Chart
+        from sage.plot.point import point2d
+        from sage.plot.text import text
         if self._manifold.base_field_type() != 'real':
             raise NotImplementedError('plot of points on manifolds over fields different'
                                       ' from the real field is not implemented')

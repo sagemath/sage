@@ -18,6 +18,7 @@ Base for Classical Matrix Groups with GAP
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
 from sage.groups.matrix_gps.named_group import NamedMatrixGroup_generic
 
+
 class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
 
     def __init__(self, degree, base_ring, special, sage_name, latex_string,

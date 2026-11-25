@@ -11,16 +11,18 @@ Degenerate manifolds
 # *****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.rings.infinity import infinity
-from sage.manifolds.structure import DegenerateStructure
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.structure import DegenerateStructure
+from sage.rings.infinity import infinity
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
 
 ###############################################################################
+
 
 class DegenerateManifold(DifferentiableManifold):
     r"""
@@ -360,15 +362,15 @@ class DegenerateManifold(DifferentiableManifold):
             for chart2 in coord_def:
                 if chart2 != chart1 and (chart1, chart2) in self._coord_changes:
                     self._coord_changes[(chart1, chart2)].restrict(resu)
-        #!# update non-coordinate vector frames and change of frames
-        #
+        # update non-coordinate vector frames and change of frames
         return resu
 
 
 #*******************************************************************************************
 
-from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 from sage.manifolds.differentiable.tensorfield import TensorField
+from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+
 
 class TangentTensor(TensorFieldParal):
     r"""

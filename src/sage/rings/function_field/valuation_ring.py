@@ -32,7 +32,9 @@ valuation ring, as shown in the following example::
     0
 
 The residue field at the place is defined as the quotient ring of the valuation
-ring modulo its unique maximal ideal. The method :meth:`residue_field()` of the
+ring modulo its unique maximal ideal. The method
+:meth:`~sage.rings.function_field.valuation_ring.FunctionFieldValuationRing.residue_field`
+of the
 valuation ring returns an extension field of the constant base field, isomorphic
 to the residue field, along with lifting and evaluation homomorphisms::
 
@@ -64,13 +66,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class FunctionFieldValuationRing(UniqueRepresentation, Parent):
     """
@@ -90,7 +91,7 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         sage: p.valuation_ring()
         Valuation ring at Place (x, x*y)
     """
-    def __init__(self, field, place, category=None):
+    def __init__(self, field, place, category=None) -> None:
         """
         Initialize.
 
@@ -130,10 +131,9 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         x = self._field(x)
         if x.valuation(self._place) >= 0:
             return x
-        else:
-            raise TypeError
+        raise TypeError
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the valuation ring.
 
@@ -205,6 +205,6 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         from .maps import FunctionFieldRingMorphism as morphism
 
         k, from_k, to_k = self._place._residue_field(name=name)
-        mor_from_k = morphism(Hom(k,self), from_k)
-        mor_to_k = morphism(Hom(self,k), to_k)
+        mor_from_k = morphism(Hom(k, self), from_k)
+        mor_to_k = morphism(Hom(self, k), to_k)
         return k, mor_from_k, mor_to_k

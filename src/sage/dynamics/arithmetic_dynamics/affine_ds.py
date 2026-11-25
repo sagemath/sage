@@ -25,7 +25,7 @@ AUTHORS:
 - Ben Hutz (2017) relocate code and create new class
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -34,14 +34,15 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.matrix.constructor import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
@@ -56,7 +57,7 @@ from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affin
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.structure.element import get_coercion_model
 
-import sage.rings.abc
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
@@ -69,8 +70,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         You should not create objects of this class directly because
         no type or consistency checking is performed. The preferred
         method to construct such dynamical systems is to use
-        :func:`~sage.dynamics.arithmetic_dynamics.generic_ds.DynamicalSystem_affine`
-        function.
+        :class:`~sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine`
+        constructor.
 
     INPUT:
 
@@ -255,7 +256,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(polys, domain)
             return DynamicalSystem_affine_field(polys, domain)
-        elif isinstance(morphism_or_polys,(list, tuple)):
+        if isinstance(morphism_or_polys, (list, tuple)):
             polys = list(morphism_or_polys)
         else:
             polys = [morphism_or_polys]
@@ -276,7 +277,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             else:
                 polys = [PR(poly) for poly in polys]
         if domain is None:
-            if isinstance(PR, sage.rings.abc.SymbolicRing):
+            if isinstance(PR, SymbolicRing):
                 raise TypeError("symbolic ring cannot be the base ring")
             if fraction_field:
                 PR = PR.ring()
@@ -293,7 +294,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if len(polys) != domain.ambient_space().coordinate_ring().ngens():
             raise ValueError(f'number of polys does not match dimension of {domain}')
         R = domain.base_ring()
-        if isinstance(R, sage.rings.abc.SymbolicRing):
+        if isinstance(R, SymbolicRing):
             raise TypeError("symbolic ring cannot be the base ring")
         if not isinstance(domain, AffineSpace_generic) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
             raise ValueError('"domain" must be an affine scheme')
@@ -321,7 +322,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         L = polys_or_rat_fncts
         # Next attribute needed for _fast_eval and _fastpolys
         R = L[0].base_ring()
-        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.degree() == 1
         DynamicalSystem.__init__(self, L, domain)
 
     def __copy__(self):
@@ -519,7 +520,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             sage: R.<c> = QQ[]
             sage: Pc.<x,y> = ProjectiveSpace(R, 1)
             sage: G = DynamicalSystem_projective([(1/2*c + 1/2)*x^2 + (-2*c)*x*y + 2*c*y^2 , \
-                  (1/4*c + 1/2)*x^2 + (-c - 1)*x*y + (c + 1)*y^2])
+            ....: (1/4*c + 1/2)*x^2 + (-c - 1)*x*y + (c + 1)*y^2])
             sage: G.dehomogenize(1).dynatomic_polynomial(2)
             (1/4*c + 1/4)*x^2 + (-c - 1/2)*x + c + 1
         """
@@ -532,18 +533,17 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         F = G.dynatomic_polynomial(period)
         T = G.domain().coordinate_ring()
         S = self.domain().coordinate_ring()
-        if isinstance(F.parent(), sage.rings.abc.SymbolicRing):
+        if isinstance(F.parent(), SymbolicRing):
             from sage.symbolic.ring import var
             u = var(self.domain().coordinate_ring().variable_name())
-            return F.subs({F.variables()[0]:u,F.variables()[1]:1})
-        elif T(F.denominator()).degree() == 0:
+            return F.subs({F.variables()[0]: u, F.variables()[1]: 1})
+        if T(F.denominator()).degree() == 0:
             R = F.parent()
             phi = R.hom([S.gen(0), 1], S)
             return phi(F)
-        else:
-            R = F.numerator().parent()
-            phi = R.hom([S.gen(0), 1], S)
-            return phi(F.numerator())/phi(F.denominator())
+        R = F.numerator().parent()
+        phi = R.hom([S.gen(0), 1], S)
+        return phi(F.numerator()) / phi(F.denominator())
 
     def nth_iterate_map(self, n):
         r"""
@@ -612,8 +612,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         for i in range(len(D)):
             for k in range(D[i]):
                 PHI = [poly(F) for poly in PHI]
-            if i != len(D)-1: #avoid extra iterate
-                F = [R(poly(F)) for poly in F] #'square'
+            if i != len(D) - 1:  # avoid extra iterate
+                F = [R(poly(F)) for poly in F]  # 'square'
         return DynamicalSystem_affine(PHI, domain=self.domain())
 
     def nth_iterate(self, P, n):
@@ -724,11 +724,11 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if isinstance(n, (list, tuple)):
             bounds = list(n)
         else:
-            bounds = [0,n]
-        for i in range(1, bounds[0]+1):
+            bounds = [0, n]
+        for i in range(1, bounds[0] + 1):
             Q = self(Q)
         orb = [Q]
-        for i in range(bounds[0]+1, bounds[1]+1):
+        for i in range(bounds[0] + 1, bounds[1] + 1):
             Q = self(Q)
             orb.append(Q)
         return orb
@@ -800,9 +800,9 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         l = identity_matrix(FractionField(self.codomain().base_ring()), N, N)
         Q = P
         J = self.jacobian()
-        for i in range(0, n):
+        for i in range(n):
             R = self(Q)
-            l = J(tuple(Q))*l #chain rule matrix multiplication
+            l = J(tuple(Q)) * l  # chain rule matrix multiplication
             Q = R
         return l
 
@@ -883,6 +883,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             2
         """
         return self.as_scheme_morphism().degree()
+
 
 class DynamicalSystem_affine_field(DynamicalSystem_affine,
                                    SchemeMorphism_polynomial_affine_space_field):
@@ -984,6 +985,7 @@ class DynamicalSystem_affine_field(DynamicalSystem_affine,
                     ((3*x^2 + y)/(5*x), (5*y^2 + 5)/(5*x + 5*y))
         """
         return self.as_scheme_morphism().reduce_base_field().as_dynamical_system()
+
 
 class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
                                     SchemeMorphism_polynomial_affine_space_finite_field):

@@ -201,7 +201,7 @@ cdef class PuiseuxSeries(AlgebraElement):
                 l = l.add_bigoh(prec / d)
 
         self._l = l
-        self._e = long(abs(e))
+        self._e = int(abs(e))
 
     def __reduce__(self):
         """
@@ -218,7 +218,6 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(ZZ)
             sage: p = x^(1/3) + x**3
             sage: t = p._im_gens_(QQbar, [2])
@@ -854,7 +853,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p.exponents()
             [3/4, 4/5, 5/6]
         """
-        return [QQ(n) /  self._e for n in self._l.exponents()]
+        return [QQ(n) / self._e for n in self._l.exponents()]
 
     def __setitem__(self, n, value):
         """
@@ -979,7 +978,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         if self.prec() is infinity:
             return p.prec()
-        elif p.prec() is infinity:
+        if p.prec() is infinity:
             return self.prec()
         return min(self.prec(), p.prec())
 
@@ -1022,7 +1021,6 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(QQbar)
             sage: p = x**(3/2) - QQbar(I)*x**(1/2)
             sage: p.power_series()

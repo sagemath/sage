@@ -344,7 +344,7 @@ we could accomplish the branching in two steps, thus::
     sage: A1xA1 = WeylCharacterRing("A1xA1", style="coroots")
     sage: reps = [A3(fw) for fw in A3.fundamental_weights()]
     sage: [pi.branch(C2, rule="symmetric").branch(B2, rule="isomorphic"). \
-             branch(D2, rule="extended").branch(A1xA1, rule="isomorphic") for pi in reps]
+    ....:    branch(D2, rule="extended").branch(A1xA1, rule="isomorphic") for pi in reps]
     [A1xA1(1,0) + A1xA1(0,1), 2*A1xA1(0,0) + A1xA1(1,1), A1xA1(1,0) + A1xA1(0,1)]
 
 As you can see, we've redone the branching rather circuitously this

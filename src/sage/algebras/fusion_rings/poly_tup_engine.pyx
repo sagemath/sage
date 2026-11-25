@@ -26,7 +26,7 @@ cpdef inline tuple poly_to_tup(MPolynomial_libsingular poly):
         sage: poly_to_tup(x**2*y**4 - 4/5*x*y**2 + 1/3 * y)
         (((2, 4), 1), ((1, 2), -4/5), ((0, 1), 1/3))
     """
-    return tuple(poly.dict().items())
+    return tuple(poly.monomial_coefficients().items())
 
 cpdef inline MPolynomial_libsingular _tup_to_poly(tuple eq_tup, MPolynomialRing_libsingular parent):
     r"""

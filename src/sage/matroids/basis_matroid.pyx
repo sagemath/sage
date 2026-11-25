@@ -136,7 +136,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     """
     def __init__(self, M=None, groundset=None, bases=None, nonbases=None, rank=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -157,6 +157,8 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         cdef SetSystem NB
         cdef long i
         cdef mp_bitcnt_t bc
+
+        self._reset_invariants()
 
         if isinstance(M, BasisMatroid):
             BasisExchangeMatroid.__init__(self, groundset=(<BasisMatroid>M)._E, rank=(<BasisMatroid>M)._matroid_rank)
@@ -542,8 +544,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset()]
         B = [[d[y] for y in x] for x in self.bases()]
-        M = BasisMatroid(groundset=E, bases=B)
-        return M
+        return BasisMatroid(groundset=E, bases=B)
 
     # enumeration
 
@@ -637,7 +638,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     # isomorphism test
 
-    cpdef _bases_invariant(self):
+    cpdef Py_hash_t _bases_invariant(self) noexcept:
         """
         Return an isomorphism invariant based on the incidences of groundset
         elements with bases.
@@ -652,7 +653,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M._bases_invariant() == N._bases_invariant()
             True
         """
-        if self._bases_invariant_var is not None:
+        if self._bases_invariant_var != -1:
             return self._bases_invariant_var
         cdef long i, j
         cdef list bc
@@ -675,7 +676,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         self._bases_partition_var = SetSystem(self._E, [[self._E[e] for e in bi[c]] for c in sorted(bi, key=cmp_elements_key)])
         return self._bases_invariant_var
 
-    cpdef _bases_partition(self):
+    cpdef SetSystem _bases_partition(self):
         """
         Return an ordered partition based on the incidences of groundset
         elements with bases.
@@ -690,7 +691,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         self._bases_invariant()
         return self._bases_partition_var
 
-    cpdef _bases_invariant2(self):
+    cpdef Py_hash_t _bases_invariant2(self) noexcept:
         """
         Return an isomorphism invariant of the matroid.
 
@@ -709,13 +710,13 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M._bases_invariant2() == N._bases_invariant2()
             False
         """
-        if self._bases_invariant2_var is None:
+        if self._bases_invariant2_var == -1:
             CP = self.nonbases()._equitable_partition(self._bases_partition())
             self._bases_partition2_var = CP[0]
             self._bases_invariant2_var = CP[2]
         return self._bases_invariant2_var
 
-    cpdef _bases_partition2(self):
+    cpdef SetSystem _bases_partition2(self):
         """
         Return an equitable partition which refines
         :meth:`<BasisMatroid._bases_partition2>`.
@@ -730,7 +731,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         self._bases_invariant2()
         return self._bases_partition2_var
 
-    cpdef _bases_invariant3(self):
+    cpdef Py_hash_t _bases_invariant3(self) noexcept:
         """
         Return a number characteristic for the construction of
         :meth:`<BasisMatroid._bases_partition3>`.
@@ -743,13 +744,13 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M._bases_invariant3() == N._bases_invariant3()
             True
         """
-        if self._bases_invariant3_var is None:
+        if self._bases_invariant3_var == -1:
             CP = self.nonbases()._heuristic_partition(self._bases_partition2())
             self._bases_partition3_var = CP[0]
             self._bases_invariant3_var = CP[2]
         return self._bases_invariant3_var
 
-    cpdef _bases_partition3(self):
+    cpdef SetSystem _bases_partition3(self):
         """
         Return an ordered partition into singletons which refines an equitable
         partition of the matroid.
@@ -779,13 +780,13 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         self._bcount = None
         self._nonbases = None
-        self._bases_invariant_var = None
+        self._bases_invariant_var = -1
         self._bases_partition_var = None
-        self._bases_invariant2_var = None
+        self._bases_invariant2_var = -1
         self._bases_partition2_var = None
-        self._bases_invariant3_var = None
+        self._bases_invariant3_var = -1
         self._bases_partition3_var = None
-        self._flush()
+        self._flush_invariants()
 
     cpdef bint is_distinguished(self, e) noexcept:
         """
@@ -955,7 +956,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if not isinstance(other, BasisMatroid):
             return self.isomorphism(BasisMatroid(other))
         if self is other:
-            return {e:e for e in self.groundset()}
+            return {e: e for e in self.groundset()}
         if len(self) != len(other):
             return None
         if self.full_rank() != other.full_rank():
@@ -975,8 +976,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._bases_invariant2() != other._bases_invariant2():
             return None
@@ -988,8 +988,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self._is_relaxation(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._bases_invariant3() == other._bases_invariant3():
             PHS = self._bases_partition3()
@@ -1086,9 +1085,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -1126,8 +1125,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             return NotImplemented
         if left.equals(right):
             return rich_to_bool(op, 0)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __reduce__(self):
         """

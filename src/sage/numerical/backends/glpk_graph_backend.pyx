@@ -57,6 +57,14 @@ Methods index
 
 Classes and methods
 -------------------
+
+TESTS:
+
+This module is deprecated::
+
+    sage: import sage.numerical.backends.glpk_graph_backend
+    ...DeprecationWarning...
+
 """
 
 #*****************************************************************************
@@ -76,6 +84,9 @@ from sage.cpython.string import FS_ENCODING
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
 from sage.numerical.mip import MIPSolverException
+from sage.misc.superseded import deprecation
+
+deprecation(42802, "The GLPK backends are obsolete and will be removed, use HiGHs instead")
 
 cdef class GLPKGraphBackend():
     """
@@ -183,7 +194,7 @@ cdef class GLPKGraphBackend():
         3.0
     """
 
-    def __cinit__(self, data = None, format = "plain"):
+    def __cinit__(self, data=None, format="plain"):
         """
         Constructor.
 
@@ -376,8 +387,7 @@ cdef class GLPKGraphBackend():
 
         if nonecount:
             return [self.add_vertex() for i in range(nonecount)]
-        else:
-            return None
+        return None
 
     cpdef set_vertex_demand(self, vertex, demand):
         """
@@ -840,7 +850,7 @@ cdef class GLPKGraphBackend():
         cdef int i = self._find_vertex(vert)
 
         if i < 0:
-            raise RuntimeError("Vertex %s does not exist."%(vert))
+            raise RuntimeError("Vertex %s does not exist." % vert)
 
         cdef int num[2]
         num[1] = i + 1
@@ -880,7 +890,7 @@ cdef class GLPKGraphBackend():
         verts_val = [self._find_vertex(v) for v in verts]
         if -1 in verts_val:
             i = verts_val.index(-1)
-            raise RuntimeError("Vertex %s does not exist."%(verts[i]))
+            raise RuntimeError("Vertex %s does not exist." % verts[i])
 
         cdef int * num = <int *>check_allocarray(len(verts_val) + 1, sizeof(int))
         cdef int ndel = len(verts_val)

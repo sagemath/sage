@@ -1,55 +1,64 @@
 name: Lint
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  merge_group:
+  workflow_call:
+    inputs:
+      sage_repository:
+        type: string
+      sage_ref:
+        type: string
 
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    env:
+      # Use the same Python for setup-python and uv, overriding .python-version.
+      UV_PYTHON: "3.14"
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
+      with:
+        repository: ${{ inputs.sage_repository || github.repository }}
+        ref: ${{ inputs.sage_ref || github.sha }}
 
     - name: Merge CI fixes from sagemath/sage
       run: |
-        .ci/merge-fixes.sh
+        .github/workflows/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
-        SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-    - name: Install test prerequisites
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: ${{ env.UV_PYTHON }}
+
+    - name: Install prerequisites
       id: deps
-      # From docker.yml
+      run: pip install uv
+
+    - name: Test label synchronization command handling
+      run: python3 -m unittest build.test.test_sync_labels
+
+    - name: Code style check with ruff
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: |
-        sudo DEBIAN_FRONTEND=noninteractive apt-get update
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
-
-    - name: Code style check with ruff-minimal
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e ruff-minimal
-      env:
-        # https://github.com/ChartBoost/ruff-action/issues/7#issuecomment-1887780308
-        RUFF_OUTPUT_FORMAT: github
-
-    - name: Code style check with pycodestyle-minimal
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e pycodestyle-minimal
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e relint -- src/sage/
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- relint -c src/.relint.yml -- src/sage/
 
     - name: Validate docstring markup as RST
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e rst
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
+
+    - name: TOML format check with taplo
+      uses: docker://tamasfe/taplo:0.10.0
+      with:
+        args: format --check --diff pyproject.toml .taplo.toml

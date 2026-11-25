@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Modules
 """
@@ -112,7 +111,8 @@ class Modules(Category_module):
 
         - Implement a ``FreeModules(R)`` category, when so prompted by a
           concrete use case: e.g.  modeling a free module with several
-          bases (using :meth:`Sets.SubcategoryMethods.Realizations`)
+          bases (using
+          :func:`~sage.categories.realizations.Realizations`)
           or with an atlas of local maps (see e.g. :issue:`15916`).
     """
 
@@ -251,7 +251,7 @@ class Modules(Category_module):
             .. SEEALSO::
 
                 - :class:`.tensor.TensorProductsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`.
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
 
             EXAMPLES::
 
@@ -541,8 +541,7 @@ class Modules(Category_module):
                     base_ring.is_subcategory(FiniteSets)) or \
                 base_ring in FiniteSets:
                 return [FiniteSets]
-            else:
-                return []
+            return []
 
         class TensorProducts(TensorProductsCategory):
 
@@ -590,8 +589,7 @@ class Modules(Category_module):
                     base_ring.is_subcategory(FiniteSets)) or \
                 base_ring in FiniteSets:
                 return [FiniteSets]
-            else:
-                return []
+            return []
 
     Filtered = LazyImport('sage.categories.filtered_modules', 'FilteredModules')
     Graded = LazyImport('sage.categories.graded_modules', 'GradedModules')
@@ -629,9 +627,8 @@ class Modules(Category_module):
             if factor_on_left:
                 return self.sum(coeff * element
                                 for element, coeff in iter_of_elements_coeff)
-            else:
-                return self.sum(element * coeff
-                                for element, coeff in iter_of_elements_coeff)
+            return self.sum(element * coeff
+                            for element, coeff in iter_of_elements_coeff)
 
         @cached_method
         def tensor_square(self):
@@ -698,14 +695,15 @@ class Modules(Category_module):
               ``self.submodule(submodule)``
 
             - ``check``, other keyword arguments -- passed on to
-              :meth:`quotient_module`.
+              ``quotient_module``.
 
-            This method just delegates to :meth:`quotient_module`.
+            This method just delegates to ``quotient_module``.
             Classes implementing modules should override that method.
 
             Parents in categories with additional structure may override
             :meth:`quotient`. For example, in algebras, :meth:`quotient` will
-            be the same as :meth:`quotient_ring`.
+            be the same as
+            :meth:`~sage.categories.rings.Rings.ParentMethods.quotient_ring`.
 
             EXAMPLES::
 
@@ -770,6 +768,7 @@ class Modules(Category_module):
                 :meth:`sage.structure.category_object.CategoryObject.base_ring`::
 
                     sage: H.base_ring.__module__                                        # needs sage.modules
+                    'sage.structure.category_object'
 
                 Here we call it directly::
 
@@ -819,7 +818,8 @@ class Modules(Category_module):
                 """
                 Implement the fact that the endomorphism set of a module is an algebra.
 
-                .. SEEALSO:: :meth:`CategoryWithAxiom.extra_super_categories`
+                .. SEEALSO::
+                    :meth:`~sage.categories.category_with_axiom.CategoryWithAxiom.extra_super_categories`
 
                 EXAMPLES::
 
@@ -882,8 +882,7 @@ class Modules(Category_module):
                       Ambient free module of rank 3 over the principal ideal domain Integer Ring)
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
-                     over (Dedekind domains and euclidean domains
-                      and noetherian rings
+                     over (euclidean domains and noetherian rings
                       and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
@@ -893,7 +892,7 @@ class Modules(Category_module):
                      (Vector space of dimension 2 over Rational Field,
                       Univariate Polynomial Ring in x over Rational Field)
                     sage: A.category()                                                  # needs sage.modules
-                    Category of Cartesian products of vector spaces
+                    Category of Cartesian products of vector spaces with basis
                      over (number fields and quotient fields and metric spaces)
                     sage: A.base_ring()                                                 # needs sage.modules
                     Rational Field
@@ -925,9 +924,7 @@ class Modules(Category_module):
 
                     sage: A = FreeModule(ZZ, 2)                                         # needs sage.modules
                     sage: B = cartesian_product([A, A]); B                              # needs sage.modules
-                    The Cartesian product of
-                     (Ambient free module of rank 2 over the principal ideal domain Integer Ring,
-                      Ambient free module of rank 2 over the principal ideal domain Integer Ring)
+                    The Cartesian product of 2 copies of Ambient free module of rank 2 over the principal ideal domain Integer Ring
                     sage: 5*B(([1, 2], [3, 4]))                                         # needs sage.modules
                     ((5, 10), (15, 20))
                 """
@@ -967,16 +964,10 @@ class Modules(Category_module):
                      (Free Algebra on 2 generators (None0, None1) over Rational Field,
                       Free Algebra on 2 generators (None0, None1) over Rational Field))
                 """
-                try:
-                    factors = self.tensor_factors()
-                except (TypeError, NotImplementedError):
-                    from sage.misc.superseded import deprecation
-                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
-                    return None
-                return (TensorProductFunctor(),
-                        factors)
+                factors = self.tensor_factors()
+                return (TensorProductFunctor(), factors)
 
-            @abstract_method(optional=True)
+            @abstract_method
             def tensor_factors(self):
                 """
                 Return the tensor factors of this tensor product.
@@ -992,16 +983,4 @@ class Modules(Category_module):
                     F # G
                     sage: T.tensor_factors()
                     (F, G)
-
-                TESTS::
-
-                    sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ,                               # needs sage.modules
-                    ....:                             ((1, 1), (1, 2), (2, 1), (2, 2)),
-                    ....:                             category=Cat)
-                    sage: M.construction()                                              # needs sage.modules
-                    doctest:warning...
-                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
-                    See https://github.com/sagemath/sage/issues/34393 for details.
-                    (VectorFunctor, Integer Ring)
                 """

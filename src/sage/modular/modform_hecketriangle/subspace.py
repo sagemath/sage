@@ -73,7 +73,8 @@ def ModularFormsSubSpace(*args, **kwargs):
         sage: subspace.ambient_space()
         ModularForms(n=3, k=12, ep=1) over Integer Ring
         sage: subspace.gens()
-        [1 + 720*q + 179280*q^2 + 16954560*q^3 + 396974160*q^4 + O(q^5), 1 - 1007*q + 220728*q^2 + 16519356*q^3 + 399516304*q^4 + O(q^5)]
+        (1 + 720*q + 179280*q^2 + 16954560*q^3 + 396974160*q^4 + O(q^5),
+         1 - 1007*q + 220728*q^2 + 16519356*q^3 + 399516304*q^4 + O(q^5))
         sage: ModularFormsSubSpace(MF.E4()^3-MF.E6()^2, reduce=True).ambient_space()
         CuspForms(n=3, k=12, ep=1) over Integer Ring
         sage: ModularFormsSubSpace(MF.E4()^3-MF.E6()^2, MF.J_inv()*MF.E4()^3, reduce=True)
@@ -186,7 +187,8 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace.basis()[0].parent() == MF
             True
             sage: subspace.gens()
-            [q + 78*q^2 + 2781*q^3 + 59812*q^4 + O(q^5), 1 + 360360*q^4 + O(q^5)]
+            (q + 78*q^2 + 2781*q^3 + 59812*q^4 + O(q^5),
+             1 + 360360*q^4 + O(q^5))
             sage: subspace.gens()[0].parent() == subspace
             True
             sage: subspace.is_ambient()
@@ -200,7 +202,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace
             Subspace of dimension 3 of QuasiCuspForms(n=+Infinity, k=12, ep=1) over Integer Ring
             sage: subspace.gens()
-            [q + 24*q^2 + O(q^3), q - 24*q^2 + O(q^3), q - 8*q^2 + O(q^3)]
+            (q + 24*q^2 + O(q^3), q - 24*q^2 + O(q^3), q - 8*q^2 + O(q^3))
         """
         FormsSpace_abstract.__init__(self, group=ambient_space.group(), base_ring=ambient_space.base_ring(), k=ambient_space.weight(), ep=ambient_space.ep(), n=ambient_space.hecke_n())
         Module.__init__(self, base=ambient_space.base_ring())
@@ -208,7 +210,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._ambient_space = ambient_space
         self._basis = list(basis)
         # self(v) instead would somehow mess up the coercion model
-        self._gens = [self._element_constructor_(v) for v in basis]
+        self._gens = tuple(self._element_constructor_(v) for v in basis)
         self._module = ambient_space._module.submodule([ambient_space.coordinate_vector(v) for v in basis])
         # TODO: get the analytic type from the basis
         # self._analytic_type=self.AT(["quasi", "mero"])
@@ -306,7 +308,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         return self._basis
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the basis of ``self``.
 
@@ -316,11 +318,11 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF = ModularForms(n=6, k=20, ep=1)
             sage: subspace = MF.subspace([(MF.Delta()*MF.E4()^2).as_ring_element(), MF.gen(0)])
             sage: subspace.gens()
-            [q + 78*q^2 + 2781*q^3 + 59812*q^4 + O(q^5), 1 + 360360*q^4 + O(q^5)]
+            (q + 78*q^2 + 2781*q^3 + 59812*q^4 + O(q^5),
+             1 + 360360*q^4 + O(q^5))
             sage: subspace.gens()[0].parent() == subspace
             True
         """
-
         return self._gens
 
     @cached_method

@@ -1,18 +1,5 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
-
-Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
-environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :issue:`29446`)::
-
-    sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
-    sage: from subprocess import check_output
-    sage: environment = "sage.all"
-    sage: cmd = f"from {environment} import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
-    sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
-    True
 
 AUTHORS:
 
@@ -30,22 +17,23 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Optional
-import sage
 import os
 import socket
+import subprocess
 import sys
 import sysconfig
-from . import version
-from pathlib import Path
-import subprocess
+from typing import Optional
 
+from platformdirs import site_data_dir, user_data_dir
+
+import sage.config
+from sage import version
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
 
 
-def join(*args):
+def join(*args) -> str | None:
     """
     Join paths like ``os.path.join`` except that the result is ``None``
     if any of the components is ``None``.
@@ -140,14 +128,11 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
     else:
         value = os.environ.get(key)
     if value is None:
-        try:
-            import sage_conf
-            value = getattr(sage_conf, key, None)
-        except ImportError:
-            pass
-    # Try all fallbacks in order as long as we don't have a value
+        value = getattr(sage.config, key, None)
+
+    # Try all fallbacks in order as long as we don't have a non-empty value
     for f in fallbacks:
-        if value is not None:
+        if value not in (None, ""):
             break
         value = f
     SAGE_ENV[key] = value
@@ -156,7 +141,6 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
 
 # system info
-UNAME = var("UNAME", os.uname()[0])
 HOSTNAME = var("HOSTNAME", socket.gethostname())
 LOCAL_IDENTIFIER = var("LOCAL_IDENTIFIER", "{}.{}".format(HOSTNAME, os.getpid()))
 
@@ -166,20 +150,19 @@ SAGE_DATE = var("SAGE_DATE", version.date)
 SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
-SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
 SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
-SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 
 # prefix hierarchy where non-Python packages are installed
-SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
+# Sage-the-Distro sets SAGE_LOCAL; pure Python installs use the active prefix.
+SAGE_LOCAL = var("SAGE_LOCAL", os.path.abspath(sys.prefix))
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
 SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
 SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))  # deprecated
 
 # source tree of the Sage distribution
-SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
+SAGE_ROOT = var("SAGE_ROOT") or None
 SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"), SAGE_LIB)
 SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
@@ -191,20 +174,16 @@ SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
 SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
-DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
+DOT_SAGE = var("DOT_SAGE", os.path.expanduser("~/.sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
-# colon-separated search path for databases.
-SAGE_DATA_PATH = var("SAGE_DATA_PATH",
-                     os.pathsep.join(filter(None, [
-                         join(DOT_SAGE, "db"),
-                         join(SAGE_SHARE, "sagemath"),
-                         SAGE_SHARE,
-                         ])))
+# colon-separated search path for databases
+# should not be used directly; instead use sage_data_paths
+SAGE_DATA_PATH = var("SAGE_DATA_PATH")
 
 # database directories, the default is to search in SAGE_DATA_PATH
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
@@ -221,6 +200,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_PREFIX = var("MAXIMA_PREFIX")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -234,7 +214,6 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
@@ -243,10 +222,12 @@ SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
+OPENMP_LDFLAGS = OPENMP_CFLAGS+" "+var("OPENMP_CLIB", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
-# Make sure mpmath uses Sage types
-os.environ['MPMATH_SAGE'] = '1'
+# Make sure that mpmath < 1.4 does not try to use Sage types
+os.environ.pop('MPMATH_SAGE', None)
+os.environ['MPMATH_NOSAGE'] = '1'
 
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
@@ -256,12 +237,6 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
-
-# The semicolon-separated search path for GAP packages. It is passed
-# directly to GAP via the -l flag.
-GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
-                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                               join(SAGE_LOCAL, "share", "gap")]))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
@@ -273,70 +248,8 @@ if DOT_SAGE is not None and ' ' in DOT_SAGE:
     print("permissions to before you start sage.")
 
 
-def sage_include_directories(use_sources=False):
-    """
-    Return the list of include directories for compiling Sage extension modules.
-
-    INPUT:
-
-    - ``use_sources`` -- boolean (default: ``False``)
-
-    OUTPUT:
-
-    a list of include directories to be used to compile sage code
-    1. while building sage (use_sources='True')
-    2. while using sage (use_sources='False')
-
-    EXAMPLES:
-
-    Expected output while using Sage::
-
-        sage: import sage.env
-        sage: sage.env.sage_include_directories()
-        ['...',
-         '.../numpy/...core/include',
-         '.../include/python...']
-
-    To check that C/C++ files are correctly found, we verify that we can
-    always find the include file ``sage/cpython/cython_metaclass.h``,
-    with both values for ``use_sources``::
-
-        sage: file = os.path.join("sage", "cpython", "cython_metaclass.h")
-        sage: dirs = sage.env.sage_include_directories(use_sources=True)
-        sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
-        True
-        sage: dirs = sage.env.sage_include_directories(use_sources=False)
-        sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
-        True
-    """
-    if use_sources:
-        dirs = [SAGE_SRC]
-    else:
-        import sage
-        dirs = [os.path.dirname(directory)
-                for directory in sage.__path__]
-    try:
-        import numpy
-        dirs.append(numpy.get_include())
-    except ModuleNotFoundError:
-        pass
-
-    dirs.append(sysconfig.get_config_var('INCLUDEPY'))
-
-    return dirs
-
-
-def get_cblas_pc_module_name() -> str:
-    """
-    Return the name of the BLAS libraries to be used.
-    """
-    import pkgconfig
-    cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
-
-
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'ecl')
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'ecl')
 
 
 default_optional_modules = ('lapack',)
@@ -361,7 +274,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['CBLAS_CFLAGS',
+        ['ECL_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -379,7 +292,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython(                                               # optional - sage.misc.cython
         ....: '''
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
-        ....: #distutils: extra_link_args = OPENMP_CFLAGS
+        ....: #distutils: extra_link_args = OPENMP_LDFLAGS
         ....: from cython.parallel import prange
         ....:
         ....: cdef int i
@@ -393,8 +306,9 @@ def cython_aliases(required_modules=None, optional_modules=None):
         ....: ''')
         435
     """
-    import pkgconfig
     import itertools
+
+    import pkgconfig
 
     if required_modules is None:
         required_modules = default_required_modules
@@ -407,8 +321,6 @@ def cython_aliases(required_modules=None, optional_modules=None):
     for lib, required in itertools.chain(((lib, True) for lib in required_modules),
                                          ((lib, False) for lib in optional_modules)):
         var = lib.upper().replace("-", "") + "_"
-        if lib == 'cblas':
-            lib = get_cblas_pc_module_name()
         if lib == 'zlib':
             aliases[var + "CFLAGS"] = ""
             try:
@@ -460,8 +372,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     def uname_specific(name, value, alternative):
         if name in UNAME[0]:
             return value
-        else:
-            return alternative
+        return alternative
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])
@@ -492,5 +403,35 @@ def cython_aliases(required_modules=None, optional_modules=None):
     # OpenMP
     aliases["OPENMP_CFLAGS"] = OPENMP_CFLAGS.split()
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
+    aliases["OPENMP_LDFLAGS"] = OPENMP_LDFLAGS.split()
 
     return aliases
+
+
+def sage_data_paths(name: str = '') -> set[str]:
+    r"""
+    Search paths for general data files.
+
+    If specified, the subdirectory ``name`` is appended to the
+    directories. Otherwise, the directories are returned as is.
+
+    EXAMPLES::
+
+        sage: from sage.env import sage_data_paths
+        sage: sage_data_paths("cremona")
+        {'.../cremona'}
+    """
+    if not SAGE_DATA_PATH:
+        paths = {
+            join(DOT_SAGE, "db"),
+            join(SAGE_SHARE, "sagemath"),
+            SAGE_SHARE,
+        }
+        paths.add(user_data_dir("sagemath"))
+        paths.add(user_data_dir())
+        for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
+            paths.add(path)
+    else:
+        paths = set(SAGE_DATA_PATH.split(os.pathsep))
+
+    return {os.path.join(path, name) for path in paths if os.path.exists(path)}

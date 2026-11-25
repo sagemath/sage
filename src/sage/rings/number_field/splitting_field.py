@@ -22,7 +22,8 @@ from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.libs.pari.all import pari, PariError
+from sage.libs.pari import pari
+from cypari2.handle_error import PariError
 
 
 class SplittingFieldAbort(Exception):
@@ -54,7 +55,7 @@ class SplittingFieldAbort(Exception):
 class SplittingData:
     """
     A class to store data for internal use in :func:`splitting_field`.
-    It contains two attributes :attr:`pol` (polynomial), :attr:`dm`
+    It contains two attributes ``pol`` (polynomial), ``dm``
     (degree multiple), where ``pol`` is a PARI polynomial and
     ``dm`` a Sage :class:`Integer`.
 
@@ -599,5 +600,4 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     K = NumberField(Kpol, name)
     if map:
         return K, F.hom(Fgen, K)
-    else:
-        return K
+    return K

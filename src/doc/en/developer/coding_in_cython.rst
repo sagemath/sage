@@ -32,13 +32,13 @@ up-to-date information or check out the
 to get started immediately.
 
 
-Writing cython code in Sage
+Writing Cython code in Sage
 ===========================
 
 There are several ways to create and build Cython code in Sage.
 
-#. In the Sage Notebook, begin any cell with ``%cython``. When you
-   evaluate that cell,
+#. In the Sage notebook or the Sage command line, begin any cell with
+   a line containing ``%%cython``. When you evaluate that cell,
 
    #. It is saved to a file.
 
@@ -53,21 +53,20 @@ There are several ways to create and build Cython code in Sage.
       program that was compiled to create the ``.so`` file.
 
    #. A ``cpdef`` or ``def`` function, say ``testfunction``, defined in
-      a ``%cython`` cell in a worksheet can be imported and made available
-      in a different ``%cython`` cell within the same worksheet by
+      a ``%%cython`` cell in a worksheet can be imported and made available
+      in a different ``%%cython`` cell within the same worksheet by
       importing it as shown below::
 
-          %cython
+          %%cython
           from __main__ import testfunction
 
-#. Create an ``.spyx`` file and attach or load it from the command
-   line. This is similar to creating a ``%cython`` cell in the
-   notebook but works completely from the command line (and not from
-   the notebook).
+   Refer to :meth:`sage.repl.ipython_extension.SageMagics.cython`.
+
+#. Create an ``.spyx`` file and attach or load it
+   from the command line.
 
 #. Create a ``.pyx`` file and add it to the Sage library.
    Then run ``sage -b`` to rebuild Sage.
-
 
 Attaching or loading .spyx files
 ================================
@@ -157,10 +156,10 @@ Unpickling Cython code
 
 Pickling for Python classes and extension classes, such as Cython, is different.
 This is discussed in the `Python pickling documentation`_. For the unpickling of
-extension classes you need to write a :meth:`__reduce__` method which typically
+extension classes you need to write a :meth:`~object.__reduce__` method which typically
 returns a tuple ``(f, args, ...)`` such that ``f(*args)`` returns (a copy of) the
 original object. As an example, the following code snippet is the
-:meth:`~sage.rings.integer.Integer.__reduce__` method from
+:meth:`~object.__reduce__` method from
 :class:`sage.rings.integer.Integer`:
 
 .. CODE-BLOCK:: cython
@@ -210,4 +209,3 @@ it. We use 666 in the example below.
 
       from sage.misc.superseded import deprecation_cython
       deprecation_cython(666, "Do not use your computer to compute 1+1. Use your brain.")
-

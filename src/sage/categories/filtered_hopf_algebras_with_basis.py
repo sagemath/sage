@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Hopf algebras with basis
 """

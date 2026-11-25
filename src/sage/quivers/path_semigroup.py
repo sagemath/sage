@@ -18,18 +18,18 @@ Path Semigroups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.monoids import Monoids
+from sage.categories.semigroups import Semigroups
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.quivers.paths import QuiverPath
+from sage.quivers.representation import QuiverRep
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.semigroups import Semigroups
-from sage.categories.monoids import Monoids
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from .paths import QuiverPath
-from .representation import QuiverRep
 
 #########################
 # Some auxiliary function to create generating functions to count paths.
@@ -185,7 +185,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         names = ['e_{0}'.format(v) for v in Q.vertex_iterator()]
         names += list(self._labels)
         self._quiver = Q
-        if Q.num_verts() == 1:
+        if Q.n_vertices() == 1:
             cat = cat.join([cat, Monoids()])
         else:
             cat = cat.join([cat, Semigroups()])
@@ -204,7 +204,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: Q.path_semigroup()
             Monoid formed by the directed paths of Looped multi-digraph on 1 vertex
         """
-        if self._quiver.num_verts() != 1:
+        if self._quiver.n_vertices() != 1:
             return "Partial semigroup formed by the directed paths of {}".format(self._quiver)
         return "Monoid formed by the directed paths of {}".format(self._quiver)
 
@@ -260,7 +260,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # internally, directly using the backend to make things faster.
         sQ = self._quiver._backend
         oQ = other.quiver()._backend
-        if sQ.num_verts() < oQ.num_verts():
+        if sQ.n_vertices() < oQ.n_vertices():
             return False
         if any(not sQ.has_vertex(v) for v in oQ.iterator_verts(None)):
             return False
@@ -362,7 +362,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             path = []
         else:  # a list of edges
             if any(len(x) != 3 for x in data):
-                x = next((x for x in data if len(x) != 3))
+                x = next(x for x in data if len(x) != 3)
                 raise ValueError("each edge must be a triple, got {}".format(x))
             start = data[0][0]
             end = data[-1][1]
@@ -436,7 +436,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             7
         """
         Q = self._quiver
-        return Q.num_verts() + Q.num_edges()
+        return Q.n_vertices() + Q.n_edges()
 
     @cached_method
     def gen(self, i):
@@ -793,7 +793,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         Return a representation of the quiver.
 
         For more information see the
-        :class:`~sage.quivers.representation.QuiverRep` documentation.
+        :class:`~sage.quivers.representation.QuiverRep_generic` documentation.
 
         TESTS::
 
@@ -819,7 +819,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`; the simple
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the simple
         module at ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -861,7 +861,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`, the
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`, the
         indecomposable projective module at ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -901,7 +901,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        - :class:`~sage.quivers.representation.QuiverRep`, the indecomposable
+        - :class:`~sage.quivers.representation.QuiverRep_generic`, the indecomposable
           injective module at vertex ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -1020,7 +1020,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         .. NOTE::
 
             If there are multiple edges between two vertices, the method
-            :meth:`sage.graphs.digraph.all_paths` will not differentiate
+            :meth:`~sage.graphs.generic_graph.GenericGraph.all_paths` will not differentiate
             between them. But this method, which is not for digraphs but for
             their path semigroup associated with them, will.
 
@@ -1131,14 +1131,16 @@ class PathSemigroup(UniqueRepresentation, Parent):
             if len(path) == 1:
                 return [self.element_class(self, path[0], path[0], [])]
             paths = []
-            l = Q.edge_label(path[0], path[1])
-            if isinstance(l, str):
+            ell = Q.edge_label(path[0], path[1])
+            if isinstance(ell, str):
                 for b in _v_to_e(path[1:]):
-                    paths.append(self([(path[0], path[1], l)] + list(b), check=False))
+                    paths.append(self([(path[0], path[1], ell)]
+                                      + list(b), check=False))
             else:
-                for a in l:
+                for a in ell:
                     for b in _v_to_e(path[1:]):
-                        paths.append(self([(path[0], path[1], a)] + list(b), check=False))
+                        paths.append(self([(path[0], path[1], a)]
+                                          + list(b), check=False))
             return paths
 
         # For each vertex path we append the resulting edge paths

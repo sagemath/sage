@@ -31,7 +31,7 @@ patchdir="../patches"
 patch_subdir=""
 patch_strip="-p1"
 patch_args_sep=""
-patch_args="--no-backup-if-mismatch"
+patch_args=""
 
 while [[ $# > 0 ]]; do
     if [[ -z "$patch_args_sep" ]]; then

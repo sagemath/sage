@@ -5,17 +5,29 @@ PolyBoRi
 Created by Michael Brickenstein on 2008-10-31.
 Copyright 2008 The PolyBoRi Team
 """
-from zlib import compress, decompress
 import copyreg
+import os
+from zlib import compress, decompress
 
-from .pbori import if_then_else, BooleSet, CCuddNavigator
-from .PyPolyBoRi import (Polynomial, Ring, WeakRingRef, Monomial, Variable)
-from .gbcore import groebner_basis
+from sage.rings.polynomial.pbori.gbcore import groebner_basis
+from sage.rings.polynomial.pbori.pbori import (
+    BooleSet,
+    CCuddNavigator,
+    Monomial,
+    Polynomial,
+    Variable,
+    if_then_else,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import (
+    Ring,
+    WeakRingRef,
+)
 
 
-def to_fast_pickable(l):
+def to_fast_pickable(l) -> list:
     r"""
-    Convert a list of polynomials into a builtin Python value, which is fast pickable and compact.
+    Convert a list of polynomials into a builtin Python value,
+    which is fast pickable and compact.
 
     INPUT:
 
@@ -39,6 +51,7 @@ def to_fast_pickable(l):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import Ring, Polynomial
         sage: from sage.rings.polynomial.pbori.parallel import to_fast_pickable, from_fast_pickable
         sage: r = Ring(1000)
@@ -88,7 +101,7 @@ def to_fast_pickable(l):
 
     nodes_sorted = sorted(nodes, key=CCuddNavigator.value)
     nodes2i = {one: 1, zero: 0}
-    for (i, n) in enumerate(nodes_sorted):
+    for i, n in enumerate(nodes_sorted):
         nodes2i[n] = i + 2
 
     for i in range(len(nodes_sorted)):
@@ -100,7 +113,7 @@ def to_fast_pickable(l):
     return [[nodes2i[f.set().navigation()] for f in l], nodes_sorted]
 
 
-def from_fast_pickable(l, r):
+def from_fast_pickable(l, r) -> list:
     r"""
     Undo the operation :func:`to_fast_pickable`.
 
@@ -117,6 +130,7 @@ def from_fast_pickable(l, r):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import Ring
         sage: from sage.rings.polynomial.pbori.parallel import from_fast_pickable
         sage: r = Ring(1000)
@@ -141,10 +155,10 @@ def from_fast_pickable(l, r):
         [x(0)*x(1), 0, 1, x(3)]
     """
     i2poly = {0: r.zero(), 1: r.one()}
-    (indices, terms) = l
+    indices, terms = l
 
-    for i in reversed(range(len(terms))):
-        (v, t, e) = terms[i]
+    for i in range(len(terms) - 1, -1, - 1):
+        v, t, e = terms[i]
         t = i2poly[t]
         e = i2poly[e]
         terms[i] = if_then_else(v, t, e)
@@ -153,7 +167,7 @@ def from_fast_pickable(l, r):
 
 
 def _calculate_gb_with_keywords(args):
-    (I, kwds_as_single_arg) = args
+    I, kwds_as_single_arg = args
     return groebner_basis(I, **kwds_as_single_arg)
 
 
@@ -194,8 +208,7 @@ copyreg.pickle(Variable, pickle_var)
 
 
 def _decode_ring(code):
-    import os
-    (identifier, data, varnames, blocks) = code
+    identifier, data, varnames, blocks = code
 
     global _polybori_parallel_rings
     try:
@@ -203,9 +216,9 @@ def _decode_ring(code):
     except NameError:
         _polybori_parallel_rings = {}
 
-    for key in [key for key in _polybori_parallel_rings
-                if not _polybori_parallel_rings[key][0]()]:
-        del _polybori_parallel_rings[key]
+    for key in list(_polybori_parallel_rings):
+        if not _polybori_parallel_rings[key][0]():
+            del _polybori_parallel_rings[key]
 
     if identifier in _polybori_parallel_rings:
         ring = _polybori_parallel_rings[identifier][0]()
@@ -214,7 +227,7 @@ def _decode_ring(code):
 
     if not ring:
         varnames = decompress(varnames).split('\n')
-        (nvars, ordercode) = data
+        nvars, ordercode = data
         ring = Ring(nvars, ordercode, names=varnames, blocks=blocks)
         storage_data = (WeakRingRef(ring), code)
         _polybori_parallel_rings[identifier] = storage_data
@@ -224,7 +237,6 @@ def _decode_ring(code):
 
 
 def _encode_ring(ring):
-    import os
     identifier = (ring.id(), os.getpid())
 
     global _polybori_parallel_rings
@@ -233,9 +245,9 @@ def _encode_ring(ring):
     except NameError:
         _polybori_parallel_rings = {}
 
-    for key in [key for key in _polybori_parallel_rings
-                if not _polybori_parallel_rings[key][0]()]:
-        del _polybori_parallel_rings[key]
+    for key in list(_polybori_parallel_rings):
+        if not _polybori_parallel_rings[key][0]():
+            del _polybori_parallel_rings[key]
 
     if identifier in _polybori_parallel_rings:
         code = _polybori_parallel_rings[identifier][1]
@@ -274,6 +286,7 @@ def groebner_basis_first_finished(I, *l):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
         sage: r = Ring(1000)
         sage: ideal = [r.variable(1)*r.variable(2)+r.variable(2)+r.variable(1)]

@@ -69,19 +69,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modules.free_module_element import vector
+from sage.coding.ag_code_decoders import (
+    DifferentialAGCodeEncoder,
+    DifferentialAGCodeUniqueDecoder,
+    EvaluationAGCodeEncoder,
+    EvaluationAGCodeUniqueDecoder,
+)
+from sage.coding.linear_code import (
+    AbstractLinearCode,
+    LinearCodeGeneratorMatrixEncoder,
+    LinearCodeSyndromeDecoder,
+)
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module_element import vector
 from sage.rings.function_field.place import FunctionFieldPlace
-
-from .linear_code import (AbstractLinearCode,
-                          LinearCodeGeneratorMatrixEncoder,
-                          LinearCodeSyndromeDecoder)
-
-from .ag_code_decoders import (EvaluationAGCodeUniqueDecoder,
-                               EvaluationAGCodeEncoder,
-                               DifferentialAGCodeUniqueDecoder,
-                               DifferentialAGCodeEncoder)
 
 
 class AGCode(AbstractLinearCode):

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.libs.pari (for factorization)
 r"""
 Cubic Hecke Base Rings
 
@@ -105,8 +104,6 @@ def register_ring_hom(ring_hom):
         except ValueError:
             verbose('\nthe map:\n%s\ncannot be registered as conversion\n' % ring_hom)
 
-    return
-
 
 # -----------------------------------------------------------------------------
 # class for the Galois Group action on the generic extension ring corresponding
@@ -148,7 +145,7 @@ class GaloisGroupAction(Action):
         if not self.is_left():
             perm, pol = pol, perm
         pol_dict = {}
-        for key, value in pol.dict().items():
+        for key, value in pol.monomial_coefficients().items():
             newkey = [0] * len(key)
             for pos, k in enumerate(key):
                 newkey[perm(pos + 1) - 1] = k
@@ -275,7 +272,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             sage: ER = chbr.CubicHeckeExtensionRing('a, b, c')
             sage: ER._test_category()   # indirect doctest
         """
-        return None
+        return
 
     def __reduce__(self):
         r"""
@@ -383,12 +380,11 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             hom_cycl_gen = self.base_ring().hom([e3], codomain=e3.parent(), check=check, base_map=base_map)
             verbose("hom_cycl_gen %s" % hom_cycl_gen, level=2)
             return super().hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
-        else:
-            if base_map is None:
-                raise ValueError('number of images must be four (including a '
-                                 'third root of unity at first position) or a '
-                                 'base_map (on %s) must be given' % self.base_ring())
-            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+        if base_map is None:
+            raise ValueError('number of images must be four (including a '
+                             'third root of unity at first position) or a '
+                             'base_map (on %s) must be given' % self.base_ring())
+        return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
 
     def _an_element_(self):
         r"""
@@ -683,7 +679,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         if len(cyclotomic_roots) > 0:
             E3 = cyclotomic_roots[0]
-            verbose('thrird root of unity %s found in %s' % (E3, E3.parent()), level=2)
+            verbose('third root of unity %s found in %s' % (E3, E3.parent()), level=2)
 
         if E3 is None:
             raise RuntimeError('cannot find a ring containing a third root of unity for the this choice of cubic roots!')
@@ -1005,11 +1001,10 @@ class CubicHeckeRingOfDefinition(Localization):
         # Init of data used on demand
         # ----------------------------------------------------------------------
         self._mirror = None
-        return
 
-    ############################################################################
+    # ########################################################################
     # overloaded inherited methods
-    ############################################################################
+    # ########################################################################
     def _defining_names(self):
         r"""
         Return the generators of ``self`` as the defining names.
@@ -1322,6 +1317,7 @@ class CubicHeckeRingOfDefinition(Localization):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.knotinfo import KnotInfo
             sage: CHA2 = algebras.CubicHecke(2)
             sage: K5_1 = KnotInfo.K5_1.link()
@@ -1337,7 +1333,7 @@ class CubicHeckeRingOfDefinition(Localization):
                       From: Multivariate Polynomial Ring in u, v, w, s
                             over Integer Ring localized at (s, w, v, u)
                       To:   Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       Defn: u |--> -M + 1
                             v |--> -M + 1
                             w |--> 1
@@ -1345,7 +1341,7 @@ class CubicHeckeRingOfDefinition(Localization):
                     then
                       Conversion map:
                       From: Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       To:   Multivariate Laurent Polynomial Ring in L, M
                             over Integer Ring
             sage: sup = mt.support()
@@ -1356,7 +1352,7 @@ class CubicHeckeRingOfDefinition(Localization):
             True
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.knots.link import Link
         H = Link([]).homfly_polynomial().parent()
         L, M = H.gens()
@@ -1407,7 +1403,7 @@ class CubicHeckeRingOfDefinition(Localization):
             True
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.knots.knotinfo import KnotInfo
         K = KnotInfo.L2a1_1.kauffman_polynomial().parent()
         a, z = K.gens()
@@ -1459,7 +1455,7 @@ class CubicHeckeRingOfDefinition(Localization):
             + t1^2 - t0 - t1 + 1
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         L = LaurentPolynomialRing(ZZ, 't0, t1')
         t0, t1 = L.gens()

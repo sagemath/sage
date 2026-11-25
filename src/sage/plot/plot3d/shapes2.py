@@ -7,7 +7,7 @@ AUTHORS:
 
 - William Stein and Robert Bradshaw (2008-01): Many improvements
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 William Stein <wstein@gmail.com>
 #      Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
@@ -20,24 +20,21 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
-from . import shapes
 
-from .base import PrimitiveObject, point_list_bounding_box
-
-from sage.rings.real_double import RDF
-from sage.modules.free_module_element import vector
-from sage.misc.decorators import options, rename_keyword
 from sage.arith.srange import srange
+from sage.misc.decorators import options, rename_keyword
+from sage.modules.free_module_element import vector
+from sage.plot.plot3d import shapes
+from sage.plot.plot3d.base import PrimitiveObject, point_list_bounding_box
+from sage.plot.plot3d.shapes import Sphere, Text
+from sage.plot.plot3d.texture import Texture
+from sage.rings.real_double import RDF
 
-from .texture import Texture
-
-TACHYON_PIXEL = 1/200.0
-
-from .shapes import Text, Sphere
+TACHYON_PIXEL = 1 / 200.0
 
 
 @rename_keyword(alpha='opacity')
@@ -179,19 +176,18 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         L._set_extra_kwds(kwds)
         L._extra_kwds['thickness'] = thickness  # remove this line if json_repr is defined
         return L
+    v = []
+    if 'texture' in kwds:
+        kwds = kwds.copy()
+        texture = kwds.pop('texture')
     else:
-        v = []
-        if 'texture' in kwds:
-            kwds = kwds.copy()
-            texture = kwds.pop('texture')
-        else:
-            texture = Texture(kwds)
-        for i in range(len(points) - 1):
-            line = shapes.arrow3d if i == len(points)-2 and arrow_head else shapes.LineSegment
-            v.append(line(points[i], points[i+1], texture=texture, radius=radius, **kwds))
-        w = sum(v)
-        w._set_extra_kwds(kwds)
-        return w
+        texture = Texture(kwds)
+    for i in range(len(points) - 1):
+        line = shapes.arrow3d if i == len(points)-2 and arrow_head else shapes.LineSegment
+        v.append(line(points[i], points[i+1], texture=texture, radius=radius, **kwds))
+    w = sum(v)
+    w._set_extra_kwds(kwds)
+    return w
 
 
 @rename_keyword(alpha='opacity')
@@ -285,9 +281,10 @@ def bezier3d(path, **options):
         sage: bezier3d(p3d)                                                             # needs sage.symbolic
         Graphics3d Object
     """
-    from . import parametric_plot3d as P3D
     from sage.modules.free_module_element import vector
     from sage.symbolic.ring import SR
+
+    from . import parametric_plot3d as P3D
 
     p0 = vector(path[0][-1])
     t = SR.var('t')
@@ -378,7 +375,8 @@ def polygons3d(faces, points, **options):
     """
     Draw the union of several polygons in 3d.
 
-    Useful to plot a polyhedron as just one :class:`IndexFaceSet`.
+    Useful to plot a polyhedron as just one
+    :class:`~sage.plot.plot3d.index_face_set.IndexFaceSet`.
 
     INPUT:
 
@@ -516,10 +514,12 @@ def frame_labels(lower_left, upper_right,
     # Helper function for formatting the frame labels
     from math import log
     log10 = log(10)
-    nd = lambda a: int(log(a)/log10)
+
+    def nd(a):
+        return int(log(a) / log10)
 
     def fmt_string(a):
-        b = a/2.0
+        b = a / 2.0
         if b >= 1:
             return "%.1f"
         n = max(0, 2 - nd(a/2.0))
@@ -527,7 +527,7 @@ def frame_labels(lower_left, upper_right,
 
     # Slightly faster than mean for this situation
     def avg(a, b):
-        return (a+b)/2.0
+        return (a + b) / 2.0
 
     color = (0.3, 0.3, 0.3)
 
@@ -722,8 +722,8 @@ def ruler_frame(lower_left, upper_right, ticks=4, sub_ticks=4, **kwds):
         sphinx_plot(ruler_frame([1,2,3],vector([2,3,4]),ticks=6, sub_ticks=2, color='red'))
     """
     return ruler(lower_left, (upper_right[0], lower_left[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
-         + ruler(lower_left, (lower_left[0], upper_right[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
-         + ruler(lower_left, (lower_left[0], lower_left[1], upper_right[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds)
+        + ruler(lower_left, (lower_left[0], upper_right[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
+        + ruler(lower_left, (lower_left[0], lower_left[1], upper_right[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds)
 
 
 ###########################
@@ -1143,8 +1143,8 @@ class Line(PrimitiveObject):
                 cmd = ('FCylinder base {pos[0]!r} {pos[1]!r} {pos[2]!r} '
                        'apex {apex[0]!r} {apex[1]!r} {apex[2]!r} '
                        'rad {radius!r} {texture}').format(
-                               pos=(px, py, pz), apex=(x, y, z), radius=radius,
-                               texture=self.texture.id)
+                           pos=(px, py, pz), apex=(x, y, z), radius=radius,
+                           texture=self.texture.id)
                 cmds.append(cmd)
             px, py, pz = x, y, z
         return cmds
@@ -1262,47 +1262,45 @@ class Line(PrimitiveObject):
             # corners everywhere
             return self.points[:-1]
 
-        elif corner_cutoff <= -1:
+        if corner_cutoff <= -1:
             # no corners
             if max_len is not None:
                 # forced by the maximal number of consecutive smooth points
                 return self.points[:-1][::max_len - 1]
-            else:
-                return [self.points[0]]
+            return [self.points[0]]
 
-        else:
-            if max_len is None:
-                max_len = len(self.points) + 1
-            count = 2
-            # ... -- prev -- cur -- next -- ...
-            cur = self.points[0]
-            next = self.points[1]
+        if max_len is None:
+            max_len = len(self.points) + 1
+        count = 2
+        # ... -- prev -- cur -- next -- ...
+        cur = self.points[0]
+        next = self.points[1]
+        next_dir = [next[i] - cur[i] for i in range(3)]
+        corners = [cur]
+        cur, prev_dir = next, next_dir
+
+        # quicker than making them vectors first
+        def dot(x0_y0_z0, x1_y1_z1):
+            (x0, y0, z0) = x0_y0_z0
+            (x1, y1, z1) = x1_y1_z1
+            return x0 * x1 + y0 * y1 + z0 * z1
+
+        for next in self.points[2:]:
+            if next == cur:
+                corners.append(cur)
+                cur = next
+                count = 1
+                continue
             next_dir = [next[i] - cur[i] for i in range(3)]
-            corners = [cur]
+            cos_angle = (dot(prev_dir, next_dir) /
+                         math.sqrt(dot(prev_dir, prev_dir) *
+                                   dot(next_dir, next_dir)))
+            if cos_angle <= corner_cutoff or count > max_len - 1:
+                corners.append(cur)
+                count = 1
             cur, prev_dir = next, next_dir
-
-            # quicker than making them vectors first
-            def dot(x0_y0_z0, x1_y1_z1):
-                (x0, y0, z0) = x0_y0_z0
-                (x1, y1, z1) = x1_y1_z1
-                return x0 * x1 + y0 * y1 + z0 * z1
-
-            for next in self.points[2:]:
-                if next == cur:
-                    corners.append(cur)
-                    cur = next
-                    count = 1
-                    continue
-                next_dir = [next[i] - cur[i] for i in range(3)]
-                cos_angle = (dot(prev_dir, next_dir) /
-                             math.sqrt(dot(prev_dir, prev_dir) *
-                                       dot(next_dir, next_dir)))
-                if cos_angle <= corner_cutoff or count > max_len - 1:
-                    corners.append(cur)
-                    count = 1
-                cur, prev_dir = next, next_dir
-                count += 1
-            return corners
+            count += 1
+        return corners
 
     def threejs_repr(self, render_params):
         r"""

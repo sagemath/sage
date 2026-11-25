@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -71,6 +70,8 @@ class TestSuite:
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
 
     The different test methods can be called independently::
@@ -93,9 +94,9 @@ class TestSuite:
 
     Adding a new test boils down to adding a new method in the class
     of the object or any super class (e.g. in a category). This method
-    should use the utility :meth:`._tester` to handle standard options
+    should use the utility ``._tester`` to handle standard options
     and report test failures. See the code of
-    :meth:`._test_an_element` for an example. Note: Python's testunit
+    ``._test_an_element`` for an example. Note: Python's testunit
     convention is to look for methods called ``.test*``; we use instead
     ``._test_*`` so as not to pollute the object's interface.
 
@@ -115,7 +116,7 @@ class TestSuite:
         - Allow for customized behavior in case of failing assertion
           (warning, error, statistic accounting).
           This involves reimplementing the methods fail / failIf / ...
-          of unittest.TestCase in InstanceTester
+          of :class:`TestCase <unittest.TestCase>` in InstanceTester
 
         - Don't catch the exceptions if ``TestSuite(..).run()`` is called
           under the debugger, or with ``%pdb`` on (how to detect this? see
@@ -229,10 +230,9 @@ class TestSuite:
             AssertionError: None
             ------------------------------------------------------------
             Failure in _test_pickling:
-            Traceback (most recent call last):
-              ...
-            ...PicklingError: Can't pickle <class '__main__.Blah'>: attribute
-            lookup ...Blah... failed
+            ...
+            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+            ...
             ------------------------------------------------------------
             The following tests failed: _test_b, _test_d, _test_pickling
 
@@ -253,15 +253,13 @@ class TestSuite:
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . fail
-            Traceback (most recent call last):
-              ...
-            ...PicklingError: Can't pickle <class '__main__.Blah'>: attribute
-            lookup ...Blah... failed
+            ...
+            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+            ...
             ------------------------------------------------------------
             The following tests failed: _test_b, _test_d, _test_pickling
 
-            File "/opt/sage/local/lib/python/site-packages/sage/misc/sage_unittest.py", line 183, in run
-            test_method(tester = tester)
+            ...
 
         The ``catch=False`` option prevents ``TestSuite`` from
         catching exceptions::
@@ -349,7 +347,7 @@ def instance_tester(instance, tester=None, **options):
         AssertionError: 1 != 0
 
     The available assertion testing facilities are the same as in
-    :class:`unittest.TestCase` [UNITTEST]_, which see (actually, by a slight
+    :class:`TestCase <unittest.TestCase>` [UNITTEST]_, which see (actually, by a slight
     abuse, tester is currently an instance of this class).
 
     TESTS::
@@ -359,10 +357,9 @@ def instance_tester(instance, tester=None, **options):
     """
     if tester is None:
         return InstanceTester(instance, **options)
-    else:
-        assert not options
-        assert tester._instance is instance
-        return tester
+    assert not options
+    assert tester._instance is instance
+    return tester
 
 
 class InstanceTester(unittest.TestCase):
@@ -414,9 +411,9 @@ class InstanceTester(unittest.TestCase):
 
     def runTest(self):
         """
-        Trivial implementation of :meth:`unittest.TestCase.runTest` to
-        please the super class :class:`TestCase`. That's the price to
-        pay for abusively inheriting from it.
+        Trivial implementation of the default ``unittest.TestCase.runTest()``
+        method expected by :class:`TestCase <unittest.TestCase>`. That's the
+        price to pay for abusively inheriting from it.
 
         EXAMPLES::
 

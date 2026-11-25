@@ -88,8 +88,8 @@ class GaussValuationFactory(UniqueFactory):
             ...
             ValueError: the domain of v must be the base ring of domain but 2-adic valuation is not defined over Integer Ring but over Rational Field
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(domain, PolynomialRing_general):
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(domain, PolynomialRing_generic):
             raise TypeError("GaussValuations can only be created over polynomial rings but %r is not a polynomial ring" % (domain,))
         if not domain.ngens() == 1:
             raise NotImplementedError("domain must be univariate but %r is not univariate" % (domain,))
@@ -97,7 +97,7 @@ class GaussValuationFactory(UniqueFactory):
         if v is None:
             v = domain.base_ring().valuation()
 
-        if not v.domain() is domain.base_ring():
+        if v.domain() is not domain.base_ring():
             raise ValueError("the domain of v must be the base ring of domain but %r is not defined over %r but over %r" % (v, domain.base_ring(), v.domain()))
         if not v.is_discrete_valuation():
             raise ValueError("v must be a discrete valuation but %r is not" % (v,))
@@ -150,7 +150,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, v):
+    def __init__(self, parent, v) -> None:
         """
         TESTS::
 
@@ -316,7 +316,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(2,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -364,7 +363,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -436,7 +434,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: v.equivalence_unit(2)
@@ -470,7 +467,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -487,7 +483,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -509,8 +504,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: w.change_domain(QQ['x'])
             Gauss valuation induced by 2-adic valuation
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic) and ring.ngens() == 1:
             base_valuation = self._base_valuation.change_domain(ring.base_ring())
             return GaussValuation(self.domain().change_ring(ring.base_ring()), base_valuation)
         return super().change_domain(ring)
@@ -527,8 +522,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: w.extensions(GaussianIntegers()['x'])                                 # needs sage.rings.number_field
             [Gauss valuation induced by 2-adic valuation]
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic) and ring.ngens() == 1:
             if self.domain().is_subring(ring):
                 return [GaussValuation(ring, w) for w in self._base_valuation.extensions(ring.base_ring())]
         return super().extensions(ring)
@@ -547,8 +542,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         """
         if ring.is_subring(self.domain().base_ring()):
             return self._base_valuation.restriction(ring)
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic) and ring.ngens() == 1:
             if ring.base().is_subring(self.domain().base()):
                 return GaussValuation(ring, self._base_valuation.restriction(ring.base()))
         return super().restriction(ring)
@@ -559,7 +554,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -575,7 +569,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -733,13 +726,21 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: f = x^10/2 + 1
             sage: v.simplify(f)
             (2^-1 + O(2^4))*x^10 + 1 + O(2^5)
+
+        TESTS::
+
+            sage: R.<u> = Qq(4, 5)
+            sage: S.<x> = R[]
+            sage: v = GaussValuation(S)
+            sage: f = x^10/2 + 1
+            sage: v.simplify(f, size_heuristic_bound=1)
+            (2^-1 + O(2^4))*x^10
         """
         f = self.domain().coerce(f)
 
@@ -752,7 +753,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         if error is None:
             # if the caller was sure that we should simplify, then we should try to do the best simplification possible
-            error = self(f) if force else self.uppper_bound(f)
+            error = self(f) if force else self.upper_bound(f)
 
         return f.map_coefficients(lambda c: self._base_valuation.simplify(c, error=error, force=force))
 
@@ -765,7 +766,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -793,7 +793,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -807,5 +806,4 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if not coefficients:
             from sage.rings.infinity import infinity
             return infinity
-        else:
-            return self._base_valuation.upper_bound(coefficients[-1])
+        return self._base_valuation.upper_bound(coefficients[-1])

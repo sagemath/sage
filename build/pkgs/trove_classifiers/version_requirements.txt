@@ -1,1 +1,1 @@
-trove-classifiers
+trove-classifiers >= 2025.2

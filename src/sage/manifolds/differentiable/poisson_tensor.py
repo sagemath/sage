@@ -16,16 +16,20 @@ AUTHORS:
 # *****************************************************************************
 
 
+from __future__ import annotations
+from typing import Optional, Union, TYPE_CHECKING
+
 from sage.manifolds.differentiable.multivectorfield import (
     MultivectorField,
     MultivectorFieldParal,
 )
-from sage.manifolds.differentiable.diff_form import DiffForm
-from sage.manifolds.differentiable.vectorfield import VectorField
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
-from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from typing import Optional, Union
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from sage.manifolds.differentiable.diff_form import DiffForm
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.differentiable.scalarfield import DiffScalarField
+    from sage.manifolds.differentiable.vectorfield import VectorField
 
 
 class PoissonTensorField(MultivectorField):

@@ -237,7 +237,7 @@ cdef class ECModularSymbol:
             sage: M = ECModularSymbol(E, 0); M
             Modular symbol with sign 0 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
         """
-        return "Modular symbol with sign %s over Rational Field attached to %s"%(self.sign, self._E)
+        return "Modular symbol with sign %s over Rational Field attached to %s" % (self.sign, self._E)
 
     def __call__(self, r, sign=None, base_at_infinity=True):
         r"""
@@ -319,7 +319,9 @@ cdef class ECModularSymbol:
             ...
             ValueError: impossible to evaluate both symbols on a plus space
 
-        TESTS (see :issue:`11211`)::
+        TESTS:
+
+        See :issue:`11211`::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
@@ -372,11 +374,10 @@ cdef class ECModularSymbol:
 
         if sign == +1:
             return Rational((rational_num(_sp), rational_den(_sp)))
-        elif sign == -1:
+        if sign == -1:
             return Rational((rational_num(_sm), rational_den(_sm)))
-        else:
-            return [Rational((rational_num(_sp), rational_den(_sp))),
-                    Rational((rational_num(_sm), rational_den(_sm)))]
+        return [Rational((rational_num(_sp), rational_den(_sp))),
+                Rational((rational_num(_sm), rational_den(_sm)))]
 
     def __reduce__(self):
         """

@@ -99,8 +99,7 @@ Sageのクラス階層と圏の階層構造にはそれなりに類似が見ら�
     sage: Rings()
     Category of rings
     sage: ZZ.category()
-    Join of Category of Dedekind domains
-        and Category of euclidean domains
+    Join of Category of euclidean domains
         and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
@@ -252,6 +251,8 @@ Sageが宗とするのは歩み寄りだ．
     x
     sage: R2(y)
     y
+    sage: R2.coerce(y)
+    y
 
 
 変数名を維持する環準同形写像が定義できなければ，型強制も成立しない．
@@ -268,6 +269,12 @@ Sageが宗とするのは歩み寄りだ．
     z
     sage: R3(y)
     x
+    sage: R3.coerce(y)
+    Traceback (most recent call last):
+    ...
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 ところが，そうした順序依存の変換は型強制としては満足すべきものにならない．
 ``ZZ['x','y']`` から ``ZZ['y','x']`` への変数名維持写像と ``ZZ['y','x']`` から ``ZZ['a','b']`` への順序依存写像を合成すると，結果は変数名も順序も保存しない写像となって無矛盾性が破れてしまうからである．

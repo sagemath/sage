@@ -1,10 +1,9 @@
-# sage.doctest: needs sage.libs.singular
 r"""
 Helper Functions For Freeness Of Hyperplane Arrangements
 
 This contains the algorithms to check for freeness of a hyperplane
 arrangement. See
-:meth:`sage.geometry.hyperplane_arrangement.HyperplaneArrangementElement.is_free`
+:meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.is_free`
 for details.
 
 .. NOTE::
@@ -25,6 +24,7 @@ for details.
 
 from sage.matrix.constructor import matrix
 import sage.libs.singular.function_factory as fun_fact
+
 
 def less_generators(X):
     """
@@ -62,6 +62,7 @@ def less_generators(X):
             return X
         Kd = set(range(X.nrows())).difference(K)
         X = X.matrix_from_rows(sorted(Kd))
+
 
 def construct_free_chain(A):
     """

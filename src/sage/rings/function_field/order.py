@@ -30,7 +30,6 @@ is called an infinite order. Thus a function field has one maximal finite order
 `O` and one maximal infinite order `O_\infty`. There are other non-maximal
 orders such as equation orders::
 
-    sage: # needs sage.rings.function_field
     sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]
     sage: L.<y> = K.extension(y^3 - y - x)
     sage: O = L.equation_order()
@@ -49,7 +48,6 @@ function field in an extension::
     sage: p.is_prime()                                                                  # needs sage.libs.pari
     True
 
-    sage: # needs sage.rings.function_field
     sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
     sage: O = F.maximal_order()
     sage: O.decomposition(p)
@@ -58,7 +56,6 @@ function field in an extension::
      (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
 
-    sage: # needs sage.rings.function_field
     sage: p1, relative_degree,ramification_index = O.decomposition(p)[1]
     sage: p1.parent()
     Monoid of ideals of Maximal order of Function field in y
@@ -71,7 +68,6 @@ function field in an extension::
 When the base constant field is the algebraic field `\QQbar`, the only prime ideals
 of the maximal order of the rational function field are linear polynomials. ::
 
-    sage: # needs sage.rings.function_field sage.rings.number_field
     sage: K.<x> = FunctionField(QQbar)
     sage: R.<y> = K[]
     sage: L.<y> = K.extension(y^2 - (x^3-x^2))
@@ -112,10 +108,14 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
+from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
-from .ideal import IdealMonoid, FunctionFieldIdeal
+from .ideal import FunctionFieldIdeal, IdealMonoid
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
@@ -132,7 +132,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         sage: F.maximal_order()
         Maximal order of Rational function field in y over Rational Field
     """
-    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None):
+    def __init__(self, field, ideal_class=FunctionFieldIdeal, category=None) -> None:
         """
         Initialize.
 
@@ -145,10 +145,10 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         category = IntegralDomains().or_subcategory(category).Infinite()
         Parent.__init__(self, category=category, facade=field)
 
-        self._ideal_class = ideal_class # element class for parent ideal monoid
+        self._ideal_class_ = ideal_class  # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self, proof=True):
+    def is_field(self, proof: bool = True) -> bool:
         """
         Return ``False`` since orders are never fields.
 
@@ -159,7 +159,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` since orders in function fields are Noetherian.
 
@@ -183,7 +183,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
 
     fraction_field = function_field
 
-    def is_subring(self, other):
+    def is_subring(self, other) -> bool:
         """
         Return ``True`` if the order is a subring of the other order.
 
@@ -200,8 +200,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         if other is self._field:
             return True
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def ideal_monoid(self):
         """
@@ -219,7 +218,7 @@ class FunctionFieldOrder(FunctionFieldOrder_base):
     """
     Base class for orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -235,7 +234,7 @@ class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
     """
     Base class for infinite orders in function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -249,7 +248,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
     """
     Base class of maximal orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the order.
 
@@ -260,12 +259,24 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
         """
         return "Maximal order of %s" % (self.function_field(),)
 
+    @cached_method
+    def unit_ideal(self):
+        """
+        Return ``self.ideal(1)``. We cache this to avoid overhead because it is used frequently.
+
+        EXAMPLES::
+
+            sage: FunctionField(QQ,'y').maximal_order().unit_ideal()
+            Ideal (1) of Maximal order of Rational function field in y over Rational Field
+        """
+        return self.ideal(1)
+
 
 class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionFieldOrderInfinite):
     """
     Base class of maximal infinite orders of function fields.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

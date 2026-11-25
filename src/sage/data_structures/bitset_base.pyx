@@ -2,14 +2,14 @@
 Few functions from ``bitset_base.pxd`` that are not inlined.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #     Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cdef char* bitset_chars(char* s, fused_bitset_t bits, char zero=c'0', char one=c'1') noexcept:
     """
@@ -49,17 +49,14 @@ cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1')
 
 cdef bitset_string(fused_bitset_t bits):
     """
-    Return a python string representing the bitset.
+    Return a Python string representing the bitset.
     """
     return bytes_to_str(bitset_bytes(bits))
 
 cdef bitset_bytes(fused_bitset_t bits):
     """
-    Return a python bytes string representing the bitset.
-
-    On Python 2 this is equivalent to bitset_string.
+    Return a Python bytes object representing the bitset.
     """
-
     cdef char* s = bitset_chars(NULL, bits)
     cdef object py_s
     py_s = s

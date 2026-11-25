@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-`k`-Schur Functions
+`k`-Schur functions
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Jason Bandlow <jbandlow@gmail.com>,
@@ -17,29 +17,28 @@
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.categories.realizations import Realizations, Category_realization_of_parent
-from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
-from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
+from sage.arith.srange import srange
 from sage.categories.graded_coalgebras import GradedCoalgebras
 from sage.categories.graded_coalgebras_with_basis import GradedCoalgebrasWithBasis
-from sage.categories.tensor import tensor
-from sage.combinat.partition import Partition, Partitions
-from sage.combinat.sf.sf import SymmetricFunctions
-from sage.categories.morphism import SetMorphism
-from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 from sage.categories.homset import Hom
-from sage.misc.cachefunc import cached_method
+from sage.categories.morphism import SetMorphism
+from sage.categories.realizations import Category_realization_of_parent, Realizations
+from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.misc.constant_function import ConstantFunction
-from sage.matrix.constructor import matrix
-from sage.arith.srange import srange
-from sage.combinat.partition import Partitions_all_bounded
-from sage.misc.misc_c import prod
+from sage.combinat.partition import Partition, Partitions, Partitions_all_bounded
+from sage.combinat.sf.sf import SymmetricFunctions
 from sage.cpython.getattr import raw_getattr
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.misc_c import prod
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class KBoundedSubspace(UniqueRepresentation, Parent):
@@ -177,8 +176,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         if self.t == 1:
             return [self.kschur(), self.ksplit(), self.khomogeneous(),
                 self.K_kschur()]
-        else:
-            return [self.kschur(), self.ksplit()]
+        return [self.kschur(), self.ksplit()]
 
     def kschur(self):
         r"""
@@ -229,11 +227,9 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [Morse11] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-           Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+        - [Morse11]_
 
-        .. [LamSchillingShimozono10] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-           Compositio Math. 146 (2010), 811-852.
+        - [LamSchillingShimozono10]_
 
         EXAMPLES::
 
@@ -345,8 +341,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             if x in R:
                 if x == 0:
                     return self.zero()
-                else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             # x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
@@ -481,7 +476,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             return matrix([[other(self[row]).coefficient(col) for col in Q]
                            for row in P])
 
-        def an_element(self):
+        def _an_element_(self):
             r"""
             Return an element of ``self``.
 
@@ -1127,7 +1122,7 @@ class kSchur(CombinatorialFreeModule):
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
+        If `t=1`, then the product calls ``_product_on_basis_via_rectangles``.
 
         INPUT:
 
@@ -1407,11 +1402,9 @@ class K_kSchur(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [Morse2011] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-        Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+    - [Morse2011]_
 
-    .. [LamSchillingShimozono2010] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-        Compositio Math. 146 (2010), 811-852.
+    - [LamSchillingShimozono2010]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1497,8 +1490,8 @@ class K_kSchur(CombinatorialFreeModule):
             sage: g._homogeneous_generators_noncommutative_variables_zero_Hecke(0)
             1
         """
-        from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
+        from sage.combinat.root_system.weyl_group import WeylGroup
         W = WeylGroup(['A', self.k, 1])
         H = IwahoriHeckeAlgebra(W, 0, base_ring=self.base_ring()).T()
         Hgens = H.algebra_generators()

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Discrete Valuation Rings (DVR) and Fields (DVF)
 """
@@ -175,8 +174,7 @@ class DiscreteValuationRings(Category_singleton):
             other = P(other)
             if self.valuation() >= other.valuation():
                 return P(self / other), P.zero()
-            else:
-                return P.zero(), self
+            return P.zero(), self
 
         def is_unit(self):
             """
@@ -196,7 +194,7 @@ class DiscreteValuationRings(Category_singleton):
             """
             return self.valuation() == 0
 
-        def gcd(self,other):
+        def gcd(self, other):
             """
             Return the greatest common divisor of ``self`` and ``other``,
             normalized so that it is a power of the distinguished
@@ -206,10 +204,9 @@ class DiscreteValuationRings(Category_singleton):
             val = min(self.valuation(), other.valuation())
             if val is Infinity:
                 return self.parent()(0)
-            else:
-                return self.parent().uniformizer() ** val
+            return self.parent().uniformizer() ** val
 
-        def lcm(self,other):
+        def lcm(self, other):
             """
             Return the least common multiple of ``self`` and ``other``,
             normalized so that it is a power of the distinguished
@@ -219,8 +216,7 @@ class DiscreteValuationRings(Category_singleton):
             val = max(self.valuation(), other.valuation())
             if val is Infinity:
                 return self.parent()(0)
-            else:
-                return self.parent().uniformizer() ** val
+            return self.parent().uniformizer() ** val
 
 
 class DiscreteValuationFields(Category_singleton):

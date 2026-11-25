@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
@@ -51,7 +50,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         """
         Return the one of the group, which index the one of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -66,7 +66,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, g1, g2):
         r"""
         Product, on basis elements, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         The product of two basis elements is induced by the product of
         the corresponding elements of the group.
@@ -74,7 +74,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: a*b
             (1,2)
             sage: A.product_on_basis(a, b)
@@ -100,14 +100,15 @@ class MyGroupAlgebra(CombinatorialFreeModule):
 
     def coproduct_on_basis(self, g):
         r"""
-        Coproduct, on basis elements, as per :meth:`HopfAlgebrasWithBasis.ParentMethods.coproduct_on_basis`.
+        Coproduct, on basis elements, as per
+        :meth:`sage.categories.coalgebras_with_basis.CoalgebrasWithBasis.ParentMethods.coproduct_on_basis`.
 
         The basis elements are group like: `\Delta(g) = g \otimes g`.
 
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.coproduct_on_basis(a)
             B[(1,2,3)] # B[(1,2,3)]
         """
@@ -116,14 +117,15 @@ class MyGroupAlgebra(CombinatorialFreeModule):
 
     def counit_on_basis(self, g):
         r"""
-        Counit, on basis elements, as per :meth:`HopfAlgebrasWithBasis.ParentMethods.counit_on_basis`.
+        Counit, on basis elements, as per
+        :meth:`sage.categories.coalgebras_with_basis.CoalgebrasWithBasis.ParentMethods.counit_on_basis`.
 
         The counit on the basis elements is 1.
 
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.counit_on_basis(a)
             1
         """
@@ -138,7 +140,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = HopfAlgebrasWithBasis(QQ).example()
-            sage: (a, b) = A._group.gens()
+            sage: a, b = A._group.gens()
             sage: A.antipode_on_basis(a)
             B[(1,3,2)]
         """

@@ -38,13 +38,10 @@ documentation for the \sage interface rather than for QEPCAD.  As
 such, it does not cover several issues that are very important to use
 QEPCAD efficiently, such as variable ordering, the efficient use of
 the alternate quantifiers and ``_root_`` expressions, the
-``measure-zero-error`` command, etc.  For more information on
-QEPCAD, see the online documentation at
-\url{http://www.cs.usna.edu/~qepcad/B/QEPCAD.html} and Chris Brown's
-tutorial handout and slides from
-\url{http://www.cs.usna.edu/~wcbrown/research/ISSAC04/Tutorial.html}.
-(Several of the examples in this documentation came from these
-sources.)
+``measure-zero-error`` command, etc.  For more information on QEPCAD,
+see the `online documentation <https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
+and Chris Brown's `tutorial handout <https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
+(Several of the examples in this documentation came from these sources.)
 
 The examples below require that the optional qepcad package is installed.
 
@@ -396,7 +393,7 @@ symbolically and numerically.
 
 For programmatic access to cells, we have defined a \sage wrapper class
 :class:`QepcadCell`.  These cells can be created with the
-:meth:`cell` method; for example::
+:meth:`~sage.interfaces.qepcad.Qepcad.cell` method; for example::
 
     sage: c = qe.cell(3, 4); c                       # optional - qepcad
     QEPCAD cell (3, 4)
@@ -422,10 +419,12 @@ as \sage algebraic real numbers. ::
     sage: c.sample_point_dict()                      # optional - qepcad
     {'x': 0, 'y': 1.732050807568878?}
 
-We have seen that we can get cells using the :meth:`cell` method.
+We have seen that we can get cells using the
+:meth:`~sage.interfaces.qepcad.Qepcad.cell` method.
 There are several QEPCAD commands that print lists of cells; we can
-also get cells using the :meth:`make_cells` method, passing it the
-output of one of these commands. ::
+also get cells using the
+:meth:`~sage.interfaces.qepcad.Qepcad.make_cells` method, passing it
+the output of one of these commands. ::
 
     sage: qe.make_cells(qe.d_true_cells())           # optional - qepcad
     [QEPCAD cell (4, 2), QEPCAD cell (3, 4), QEPCAD cell (3, 2),
@@ -596,6 +595,7 @@ AUTHORS:
 
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
+
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
@@ -606,19 +606,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-from sage.env import SAGE_LOCAL
-import pexpect
 import re
 import sys
 
+import pexpect
+
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_LOCAL
+from sage.interfaces.expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.flatten import flatten
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction
-from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -784,6 +785,45 @@ class Qepcad_expect(ExtraTabCompletion, Expect):
                         logfile=logfile)
 
 
+def _qepcad_var_subst(text, mapping):
+    r"""
+    Replace whole-word occurrences of the keys of ``mapping`` in ``text``
+    by the corresponding values.
+
+    This is used to rename variables to and from the underscore-free names
+    that QEPCAD requires (see :issue:`38310`).  Only complete tokens are
+    replaced (using a word boundary on each side), so a name is never
+    matched as a substring of a longer name, and QEPCAD's own ``_root_``
+    notation in the output is left untouched.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.qepcad import _qepcad_var_subst
+        sage: _qepcad_var_subst('x_5_0 > 0 /\\ x_5_1 < 0',
+        ....:                   {'x_5_0': 'x50', 'x_5_1': 'x51'})
+        'x50 > 0 /\\ x51 < 0'
+
+    The reverse direction restores the original names without touching
+    QEPCAD's ``_root_`` notation or unrelated tokens such as ``x501``::
+
+        sage: _qepcad_var_subst('x50 < _root_1 x50^2 - 3 /\\ x501 = 0',
+        ....:                   {'x50': 'x_5_0'})
+        'x_5_0 < _root_1 x_5_0^2 - 3 /\\ x501 = 0'
+
+    An empty mapping leaves the text unchanged::
+
+        sage: _qepcad_var_subst('a x^2 + b x + c = 0', {})
+        'a x^2 + b x + c = 0'
+    """
+    if not mapping:
+        return text
+    # The word boundaries match each name as a complete token, so the order
+    # of the alternation does not matter and a name is never replaced inside
+    # a longer one.
+    pattern = re.compile(r'\b(' + '|'.join(re.escape(k) for k in mapping) + r')\b')
+    return pattern.sub(lambda m: mapping[m.group(0)], text)
+
+
 class Qepcad:
     r"""
     The wrapper for QEPCAD.
@@ -830,9 +870,9 @@ class Qepcad:
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \
-                           x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
-                           -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
-                           x + 3*y + 3*z - 1 < 0]
+            ....:          x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
+            ....:          -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
+            ....:          x + 3*y + 3*z - 1 < 0]
             sage: qepcad(conds, memcells=3000000) # optional - qepcad
             2 x - 1 > 0 /\ z > 0 /\ z - y < 0 /\ 3 z + 3 y + x - 1 < 0
         """
@@ -864,7 +904,7 @@ class Qepcad:
                 # and ensure they match up with the variables in the formula.
                 if frozenset(varlist) != (fvars | frozenset(fqvars)):
                     raise ValueError("specified vars don't match vars in formula")
-                if len(fqvars) and varlist[-len(fqvars):] != fqvars:
+                if fqvars and varlist[-len(fqvars):] != fqvars:
                     raise ValueError("specified vars don't match quantified vars")
             free_vars = len(fvars)
             formula = repr(formula)
@@ -872,10 +912,18 @@ class Qepcad:
         self._varlist = varlist
         self._free_vars = free_vars
 
-        varlist = [v.replace('_', '') for v in varlist]
-        if len(frozenset(varlist)) != len(varlist):
+        # QEPCAD does not allow underscores in variable names, so we send it
+        # underscore-free names and keep maps to restore the original names in
+        # the output (see :issue:`38310`).
+        safe_varlist = [v.replace('_', '') for v in varlist]
+        if len(frozenset(safe_varlist)) != len(safe_varlist):
             raise ValueError("variables collide after stripping underscores")
-        formula = formula.replace('_', '')
+        self._to_qepcad = {orig: safe
+                           for orig, safe in zip(varlist, safe_varlist)
+                           if orig != safe}
+        self._from_qepcad = {safe: orig for orig, safe in self._to_qepcad.items()}
+        formula = _qepcad_var_subst(formula, self._to_qepcad)
+        varlist = safe_varlist
 
         qex = Qepcad_expect(logfile=logfile, memcells=memcells, server=server)
         qex._send('[ input from Sage ]')
@@ -883,8 +931,32 @@ class Qepcad:
         qex._send(str(free_vars))
         # I hope this prompt is distinctive enough...
         # if not, we could list all the cases separately
-        qex._change_prompt(['\r\n([^\r\n]*) >\r\n', pexpect.EOF])
+        #
+        # While reading the formula we additionally watch for QEPCAD's
+        # "Error <routine>: <message>" output: when it cannot parse the input
+        # it prints such a line and prompts for the formula again.  Since the
+        # pexpect process has no timeout, an undetected error would hang
+        # forever, so we raise a Python exception instead (see :issue:`41498`).
+        # This extra pattern must not stay in the persistent prompt, because
+        # QEPCAD also prints "Error ..." as ordinary output later on (e.g. for
+        # commands that are not active in the current phase), so we restore the
+        # plain prompt as soon as the formula has been read.
+        qex._change_prompt(['\r\n([^\r\n]*) >\r\n',
+                            '\r\nError [^\r\n]*',
+                            pexpect.EOF])
         qex.eval(formula + '.')
+        matched = qex._expect.after
+        if isinstance(matched, bytes):
+            matched = bytes_to_str(matched)
+        if not isinstance(matched, str):
+            # pexpect.EOF (or TIMEOUT) matched: the process is already gone.
+            qex.quit()
+            raise ValueError("QEPCAD terminated while reading the input formula")
+        if matched.lstrip().startswith('Error'):
+            qex.quit()
+            raise ValueError("QEPCAD could not parse the input formula: "
+                             + matched.strip())
+        qex._change_prompt(['\r\n([^\r\n]*) >\r\n', pexpect.EOF])
         self._qex = qex
 
     def __repr__(self):
@@ -926,15 +998,15 @@ class Qepcad:
         """
         if not isinstance(assume, str):
             assume = qepcad_formula.formula(assume)
-            if len(assume.qvars):
+            if assume.qvars:
                 raise ValueError("assumptions cannot be quantified")
             if not assume.vars.issubset(frozenset(self._varlist[:self._free_vars])):
                 raise ValueError("assumption contains variables not "
                                  "present in formula")
             assume = repr(assume)
-        assume = assume.replace('_', '')
+        assume = _qepcad_var_subst(assume, self._to_qepcad)
         result = self._eval_line("assume [%s]" % assume)
-        if len(result):
+        if result:
             return AsciiArtString(result)
 
     def solution_extension(self, kind):
@@ -1019,8 +1091,8 @@ class Qepcad:
         loc = result.find(tagline)
         if loc >= 0:
             result = result[loc + len(tagline):]
-        result = result.strip()
-        if len(result):
+        result = _qepcad_var_subst(result.strip(), self._from_qepcad)
+        if result:
             return AsciiArtString(result)
 
     def set_truth_value(self, index, nv):
@@ -1072,8 +1144,7 @@ class Qepcad:
         match = self._qex.expect().match
         if match == pexpect.EOF:
             return 'EXITED'
-        else:
-            return bytes_to_str(match.group(1))
+        return bytes_to_str(match.group(1))
 
     def _parse_answer_stats(self):
         r"""
@@ -1100,9 +1171,9 @@ class Qepcad:
         match = re.search('\nAn equivalent quantifier-free formula:(.*)\n=+  The End  =+\r\n\r\n(.*)$', final, re.DOTALL)
 
         if match:
-            return (match.group(1).strip(), match.group(2))
-        else:
-            return (final, '')
+            answer = _qepcad_var_subst(match.group(1).strip(), self._from_qepcad)
+            return (answer, match.group(2))
+        return (_qepcad_var_subst(final, self._from_qepcad), '')
 
     def answer(self):
         r"""
@@ -1188,15 +1259,14 @@ class Qepcad:
         index_str = _format_cell_index(index)
         if index_str in self._cell_cache:
             return self._cell_cache[index_str]
-        else:
-            c = self.make_cells(self.d_cell(index))[0]
-            self._cell_cache[index_str] = c
-            return c
+        c = self.make_cells(self.d_cell(index))[0]
+        self._cell_cache[index_str] = c
+        return c
 
     def make_cells(self, text):
         r"""
         Given the result of some QEPCAD command that returns cells
-        (such as :meth:`d_cell`, :meth:`d_witness_list`, etc.),
+        (such as ``d_cell``, ``d_witness_list``, etc.),
         return a list of cell objects.
 
         EXAMPLES::
@@ -1329,8 +1399,12 @@ class Qepcad:
         pre_phase = self.phase()
         result = self._eval_line('{} {}'.format(name, ' '.join(args)))
         post_phase = self.phase()
-        if len(result) and post_phase != 'EXITED':
-            return AsciiArtString(result)
+        if result and post_phase != 'EXITED':
+            # Restore the original variable names for commands that echo the
+            # formula (e.g. ``d_formula``); see :issue:`38310`.  Cell parsers
+            # normalize this display text back to QEPCAD's internal names
+            # before interpreting sample-point data.
+            return AsciiArtString(_qepcad_var_subst(result, self._from_qepcad))
         if pre_phase != post_phase:
             if post_phase == 'EXITED' and name != 'quit':
                 return self.answer()
@@ -1365,12 +1439,11 @@ def _format_cell_index(a):
         '(5)'
     """
     a = flatten([a])
-    if len(a) and isinstance(a[0], QepcadCell):
+    if a and isinstance(a[0], QepcadCell):
         a[0:1] = a[0].index()
     if len(a) == 1:
         return '(%s)' % a[0]
-    else:
-        return str(tuple(a))
+    return str(tuple(a))
 
 
 @instancedoc
@@ -1562,11 +1635,51 @@ def qepcad(formula, assume=None, interact=False, solution=None,
 
     TESTS:
 
-    We verify that long variable names work.  (Note that QEPCAD
-    does not support underscores, so they are stripped from the formula.) ::
+    We verify that long variable names work.  (Note that QEPCAD does not
+    support underscores, so internally they are removed from the variable
+    names before the formula is sent to QEPCAD and restored in the output;
+    see :issue:`38310`.) ::
 
         sage: qepcad(qf.exists(a, a*long_with_underscore_314159 == 1))                # optional - qepcad
-        longwithunderscore314159 /= 0
+        long_with_underscore_314159 /= 0
+
+    We check that variable names with underscores are restored in the
+    output instead of being silently mangled (:issue:`38310`)::
+
+        sage: from sage.interfaces.qepcad import _qepcad_atoms
+        sage: var('x_5_0, x_5_1')
+        (x_5_0, x_5_1)
+        sage: _qepcad_atoms(qepcad(qf.exists(x, x_5_0 * x + x_5_1 > 0)))              # optional - qepcad
+        {'x_5_0 /= 0', 'x_5_1 > 0'}
+
+    The original names are also restored in the output of interactive
+    commands that echo the formula, such as ``d_formula`` (:issue:`38310`)::
+
+        sage: qe = qepcad(qf.exists(x, x_5_0 * x + x_5_1 > 0), interact=True)         # optional - qepcad
+        sage: qe.d_formula()                                                          # optional - qepcad
+        (E x)x_5_0 x + x_5_1 > 0
+
+    Restoring variable names in interactive output must not corrupt the
+    cell output parsed by the point-finding modes::
+
+        sage: x_ = var('x_')
+        sage: pts = qepcad(x_^2 - 2 == 0, solution='all-points')                       # optional - qepcad
+        sage: sorted(p['x_'].sign() for p in pts)                                      # optional - qepcad
+        [-1, 1]
+
+    QEPCAD's ``_root_`` notation may be used in the input; its underscores
+    are no longer stripped away (:issue:`41498`)::
+
+        sage: qepcad(r'(E x)[ x = _root_1 x^2 - a ]', vars='a,x')                     # optional - qepcad
+        a >= 0
+
+    An input that QEPCAD cannot parse raises an exception instead of
+    hanging forever (:issue:`41498`)::
+
+        sage: qepcad('(E x)[ x = undeclared ]', vars='a,x')                           # optional - qepcad
+        Traceback (most recent call last):
+        ...
+        ValueError: QEPCAD could not parse the input formula: Error ...
 
     Tests related to the not tested examples (nondeterministic order of atoms)::
 
@@ -1630,7 +1743,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
     use_witness = False
     if solution == 'any-point':
         formula = qepcad_formula.formula(formula)
-        if len(formula.qvars) == 0:
+        if not formula.qvars:
             if vars is None:
                 vars = sorted(formula.vars)
             formula = qepcad_formula.exists(vars, formula)
@@ -1644,44 +1757,42 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         if solution is not None:
             print("WARNING: 'solution=' is ignored for interactive use")
         return qe
-    else:
-        qe.go()
-        qe.go()
-        qe.go()
-        if solution is None:
-            qe.finish()
-            return qe.answer()
-        elif solution == 'geometric':
-            s = qe.solution_extension('G')
-            qe.quit()
-            return s
-        elif solution == 'extended':
-            s = qe.solution_extension('E')
-            qe.quit()
-            return s
-        elif solution == 'any-point':
-            if use_witness:
-                cells = qe.make_cells(qe.d_witness_list())
-            else:
-                cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            if len(cells) == 0:
-                raise ValueError("input formula is false everywhere")
-            return cells[0].sample_point_dict()
-        elif solution == 'cell-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            return [c.sample_point_dict() for c in cells]
-        elif solution == 'all-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            for c in cells:
-                if c._dimension > 0:
-                    raise ValueError("input formula is true for "
-                                     "infinitely many points")
-            return [c.sample_point_dict() for c in cells]
+    qe.go()
+    qe.go()
+    qe.go()
+    if solution is None:
+        qe.finish()
+        return qe.answer()
+    if solution == 'geometric':
+        s = qe.solution_extension('G')
+        qe.quit()
+        return s
+    if solution == 'extended':
+        s = qe.solution_extension('E')
+        qe.quit()
+        return s
+    if solution == 'any-point':
+        if use_witness:
+            cells = qe.make_cells(qe.d_witness_list())
         else:
-            raise ValueError(f"Unknown solution type ({solution})")
+            cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        if not cells:
+            raise ValueError("input formula is false everywhere")
+        return cells[0].sample_point_dict()
+    if solution == 'cell-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        return [c.sample_point_dict() for c in cells]
+    if solution == 'all-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        for c in cells:
+            if c._dimension > 0:
+                raise ValueError("input formula is true for "
+                                 "infinitely many points")
+        return [c.sample_point_dict() for c in cells]
+    raise ValueError(f"Unknown solution type ({solution})")
 
 
 def qepcad_console(memcells=None):
@@ -1891,7 +2002,7 @@ class qepcad_formula_factory:
         vars = frozenset()
         for f in formulas:
             vars = vars | f.vars
-            if len(f.qvars):
+            if f.qvars:
                 raise ValueError("QEPCAD formulas must be in prenex"
                                  " (quantifiers outermost) form")
         return formula_strs, vars
@@ -1969,8 +2080,7 @@ class qepcad_formula_factory:
         """
         if isinstance(formula, (list, tuple)):
             return self.and_(formula)
-        else:
-            return self.atomic(formula)
+        return self.atomic(formula)
 
     def and_(self, *formulas):
         r"""
@@ -2296,9 +2406,8 @@ class qepcad_formula_factory:
         if allow_multi and isinstance(v, (list, tuple)):
             if not v:
                 return formula
-            else:
-                return self.quantifier(kind, v[0],
-                                       self.quantifier(kind, v[1:], formula))
+            return self.quantifier(kind, v[0],
+                                   self.quantifier(kind, v[1:], formula))
 
         form_str = str(formula)
         if form_str[-1] != ']':
@@ -2338,10 +2447,10 @@ def _eval_qepcad_algebraic(text):
         sage: 8*x^2 - 8*x - 29 == 0
         True
     """
-    from sage.rings.rational_field import QQ
     from sage.rings.polynomial.polynomial_ring import polygen
-    from sage.rings.real_mpfi import RealIntervalField
     from sage.rings.qqbar import AA
+    from sage.rings.rational_field import QQ
+    from sage.rings.real_mpfi import RealIntervalField
 
     match = _qepcad_algebraic_re.match(text)
 
@@ -2410,6 +2519,10 @@ class QepcadCell:
             QEPCAD cell (4, 3)
         """
         self._parent = parent
+        # Public commands restore original variable names for display, but the
+        # cell parser expects QEPCAD's internal text.  In particular, algebraic
+        # sample-point polynomials use ``x`` as a dummy variable.
+        lines = [_qepcad_var_subst(line, parent._to_qepcad) for line in lines]
         self._lines = lines
 
         max_level = len(parent._varlist)
@@ -2576,7 +2689,7 @@ class QepcadCell:
             ind = '(%s)' % ind[0]
         else:
             ind = str(ind)
-        return ('QEPCAD cell %s' % ind)
+        return f'QEPCAD cell {ind}'
 
     def index(self):
         r"""

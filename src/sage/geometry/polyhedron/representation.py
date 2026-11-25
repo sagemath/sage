@@ -207,8 +207,7 @@ class PolyhedronRepresentation(SageObject):
         lcf = self._vector.leading_coefficient()
         if self.type() == self.EQUATION or self.type() == self.LINE:
             return 1/lcf
-        else:
-            return 1/lcf.abs()
+        return 1/lcf.abs()
 
     def vector(self, base_ring=None):
         """
@@ -221,9 +220,9 @@ class PolyhedronRepresentation(SageObject):
         OUTPUT:
 
         For a V-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`. For
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`. For
         a H-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`
         + 1.
 
         EXAMPLES::
@@ -257,8 +256,7 @@ class PolyhedronRepresentation(SageObject):
         """
         if (base_ring is None) or (base_ring is self._base_ring):
             return copy(self._vector)
-        else:
-            return vector(base_ring, self._vector)
+        return vector(base_ring, self._vector)
 
     _vector_ = vector
 
@@ -771,8 +769,8 @@ class Inequality(Hrepresentation):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.slack_matrix`
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.slack_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
 
         EXAMPLES::
 
@@ -787,7 +785,7 @@ class Inequality(Hrepresentation):
             sage: Q = Polyhedron(ieqs=[[0,2,0,3]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
-            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])                           # needs sage.rings.number_field
+            sage: Q = Polyhedron(ieqs=[[0,AA(2).sqrt(),0,3]])
             sage: Q.inequalities()[0].is_facet_defining_inequality(P)
             True
             sage: Q = Polyhedron(ieqs=[[1,1,0,0]])
@@ -890,9 +888,9 @@ class Inequality(Hrepresentation):
         Test that :issue:`21105` has been fixed::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # needs sage.rings.number_field
-            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])                    # needs sage.rings.number_field
-            sage: P.inequalities()                                                      # needs sage.rings.number_field
+            sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)
+            sage: P = Polyhedron(vertices=[(1,1,cbrt2),(cbrt2,1,1)])
+            sage: P.inequalities()
             (An inequality (-cbrt2^2 - cbrt2 - 1, 0, 0) x + cbrt2^2 + cbrt2 + 2 >= 0,
              An inequality (cbrt2^2 + cbrt2 + 1, 0, 0) x - cbrt2^2 + cbrt2 + 1 >= 0)
         """
@@ -933,8 +931,7 @@ class Inequality(Hrepresentation):
 
         if Vobj.is_line():
             return self.polyhedron()._is_zero( self.eval(Vobj) )
-        else:
-            return self.polyhedron()._is_nonneg( self.eval(Vobj) )
+        return self.polyhedron()._is_nonneg( self.eval(Vobj) )
 
     def interior_contains(self, Vobj):
         """
@@ -967,10 +964,10 @@ class Inequality(Hrepresentation):
 
         if Vobj.is_line():
             return self.polyhedron()._is_zero( self.eval(Vobj) )
-        elif Vobj.is_vertex():
+        if Vobj.is_vertex():
             return self.polyhedron()._is_positive( self.eval(Vobj) )
-        else: # Vobj.is_ray()
-            return self.polyhedron()._is_nonneg( self.eval(Vobj) )
+        # Vobj.is_ray()
+        return self.polyhedron()._is_nonneg( self.eval(Vobj) )
 
     def outer_normal(self):
         r"""
@@ -1091,7 +1088,7 @@ class Equation(Hrepresentation):
 
         .. NOTE::
 
-            Return False for any equation.
+            Return ``False`` for any equation.
 
         EXAMPLES::
 
@@ -1718,5 +1715,4 @@ def repr_pretty(coefficients, type, prefix='x', indices=None,
 
     if not split:
         return '{} {} {}'.format(left_part, rel, right_part)
-    else:
-        return (str(left_part), rel, str(right_part))
+    return (str(left_part), rel, str(right_part))

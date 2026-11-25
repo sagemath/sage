@@ -32,10 +32,15 @@ TESTS::
 ##############################################################################
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
+from math import prod
+from sage.functions.all import gamma
+from sage.symbolic.constants import pi, e
+
 
 try:
     from sage.rings.number_field.number_field_element import OrderElement_absolute
@@ -171,6 +176,18 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0 1048576       0       0]
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
+
+    We construct a large lattice, this lattice will not be constructible
+    if echelon form was also being computed::
+
+        sage: n = 500
+        sage: q = 65537
+        sage: M = matrix.random(ZZ, n, x=0, y=q+1).augment(q*matrix.identity(n))
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: L = IntegerLattice(M, lll_reduce=False); L
+        Free module of degree 1000 and rank 500 over Integer Ring
+        User basis matrix:
+        500 x 1000 dense matrix over Integer Ring
     """
 
     if isinstance(basis, OrderElement_absolute):
@@ -488,8 +505,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         if self.rank() == self.degree():
             return abs(self.reduced_basis.determinant())
-        else:
-            return self.gram_matrix().determinant().sqrt()
+        return self.gram_matrix().determinant().sqrt()
 
     @cached_method
     def discriminant(self):
@@ -508,7 +524,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         return abs(self.gram_matrix().determinant())
 
     @cached_method
-    def is_unimodular(self):
+    def is_unimodular(self) -> bool:
         """
         Return ``True`` if this lattice is unimodular.
 
@@ -528,7 +544,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
         INPUT:
 
@@ -549,22 +565,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector().norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
         """
         if algorithm == "pari":
             if self._basis_is_LLL_reduced:
@@ -574,7 +590,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 B = self.reduced_basis.LLL()
                 qf = B*B.transpose()
 
-            count, length, vectors = qf.__pari__().qfminim()
+            count, length, vectors = qf.__pari__().qfminim(m=1)
             v = vectors.sage().columns()[0]
             w = v*B
         elif algorithm == "fplll":
@@ -784,16 +800,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t, delta=None, *args, **kwargs):
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding',
+                                   *args, lll_algorithm=None, **kwargs):
         r"""
-        Compute a vector `w` such that
-
-        .. MATH::
-
-            |t-w|<(\frac{1}{\delta-\frac{1}{4}})^{d/2}|t-u|
-
-        where `u` is the closest lattice point to `t`, `\delta` is the LLL
-        reduction parameter, and `d` is the dimension of the lattice.
+        Compute a vector `w` in this lattice which is close to the target vector `t`.
+        The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
+        is exponential in the dimension of the lattice.
 
         This will check whether the basis is already `\delta`-LLL-reduced
         and otherwise it will run LLL to make sure that it is. For more
@@ -805,9 +817,26 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
 
-        - ``*args`` -- passed through to :meth:`LLL`
+        - ``algorithm`` -- string (default: ``'embedding'``); the approximation
+          algorithm:
 
-        - ``**kwds`` -- passed through to :meth:`LLL`
+          - ``'embedding'`` -- embeds the lattice in a d+1 dimensional space
+            and seeks short vectors using LLL. This may call LLL twice but is
+            usually still quick.
+
+          - ``'nearest_plane'`` -- uses the "NEAREST PLANE" algorithm from [Bab86]_
+
+          - ``'rounding_off'`` -- uses the "ROUNDING OFF" algorithm from [Bab86]_.
+            This yields slightly worse results than the other algorithms but is
+            at least faster than ``'nearest_plane'``.
+
+        - ``*args`` -- positional arguments passed through to :meth:`LLL`
+          after ``delta``
+
+        - ``lll_algorithm`` -- string (default: ``None``); the algorithm passed
+          to :meth:`LLL`; when ``None``, use the default LLL algorithm
+
+        - ``**kwargs`` -- passed through to :meth:`LLL`
 
         OUTPUT: the vector `w` described above
 
@@ -818,6 +847,16 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L.approximate_closest_vector((-6, 5/3))
             (-6, 2)
 
+        Positional arguments and the choice of LLL algorithm are passed through
+        to :meth:`LLL` (:issue:`42731`)::
+
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), None, 'embedding', 3/4)
+            (1, 1)
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), lll_algorithm='NTL:LLL')
+            (1, 1)
+
         The quality of the approximation depends on ``delta``::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
@@ -825,30 +864,151 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ....:                     [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
             sage: t = vector([1337]*4)
             sage: L.approximate_closest_vector(t, delta=0.26)
-            (1348, 1340, 1383, 1337)
+            (1331, 1324, 1349, 1334)
             sage: L.approximate_closest_vector(t, delta=0.99)
             (1326, 1349, 1339, 1345)
             sage: L.closest_vector(t)
             (1326, 1349, 1339, 1345)
 
-        ALGORITHM:
-
-        Uses the algorithm from [Bab86]_.
+            sage: # Checking that the other algorithms work
+            sage: L.approximate_closest_vector(t, algorithm='nearest_plane')
+            (1326, 1349, 1339, 1345)
+            sage: L.approximate_closest_vector(t, algorithm='rounding_off')
+            (1331, 1324, 1349, 1334)
         """
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
-        # bound checks on delta are performed in is_LLL_reduced
+        if lll_algorithm is not None:
+            kwargs['algorithm'] = lll_algorithm
+
+        # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
-            self.LLL(*args, delta=delta, **kwargs)
+            self.LLL(delta, *args, **kwargs)
 
         B = self._reduced_basis
-        G = B.gram_schmidt()[0]
         t = vector(t)
 
-        b = t
-        for i in reversed(range(G.nrows())):
-            b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
-        return (t - b).change_ring(ZZ)
+        if algorithm == 'embedding':
+            L = matrix(QQ, B.nrows()+1, B.ncols()+1)
+            L.set_block(0, 0, B)
+            L.set_block(B.nrows(), 0, matrix(t))
+            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
+            L[-1, -1] = weight
 
-    babai = approximate_closest_vector
+            # The vector should be the last row but we iterate just in case
+            for v in reversed(L.LLL(delta, *args, **kwargs).rows()):
+                if abs(v[-1]) == weight:
+                    return t - v[:-1]*v[-1].sign()
+            raise ValueError('No suitable vector found in basis.'
+                             'This is a bug, please report it.')
+
+        elif algorithm == 'nearest_plane':
+            G = B.gram_schmidt()[0]
+
+            b = t
+            for i in reversed(range(G.nrows())):
+                b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
+            return (t - b).change_ring(ZZ)
+
+        elif algorithm == 'rounding_off':
+            # t = x*B might not have a solution over QQ so we instead solve
+            # the system x*B*B^T = t*B^T which will be the "closest" solution
+            # if it does not exist, same effect as using the psuedo-inverse
+            sol = (B*B.T).solve_left(t*B.T)
+            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
+
+        else:
+            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
+
+    def babai(self, *args, **kwargs):
+        """
+        Alias for :meth:`approximate_closest_vector`.
+        """
+        return self.approximate_closest_vector(*args, **kwargs)
+
+    def hadamard_ratio(self, use_reduced_basis=True):
+        r"""
+        Computes the normalized Hadamard ratio of the given basis.
+
+        The normalized Hadamard ratio of the basis `B = \left\{ v_1, v_2, \dots, v_n \right\}` is defined as
+
+        .. MATH::
+
+            \mathcal{H}(B) = \left( \dfrac{\det L}{\|v_1\| \|v_2\| \cdots \|v_n\|} \right)^{\frac{1}{n}}
+
+        The closer this ratio is to 1, the more orthogonal the basis is.
+
+        INPUT:
+
+        - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis for computing the ratio
+
+        OUTPUT: the ratio described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
+            sage: L.hadamard_ratio()
+            4331^(1/8)*(1/4331)^(1/4)
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
+            0.351096481348176
+            sage: L.LLL()
+            [  1  -5   2  18]
+            [ -5  25 -10  11]
+            [-17 -16 -34  -3]
+            [-39  -7  23   5]
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
+            0.9933322263147489
+        """
+        if use_reduced_basis:
+            basis = self.reduced_basis
+        else:
+            basis = self.basis_matrix()
+
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+
+        ratio = (self.discriminant().sqrt() / prod([v.norm() for v in basis]))**(1/r)
+        assert 0 < ratio <= 1
+        return ratio
+
+    def gaussian_heuristic(self, exact_form=False):
+        r"""
+        Computes the Gaussian expected shortest length, also known as the Gaussian
+        heuristic. This estimates the expected norm of the shortest non-zero vector
+        in the lattice. The heuristic is independent of the chosen basis.
+
+        INPUT:
+
+        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
+          based on gamma function, instead of using stirling's approximation
+
+        OUTPUT: The Gaussian heuristic described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]])
+            sage: L.gaussian_heuristic()
+            1030301^(1/4)*sqrt(2)*e^(-1/2)/sqrt(pi)
+            sage: float(L.gaussian_heuristic()) # rel tol 1e-13
+            15.418206247181422
+
+        For small `n`, the exact and approximate forms differ significantly::
+
+            sage: float(L.gaussian_heuristic(exact_form=True)) # rel tol 1e-13
+            21.375859827168494
+        """
+        basis = self.basis_matrix()
+
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+
+        D = self.discriminant().sqrt()
+
+        if exact_form:
+            return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
+        return D**(1/r) * (r/(2*pi*e)).sqrt()

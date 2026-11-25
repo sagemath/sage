@@ -234,8 +234,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "*%s^%s" % (parent._names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -265,8 +264,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "%s^{%s}" % (parent._latex_names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def coefficient(self):
         r"""
@@ -607,7 +605,7 @@ cdef class TateAlgebraTerm(MonoidElement):
         if len(args) != parent._ngens:
             raise TypeError("wrong number of arguments")
         A = _pushout_family(args, parent._field)
-        args = [ A(arg) for arg in args ]
+        args = [A(arg) for arg in args]
         ratio = A.absolute_e() // parent._base.absolute_e()
         for i in range(parent._ngens):
             if args[i].valuation() < -ratio * parent._log_radii[i]:
@@ -673,8 +671,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 return False
         if self._parent.base_ring().is_field():
             return True
-        else:
-            return self.valuation() == 0 or other.valuation() == 0
+        return self.valuation() == 0 or other.valuation() == 0
 
     @coerce_binop
     def gcd(self, other):
@@ -758,9 +755,9 @@ cdef class TateAlgebraTerm(MonoidElement):
 
         - ``other`` -- a Tate term
 
-        EXAMPLES::
+        EXAMPLES:
 
-        In a Tate algebra over a field:
+        In a Tate algebra over a field::
 
             sage: R = Zp(2, print_mode='digits', prec=10)
             sage: A.<x,y> = TateAlgebra(R)
@@ -784,9 +781,9 @@ cdef class TateAlgebraTerm(MonoidElement):
 
         - ``other`` -- a Tate term
 
-        EXAMPLES::
+        EXAMPLES:
 
-        In a Tate algebra over a field:
+        In a Tate algebra over a field::
 
             sage: R = Zp(2, print_mode='digits', prec=10)
             sage: A.<x,y> = TateAlgebra(R)
@@ -1074,7 +1071,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         else:
             try:
                 poly = parent._polynomial_ring(x)
-                self._poly = PolyDict(poly.dict(), None)
+                self._poly = PolyDict(poly.monomial_coefficients(), None)
             except TypeError:
                 # last chance: we first try to convert to the rational Tate series
                 if parent._integral:
@@ -1115,6 +1112,15 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A(78612, prec=3)  # indirect doctest
             ...100 + O(2^3 * <x, y>)
+
+        TESTS:
+
+        We check that :issue:`40046` is fixed::
+
+            sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
+            sage: f = 5*x
+            sage: f.add_bigoh(1)
+            (5 + O(5^2))*x + O(5 * <5*x, y>)
         """
         self._is_normalized = True
         if self._prec is Infinity:
@@ -1124,9 +1130,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         for (e, c) in list(self._poly.__repn.items()):
             v = (<ETuple>self._parent._log_radii).dotprod(<ETuple>e)
             coeff = self._poly.__repn[e]
-            if coeff.precision_absolute() > self._prec - v:
-                coeff = coeff.add_bigoh(self._prec - v)
-            if coeff.valuation() >= self._prec - v:
+            if coeff.precision_absolute() > self._prec + v:
+                coeff = coeff.add_bigoh(self._prec + v)
+            if coeff.valuation() >= self._prec + v:
                 del self._poly.__repn[e]
             else:
                 self._poly.__repn[e] = coeff
@@ -1160,9 +1166,16 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
             sage: A(x + 2*x^2 + x^3, prec=5)
             ...00001*x^3 + ...00001*x + ...00010*x^2 + O(2^5 * <x, y>)
+
+        TESTS::
+
+            sage: S.<x> = TateAlgebra(R, log_radii=[-1])
+            sage: S(x, 5)
+            ...0001*x + O(2^5 * <x/2>)
+            sage: S.<x> = TateAlgebra(R, log_radii=[1])
+            sage: S(x, 5)
+            ...000001*x + O(2^5 * <2*x>)
         """
-        base = self._parent.base_ring()
-        nvars = self._parent.ngens()
         vars = self._parent.variable_names()
         s = ""
         for t in self._terms_c():
@@ -1180,18 +1193,18 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 s += " + "
             su = self._parent._uniformizer_repr
             lr = self._parent.log_radii()
-            sv = [ ]
+            sv = []
             for i in range(len(vars)):
                 if lr[i] == 0:
                     sv.append(vars[i])
-                elif lr[i] == -1:
-                    sv.append("%s*%s" % (su, vars[i]))
                 elif lr[i] == 1:
+                    sv.append("%s*%s" % (su, vars[i]))
+                elif lr[i] == -1:
                     sv.append("%s/%s" % (vars[i], su))
-                elif lr[i] < 0:
-                    sv.append("%s^%s*%s" % (su, -lr[i], vars[i]))
+                elif lr[i] > 0:
+                    sv.append("%s^%s*%s" % (su, lr[i], vars[i]))
                 else:
-                    sv.append("%s/%s^%s" % (vars[i], su, lr[i]))
+                    sv.append("%s/%s^%s" % (vars[i], su, -lr[i]))
             sv = ", ".join(sv)
             if self._prec == 0:
                 s += "O(<%s>)" % sv
@@ -1220,9 +1233,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f._latex_()
             '...0000000001x^{3} + ...0000000001x + ...00000000010x^{2}'
         """
-        base = self._parent.base_ring()
-        nvars = self._parent.ngens()
-        vars = self._parent.variable_names()
         s = ""
         for t in self.terms():
             if t.valuation() >= self._prec:
@@ -1237,7 +1247,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         if self._prec is not Infinity:
             if s != "":
                 s += " + "
-            sv = ",".join(vars)
             if self._prec == 0:
                 s += "O\\left(%s\\right)" % self._parent.integer_ring()._latex_()
             elif self._prec == 1:
@@ -1864,7 +1873,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         if len(args) != parent._ngens:
             raise TypeError("wrong number of arguments")
         A = _pushout_family(args, parent._field)
-        args = [ A(arg) for arg in args ]
+        args = [A(arg) for arg in args]
         ratio = A.absolute_e() // parent._base.absolute_e()
         for i in range(parent._ngens):
             if args[i].valuation() < -ratio * parent._log_radii[i]:
@@ -1919,7 +1928,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f << 2  # indirect doctest
             ...000000000100*x^3 + ...000000000100*x + ...0000000001000*x^2
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef ETuple e
         cdef Element c
         cdef TateAlgebraElement ans = self._new_c()
@@ -1952,23 +1961,22 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: g << 2
             ...0000100*x^3 + ...0000100*x + ...0001000*x^2 + O(2^7 * <x, y>)
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef ETuple e
         cdef Element c
         cdef TateAlgebraElement ans = self._new_c()
         parent = self._parent
         base = parent.base_ring()
         if base.is_field():
-            for (e,c) in self._poly.__repn.items():
+            for e, c in self._poly.__repn.items():
                 coeffs[e] = c << n
             ans._prec = self._prec + n
         else:
             field = base.fraction_field()
-            ngens = parent.ngens()
-            for (e,c) in self._poly.__repn.items():
+            for e, c in self._poly.__repn.items():
                 minval = ZZ(e.dotprod(<ETuple>parent._log_radii)).ceil()
                 coeffs[e] = field(base(c) >> (minval-n)) << minval
-            ans._prec = max(ZZ(0), self._prec + n)
+            ans._prec = max(ZZ.zero(), self._prec + n)
         ans._poly = PolyDict(coeffs, None)
         return ans
 
@@ -2091,8 +2099,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         INPUT:
 
         - ``log_radii`` -- integer or a tuple; the log-radii of
-          convergence of the smaller domain (see :class:`TateAlgebra`
-          for more details)
+          convergence of the smaller domain (see
+          :data:`~sage.rings.tate_algebra.TateAlgebra` for more details)
 
         EXAMPLES::
 
@@ -2172,11 +2180,11 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 if term._valuation_c() < self._prec:
                     self._terms.append(term)
             self._terms.sort(reverse=True)
-            self._terms_nonzero = [ term for term in self._terms if not term.coefficient().is_zero() ]
+            self._terms_nonzero = [term for term in self._terms
+                                   if not term.coefficient().is_zero()]
         if include_zero:
             return self._terms
-        else:
-            return self._terms_nonzero
+        return self._terms_nonzero
 
     def monomials(self):
         r"""
@@ -2190,9 +2198,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.monomials()  # indirect doctest
             [...0000000001*x, ...0000000001*x^2]
         """
-        return [ t.monomial() for t in self.terms() ]
+        return [t.monomial() for t in self.terms()]
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a dictionary whose keys are the exponents and whose values
         are the corresponding coefficients of this series.
@@ -2202,11 +2210,18 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: R = Zp(2, prec=10, print_mode='digits')
             sage: A.<x,y> = TateAlgebra(R)
             sage: f = 2*x^2 + x
+            sage: f.monomial_coefficients()
+            {(1, 0): ...0000000001, (2, 0): ...00000000010}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {(1, 0): ...0000000001, (2, 0): ...00000000010}
         """
         self._normalize()
         return dict(self._poly.__repn)
+
+    dict = monomial_coefficients
 
     def coefficient(self, exponent):
         r"""
@@ -2247,8 +2262,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             raise IndexError("lengths do not match")
         if e in self._poly.__repn:
             return self._poly.__repn[e]
-        else:
-            return self.base_ring()(0, self.precision_absolute())
+        return self.base_ring()(0, self.precision_absolute())
 
     def __getitem__(self, exponent):
         r"""
@@ -2288,7 +2302,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.coefficients()
             [...0000000001, ...00000000010]
         """
-        return [ t.coefficient() for t in self.terms() ]
+        return [t.coefficient() for t in self.terms()]
 
     def add_bigoh(self, n):
         r"""
@@ -2364,7 +2378,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 return elt.lift_to_precision(prec)
             except PrecisionError:
                 return elt.lift_to_precision()
-        ans._poly = PolyDict({ e: lift_without_error(c) for (e,c) in self._poly.__repn.iteritems() }, None)
+        ans._poly = PolyDict({e: lift_without_error(c)
+                              for e, c in self._poly.__repn.items()},
+                             None)
         if prec is None:
             prec = self._parent.precision_cap()
         ans._prec = max(self._prec, prec)
@@ -2435,12 +2451,10 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.valuation()
             -4
         """
-        cdef TateAlgebraTerm t
         cdef list terms = self._terms_c()
         if terms:
             return min(terms[0].valuation(), self._prec)
-        else:
-            return self._prec
+        return self._prec
 
     def precision_relative(self):
         """
@@ -2525,8 +2539,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\log(1+x)` converges on a smaller disk::
 
             sage: f.restriction(-1).log()
-            ...0000000001*x + ...000000000.1*x^3 + ...111111111*x^2 + ...
-             + O(3^10 * <3*x, 3*y>)
+            ...000000001*x + ...0000000.1*x^3 + ...11111111*x^2 + ...
+             + O(3^10 * <x/3, y/3>)
 
         TESTS::
 
@@ -2683,8 +2697,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\exp(x)` converges on a smaller disk::
 
             sage: f.restriction(-1).exp()
-            ...0000000001 + ...0000000001*x + ...111111111.2*x^3 + ...111111112*x^2
-             + ... + O(3^10 * <3*x, 3*y>)
+            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...11111112*x^2
+             + ... + O(3^10 * <x/3, y/3>)
 
         TESTS::
 
@@ -3120,11 +3134,12 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: r
             ...00001 + ...00010*x*y + ...00100*x*y^2 + O(2^5 * <x, y>)
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef TateAlgebraElement f
         cdef TateAlgebraTerm lt
-        cdef list ltds = [ (<TateAlgebraElement>d)._terms_c()[0] for d in divisors ]
-        cdef list quos = [ ]
+        cdef list ltds = [(<TateAlgebraElement>d)._terms_c()[0]
+                          for d in divisors]
+        cdef list quos = []
         cdef list terms = self._terms_c()
         cdef int index = 0
         cdef bint in_rem
@@ -3226,7 +3241,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             divisors = [divisors]
             onedivisor = True
         A = _pushout_family(divisors, self._parent)
-        f = A(self)
         divisors = [A(d) for d in divisors]
         q, r = (<TateAlgebraElement>self)._quo_rem_c(divisors, quo, rem, False)
         if quo and onedivisor:
@@ -3373,7 +3387,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
     @coerce_binop
     def Spoly(self, other):
-        """
+        r"""
         Return the S-polynomial of this series and ``other``.
 
         INPUT:
@@ -3388,7 +3402,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         .. MATH::
 
-            S(f,g) = \frac{\text{lcm}(t_f,t_g)}{t_f}} f - \frac{\text{lcm}(t_f,t_g)}{t_g}} g
+            S(f,g) = \frac{\text{lcm}(t_f,t_g)}{t_f} f - \frac{\text{lcm}(t_f,t_g)}{t_g} g
 
         By construction the terms in `\text{lcm}(t_f,t_g)` cancel,
         so that the leading term of `S(f,g)` is strictly smaller

@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 include 'misc.pxi'
 include 'decl.pxi'
@@ -66,7 +66,7 @@ cdef class ntl_GF2EContext_class():
         """
         return ntl_GF2EContext, (self.m,)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a print representation of ``self``.
 
@@ -76,7 +76,7 @@ cdef class ntl_GF2EContext_class():
             sage: c
             NTL modulus [1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1]
         """
-        return "NTL modulus %s"%(self.m)
+        return "NTL modulus %s" % (self.m)
 
     def modulus(self):
         """
@@ -108,7 +108,7 @@ cdef class ntl_GF2EContext_class():
         self.x.restore()
 
 
-def ntl_GF2EContext( v ):
+def ntl_GF2EContext(v):
     """
     Create a new GF2EContext.
 
@@ -120,7 +120,7 @@ def ntl_GF2EContext( v ):
         [0 1]
     """
     v = ntl_GF2X(v)
-    if (GF2X_deg((<ntl_GF2X>v).x) < 1):
+    if GF2X_deg((<ntl_GF2X>v).x) < 1:
         raise ValueError("%s is not a valid modulus." % v)
     key = hash(v)
     if key in GF2EContextDict:

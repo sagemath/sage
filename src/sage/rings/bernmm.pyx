@@ -39,7 +39,7 @@ cdef extern from "bernmm/bern_modp.h":
 from sage.rings.rational cimport Rational
 
 
-def bernmm_bern_rat(long k, int num_threads = 1):
+def bernmm_bern_rat(long k, int num_threads=1):
     r"""
     Compute `k`-th Bernoulli number using a multimodular algorithm.
     (Wrapper for bernmm library.)

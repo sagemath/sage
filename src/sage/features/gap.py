@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of the SageMath interfaces to ``gap`` and of GAP packages
 """
@@ -16,6 +15,7 @@ from . import Feature, FeatureTestResult, PythonModule
 from .join_feature import JoinFeature
 from .sagemath import sage__libs__gap
 
+
 class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
@@ -25,7 +25,7 @@ class GapPackage(Feature):
 
     .. SEEALSO::
 
-        :class:`Feature sage.libs.gap <~sage.features.sagemath.sage__libs__gap>`
+        :class:`Feature sage.libs.gap <sage.features.sagemath.sage__libs__gap>`
 
     EXAMPLES::
 
@@ -70,9 +70,8 @@ class GapPackage(Feature):
         if presence:
             return FeatureTestResult(self, True,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
-        else:
-            return FeatureTestResult(self, False,
-                    reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+        return FeatureTestResult(self, False,
+                reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
 
 
 def all_features():
@@ -81,6 +80,8 @@ def all_features():
             GapPackage("grape", spkg='gap_packages'),
             GapPackage("guava", spkg='gap_packages'),
             GapPackage("hap", spkg='gap_packages'),
+            GapPackage("polenta", spkg='gap_packages'),
             GapPackage("polycyclic", spkg='gap_packages'),
             GapPackage("qpa", spkg='gap_packages'),
-            GapPackage("quagroup", spkg='gap_packages')]
+            GapPackage("quagroup", spkg='gap_packages'),
+            GapPackage("tomlib", spkg='gap_packages')]

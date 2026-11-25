@@ -407,7 +407,7 @@ class ToricIdeal(MPolynomialIdeal):
             return tuple([l[0] - power] + l[1:])
 
         def divide_by_x_n(p):
-            d_old = p.dict()
+            d_old = p.monomial_coefficients()
             power = min(e[0] for e in d_old)
             d_new = {subtract(exponent, power): coefficient
                      for exponent, coefficient in d_old.items()}

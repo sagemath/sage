@@ -1,15 +1,14 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Star-Crystal Structure On `B(\infty)`
+Star-crystal structure on `B(\infty)`
 
 AUTHORS:
 
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2016 Ben Salisbury <ben DOT salisbury AT cmich DOT edu>
 #                          Travis Scrimshaw <tscrimsh AT umn DOT edu>
 #
@@ -17,14 +16,14 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.combinat.crystals.elementary_crystals import ElementaryCrystal
+from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class StarCrystal(UniqueRepresentation, Parent):
@@ -61,7 +60,7 @@ class StarCrystal(UniqueRepresentation, Parent):
       is the highest weight vector in `B(\infty)`;
 
     - if `\Psi_i(b) = f_i^mb_i(0) \otimes b_0`, then
-      `\Psi_i(f_i^*b) =f_i^{m+1}b_i(0) \otimes b_0`
+      `\Psi_i(f_i^*b) = f_i^{m+1}b_i(0) \otimes b_0`
       and `\varepsilon_i(b^*) = m`;
 
     - the image of `\Psi_i` is `\{f_i^mb_i(0)\otimes b :
@@ -87,7 +86,7 @@ class StarCrystal(UniqueRepresentation, Parent):
         [[1, 1, 1, 1, 1, 2, 2], [2, 3, 3, 3]]
     """
 
-    def __init__(self, Binf):
+    def __init__(self, Binf) -> None:
         r"""
         Initialize ``self``.
 
@@ -103,13 +102,13 @@ class StarCrystal(UniqueRepresentation, Parent):
         Parent.__init__(self, category=HighestWeightCrystals().Infinite())
         self.module_generators = (self(self._Binf.module_generators[0]),)
         t0 = Binf.highest_weight_vector()
-        B = {i: ElementaryCrystal(Binf.cartan_type(),i) for i in self.index_set()}
+        B = {i: ElementaryCrystal(Binf.cartan_type(), i) for i in self.index_set()}
         self._tens = {i: B[i].tensor(Binf) for i in self.index_set()}
         gens = {i: self._tens[i](B[i](0), t0) for i in self.index_set()}
         self._embedding = {i: Binf.crystal_morphism({t0: gens[i]}) for i in self.index_set()}
         self._pullback = {i: self._tens[i].crystal_morphism({gens[i]: t0}) for i in self.index_set()}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -124,7 +123,7 @@ class StarCrystal(UniqueRepresentation, Parent):
 
     class Element(ElementWrapper):
 
-        def e(self,i):
+        def e(self, i):
             r"""
             Return the action of `e_i^*` on ``self``.
 
@@ -150,9 +149,9 @@ class StarCrystal(UniqueRepresentation, Parent):
             image = P._embedding[i](self.value)
             if image[0].e(i)._m > 0:
                 return None
-            return P(P._pullback[i]( P._tens[i](image[0].e(i),image[1]) ))
+            return P(P._pullback[i](P._tens[i](image[0].e(i), image[1])))
 
-        def f(self,i):
+        def f(self, i):
             r"""
             Return the action of `f_i^*` on ``self``.
 
@@ -176,7 +175,7 @@ class StarCrystal(UniqueRepresentation, Parent):
             """
             P = self.parent()
             image = P._embedding[i](self.value)
-            return P(P._pullback[i]( P._tens[i](image[0].f(i),image[1]) ))
+            return P(P._pullback[i](P._tens[i](image[0].f(i), image[1])))
 
         def weight(self):
             r"""

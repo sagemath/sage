@@ -95,7 +95,7 @@ class ParametrizedSurface3D(SageObject):
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
         Parametrized surface ('ellipsoid') with equation
         (cos(u1)*cos(u2), 2*cos(u2)*sin(u1), 3*sin(u2))
-        sage: ellipsoid.plot()                                                          # needs sage.plot
+        sage: ellipsoid.plot()
         Graphics3d Object
 
     Standard surfaces can be constructed using the ``surfaces`` generator::
@@ -123,7 +123,7 @@ class ParametrizedSurface3D(SageObject):
         sage: enneper = surfaces.Enneper(); enneper
         Parametrized surface ('Enneper's surface') with equation
         (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
-        sage: enneper.plot(aspect_ratio='automatic')                                    # needs sage.plot
+        sage: enneper.plot(aspect_ratio='automatic')
         Graphics3d Object
 
     We construct an ellipsoid whose axes are given by symbolic variables `a`,
@@ -276,12 +276,12 @@ class ParametrizedSurface3D(SageObject):
         sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]
         sage: points_array = [ellipsoid_equation(u_array[counter][0],
         ....:                                    u_array[counter][1])
-        ....:                 for counter in range(0,len(u_array))]
-        sage: curvature_ellipsoid_plot = sum(point([xx                                  # needs sage.plot
+        ....:                 for counter in range(len(u_array))]
+        sage: curvature_ellipsoid_plot = sum(point([xx
         ....:                                       for xx in points_array[counter]],
         ....:                                      color=hue(cc_array[counter]/2))
-        ....:                                for counter in range(0,len(u_array)))
-        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                             # needs sage.plot
+        ....:                                for counter in range(len(u_array)))
+        sage: curvature_ellipsoid_plot.show(aspect_ratio=1)
 
     We can find the principal curvatures and principal directions of the
     elliptic paraboloid::
@@ -338,7 +338,7 @@ class ParametrizedSurface3D(SageObject):
         sage: g3 = [c[-1] for c in S.geodesics_numerical((0,0),
         ....:                                            (cos(2*pi/3),sin(2*pi/3)),
         ....:                                            (0,2*pi,100))]
-        sage: (S.plot(opacity=0.3) + line3d(g1, color='red')                            # needs sage.plot
+        sage: (S.plot(opacity=0.3) + line3d(g1, color='red')
         ....:     + line3d(g2, color='red') + line3d(g3, color='red')).show()
     """
 
@@ -501,7 +501,7 @@ class ParametrizedSurface3D(SageObject):
             sage: u, v = var('u, v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
             sage: enneper = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
-            sage: enneper.plot((-5, 5), (-5, 5))                                        # needs sage.plot
+            sage: enneper.plot((-5, 5), (-5, 5))
             Graphics3d Object
         """
 
@@ -634,8 +634,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_first_fundamental_form_coefficient(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     def first_fundamental_form_coefficients(self):
         r"""
@@ -785,11 +784,10 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self.first_fundamental_form_inverse_coefficients()[index]
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     @cached_method
-    def rotation(self,theta):
+    def rotation(self, theta):
         r"""
         Give the matrix of the rotation operator over a given angle `\theta`
         with respect to the natural frame.
@@ -903,7 +901,7 @@ class ParametrizedSurface3D(SageObject):
         r"""
         Return a specific basis vector field of the orthonormal frame field on
         the surface, expressed in exterior or interior coordinates.  See
-        :meth:`orthogonal_frame` for more details.
+        ``orthogonal_frame`` for more details.
 
         INPUT:
 
@@ -1107,8 +1105,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_second_order_frame_element(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     @cached_method
     def _compute_second_fundamental_form_coefficient(self, index):
@@ -1156,8 +1153,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(index)
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_second_fundamental_form_coefficient(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     def second_fundamental_form_coefficients(self):
         """
@@ -1185,7 +1181,7 @@ class ParametrizedSurface3D(SageObject):
                 self._compute_second_fundamental_form_coefficient(index)
         return coefficients
 
-    def second_fundamental_form(self,vector1,vector2):
+    def second_fundamental_form(self, vector1, vector2):
         r"""
         Evaluates the second fundamental form on two vectors on the surface.
         If the vectors are given by `v=(v^1,v^2)` and `w=(w^1,w^2)`, the
@@ -1569,7 +1565,7 @@ class ParametrizedSurface3D(SageObject):
                 pt_ode.function = lambda t, v1_v2: [fun1(t, v1_v2[0], v1_v2[1]), fun2(t, v1_v2[0], v1_v2[1])]
                 return pt_ode
 
-    def parallel_translation_numerical(self,curve,t,v0,tinterval):
+    def parallel_translation_numerical(self, curve, t, v0, tinterval):
         r"""
         Numerically solve the equations for parallel translation of a vector
         along a curve on the surface.  Explicitly, the equations for parallel
@@ -1582,7 +1578,7 @@ class ParametrizedSurface3D(SageObject):
         ALGORITHM:
 
         The parallel transport equations are integrated forward in time using
-        the ode solvers from ``sage.calculus.ode``. See :meth:`_create_pt_ode_system`
+        the ode solvers from ``sage.calculus.ode``. See ``_create_pt_ode_system``
         for more details.
 
         INPUT:

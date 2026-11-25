@@ -126,7 +126,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
         Over unramified extensions::
 
 
-            sage: # needs sage.libs.ntl
             sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
@@ -134,7 +133,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
 
-            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
@@ -148,7 +146,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Over Eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
@@ -194,7 +191,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         """
         raise TypeError("this local element is not iterable")
 
-    def slice(self, i, j, k = 1, lift_mode='simple'):
+    def slice(self, i, j, k=1, lift_mode='simple'):
         r"""
         Return the sum of the `pi^{i + l \cdot k}` terms of the series
         expansion of this element, where pi is the uniformizer,
@@ -296,7 +293,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 5)
@@ -310,7 +306,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over unramified extensions::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 2)
@@ -324,7 +319,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over 2-step extensions (unramified followed by eisenstein)::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 3)
@@ -377,7 +371,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         # make sure that start and stop are nonnegative
         if start<0:
-            i += -start # fix the value of ppow below
+            i += -start  # fix the value of ppow below
             start = 0
         stop = max(stop, 0)
 
@@ -464,7 +458,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
             O(3^-5)
 
         One cannot use ``add_bigoh`` to lift to a higher precision; this
-        can be accomplished with :meth:`lift_to_precision`::
+        can be accomplished with
+        :meth:`~sage.categories.complete_discrete_valuation.CompleteDiscreteValuationRings.ElementMethods.lift_to_precision`::
 
             sage: o.add_bigoh(5)
             1 + O(3^4)
@@ -815,7 +810,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         """
         return self.square_root(extend, all)
 
-    #def square_root(self, extend = True, all = False):
+    #def square_root(self, extend=True, all=False):
     #    raise NotImplementedError
 
     #def unit_part(self):
@@ -948,8 +943,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         from sage.categories.fields import Fields
         if not integral and self.parent() in Fields():
             return (self / other, self.parent().zero())
-        else:
-            return self._quo_rem(other)
+        return self._quo_rem(other)
 
     def _test_trivial_powers(self, **options):
         r"""

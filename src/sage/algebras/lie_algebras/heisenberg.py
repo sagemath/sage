@@ -6,15 +6,15 @@ AUTHORS:
 - Travis Scrimshaw (2013-08-13): Initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.indexed_generators import IndexedGenerators
@@ -234,7 +234,7 @@ class HeisenbergAlgebra_fd:
         return self._n
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the Lie algebra generators of ``self``.
 

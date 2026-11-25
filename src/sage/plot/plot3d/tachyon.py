@@ -371,8 +371,8 @@ class Tachyon(WithEqualityById, SageObject):
                  antialiasing=False,
                  aspectratio=1.0,
                  raydepth=8,
-                 camera_position=None, # default value (-3, 0, 0),
-                 camera_center=None, # alternative equivalent name
+                 camera_position=None,  # default value (-3, 0, 0),
+                 camera_center=None,  # alternative equivalent name
                  updir=[0, 0, 1],
                  look_at=[0, 0, 0],
                  viewdir=None,
@@ -397,10 +397,10 @@ class Tachyon(WithEqualityById, SageObject):
         self._raydepth = raydepth
         if camera_position is not None:
             self._camera_position = camera_position
-        elif camera_center is not None: # make sure that old programs continue to work
+        elif camera_center is not None:  # make sure that old programs continue to work
             self._camera_position = camera_center
         else:
-            self._camera_position = (-3, 0, 0) # default value
+            self._camera_position = (-3, 0, 0)  # default value
         self._updir = updir
         self._projection = projection
         self._focallength = focallength
@@ -559,7 +559,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: h = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -577,7 +577,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: s = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -600,7 +600,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: d = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,              # needs sage.symbolic
@@ -689,8 +689,8 @@ class Tachyon(WithEqualityById, SageObject):
         {}
         {}
         end_scene""".format(self._res(),
-                        self._camera(),
-                        '\n'.join(x.str() for x in self._objects))
+                            self._camera(),
+                            '\n'.join(x.str() for x in self._objects))
 
     def light(self, center, radius, color):
         r"""
@@ -1004,7 +1004,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -1020,8 +1020,8 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
-            sage: def g(x,y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
+            sage: def f(x, y): return float(sin(x*y))
+            sage: def g(x, y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -1159,20 +1159,20 @@ class Texfunc:
         """
         if self._ttype == 0:
             return "0"
-        elif self._ttype < 7 and self._ttype > 0:
+        if self._ttype < 7 and self._ttype > 0:
             return r"""%d center %s rotate %s scale %s""" % (
                 self._ttype,
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        elif self._ttype < 9:
+        if self._ttype < 9:
             return r"""%d %s center %s rotate %s scale %s""" % (
                 self._ttype,
                 self._imagefile,
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        elif self._ttype == 9:
+        if self._ttype == 9:
             return r"""%d %s center %s rotate %s scale %s
             uaxis 1.0 0.0 0.0
             vaxis 0.0 1.0 0.0""" % (
@@ -1181,8 +1181,7 @@ class Texfunc:
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        else:
-            raise ValueError
+        raise ValueError
 
 
 class Texture:
@@ -1249,15 +1248,15 @@ class Texture:
         phong {} {} phong_size {}
         color {} texfunc {}
         """.format(self._name,
-               self._ambient,
-               self._diffuse,
-               self._specular,
-               self._opacity,
-               self._phongtype,
-               self._phong,
-               self._phongsize,
-               tostr(self._color),
-               self._texfunc)
+                   self._ambient,
+                   self._diffuse,
+                   self._specular,
+                   self._opacity,
+                   self._phongtype,
+                   self._phong,
+                   self._phongsize,
+                   tostr(self._color),
+                   self._texfunc)
 
 
 class Sphere:
@@ -1338,7 +1337,7 @@ class Ring:
         return r"""
         ring center {} normal {} inner {} outer {} {}
         """.format(tostr(self._center), tostr(self._normal),
-               self._inner, self._outer, self._texture)
+                   self._inner, self._outer, self._texture)
 
 
 class FractalLandscape:
@@ -1380,7 +1379,7 @@ class FractalLandscape:
         return r"""
         scape res {} scale {} center {} {}
         """.format(tostr(self._res, 2, int), tostr(self._scale, 2, int),
-               tostr(self._center), self._texture)
+                   tostr(self._center), self._texture)
 
 
 class Cylinder:
@@ -1614,8 +1613,7 @@ class TachyonTriangleFactory(TriangleFactory):
         """
         if color is None:
             return TachyonTriangle(a, b, c, self._texture)
-        else:
-            return TachyonTriangle(a, b, c, color)
+        return TachyonTriangle(a, b, c, color)
 
     def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         r"""
@@ -1633,8 +1631,7 @@ class TachyonTriangleFactory(TriangleFactory):
         """
         if color is None:
             return TachyonSmoothTriangle(a, b, c, da, db, dc, self._texture)
-        else:
-            return TachyonSmoothTriangle(a, b, c, da, db, dc, color)
+        return TachyonSmoothTriangle(a, b, c, da, db, dc, color)
 
     def get_colors(self, list):
         r"""
@@ -1751,10 +1748,7 @@ class ParametricPlot:
             return True
 
         r = sqrt(a**2 + b**2 + c**2)
-        if delta < self._e_rel * r:
-            return True
-
-        return False
+        return delta < self._e_rel * r
 
 
 def tostr(s, length=3, out_type=float):

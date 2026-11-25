@@ -31,14 +31,24 @@ AUTHORS:
 For this interface, Maxima is loaded into ECL which is itself loaded
 as a C library in Sage. Translations between Sage and Maxima objects
 (which are nothing but wrappers to ECL objects) is made as much as possible
-directly, but falls back to the string based conversion used by the
-classical Maxima Pexpect interface in case no new implementation has been made.
+directly, but falls back to the string based conversion in case no new implementation
+has been made.
 
-This interface is the one used for calculus by Sage
-and is accessible as `maxima_calculus`::
+This is the default ``maxima`` interface and the one used for calculus by
+Sage.  It is also accessible as ``maxima_calculus``::
 
+    sage: maxima(2).parent() is maxima_calculus(2).parent()
+    True
     sage: maxima_calculus
-    Maxima_lib
+    Maxima
+
+Maxima settings, loaded packages, and assumptions are shared with Sage's
+calculus engine.  Sage symbolic variables are translated to names prefixed
+with ``_SAGE_VAR_``, so assigning a value to ``x`` in Maxima does not assign
+a value to the Sage symbolic variable ``x``.
+
+For a separate Maxima process, explicitly import the Pexpect interface from
+:mod:`sage.interfaces.maxima`.
 
 Only one instance of this interface can be instantiated,
 so the user should not try to instantiate another one,
@@ -79,23 +89,86 @@ The output is parseable (i. e. :issue:`31796` is fixed)::
 
 TESTS:
 
-Check our workaround for a race in ecl works, see :issue:`26968`.
-We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
-in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
+The public interface, symbolic method wrapper, and Maxima magics work
+without starting a Pexpect session.  Check this in a fresh process so an
+existing subprocess cannot hide an unintended use of that interface::
 
-    sage: import tempfile, subprocess
-    sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
-    sage: _ = subprocess.run(['sage', '-c',  # long time
-    ....: f'''
-    ....: import os
-    ....: os.environ["MAXIMA_USERDIR"] = "{tmpdir.name}"
-    ....: if not os.fork():
-    ....:     import sage.interfaces.maxima_lib
-    ....: else:
-    ....:     import sage.interfaces.maxima_lib
-    ....:     os.wait()
-    ....: '''])
-    sage: tmpdir.cleanup()
+    sage: import subprocess, sys
+    sage: code = '''
+    ....: import importlib.abc
+    ....: import sys
+    ....: blocked = []
+    ....: class RejectPexpectMaxima(importlib.abc.MetaPathFinder):
+    ....:     def find_spec(self, fullname, path=None, target=None):
+    ....:         if fullname == 'sage.interfaces.maxima':
+    ....:             blocked.append(fullname)
+    ....:             raise AssertionError('Pexpect Maxima must not be imported')
+    ....: assert 'sage.interfaces.maxima' not in sys.modules
+    ....: sys.meta_path.insert(0, RejectPexpectMaxima())
+    ....: from unittest.mock import patch
+    ....: from sage.all import *
+    ....: from sage.interfaces.expect import Expect
+    ....: from sage.repl.interface_magic import InterfaceMagic
+    ....: x = var('x')
+    ....: with patch.object(Expect, '_start', side_effect=AssertionError('Pexpect started')):
+    ....:     assert maxima('diff(x^3,x)').sage() == 3*x**2
+    ....:     assert maxima(x).parent() is maxima_calculus(x).parent()
+    ....:     assert loads(dumps(maxima(7))).sage() == 7
+    ....:     assert (sin(x)**2 + cos(x)**2).maxima_methods().trigsimp() == 1
+    ....:     assert chebyshev_T(5, x, algorithm='maxima') == 16*x**5 - 20*x**3 + 5*x
+    ....:     assert maxima(harmonic_number(x, 2)).sage() == harmonic_number(x, 2)
+    ....:     magic = InterfaceMagic.find('maxima')
+    ....:     assert magic.line_magic_factory()('2+3').sage() == 5
+    ....:     magic.cell_magic_factory()('', '1+1; 2+2$')
+    ....: assert not blocked, blocked
+    ....: assert 'sage.interfaces.maxima' not in sys.modules
+    ....: '''
+    sage: result = subprocess.run([sys.executable, '-c', code],
+    ....:                         capture_output=True, text=True, timeout=60)
+    sage: assert result.returncode == 0, result.stdout + result.stderr
+    sage: result.stdout.strip()
+    '2'
+
+Check that concurrent Maxima initialization is not affected by ECL races,
+see :issue:`26968`.  The subprocesses share an empty ``MAXIMA_USERDIR`` and
+wait at a barrier before importing this module.  In particular, check every
+subprocess return code so that a failure cannot go unnoticed::
+
+    sage: import os, pathlib, subprocess, sys, tempfile, time
+    sage: with tempfile.TemporaryDirectory(dir=DOT_SAGE) as userdir:  # long time
+    ....:     start = pathlib.Path(userdir, "start")
+    ....:     ready = [pathlib.Path(userdir, f"ready-{i}") for i in range(4)]
+    ....:     processes = []
+    ....:     for ready_file in ready:
+    ....:         code = f'''
+    ....: from pathlib import Path
+    ....: import time
+    ....: Path({str(ready_file)!r}).touch()
+    ....: while not Path({str(start)!r}).exists():
+    ....:     time.sleep(0.01)
+    ....: import sage.all
+    ....: from sage.interfaces.maxima_lib import maxima
+    ....: maxima("load(linearalgebra)")
+    ....: '''
+    ....:         env = os.environ.copy()
+    ....:         env["MAXIMA_USERDIR"] = userdir
+    ....:         processes.append(subprocess.Popen(
+    ....:             [sys.executable, "-c", code], env=env,
+    ....:             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    ....:             text=True))
+    ....:     deadline = time.monotonic() + 30
+    ....:     while not all(path.exists() for path in ready):
+    ....:         if time.monotonic() >= deadline:
+    ....:             raise RuntimeError("Maxima test subprocess did not start")
+    ....:         time.sleep(float("0.01"))
+    ....:     start.touch()
+    ....:     failures = []
+    ....:     for process in processes:
+    ....:         output, _ = process.communicate()
+    ....:         if process.returncode:
+    ....:             failures.append((process.returncode, output))
+    ....:     failures
+    []
 """
 
 # ****************************************************************************
@@ -112,24 +185,80 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.structure.element import Expression
-from sage.symbolic.ring import SR
-
-from sage.libs.ecl import EclObject, ecl_eval
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                              MaximaAbstractElement, MaximaAbstractFunctionElement,
-                              MaximaAbstractElementFunction)
-from sage.misc.instancedoc import instancedoc
-from sage.env import MAXIMA_FAS
+import errno
+import os
+import re
+import time
+from contextlib import contextmanager
 
 import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
-
+from sage.env import MAXIMA_FAS, MAXIMA_PREFIX
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
+from sage.libs.ecl import EclObject, ecl_eval
+from sage.misc.instancedoc import instancedoc
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+from sage.structure.element import Expression
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
+from sage.symbolic.ring import SR
+
+
+@contextmanager
+def _maxima_cache_lock(cache_dir):
+    r"""
+    Lock operations that can write to Maxima's per-user ECL cache.
+
+    ECL derives compiler intermediate names from the final ``.fas`` name.
+    Concurrent processes compiling the same Maxima package therefore use and
+    delete the same ``.c``, ``.eclh``, ``.data`` and object files.  Serialize
+    those operations across Sage processes while continuing to share the
+    completed cache.
+    """
+    os.makedirs(cache_dir, exist_ok=True)
+    lock_path = os.path.join(cache_dir, ".sage-maxima-lib.lock")
+
+    with open(lock_path, "a+b") as lock_file:
+        if os.name == "nt":
+            import msvcrt
+
+            # Locking an empty range is unreliable on Windows.  Concurrent
+            # appenders may add more than one byte, which is harmless because
+            # every process locks the first byte.
+            lock_file.seek(0, os.SEEK_END)
+            if lock_file.tell() == 0:
+                lock_file.write(b"\0")
+                lock_file.flush()
+            lock_file.seek(0)
+            while True:
+                try:
+                    msvcrt.locking(lock_file.fileno(), msvcrt.LK_NBLCK, 1)
+                except OSError as error:
+                    if error.errno not in (errno.EACCES, errno.EAGAIN,
+                                            errno.EDEADLK):
+                        raise
+                    time.sleep(0.05)
+                else:
+                    break
+        else:
+            import fcntl
+
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+
+        try:
+            yield
+        finally:
+            if os.name == "nt":
+                lock_file.seek(0)
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 
 
 # We begin here by initializing Maxima in library mode
@@ -142,29 +271,79 @@ else:
 ecl_eval("(in-package :maxima)")
 ecl_eval("(set-locale-subdir)")
 
-# This workaround has to happen before any call to (set-pathnames).
-# To be safe please do not call anything other than
-# (set-locale-subdir) before this block.
-try:
-    ecl_eval("(set-pathnames)")
-except RuntimeError:
-    # Recover from :issue:`26968` by creating `*maxima-objdir*` here.
-    # This cannot be done before calling `(set-pathnames)` since
-    # `*maxima-objdir*` is computed there.
-    # We use python `os.makedirs()` which is immune to the race.
-    # Using `(ensure-directories-exist ...)` in lisp would be
-    # subject to the same race condition and since `*maxima-objdir*`
-    # has multiple components this is quite plausible to happen.
+if MAXIMA_PREFIX:
+    os.environ["MAXIMA_PREFIX"] = MAXIMA_PREFIX
+
+maxima_userdir = os.environ.get("MAXIMA_USERDIR")
+if not maxima_userdir:
+    maxima_userdir = ecl_eval("(default-userdir)").python()[1:-1]
+
+# This lock prevents both the directory-creation race of :issue:`26968` and
+# concurrent writes to the compiler cache.  Keep the Python fallback because
+# an external Maxima process does not honor Sage's lock.
+with _maxima_cache_lock(maxima_userdir):
+    try:
+        ecl_eval("(set-pathnames)")
+    except RuntimeError:
+        maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+        os.makedirs(maxima_objdir, exist_ok=True)
+        ecl_eval("(set-pathnames)")
+
     maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
-    import os
     os.makedirs(maxima_objdir, exist_ok=True)
-    # Call `(set-pathnames)` again to complete its job.
-    ecl_eval("(set-pathnames)")
+
+
+def _maxima_share_subdirs(sharedir=None):
+    r"""
+    Return Maxima's share-package subdirectories, relative to the share tree.
+
+    The directories are read from Maxima's own ``*maxima-sharedir*`` -- the
+    canonical package tree that Maxima itself searches and compiles into --
+    rather than from a hardcoded list, so they cannot drift out of sync with
+    the installed Maxima version.
+
+    INPUT:
+
+    - ``sharedir`` -- string or ``None`` (default: ``None``); the Maxima
+      share directory to walk.  When ``None``, use ``*maxima-sharedir*``.
+
+    OUTPUT: a sorted list of ``/``-separated subdirectory paths relative to
+    ``sharedir``.
+
+    TESTS::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_share_subdirs
+        sage: import os, tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     os.makedirs(os.path.join(d, 'linearalgebra'))
+        ....:     os.makedirs(os.path.join(d, 'contrib', 'diffequations'))
+        ....:     _maxima_share_subdirs(sharedir=d)
+        ['contrib', 'contrib/diffequations', 'linearalgebra']
+
+    On startup the list is computed from the live Maxima share tree::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_share_packages
+        sage: 'linearalgebra' in _maxima_share_packages
+        True
+    """
+    if sharedir is None:
+        sharedir = ecl_eval("*maxima-sharedir*").python()[1:-1]
+
+    subdirs = []
+    for dirpath, _, _ in os.walk(sharedir):
+        rel = os.path.relpath(dirpath, sharedir)
+        if rel != os.curdir:
+            subdirs.append(rel.replace(os.sep, "/"))
+    return sorted(subdirs)
+
+
+_maxima_share_packages = _maxima_share_subdirs()
 
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
-ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
+ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
+ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not *pcprntd*) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
 
@@ -173,15 +352,9 @@ ecl_eval("(setf $errormsg nil)")
 # question and returning the answer. Our version throws an error in
 # which the text of the question is included. This is accomplished by
 # redirecting *standard-output* to a string.
-#
-# After an update in Issue 31553, this routine also preprocesses the
-# text to replace space symbols with strings. This prevents those
-# symbols from being turned into ugly newlines -- a problem that we
-# used to avoid with a custom patch.
 ecl_eval(r"""
 (defun retrieve (msg flag &aux (print? nil))
   (declare (special msg flag print?))
-  (setq msg (mapcar #'(lambda (x) (if (eq x '| |) " " x)) msg))
   (or (eq flag 'noprint) (setq print? t))
   (error
     (concatenate 'string
@@ -211,13 +384,21 @@ ecl_eval("(setf original-standard-output *standard-output*)")
 ecl_eval("(setf *standard-output* *dev-null*)")
 # ecl_eval("(setf *error-output* *dev-null*)")
 
+# Add search paths
+if MAXIMA_PREFIX:
+    import_packages = "{" + ",".join(_maxima_share_packages) + "}"
+    ecl_eval(f'#$file_search_maxima: append(file_search_maxima, ["{MAXIMA_PREFIX}/###.{{mac,mc,wxm}}", "{MAXIMA_PREFIX}/{import_packages}/###.{{mac,mc,wxm}}"])$')
+    ecl_eval(f'#$file_search_lisp: append(file_search_lisp, ["{MAXIMA_PREFIX}/###.{{fas,lisp,lsp}}", "{MAXIMA_PREFIX}/../src/###.{{fas,lisp,lsp}}", "{MAXIMA_PREFIX}/{import_packages}/###.{{fas,lisp,lsp}}"])$')
+
 # Default options set in Maxima
 # display2d -- no ascii art output
 # keepfloat -- don't automatically convert floats to rationals
 
+# Load linearalgebra explicitly under the cache lock instead of relying on
+# transitive loads from other packages, which vary between Maxima builds.
 init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'keepfloat : true',
-             'load(to_poly_solve)', 'load(simplify_sum)',
-             'load(diag)']
+             'load(linearalgebra)', 'load(to_poly_solve)', 'load(simplify_sum)',
+             'load(diag)', 'load(abs_integrate)']
 
 
 # Turn off the prompt labels, since computing them *very
@@ -227,8 +408,9 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 # Robert Dodier for figuring this out!
 # See trac # 6818.
 init_code.append('nolabels : true')
-for l in init_code:
-    ecl_eval("#$%s$" % l)
+with _maxima_cache_lock(maxima_objdir):
+    for l in init_code:
+        ecl_eval("#$%s$" % l)
 # To get more debug information uncomment the next line
 # should allow to do this through a method
 # ecl_eval("(setf *standard-output* original-standard-output)")
@@ -311,7 +493,9 @@ def max_to_string(s):
         sage: max_to_string(ecl)
         'cos(_SAGE_VAR_x)'
     """
-    return maxprint(s).python()[1:-1]
+    # EclObject.python() returns a printed Lisp string, including its quotes
+    # and escapes.  Undo that quoting, preserving Maxima's own escapes.
+    return re.sub(r'\\(.)', r'\1', maxprint(s).python()[1:-1], flags=re.DOTALL)
 
 
 my_mread = ecl_eval("""
@@ -336,7 +520,61 @@ def parse_max_string(s):
         sage: parse_max_string('1+1')
         <ECL: ((MPLUS) 1 1)>
     """
-    return my_mread('"%s;"' % s)
+    return my_mread(EclObject(s + ';', False))
+
+
+def _maxima_statements(line):
+    r"""
+    Split Maxima input into statements and their ``;`` or ``$`` terminators.
+
+    Only recognize statement boundaries here; Maxima parses each statement.
+    Strings and backslash escapes protect terminators, and Maxima permits
+    nested ``/* ... */`` comments.  A final unterminated statement has the
+    empty string as its terminator.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_statements
+        sage: list(_maxima_statements('1+1; "a;b"$ 3'))
+        [('1+1', ';'), (' "a;b"', '$'), (' 3', '')]
+    """
+    start = i = 0
+    comment_depth = 0
+    quoted = has_code = False
+    while i < len(line):
+        char = line[i]
+        pair = line[i:i + 2]
+        if comment_depth:
+            if pair == '/*':
+                comment_depth += 1
+                i += 2
+                continue
+            if pair == '*/':
+                comment_depth -= 1
+                i += 2
+                continue
+        elif char == '\\':
+            has_code = True
+            i += 2
+            continue
+        elif char == '"':
+            quoted = not quoted
+            has_code = True
+        elif not quoted:
+            if pair == '/*':
+                comment_depth = 1
+                i += 2
+                continue
+            if char in ';$':
+                if has_code:
+                    yield line[start:i], char
+                start = i + 1
+                has_code = False
+            elif not char.isspace():
+                has_code = True
+        i += 1
+    if has_code or comment_depth:
+        yield line[start:], ''
 
 
 class MaximaLib(MaximaAbstract):
@@ -382,10 +620,9 @@ class MaximaLib(MaximaAbstract):
             raise RuntimeError("Maxima interface in library mode can only be instantiated once")
         maxima_lib_instances += 1
 
-        global init_code
         self.__init_code = init_code
 
-        MaximaAbstract.__init__(self, "maxima_lib")
+        MaximaAbstract.__init__(self, "maxima")
         self.__seq = 0
 
     def _coerce_from_special_method(self, x):
@@ -458,25 +695,34 @@ class MaximaLib(MaximaAbstract):
             ''
             sage: maxima_lib._eval_line('randvar')
             'sin(y)+cos(x)'
+
+        Terminators inside strings, escaped identifiers, and nested comments
+        do not end a statement::
+
+            sage: maxima.eval('"a;b$c"; 2+2$')
+            '"a;b$c"'
+            sage: maxima.eval(r'"a\";b$c"')
+            '"a\\";b$c"'
+            sage: maxima.eval(r'a\;b')
+            'a\\;b'
+            sage: maxima.eval('/* ; /* $ */ ; */ 1+1; /* $ */')
+            '2'
+            sage: maxima.eval(' /* a comment */ ')
+            ''
+
+        Statements terminated by ``$`` are evaluated without returning
+        their values::
+
+            sage: maxima.eval('sage_eval_test: 3$ sage_eval_test + 4;')
+            '7'
+            sage: maxima.eval('kill(sage_eval_test)$')
+            ''
         """
         result = ''
-        while line:
-            ind_dollar = line.find("$")
-            ind_semi = line.find(";")
-            if ind_dollar == -1 or (ind_semi >= 0 and ind_dollar > ind_semi):
-                if ind_semi == -1:
-                    statement = line
-                    line = ''
-                else:
-                    statement = line[:ind_semi]
-                    line = line[ind_semi + 1:]
-                if statement:
-                    result = ((result + '\n') if result else '') + max_to_string(maxima_eval("#$%s$" % statement))
-            else:
-                statement = line[:ind_dollar]
-                line = line[ind_dollar + 1:]
-                if statement:
-                    maxima_eval("#$%s$" % statement)
+        for statement, terminator in _maxima_statements(line):
+            value = maxima_eval(parse_max_string(statement))
+            if terminator != '$':
+                result = ((result + '\n') if result else '') + max_to_string(value)
         if not reformat:
             return result
         return ' '.join(x.strip() for x in result.split())
@@ -725,58 +971,21 @@ class MaximaLib(MaximaAbstract):
             sage: assumptions()  # Check the assumptions really were forgotten
             []
 
-        Make sure the abs_integrate package is being used,
-        :issue:`11483`. The following are examples from the Maxima
-        abs_integrate documentation::
+        An example from the maxima documentation involving the
+        absolute value::
 
-            sage: integrate(abs(x), x)
-            1/2*x*abs(x)
-
-        ::
-
-            sage: integrate(sgn(x) - sgn(1-x), x)  # known bug
+            sage: integrate(sgn(x) - sgn(1-x), x)
             abs(x - 1) + abs(x)
 
-        This is a known bug in Sage symbolic limits code, see
+        This is a fixed bug in Sage symbolic limits code, see
         :issue:`17892` and https://sourceforge.net/p/maxima/bugs/3237/ ::
 
-            sage: integrate(1 / (1 + abs(x-5)), x, -5, 6) # not tested -- known bug
+            sage: integrate(1 / (1 + abs(x-5)), x, -5, 6)
             log(11) + log(2)
-
-        ::
-
-            sage: integrate(1/(1 + abs(x)), x)  # known bug
-            1/2*(log(x + 1) + log(-x + 1))*sgn(x) + 1/2*log(x + 1) - 1/2*log(-x + 1)
-
-        ::
-
-            sage: integrate(cos(x + abs(x)), x)  # known bug
-            -1/2*x*sgn(x) + 1/4*(sgn(x) + 1)*sin(2*x) + 1/2*x
-
-        The last example relies on the following simplification::
-
-            sage: maxima("realpart(signum(x))")
-            signum(x)
-
-        An example from sage-support thread e641001f8b8d1129::
-
-            sage: f = e^(-x^2/2)/sqrt(2*pi) * sgn(x-1)
-            sage: integrate(f, x, -Infinity, Infinity)  # known bug
-            -erf(1/2*sqrt(2))
-
-        From :issue:`8624`::
-
-            sage: integral(abs(cos(x))*sin(x),(x,pi/2,pi))
-            1/2
-
-        ::
-
-            sage: integrate(sqrt(x + sqrt(x)), x).canonicalize_radical()  # known bug
-            1/12*((8*x - 3)*x^(1/4) + 2*x^(3/4))*sqrt(sqrt(x) + 1) + 1/8*log(sqrt(sqrt(x) + 1) + x^(1/4)) - 1/8*log(sqrt(sqrt(x) + 1) - x^(1/4))
 
         And :issue:`11594`::
 
-            sage: integrate(abs(x^2 - 1), x, -2, 2)  # known bug
+            sage: integrate(abs(x^2 - 1), x, -2, 2)
             4
 
         This definite integral returned zero (incorrectly) in at least
@@ -794,6 +1003,45 @@ class MaximaLib(MaximaAbstract):
             0.124756040961038
             sage: a.imag().abs() < 3e-17
             True
+
+        The following examples require Maxima's ``abs_integrate``
+        package. Enabling ``abs_integrate`` globally caused several
+        bugs (catalogued in :issue:`12731`) but most of these have
+        been fixed, and ``abs_integrate`` has been re-enabled::
+
+            sage: integrate(1/(abs(x) + 1), x, algorithm="maxima")
+            1/2*(log(x + 1) + log(-x + 1))*sgn(x) + 1/2*log(x + 1) - 1/2*log(-x + 1)
+            sage: integrate(cos(x + abs(x)), x, algorithm="maxima")
+            -1/4*(2*x - sin(2*x))*sgn(x) + 1/2*x + 1/4*sin(2*x)
+
+        Several examples where ``abs_integrate`` previously lead to
+        incorrect results. This was once reported to be divergent in
+        :issue:`13733`, and only in maxima-5.48 does it give the
+        correct answer::
+
+            sage: # long time, not tested until maxima-5.48 is widespread
+            sage: integral(log(cot(x)-1), x, 0, pi/4, algorithm="maxima")
+            catalan + 1/2*I*dilog(1/2*I + 1/2) - 1/2*I*dilog(-1/2*I + 1/2)
+
+        This used to return ``1/2`` in :issue:`11590`::
+
+            sage: integrate(x * sgn(x^2 - 1/4), x, -1, 0, algorithm="maxima")
+            -1/4
+
+        In :issue:`14591`, this incorrectly simplified to ``cosh(x)``::
+
+            sage: integrate(sqrt(1-1/4*cosh(x)^2), x, algorithm="maxima")
+            integrate(sqrt(-1/4*cosh(x)^2 + 1), x)
+
+        In :issue:`17468`, this integral hangs::
+
+            sage: integral(log(abs(2*sin(x))), x, 0, pi/3, algorithm="maxima")
+            1/36*I*pi^2 + I*dilog(1/2*I*sqrt(3) + 1/2) + I*dilog(-1/2*I*sqrt(3) - 1/2)
+
+        This used to return a *negative* answer in :issue:`17511`::
+
+            sage: integrate(abs(cos(x)), x, 0, pi, algorithm="maxima")
+            2
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
@@ -911,12 +1159,20 @@ class MaximaLib(MaximaAbstract):
             factorial(n)
             sage: symbolic_product(2*x,x,1,n)
             2^n*factorial(n)
+
+        The result is not passed through ``ratsimp``, so products that
+        cannot be evaluated in terms of factorials stay fully factored::
+
+            sage: from sage.interfaces.maxima_lib import maxima_lib
+            sage: k, n = var('k n')
+            sage: f = (18*k^3 + 27*k^2 + 13*k + 2)/(2*k^3 + 9*k^2 + 13*k + 6)
+            sage: maxima_lib.sr_prod(f, k, 0, n)
+            3^(2*n + 2)*gamma(n + 5/3)*gamma(n + 4/3)/((2*n + 3)*factorial(n + 2)*factorial(n + 1)*gamma(2/3)*gamma(1/3))
         """
         try:
-            return max_to_sr(maxima_eval([[max_ratsimp],
-                                          [[max_simplify_prod],
-                                           ([max_prod],
-                                            [sr_to_max(SR(a)) for a in args])]]))
+            return max_to_sr(maxima_eval([[max_simplify_prod],
+                                          ([max_prod],
+                                           [sr_to_max(SR(a)) for a in args])]))
         except RuntimeError as error:
             s = str(error)
             if "divergent" in s:
@@ -1050,29 +1306,8 @@ class MaximaLib(MaximaAbstract):
 
         outstr = "Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume("\
             + errstr[jj + 1:k] + ">0)', see `assume?` for more details)\n" + errstr
-        outstr = outstr.replace('_SAGE_VAR_', '')
+        outstr = outstr.replace("_SAGE_VAR_", "")
         raise ValueError(outstr)
-
-
-def is_MaximaLibElement(x):
-    r"""
-    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.maxima_lib import maxima_lib, is_MaximaLibElement
-        sage: is_MaximaLibElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima_lib(1)
-        sage: is_MaximaLibElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaLibElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaLibElement) instead")
-
-    return isinstance(x, MaximaLibElement)
 
 
 @instancedoc
@@ -1198,7 +1433,7 @@ def reduce_load_MaximaLib():
 
         sage: from sage.interfaces.maxima_lib import reduce_load_MaximaLib
         sage: reduce_load_MaximaLib()
-        Maxima_lib
+        Maxima
     """
     return maxima_lib
 
@@ -1242,10 +1477,12 @@ sage_op_dict = {
     sage.functions.error.erf: "%ERF",
     sage.functions.gamma.gamma_inc: "%GAMMA_INCOMPLETE",
     sage.functions.other.conjugate: "$CONJUGATE",
+    sage.functions.other.imag_part: "%IMAGPART",
+    sage.functions.other.real_part: "%REALPART",
 }
 # we compile the dictionary
-sage_op_dict = dict([(k, EclObject(sage_op_dict[k])) for k in sage_op_dict])
-max_op_dict = dict([(sage_op_dict[k], k) for k in sage_op_dict])
+sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}
+max_op_dict = {sage_op_dict[k]: k for k in sage_op_dict}
 
 
 # Here we correct the dictionaries for some simple operators
@@ -1356,11 +1593,10 @@ def mqapply_to_sage(expr):
         return sage.functions.hypergeometric.hypergeometric(mlist_to_sage(car(cdr(cdr(expr)))),
                                                             mlist_to_sage(car(cdr(cdr(cdr(expr))))),
                                                             max_to_sr(car(cdr(cdr(cdr(cdr(expr)))))))
-    else:
-        op = max_to_sr(cadr(expr))
-        max_args = cddr(expr)
-        args = [max_to_sr(a) for a in max_args]
-        return op(*args)
+    op = max_to_sr(cadr(expr))
+    max_args = cddr(expr)
+    args = [max_to_sr(a) for a in max_args]
+    return op(*args)
 
 
 def mdiff_to_sage(expr):
@@ -1437,7 +1673,7 @@ def max_at_to_sage(expr):
         subsvalues = {v.lhs(): v.rhs() for v in max_to_sr(subsarg)}
     else:
         v = max_to_sr(subsarg)
-        subsvalues = dict([(v.lhs(), v.rhs())])
+        subsvalues = {v.lhs(): v.rhs()}
     return SR(arg).subs(subsvalues)
 
 
@@ -1572,8 +1808,10 @@ def pyobject_to_max(obj):
     """
     if isinstance(obj, sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(), obj.denom()])
-    elif isinstance(obj, NumberFieldElement_base):
-        from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+    if isinstance(obj, NumberFieldElement_base):
+        from sage.rings.number_field.number_field_element_quadratic import (
+            NumberFieldElement_quadratic,
+        )
         if isinstance(obj, NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1, 0, 1]:
             re, im = obj.list()
             return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
@@ -1615,8 +1853,6 @@ def sr_to_max(expr):
         sage: max_to_sr(sr_to_max(f_prime(x = 1)))
         D[0](f)(1)
     """
-    global sage_op_dict, max_op_dict
-    global sage_sym_dict, max_sym_dict
     if isinstance(expr, (list, tuple)):
         return EclObject(([mlist], [sr_to_max(e) for e in expr]))
     op = expr.operator()
@@ -1653,11 +1889,12 @@ def sr_to_max(expr):
             l = [[mdiff], f]
             l.extend(deriv_max)
             return EclObject(l)
-        elif (op in special_sage_to_max):
+        if (op in special_sage_to_max):
             return EclObject(special_sage_to_max[op](*[sr_to_max(o) for o in expr.operands()]))
-        elif op == tuple:
-            return EclObject(([mlist], list(sr_to_max(op) for op in expr.operands())))
-        elif not (op in sage_op_dict):
+        if op is tuple:
+            return EclObject(([mlist],
+                              [sr_to_max(op) for op in expr.operands()]))
+        if op not in sage_op_dict:
             # Maxima does some simplifications automatically by default
             # so calling maxima(expr) can change the structure of expr
             # op_max=caar(maxima(expr).ecl())
@@ -1671,21 +1908,21 @@ def sr_to_max(expr):
             max_op_dict[op_max] = op
         return EclObject(([sage_op_dict[op]],
                           [sr_to_max(o) for o in expr.operands()]))
-    elif expr.is_symbol() or expr._is_registered_constant_():
+    if expr.is_symbol() or expr._is_registered_constant_():
         if expr not in sage_sym_dict:
             sym_max = maxima(expr).ecl()
             sage_sym_dict[expr] = sym_max
             max_sym_dict[sym_max] = expr
         return sage_sym_dict[expr]
-    else:
-        try:
-            return pyobject_to_max(expr.pyobject())
-        except TypeError:
-            return maxima(expr).ecl()
+    try:
+        return pyobject_to_max(expr.pyobject())
+    except TypeError:
+        return maxima(expr).ecl()
 
 
 # This goes from EclObject to SR
 from sage.symbolic.expression import symbol_table
+
 max_to_pynac_table = symbol_table['maxima']
 
 
@@ -1737,14 +1974,23 @@ def max_to_sr(expr):
         max_args = cdr(expr)
         args = [max_to_sr(a) for a in max_args]
         return op(*args)
-    elif expr.symbolp():
+    if expr.symbolp():
         if expr not in max_sym_dict:
             sage_symbol = SR(maxima(expr))
             sage_sym_dict[sage_symbol] = expr
             max_sym_dict[expr] = sage_symbol
         return max_sym_dict[expr]
-    else:
-        e = expr.python()
-        if isinstance(e, float):
-            return sage.rings.real_double.RealDoubleElement(e)
-        return e
+    e = expr.python()
+    if isinstance(e, float):
+        return sage.rings.real_double.RealDoubleElement(e)
+    return e
+
+#interface routines for evaluating maxima's `equal` and `notequal`
+
+
+max_equal = EclObject("$EQUAL")
+max_notequal = EclObject("$NOTEQUAL")
+max_is = EclObject("$IS")
+test_max_equal = lambda A,B: maxima_eval([[max_is],[[max_equal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_notequal = lambda A,B: maxima_eval([[max_is],[[max_notequal],sr_to_max(A),sr_to_max(B)]]).python()
+test_max_relation = lambda R: maxima_eval([[max_is],sr_to_max(R)]).python()

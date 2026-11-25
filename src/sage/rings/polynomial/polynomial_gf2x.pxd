@@ -7,4 +7,3 @@ include "polynomial_template_header.pxi"
 
 cdef class Polynomial_GF2X(Polynomial_template):
     pass
-

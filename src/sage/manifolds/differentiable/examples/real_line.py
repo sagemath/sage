@@ -24,14 +24,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.latex import latex
-from sage.rings.infinity import infinity, minus_infinity
-from sage.symbolic.ring import SR
-from sage.rings.real_mpfr import RR
-from sage.typeset.unicode_characters import unicode_mathbbR
+from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import RealDifferentialStructure
-from sage.categories.manifolds import Manifolds
+from sage.misc.latex import latex
+from sage.rings.infinity import infinity, minus_infinity
+from sage.rings.real_mpfr import RR
+from sage.symbolic.ring import SR
+from sage.typeset.unicode_characters import unicode_mathbbR
+
 
 class OpenInterval(DifferentiableManifold):
     r"""

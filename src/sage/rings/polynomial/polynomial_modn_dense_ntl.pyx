@@ -36,11 +36,13 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.integer cimport smallInteger
 
-from sage.libs.ntl.all import ZZX, ZZ_pX
+from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
+from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 from sage.rings.integer_ring import ZZ
 
 from sage.rings.fraction_field_element import FractionFieldElement
@@ -602,6 +604,21 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         sage: q == qbar - d                                                             # needs sage.symbolic
         True
 
+    TESTS:
+
+    The lattice has no trailing zero columns when `t < \delta`
+    (:issue:`42590`)::
+
+        sage: R.<x> = PolynomialRing(Zmod(17), implementation='NTL')
+        sage: f = x^2 - 5*x + 6
+        sage: from sage.misc.verbose import set_verbose
+        sage: set_verbose(1)
+        sage: f.small_roots()
+        verbose 1 (<module>) LLL of 8x8 matrix (algorithm ...)
+        verbose 1 (<module>) LLL finished (time = ...)
+        [2]
+        sage: set_verbose(0)
+
     REFERENCES:
 
     Don Coppersmith. *Finding a small root of a univariate modular equation.*
@@ -628,41 +645,42 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     f = self.change_ring(ZZ)
 
-    P,(x,) = f.parent().objgens()
+    _, (x,) = f.parent().objgens()
 
     delta = f.degree()
 
     if epsilon is None:
         epsilon = beta/8
-    verbose("epsilon = %f"%epsilon, level=2)
+    verbose("epsilon = %f" % epsilon, level=2)
 
     m = max(beta**2/(delta * epsilon), 7*beta/delta).ceil()
-    verbose("m = %d"%m, level=2)
+    verbose("m = %d" % m, level=2)
 
     t = int( ( delta*m*(1/beta -1) ).floor() )
-    verbose("t = %d"%t, level=2)
+    verbose("t = %d" % t, level=2)
 
     if X is None:
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
-    verbose("X = %s"%X, level=2)
+    verbose("X = %s" % X, level=2)
 
     # we could do this much faster, but this is a cheap step
     # compared to LLL
-    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
-    g.extend([x**i * f**m for i in range(t)]) # h
+    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta)]
+    fm = f**m
+    g.extend(x**i * fm for i in range(t))  # h
 
-    B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
+    B = Matrix(ZZ, len(g), delta*m + t)
     for i in range(B.nrows()):
-        for j in range( g[i].degree()+1 ):
-            B[i,j] = g[i][j]*X**j
+        for j in range(g[i].degree() + 1):
+            B[i, j] = g[i][j]*X**j
 
-    B =  B.LLL(**kwds)
+    B = B.LLL(**kwds)
 
-    f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
+    f = sum([ZZ(B[0, i]//X**i) * x**i for i in range(B.ncols())])
     R = f.roots()
 
     ZmodN = self.base_ring()
-    roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
+    roots = set(ZmodN(r) for r, m in R if abs(r) <= X)
     Nbeta = N**beta
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 
@@ -956,8 +974,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     @coerce_binop
     def quo_rem(self, right):
@@ -1525,8 +1542,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             if do_sig: sig_off()
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     @coerce_binop
     def quo_rem(self, right):
@@ -1848,7 +1864,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         arg = args[0]
         cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
+        if isinstance(arg, (int, Integer)):
             x = ntl_ZZ_p(arg, self.c)
         elif isinstance(arg, Element):
             if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack
@@ -1942,13 +1958,11 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
                 modulus = m
             self = self % modulus
             return parent(pow(self.ntl_ZZ_pX(), n, modulus.ntl_ZZ_pX()), construct=True)
-        else:
-            if n < 0:
-                return ~(self**(-n))
-            elif self.degree() <= 0:
-                return parent(self[0]**n)
-            else:
-                return parent(self.ntl_ZZ_pX()**n, construct=True)
+        if n < 0:
+            return ~(self**(-n))
+        if self.degree() <= 0:
+            return parent(self[0]**n)
+        return parent(self.ntl_ZZ_pX()**n, construct=True)
 
     @coerce_binop
     def gcd(self, right):

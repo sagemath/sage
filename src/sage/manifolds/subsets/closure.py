@@ -17,8 +17,8 @@ of a manifold subset in the topology of the manifold.
 
 from sage.manifolds.subset import ManifoldSubset
 
-class ManifoldSubsetClosure(ManifoldSubset):
 
+class ManifoldSubsetClosure(ManifoldSubset):
     r"""
     Topological closure of a manifold subset in the topology of the manifold.
 

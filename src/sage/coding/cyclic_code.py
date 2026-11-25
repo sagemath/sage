@@ -198,13 +198,12 @@ def bch_bound(n, D, arithmetic=False):
     if not arithmetic:
         one_len, offset = longest_streak(1)
         return (one_len + 1, (1, offset))
-    else:
-        n = Integer(n)
-        longest_streak_list = [(longest_streak(step), step)
-                               for step in n.coprime_integers(n // 2 + 1)
-                               if step >= 1]
-        (max_len, offset), step = max(longest_streak_list)
-        return (max_len + 1, (step, offset))
+    n = Integer(n)
+    longest_streak_list = [(longest_streak(step), step)
+                           for step in n.coprime_integers(n // 2 + 1)
+                           if step >= 1]
+    (max_len, offset), step = max(longest_streak_list)
+    return (max_len + 1, (step, offset))
 
 
 class CyclicCode(AbstractLinearCode):
@@ -288,7 +287,7 @@ class CyclicCode(AbstractLinearCode):
     _registered_decoders = {}
 
     def __init__(self, generator_pol=None, length=None, code=None, check=True,
-                 D=None, field=None, primitive_root=None):
+                 D=None, field=None, primitive_root=None) -> None:
         r"""
         TESTS:
 
@@ -462,7 +461,7 @@ class CyclicCode(AbstractLinearCode):
                                  "of powers and the length and the field, or "
                                  "a generator polynomial and the code length")
 
-    def __contains__(self, word):
+    def __contains__(self, word) -> bool:
         r"""
         Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
@@ -484,7 +483,7 @@ class CyclicCode(AbstractLinearCode):
         R = self._polynomial_ring
         return (g.divides(R(word.list())) and word in self.ambient_space())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCode objects.
 
@@ -504,11 +503,10 @@ class CyclicCode(AbstractLinearCode):
         """
         if not isinstance(other, CyclicCode):
             return False
-        else:
-            R = self._polynomial_ring
-            return (self.base_field() == other.base_field() and
-                    self.length() == other.length() and
-                    self.generator_polynomial() == R(other.generator_polynomial()))
+        R = self._polynomial_ring
+        return (self.base_field() == other.base_field() and
+                self.length() == other.length() and
+                self.generator_polynomial() == R(other.generator_polynomial()))
 
     def _repr_(self):
         r"""
@@ -639,38 +637,37 @@ class CyclicCode(AbstractLinearCode):
                 (primitive_root is None or
                  primitive_root == self._primitive_root)):
             return self._defining_set
+        F = self.base_field()
+        n = self.length()
+        q = F.cardinality()
+        g = self.generator_polynomial()
+
+        s = Zmod(n)(q).multiplicative_order()
+
+        if primitive_root is None:
+            Fsplit, FE = F.extension(Integer(s), map=True)
+            alpha = Fsplit.zeta(n)
         else:
-            F = self.base_field()
-            n = self.length()
-            q = F.cardinality()
-            g = self.generator_polynomial()
+            try:
+                alpha = primitive_root
+                Fsplit = alpha.parent()
+                FE = Hom(Fsplit, F)[0]
+            except ValueError:
+                raise ValueError("primitive_root does not belong to the "
+                                 "right splitting field")
+            if alpha.multiplicative_order() != n:
+                raise ValueError("primitive_root must have multiplicative "
+                                 "order equal to the code length")
 
-            s = Zmod(n)(q).multiplicative_order()
+        Rsplit = Fsplit['xx']
+        gsplit = Rsplit([FE(coeff) for coeff in g])
+        roots = gsplit.roots(multiplicities=False)
+        D = [root.log(alpha) for root in roots]
 
-            if primitive_root is None:
-                Fsplit, FE = F.extension(Integer(s), map=True)
-                alpha = Fsplit.zeta(n)
-            else:
-                try:
-                    alpha = primitive_root
-                    Fsplit = alpha.parent()
-                    FE = Hom(Fsplit, F)[0]
-                except ValueError:
-                    raise ValueError("primitive_root does not belong to the "
-                                     "right splitting field")
-                if alpha.multiplicative_order() != n:
-                    raise ValueError("primitive_root must have multiplicative "
-                                     "order equal to the code length")
-
-            Rsplit = Fsplit['xx']
-            gsplit = Rsplit([FE(coeff) for coeff in g])
-            roots = gsplit.roots(multiplicities=False)
-            D = [root.log(alpha) for root in roots]
-
-            self._field_embedding = FE
-            self._primitive_root = alpha
-            self._defining_set = sorted(D)
-            return self._defining_set
+        self._field_embedding = FE
+        self._primitive_root = alpha
+        self._defining_set = sorted(D)
+        return self._defining_set
 
     def primitive_root(self):
         r"""
@@ -699,9 +696,8 @@ class CyclicCode(AbstractLinearCode):
         """
         if hasattr(self, "_primitive_root"):
             return self._primitive_root
-        else:
-            self.defining_set()
-            return self._primitive_root
+        self.defining_set()
+        return self._primitive_root
 
     @cached_method
     def check_polynomial(self):
@@ -836,7 +832,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -853,7 +849,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         self._polynomial_ring = code._polynomial_ring
         super().__init__(code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodePolynomialEncoder objects.
 
@@ -1005,7 +1001,7 @@ class CyclicCodeVectorEncoder(Encoder):
         Vector-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         EXAMPLES::
@@ -1023,7 +1019,7 @@ class CyclicCodeVectorEncoder(Encoder):
         self._polynomial_ring = code._polynomial_ring
         super().__init__(code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodeVectorEncoder objects.
 
@@ -1198,7 +1194,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         sage: D
         Decoder through the surrounding BCH code of the [15, 10] Cyclic Code over GF(16)
     """
-    def __init__(self, code, **kwargs):
+    def __init__(self, code, **kwargs) -> None:
         r"""
 
         EXAMPLES::
@@ -1213,7 +1209,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         self._decoder_type = copy(self._bch_decoder.decoder_type())
         super().__init__(code, code.ambient_space(), "Vector")
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodeSurroundingBCHDecoder objects.
 

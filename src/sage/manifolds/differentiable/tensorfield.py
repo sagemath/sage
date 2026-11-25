@@ -547,7 +547,7 @@ class TensorField(ModuleElementWithMutability):
 
     # #### End of required methods for ModuleElement (beside arithmetic) #####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -564,7 +564,7 @@ class TensorField(ModuleElementWithMutability):
             if self._name is not None:
                 description += self._name + " "
         else:
-        # Generic case
+            # Generic case
             description = "Tensor field "
             if self._name is not None:
                 description += self._name + " "
@@ -588,8 +588,7 @@ class TensorField(ModuleElementWithMutability):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
@@ -2228,7 +2227,7 @@ class TensorField(ModuleElementWithMutability):
             sage: t.parent().zero() == 0
             True
         """
-        from .mixed_form import MixedForm
+        from sage.manifolds.differentiable.mixed_form import MixedForm
 
         if other is self:
             return True
@@ -2236,44 +2235,44 @@ class TensorField(ModuleElementWithMutability):
             if other == 0:
                 return self.is_zero()
             return False
-        elif isinstance(other, MixedForm):
+        if isinstance(other, MixedForm):
             # use comparison of MixedForm:
             return other == self
-        elif not isinstance(other, TensorField):
+        if not isinstance(other, TensorField):
             return False
-        else: # other is another tensor field
-            if other._vmodule != self._vmodule:
-                return False
-            if other._tensor_type != self._tensor_type:
-                return False
-            # Non-trivial open covers of the domain:
-            for oc in self._domain.open_covers(trivial=False):
-                resu = True
-                for dom in oc:
-                    try:
-                        resu = resu and \
-                                bool(self.restrict(dom) == other.restrict(dom))
-                    except ValueError:
-                        break
-                else:
-                    # If this point is reached, no exception has occurred; hence
-                    # the result is valid and can be returned:
-                    return resu
-            # If this point is reached, the comparison has not been possible
-            # on any open cover; we then compare the restrictions to
-            # subdomains:
-            if not self._restrictions:
-                return False  # self is not initialized
-            if len(self._restrictions) != len(other._restrictions):
-                return False  # the restrictions are not on the same subdomains
+        # other is another tensor field
+        if other._vmodule != self._vmodule:
+            return False
+        if other._tensor_type != self._tensor_type:
+            return False
+        # Non-trivial open covers of the domain:
+        for oc in self._domain.open_covers(trivial=False):
             resu = True
-            for dom, rst in self._restrictions.items():
-                if dom in other._restrictions:
-                    resu = resu and bool(rst == other._restrictions[dom])
-                else:
-                    return False  # the restrictions are not on the same
-                                  # subdomains
-            return resu
+            for dom in oc:
+                try:
+                    resu = resu and \
+                            bool(self.restrict(dom) == other.restrict(dom))
+                except ValueError:
+                    break
+            else:
+                # If this point is reached, no exception has occurred; hence
+                # the result is valid and can be returned:
+                return resu
+        # If this point is reached, the comparison has not been possible
+        # on any open cover; we then compare the restrictions to
+        # subdomains:
+        if not self._restrictions:
+            return False  # self is not initialized
+        if len(self._restrictions) != len(other._restrictions):
+            return False  # the restrictions are not on the same subdomains
+        resu = True
+        for dom, rst in self._restrictions.items():
+            if dom in other._restrictions:
+                resu = resu and bool(rst == other._restrictions[dom])
+            else:
+                return False  # the restrictions are not on the same
+                              # subdomains
+        return resu
 
     def __ne__(self, other):
         r"""
@@ -2341,8 +2340,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = + rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('+', self._name)
         resu._latex_name = format_unop_latex(r'+', self._latex_name)
         return resu
@@ -2385,8 +2386,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = - rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('-', self._name)
         resu._latex = format_unop_latex(r'-', self._latex_name)
         return resu
@@ -2597,8 +2600,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu_name = format_mul_txt(scalar._name, '*', self._name)
         resu_latex = format_mul_latex(scalar._latex_name, r' \cdot ',
                                       self._latex_name)
@@ -2923,60 +2928,59 @@ class TensorField(ModuleElementWithMutability):
         if ambient_dom.is_manifestly_parallelizable():
             # TensorFieldParal version
             return self_r(*args_r)
-        else:
-            resu = dom_resu.scalar_field()
-            com_dom = []
-            for dom in self_r._restrictions:
-                for arg in args_r:
-                    if dom not in arg._restrictions:
-                        break
+        resu = dom_resu.scalar_field()
+        com_dom = []
+        for dom in self_r._restrictions:
+            for arg in args_r:
+                if dom not in arg._restrictions:
+                    break
+            else:
+                com_dom.append(dom)
+        for dom in com_dom:
+            self_rr = self_r._restrictions[dom]
+            args_rr = [args_r[i]._restrictions[dom] for i in range(p)]
+            resu_rr = self_rr(*args_rr)
+            if resu_rr.is_trivial_zero():
+                for chart in resu_rr._domain._atlas:
+                    resu._express[chart] = chart.zero_function()
+            else:
+                for chart, expr in resu_rr._express.items():
+                    resu._express[chart] = expr
+        if resu.is_trivial_zero():
+            return dom_resu._zero_scalar_field
+        # Name of the output:
+        res_name = None
+        if self._name is not None:
+            res_name = self._name + "("
+            for i in range(p-1):
+                if args[i]._name is not None:
+                    res_name += args[i]._name + ","
                 else:
-                    com_dom.append(dom)
-            for dom in com_dom:
-                self_rr = self_r._restrictions[dom]
-                args_rr = [args_r[i]._restrictions[dom] for i in range(p)]
-                resu_rr = self_rr(*args_rr)
-                if resu_rr.is_trivial_zero():
-                    for chart in resu_rr._domain._atlas:
-                        resu._express[chart] = chart.zero_function()
+                    res_name = None
+                    break
+            if res_name is not None:
+                if args[p-1]._name is not None:
+                    res_name += args[p-1]._name + ")"
                 else:
-                    for chart, expr in resu_rr._express.items():
-                        resu._express[chart] = expr
-            if resu.is_trivial_zero():
-                return dom_resu._zero_scalar_field
-            # Name of the output:
-            res_name = None
-            if self._name is not None:
-                res_name = self._name + "("
-                for i in range(p-1):
-                    if args[i]._name is not None:
-                        res_name += args[i]._name + ","
-                    else:
-                        res_name = None
-                        break
-                if res_name is not None:
-                    if args[p-1]._name is not None:
-                        res_name += args[p-1]._name + ")"
-                    else:
-                        res_name = None
-            resu._name = res_name
-            # LaTeX symbol of the output:
-            res_latex = None
-            if self._latex_name is not None:
-                res_latex = self._latex_name + r"\left("
-                for i in range(p-1):
-                    if args[i]._latex_name is not None:
-                        res_latex += args[i]._latex_name + ","
-                    else:
-                        res_latex = None
-                        break
-                if res_latex is not None:
-                    if args[p-1]._latex_name is not None:
-                        res_latex += args[p-1]._latex_name + r"\right)"
-                    else:
-                        res_latex = None
-            resu._latex_name = res_latex
-            return resu
+                    res_name = None
+        resu._name = res_name
+        # LaTeX symbol of the output:
+        res_latex = None
+        if self._latex_name is not None:
+            res_latex = self._latex_name + r"\left("
+            for i in range(p-1):
+                if args[i]._latex_name is not None:
+                    res_latex += args[i]._latex_name + ","
+                else:
+                    res_latex = None
+                    break
+            if res_latex is not None:
+                if args[p-1]._latex_name is not None:
+                    res_latex += args[p-1]._latex_name + r"\right)"
+                else:
+                    res_latex = None
+        resu._latex_name = res_latex
+        return resu
 
     def trace(
         self,
@@ -3826,17 +3830,16 @@ class TensorField(ModuleElementWithMutability):
             raise ValueError("position out of range")
 
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
         from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
         if isinstance(non_degenerate_form, PseudoRiemannianMetric):
             return self.contract(pos, non_degenerate_form.inverse(), 1)
-        elif isinstance(non_degenerate_form, SymplecticForm):
+        if isinstance(non_degenerate_form, SymplecticForm):
             return self.contract(pos, non_degenerate_form.poisson(), 1)
-        elif isinstance(non_degenerate_form, PoissonTensorField):
+        if isinstance(non_degenerate_form, PoissonTensorField):
             return self.contract(pos, non_degenerate_form, 1)
-        else:
-            raise ValueError("The non-degenerate form has to be a metric, a symplectic form or a Poisson tensor field")
+        raise ValueError("The non-degenerate form has to be a metric, a symplectic form or a Poisson tensor field")
 
     def down(
         self,
