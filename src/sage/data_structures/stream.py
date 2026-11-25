@@ -113,6 +113,7 @@ from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.cachefunc import cached_method
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -2021,6 +2022,15 @@ class Stream_uninitialized(Stream):
                 return num.constant_coefficient() / den.constant_coefficient()
             return c
 
+        def subs_coefficient(e):
+            """Substitute in a coefficient in ``P`` or ``PF``, and
+            retract constants; leave other coefficients alone."""
+            if e.parent() is self._P:
+                e = self._PF(e)
+            if e.parent() is self._PF:
+                return retract(subs(e, var, val))
+            return e
+
         def fix_cache(j, s, ao):
             if s._cache[ao]:
                 # TODO: perhaps, if not
@@ -2056,16 +2066,25 @@ class Stream_uninitialized(Stream):
                 good = m
                 for i0, i in enumerate(indices):
                     before = c = s._cache[i]
-                    if self._coefficient_ring == self._base_ring:
-                        if c.parent() == self._PF:
-                            c = retract(subs(c, var, val))
-                            if c.parent() is not self._base_ring:
-                                good = m - i0 - 1
+                    if c.parent() == self._PF:
+                        c = retract(subs(c, var, val))
+                        if c.parent() is not self._base_ring:
+                            good = m - i0 - 1
                     elif c.parent() == self._U:
                         c = c.map_coefficients(lambda e: subs(e, var, val))
                         try:
                             c = c.map_coefficients(lambda e: retract(e), self._base_ring)
                         except TypeError:
+                            good = m - i0 - 1
+                    elif isinstance(c, IndexedFreeModuleElement):
+                        # Values in other free modules, notably powersum
+                        # realizations, are constructed directly from
+                        # their coefficients, which may be undetermined
+                        # without being coerced into their parent.
+                        mc = {mon: subs_coefficient(e)
+                               for mon, e in c.monomial_coefficients().items()}
+                        c = c.parent().element_class(c.parent(), mc)
+                        if any(e.parent() is self._PF for e in mc.values()):
                             good = m - i0 - 1
                     if before != c:
                         changed_streams.add(id(s))
@@ -3907,7 +3926,7 @@ class Stream_plethysm(Stream_binary):
         TESTS::
 
 
-            sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: s[n], True, 1)
