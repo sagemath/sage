@@ -1,7 +1,7 @@
 r"""
 Hodge-special fourfolds
 
-This module provides computational support for studying Hodge-special fourfolds, including cubic fourfolds and Gushel-Mukai fourfolds.
+This module provides computational support for studying Hodge-special fourfolds, including cubic fourfolds (also containing two surfaces), Gushel-Mukai fourfolds, and complete intersections of three quadrics in ``PP^7``.
 
 For practical examples of using this module, refer to the :class:`Hodge_special_fourfold` class and the :func:`fourfold` function.
 
@@ -9,12 +9,14 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 .. NOTE::
 
-    For some of the functions provided, you must have ``Macaulay2`` with the package ``SpecialFanoFourfolds`` (version 2.8 or later)
+    For some of the functions provided, you must have ``Macaulay2`` with the package ``SpecialFanoFourfolds`` (version 2.8.1 or later)
     installed on your computer; see https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/index.html.
 
 AUTHORS:
 
 - Giovanni Staglianò (2023-06-15): initial version
+
+- Giovanni Staglianò (2026-11): updated for ``SpecialFanoFourfolds`` 2.8.1; support for doubly special cubic fourfolds
 
 """
 
@@ -27,6 +29,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #***************************************************************************************
+
+import os
+import urllib.request
 
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_function
@@ -56,7 +61,6 @@ from sage.functions.other import binomial
 from sage.libs.singular.function_factory import singular_function
 _minbase = singular_function('minbase')
 
-import importlib
 
 _HAS_MACAULAY2 = Macaulay2().is_present()
 
@@ -893,6 +897,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         f._inverse_rational_map = g
         g._inverse_rational_map = f
         Y._from_random_coordinate_change = f
+        _transfer_projective_invariants(self, Y)
         return Y
 
     def is_subset(self,Y):
@@ -1055,6 +1060,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
                 print("-- function parametrize has successfully terminated. --")
             psi = _from_macaulay2map_to_sagemap(psi, Sage_Target=self)
             assert psi.target() is self
+            self._parametrization = psi
             return psi
 
     def intersection(self, other):
@@ -1433,19 +1439,21 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
     ::
 
         sage: g_ = macaulay2(g); g_                                           # optional - macaulay2
-        multi-rational map consisting of one single rational map
+        rational map between projective varieties
+        represented by a tuple of homogeneous polynomials of degree 2
         source variety: PP^4
-        target variety: hypersurface in PP^5 defined by a form of degree 2
+        target variety: quadric hypersurface in PP^5
         <BLANKLINE>
-        MultirationalMap (rational map from PP^4 to hypersurface in PP^5)
+        RationalMap (rational map from PP^4 to hypersurface in PP^5)
         sage: g_.graph().last().inverse()                                     # optional - macaulay2
-        multi-rational map consisting of 2 rational maps
-        source variety: hypersurface in PP^5 defined by a form of degree 2
-        target variety: 4-dimensional subvariety of PP^4 x PP^5 cut out by 9 hypersurfaces of multi-degrees (0,2)^1 (1,1)^8
+        rational map between projective varieties
+        represented by 2 tuples of homogeneous polynomials of degrees (2,1)
+        source variety: quadric hypersurface in PP^5
+        target variety: fourfold in PP^4 x PP^5 cut out by 9 hypersurfaces of multi-degrees (0,2)^1 (1,1)^8
         dominance: true
         degree: 1
         <BLANKLINE>
-        MultirationalMap (birational map from hypersurface in PP^5 to 4-dimensional subvariety of PP^4 x PP^5)
+        RationalMap (birational map from hypersurface in PP^5 to fourfold in PP^4 x PP^5)
     """
     def __init__(self, X, Y, polys) -> None:
         r"""See :class:`Rational_map_between_embedded_projective_varieties` for documentation."""
@@ -1867,8 +1875,9 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         TESTS::
 
             sage: # optional - macaulay2
+            sage: from sage.schemes.hodge_special_fourfolds.sff import _from_macaulay2map_to_sagemap
             sage: F = macaulay2(f,'f')
-            sage: g = macaulay2('last(forceImage(f,image(f,2)), f = toRationalMap rationalMap(f,Dominant=>true), multirationalMap inverseMap(f))')
+            sage: g = macaulay2('last(forceImage(f,image(f,2)), f = toLegacyRationalMap rationalMap(f,Dominant=>true), rationalMap inverseMap(f))')
             sage: g = _from_macaulay2map_to_sagemap(g); g
             rational map defined by forms of degree 3
             source: 6-dimensional variety of degree 5 in PP^9 cut out by 5 hypersurfaces of degree 2
@@ -2046,11 +2055,12 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             sage: from sage.schemes.hodge_special_fourfolds.sff import veronese
             sage: f = veronese(1,4)
             sage: macaulay2(f)                # optional - macaulay2
-            multi-rational map consisting of one single rational map
+            rational map between projective varieties
+            represented by a tuple of homogeneous polynomials of degree 4
             source variety: PP^1
             target variety: PP^4
             <BLANKLINE>
-            MultirationalMap (rational map from PP^1 to PP^4)
+            RationalMap (rational map from PP^1 to PP^4)
         """
         if macaulay2 is None:
             macaulay2 = globals()['macaulay2']
@@ -2184,7 +2194,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
                 raise TypeError("expected True or False")
             if algorithm != 'macaulay2':
                 raise NotImplementedError("representatives of a rational map using built-in functions")
-            f = macaulay2(self).toRationalMap()
+            f = macaulay2(self).toLegacyRationalMap()
             if verbose:
                 print("-- running Macaulay2 function to compute representatives of map... --")
             n = f.maps().length().sage()
@@ -2773,7 +2783,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         sage: S = surface(3,1,1)
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+        Cubic fourfold in C_14 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
         sage: X.surface()
         rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
         sage: X.ambient_fivefold()
@@ -2784,9 +2794,11 @@ class Hodge_special_fourfold(Embedded_projective_variety):
     ::
 
         sage: X_ = macaulay2(X); X_                                                  # optional - macaulay2
-        hypersurface in PP^5 defined by a form of degree 3
+        cubic fourfold: smooth cubic hypersurface in PP^5
+        surface: surface of degree 4 and sectional genus 0
+                 cut out by 6 hypersurfaces of degree 2
         <BLANKLINE>
-        ProjectiveVariety, cubic fourfold containing a surface of degree 4 and sectional genus 0
+        ProjectiveVariety, cubic fourfold
         sage: X_.surface()                                                           # optional - macaulay2
         surface in PP^5 cut out by 6 hypersurfaces of degree 2
         <BLANKLINE>
@@ -2824,7 +2836,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
     ::
 
         sage: X = fourfold(surface(1,ambient=7)); X
-        Complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
+        Complete intersection of three quadrics in PP^7 of discriminant 31 containing a plane in PP^7
         sage: T = X.Castelnuovo(verbose=False, building=True); T                                              # optional - macaulay2
         surface in PP^4 of degree 9 and sectional genus 9 cut out by 4 hypersurfaces of degrees (3, 4, 4, 4)
         sage: building = T.building() # a tuple of 4 objects obtained in the construction of T                # optional - macaulay2
@@ -2910,11 +2922,11 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(1,ambient=5)); X
-            Cubic fourfold of discriminant 8 = 3*3-1^2 containing a plane in PP^5
+            Cubic fourfold in C_8 containing a plane in PP^5
             sage: X.ambient_fivefold()
             PP^5
             sage: X = fourfold(surface(1,ambient=7)); X
-            Complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
+            Complete intersection of three quadrics in PP^7 of discriminant 31 containing a plane in PP^7
             sage: X.ambient_fivefold()
             complete intersection of type (2, 2) in PP^7
         """
@@ -3000,12 +3012,12 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,4)); X
-            Cubic fourfold of discriminant 14 = 3*13-5^2 containing a rational surface in PP^5 of degree 5 and sectional genus 1 cut out by 5 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 4])
+            Cubic fourfold in C_14 containing a rational surface in PP^5 of degree 5 and sectional genus 1 cut out by 5 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 4])
             sage: X.discriminant()
             14
 
             sage: Y = fourfold(surface(5,7,0,1)); Y
-            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+            Complete intersection of three quadrics in PP^7 of discriminant 47 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
             sage: Y.discriminant()
             47
         """
@@ -3065,7 +3077,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 X.imageOfAssociatedMap()
                 if verbose:
                     print("--computation of image of map_from_fivefold terminated.")
-                self._the_map_from_the_fivefold = _from_macaulay2map_to_sagemap(f.removeUnderscores().multirationalMap(), Sage_Source=self.ambient_fivefold())
+                self._the_map_from_the_fivefold = _from_macaulay2map_to_sagemap(f.removeUnderscores().rationalMap(), Sage_Source=self.ambient_fivefold())
                 assert hasattr(self._the_map_from_the_fivefold,"_closure_of_image")
                 return self._the_map_from_the_fivefold
             if algorithm == 'sage':
@@ -3114,7 +3126,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,1,1,KK=GF(65521))); X
-            Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+            Cubic fourfold in C_14 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             sage: f = X.congruence(algorithm_for_image='macaulay2'); f                                            # optional - macaulay2
             Congruence of 2-secant lines
             to: rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
@@ -3124,7 +3136,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             line in PP^5
 
             sage: X = fourfold(surface(5,7,0,1,KK=GF(65521))); X
-            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+            Complete intersection of three quadrics in PP^7 of discriminant 47 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
             sage: f = X.congruence(algorithm_for_image='macaulay2', algorithm_for_point='sage', num_checks=2); f  # optional - macaulay2
             Congruence of 5-secant cubic curves
             to: rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
@@ -3149,7 +3161,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
             sage: # optional - macaulay2
             sage: X = fourfold("3-nodal septic scroll", GF(61001)); X
-            Cubic fourfold of discriminant 26 = 3*25-7^2 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
+            Cubic fourfold in C_26 containing a surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
             sage: X.congruence(algorithm_for_image='macaulay2', num_checks=2)
             Congruence of 5-secant conics
             to: surface in PP^5 of degree 7 and sectional genus 0 cut out by 13 hypersurfaces of degree 3
@@ -3208,7 +3220,6 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 return function_congruence(self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point), degree=None, verbose=verbose)
             if len(W) == 0:
                 raise RuntimeError("function 'congruence' failed")
-                self._possible_degrees_for_curves_of_congruence = set()
             assert p.is_subset(W[0])
             self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
             return W[0]
@@ -3254,7 +3265,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         if verbose:
             print("-- running Macaulay2 function fanoMap()... --")
         try:
-            f = X.fanoMap().multirationalMap()
+            f = X.fanoMap().rationalMap()
         except Exception as err:
             raise RuntimeError(err)
         F = _from_macaulay2map_to_sagemap(f, Sage_Source=self.ambient_fivefold())
@@ -3272,7 +3283,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             sage: set_random_seed(1234567)
             sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
             sage: X = fourfold(Veronese(2,2,KK=101)); X
-            Cubic fourfold of discriminant 20 = 3*12-4^2 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+            Cubic fourfold in C_20 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
             sage: X.surface().defining_polynomials()
             (x4^2 - x3*x5,
             x2*x4 - x1*x5,
@@ -3281,7 +3292,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             x1*x2 - x0*x4,
             x1^2 - x0*x3)
             sage: Y = X.random_coordinate_change(); Y
-            Cubic fourfold of discriminant 20 = 3*12-4^2 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+            Cubic fourfold in C_20 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
             sage: Y.surface().defining_polynomials()
             (x2^2 - 28*x0*x3 + 31*x1*x3 + 15*x2*x3 + 32*x3^2 + 9*x0*x4 - 34*x1*x4 + 33*x2*x4 + 37*x3*x4 - x4^2 - 18*x0*x5 - 37*x1*x5 + 32*x2*x5 - 22*x3*x5 + x4*x5 + 20*x5^2,
             x1*x2 - 46*x0*x3 + 15*x1*x3 + 28*x2*x3 - 13*x3^2 - 32*x0*x4 - 44*x1*x4 + 27*x2*x4 + 19*x3*x4 - 29*x4^2 + 28*x0*x5 + 48*x1*x5 - 10*x2*x5 - 48*x3*x5 - 33*x4*x5 + 6*x5^2,
@@ -3292,6 +3303,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         """
         V = self.ambient_fivefold().random_coordinate_change()
         S = V._from_random_coordinate_change(self.surface())
+        _transfer_projective_invariants(self.surface(), S)
         X = V._from_random_coordinate_change(self)
         return fourfold(S, X, V, check=False)
 
@@ -3310,20 +3322,20 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,1,1)); X
-            Cubic fourfold of discriminant 14 = 3*10-4^2 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
+            Cubic fourfold in C_14 containing a rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 1, 1])
             sage: X.parameter_count(verbose=True)                                          # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
-            S: smooth rational normal scroll surface of degree 4 in PP^5
-            X: smooth cubic hypersurface in PP^5
-            (assumption: dim Ext^1(I_{S,P^5},O_S) = 0)
-            h^0(N_{S,P^5}) = 29
-            h^1(O_S(3)) = 0, and h^0(I_{S,P^5}(3)) = 28 = h^0(O_(P^5)(3)) - \chi(O_S(3));
-            in particular, h^0(I_{S,P^5}(3)) is minimal
-            h^0(N_{S,P^5}) + 27 = 56
-            h^0(N_{S,X}) = 2
-            dim{[X] : S ⊂ X} >= 54
-            dim P(H^0(O_(P^5)(3))) = 55
-            codim{[X] : S ⊂ X} <= 1
+            -- S: surface in PP^5 cut out by 6 hypersurfaces of degree 2
+            -- X: smooth cubic hypersurface in PP^5
+            -- (assumption: dim Ext^1(I_{S,P^5},O_S) = 0)
+            -- h^0(N_{S,P^5}) = 29
+            -- h^1(O_S(3)) = 0, and h^0(I_{S,P^5}(3)) = 28 = h^0(O_(P^5)(3)) - χ(O_S(3));
+            -- in particular, h^0(I_{S,P^5}(3)) is minimal
+            -- h^0(N_{S,P^5}) + 27 = 56
+            -- h^0(N_{S,X}) = 2
+            -- dim{[X] : S ⊂ X} >= 54
+            -- dim P(H^0(O_(P^5)(3))) = 55
+            -- codim{[X] : S ⊂ X} <= 1
             -- function parameterCount() has terminated. --
             (1, (28, 29, 2))
 
@@ -3331,18 +3343,18 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             Gushel-Mukai fourfold of discriminant 10(') containing a quadric surface in PP^8, class of the surface in GG(1,4): (1, 1)
             sage: X.parameter_count(verbose=True)                                          # optional - macaulay2
             -- running Macaulay2 function parameterCount()... --
-            S: smooth quadric surface in PP^8
-            X: GM fourfold containing S
-            Y: del Pezzo fivefold containing X
-            h^1(N_{S,Y}) = 0
-            h^0(N_{S,Y}) = 8
-            h^1(O_S(2)) = 0, and h^0(I_{S,Y}(2)) = 31 = h^0(O_Y(2)) - \chi(O_S(2));
-            in particular, h^0(I_{S,Y}(2)) is minimal
-            h^0(N_{S,Y}) + 30 = 38
-            h^0(N_{S,X}) = 0
-            dim{[X] : S ⊂ X ⊂ Y} >= 38
-            dim P(H^0(O_Y(2))) = 39
-            codim{[X] : S ⊂ X ⊂ Y} <= 1
+            -- S: surface in PP^8 cut out by 6 hypersurfaces of degrees 1^5 2^1
+            -- X: GM fourfold containing S
+            -- Y: del Pezzo fivefold containing X
+            -- h^1(N_{S,Y}) = 0
+            -- h^0(N_{S,Y}) = 8
+            -- h^1(O_S(2)) = 0, and h^0(I_{S,Y}(2)) = 31 = h^0(O_Y(2)) - χ(O_S(2));
+            -- in particular, h^0(I_{S,Y}(2)) is minimal
+            -- h^0(N_{S,Y}) + 30 = 38
+            -- h^0(N_{S,X}) = 0
+            -- dim{[X] : S ⊂ X ⊂ Y} >= 38
+            -- dim P(H^0(O_Y(2))) = 39
+            -- codim{[X] : S ⊂ X ⊂ Y} <= 1
             -- function parameterCount() has terminated. --
             (1, (31, 8, 0))
         """
@@ -3522,7 +3534,7 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
 
     def _repr_(self) -> str:
         r"""Return a string representation of the fourfold."""
-        return "Complete intersection of 3 quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " = 8*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
+        return "Complete intersection of three quadrics in PP^7 of discriminant " + str(self.discriminant(verbose=False)) + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
         r"""
@@ -3536,12 +3548,9 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
 
             sage: X = fourfold(surface(1,ambient=7))
             sage: latex(X)
-            \mbox{Complete intersection of } 3 \mbox{ quadrics in } \mathbb{P}^{ 7 } \mbox{ of discriminant } 31 = \det \left(\begin{array}{rr}
-            8 & 1 \\
-            1 & 4
-            \end{array}\right) \mbox{ containing a } \mbox{plane in }\mathbb{P}^{ 7 }
+            \mbox{Complete intersection of three quadrics in } \mathbb{P}^{ 7 } \mbox{ of discriminant } 31 \mbox{ containing a } \mbox{plane in }\mathbb{P}^{ 7 }
         """
-        return "\\mbox{Complete intersection of }" + latex(3) + "\\mbox{ quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
+        return "\\mbox{Complete intersection of three quadrics in }" + latex(self.ambient()) + "\\mbox{ of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface())
 
     def ambient_fivefold(self):
         r"""See :meth:`Hodge_special_fourfold.ambient_fivefold`."""
@@ -3581,7 +3590,7 @@ class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadr
         sage: S = surface(7,1,9, virtual=True); S
         virtual rational surface in PP^7 of degree 12 and sectional genus 6 cut out by at least 9 hypersurfaces of degree 2
         sage: X = fourfold(S); X
-        Complete intersection of 3 quadrics in PP^7 of discriminant 96 = 8*30-12^2 containing a virtual rational surface in PP^7 of degree 12 and sectional genus 6 cut out by at least 9 hypersurfaces of degree 2
+        Complete intersection of three quadrics in PP^7 of discriminant 96 containing a virtual rational surface in PP^7 of degree 12 and sectional genus 6 cut out by at least 9 hypersurfaces of degree 2
     """
     def __init__(self, S, check=True):
         r"""See :class:`_Virtual_intersection_of_three_quadrics_in_P7` for documentation."""
@@ -3612,9 +3621,9 @@ class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadr
         EXAMPLES::
 
             sage: X = fourfold(surface(5,7,0,1, virtual=True)); X
-            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
+            Complete intersection of three quadrics in PP^7 of discriminant 47 containing a virtual rational surface in PP^7 of degree 9 and sectional genus 3 cut out by at least 12 hypersurfaces of degree 2
             sage: X.materialize()
-            Complete intersection of 3 quadrics in PP^7 of discriminant 47 = 8*16-9^2 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
+            Complete intersection of three quadrics in PP^7 of discriminant 47 containing a rational surface in PP^7 of degree 9 and sectional genus 3 cut out by 12 hypersurfaces of degree 2 (the image of the plane via the linear system [5, 7, 0, 1])
         """
         if not hasattr(self, "_materialization"):
             self._materialization = fourfold(self.surface().materialize(), check=True)
@@ -3632,7 +3641,7 @@ class _Cubic_fourfold(Hodge_special_fourfold):
         sage: S = surface(10,0,0,10, KK=GF(33331)); S
         rational surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3 (the image of the plane via the linear system [10, 0, 0, 10])
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 38 = 3*46-10^2 containing a rational surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3 (the image of the plane via the linear system [10, 0, 0, 10])
+        Cubic fourfold in C_38 containing a rational surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3 (the image of the plane via the linear system [10, 0, 0, 10])
         sage: f = rational_map(2 * S, 5); f
         rational map defined by forms of degree 5
         source: PP^5
@@ -3653,7 +3662,7 @@ class _Cubic_fourfold(Hodge_special_fourfold):
         computing number of nodes...
         38
         sage: Y
-        Cubic fourfold of discriminant 38 = 3*34-8^2 containing a surface in PP^5 of degree 8 and sectional genus 0 cut out by 10 hypersurfaces of degree 3
+        Cubic fourfold in C_38 containing a surface in PP^5 of degree 8 and sectional genus 0 cut out by 10 hypersurfaces of degree 3
     """
     def __init__(self, S, X, V=None, check=True):
         r"""See :class:`_Cubic_fourfold` for documentation."""
@@ -3664,7 +3673,7 @@ class _Cubic_fourfold(Hodge_special_fourfold):
 
     def _repr_(self) -> str:
         r"""Return a string representation of the fourfold."""
-        return "Cubic fourfold of discriminant " + str(self.discriminant(verbose=False)) + " = 3*" + str(self._lattice_intersection_matrix()[1,1]) + "-" + str(self._lattice_intersection_matrix()[0,1]) + "^2" + " containing a " + str(self.surface())
+        return "Cubic fourfold in C_" + str(self.discriminant(verbose=False)) + " containing a " + str(self.surface())
 
     def _latex_(self) -> str:
         r"""
@@ -3678,12 +3687,9 @@ class _Cubic_fourfold(Hodge_special_fourfold):
 
             sage: X = fourfold(surface(3,4))
             sage: latex(X)
-            \mbox{Cubic fourfold of discriminant } 14 = \det \left(\begin{array}{rr}
-            3 & 5 \\
-            5 & 13
-            \end{array}\right) \mbox{ containing a } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 5 \mbox{ and sectional genus } 1 \mbox{ cut out by } 5 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 4\right] \mbox{)}
+            \mbox{Cubic fourfold in }\mathcal{C}_{ 14 }\mbox{ containing a } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 5 \mbox{ and sectional genus } 1 \mbox{ cut out by } 5 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[3, 4\right] \mbox{)}
         """
-        return "\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
+        return "\\mbox{Cubic fourfold in }\\mathcal{C}_{" + latex(self.discriminant(verbose=False)) + "}\\mbox{ containing a }" + latex(self.surface())
 
     def K3(self, verbose=None, building=False):
         r"""
@@ -3723,6 +3729,19 @@ class _Doubly_special_cubic_fourfold(_Cubic_fourfold):
         dominant rational map defined by forms of degree 2
         source: PP^5
         target: PP^4
+
+    The parameter count is available for fourfolds constructed in ``Macaulay2``
+    with ``specialFourfold(surface(...),(...))``::
+
+        sage: # optional - macaulay2
+        sage: Y = fourfold(macaulay2('specialFourfold surface((2,0,0),(1,0,0))')); Y
+        Cubic fourfold in C_20 ∩ C_8 containing two surfaces:
+        (1) surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+        (2) plane in PP^5
+        sage: Y.parameter_count()
+        (1, (25, 29, 0))
+        sage: Y.swap().parameter_count()
+        (1, (25, 29, 0))
     """
     def __init__(self, S, T, X, check=True):
         r"""See :class:`_Doubly_special_cubic_fourfold` for documentation."""
@@ -3757,14 +3776,14 @@ class _Doubly_special_cubic_fourfold(_Cubic_fourfold):
             (1) rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [2])
             (2) plane in PP^5
             sage: latex(X)
-            \mbox{Cubic fourfold in }\mathcal C_{20} \cap \mathcal C_{8}
+            \mbox{Cubic fourfold in } \mathcal{C}_{ 20 } \cap\mathcal{C}_{ 8 } \mbox{ containing two surfaces: (1) } \mbox{rational } \mbox{surface in }\mathbb{P}^{ 5 } \mbox{ of degree } 4 \mbox{ and sectional genus } 0 \mbox{ cut out by } 6 \mbox{ hypersurfaces of degree } 2 \mbox{ (the image of the plane via the linear system } \left[2\right] \mbox{)} \mbox{, (2) } \mbox{plane in }\mathbb{P}^{ 5 }
         """
         d1 = self.discriminant(verbose=False)
         d2 = self._parent_cubic_fourfold.discriminant(verbose=False)
-        Cd1d2 = "\\mathcal C_{" + str(d1) + "}"
+        Cd1d2 = "\\mathcal{C}_{" + latex(d1) + "}"
         if d1 != d2:
-            Cd1d2 = Cd1d2 + " \\cap \\mathcal C_" + "{" + str(d2) + "}"
-        return "\\mbox{Cubic fourfold in }" + Cd1d2
+            Cd1d2 = Cd1d2 + "\\cap\\mathcal{C}_{" + latex(d2) + "}"
+        return "\\mbox{Cubic fourfold in }" + Cd1d2 + "\\mbox{ containing two surfaces: (1) }" + latex(self.surface()) + "\\mbox{, (2) }" + latex(self._surface2)
 
     def _macaulay2_init_(self, macaulay2=None):
         r"""Get the corresponding doubly special cubic fourfold in Macaulay2."""
@@ -3781,6 +3800,247 @@ class _Doubly_special_cubic_fourfold(_Cubic_fourfold):
             self._macaulay2_object._sage_object = self
             return self._macaulay2_object
 
+    def surfaces(self):
+        r"""
+        Return the two surfaces contained in the fourfold.
+
+        OUTPUT:
+
+        A tuple of two objects of the class :class:`Embedded_projective_variety`.
+
+        EXAMPLES::
+
+            sage: S = surface((2))
+            sage: T = (S.point() + S.point() + S.point()).linear_span()
+            sage: X = fourfold([S,T])
+            sage: X.surfaces() == (S, T)
+            True
+            sage: X.surfaces()[0] is X.surface()
+            True
+        """
+        return (self.surface(), self._surface2)
+
+    def swap(self):
+        r"""
+        Return the same fourfold with the order of the two surfaces reversed.
+
+        OUTPUT:
+
+        :class:`_Doubly_special_cubic_fourfold`
+
+        EXAMPLES::
+
+            sage: S = surface((2))
+            sage: T = (S.point() + S.point() + S.point()).linear_span()
+            sage: X = fourfold([S,T]); X
+            Cubic fourfold in C_20 ∩ C_8 containing two surfaces:
+            (1) rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [2])
+            (2) plane in PP^5
+            sage: Y = X.swap(); Y
+            Cubic fourfold in C_8 ∩ C_20 containing two surfaces:
+            (1) plane in PP^5
+            (2) rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [2])
+            sage: Y == X and Y.swap() is X
+            True
+        """
+        try:
+            return self._swapped_fourfold
+        except AttributeError:
+            Y = _Doubly_special_cubic_fourfold(self._surface2, self.surface(), self, check=False)
+            Y._swapped_fourfold = self
+            self._swapped_fourfold = Y
+            return Y
+
+    def random_coordinate_change(self):
+        r"""
+        Apply a random coordinate change on the ambient projective space of ``self``.
+
+        TESTS::
+
+            sage: X = fourfold(macaulay2('specialFourfold surface((2,0,0),(1,0,0))'))  # optional - macaulay2
+            sage: Y = X.random_coordinate_change()  # optional - macaulay2
+            sage: Y.discriminants() == X.discriminants() and all(S.dimension() == 2 for S in Y.surfaces())  # optional - macaulay2
+            True
+        """
+        V = self.ambient_fivefold().random_coordinate_change()
+        S1 = V._from_random_coordinate_change(self.surface())
+        S2 = V._from_random_coordinate_change(self._surface2)
+        _transfer_projective_invariants(self.surface(), S1)
+        _transfer_projective_invariants(self._surface2, S2)
+        X = V._from_random_coordinate_change(self)
+        return fourfold((S1, S2), X, check=False)
+
+    def discriminants(self):
+        r"""
+        Return the discriminants of the fourfold with respect to each of the two surfaces.
+
+        OUTPUT:
+
+        A tuple of two integers.
+
+        EXAMPLES::
+
+            sage: S = surface((2))
+            sage: T = (S.point() + S.point() + S.point()).linear_span()
+            sage: X = fourfold([S,T])
+            sage: X.discriminants()
+            (20, 8)
+        """
+        return (self.discriminant(verbose=False), self._parent_cubic_fourfold.discriminant(verbose=False))
+
+    def lattice_intersection_matrix(self):
+        r"""
+        Return the intersection matrix of the lattice spanned by `h^2` and the classes of the two surfaces.
+
+        The computation is performed by ``Macaulay2``.
+
+        OUTPUT:
+
+        A `3 \times 3` matrix over the integers.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: X = fourfold('DSCF-6')
+            sage: X.lattice_intersection_matrix()
+            [ 3  4  1]
+            [ 4 12 -1]
+            [ 1 -1  3]
+            sage: X.lattice_intersection_matrix().det()
+            37
+        """
+        try:
+            return self._lattice_intersection_matrix_3x3
+        except AttributeError:
+            A = macaulay2(self).latticeIntersectionMatrix3x3()
+            if not A.ring()._operator('===', macaulay2('ZZ')).sage():
+                raise NotImplementedError("unable to determine the intersection number of the two surfaces")
+            self._lattice_intersection_matrix_3x3 = matrix(ZZ, A.entries().sage())
+            return self._lattice_intersection_matrix_3x3
+
+    def describe(self):
+        r"""
+        Print a description of the fourfold computed by ``Macaulay2``.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: X = fourfold('DSCF-6')
+            sage: X.describe()
+            Cubic fourfold in C_20 ∩ C_8 over ZZ/65521 of lattice discriminant
+            ...
+            containing two surfaces:
+             - rational surface of degree 4 and sectional genus 0
+               cut out by 6 hypersurfaces of degree 2
+             - plane
+            Intersection of the surfaces: irreducible conic curve
+            ★ The generic quadric fiber meets the other surface residually in a single point
+            K3 status: ...
+        """
+        print(macaulay2(self).describe())
+
+    def polarized_K3(self, verbose=None, building=False, fano_map_type=None, strategy=None):
+        r"""
+        Return the lattice-polarized K3 surface associated to the fourfold.
+
+        This function calls the ``Macaulay2`` function ``polarizedK3surface``, documented at
+        https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_polarized__K3surface.html.
+
+        INPUT:
+
+        - ``verbose`` -- boolean (default: ``None``); whether to print information about the ``Macaulay2`` computation
+
+        - ``building`` -- boolean (default: ``False``); if ``True``, the output surface has a
+          method ``.building()`` that returns the construction data ``(mu, U, (L, C), f)``, as for :meth:`_Cubic_fourfold.K3`
+
+        - ``fano_map_type`` -- (default: ``None``) ``None``, ``'Standard'`` or ``'P2xP2'``; the type of Fano map to use
+
+        - ``strategy`` -- (default: ``None``) a string or a pair of strings, passed to the option ``Strategy`` of ``polarizedK3surface``
+
+        OUTPUT:
+
+        :class:`Embedded_projective_variety`, the K3 surface associated to ``self``.
+        It has a method ``.lattice_intersection_matrix()`` that returns the intersection
+        matrix of the lattice spanned by the hyperplane class and the special curve.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: X = fourfold('DSCF-6')
+            sage: T = X.polarized_K3(verbose=False, building=True); T
+            surface in PP^4 of degree 6 and sectional genus 4 cut out by 2 hypersurfaces of degrees (2, 3)
+            sage: M = T.lattice_intersection_matrix(); M
+            [ 6  5]
+            [ 5 -2]
+            sage: M.det() + X.lattice_intersection_matrix().det()
+            0
+            sage: building = T.building()
+            sage: building[0]
+            dominant rational map defined by forms of degree 2
+            source: PP^5
+            target: PP^4
+            sage: X.polarized_K3() is T
+            True
+        """
+        if verbose is None:
+            verbose = get_verbose() >= 1
+        if fano_map_type not in (None, 'Standard', 'P2xP2'):
+            raise ValueError("keyword fano_map_type must be None, 'Standard' or 'P2xP2'")
+        if strategy is None:
+            str_strategy = None
+        elif isinstance(strategy, str):
+            str_strategy = '"' + strategy + '"'
+        elif isinstance(strategy, (tuple, list)) and len(strategy) == 2 and all(isinstance(t, str) for t in strategy):
+            strategy = tuple(strategy)
+            str_strategy = '("' + strategy[0] + '","' + strategy[1] + '")'
+        else:
+            raise TypeError("keyword strategy must be a string or a pair of strings")
+        try:
+            data = self._polarized_K3_data
+        except AttributeError:
+            data = self._polarized_K3_data = {}
+        key = (fano_map_type, strategy)
+        if key in data and (not building or hasattr(data[key], '_polarized_K3_construction')):
+            return data[key]
+        if verbose:
+            print("-- running Macaulay2 function polarizedK3surface()... --")
+        X = macaulay2(self,'X')
+        opts = "Verbose=>" + ("true" if verbose else "false")
+        if fano_map_type is not None:
+            opts = opts + ', FanoMapType=>"' + fano_map_type + '"'
+        if str_strategy is not None:
+            opts = opts + ', Strategy=>' + str_strategy
+        s = "E = polarizedK3surface(X, " + opts + "); E = polarizedK3surface(X, " + opts + ");"
+        _print_partial_M2_output(s) if verbose else macaulay2.eval(s)
+        E = macaulay2('E')
+        Y = E.projectiveVariety()
+        if not Y.instance(macaulay2('EmbeddedProjectiveVariety')).sage():
+            raise NotImplementedError("the associated K3 surface is not embedded in a projective space")
+        if verbose:
+            print("-- retrieving data from Macaulay2 computation... --")
+        if key in data:
+            T = data[key]
+        else:
+            Y = Y.removeUnderscores()
+            T = _from_macaulay2_to_sage(Y, ProjectiveSpace(Y.ambient().ring().sage()))
+            M = matrix(ZZ, macaulay2('latticeMatrix E').entries().sage())
+            T.lattice_intersection_matrix = lambda : M
+            T.building = lambda : print("surface was computed using building=False")
+            data[key] = T
+        if building:
+            B = E.building()
+            mu = _from_macaulay2map_to_sagemap(B[0].removeUnderscores(), Sage_Source=self.ambient_fivefold())
+            W = mu.target().ambient_space()
+            U = _from_macaulay2_to_sage(B[1].removeUnderscores(), Sage_Ambient_Space=W)
+            L = _from_macaulay2_to_sage(B[2][0].removeUnderscores(), Sage_Ambient_Space=W)
+            C = _from_macaulay2_to_sage(B[2][1].removeUnderscores(), Sage_Ambient_Space=W)
+            f = _from_macaulay2map_to_sagemap(B[3].removeUnderscores(), Sage_Source=U)
+            T._polarized_K3_construction = (mu, U, (L, C), f)
+            T.building = lambda : T._polarized_K3_construction
+        if verbose:
+            print("-- function polarizedK3surface() has terminated. --")
+        return T
+
 
 class _Virtual_cubic_fourfold(_Cubic_fourfold):
     r"""The class of virtual Hodge-special cubic fourfolds in ``PP^5``.
@@ -3791,7 +4051,7 @@ class _Virtual_cubic_fourfold(_Cubic_fourfold):
         virtual rational surface in PP^5 of degree 10 and sectional genus 6
         cut out by at least 10 hypersurfaces of degree 3
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 38 = 3*46-10^2 containing a virtual rational surface in PP^5
+        Cubic fourfold in C_38 containing a virtual rational surface in PP^5
         of degree 10 and sectional genus 6 cut out by at least 10 hypersurfaces of degree 3
     """
     def __init__(self, S, check=True) -> None:
@@ -3819,9 +4079,9 @@ class _Virtual_cubic_fourfold(_Cubic_fourfold):
         EXAMPLES::
 
             sage: X = fourfold(surface(3,4, ambient=5, virtual=True)); X
-            Cubic fourfold of discriminant 14 = 3*13-5^2 containing a virtual rational surface in PP^5 of degree 5 and sectional genus 1 cut out by at least 5 hypersurfaces of degree 2
+            Cubic fourfold in C_14 containing a virtual rational surface in PP^5 of degree 5 and sectional genus 1 cut out by at least 5 hypersurfaces of degree 2
             sage: X.materialize()
-            Cubic fourfold of discriminant 14 = 3*13-5^2 containing a rational surface in PP^5 of degree 5 and sectional genus 1 cut out by 5 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 4])
+            Cubic fourfold in C_14 containing a rational surface in PP^5 of degree 5 and sectional genus 1 cut out by 5 hypersurfaces of degree 2 (the image of the plane via the linear system [3, 4])
         """
         if not hasattr(self, "_materialization"):
             self._materialization = fourfold(self.surface().materialize(), check=True)
@@ -3849,19 +4109,34 @@ class _GushelMukai_fourfold(Hodge_special_fourfold):
         r"""Return a string representation of the fourfold."""
         d = self.discriminant(verbose=False)
         (a,b) = self._class_of_surface_in_the_Grass
-        e = ""
-        if d % 8 == 2:
-            if (a+b) % 2 == 0 and b % 2 == 1:
-                e = "(')"
-            elif (a+b) % 2 == 1 and b % 2 == 0:
-                e = "('')"
-            else:
-                raise RuntimeError("Internal error encountered.")
-        return "Gushel-Mukai fourfold of discriminant " + str(d) + e + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b))
+        return "Gushel-Mukai fourfold of discriminant " + str(d) + ("(" + self._primes() + ")" if self._primes() else "") + " containing a " + str(self.surface()) + ", class of the surface in GG(1,4): " + str((a,b))
 
     def _latex_(self) -> str:
-        r"""Return the LaTeX representation of the Gushel-Mukai fourfold."""
-        return "\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface())
+        r"""
+        Return the LaTeX representation of the Gushel-Mukai fourfold.
+
+        EXAMPLES::
+
+            sage: X = fourfold("tau-quadric")  # optional - macaulay2
+            sage: latex(X)  # optional - macaulay2
+            \mbox{Gushel-Mukai fourfold in }\mathcal{GM}_{ 10 } ^{'} \mbox{ containing a } \mbox{quadric surface in }\mathbb{P}^{ 8 } \mbox{, class of the surface in }\mathbb{G}(1,4)\mbox{: } \left(1, 1\right)
+        """
+        d = self.discriminant(verbose=False)
+        (a,b) = self._class_of_surface_in_the_Grass
+        e = "^{" + self._primes() + "}" if self._primes() else ""
+        return "\\mbox{Gushel-Mukai fourfold in }\\mathcal{GM}_{" + latex(d) + "}" + e + "\\mbox{ containing a }" + latex(self.surface()) + "\\mbox{, class of the surface in }\\mathbb{G}(1,4)\\mbox{: }" + latex((a,b))
+
+    def _primes(self):
+        r"""Return ``"'"``, ``"''"`` or ``""``, according to the type of the discriminant (relevant only when it is ``2`` modulo ``8``)."""
+        d = self.discriminant(verbose=False)
+        if d % 8 != 2:
+            return ""
+        (a,b) = self._class_of_surface_in_the_Grass
+        if (a+b) % 2 == 0 and b % 2 == 1:
+            return "'"
+        if (a+b) % 2 == 1 and b % 2 == 0:
+            return "''"
+        raise RuntimeError("Internal error encountered.")
 
     def K3(self, verbose=None, building=False):
         r"""
@@ -3883,7 +4158,7 @@ class _GushelMukai_fourfold(Hodge_special_fourfold):
         return self._hodge_associated_surface(verbose=verbose, building=building)
 
 
-def fourfold(S, X=None, V=None, check=True):
+def fourfold(S=None, X=None, V=None, check=True, example=None):
     r"""Construct Hodge-special fourfolds.
 
     The typical input for this function is a triple consisting of a surface ``S``, a fourfold ``X`` containing ``S``,
@@ -3914,7 +4189,7 @@ def fourfold(S, X=None, V=None, check=True):
         sage: G.describe()
         Special Gushel-Mukai fourfold of discriminant 10('')
         containing a plane
-        and with class in G(1,4) given by s_(3,1)
+        whose class in G(1,4) is s_(3,1)
         Type: ordinary
         (case 6 of Table 1 in arXiv:2002.07026)
         sage: fourfold(G)
@@ -3927,7 +4202,16 @@ def fourfold(S, X=None, V=None, check=True):
     ::
 
         sage: fourfold('general cubic 4-fold of discriminant 38',GF(65521))                                               # optional - macaulay2
-        Cubic fourfold of discriminant 38 = 3*46-10^2 containing a surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3
+        Cubic fourfold in C_38 containing a surface in PP^5 of degree 10 and sectional genus 6 cut out by 10 hypersurfaces of degree 3
+
+    With the option ``example``, the fourfold is loaded from the local archive of examples of the
+    ``Macaulay2`` package ``SpecialFanoFourfolds`` (see the ``Macaulay2`` function ``example``);
+    pass a name (an integer or a string) or a pair ``(name, n)``, where ``n`` specifies the type of fourfold.
+
+    ::
+
+        sage: X = fourfold(example=1)              # not tested (requires a local archive of examples)
+        sage: Y = fourfold(example=("1", 4))       # not tested
 
     Some calculations can be performed very quickly using virtual fourfolds, although the results may not always be meaningful.
 
@@ -3936,18 +4220,26 @@ def fourfold(S, X=None, V=None, check=True):
         sage: S = surface(4,8, ambient=5, virtual=True); S
         virtual rational surface in PP^5 of degree 8 and sectional genus 3 cut out by at least 13 hypersurfaces of degree 3
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 14 = 3*26-8^2 containing a virtual rational surface in PP^5 of degree 8 and sectional genus 3 cut out by at least 13 hypersurfaces of degree 3
+        Cubic fourfold in C_14 containing a virtual rational surface in PP^5 of degree 8 and sectional genus 3 cut out by at least 13 hypersurfaces of degree 3
 
         sage: S = surface(11,0,0,1, virtual=True, class_surfaces='K3'); S   # triple projection of a general K3 surface of genus 11
         virtual K3 surface in PP^5 of degree 11 and sectional genus 8 cut out by at least 9 hypersurfaces of degree 3
         sage: X = fourfold(S); X
-        Cubic fourfold of discriminant 26 = 3*49-11^2 containing a virtual K3 surface in PP^5 of degree 11 and sectional genus 8 cut out by at least 9 hypersurfaces of degree 3
+        Cubic fourfold in C_26 containing a virtual K3 surface in PP^5 of degree 11 and sectional genus 8 cut out by at least 9 hypersurfaces of degree 3
 
     """
+    if example is not None:
+        if not (S is None and X is None and V is None and check is True):
+            raise TypeError("the option 'example' cannot be used together with other arguments")
+        return fourfold(_example_from_m2(example))
+    if S is None:
+        raise TypeError("expected a surface, a string, a Macaulay2 object, or the option 'example'")
     if isinstance(S, str):
         if not (V is None and check is True and (X is None or isinstance(X,(int,Integer)) or X in Fields())):
             raise TypeError
         return _special_fourfold_from_m2(S, i=X)
+    if isinstance(S, sage.interfaces.abc.Macaulay2Element):
+        _set_macaulay2_()
     if isinstance(S, sage.interfaces.abc.Macaulay2Element) and S.instance(macaulay2('HodgeSpecialFourfold')).sage():
         if not (X is None and V is None and check is True):
             raise TypeError
@@ -3995,6 +4287,27 @@ def fourfold(S, X=None, V=None, check=True):
     if n == 8 and X.degree() == 10 and X.sectional_genus() == 6 and X.degrees_generators() == (2,2,2,2,2,2):
         return _GushelMukai_fourfold(S,X,V,check)
     return Hodge_special_fourfold(S,X,V,check)
+
+
+def _example_from_m2(e):
+    r"""
+    Return the ``Macaulay2`` object ``example e`` (or ``example(name,n)`` if ``e = (name, n)``)
+    from the local archive of examples of ``SpecialFanoFourfolds``.
+    """
+    def m2name(a):
+        if isinstance(a, (int, Integer)):
+            return str(Integer(a))
+        if isinstance(a, str):
+            return '"' + a.replace('\\', '\\\\').replace('"', '\\"') + '"'
+        raise TypeError("expected an integer or a string as name of the example")
+    if isinstance(e, (tuple, list)):
+        if not (len(e) == 2 and isinstance(e[1], (int, Integer))):
+            raise TypeError("expected a pair (name, n) with n an integer")
+        args = m2name(e[0]) + ', ' + str(Integer(e[1]))
+    else:
+        args = m2name(e)
+    _set_macaulay2_()
+    return macaulay2('example(' + args + ', Verbose=>false)')
 
 
 def _special_fourfold_from_m2(s, i=None):
@@ -4088,6 +4401,14 @@ def _expr_var_1(X):
     return (str(k) + "-dimensional variety of degree " + str(X.degree()) + " in PP^" + str(n) + cutOut, latex(k) + "\\mbox{-dimensional variety of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}" + cutOut_l)
 
 
+def _transfer_projective_invariants(X, Y):
+    r"""Copy to ``Y`` the cached projective invariants of ``X`` that are expensive to compute
+    (topological Euler characteristic and number of nodes); ``Y`` is assumed to be projectively equivalent to ``X``."""
+    for attr in ("_topological_euler_characteristic", "_finite_number_of_nodes"):
+        if getattr(X, attr, None) is not None and not hasattr(Y, attr):
+            setattr(Y, attr, getattr(X, attr))
+
+
 def _saturation(I):
     r"""Compute the saturation of the ideal with respect to the irrelevant ideal."""
     J = I.ring().irrelevant_ideal()
@@ -4105,6 +4426,7 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
 
     TESTS::
 
+        sage: from sage.schemes.hodge_special_fourfolds.sff import _from_macaulay2_to_sage
         sage: S_sage = surface(3,1,1)
         sage: V = S_sage.ambient_space()
         sage: S_m2 = macaulay2(S_sage)                                                 # optional - macaulay2
@@ -4124,6 +4446,7 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
     """
     if not isinstance(X, sage.interfaces.abc.Macaulay2Element):
         raise TypeError("expected a Macaulay2 object")
+    _set_macaulay2_()
     try:
         return X._sage_object
     except AttributeError:
@@ -4167,7 +4490,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
     TESTS::
 
         sage: # optional - macaulay2
-        sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
+        sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese, projective_variety, _from_macaulay2map_to_sagemap
         sage: C = macaulay2(projective_variety(Veronese(1,4).to_built_in_variety()))
         sage: f = C.parametrize().inverse()
         sage: g = _from_macaulay2map_to_sagemap(f); g
@@ -4178,7 +4501,8 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
     """
     if not isinstance(f,sage.interfaces.abc.Macaulay2Element):
         raise TypeError("expected a Macaulay2 object")
-    if not f.instance('MultirationalMap').sage():
+    _set_macaulay2_()
+    if not f.instance('RationalMap').sage():
         raise ValueError("expected a Macaulay2 object of type multi-rational map")
     try:
         return f._sage_object
@@ -4202,7 +4526,7 @@ def _from_macaulay2map_to_sagemap(f, Sage_Source=None, Sage_Target=None):
             Z = _from_macaulay2_to_sage(f.image(), Sage_Target.ambient_space())
             assert Z.is_subset(f._sage_object.target())
             f._sage_object._closure_of_image = Z
-        if f._sage_object._is_morphism is not True and (not hasattr(f._sage_object,"_list_of_representatives_of_map")) and (not f.toRationalMap().sharp('"maps"')._operator('===',macaulay2('null')).sage()):
+        if f._sage_object._is_morphism is not True and (not hasattr(f._sage_object,"_list_of_representatives_of_map")) and (not f.toLegacyRationalMap().sharp('"maps"')._operator('===',macaulay2('null')).sage()):
             assert macaulay2(f._sage_object) is f
             f._sage_object._representatives(verbose=False,algorithm='macaulay2')
             assert hasattr(f._sage_object,"_list_of_representatives_of_map")
@@ -4222,40 +4546,80 @@ def _print_partial_M2_output(m2_str):
     print(w)
 
 
-def _update_macaulay2_packages():
-    r"""Update some ``Macaulay2`` packages to their latest version.
+def _update_macaulay2_packages(directory=None, base_url=None, packages=None):
+    r"""
+    Download the latest versions of the ``Macaulay2`` packages needed by this module.
 
-    To use this function, first import it and then execute it as follows:
+    This is a Sage-native analogue of the ``Macaulay2`` function ``updatePackage``
+    from ``SpecialFanoFourfolds``, and it accepts the same arguments.
 
-    from sage.schemes.hodge_special_fourfolds.sff import _update_macaulay2_packages
-    _update_macaulay2_packages()
+    INPUT:
 
-    This command downloads into your current directory all the ``Macaulay2``
-    packages required for the functions of this module.
-    You do not need to do this if you are using a recent version of ``Macaulay2``.
+    - ``directory`` -- (default: the current directory) the directory where the files are saved;
+      ``Macaulay2`` looks for packages first in the directory from which it is launched,
+      so this should be the directory from which Sage is started.
+
+    - ``base_url`` -- (default: the development branch of the ``Macaulay2`` repository) the url
+      of the directory containing the packages; ``"@"`` stands for the author's fork.
+
+    - ``packages`` -- (default: ``("SpecialFanoFourfolds", "MultiprojectiveVarieties", "K3Surfaces")``)
+      the names of the packages to download; auxiliary files of ``SpecialFanoFourfolds``,
+      ``Cremona`` and ``CoincidentRootLoci`` are downloaded as well.
+
+    The files are written only after all of them have been downloaded successfully.
+    You need to restart Sage afterwards.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.hodge_special_fourfolds.sff import _update_macaulay2_packages
+        sage: _update_macaulay2_packages()  # not tested
     """
-    os = importlib.import_module("os")
-    inp = input('Do you want to download or update all the needed files in the current directory: ' + os.getcwd() + "? (y/n) ")
-    if inp not in ('y', 'Y', 'yes', 'Yes', 'YES'):
-        print('## Update not executed. ##')
+    if directory is None or directory == "":
+        directory = os.getcwd()
+    if not os.path.isdir(directory):
+        raise ValueError("expected a directory")
+    if base_url is None or base_url == "":
+        base_url = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"
+    if base_url == "@":
+        base_url = "https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/"
+    if not base_url.startswith("http"):
+        raise ValueError("expected a url")
+    if not base_url.endswith("/"):
+        base_url = base_url + "/"
+    if packages is None:
+        packages = ("SpecialFanoFourfolds", "MultiprojectiveVarieties", "K3Surfaces")
+    if isinstance(packages, str):
+        packages = (packages,)
+    if not (len(packages) > 0 and all(isinstance(F, str) for F in packages)):
+        raise TypeError("expected a list of package names")
+    # keep in sync with updatePackage in SpecialFanoFourfolds/utils.m2
+    aux_files = {
+        "SpecialFanoFourfolds": ["AssociatedSurfaces", "CubicFourfolds", "DSCF", "FanoMaps", "HodgeSpecialFourfolds", "IntersectionOfThreeQuadrics", "tests", "Congruences", "docs", "examples", "GushelMukai", "HodgeSpecialSurfaces", "mirrorFourfolds", "contractionMaps", "LatticePolarizations", "LatticePolarizedK3", "utils", "LatexTables"],
+        "Cremona": ["examples", "documentation", "tests"],
+        "CoincidentRootLoci": ["equationsCRL", "equationsDualCRL", "documentation", "tests"]
+    }
+    files = []
+    for F in packages:
+        files.append(F + ".m2")
+        files.extend(F + "/" + G + ".m2" for G in aux_files.get(F, []))
+    ans = input("Download the latest versions of " + ", ".join(packages) + " to " + directory + "? (y/n) ")
+    if ans not in ("y", "Y", "yes", "Yes", "YES"):
+        print("-- update cancelled.")
         return
-    base_url = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"
-    single_packages = ["K3Surfaces.m2", "SpecialFanoFourfolds.m2"]
-    sff_aux_files = ["AssociatedSurfaces.m2", "CubicFourfolds.m2", "DSCF.m2", "FanoMaps.m2", "HodgeSpecialFourfolds.m2", "IntersectionOfThreeQuadrics.m2", "tests.m2", "Congruences.m2", "docs.m2", "examples.m2", "GushelMukai.m2", "HodgeSpecialSurfaces.m2", "mirrorFourfolds.m2", "contractionMaps.m2", "LatticePolarizedK3.m2", "utils.m2"]
-    print('Downloading files in ' + os.getcwd() + '...')
-    for pkg in single_packages:
-        os.system("curl -s -o " + pkg + " " + base_url + pkg)
-    if not os.path.exists("SpecialFanoFourfolds"):
-        os.makedirs("SpecialFanoFourfolds")
-    for f in sff_aux_files:
-        os.system("curl -s -o SpecialFanoFourfolds/" + f + " " + base_url + "SpecialFanoFourfolds/" + f)
-    success = all(os.path.isfile(pkg) for pkg in single_packages)
-    success = success and all(os.path.isfile("SpecialFanoFourfolds/" + af) for af in sff_aux_files)
-    if success:
-        print('Download successfully completed.')
-    else:
-        raise FileNotFoundError("Something went wrong during the download process.")
-    print('## You should restart Sage and reload this module.')
+    print("-- downloading " + str(len(files)) + " files...")
+    contents = {}
+    for f in files:
+        try:
+            with urllib.request.urlopen(base_url + f, timeout=60) as response:
+                contents[f] = response.read()
+        except Exception as err:
+            raise RuntimeError("unable to download " + base_url + f + " (" + str(err) + "); no file has been written") from err
+    for f, data in contents.items():
+        path = os.path.join(directory, *f.split("/"))
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as out:
+            out.write(data)
+    print("-- update completed; restart Sage to load the new package versions.")
 
 
 def _set_macaulay2_():
@@ -4268,7 +4632,7 @@ def _set_macaulay2_():
     macaulay2('needsPackage "SpecialFanoFourfolds"')
     macaulay2.options.after_print = True
     macaulay2('importFrom_MultiprojectiveVarieties {"coordinates"}')
-    macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize", "imageOfAssociatedMap"}')
+    macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize", "imageOfAssociatedMap", "latticeIntersectionMatrix3x3", "latticeMatrix"}')
     macaulay2('importFrom_Cremona {"maps"}')
     # I had issues converting M2 objects to Sage due to underscores in variable names.
     # This temporary M2 code resolves the problem.
@@ -4289,12 +4653,13 @@ removeUnderscores EmbeddedProjectiveVariety := X -> (
     if codim Y > 0 then assert (ambient Y === projectiveVariety P) else assert (ambient Y == projectiveVariety P);
     if X.cache#?"euler" then Y.cache#"euler" = X.cache#"euler";
     if X.cache#?"FiniteNumberOfNodes" then Y.cache#"FiniteNumberOfNodes" = X.cache#"FiniteNumberOfNodes";
+    if X.cache#?"ConstructionParameters" then Y.cache#"ConstructionParameters" = X.cache#"ConstructionParameters";
     if X.cache#?"rationalParametrization" then Y.cache#"rationalParametrization" = removeUnderscores(X.cache#"rationalParametrization");
     if codim ambientVariety X > 0 then Y % removeUnderscores(ambientVariety X);
     Y.cache#"removeUnderscores" = Y;
     X.cache#"removeUnderscores" = Y
 );
-removeUnderscores RationalMap := f -> (
+removeUnderscores LegacyRationalMap := f -> (
     if f#"map".cache#?"removeUnderscores" then return f#"map".cache#"removeUnderscores";
     P1 := removeUnderscores(coefficientRing f, f#"dimAmbientTarget");
     P2 := removeUnderscores(coefficientRing f, f#"dimAmbientSource");
@@ -4302,22 +4667,22 @@ removeUnderscores RationalMap := f -> (
     g#"map".cache#"removeUnderscores" = g;
     f#"map".cache#"removeUnderscores" = g
 );
-removeUnderscores MultirationalMap := f -> (
+removeUnderscores RationalMap := f -> (
     if f.cache#?"removeUnderscores" then return f.cache#"removeUnderscores";
-    g := multirationalMap removeUnderscores toRationalMap f;
+    g := rationalMap removeUnderscores toLegacyRationalMap f;
     g.cache#"removeUnderscores" = g;
     f.cache#"removeUnderscores" = g
 );
-removeUnderscores (EmbeddedProjectiveVariety,MultirationalMap) := (X,f) -> (
+removeUnderscores (EmbeddedProjectiveVariety,RationalMap) := (X,f) -> (
     if f.cache#?("removeUnderscores",X) then return f.cache#("removeUnderscores",X);
     g := removeUnderscores f;
     h := (Hom(X,target g)) entries sub(matrix entries g,vars ring ambient X);
     h.cache#("removeUnderscores",X) = h;
     f.cache#("removeUnderscores",X) = h
 );
-removeUnderscores (EmbeddedProjectiveVariety,RationalMap) := (X,f) -> (
+removeUnderscores (EmbeddedProjectiveVariety,LegacyRationalMap) := (X,f) -> (
     if f#"map".cache#?("removeUnderscores",X) then return f#"map".cache#("removeUnderscores",X);
-    g := toRationalMap removeUnderscores(X,multirationalMap f);
+    g := toLegacyRationalMap removeUnderscores(X,rationalMap f);
     g#"map".cache#("removeUnderscores",X) = g;
     f#"map".cache#("removeUnderscores",X) = g
 );
@@ -4359,7 +4724,7 @@ if __name__ == "__main__":
     if _HAS_MACAULAY2:
         _set_macaulay2_()
     print("""┌─────────────────────────────────────┐
- sff.py version 1.0, date: 2023-06-15""" +
+ sff.py version 1.1, date: 2026-11-25""" +
 ("\n with SpecialFanoFourfolds.m2 v. " + macaulay2('SpecialFanoFourfolds.Options.Version').sage() if _HAS_MACAULAY2 else "\n Macaulay2 not present") +
 """
 └─────────────────────────────────────┘""")
