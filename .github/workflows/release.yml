@@ -54,8 +54,8 @@ on:
       suite:
         description: Homebrew doctest suite (pytest tests always run)
         type: choice
-        default: smoke
-        options: [smoke, all]
+        default: all
+        options: [all, smoke]
       doctest_paths:
         description: Optional space-separated src/sage paths for homebrew
         type: string
@@ -170,7 +170,7 @@ jobs:
     with:
       sage_repository: ${{ inputs.sage_repository || '' }}
       sage_ref: ${{ inputs.sage_ref || '' }}
-      suite: ${{ inputs.suite || 'smoke' }}
+      suite: ${{ inputs.suite || 'all' }}
       doctest_paths: ${{ inputs.doctest_paths || '' }}
 
   docker:

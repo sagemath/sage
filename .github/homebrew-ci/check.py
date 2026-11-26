@@ -42,6 +42,8 @@ def data():
 
 def provenance():
     """Reject an installed Sage bottle accidentally taking precedence."""
+    from packaging.version import Version
+
     source = Path(os.environ["CI_SOURCE"]).resolve()
     build = Path(os.environ["CI_RUN_DIR"], "build").resolve()
     result = {
@@ -60,11 +62,14 @@ def provenance():
     direct_url = json.loads(dist.read_text("direct_url.json"))
     if direct_url != {"dir_info": {"editable": True}, "url": source.as_uri()}:
         raise RuntimeError(f"Not the candidate's editable installation: {direct_url}")
-    for name, formula in (("sympy", "sagemath-deps"), ("sphinx", "sagemath-docbuild-deps")):
+    for name, formula in (("cypari2", "cypari2"), ("sympy", "sagemath-deps"),
+                          ("sphinx", "sagemath-docbuild-deps")):
         prefix = Path(subprocess.check_output(
             ["brew", "--prefix", f"dimpase/tap/{formula}"], text=True).strip()).resolve()
         dist = metadata.distribution(name)
-        path = Path(dist.locate_file("")).resolve()
+        if name == "cypari2" and Version(dist.version) < Version("2.2.9"):
+            raise RuntimeError(f"Expected cypari2 2.2.9 or later, found {dist.version}")
+        path = Path(importlib.import_module(name).__file__).resolve()
         if not path.is_relative_to(prefix):
             raise RuntimeError(f"{name} came from {path}, expected the {formula} bottle")
         result["dependencies"][name] = {"version": dist.version, "path": str(path)}
@@ -73,31 +78,29 @@ def provenance():
 
 def doctest():
     paths = shlex.split(os.environ.get("CI_DOCTEST_PATHS", ""))
-    if not paths:
-        if os.environ.get("CI_SUITE", "smoke") == "all":
-            paths = ["src/sage"]
-        else:
-            paths = [
-                "src/sage/arith/misc.py",
-                "src/sage/rings/integer.pyx",
-                "src/sage/matrix/matrix_double_dense.pyx",
-                "src/sage/libs/pari",
-                "src/sage/libs/eclib",
-                "src/sage/libs/gap",
-                "src/sage/interfaces/maxima_lib.py",
-            ]
+    full_suite = not paths and os.environ.get("CI_SUITE", "all") == "all"
+    if not paths and not full_suite:
+        paths = [
+            "src/sage/arith/misc.py",
+            "src/sage/rings/integer.pyx",
+            "src/sage/matrix/matrix_double_dense.pyx",
+            "src/sage/libs/pari",
+            "src/sage/libs/eclib",
+            "src/sage/libs/gap",
+            "src/sage/interfaces/maxima_lib.py",
+        ]
     root = Path("src/sage").resolve()
     for value in paths:
         path = Path(value).resolve()
         if not path.is_relative_to(root) or not path.exists():
             raise ValueError(f"Expected an existing path under src/sage: {value}")
-    arguments = ["-p", os.environ.get("CI_JOBS", "4"),
-                 "--format", "github", "--random-seed=0", "--timeout=900",
-                 f"--stats-path={os.environ['CI_RESULTS']}/doctest-stats.json", *paths]
-    from sage.doctest.__main__ import main
-    print("Running Sage doctests: " + shlex.join(arguments), flush=True)
-    sys.argv = ["sage.doctest", *arguments]
-    raise SystemExit(main())
+    # The workflow runs pytest separately and saves its JUnit report.
+    from sage.doctest.control import DocTestController, DocTestDefaults
+    options = DocTestDefaults(runtest_default=True, all=full_suite,
+                              nthreads=int(os.environ.get("CI_JOBS", "4")), format="github",
+                              random_seed=0, timeout=900,
+                              stats_path=str(Path(os.environ["CI_RESULTS"]) / "doctest-stats.json"))
+    raise SystemExit(DocTestController(options, paths).run())
 
 
 if __name__ == "__main__":

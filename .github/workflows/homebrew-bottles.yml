@@ -9,22 +9,29 @@ on:
         type: string
       suite:
         type: string
-        default: smoke
+        default: all
       doctest_paths:
         type: string
 
 permissions:
   contents: read
 
-# The dependency installation is shared by jobs on this persistent runner.
-concurrency:
-  group: homebrew-bottles-darwin-27
-  cancel-in-progress: false
-
 jobs:
   sagelib:
-    name: sagelib / darwin-27 / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'smoke' }}
-    runs-on: [self-hosted, macOS, ARM64, darwin-27]
+    name: sagelib / ${{ matrix.platform }} / Python 3.14 / ${{ inputs.doctest_paths && 'selected paths' || inputs.suite || 'all' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: darwin-27
+            runner: [self-hosted, macOS, ARM64, darwin-27]
+          - platform: linux-x86_64
+            runner: ubuntu-26.04
+    runs-on: ${{ matrix.runner }}
+    # Only the persistent macOS runner shares its Homebrew installation across runs.
+    concurrency:
+      group: homebrew-bottles-${{ matrix.platform }}${{ matrix.platform == 'linux-x86_64' && format('-{0}', github.run_id) || '' }}
+      cancel-in-progress: false
     timeout-minutes: 240
     defaults:
       run:
@@ -43,10 +50,18 @@ jobs:
       VECLIB_MAXIMUM_THREADS: 1
       MAKE: make -j4
       CI_JOBS: 4
-      CI_SUITE: ${{ inputs.suite || 'smoke' }}
+      CI_SUITE: ${{ inputs.suite || 'all' }}
       CI_DOCTEST_PATHS: ${{ inputs.doctest_paths }}
 
     steps:
+      - name: Make room for dependency bottles and the Sage build
+        if: runner.os == 'Linux'
+        uses: jlumbroso/free-disk-space@v2.0.0
+        with:
+          preinstalled-runtimes: false
+          large-packages: false
+          swap-storage: false
+
       # Keep the harness separate so it can test commits without this workflow.
       - name: Checkout CI harness
         uses: actions/checkout@v7
@@ -118,7 +133,7 @@ jobs:
             echo '### Homebrew sagelib build'
             echo "Sage commit: $(git -C "$CI_SOURCE" rev-parse HEAD)"
             echo
-            echo 'Runner: darwin-27; Python: 3.14; workers: 4.'
+            echo "Runner: $RUNNER_OS $RUNNER_ARCH; Python: 3.14; workers: $CI_JOBS."
             echo "Doctest selection: ${CI_DOCTEST_PATHS:-$CI_SUITE}."
             echo 'The artifact contains dependency versions, import provenance, and build/test logs.'
           } >> "$GITHUB_STEP_SUMMARY"
@@ -127,7 +142,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: homebrew-darwin-27-${{ github.run_id }}-${{ github.run_attempt }}
+          name: homebrew-${{ matrix.platform }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ env.CI_RESULTS }}
           retention-days: 14
 
