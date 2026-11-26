@@ -2222,8 +2222,9 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         args = [P(g) for g in args]
 
         for g in args:
-            if g._coeff_stream._approximate_order == 0:
-                if not g._coeff_stream.is_uninitialized() and g[0]:
+            if (g._coeff_stream._approximate_order == 0
+                    and not g._coeff_stream.is_uninitialized()):
+                if g[0]:
                     raise ValueError("can only compose with a positive valuation series")
                 g._coeff_stream._approximate_order = 1
 

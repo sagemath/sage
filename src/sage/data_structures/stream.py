@@ -3599,9 +3599,11 @@ class Stream_compose(Stream_inexact):
         """
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
-        if self._input._coeff_stream[0]:
-            # a nonzero constant term of the inner series: every outer
-            # degree contributes, and the outer stream has finite support
+        if any(self._input._coeff_stream[i]
+               for i in range(self._input._coeff_stream._approximate_order, 1)):
+            # a nonzero coefficient of the inner series below degree one:
+            # every outer degree contributes, and the outer stream has
+            # finite support
             if self._degree_f is None:
                 raise ValueError(
                     "can only compose with a series of positive valuation, "
@@ -3775,9 +3777,11 @@ class Stream_cauchy_compose(Stream_binary):
         """
         fv = self._left._approximate_order
         gv = self._right._approximate_order
-        if self._right[0]:
-            # a nonzero constant term of the inner series: every outer
-            # degree contributes, and the outer stream has finite support
+        if any(self._right[i]
+               for i in range(self._right._approximate_order, 1)):
+            # a nonzero coefficient of the inner series below degree one:
+            # every outer degree contributes, and the outer stream has
+            # finite support
             if self._degree_f is None:
                 raise ValueError(
                     "can only compose with a series of positive valuation, "
@@ -4023,10 +4027,27 @@ class Stream_plethysm(Stream_binary):
             sage: all(C[n] == f.symmetric_function()(bounded).homogeneous_component(n)
             ....:     for n in range(4))
             True
+
+        The same holds for an inner series defined implicitly: when
+        its solution has a nonzero constant term, the plethysm is not
+        defined, which only shows when a coefficient is computed::
+
+            sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).p())
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: F = L(lambda n: p[n])
+            sage: A = L.undefined()
+            sage: c = F(A)
+            sage: L.define_implicitly([A], [A - p.one() - p[1]])
+            sage: c[p.one()]
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
         """
-        if self._right[0]:
-            # a nonzero constant term of the inner series: every outer
-            # degree contributes, and the outer stream has finite support
+        if any(self._right[i]
+               for i in range(self._right._approximate_order, 1)):
+            # a nonzero coefficient of the inner series below degree one:
+            # every outer degree contributes, and the outer stream has
+            # finite support
             if self._degree_f is None:
                 raise ValueError(
                     "can only compute plethysm with a series of positive "
@@ -4314,9 +4335,11 @@ class Stream_plethysm_multi(Stream_inexact):
         r"""
         Return the coefficient of total degree ``n``.
         """
-        if any(g[0] for g in self._arguments):
-            # a nonzero constant term of an argument: every outer degree
-            # contributes, and the outer stream has finite support
+        if any(g[i] for g in self._arguments
+               for i in range(g._approximate_order, 1)):
+            # a nonzero coefficient of an argument below degree one:
+            # every outer degree contributes, and the outer stream has
+            # finite support
             if self._degree_f is None:
                 raise ValueError(
                     "can only compute plethysm with a series of positive "

@@ -1624,6 +1624,31 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: g
             z*q + z^2*q + z^3*q + (z^4*q+z^3*q^2) + (z^5*q+3*z^4*q^2) + O(z,q)^7
 
+        Composing with an undefined series is allowed: the valuation of
+        the inner series is only checked when a coefficient of the
+        composition is computed, so that the following system, whose
+        solution has valuation zero, can be solved::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-z)
+            sage: A = L.undefined()
+            sage: c = f(A)
+            sage: L.define_implicitly([A], [A - z - z^2*c])
+            sage: A
+            z + z^2 + z^3 + 2*z^4 + 4*z^5 + 9*z^6 + O(z^7)
+
+        If the composition is not defined because the solution has a
+        nonzero constant term, this only shows when the composition
+        is computed::
+
+            sage: A = L.undefined()
+            sage: c = f(A)
+            sage: L.define_implicitly([A], [A - 1 - z])
+            sage: c[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
         The following does not work, because the equations
         determining the coefficients come in bad order::
 

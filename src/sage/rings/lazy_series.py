@@ -1577,6 +1577,31 @@ class LazyModuleElement(Element):
             sage: b
             O(z^8)
 
+        Defining a series after composing with it does not corrupt the
+        composition: the valuation of the inner series is only checked
+        when a coefficient of the composition is computed.  If the
+        definition has a nonzero constant term, the composition is not
+        defined::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-z)
+            sage: g = L.undefined()
+            sage: c = f(g)
+            sage: g.define(1 + z)
+            sage: c[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        If the definition has zero constant term, the composition is
+        well defined::
+
+            sage: g = L.undefined()
+            sage: c = f(g)
+            sage: g.define(z + z^2)
+            sage: c
+            1 + z + 2*z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + O(z^7)
+
             sage: L.<x> = LazyPowerSeriesRing(ZZ)
             sage: f = L.undefined()
             sage: f.define(L(lambda n: 0 if not n else sigma(f[n-1]+1)))
@@ -1596,8 +1621,13 @@ class LazyModuleElement(Element):
             s = self.parent()(s)
 
         coeff_stream = s._coeff_stream
-        # Special case when it has a trivial definition
+        # Special case when it has a trivial definition: the series
+        # itself becomes the defining stream, so that it is, for
+        # example, printed without a big-oh term
         if isinstance(coeff_stream, (Stream_zero, Stream_exact)):
+            # define the uninitialized stream in place, so that series
+            # already composed with it see the definition
+            self._coeff_stream.define(coeff_stream)
             self._coeff_stream = coeff_stream
             return
 
@@ -4560,10 +4590,14 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             #   as we can use the (default?) order given
             raise NotImplementedError("can only compose with a lazy series")
 
-        # Perhaps we just don't yet know if the valuation is positive
-        if g._coeff_stream._approximate_order <= 0:
-            if (not g._coeff_stream.is_uninitialized()
-                and any(g._coeff_stream[i] for i in range(g._coeff_stream._approximate_order, 1))):
+        # Perhaps we just don't yet know if the valuation is positive.
+        # An uninitialized inner series is not checked here, since
+        # reading its coefficients could trigger a premature
+        # computation; the composition reads its coefficients below
+        # degree one when its own coefficients are read.
+        if (g._coeff_stream._approximate_order <= 0
+                and not g._coeff_stream.is_uninitialized()):
+            if any(g._coeff_stream[i] for i in range(g._coeff_stream._approximate_order, 1)):
                 raise ValueError("can only compose with a positive valuation series")
             g._coeff_stream._approximate_order = 1
 
@@ -5572,8 +5606,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         R = P._stream_coefficient_ring
 
         for h in g:
-            if h._coeff_stream._approximate_order == 0:
-                if not h._coeff_stream.is_uninitialized() and h[0]:
+            if (h._coeff_stream._approximate_order == 0
+                    and not h._coeff_stream.is_uninitialized()):
+                if h[0]:
                     raise ValueError("can only compose with a positive valuation series")
                 h._coeff_stream._approximate_order = 1
 
@@ -7130,8 +7165,9 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                 g = P(g)
 
             if not isinstance(self._coeff_stream, Stream_exact):
-                if g._coeff_stream._approximate_order == 0:
-                    if not g._coeff_stream.is_uninitialized() and g[0]:
+                if (g._coeff_stream._approximate_order == 0
+                        and not g._coeff_stream.is_uninitialized()):
+                    if g[0]:
                         raise ValueError("can only compose with a positive valuation series")
                     g._coeff_stream._approximate_order = 1
 
@@ -7179,8 +7215,9 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             # see the arity-one case: an inner argument of valuation
             # zero requires finite support of the outer function
             for g in args:
-                if g._coeff_stream._approximate_order == 0:
-                    if not g._coeff_stream.is_uninitialized() and g[0]:
+                if (g._coeff_stream._approximate_order == 0
+                        and not g._coeff_stream.is_uninitialized()):
+                    if g[0]:
                         raise ValueError("can only compose with a positive "
                                          "valuation series")
                     g._coeff_stream._approximate_order = 1
