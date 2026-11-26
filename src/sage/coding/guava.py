@@ -94,9 +94,22 @@ def RandomLinearCodeGuava(n, k, F):
         sage: C = codes.RandomLinearCodeGuava(10,5,GF(4,'a')); C   # optional - gap_package_guava
         [10, 5] linear code over GF(4)
 
+    TESTS:
+
+    Sage's random seed controls the GAP generator used by GUAVA, without
+    relying on the pexpect GAP interface::
+
+        sage: from unittest.mock import patch
+        sage: with patch('sage.interfaces.gap.gap', None), seed(123):  # optional - gap_package_guava
+        ....:     G1 = codes.RandomLinearCodeGuava(12, 6, GF(4, 'a')).generator_matrix()
+        sage: with seed(123):                                   # optional - gap_package_guava
+        ....:     G2 = codes.RandomLinearCodeGuava(12, 6, GF(4, 'a')).generator_matrix()
+        sage: G1 == G2                                          # optional - gap_package_guava
+        True
+
     AUTHOR: David Joyner (11-2005)
     """
-    current_randstate().set_seed_gap()
+    current_randstate().set_seed_libgap()
 
     GapPackage('guava', spkg='gap_packages').require()
     libgap.load_package('guava')

@@ -61,9 +61,9 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
     OUTPUT:
 
     - ``block_matrix`` -- list of lists representing a matrix of linear
-      transformations `(T_{ij})`.  Each transformtion `T_{ij}` is the linear map
-      representing multiplication by the coefficient `r_{ij}` restricted to
-      the module elements of degree ``source_degs[j]``.
+      transformations `(T_{ij})`.  Each transformation `T_{ij}` is the
+      linear map representing multiplication by the coefficient
+      `r_{ij}` restricted to the module elements of degree ``source_degs[j]``.
     - ``R`` -- a matrix representing ``block_matrix`` as a single linear
       transformation
 

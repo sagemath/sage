@@ -1,1 +1,1 @@
- sphinx | $(PYTHON_TOOLCHAIN) sagelib $(PYTHON)
+ sphinx sphinxcontrib_bibtex | $(PYTHON_TOOLCHAIN) sagelib $(PYTHON)

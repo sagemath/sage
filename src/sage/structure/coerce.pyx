@@ -77,7 +77,7 @@ see the documentation for :class:`~sage.structure.parent.Parent`.
 from cpython.object cimport (PyTypeObject, PyObject_CallObject,
                              PyObject_RichCompare, Py_TYPE,
                              Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT)
-from cpython.weakref cimport PyWeakref_GET_OBJECT, PyWeakref_NewRef
+from cpython.weakref cimport PyWeakref_NewRef
 from libc.string cimport strncmp
 cimport gmpy2
 
@@ -529,8 +529,7 @@ cdef class CoercionModel:
     Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
-        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
+        sage: __ = numpy.set_printoptions(legacy="1.25")                                # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -1545,16 +1544,16 @@ cdef class CoercionModel:
                 return None
             R_map_ref, S_map_ref = refs
             if R_map_ref is None:
-                S_map = <object>PyWeakref_GET_OBJECT(S_map_ref)
+                S_map = S_map_ref()
                 if S_map is not None:
                     return None, S_map
             elif S_map_ref is None:
-                R_map = <object>PyWeakref_GET_OBJECT(R_map_ref)
+                R_map = R_map_ref()
                 if R_map is not None:
                     return R_map, None
             else:
-                R_map = <object>PyWeakref_GET_OBJECT(R_map_ref)
-                S_map = <object>PyWeakref_GET_OBJECT(S_map_ref)
+                R_map = R_map_ref()
+                S_map = S_map_ref()
                 if R_map is not None and S_map is not None:
                     return R_map, S_map
         except KeyError:

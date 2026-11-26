@@ -376,7 +376,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     :class:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Immaculate`
     basis was introduced in [BBSSZ2012]_.  The
     :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
-    were defined in [QSCHUR]_ and the dual basis is implemented here as
+    were defined in [HLMvW2011]_ and the dual basis is implemented here as
     :class:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.dualQuasisymmetric_Schur`.
     Refer to the documentation for the use and definition of these bases.
 
@@ -4847,7 +4847,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         The
         :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
-        functions are defined in [QSCHUR]_ (see also
+        functions are defined in [HLMvW2011]_ (see also
         Definition 5.1.1 of [LMvW13]_).  The dual basis in the algebra
         of non-commutative symmetric functions is defined by the following
         formula:

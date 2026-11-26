@@ -1215,12 +1215,12 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 class DualkSchurFunctions(KBoundedQuotientBasis):
     r"""
     This basis is dual to the `k`-Schur functions.  The expansion is given
-    in Section 4.12 of [LLMSSZ]_.  When `t=1` this basis is equal to the
+    in Section 4.12 of [LLMSSZ2013]_.  When `t=1` this basis is equal to the
     :class:`AffineSchurFunctions` and that basis is more efficient in this case.
 
     REFERENCES:
 
-    - [LLMSSZ]_
+    - [LLMSSZ2013]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1280,7 +1280,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
             sage: dks3._dks_to_khlp_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=self.t)
@@ -1334,11 +1334,11 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 class AffineSchurFunctions(KBoundedQuotientBasis):
     r"""
     This basis is dual to the `k`-Schur functions at `t=1`.  This realization
-    follows the monomial expansion given by Lam [Lam2006]_.
+    follows the monomial expansion given by Lam [Lam2008]_.
 
     REFERENCES:
 
-    - [Lam2006]_
+    - [Lam2008]_
     """
 
     def __init__(self, kBoundedRing):
@@ -1428,7 +1428,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
             sage: F._m_to_F_on_basis(Partition([4,1]))
             Traceback (most recent call last):
             ...
-            AssertionError: [4, 1] should be an element of 3-Bounded Partitions
+            ValueError: [4, 1] should be an element of 3-Bounded Partitions
         """
         Sym = self._kBoundedRing.ambient()
         kB = Sym.kBoundedSubspace(self.k, t=1)
