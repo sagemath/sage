@@ -2432,7 +2432,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         coeffs = vector([ZZ.zero()] * m)
         for h, c in left[N]:
             f = [fixed_points_factorized(N,
-                                         [(A._dis, e) for A, e in h._monomial.items()],
+                                         [(A._group, e) for A, e in h._monomial.items()],
                                          B)
                  for B in C_N]
             v = libgap.DecomposedFixedPointVector(M, f).sage()
