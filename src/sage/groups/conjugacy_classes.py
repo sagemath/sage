@@ -442,6 +442,27 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._libgap_().Size().sage()
 
+    def __iter__(self):
+        r"""
+        Iterate over the elements of this conjugacy class using GAP.
+
+        TESTS::
+
+            sage: G = SymmetricGroup(2)
+            sage: H = G.subgroup([])
+            sage: list(H.conjugacy_class(H.one())) == [H.one()]
+            True
+
+            sage: G = SymmetricGroup(3)
+            sage: H = G.subgroup([(1,2), (1,3)])
+            sage: set(H.conjugacy_class(H((1,2)))) == {
+            ....:     H((1,2)), H((1,3)), H((2,3))}
+            True
+        """
+        iterator = self._gap_conjugacy_class.Iterator()
+        while not iterator.IsDoneIterator().sage():
+            yield self._parent(iterator.NextIterator().sage())
+
     def __contains__(self, g) -> bool:
         r"""
         Containment test.
