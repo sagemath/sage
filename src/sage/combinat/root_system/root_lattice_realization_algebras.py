@@ -197,8 +197,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lascoux2003] Alain Lascoux, Symmetric functions and combinatorial operators on polynomials,
-               CBMS Regional Conference Series in Mathematics, 99, 2003.
+            - [Lascoux2003]_
             """
             P = self.basis().keys()  # the root lattice realization
             n = weight.scalar(P.simple_coroot(i))
@@ -231,8 +230,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Kumar1987] \S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
-               Invent. Math. 89 (1987), no. 2, 395-423.
+            - [Kumar1987]_
 
             EXAMPLES:
 
@@ -425,7 +423,7 @@ class Algebras(AlgebrasCategory):
             The names dominant and antidominant for the conventions were chosen with regards to
             the nonsymmetric Macdonald polynomials. The `Y` operators for the Macdonald polynomials
             in the "dominant" convention satisfy `Y_\lambda = T_{t_{\lambda}}` for `\lambda` dominant.
-            This is also the convention used in [Haiman06]_. For the "antidominant" convention,
+            This is also the convention used in [HaimanICM]_. For the "antidominant" convention,
             `Y_\lambda = T_{t_{\lambda}}` with `\lambda` antidominant.
 
             .. SEEALSO::
@@ -435,12 +433,9 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lusztig1985] \G. Lusztig,
-               *Equivariant K-theory and representations of Hecke algebras*,
-               Proc. Amer. Math. Soc. 94 (1985), no. 2, 337-342.
+            - [Lusztig1985]_
 
-            .. [Cherednik1995] \I. Cherednik,
-               *Nonsymmetric Macdonald polynomials*. IMRN 10, 483-515 (1995).
+            - [Cherednik1995]_
 
             EXAMPLES::
 
@@ -768,11 +763,11 @@ class Algebras(AlgebrasCategory):
             r"""
             Return the `T_0^\vee` operator acting on the basis.
 
-            This implements the formula for `T_{0'}` in Section 6.12 of [Haiman06]_.
+            This implements the formula for `T_{0'}` in Section 6.12 of [HaimanICM]_.
 
             REFERENCES:
 
-            .. [Haiman06] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
+            - [HaimanICM]_
 
             .. WARNING::
 

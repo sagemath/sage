@@ -1993,10 +1993,12 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
         I.__pari_hnf = hnf
         return I
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
-        Return ``True`` if this ideal is maximal.  This is equivalent to
-        ``self`` being prime, since it is nonzero.
+        Return ``True`` if this ideal is maximal.
+
+        This is equivalent to ``self`` being prime, since it is
+        nonzero.
 
         EXAMPLES::
 
@@ -2010,7 +2012,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
         """
         return self.is_prime()
 
-    def is_trivial(self, proof=None):
+    def is_trivial(self, proof=None) -> bool:
         """
         Return ``True`` if this is a trivial ideal.
 
@@ -2973,7 +2975,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
             a = a*p**(-n)
         return a
 
-    def is_S_unit(self, S):
+    def is_S_unit(self, S) -> bool:
         r"""
         Return ``True`` if this fractional ideal is a unit with respect to the list of primes `S`.
 
@@ -3004,7 +3006,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
         """
         return self.prime_to_S_part(S).is_trivial()
 
-    def is_S_integral(self, S):
+    def is_S_integral(self, S) -> bool:
         r"""
         Return ``True`` if this fractional ideal is integral with respect to the list of primes `S`.
 

@@ -56,11 +56,11 @@ REFERENCES:
 - Anders N. Jensen; *Gfan, a software system for Groebner fans*;
   http://home.math.au.dk/jensen/software/gfan/gfan.html
 """
+from __future__ import annotations
 from subprocess import PIPE, Popen
 import pexpect
 import re
 import string
-from collections.abc import Iterator
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan
@@ -78,6 +78,10 @@ from sage.geometry.fan import Fan
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def prefix_check(str_list) -> bool:

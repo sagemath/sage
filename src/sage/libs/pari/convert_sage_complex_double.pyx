@@ -50,11 +50,11 @@ cpdef Gen new_gen_from_complex_double_element(ComplexDoubleElement self):
 
         sage: from sage.libs.pari.convert_sage_complex_double import new_gen_from_complex_double_element
         sage: new_gen_from_complex_double_element(CDF(1,0))
-        1.00000000000000
+        1.00000000000...
         sage: new_gen_from_complex_double_element(CDF(0,1))
-        1.00000000000000*I
+        1.00000000000...*I
         sage: new_gen_from_complex_double_element(CDF(1,1))
-        1.00000000000000 + 1.00000000000000*I
+        1.00000000000... + 1.00000000000...*I
     """
     if not GSL_IMAG(self._complex):
         return new_gen_from_double(GSL_REAL(self._complex))

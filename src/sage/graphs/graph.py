@@ -2322,13 +2322,13 @@ class Graph(GenericGraph):
         It is clear, though, that a random Bipartite Graph which is not a forest
         has an even hole::
 
-            sage: g = graphs.RandomBipartite(10, 10, .5)                                # needs numpy
-            sage: g.is_even_hole_free() and not g.is_forest()                           # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(10, 10, .5)
+            sage: g.is_even_hole_free() and not g.is_forest()                           # needs sage.modules
             False
 
         We can check the certificate returned is indeed an even cycle::
 
-            sage: if not g.is_forest():                                                 # needs numpy sage.modules
+            sage: if not g.is_forest():                                                 # needs sage.modules
             ....:    cycle = g.is_even_hole_free(certificate=True)
             ....:    if cycle.order() % 2 == 1:
             ....:        print("Error !")
@@ -2354,7 +2354,7 @@ class Graph(GenericGraph):
 
             sage: t = lambda x: (Graph(x).is_forest() or
             ....:       isinstance(Graph(x).is_even_hole_free(certificate=True), Graph))
-            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs numpy sage.modules
+            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs sage.modules
             True
         """
         girth = self.girth()
@@ -2681,14 +2681,14 @@ class Graph(GenericGraph):
 
         A Bipartite Graph is always perfect ::
 
-            sage: g = graphs.RandomBipartite(8,4,.5)                                    # needs numpy
-            sage: g.is_perfect()                                                        # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(8,4,.5)
+            sage: g.is_perfect()                                                        # needs sage.modules
             True
 
         So is the line graph of a bipartite graph::
 
-            sage: g = graphs.RandomBipartite(4,3,0.7)                                   # needs numpy
-            sage: g.line_graph().is_perfect()   # long time                             # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(4,3,0.7)
+            sage: g.line_graph().is_perfect()   # long time                             # needs sage.modules
             True
 
         As well as the Cartesian product of two complete graphs::
@@ -2925,6 +2925,11 @@ class Graph(GenericGraph):
             sage: L = graphs.LjubljanaGraph()
             sage: L.is_semi_symmetric()                                                 # needs sage.libs.gap
             True
+
+        The empty graph is vertex transitive, so it is not semi-symmetric::
+
+            sage: Graph().is_semi_symmetric()
+            False
         """
         # A semi-symmetric graph is always bipartite
         if not self.is_bipartite():
@@ -3556,7 +3561,7 @@ class Graph(GenericGraph):
 
         A bipartite graph has (by definition) chromatic number 2::
 
-            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()                  # needs numpy
+            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()
             2
 
         A complete multipartite graph with `k` parts has chromatic number `k`::
@@ -4835,7 +4840,33 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'DHV' works only if all eccentricities are needed
+
+        Check that the method returns a scalar when ``v`` is a vertex,
+        and otherwise a list (see :issue:`43186`)::
+
+            sage: Graph(1).eccentricity()
+            [0]
+            sage: Graph(1).eccentricity(by_weight=True)
+            [0]
+            sage: Graph(1).eccentricity(0)
+            0
+            sage: Graph(1).radius(algorithm='Dijkstra_Boost')
+            0
+            sage: Graph(1).diameter(algorithm='Dijkstra_Boost')
+            0
+            sage: graphs.PetersenGraph().eccentricity([0], algorithm='Dijkstra_Boost')
+            [2]
+            sage: Graph(1).eccentricity(algorithm='Dijkstra_NetworkX')                  # needs networkx
+            [0]
         """
+        if v is not None and not isinstance(v, list):
+            # a single vertex is given: return a single value
+            ecc = self.eccentricity(v=[v], by_weight=by_weight, algorithm=algorithm,
+                                    weight_function=weight_function,
+                                    check_weight=check_weight, dist_dict=dist_dict,
+                                    with_labels=with_labels)
+            return ecc if with_labels else ecc[0]
+
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
@@ -4856,8 +4887,6 @@ class Graph(GenericGraph):
             weight_function = None
 
         if v is not None:
-            if not isinstance(v, list):
-                v = [v]
             v_set = set(v)
 
         if v is None or all(u in v_set for u in self):
@@ -4920,10 +4949,6 @@ class Graph(GenericGraph):
 
         if with_labels:
             return ecc
-        if len(ecc) == 1:
-            # return single value
-            v, = ecc.values()
-            return v
         return [ecc[u] for u in v]
 
     @doc_index("Distances")
@@ -8659,8 +8684,7 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        .. [Lein] Tom Leinster, *The magnitude of metric spaces*.
-           Doc. Math. 18 (2013), 857-905.
+        - [Lei2013]_
         """
         from sage.matrix.constructor import matrix
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -9809,6 +9833,8 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
     from sage.graphs.graph_decompositions.bandwidth import bandwidth
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
+    from sage.graphs.graph_decompositions.modular_decomposition import modular_width
+    from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
     cliques_maximum = LazyImport('sage.graphs.cliquer', 'all_max_clique', at_startup=True)
@@ -9863,6 +9889,7 @@ _additional_categories = {
     "is_weakly_chordal"         : "Graph properties",
     "is_asteroidal_triple_free" : "Graph properties",
     "chromatic_polynomial"      : "Coloring",
+    "modular_width"             : "Modules",
     "rank_decomposition"        : "Algorithmically hard stuff",
     "treewidth"                 : "Algorithmically hard stuff",
     "pathwidth"                 : "Algorithmically hard stuff",
@@ -9916,7 +9943,8 @@ _additional_categories = {
     "is_factor_critical"        : "Matching",
     "is_matching_covered"       : "Matching",
     "matching"                  : "Matching",
-    "perfect_matchings"         : "Matching"
+    "perfect_matchings"         : "Matching",
+    "quotient_graph"            : "Leftovers"
 }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

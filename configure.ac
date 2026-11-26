@@ -386,7 +386,7 @@ PKG_CHECK_MODULES([liblzma], [liblzma], [], [
 ########################################################################
 
 m4_pushdef([PYTHON_MIN_VERSION],               [3.13.0])
-m4_pushdef([PYTHON_LT_VERSION],                [3.15.0])
+m4_pushdef([PYTHON_LT_VERSION],                [3.16.0])
 
 AC_ARG_WITH([python],
             [AS_HELP_STRING([--with-python=PYTHON3],
@@ -675,6 +675,7 @@ dnl when the system package is not usable.
 AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
+SAGE_CHECK_SYSTEM_LIBTOOL()
 
 AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
 

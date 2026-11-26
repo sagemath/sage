@@ -7,7 +7,6 @@ internals.
 .. toctree::
    :maxdepth: 1
 
-   sage/cpython/atexit
    sage/cpython/string
    sage/cpython/debug
    sage/cpython/getattr

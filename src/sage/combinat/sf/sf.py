@@ -55,7 +55,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     This document is an introduction to working with symmetric function
     theory in Sage.
     It is not intended to be an introduction to the theory
-    of symmetric functions ([MAC]_ and [STA]_, Chapter 7, are two excellent
+    of symmetric functions ([Mac1995]_ and [EnumComb2]_, Chapter 7, are two excellent
     references.)  The reader is also expected to be familiar with Sage.
 
     .. rubric:: The algebra of symmetric functions
@@ -358,7 +358,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     .. rubric:: Plethysm
 
     The *plethysm* of symmetric functions is the operation corresponding to
-    composition of representations of the general linear group.  See [STA]_
+    composition of representations of the general linear group.  See [EnumComb2]_
     Chapter 7, Appendix 2 for details.
     ::
 
@@ -384,7 +384,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     The operation of inner plethysm ``f.inner_plethysm(g)`` models the
     composition of the `S_n` representation represented by `g` with the
     `GL_m` representation whose character is `f`.  See the documentation of
-    ``inner_plethysm``, [ST94]_ or [STA]_, exercise 7.74 solutions for more
+    ``inner_plethysm``, [ST94]_ or [EnumComb2]_, exercise 7.74 solutions for more
     information::
 
         sage: s = SymmetricFunctions(QQ).schur()
@@ -657,7 +657,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     functions with a parameter `t`.  The `k`-split basis has the property that
     `Q'_\lambda[X;t]` expands positively in the `k`-split basis and the
     `k`-split basis conjecturally expands positively in the `k`-Schur functions.
-    The definition can be found in [LLMSSZ]_ p. 81.::
+    The definition can be found in [LLMSSZ2013]_ p. 81.::
 
         sage: ksp3 = SymS3.ksplit()
         sage: ksp3(Qp[2,1,1,1])
@@ -774,7 +774,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     of ``Sym``.  The ``Element`` class inherits all of the methods from
     :class:`sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element`.
 
-    In the reference [MAC]_ on page 354, this basis is denoted
+    In the reference [Mac1995]_ on page 354, this basis is denoted
     `S_\lambda(x;t)` and the change of basis coefficients of the
     Macdonald ``J`` basis are the coefficients `K_{\lambda\mu}(q,t)`.
     Here is an example of its use::
@@ -801,30 +801,15 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
-             In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
-             volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
-             :arxiv:`0806.1873`
+    - [FD06]_
 
-    .. [HT04] Florent Hivert and Nicolas M. Thiery,
-             MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
-             Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
-             http://mupad-combinat.sf.net/.
+    - [HT04]_
 
-    .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
-             Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
-             Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
-             ISBN: 0-19-853489-2
+    - [Mac1995]_
 
-    .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
-             With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
-             Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
-             ISBN: 0-521-56069-1; 0-521-78987-7
+    - [EnumComb2]_
 
-    .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
-             A Hopf-algebra approach to inner plethysm.
-             Adv. Math.  104  (1994),  no. 1, 30-58.
-             :doi:`10.1006/aima.1994.1019`
+    - [ST94]_
 
     .. RUBRIC:: Further tests
 

@@ -69,6 +69,7 @@ and its responsibility is now taken by the ``Makefile`` in ``$SAGE_ROOT/src/doc`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import functools
 import importlib.machinery
 import logging
@@ -84,13 +85,15 @@ import tempfile
 import threading
 import time
 import warnings
-from collections.abc import Generator
 from pathlib import Path
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 
 from . import build_options
-from .build_options import BuildOptions
 from .utils import build_many as _build_many
+
+if TYPE_CHECKING:
+    from .build_options import BuildOptions
+    from collections.abc import Generator
 
 logger = logging.getLogger(__name__)
 
@@ -779,14 +782,17 @@ class ReferenceTopBuilder(DocBuilder):
         #
         # Change the third form to
         #
-        #   <a href="module/module.pdf"><img src="_static/pdf.png">blah</a>
+        #   <a title="PDF" class="pdf" href="PDF"><img src="_static/pdf.png"></a><a href="PDF">blah</a>
+        #
+        # where PDF is ../../../pdf/en/reference/module/module.pdf, so that both
+        # the icon and the title open the PDF file.
         #
         rst = re.sub(r'`([^`\n]*)`__.*\n\n__ (.*)',
                      r'<a href="\2">\1</a>.', rst)
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a title="PDF" class="pdf" href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"></a><a href="\2/index.html">\1</a> ', rst)
+                     r'<a title="PDF" class="pdf" href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"></a><a href="../../../pdf/en/reference/\2/\2.pdf">\1</a> ', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')

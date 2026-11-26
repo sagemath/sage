@@ -345,7 +345,7 @@ def has_blum_prime(lbound, ubound) -> bool:
     return any(mod(p, 4).lift() == 3 for p in primes(lbound, ubound + 1))
 
 
-def is_blum_prime(n):
+def is_blum_prime(n) -> bool:
     r"""
     Determine whether or not ``n`` is a Blum prime.
 

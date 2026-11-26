@@ -2200,10 +2200,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        .. [FSS07] \G. Fourier, A. Schilling, and M. Shimozono,
-           *Demazure structure inside Kirillov-Reshetikhin crystals*,
-           J. Algebra, Vol. 309, (2007), p. 386-404
-           :arxiv:`math/0605451`
+        - [FSS07]_
         """
         a = self.a()
         acheck = self.acheck()
@@ -2353,7 +2350,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
             Add the picture here, once root system plots in the
             weight lattice will be implemented. In the mean time, the
-            reader may look up the dual picture on Figure 2 of [HST09]_
+            reader may look up the dual picture on Figure 2 of [HST2008]_
             which was produced by MuPAD-Combinat.
 
         From this picture, one can read that translations by
@@ -2374,10 +2371,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        .. [HST09] \F. Hivert, A. Schilling, and N. M. Thiéry,
-           *Hecke group algebras as quotients of affine Hecke
-           algebras at level 0*, JCT A, Vol. 116, (2009) p. 844-863
-           :arxiv:`0804.3781`
+        - [HST2008]_
         """
         a = self.a()
         acheck = self.acheck()

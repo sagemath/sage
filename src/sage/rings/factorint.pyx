@@ -287,3 +287,98 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     return IntegerFactorization(F, unit=unit, unsafe=True,
                                    sort=False, simplify=False)
+
+
+def fermat_factor(n, max_iterations=10000):
+    r"""
+    Try to split ``n`` using Fermat's factorization method.
+
+    Fermat's method writes `n` as a difference of two squares
+    `n = a^2 - b^2 = (a - b)(a + b)`.  Starting from
+    `a = \lceil\sqrt{n}\rceil`, it tests for successive values of `a`
+    whether `a^2 - n` is a perfect square.
+
+    The number of iterations needed is `(p + q)/2 - \lceil\sqrt{pq}\rceil \approx
+    (p - q)^2/(8\sqrt{n})`.  The method is therefore effective precisely
+    when ``n`` has two factors of close magnitude, and hopeless when the
+    factors are far apart.
+
+    INPUT:
+
+    - ``n`` -- integer at least 3
+
+    - ``max_iterations`` -- integer (default: 10000); number of candidate
+      values of `a` to test
+
+    OUTPUT:
+
+    A pair ``(p, q)`` of integers with ``p * q == n`` and ``p <= q``, or
+    ``None`` if no such pair was found within ``max_iterations``
+    iterations.  The factors are not guaranteed to be prime, and the
+    pair may be the trivial factorization ``(1, n)``.
+
+    EXAMPLES::
+
+        sage: from sage.rings.factorint import fermat_factor
+        sage: p = next_prime(2^512); q = next_prime(p)
+        sage: fermat_factor(p * q) == (p, q)
+        True
+
+    The method splits moduli far beyond the reach of
+    :func:`~sage.arith.misc.factor` when the two prime factors share
+    their leading bits::
+
+        sage: p = next_prime(2^1024 + 2^400); q = next_prime(2^1024 + 2^500)
+        sage: fermat_factor(p * q) == (p, q)
+        True
+
+    A perfect square yields two equal factors, and a prime yields the
+    trivial factorization::
+
+        sage: fermat_factor(15^2)
+        (15, 15)
+        sage: fermat_factor(101)
+        (1, 101)
+
+    An integer congruent to `2` modulo `4` is not a difference of two
+    squares, and far-apart factors exhaust the search budget; both
+    cases return ``None``::
+
+        sage: fermat_factor(22)
+        sage: fermat_factor(3 * next_prime(2^80), max_iterations=100)
+
+    TESTS::
+
+        sage: fermat_factor(1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be an integer at least 3
+
+    REFERENCES::
+
+    - :wikipedia:`Fermat's_factorization_method`
+    """
+    n = Integer(n)
+    if n < 3:
+        raise ValueError("n must be an integer at least 3")
+    if n % 4 == 2:
+        # a^2 - b^2 is congruent to 0, 1 or 3 mod 4, never 2
+        return None
+    a = n.isqrt()
+    if a * a < n:
+        a += 1
+    if n % 2 == 1:
+        # an odd difference of squares forces the parity of a:
+        # a is odd if n is 1 mod 4 and even if n is 3 mod 4,
+        # so it suffices to test every second value of a
+        if (n % 4 == 1) != (a % 2 == 1):
+            a += 1
+        step = 2
+    else:
+        step = 1
+    for _ in range(max_iterations):
+        b, rem = (a * a - n).sqrtrem()
+        if not rem:
+            return (a - b, a + b)
+        a += step
+    return None
