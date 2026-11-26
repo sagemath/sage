@@ -3276,81 +3276,6 @@ class Stream_pseudo_diff_mul(Stream_binary):
         return self._left.is_nonzero() and self._right.is_nonzero()
 
 
-_PLETHYSM_VALUATION_ZERO_MESSAGE = (
-    "can only compute plethysm with a series of positive valuation, "
-    "or of valuation 0 for symmetric functions of finite support")
-
-
-def _finite_support_degree(f):
-    r"""
-    Return the degree of ``f`` if ``f`` has finite support, and ``None``
-    otherwise.
-
-    A nonzero constant tail has infinite support, even for a
-    :class:`Stream_exact`.
-    """
-    if isinstance(f, Stream_exact) and not f._constant:
-        return f._degree
-    return None
-
-
-def _check_valuation(g, degree_f, message):
-    r"""
-    Check that the inner stream ``g`` of a composition is admissible.
-
-    A stream of negative true order is rejected.  A stream of true
-    valuation zero is admissible only with an outer series of finite
-    support, since then all of its degrees contribute to every degree
-    of the result.
-
-    EXAMPLES::
-
-        sage: from sage.data_structures.stream import Stream_exact, _check_valuation
-        sage: f = Stream_exact([1], order=0)
-        sage: _check_valuation(f, None, "message")
-        Traceback (most recent call last):
-        ...
-        ValueError: message
-        sage: _check_valuation(f, 2, "message")
-    """
-    if (g._true_order and g._approximate_order <= 0
-            and (g._approximate_order < 0 or degree_f is None)):
-        raise ValueError(message)
-
-
-def _outer_bound(degree_f, n, inner_order, inner_constant):
-    r"""
-    Return the exclusive bound on outer degrees needed to compute
-    degree ``n`` of a composition.
-
-    Every outer degree contributes to every output degree when the inner
-    constant term is nonzero, so only a finite-support outer series is
-    allowed in that case.  Otherwise the bound is supplied by the inner
-    approximate order, clamped to at least 1.
-
-    In particular, a nonzero constant inner term does not mean that the
-    bound can be truncated to the queried output degree.  This example
-    checks plethysm computed with an ordinary truncated symmetric
-    function::
-
-        sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
-        sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).s())
-        sage: f = L(SymmetricFunctions(QQ).s()([2,1]))
-        sage: g = L(lambda n: SymmetricFunctions(QQ).s()([n])
-        ....:       if n else SymmetricFunctions(QQ).s()([]), valuation=0)
-        sage: C = f(g)
-        sage: bounded = sum(SymmetricFunctions(QQ).s()([k]) for k in range(4))
-        sage: all(C[n] == f.symmetric_function()(bounded).homogeneous_component(n)
-        ....:     for n in range(4))
-        True
-    """
-    if inner_constant:
-        if degree_f is None:
-            raise ValueError(_PLETHYSM_VALUATION_ZERO_MESSAGE)
-        return degree_f
-    return n // max(inner_order, 1) + 1
-
-
 def _to_powersum(f, scalar_basis, is_sparse, is_tensor=False):
     r"""
     Return the stream of the coefficients of ``f`` in the powersum
@@ -3501,11 +3426,14 @@ class Stream_compose(Stream_inexact):
             [2, 1, 0, 0]
         """
         gs = g._coeff_stream
-        self._degree_f = _finite_support_degree(f)
-        _check_valuation(
-            gs, self._degree_f,
-            "can only compose with a series of positive valuation, "
-            "or of valuation zero if the outer series has finite support")
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        if (gs._true_order and gs._approximate_order <= 0
+                and (gs._approximate_order < 0 or self._degree_f is None)):
+            raise ValueError(
+                "can only compose with a series of positive valuation, "
+                "or of valuation zero if the outer series has finite support")
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
         # the 0-th power is the multiplicative identity and the 1-st the
@@ -3680,11 +3608,16 @@ class Stream_compose(Stream_inexact):
         self._approximate_order
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
-        K = _outer_bound(self._degree_f, n, gv,
-                         self._input._coeff_stream[0])
-        # When the inner argument has a nonzero constant term and the
-        # outer stream has finite support, every outer degree must be
-        # considered.  This is the same bound as for plethysm.
+        if self._input._coeff_stream[0]:
+            # a nonzero constant term of the inner series: every outer
+            # degree contributes, and the outer stream has finite support
+            if self._degree_f is None:
+                raise ValueError(
+                    "can only compose with a series of positive valuation, "
+                    "or of valuation zero if the outer series has finite support")
+            K = self._degree_f
+        else:
+            K = n // max(gv, 1) + 1
         while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
         # Negative outer degrees use inverse powers of the inner
@@ -3742,11 +3675,14 @@ class Stream_cauchy_compose(Stream_binary):
             sage: [h[n] for n in range(4)]
             [2, 1, 0, 0]
         """
-        self._degree_f = _finite_support_degree(f)
-        _check_valuation(
-            g, self._degree_f,
-            "can only compose with a series of positive valuation, "
-            "or of valuation zero if the outer series has finite support")
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        if (g._true_order and g._approximate_order <= 0
+                and (g._approximate_order < 0 or self._degree_f is None)):
+            raise ValueError(
+                "can only compose with a series of positive valuation, "
+                "or of valuation zero if the outer series has finite support")
         # the 0-th power is the multiplicative identity and the 1-st the
         # inner stream itself; higher powers are created on demand
         self._pos_powers = [Stream_exact([1], order=0), g]
@@ -3849,7 +3785,16 @@ class Stream_cauchy_compose(Stream_binary):
         self._approximate_order
         fv = self._left._approximate_order
         gv = self._right._approximate_order
-        K = _outer_bound(self._degree_f, n, gv, self._right[0])
+        if self._right[0]:
+            # a nonzero constant term of the inner series: every outer
+            # degree contributes, and the outer stream has finite support
+            if self._degree_f is None:
+                raise ValueError(
+                    "can only compose with a series of positive valuation, "
+                    "or of valuation zero if the outer series has finite support")
+            K = self._degree_f
+        else:
+            K = n // max(gv, 1) + 1
         while len(self._pos_powers) < K:
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
                                                       self._right,
@@ -3985,7 +3930,12 @@ class Stream_plethysm(Stream_binary):
         # species, a graded series whose constant tail is zero, so
         # every exact stream has finite support
         self._degree_f = f._degree if isinstance(f, Stream_exact) else None
-        _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
+        if (g._true_order and g._approximate_order <= 0
+                and (g._approximate_order < 0 or self._degree_f is None)):
+            raise ValueError(
+                "can only compute plethysm with a series of positive "
+                "valuation, or of valuation 0 for symmetric functions "
+                "of finite support")
 
         if ring is None:
             self._basis = p
@@ -4059,9 +4009,32 @@ class Stream_plethysm(Stream_binary):
              2*s[1, 1, 1] + s[2, 1] + s[3],
              3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4],
              4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]]
+
+        A nonzero constant term of the inner series does not allow the
+        bound to be truncated to the queried degree::
+
+            sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
+            sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).s())
+            sage: f = L(SymmetricFunctions(QQ).s()([2,1]))
+            sage: g = L(lambda n: SymmetricFunctions(QQ).s()([n])
+            ....:       if n else SymmetricFunctions(QQ).s()([]), valuation=0)
+            sage: C = f(g)
+            sage: bounded = sum(SymmetricFunctions(QQ).s()([k]) for k in range(4))
+            sage: all(C[n] == f.symmetric_function()(bounded).homogeneous_component(n)
+            ....:     for n in range(4))
+            True
         """
-        K = _outer_bound(self._degree_f, n,
-                         self._right._approximate_order, self._right[0])
+        if self._right[0]:
+            # a nonzero constant term of the inner series: every outer
+            # degree contributes, and the outer stream has finite support
+            if self._degree_f is None:
+                raise ValueError(
+                    "can only compute plethysm with a series of positive "
+                    "valuation, or of valuation 0 for symmetric functions "
+                    "of finite support")
+            K = self._degree_f
+        else:
+            K = n // max(self._right._approximate_order, 1) + 1
 
         return self._basis.sum(c * self._compute_product(n, la)
                                for k in range(self._left._approximate_order, K)
@@ -4299,7 +4272,12 @@ class Stream_plethysm_multi(Stream_inexact):
 
         self._degree_f = f._degree if isinstance(f, Stream_exact) else None
         for g in gs:
-            _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
+            if (g._true_order and g._approximate_order <= 0
+                    and (g._approximate_order < 0 or self._degree_f is None)):
+                raise ValueError(
+                    "can only compute plethysm with a series of positive "
+                    "valuation, or of valuation 0 for symmetric functions "
+                    "of finite support")
 
         self._basis = ring
         self._p = p
@@ -4336,9 +4314,17 @@ class Stream_plethysm_multi(Stream_inexact):
         r"""
         Return the coefficient of total degree ``n``.
         """
-        K = _outer_bound(self._degree_f, n,
-                         min(g._approximate_order for g in self._arguments),
-                         any(g[0] for g in self._arguments))
+        if any(g[0] for g in self._arguments):
+            # a nonzero constant term of an argument: every outer degree
+            # contributes, and the outer stream has finite support
+            if self._degree_f is None:
+                raise ValueError(
+                    "can only compute plethysm with a series of positive "
+                    "valuation, or of valuation 0 for symmetric functions "
+                    "of finite support")
+            K = self._degree_f
+        else:
+            K = n // max(min(g._approximate_order for g in self._arguments), 1) + 1
         return self._basis.sum(c * self._compute_product(n, tuple(la), 0, {})
                                for k in range(self._left._approximate_order, K)
                                if (fk := self._left[k])  # fk might be int(0)
