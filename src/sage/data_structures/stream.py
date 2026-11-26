@@ -3348,36 +3348,37 @@ def _outer_bound(degree_f, n, inner_order, inner_constant):
     return n // max(inner_order, 1) + 1
 
 
-def _powersum_realization(P):
+def _to_powersum(f, scalar_basis=None, is_sparse=True):
     r"""
-    Return the powersum realization of a symmetric function algebra,
-    factorwise when ``P`` is a tensor product of such algebras.
-    """
-    if HopfAlgebrasWithBasis(P.base_ring()).TensorProducts() in P.categories():
-        return tensor([B.realization_of().p() for B in P._sets])
-    return P.realization_of().p()
+    Return the stream of the coefficients of ``f`` in the powersum
+    realization of their algebra.
 
-
-def _to_powersum(x, scalar_basis=None):
-    r"""
-    Convert ``x`` to the powersum realization of its algebra.
-
-    The result reflects the base ring of the coefficients of ``x``, not
-    just the base ring of a previously chosen basis.  If ``x`` is only a
-    scalar coefficient from a base ring, ``scalar_basis`` supplies the
-    algebra into which it should first be lifted.  The conversion uses
-    denominator-extended coefficients when necessary.
+    The conversion reflects the base ring of the coefficients of ``f``
+    and not only the base ring of a previously chosen basis; it extends
+    the coefficient ring by denominators when the conversion to the
+    powersum basis requires it.  A coefficient which is a scalar is
+    lifted into ``scalar_basis`` first, if given.  Tensor-valued
+    coefficients are converted factorwise.
 
     EXAMPLES::
 
-        sage: from sage.data_structures.stream import _to_powersum
+        sage: from sage.data_structures.stream import Stream_exact, _to_powersum
         sage: h = SymmetricFunctions(ZZ).h()
         sage: p = SymmetricFunctions(QQ).p()
-        sage: c = _to_powersum(h[2])
-        sage: c == 1/2*p[1,1] + 1/2*p[2]
-        True
-        sage: c.parent().base_ring() is QQ
-        True
+        sage: f = Stream_exact([h[2]], order=2)
+        sage: g = _to_powersum(f)
+        sage: [g[i] for i in range(3)]
+        [0, 0, 1/2*p[1, 1] + 1/2*p[2]]
+
+        Scalar coefficients are lifted into ``scalar_basis``::
+
+        sage: f = Stream_exact([ZZ(2), ZZ(3)], order=0)
+        sage: g = _to_powersum(f, p)
+        sage: [g[i] for i in range(2)]
+        [2*p[], 3*p[]]
+
+        Coefficients determined implicitly are converted when they are
+        read, so that no undetermined coefficient survives in a cache::
 
         sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
         sage: hq = SymmetricFunctions(QQ).h()
@@ -3390,23 +3391,36 @@ def _to_powersum(x, scalar_basis=None):
         sage: [p2(g)[i] for i in range(2)]
         [-h[], 0]
     """
-    # Only combine a genuine scalar base-ring coefficient into the
-    # algebra.  Symmetric functions, in any basis, and tensor-valued
-    # data are converted factorwise instead.
-    if (scalar_basis is not None
-            and not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
-            and HopfAlgebrasWithBasis(
-                x.parent().base_ring()).TensorProducts()
-                not in x.parent().categories()):
-        x = scalar_basis(x)
-    try:
-        return _powersum_realization(x.parent())(x)
-    except TypeError:
-        # Basis conversion may require denominators absent from the
-        # coefficient ring (e.g. Schur -> powersum over ZZ).
-        from sage.categories.pushout import pushout
-        Qx = x.parent().change_ring(pushout(x.parent().base_ring(), QQ))
-        return _powersum_realization(Qx)(Qx(x))
+
+    def powersum(P):
+        # the powersum realization of P, factorwise for tensor products
+        if HopfAlgebrasWithBasis(P.base_ring()).TensorProducts() in P.categories():
+            return tensor([B.realization_of().p() for B in P._sets])
+        return P.realization_of().p()
+
+    def convert(x):
+        # Only combine a genuine scalar base-ring coefficient into the
+        # algebra.  Symmetric functions, in any basis, and tensor-valued
+        # data are converted factorwise instead.
+        if (scalar_basis is not None
+                and not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
+                and HopfAlgebrasWithBasis(
+                    x.parent().base_ring()).TensorProducts()
+                    not in x.parent().categories()):
+            x = scalar_basis(x)
+        P = x.parent()
+        p = powersum(P)
+        try:
+            return p(x)
+        except TypeError:
+            # The conversion to the powersum basis may require
+            # denominators absent from the coefficient ring, for
+            # example from the Schur to the powersum basis over ZZ.
+            from sage.categories.pushout import pushout
+            Qx = P.change_ring(pushout(P.base_ring(), QQ))
+            return powersum(Qx)(Qx(x))
+
+    return Stream_map_coefficients(f, convert, is_sparse)
 
 
 class Stream_compose(Stream_inexact):
@@ -3949,8 +3963,7 @@ class Stream_plethysm(Stream_binary):
         else:
             self._basis = ring
         self._p = p
-        g = Stream_map_coefficients(
-            g, lambda x: _to_powersum(x, self._basis), is_sparse)
+        g = _to_powersum(g, self._basis, is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
         self._stretched = {}  # a cache for the streams of stretched powers
         R = self._basis.base_ring()
@@ -3962,12 +3975,10 @@ class Stream_plethysm(Stream_binary):
             # unit of the first tensor factor as their outer stream
             self._tensor_power = len(p._sets)
             p_f = p._sets[0]
-            f = Stream_map_coefficients(
-                f, lambda x: _to_powersum(x, p_f), is_sparse)
+            f = _to_powersum(f, p_f, is_sparse)
         else:
             self._tensor_power = None
-            f = Stream_map_coefficients(
-                f, lambda x: _to_powersum(x, p), is_sparse)
+            f = _to_powersum(f, p, is_sparse)
         super().__init__(f, g, is_sparse)
 
     @lazy_attribute
@@ -4263,8 +4274,7 @@ class Stream_plethysm_multi(Stream_inexact):
         self._p = p
         self._arguments = gs
 
-        self._left = Stream_map_coefficients(
-            f, lambda x: _to_powersum(x, self._basis), is_sparse)
+        self._left = _to_powersum(f, self._basis, is_sparse)
         if HopfAlgebrasWithBasis(p.base_ring()).TensorProducts() in p.categories():
             factor_basis = p._sets[0]
         else:
