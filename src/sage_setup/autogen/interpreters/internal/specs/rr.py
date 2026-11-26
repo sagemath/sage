@@ -148,11 +148,13 @@ class RRInterpreter(StackInterpreter):
             }
 
         This instruction makes use of the function ``rr_py_call_helper``,
-        which is declared in ``wrapper_rr.h``::
+        which is forward-declared in ``c_header``::
 
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpfr.h>
+            <BLANKLINE>
+            int rr_py_call_helper(PyObject *, PyObject *, int, mpfr_t *, __mpfr_struct *);
             <BLANKLINE>
 
         The function ``rr_py_call_helper`` is implemented in Cython::
@@ -191,6 +193,8 @@ class RRInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpfr.h>
+
+            int rr_py_call_helper(PyObject *, PyObject *, int, mpfr_t *, __mpfr_struct *);
             ''')
 
         self.pxd_header = ri(0,

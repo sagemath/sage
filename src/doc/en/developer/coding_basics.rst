@@ -433,14 +433,18 @@ information. You can use the existing functions of Sage as templates.
        `p`. For any odd integer `k` between 1 and `p - 1`, inclusive,
        `g^k` is a generator modulo `p` if and only if `\gcd(k, p-1) = 1`.
 
-   The bibliographical reference should go in Sage's master
-   bibliography file,
-   :sage_root:`src/doc/en/reference/references/index.rst`:
+   The bibliographical reference should go in one of Sage's shared
+   bibliography files, for example
+   :sage_root:`src/doc/references/reference-database.bib`:
 
-   .. CODE-BLOCK:: rest
+   .. CODE-BLOCK:: bibtex
 
-       .. [Nat2000] \M. B. Nathanson. Elementary Methods in Number Theory.
-          Springer, 2000.
+       @book{Nat2000,
+         author = {Nathanson, Melvyn B.},
+         title = {{Elementary Methods in Number Theory}},
+         publisher = {Springer},
+         year = {2000}
+       }
 
 -  A **NOTE** block for tips/tricks (optional).
 
@@ -496,8 +500,8 @@ information. You can use the existing functions of Sage as templates.
 
 - A **REFERENCES** block to list related books or papers (optional).
 
-  Almost all bibliographic information should be put in the master bibliography
-  file, see below. Citations will then link to the master bibliography where
+  Almost all bibliographic information should be put in the shared bibliography
+  files, see below. Citations will then link to the bibliography where
   the reader can find the bibliographic details (see below for citation
   syntax).  REFERENCE blocks in individual docstrings are therefore usually not
   necessary.
@@ -505,7 +509,7 @@ information. You can use the existing functions of Sage as templates.
   Nevertheless, a REFERENCE block can be useful if there are relevant sources
   which are not explicitly mentioned in the docstring or if the docstring is
   particularly long. In that case, add the bibliographic information to the
-  master bibliography file, if not already present, and add a reference block
+  shared bibliography files, if not already present, and add a reference block
   to your docstring as follows:
 
   .. CODE-BLOCK:: rest
@@ -519,7 +523,7 @@ information. You can use the existing functions of Sage as templates.
       - [Voe2003]_
 
   Note the trailing underscores which makes the citations into hyperlinks. See
-  below for more about the master bibliography file. For more about citations,
+  below for more about the shared bibliography files. For more about citations,
   see the `Sphinx/reST markup for citations
   <https://www.sphinx-doc.org/rest.html#citations>`_. For links to GitHub issues and PRs
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
@@ -603,25 +607,35 @@ introduction. Sage imposes these styles:
 
       If ``check`` is ``True``, then ...
 
-Sage's master **BIBLIOGRAPHY** file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sage's shared **BIBLIOGRAPHY** files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All bibliographical references should be stored in the master
-bibliography file,
-:sage_root:`src/doc/en/reference/references/index.rst`, in the
-format
+All bibliographical references should be stored in BibTeX files in
+:sage_root:`src/doc/references/`, for example
+:sage_root:`src/doc/references/reference-database.bib`:
 
-.. CODE-BLOCK:: rest
+.. CODE-BLOCK:: bibtex
 
-  .. [Gau1801] \C. F. Gauss, *Disquisitiones Arithmeticae*, 1801.
+  @book{Gau1801,
+    author = {Gauss, Carl Friedrich},
+    title = {{Disquisitiones Arithmeticae}},
+    publisher = {Gerhard Fleischer},
+    year = {1801}
+  }
 
-  .. [RSA1978] \R. Rivest, A. Shamir, L. Adleman,
-               "A Method for Obtaining Digital Signatures and
-               Public-Key Cryptosystems".
-               Communications of the ACM **21** (February 1978),
-               120–126. :doi:`10.1145/359340.359342`.
+  @article{RSA1978,
+    author = {Rivest, Ronald L. and Shamir, Adi and Adleman, Leonard},
+    title = {{A Method for Obtaining Digital Signatures and
+              Public-Key Cryptosystems}},
+    journal = {Communications of the ACM},
+    volume = {21},
+    number = {2},
+    pages = {120--126},
+    year = {1978},
+    doi = {10.1145/359340.359342}
+  }
 
-The part in brackets is the citation key: given these examples, you
+The identifier after the entry type is the citation key: given these examples, you
 could then use ``[Gau1801]_`` in a docstring to provide a link to the
 first reference. Note the trailing underscore which makes the citation a
 hyperlink.
@@ -632,10 +646,32 @@ authors, use the first letter of each of the family names followed by the
 year. Note that the year should be four digits, not just the last two -- Sage
 already has references from both 1910 and 2010, for example.
 
-When abbreviating the first name of an author in a bibliography
-listing, be sure to put a backslash in front of it. This ensures
-that the letter (``C.`` in the example above) will not be
-interpreted as a list enumerator.
+All ``.bib`` files in this directory form one shared citation database.
+Citation keys must be unique across all files. To add another bibliography
+file, list it in :sage_root:`src/doc/references/meson.build` so Meson copies it
+into the documentation build directory. The ``sage-docbuild`` wheel includes
+all these ``.bib`` files automatically.
+
+Entries may appear in any order in each BibTeX file; the rendered bibliography
+is sorted independently, case-insensitively by citation key. Keep existing
+keys unchanged. Use ``and`` between authors. Protect capitalization in
+titles with braces, and preserve DOI identifiers in the ``doi`` field.
+DOI content negotiation can provide a BibTeX entry, but check it against the
+source and retain additional notes and links. Documentation builds use the
+checked-in databases and do not fetch metadata.
+
+Entries migrated from the former reST database have an ``annotation`` field
+containing their complete original description in TeX, including mathematical
+expressions and hyperlinks. Sage displays this description to preserve all
+the existing information. Keep the ordinary ``author``, ``editor``, ``title``,
+and publication fields accurate too: rendering an ``annotation`` does not
+validate them. Check that retrieved DOI metadata identifies the cited work
+and edition, rather than a book review or a different version of a paper.
+For new entries, use ordinary BibTeX fields; ``annotation`` is optional.
+
+Both ``[Gau1801]_`` and ``:cite:p:`Gau1801``` work. Each separately built
+manual includes its cited references, so citations also resolve in standalone
+PDFs. The reference catalogue lists every entry.
 
 For more about citations, see the `Sphinx/reST markup for citations
 <https://www.sphinx-doc.org/rest.html#citations>`_.
@@ -704,12 +740,22 @@ indentation:
         """
         <body of the function>
 
-The master bibliography file would contain
+One of the shared bibliography files would contain
 
-.. CODE-BLOCK:: rest
+.. CODE-BLOCK:: bibtex
 
-        .. [BCDT2001] Breuil, Conrad, Diamond, Taylor,
-                      "Modularity ...."
+        @article{BCDT2001,
+          author = {Breuil, Christophe and Conrad, Brian and
+                    Diamond, Fred and Taylor, Richard},
+          title = {{On the modularity of elliptic curves over Q:
+                    wild 3-adic exercises}},
+          journal = {Journal of the American Mathematical Society},
+          volume = {14},
+          number = {4},
+          pages = {843--939},
+          year = {2001},
+          doi = {10.1090/S0894-0347-01-00370-8}
+        }
 
 You are strongly encouraged to:
 

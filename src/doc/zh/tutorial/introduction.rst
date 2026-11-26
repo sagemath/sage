@@ -37,7 +37,7 @@ Python 初学者指南 [PyB]_ 列出了许多选择。如果你只是想快速�
     over Rational Field
     sage: E.anlist(10)
     [0, 1, 1, 0, -1, -3, 0, -1, -3, -3, -3]
-    sage: E.rank()
+    sage: E.rank()  # needs eclib
     1
 
     sage: k = 1/(sqrt(3)*I + 3/4 + sqrt(73)*5/9); k

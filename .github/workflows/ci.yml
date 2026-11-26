@@ -11,9 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - fedora:41
-          - fedora:42
           - fedora:43
+          - fedora:44
+          - fedora:45
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
@@ -49,7 +49,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.3.2
+        uses: astral-sh/setup-uv@v10.3.3
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -106,8 +106,8 @@ jobs:
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
-            build/cp313/meson-logs/
-            build/cp313/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/
 
   macos:
     name: Build and Test (${{ matrix.runner }})
@@ -125,12 +125,12 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.3.2
+        uses: astral-sh/setup-uv@v10.3.3
 
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13'
+          python-version: '3.15'
 
       - name: Install dependencies
         run: |
@@ -148,25 +148,21 @@ jobs:
           done
           brew install dimpase/tap/pari
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(uv run --no-project build/bin/sage-package list :standard:)))
-          brew install dimpase/tap/cypari2
 
       - name: Build
         run: |
           source ./.homebrew-build-env
-          # Reuse Homebrew's PARI-compatible binding instead of building the PyPI version.
-          uv venv --python 3.13 --allow-existing
-          python_version=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-          cypari2_site="$(brew --prefix dimpase/tap/cypari2)/lib/python${python_version}/site-packages"
-          test -d "$cypari2_site/cypari2"
-          venv_site=$(.venv/bin/python -c 'import sysconfig; print(sysconfig.get_path("purelib"))')
-          printf '%s\n' "$cypari2_site" > "$venv_site/homebrew-cypari2.pth"
+          uv venv --python 3.15 --allow-existing
+          # Build the locked PARI-compatible cypari2 source for this Python.
+          # Homebrew's cypari2 formula does not supply Python 3.15 bindings.
+          pari_prefix=$(brew --prefix dimpase/tap/pari)
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project --no-install-package cypari2 -v
-          .venv/bin/python -c 'import cypari2, sys; from pathlib import Path; assert Path(cypari2.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve()); print(cypari2.__file__)' "$cypari2_site"
-          uv sync --frozen --inexact --no-build-isolation --no-install-package cypari2 -v
+          uv sync --frozen --inexact --no-install-project --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
+          uv sync --frozen --inexact --no-build-isolation --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
 
       - name: Test
         run: |
+          source ./.homebrew-build-env # Needed for runtime Cython and MeatAxe tables.
           uv run --frozen --no-sync ./sage -t --all -p4 || true
 
       - name: Upload log
@@ -175,5 +171,5 @@ jobs:
         with:
           name: ${{ matrix.runner }}-log
           path: |
-            build/cp312/meson-logs/
-            build/cp312/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/
