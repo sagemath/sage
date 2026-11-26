@@ -166,7 +166,7 @@ import sage.rings.abc
 
 from sage.misc.cachefunc import cached_method
 
-from sage.structure.richcmp import richcmp, rich_to_bool
+from sage.structure.richcmp import richcmp, richcmp_method, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
 from sage.structure.parent import Parent
@@ -306,6 +306,7 @@ class UCFtoQQbar(Morphism):
         return QQbar(sum(coeffs[a] * zeta**a for a in range(k)))
 
 
+@richcmp_method
 class UniversalCyclotomicFieldElement(FieldElement):
     def __init__(self, parent, obj):
         r"""
