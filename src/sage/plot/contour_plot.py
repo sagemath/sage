@@ -154,11 +154,35 @@ class ContourPlot(GraphicPrimitive):
             sage: contour_plot(x^2 - y^3 + 10*sin(x*y), (x,-4,4), (y,-4,4),
             ....:              plot_points=121, cmap='hsv')
             Graphics object consisting of 1 graphics primitive
+
+        The drawing order is respected for automatic and explicit contour
+        levels, with and without filling (:issue:`35992`)::
+
+            sage: for levels in (None, [-1, 0, 1]):
+            ....:     for fill in (False, True):
+            ....:         g = contour_plot(lambda x, y: x + y, (-1, 1), (-1, 1),
+            ....:                          contours=levels, fill=fill, zorder=5)
+            ....:         ax = g.matplotlib().axes[0]
+            ....:         assert {c.get_zorder() for c in ax.collections} == {5}
+
+        Without an explicit drawing order, fills remain below contour lines::
+
+            sage: g = contour_plot(lambda x, y: x + y, (-1, 1), (-1, 1))
+            sage: sorted({c.get_zorder() for c in g.matplotlib().axes[0].collections})
+            [1, 2]
+
+        Region fills and their borders also respect the drawing order::
+
+            sage: g = region_plot(lambda x, y: x < y, (-1, 1), (-1, 1),
+            ....:                 bordercol='black', zorder=5)
+            sage: {c.get_zorder() for c in g.matplotlib().axes[0].collections} == {5}
+            True
         """
         from sage.rings.integer import Integer
         options = self.options()
         fill = options['fill']
         contours = options['contours']
+        zorder_options = {'zorder': options['zorder']} if 'zorder' in options else {}
         if 'cmap' in options:
             cmap = get_cmap(options['cmap'])
         elif fill or contours is None:
@@ -181,10 +205,11 @@ class ContourPlot(GraphicPrimitive):
         if fill:
             if contours is None:
                 CSF = subplot.contourf(self.xy_data_array, cmap=cmap,
-                                       extent=(x0, x1, y0, y1))
+                                       extent=(x0, x1, y0, y1), **zorder_options)
             else:
                 CSF = subplot.contourf(self.xy_data_array, contours, cmap=cmap,
-                                       extent=(x0, x1, y0, y1), extend='both')
+                                       extent=(x0, x1, y0, y1), extend='both',
+                                       **zorder_options)
 
         linewidths = options.get('linewidths', None)
         if isinstance(linewidths, (int, Integer)):
@@ -202,11 +227,13 @@ class ContourPlot(GraphicPrimitive):
         if contours is None:
             CS = subplot.contour(self.xy_data_array, cmap=cmap,
                                  extent=(x0, x1, y0, y1),
-                                 linewidths=linewidths, linestyles=linestyles)
+                                 linewidths=linewidths, linestyles=linestyles,
+                                 **zorder_options)
         else:
             CS = subplot.contour(self.xy_data_array, contours, cmap=cmap,
                                  extent=(x0, x1, y0, y1),
-                                 linewidths=linewidths, linestyles=linestyles)
+                                 linewidths=linewidths, linestyles=linestyles,
+                                 **zorder_options)
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
