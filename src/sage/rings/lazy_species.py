@@ -84,7 +84,8 @@ from sage.data_structures.stream import (Stream_zero,
                                          Stream_function,
                                          Stream_map_coefficients,
                                          Stream_shift,
-                                         Stream_uninitialized)
+                                         Stream_uninitialized,
+                                         _assume_positive_valuation)
 from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
@@ -2262,14 +2263,10 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                     if left[0]:
                         return R(list(left[0])[0][1])
                     return R.zero()
-                if any(g[i] for g in args
-                       if g._coeff_stream._approximate_order < 1
-                       for i in range(g._coeff_stream._approximate_order, 1)):
-                    # a nonzero constant term of an argument: every
-                    # outer degree contributes, and the outer series
-                    # has infinite support
-                    raise ValueError("can only compose with a series of "
-                                     "positive valuation")
+                # the outer series has infinite support, so every
+                # argument must have positive valuation
+                _assume_positive_valuation([g._coeff_stream for g in args],
+                                           None)
                 result = R.zero()
                 for i in range(1, n // max(gv, 1) + 1):
                     # skip i=0 because it produces a term only for n=0

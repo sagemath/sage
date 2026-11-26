@@ -264,7 +264,8 @@ from sage.data_structures.stream import (
     Stream_plethysm,
     Stream_plethysm_multi,
     Stream_compose_multi,
-    Stream_pseudo_diff_mul
+    Stream_pseudo_diff_mul,
+    _assume_positive_valuation
 )
 
 
@@ -3924,7 +3925,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: exp(1 + z)
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: exp(x+y)[4].factor()
@@ -3948,11 +3949,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         P = self.parent()
         R = self.base_ring()
         coeff_stream = self._coeff_stream
-        # coefficients must not be checked here, it prevents
-        # us from using self.define in some cases!
-        if ((not coeff_stream.is_uninitialized())
-            and any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1))):
-            raise ValueError("can only compose with a positive valuation series")
+        # the outer series, the exponential, has infinite support, so
+        # the inner series must have positive valuation
+        _assume_positive_valuation([coeff_stream], None)
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
         # We make the streams dense, because all coefficients have to be computed anyway
@@ -6971,7 +6970,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: S(lambda n: p[n], valuation=1)(S(1 + p[1]))
             Traceback (most recent call last):
             ...
-            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
         The powers of an inner series are reread as it is refined by
         an implicit definition.  With `A = 1 + p_1 A`, i.e., `A =
@@ -7094,7 +7093,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: f(s(1))
             Traceback (most recent call last):
             ...
-            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
         Check that composing the zero series with anything yields
         zero in the correct parent::
