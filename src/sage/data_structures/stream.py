@@ -3429,11 +3429,25 @@ class Stream_compose(Stream_inexact):
         self._degree_f = (f._degree
                           if isinstance(f, Stream_exact) and not f._constant
                           else None)
-        if (gs._true_order and gs._approximate_order <= 0
-                and (gs._approximate_order < 0 or self._degree_f is None)):
-            raise ValueError(
-                "can only compose with a series of positive valuation, "
-                "or of valuation zero if the outer series has finite support")
+        # The constant term of the inner series sits at the degree of
+        # the identity of its parent, which is 1 for Dirichlet series
+        # and 0 otherwise.  An inner series with a nonzero constant
+        # term is only admissible when the outer series has finite
+        # support.  An uninitialized inner series is not checked here,
+        # since reading its coefficients could trigger a premature
+        # computation; its coefficients below the degree of the
+        # identity are read when the coefficients of the composition
+        # are read.
+        if not gs.is_uninitialized():
+            K0 = g.parent().one()._coeff_stream._approximate_order + 1
+            if gs._approximate_order < K0:
+                if any(gs[i] for i in range(gs._approximate_order, K0)):
+                    if self._degree_f is None:
+                        raise ValueError(
+                            "can only compose with a series of positive valuation, "
+                            "or of valuation zero if the outer series has finite support")
+                else:
+                    gs._approximate_order = K0
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
         # the 0-th power is the multiplicative identity and the 1-st the
@@ -3579,12 +3593,30 @@ class Stream_compose(Stream_inexact):
              4*s[]*a^8 + 9*s[]*a^7 + (11*s[] + 4*s[2, 1])*a^6
               + (-6*s[] + 4*s[1, 1])*a^5 + (-12*s[] + 4*s[2])*a^4 - 16*s[]*a^3 + 4*s[]*a^2]
 
+        An inner series of valuation zero, whose constant term
+        therefore does not vanish, is not admissible when the outer
+        series has infinite support.  For Dirichlet series the
+        constant term sits at degree 1, the degree of the identity::
+
             sage: L = LazyDirichletSeriesRing(QQ, 't')
-            sage: f = Stream_function(lambda n: n+3, True, -2)
+            sage: f = Stream_function(lambda n: n, True, 0)
             sage: g = L(lambda n: n)
-            sage: c = Stream_compose(f, g, False)
-            sage: [c[i] for i in range(-2, 5)]  # indirect doctest
-            [0, 0, 0, 10, 20, 84, 504]
+            sage: Stream_compose(f, g, False)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        An outer series of negative order uses inverse powers of the
+        inner series::
+
+            sage: a = polygen(QQ, 'a')
+            sage: P = PseudoDifferentialOperatorRing(a)
+            sage: Phi = P([1, a^2, a + a^2], constant=a, valuation=1)
+            sage: Psi = Phi^2 + Phi
+            sage: f = Stream_function(lambda n: n+3, True, -2)
+            sage: c = Stream_compose(f, Psi, True)
+            sage: [c[i] for i in range(2)]
+            [3*a^4 - 2*a^2 - 8*a + 4, -4*a^6 + 6*a^4 + 18*a^3 - 8*a - 3]
 
         An inner stream whose order is only bounded below uses its
         positive powers also for negative degrees::
@@ -3599,11 +3631,14 @@ class Stream_compose(Stream_inexact):
         """
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
-        if any(self._input._coeff_stream[i]
-               for i in range(self._input._coeff_stream._approximate_order, 1)):
-            # a nonzero coefficient of the inner series below degree one:
-            # every outer degree contributes, and the outer stream has
-            # finite support
+        # the degree of the constant term of the inner series, see
+        # ``__init__``
+        K0 = self._pos_powers[0]._coeff_stream._approximate_order + 1
+        if (gv < K0
+                and any(self._input._coeff_stream[i] for i in range(gv, K0))):
+            # a nonzero coefficient of the inner series at or below the
+            # degree of the identity: every outer degree contributes,
+            # and the outer stream has finite support
             if self._degree_f is None:
                 raise ValueError(
                     "can only compose with a series of positive valuation, "
@@ -3679,11 +3714,22 @@ class Stream_cauchy_compose(Stream_binary):
         self._degree_f = (f._degree
                           if isinstance(f, Stream_exact) and not f._constant
                           else None)
-        if (g._true_order and g._approximate_order <= 0
-                and (g._approximate_order < 0 or self._degree_f is None)):
-            raise ValueError(
-                "can only compose with a series of positive valuation, "
-                "or of valuation zero if the outer series has finite support")
+        # The constant term of the inner series sits at degree 0, the
+        # degree of the identity.  An inner series with a nonzero
+        # constant term is only admissible when the outer series has
+        # finite support.  An uninitialized inner series is not checked
+        # here, since reading its coefficients could trigger a premature
+        # computation; its constant term is read when the coefficients
+        # of the composition are read.
+        if (not g.is_uninitialized()
+                and g._approximate_order < 1):
+            if any(g[i] for i in range(g._approximate_order, 1)):
+                if self._degree_f is None:
+                    raise ValueError(
+                        "can only compose with a series of positive valuation, "
+                        "or of valuation zero if the outer series has finite support")
+            else:
+                g._approximate_order = 1
         # the 0-th power is the multiplicative identity and the 1-st the
         # inner stream itself; higher powers are created on demand
         self._pos_powers = [Stream_exact([1], order=0), g]
@@ -3777,8 +3823,8 @@ class Stream_cauchy_compose(Stream_binary):
         """
         fv = self._left._approximate_order
         gv = self._right._approximate_order
-        if any(self._right[i]
-               for i in range(self._right._approximate_order, 1)):
+        if (gv < 1
+                and any(self._right[i] for i in range(gv, 1))):
             # a nonzero coefficient of the inner series below degree one:
             # every outer degree contributes, and the outer stream has
             # finite support
@@ -3811,6 +3857,233 @@ class Stream_cauchy_compose(Stream_binary):
 
         return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(K)
                             if (l := self._left[k]))
+
+
+class Stream_compose_multi(Stream_inexact):
+    r"""
+    Return ``f`` composed by the tuple ``g`` of inner series.
+
+    This is the multivariate composition `f(g_1, \dots, g_k)`.  The
+    coefficients of the outer stream ``f`` are homogeneous polynomials,
+    which are evaluated at the inner series by splitting them into
+    their monomials and reading the corresponding products of powers
+    of the inner series.
+
+    INPUT:
+
+    - ``f`` -- a :class:`Stream` whose coefficients are homogeneous
+      polynomials
+
+    - ``g`` -- a tuple of :class:`LazyModuleElement`, the inner series
+
+    - ``is_sparse`` -- boolean
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_compose_multi
+        sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+        sage: f = 1/(1-a-b)
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+        sage: [h[n] for n in range(4)]
+        [1, a + b, a^2 + 2*a*b + b^2, a^3 + 3*a^2*b + 3*a*b^2 + b^3]
+
+        sage: h = Stream_compose_multi(f._coeff_stream, (a^2, b), True)
+        sage: [h[n] for n in range(5)]
+        [1, b, a^2 + b^2, 2*a^2*b + b^3, a^4 + 3*a^2*b^2 + b^4]
+
+        An inner series of valuation 0 is only admissible when the
+        outer series has finite support::
+
+        sage: g = 1 + b
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, g), True)
+        Traceback (most recent call last):
+        ...
+        ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        sage: f2 = L([1, a])
+        sage: h = Stream_compose_multi(f2._coeff_stream, (a, g), True)
+        sage: [h[n] for n in range(4)]
+        [1, a, 0, 0]
+
+        An uninitialized inner series is admissible; its constant term
+        is read when a coefficient of the composition is computed::
+
+        sage: A = L.undefined()
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, A), True)
+        sage: A.define(1 + b)
+        sage: h[0]
+        Traceback (most recent call last):
+        ...
+        ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        sage: A = L.undefined()
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, A), True)
+        sage: A.define(b)
+        sage: [h[n] for n in range(3)]
+        [1, a + b, a^2 + 2*a*b + b^2]
+    """
+    def __init__(self, f, g, is_sparse):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: TestSuite(h).run()
+        """
+        gs = tuple(g)
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        # An inner series of valuation 0 is only admissible when the
+        # outer series has finite support.  An uninitialized inner
+        # series is not checked here, since reading its coefficients
+        # could trigger a premature computation; its constant term is
+        # read when the coefficients of the composition are read.
+        for h in gs:
+            s = h._coeff_stream
+            if not s.is_uninitialized() and s._approximate_order < 1:
+                if any(s[i] for i in range(s._approximate_order, 1)):
+                    if self._degree_f is None:
+                        raise ValueError(
+                            "can only compose with a series of positive valuation, "
+                            "or of valuation zero if the outer series has finite support")
+                else:
+                    s._approximate_order = 1
+        self._stream = f  # a Stream object
+        self._input = gs  # a tuple of LazyModuleElement
+        self._coefficient_ring = gs[0].parent()._stream_coefficient_ring
+        # the powers of the inner series, keyed by their exponent
+        # tuple; the zero exponent is the multiplicative identity and
+        # the exponents with a single 1 are the inner series
+        # themselves, higher powers are created on demand
+        zero = (0,) * len(gs)
+        self._powers = {zero: gs[0].parent().one()}
+        for i, h in enumerate(gs):
+            self._powers[zero[:i] + (1,) + zero[i+1:]] = h
+        super().__init__(is_sparse, False)
+
+    def is_uninitialized(self):
+        r"""
+        Return whether an input stream is uninitialized.
+        """
+        return (self._stream.is_uninitialized()
+                or any(h._coeff_stream.is_uninitialized()
+                       for h in self._input))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: g = Stream_compose_multi(f._coeff_stream, (a, b), False)
+            sage: h == g
+            True
+        """
+        return (isinstance(other, type(self))
+                and self._stream == other._stream
+                and self._input == other._input)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        r"""
+        Return a lower bound for the order of ``self``.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = (a+b)/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a^2, b^2), True)
+            sage: h._approximate_order
+            2
+        """
+        return (self._stream._approximate_order
+                * min(h._coeff_stream._approximate_order
+                      for h in self._input))
+
+    def _power(self, m):
+        r"""
+        Return the product of the powers of the inner series given by
+        the exponent tuple ``m``, creating it if necessary.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: h._power((2, 1))[3]
+            a^2*b
+        """
+        m = tuple(m)
+        try:
+            return self._powers[m]
+        except KeyError:
+            pass
+        i = next(i for i, e in enumerate(m) if e)
+        m0 = m[:i] + (m[i] - 1,) + m[i+1:]
+        value = self._power(m0) * self._input[i]
+        self._powers[m] = value
+        return value
+
+    def get_coefficient(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+        """
+        if any(h._coeff_stream[i] for h in self._input
+               if h._coeff_stream._approximate_order < 1
+               for i in range(h._coeff_stream._approximate_order, 1)):
+            # a nonzero constant term of an inner series: every outer
+            # degree contributes, and the outer stream has finite
+            # support
+            if self._degree_f is None:
+                raise ValueError(
+                    "can only compose with a series of positive valuation, "
+                    "or of valuation zero if the outer series has finite support")
+            K = self._degree_f
+        else:
+            K = n // max(min(h._coeff_stream._approximate_order
+                             for h in self._input), 1) + 1
+        r = self._coefficient_ring.zero()
+        zero_exp = (0,) * len(self._input)
+        for k in range(K):
+            c = self._stream[k]
+            if not c:
+                continue
+            try:
+                monomials = c.monomial_coefficients().items()
+            except AttributeError:
+                # a scalar coefficient is the constant monomial
+                monomials = [(zero_exp, c)]
+            for m, coeff in monomials:
+                # the scalar multiplication is done in the parent of the
+                # powers, so that the coefficients of the result are
+                # homogeneous polynomials
+                r += (coeff * self._power(m))[n]
+        return r
+
+    def input_streams(self):
+        r"""
+        Return the outer stream together with the power streams of the
+        inner series.
+
+        These are all the streams whose cached coefficients can become
+        stale when an uninitialized stream is defined.
+        """
+        return [self._stream] + [p._coeff_stream for p in self._powers.values()]
 
 
 class Stream_plethysm(Stream_binary):
@@ -3934,12 +4207,21 @@ class Stream_plethysm(Stream_binary):
         # species, a graded series whose constant tail is zero, so
         # every exact stream has finite support
         self._degree_f = f._degree if isinstance(f, Stream_exact) else None
-        if (g._true_order and g._approximate_order <= 0
-                and (g._approximate_order < 0 or self._degree_f is None)):
-            raise ValueError(
-                "can only compute plethysm with a series of positive "
-                "valuation, or of valuation 0 for symmetric functions "
-                "of finite support")
+        # An inner series of valuation 0 is only admissible when the
+        # outer series has finite support.  An uninitialized inner
+        # series is not checked here, since reading its coefficients
+        # could trigger a premature computation; its constant term is
+        # read when the coefficients of the plethysm are read.
+        if (not g.is_uninitialized()
+                and g._approximate_order < 1):
+            if any(g[i] for i in range(g._approximate_order, 1)):
+                if self._degree_f is None:
+                    raise ValueError(
+                        "can only compute plethysm with a series of positive "
+                        "valuation, or of valuation 0 for symmetric functions "
+                        "of finite support")
+            else:
+                g._approximate_order = 1
 
         if ring is None:
             self._basis = p
@@ -4043,8 +4325,9 @@ class Stream_plethysm(Stream_binary):
             ...
             ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
         """
-        if any(self._right[i]
-               for i in range(self._right._approximate_order, 1)):
+        if (self._right._approximate_order < 1
+                and any(self._right[i]
+                        for i in range(self._right._approximate_order, 1))):
             # a nonzero coefficient of the inner series below degree one:
             # every outer degree contributes, and the outer stream has
             # finite support
@@ -4292,13 +4575,22 @@ class Stream_plethysm_multi(Stream_inexact):
             raise ValueError("the number of arguments must match the outer tensor power")
 
         self._degree_f = f._degree if isinstance(f, Stream_exact) else None
+        # An argument of valuation 0 is only admissible when the outer
+        # series has finite support.  An uninitialized argument is not
+        # checked here, since reading its coefficients could trigger a
+        # premature computation; its constant term is read when the
+        # coefficients of the plethysm are read.
         for g in gs:
-            if (g._true_order and g._approximate_order <= 0
-                    and (g._approximate_order < 0 or self._degree_f is None)):
-                raise ValueError(
-                    "can only compute plethysm with a series of positive "
-                    "valuation, or of valuation 0 for symmetric functions "
-                    "of finite support")
+            if (not g.is_uninitialized()
+                    and g._approximate_order < 1):
+                if any(g[i] for i in range(g._approximate_order, 1)):
+                    if self._degree_f is None:
+                        raise ValueError(
+                            "can only compute plethysm with a series of positive "
+                            "valuation, or of valuation 0 for symmetric functions "
+                            "of finite support")
+                else:
+                    g._approximate_order = 1
 
         self._basis = ring
         self._p = p
@@ -4336,6 +4628,7 @@ class Stream_plethysm_multi(Stream_inexact):
         Return the coefficient of total degree ``n``.
         """
         if any(g[i] for g in self._arguments
+               if g._approximate_order < 1
                for i in range(g._approximate_order, 1)):
             # a nonzero coefficient of an argument below degree one:
             # every outer degree contributes, and the outer stream has

@@ -263,6 +263,7 @@ from sage.data_structures.stream import (
     Stream_dirichlet_invert,
     Stream_plethysm,
     Stream_plethysm_multi,
+    Stream_compose_multi,
     Stream_pseudo_diff_mul
 )
 
@@ -2330,7 +2331,7 @@ class LazyModuleElement(Element):
             sage: sin(1 + z)
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: sin(x/(1-y)).polynomial(3)
@@ -4412,13 +4413,13 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: f(g)
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
             sage: f = L(lambda n: n, valuation=1)
             sage: f(1 + z)
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
         We compose the exponential with a Dirichlet series::
 
@@ -4446,7 +4447,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: e(D([1,0,1]))
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
             sage: e5 = L(e, degree=5)
             sage: e5
@@ -4590,26 +4591,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             #   as we can use the (default?) order given
             raise NotImplementedError("can only compose with a lazy series")
 
-        # Perhaps we just don't yet know if the valuation is positive.
-        # An uninitialized inner series is not checked here, since
-        # reading its coefficients could trigger a premature
-        # computation; the composition reads its coefficients below
-        # degree one when its own coefficients are read.
-        if (g._coeff_stream._approximate_order <= 0
-                and not g._coeff_stream.is_uninitialized()):
-            if any(g._coeff_stream[i] for i in range(g._coeff_stream._approximate_order, 1)):
-                raise ValueError("can only compose with a positive valuation series")
-            g._coeff_stream._approximate_order = 1
-
         if not isinstance(g, LazyCauchyProductSeries):
-            if isinstance(g, LazyDirichletSeries):
-                if g._coeff_stream._approximate_order == 1:
-                    if (not g._coeff_stream.is_uninitialized()
-                        and g._coeff_stream[1] != 0):
-                        raise ValueError("can only compose with a positive valuation series")
-                    g._coeff_stream._approximate_order = 2
-                # we assume that the valuation of self[i](g) is at least i
-
             coeff_stream = Stream_compose(self._coeff_stream, g, P._sparse)
         else:
             coeff_stream = Stream_cauchy_compose(self._coeff_stream,
@@ -5478,7 +5460,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f(1, x*y)
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
 
         This test will pass once pushouts are implemented::
 
@@ -5603,20 +5585,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             g = [P(S(h)) for h in g]
         else:
             g = [P(h) for h in g]
-        R = P._stream_coefficient_ring
-
-        for h in g:
-            if (h._coeff_stream._approximate_order == 0
-                    and not h._coeff_stream.is_uninitialized()):
-                if h[0]:
-                    raise ValueError("can only compose with a positive valuation series")
-                h._coeff_stream._approximate_order = 1
-
-            if isinstance(h, LazyDirichletSeries):
-                if h._coeff_stream._approximate_order == 1:
-                    if not h._coeff_stream.is_uninitialized() and h._coeff_stream[1] != 0:
-                        raise ValueError("can only compose with a positive valuation series")
-                    h._coeff_stream._approximate_order = 2
 
         # We now have that every element of g has a _coeff_stream
         if len(g) == 1:
@@ -5629,24 +5597,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                                                             P.is_sparse()))
 
         # The arity is at least 2
-        gv = min(h._coeff_stream._approximate_order for h in g)
-
-        def coefficient(n):
-            r = R.zero()
-            for i in range(n // gv + 1):
-                c = coeff_stream[i]
-                B = c.parent()
-                if B is ZZ or B is QQ or B == self.base_ring() or B == self.base_ring().fraction_field():
-                    c = P(c)
-                    r += c[n]
-                else:
-                    d = c(g)
-                    r += d[n]
-            return r
-
-        sorder = coeff_stream._approximate_order
-        return P.element_class(P, Stream_function(coefficient,
-                                                  P._sparse, sorder * gv))
+        return P.element_class(P, Stream_compose_multi(coeff_stream, g, P._sparse))
 
     compose = __call__
 
@@ -7086,7 +7037,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: f(s(1))
             Traceback (most recent call last):
             ...
-            ValueError: can only compose with a positive valuation series
+            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
 
         Check that composing the zero series with anything yields
         zero in the correct parent::
@@ -7164,13 +7115,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                 P = LazySymmetricFunctions(R)
                 g = P(g)
 
-            if not isinstance(self._coeff_stream, Stream_exact):
-                if (g._coeff_stream._approximate_order == 0
-                        and not g._coeff_stream.is_uninitialized()):
-                    if g[0]:
-                        raise ValueError("can only compose with a positive valuation series")
-                    g._coeff_stream._approximate_order = 1
-
             if P._arity == 1:
                 ps = R.realization_of().p()
             else:
@@ -7211,16 +7155,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         args = [P(g) for g in args]
         R = P._stream_coefficient_ring
 
-        if not f_is_polynomial:
-            # see the arity-one case: an inner argument of valuation
-            # zero requires finite support of the outer function
-            for g in args:
-                if (g._coeff_stream._approximate_order == 0
-                        and not g._coeff_stream.is_uninitialized()):
-                    if g[0]:
-                        raise ValueError("can only compose with a positive "
-                                         "valuation series")
-                    g._coeff_stream._approximate_order = 1
         if P._arity == 1:
             target_ps = R.realization_of().p()
         else:

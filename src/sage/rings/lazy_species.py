@@ -2221,13 +2221,6 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
 
         args = [P(g) for g in args]
 
-        for g in args:
-            if (g._coeff_stream._approximate_order == 0
-                    and not g._coeff_stream.is_uninitialized()):
-                if g[0]:
-                    raise ValueError("can only compose with a positive valuation series")
-                g._coeff_stream._approximate_order = 1
-
         sorder = left._coeff_stream._approximate_order
         gv = min(g._coeff_stream._approximate_order for g in args)
         R = P._stream_coefficient_ring
@@ -2269,8 +2262,16 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                     if left[0]:
                         return R(list(left[0])[0][1])
                     return R.zero()
+                if any(g[i] for g in args
+                       if g._coeff_stream._approximate_order < 1
+                       for i in range(g._coeff_stream._approximate_order, 1)):
+                    # a nonzero constant term of an argument: every
+                    # outer degree contributes, and the outer series
+                    # has infinite support
+                    raise ValueError("can only compose with a series of "
+                                     "positive valuation")
                 result = R.zero()
-                for i in range(1, n // gv + 1):
+                for i in range(1, n // max(gv, 1) + 1):
                     # skip i=0 because it produces a term only for n=0
 
                     # compute homogeneous components
