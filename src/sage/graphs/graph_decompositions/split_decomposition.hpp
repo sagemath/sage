@@ -77,6 +77,7 @@
  */
 
 #include <algorithm>
+#include <numeric>
 #include <random>
 #include <set>
 #include <stdexcept>
@@ -87,6 +88,21 @@
 #include <vector>
 using namespace std;
 
+
+/**
+ * @brief Returns the number of '1' bits in a 32-bits integer.
+ *
+ * This is used in method verify which limits the number of vertices in a prime
+ * node to 14 (otherwise the verification is too slow).
+ * This is a standard bit-twiddling hack, see
+ * https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+ * Also used in fast_digraph.pyx.
+ */
+static inline int popcount32(unsigned x) noexcept {
+    x = x - ((x >> 1) & 0x55555555);
+    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
+    return ((x + (x >> 4) & 0x0F0F0F0F) * 0x01010101) >> 24;
+}
 
 /**
  * @brief The graph-labelled tree together with the vertex-insertion algorithm.
@@ -1587,7 +1603,7 @@ struct FastGLT {
                 if (node_marker_count > 14)
                     continue;
                 for (int mask = 1; mask < (1 << node_marker_count); ++mask) {
-                    int subset_size = __builtin_popcount(mask);
+                    int subset_size = popcount32(mask);
                     if (subset_size < 2 || node_marker_count - subset_size < 2)
                         continue;
                     vector<char> has_outside_neighbour(node_marker_count, 0);
