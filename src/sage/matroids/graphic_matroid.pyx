@@ -86,7 +86,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import Counter
+from collections import Counter, defaultdict
 from copy import copy
 from itertools import combinations
 
@@ -279,7 +279,7 @@ cdef class GraphicMatroid(Matroid):
             [v for _, v, _ in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
-        for u, v, l in edges:
+        for u, v, _ in edges:
             DS_vertices.union(u, v)
         return len(vertices) - DS_vertices.number_of_subsets()
 
@@ -650,7 +650,7 @@ cdef class GraphicMatroid(Matroid):
         cdef list all_vertices = self._G.vertices(sort=False)
         cdef list not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
         DS_vertices = DisjointSet_of_hashables(all_vertices)
-        for u, v, l in not_our_edges:
+        for u, v, _ in not_our_edges:
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - 1)
 
@@ -1013,46 +1013,76 @@ cdef class GraphicMatroid(Matroid):
             sage: O = Matroid(range(6), graphs.CycleGraph(6))
             sage: M._is_isomorphic(O)
             False
+
+        TESTS:
+
+        Check that :issue:`42556` is fixed::
+
+            sage: M = matroids.catalog.K4()
+            sage: G = Graph(multiedges=True)
+            sage: G.add_vertices(range(4))
+            sage: G.add_edges([(0,1),(0,1),(0,2),(0,3),(1,2),(1,3),(2,3)])
+            sage: M2 = Matroid(G)
+            sage: M.is_isomorphic(M2) or M2.is_isomorphic(M)
+            False
         """
-        # Check for 3-connectivity so we don't have to worry about Whitney twists
-        if isinstance(other, GraphicMatroid) and other.is_3connected():
+        if self.size() != other.size():
+            return (False, None) if certificate else False
+
+        if isinstance(other, GraphicMatroid):
             G = self.graph()
             H = other.graph()
-            G.allow_loops(False)
-            G.allow_multiple_edges(False)
-            H.allow_loops(False)
-            H.allow_multiple_edges(False)
+            G_valid = (not G.has_loops()) and G.is_triconnected()
+            H_valid = (not H.has_loops()) and H.is_triconnected()
 
-            result = G.is_isomorphic(H, certificate=certificate)
-            if not certificate or result[0] is False:
-                return result
-            # If they are isomorphic and the user wants a certificate,
-            # result[1] is a dictionary of vertices.
-            # We need to translate this to edge labels.
-            vertex_certif = result[1]
-            elt_certif = {}
-            for u, v, l in G.edge_iterator():
-                l_maps_to = H.edge_label(vertex_certif[u], vertex_certif[v])
-                elt_certif[l] = l_maps_to
-            return (True, elt_certif)
+            # Check for 3-connectivity so we don't have to worry about Whitney twists
+            # Both are loopless and 3-connected; reduce to graph isomorphism
+            if G_valid and H_valid:
+                result = G.is_isomorphic(H, certificate=certificate)
+                if not certificate or result[0] is False:
+                    return result
 
-        else:
-            M = self.regular_matroid()
-            if isinstance(other, GraphicMatroid):
-                other = other.regular_matroid()
-            if certificate:
-                # iso0: isomorphism from M and self -- in this order,
-                # to prevent an infinite recursion.
-                iso0 = M._is_isomorphic(self, certificate=certificate)[1]
-                # Now invert iso0 to get iso1, an isomorphism from self to M.
-                iso1 = {iso0[e]: e for e in iso0}
-                # iso2: isomorphism from M and other.
-                isomorphic, iso2 = M._is_isomorphic(other, certificate=certificate)
-                if not isomorphic:
-                    return (False, None)
-                # Compose iso1 and iso2, to go from self to other.
-                return (True, {e: iso2[iso1[e]] for e in iso1})
-            return M._is_isomorphic(other)
+                # If they are isomorphic and the user wants a certificate,
+                # result[1] is a dictionary of vertices.
+                # We need to translate this to edge labels.
+                vertex_certif = result[1]
+                elt_certif = {}
+                # Group edge labels by unordered endpoints to handle multigraphs
+                G_edges = defaultdict(list)
+                H_edges = defaultdict(list)
+                for u, v, l in G.edge_iterator():
+                    G_edges[frozenset({u, v})].append(l)
+                for u, v, l in H.edge_iterator():
+                    H_edges[frozenset({u, v})].append(l)
+                for (u, v), g_labels in G_edges.items():
+                    hu, hv = vertex_certif[u], vertex_certif[v]
+                    h_labels = H_edges[frozenset({hu, hv})]
+                    # Pair up parallel edges arbitrarily
+                    for gl, hl in zip(g_labels, h_labels):
+                        elt_certif[gl] = hl
+                return (True, elt_certif)
+
+            # Exactly one is loopless and 3-connected; not isomorphic
+            elif G_valid or H_valid:
+                return (False, None) if certificate else False
+
+        # Fallback
+        M = self.regular_matroid()
+        if isinstance(other, GraphicMatroid):
+            other = other.regular_matroid()
+        if certificate:
+            # iso0: isomorphism from M and self -- in this order,
+            # to prevent an infinite recursion.
+            iso0 = M._is_isomorphic(self, certificate=certificate)[1]
+            # Now invert iso0 to get iso1, an isomorphism from self to M.
+            iso1 = {iso0[e]: e for e in iso0}
+            # iso2: isomorphism from M and other.
+            isomorphic, iso2 = M._is_isomorphic(other, certificate=certificate)
+            if not isomorphic:
+                return (False, None)
+            # Compose iso1 and iso2, to go from self to other.
+            return (True, {e: iso2[iso1[e]] for e in iso1})
+        return M._is_isomorphic(other)
 
     cpdef _isomorphism(self, other):
         """
@@ -1976,7 +2006,7 @@ cdef class GraphicMatroid(Matroid):
             True
         """
         from sage.matroids.constructor import Matroid as ConstructorMatroid
-        X = [l for u, v, l in self._G.edge_iterator()]
+        X = [l for _, _, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
 
     cpdef relabel(self, mapping):
