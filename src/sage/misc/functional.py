@@ -1689,7 +1689,7 @@ def regulator(x):
         sage: x = polygen(ZZ, 'x')
         sage: regulator(NumberField(x^2 - 2, 'a'))
         0.881373587019543
-        sage: regulator(EllipticCurve('11a'))
+        sage: regulator(EllipticCurve('11a'))  # needs eclib
         1.00000000000000
     """
     return x.regulator()
