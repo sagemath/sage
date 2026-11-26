@@ -4070,14 +4070,32 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I = O*141 + O*alpha; I.norm()
             141
             sage: el = I.minimal_element(); el
-            13/2 - 7/6*i + j + 2/3*k
+            5 + 8/3*i - 1/2*j + 5/6*k
             sage: el.reduced_norm()
             282
+
+        TESTS:
+
+        Check that :issue:`42928` is fixed::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(10^30 + 57)
+            sage: I = B.fractional_ideal([
+            ....:             7517320114,
+            ....:             7084435129/2 - 7081809313733777046202915/13043169242441818*i - 2026104623/841494789834956*j - 25750898865/26086338484883636*k,
+            ....:             3350067434 + 6787267604564158204589447/6521584621220909*i + 3321083469/841494789834956*j - 5798070885/26086338484883636*k,
+            ....:             1675033717 - 255730088465543063696618769020818/57713138240893*i + 265026876551601759/7446856547212*j - 83798387185821703/230852552963572*k
+            ....:         ])
+            sage: elt = 1250070231/2 - 6492725895394539362975979/13043169242441818*i - 647489423/420747394917478*j + 15774484875/13043169242441818*k
+            sage: elt in I
+            True
+            sage: I.minimal_element().reduced_norm() <= elt.reduced_norm()
+            True
         """
         if not self.quaternion_algebra().is_definite():
             raise ValueError('quaternion algebra must be definite')
         pariqf = self.quadratic_form().__pari__()
-        _, v = pariqf.qfminim(None, None, 1)
+        _, _, V = pariqf.qfminim(m=1, flag=2)
+        v, = V
         return sum(ZZ(c) * g for c, g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
@@ -4623,10 +4641,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             True
             sage: OO = R[0].left_order()
             sage: S = OO.right_ideal([3*a for a in R[0].basis()])
-            sage: R[0].is_right_equivalent(S, certificate=True)
-            (True, 1/3)
-            sage: -1/3*S == R[0]
+            sage: t = R[0].is_right_equivalent(S, certificate=True); t
+            (True, -1/6*i + 1/6*k)
+            sage: t[1]*S == R[0]
             True
+
+        ::
 
             sage: B.<i,j,k> = QuaternionAlgebra(101)
             sage: I = B.maximal_order().unit_ideal()
