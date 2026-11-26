@@ -725,6 +725,15 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
+        Regression test for :issue:`17723`: an unknown algorithm raises a
+        descriptive error::
+
+            sage: R.<x,y> = QQ[]
+            sage: R.ideal(x).complete_primary_decomposition('elephants')
+            Traceback (most recent call last):
+            ...
+            TypeError: algorithm 'elephants' unknown
+
         Check that :issue:`15745` is fixed::
 
             sage: R.<x,y>= QQ[]
@@ -734,6 +743,9 @@ class MPolynomialIdeal_singular_repr(
             sage: I.is_prime()
             False
         """
+
+        if algorithm not in ('sy', 'gtz'):
+            raise TypeError("algorithm '%s' unknown" % algorithm)
 
         # Avoid a bug in Singular (see #15745).
         if self.is_one():
