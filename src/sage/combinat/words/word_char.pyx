@@ -354,7 +354,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w['foo':'bar']
             Traceback (most recent call last):
             ...
-            TypeError: slice indices must be integers or None or have an __index__ method
+            TypeError: slice indices must be integers...or have an __index__ method
 
         Check a weird behavior of PySlice_GetIndicesEx (:issue:`17056`)::
 

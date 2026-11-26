@@ -47,7 +47,7 @@ Meson build directory, and look at the resulting LaTeX file in
 import importlib
 
 
-def produce_latex_macro(name, *sample_args):
+def produce_latex_macro(name: str, *sample_args: object) -> str:
     r"""
     Produce a string defining a LaTeX macro.
 
@@ -100,7 +100,9 @@ def produce_latex_macro(name, *sample_args):
     return newcommand + defn
 
 
-def convert_latex_macro_to_mathjax(macro):
+def convert_latex_macro_to_mathjax(
+    macro: str,
+) -> tuple[str, str] | tuple[str, list[str | int]]:
     r"""
     This converts a LaTeX macro definition (\newcommand...) to a
     MathJax macro definition (MathJax.Macro...).
@@ -178,7 +180,7 @@ latex_macros = [r"\newcommand{\SL}{\mathrm{SL}}",
 sage_configurable_latex_macros = [r"\newcommand{\Bold}[1]{\mathbf{#1}}"]
 
 
-def sage_latex_macros():
+def sage_latex_macros() -> list[str]:
     r"""
     Return list of LaTeX macros for Sage. This just runs the function
     :func:`produce_latex_macro` on the list ``macros`` defined in this
@@ -194,7 +196,7 @@ def sage_latex_macros():
     return [produce_latex_macro(*x) for x in macros] + latex_macros + sage_configurable_latex_macros
 
 
-def sage_mathjax_macros():
+def sage_mathjax_macros() -> dict[str, str | list[str | int]]:
     r"""
     Return Sage's macro definitions for usage with MathJax.
 

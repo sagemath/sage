@@ -29,23 +29,23 @@ using namespace NTL;
 #ifndef __cplusplus
 /* Ensure that code passing around pointers to NTL classes can be
  * compiled in pure C mode. */
-typedef struct {} ZZ;
-typedef struct {} ZZ_p;
-typedef struct {} ZZX;
-typedef struct {} ZZ_pX;
-typedef struct {} zz_p;
-typedef struct {} zz_pX;
-typedef struct {} ZZ_pEContext;
-typedef struct {} ZZ_pE;
-typedef struct {} ZZ_pEX;
-typedef struct {} GF2X;
-typedef struct {} GF2EContext;
-typedef struct {} GF2X_c;
-typedef struct {} GF2E;
-typedef struct {} GF2;
-typedef struct {} mat_ZZ;
-typedef struct {} mat_GF2;
-typedef struct {} mat_GF2E;
+typedef class {} ZZ;
+typedef class {} ZZ_p;
+typedef class {} ZZX;
+typedef class {} ZZ_pX;
+typedef class {} zz_p;
+typedef class {} zz_pX;
+typedef class {} ZZ_pEContext;
+typedef class {} ZZ_pE;
+typedef class {} ZZ_pEX;
+typedef class {} GF2X;
+typedef class {} GF2EContext;
+typedef class {} GF2X_c;
+typedef class {} GF2E;
+typedef class {} GF2;
+typedef class {} mat_ZZ;
+typedef class {} mat_GF2;
+typedef class {} mat_GF2E;
 #endif
 
 #endif

@@ -2703,6 +2703,19 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: k.<a> = NumberField(x)
             sage: k.is_isomorphic(k)
             True
+
+        Check that :issue:`43197` is fixed::
+
+            sage: x = polygen(QQ)
+            sage: f = 2*x^2 - x - 2
+            sage: K.<a> = NumberField(f)
+            sage: ok, maps = K.is_isomorphic(K, isomorphism_maps=True)
+            sage: ok
+            True
+            sage: sorted(maps)
+            [-x + 1/2, x]
+            sage: [f(g(a)) for g in maps]
+            [0, 0]
         """
         if not isinstance(other, NumberField_generic):
             raise ValueError("other must be a generic number field.")
@@ -2715,8 +2728,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             res = True
 
         if isomorphism_maps:
-            R = self.polynomial().parent()
-            return res, [R(ti) for ti in t]
+            # PARI returns the maps as polynomials in its own generator;
+            # convert them to polynomials in Sage's generator.
+            alpha = self._pari_absolute_structure()[1].lift()
+            maps = [self(alpha(ti), check=False).polynomial() for ti in t]
+            return res, maps
         return res
 
     def is_totally_real(self) -> bool:

@@ -1,6 +1,7 @@
 doc_sources = [
   'conda.rst',
   'conf.py',
+  'homebrew.rst',
   'index.rst',
   'launching.rst',
   'source.rst',

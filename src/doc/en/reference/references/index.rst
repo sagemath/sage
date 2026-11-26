@@ -1,3 +1,7 @@
-This is a placeholder that allows the docbuild (not yet mesonized) to
-generate the correct targets. The real index.rst is generated, in the
-build directory, from index.rst.in.
+Bibliographic References
+========================
+
+The references for Sage, sorted alphabetically by citation key.
+
+.. bibliography::
+   :all:
