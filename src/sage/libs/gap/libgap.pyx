@@ -246,7 +246,7 @@ the GAP code has finished. This is accomplished using ``gap_sig_on()``
 and ``gap_sig_off()``. If GAP receives either signal during the call,
 it will invoke our custom ``error_handler()`` that sets a
 :exc:`KeyboardInterrupt` for ``SIGINT`` or an
-:class:`~cysignals.signals.AlarmInterrupt` for ``SIGALRM``.
+``AlarmInterrupt`` for ``SIGALRM``.
 Eventually (as explained in the preceding paragraphs),
 control will jump back to the Cython wrapper for ``GAP_Enter()``, and
 this exception will be raised.
