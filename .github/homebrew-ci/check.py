@@ -28,10 +28,10 @@ def data():
     root = Path(os.environ["SAGE_DATA_PATH"])
     root.mkdir()
     directories = {
-        "cremona": files("sage_data_elliptic_curves.data") / "cremona",
-        "ellcurves": files("sage_data_elliptic_curves.data") / "ellcurves",
-        "graphs": files("sage_data_graphs.data"),
-        "reflexive_polytopes": files("sage_data_polytopes") / "data",
+        "cremona": files("elliptic_curve_databases.data") / "cremona",
+        "ellcurves": files("elliptic_curve_databases.data") / "ellcurves",
+        "graphs": files("graph_databases.data"),
+        "reflexive_polytopes": files("polytope_databases") / "data",
     }
     for name, path in directories.items():
         if not path.is_dir():

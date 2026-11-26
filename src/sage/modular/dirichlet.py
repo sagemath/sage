@@ -358,7 +358,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta12 to a rational
+            TypeError: no conversion of this number field element to a rational
 
         We test the case where `R` is a map (:issue:`18072`)::
 
@@ -2790,7 +2790,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             sage: H = DirichletGroup(16, QQ); H(DirichletGroup(16).1)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta4 to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         R = self.base_ring()
         try:
