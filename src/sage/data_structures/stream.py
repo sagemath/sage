@@ -1736,7 +1736,7 @@ class Stream_uninitialized(Stream):
                 self._name += str(self._series.index(self))
         self._max_lookahead = max_lookahead
 
-    def _traverse_dependencies(self):
+    def _input_streams(self):
         r"""
         Return the cached streams on which an implicitly defined
         ``self`` depends, computed by a fresh traversal.
@@ -1755,7 +1755,7 @@ class Stream_uninitialized(Stream):
             sage: M = Stream_map_coefficients(C, lambda c: c, True)
             sage: S = Stream_shift(M, -1)
             sage: C.define(S)
-            sage: C._traverse_dependencies() == [C, M]
+            sage: C._input_streams() == [C, M]
             True
 
             sage: terms_of_degree = lambda n, R: [R.one()]
@@ -1764,7 +1764,7 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: len(C._traverse_dependencies())
+            sage: len(C._input_streams())
             4
         """
         known = [self]
@@ -1800,11 +1800,11 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C._compute_good_cache(C._traverse_dependencies())
+            sage: C._compute_good_cache(C._input_streams())
             [0, 0, 0, 0]
             sage: C[1]
             1
-            sage: C._compute_good_cache(C._traverse_dependencies())
+            sage: C._compute_good_cache(C._input_streams())
             [1, 0, 1, 0]
             sage: C._good_cache
             1
@@ -2013,7 +2013,7 @@ class Stream_uninitialized(Stream):
         # every actual dummy replacement.  Power streams constructed
         # since the previous traversal are included now.  Only the
         # prefix of ``self`` is retained between substitutions.
-        streams = self._traverse_dependencies()
+        streams = self._input_streams()
         good_cache = self._compute_good_cache(streams)
         try:
             self._good_cache = good_cache[0]
