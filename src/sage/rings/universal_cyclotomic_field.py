@@ -166,7 +166,7 @@ import sage.rings.abc
 
 from sage.misc.cachefunc import cached_method
 
-from sage.structure.richcmp import rich_to_bool
+from sage.structure.richcmp import richcmp, richcmp_method, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
 from sage.structure.parent import Parent
@@ -306,6 +306,7 @@ class UCFtoQQbar(Morphism):
         return QQbar(sum(coeffs[a] * zeta**a for a in range(k)))
 
 
+@richcmp_method
 class UniversalCyclotomicFieldElement(FieldElement):
     def __init__(self, parent, obj):
         r"""
@@ -770,6 +771,11 @@ class UniversalCyclotomicFieldElement(FieldElement):
             True
             sage: fibonacci(201)*(E(5)+E(5,4)) <= fibonacci(200)
             False
+
+            sage: UCF.zero() < UCF.zero().abs()
+            False
+            sage: UCF.gen(3).real() < abs(UCF.gen(3).real())
+            True
         """
         if self._obj == other._obj:
             return rich_to_bool(op, 0)
@@ -791,6 +797,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sa = s._eval_real_(R)
             oa = o._eval_real_(R)
         return sa._richcmp_(oa, op)
+
+    def __richcmp__(self, other, op):
+        if parent(other) is AA:
+            real = AA(self.real_part())
+            if real == other:
+                return richcmp(AA(self.imag_part()), AA.zero(), op)
+            return richcmp(real, other, op)
+        return super().__richcmp__(other, op)
 
     def denominator(self):
         r"""
