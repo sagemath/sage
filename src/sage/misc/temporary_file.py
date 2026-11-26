@@ -41,7 +41,7 @@ atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 # temporary directory
 #################################################################
 
-def tmp_dir(name='dir_', ext='') -> str:
+def tmp_dir(name: str = 'dir_', ext: str = '') -> str:
     r"""
     Create and return a temporary directory in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -84,7 +84,7 @@ def tmp_dir(name='dir_', ext='') -> str:
 # temporary filename
 #################################################################
 
-def tmp_filename(name='tmp_', ext='') -> str:
+def tmp_filename(name: str = 'tmp_', ext: str = '') -> str:
     r"""
     Create and return a temporary file in
     ``$HOME/.sage/temp/hostname/pid/``
