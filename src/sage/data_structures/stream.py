@@ -3467,8 +3467,11 @@ class Stream_compose(Stream_inexact):
             "or of valuation zero if the outer series has finite support")
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
-        # the powers of the inner element, created in _approximate_order
-        self._pos_powers = []
+        # the 0-th power is the multiplicative identity and the 1-st the
+        # inner element itself; higher powers are created on demand
+        self._pos_powers = [g.parent().one(), g]
+        # the (-k)-th power is at index k; only created once the order
+        # of the outer stream is known to be negative
         self._neg_powers = []
         super().__init__(is_sparse, False)
 
@@ -3500,7 +3503,7 @@ class Stream_compose(Stream_inexact):
             sage: len(c.input_streams()) > 2
             True
         """
-        return ([self._stream, self._input._coeff_stream]
+        return ([self._stream]
                 + [h._coeff_stream for h in self._pos_powers[1:]]
                 + [h._coeff_stream for h in self._neg_powers[1:]])
 
@@ -3581,8 +3584,6 @@ class Stream_compose(Stream_inexact):
             self._neg_powers = [None, ginv]
             for i in range(1, -self._stream._approximate_order):
                 self._neg_powers.append(self._neg_powers[-1] * ginv)
-        # the 0-th power is the multiplicative identity of the inner ring
-        self._pos_powers = [self._input.parent().one(), self._input]
 
         if self._stream._approximate_order == 0:
             # Special case for inputs whose 1 element has a positive approximate
@@ -3705,8 +3706,11 @@ class Stream_cauchy_compose(Stream_binary):
             g, self._degree_f,
             "can only compose with a series of positive valuation, "
             "or of valuation zero if the outer series has finite support")
-        # the powers of the inner stream, created in _approximate_order
-        self._pos_powers = []
+        # the 0-th power is the multiplicative identity and the 1-st the
+        # inner stream itself; higher powers are created on demand
+        self._pos_powers = [Stream_exact([1], order=0), g]
+        # the (-k)-th power is at index k; only created once the order
+        # of the outer stream is known to be negative
         self._neg_powers = []
         super().__init__(f, g, is_sparse)
 
@@ -3730,7 +3734,7 @@ class Stream_cauchy_compose(Stream_binary):
             sage: len(h.input_streams()) > 2
             True
         """
-        return [self._left, self._right] + self._pos_powers[1:] + self._neg_powers[1:]
+        return [self._left] + self._pos_powers[1:] + self._neg_powers[1:]
 
     @lazy_attribute
     def _approximate_order(self):
@@ -3760,8 +3764,6 @@ class Stream_cauchy_compose(Stream_binary):
             self._neg_powers = [None, ginv]
             for i in range(1, -self._left._approximate_order):
                 self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1], ginv, self._is_sparse))
-        # the 0-th power is the multiplicative identity
-        self._pos_powers = [Stream_exact([1], order=0), self._right]
 
         return self._left._approximate_order * self._right._approximate_order
 
