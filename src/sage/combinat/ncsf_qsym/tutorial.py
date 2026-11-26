@@ -260,7 +260,7 @@ These two operations endow `QSym` with the structure of a Hopf algebra. It is
 the dual Hopf algebra of the non-commutative symmetric functions `NCSF`. Under
 this duality, the Monomial basis of `QSym` is dual to the Complete basis of
 `NCSF`, and the Fundamental basis of `QSym` is dual to the Ribbon basis of
-`NCSF` (see [MR]_)::
+`NCSF` (see [MR1995]_)::
 
     sage: S = M.dual(); S
     Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
@@ -435,5 +435,5 @@ REFERENCES:
 
 - [LW12]_
 
-- [KT97]_
+- [KT1997]_
 """

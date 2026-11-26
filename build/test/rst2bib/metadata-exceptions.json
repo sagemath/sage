@@ -1,0 +1,68 @@
+{
+  "authorless_web_references": [
+    "BlockIncidenceWikipedia",
+    "Br2016",
+    "dotspec",
+    "GSL",
+    "Gu",
+    "HadaWiki",
+    "KnotAtlas",
+    "LJCR",
+    "MagmaHGM",
+    "PearsonTest",
+    "Prototype_pattern",
+    "RSS",
+    "SL000081",
+    "sudoku:top95",
+    "sudoku:wikipedia",
+    "UNITTEST",
+    "WA2025",
+    "WP-Bessel",
+    "WP-Error",
+    "WP-Struve"
+  ],
+  "incomplete_publication_fields": {
+    "AS-Bessel": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "AS-Spherical": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "AS-Struve": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "DLMF-Bessel": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "DLMF-Error": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "DLMF-Legendre": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    },
+    "DLMF-Struve": {
+      "fields": [
+        "year"
+      ],
+      "reason": "The source cites an online chapter without specifying the edition/publication date."
+    }
+  }
+}

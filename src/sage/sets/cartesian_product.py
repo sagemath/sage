@@ -26,7 +26,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
 
 from sage.categories.rings import Rings
-_Rings = Rings()
+from sage.categories.additive_monoids import AdditiveMonoids
 
 
 class CartesianProduct(UniqueRepresentation, Parent):
@@ -120,11 +120,22 @@ class CartesianProduct(UniqueRepresentation, Parent):
             (0, 0)
             sage: R(-5)
             (-5, -5)
+
+        Check that passing 0 to the element constructor works
+        whenever the product has an additive monoid structure::
+
+            sage: E = EllipticCurve(GF(419), [1,0])
+            sage: EE = cartesian_product([E, E])
+            sage: EE(0)
+            ((0 : 1 : 0), (0 : 1 : 0))
         """
         # NOTE: should we more generally allow diagonal embedding
         # if we have a conversion?
-        if self in _Rings and isinstance(x, numbers.Integral):
-            return x * self.one()
+        if isinstance(x, numbers.Integral):
+            if x == 0 and self in AdditiveMonoids():
+                return self.zero()
+            if self in Rings():
+                return x * self.one()
 
         x = tuple(x)
 
