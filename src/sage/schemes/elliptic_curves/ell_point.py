@@ -120,6 +120,8 @@ AUTHORS:
 - Lorenz Panny (2022): point addition over general rings
 """
 
+from __future__ import annotations
+
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -138,6 +140,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
@@ -434,7 +437,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         return self + (-other)
 
-    def _acted_upon_(self, other, side):
+    def _acted_upon_(self, other, side) -> EllipticCurvePoint:
         r"""
         We implement ``_acted_upon_`` to provide scalar multiplications.
 
@@ -543,6 +546,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     Test pickling an elliptic curve that has known points on it::
 
+        sage: # needs eclib
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
         True
 
@@ -742,7 +746,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return pari([x/z, y/z])
         return pari([0])
 
-    def order(self, algorithm=None):
+    def order(self, algorithm: str | None = None) -> Integer | PlusInfinity:
         r"""
         Return the order of this point on the elliptic curve.
 
@@ -850,6 +854,8 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             (0 : 1 : 0)
             sage: P.is_zero()
             True
+
+            sage: # needs eclib
             sage: P = E.gens()[0]
             sage: P.is_zero()
             False
@@ -1033,7 +1039,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return text("$\\infty$", (-3, 3), **args)
         return point((self[0], self[1]), **args)
 
-    def _add_(self, other):
+    def _add_(self, other: EllipticCurvePoint_field) -> EllipticCurvePoint_field:
         r"""
         Add this point to another point on the same elliptic curve.
 
@@ -1052,6 +1058,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         Example to show that bug :issue:`4820` is fixed::
 
+            sage: # needs eclib
             sage: [type(c) for c in 2*EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
             <... 'sage.rings.rational.Rational'>,
@@ -1143,6 +1150,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         Example to show that bug :issue:`4820` is fixed::
 
+            sage: # needs eclib
             sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
              <... 'sage.rings.rational.Rational'>,
@@ -1154,7 +1162,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # See trac #4820 for why we need to coerce 1 into the base ring here:
         return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
-    def xy(self):
+    def xy(self) -> tuple:
         """
         Return the `x` and `y` coordinates of this point, as a 2-tuple.
         If this is the point at infinity, a :exc:`ZeroDivisionError` is raised.
@@ -1342,7 +1350,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         return len(self.division_points(m)) > 0
 
-    def division_points(self, m, poly_only=False):
+    def division_points(self, m: int | Integer, poly_only: bool = False) -> list:
         r"""
         Return a list of all points `Q` such that `mQ=P` where `P` = ``self``.
 
@@ -2915,11 +2923,12 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     Test pickling an elliptic curve that has known points on it::
 
+        sage: # needs eclib
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
         True
     """
 
-    def order(self, algorithm=None):
+    def order(self, algorithm: str | None = None) -> Integer | PlusInfinity:
         r"""
         Return the order of this point on the elliptic curve.
 
@@ -3262,14 +3271,16 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('990e1')
-            sage: P = E.gen(0); P
-            (15 : 51 : 1)
             sage: [E.has_good_reduction(p) for p in [2,3,5,7]]
             [False, False, False, True]
-            sage: [P.has_good_reduction(p) for p in [2,3,5,7]]
-            [True, False, True, True]
             sage: [E.tamagawa_exponent(p) for p in [2,3,5,7]]
             [2, 2, 1, 1]
+
+            sage: # needs eclib
+            sage: P = E.gen(0); P
+            (15 : 51 : 1)
+            sage: [P.has_good_reduction(p) for p in [2,3,5,7]]
+            [True, False, True, True]
             sage: [(2*P).has_good_reduction(p) for p in [2,3,5,7]]
             [True, True, True, True]
             sage: P.has_good_reduction()
@@ -3468,12 +3479,12 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: P = E([0,0])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: P.order()
             +Infinity
-            sage: E.regulator()
-            0.0511114082399688...
+            sage: E.regulator()  # abs tol 1e-15, needs eclib
+            0.0511114082399688
 
             sage: def naive_height(P):
             ....:     return log(RR(max(abs(P[0].numerator()), abs(P[0].denominator()))))
@@ -3541,9 +3552,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,0])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
-            sage: P.height(normalised=False)
+            sage: P.height(normalised=False)  # abs tol 1e-15
             0.0511114082399688
             sage: K.<z> = CyclotomicField(5)                                            # needs sage.rings.number_field
             sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
@@ -3577,7 +3588,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: E = EllipticCurve('37a')
             sage: P = E([0,-1])
-            sage: P.height()
+            sage: P.height()  # abs tol 1e-15
             0.0511114082399688
             sage: K.<a> = QuadraticField(-7)                                            # needs sage.rings.number_field
             sage: ED = E.quadratic_twist(-7)                                            # needs sage.rings.number_field
@@ -4502,7 +4513,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         x, y = self.xy()
         return "%s![%s,%s]" % (E, x, y)
 
-    def _acted_upon_(self, other, side):
+    def _acted_upon_(self, other, side) -> EllipticCurvePoint_finite_field:
         r"""
         We implement ``_acted_upon_`` to make use of the specialized faster
         scalar multiplication from PARI, and to keep track of cached point
@@ -4619,12 +4630,13 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF((3,6),'a')
             sage: a = F.gen()
             sage: E = EllipticCurve([0,1,1,a,a])
             sage: E.cardinality()
             762
+
+            sage: # needs eclib
             sage: P = E.gens()[0]
             sage: Q = 400*P
             sage: Q.log(P)
@@ -4856,7 +4868,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         """
         return True
 
-    def order(self, algorithm=None):
+    def order(self, algorithm: str | None = None) -> Integer:
         r"""
         Return the order of this point on the elliptic curve.
 

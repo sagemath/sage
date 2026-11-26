@@ -192,3 +192,19 @@ cdef extern from "m4ri/m4ri.h":
     ##################################
 
     cdef void mzd_clear_bits(mzd_t *m, int x, int y, int n)
+
+
+# m4ri_set_interrupt_check() is not available in older versions of M4RI
+cdef extern from *:
+    """
+    #ifndef __M4RI_HAVE_INTERRUPT_CHECK
+    #define __M4RI_HAVE_INTERRUPT_CHECK 0
+    typedef void (*m4ri_interrupt_check_t)(void);
+    typedef int (*m4ri_interrupt_pending_t)(void);
+    static inline void m4ri_set_interrupt_check(m4ri_interrupt_check_t check, m4ri_interrupt_pending_t pending) {}
+    #endif
+    """
+    cdef bint M4RI_HAVE_INTERRUPT_CHECK "__M4RI_HAVE_INTERRUPT_CHECK"
+    ctypedef void (*m4ri_interrupt_check_t)() noexcept nogil
+    ctypedef int (*m4ri_interrupt_pending_t)() noexcept nogil
+    cdef void m4ri_set_interrupt_check(m4ri_interrupt_check_t check, m4ri_interrupt_pending_t pending)

@@ -34,6 +34,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from sage.arith.misc import binomial
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.cachefunc import cached_method
@@ -41,12 +42,15 @@ from sage.misc.functional import rank
 from sage.misc.lazy_import import lazy_import
 from sage.misc.prandom import choice
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 lazy_import("sage.libs.pari", "pari")
 lazy_import("sage.schemes.hyperelliptic_curves.hypellfrob", "hypellfrob")
@@ -123,8 +127,36 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             (4 : 1 : 1)
             sage: type(C.random_point())
             <class 'sage.schemes.weighted_projective.weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
+
+        Some hyperelliptic curves do not have any rational points over
+        the chosen base field (:issue:`43166`)::
+
+            sage: K.<a> = GF(4)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurve(x^6 + a*x^4 + a*x^3 + a*x + a, a*x^3 + 1)
+            sage: H.rational_points()
+            []
+            sage: H.random_point()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot sample a random point since the curve is pointless
         """
         k = self.base_ring()
+
+        # For inert curves and very small base fields, we simply enumerate
+        # all the points and choose one at random: If there aren't any rational
+        # points, the loop below would keep going forever.
+        # Hasse-Weil says |#C(F_q) - (q+1)| <= 2 g sqrt(q)
+        # hence if #C(F_q) = 0 then q+1 <= 2 g sqrt(q)
+        # ...which is equivalent to (q+1)^2 / q <= 4 g^2
+        # ...which implies q+2+1/q <= 4 g^2
+        # ...which implies q <= 4 g^2 - 3 since q,g are integers
+        if self.is_inert() and k.order() <= 4 * self.genus()**2 - 3:
+            pts = self.rational_points()
+            if not pts:
+                raise ValueError('cannot sample a random point since the curve is pointless')
+            return choice(pts)
+
         n = 2 * k.order() + 1
 
         while True:

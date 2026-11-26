@@ -1746,11 +1746,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: z.coefficient([1,2])
                 Traceback (most recent call last):
                 ...
-                AssertionError: [1, 2] should be an element of Partitions
+                ValueError: [1, 2] should be an element of Partitions
                 sage: z.coefficient(Composition([2,1]))
                 Traceback (most recent call last):
                 ...
-                AssertionError: [2, 1] should be an element of Partitions
+                ValueError: [2, 1] should be an element of Partitions
 
             Test that ``coefficient`` also works for those parents that do
             not have an ``element_class``::
@@ -1767,8 +1767,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             # NT: coefficient_fast should be the default, just with appropriate assertions
             # that can be turned on or off
             C = self.parent().basis().keys()
-            # TODO: This should raise a ValueError - TS
-            assert m in C, "%s should be an element of %s" % (m, C)
+            if m not in C:
+                raise ValueError("%s should be an element of %s" % (m, C))
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]

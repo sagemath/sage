@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 """
 Cremona matrices
 """

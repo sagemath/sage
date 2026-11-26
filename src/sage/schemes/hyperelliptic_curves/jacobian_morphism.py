@@ -57,6 +57,23 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian()
             sage: D = J(x^2 + 14*x + 16, 3*x + 4); D # indirect doctest
             (x^2 + 14*x + 16, 3*x + 4)
+
+        Non-monic ``u`` is scaled to a monic representative (see :issue:`43180`)::
+
+            sage: x = polygen(GF(419))
+            sage: H = HyperellipticCurve(x**5 + 1, 0)
+            sage: J = H.jacobian()
+            sage: J(42, 0)
+            (1, 0)
+            sage: J(42, 0).is_zero()
+            True
+
+        The zero polynomial is not a valid Mumford coordinate::
+
+            sage: J(x.parent().zero(), x.parent().zero())
+            Traceback (most recent call last):
+            ...
+            ValueError: Mumford coordinate u=0 must be nonzero
         """
         SchemeMorphism.__init__(self, parent)
 
@@ -66,6 +83,13 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         # TODO:
         # 1. allow elements of the base field as input
         #   (in particular something like (u,v) = (x-alpha, 0))
+
+        # Mumford representatives are unique with monic u; only the vanishing
+        # locus of u matters, so scale by units (see :issue:`43180`).
+        # The zero polynomial is invalid (would later fail with ZeroDivisionError).
+        if u.is_zero():
+            raise ValueError(f"Mumford coordinate u={u} must be nonzero")
+        u = u.monic()
 
         # Ensure the divisor is valid
         if check:
@@ -187,7 +211,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return richcmp(tuple(self), tuple(other), op)
 
-    def __iter__(self) -> Iterator[Polynomial]:
+    def __iter__(self) -> Iterator[Polynomial | int | Integer]:
         r"""
         TESTS:
 
@@ -289,6 +313,13 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: D = JK(x^2 + 5*x + 6, 6*x + 3)
             sage: D.order()
             38
+
+        TESTS:
+
+        Check that the :meth:`additive_order()` alias works::
+
+            sage: D.additive_order()
+            38
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
             raise NotImplementedError(
@@ -296,6 +327,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             )
         n = self.parent().order()
         return order_from_multiple(self, n)
+
+    additive_order = order  # compatibility alias
 
     def degree(self) -> Integer:
         r"""
@@ -633,7 +666,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         g = self._parent.curve().genus()
         return not (self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2)
 
-    def __iter__(self) -> Iterator[Polynomial]:
+    def __iter__(self) -> Iterator[Polynomial | int | Integer]:
         r"""
         TESTS:
 

@@ -106,7 +106,7 @@ my(alift,ta,minpola,py,pfact);
 \\ the real embeddings must all be >0
 
   minpola = minpoly(a);
-  if( polsturm(minpola,,0), return([]));
+  if( polsturm(minpola,[-oo,0]), return([]));
 
 \\ factorization over nf of the polynomial X^2-a
 

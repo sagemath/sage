@@ -142,19 +142,13 @@ and check that the first relation holds::
 
 REFERENCES:
 
-.. [Brown2012] Francis C. S. Brown, *On the decomposition of motivic
-   multiple zeta values*, Advanced Studies in Pure Mathematics 63,
-   2012. Galois-Teichmuller Theory and Arithmetic Geometry.
+- [Brown2012]_
 
-.. [Brown2019] Francis C. S. Brown, *From the Deligne-Ihara conjecture to
-   multiple modular values*, :arxiv:`1904.00179`
+- [Brown2019]_
 
-.. [Deli2012] Pierre Deligne, *Multizêtas, d’après Francis Brown*,
-   Séminaire Bourbaki, janvier 2012. http://www.bourbaki.ens.fr/TEXTES/1048.pdf
+- [Deli2012]_
 
-.. [Stie2020] \S. Stieberger, *Periods and Superstring Amplitudes*,
-   Periods in Quantum Field Theory and Arithmetic, Springer Proceedings
-   in Mathematics and Statistics 314, 2020
+- [Stie2020]_
 """
 # ****************************************************************************
 #       Copyright (C) 2020     Frédéric Chapoton
@@ -495,7 +489,7 @@ class MultizetaValues(Singleton):
             sage: from sage.modular.multiple_zeta import MultizetaValues
             sage: M = MultizetaValues()
             sage: [M.pari_eval((n,)) for n in range(2,20)]
-            [1.64493406684823, 1.20205690315959, 1.08232323371114, 1.03692775514337, ... 1.00000381729326, 1.00000190821272]
+            [1.64493406684..., 1.20205690315..., 1.08232323371..., 1.03692775514..., ...1.00000381729..., 1.00000190821...]
         """
         weight = sum(index)
         index = list(reversed(index))
@@ -1330,7 +1324,7 @@ class Multizetas(CombinatorialFreeModule):
                 sage: M = Multizetas(QQ)
                 sage: a = M((3,2)) - 2*M((7,))
                 sage: a._numerical_approx_pari()
-                -1.30513235721327
+                -1.30513235721...
                 sage: type(a._numerical_approx_pari())
                 <class 'cypari2.gen.Gen'>
             """

@@ -5381,10 +5381,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         REFERENCES:
 
-        .. [Feig1986] Joan Feigenbaum, *Directed Cartesian-Product Graphs
-           have Unique Factorizations that can be computed in Polynomial Time*,
-           Discrete Applied Mathematics 15 (1986) 105-110
-           :doi:`10.1016/0166-218X(86)90023-5`
+        - [Feig1986]_
         """
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
@@ -8579,7 +8576,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
         G = DiGraph(pdict, format='dict_of_lists')
-        a = {e: 0 for e in G.edge_iterator(labels=False)}
+        a = dict.fromkeys(G.edge_iterator(labels=False), 0)
         for i in self:
             a[((0, i), (1, i))] = 1
         return (G, a)

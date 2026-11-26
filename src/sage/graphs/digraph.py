@@ -2522,7 +2522,29 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
+
+        Check that the method returns a scalar when ``v`` is a vertex,
+        and otherwise a list (see :issue:`43186`)::
+
+            sage: DiGraph(1).eccentricity()
+            [0]
+            sage: DiGraph(1).eccentricity(by_weight=True)
+            [0]
+            sage: DiGraph(1).eccentricity(0)
+            0
+            sage: DiGraph(1).radius(by_weight=True)
+            0
+            sage: DiGraph(1).diameter(algorithm='Dijkstra_Boost')
+            0
         """
+        if v is not None and not isinstance(v, list):
+            # a single vertex is given: return a single value
+            ecc = self.eccentricity(v=[v], by_weight=by_weight, algorithm=algorithm,
+                                    weight_function=weight_function,
+                                    check_weight=check_weight, dist_dict=dist_dict,
+                                    with_labels=with_labels)
+            return ecc if with_labels else ecc[0]
+
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
@@ -2543,8 +2565,6 @@ class DiGraph(GenericGraph):
                 algorithm = 'Dijkstra_Boost'
 
         if v is not None:
-            if not isinstance(v, list):
-                v = [v]
             v_set = set(v)
 
         if v is None or all(u in v_set for u in self):
@@ -2591,10 +2611,6 @@ class DiGraph(GenericGraph):
 
         if with_labels:
             return ecc
-        if len(ecc) == 1:
-            # return single value
-            v, = ecc.values()
-            return v
         return [ecc[u] for u in v]
 
     def radius(self, by_weight=False, algorithm=None, weight_function=None,
@@ -3266,12 +3282,12 @@ class DiGraph(GenericGraph):
         )
 
         NEG_INF = float('-inf')
-        pred = {v: None for v in self}
+        pred = dict.fromkeys(self)
 
         if source is None:
-            dist = {v: 0 for v in self}
+            dist = dict.fromkeys(self, 0)
         else:
-            dist = {v: NEG_INF for v in self}
+            dist = dict.fromkeys(self, NEG_INF)
             dist[source] = 0
 
         for u in topo_order:
@@ -3562,7 +3578,7 @@ class DiGraph(GenericGraph):
         g = 0
 
         for component in self.strongly_connected_components():
-            levels = {s: None for s in component}
+            levels = dict.fromkeys(component)
             vertices_in_scc = levels  # considers level as a set
             s = component[0]
             levels[s] = 0
