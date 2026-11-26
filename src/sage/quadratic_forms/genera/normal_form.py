@@ -45,7 +45,7 @@ A computation reveals that both forms are equivalent over `\ZZ_2`::
 Moreover, we have computed the `2`-adic isomorphism::
 
     sage: U = U2.inverse()*U1
-    sage: U*G1*U.T
+    sage: U*G1*U.T  # random - error term depends on pari version
     [          2 2^31 + 2^32 2^32 + 2^33           1]
     [2^31 + 2^32           2        2^32           1]
     [2^32 + 2^33        2^32         2^2           2]
