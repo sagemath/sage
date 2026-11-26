@@ -68,6 +68,57 @@ cpdef Fmpz_poly chain_poly(list positions):
     return total
 
 
+cpdef Fmpz_poly max_chain_poly(list positions):
+    """
+    Return the max-restricted chain polynomial of a poset.
+
+    This is enumerating chains whose maximal element is a maximum.
+
+    INPUT:
+
+    - ``positions`` -- a list of sets of integers describing the poset, as
+      given by the lazy attribute ``_leq_storage`` of Hasse diagrams
+
+    OUTPUT: a Flint polynomial in one variable over `\ZZ`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.hasse_cython_flint import max_chain_poly
+        sage: D = [{0, 1, 2}, {1}, {2}]
+        sage: max_chain_poly(D)
+        3  0 2 2
+        sage: W = SymmetricGroup(3)
+        sage: P = W.absolute_poset()
+        sage: H = P._hasse_diagram
+        sage: D = H._leq_storage
+        sage: max_chain_poly(D)
+        4  0 2 8 6
+    """
+    cdef Py_ssize_t n = len(positions)
+    cdef Py_ssize_t i, j
+    cdef set pi
+
+    q = Fmpz_poly([0, 1])
+    zero = Fmpz_poly(0)
+    one = Fmpz_poly(1)
+
+    cdef list chain_polys = [zero] * n
+
+    # chain_polys[i] will be the generating function for the
+    # chains with lowest vertex i (in the labelling of the
+    # Hasse diagram).
+    for i in range(n - 1, -1, -1):
+        pi = positions[i]
+        cpi = q if len(pi) == 1 else zero
+        for j in pi:
+            cpi += q * chain_polys[j]
+        chain_polys[i] = cpi
+    total = zero
+    for i in range(n):
+        total += chain_polys[i]
+    return total
+
+
 cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     """
     Compute the Möbius matrix of a poset by a specific triangular inversion.

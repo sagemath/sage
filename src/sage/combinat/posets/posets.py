@@ -7499,13 +7499,17 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: parent(_)
             Univariate Polynomial Ring in q over Rational Field
         """
-        from sage.functions.other import binomial
         R = PolynomialRing(QQ, 'q')
         q = R.gen()
 
-        top_level = self.level_sets()[-1]
-        return sum(binomial(q - 2, len(c) - 1)
-                   for c in self.chains() if c and c[-1] in top_level)
+        g = self._hasse_diagram.max_chain_polynomial()
+        n = g.degree()
+        f = R(g[max(n, 1)])
+        while n > 1:
+            f = (q - n) * f
+            n -= 1
+            f = g[n] + f / n
+        return f
 
     def M_triangle(self):
         r"""
