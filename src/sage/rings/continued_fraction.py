@@ -1470,10 +1470,26 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             False
             sage: b >= d
             False
+
+        Distinct expansions can agree on the first
+        ``preperiod + 2 * period`` quotients (:issue:`43195`)::
+
+            sage: a = continued_fraction(((), (2, 1, 1)))
+            sage: b = continued_fraction(((2, 1, 1, 2), (1,)))
+            sage: a == b
+            False
+            sage: a > b
+            True
         """
         if isinstance(other, ContinuedFraction_periodic):
-            n = max(len(self._x1) + 2 * len(self._x2),
-                    len(other._x1) + 2 * len(other._x2))
+            # Ultimately periodic sequences are equal everywhere iff they agree
+            # on the first max(preperiod) + lcm(period) partial quotients.
+            # ``preperiod + 2 * period`` is not always enough (:issue:`43195`).
+            from math import gcd
+            p = max(len(self._x1), len(other._x1))
+            q1 = len(self._x2)
+            q2 = len(other._x2)
+            n = p + q1 // gcd(q1, q2) * q2
             for i in range(n):
                 a = self.quotient(i)
                 b = other.quotient(i)
