@@ -156,6 +156,31 @@ class MPolynomial_element(MPolynomial):
             sage: a(()).parent()
             Rational Field
 
+        A value for a variable that does not occur in the polynomial does
+        not get in the way when it cannot be combined with the other values
+        (:issue:`39080`)::
+
+            sage: R.<a,b> = PolynomialRing(QQ, implementation='generic')
+            sage: S.<c,d> = PolynomialRing(QQ, implementation='generic')
+            sage: b(a, d)
+            d
+            sage: b.subs(b=d)
+            d
+            sage: (b^2 + 1).subs(b=d)
+            d^2 + 1
+            sage: _.parent() is S
+            True
+            sage: a.subs(a=c)
+            c
+
+        Otherwise the first value still decides the parent of the result, so
+        substituting a constant gives a polynomial::
+
+            sage: b.subs(b=1).parent() is R
+            True
+            sage: b(c, 1).parent() is S
+            True
+
         AUTHORS:
 
         - David Kohel (2005-09-27)
@@ -172,19 +197,34 @@ class MPolynomial_element(MPolynomial):
             raise TypeError("x must be of correct length")
         if n == 0:
             return self.constant_coefficient()
+        monomials = self.element().dict()
+
+        def evaluate(K):
+            try:
+                y = K.zero()
+                one = K.one()
+            except (AttributeError, RuntimeError):
+                y = K(0)
+                one = K(1)
+            for m, c in monomials.items():
+                y += c * prod((v ** e for v, e in zip(x, m) if e), one)
+            return y
+
         try:
             K = x[0].parent()
         except AttributeError:
             K = self.parent().base_ring()
         try:
-            y = K.zero()
-            one = K.one()
-        except (AttributeError, RuntimeError):
-            y = K(0)
-            one = K(1)
-        for m, c in self.element().dict().items():
-            y += c * prod((v ** e for v, e in zip(x, m) if e), one)
-        return y
+            return evaluate(K)
+        except TypeError:
+            # The first value can belong to a variable that does not occur in
+            # self, like the generators that subs() passes for the variables
+            # it keeps. If it cannot be combined with the other values, take
+            # the parent from the value of the first variable that does occur.
+            used = next((i for i in range(n) if any(m[i] for m in monomials)), 0)
+            if not used or not hasattr(x[used], "parent"):
+                raise
+        return evaluate(x[used].parent())
 
     def _richcmp_(self, other, op) -> bool:
         """
