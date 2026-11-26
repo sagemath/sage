@@ -3399,15 +3399,16 @@ def _to_powersum(f, scalar_basis, is_sparse):
         return P.realization_of().p()
 
     def convert(x):
+        P = x.parent()
         # Only combine a genuine scalar base-ring coefficient into the
         # algebra.  Symmetric functions, in any basis, and tensor-valued
         # data are converted factorwise instead.
         if (not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
                 and HopfAlgebrasWithBasis(
-                    x.parent().base_ring()).TensorProducts()
-                    not in x.parent().categories()):
+                    P.base_ring()).TensorProducts()
+                    not in P.categories()):
             x = scalar_basis(x)
-        P = x.parent()
+            P = x.parent()
         p = powersum(P)
         try:
             return p(x)
