@@ -93,7 +93,7 @@ from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import Vector
-from sage.structure.element cimport have_same_parent
+from sage.structure.element cimport RingElement, have_same_parent
 from sage.misc.verbose import verbose
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, IntegerRing_class
@@ -14050,11 +14050,12 @@ cdef class Matrix(Matrix1):
             C.set_immutable()
             return C
 
-        # Use classical=True to ensure that we don't get a permuted L.
+        # Use algorithm="classical" to ensure that we don't get a
+        # permuted L.
         cdef Matrix L  # block_ldlt() results
         cdef list d    # block_ldlt() results
         try:
-            _, L, d = self._block_ldlt(True)
+            _, L, d = self._block_ldlt(True, False)
         except ValueError:
             # If the matrix was positive-definite, that would
             # have worked.
@@ -15177,7 +15178,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg.format(d))
         return L, vector(L.base_ring(), d)
 
-    cdef tuple _block_ldlt(self, bint classical):
+    cdef tuple _block_ldlt(self, bint classical, bint greedy):
         r"""
         Perform a user-unfriendly block-`LDL^{T}` factorization of the
         Hermitian matrix `A`
@@ -15207,15 +15208,14 @@ cdef class Matrix(Matrix1):
         cdef str cache_string = "_block_ldlt"
         if classical:
             cache_string += "_classical"
+        elif greedy:
+            cache_string += "_greedy"
         cdef tuple result = self.fetch(cache_string)
         if result is not None:
             return result
 
         cdef Py_ssize_t i, j, k  # loop indices
-        cdef Py_ssize_t r = 0    # another row/column index (set before use)
-
-        # We need to construct 1x1 and 2x2 matrices to stick in d.
-        from sage.matrix.constructor import matrix
+        cdef Py_ssize_t r        # another row/column index
 
         # We have to make at least one copy of the input matrix so
         # that we can change the base ring to its fraction field. Both
@@ -15238,7 +15238,7 @@ cdef class Matrix(Matrix1):
         cdef Matrix A  # A copy of the input matrix
         cdef Matrix E  # Top-left diagonal block
 
-        if self.base_ring() == ring:
+        if self.base_ring() is ring:
             A = self.__copy__()
         else:
             # Changing the ring of a large matrix can take a loooong
@@ -15246,22 +15246,32 @@ cdef class Matrix(Matrix1):
             # might waste here checking if we need to do it.
             A = self.change_ring(ring)
 
-        zero = ring.zero()
-        one = ring.one()
+        # Elements of SR.fraction_field() == SR are not FieldElements,
+        # only CommutativeRingElements. And elements of RealField are
+        # not even commutative! This is not so surprising given that
+        # floating point arithmetic fails to have every nice property.
+        cdef RingElement zero = ring.zero()
+        cdef RingElement one = ring.one()
 
-        # The magic constant (1 + sqrt(17))/8 used by Bunch-Kaufman.
-        # This is mainly useful for numerical stability, so we use its
-        # numerical approximation to speed up the comparisons we're
-        # going to make with it.
-        cdef double alpha = 0.6403882032022076
+        # The current 1x1 pivot candidate and its absolute value.
+        cdef RingElement A_kk, A_kk_abs
 
-        # Likewise, these two values are only ever used in comparisons
-        # that determine which row/column swaps we make. It's quite
-        # pointless to make long, slow comparisons when we happen to be
-        # working in exact arithmetic where the process is stable anyway.
-        # So, we define these constants to be C doubles, forcing any
-        # comparisons to be made quickly.
-        cdef double omega_1, omega_r = 0
+        # Alternate diagonal pivot candidate.
+        cdef RingElement A_rr, A_rr_abs
+
+        # Used in both row searches, to hold the (absolute) value of
+        # either A_kj or A_rj.
+        cdef RingElement A_ij, A_ij_abs
+
+        # The magic constant used by Bunch-Kaufman. We use a rational
+        # approximation (rounded down a tad) to avoid the square root
+        # our ring would need for (1 + sqrt(17))/8. The absolute value
+        # ensures a real parent; in UCF = UniversalCyclotomicField(),
+        # UCF(1) < UCF(2) works, but UFC(1) < UCF(2).abs() does not.
+        cdef RingElement alpha = (ring(3201941)/ring(5000000)).abs()
+
+        # Row/column maxima that determine row/column swaps.
+        cdef RingElement omega_1, omega_r
 
         # Keep track of the permutations and diagonal blocks in a vector
         # rather than in a matrix, for efficiency.
@@ -15306,12 +15316,14 @@ cdef class Matrix(Matrix1):
                 k += 1
                 continue
 
-            if classical:
+            if classical or (greedy and A_kk):
                 try:
-                    # This is a "step zero" that doesn't appear in the published algorithms.
-                    # It's a back door that lets us escape with only the standard non-block
-                    # non-pivoting LDL^T factorization. This allows us to implement e.g.
-                    # indefinite_factorization() in terms of this method.
+                    # This is a "step zero" that doesn't appear in the
+                    # published algorithms. It's a back door that
+                    # lets us escape with only the standard non-block
+                    # non-pivoting LDL^T factorization. This allows us
+                    # to implement e.g. indefinite_factorization() in
+                    # terms of this method.
                     E = one_by_one_space(A_kk)
                     E.set_immutable()
                     d.append(E)
@@ -15319,29 +15331,43 @@ cdef class Matrix(Matrix1):
                     k += 1
                     continue
                 except ZeroDivisionError:
-                    raise ValueError("matrix has no classical LDL^T factorization")
+                    raise ValueError(
+                        "matrix has no classical LDL^T factorization"
+                    )
 
             # Find the largest subdiagonal entry (in magnitude) in the
             # kth column. This occurs prior to Step (1) in Higham,
             # but is part of Step (1) in Bunch and Kaufman. We adopt
             # Higham's "omega" notation instead of B&K's "lambda"
-            # because "lambda" can lead to some confusion.
+            # because "lambda" can lead to some confusion. The abs()
+            # ensures a real parent -- see the definition of alpha.
+            omega_1 = zero.abs()
+
+            # We set r = j > k >= 0 in the loop if we find a nonzero
+            # subdiagonal entry. If r is still zero at the end, that
+            # indicates that the entire subdiagonal is zero.
             #
-            # Note: omega_1 is defined as a C double, but the abs()
-            # below would make a complex number approximate anyway.
-            omega_1 = 0
-            for i in range(k+1, n):
-                a_ik_abs = A.get_unsafe(i, k).abs()
-                if a_ik_abs > omega_1:
-                    omega_1 = a_ik_abs
+            # Testing the integer r is faster than testing omega_1.
+            r = 0
+            for j in range(k+1, n):
+                # Imagine i = k for A_ij to make sense. We scan
+                # the row instead of the column for speed; matrices in
+                # Sage are row-based.
+                A_ij = A.get_unsafe(k, j)
+                A_ij_abs = A_ij.abs()
+                if A_ij_abs > omega_1:
+                    omega_1 = A_ij_abs
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
                     # branch of Higham's Step (1), separate from
                     # his computation of omega_1.
-                    r = i
+                    r = j
+                    if greedy:
+                        # Any nonzero entry will do
+                        break
 
-            if omega_1 == 0:
+            if r == 0:
                 # In this case, our matrix looks like
                 #
                 #   [ a 0 ]
@@ -15357,7 +15383,56 @@ cdef class Matrix(Matrix1):
                 k += 1
                 continue
 
-            if A_kk.abs() > alpha*omega_1:
+            if greedy:
+                # If r == k+1, the top-left 2x2 block is already a
+                # valid pivot, but it seems prudent to search the
+                # diagonal for 1x1 pivots first, falling back to the
+                # 2x2 block only when no 1x1 block is found.
+                for j in range(k+1, n):
+                    A_ij = A.get_unsafe(j, j)
+                    if A_ij:
+                        # 1x1 pivot, swap rows/cols k,j
+                        E = one_by_one_space(A_ij)
+                        E.set_immutable()
+                        d.append(E)
+                        A.swap_columns_c(k, j)
+                        A.swap_rows_c(k, j)
+                        p_k = p[k]
+                        p[k] = p[j]
+                        p[j] = p_k
+                        _block_ldlt_pivot1x1(A, k)
+                        k += 1
+                        # We'd like to "continue" the "k" loop here,
+                        # but python doesn't make it easy. Instead we
+                        # break the inner loop, bypass the "else",
+                        # and wind up at the outer continue.
+                        break
+                else:
+                    # The diagonal is zero and the top-left 2x2 block is
+                    # zero, but r being nonzero means that A[k,r] is too.
+                    # Swap rows/cols k+1,r and do a 2x2 pivot.
+                    A.swap_columns_c(k+1, r)
+                    A.swap_rows_c(k+1, r)
+                    p_k = p[k+1]
+                    p[k+1] = p[r]
+                    p[r] = p_k
+                    E = A[k:k+2, k:k+2]
+                    E.set_immutable()
+                    d.append(E)
+                    _block_ldlt_pivot2x2(A, k)
+                    k += 2
+                    continue
+
+                # This is the "continue" from the non-zero row search.
+                continue
+
+            # Bunch-Kaufman
+            # =============
+            # We're past the shortcuts for the classical/greedy
+            # algorithms, and are entering Bunch-Kaufman.
+
+            A_kk_abs = A_kk.abs()  # Store to avoid an extra abs()
+            if A_kk_abs > alpha*omega_1:
                 # This is the first case in Higham's Step (1), and B&K's
                 # Step (2). Note that we have skipped the part of B&K's
                 # Step (1) where we determine "r", since "r" is not yet
@@ -15377,19 +15452,18 @@ cdef class Matrix(Matrix1):
             # off-diagonal entry (in magnitude) in column "r" of the
             # active submatrix. Since the matrix is Hermitian, we search
             # row "r", whose corresponding entries have the same
-            # magnitudes.
-            #
-            # Note: omega_r is defined as a C double, but the abs()
-            # below would make a complex number approximate anyway.
-            omega_r = 0
+            # magnitudes. The abs() ensures a real parent -- see the
+            # definition of alpha.
+            omega_r = zero.abs()
             for j in range(k, n):
                 if j == r:
                     continue
-                a_rj_abs = A.get_unsafe(r, j).abs()
-                if a_rj_abs > omega_r:
-                    omega_r = a_rj_abs
+                # Imagine i = r for A_rj_abs to make sense.
+                A_ij_abs = A.get_unsafe(r, j).abs()
+                if A_ij_abs > omega_r:
+                    omega_r = A_ij_abs
 
-            if A_kk.abs()*omega_r >= alpha*(omega_1**2):
+            if A_kk_abs*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
                 E = one_by_one_space(A_kk)
                 E.set_immutable()
@@ -15430,41 +15504,7 @@ cdef class Matrix(Matrix1):
             E = A[k:k+2, k:k+2]
             E.set_immutable()
             d.append(E)
-
-            C = A[k+2:n, k:k+2]
-            B = A[k+2:, k+2:]
-
-            # We don't actually need the inverse of E, what we really need
-            # is C*E.inverse(), and that can be found by setting
-            #
-            #   X = C*E.inverse()   <====>   XE = C.
-            #
-            # Then "X" can be found easily by solving a system.  Note: I
-            # do not actually know that sage solves the system more
-            # intelligently, but this is still The Right Thing To Do.
-            CE_inverse = E.solve_left(C)
-
-            schur_complement = B - (CE_inverse*C.conjugate_transpose())
-
-            # Compute the Schur complement that we'll work on during
-            # the following iteration, and store it back in the lower-
-            # right-hand corner of "A".
-            for i in range(n-k-2):
-                for j in range(i+1):
-                    A.set_unsafe(k+2+i, k+2+j, schur_complement[i, j])
-                    A.set_unsafe(k+2+j, k+2+i, schur_complement[j, i])
-
-            # The on- and above-diagonal entries of "L" will be fixed
-            # later, so we only need to worry about the lower-left entry
-            # of the 2x2 identity matrix that belongs at the top of the
-            # new column of "L".
-            A.set_unsafe(k+1, k, zero)
-            for i in range(n-k-2):
-                for j in range(2):
-                    # Store the new (k and (k+1)st) columns of "L" within
-                    # the lower-left-hand corner of "A".
-                    A.set_unsafe(k+i+2, k+j, CE_inverse[i, j])
-
+            _block_ldlt_pivot2x2(A, k)
             k += 2
 
         for i in range(n):
@@ -15482,42 +15522,63 @@ cdef class Matrix(Matrix1):
         self.cache(cache_string, result)
         return result
 
-    def block_ldlt(self, classical=False):
+    def block_ldlt(self, classical=False, algorithm=None):
         r"""
         Compute a block-`LDL^{T}` factorization of a Hermitian
         matrix.
 
-        The standard `LDL^{T}` factorization of a positive-definite
-        matrix `A` factors it as `A = LDL^{T}` where `L` is
-        unit-lower-triangular and `D` is diagonal. If one allows
-        row/column swaps via a permutation matrix `P`, then this
-        factorization can be extended to many positive-semidefinite
-        matrices `A` via the factorization `P^{T}AP = LDL^{T}` that
-        places the zeros at the bottom of `D` to avoid division by
-        zero. These factorizations extend easily to complex Hermitian
-        matrices when one replaces the transpose by the
-        conjugate-transpose.
+        The classical `LDL^{T}` factorization of a real symmetric
+        positive-definite matrix `A` is `A = LDL^{T}`, where `L` is
+        unit-lower-triangular and `D` is diagonal. If we are allowed
+        to make row/column swaps using a permutation matrix `P`, this
+        extends to all symmetric `A` having nonzero diagonal,
+        producing `P^{T}AP = LDL^{T}`. If we furthermore allow `D` to
+        contain `2 \times 2` blocks, then every real symmetric `A` has
+        such a factorization. The ideas extend easily to complex
+        Hermitian matrices using the conjugate-transpose.
 
-        However, we can go one step further. If, in addition, we allow
-        `D` to potentially contain `2 \times 2` blocks on its
-        diagonal, then every real or complex Hermitian matrix `A` can
-        be factored as `A = PLDL^{*}P^{T}`. When the row/column swaps
-        are made intelligently, this process is numerically stable
-        over inexact rings like ``RDF``.  Bunch and Kaufman describe
-        such a "pivot" scheme that is suitable for the solution of
-        Hermitian systems, and that is how we choose our row and
-        column swaps.
+        When the row/column swaps are chosen intelligently, there are
+        stability guarantees for the solution of `Ax = b` over an
+        inexact ring using the factored matrix. The method by which
+        the swaps are chosen is called a pivot scheme. Choosing the
+        best row/column -- called complete pivoting, as in Gaussian
+        elimination -- would involve scanning the entire matrix at
+        each step. To avoid that, Bunch and Kaufman devised a pivot
+        scheme that retains some stability guarantees while scanning
+        only one row/column at each step. This "bunch-kaufman"
+        algorithm is used by default in inexact rings.
+
+        Over exact rings, where stability is less of an issue, a
+        "greedy" algorithm is used instead. With a preference for `1
+        \times 1` blocks, the greedy algorithm takes the first usable
+        pivot. This will scan fewer entries and making fewer
+        comparisons at each step, ensuring only that we do not divide
+        by zero.
 
         INPUT:
 
-        - ``classical`` -- boolean (default: ``False``); whether or not to
-          attempt a classical non-block `LDL^{T}` factorization with no
-          row/column swaps.
+        - ``algorithm`` -- string (default: ``None``); one of
+
+          - ``None`` -- use the greedy algorithm in exact and
+            symbolic rings, and Bunch-Kaufman partial pivoting
+            everywhere else.
+
+          - ``"bunch-kaufman"`` -- use Bunch-Kaufman partial pivoting.
+
+          - ``"greedy"`` -- use a greedy algorithm that chooses the
+            first usable (does not divide by zero) pivot.
+
+          - ``"classical"`` -- attempts a classical non-block `LDL^{T}`
+            factorization with no row/column swaps.
+
+        - ``classical`` -- boolean (default: ``False``); deprecated
+          alias for ``algorithm="classical"``.
+
 
         .. WARNING::
 
             Not all matrices have a classical `LDL^{T}` factorization.
-            Set ``classical=True`` at your own risk, preferably after
+            Set ``algorithm="classical"`` at your own risk, preferably after
             verifying that your matrix is positive-definite and (over
             inexact rings) not ill-conditioned.
 
@@ -15535,16 +15596,29 @@ cdef class Matrix(Matrix1):
         The matrix `L` is cached, hence immutable. So is `D` when it
         consists of a single block.
 
-        With ``classical=True``, the permutation matrix `P` is always
-        an identity matrix and the diagonal blocks are always
+        With ``algorithm="classical"``, the permutation matrix `P` is
+        always an identity matrix and the diagonal blocks are always
         one-by-one. A :exc:`ValueError` is raised if the matrix has no
         classical `LDL^{T}` factorization.
 
         ALGORITHM:
 
         We essentially follow "Algorithm A" in the paper by Bunch and
-        Kaufman [BK1977]_ that describes the stable pivoting strategy.
-        The same scheme is described by Higham [Hig2002]_.
+        Kaufman [BK1977]_, the partial pivoting strategy. The same
+        scheme is described by Higham [Hig2002]_. Trap doors for the
+        classical and greedy algorithms have been inserted to exit the
+        loop sooner than usual:
+
+          * The classical algorithm blindly attempts a `1 \times 1`
+            pivot at the beginning of each iteration.
+
+          * The greedy algorithm waits for the scan of the current row
+            to proceed; if the row is identically zero, the iteration
+            is skipped. If not, the first nonzero `1 \times 1`
+            diagonal entry is permuted into place and used as the
+            pivot. If all diagonal entries are zero, a `2 \times 2`
+            pivot is constructed using the nonzero entry found in the
+            row scan.
 
         .. SEEALSO::
 
@@ -15557,14 +15631,35 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES:
 
-        This three-by-three real symmetric matrix has one positive, one
-        negative, and one zero eigenvalue -- so it is not any flavor of
-        (semi)definite, yet we can still factor it::
+        This three-by-three real symmetric matrix has one positive,
+        one negative, and one zero eigenvalue -- so it is not any
+        flavor of (semi)definite, yet we can still factor it. The
+        default "greedy" algorithm over ``QQ`` and "bunch-kaufman"
+        give two different but valid answers::
 
             sage: A =  matrix(QQ, [[0, 1, 0],
             ....:                  [1, 1, 2],
             ....:                  [0, 2, 0]])
+
             sage: P,L,D = A.block_ldlt()
+            sage: P
+            [0 1 0]
+            [1 0 0]
+            [0 0 1]
+            sage: L
+            [1 0 0]
+            [1 1 0]
+            [2 2 1]
+            sage: D
+            [ 1| 0| 0]
+            [--+--+--]
+            [ 0|-1| 0]
+            [--+--+--]
+            [ 0| 0| 0]
+            sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+            sage: P,L,D = A.block_ldlt(algorithm="bunch-kaufman")
             sage: P
             [1 0 0]
             [0 1 0]
@@ -15589,7 +15684,8 @@ cdef class Matrix(Matrix1):
             sage: H = RDF(1e200)
             sage: A = matrix(RDF, [[0, 1, 0], [1, 1, H], [0, H, 1]])
             sage: P, L, D = A.block_ldlt()
-            sage: any(x.is_infinity() or x.is_NaN() for x in L.list() + D.list())
+            sage: any(x.is_infinity() or x.is_NaN()
+            ....:     for x in L.list() + D.list())
             False
             sage: P.T * A * P == L * D * L.T
             True
@@ -15599,7 +15695,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, [ [0,1],
             ....:                  [1,0] ])
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
@@ -15613,7 +15709,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQbar, [ [ 0,I],
             ....:                     [-I,0] ])
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
@@ -15630,11 +15726,11 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(RDF, 2, 2, [ [1e-10, 1    ],
             ....:                         [1    , 2e-10] ])
-            sage: _,L,D = A.block_ldlt(classical=True)
+            sage: _,L,D = A.block_ldlt(algorithm="classical")
             sage: L*D*L.T
             [1e-10   1.0]
             [  1.0   0.0]
-            sage: A.block_ldlt()                                                        # needs scipy
+            sage: A.block_ldlt()  # needs scipy
             (
             [1.0 0.0]  [1.0 0.0]  [1e-10   1.0]
             [0.0 1.0], [0.0 1.0], [  1.0 2e-10]
@@ -15662,25 +15758,31 @@ cdef class Matrix(Matrix1):
             ....:                 [-2,  6,  3,  8]])
             sage: A[0:3,0:3].det() == 0
             True
-            sage: A.block_ldlt(classical=True)
+            sage: A.block_ldlt(algorithm="classical")
             Traceback (most recent call last):
             ...
             ValueError: matrix has no classical LDL^T factorization
-            sage: A.block_ldlt()
-            (
-            [1 0 0 0]  [     1      0      0      0]
-            [0 0 1 0]  [ -2/21      1      0      0]
-            [0 0 0 1]  [   5/7  39/41      1      0]
-            [0 1 0 0], [   4/7 87/164  48/79      1],
-            <BLANKLINE>
-            [     21|      0|      0|      0]
-            [-------+-------+-------+-------]
-            [      0| 164/21|      0|      0]
-            [-------+-------+-------+-------]
-            [      0|      0|-237/41|      0]
-            [-------+-------+-------+-------]
-            [      0|      0|      0| 25/316]
-            )
+            sage: P,L,D = A.block_ldlt()
+            sage: P.T*A*P == L*D*L.T
+            True
+            sage: P
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 0 1]
+            [0 0 1 0]
+            sage: L
+            [      1       0       0       0]
+            [    5/7       1       0       0]
+            [  -2/21    52/9       1       0]
+            [    4/7     1/3 -15/316       1]
+            sage: D
+            [    21|     0|     0|     0]
+            [------+------+------+------]
+            [     0|   9/7|     0|     0]
+            [------+------+------+------]
+            [     0|     0|-316/9|     0]
+            [------+------+------+------]
+            [     0|     0|     0|25/316]
 
         An indefinite symmetric matrix that happens to have a
         classical factorization::
@@ -15690,7 +15792,7 @@ cdef class Matrix(Matrix1):
             ....:                 [ 9, -16,  28,  16, -40],
             ....:                 [ 6, -11,  16,   9, -19],
             ....:                 [-9,  17, -40, -19,  68]])
-            sage: A.block_ldlt(classical=True)[1:]
+            sage: A.block_ldlt(algorithm="classical")[1:]
             (
                               [ 3| 0| 0| 0| 0]
                               [--+--+--+--+--]
@@ -15706,11 +15808,11 @@ cdef class Matrix(Matrix1):
         An indefinite Hermitian matrix that happens to have a
         classical factorization::
 
-            sage: F.<I> = QuadraticField(-1)                                            # needs sage.rings.number_field
-            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],                           # needs sage.rings.number_field
+            sage: F.<I> = QuadraticField(-1)
+            sage: A = matrix(F, [[      2, 4 - 2*I, 2 + 2*I],
             ....:                [4 + 2*I,       8,    10*I],
             ....:                [2 - 2*I,   -10*I,      -3]])
-            sage: A.block_ldlt(classical=True)[1:]                                      # needs sage.rings.number_field
+            sage: A.block_ldlt(algorithm="classical")[1:]
             (
                                        [ 2| 0| 0]
                                        [--+--+--]
@@ -15721,91 +15823,18 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        All three factors should be the identity when the input matrix is::
-
-            sage: n = ZZ.random_element(6)
-            sage: I = matrix.identity(QQ,n)
-            sage: P,L,D = I.block_ldlt()
-            sage: P == I and L == I and D == I
-            True
-
-        Ensure that a "random" real symmetric matrix is factored correctly::
-
-            sage: n = ZZ.random_element(6)
-            sage: A = matrix.random(QQ, n)
-            sage: A = A + A.transpose()
-            sage: P,L,D = A.block_ldlt()
-            sage: A == P*L*D*L.transpose()*P.transpose()
-            True
-
-        Ensure that a "random" complex Hermitian matrix is factored
-        correctly::
-
-            sage: n = ZZ.random_element(6)
-            sage: F = QuadraticField(-1, 'I')
-            sage: A = matrix.random(F, n)
-            sage: A = A + A.conjugate_transpose()
-            sage: P,L,D = A.block_ldlt()
-            sage: A == P*L*D*L.conjugate_transpose()*P.conjugate_transpose()
-            True
-
-        Ensure that a "random" complex positive-semidefinite matrix is
-        factored correctly and that the resulting block-diagonal matrix
-        is in fact diagonal::
-
-            sage: n = ZZ.random_element(6)
-            sage: F = QuadraticField(-1, 'I')
-            sage: A = matrix.random(F, n)
-            sage: A = A * A.conjugate_transpose()
-            sage: P,L,D = A.block_ldlt()
-            sage: A == P * L * D * L.conjugate_transpose() * P.conjugate_transpose()
-            True
-            sage: diagonal_matrix(D.diagonal()) == D
-            True
-
-        The factorization should be a no-op on diagonal matrices::
-
-            sage: n = ZZ.random_element(6)
-            sage: A = matrix.diagonal(random_vector(QQ, n))
-            sage: I = matrix.identity(QQ, n)
-            sage: P,L,D = A.block_ldlt()
-            sage: P == I and L == I and A == D
-            True
-
-        All three factors have the same base ring, even when they're
-        trivial::
-
-            sage: A = matrix(QQ,0,[])
-            sage: P,L,D = A.block_ldlt()
-            sage: P.base_ring() == L.base_ring()
-            True
-            sage: L.base_ring() == D.base_ring()
-            True
-
-        Ensure that a "random" real positive-definite symmetric matrix
-        has a classical factorization that agrees with
-        :meth:`indefinite_factorization`::
-
-            sage: n = ZZ.random_element(6)
-            sage: A = matrix.random(QQ, n)
-            sage: A = A*A.transpose() + matrix.identity(QQ, n)
-            sage: _,L,D = A.block_ldlt(classical=True)
-            sage: l,d = A.indefinite_factorization()
-            sage: L == l and D == matrix.diagonal(d)
-            True
-
         The cached factorization, which :meth:`cholesky` also uses,
         cannot be modified::
 
             sage: A = matrix(QQ, [[4, 2], [2, 5]])
-            sage: P,L,D = A.block_ldlt(classical=True)
+            sage: P,L,D = A.block_ldlt(algorithm="classical")
             sage: L.is_immutable()
             True
             sage: L[1, 0] = 100
             Traceback (most recent call last):
             ...
             ValueError: matrix is immutable; please change a copy instead...
-            sage: A.block_ldlt(classical=True)[1] is L
+            sage: A.block_ldlt(algorithm="classical")[1] is L
             True
             sage: A.cholesky()
             [2 0]
@@ -15825,10 +15854,47 @@ cdef class Matrix(Matrix1):
             True
             sage: matrix(QQ, 0, 0).block_ldlt()
             ([], [], [])
+
+        An example that can incorrectly take the second 1x1 pivot
+        branch if do the comparison (inf >= inf) using C doubles::
+
+            sage: A = matrix(RR, [[RR('1e150'), RR('1e200')],
+            ....:                 [RR('1e200'), RR('1e150')]])
+            sage: P, L, D = A.block_ldlt()
+            sage: (P.T*A*P - L*D*L.T).is_zero()
+            True
+
+        An example with entries too small to represent as a C double::
+
+            sage: t = QQ(1) / 2^2000
+            sage: A = matrix(QQ, [[0, t],
+            ....:                 [t, 0]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
         """
         cdef Matrix P, L, D   # output matrices
 
-        p, L, d = self._block_ldlt(classical)
+        if classical:
+            from sage.misc.superseded import deprecation
+            deprecation(1, 'classical=True is deprecated, ' +
+                           'use algorithm="classical" instead')
+            algorithm = "classical"
+
+        if algorithm is None:
+            R = self.base_ring()
+            if R.is_exact() or isinstance(R, SymbolicRing):
+                algorithm = "greedy"
+            else:
+                algorithm = "bunch-kaufman"
+
+        if algorithm == "classical":
+            p, L, d = self._block_ldlt(True, False)
+        elif algorithm == "bunch-kaufman":
+            p, L, d = self._block_ldlt(False, False)
+        elif algorithm == "greedy":
+            p, L, d = self._block_ldlt(False, True)
+
         MS = L.matrix_space()
         P = MS.matrix(lambda i, j: p[j] == i)
 
@@ -15871,7 +15937,11 @@ cdef class Matrix(Matrix1):
             return True  # vacuously
 
         cdef list d
-        _, _, d = self._block_ldlt(False)
+        cdef bint greedy = False
+        if R.is_exact() or isinstance(R, SymbolicRing):
+            # mimic how block_ldlt() chooses an algorithm
+            greedy = True
+        _, _, d = self._block_ldlt(False, greedy)
 
         # Check each 1x1 block for a nonpositive (negative) entry. If
         # we don't find any, the matrix is positive-(semi)definite. The
@@ -21099,7 +21169,7 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
     to return zero/one so that ``1`` can be used to indicate that
     a python exception occurred.
     """
-    cdef Py_ssize_t i, j  # dumy loop indices
+    cdef Py_ssize_t i, j  # loop indices
     cdef Py_ssize_t n = A._nrows
     pivot = A.get_unsafe(k, k)
 
@@ -21122,5 +21192,59 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
         A.set_unsafe(k+i+1,
                      k,
                      A.get_unsafe(k+i+1, k)/ pivot)
+
+    return 0
+
+
+cdef inline bint _block_ldlt_pivot2x2(Matrix A, Py_ssize_t k) except 1:
+    r"""
+    Update the `n`-by-`n` matrix `A` as part of a 2x2 pivot (``E``) in
+    the ``k,k`` position. Relies on the fact that `A` is passed in by
+    reference, since for performance reasons this routine should
+    overwrite its argument.
+
+    There is no return value from this function, as its intended
+    effect is to update the matrix `A` in-place, but we allow it
+    to return zero/one so that ``1`` can be used to indicate that
+    a python exception occurred.
+    """
+    cdef Py_ssize_t i,j  # loop indices
+    cdef Py_ssize_t n = A._nrows
+
+    cdef Matrix E = A[k:k+2, k:k+2]
+    cdef Matrix C = A[k+2:n, k:k+2]
+    cdef Matrix B = A[k+2:, k+2:]
+
+    # We don't actually need the inverse of E, what we really need
+    # is C*E.inverse(), and that can be found by setting
+    #
+    #   X = C*E.inverse()   <====>   XE = C.
+    #
+    # Then "X" can be found easily by solving a system.  Note: I
+    # do not actually know that sage solves the system more
+    # intelligently, but this is still The Right Thing To Do.
+    cdef Matrix CE_inverse = E.solve_left(C)
+    cdef Matrix schur_complement = B - (CE_inverse*C.conjugate_transpose())
+
+    # Compute the Schur complement that we'll work on during
+    # the following iteration, and store it back in the lower-
+    # right-hand corner of "A".
+    for i in range(n-k-2):
+        for j in range(i+1):
+            A.set_unsafe(k+2+i, k+2+j,
+                         schur_complement.get_unsafe(i, j))
+            A.set_unsafe(k+2+j, k+2+i,
+                         schur_complement.get_unsafe(j, i))
+
+    # The on- and above-diagonal entries of "L" will be fixed
+    # later, so we only need to worry about the lower-left entry
+    # of the 2x2 identity matrix that belongs at the top of the
+    # new column of "L".
+    A.set_unsafe(k+1, k, 0*A.get_unsafe(k+1,k))
+    for i in range(n-k-2):
+        for j in range(2):
+            # Store the new (k and (k+1)st) columns of "L" within
+            # the lower-left-hand corner of "A".
+            A.set_unsafe(k+i+2, k+j, CE_inverse.get_unsafe(i, j))
 
     return 0
