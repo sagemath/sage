@@ -588,12 +588,32 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         sage: P
         (3 : a : 1)
         sage: P in E
-        False
-        sage: P in E.base_extend(K)
         True
-        sage: P in X.codomain()
+        sage: P in E.base_extend(K)
         False
+        sage: P in X.codomain()
+        True
         sage: P in X.extended_codomain()
+        False
+
+    Points constructed in ``X`` really lie in that homset (:issue:`37427`)::
+
+        sage: # needs sage.rings.number_field sage.schemes
+        sage: P.parent() is X
+        True
+        sage: P in X
+        True
+        sage: P.codomain() is E
+        True
+        sage: X.zero() in X
+        True
+        sage: all(Q.parent() is X for Q in [P + P, -P, P - P, 2*P])
+        True
+        sage: X(E(0, 0)).parent() is X
+        True
+        sage: P + E(0, 0)
+        (-1/9*a - 1/3 : 2/27*a - 1/9 : 1)
+        sage: (P + E(0, 0)).parent() is X
         True
 
     Check for :issue:`11982`::
@@ -640,7 +660,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             v = v[0]
         if v == 0:
             return self.zero()
-        return self.codomain()._point(self.extended_codomain(), v, **kwds)
+        return self.extended_codomain()._point(self, v, **kwds)
 
     def _repr_(self):
         """
@@ -702,7 +722,8 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             sage: S.zero()
             (0 : 1 : 0)
         """
-        return self.codomain()(0)
+        R = self.value_ring()
+        return self.extended_codomain()._point(self, [R.zero(), R.one(), R.zero()], check=False)
 
     _an_element_ = zero
 
