@@ -1664,8 +1664,8 @@ cdef class Expression(Expression_abc):
         because their numerical values come from mpmath without error
         bounds, are enclosed using ball arithmetic when possible::
 
-            sage: y = RIF(Ei(1)); y
-            1.895117816355937?
+            sage: y = RIF(bessel_J(1/3, 2)); y
+            0.44293981814858?
             sage: y.diameter() > 0
             True
             sage: int(Ei(1)), floor(Ei(3))
@@ -1674,18 +1674,39 @@ cdef class Expression(Expression_abc):
             Traceback (most recent call last):
             ...
             TypeError: unable to simplify to a real interval approximation
+
+        Values which are not finite real numbers have no enclosure::
+
+            sage: RIF(Ei(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to simplify to a real interval approximation
+            sage: RIF(log_integral(-1))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to simplify to a real interval approximation
+            sage: floor(log_integral(-1))
+            floor(log_integral(-1))
         """
         # Errors raised by numerical evaluation functions called from
-        # Pynac reach us as RuntimeError
+        # Pynac reach us as RuntimeError, and interval methods raise
+        # ValueError outside of the domain of the function
         try:
             return self._eval_self(R)
-        except (TypeError, RuntimeError):
+        except (TypeError, ValueError, RuntimeError):
             pass
+        # Ball arithmetic is still needed for functions which have methods
+        # for balls but not for intervals, e.g. the Bessel and
+        # hypergeometric functions
         try:
             from sage.rings.real_arb import RealBallField
-            return R(self._arb_(RealBallField(R.prec())))
+            b = self._arb_(RealBallField(R.prec()))
+            # the result can be a complex ball with zero imaginary part
+            if b.real().is_finite() and b.imag().is_finite():
+                return R(b)
         except (ImportError, TypeError, ValueError, RuntimeError):
-            raise TypeError("unable to simplify to a real interval approximation")
+            pass
+        raise TypeError("unable to simplify to a real interval approximation")
 
     def _complex_mpfi_(self, R):
         """
@@ -1705,18 +1726,28 @@ cdef class Expression(Expression_abc):
             Traceback (most recent call last):
             ...
             TypeError: unable to simplify to a complex interval approximation
+            sage: CIF(Ei(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to simplify to a complex interval approximation
         """
         # Errors raised by numerical evaluation functions called from
         # Pynac reach us as RuntimeError
         try:
             return self._eval_self(R)
-        except (TypeError, RuntimeError):
+        except (TypeError, ValueError, RuntimeError):
             pass
+        # Ball arithmetic is still needed for functions which have methods
+        # for complex balls but not for complex intervals, e.g. the
+        # exponential integrals and the Bessel functions
         try:
             from sage.rings.complex_arb import ComplexBallField
-            return R(self._arb_(ComplexBallField(R.prec())))
+            b = self._arb_(ComplexBallField(R.prec()))
+            if b.real().is_finite() and b.imag().is_finite():
+                return R(b)
         except (ImportError, TypeError, ValueError, RuntimeError):
-            raise TypeError("unable to simplify to a complex interval approximation")
+            pass
+        raise TypeError("unable to simplify to a complex interval approximation")
 
     def _arb_(self, R):
         r"""

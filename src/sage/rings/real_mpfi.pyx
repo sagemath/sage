@@ -5159,10 +5159,17 @@ cdef class RealIntervalFieldElement(RingElement):
             1.895117816355937?
             sage: RIF(3).log().Ei().overlaps(RIF(3).log_integral())
             True
+            sage: y = RIF(-2, -1).Ei()
+            sage: RIF(-2).Ei() in y and RIF(-1).Ei() in y
+            True
             sage: RIF(0).Ei()
             Traceback (most recent call last):
             ...
             ValueError: cannot enclose Ei(0) in a real interval
+            sage: RIF(-1, 1).Ei()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose Ei(0.?) in a real interval
         """
         return _ball_eval(self, "Ei")
 
@@ -5176,10 +5183,16 @@ cdef class RealIntervalFieldElement(RingElement):
             2.16358859466720?
             sage: RIF(1/2).log_integral()
             -0.378671043061088?
+            sage: RIF(0).log_integral()
+            0
             sage: RIF(-1).log_integral()
             Traceback (most recent call last):
             ...
             ValueError: cannot enclose log_integral(-1) in a real interval
+            sage: RIF(1/2, 3/2).log_integral()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose log_integral(1.?) in a real interval
         """
         return _ball_eval(self, "log_integral")
 

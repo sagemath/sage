@@ -76,19 +76,28 @@ def _evalf_method_or_mpmath(name, z, function, parent, **kwds):
 
     Real and complex balls, as well as real intervals, implement the
     exponential integrals with rigorous error bounds, which mpmath does
-    not provide.
+    not provide. The method is called on ``z`` converted to ``parent``, so
+    that the result has the requested precision.
 
     EXAMPLES::
 
+        sage: # needs mpmath sage.libs.flint
         sage: from sage.functions.exp_integral import _evalf_method_or_mpmath
-        sage: from mpmath import li
+        sage: from mpmath import ei, li
         sage: _evalf_method_or_mpmath('log_integral', RIF(3), li, RIF)
         2.16358859466720?
-        sage: _evalf_method_or_mpmath('log_integral', RR(3), li, RR)            # needs mpmath
+        sage: _evalf_method_or_mpmath('log_integral', RR(3), li, RR)
         2.16358859466719
+        sage: _evalf_method_or_mpmath('Ei', RBF(1), ei, RealBallField(100))
+        [1.89511781635593675546652093433 +/- 2.60e-30]
     """
     method = getattr(z, name, None)
-    if method is not None:
+    if callable(method):
+        if parent is not None and parent is not z.parent():
+            try:
+                method = getattr(parent(z), name, method)
+            except (TypeError, ValueError):
+                pass
         return method()
     return _mpmath_utils_call(function, z, parent=parent, **kwds)
 
@@ -1427,7 +1436,7 @@ class Function_exp_integral(BuiltinFunction):
         Evaluation in real intervals is rigorous. Since `\operatorname{li}(3)
         = \operatorname{Ei}(\log(3))`, the enclosures of both sides overlap::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.libs.flint sage.symbolic
             sage: a = RIF(Ei(log(3))); a
             2.16358859466719?
             sage: a.diameter() > 0
@@ -1435,6 +1444,18 @@ class Function_exp_integral(BuiltinFunction):
             sage: a.overlaps(RIF(log_integral(3)))
             True
             sage: RealIntervalField(200)(Ei(1)).diameter() < 1e-55
+            True
+
+        The uncertainty of an interval argument is kept in the result::
+
+            sage: # needs sage.libs.flint
+            sage: y = Ei(RIF(1, 2))
+            sage: y.parent() is RIF
+            True
+            sage: RIF(1).Ei() in y and RIF(2).Ei() in y
+            True
+            sage: y = log_integral(RIF(2, 3))
+            sage: RIF(2).log_integral() in y and RIF(3).log_integral() in y
             True
         """
         return _evalf_method_or_mpmath('Ei', x, _mpmath_ei, parent)
