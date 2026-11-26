@@ -112,7 +112,6 @@ from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRin
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.misc.cachefunc import cached_method
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -1818,11 +1817,25 @@ class Stream_uninitialized(Stream):
                 vals = c._cache
             i = 0
             for val in vals:
-                if val not in self._coefficient_ring:
+                if not self._is_determined(val):
                     break
                 i += 1
             g.append(i)
         return g
+
+    def _is_determined(self, val):
+        r"""
+        Return whether ``val`` is free of undetermined coefficients.
+
+        A value in an indexed free module may be constructed directly
+        from its coefficients, which can then be undetermined without
+        being coerced into the parent of the value; membership in the
+        coefficient ring is not sufficient for such values.
+        """
+        if isinstance(val, IndexedFreeModuleElement):
+            return not any(e.parent() is self._P or e.parent() is self._PF
+                           for e in val.monomial_coefficients().values())
+        return val in self._coefficient_ring
 
     def __getitem__(self, n):
         """
@@ -1989,12 +2002,7 @@ class Stream_uninitialized(Stream):
 
         def fix_cache(good_cache, j, s, ao):
             if s._cache[ao]:
-                # TODO: perhaps, if not
-                # self._coefficient_ring.has_coerce_map_from(s._cache[ao].parent())
-                # we can be certain that there is still an
-                # undetermined coefficient -- if so, we could replace
-                # the following line for a performance improvement
-                if s._cache[ao] in self._coefficient_ring:
+                if self._is_determined(s._cache[ao]):
                     s._true_order = True
                 return False
             del s._cache[ao]
@@ -2038,8 +2046,8 @@ class Stream_uninitialized(Stream):
                         # realizations, are constructed directly from
                         # their coefficients, which may be undetermined
                         # without being coerced into their parent.
-                        mc = {mon: subs_coefficient(e)
-                              for mon, e in c.monomial_coefficients().items()}
+                        mc = {mon: e for mon, c0 in c.monomial_coefficients().items()
+                              if (e := subs_coefficient(c0))}
                         c = c.parent().element_class(c.parent(), mc)
                         if any(e.parent() is self._PF for e in mc.values()):
                             good = m - i0 - 1
@@ -2064,6 +2072,10 @@ class Stream_uninitialized(Stream):
         Return the equations obtained by setting the elements
         ``eq._approximate_order + offset`` equal to zero, for each
         ``eq`` in ``self._eqs``.
+
+        The search is unbounded: if no equation determines a variable
+        at any degree, this loops forever, computing ever higher
+        coefficients.
 
         EXAMPLES::
 
@@ -3261,8 +3273,8 @@ class Stream_pseudo_diff_mul(Stream_binary):
 
 
 _PLETHYSM_VALUATION_ZERO_MESSAGE = (
-    "can only compute plethysm with a series of valuation 0 for symmetric "
-    "functions of finite support")
+    "can only compute plethysm with a series of positive valuation, "
+    "or of valuation 0 for symmetric functions of finite support")
 
 
 def _finite_support_degree(f):
@@ -3942,8 +3954,10 @@ class Stream_plethysm(Stream_binary):
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
         if HopfAlgebrasWithBasis(R).TensorProducts() in p.categories():
+            # a tensor basis reaching the single sort class comes from
+            # Stream_plethysm_multi, whose factor plethysms have the
+            # unit of the first tensor factor as their outer stream
             self._tensor_power = len(p._sets)
-            # the outer coefficients live in the first tensor factor
             p_f = p._sets[0]
             f = Stream_map_coefficients(
                 f, lambda x: _to_powersum(x, p_f), is_sparse)
@@ -4231,7 +4245,7 @@ class Stream_plethysm_multi(Stream_inexact):
             ....:                     p_outer=tensor([p, p]))
             Traceback (most recent call last):
             ...
-            ValueError: can only compute plethysm with a series of valuation 0 for symmetric functions of finite support
+            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
         """
         from sage.categories.tensor import tensor
         gs = tuple(gs)

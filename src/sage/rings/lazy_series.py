@@ -6980,10 +6980,55 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: F = L(tensor([p[[1]*8], p[[]]]))
             sage: A = S.undefined(0)
             sage: z = S(p[1])
+            sage: H = F(A, z)
             sage: S.define_implicitly([(A, [p[[]]])],
-            ....:     [A - S(QQ(15)/16) - z - F(A,z)/16])
+            ....:     [A - S(QQ(15)/16) - z - H/16])
             sage: A[:5]
             [p[], 2*p[1], 14*p[1, 1], 252*p[1, 1, 1], 5530*p[1, 1, 1, 1]]
+
+        Reading the plethysm held before and during the solve gives the
+        substituted values, both in sparse and in dense representation::
+
+            sage: H[1] == 16*p[1] and H[2] == 224*p[1, 1]
+            True
+            sage: bool(H[2] - 224*p[1, 1])
+            False
+            sage: S2 = LazySymmetricFunctions(p, sparse=False)
+            sage: L2 = LazySymmetricFunctions(tensor([p, p]), sparse=False)
+            sage: F2 = L2(tensor([p[[1]*8], p[[]]]))
+            sage: A2 = S2.undefined(0)
+            sage: z2 = S2(p[1])
+            sage: H2 = F2(A2, z2)
+            sage: S2.define_implicitly([(A2, [p[[]]])],
+            ....:     [A2 - S2(QQ(15)/16) - z2 - H2/16])
+            sage: A2[:5]
+            [p[], 2*p[1], 14*p[1, 1], 252*p[1, 1, 1], 5530*p[1, 1, 1, 1]]
+            sage: H2[1] == 16*p[1] and H2[2] == 224*p[1, 1]
+            True
+
+        A defined series used only as the outer stream of a plethysm is
+        substituted as well::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: S = LazySymmetricFunctions(s)
+            sage: x = S(s[1])
+            sage: B = S.undefined(1)
+            sage: D = S.undefined(1)
+            sage: U = D - x
+            sage: S.define_implicitly([B, D],
+            ....:     [B - x - U(B), D - x - x*x*D])
+            sage: [B[n] for n in range(4)]
+            [0, s[1], 0, s[1, 1, 1] + 2*s[2, 1] + s[3]]
+
+        Outer coefficients whose powersum expansion requires denominators
+        are converted through the fraction field::
+
+            sage: h = SymmetricFunctions(ZZ).h()
+            sage: p = SymmetricFunctions(ZZ).p()
+            sage: S = LazySymmetricFunctions(h)
+            sage: f = 1 / (1 - S(h[2]))
+            sage: [f(S(p[1]))[n] for n in range(5)]
+            [h[], 0, h[2], 0, h[2, 2]]
 
         TESTS::
 
