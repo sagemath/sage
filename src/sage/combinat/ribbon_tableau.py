@@ -16,6 +16,7 @@ Ribbon tableaux
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import functools
+from itertools import combinations
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
@@ -34,8 +35,6 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from . import permutation
 
 
 class RibbonTableau(SkewTableau):
@@ -739,13 +738,19 @@ def graph_implementation_rec(skp, weight, length, function):
     """
     TESTS::
 
-        sage: from sage.combinat.ribbon_tableau import graph_implementation_rec, list_rec
+        sage: from sage.combinat.ribbon_tableau import count_rec, graph_implementation_rec, list_rec
         sage: graph_implementation_rec(SkewPartition([[1], []]), [1], 1, list_rec)
         [[[], [[1]]]]
         sage: graph_implementation_rec(SkewPartition([[2, 1], []]), [1, 2], 1, list_rec)
         [[[], [[2], [1, 2]]]]
         sage: graph_implementation_rec(SkewPartition([[], []]), [0], 1, list_rec)
         [[[], []]]
+
+    A zero ribbon length is not valid for :class:`RibbonTableaux`, but keep
+    the historical result for direct calls to this function::
+
+        sage: graph_implementation_rec(SkewPartition([[2, 1], []]), [1], 0, count_rec)
+        [1]
     """
     if sum(weight) == 0:
         weight = []
@@ -756,15 +761,23 @@ def graph_implementation_rec(skp, weight, length, function):
     outer_len = len(outer)
 
     # Some tests in order to know if the shape and the weight are compatible.
-    if weight and weight[-1] <= len(partp):
-        perms = permutation.Permutations([0] * (len(partp) - weight[-1]) + [length] * (weight[-1])).list()
-    else:
+    if not weight or weight[-1] > ell:
         return function([], [], skp, weight, length)
 
     selection = []
 
-    for j in range(len(perms)):
-        retire = [(val + ell - (i + 1) - perms[j][i]) for i, val in enumerate(partp)]
+    if length:
+        zero_position_sets = combinations(range(ell), ell - weight[-1])
+    else:
+        zero_position_sets = [range(ell)]
+
+    # This is the lexicographic order used by the former multiset
+    # ``Permutations(...).list()`` implementation.
+    for zero_positions in zero_position_sets:
+        perm = [length] * ell
+        for i in zero_positions:
+            perm[i] = 0
+        retire = [(val + ell - (i + 1) - perm[i]) for i, val in enumerate(partp)]
         retire.sort(reverse=True)
         retire = [val - ell + (i + 1) for i, val in enumerate(retire)]
 
@@ -779,7 +792,7 @@ def graph_implementation_rec(skp, weight, length, function):
                         append = False
                         break
                 if append:
-                    selection.append([retire, perms[j]])
+                    selection.append([retire, perm])
 
     # selection contains the list of current nodes
 
