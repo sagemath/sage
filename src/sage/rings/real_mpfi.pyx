@@ -5145,6 +5145,125 @@ cdef class RealIntervalFieldElement(RingElement):
         return RealBallField(self.precision())(self).zeta(a).\
             _real_mpfi_(self._parent)
 
+    # The following functions are computed using ball arithmetic, so that
+    # symbolic expressions involving them can be evaluated rigorously.
+
+    def Ei(self):
+        """
+        Return the exponential integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(1).Ei()
+            1.895117816355937?
+            sage: RIF(3).log().Ei().overlaps(RIF(3).log_integral())
+            True
+            sage: y = RIF(-2, -1).Ei()
+            sage: RIF(-2).Ei() in y and RIF(-1).Ei() in y
+            True
+            sage: RIF(0).Ei()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose Ei(0) in a real interval
+            sage: RIF(-1, 1).Ei()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose Ei(0.?) in a real interval
+        """
+        return _ball_eval(self, "Ei")
+
+    def log_integral(self):
+        """
+        Return the logarithmic integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(3).log_integral()
+            2.16358859466720?
+            sage: RIF(1/2).log_integral()
+            -0.378671043061088?
+            sage: RIF(0).log_integral()
+            0
+            sage: RIF(-1).log_integral()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose log_integral(-1) in a real interval
+            sage: RIF(1/2, 3/2).log_integral()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot enclose log_integral(1.?) in a real interval
+        """
+        return _ball_eval(self, "log_integral")
+
+    def log_integral_offset(self):
+        """
+        Return the offset logarithmic integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(3).log_integral_offset()
+            1.118424814549...?
+        """
+        return _ball_eval(self, "log_integral_offset")
+
+    def sin_integral(self):
+        """
+        Return the sine integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(1).sin_integral()
+            0.946083070367183?
+            sage: RIF(-1, 3).sin_integral()
+            0.?e1
+        """
+        return _ball_eval(self, "sin_integral")
+
+    def cos_integral(self):
+        """
+        Return the cosine integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(1).cos_integral()
+            0.337403922900968?
+        """
+        return _ball_eval(self, "cos_integral")
+
+    def sinh_integral(self):
+        """
+        Return the hyperbolic sine integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(1).sinh_integral()
+            1.057250875375728?
+        """
+        return _ball_eval(self, "sinh_integral")
+
+    def cosh_integral(self):
+        """
+        Return the hyperbolic cosine integral of this interval.
+
+        EXAMPLES::
+
+            sage: RIF(1).cosh_integral()
+            0.837866940980208?
+        """
+        return _ball_eval(self, "cosh_integral")
+
+
+cdef _ball_eval(RealIntervalFieldElement x, str name):
+    """
+    Return an enclosure of the image of ``x`` by the function computed by
+    the method ``name`` of real balls.
+    """
+    from sage.rings.real_arb import RealBallField
+    b = getattr(RealBallField(x.precision())(x), name)()
+    if not b.is_finite():
+        raise ValueError(f"cannot enclose {name}({x}) in a real interval")
+    return b._real_mpfi_(x._parent)
+
 
 def _simplest_rational_test_helper(low, high, low_open=False, high_open=False):
     """

@@ -366,6 +366,25 @@ class Hypergeometric(BuiltinFunction):
         if not isinstance(z, Expression) and z == 0:  # Expression is excluded
             return Integer(1)                         # to avoid call to Maxima
 
+    def _method_arguments(self, a, b, z):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: hypergeometric([1, 1/3], [2], CBF(1/2))
+            [1.11011842515769 +/- 3.69e-15]
+            sage: RIF(hypergeometric([1], [2], 1))                                    # needs sage.symbolic
+            1.71828182845905?
+        """
+        def params(p):
+            if isinstance(p, Expression):
+                p = p.operands()
+            return [c.pyobject() if isinstance(c, Expression) and c.is_numeric()
+                    else c for c in p]
+        return [z, params(a), params(b)]
+
     def _evalf_try_(self, a, b, z):
         """
         Call :meth:`_evalf_` if one of the arguments is numerical and none
@@ -1141,6 +1160,18 @@ class Hypergeometric_U(BuiltinFunction):
 
     def _eval_(self, a, b, z, **kwargs):
         return
+
+    def _method_arguments(self, a, b, z):
+        r"""
+        TESTS:
+
+        Evaluation in ball and interval fields is rigorous::
+
+            sage: # needs sage.libs.flint
+            sage: hypergeometric_U(1/3, 5/2, CBF(1/2))
+            [2.3641369977802 +/- 5.18e-14]
+        """
+        return [z, a, b]
 
     def _evalf_(self, a, b, z, parent, algorithm=None):
         """
