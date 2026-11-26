@@ -3419,12 +3419,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
         from sage.combinat.sf.sfa import _raise_variables, _variables_recursive
         degree_one = _variables_recursive(self.base_ring(),
                                           include=include, exclude=exclude)
-        def stretch(c, k):
-            r"""
-            Substitute in ``c`` all variables appearing in the
-            base ring with their ``k``-th power.
-            """
-            return _raise_variables(c, k, degree_one)
 
         def factor(s, c, d):
             r"""
@@ -3433,7 +3427,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             We use Proposition 2 in [Labelle2008]_.
             """
             return self.sum(~ mu.centralizer_size()
-                            * self.prod(stretch(c, k)
+                            * self.prod(_raise_variables(c, k, degree_one)
                                         * self._powersum(s, k) for k in mu)
                             for mu in Partitions(d))
 
