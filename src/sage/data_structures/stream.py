@@ -2019,10 +2019,12 @@ class Stream_uninitialized(Stream):
             good_cache[j] -= 1
             return True
 
-        # Rebuild the dependency graph and its known-good prefixes on
-        # every actual dummy replacement.  Power streams constructed
-        # since the previous traversal are included now.  Only the
-        # prefix of ``self`` is retained between substitutions.
+        # Collect all cached streams on which ``self`` depends,
+        # following ``input_streams``; streams created since an earlier
+        # substitution, e.g. the powers of an inner series, are
+        # included.  For each of them, determine how many leading
+        # cached coefficients are already free of undetermined
+        # coefficients: only the remaining ones can contain ``var``.
         streams = self._input_streams()
         good_cache = self._compute_good_cache(streams)
         try:
