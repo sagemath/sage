@@ -2027,7 +2027,7 @@ def block_matrix(*args, **kwds):
         ...
         ValueError: an element of parent <class 'list'> was passed in,
          but only matrices, vectors and ring elements are accepted
-        sage: matrix.block([
+        sage: matrix.block([  # needs eclib
         ....:     [EllipticCurve('37a1').0],
         ....:     ])
         Traceback (most recent call last):
@@ -3565,7 +3565,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
-        TypeError: Unable to coerce I + 2 to a rational
+        TypeError: no conversion of this number field element to a rational
 
     Diagonal matrices must be square::
 

@@ -37,6 +37,11 @@ options below to find instructions for your operating system.
     
     For more details, see section :ref:`sec-installation-conda`.
 
+  .. tab:: Homebrew (Linuxbrew)
+
+    To install SageMath on x86-64 or ARM64 Linux with Homebrew, follow
+    :ref:`sec-installation-homebrew`.
+
   .. tab:: Arch Linux/Manjaro
 
     Install SageMath by running the following command in a terminal::
@@ -80,6 +85,9 @@ options below to find instructions for your operating system.
     optional packages is not possible.
 
 .. tab:: macOS 
+
+  - To install SageMath with Homebrew on Apple Silicon, follow
+    :ref:`sec-installation-homebrew`.
 
   - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
     from the 3-manifolds project.  It is a signed and notarized app, which
@@ -193,6 +201,7 @@ More information
    :maxdepth: 2
 
    conda
+   homebrew
    source
    source-distro
    launching

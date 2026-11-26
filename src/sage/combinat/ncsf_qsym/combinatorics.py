@@ -5,7 +5,7 @@ REFERENCES:
 
 - [NCSF]_
 
-- [QSCHUR]_
+- [HLMvW2011]_
 
 - [Tev2007]_
 """
@@ -138,7 +138,7 @@ def coeff_dab(I, J):
 
 def compositions_order(n):
     r"""
-    Return the compositions of `n` ordered as defined in [QSCHUR]_.
+    Return the compositions of `n` ordered as defined in [HLMvW2011]_.
 
     Let `S(\gamma)` return the composition `\gamma` after sorting. For
     compositions `\alpha` and `\beta`, we order `\alpha \rhd \beta` if
