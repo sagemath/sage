@@ -744,6 +744,15 @@ cpdef min_spanning_tree(g,
         sage: F = min_spanning_tree(G, algorithm='Prim')
         sage: sum(w for _, _, w in F)
         3
+
+    Parallel edges: keep the lightest one (:issue:`43217`)::
+
+        sage: G = Graph([(0, 1, 10), (0, 1, 1), (1, 2, 5), (0, 2, 7)],
+        ....:           multiedges=True, weighted=True)
+        sage: sum(w for _, _, w in min_spanning_tree(G, algorithm='Prim'))
+        6
+        sage: sum(w for _, _, w in min_spanning_tree(G, algorithm='Kruskal'))
+        6
     """
     from sage.graphs.graph import Graph
 
@@ -753,7 +762,14 @@ cpdef min_spanning_tree(g,
         raise ValueError("algorithm '%s' not yet implemented, please contribute" % (algorithm))
 
     if g.allows_loops() or g.allows_multiple_edges():
-        g = g.to_simple()
+        # ``to_simple()`` would keep an arbitrary parallel edge. The spanning
+        # tree must be computed on the lightest one (:issue:`43217`).
+        if weight_function is not None:
+            g = g.to_simple(keep_label='min', key=weight_function)
+        elif g.weighted():
+            g = g.to_simple(keep_label='min', key=lambda e: e[2])
+        else:
+            g = g.to_simple()
     # Now g has no self loops and no multiple edges.
     # These variables are automatically deleted when the function terminates.
     cdef BoostVecWeightedGraph g_boost
