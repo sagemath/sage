@@ -3576,12 +3576,12 @@ class Stream_compose(Stream_inexact):
         # this is very likely not the true order
         if self._stream._approximate_order < 0:
             ginv = ~self._input
-            # The constant part makes no contribution to the negative.
-            # We need this for the case so self._neg_powers[0][n] => 0.
-            self._neg_powers = [self._input.parent().zero(), ginv]
+            # None is a pad, so that the (-k)-th power of the inner
+            # element is at index k; the 0-th entry is never used.
+            self._neg_powers = [None, ginv]
             for i in range(1, -self._stream._approximate_order):
                 self._neg_powers.append(self._neg_powers[-1] * ginv)
-        # placeholder None to make this 1-based.
+        # the 0-th power is the multiplicative identity of the inner ring
         self._pos_powers = [self._input.parent().one(), self._input]
 
         if self._stream._approximate_order == 0:
@@ -3755,13 +3755,13 @@ class Stream_cauchy_compose(Stream_binary):
         # this is very likely not the true order
         if self._left._approximate_order < 0:
             ginv = Stream_cauchy_invert(self._right)
-            # The constant part makes no contribution to the negative.
-            # We need this for the case so self._neg_powers[0][n] => 0.
-            self._neg_powers = [Stream_zero(), ginv]
+            # None is a pad, so that the (-k)-th power of the inner
+            # stream is at index k; the 0-th entry is never used.
+            self._neg_powers = [None, ginv]
             for i in range(1, -self._left._approximate_order):
                 self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1], ginv, self._is_sparse))
-        # placeholder None to make this 1-based.
-        self._pos_powers = [None, self._right]
+        # the 0-th power is the multiplicative identity
+        self._pos_powers = [Stream_exact([1], order=0), self._right]
 
         return self._left._approximate_order * self._right._approximate_order
 
@@ -3813,14 +3813,11 @@ class Stream_cauchy_compose(Stream_binary):
                                                       self._is_sparse))
         # Negative outer degrees use inverse powers of the inner
         # series, nonnegative degrees use its positive powers.  The
-        # constant outer term contributes only to degree zero.
+        # constant outer term enters through the multiplicative identity.
         ret = ZZ.sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                      if (l := self._left[k]))
 
-        if not n:
-            ret += self._left[0]
-
-        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(1, K)
+        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(K)
                             if (l := self._left[k]))
 
 
