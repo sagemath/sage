@@ -2,6 +2,18 @@
 # that activate keg-only homebrew package installations
 
 HOMEBREW=`brew --prefix` || return 1
+
+# Homebrew libraries are native to this machine. Python.org's universal2
+# defaults also try to link x86_64 objects and target older macOS releases.
+if [ "$(uname -s)" = Darwin ]; then
+    if [ -z "${ARCHFLAGS+x}" ]; then
+        export ARCHFLAGS="-arch $(uname -m)"
+    fi
+    if [ -z "${MACOSX_DEPLOYMENT_TARGET+x}" ]; then
+        export MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion | cut -d. -f1,2)"
+    fi
+fi
+
 for l in bzip2 cliquer eclib lcalc lrcalc texinfo polymake; do
     if [ -d "$HOMEBREW/opt/$l/bin" ]; then
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
@@ -43,6 +55,12 @@ for l in "gcc/lib/gcc/current gcc/lib/gcc/16 gcc/lib/gcc/15"; do
 done
 export LIBRARY_PATH
 export CPATH
+
+# SharedMeatAxe installs its arithmetic tables alongside the library.
+if [ -z "${MTXLIB:-}" ] && [ -f "$HOMEBREW/opt/meataxe/lib/p002.zzz" ]; then
+    export MTXLIB="$HOMEBREW/opt/meataxe/lib"
+fi
+
 for l in ; do
     if [ -d "$HOMEBREW/opt/$l/share/aclocal" ]; then
         ACLOCAL_PATH="$HOMEBREW/opt/$l/share/aclocal:$ACLOCAL_PATH"
