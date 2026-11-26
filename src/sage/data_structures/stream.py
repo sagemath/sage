@@ -3467,6 +3467,9 @@ class Stream_compose(Stream_inexact):
             "or of valuation zero if the outer series has finite support")
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
+        # the powers of the inner element, created in _approximate_order
+        self._pos_powers = []
+        self._neg_powers = []
         super().__init__(is_sparse, False)
 
     def input_streams(self):
@@ -3498,9 +3501,8 @@ class Stream_compose(Stream_inexact):
             True
         """
         return ([self._stream, self._input._coeff_stream]
-                + [h._coeff_stream for h in getattr(self, "_pos_powers", [])[1:]]
-                + [h._coeff_stream
-                   for h in getattr(self, "_neg_powers", [])[1:]])
+                + [h._coeff_stream for h in self._pos_powers[1:]]
+                + [h._coeff_stream for h in self._neg_powers[1:]])
 
     def __hash__(self):
         r"""
@@ -3703,6 +3705,9 @@ class Stream_cauchy_compose(Stream_binary):
             g, self._degree_f,
             "can only compose with a series of positive valuation, "
             "or of valuation zero if the outer series has finite support")
+        # the powers of the inner stream, created in _approximate_order
+        self._pos_powers = []
+        self._neg_powers = []
         super().__init__(f, g, is_sparse)
 
     def input_streams(self):
@@ -3725,9 +3730,7 @@ class Stream_cauchy_compose(Stream_binary):
             sage: len(h.input_streams()) > 2
             True
         """
-        return ([self._left, self._right]
-                + getattr(self, "_pos_powers", [])[1:]
-                + getattr(self, "_neg_powers", [])[1:])
+        return [self._left, self._right] + self._pos_powers[1:] + self._neg_powers[1:]
 
     @lazy_attribute
     def _approximate_order(self):
