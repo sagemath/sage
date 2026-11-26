@@ -652,6 +652,13 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     return (bandwidth, [int_to_vertex[<int> result[i]] for i in range(n)])
 
 
+def _edge_label(e):
+    r"""
+    Return the label of an edge ``(u, v, label)``.
+    """
+    return e[2]
+
+
 cpdef min_spanning_tree(g,
                         weight_function=None,
                         algorithm='Kruskal'):
@@ -767,7 +774,7 @@ cpdef min_spanning_tree(g,
         if weight_function is not None:
             g = g.to_simple(keep_label='min', key=weight_function)
         elif g.weighted():
-            g = g.to_simple(keep_label='min', key=lambda e: e[2])
+            g = g.to_simple(keep_label='min', key=_edge_label)
         else:
             g = g.to_simple()
     # Now g has no self loops and no multiple edges.

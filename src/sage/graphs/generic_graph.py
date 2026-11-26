@@ -5288,8 +5288,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: E = G.min_spanning_tree(algorithm='Boruvka', by_weight=True)
             sage: E = G.min_spanning_tree(algorithm='NetworkX', by_weight=True)         # needs networkx
 
-            On a weighted multigraph every algorithm returns a minimum spanning
-            tree, not an arbitrary parallel edge (:issue:`43217`)::
+        On a weighted multigraph every algorithm returns a minimum spanning
+        tree, not an arbitrary parallel edge (:issue:`43217`)::
 
             sage: G = Graph([(0, 1, 10), (0, 1, 1), (1, 2, 5), (0, 2, 7)],
             ....:           multiedges=True, weighted=True)
