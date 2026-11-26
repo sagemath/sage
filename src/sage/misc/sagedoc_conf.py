@@ -1,5 +1,5 @@
 r"""
-Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
+Sphinx configuration helpers for Sage documentation
 
 AUTHORS:
 
@@ -129,20 +129,6 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
             break
 
 
-def process_dollars(app, what, name, obj, options, docstringlines):
-    r"""
-    Replace dollar signs with backticks.
-
-    See sage.misc.sagedoc.process_dollars for more information.
-    """
-    if len(docstringlines) and name.find("process_dollars") == -1:
-        from sage.misc.sagedoc import process_dollars as sagedoc_dollars
-        s = sagedoc_dollars("\n".join(docstringlines))
-        lines = s.split("\n")
-        for i in range(len(lines)):
-            docstringlines[i] = lines[i]
-
-
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
     If we're including inherited members, omit their docstrings.
@@ -203,16 +189,3 @@ class SagemathTransform(SphinxTransform):
                 source = blankline_re.sub('', source)
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
-
-# This is only used by sage.misc.sphinxify
-
-
-def setup(app):
-    app.connect('autodoc-process-docstring', process_docstring_cython)
-    app.connect('autodoc-process-docstring', process_directives)
-    app.connect('autodoc-process-docstring', process_docstring_module_title)
-    app.connect('autodoc-process-docstring', process_dollars)
-    app.connect('autodoc-process-docstring', process_inherited)
-    app.connect('autodoc-process-docstring', skip_TESTS_block)
-
-    app.add_transform(SagemathTransform)

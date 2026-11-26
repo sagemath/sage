@@ -304,10 +304,10 @@ class pAdicExtensionGeneric(pAdicGeneric):
     #def discriminant(self):
     #    raise NotImplementedError
 
-    #def is_abelian(self):
+    #def is_abelian(self) -> bool:
     #    raise NotImplementedError
 
-    #def is_normal(self):
+    #def is_normal(self) -> bool:
     #    raise NotImplementedError
 
     def defining_polynomial(self, var=None, exact=False):

@@ -44,6 +44,11 @@
 #    --disable-maintainer-mode --disable-dependency-tracking) Additional
 #    arguments to `./configure` may be given as arguments.
 #
+# - sdh_autoreconf
+#
+#    Regenerate autotools build machinery using the configured system tools.
+#    In particular, replace bundled libtool scripts and macros together.
+#
 # - sdh_make [...]
 #
 #    Runs `$MAKE` with the default target.  Additional arguments to `make` may
@@ -181,6 +186,13 @@ _EOF_
     fi
 }
 
+
+sdh_autoreconf() {
+    sdh_check_vars SAGE_AUTORECONF SAGE_AUTOCONF SAGE_AUTOMAKE SAGE_ACLOCAL SAGE_LIBTOOLIZE
+    AUTOCONF="$SAGE_AUTOCONF" AUTOMAKE="$SAGE_AUTOMAKE" ACLOCAL="$SAGE_ACLOCAL" \
+        LIBTOOLIZE="$SAGE_LIBTOOLIZE" "$SAGE_AUTORECONF" --force --install || \
+        sdh_die "Error regenerating build machinery with system autotools"
+}
 
 sdh_make() {
     echo "Building $PKG_NAME"

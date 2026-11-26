@@ -55,7 +55,6 @@ from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
-from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
@@ -63,7 +62,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
@@ -877,7 +876,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
     x, y = g.parent().gens()
     intervals = {}
     if not precision1:
-        precision1 = {f: 53 for f in glist1}
+        precision1 = dict.fromkeys(glist1, 53)
     y0s = []
     for f in glist1:
         if f.variables() == (y,):

@@ -219,7 +219,7 @@ def gen_html_code(G,
     if vertex_colors is not None:
         vertex_partition = list(vertex_colors.values())
     len_vertex_partition = len(vertex_partition)
-    color = {i: len_vertex_partition for i in range(G.order())}
+    color = dict.fromkeys(range(G.order()), len_vertex_partition)
     for i, l in enumerate(vertex_partition):
         for v in l:
             color[v_to_id[v]] = i

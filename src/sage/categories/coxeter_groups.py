@@ -2158,7 +2158,6 @@ class CoxeterGroups(Category_singleton):
                 left_refl = P.simple_reflection(w[0])
                 return [left_refl, self * left_refl]
 
-            import itertools
             s = P.simple_reflections()
             rev = P.one()
             cur = P.one()
@@ -2168,11 +2167,11 @@ class CoxeterGroups(Category_singleton):
                 reflections.append(cur * rev)
                 rev = s[val] * rev
             for ell in range(n):
-                for chain in itertools.combinations(reflections, ell):
+                for chain in combinations(reflections, ell):
                     if P.prod(reversed(chain)) == self:
                         return list(chain)
             # If we get here it's cause ell == n and so we need all of the
-            # refelctions
+            # reflections
             return reflections
 
         def absolute_le(self, other):

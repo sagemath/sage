@@ -13,19 +13,28 @@ Check that gamma function imports are deprecated (:issue:`24411`)::
     beta(x, x)
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, overload
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
+
+
 import math
 
-from sage.arith.misc import binomial as arith_binomial
-from sage.functions.trig import arctan2
-from sage.misc.functional import sqrt
 from sage.misc.lazy_import import lazy_import
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.structure.element import Element, Expression, coercion_model
 
 # avoid name conflicts with `parent` as a function parameter
 from sage.structure.element import parent as s_parent
+
+from sage.arith.misc import binomial as arith_binomial
+from sage.functions.trig import arctan2
+from sage.misc.functional import sqrt
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.symbols import register_symbol, symbol_table
 
@@ -1361,6 +1370,17 @@ conjugate = Function_conjugate()
 
 
 class Function_factorial(GinacFunction):
+    @overload
+    def __call__(self, n: Integer, algorithm: str = ...) -> Integer: ...
+
+    @overload
+    def __call__(self, n: int, algorithm: str = ...) -> int: ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        # Purely forwarding: the @overload declarations give static checkers
+        # the int/Integer return types; dispatch stays with GinacFunction.
+        return super().__call__(*args, **kwds)
+
     def __init__(self):
         r"""
         Return the factorial of `n`.
@@ -1556,6 +1576,17 @@ factorial = Function_factorial()
 
 
 class Function_binomial(GinacFunction):
+    @overload
+    def __call__(self, x: Integer, m: int | Integer, **kwds: Any) -> Integer: ...
+
+    @overload
+    def __call__(self, x: int, m: int, **kwds: Any) -> int: ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        # Purely forwarding: the @overload declarations give static checkers
+        # the int/Integer return types; dispatch stays with GinacFunction.
+        return super().__call__(*args, **kwds)
+
     def __init__(self):
         r"""
         Return the binomial coefficient.

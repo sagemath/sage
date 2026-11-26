@@ -35,16 +35,11 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     - [Ka1990]_
 
-    .. [KMPS] Kass, Moody, Patera and Slansky, *Affine Lie algebras,
-       weight multiplicities, and branching rules*. Vols. 1, 2. University
-       of California Press, Berkeley, CA, 1990.
+    - [KMPS]_
 
-    .. [KacPeterson] Kac and Peterson. *Infinite-dimensional Lie algebras,
-       theta functions and modular forms*. Adv. in Math. 53 (1984),
-       no. 2, 125-264.
+    - [KacPeterson]_
 
-    .. [Carter] Carter, *Lie algebras of finite and affine type*. Cambridge
-       University Press, 2005
+    - [Carter]_
 
     If `\Lambda` is a dominant integral weight for an affine root system,
     there exists a unique integrable representation `V=V_\Lambda` of highest

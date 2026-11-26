@@ -16,15 +16,14 @@ on:
         description: 'Stringified JSON object listing tox system factors'
         type: string
         # 'tox -e update_docker_platforms' updates below
-        # Only distros with Python 3.12+ are supported (Sage now requires system Python 3.12+)
+        # Only distros with Python 3.13+ are supported (Sage now requires system Python 3.13+)
         default: >-
           [
-           "ubuntu-noble",
            "ubuntu-resolute",
            "debian-trixie",
-           "fedora-42",
            "fedora-43",
-           "centos-stream-10",
+           "fedora-44",
+           "fedora-45",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
@@ -37,6 +36,10 @@ on:
            ]
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'
+        type: string
+        default: ""
+      extra_configure_args:
+        description: 'Additional Sage configure arguments'
         type: string
         default: ""
       max_parallel:
@@ -98,7 +101,7 @@ on:
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       max-parallel: ${{ inputs.max_parallel }}
@@ -115,13 +118,13 @@ jobs:
       FROM_DOCKER_REPOSITORY: ${{ inputs.from_docker_repository }}
       FROM_DOCKER_TARGET: ${{ inputs.from_docker_target }}
       FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
-      EXTRA_CONFIGURE_ARGS: --enable-fat-binary
+      EXTRA_CONFIGURE_ARGS: --enable-fat-binary ${{ inputs.extra_configure_args }}
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
-          tool-cache: false
+          preinstalled-runtimes: false
           android: true
           dotnet: true
           haskell: true
