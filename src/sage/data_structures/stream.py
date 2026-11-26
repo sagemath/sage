@@ -113,6 +113,7 @@ from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -3389,11 +3390,11 @@ def _to_powersum(x, scalar_basis=None):
         sage: [p2(g)[i] for i in range(2)]
         [-h[], 0]
     """
-    # Only combine a genuine scalar base-ring coefficient into the algebra.
-    # Tensor-valued data must be converted factorwise, not coerced into a
-    # one-factor parent merely because its realization hook is absent.
-    if (not hasattr(x.parent(), 'realization_of')
-            and scalar_basis is not None
+    # Only combine a genuine scalar base-ring coefficient into the
+    # algebra.  Symmetric functions, in any basis, and tensor-valued
+    # data are converted factorwise instead.
+    if (scalar_basis is not None
+            and not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
             and HopfAlgebrasWithBasis(
                 x.parent().base_ring()).TensorProducts()
                 not in x.parent().categories()):
