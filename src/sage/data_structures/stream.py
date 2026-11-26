@@ -3546,14 +3546,6 @@ class Stream_compose(Stream_inexact):
             [0, 3, 0, 0, 16]
         """
         # this is very likely not the true order
-        if self._stream._approximate_order < 0:
-            ginv = ~self._input
-            # None is a pad, so that the (-k)-th power of the inner
-            # element is at index k; the 0-th entry is never used.
-            self._neg_powers = [None, ginv]
-            for i in range(1, -self._stream._approximate_order):
-                self._neg_powers.append(self._neg_powers[-1] * ginv)
-
         if self._stream._approximate_order == 0:
             # Special case for inputs whose 1 element has a positive approximate
             #   order (mainly Dirichlet series).
@@ -3605,7 +3597,6 @@ class Stream_compose(Stream_inexact):
             sage: c.get_coefficient(-1)
             0
         """
-        self._approximate_order
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
         if self._input._coeff_stream[0]:
@@ -3620,6 +3611,14 @@ class Stream_compose(Stream_inexact):
             K = n // max(gv, 1) + 1
         while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
+        if fv < 0:
+            # the negative outer degrees use inverse powers of the
+            # inner element; None is a pad, so that the (-k)-th power
+            # is at index k, and the 0-th entry is never used
+            if not self._neg_powers:
+                self._neg_powers = [None, ~self._input]
+            while len(self._neg_powers) < 1 - fv:
+                self._neg_powers.append(self._neg_powers[-1] * self._neg_powers[1])
         # Negative outer degrees use inverse powers of the inner
         # element, nonnegative degrees use its positive powers.
         ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
@@ -3734,14 +3733,6 @@ class Stream_cauchy_compose(Stream_binary):
             check similarities with :class:`Stream_plethysm`
         """
         # this is very likely not the true order
-        if self._left._approximate_order < 0:
-            ginv = Stream_cauchy_invert(self._right)
-            # None is a pad, so that the (-k)-th power of the inner
-            # stream is at index k; the 0-th entry is never used.
-            self._neg_powers = [None, ginv]
-            for i in range(1, -self._left._approximate_order):
-                self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1], ginv, self._is_sparse))
-
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
@@ -3782,7 +3773,6 @@ class Stream_cauchy_compose(Stream_binary):
             sage: [h.get_coefficient(n) for n in (-1,0,1,2)]
             [0, 3, 6, 4]
         """
-        self._approximate_order
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if self._right[0]:
@@ -3799,6 +3789,16 @@ class Stream_cauchy_compose(Stream_binary):
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
                                                       self._right,
                                                       self._is_sparse))
+        if fv < 0:
+            # the negative outer degrees use inverse powers of the
+            # inner stream; None is a pad, so that the (-k)-th power
+            # is at index k, and the 0-th entry is never used
+            if not self._neg_powers:
+                self._neg_powers = [None, Stream_cauchy_invert(self._right)]
+            while len(self._neg_powers) < 1 - fv:
+                self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1],
+                                                           self._neg_powers[1],
+                                                           self._is_sparse))
         # Negative outer degrees use inverse powers of the inner
         # series, nonnegative degrees use its positive powers.  The
         # constant outer term enters through the multiplicative identity.
