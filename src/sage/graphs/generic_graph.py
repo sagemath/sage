@@ -5287,6 +5287,24 @@ class GenericGraph(GenericGraph_pyx):
             sage: E = G.min_spanning_tree(algorithm='Filter_Kruskal', by_weight=True)
             sage: E = G.min_spanning_tree(algorithm='Boruvka', by_weight=True)
             sage: E = G.min_spanning_tree(algorithm='NetworkX', by_weight=True)         # needs networkx
+
+        On a weighted multigraph every algorithm returns a minimum spanning
+        tree, not an arbitrary parallel edge (:issue:`43217`)::
+
+            sage: G = Graph([(0, 1, 10), (0, 1, 1), (1, 2, 5), (0, 2, 7)],
+            ....:           multiedges=True, weighted=True)
+            sage: sum(w for _, _, w in G.min_spanning_tree(by_weight=True))
+            6
+            sage: sum(w for _, _, w in G.min_spanning_tree(by_weight=True, algorithm='Kruskal_Boost'))
+            6
+            sage: sum(w for _, _, w in G.min_spanning_tree(by_weight=True, algorithm='Prim_fringe'))
+            6
+            sage: sum(w for _, _, w in G.min_spanning_tree(by_weight=True, algorithm='NetworkX'))  # needs networkx
+            6
+            sage: H = Graph([(0, 1, 1), (0, 1, 10), (1, 2, 5), (0, 2, 7)],
+            ....:           multiedges=True, weighted=True)
+            sage: sum(w for _, _, w in H.min_spanning_tree(by_weight=True))
+            6
         """
         if not self.order():
             return []
@@ -5329,10 +5347,17 @@ class GenericGraph(GenericGraph_pyx):
                 v = starting_vertex
             tree = set([v])
             edges = []
-            # Initialize fringe_list with v's neighbors. Fringe_list
-            # contains fringe_vertex: (weight, vertex_in_tree) for each
-            # fringe vertex.
-            fringe_list = {e[0] if e[0] != v else e[1]: (wfunction_float(e), v) for e in self.edges_incident(v)}
+            # fringe vertex -> (weight, vertex_in_tree, label)
+            # Keep the lightest parallel edge. ``edge_label`` on a multigraph
+            # is the list of all labels (:issue:`43217`).
+            fringe_list = {}
+            for e in self.edges_incident(v):
+                neighbor = e[0] if e[0] != v else e[1]
+                if neighbor == v:
+                    continue
+                w = wfunction_float(e)
+                if neighbor not in fringe_list or w < fringe_list[neighbor][0]:
+                    fringe_list[neighbor] = (w, v, e[2])
 
             def cmp_fun(x):
                 return fringe_list[x][0]
@@ -5341,20 +5366,21 @@ class GenericGraph(GenericGraph_pyx):
                 # find the smallest-weight fringe vertex
                 u = min(fringe_list, key=cmp_fun)
                 x = fringe_list[u][1]
+                label = fringe_list[u][2]
                 if hash(u) < hash(x):
-                    edges.append((u, x, self.edge_label(u, x)))
+                    edges.append((u, x, label))
                 else:
-                    edges.append((x, u, self.edge_label(x, u)))
+                    edges.append((x, u, label))
                 tree.add(u)
                 fringe_list.pop(u)
                 # update fringe list
                 for e in self.edges_incident(u):
                     neighbor = e[0] if e[0] != u else e[1]
-                    if neighbor in tree:
+                    if neighbor in tree or neighbor == u:
                         continue
                     w = wfunction_float(e)
                     if neighbor not in fringe_list or fringe_list[neighbor][0] > w:
-                        fringe_list[neighbor] = (w, u)
+                        fringe_list[neighbor] = (w, u, e[2])
             return edges
 
         if algorithm == "Prim_edge":
@@ -5391,10 +5417,30 @@ class GenericGraph(GenericGraph_pyx):
 
         if algorithm == "NetworkX":
             import networkx
-            G = networkx.Graph([(e[0], e[1], {'weight': wfunction_float(e)}) for e in self.edge_iterator()])
+            # NetworkX ``Graph`` keeps one edge per pair. Retain the lightest
+            # parallel edge, and its own label rather than ``edge_label``
+            # (a list on multigraphs). See :issue:`43217`.
+            best = {}
+            for e in self.edge_iterator():
+                u, v, label = e[0], e[1], e[2]
+                if u == v:
+                    continue
+                w = wfunction_float(e)
+                key = frozenset((u, v))
+                prev = best.get(key)
+                if prev is None or w < prev[0]:
+                    best[key] = (w, label)
+            G = networkx.Graph((tuple(key)[0], tuple(key)[1], {'weight': w})
+                               for key, (w, _) in best.items())
             E = networkx.minimum_spanning_edges(G, data=False)
-            return [(u, v, self.edge_label(u, v)) if hash(u) < hash(v) else (v, u, self.edge_label(u, v))
-                    for u, v in E]
+            edges = []
+            for u, v in E:
+                label = best[frozenset((u, v))][1]
+                if hash(u) < hash(v):
+                    edges.append((u, v, label))
+                else:
+                    edges.append((v, u, label))
+            return edges
         raise NotImplementedError("minimum spanning tree algorithm '%s' is not implemented" % algorithm)
 
     def number_of_spanning_trees(self, root_vertex=None):
