@@ -95,6 +95,7 @@ jobs:
       docker: ${{ steps.select.outputs.docker }}
       release: ${{ steps.select.outputs.release }}
       types: ${{ steps.select.outputs.types }}
+      publish_to_pypi: ${{ steps.select.outputs.publish_to_pypi }}
     steps:
       - uses: actions/checkout@v7
       - name: Test workflow selection
@@ -248,8 +249,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    env:
-      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -280,7 +279,7 @@ jobs:
         with:
           skip-existing: true
           verbose: true
-        if: env.CAN_DEPLOY == 'true'
+        if: needs.select.outputs.publish_to_pypi == 'true'
 
   release:
     needs: [lint, select, release_dist, sdists]
@@ -326,6 +325,35 @@ jobs:
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
           body_path: release_notes
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+
+  report_status:
+    # The commits page of a branch does not show the checks of a tag run, even
+    # though the tag points at the same commit. So we post the result of the
+    # release jobs as a commit status.
+    name: Report release result on the commit
+    needs: [select, release_dist, sdists, release]
+    if: always() && github.ref_type == 'tag' && needs.select.outputs.release == 'true'
+    runs-on: ubuntu-26.04
+    permissions:
+      statuses: write
+    steps:
+      - uses: actions/github-script@v9
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        with:
+          script: |
+            const needs = JSON.parse(process.env.NEEDS);
+            const ids = ['release_dist', 'sdists', 'release'];
+            const results = ids.map(id => needs[id].result);
+            const state = results.includes('failure') ? 'failure'
+              : results.includes('cancelled') ? 'error' : 'success';
+            const description = ids.map((id, i) => `${id}: ${results[i]}`).join(', ');
+            core.info(`release: ${state} (${description})`);
+            await github.rest.repos.createCommitStatus({
+              ...context.repo, sha: context.sha, state, description,
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              context: `CI (${context.ref.replace('refs/tags/', '')}) / release`,
+            });
 
   build_wheels:
     # Temporarily disabled due to build errors
@@ -420,13 +448,11 @@ jobs:
   upload_wheels:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     needs: [lint, select, build_wheels]
-    if: needs.select.outputs.release == 'true'
+    if: needs.select.outputs.release == 'true' && needs.select.outputs.publish_to_pypi == 'true'
     runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
-    env:
-      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
 
       - uses: actions/download-artifact@v8
@@ -440,4 +466,3 @@ jobs:
           packages-dir: wheelhouse/
           skip-existing: true
           verbose: true
-        if: env.CAN_DEPLOY == 'true'

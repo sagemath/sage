@@ -268,7 +268,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Proposition 12 of [GiTr1996]_.
+        Proposition 12 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -328,7 +328,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Proposition 12 of [GiTr1996]_.
+        Proposition 12 of [GT1996]_.
 
         .. SEEALSO::
 
