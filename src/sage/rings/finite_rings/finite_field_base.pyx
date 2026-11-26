@@ -1508,6 +1508,18 @@ cdef class FiniteField(Field):
             sage: L.<v> = K.extension(1)
             sage: L(u).minpoly() == u.minpoly()
             True
+
+        Check that embeddings from ``.extension()`` are compatible along
+        different paths, see :issue:`43212`::
+
+            sage: F.<a> = GF(101^2, modulus=[2,0,1])
+            sage: K = F.extension(2, 'b')
+            sage: L = F.extension(4, 'c')
+            sage: M = K.extension(2, 'c')
+            sage: M is L
+            True
+            sage: L(a) == L(K(a))
+            True
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -1542,7 +1554,7 @@ cdef class FiniteField(Field):
                 if self.is_conway() and E.is_conway():
                     alpha = E.gen()**((E.order()-1)//(self.order()-1))
                 else:
-                    alpha = self.modulus().any_root(E)
+                    alpha = self._compatible_root(E)
                 try: # to register a coercion map (embedding of self to E)
                     E.register_coercion(self.hom([alpha], codomain=E, check=False))
                 except AssertionError: # coercion already exists
@@ -1553,6 +1565,66 @@ cdef class FiniteField(Field):
         if map:
             return (E, E.coerce_map_from(self))
         return E
+
+
+    def _compatible_root(self, E):
+        """
+        Return a root of ``self.modulus()`` in ``E`` for a compatible embedding.
+
+        The returned element ``alpha`` in ``E`` is a root of the modulus of
+        ``self``, so ``self.hom([alpha], codomain=E)`` is a field embedding.
+        Moreover, if a finite field ``S`` already coerces into both ``self``
+        and ``E``, the resulting embedding is chosen so that the triangle
+        ``S -> self -> E`` and ``S -> E`` commute.
+
+        This is used by :meth:`extension` to avoid incompatible coercion
+        paths when the same absolute field is constructed along different
+        towers (see :issue:`43212`).
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(101^2, modulus=[2,0,1])
+            sage: K = F.extension(2, 'b')
+            sage: L = F.extension(4, 'c')
+            sage: alpha = K._compatible_root(L)
+            sage: K.modulus()(alpha)
+            0
+            sage: phi = K.hom([alpha], codomain=L, check=False)
+            sage: phi(K(a)) == L(a)
+            True
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+        R = PolynomialRing(E, names='x')
+        x = R.gen()
+        mod = self.modulus()
+        constraint = sum(E(mod[i]) * x**i for i in range(mod.degree() + 1))
+
+        try:
+            coerce_self = self._introspect_coerce()['_coerce_from_list']
+            coerce_E = E._introspect_coerce()['_coerce_from_list']
+        except (AttributeError, KeyError, TypeError):
+            return mod.any_root(E)
+
+        domains_E = {mor.domain() for mor in coerce_E}
+        for mor in coerce_self:
+            S = mor.domain()
+            if S not in domains_E:
+                continue
+            if not isinstance(S, FiniteField) or S.degree() <= 1:
+                continue
+            image_in_self = mor(S.gen())
+            image_in_E = E.coerce_map_from(S)(S.gen())
+            f = image_in_self.polynomial()
+            fE = sum(E(f[i]) * x**i for i in range(f.degree() + 1))
+            constraint = constraint.gcd(fE - image_in_E)
+
+        if constraint.degree() < 1:
+            return mod.any_root(E)
+        roots = constraint.roots(multiplicities=False)
+        if not roots:
+            return mod.any_root(E)
+        return roots[0]
 
     @cached_method
     def _compatible_family(self):
