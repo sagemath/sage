@@ -454,10 +454,57 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: 1/g
             1/2*s^-1
 
-        ALGORITHM: A Laurent polynomial is a unit if and only if its "unit
-        part" is a unit.
+        TESTS::
+
+            Check that :issue:`43194` is fixed::
+
+                sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+                sage: f = 3*x + 4
+                sage: f.is_unit()
+                True
+                sage: (3*x + 4) * (3*x^-1 + 4)
+                1
+                sage: (2*x + 2).is_unit()
+                False
+
+            We raise a NotImplementedError for non-square-free moduli::
+
+                sage: R.<x> = LaurentPolynomialRing(Zmod(4))
+                sage: (1 + 2*x).is_unit()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: is_unit is not implemented for Laurent polynomials over Ring of integers modulo 4
+
+        ALGORITHM:
+
+        A Laurent polynomial is a unit if and only if its "unit part" is a unit.
+        For a general ring, this requires checking that the polynomial reduces to
+        a single term with a unit coefficient. Since this is not implemented
+        for all rings, we handle the generic case by reducing modulo the prime
+        factors for square-free finite rings.
         """
-        return self.__u.is_term() and self.__u.coefficients()[0].is_unit()
+        R = self.base_ring()
+        if R.is_integral_domain():
+            return self.__u.is_term() and self.__u.coefficients()[0].is_unit()
+
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, IntegerModRing_generic
+        if isinstance(R, IntegerModRing_generic):
+            n = R.order()
+            if n == 1:
+                return False
+            from sage.arith.misc import factor
+            fac = factor(n)
+            if any(e > 1 for _, e in fac):
+                raise NotImplementedError("is_unit is not implemented for Laurent polynomials over %s" % R)
+
+            for p, e in fac:
+                Rp = IntegerModRing(p)
+                img = self.change_ring(Rp)
+                if len(img.dict()) != 1:
+                    return False
+            return True
+
+        raise NotImplementedError("is_unit is not implemented for Laurent polynomials over %s" % R)
 
     def is_zero(self):
         """
