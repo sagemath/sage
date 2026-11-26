@@ -263,7 +263,6 @@ from sage.data_structures.stream import (
     Stream_dirichlet_invert,
     Stream_plethysm,
     Stream_plethysm_multi,
-    _finite_support_degree,
     Stream_pseudo_diff_mul
 )
 
@@ -7111,15 +7110,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         if len(args) == 1:
             g = args[0]
-            if (isinstance(self._coeff_stream, Stream_exact)
-                and not self._coeff_stream._constant):
+            if isinstance(self._coeff_stream, Stream_exact):
 
                 if not isinstance(g, LazySymmetricFunction):
                     f = self.symmetric_function()
                     return f(g, include=include, exclude=exclude)
 
-                if (isinstance(g._coeff_stream, Stream_exact)
-                    and not g._coeff_stream._constant):
+                if isinstance(g._coeff_stream, Stream_exact):
                     f = self.symmetric_function()
                     gs = g.symmetric_function()
                     return P(f(gs, include=include, exclude=exclude))
@@ -7132,8 +7129,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                 P = LazySymmetricFunctions(R)
                 g = P(g)
 
-            if not (isinstance(self._coeff_stream, Stream_exact)
-                    and not self._coeff_stream._constant):
+            if not isinstance(self._coeff_stream, Stream_exact):
                 if g._coeff_stream._approximate_order == 0:
                     if not g._coeff_stream.is_uninitialized() and g[0]:
                         raise ValueError("can only compose with a positive valuation series")
@@ -7158,7 +7154,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         fR = fP._stream_coefficient_ring
         ps = tensor([B.realization_of().p() for B in fR.tensor_factors()])
         ps_factors = ps.tensor_factors()
-        f_is_polynomial = (_finite_support_degree(self._coeff_stream) is not None)
+        f_is_polynomial = isinstance(self._coeff_stream, Stream_exact)
         if not isinstance(P, LazySymmetricFunctions):
             if f_is_polynomial:
                 args = [P(g) for g in args]

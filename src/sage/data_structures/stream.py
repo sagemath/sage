@@ -3981,7 +3981,10 @@ class Stream_plethysm(Stream_binary):
             sage: h[2]
             1/2*p[1, 1] + 1/2*p[2]
         """
-        self._degree_f = _finite_support_degree(f)
+        # the outer of a plethysm is a lazy symmetric function or
+        # species, a graded series whose constant tail is zero, so
+        # every exact stream has finite support
+        self._degree_f = f._degree if isinstance(f, Stream_exact) else None
         _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
 
         if ring is None:
@@ -4007,7 +4010,7 @@ class Stream_plethysm(Stream_binary):
             f = _to_powersum(f, p, is_sparse)
             g = _to_powersum(g, self._basis, is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
-        self._stretched = {}  # a cache for the streams of stretched powers
+        self._stretched_streams = {}
         super().__init__(f, g, is_sparse)
 
     @lazy_attribute
@@ -4060,12 +4063,12 @@ class Stream_plethysm(Stream_binary):
         K = _outer_bound(self._degree_f, n,
                          self._right._approximate_order, self._right[0])
 
-        return self._basis.sum(c * self.compute_product(n, la)
+        return self._basis.sum(c * self._compute_product(n, la)
                                for k in range(self._left._approximate_order, K)
                                if (fk := self._left[k])  # fk might be int(0)
                                for la, c in fk)
 
-    def compute_product(self, n, la):
+    def _compute_product(self, n, la):
         r"""
         Compute the product ``p[la](self._right)`` in degree ``n``.
 
@@ -4078,7 +4081,7 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.compute_product(7, Partition([2, 1])); A
+            sage: A = h._compute_product(7, Partition([2, 1])); A
             1/12*p[2, 2, 1, 1, 1] + 1/4*p[2, 2, 2, 1] + 1/6*p[3, 2, 2]
              + 1/12*p[4, 1, 1, 1] + 1/4*p[4, 2, 1] + 1/6*p[4, 3]
             sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)
@@ -4090,7 +4093,7 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
             ....:                                   for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.compute_product(7, Partition([2, 1]))
+            sage: A = h._compute_product(7, Partition([2, 1]))
             sage: B = p[2, 1](sum(g[n] for n in range(7)))
             sage: B = p2.element_class(p2, {m: c for m, c in B
             ....:                           if sum(mu.size() for mu in m) == 7})
@@ -4102,7 +4105,7 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
             sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
-            sage: all(h.compute_product(k, Partition([2, 2, 1]))
+            sage: all(h._compute_product(k, Partition([2, 2, 1]))
             ....:      == B.restrict_degree(k) for k in range(7))
             True
         """
@@ -4122,12 +4125,12 @@ class Stream_plethysm(Stream_binary):
         exp.reverse()
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
             # prod does not short-cut zero, therefore
-            # ret += prod(self.stretched(i, m)[rao * m + d]
+            # ret += prod(self._stretched(i, m)[rao * m + d]
             #             for i, m, d in zip(wgt, exp, k))
             # is expensive
             lf = []
             for i, m, d in zip(wgt, exp, k):
-                f = self.stretched(i, m)[rao * m + d]
+                f = self._stretched(i, m)[rao * m + d]
                 if not f:
                     break
                 lf.append(f)
@@ -4136,7 +4139,7 @@ class Stream_plethysm(Stream_binary):
 
         return ret
 
-    def stretched(self, i, m):
+    def _stretched(self, i, m):
         r"""
         Return the stream of the stretched powers ``p([i]*m)(g)``.
 
@@ -4156,7 +4159,7 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.stretched(2, 3)[6]
+            sage: A = h._stretched(2, 3)[6]
             sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
             True
 
@@ -4166,7 +4169,7 @@ class Stream_plethysm(Stream_binary):
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
             ....:                                   for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.stretched(2, 3)[6]
+            sage: A = h._stretched(2, 3)[6]
             sage: B = p[2,2,2](sum(g[n] for n in range(7)))     # long time
             sage: B = p2.element_class(p2, {m: c for m, c in B  # long time
             ....:                           if sum(mu.size() for mu in m) == 12})
@@ -4178,7 +4181,7 @@ class Stream_plethysm(Stream_binary):
             self._powers.append(Stream_cauchy_mul(self._powers[-1],
                                                   self._powers[0],
                                                   self._is_sparse))
-        if (i, m) not in self._stretched:
+        if (i, m) not in self._stretched_streams:
             def stretched(power_d, i=i):
                 # power_d might be an integer and not a symmetric
                 # function
@@ -4195,9 +4198,9 @@ class Stream_plethysm(Stream_binary):
                                  for mon, c in power_d}
                     return self._basis(self._p.element_class(self._p, terms))
                 return self._basis.zero()
-            self._stretched[(i, m)] = Stream_map_coefficients(
+            self._stretched_streams[(i, m)] = Stream_map_coefficients(
                 self._powers[m-1], stretched, self._is_sparse)
-        return self._stretched[(i, m)]
+        return self._stretched_streams[(i, m)]
 
     def input_streams(self):
         r"""
@@ -4222,7 +4225,7 @@ class Stream_plethysm(Stream_binary):
             sage: len(h.input_streams()) > 3
             True
         """
-        return [self._left] + self._powers + list(self._stretched.values())
+        return [self._left] + self._powers + list(self._stretched_streams.values())
 
 
 class Stream_plethysm_multi(Stream_inexact):
@@ -4294,7 +4297,7 @@ class Stream_plethysm_multi(Stream_inexact):
         if len(gs) != len(p_outer.tensor_factors()):
             raise ValueError("the number of arguments must match the outer tensor power")
 
-        self._degree_f = _finite_support_degree(f)
+        self._degree_f = f._degree if isinstance(f, Stream_exact) else None
         for g in gs:
             _check_valuation(g, self._degree_f, _PLETHYSM_VALUATION_ZERO_MESSAGE)
 
@@ -4362,7 +4365,7 @@ class Stream_plethysm_multi(Stream_inexact):
             else:
                 terms = []
                 for k in range(orders[0], n - sum(orders[1:]) + 1):
-                    left = self._plethysms[i].compute_product(k, la[i])
+                    left = self._plethysms[i]._compute_product(k, la[i])
                     if not left:
                         continue
                     right = self._compute_product(n - k, la, i + 1, cache)
