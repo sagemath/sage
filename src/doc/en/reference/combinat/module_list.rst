@@ -490,11 +490,13 @@ Comprehensive module list
 .. toctree::
     :maxdepth: 1
 
+    sage/combinat/super_sf/all
     sage/combinat/super_sf/super_sf
     sage/combinat/super_sf/super_sfa
-    sage/combinat/super_sf/powersum
     sage/combinat/super_sf/hom_el
-    sage/combinat/super_sf/all
+    sage/combinat/super_sf/monomial
+    sage/combinat/super_sf/powersum
+    sage/combinat/super_sf/schur
 
 ``sage.combinat.words``
 -----------------------
