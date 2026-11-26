@@ -1,0 +1,20 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "SageMath",
+    "image": "condaforge/miniforge3:latest",
+    // Install the conda-forge package in a dedicated environment.
+    "onCreateCommand": ".devcontainer/codespaces-conda-forge/onCreate.sh",
+    "remoteEnv": {
+        "PATH": "/opt/conda/envs/sage/bin:${containerEnv:PATH}"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/conda/envs/sage/bin/python"
+            }
+        }
+    }
+}
