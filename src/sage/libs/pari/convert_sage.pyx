@@ -35,7 +35,9 @@ from cypari2.paridecl cimport (
     uisprimepower,
     ulong,
 )
+from cypari2.thread_support cimport is_owner_thread
 from cypari2.stack cimport new_gen
+from sage.libs.pari import pari
 from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
 from sage.ext.stdsage cimport PY_NEW
@@ -283,6 +285,8 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: type(s)
         <class 'str'>
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(gen_to_sage, z, locals)
     cdef GEN g = z.g
     cdef long t = typ(g)
     cdef long tx, ty
@@ -359,6 +363,8 @@ cpdef set_integer_from_gen(Integer self, Gen x):
         ...
         TypeError: Attempt to coerce non-integral real number to an Integer
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(set_integer_from_gen, self, x)
     # Simplify and lift until we get an integer
     while typ((<Gen>x).g) != t_INT:
         x = x.simplify()
@@ -404,7 +410,18 @@ cpdef Gen new_gen_from_integer(Integer self):
         2
         sage: Rational(pari(-1))
         -1
+
+    A worker can run the ordinary Sage method while the main thread services
+    PARI requests::
+
+        sage: pari.run_with_threads(lambda: ZZ(360).euler_phi())
+        96
+        sage: q = QQ((2^130 + 1)/7)
+        sage: pari.run_with_threads(lambda: QQ(q.__pari__())) == q
+        True
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(new_gen_from_integer, self)
     return new_gen_from_mpz_t(self.value)
 
 
@@ -419,6 +436,8 @@ cpdef set_rational_from_gen(Rational self, Gen x):
         ...
         TypeError: Attempt to coerce non-integral real number to an Integer
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(set_rational_from_gen, self, x)
     x = x.simplify()
     if is_rational_t(typ((<Gen>x).g)):
         INTFRAC_to_mpq(self.value, (<Gen>x).g)
@@ -437,6 +456,8 @@ cpdef Gen new_gen_from_rational(Rational self):
         sage: Rational(pari(-1/2))
         -1/2
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(new_gen_from_rational, self)
     return new_gen_from_mpq_t(self.value)
 
 
@@ -465,6 +486,8 @@ cpdef list pari_divisors_small(Integer self):
         ...
         AssertionError
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(pari_divisors_small, self)
     # we need n to fit into a long and not a unsigned long in order to use
     # smallInteger
     assert mpz_fits_slong_p(self.value) and mpz_sgn(self.value) > 0
@@ -510,6 +533,8 @@ cpdef pari_is_prime(Integer p):
         sage: pari_is_prime(2**64 + 2)
         True
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(pari_is_prime, p)
     return bool(uisprime(mpz_get_ui(p.value)))
 
 
@@ -546,6 +571,8 @@ cpdef pari_is_prime_power(Integer q, bint get_data):
         sage: pari_is_prime_power(2**64 + 2, False)
         True
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(pari_is_prime_power, q, get_data)
     cdef long p, n
     n = uisprimepower(mpz_get_ui(q.value), <ulong*>(&p))
     if n:
@@ -553,7 +580,7 @@ cpdef pari_is_prime_power(Integer q, bint get_data):
     return (q, smallInteger(0)) if get_data else False
 
 
-cpdef unsigned long pari_maxprime() noexcept:
+cpdef unsigned long pari_maxprime() except? 0:
     """
     Return to which limit PARI has computed the primes.
 
@@ -566,6 +593,8 @@ cpdef unsigned long pari_maxprime() noexcept:
         sage: b >= 2*a
         True
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(pari_maxprime)
     return maxprime()
 
 
@@ -583,6 +612,8 @@ cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
         sage: pari_prime_range(2, 19)
         [2, 3, 5, 7, 11, 13, 17]
     """
+    if not is_owner_thread():
+        return pari.run_on_owner(pari_prime_range, c_start, c_stop, py_ints)
     cdef ulong i = 1
     res = []
     while pari_PRIMES[i] < c_start:

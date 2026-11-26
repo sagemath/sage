@@ -20,9 +20,11 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 from cypari2.paripriv cimport *
+from cypari2.thread_support cimport is_owner_thread
+from sage.libs.pari import pari
 from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 from cypari2.stack cimport new_gen, new_gen_noclear, clear_stack
-from cypari2.gen cimport Gen as pari_gen, objtogen
+from cypari2.gen cimport Gen as pari_gen, objtogen, release_clone
 
 from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
@@ -333,6 +335,9 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: x
             a + 1
         """
+        if not is_owner_thread():
+            pari.run_on_owner(FiniteFieldElement_pari_ffelt.__init__, self, parent, x)
+            return
         # FinitePolyExtElement.__init__(self, parent)
         self._parent = parent
         self.construct_from(x)
@@ -342,7 +347,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         Cython destructor.
         """
         if self.val is not NULL:
-            gunclone_deep(self.val)
+            release_clone(self.val)
 
     cdef FiniteFieldElement_pari_ffelt _new(self):
         """
@@ -545,6 +550,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: I
             I
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt._repr_, self)
         s = str(new_gen_noclear(self.val))
         if self._parent._need_replace_varname:
             s = s.replace("x", self._parent._names[0])  # .variable_name() is slower
@@ -660,6 +667,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a > a^2
             False
         """
+        if not is_owner_thread():
+            return pari.run_on_owner((<object>FiniteFieldElement_pari_ffelt)._richcmp_, self, other, op)
         cdef int r
         sig_on()
         r = cmp_universal(self.val, (<FiniteFieldElement_pari_ffelt>other).val)
@@ -676,6 +685,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a + a^2 # indirect doctest
             a^2 + a
         """
+        if not is_owner_thread():
+            return pari.run_on_owner((<object>FiniteFieldElement_pari_ffelt)._add_, self, right)
         cdef FiniteFieldElement_pari_ffelt x = self._new()
         sig_on()
         x.construct(FF_add((<FiniteFieldElement_pari_ffelt>self).val,
@@ -692,6 +703,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a - a # indirect doctest
             0
         """
+        if not is_owner_thread():
+            return pari.run_on_owner((<object>FiniteFieldElement_pari_ffelt)._sub_, self, right)
         cdef FiniteFieldElement_pari_ffelt x = self._new()
         sig_on()
         x.construct(FF_sub((<FiniteFieldElement_pari_ffelt>self).val,
@@ -707,7 +720,14 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: k.<a> = GF(3^17, implementation='pari_ffelt')
             sage: (a^12 + 1)*(a^15 - 1) # indirect doctest
             a^15 + 2*a^12 + a^11 + 2*a^10 + 2
+
+        A product can be used after the Python worker that created it exits::
+
+            sage: pari.run_with_threads(lambda: a * a) == a^2
+            True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner((<object>FiniteFieldElement_pari_ffelt)._mul_, self, right)
         cdef FiniteFieldElement_pari_ffelt x = self._new()
         sig_on()
         x.construct(FF_mul((<FiniteFieldElement_pari_ffelt>self).val,
@@ -724,6 +744,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: (a - 1) / (a + 1) # indirect doctest
             2*a^16 + a^15 + 2*a^14 + a^13 + 2*a^12 + a^11 + 2*a^10 + a^9 + 2*a^8 + a^7 + 2*a^6 + a^5 + 2*a^4 + a^3 + 2*a^2 + a + 1
         """
+        if not is_owner_thread():
+            return pari.run_on_owner((<object>FiniteFieldElement_pari_ffelt)._div_, self, right)
         if FF_equal0((<FiniteFieldElement_pari_ffelt>right).val):
             raise ZeroDivisionError
         cdef FiniteFieldElement_pari_ffelt x = self._new()
@@ -744,6 +766,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: (a - a).is_zero()
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.is_zero, self)
         return bool(FF_equal0(self.val))
 
     def is_one(self):
@@ -758,6 +782,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: (a/a).is_one()
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.is_one, self)
         return bool(FF_equal1(self.val))
 
     def is_unit(self):
@@ -770,6 +796,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a.is_unit()
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.is_unit, self)
         return not bool(FF_equal0(self.val))
 
     __bool__ = is_unit
@@ -796,6 +824,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: -a
             2*a
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.__neg__, self)
         cdef FiniteFieldElement_pari_ffelt x = self._new()
         sig_on()
         x.construct(FF_neg_i((<FiniteFieldElement_pari_ffelt>self).val))
@@ -815,6 +845,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: ~((2*a)/a)
             2
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.__invert__, self)
         if FF_equal0(self.val):
             raise ZeroDivisionError
         cdef FiniteFieldElement_pari_ffelt x = self._new()
@@ -856,6 +888,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             returns `a` even if `n` is not a multiple of the
             multiplicative order of `a`.
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.__pow__, self, exp, other)
         if exp == 0:
             return self._parent.one()
         if exp < 0 and FF_equal0(self.val):
@@ -903,6 +937,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: x.pth_power(-1)**127 == x
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.pth_power, self, k)
         cdef int n = int(self._parent.degree())
         if k % n == 0:
             return self
@@ -953,6 +989,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: (a**2 + 1).polynomial('beta').parent()
             Univariate Polynomial Ring in beta over Finite Field of size 3
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.polynomial, self, name)
         sig_on()
         pol = new_gen(FF_to_FpXQ(self.val))
         return self._parent.polynomial_ring(name)(pol)
@@ -972,6 +1010,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a.minpoly('y')
             y^2 + 1
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.minpoly, self, var)
         sig_on()
         pol = new_gen(FF_minpoly(self.val))
         return self._parent.polynomial_ring(var)(pol)
@@ -991,6 +1031,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a.charpoly('y')
             y^2 + 1
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.charpoly, self, var)
         sig_on()
         pol = new_gen(FF_charpoly(self.val))
         return self._parent.polynomial_ring(var)(pol)
@@ -1020,6 +1062,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: k(0).is_square()
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.is_square, self)
         cdef long i
         sig_on()
         i = FF_issquare(self.val)
@@ -1081,6 +1125,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: _^2 == a^3 - a - 1
             True
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.sqrt, self, extend, all)
         if extend:
             raise NotImplementedError
         cdef GEN s
@@ -1186,6 +1232,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             ...
             ValueError: element does not have the provided order
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.log, self, base, order, check=check)
         base = self._parent(base)
         if self.is_zero():
             raise ArithmeticError("discrete logarithm of 0 is not defined")
@@ -1226,6 +1274,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a**124
             1
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.multiplicative_order, self)
         if self.is_zero():
             raise ArithmeticError("Multiplicative order of 0 not defined.")
         cdef GEN order
@@ -1247,6 +1297,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: b.parent()
             Integer Ring
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.lift, self)
         if FF_equal0(self.val):
             return Integer(0)
         f = self.polynomial()
@@ -1321,6 +1373,8 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             ...
             ValueError: variable name illegal in PARI
         """
+        if not is_owner_thread():
+            return pari.run_on_owner(FiniteFieldElement_pari_ffelt.__pari__, self, var)
         if self._parent._need_replace_varname:
             raise ValueError("variable name illegal in PARI")
         return new_gen_noclear(self.val)
