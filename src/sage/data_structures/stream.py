@@ -3348,7 +3348,7 @@ def _outer_bound(degree_f, n, inner_order, inner_constant):
     return n // max(inner_order, 1) + 1
 
 
-def _to_powersum(f, scalar_basis=None, is_sparse=True):
+def _to_powersum(f, scalar_basis, is_sparse):
     r"""
     Return the stream of the coefficients of ``f`` in the powersum
     realization of their algebra.
@@ -3357,8 +3357,8 @@ def _to_powersum(f, scalar_basis=None, is_sparse=True):
     and not only the base ring of a previously chosen basis; it extends
     the coefficient ring by denominators when the conversion to the
     powersum basis requires it.  A coefficient which is a scalar is
-    lifted into ``scalar_basis`` first, if given.  Tensor-valued
-    coefficients are converted factorwise.
+    lifted into ``scalar_basis`` first.  Tensor-valued coefficients
+    are converted factorwise.
 
     EXAMPLES::
 
@@ -3366,14 +3366,14 @@ def _to_powersum(f, scalar_basis=None, is_sparse=True):
         sage: h = SymmetricFunctions(ZZ).h()
         sage: p = SymmetricFunctions(QQ).p()
         sage: f = Stream_exact([h[2]], order=2)
-        sage: g = _to_powersum(f)
+        sage: g = _to_powersum(f, p, True)
         sage: [g[i] for i in range(3)]
         [0, 0, 1/2*p[1, 1] + 1/2*p[2]]
 
         Scalar coefficients are lifted into ``scalar_basis``::
 
         sage: f = Stream_exact([ZZ(2), ZZ(3)], order=0)
-        sage: g = _to_powersum(f, p)
+        sage: g = _to_powersum(f, p, True)
         sage: [g[i] for i in range(2)]
         [2*p[], 3*p[]]
 
@@ -3402,8 +3402,7 @@ def _to_powersum(f, scalar_basis=None, is_sparse=True):
         # Only combine a genuine scalar base-ring coefficient into the
         # algebra.  Symmetric functions, in any basis, and tensor-valued
         # data are converted factorwise instead.
-        if (scalar_basis is not None
-                and not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
+        if (not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
                 and HopfAlgebrasWithBasis(
                     x.parent().base_ring()).TensorProducts()
                     not in x.parent().categories()):
