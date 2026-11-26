@@ -103,7 +103,7 @@ with ideals in non-maximal orders.
     sage: R.ideal(5).factor()
     Traceback (most recent call last):
     ...
-    AttributeError: 'NumberFieldOrderIdeal_generic' object has no attribute 'factor'
+    NotImplementedError: factorization is not implemented for non-maximal orders
 
 
 Relative Extensions
