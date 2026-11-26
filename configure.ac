@@ -386,7 +386,7 @@ PKG_CHECK_MODULES([liblzma], [liblzma], [], [
 ########################################################################
 
 m4_pushdef([PYTHON_MIN_VERSION],               [3.13.0])
-m4_pushdef([PYTHON_LT_VERSION],                [3.15.0])
+m4_pushdef([PYTHON_LT_VERSION],                [3.16.0])
 
 AC_ARG_WITH([python],
             [AS_HELP_STRING([--with-python=PYTHON3],
