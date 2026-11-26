@@ -76,6 +76,7 @@
  *    insert() relies on it). The validity of the given order is not checked.
  */
 
+#include <algorithm>
 #include <random>
 #include <set>
 #include <stdexcept>
