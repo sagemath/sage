@@ -697,7 +697,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         from sage.modules.free_module import FreeModule
         return FreeModule(ZZ, self.space_dimension())
 
-    def contains(self, point_coordinates):
+    def contains(self, point_coordinates) -> bool:
         r"""
         Test whether point is contained in the polytope.
 
@@ -722,7 +722,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return all(p.relation_with(c).implies(is_included) for c in self.constraints())
 
     @cached_method
-    def contains_origin(self):
+    def contains_origin(self) -> bool:
         """
         Test whether the polytope contains the origin.
 

@@ -400,7 +400,7 @@ class Polyhedron_base(Polyhedron_base7):
         """
         return self.radius_square().sqrt()
 
-    def is_inscribed(self, certificate=False):
+    def is_inscribed(self, certificate=False) -> bool | tuple:
         """
         This function tests whether the vertices of the polyhedron are
         inscribed on a sphere.
@@ -747,7 +747,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         return FaceFan(self)
 
-    def is_minkowski_summand(self, Y):
+    def is_minkowski_summand(self, Y) -> bool:
         r"""
         Test whether ``Y`` is a Minkowski summand.
 

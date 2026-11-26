@@ -1046,7 +1046,8 @@ class Polyhedron_base4(Polyhedron_base3):
         from sage.groups.matrix_gps.finitely_generated import MatrixGroup
         return MatrixGroup(matrices)
 
-    def is_combinatorially_isomorphic(self, other, algorithm='bipartite_graph'):
+    def is_combinatorially_isomorphic(self, other,
+                                      algorithm='bipartite_graph') -> bool:
         r"""
         Return whether the polyhedron is combinatorially isomorphic to another polyhedron.
 
@@ -1211,7 +1212,7 @@ class Polyhedron_base4(Polyhedron_base3):
             if self.n_vertices():
                 tester.assertTrue(self.is_combinatorially_isomorphic(self + self.center(), algorithm='face_lattice'))
 
-    def is_self_dual(self):
+    def is_self_dual(self) -> bool:
         r"""
         Return whether the polytope is self-dual.
 

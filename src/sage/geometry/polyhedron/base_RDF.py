@@ -18,7 +18,7 @@ class Polyhedron_RDF(Polyhedron_base):
     """
     # 1e-6 is the cddf+ default fuzzy zero cutoff
 
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
@@ -43,7 +43,7 @@ class Polyhedron_RDF(Polyhedron_base):
         """
         return abs(x) <= 1e-6
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
@@ -68,7 +68,7 @@ class Polyhedron_RDF(Polyhedron_base):
         """
         return x >= -1e-6
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 

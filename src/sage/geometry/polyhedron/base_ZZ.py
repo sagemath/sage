@@ -857,6 +857,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
                     return True
                 except ValueError:
                     pass
+
         decompositions = []
         for X in self._subpoly_parallel_facets():
             if is_known_summand(X):

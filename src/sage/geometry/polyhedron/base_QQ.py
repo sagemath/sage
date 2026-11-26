@@ -18,7 +18,7 @@ class Polyhedron_QQ(Polyhedron_base):
         A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
         sage: TestSuite(p).run()
     """
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
@@ -38,7 +38,7 @@ class Polyhedron_QQ(Polyhedron_base):
         """
         return x == 0
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
@@ -58,7 +58,7 @@ class Polyhedron_QQ(Polyhedron_base):
         """
         return x >= 0
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 
@@ -1145,7 +1145,7 @@ class Polyhedron_QQ(Polyhedron_base):
         """
         raise TypeError("the backend of the polyhedron should be 'normaliz'")
 
-    def is_effective(self, Hstar, Hstar_as_lin_comb):
+    def is_effective(self, Hstar, Hstar_as_lin_comb) -> bool:
         r"""
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
@@ -1220,7 +1220,7 @@ class Polyhedron_QQ(Polyhedron_base):
             return self._is_effective_normaliz(Hstar, Hstar_as_lin_comb)
         raise TypeError("the backend of the polyhedron should be 'normaliz'")
 
-    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
+    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb) -> bool:
         r"""
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 

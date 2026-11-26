@@ -766,7 +766,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         yield from self.as_polyhedron().some_elements()
 
-    def contains(self, point):
+    def contains(self, point) -> bool:
         """
         Test whether the polyhedron contains the given ``point``.
 

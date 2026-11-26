@@ -2413,7 +2413,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         fraction_virtual_ring = virtual_ring.fraction_field()
         return initial_Hstar.change_ring(fraction_virtual_ring) * vector(fraction_virtual_ring, Chi_ring.gens())
 
-    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
+    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb) -> bool:
         r"""
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 

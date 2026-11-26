@@ -1242,7 +1242,7 @@ class Polyhedron_base3(Polyhedron_base2):
             raise NotImplementedError("this function is implemented for polytopes only")
         return self.combinatorial_polyhedron().is_simplicial()
 
-    def is_pyramid(self, certificate=False):
+    def is_pyramid(self, certificate=False) -> bool | tuple:
         """
         Test whether the polytope is a pyramid over one of its facets.
 
@@ -1289,7 +1289,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         return self.combinatorial_polyhedron().is_pyramid(certificate)
 
-    def is_bipyramid(self, certificate=False):
+    def is_bipyramid(self, certificate=False) -> bool | tuple:
         r"""
         Test whether the polytope is combinatorially equivalent to a
         bipyramid over some polytope.
@@ -1344,7 +1344,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         return self.combinatorial_polyhedron().is_bipyramid(certificate)
 
-    def is_prism(self, certificate=False):
+    def is_prism(self, certificate=False) -> bool | tuple:
         """
         Test whether the polytope is combinatorially equivalent to a prism of
         some polytope.
@@ -1423,7 +1423,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         return self.combinatorial_polyhedron().is_prism(certificate)
 
-    def is_lawrence_polytope(self):
+    def is_lawrence_polytope(self) -> bool:
         """
         Return ``True`` if ``self`` is a Lawrence polytope.
 
@@ -1496,7 +1496,7 @@ class Polyhedron_base3(Polyhedron_base2):
         """
         return self.combinatorial_polyhedron().neighborliness()
 
-    def is_neighborly(self, k=None):
+    def is_neighborly(self, k=None) -> bool:
         r"""
         Return whether the polyhedron is neighborly.
 

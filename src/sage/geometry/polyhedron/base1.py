@@ -233,7 +233,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         return op == op_NE
 
     @coerce_binop
-    def _is_subpolyhedron(self, other):
+    def _is_subpolyhedron(self, other) -> bool:
         """
         Test whether ``self`` is a (not necessarily strict)
         sub-polyhedron of ``other``.
@@ -257,7 +257,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                    for other_H in other.Hrepresentation()
                    for self_V in self.Vrepresentation())
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Test whether the polyhedron is the empty polyhedron.
 
@@ -282,7 +282,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         return self.n_Vrepresentation() == 0
 
-    def is_universe(self):
+    def is_universe(self) -> bool:
         """
         Test whether the polyhedron is the whole ambient space.
 
@@ -573,7 +573,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         except StopIteration:
             pass
 
-    def contains(self, point):
+    def contains(self, point) -> bool:
         """
         Test whether the polyhedron contains the given ``point``.
 
@@ -697,7 +697,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             return self.parent().element_class(self.parent(), None, None)
         return self.relative_interior()
 
-    def interior_contains(self, point):
+    def interior_contains(self, point) -> bool:
         """
         Test whether the interior of the polyhedron contains the
         given ``point``.
@@ -752,7 +752,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         return all(H.interior_contains(p) for H in self.Hrep_generator())
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -814,7 +814,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             return self
         return RelativeInterior(self)
 
-    def relative_interior_contains(self, point):
+    def relative_interior_contains(self, point) -> bool:
         """
         Test whether the relative interior of the polyhedron
         contains the given ``point``.
