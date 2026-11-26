@@ -3736,9 +3736,10 @@ class Stream_cauchy_compose(Stream_binary):
                           if isinstance(f, Stream_exact) and not f._constant
                           else None)
         _assume_positive_valuation([g], self._degree_f)
-        # the 0-th power is the multiplicative identity and the 1-st the
-        # inner stream itself; higher powers are created on demand
-        self._pos_powers = [Stream_exact([1], order=0), g]
+        # the k-th power of the inner stream is at index k; None is a
+        # pad, since the 0-th power is the multiplicative identity;
+        # higher powers are created on demand
+        self._pos_powers = [None, g]
         # the (-k)-th power is at index k; only created once the order
         # of the outer stream is known to be negative
         self._neg_powers = []
@@ -3849,11 +3850,14 @@ class Stream_cauchy_compose(Stream_binary):
                                                            self._is_sparse))
         # Negative outer degrees use inverse powers of the inner
         # series, nonnegative degrees use its positive powers.  The
-        # constant outer term enters through the multiplicative identity.
+        # constant outer term, the 0-th power of the inner series, is
+        # the multiplicative identity.
         ret = ZZ.sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                      if (l := self._left[k]))
+        if not n and (l := self._left[0]):
+            ret += l
 
-        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(K)
+        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(1, K)
                             if (l := self._left[k]))
 
 
