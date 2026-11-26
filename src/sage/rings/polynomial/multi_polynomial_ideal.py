@@ -725,7 +725,8 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that an unknown algorithm raises a descriptive error::
+        Regression test for :issue:`17723`: an unknown algorithm raises a
+        descriptive error::
 
             sage: R.<x,y> = QQ[]
             sage: R.ideal(x).complete_primary_decomposition('elephants')
