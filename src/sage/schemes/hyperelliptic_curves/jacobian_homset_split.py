@@ -117,9 +117,9 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
 
         We use `P_2 + \iota(P_2) \sim \infty_+ + \infty_-` to write
         `[P_1 - P_2] = [P_1] + [\iota(P_2)] - \infty_+ - \infty_-`. Composing the
-        affine parts of `[P_1]` and `[\iota(P_2)]` removes ``s_deg`` pairs of
+        affine parts of `[P_1]` and `[\iota(P_2)]` removes ``s.degree()`` pairs of
         mutually inverse points, each contributing `\infty_+ + \infty_-`, so the
-        multiplicity of `\infty_+` is increased by ``s_deg``.
+        multiplicity of `\infty_+` is increased by ``s.degree()``.
 
         EXAMPLES::
 
@@ -200,15 +200,16 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         u1, v1, n1 = self.point_to_mumford_coordinates(P1)
         P2_inv = H.hyperelliptic_involution(P2)
         u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
-        u, v, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
-        n = (g + 1) // 2 - 1 + n1 + n2 + s_deg
+        u, v, s = self._cantor_composition_generic(u1, v1, u2, v2)
+        n = (g + 1) // 2 - 1 + n1 + n2 + s.degree()
         # Reduce to the canonical balanced representative. This is a no-op when
         # the divisor is already reduced (genus >= 2), and handles the genus 1
         # case where ``deg(u)`` can exceed ``g``.
         while u.degree() > g + 1:
             u, v, n = self.cantor_reduction(u, v, n)
         while n < 0 or n > g - u.degree():
-            u, v, n = self.cantor_compose_at_infinity(u, v, n, plus=(n >= 0))
+            plus = n >= 0
+            u, v, n, _ = self.cantor_compose_at_infinity(u, v, n, plus=plus)
         return u, v, n
 
     def _mumford_from_coordinates(self, args):
@@ -282,10 +283,10 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         g = H.genus()
 
         # Cantor composition
-        u3, v3, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
+        u3, v3, s = self._cantor_composition_generic(u1, v1, u2, v2)
 
         # Compute new weight
-        n3 = n1 + n2 + s_deg - ((g + 1) // 2)
+        n3 = n1 + n2 + s.degree() - ((g + 1) // 2)
 
         return u3, v3, n3
 
@@ -351,9 +352,9 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         while composing at `\infty_-` increases that value::
 
             sage: JF.cantor_compose_at_infinity(x^2 + 4*x + 3, 2*x + 2, 1)
-            (x^2 + 3*x + 6, 5*x + 5, -1)
+            (x^2 + 3*x + 6, 5*x + 5, -1, x^4 + 6)
             sage: JF.cantor_compose_at_infinity(x^2 + 4*x + 3, 2*x + 2, 1, plus=False)
-            (x^3 + 6*x^2 + x + 4, 5*x + 5, 2)
+            (x^3 + 6*x^2 + x + 4, 5*x + 5, 2, 6*x^4 + 4*x + 5)
         """
         # Collect data from HyperellipticCurve
         H = self.extended_curve()
@@ -362,10 +363,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
 
         # Pick either G_plus or G_minus for reduction
         G_plus, G_minus = H.split_G_plus_minus()
-        if plus:
-            G = G_plus
-        else:
-            G = G_minus
+        G = G_plus if plus else G_minus
 
         v1_prime = G + ((v0 - G) % u0)
         u1 = (v1_prime**2 + h * v1_prime - f) // u0
@@ -378,4 +376,4 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         else:
             n1 = n0 + g + 1 - u1.degree()
 
-        return u1, v1, n1
+        return u1, v1, n1, v1_prime
