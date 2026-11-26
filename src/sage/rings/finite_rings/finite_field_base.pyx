@@ -1551,10 +1551,11 @@ cdef class FiniteField(Field):
             elif hasattr(E, '_prefix') and hasattr(self, '_prefix'):
                 pass # coercion map is automatically found
             else:
-                if self.is_conway() and E.is_conway():
-                    alpha = E.gen()**((E.order()-1)//(self.order()-1))
-                else:
-                    alpha = self._compatible_root(E)
+                # Both fields may be Conway even when a non-Conway subfield
+                # already embeds into each of them. The standard Conway
+                # generator power then fails to commute (:issue:`43212`).
+                # ``_compatible_root`` keeps that power when it is compatible.
+                alpha = self._compatible_root(E)
                 try: # to register a coercion map (embedding of self to E)
                     E.register_coercion(self.hom([alpha], codomain=E, check=False))
                 except AssertionError: # coercion already exists
@@ -1618,6 +1619,11 @@ cdef class FiniteField(Field):
             f = image_in_self.polynomial()
             fE = sum(E(f[i]) * x**i for i in range(f.degree() + 1))
             constraint = constraint.gcd(fE - image_in_E)
+
+        if self.is_conway() and E.is_conway():
+            conway_alpha = E.gen()**((E.order() - 1) // (self.order() - 1))
+            if constraint(conway_alpha) == 0:
+                return conway_alpha
 
         if constraint.degree() < 1:
             return mod.any_root(E)
