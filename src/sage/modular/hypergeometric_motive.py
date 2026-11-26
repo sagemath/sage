@@ -923,7 +923,7 @@ class HypergeometricData:
 
         This is a bivariate polynomial.
 
-        The algorithm is taken from [FRV2019]_.
+        The algorithm is taken from [RV2019]_.
 
         INPUT:
 
@@ -931,8 +931,7 @@ class HypergeometricData:
 
         REFERENCES:
 
-        .. [FRV2019] Fernando Rodriguez Villegas, *Mixed Hodge numbers
-           and factorial ratios*, :arxiv:`1907.02722`
+        - [RV2019]_
 
         EXAMPLES::
 

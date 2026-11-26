@@ -5,7 +5,7 @@ all.py -- much of sage is imported into this module, so you don't
 WARNING:
 
 Do not import from this module into other modules. Instead, import
-from the orginal location. The tool `import_statements` helps in
+from the original location. The tool `import_statements` helps in
 figuring out where that location is. For instance::
 
     sage: import_statements("TensorAlgebra")
@@ -109,9 +109,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                         module='(.*[.]_vendor[.])?packaging')
 
 # Ignore a few warnings triggered by pythran 0.12.1
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        message='\n\n  `numpy.distutils` is deprecated since NumPy 1.23.0',
-                        module='pythran.dist')
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message='pkg_resources is deprecated as an API|'
                         'Deprecated call to `pkg_resources.declare_namespace(.*)`',

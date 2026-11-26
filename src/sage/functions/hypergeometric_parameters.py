@@ -1040,7 +1040,7 @@ class HypergeometricParameters(SageObject):
 
         - ``p`` -- a prime number
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.functions.hypergeometric_algebraic import HypergeometricParameters
             sage: pa = HypergeometricParameters([1/4, 1/3, 1/2], [2/5, 3/5])

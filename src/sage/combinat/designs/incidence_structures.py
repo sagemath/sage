@@ -2,17 +2,16 @@ r"""
 Incidence structures (i.e. hypergraphs, i.e. set systems)
 
 An incidence structure is specified by a list of points, blocks, or an incidence
-matrix ([1]_, [2]_). :class:`IncidenceStructure` instances have the following methods:
+matrix ([BlockIncidenceWikipedia]_, [AK1992]_).
+:class:`IncidenceStructure` instances have the following methods:
 
 {METHODS_OF_IncidenceStructure}
 
 REFERENCES:
 
-.. [1] Block designs and incidence structures from wikipedia,
-  :wikipedia:`Block_design`
-  :wikipedia:`Incidence_structure`
+- [BlockIncidenceWikipedia]_
 
-.. [2] \E. Assmus, J. Key, Designs and their codes, CUP, 1992.
+- [AK1992]_
 
 AUTHORS:
 

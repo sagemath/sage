@@ -232,7 +232,7 @@ class WordMonoidElement(ElementWrapper):
             raise ValueError("letters must be integers from 1 to %s" % r)
         ElementWrapper.__init__(self, parent, value)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -272,7 +272,7 @@ class WordMonoidElement(ElementWrapper):
 
     grade = __len__
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         TESTS::
 
@@ -363,7 +363,7 @@ class WordMonoidElement(ElementWrapper):
         word = self.value + other.value
         return self.__class__(parent, word)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return whether ``self`` and ``other`` are equal.
 
@@ -406,7 +406,7 @@ class WordMonoidElement(ElementWrapper):
         """
         return self.to_tableau().shape()
 
-    def is_canonical(self):
+    def is_canonical(self) -> bool:
         """
         Return whether ``self`` is its row reading word representative.
 

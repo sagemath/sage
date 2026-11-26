@@ -7,6 +7,9 @@ AUTHORS:
 
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, overload
 
 # *****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -40,6 +43,15 @@ from sage.structure.sequence import Sequence
 from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
 from sage.misc.lazy_import import lazy_import
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence as AbcSequence
+    from sage.rings.integer import Integer
+    from sage.rings.ring import Field
+    from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+    from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+    from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+    from sage.schemes.elliptic_curves.ell_rational_field import EllipticCurve_rational_field
 
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
@@ -358,6 +370,33 @@ class EllipticCurveFactory(UniqueFactory):
         TypeError: invalid input to EllipticCurve constructor
     """
 
+    @overload
+    def __call__(self, x: AbcSequence[int] | AbcSequence[Integer], **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: str, **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, *, j: int | Integer, minimal_twist: bool = ..., **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: RationalField, y: AbcSequence, **kwds: Any) -> EllipticCurve_rational_field: ...
+
+    @overload
+    def __call__(self, x: FiniteField, y: AbcSequence, **kwds: Any) -> EllipticCurve_finite_field: ...
+
+    @overload
+    def __call__(self, x: Field, y: AbcSequence, **kwds: Any) -> EllipticCurve_field: ...
+
+    @overload
+    def __call__(self, x: AbcSequence, **kwds: Any) -> EllipticCurve_field: ...
+
+    def __call__(self, *args: Any, **kwds: Any) -> EllipticCurve_generic:
+        # A pure forwarding override: the @overload declarations above give
+        # static checkers the concrete return classes; instances still
+        # dispatch to the inherited UniqueFactory.__call__ machinery.
+        return super().__call__(*args, **kwds)
+
     def create_key_and_extra_args(
         self, x=None, y=None, j=None, A=None, minimal_twist=True, **kwds
     ):
@@ -540,9 +579,11 @@ class EllipticCurveFactory(UniqueFactory):
 
         ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
 
+            sage: # needs eclib
             sage: E.<P> = EllipticCurve(QQ, [1, 3])
             sage: P
             (-1 : 1 : 1)
+
             sage: E.<P> = EllipticCurve(GF(5), [1, 3])
             sage: P
             (4 : 1 : 1)
@@ -757,7 +798,7 @@ def EllipticCurve_from_c4c6(c4, c6):
     return EllipticCurve([-K(c4) / K(48), -K(c6) / K(864)])
 
 
-def EllipticCurve_from_j(j, minimal_twist=True):
+def EllipticCurve_from_j(j, minimal_twist: bool = True) -> EllipticCurve_generic:
     r"""
     Return an elliptic curve with given `j`-invariant.
 
@@ -1126,13 +1167,15 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     the generator::
 
         sage: E = f.codomain()
+        sage: finv = f.inverse()
+
+        sage: # needs eclib
         sage: E.label()
         '720e2'
         sage: E.rank()
         1
         sage: R = E.gens()[0]; R
         (-17280000/2527 : 9331200000/6859 : 1)
-        sage: finv = f.inverse()
         sage: [finv(k*R) for k in range(1,10)]
         [(-4 : 1 : 0),
         (-1 : 4 : 1),
@@ -1654,6 +1697,7 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     EXAMPLES::
 
+        sage: # needs eclib
         sage: EllipticCurves_with_good_reduction_outside_S([])
         []
         sage: elist = EllipticCurves_with_good_reduction_outside_S([2])
@@ -1669,14 +1713,15 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     Without ``Proof=False``, this example gives two warnings::
 
-        sage: elist = EllipticCurves_with_good_reduction_outside_S([11], proof=False)   # long time (14s on sage.math, 2011)
-        sage: len(elist)                                                                # long time
+        sage: # long time, needs eclib
+        sage: elist = EllipticCurves_with_good_reduction_outside_S([11], proof=False)
+        sage: len(elist)
         12
-        sage: ', '.join(e.label() for e in elist)                                       # long time
+        sage: ', '.join(e.label() for e in elist)
         '11a1, 11a2, 11a3, 121a1, 121a2, 121b1, 121b2, 121c1, 121c2, 121d1, 121d2, 121d3'
 
-        sage: # long time
-        sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3])               # long time (26s on sage.math, 2011)
+        sage: # long time, needs eclib
+        sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3])
         sage: len(elist)
         752
         sage: conds = sorted(set([e.conductor() for e in elist]))

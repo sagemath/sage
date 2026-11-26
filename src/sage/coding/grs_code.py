@@ -368,7 +368,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         """
         return self._column_multipliers
 
-    def is_generalized(self):
+    def is_generalized(self) -> bool:
         r"""
         Return whether ``self`` is a Generalized Reed-Solomon code or
         a regular Reed-Solomon code.
