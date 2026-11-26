@@ -55,7 +55,7 @@ else:
     from ctypes.util import find_library as _find_library
 
 
-def find_library(name):
+def find_library(name: str) -> str | None:
     """
     Return the shared library filename for a given library.
 
