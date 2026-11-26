@@ -1994,8 +1994,10 @@ class Stream_uninitialized(Stream):
             return c
 
         def subs_coefficient(e):
-            """Substitute in a coefficient in ``P`` or ``PF``, and
-            retract constants; leave other coefficients alone."""
+            """
+            Substitute in a coefficient in ``P`` or ``PF``, and
+            retract constants; leave other coefficients alone.
+            """
             if e.parent() is self._P:
                 e = self._PF(e)
             if e.parent() is self._PF:
@@ -3996,12 +3998,12 @@ class Stream_plethysm(Stream_binary):
             # does with a tensor valued inner, or comes from
             # Stream_plethysm_multi, whose factor plethysms have the
             # unit of the first tensor factor as their outer stream
-            self._tensor_power = len(p.tensor_factors())
+            self._is_tensor = True
             # the outer stream is single sort, the inner tensor valued
             f = _to_powersum(f, p.tensor_factors()[0], is_sparse)
             g = _to_powersum(g, self._basis, is_sparse, is_tensor=True)
         else:
-            self._tensor_power = None
+            self._is_tensor = False
             f = _to_powersum(f, p, is_sparse)
             g = _to_powersum(g, self._basis, is_sparse)
         self._powers = [g]  # a cache for the powers of g in the powersum basis
@@ -4030,7 +4032,7 @@ class Stream_plethysm(Stream_binary):
 
     def get_coefficient(self, n):
         r"""
-        Return the ``n``-th coefficient of ``self``.
+        Return the coefficient of total degree ``n``.
 
         INPUT:
 
@@ -4058,11 +4060,10 @@ class Stream_plethysm(Stream_binary):
         K = _outer_bound(self._degree_f, n,
                          self._right._approximate_order, self._right[0])
 
-        return sum((c * self.compute_product(n, la)
-                    for k in range(self._left._approximate_order, K)
-                    if self._left[k]  # necessary, because it might be int(0)
-                    for la, c in self._left[k]),
-                   self._basis.zero())
+        return self._basis.sum(c * self.compute_product(n, la)
+                               for k in range(self._left._approximate_order, K)
+                               if (fk := self._left[k])  # fk might be int(0)
+                               for la, c in fk)
 
     def compute_product(self, n, la):
         r"""
@@ -4184,12 +4185,12 @@ class Stream_plethysm(Stream_binary):
                 if power_d:
                     # _raise_variables(c, i, self._degree_one) cannot
                     # vanish because i is positive and c is nonzero
-                    if self._tensor_power is None:
-                        terms = {mon.stretch(i):
+                    if self._is_tensor:
+                        terms = {tuple(mu.stretch(i) for mu in mon):
                                  _raise_variables(c, i, self._degree_one)
                                  for mon, c in power_d}
                     else:
-                        terms = {tuple(mu.stretch(i) for mu in mon):
+                        terms = {mon.stretch(i):
                                  _raise_variables(c, i, self._degree_one)
                                  for mon, c in power_d}
                     return self._basis(self._p.element_class(self._p, terms))
@@ -4314,29 +4315,36 @@ class Stream_plethysm_multi(Stream_inexact):
         super().__init__(is_sparse, False)
 
     def is_uninitialized(self):
-        r"""Return whether an input stream is uninitialized."""
+        r"""
+        Return whether an input stream is uninitialized.
+        """
         return (self._left.is_uninitialized()
                 or any(g.is_uninitialized() for g in self._arguments))
 
     @lazy_attribute
     def _approximate_order(self):
-        r"""Return a lower bound for the order."""
+        r"""
+        Return a lower bound for the order.
+        """
         return self._left._approximate_order * min(
             g._approximate_order for g in self._arguments)
 
     def get_coefficient(self, n):
-        r"""Return the coefficient of total degree ``n``."""
-        stop = _outer_bound(
-            self._degree_f, n,
-            min(g._approximate_order for g in self._arguments),
-            any(g[0] for g in self._arguments))
+        r"""
+        Return the coefficient of total degree ``n``.
+        """
+        K = _outer_bound(self._degree_f, n,
+                         min(g._approximate_order for g in self._arguments),
+                         any(g[0] for g in self._arguments))
         return self._basis.sum(c * self._compute_product(n, tuple(la), 0, {})
-                               for k in range(self._left._approximate_order, stop)
-                               for fk in [self._left[k]] if fk
+                               for k in range(self._left._approximate_order, K)
+                               if (fk := self._left[k])  # fk might be int(0)
                                for la, c in fk)
 
     def _compute_product(self, n, la, i, cache):
-        r"""Return the product of the factors ``la[i:]`` in degree ``n``."""
+        r"""
+        Return the product of the factors ``la[i:]`` in degree ``n``.
+        """
         key = (n, i)
         try:
             return cache[key]
