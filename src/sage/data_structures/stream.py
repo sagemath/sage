@@ -261,6 +261,12 @@ class Stream:
         Return the list of streams which are used to compute the
         coefficients of ``self``.
 
+        This includes streams which are cached as an implementation
+        detail, notably the powers of inner streams: the cached
+        coefficients of all these streams can become stale when an
+        uninitialized stream is defined.  The implicit definition
+        machinery traverses this graph to find its dependencies.
+
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_zero
@@ -4082,6 +4088,25 @@ class Stream_compose_multi(Stream_inexact):
 
         These are all the streams whose cached coefficients can become
         stale when an uninitialized stream is defined.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, ('a', 'b'))
+            sage: a, b = L.gens()
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: h.input_streams() == ([f._coeff_stream]
+            ....:                     + [p._coeff_stream for p in (L.one(), a, b)])
+            True
+
+        Cached powers are also returned, once created::
+
+            sage: h[3]
+            a^3 + 3*a^2*b + 3*a*b^2 + b^3
+            sage: len(h.input_streams()) > 4
+            True
         """
         return [self._stream] + [p._coeff_stream for p in self._powers.values()]
 
@@ -4613,7 +4638,7 @@ class Stream_plethysm_multi(Stream_inexact):
         Return whether an input stream is uninitialized.
         """
         return (self._left.is_uninitialized()
-                or any(g.is_uninitialized() for g in self._arguments))
+                or any(h.is_uninitialized() for h in self._plethysms))
 
     @lazy_attribute
     def _approximate_order(self):
@@ -5040,10 +5065,28 @@ class Stream_cauchy_invert(Stream_unary):
             -1
             sage: [h[i] for i in range(-2, 5)]
             [0, 1, 5, 1, 0, 0, 0]
+
+        An undefined stream is not reported as a nonexistent inverse::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: A = L.undefined()
+            sage: h = Stream_cauchy_invert(A._coeff_stream)
+            sage: h._approximate_order
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
         """
         try:
             return -self._series.order()
-        except (ValueError, RecursionError):
+        except ValueError:
+            if self._series.is_uninitialized():
+                # the order of the inverse of a series whose stream is
+                # not yet defined cannot be computed; do not mask this
+                # error as a nonexistent inverse
+                raise
+            raise ValueError("inverse does not exist")
+        except RecursionError:
             raise ValueError("inverse does not exist")
 
     @lazy_attribute

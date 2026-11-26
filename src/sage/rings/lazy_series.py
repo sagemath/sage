@@ -6955,6 +6955,63 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: F(S(q), S.one(), include=[])[0]
             q*p[]
 
+        An inner series of valuation zero is admissible when the outer
+        function has finite support.  Since Adams operations fix
+        scalars, `p_2(1 + p_1) = 1 + p_2`, so the ground truth is a
+        product::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: S = LazySymmetricFunctions(p)
+            sage: S(p[2, 1])(S(1 + p[1]))[3] == ((1 + p[2]) * (1 + p[1])).homogeneous_component(3)
+            True
+
+        The same inner series is rejected with an outer function of
+        infinite support::
+
+            sage: S(lambda n: p[n], valuation=1)(S(1 + p[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compute plethysm with a series of positive valuation, or of valuation 0 for symmetric functions of finite support
+
+        The powers of an inner series are reread as it is refined by
+        an implicit definition.  With `A = 1 + p_1 A`, i.e., `A =
+        1/(1 - p_1)`, we have `p_2(A) = 1/(1 - p_2)`::
+
+            sage: A = S.undefined(0)
+            sage: B = S.undefined(0)
+            sage: H = S(p[2])(A)
+            sage: S.define_implicitly([(A, [p[[]]]), (B, [p[[]]])],
+            ....:                   [A - 1 - p[1]*A, B - H])
+            sage: [B[n] for n in range(5)]
+            [p[], 0, p[2], 0, p[2, 2]]
+
+        A tensor outer series uses one factor plethysm per argument,
+        which are reread as well.  Here `G = p_2(A)^2 = 1/(1 - p_2)^2`::
+
+            sage: L = LazySymmetricFunctions(tensor([p, p]))
+            sage: F = S.undefined(0)
+            sage: G = S.undefined(0)
+            sage: H2 = L(tensor([p[2], p[2]]))(F, F)
+            sage: S.define_implicitly([(F, [p[[]]]), (G, [p[[]]])],
+            ....:                   [F - 1 - p[1]*F, G - H2])
+            sage: [G[n] for n in range(5)]
+            [p[], 0, 2*p[2], 0, 3*p[2, 2]]
+
+        Two plethysms sharing an implicitly defined inner series are
+        refined together::
+
+            sage: E = S.undefined(0)
+            sage: C = S.undefined(0)
+            sage: D = S.undefined(0)
+            sage: H3 = S(p[2])(E)
+            sage: H4 = S(p[3])(E)
+            sage: S.define_implicitly([(E, [p[[]]]), (C, [p[[]]]), (D, [p[[]]])],
+            ....:                   [E - 1 - p[1]*E, C - H3, D - H4])
+            sage: [C[n] for n in range(5)]
+            [p[], 0, p[2], 0, p[2, 2]]
+            sage: [D[n] for n in range(5)]
+            [p[], 0, 0, p[3], 0]
+
         An argument with nonzero constant term is allowed if the outer
         function has finite support.  The higher powers needed here are
         reread as an implicit argument is refined::
