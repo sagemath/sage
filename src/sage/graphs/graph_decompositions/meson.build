@@ -22,6 +22,8 @@ py.install_sources(
   'rankwidth.pyx',
   'slice_decomposition.pxd',
   'slice_decomposition.pyx',
+  'split_decomposition.pxd',
+  'split_decomposition.pyx',
   'tdlib.pyx',
   'tree_decomposition.pxd',
   'tree_decomposition.pyx',
@@ -59,6 +61,7 @@ extension_data_cpp = {
   'clique_separators': files('clique_separators.pyx'),
   'slice_decomposition': files('slice_decomposition.pyx'),
   'modular_decomposition': files('modular_decomposition.pyx'),
+  'split_decomposition': files('split_decomposition.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
