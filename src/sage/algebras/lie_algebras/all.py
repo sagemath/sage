@@ -21,4 +21,5 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.algebras.lie_algebras.lie_algebra', 'LieAlgebra')
 # from kac_moody import KacMoodyAlgebra
 lazy_import('sage.algebras.lie_algebras', 'examples', 'lie_algebras')
+lazy_import('sage.algebras.lie_algebras.superliealgebra', 'SuperLieAlgebra')
 del lazy_import
