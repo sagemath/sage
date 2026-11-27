@@ -189,17 +189,17 @@ Basic Arithmetic Rules
 Suppose we want to add two element, a and b, whose parents are A and B
 respectively. When we type ``a+b`` then
 
-1. If A ``is`` B, call a._add_(b)
+1. If A ``is`` B, call ``a._add_(b)``
 
-2. If there is a coercion `\phi: B \rightarrow A`, call a._add_( `\phi` (b))
+2. If there is a coercion `\phi\colon B \rightarrow A`, call ``a._add_(`` `\phi` ``(b))``
 
-3. If there is a coercion `\phi: A \rightarrow B`, call `\phi` (a)._add_(b)
+3. If there is a coercion `\phi\colon A \rightarrow B`, call `\phi` ``(a)._add_(b)``
 
-4. Look for `Z` such that there is a coercion `\phi_A: A \rightarrow Z` and
-   `\phi_B: B \rightarrow Z`, call `\phi_A` (a)._add_( `\phi_B` (b))
+4. Look for `Z` such that there is a coercion `\phi_A\colon A \rightarrow Z` and
+   `\phi_B\colon B \rightarrow Z`, call `\phi_A` ``(a)._add_(`` `\phi_B` ``(b))``
 
 These rules are evaluated in order; therefore if there are coercions
-in both directions, then the parent of a._add_b is A -- the parent
+in both directions, then the parent of ``a._add_(b)`` is A -- the parent
 of the left-hand operand is used in such cases.
 
 The same rules are used for subtraction, multiplication, and
