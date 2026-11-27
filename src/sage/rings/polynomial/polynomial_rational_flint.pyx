@@ -2622,3 +2622,269 @@ cdef class Polynomial_rational_flint(Polynomial):
                 (d1 > d/2 and d1 < d-2 and d1.is_prime()):
                 return (2 if self.disc().is_square() else 1)
         return 0
+
+    @coerce_binop
+    def divides(self, Polynomial_rational_flint other):
+        r"""
+        Return ``True`` if this polynomial divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x - 1
+            sage: g = x^3 - 1
+            sage: f.divides(g)
+            True
+            sage: f.divides(x + 1)
+            False
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: f.divides(R(0))
+            True
+        """
+        cdef Polynomial_rational_flint q
+        cdef int result
+        if self.is_zero():
+            return other.is_zero()
+        q = self._new()
+        sig_str("FLINT exception")
+        result = fmpq_poly_divides(q._poly, other._poly, self._poly)
+        sig_off()
+        return bool(result)
+
+    def is_squarefree(self):
+        r"""
+        Return ``True`` if this polynomial is squarefree.
+
+        By convention, the zero polynomial is considered squarefree.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: (x^2 - 1).is_squarefree()
+            True
+            sage: ((x - 1)^2).is_squarefree()
+            False
+            sage: R(1).is_squarefree()
+            True
+            sage: R(0).is_squarefree()
+            True
+        """
+        sig_on()
+        cdef bint result = fmpq_poly_is_squarefree(self._poly)
+        sig_off()
+        return bool(result)
+
+    def is_monic(self):
+        r"""
+        Return ``True`` if this polynomial is monic.
+
+        A polynomial is monic if its leading coefficient is `1`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: (x^2 + 1/2*x - 3).is_monic()
+            True
+            sage: (2*x^2 + x).is_monic()
+            False
+            sage: R(0).is_monic()
+            False
+            sage: R(1).is_monic()
+            True
+        """
+        return bool(fmpq_poly_is_monic(self._poly))
+
+    def content(self):
+        r"""
+        Return the content of this polynomial.
+
+        The content is the rational number whose absolute value is the
+        positive gcd of the numerators divided by the lcm of the
+        denominators of the coefficients; its sign is the sign of the
+        leading coefficient.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: (3*x^2 + 6*x - 9).content()
+            3
+            sage: (x/2 + 1/3).content()
+            1/6
+            sage: R(0).content()
+            0
+        """
+        cdef Rational result = Rational.__new__(Rational)
+        cdef fmpq_t c
+        fmpq_init(c)
+        sig_on()
+        fmpq_poly_content(c, self._poly)
+        sig_off()
+        fmpq_get_mpq(result.value, c)
+        fmpq_clear(c)
+        return result
+
+    def primitive_part(self):
+        r"""
+        Return the primitive part of this polynomial.
+
+        The primitive part is obtained by dividing by the content. The result
+        is a polynomial with integer coefficients (viewed as an element of
+        `\QQ[x]`).
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: (3*x^2 - 6*x + 9).primitive_part()
+            x^2 - 2*x + 3
+            sage: (x/2 + 1/3).primitive_part()
+            3*x + 2
+            sage: R(0).primitive_part()
+            0
+        """
+        cdef Polynomial_rational_flint res = self._new()
+        sig_str("FLINT exception")
+        fmpq_poly_primitive_part(res._poly, self._poly)
+        sig_off()
+        return res
+
+    def nth_derivative(self, n):
+        r"""
+        Return the ``n``-th derivative of this polynomial.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^4/24 + x^2/2 + 1
+            sage: f.nth_derivative(0) == f
+            True
+            sage: f.nth_derivative(1)
+            1/6*x^3 + x
+            sage: f.nth_derivative(2)
+            1/2*x^2 + 1
+            sage: f.nth_derivative(4)
+            1
+            sage: f.nth_derivative(10)
+            0
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        cdef Polynomial_rational_flint res = self._new()
+        sig_str("FLINT exception")
+        fmpq_poly_nth_derivative(res._poly, self._poly, <ulong>n)
+        sig_off()
+        return res
+
+    @coerce_binop
+    def compose_series(self, Polynomial_rational_flint other, n):
+        r"""
+        Return the composition of this polynomial with ``other`` modulo
+        `x^n`.
+
+        The polynomial ``other`` must have zero constant term so that the
+        composition is well-defined as a power series.
+
+        INPUT:
+
+        - ``other`` -- a polynomial with zero constant coefficient
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = 1 + x/2 + x^2/3
+            sage: g = x - x^2
+            sage: f.compose_series(g, 4)
+            -2/3*x^3 - 1/6*x^2 + 1/2*x + 1
+            sage: (1 + x).compose_series(x, 4)
+            x + 1
+
+        TESTS::
+
+            sage: f.compose_series(1 + x, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: other must have zero constant term
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if other[0] != 0:
+            raise ValueError("other must have zero constant term")
+        cdef Polynomial_rational_flint res = self._new()
+        sig_str("FLINT exception")
+        fmpq_poly_compose_series(res._poly, self._poly, other._poly, <slong>n)
+        sig_off()
+        return res
+
+    def power_sums(self, n):
+        r"""
+        Return the polynomial whose coefficients are the Newton power sums
+        of the roots of this polynomial, up to (but not including) order
+        ``n``.
+
+        If `r_1, \dots, r_d` are the roots of this polynomial (counted with
+        multiplicity), then the returned polynomial is
+        `\sum_{k=0}^{n-1} p_k x^k` where `p_k = \sum_i r_i^k`.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = (x - 1) * (x - 2) * (x + 1/2)
+            sage: f.power_sums(5)
+            273/16*x^4 + 71/8*x^3 + 21/4*x^2 + 5/2*x + 3
+            sage: f.power_sums(0)
+            0
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if self.is_zero():
+            raise ValueError("power_sums is not defined for the zero polynomial")
+        cdef Polynomial_rational_flint res = self._new()
+        sig_str("FLINT exception")
+        fmpq_poly_power_sums(res._poly, self._poly, <slong>n)
+        sig_off()
+        return res
+
+    def rescale(self, a):
+        r"""
+        Return the polynomial ``self(a * x)``.
+
+        INPUT:
+
+        - ``a`` -- a rational number
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^3 - 2*x + 1
+            sage: f.rescale(2)
+            8*x^3 - 4*x + 1
+            sage: f.rescale(1/2)
+            1/8*x^3 - x + 1
+            sage: f.rescale(0)
+            1
+        """
+        cdef Rational aa = QQ(a)
+        # FLINT's fmpq_poly_rescale uses the convention 0^0 = 0; handle
+        # the a = 0 case manually so that the result is the constant term.
+        if aa.is_zero():
+            return self.parent()(self[0])
+        cdef Polynomial_rational_flint res = self._new()
+        cdef fmpq_t a_fmpq
+        fmpq_init(a_fmpq)
+        fmpq_set_mpq(a_fmpq, aa.value)
+        sig_str("FLINT exception")
+        fmpq_poly_rescale(res._poly, self._poly, a_fmpq)
+        sig_off()
+        fmpq_clear(a_fmpq)
+        return res
