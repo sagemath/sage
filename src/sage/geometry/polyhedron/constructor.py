@@ -551,15 +551,18 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Q.base_ring()
         Rational Field
 
-    Check that enforcing base ring `ZZ` for this example gives an error::
+    Enforcing base ring ``ZZ`` for this example succeeds because the PPL
+    point generator can be replaced by an integral representative modulo
+    the lineality (see :issue:`42142`)::
 
         sage: Q = Polyhedron(vertices=[(1, 2, 3), (1, 3, 2), (2, 1, 3),
         ....:                          (2, 3, 1), (3, 1, 2), (3, 2, 1)],
         ....:                rays=[[1, 1, 1]], lines=[[1, 2, 3]], backend='ppl',
         ....:                base_ring=ZZ)
-        Traceback (most recent call last):
-        ...
-        TypeError: no conversion of this rational to integer
+        sage: Q.base_ring()
+        Integer Ring
+        sage: Q.dimension()
+        3
 
     Check that input with too many bits of precision returns an error (see
     :issue:`22552`)::
