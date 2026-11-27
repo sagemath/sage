@@ -1680,7 +1680,7 @@ class Stream_uninitialized(Stream):
 
     def define_implicitly(self, series, initial_values, equations,
                           base_ring, coefficient_ring, terms_of_degree,
-                          max_lookahead=1):
+                          max_lookahead=1, equation_factories=None):
         r"""
         Define ``self`` via ``equations == 0``.
 
@@ -1697,6 +1697,9 @@ class Stream_uninitialized(Stream):
         - ``max_lookahead`` -- a positive integer specifying how many
           elements beyond the approximate order of each equation to
           extract linear equations from
+        - ``equation_factories`` -- (optional) a list of callables
+          returning an equation, used to verify the residual of the
+          solution on freshly built equations
 
         EXAMPLES::
 
@@ -1748,6 +1751,11 @@ class Stream_uninitialized(Stream):
             if len(self._series) > 1:
                 self._name += str(self._series.index(self))
         self._max_lookahead = max_lookahead
+        # residual verification
+        self._eq_factories = equation_factories
+        self._residual_eqs = None
+        self._verified = -1
+        self._verifying = False
 
     def _input_streams(self):
         r"""
@@ -1959,6 +1967,7 @@ class Stream_uninitialized(Stream):
                 self._compute()
             for f in self._series:
                 f._uncomputed = True
+            self._verify_residuals(n)
 
         if n < self._approximate_order:
             return ZZ.zero()
@@ -1980,6 +1989,81 @@ class Stream_uninitialized(Stream):
             self._cache.append(x)
 
         return x
+
+    def _verify_residuals(self, n):
+        r"""
+        Check that the defining equations are satisfied in the
+        degrees up to ``n``.
+
+        If equation factories were provided, the equations are rebuilt
+        from the series with the currently determined coefficients, so
+        that the check is independent of the caches used during
+        solving.  Otherwise, the equations given to
+        :meth:`define_implicitly` are used.
+
+        Raise a :class:`ValueError` if an equation is not satisfied.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C[4]  # indirect doctest
+            5
+            sage: C._verify_residuals(4) is None
+            True
+        """
+        if self._verifying:
+            # the verification itself requires coefficients that are
+            # not yet determined; they are computed by the nested call
+            return
+        if not self._base_ring.is_exact():
+            # verification is meaningless for inexact coefficient rings
+            return
+        if self._eq_factories is not None:
+            if self._residual_eqs is None:
+                residual_eqs = []
+                for f in self._eq_factories:
+                    built = f()
+                    if isinstance(built, (list, tuple)):
+                        residual_eqs.extend(built)
+                    else:
+                        residual_eqs.append(built)
+                self._residual_eqs = residual_eqs
+            eqs = [eq._coeff_stream for eq in self._residual_eqs]
+        else:
+            eqs = self._eqs
+
+        def determined(res):
+            r"""
+            Return whether the residual cannot contain an undetermined
+            coefficient; only then is a nonzero residual an error.
+            """
+            if not hasattr(res, "parent"):
+                return True
+            Pc = res.parent()
+            if Pc == self._PF:
+                return False
+            return not (hasattr(Pc, "base_ring")
+                        and Pc.base_ring() == self._PF)
+
+        self._verifying = True
+        try:
+            for stream in eqs:
+                for d in range(self._verified + 1, n + 1):
+                    res = stream[d]
+                    if res and determined(res):
+                        raise ValueError(
+                            "the implicit definition is not satisfied:"
+                            " the equation has residual %s in degree %s"
+                            % (res, d))
+            self._verified = n
+        finally:
+            self._verifying = False
 
     def _subs_in_caches(self, var, val):
         r"""

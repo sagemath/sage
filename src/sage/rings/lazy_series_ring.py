@@ -1524,6 +1524,37 @@ class LazySeriesRing(UniqueRepresentation, Parent):
              + ((h[1,1,1]+3*h[2,1]+h[3])*t^6+(2*h[2,1]+h[3])*t^5*u+h[3]*t^4*u^2)
              + O(t,u)^7
 
+        Equations may be given as factories, callables returning an
+        equation or a list of equations, typically closing over the
+        series.  The solver then checks the residual of the solution
+        on freshly built equations, so that a wrong solution is caught
+        instead of returned silently.  Here the solver treats the
+        undetermined coefficient as fixed under the Adams operation and
+        commits to a wrong solution, which the residual check turns
+        into a loud failure (the solution is `D = q Y`)::
+
+            sage: R = PolynomialRing(QQ, 'q'); q = R.gen()
+            sage: h = SymmetricFunctions(R).h()
+            sage: L = LazySymmetricFunctions(h)
+            sage: p2 = L(SymmetricFunctions(R).p()([2]))
+            sage: D = L.undefined(1)
+            sage: L.define_implicitly([D], [lambda: p2(D) - q**2*p2])
+            sage: D[2]
+            Traceback (most recent call last):
+            ...
+            ValueError: the implicit definition is not satisfied: the equation has residual (-q^4+q^2)*h[1, 1] + (2*q^4-2*q^2)*h[2] in degree 2
+
+        A single factory may be given for all the equations of a
+        system::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: L = LazySymmetricFunctions(h)
+            sage: X = L(h[1]); E2 = L(h[2])
+            sage: A = L.undefined(1)
+            sage: L.define_implicitly([A], lambda: A - X - E2(A))
+            sage: [A[i] for i in range(4)]
+            [0, h[1], h[2], h[2, 1]]
+
         TESTS::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
@@ -1711,13 +1742,42 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         ics = [a[1] if isinstance(a, (tuple, list))
                else []
                for a in series]
-        eqs = [eq._coeff_stream for eq in equations]
+        # an equation may be given as a factory, a callable receiving
+        # the list of series and returning the equation; factories
+        # allow the solver to verify the residual of the solution on
+        # freshly built equations after solving
+        from sage.structure.element import Element
+        factories = []
+        eqs = []
+        if not isinstance(equations, (list, tuple)):
+            # a single factory for all equations
+            factories.append(equations)
+            built = equations()
+            equations = (built if isinstance(built, (list, tuple))
+                         else [built])
+        for eq in equations:
+            if isinstance(eq, Element):
+                eqs.append(eq._coeff_stream)
+            else:
+                # an equation factory: a callable returning an
+                # equation or a list of equations, typically closing
+                # over the series; it allows the solver to verify the
+                # residual of the solution on freshly built equations
+                factories.append(eq)
+                built = eq()
+                if isinstance(built, (list, tuple)):
+                    eqs.extend(e._coeff_stream for e in built)
+                else:
+                    eqs.append(built._coeff_stream)
+        if not factories:
+            factories = None
         for f, ic in zip(s, ics):
             f.define_implicitly(s, ic, eqs,
                                 self.base_ring(),
                                 self._stream_coefficient_ring,
                                 self._terms_of_degree,
-                                max_lookahead=max_lookahead)
+                                max_lookahead=max_lookahead,
+                                equation_factories=factories)
 
     class options(GlobalOptions):
         r"""
