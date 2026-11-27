@@ -1,6 +1,8 @@
 # cython: old_style_globals=True
 """
 Interpreter reset
+
+.. autodata:: EXCLUDE
 """
 import sys
 
@@ -19,7 +21,7 @@ def reset(vars=None, attached=False):
     If vars is specified, just restore the value of vars and leave
     all other variables alone (i.e., call restore).
 
-    Note that the variables in the set :obj:`sage.misc.reset.EXCLUDE` are
+    Note that the variables in the set :data:`EXCLUDE` are
     excluded from being reset.
 
     INPUT:
@@ -34,7 +36,7 @@ def reset(vars=None, attached=False):
 
         sage: x = 5
         sage: reset()
-        sage: x                                                                         # needs sage.symbolic
+        sage: x
         x
 
         sage: fn = tmp_filename(ext='.py')
@@ -58,7 +60,6 @@ def reset(vars=None, attached=False):
 
     Confirm that assumptions do not survive a reset (:issue:`10855`)::
 
-        sage: # needs sage.symbolic
         sage: assume(x > 3)
         sage: assumptions()
         [x > 3]
@@ -109,9 +110,9 @@ def restore(vars=None):
         Rational Field
         sage: x
         10
-        sage: y = var('y')                                                              # needs sage.symbolic
+        sage: y = var('y')
         sage: restore('x y')
-        sage: x                                                                         # needs sage.symbolic
+        sage: x
         x
         sage: y
         Traceback (most recent call last):
@@ -120,7 +121,7 @@ def restore(vars=None):
         sage: x = 10; y = 15/3; QQ='red'
         sage: ww = 15
         sage: restore()
-        sage: x, QQ, ww                                                                 # needs sage.symbolic
+        sage: x, QQ, ww
         (x, Rational Field, 15)
         sage: restore('ww')
         sage: ww

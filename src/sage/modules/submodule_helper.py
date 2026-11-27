@@ -380,11 +380,10 @@ class SubmoduleHelper_polynomial_ring(SubmoduleHelper):
         P, T = self._popov
         if P.is_one():
             return T
-        else:
-            return self.basis.stack(self.complement).inverse()
+        return self.basis.stack(self.complement).inverse()
 
     @lazy_attribute
-    def is_saturated(self):
+    def is_saturated(self) -> bool:
         r"""
         Return ``True`` if this submodule is saturated; ``False`` otherwise.
 

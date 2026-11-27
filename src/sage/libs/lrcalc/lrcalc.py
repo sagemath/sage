@@ -252,7 +252,7 @@ def lrcoef(outer, inner1, inner2):
 
     .. NOTE::
 
-       This function converts its inputs into :func:`Partition`'s.  If
+       This function converts its inputs into :class:`~sage.combinat.partition.Partition`'s.  If
        you don't need these checks and your inputs are valid, then you
        can use :func:`lrcoef_unsafe`.
 

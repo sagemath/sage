@@ -411,8 +411,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 s = -s
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
         def is_dominant_weight(self) -> bool:
             """
@@ -452,7 +451,7 @@ class CartanType(SuperCartanType_standard):
     """
     Cartan Type `A(m|n)`.
 
-    .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
     """
 
     def __init__(self, m, n):

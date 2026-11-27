@@ -28,6 +28,10 @@ def have_program(program, path=None) -> bool:
 
         sage: from sage.misc.sage_ostools import have_program
         sage: have_program('ls')
+        doctest:warning
+        ...
+        DeprecationWarning: have_program is deprecated; use shutil.which instead
+        See https://github.com/sagemath/sage/issues/32957 for details.
         True
         sage: have_program('there_is_not_a_program_with_this_name')
         False
@@ -38,6 +42,8 @@ def have_program(program, path=None) -> bool:
         sage: have_program('there_is_not_a_program_with_this_name', "/bin")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32957, "have_program is deprecated; use shutil.which instead")
     if path is None:
         path = os.environ.get('PATH', "")
     for p in path.split(os.pathsep):

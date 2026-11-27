@@ -16,7 +16,7 @@ cdef class FlatsMatroid(Matroid):
     cpdef full_rank(self)
 
     # enumeration
-    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem flats(self, long k=*)
     cpdef list whitney_numbers(self)
     cpdef list whitney_numbers2(self)
 

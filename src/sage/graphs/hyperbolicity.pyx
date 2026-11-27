@@ -1426,7 +1426,7 @@ def hyperbolicity(G,
             DOM.add(G.random_vertex())
         # We map the dominating set to [0..N-1]
         v_to_int = {v: i for i, v in enumerate(G.vertex_iterator())}
-        DOM_int = set(v_to_int[v] for v in DOM)
+        DOM_int = {v_to_int[v] for v in DOM}
         # We set null distances to vertices outside DOM. This way these
         # vertices will not be considered anymore.
         for i in range(N):

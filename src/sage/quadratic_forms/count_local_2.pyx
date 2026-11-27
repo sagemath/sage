@@ -147,9 +147,8 @@ cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec):
 def CountAllLocalTypesNaive(Q, p, k, m, zvec, nzvec):
     r"""
     This is an internal routine, which is called by
-    :meth:`sage.quadratic_forms.quadratic_form.QuadraticForm.count_congruence_solutions_by_type
-    QuadraticForm.count_congruence_solutions_by_type`. See the documentation of
-    that method for more details.
+    ``QuadraticForm.count_congruence_solutions_by_type``. See the documentation
+    of that method for more details.
 
     INPUT:
 
@@ -286,9 +285,8 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
 def count_all_local_good_types_normal_form(Q, p, k, m, zvec, nzvec):
     r"""
     This is an internal routine, which is called by
-    :meth:`sage.quadratic_forms.quadratic_form.QuadraticForm.local_good_density_congruence_even
-    QuadraticForm.local_good_density_congruence_even`. See the documentation of
-    that method for more details.
+    ``QuadraticForm.local_good_density_congruence_even``. See the documentation
+    of that method for more details.
 
     INPUT:
 

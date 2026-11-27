@@ -371,7 +371,6 @@ def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
     One can compute the core of a graph (with respect to homomorphism)
     with this method::
 
-        sage: # needs sage.numerical.mip
         sage: g = graphs.CycleGraph(8)
         sage: mapping = g.has_homomorphism_to(g, core=True)
         sage: print(f"The size of the core is {len(set(mapping.values()))}")
@@ -384,7 +383,6 @@ def has_homomorphism_to(G, H, core=False, solver=None, verbose=0,
     The chromatic number of a graph is the order of the smallest clique to which
     it has an homomorphism::
 
-        sage: # needs sage.numerical.mip
         sage: g = graphs.CycleGraph(9)
         sage: g.chromatic_number()
         3

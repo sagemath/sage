@@ -2450,8 +2450,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
                             resu.append(chart2)
         if not resu:
             return None
-        else:
-            return resu
+        return resu
 
     def __call__(self, p, chart=None):
         r"""

@@ -294,23 +294,29 @@ cpdef getattr_from_other_class(self, cls, name):
     In general, descriptors are not yet well supported, because they
     often do not accept to be cheated with the type of their instance::
 
-        sage: A.__weakref__.__get__(1)
+        sage: class B:
+        ....:     __slots__ = ("value",)
+        sage: B.value.__get__(1)
         Traceback (most recent call last):
         ...
-        TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
+        TypeError: descriptor 'value' for 'B' objects doesn't apply
         to ...'sage.rings.integer.Integer' object
 
     When this occurs, an :exc:`AttributeError` is raised::
 
-        sage: getattr_from_other_class(1, A, "__weakref__")
+        sage: getattr_from_other_class(1, B, "value")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'value'...
 
     This was caught by :issue:`8296` for which we do a couple more tests::
 
         sage: "__weakref__" in dir(A)
         True
+        sage: getattr_from_other_class(1, A, "__weakref__")
+        Traceback (most recent call last):
+        ...
+        AttributeError: ...__weakref__...
         sage: 1.__weakref__
         Traceback (most recent call last):
         ...
@@ -421,7 +427,7 @@ def dir_with_other_class(self, *cls):
 
     Check that :issue:`13043` is fixed::
 
-        sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
+        sage: len(dir(RIF))==len(set(dir(RIF)))
         True
     """
     ret = set()

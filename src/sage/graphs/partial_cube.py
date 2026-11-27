@@ -269,8 +269,7 @@ def is_partial_cube(G, certificate=False):
     if not G.order():
         if certificate:
             return (True, {})
-        else:
-            return True
+        return True
 
     if certificate:
         fail = (False, None)
@@ -312,7 +311,7 @@ def is_partial_cube(G, certificate=False):
         available -= deg
 
         # Set up bitvectors on vertices
-        bitvec = {v: 0 for v in contracted}
+        bitvec = dict.fromkeys(contracted, 0)
         neighbors = {}
         for i, neighbor in enumerate(contracted[root]):
             bitvec[neighbor] = 1 << i
@@ -396,7 +395,7 @@ def is_partial_cube(G, certificate=False):
     activeTokens = list(activeTokens)
 
     # Rest of data structure: point from states to list and list to states
-    state_to_active_token = {v: -1 for v in g}
+    state_to_active_token = dict.fromkeys(g, -1)
     token_to_states = [[] for _ in activeTokens]  # (i.e. vertices on which each token acts)
 
     def scan(v):
@@ -454,5 +453,4 @@ def is_partial_cube(G, certificate=False):
     if certificate:
         format = "{0:0%db}" % dim
         return (True, {v: format.format(l) for v, l in embed.items()})
-    else:
-        return True
+    return True

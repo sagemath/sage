@@ -35,10 +35,10 @@ If you are in a hurry, you can skip the details and just follow these steps:
 
    .. code-block:: console
 
-       $ conda env create --file environment-3.12-linux.yml --name sage-dev
+       $ conda env create --file environment-3.13-linux.yml --name sage-dev
        $ conda activate sage-dev
 
-   Replace ``environment-3.12-linux.yml`` with the appropriate file for your system.
+   Replace ``environment-3.13-linux.yml`` with the appropriate file for your system.
 
 5. Build and install Sage
 
@@ -113,9 +113,13 @@ the Sage source code.
 Building Sage
 =============
 
-Sage is a large project with many dependencies. To build it, we
-recommend using Conda. If you don't have Conda installed, you can install it
-by following the `official instructions <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_
+Sage is a large project with many dependencies. To build it, we recommend using
+Conda. You can instead use the approach described in the section
+`Sage-the-distribution (classical build) <../installation/source-distro.html>`_
+of the Sage installation guide, or use ``uv``, see `System Package Manager <../installation/source.html#using-system-package-manager>`_.
+
+Here we concentrate on using Conda.  If you don't have Conda installed, you can install it by following the `official
+instructions <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_
 
 .. code-block:: console
 
@@ -127,10 +131,10 @@ and a few additional developer tools
 
 .. code-block:: console
 
-    $ conda env create --file environment-3.12-linux.yml --name sage-dev
+    $ conda env create --file environment-3.13-linux.yml --name sage-dev
     $ conda activate sage-dev
 
-Replace ``environment-3.12-linux.yml`` with the appropriate file for your system.
+Replace ``environment-3.13-linux.yml`` with the appropriate file for your system.
 You can find the environment files in the root directory of the Sage repository.
 
 Now you can build and install Sage:
@@ -143,7 +147,7 @@ This will install Sage in the current Conda environment.
 You can then start Sage from the command line with ``sage``.
 
 For more information on building Sage we refer to the section `building
-from source <../installation/meson.html>`_ in the Sage installation guide.
+from source <../installation/source.html>`_ in the Sage installation guide.
 
 .. _section-walkthrough-branch:
 
@@ -309,6 +313,17 @@ You can then continue working towards your next milestone, make
 another commit, repeat until finished. As long as you do not
 ``git checkout`` another branch, all commits that you make will be part of
 the branch that you created.
+
+.. tip::
+
+    Consider activating the pre-commit hook so that your code is automatically
+    checked before each commit:
+
+    .. code-block:: console
+
+        $ git config core.hooksPath git-hooks
+
+    This only needs to be done once after cloning the repository.
 
 Open pull request
 =================

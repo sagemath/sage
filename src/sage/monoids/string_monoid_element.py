@@ -29,70 +29,12 @@ lazy_import('sage.rings.real_mpfr', 'RealField')
 from .free_monoid_element import FreeMonoidElement
 
 
-def is_StringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_StringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement)' instead.")
-    return isinstance(x, StringMonoidElement)
-
-
-def is_AlphabeticStringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_AlphabeticStringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), AlphabeticStringMonoid)' instead.")
-    from .string_monoid import AlphabeticStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-        isinstance(x.parent(), AlphabeticStringMonoid)
-
-
-def is_BinaryStringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_BinaryStringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), BinaryStringMonoid)' instead.")
-    from .string_monoid import BinaryStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-        isinstance(x.parent(), BinaryStringMonoid)
-
-
-def is_OctalStringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_OctalStringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), OctalStringMonoid)' instead.")
-    from .string_monoid import OctalStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-        isinstance(x.parent(), OctalStringMonoid)
-
-
-def is_HexadecimalStringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_HexadecimalStringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), HexadecimalStringMonoid)' instead.")
-    from .string_monoid import HexadecimalStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-        isinstance(x.parent(), HexadecimalStringMonoid)
-
-
-def is_Radix64StringMonoidElement(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38280,
-                "The function is_Radix64StringMonoidElement is deprecated; "
-                "use 'isinstance(..., StringMonoidElement) and isinstance(x.parent(), Radix64StringMonoid)' instead.")
-    from .string_monoid import Radix64StringMonoid
-    return isinstance(x, StringMonoidElement) and \
-        isinstance(x.parent(), Radix64StringMonoid)
-
-
 class StringMonoidElement(FreeMonoidElement):
     """
     Element of a free string monoid.
     """
 
-    def __init__(self, S, x, check=True):
+    def __init__(self, S, x, check=True) -> None:
         """
         Create the element ``x`` of the StringMonoid ``S``.
 

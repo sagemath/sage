@@ -73,7 +73,7 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.integral_domains import IntegralDomains
 from sage.modules import free_module
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 
 # #############################################################################
 #
@@ -134,7 +134,6 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         [1 0]
         [0 1]
     """
-    global _cache
     rank = int(rank)
 
     # In order to use coercion into the inner_product_ring we need to pass
@@ -228,31 +227,6 @@ InnerProductSpace = QuadraticSpace
 # Base class for all free modules
 #
 # #############################################################################
-
-def is_FreeQuadraticModule(M):
-    """
-    Return ``True`` if `M` is a free quadratic module.
-
-    EXAMPLES::
-
-        sage: from sage.modules.free_quadratic_module import is_FreeQuadraticModule
-        sage: U = FreeModule(QQ,3)
-        sage: is_FreeQuadraticModule(U)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeQuadraticModule is deprecated;
-        use 'isinstance(..., FreeQuadraticModule_generic)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        False
-        sage: V = FreeModule(QQ,3,inner_product_matrix=diagonal_matrix([1,1,1]))
-        sage: is_FreeQuadraticModule(V)
-        True
-        sage: W = FreeModule(QQ,3,inner_product_matrix=diagonal_matrix([2,3,3]))
-        sage: is_FreeQuadraticModule(W)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FreeQuadraticModule is deprecated; use 'isinstance(..., FreeQuadraticModule_generic)' instead")
-    return isinstance(M, FreeQuadraticModule_generic)
 
 
 class FreeQuadraticModule_generic(free_module.FreeModule_generic):
@@ -671,7 +645,7 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         return FreeQuadraticModule_submodule_with_basis_pid(
             self.ambient_module(), basis=basis, inner_product_matrix=self.inner_product_matrix(),
@@ -805,7 +779,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         return FreeQuadraticModule_submodule_with_basis_field(
             self.ambient_module(), basis=basis,
@@ -1615,7 +1589,10 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
     EXAMPLES:
 
     Since this is an embedded vector subspace with echelonized basis,
-    the methods :meth:`echelon_coordinates` and :meth:`coordinates` return the same
+    the methods
+    :meth:`~sage.modules.free_module.FreeModule_submodule_field.echelon_coordinates`
+    and :meth:`~sage.modules.free_module.FreeModule_generic.coordinates`
+    return the same
     coordinates::
 
         sage: V = QQ^3

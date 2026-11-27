@@ -33,6 +33,10 @@ static CYTHON_INLINE PyObject* PyMethodDescr_CallSelf(PyMethodDescrObject* desc,
     return meth->ml_meth(self, NULL);
 }
 
+#if defined(CYTHON_HEX_VERSION) && CYTHON_HEX_VERSION >= 0x03030000
+static int __Pyx_InitAfterSharedUtility(void);
+#endif
+
 /*
  * This function calls PyType_Ready(t) and then calls
  * t.__getmetaclass__(None) (if that method exists) which should
@@ -44,6 +48,12 @@ static CYTHON_INLINE int Sage_PyType_Ready(PyTypeObject* t)
     int r = PyType_Ready(t);
     if (r < 0)
         return r;
+
+#if defined(CYTHON_HEX_VERSION) && CYTHON_HEX_VERSION >= 0x03030000
+    // Ensure Cython function types are initialized before calling metaclass methods.
+    if (__Pyx_InitAfterSharedUtility() < 0)
+        return -1;
+#endif
 
     // Cython 3 sets Py_TPFLAGS_HEAPTYPE before calling PyType_Ready,
     // and resets just after the call. We need to reset it earlier,

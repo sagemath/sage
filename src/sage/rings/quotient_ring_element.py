@@ -69,7 +69,6 @@ class QuotientRingElement(RingElement):
 
     ::
 
-        sage: # needs sage.libs.singular
         sage: S.<a,b> = R.quotient(x^2 + y^2)
         sage: a
         a
@@ -204,7 +203,6 @@ class QuotientRingElement(RingElement):
         In :issue:`11068`, the case of quotient rings without
         assigned names has been covered as well::
 
-            sage: # needs sage.libs.singular
             sage: S = SteenrodAlgebra(2)
             sage: I = S * [S.0 + S.1] * S
             sage: Q = S.quo(I)
@@ -433,8 +431,7 @@ class QuotientRingElement(RingElement):
             except NotImplementedError:
                 if R.is_unit():
                     return L * ~R
-                else:
-                    raise
+                raise
 
         # Now the parent is a polynomial ring, so we have an algorithm
         # at our disposal.
@@ -476,7 +473,6 @@ class QuotientRingElement(RingElement):
         Ring homomorphisms whose domain is the fraction field of a
         quotient ring work correctly (see :issue:`16135`)::
 
-            sage: # needs sage.libs.singular
             sage: R.<x, y> = QQ[]
             sage: K = R.quotient(x^2 - y^3).fraction_field()
             sage: L.<t> = FunctionField(QQ)
@@ -499,7 +495,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: int(S(-3))                # indirect doctest
@@ -618,7 +613,6 @@ class QuotientRingElement(RingElement):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = R.quo(x^2 + y^2)
             sage: c = a*a + b
@@ -631,7 +625,6 @@ class QuotientRingElement(RingElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: a > b    # indirect doctest
@@ -650,7 +643,6 @@ class QuotientRingElement(RingElement):
 
         See :issue:`7797`::
 
-            sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
             sage: Q = F.quo(I)
@@ -660,7 +652,6 @@ class QuotientRingElement(RingElement):
         The issue from :issue:`8005` was most likely fixed as part of
         :issue:`9138`::
 
-            sage: # needs sage.libs.singular
             sage: F = GF(5)
             sage: R.<x,y> = F[]
             sage: I = Ideal(R, [x, y])
@@ -688,7 +679,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -711,7 +701,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -734,7 +723,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = PolynomialRing(GF(7), 3, order='lex')
             sage: I = sage.rings.ideal.FieldIdeal(R)
             sage: Q = R.quo(I)
@@ -762,7 +750,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: a.variables()
@@ -786,7 +773,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: a.monomials()
@@ -808,7 +794,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<x,y> = PolynomialRing(GF(2), 2)
             sage: I = sage.rings.ideal.FieldIdeal(P)
             sage: Q = P.quo(I)
@@ -831,7 +816,6 @@ class QuotientRingElement(RingElement):
 
         TESTS::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]; S.<a,b> = R.quo(x^2 + y^2); type(a)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: (a - 2/3*b)._singular_()
@@ -851,7 +835,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<x,y> = PolynomialRing(GF(2))
             sage: Q = P.quotient(sage.rings.ideal.FieldIdeal(P))
             sage: xbar, ybar = Q.gens()
@@ -870,7 +853,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y])
             sage: x, y = Q.gens()
@@ -895,7 +877,6 @@ class QuotientRingElement(RingElement):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y], names=R.gens())
             sage: x, y = Q.gens()
@@ -912,7 +893,6 @@ class QuotientRingElement(RingElement):
         Check that changing the currently defined global variables (`x`, `y`,
         ...) in Macaulay2 does not affect the result of this conversion::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7), 2)
             sage: Q = R.quotient([x^2 - y], names=R.gens())
             sage: x, y = Q.gens()
@@ -950,7 +930,6 @@ class QuotientRingElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d,e> = PolynomialRing(GF(2), 5, order='lex')
             sage: I1 = ideal([a*b + c*d + 1, a*c*e + d*e,
             ....:             a*b*e + c*e, b*c + c*d*e + 1])

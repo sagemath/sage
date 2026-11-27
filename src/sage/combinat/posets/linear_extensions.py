@@ -379,7 +379,9 @@ class LinearExtensionOfPoset(ClonableArray,
 
         For more details see [Stan2009]_.
 
-        .. SEEALSO:: :meth:`tau`, :meth:`evacuation`
+        .. SEEALSO::
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`,
+            :meth:`evacuation`
 
         EXAMPLES::
 
@@ -404,7 +406,9 @@ class LinearExtensionOfPoset(ClonableArray,
         `\pi (\tau_1 \cdots \tau_{n-1}) (\tau_1 \cdots \tau_{n-2}) \cdots (\tau_1)`.
         For more details see [Stan2009]_.
 
-        .. SEEALSO:: :meth:`tau`, :meth:`promotion`
+        .. SEEALSO::
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`
 
         EXAMPLES::
 
@@ -715,8 +719,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         This method creates a graph with vertices being the linear extensions of a given finite
         poset and an edge from `\pi` to `\pi'` if `\pi' = \pi \partial_i` where `\partial_i` is
-        the promotion operator (see :meth:`promotion`) if ``action`` is set to ``promotion``
-        and `\tau_i` (see :meth:`tau`) if ``action`` is set to ``tau``. The label of the edge
+        the promotion operator (see
+        :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`)
+        if ``action`` is set to ``promotion``
+        and `\tau_i` (see
+        :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`)
+        if ``action`` is set to ``tau``. The label of the edge
         is `i` (resp. `\pi_i`) if ``labeling`` is set to ``identity`` (resp. ``source``).
 
         EXAMPLES::
@@ -767,7 +775,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
              ([2, 1, 4, 3], [1, 2, 4, 3], 1), ([2, 1, 4, 3], [2, 1, 3, 4], 3), ([2, 1, 4, 3], [2, 1, 4, 3], 2)]
             sage: view(G) # optional - dot2tex graphviz, not tested (opens external window)
 
-        .. SEEALSO:: :meth:`markov_chain_transition_matrix`, :meth:`promotion`, :meth:`tau`
+        .. SEEALSO:: :meth:`markov_chain_transition_matrix`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`
 
         TESTS::
 
@@ -848,7 +858,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [           x0             0             0      -x1 - x2            x3]
             [            0            x0             0            x2      -x1 - x3]
 
-        .. SEEALSO:: :meth:`markov_chain_digraph`, :meth:`promotion`, :meth:`tau`
+        .. SEEALSO:: :meth:`markov_chain_digraph`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.promotion`,
+            :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.tau`
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix

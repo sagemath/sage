@@ -1,15 +1,16 @@
-from sage.rings.integer import Integer
-from sage.structure.element import Element
-from sage.structure.parent import Parent
+from typing import Any
+
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
+from sage.rings.integer import Integer
+from sage.structure.parent import Parent
 
 class RingMap(Morphism):
     pass
 
 class RingMap_lift(RingMap):
-    S: Parent
-    to_S: Map
+    S: Parent[Any]
+    to_S: Map[Any, Any]
 
 class RingHomomorphism(RingMap):
     _lift: Morphism

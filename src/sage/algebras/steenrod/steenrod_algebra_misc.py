@@ -29,6 +29,10 @@ The main functions here are
   (:func:`milnor_mono_to_string`, etc.).  These convert tuples
   representing basis elements to strings, for _repr_ and _latex_
   methods.
+
+.. autodata:: sage.algebras.steenrod.steenrod_algebra_misc::_steenrod_milnor_basis_names
+
+.. autodata:: sage.algebras.steenrod.steenrod_algebra_misc::_steenrod_serre_cartan_basis_names
 """
 
 # ****************************************************************************
@@ -63,8 +67,11 @@ def get_basis_name(basis, p, generic=None):
     name for the basis.
 
     For the Milnor and Serre-Cartan bases, use the list of synonyms
-    defined by the variables :data:`_steenrod_milnor_basis_names` and
-    :data:`_steenrod_serre_cartan_basis_names`.  Their canonical names
+    defined by the variables
+    :data:`~sage.algebras.steenrod.steenrod_algebra_misc._steenrod_milnor_basis_names`
+    and
+    :data:`~sage.algebras.steenrod.steenrod_algebra_misc._steenrod_serre_cartan_basis_names`.
+    Their canonical names
     are 'milnor' and 'serre-cartan', respectively.
 
     For the other bases, use pattern-matching rather than a list of
@@ -183,7 +190,7 @@ def get_basis_name(basis, p, generic=None):
 # profile functions
 
 
-def is_valid_profile(profile, truncation_type, p=2, generic=None):
+def is_valid_profile(profile, truncation_type, p=2, generic=None) -> bool:
     r"""
     Return ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
@@ -499,8 +506,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             new_profile = tuple(new_profile)
         if is_valid_profile(new_profile, truncation_type, p):
             return new_profile, truncation_type
-        else:
-            raise ValueError("invalid profile")
+        raise ValueError("invalid profile")
     else:  # p odd
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
@@ -559,8 +565,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             new_profile = (e, k)
         if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
-        else:
-            raise ValueError("invalid profile")
+        raise ValueError("invalid profile")
 
 ######################################################
 # string representations for elements
@@ -621,23 +626,22 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
             P = "P"
     if mono == () or mono == (0,) or (generic and len(mono[0]) + len(mono[1]) == 0):
         return "1"
+    if not generic:
+        string = sq + "(" + str(mono[0])
+        for n in mono[1:]:
+            string = string + "," + str(n)
+        string = string + ")"
     else:
-        if not generic:
-            string = sq + "(" + str(mono[0])
-            for n in mono[1:]:
+        string = ""
+        if len(mono[0]) > 0:
+            for e in mono[0]:
+                string = string + "Q_{" + str(e) + "} "
+        if len(mono[1]) > 0:
+            string = string + P + "(" + str(mono[1][0])
+            for n in mono[1][1:]:
                 string = string + "," + str(n)
             string = string + ")"
-        else:
-            string = ""
-            if len(mono[0]) > 0:
-                for e in mono[0]:
-                    string = string + "Q_{" + str(e) + "} "
-            if len(mono[1]) > 0:
-                string = string + P + "(" + str(mono[1][0])
-                for n in mono[1][1:]:
-                    string = string + "," + str(n)
-                string = string + ")"
-        return string.strip(" ")
+    return string.strip(" ")
 
 
 def serre_cartan_mono_to_string(mono, latex=False, generic=False):
@@ -1143,7 +1147,7 @@ def convert_perm(m):
     permutation of the set `(3,4,7)` sending 3 to 3, 4 to 7, and 7 to
     4. This function converts ``m`` to the list ``[1,3,2]``, which
     represents essentially the same permutation, but of the set
-    `(1,2,3)`. This list can then be passed to :func:`Permutation
+    `(1,2,3)`. This list can then be passed to :class:`Permutation
     <sage.combinat.permutation.Permutation>`, and its signature can be
     computed.
 

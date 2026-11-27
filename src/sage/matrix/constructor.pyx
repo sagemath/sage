@@ -2,7 +2,7 @@
 General matrix Constructor and display options
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2016 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
@@ -11,7 +11,7 @@ General matrix Constructor and display options
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.matrix.args cimport MatrixArgs
 from sage.structure.global_options import GlobalOptions
@@ -542,12 +542,12 @@ def matrix(*args, **kwds):
         [4 5 6]
         [7 8 9]
         Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
-        sage: n = matrix(QQ, 2, 2, [1, 1/2, 1/3, 1/4]).numpy(); n
-        array([[1.        , 0.5       ],
-               [0.33333333, 0.25      ]])
+        sage: n = matrix(QQ, 2, 2, [1, 1/2, 1/4, 1/8]).numpy(); n
+        array([[1.   , 0.5  ],
+               [0.25 , 0.125]])
         sage: matrix(QQ, n)
         [  1 1/2]
-        [1/3 1/4]
+        [1/4 1/8]
 
     The dimensions of a matrix may be given as numpy types::
 
@@ -606,7 +606,6 @@ def matrix(*args, **kwds):
 
     Check :issue:`24459`::
 
-        sage: # needs sage.libs.linbox
         sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
         Traceback (most recent call last):
         ...
@@ -668,7 +667,7 @@ def matrix(*args, **kwds):
       and :issue:`20016`
 
     - Jeroen Demeyer (2018-02-20): completely rewritten using
-      :class:`MatrixArgs`, see :issue:`24742`
+      :class:`~sage.matrix.args.MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
     return MatrixArgs(*args, **kwds).element(immutable=immutable)

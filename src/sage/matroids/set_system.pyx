@@ -222,7 +222,7 @@ cdef class SetSystem:
                 E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
-        self._groundset = E
+        self._groundset = tuple(E)
         self._idx = {}
         for i in range(self._groundset_size):
             self._idx[self._groundset[i]] = i
@@ -483,7 +483,7 @@ cdef class SetSystem:
         return S
 
     # partition functions
-    cdef initial_partition(self, SetSystem P=None, E=None):
+    cdef SetSystem initial_partition(self, SetSystem P=None, E=None):
         """
         Helper method for partition methods below.
         """
@@ -550,7 +550,7 @@ cdef class SetSystem:
             partition elements is an invariant of the isomorphism class of the
             hypergraph.
         """
-        cdef long h
+        cdef Py_hash_t h
         cdef list EP2, H
 
         if P is None:

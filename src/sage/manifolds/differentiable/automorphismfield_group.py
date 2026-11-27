@@ -535,8 +535,7 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
         Field of tangent-space automorphisms t^(-1) on the 2-dimensional
          differentiable manifold M
         sage: (t1^(-1)).display()
-        t^(-1) = 1/(e^y + 1) ∂/∂x⊗dx - x*y/(x^2 + (x^2 + 1)*e^y + 1) ∂/∂x⊗dy
-         + 1/(x^2 + 1) ∂/∂y⊗dy
+        t^(-1) = 1/(e^y + 1) ∂/∂x⊗dx - x*y/(x^2*(e^y + 1) + e^y + 1) ∂/∂x⊗dy + 1/(x^2 + 1) ∂/∂y⊗dy
 
     Since any automorphism field can be considered as a tensor field of
     type-`(1,1)` on ``M``, there is a coercion map from ``G`` to the

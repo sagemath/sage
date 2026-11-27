@@ -63,6 +63,7 @@ def homfly_polynomial_string(link):
 
     EXAMPLES::
 
+        sage: # needs libhomfly
         sage: from sage.libs.homfly import homfly_polynomial_string
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
         sage: homfly_polynomial_string(trefoil)
@@ -85,6 +86,7 @@ def homfly_polynomial_dict(link):
 
     EXAMPLES::
 
+        sage: # needs libhomfly
         sage: from sage.libs.homfly import homfly_polynomial_dict
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
         sage: homfly_polynomial_dict(trefoil)

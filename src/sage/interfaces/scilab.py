@@ -197,7 +197,7 @@ AUTHORS:
 
 import os
 
-from .expect import Expect, ExpectElement
+from sage.interfaces.expect import Expect, ExpectElement
 from sage.misc.instancedoc import instancedoc
 
 

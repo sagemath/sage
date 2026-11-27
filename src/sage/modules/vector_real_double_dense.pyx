@@ -89,7 +89,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
             True
         """
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
 
 # For backwards compatibility, we must keep the function unpickle_v0
@@ -107,7 +107,7 @@ def unpickle_v0(parent, entries, degree):
     return unpickle_v1(parent, entries, degree)
 
 
-def unpickle_v1(parent, entries, degree, is_mutable=None):
+def unpickle_v1(parent, entries, degree, immutable=None):
     """
     Create a real double vector with the given parent, entries,
     degree, and mutability.
@@ -120,6 +120,6 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
         True
     """
     cdef Vector_real_double_dense v = Vector_real_double_dense(parent, entries)
-    if is_mutable is not None:
-        v._is_immutable = not is_mutable
+    if immutable is not None:
+        v._is_immutable = immutable
     return v

@@ -267,7 +267,7 @@ def dedekind_sum(p, q):
     fmpz_set_mpz(p_fmpz, (<Integer>p).value)
     fmpz_set_mpz(q_fmpz, (<Integer>q).value)
 
-    arith_dedekind_sum(s_fmpq, p_fmpz, q_fmpz)
+    fmpq_dedekind_sum(s_fmpq, p_fmpz, q_fmpz)
 
     fmpq_get_mpq((<Rational>s).value, s_fmpq)
 

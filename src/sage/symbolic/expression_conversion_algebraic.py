@@ -108,12 +108,11 @@ class AlgebraicConverter(Converter):
                 base = self.field(base)
                 expt = Rational(expt)
                 return self.field(base**expt)
-            else:
-                if operator is add_vararg:
-                    operator = add
-                elif operator is mul_vararg:
-                    operator = mul
-                return reduce(operator, map(self, ex.operands()))
+            if operator is add_vararg:
+                operator = add
+            elif operator is mul_vararg:
+                operator = mul
+            return reduce(operator, map(self, ex.operands()))
         except TypeError:
             pass
 
@@ -222,7 +221,7 @@ class AlgebraicConverter(Converter):
                 raise TypeError("unable to convert %r to %s" % (ex, self.field))
             res = zeta(rat_arg.denom())**rat_arg.numer()
             return self.field(res)
-        elif func_name in ['sin', 'cos', 'tan']:
+        if func_name in ['sin', 'cos', 'tan']:
             exp_ia = exp(SR(-1).sqrt() * operand, hold=hold)._algebraic_(QQbar)
             if func_name == 'sin':
                 res = (exp_ia - ~exp_ia) / (2 * zeta(4))
@@ -231,7 +230,7 @@ class AlgebraicConverter(Converter):
             else:
                 res = -zeta(4) * (exp_ia - ~exp_ia) / (exp_ia + ~exp_ia)
             return self.field(res)
-        elif func_name in ['sinh', 'cosh', 'tanh']:
+        if func_name in ['sinh', 'cosh', 'tanh']:
             if not (SR(-1).sqrt()*operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
             exp_a = exp(operand, hold=hold)._algebraic_(QQbar)
@@ -242,15 +241,15 @@ class AlgebraicConverter(Converter):
             else:
                 res = (exp_a - ~exp_a) / (exp_a + ~exp_a)
             return self.field(res)
-        elif func_name in self.reciprocal_trig_functions:
+        if func_name in self.reciprocal_trig_functions:
             res = ~self.reciprocal_trig_functions[func_name](operand)._algebraic_(QQbar)
             return self.field(res)
-        elif func_name == 'complex_root_of':
+        if func_name == 'complex_root_of':
             cr = ex._sympy_()
             poly = cr.poly._sage_()
             interval = cr._get_interval()._sage_()
             return self.field.polynomial_root(poly, interval)
-        elif operand is not None:
+        if operand is not None:
             res = func(operand._algebraic_(self.field))
             # We have to handle the case where we get the same symbolic
             # expression back.  For example, QQbar(zeta(7)).  See

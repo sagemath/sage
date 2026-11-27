@@ -27,15 +27,15 @@ REFERENCES:
 - Chap. 23 of R. Godement : *Algebra* [God1968]_
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
@@ -234,7 +234,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a1[e,0,1] = 2
             sage: TestSuite(a1).run()
         """
-        FreeModuleTensor.__init__(self, fmodule, (0,degree), name=name,
+        FreeModuleTensor.__init__(self, fmodule, (0, degree), name=name,
                                   latex_name=latex_name,
                                   antisym=range(degree),
                                   parent=fmodule.dual_exterior_power(degree))
@@ -666,7 +666,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         for ind_s, val_s in cmp_s._comp.items():
             for ind_o, val_o in cmp_o._comp.items():
                 ind_r = ind_s + ind_o
-                if len(ind_r) == len(set(ind_r)): # all indices are different
+                if len(ind_r) == len(set(ind_r)):  # all indices are different
                     cmp_r[[ind_r]] += val_s * val_o
         result = fmodule.alternating_form(rank_r)
         result._components[basis] = cmp_r
@@ -811,8 +811,8 @@ class FreeModuleAltForm(FreeModuleTensor):
         p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result
         if self._tensor_rank == 1:
             # Case p = 1:
-            res = self.contract(alt_tensor)  # contract() deals efficiently
-                                             # with antisymmetry for p = 1
+            res = self.contract(alt_tensor)
+            # contract() deals efficiently with antisymmetry for p = 1
         else:
             # Case p > 1:
             if alt_tensor._fmodule != self._fmodule:

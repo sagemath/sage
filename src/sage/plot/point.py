@@ -246,10 +246,8 @@ class Point(GraphicPrimitive_xydata):
             all = [point3d(list(zip(self.xdata, self.ydata, zdata)), **options)]
             if len(all) == 1:
                 return all[0]
-            else:
-                return Graphics3dGroup(all)
-        else:
-            raise ValueError('incorrect number of heights given')
+            return Graphics3dGroup(all)
+        raise ValueError('incorrect number of heights given')
 
     def _repr_(self):
         """
@@ -599,7 +597,7 @@ def point2d(points, **options):
     l = len(points)
     if l == 0:
         return Graphics()
-    elif l == 2:  # special case for a single 2D point
+    if l == 2:  # special case for a single 2D point
         if all(isinstance(z, numbers.Real)
                or (isinstance(z, Expression) and not complex(z).imag)
                for z in points):

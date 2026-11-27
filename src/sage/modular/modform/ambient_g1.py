@@ -85,10 +85,9 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
         """
         if self.level() == 1:
             return cuspidal_submodule.CuspidalSubmodule_level1_Q(self)
-        elif self.weight() == 1:
+        if self.weight() == 1:
             return cuspidal_submodule.CuspidalSubmodule_wt1_gH(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_gH_Q(self)
+        return cuspidal_submodule.CuspidalSubmodule_gH_Q(self)
 
     @cached_method
     def eisenstein_submodule(self):
@@ -178,10 +177,9 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
         """
         if self.level() == 1:
             return cuspidal_submodule.CuspidalSubmodule_level1_Q(self)
-        elif self.weight() == 1:
+        if self.weight() == 1:
             return cuspidal_submodule.CuspidalSubmodule_wt1_gH(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_g1_Q(self)
+        return cuspidal_submodule.CuspidalSubmodule_g1_Q(self)
 
     @cached_method
     def eisenstein_submodule(self):

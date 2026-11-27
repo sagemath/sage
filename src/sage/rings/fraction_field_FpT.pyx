@@ -26,7 +26,7 @@ from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
 
 class FpT(FractionField_1poly_field):
     r"""
-    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^31-1}`.
+    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^{31}-1}`.
 
     EXAMPLES::
 
@@ -370,8 +370,7 @@ cdef class FpTElement(FieldElement):
         """
         if nmod_poly_degree(self._denom) == 0 and nmod_poly_get_coeff_ui(self._denom, 0) == 1:
             return self.numer()._latex_()
-        else:
-            return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
+        return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
 
     cpdef _richcmp_(self, other, int op):
         """
@@ -822,16 +821,12 @@ cdef class FpTElement(FieldElement):
         if s is None:
             if extend:
                 raise NotImplementedError("function fields not yet implemented")
-            else:
-                raise ValueError("not a perfect square")
-        else:
-            if all:
-                if not s:
-                    return [s]
-                else:
-                    return [s, -s]
-            else:
-                return s
+            raise ValueError("not a perfect square")
+        if all:
+            if not s:
+                return [s]
+            return [s, -s]
+        return s
 
     def __pow__(FpTElement self, Py_ssize_t e, dummy):
         r"""

@@ -474,7 +474,7 @@ class PathAlgebra(CombinatorialFreeModule):
             e_1 + e_2 + e_3
         """
         one = self.base_ring().one()
-        D = {index: one for index in self._semigroup.idempotents()}
+        D = dict.fromkeys(self._semigroup.idempotents(), one)
         return self._from_dict(D)
 
     ###########################################################################
@@ -615,9 +615,8 @@ class PathAlgebra(CombinatorialFreeModule):
         if factor_on_left:
             return self.sum(coeff * element
                             for element, coeff in iter_of_elements_coeff)
-        else:
-            return self.sum(element * coeff
-                            for element, coeff in iter_of_elements_coeff)
+        return self.sum(element * coeff
+                        for element, coeff in iter_of_elements_coeff)
 
     def homogeneous_component(self, n):
         """

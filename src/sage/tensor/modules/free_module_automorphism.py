@@ -452,7 +452,8 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
              Rank-3 free module M over the Integer Ring}
 
         Of course, they can be computed from those in basis ``f`` by means of
-        a change-of-basis formula, via the method :meth:`comp` or
+        a change-of-basis formula, via the method
+        :meth:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor.comp` or
         :meth:`matrix`::
 
             sage: a.matrix(e)
@@ -622,8 +623,8 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
                     raise TypeError("the second argument must be a module" +
                                     " element")
                 return linform(vector)
-            else: # self is not the identity automorphism:
-                return FreeModuleTensor.__call__(self, *arg)
+            # self is not the identity automorphism:
+            return FreeModuleTensor.__call__(self, *arg)
         # The automorphism acting as such, on a module element, returning a
         # module element:
         vector = arg[0]
@@ -921,8 +922,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         """
         if isinstance(other, FreeModuleAutomorphism):
             return self._mul_(other)  # general linear group law
-        else:
-            return FreeModuleTensor.__mul__(self, other)  # tensor product
+        return FreeModuleTensor.__mul__(self, other)  # tensor product
 
     def matrix(self, basis1=None, basis2=None):
         r"""

@@ -154,8 +154,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             """
             if other is self.base_ring():
                 return self._coerce_map_from_base_ring()
-            else:
-                return self._coerce_map_via([self.base_ring()], other)
+            return self._coerce_map_via([self.base_ring()], other)
 
         def _coerce_map_from_base_ring(self):
             """
@@ -279,8 +278,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             def one_from_one_basis(self):
                 """
                 Return the one of the algebra, as per
-                :meth:`Monoids.ParentMethods.one()
-                <sage.categories.monoids.Monoids.ParentMethods.one>`
+                :meth:`Magmas.Unital.ParentMethods.one()
+                <sage.categories.magmas.Magmas.Unital.ParentMethods.one>`
 
                 By default, this is implemented from
                 :meth:`.one_basis`, if available.

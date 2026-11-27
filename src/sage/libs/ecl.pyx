@@ -18,7 +18,7 @@ from libc.stdlib cimport abort
 from libc.signal cimport SIGINT, SIGBUS, SIGFPE, SIGSEGV
 from libc.signal cimport raise_ as signal_raise
 from posix.signal cimport sigaction, sigaction_t
-cimport cysignals.signals
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmp.types cimport mpz_t
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -43,8 +43,8 @@ cdef bint bint_base_string_p(cl_object obj) noexcept:
     return not(si_base_string_p(obj) == ECL_NIL)
 
 cdef extern from "eclsig.h":
-    int ecl_sig_on() except 0
-    void ecl_sig_off()
+    void set_ecl_signal_handler()
+    void unset_ecl_signal_handler()
     cdef sigaction_t ecl_sigint_handler
     cdef sigaction_t ecl_sigbus_handler
     cdef sigaction_t ecl_sigfpe_handler
@@ -128,10 +128,11 @@ def test_sigint_before_ecl_sig_on():
     # Raise a SIGINT *now*.  Since we are outside of sig_on() at this
     # point, this SIGINT will not be seen yet.
     signal_raise(SIGINT)
-    # An ordinary KeyboardInterrupt should be raised by ecl_sig_on()
-    # since ecl_sig_on() calls sig_on() before anything else.  This
+    # An ordinary KeyboardInterrupt should be raised by sig_on()
+    # since sig_on() is called before anything else.  This
     # will catch the pending SIGINT.
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     # We should never get here.
     abort()
 
@@ -290,8 +291,7 @@ def init_ecl():
 cdef ecl_string_to_python(cl_object s):
     if bint_base_string_p(s):
         return char_to_str(ecl_base_string_pointer_safe(s))
-    else:
-        return ''.join(chr(ecl_char(s, i)) for i in range(ecl_length(s)))
+    return ''.join(chr(ecl_char(s, i)) for i in range(ecl_length(s)))
 
 cdef cl_object ecl_safe_eval(cl_object form) except NULL:
     """
@@ -312,9 +312,11 @@ cdef cl_object ecl_safe_eval(cl_object form) except NULL:
     """
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_eval(&error, form)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
@@ -328,9 +330,11 @@ cdef cl_object ecl_safe_eval(cl_object form) except NULL:
 cdef cl_object ecl_safe_funcall(cl_object func, cl_object arg) except NULL:
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_funcall(&error, func, arg)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
@@ -344,9 +348,11 @@ cdef cl_object ecl_safe_funcall(cl_object func, cl_object arg) except NULL:
 cdef cl_object ecl_safe_apply(cl_object func, cl_object args) except NULL:
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_apply(&error, func, args)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
@@ -431,18 +437,16 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
     if isinstance(pyobj, bool):
         if pyobj:
             return ECL_T
-        else:
-            return ECL_NIL
-    elif pyobj is None:
         return ECL_NIL
-    elif isinstance(pyobj, int):
+    if pyobj is None:
+        return ECL_NIL
+    if isinstance(pyobj, int):
         if MOST_NEGATIVE_FIXNUM <= pyobj <= MOST_POSITIVE_FIXNUM:
             return ecl_make_integer(pyobj)
-        else:
-            return python_to_ecl(Integer(pyobj), read_strings)
-    elif isinstance(pyobj, float):
+        return python_to_ecl(Integer(pyobj), read_strings)
+    if isinstance(pyobj, float):
         return ecl_make_doublefloat(pyobj)
-    elif isinstance(pyobj, unicode):
+    if isinstance(pyobj, unicode):
         try:
             s = str_to_bytes(pyobj, 'ascii')
         except UnicodeEncodeError:
@@ -454,40 +458,35 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
 
         if read_strings:
             return ecl_safe_funcall(read_from_string_clobj, o)
-        else:
-            return o
-    elif isinstance(pyobj, bytes):
+        return o
+    if isinstance(pyobj, bytes):
         s = <bytes>pyobj
         if read_strings:
             return ecl_safe_read_string(s)
-        else:
-            return ecl_cstring_to_base_string_or_nil(s)
-    elif isinstance(pyobj, Integer):
+        return ecl_cstring_to_base_string_or_nil(s)
+    if isinstance(pyobj, Integer):
         if pyobj >= MOST_NEGATIVE_FIXNUM and pyobj <= MOST_POSITIVE_FIXNUM:
             return ecl_make_integer(pyobj)
-        else:
-            return ecl_bignum_from_mpz((<Integer>pyobj).value)
-    elif isinstance(pyobj, Rational):
+        return ecl_bignum_from_mpz((<Integer>pyobj).value)
+    if isinstance(pyobj, Rational):
         return ecl_make_ratio(
             python_to_ecl((<Rational>pyobj).numerator(), read_strings),
             python_to_ecl((<Rational>pyobj).denominator(), read_strings))
-    elif isinstance(pyobj, EclObject):
+    if isinstance(pyobj, EclObject):
         return (<EclObject>pyobj).obj
-    elif isinstance(pyobj, list):
+    if isinstance(pyobj, list):
         L = ECL_NIL
         for i in range(len(pyobj) - 1, -1, -1):
             L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
         return L
-    elif isinstance(pyobj, tuple):
+    if isinstance(pyobj, tuple):
         if not pyobj:
             return ECL_NIL
-        else:
-            L = python_to_ecl(pyobj[-1], read_strings)
-            for i in range(len(pyobj) - 2, -1, -1):
-                L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
-            return L
-    else:
-        raise TypeError("Unimplemented type for python_to_ecl")
+        L = python_to_ecl(pyobj[-1], read_strings)
+        for i in range(len(pyobj) - 2, -1, -1):
+            L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
+        return L
+    raise TypeError("Unimplemented type for python_to_ecl")
 
 
 cdef ecl_to_python(cl_object o):
@@ -853,13 +852,11 @@ cdef class EclObject:
         if op == Py_EQ:
             if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return False
-            else:
-                return bint_equal((<EclObject>left).obj, (<EclObject>right).obj)
-        elif op == Py_NE:
+            return bint_equal((<EclObject>left).obj, (<EclObject>right).obj)
+        if op == Py_NE:
             if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return True
-            else:
-                return not(bint_equal((<EclObject>left).obj, (<EclObject>right).obj))
+            return not(bint_equal((<EclObject>left).obj, (<EclObject>right).obj))
 
         # Common lisp only seems to be able to compare numeric and string types
         # and does not have generic routines for doing that.

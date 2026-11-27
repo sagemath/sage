@@ -17,7 +17,7 @@ Miscellaneous
 # ***************************************************************************
 
 from sage.misc.misc_c import prod
-
+from sage.rings.infinity import Infinity
 
 class DoublyLinkedList:
     """
@@ -379,8 +379,8 @@ def check_integer_list_constraints(l, **kwargs):
 
     filters = {}
     filters['length'] = lambda x: len(x) == length
-    filters['min_part'] = lambda x: min(x) >= min_part
-    filters['max_part'] = lambda x: max(x) <= max_part
+    filters['min_part'] = lambda x: min(x, default=Infinity) >= min_part
+    filters['max_part'] = lambda x: max(x, default=-Infinity) <= max_part
     filters['min_length'] = lambda x: len(x) >= min_length
     filters['max_length'] = lambda x: len(x) <= max_length
     filters['min_slope'] = lambda x: min((x[i + 1] - x[i] for i in range(len(x) - 1)), default=min_slope + 1) >= min_slope

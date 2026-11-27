@@ -156,8 +156,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         def _find_N0():
             if self._nodenominators:
                 return _N0_nodenominators(self._p, self._genus, self._n)
-            else:
-                return _N0_RH() + self._extraprec
+            return _N0_RH() + self._extraprec
 
         def _find_N_43():
             """
@@ -322,8 +321,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 ],
             )
             return vector(R, [R(elt) for elt in vectQq])
-        else:
-            return vector(R, [(m * elt).lift_to_precision() for elt in vect])
+        return vector(R, [(m * elt).lift_to_precision() for elt in vect])
 
     def _frob_sparse(self, i, j, N0):
         r"""
@@ -897,8 +895,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 MV = self._vertical_fat_s[s0][s // self._p]
 
             return MV * G
-        else:
-            return _reduce_vector_vertical_plain(G, s0, s, k)
+        return _reduce_vector_vertical_plain(G, s0, s, k)
 
     def _initialize_fat_vertical(self, s0, max_upper_target):
         """
@@ -1069,16 +1066,15 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         assert N == self._N0 or N is None
         if self._n == 1:
             return FrobP
-        else:
-            current = FrobP
-            total = FrobP
-            for i in range(self._n - 1):
-                current = matrix(
-                    [[entry.frobenius() for entry in row] for row in current]
-                )
-                total = total * current
-            total = matrix([[elt.add_bigoh(self._N0) for elt in row] for row in total])
-            return total
+        current = FrobP
+        total = FrobP
+        for i in range(self._n - 1):
+            current = matrix(
+                [[entry.frobenius() for entry in row] for row in current]
+            )
+            total = total * current
+        total = matrix([[elt.add_bigoh(self._N0) for elt in row] for row in total])
+        return total
 
     @cached_method
     def frobenius_polynomial(self):
@@ -1257,16 +1253,16 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                         ki = G(self._q).multiplicative_order()
                         denom = denom * (T ** ki - 1) ** (phi // ki)
                 return denom
-            else:  # Non-monic
-                x = PolynomialRing(self._Fq, "x").gen()
-                f = x ** self._delta - lc
-                L = f.splitting_field("a")
-                roots = [r for r, _ in f.change_ring(L).roots()]
-                roots_dict = {r: i for i, r in enumerate(roots)}
-                rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
-                m = zero_matrix(len(roots))
-                for i, r in enumerate(roots):
-                    m[i, roots_dict[rootsfrob[i]]] = 1
+            # Non-monic
+            x = PolynomialRing(self._Fq, "x").gen()
+            f = x ** self._delta - lc
+            L = f.splitting_field("a")
+            roots = [r for r, _ in f.change_ring(L).roots()]
+            roots_dict = {r: i for i, r in enumerate(roots)}
+            rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
+            m = zero_matrix(len(roots))
+            for i, r in enumerate(roots):
+                m[i, roots_dict[rootsfrob[i]]] = 1
             return R(R(m.characteristic_polynomial()) // (T - 1))
 
         denom = _denominator()
@@ -1285,24 +1281,23 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             ] * (self._genus + 1)
             cp = charpoly_frobenius(F, charpoly_prec, self._p, 1, self._n, denom.list())
             return R(cp)
-        else:
-            cp = F.charpoly().reverse()
-            denom = denom.reverse()
-            PS = PowerSeriesRing(self._Zp, "T")
-            cp = PS(cp) / PS(denom)
-            cp = cp.padded_list(self._genus + 1)
-            cpZZ = [None for _ in range(2 * self._genus + 1)]
-            cpZZ[0] = 1
-            cpZZ[-1] = self._p ** self._genus
-            for i in range(1, self._genus + 1):
-                cmod = cp[i]
-                bound = binomial(2 * self._genus, i) * self._p ** (i * self._n * 0.5)
-                localmod = self._p ** (ceil(log(bound, self._p)))
-                c = cmod.lift() % localmod
-                if c > bound:
-                    c = -(-cmod.lift() % localmod)
-                cpZZ[i] = c
-                if i != self._genus + 1:
-                    cpZZ[2 * self._genus - i] = c * self._p ** (self._genus - i)
-            cpZZ.reverse()
-            return R(cpZZ)
+        cp = F.charpoly().reverse()
+        denom = denom.reverse()
+        PS = PowerSeriesRing(self._Zp, "T")
+        cp = PS(cp) / PS(denom)
+        cp = cp.padded_list(self._genus + 1)
+        cpZZ = [None for _ in range(2 * self._genus + 1)]
+        cpZZ[0] = 1
+        cpZZ[-1] = self._p ** self._genus
+        for i in range(1, self._genus + 1):
+            cmod = cp[i]
+            bound = binomial(2 * self._genus, i) * self._p ** (i * self._n * 0.5)
+            localmod = self._p ** (ceil(log(bound, self._p)))
+            c = cmod.lift() % localmod
+            if c > bound:
+                c = -(-cmod.lift() % localmod)
+            cpZZ[i] = c
+            if i != self._genus + 1:
+                cpZZ[2 * self._genus - i] = c * self._p ** (self._genus - i)
+        cpZZ.reverse()
+        return R(cpZZ)

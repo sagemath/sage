@@ -359,15 +359,15 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
             return ret
         return ZZ(int(ret_mp))
 
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         import sage.libs.flint.arith_sage
         return sage.libs.flint.arith_sage.bell_number(n)
 
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         return libgap.Bell(n).sage()
 
-    elif algorithm == 'dobinski':
+    if algorithm == 'dobinski':
         # Hardcode small cases. We only proved the algorithm below
         # for n >= 5, but it turns out that n = 4 also works.
         if n < 4:
@@ -524,11 +524,10 @@ def euler_number(n, algorithm='flint') -> Integer:
         raise ValueError("n (=%s) must be a nonnegative integer" % n)
     if algorithm == 'maxima':
         return ZZ(maxima.euler(n))  # type:ignore
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         import sage.libs.flint.arith_sage
         return sage.libs.flint.arith_sage.euler_number(n)
-    else:
-        raise ValueError("algorithm must be 'flint' or 'maxima'")
+    raise ValueError("algorithm must be 'flint' or 'maxima'")
 
 
 @cached_function(key=lambda n, k, a: (n, k))
@@ -622,7 +621,7 @@ def eulerian_polynomial(n, algorithm='derivative'):
     if algorithm == 'derivative':
         A = eulerian_polynomial(n - 1, algorithm=algorithm)
         return t * (1 - t) * A.derivative() + (1 + (n - 1) * t) * A
-    elif algorithm == 'coeffs':
+    if algorithm == 'coeffs':
         return R([eulerian_number(n, k, "formula") for k in range(n)])
 
 
@@ -676,11 +675,10 @@ def fibonacci(n, algorithm='pari') -> Integer:
     n = ZZ(n)
     if algorithm == 'pari':
         return ZZ(pari(n).fibonacci())
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         return libgap.Fibonacci(n).sage()
-    else:
-        raise ValueError("no algorithm {}".format(algorithm))
+    raise ValueError("no algorithm {}".format(algorithm))
 
 
 def lucas_number1(n, P, Q):
@@ -1245,8 +1243,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list == other._list
-        else:
-            return self._list == other
+        return self._list == other
 
     def __lt__(self, other):
         """
@@ -1277,8 +1274,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list < other._list
-        else:
-            return self._list < other
+        return self._list < other
 
     def __le__(self, other):
         """
@@ -1295,8 +1291,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list <= other._list
-        else:
-            return self._list <= other
+        return self._list <= other
 
     def __gt__(self, other):
         """
@@ -1313,8 +1308,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list > other._list
-        else:
-            return self._list > other
+        return self._list > other
 
     def __ge__(self, other):
         """
@@ -1331,8 +1325,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list >= other._list
-        else:
-            return self._list >= other
+        return self._list >= other
 
     def __ne__(self, other):
         """
@@ -1349,8 +1342,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list != other._list
-        else:
-            return self._list != other
+        return self._list != other
 
     def __add__(self, other):
         """

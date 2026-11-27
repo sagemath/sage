@@ -75,7 +75,7 @@ class CoxeterGroups(Category_singleton):
 
     .. SEEALSO::
 
-        - :mod:`sage.combinat.root_system`
+        - :mod:`sage.combinat.root_system.root_system`
         - :class:`WeylGroups`
         - :class:`GeneralizedCoxeterGroups`
 
@@ -514,7 +514,8 @@ class CoxeterGroups(Category_singleton):
 
             .. rubric:: Background
 
-            The weak order is returned as a :class:`RecursivelyEnumeratedSet_forest`.
+            The weak order is returned as a
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
             This is achieved by assigning to each element `u1` of the
             ideal a single ancestor `u=u1 s_i`, where `i` is the
             smallest descent of `u`.
@@ -1755,7 +1756,7 @@ class CoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                :meth:`braid_orbit_iter`
+                :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.braid_orbit_iter`
 
             EXAMPLES::
 
@@ -1780,7 +1781,7 @@ class CoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                :meth:`braid_orbit`
+                :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.braid_orbit`
 
             EXAMPLES::
 
@@ -2157,7 +2158,6 @@ class CoxeterGroups(Category_singleton):
                 left_refl = P.simple_reflection(w[0])
                 return [left_refl, self * left_refl]
 
-            import itertools
             s = P.simple_reflections()
             rev = P.one()
             cur = P.one()
@@ -2167,11 +2167,11 @@ class CoxeterGroups(Category_singleton):
                 reflections.append(cur * rev)
                 rev = s[val] * rev
             for ell in range(n):
-                for chain in itertools.combinations(reflections, ell):
+                for chain in combinations(reflections, ell):
                     if P.prod(reversed(chain)) == self:
                         return list(chain)
             # If we get here it's cause ell == n and so we need all of the
-            # refelctions
+            # reflections
             return reflections
 
         def absolute_le(self, other):

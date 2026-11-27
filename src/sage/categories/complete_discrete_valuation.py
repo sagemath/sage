@@ -252,8 +252,7 @@ class CompleteDiscreteValuationFields(Category_singleton):
             R = self.parent().integer_ring()
             if val >= 0:
                 return R(1)
-            else:
-                return R(1) << (-val)
+            return R(1) << (-val)
 
         def numerator(self):
             """

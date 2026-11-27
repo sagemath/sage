@@ -80,5 +80,4 @@ def plot_step_function(v, vertical_lines=True, **kwds):
             if i+1 < len(v):
                 w.append((v[i+1][0], v[i][1]))
         return line(w, **kwds)
-    else:
-        return sum(line([v[i], (v[i+1][0], v[i][1])], **kwds) for i in range(len(v)-1))
+    return sum(line([v[i], (v[i+1][0], v[i][1])], **kwds) for i in range(len(v)-1))

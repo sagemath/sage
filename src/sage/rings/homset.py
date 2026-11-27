@@ -2,45 +2,19 @@
 Space of homomorphisms between two rings
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.homset import HomsetWithBase
 from sage.categories.rings import Rings
-
-_Rings = Rings()
-
 from sage.rings import morphism, quotient_ring
 
-
-def is_RingHomset(H):
-    """
-    Return ``True`` if ``H`` is a space of homomorphisms between two rings.
-
-    EXAMPLES::
-
-        sage: from sage.rings.homset import is_RingHomset as is_RH
-        sage: is_RH(Hom(ZZ, QQ))
-        doctest:warning...
-        DeprecationWarning: the function is_RingHomset is deprecated;
-        use 'isinstance(..., RingHomset_generic)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        True
-        sage: is_RH(ZZ)
-        False
-        sage: is_RH(Hom(RR, CC))                                                        # needs sage.rings.real_mpfr
-        True
-        sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))                            # needs sage.modules
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_RingHomset is deprecated; use 'isinstance(..., RingHomset_generic)' instead")
-    return isinstance(H, RingHomset_generic)
+_Rings = Rings()
 
 
 def RingHomset(R, S, category=None):
@@ -75,7 +49,7 @@ class RingHomset_generic(HomsetWithBase):
 
     Element = morphism.RingHomomorphism
 
-    def __init__(self, R, S, category=None):
+    def __init__(self, R, S, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -88,7 +62,7 @@ class RingHomset_generic(HomsetWithBase):
             category = _Rings
         HomsetWithBase.__init__(self, R, S, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -99,7 +73,7 @@ class RingHomset_generic(HomsetWithBase):
         """
         return "Set of Homomorphisms from %s to %s" % (self.domain(), self.codomain())
 
-    def has_coerce_map_from(self, x):
+    def has_coerce_map_from(self, x) -> bool:
         """
         The default for coercion maps between ring homomorphism spaces is
         very restrictive (until more implementation work is done).
@@ -113,7 +87,7 @@ class RingHomset_generic(HomsetWithBase):
             sage: H.has_coerce_map_from(H2)
             False
         """
-        return (x.domain() == self.domain() and x.codomain() == self.codomain())
+        return x.domain() == self.domain() and x.codomain() == self.codomain()
 
     def _element_constructor_(self, x, check=True, base_map=None):
         """
@@ -139,7 +113,6 @@ class RingHomset_generic(HomsetWithBase):
 
         You can provide a morphism on the base::
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(9)
             sage: z2 = k.gen()
             sage: cc = k.frobenius_endomorphism()
@@ -178,14 +151,14 @@ class RingHomset_generic(HomsetWithBase):
         if x.parent() == self:
             if isinstance(x, morphism.RingHomomorphism_im_gens):
                 return morphism.RingHomomorphism_im_gens(self, x.im_gens())
-            elif isinstance(x, morphism.RingHomomorphism_cover):
+            if isinstance(x, morphism.RingHomomorphism_cover):
                 return morphism.RingHomomorphism_cover(self)
-            elif isinstance(x, morphism.RingHomomorphism_from_base):
+            if isinstance(x, morphism.RingHomomorphism_from_base):
                 return morphism.RingHomomorphism_from_base(self, x.underlying_map())
         # Case 2: unique extension via fraction field
         try:
-            if (isinstance(x, morphism.RingHomomorphism_im_gens)
-                and x.domain().fraction_field().has_coerce_map_from(self.domain())):
+            if (isinstance(x, morphism.RingHomomorphism_im_gens) and
+                    x.domain().fraction_field().has_coerce_map_from(self.domain())):
                 return morphism.RingHomomorphism_im_gens(self, x.im_gens())
         except (TypeError, ValueError):
             pass
@@ -196,10 +169,10 @@ class RingHomset_generic(HomsetWithBase):
             pass
         # Case 4: the homomorphism is induced from the base ring
         if (self.domain() != self.domain().base()
-            or self.codomain() != self.codomain().base()):
+                or self.codomain() != self.codomain().base()):
             x = self.domain().base().Hom(self.codomain().base())(x)
             return morphism.RingHomomorphism_from_base(self, x)
-        raise ValueError('cannot convert {} to an element of {}'.format(x, self))
+        raise ValueError(f'cannot convert {x} to an element of {self}')
 
     def natural_map(self):
         """
@@ -271,7 +244,6 @@ class RingHomset_quo_ring(RingHomset_generic):
 
     ::
 
-        sage: # needs sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: S.<a,b> = R.quotient(x^2 + y^2)
         sage: H = S.Hom(R)
@@ -293,7 +265,6 @@ class RingHomset_quo_ring(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = R.quotient(x^2 + y^2)
             sage: H = S.Hom(R)

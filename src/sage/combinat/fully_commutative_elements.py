@@ -231,8 +231,7 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         if not display_labeling:
             return p
-        else:
-            return p.relabel(lambda i: (i, letter(i)))
+        return p.relabel(lambda i: (i, letter(i)))
 
     # Hasse diagrams of heaps help visualize FC elements:
     def plot_heap(self):
@@ -712,9 +711,9 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Perform the coset decomposition on the specified side:
         if side == 'left':
-            (string, remaining) = self.coset_decomposition(J, side=side)
+            string, remaining = self.coset_decomposition(J, side=side)
         elif side == 'right':
-            (remaining, string) = self.coset_decomposition(J, side=side)
+            remaining, string = self.coset_decomposition(J, side=side)
 
         cur_string = list(string)
 

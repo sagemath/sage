@@ -42,8 +42,8 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         You should not create objects of this class directly because
         no type or consistency checking is performed. The preferred
         method to construct such dynamical systems is to use
-        :func:`~sage.dynamics.arithmetic_dynamics.generic_ds.DynamicalSystem_projective`
-        function.
+        :class:`~sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective`
+        constructor.
 
     INPUT:
 
@@ -155,15 +155,14 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             raise TypeError("must be a forward orbit")
         if n == 0:
             return self
-        else:
-            Q = self(P)
+        Q = self(P)
+        if normalize:
+            Q.normalize_coordinates()
+        for i in range(2,n+1):
+            Q = self(Q)
             if normalize:
                 Q.normalize_coordinates()
-            for i in range(2,n+1):
-                Q = self(Q)
-                if normalize:
-                    Q.normalize_coordinates()
-            return Q
+        return Q
 
     def orbit(self, P, N, **kwds):
         r"""

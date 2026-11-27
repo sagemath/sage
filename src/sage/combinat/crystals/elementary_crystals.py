@@ -675,10 +675,9 @@ class RCrystal(UniqueRepresentation, Parent):
             """
             if self.parent()._dual:
                 return ZZ.zero()
-            else:
-                P = self.parent().weight_lattice_realization()
-                h = P.simple_coroots()
-                return -P(self.weight()).scalar(h[i])
+            P = self.parent().weight_lattice_realization()
+            h = P.simple_coroots()
+            return -P(self.weight()).scalar(h[i])
 
         def phi(self, i):
             r"""
@@ -705,8 +704,7 @@ class RCrystal(UniqueRepresentation, Parent):
                 P = self.parent().weight_lattice_realization()
                 h = P.simple_coroots()
                 return P(self.weight()).scalar(h[i])
-            else:
-                return ZZ.zero()
+            return ZZ.zero()
 
         def weight(self):
             r"""
@@ -965,8 +963,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self.__class__(self.parent(), self._m + 1)
-            else:
-                return None
+            return None
 
         def f(self, i):
             r"""
@@ -987,8 +984,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self.__class__(self.parent(), self._m - 1)
-            else:
-                return None
+            return None
 
         def epsilon(self, i):
             r"""
@@ -1010,8 +1006,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return -self._m
-            else:
-                return float("-inf")
+            return float("-inf")
 
         def phi(self, i):
             r"""
@@ -1033,8 +1028,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self._m
-            else:
-                return float("-inf")
+            return float("-inf")
 
         def weight(self):
             r"""

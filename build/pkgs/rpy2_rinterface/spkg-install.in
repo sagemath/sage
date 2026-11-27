@@ -1,0 +1,7 @@
+set -e
+
+cd src
+
+export RHOME="$SAGE_LOCAL"/lib/R
+
+sdh_pip_install .

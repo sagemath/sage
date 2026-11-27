@@ -154,8 +154,7 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
                 for v, p in zip(scaled_vectors, points))
         G._set_extra_kwds(kwds)
         return G
-    else:
-        G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p)
-                for v, p in zip(scaled_vectors, points))
-        G._set_extra_kwds(kwds)
-        return G
+    G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p)
+            for v, p in zip(scaled_vectors, points))
+    G._set_extra_kwds(kwds)
+    return G

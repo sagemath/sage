@@ -375,8 +375,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         """
         if self == 0:
             return Infinity
-        else:
-            return min(self._F[e].valuation() for e in range(self._nE))
+        return min(self._F[e].valuation() for e in range(self._nE))
 
     def _compute_element(self):
         r"""
@@ -631,8 +630,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
             return sum([self.riemann_sum(subst(v), center, level) for v in V])
         if z is None:
             return F
-        else:
-            return F(z)
+        return F(z)
 
 
 class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
@@ -1044,14 +1042,13 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
             parent = x.parent()
             if isinstance(parent, BruhatTitsHarmonicCocycles):
                 return self.element_class(self, [self._U(o) for o in x._F])
-            elif isinstance(parent, pAdicAutomorphicForms):
+            if isinstance(parent, pAdicAutomorphicForms):
                 tmp = [self._E[ii].rep * self._U(x._F[ii]) for ii in range(self._nE)]
                 return self.element_class(self, tmp)
         if x == 0:
             tmp = [self._U([0] * (self.weight() - 1))] * self._X._num_edges
             return self.element_class(self, tmp)
-        else:
-            raise TypeError
+        raise TypeError
 
     def free_module(self):
         r"""

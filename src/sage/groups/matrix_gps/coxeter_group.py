@@ -68,7 +68,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     a quadratic number field when possible.
 
     For more on creating Coxeter groups, see
-    :meth:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
+    :func:`~sage.combinat.root_system.coxeter_group.CoxeterGroup`.
 
     .. TODO::
 
@@ -285,8 +285,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return E(2 * x) + ~E(2 * x)
+                return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
@@ -295,22 +294,20 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+                return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
                 if x == -1:
                     return 2
-                elif x == 1:
+                if x == 1:
                     return -2
-                elif x == 2:
+                if x == 2:
                     return 0
-                elif x == 3:
+                if x == 3:
                     return 1
-                else:
-                    from sage.functions.trig import cos
-                    from sage.symbolic.constants import pi
-                    return base_ring(2 * cos(pi / x))
+                from sage.functions.trig import cos
+                from sage.symbolic.constants import pi
+                return base_ring(2 * cos(pi / x))
         gens = [one + MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])
                 for i in range(n)]
@@ -645,7 +642,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         norm.
 
         The positive roots are listed first, then the negative roots
-        in the same order. The order is the one given by :meth:`roots`.
+        in the same order. The order is the one given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -679,7 +677,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         Return the index of the simple root `\alpha_i`.
 
         This is the position of `\alpha_i` in the list of all roots
-        as given be :meth:`roots`.
+        as given by
+        :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
         EXAMPLES::
 
@@ -864,7 +863,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             """
             Return the action on the set of roots.
 
-            The roots are ordered as in the output of the method :meth:`roots`.
+            The roots are ordered as in the output of the method
+            :meth:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup.roots`.
 
             EXAMPLES::
 
@@ -921,6 +921,6 @@ def _matrix_test_right_descent(M, i, n, zero):
         c = M[j, i]
         if c < zero:
             return True
-        elif c > zero:
+        if c > zero:
             return False
     raise AssertionError('a zero column, so there must be a bug')

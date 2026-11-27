@@ -158,6 +158,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Check that non-torsion points are remembered when extending
         the base field (see :issue:`16034`)::
 
+            sage: # needs eclib
             sage: E = EllipticCurve([1, 0, 1, -1751, -31352])
             sage: K.<d> = QuadraticField(5)
             sage: E.gens()
@@ -335,13 +336,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve([0, 0, 1, -1, 0])
-            sage: E.height_pairing_matrix()
+            sage: E.height_pairing_matrix() # abs tol 1e-15
             [0.0511114082399688]
 
         For rank 0 curves, the result is a valid 0x0 matrix::
 
-            sage: EllipticCurve('11a').height_pairing_matrix()
+            sage: EllipticCurve('11a').height_pairing_matrix()  # needs eclib
             []
             sage: E = EllipticCurve('5077a1')
             sage: E.height_pairing_matrix([E.lift_x(x) for x in [-2,-7/4,1]], precision=100)
@@ -349,6 +351,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [ -1.3095767070865761992624519454   2.7173593928122930896610589220   1.0998184305667292139777571432]
             [-0.63486715783715592064475542573   1.0998184305667292139777571432  0.66820516565192793503314205089]
 
+            sage: # needs eclib
             sage: E = EllipticCurve('389a1')
             sage: E = EllipticCurve('389a1')
             sage: P, Q = E.point([-1,1,1]), E.point([0,-1,1])
@@ -358,6 +361,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Over a number field::
 
+            sage: # needs eclib
             sage: x = polygen(QQ)
             sage: K.<t> = NumberField(x^2 + 47)
             sage: EK = E.base_extend(K)
@@ -429,7 +433,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve('37a1')
             sage: P = E(0,0)
             sage: Q = E(1,0)
-            sage: E.regulator_of_points([P,Q])
+            sage: E.regulator_of_points([P,Q])  # abs tol 1e-15
             0.000000000000000
             sage: 2*P == Q
             True
@@ -438,7 +442,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             sage: E = EllipticCurve('5077a1')
             sage: points = [E.lift_x(x) for x in [-2,-7/4,1]]
-            sage: E.regulator_of_points(points)
+            sage: E.regulator_of_points(points)  # abs tol 1e-15
             0.417143558758384
             sage: E.regulator_of_points(points, precision=100)
             0.41714355875838396981711954462
@@ -496,6 +500,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('389a1')
             sage: P,Q = E.gens()
             sage: E.regulator_of_points([P,Q])
@@ -1957,15 +1962,50 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Fv = OK.residue_field(place)
         return self.change_ring(Fv)
 
-    @cached_method
-    def torsion_subgroup(self):
+    def torsion_subgroup(self, n=None, **kwds):
         r"""
-        Return the torsion subgroup of this elliptic curve.
+        Return the torsion subgroup of this elliptic curve
+        if ``n`` is ``None``, or the `n`-torsion subgroup
+        if `n` is an integer. In the latter case, if ``extend``
+        is set to ``True``, the base field is extended as
+        needed to find all `n`-torsion points that exist over
+        the algebraic closure.
 
-        OUTPUT: the :class:`EllipticCurveTorsionSubgroup` associated to this elliptic
-        curve.
+        OUTPUT: the
+        :class:`~sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup`
+        associated
+        to this elliptic curve in case ``n`` is ``None``, or an
+        :class:`AdditiveAbelianGroupWrapper` object representing
+        the `n`-torsion subgroup.
 
         EXAMPLES::
+
+            sage: EllipticCurve('11a').torsion_subgroup()
+            Torsion Subgroup isomorphic to Z/5 associated to the
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            sage: EllipticCurve('37b').torsion_subgroup()
+            Torsion Subgroup isomorphic to Z/3 associated to the
+             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field
+
+        ::
+
+            sage: e = EllipticCurve([-1386747,368636886]); e
+            Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over Rational Field
+            sage: G = e.torsion_subgroup(); G
+            Torsion Subgroup isomorphic to Z/8 + Z/2 associated to the
+             Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over
+             Rational Field
+            sage: G.0*3 + G.1
+            (1227 : 22680 : 1)
+            sage: G.1
+            (282 : 0 : 1)
+            sage: list(G)
+            [(0 : 1 : 0), (147 : -12960 : 1), (2307 : -97200 : 1), (-933 : -29160 : 1),
+             (1011 : 0 : 1), (-933 : 29160 : 1), (2307 : 97200 : 1), (147 : 12960 : 1),
+             (-1293 : 0 : 1), (1227 : 22680 : 1), (-285 : 27216 : 1), (8787 : 816480 : 1),
+             (282 : 0 : 1), (8787 : -816480 : 1), (-285 : -27216 : 1), (1227 : -22680 : 1)]
+
+        ::
 
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
@@ -2012,9 +2052,19 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
             to determine the field of definition of the `\ell`-torsion subgroup.
+
+        ALGORITHM: If ``n`` is ``None``, constructs and returns the
+        :class:`~sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup`
+        of this curve. If ``n`` is an integer, calls
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup`.
         """
-        from .ell_torsion import EllipticCurveTorsionSubgroup
-        return EllipticCurveTorsionSubgroup(self)
+        if n is None:
+            if not hasattr(self, '_cached_torsion_subgroup'):
+                from .ell_torsion import EllipticCurveTorsionSubgroup
+                self._cached_torsion_subgroup = EllipticCurveTorsionSubgroup(self)
+            return self._cached_torsion_subgroup
+
+        return super().torsion_subgroup(n, **kwds)
 
     @cached_method
     def torsion_order(self):
@@ -2284,8 +2334,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         lower, upper = self.rank_bounds(**kwds)
         if lower == upper:
             return lower
-        else:
-            raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
+        raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
 
     def gens(self, **kwds):
         r"""
@@ -2335,7 +2384,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K,[0,0,0,101,0])
-            sage: E.gens()
+            sage: E.gens()  # needs eclib
             ((23831509/8669448*a - 2867471/8669448 : 76507317707/18049790736*a - 424166479633/18049790736 : 1),
              (-2031032029/969232392*a + 58813561/969232392 : -15575984630401/21336681877488*a + 451041199309/21336681877488 : 1),
              (-186948623/4656964 : 549438861195/10049728312*a : 1))
@@ -2343,6 +2392,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         It can happen that no points are found if the height bounds
         used in the search are too small (see :issue:`10745`)::
 
+            sage: # needs eclib
             sage: K.<t> = NumberField(x^4 + x^2 - 7)
             sage: E = EllipticCurve(K, [1, 0, 5*t^2 + 16, 0, 0])
             sage: E.gens(lim1=1, lim3=1)
@@ -2354,6 +2404,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Check that the point found has infinite order, and that it is on the curve::
 
+            sage: # needs eclib
             sage: P=gg[0]; P.order()  # long time
             +Infinity
             sage: E.defining_polynomial()(*P)  # long time
@@ -2361,6 +2412,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Here is a curve of rank 2::
 
+            sage: # needs eclib
             sage: K.<t> = NumberField(x^2 - 17)
             sage: E = EllipticCurve(K, [-4, 0])
             sage: E.gens()
@@ -2370,6 +2422,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Test that points of finite order are not included (see :issue:`13593`)::
 
+            sage: # needs eclib
             sage: E = EllipticCurve("17a3")
             sage: K.<t> = NumberField(x^2 + 3)
             sage: EK = E.base_extend(K)
@@ -2566,7 +2619,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             If using the algorithm ``'heuristic'`` for non-CM curves, the
             result is not guaranteed to be the complete isogeny class,
             since only reducible primes up to the default bound in
-            :meth:`reducible_primes_naive` (currently 1000) are
+            :func:`~sage.schemes.elliptic_curves.gal_reps_number_field.reducible_primes_naive`
+            (currently 1000) are
             tested.  However, no examples of non-CM elliptic curves
             with reducible primes greater than 100 have yet been
             computed so the output is likely to be correct.
@@ -3017,8 +3071,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             try:
                 if l.is_prime(proof=False):
                     return isogenies_prime_degree(self, l, minimal_models=minimal_models)
-                else:
-                    raise ValueError("%s is not prime." % l)
+                raise ValueError("%s is not prime." % l)
             except AttributeError:
                 raise ValueError("%s is not prime." % l)
 
@@ -3374,6 +3427,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Some examples over `\QQ`::
 
+            sage: # needs eclib
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens(); Pi
             [(-4 : 1 : 1), (-3 : 5 : 1), (-11/4 : 43/8 : 1), (-2 : 6 : 1)]
@@ -3423,6 +3477,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example to show the explicit use of the height pairing matrix::
 
+            sage: # needs eclib
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens()
             sage: H = E.height_pairing_matrix(Pi,3)
@@ -3546,8 +3601,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         if flag:
             d, f = df
             return d*f**2
-        else:  # no CM
-            return ZZ.zero()
+        # no CM
+        return ZZ.zero()
 
     @cached_method
     def has_cm(self) -> bool:
@@ -3729,13 +3784,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
           certificate is a prime `p` such that the reductions of `E`
           at the primes dividing `p` are inconsistent with the
           property of being a `\QQ`-curve.  See the documentation for
-          :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`
+          :func:`sage.schemes.elliptic_curves.Qcurves.is_Q_curve`
           for details.
 
         ALGORITHM:
 
         See the documentation for
-        :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`, and
+        :func:`sage.schemes.elliptic_curves.Qcurves.is_Q_curve`, and
         [CrNa2020]_ for details.
 
         EXAMPLES:
@@ -4011,9 +4066,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
                 if verbose:
                     print("Saturation index bound < 2, points are saturated already.")
                 return Plist, index, RealField()(1)
-            else:
-                if verbose:
-                    print("p-saturating for primes p < {}".format(index_bound.ceil()))
+            if verbose:
+                print("p-saturating for primes p < {}".format(index_bound.ceil()))
             prime_list = prime_range(index_bound.ceil())
         else:
             if one_prime:
@@ -4061,13 +4115,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve([1,2,3,40,50])
             sage: E.conductor()
             2123582
-            sage: E.gens()
+            sage: E.gens()  # needs eclib
             [(5 : 17 : 1)]
             sage: K.<i> = QuadraticField(-1)
             sage: EK = E.change_ring(K)
-            sage: EK.gens_quadratic()
+            sage: EK.gens_quadratic()  # needs eclib
             [(5 : 17 : 1), (-13 : 48*i + 5 : 1)]
 
+            sage: # needs eclib
             sage: E.change_ring(QuadraticField(3, 'a')).gens_quadratic()
             [(5 : 17 : 1), (-1 : 2*a - 1 : 1), (11/4 : 33/4*a - 23/8 : 1)]
 
@@ -4075,16 +4130,16 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve([0,0,0,197,0])
             sage: E.conductor()
             2483776
-            sage: E.gens()
+            sage: E.gens()  # needs eclib
             [(47995604297578081/7389879786648100 : -25038161802544048018837479/635266655830129794121000 : 1)]
             sage: K.<a> = QuadraticField(7)
-            sage: E.change_ring(K).gens_quadratic()
+            sage: E.change_ring(K).gens_quadratic()  # needs eclib
             [(-1209642055/59583566*a + 1639995844/29791783 : -377240626321899/1720892553212*a + 138577803462855/245841793316 : 1),
              (1/28 : 393/392*a : 1),
              (-61*a + 162 : 1098*a - 2916 : 1)]
 
             sage: E = EllipticCurve([1, a])
-            sage: E.gens_quadratic()
+            sage: E.gens_quadratic()  # needs eclib
             Traceback (most recent call last):
             ...
             ValueError: gens_quadratic() requires the elliptic curve to be a base change from Q
@@ -4123,7 +4178,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
     def rational_points(self, **kwds):
         r"""
         Find rational points on the elliptic curve, all arguments are passed
-        on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
+        on to
+        :meth:`sage.schemes.generic.algebraic_scheme.AlgebraicScheme_subscheme.rational_points`.
 
         EXAMPLES::
 

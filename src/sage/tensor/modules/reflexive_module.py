@@ -16,7 +16,8 @@ class ReflexiveModule_abstract(Parent):
     In the category of `R`-modules, the dual module `M^*` is
     the `R`-module of linear functionals `\phi:\ M \longrightarrow R`.
     However, we do not make the assumption that the dual module
-    (obtained by :meth:`dual`) is in the category :class:`Homsets`.
+    (obtained by :meth:`dual`) is in the category
+    :class:`~sage.categories.homsets.Homsets`.
 
     We identify the double dual `M^{**}` with `M`.
 

@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([editables], [SAGE_PYTHON_PACKAGE_CHECK([editables])])

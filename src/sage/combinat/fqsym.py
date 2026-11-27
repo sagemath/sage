@@ -160,8 +160,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             phi = R.module_morphism(G_to_G_on_basis, codomain=G)
             if self is G:
                 return phi
-            else:
-                return self.coerce_map_from(G) * phi
+            return self.coerce_map_from(G) * phi
 
         return super()._coerce_map_from_(R)
 
@@ -198,7 +197,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     permutations, whereas its coproduct is given by splitting
     a permutation (regarded as a word) into two (at every
     possible point) and standardizing the two pieces.
-    This Hopf algebra was introduced in [MR]_.
+    This Hopf algebra was introduced in [MR1995]_.
     See [GriRei18]_ (Chapter 8) for a treatment using modern
     notations.
 
@@ -346,7 +345,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    - [MR]_
+    - [MR1995]_
     - [LR1998]_
     - [GriRei18]_
     """
@@ -878,7 +877,8 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         The M-basis of `FQSym`.
 
         This is the Monomial basis `(\mathcal{M}_w)`, with `w` ranging
-        over all permutations. See the documentation of :class:`FQSym`
+        over all permutations. See the documentation of
+        :class:`~sage.combinat.fqsym.FreeQuasisymmetricFunctions`
         for details.
 
         EXAMPLES::
@@ -1198,12 +1198,13 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`FQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`omega_involution`, :meth:`psi_involution`
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
                 EXAMPLES::
 
@@ -1341,8 +1342,7 @@ class FQSymBases(Category_realization_of_parent):
             from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
-            else:
-                return Family(Permutations(degree), self.monomial)
+            return Family(Permutations(degree), self.monomial)
 
         def is_field(self, proof=True):
             """
@@ -1571,7 +1571,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`psi_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1681,7 +1682,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1785,7 +1787,7 @@ class FQSymBases(Category_realization_of_parent):
             (:meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.star_involution`)
             with `\pi : NSym \to FQSym` being the canonical inclusion
             and the word quasisymmetric functions
-            (:meth:`~sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions.Bases.ElementMethods.star_involution`)
+            (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`)
             with `\pi : FQSym \to WQSym` the canonical inclusion.
 
             .. TODO::
@@ -1794,7 +1796,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`psi_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
             EXAMPLES::
 

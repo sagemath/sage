@@ -59,7 +59,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
     and were chosen based on virtual crystals. In particular, the diagram
     foldings extend to crystal morphisms and gives a realization of
     Kirillov-Reshetikhin crystals for non-simply-laced types as simply-laced
-    types. See [OSShimo03]_ and [FOS2009]_ for more details. Here we can compute
+    types. See [OSS2003]_ and [FOS2009]_ for more details. Here we can compute
     `\gamma_i = \max(c) / c_i` where `(c_i)_i` are the translation factors
     of the root system. In a more type-dependent way, we can define `\gamma_i`
     as follows:
@@ -151,10 +151,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
 
     - :wikipedia:`Dynkin_diagram#Folding`
 
-    .. [OSShimo03] \M. Okado, A. Schilling, M. Shimozono.
-       "Virtual crystals and fermionic formulas for type `D_{n+1}^{(2)}`,
-       `A_{2n}^{(2)}`, and `C_n^{(1)}`". Representation Theory. **7** (2003).
-       101-163. :doi:`10.1.1.192.2095`, :arxiv:`0810.5067`.
+    - [OSS2003]_
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type, virtual, orbit):
@@ -293,7 +290,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             index_set = self._cartan_type.index_set()
             min_f = min(f(j) for j in index_set)
             return Family({i: int(f(i) / min_f) for i in index_set})
-        elif self._cartan_type.is_affine():
+        if self._cartan_type.is_affine():
             c = self._cartan_type.translation_factors()
             cmax = max(c)
             return Family({i: int(cmax / c[i])

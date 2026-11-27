@@ -41,12 +41,12 @@ Classes and Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
 from sage.structure.unique_representation import UniqueRepresentation
-import sage.rings.abc
 
 
 class AbstractArgument(MultiplicativeGroupElement):
@@ -262,7 +262,7 @@ class AbstractArgument(MultiplicativeGroupElement):
             sage: _.parent()
             Symbolic Ring
         """
-        from sage.symbolic.ring import SymbolicRing, SR
+        from sage.symbolic.ring import SR, SymbolicRing
 
         P = other.parent()
         S = P if isinstance(P, SymbolicRing) else SR
@@ -721,8 +721,8 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: U(exponent=5/2, normalize=False)
             zeta2^5
         """
-        from sage.groups.generic import discrete_log
         import sage.rings.abc
+        from sage.groups.generic import discrete_log
         from sage.rings.asymptotic.misc import combine_exceptions
         from sage.rings.rational_field import QQ
 
@@ -1172,7 +1172,7 @@ class ArgumentByElement(AbstractArgument):
             sage: a.parent()
             Symbolic Ring
         """
-        from sage.rings.abc import SymbolicRing
+        from sage.symbolic.ring import SymbolicRing
 
         element = self._element_ ** exponent
         parent = element.parent()
@@ -1760,7 +1760,7 @@ class ArgumentGroupFactory(UniqueFactory):
         Sign Group
         sage: ArgumentGroup('Arg_RR')                                                   # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup(RIF)                                                        # needs sage.rings.real_interval_field
+        sage: ArgumentGroup(RIF)
         Sign Group
         sage: ArgumentGroup(RBF)
         Sign Group
@@ -1807,8 +1807,8 @@ class ArgumentGroupFactory(UniqueFactory):
             sage: ArgumentGroup('Arg_CC') is ArgumentGroup(domain=CC)  # indirect doctest
             True
         """
-        from sage.rings.integer_ring import ZZ
         from sage.misc.misc import exactly_one_is_true
+        from sage.rings.integer_ring import ZZ
         from sage.rings.qqbar import AA
         from sage.rings.rational_field import QQ
 
@@ -1835,7 +1835,7 @@ class ArgumentGroupFactory(UniqueFactory):
                 return (RootsOfUnityGroup, ()), kwds
             if specification == 'Signs':
                 return (SignGroup, ()), kwds
-            elif specification.startswith('UU_'):
+            if specification.startswith('UU_'):
                 from sage.rings.asymptotic.misc import repr_short_to_parent
                 exponents = repr_short_to_parent(specification[3:])
             elif specification.startswith('Arg_') or specification.startswith('arg_'):
@@ -1850,20 +1850,18 @@ class ArgumentGroupFactory(UniqueFactory):
                                       sage.rings.abc.RealIntervalField,
                                       sage.rings.abc.RealBallField)):
                 return (SignGroup, ()), kwds
-            elif isinstance(domain, (sage.rings.abc.ComplexField,
+            if isinstance(domain, (sage.rings.abc.ComplexField,
                                      sage.rings.abc.ComplexIntervalField,
                                      sage.rings.abc.ComplexBallField)):
                 return (UnitCircleGroup, (domain._real_field(),)), kwds
-            else:
-                return (ArgumentByElementGroup, (domain,)), kwds
+            return (ArgumentByElementGroup, (domain,)), kwds
 
-        elif exponents is not None:
+        if exponents is not None:
             if exponents == ZZ:
                 return (SignGroup, ()), kwds
-            elif exponents == QQ:
+            if exponents == QQ:
                 return (RootsOfUnityGroup, ()), kwds
-            else:
-                return (UnitCircleGroup, (exponents,)), kwds
+            return (UnitCircleGroup, (exponents,)), kwds
 
     def create_object(self, version, key, **kwds):
         r"""

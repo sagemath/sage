@@ -97,7 +97,7 @@ function print_shell_command()
     if [ -z "$WRAP" -o $# -lt 6 ]; then
         echo "${PROMPT}${quoted}"
     else
-        sage-bootstrap-python -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''${quoted}''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
+        python3 -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''${quoted}''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
     fi
     if [ -n "$OUTPUT_RST" ]; then
         echo

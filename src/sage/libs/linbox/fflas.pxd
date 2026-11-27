@@ -32,6 +32,9 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
         FflasLeft
         FflasRight
 
+    ctypedef enum FFLAS_DIAG:
+        FflasUnit
+
     # double
     Modular_double.Element* fgemv (Modular_double F, FFLAS_TRANSPOSE transA,
              size_t nrows, size_t ncols,
@@ -91,6 +94,8 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
 
     void MathPerm2LAPACKPerm (size_t * LapackP, size_t * MathP, size_t N)
 
+    void LAPACKPerm2MathPerm (size_t * MathP, const size_t * LapackP, size_t N)
+
     # double
     bint IsSingular (Modular_double F,
                      size_t nrows, size_t ncols, Modular_double.Element* A,
@@ -112,6 +117,10 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     int pRank (Modular_double,
               size_t nrows, size_t ncols,
               Modular_double.Element *A, size_t lda, size_t numthreads)
+
+    size_t LUdivine (Modular_double F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_double.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
 
     size_t ReducedRowEchelonForm (Modular_double F, size_t a, size_t b,
                                   Modular_double.Element* matrix,
@@ -169,6 +178,10 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     int pRank (Modular_float,
               size_t nrows, size_t ncols,
               Modular_float.Element *A, size_t lda, size_t numthreads)
+
+    size_t LUdivine (Modular_float F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_float.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
 
     size_t ReducedRowEchelonForm (Modular_float F, size_t a, size_t b,
                                   Modular_float.Element* matrix,

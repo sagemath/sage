@@ -1,16 +1,20 @@
 # pylint: disable=missing-function-docstring
+from __future__ import annotations
 import pytest
-from _pytest.fixtures import FixtureRequest
 
 from sage.manifolds.differentiable.examples.sphere import Sphere
 from sage.manifolds.differentiable.examples.symplectic_space import (
     StandardSymplecticSpace,
 )
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 from sage.manifolds.manifold import Manifold
 from sage.symbolic.function_factory import function
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.scalarfield import DiffScalarField
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from _pytest.fixtures import FixtureRequest
 
 
 class TestGenericSymplecticForm:
@@ -50,6 +54,7 @@ class TestGenericSymplecticForm:
         assert omega._poisson is None  # type: ignore reportPrivateUsage
 
 
+@pytest.mark.long
 class TestCoherenceOfFormulas:
     r"""
     Test correctness of the implementation, by checking that equivalent formulas give the correct result.
@@ -60,7 +65,7 @@ class TestCoherenceOfFormulas:
     def M(self, request: FixtureRequest):
         if request.param == 'R2':
             return StandardSymplecticSpace(2, 'R2', symplectic_name='omega')
-        elif request.param == 'S2':
+        if request.param == 'S2':
             # Init stereographic coordinates to get a complete atlas
             return Sphere(2, coordinates='stereographic')
 
@@ -68,8 +73,7 @@ class TestCoherenceOfFormulas:
     def omega(self, M):
         if isinstance(M, StandardSymplecticSpace):
             return M.symplectic_form()
-        else:
-            return SymplecticForm.wrap(M.metric().volume_form(), "omega")
+        return SymplecticForm.wrap(M.metric().volume_form(), "omega")
 
     def test_flat_of_hamiltonian_vector_field(
         self, M: DifferentiableManifold, omega: SymplecticForm

@@ -5,7 +5,9 @@ A *functorial construction* is a collection of functors
 `(F_{Cat})_{Cat}` (indexed by a collection of categories) which associate
 to a sequence of parents `(A, B, ...)` in a category `Cat` a parent
 `F_{Cat}(A, B, ...)`. Typical examples of functorial
-constructions are :obj:`cartesian_product` and :obj:`tensor_product`.
+constructions are
+:class:`~sage.categories.cartesian_product.CartesianProductFunctor` and
+:obj:`~sage.categories.tensor.tensor`.
 
 The category of `F_{Cat}(A, B, ...)`, which only depends on `Cat`, is
 called the (functorial) construction category.
@@ -30,6 +32,8 @@ monoid structure.
 See :class:`CovariantFunctorialConstruction`,
 :class:`CovariantConstructionCategory` and
 :class:`RegressiveCovariantConstructionCategory` for more details.
+
+.. automethod:: sage.categories.covariant_functorial_construction::CovariantConstructionCategory.extra_super_categories
 
 AUTHORS:
 
@@ -121,8 +125,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
     Note: for each functorial construction, there probably is one (or several)
     largest categories on which it applies. For example, the
-    :func:`~sage.categories.cartesian_product.CartesianProducts` construction makes
-    only sense for concrete categories, that is subcategories of
+    :class:`~sage.categories.cartesian_product.CartesianProductsCategory`
+    construction makes only sense for concrete categories, that is subcategories of
     ``Sets()``. Maybe we want to model this one way or the other.
     """
 
@@ -320,8 +324,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         base_category_class = cls._base_category_class[0]
         if isinstance(category, base_category_class):
             return super().__classcall__(cls, category, *args)
-        else:
-            return cls.category_of(base_category_class(category, *args))
+        return cls.category_of(base_category_class(category, *args))
 
     @staticmethod
     def __classget__(cls, base_category, base_category_class):
@@ -416,8 +419,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         functor_category = getattr(category.__class__, cls._functor_category)
         if isinstance(functor_category, type) and issubclass(functor_category, Category):
             return functor_category(category, *args)
-        else:
-            return cls.default_super_categories(category, *args)
+        return cls.default_super_categories(category, *args)
 
     def __init__(self, category, *args):
         r"""
@@ -654,8 +656,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         """
         if self.is_construction_defined_by_base():
             return self
-        else:
-            return None
+        return None
 
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):

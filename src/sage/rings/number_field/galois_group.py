@@ -70,7 +70,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         True
     """
 
-    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None, _type=None):
+    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None):
         r"""
         Create a Galois group.
 
@@ -112,8 +112,6 @@ class GaloisGroup_v2(GaloisGroup_perm):
             deprecation(28782, "Use .absolute_field().galois_group() if you want the Galois group of the absolute field")
         if gc_numbering is None:
             gc_numbering = algorithm != 'magma'
-        # For the deprecated group() method of GaloisGroup_v1
-        self._type = _type
         super().__init__(number_field, algorithm, names, gc_numbering)
 
     @cached_method(key=GaloisGroup_perm._get_algorithm)
@@ -131,10 +129,16 @@ class GaloisGroup_v2(GaloisGroup_perm):
             PARI group [6, -1, 2, "S3"] of degree 3
             sage: G._pol_galgp(algorithm='gap') # optional - gap_packages
             Transitive group number 2 of degree 3
+
+        The automatic fallback to GAP is preserved in higher degrees::
+
+            sage: K.<a> = NumberField(x^12 - x - 1)
+            sage: K.galois_group()._pol_galgp()
+            Transitive group number 301 of degree 12
         """
         algorithm = self._get_algorithm(algorithm)
         f = self._field.absolute_polynomial()
-        pari_group = (self._type != "gap")  # while GaloisGroup_v1 is deprecated
+        pari_group = algorithm == 'pari' and f.degree() <= 11
         return f.galois_group(pari_group=pari_group, algorithm=algorithm)
 
     @cached_method(key=_alg_key)
@@ -155,8 +159,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         K = self._field
         if K.absolute_degree() < 12 or algorithm != "pari":
             return self._pol_galgp(algorithm=algorithm).order()
-        else:
-            return self._galois_closure.absolute_degree()
+        return self._galois_closure.absolute_degree()
 
     def easy_order(self, algorithm=None):
         """
@@ -214,12 +217,11 @@ class GaloisGroup_v2(GaloisGroup_perm):
         K = self._field
         if K.absolute_degree() < 12 or algorithm != "pari":
             return self._pol_galgp(algorithm=algorithm).transitive_number()
+        if self._gc_numbering:
+            G = self._field.galois_group(algorithm=self._default_algorithm, names=self._gc_names, gc_numbering=False)
         else:
-            if self._gc_numbering:
-                G = self._field.galois_group(algorithm=self._default_algorithm, names=self._gc_names, gc_numbering=False)
-            else:
-                G = self
-            return ZZ(G.gap().TransitiveIdentification())
+            G = self
+        return ZZ(G.gap().TransitiveIdentification())
 
     def pari_label(self):
         """
@@ -235,8 +237,26 @@ class GaloisGroup_v2(GaloisGroup_perm):
             '8T44'
             sage: G.pari_label()
             '[2^4]S(4)'
+
+        The label can also be requested when another default algorithm was
+        selected::
+
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)
+            sage: K.galois_group(algorithm='gap').pari_label()
+            'S3'
+
+        PARI does not support this computation above degree 11::
+
+            sage: K.<a> = NumberField(x^12 - x - 1)
+            sage: K.galois_group().pari_label()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: PARI only supports Galois group computations through degree 11
         """
-        return self._pol_galgp().label()
+        if self._field.absolute_degree() > 11:
+            raise NotImplementedError(
+                "PARI only supports Galois group computations through degree 11")
+        return self._pol_galgp(algorithm='pari').label()
 
     @cached_method
     def signature(self):
@@ -256,10 +276,9 @@ class GaloisGroup_v2(GaloisGroup_perm):
         """
         if self._field.absolute_degree() < 12:
             return self._pol_galgp().signature()
-        elif self._field.absolute_polynomial().discriminant().is_square():
+        if self._field.absolute_polynomial().discriminant().is_square():
             return ZZ(1)
-        else:
-            return ZZ(-1)
+        return ZZ(-1)
 
     # We compute various attributes lazily so that we can support quick lookup
     # of some that are more easily computed.  This allows us to emulate
@@ -304,17 +323,16 @@ class GaloisGroup_v2(GaloisGroup_perm):
         K = self._field
         if self.is_galois():
             return K, K.hom(K.gen(), K)
+        if K.is_relative():
+            # Switch to the absolute field
+            K = K.absolute_field(K.variable_name() + 'a')
+            from_abs, to_abs = K.structure()
         else:
-            if K.is_relative():
-                # Switch to the absolute field
-                K = K.absolute_field(K.variable_name() + 'a')
-                from_abs, to_abs = K.structure()
-            else:
-                to_abs = None
-            L, emb = K.galois_closure(names=self._gc_names, map=True)
-            if to_abs is not None:
-                emb = emb * to_abs
-            return L, emb
+            to_abs = None
+        L, emb = K.galois_closure(names=self._gc_names, map=True)
+        if to_abs is not None:
+            emb = emb * to_abs
+        return L, emb
 
     @lazy_attribute
     def _pari_data(self):
@@ -384,35 +402,34 @@ class GaloisGroup_v2(GaloisGroup_perm):
                 gens = [()]
             gens = [self.element_class(x, self, check=False) for x in gens]
             return sorted(set(gens))
+        G = self._field.galois_group(algorithm=self._default_algorithm, names=self._gc_names, gc_numbering=True)
+        self._galois_closure = L = G._galois_closure
+        gens = [g.as_hom() for g in G._gens]
+        if gens:
+            # We add None so that we're 1-indexed
+            roots = [None] + self._field.absolute_polynomial().roots(L, multiplicities=False)
+            new_gens = []
+            for g in gens:
+                seen = set()
+                cycles = []
+                for start in range(1, len(roots)):
+                    if start in seen:
+                        continue
+                    cycle = [start]
+                    r = roots[start]
+                    while True:
+                        r = g(r)
+                        i = roots.index(r)
+                        seen.add(i)
+                        if i == start:
+                            break
+                        cycle.append(i)
+                    cycles.append(tuple(cycle))
+                new_gens.append(cycles)
         else:
-            G = self._field.galois_group(algorithm=self._default_algorithm, names=self._gc_names, gc_numbering=True)
-            self._galois_closure = L = G._galois_closure
-            gens = [g.as_hom() for g in G._gens]
-            if gens:
-                # We add None so that we're 1-indexed
-                roots = [None] + self._field.absolute_polynomial().roots(L, multiplicities=False)
-                new_gens = []
-                for g in gens:
-                    seen = set()
-                    cycles = []
-                    for start in range(1, len(roots)):
-                        if start in seen:
-                            continue
-                        cycle = [start]
-                        r = roots[start]
-                        while True:
-                            r = g(r)
-                            i = roots.index(r)
-                            seen.add(i)
-                            if i == start:
-                                break
-                            cycle.append(i)
-                        cycles.append(tuple(cycle))
-                    new_gens.append(cycles)
-            else:
-                new_gens = [()]
-            # Want order to match G's, so don't sort
-            return [self.element_class(x, self, check=False) for x in new_gens]
+            new_gens = [()]
+        # Want order to match G's, so don't sort
+        return [self.element_class(x, self, check=False) for x in new_gens]
 
     def _element_constructor_(self, x, check=True):
         """
@@ -470,8 +487,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         d = K.absolute_degree()
         if d < 12:
             return self._pol_galgp().order() == d
-        else:
-            return len(K.automorphisms()) == d
+        return len(K.automorphisms()) == d
 
     def _repr_(self):
         r"""
@@ -497,8 +513,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             tlabel = ""
         if d < 12 or self.is_galois():
             return "Galois group %sof %s" % (tlabel, f)
-        else:
-            return "Galois group %sof (non-Galois) %s" % (tlabel, f)
+        return "Galois group %sof (non-Galois) %s" % (tlabel, f)
 
     def number_field(self):
         r"""
@@ -641,10 +656,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
         if isinstance(P, NumberFieldHomomorphism_im_gens):
             if self.number_field().is_totally_real():
                 return self.subgroup([])
-            else:
-                return self.subgroup([self.complex_conjugation(P)])
-        else:
-            return self.ramification_group(P, -1)
+            return self.subgroup([self.complex_conjugation(P)])
+        return self.ramification_group(P, -1)
 
     def complex_conjugation(self, P=None):
         """
@@ -713,10 +726,9 @@ class GaloisGroup_v2(GaloisGroup_perm):
         ramdata = self._ramgroups(P)
         if v < -1:
             raise ValueError("v must be at least -1")
-        elif v + 1 >= len(ramdata):
+        if v + 1 >= len(ramdata):
             return self.subgroup([])
-        else:
-            return self.subgroup(ramdata[v + 1][0])
+        return self.subgroup(ramdata[v + 1][0])
 
     def inertia_group(self, P):
         """
@@ -954,7 +966,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         L = G._galois_closure
         if self.order() == G.order():
             return QQ, L.coerce_map_from(QQ)
-        elif self.order() == 1:
+        if self.order() == 1:
             return L, L.coerce_map_from(L)
         vecs = [pari(g.domain()).Vecsmall() for g in self.iteration()]
         v = G._pari_data.galoisfixedfield(vecs)

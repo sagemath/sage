@@ -129,6 +129,8 @@ Comprehensive module list
     sage/combinat/t_sequences
     sage/combinat/tableau_tuple
     sage/combinat/tableau
+    sage/combinat/quasi_ribbon_tableau
+    sage/combinat/tamari_blossoming_tree
     sage/combinat/interval_posets
     sage/combinat/hillman_grassl
     sage/combinat/tiling
@@ -324,6 +326,7 @@ Comprehensive module list
     sage/combinat/posets/linear_extensions
     sage/combinat/posets/mobile
     sage/combinat/posets/moebius_algebra
+    sage/combinat/posets/sashes
     sage/combinat/posets/all
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint
@@ -480,6 +483,18 @@ Comprehensive module list
     sage/combinat/species/structure
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
+
+``sage.combinat.super_sf``
+--------------------------
+
+.. toctree::
+    :maxdepth: 1
+
+    sage/combinat/super_sf/super_sf
+    sage/combinat/super_sf/super_sfa
+    sage/combinat/super_sf/powersum
+    sage/combinat/super_sf/hom_el
+    sage/combinat/super_sf/all
 
 ``sage.combinat.words``
 -----------------------

@@ -75,7 +75,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
     Return integral points in the parallelotope starting at the origin
     and spanned by the ``spanning_points``.
 
-    See :meth:`~ConvexRationalPolyhedralCone.semigroup_generators` for a description of the
+    See :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.semigroup_generators` for a description of the
     algorithm.
 
     INPUT:
@@ -302,7 +302,7 @@ cpdef tuple simplex_points(vertices):
     origin.set_immutable()
     if not rays:
         return (origin,)
-    translate_points(rays, origin)
+    translate_points(rays, origin, False)
 
     # Find equation Ax<=b that cuts out simplex from parallelotope
     cdef MatrixClass Rt = matrix(ZZ, rays)
@@ -321,11 +321,11 @@ cpdef tuple simplex_points(vertices):
     e, d, VDinv = ray_matrix_normal_form(R)
     lattice = origin.parent()
     points = loop_over_parallelotope_points(e, d, VDinv, R, lattice, A, b) + tuple(rays)
-    translate_points(points, -origin)
+    translate_points(points, -origin, True)
     return points
 
 
-cdef translate_points(v_list, VectorClass delta):
+cdef translate_points(v_list, VectorClass delta, bint immutable):
     r"""
     Add ``delta`` to each vector in ``v_list``.
     """
@@ -334,7 +334,9 @@ cdef translate_points(v_list, VectorClass delta):
     for v in v_list:
         for i in range(dim):
             v[i] -= delta.get_unsafe(i)
-
+    if immutable:
+        for v in v_list:
+            v.set_immutable()
 
 ##############################################################################
 # For points with "small" coordinates (that is, fitting into a small
@@ -469,8 +471,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # needs sage.symbolic
-        sage: len(rectangular_box_points([-100], [100], polytope))                      # needs sage.symbolic
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)
+        sage: len(rectangular_box_points([-100], [100], polytope))
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -737,7 +739,7 @@ cdef class Inequality_generic:
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # needs sage.symbolic
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -759,7 +761,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # needs sage.symbolic
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
@@ -1180,8 +1182,8 @@ cdef class InequalityCollection:
         Check that :issue:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field
-            sage: P.integral_points()                                                   # needs sage.rings.number_field
+            sage: P += 1/1000*polytopes.regular_polygon(5)
+            sage: P.integral_points()
             ((0, 0), (17, 3))
         """
         cdef list A

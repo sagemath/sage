@@ -87,8 +87,8 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None,
 
     cdef int i, j
     edges = ((i, j) for i in range(n)
-                 for j in range((0 if directed else i + 1), n)
-                 if (i != j or loops) and random() < pp)
+             for j in range((0 if directed else i + 1), n)
+             if (i != j or loops) and random() < pp)
 
     return GT([range(n), edges], format='vertices_and_edges',
               loops=directed and loops, name=name, immutable=immutable)

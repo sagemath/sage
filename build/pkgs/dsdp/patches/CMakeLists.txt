@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.30)
 project (dsdp VERSION 5.8 LANGUAGES C)
 
 link_directories(${LIBRARY_PREFIX}/lib)

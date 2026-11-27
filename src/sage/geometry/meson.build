@@ -3,6 +3,7 @@ py.install_sources(
   'abc.pyx',
   'all.py',
   'cone.py',
+  'cone_test.py',
   'cone_catalog.py',
   'cone_critical_angles.py',
   'convex_set.py',

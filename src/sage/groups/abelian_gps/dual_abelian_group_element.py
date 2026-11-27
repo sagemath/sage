@@ -3,7 +3,8 @@
 Elements (characters) of the dual group of a finite Abelian group
 
 To obtain the dual group of a finite Abelian group, use the
-:meth:`~sage.groups.abelian_gps.abelian_group.dual_group` method::
+:meth:`~sage.groups.abelian_gps.abelian_group.AbelianGroup_class.dual_group`
+method::
 
     sage: F = AbelianGroup([2,3,5,7,8], names='abcde')
     sage: F
@@ -54,36 +55,6 @@ AUTHORS:
 # ****************************************************************************
 from sage.arith.functions import lcm as LCM
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
-
-
-def is_DualAbelianGroupElement(x) -> bool:
-    """
-    Test whether ``x`` is a dual Abelian group element.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.groups.abelian_gps.dual_abelian_group import is_DualAbelianGroupElement
-        sage: F = AbelianGroup(5, [5,5,7,8,9], names=list("abcde")).dual_group()
-        sage: is_DualAbelianGroupElement(F)
-        doctest:warning...
-        DeprecationWarning: The function is_DualAbelianGroupElement is deprecated;
-        use 'isinstance(..., DualAbelianGroupElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_DualAbelianGroupElement(F.an_element())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_DualAbelianGroupElement is deprecated; "
-                "use 'isinstance(..., DualAbelianGroupElement)' instead.")
-    return isinstance(x, DualAbelianGroupElement)
 
 
 class DualAbelianGroupElement(AbelianGroupElementBase):

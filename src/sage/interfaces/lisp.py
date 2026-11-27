@@ -419,10 +419,9 @@ class LispElement(RingElement, ExpectElement):
 
         if P.eval('(= %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 0)
-        elif P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
+        if P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __bool__(self):
         """
