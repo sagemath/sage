@@ -1,40 +1,41 @@
 # distutils: depends = NTL/ZZ.h
 
-from sage.libs.ntl.types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
-        ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
+from sage.libs.ntl.types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c,
+                                  ZZ_pContext_c,
+                                  ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
 
 
 cdef extern from "ntlwrap.h":
     long ZZ_pX_IsZero "IsZero"(ZZ_pX_c a)
     long ZZ_pX_IsOne "IsOne"(ZZ_pX_c a)
 
-    void ZZ_pX_add "add"( ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
+    void ZZ_pX_add "add"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_add_long "add"(ZZ_pX_c x, ZZ_pX_c a, long b)
-    void ZZ_pX_sub "sub"( ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
+    void ZZ_pX_sub "sub"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_sub_long "sub"(ZZ_pX_c x, long a, ZZ_pX_c b)
     void ZZ_pX_negate "NTL::negate"(ZZ_pX_c x, ZZ_pX_c a)
 
-    void ZZ_pX_mul "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
-    void ZZ_pX_mul_long "mul"( ZZ_pX_c x, ZZ_pX_c a, long b)
-    void ZZ_pX_mul_ZZ_p "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
-    void ZZ_pX_rmul "mul"( ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
-    void ZZ_pX_sqr "sqr"( ZZ_pX_c x, ZZ_pX_c a)
-    long ZZ_pX_power "NTL::power"( ZZ_pX_c x, ZZ_pX_c a, long e)
+    void ZZ_pX_mul "mul"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
+    void ZZ_pX_mul_long "mul"(ZZ_pX_c x, ZZ_pX_c a, long b)
+    void ZZ_pX_mul_ZZ_p "mul"(ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
+    void ZZ_pX_rmul "mul"(ZZ_pX_c x, ZZ_pX_c a, ZZ_p_c b)
+    void ZZ_pX_sqr "sqr"(ZZ_pX_c x, ZZ_pX_c a)
+    long ZZ_pX_power "NTL::power"(ZZ_pX_c x, ZZ_pX_c a, long e)
 
     void ZZ_pX_LeftShift "LeftShift"(ZZ_pX_c x, ZZ_pX_c a, long n)
     void ZZ_pX_RightShift "RightShift"(ZZ_pX_c x, ZZ_pX_c a, long n)
 
     void ZZ_pX_DivRem "DivRem"(ZZ_pX_c q, ZZ_pX_c r, ZZ_pX_c a, ZZ_pX_c b)
-    void ZZ_pX_div_ZZ "div"( ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
-    void ZZ_pX_div "div"( ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
-    long ZZ_pX_divide "divide"( ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
+    void ZZ_pX_div_ZZ "div"(ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
+    void ZZ_pX_div "div"(ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
+    long ZZ_pX_divide "divide"(ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_rem "rem"(ZZ_pX_c r, ZZ_pX_c a, ZZ_pX_c b)
 
     void ZZ_pX_GCD "GCD"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_PlainXGCD "PlainXGCD"(ZZ_pX_c d, ZZ_pX_c s, ZZ_pX_c t, ZZ_pX_c a, ZZ_pX_c b)
     void ZZ_pX_XGCD "XGCD"(ZZ_pX_c d, ZZ_pX_c s, ZZ_pX_c t, ZZ_pX_c a, ZZ_pX_c b)
 
-    long ZZ_pX_deg "deg"( ZZ_pX_c x )
+    long ZZ_pX_deg "deg"(ZZ_pX_c x)
     ZZ_p_c ZZ_pX_coeff "coeff"(ZZ_pX_c a, long i)
     ZZ_p_c ZZ_pX_LeadCoeff "LeadCoeff"(ZZ_pX_c x)
     ZZ_p_c ZZ_pX_ConstTerm "ConstTerm"(ZZ_pX_c x)
@@ -66,7 +67,7 @@ cdef extern from "ntlwrap.h":
     void ZZ_pX_InvMod "InvMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c f)
     long ZZ_pX_InvModStatus "InvModStatus"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c f)
 
-    void ZZ_pX_Modulus_build "build"(ZZ_pX_Modulus_c F, ZZ_pX_c f) # MUST be called before using the modulus
+    void ZZ_pX_Modulus_build "build"(ZZ_pX_Modulus_c F, ZZ_pX_c f)  # MUST be called before using the modulus
     long ZZ_pX_Modulus_deg "deg"(ZZ_pX_Modulus_c F)
 
     void ZZ_pX_MulMod_pre "MulMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_c b, ZZ_pX_Modulus_c F)
@@ -82,7 +83,7 @@ cdef extern from "ntlwrap.h":
     void ZZ_pX_div_pre "div"(ZZ_pX_c q, ZZ_pX_c a, ZZ_pX_Modulus_c F)
     void ZZ_pX_InvMod_pre "InvMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Modulus_c F)
 
-    void ZZ_pX_Multiplier_build "build"(ZZ_pX_Multiplier_c F, ZZ_pX_c b, ZZ_pX_Modulus_c F) # MUST be called before using the multiplier
+    void ZZ_pX_Multiplier_build "build"(ZZ_pX_Multiplier_c F, ZZ_pX_c b, ZZ_pX_Modulus_c F)  # MUST be called before using the multiplier
     void ZZ_pX_MulMod_premul "MulMod"(ZZ_pX_c x, ZZ_pX_c a, ZZ_pX_Multiplier_c B, ZZ_pX_Modulus_c F)
 
     void ZZ_pX_CompMod "CompMod"(ZZ_pX_c x, ZZ_pX_c g, ZZ_pX_c h, ZZ_pX_Modulus_c F)

@@ -44,7 +44,9 @@ def cholesky_decomposition(self, bit_prec=53):
     .. TODO::
 
         If we only care about working over the real double field (``RDF``), then we
-        can use the method :meth:`cholesky` present for square matrices over that.
+        can use the method
+        :meth:`~sage.matrix.matrix_double_dense.Matrix_double_dense.cholesky`
+        present for square matrices over that.
 
     .. NOTE::
 
@@ -385,7 +387,7 @@ def split_local_cover(self):
     if hasattr(self, "__split_local_cover"):
         if isinstance(self.__split_local_cover, QuadraticForm):  # Here the computation has been done.
             return self.__split_local_cover
-        elif self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
+        if self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
             Length_Max = current_length + 5
     else:

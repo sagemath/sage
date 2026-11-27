@@ -913,11 +913,10 @@ def p_adic_symbol(A, p, val):
         e0 = Integer(A_p.det()).kronecker(p)
         n0 = A.nrows()
         return [[m0, n0, e0]]
-    else:
-        C_p = basis_complement(B_p)
-        e0 = Integer((C_p * A_p * C_p.transpose()).det()).kronecker(p)
-        n0 = C_p.nrows()
-        sym = [[0, n0, e0]]
+    C_p = basis_complement(B_p)
+    e0 = Integer((C_p * A_p * C_p.transpose()).det()).kronecker(p)
+    n0 = C_p.nrows()
+    sym = [[0, n0, e0]]
     r = B_p.nrows()
     B = MatrixSpace(ZZ, r, n)(B_p)
     C = MatrixSpace(ZZ, n - r, n)(C_p)
@@ -1154,31 +1153,29 @@ def two_adic_symbol(A, val):
         even, _ = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
         if even:
             return [[m0, n0, d0, 0, 0]]
-        else:
-            tr8 = trace_diag_mod_8(A_8)  # Here we already know that A_8 is odd and diagonalizable mod 8.
-            return [[m0, n0, d0, 1, tr8]]
+        tr8 = trace_diag_mod_8(A_8)  # Here we already know that A_8 is odd and diagonalizable mod 8.
+        return [[m0, n0, d0, 1, tr8]]
 
     # Deal with the matrix being degenerate mod 2.
+    B_2 = K_2.echelonized_basis_matrix()
+    C_2 = basis_complement(B_2)
+    n0 = C_2.nrows()
+    C = MatrixSpace(ZZ, n0, n)(C_2)
+    A_new = C * A * C.transpose()
+    # compute oddity modulo 8:
+    A_8 = MatrixSpace(R_8, n0, n0)(A_new)
+    # d0 = A_8.det() # no determinant over Z/8Z
+    d0 = ZZ(R_8(MatrixSpace(ZZ, n0, n0)(A_8).determinant()))
+    if d0 == 0:
+        print("A:")
+        print(A_new)
+        assert False
+    even, _ = is_even_matrix(A_new)
+    if even:
+        sym = [[0, n0, d0, 0, 0]]
     else:
-        B_2 = K_2.echelonized_basis_matrix()
-        C_2 = basis_complement(B_2)
-        n0 = C_2.nrows()
-        C = MatrixSpace(ZZ, n0, n)(C_2)
-        A_new = C * A * C.transpose()
-        # compute oddity modulo 8:
-        A_8 = MatrixSpace(R_8, n0, n0)(A_new)
-        # d0 = A_8.det() # no determinant over Z/8Z
-        d0 = ZZ(R_8(MatrixSpace(ZZ, n0, n0)(A_8).determinant()))
-        if d0 == 0:
-            print("A:")
-            print(A_new)
-            assert False
-        even, _ = is_even_matrix(A_new)
-        if even:
-            sym = [[0, n0, d0, 0, 0]]
-        else:
-            tr8 = trace_diag_mod_8(A_8)
-            sym = [[0, n0, d0, 1, tr8]]
+        tr8 = trace_diag_mod_8(A_8)
+        sym = [[0, n0, d0, 1, tr8]]
     r = B_2.nrows()
     B = MatrixSpace(ZZ, r, n)(B_2)
     C = MatrixSpace(ZZ, n - r, n)(C_2)
@@ -1721,8 +1718,7 @@ class Genus_Symbol_p_adic_ring:
             if self._canonical_symbol is None:
                 self._canonical_symbol = canonical_2_adic_reduction(symbol)
             return self._canonical_symbol
-        else:
-            return self._symbol
+        return self._symbol
 
     def gram_matrix(self, check=True):
         r"""
@@ -2182,12 +2178,11 @@ class Genus_Symbol_p_adic_ring:
                 if s[0] % 2 == 1 and s[2] in (3, 5):
                     k += 1
             return Integer(sum([s[4] for s in self._symbol]) + 4*k).mod(8)
-        else:
-            k = 0
-            for s in self._symbol:
-                if s[0] % 2 == 1 and s[2] == -1:
-                    k += 1
-            return Integer(sum([s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
+        k = 0
+        for s in self._symbol:
+            if s[0] % 2 == 1 and s[2] == -1:
+                k += 1
+        return Integer(sum([s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
 
     def scale(self):
         r"""
@@ -2234,8 +2229,7 @@ class Genus_Symbol_p_adic_ring:
         if p == 2:
             fq = self._symbol[0]
             return self.prime()**(fq[0] + 1 - fq[3])
-        else:
-            return self.scale()
+        return self.scale()
 
     def level(self):
         r"""
@@ -2624,9 +2618,8 @@ class GenusSymbol_global_ring:
         b, j = self._proper_is_improper()
         if b:
             return A, K
-        else:
-            K = A.subgroup(K.gens() + (j,))
-            return A, K
+        K = A.subgroup(K.gens() + (j,))
+        return A, K
 
     def spinor_generators(self, proper) -> list:
         r"""
@@ -2636,7 +2629,7 @@ class GenusSymbol_global_ring:
 
         - ``proper`` -- boolean
 
-        OUTPUT: list of primes not dividing the determinant
+        OUTPUT: list of odd primes not dividing ``2 * determinant``
 
         EXAMPLES::
 
@@ -2644,6 +2637,96 @@ class GenusSymbol_global_ring:
             sage: gen = Genus(g)
             sage: gen.spinor_generators(False)
             [5]
+
+        Check that independent spinor classes generate the whole quotient, and
+        that the definite enumeration recovers the twelve classes reported for
+        the lattice $B^1$ by Benham--Hsia, §2.3::
+
+            sage: G = Genus(matrix.diagonal(ZZ, [1, 20, 400]))
+            sage: A, K = G._improper_spinor_kernel()
+            sage: Q = A.quotient(K)
+            sage: Q.order() == 4 and all(g.order() in (1, 2) for g in Q.gens())
+            True
+            sage: primes = G.spinor_generators(False)
+            sage: primes == [3, 11]
+            True
+            sage: all(p % 2 == 1 for p in primes)
+            True
+            sage: U = Q.subgroup([])
+            sage: orders = []
+            sage: for p in primes:
+            ....:     Unew = Q.subgroup((Q(A.delta(p)),) + U.gens())
+            ....:     orders.append(Unew.order())
+            ....:     U = Unew
+            sage: orders == [2, 4]
+            True
+            sage: (Q.subgroup([Q(A.delta(p)) for p in primes]).order()
+            ....:  == Q.order())
+            True
+
+        For this published example the two independent improper classes are
+        represented by the primes 3 and 11, each of order two::
+
+            sage: c3, c11 = Q(A.delta(3)), Q(A.delta(11))
+            sage: c3.order() == c11.order() == 2
+            True
+            sage: Q.subgroup([c3, c11]).order() == Q.order() == 4
+            True
+
+        The same four-way partition holds for the proper spinor quotient::
+
+            sage: A_proper, K_proper = G._proper_spinor_kernel()
+            sage: Q_proper = A_proper.quotient(K_proper)
+            sage: Q_proper.order() == 4 and all(
+            ....:     g.order() in (1, 2) for g in Q_proper.gens())
+            True
+            sage: proper_primes = G.spinor_generators(True)
+            sage: Q_proper.subgroup(
+            ....:     [Q_proper(A_proper.delta(p)) for p in proper_primes]
+            ....: ).order() == Q_proper.order()
+            True
+            sage: U_proper = Q_proper.subgroup([])
+            sage: proper_orders = []
+            sage: for p in proper_primes:
+            ....:     U_new = Q_proper.subgroup(
+            ....:         (Q_proper(A_proper.delta(p)),) + U_proper.gens())
+            ....:     proper_orders.append(U_new.order())
+            ....:     U_proper = U_new
+            sage: proper_orders == [2, 4]
+            True
+            sage: reps = G.representatives()
+            sage: len(reps)
+            12
+
+        The twelve classes satisfy the definite mass formula, independently
+        weighting each class by the reciprocal of its automorphism-group
+        order::
+
+            sage: from sage.quadratic_forms.quadratic_form import QuadraticForm
+            sage: sum(1 / QuadraticForm(ZZ, 2*R).automorphism_group().order()
+            ....:     for R in reps) == G.mass() == QQ(3)/2
+            True
+
+        The same generator-coverage invariant holds for an indefinite genus.
+        For $\operatorname{diag}(1,20,-400)$, the improper quotient has order
+        two and the genus has two classes. Since this lattice is isotropic,
+        this agrees with the theorem that each spinor genus of an isotropic
+        indefinite lattice of rank at least three consists of one class
+        (Conway--Sloane, *Sphere Packings, Lattices and Groups*, 3rd ed.,
+        Ch. 15, §9.1, Thm. 14)::
+
+            sage: H = Genus(matrix.diagonal(ZZ, [1, 20, -400]))
+            sage: A_indef, K_indef = H._improper_spinor_kernel()
+            sage: Q_indef = A_indef.quotient(K_indef)
+            sage: p_indef = H.spinor_generators(False)
+            sage: Q_indef.subgroup(
+            ....:     [Q_indef(A_indef.delta(p)) for p in p_indef]
+            ....: ).order() == Q_indef.order() == 2
+            True
+            sage: len(H.representatives())
+            2
+
+
         """
         from sage.sets.primes import Primes
         if proper:
@@ -2652,21 +2735,39 @@ class GenusSymbol_global_ring:
             A, K = self._improper_spinor_kernel()
         Q = A.quotient(K)
         q = Q.order()
+        assert Q.is_abelian(), "the spinor norm quotient must be abelian"
+        assert all(g.order() in (1, 2) for g in Q.gens()), (
+            "the spinor quotient must be elementary 2"
+        )
         U = Q.subgroup([])
 
         spinor_gens = []
         P = Primes()
+        # Every spinor class has infinitely many prime representatives by
+        # the Chebotarev density theorem (Neukirch, *Algebraic Number Theory*,
+        # Chapter VII, §13) applied to the spinor class field. Initialize at 2 because
+        # the loop advances with P.next(p), so its first candidate is 3. All
+        # returned generators are therefore odd and coprime to 2*det, as
+        # required by the p-neighbour spinor-action theorem.
         p = ZZ(2)
         while not U.order() == q:
             p = P.next(p)
             if p.divides(self.determinant()):
                 continue
             g = Q(A.delta(p))
-            if g.gap() in U.gap():  # containment in sage is broken
+            # The spinor quotient is elementary 2, so each prime class has
+            # order one or two. Membership testing in these quotient groups is
+            # unreliable; compare subgroup orders to test whether g enlarges U.
+            assert g.order() in (1, 2)
+            enlarged = Q.subgroup((g,) + U.gens())
+            if enlarged.order() == U.order():
                 continue
-            else:
-                spinor_gens.append(p)
-                U = Q.subgroup((g,) + Q.gens())
+            assert enlarged.order() == 2 * U.order(), (
+                "a spinor generator must enlarge the elementary "
+                "2-quotient by index two"
+            )
+            spinor_gens.append(p)
+            U = enlarged
         return spinor_gens
 
     def _proper_is_improper(self):
@@ -3247,7 +3348,7 @@ class GenusSymbol_global_ring:
             for sym in self._local_symbols:
                 mass *= sym.mass() / sym._standard_mass()
             return QQ(mass.canonicalize_radical())
-        elif backend == 'magma':
+        if backend == 'magma':
             e = 1  # lattices in magma are positive definite
             if neg != 0:
                 e = -1
@@ -3255,8 +3356,7 @@ class GenusSymbol_global_ring:
             L = magma(e * self.representative().dense_matrix())
             L = L.LatticeWithGram()
             return QQ(L.Mass())
-        else:
-            raise ValueError("unknown backend: %s" % backend)
+        raise ValueError("unknown backend: %s" % backend)
 
     def level(self):
         r"""

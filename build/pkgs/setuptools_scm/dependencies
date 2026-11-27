@@ -1,4 +1,4 @@
-packaging setuptools typing_extensions | pip $(PYTHON)
+packaging setuptools typing_extensions vcs_versioning | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

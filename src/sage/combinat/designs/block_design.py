@@ -15,11 +15,9 @@ REFERENCES:
   External Representation of Block Designs' by Peter J. Cameron, Peter
   Dobcsanyi, John P. Morgan, Leonard H. Soicher)
 
-.. [Hu57] Daniel R. Hughes, "A class of non-Desarguesian projective planes",
-   The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378
+- [Hu57]_
 
-.. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
-   the AMS, vol. 54 num. 10, pages 1294--1303
+- [We07]_
 
 AUTHORS:
 
@@ -480,12 +478,11 @@ def normalize_hughes_plane_point(p, q):
     for i in [2,1,0]:
         if p[i].is_one():
             return tuple(p)
-        elif not p[i].is_zero():
+        if not p[i].is_zero():
             k = ~p[i]
             if k.is_square():
                 return (p[0] * k,p[1] * k,p[2] * k)
-            else:
-                return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+            return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
 
 
 def HughesPlane(q2, check=True):
@@ -780,8 +777,7 @@ def projective_plane(n, check=True, existence=False):
 
     if existence:
         return True
-    else:
-        return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+    return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
 
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
@@ -909,10 +905,10 @@ def CremonaRichmondConfiguration():
 
     EXAMPLES::
 
-        sage: H = designs.CremonaRichmondConfiguration(); H                             # needs networkx
+        sage: H = designs.CremonaRichmondConfiguration(); H
         Incidence structure with 15 points and 15 blocks
-        sage: g = graphs.TutteCoxeterGraph()                                            # needs networkx
-        sage: H.incidence_graph().is_isomorphic(g)                                      # needs networkx
+        sage: g = graphs.TutteCoxeterGraph()
+        sage: H.incidence_graph().is_isomorphic(g)
         True
     """
     from sage.graphs.generators.smallgraphs import TutteCoxeterGraph
@@ -1054,8 +1050,7 @@ def Hadamard3Design(n):
 
     REFERENCES:
 
-    .. [CvL] \P. Cameron, J. H. van Lint, Designs, graphs, codes and
-      their links, London Math. Soc., 1991.
+    - [CvL]_
     """
     if n == 1 or n == 4:
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)

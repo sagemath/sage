@@ -13,6 +13,10 @@ m4
 gawk
 perl
 python3
+# python3-devel is needed for Python.h header used in configure checks
+python3-devel
+# python3-setuptools is needed for configure checks (Python 3.12+ removed distutils)
+python3-setuptools
 tar
 bc
 which

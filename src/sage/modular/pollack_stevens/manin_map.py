@@ -10,6 +10,7 @@ provides basic arithmetic and right action of matrices.
 
 EXAMPLES::
 
+    sage: # needs eclib
     sage: E = EllipticCurve('11a')
     sage: phi = E.pollack_stevens_modular_symbol()
     sage: phi
@@ -158,8 +159,7 @@ def unimod_matrices_from_infty(r, s):
             v.append(M2Z([-b, (-1) ** (j + 1) * a, -d, (-1) ** (j + 1) * c]))
             # The matrix connecting two consecutive convergents is added on
         return v
-    else:
-        return []
+    return []
 
 
 class ManinMap:
@@ -779,6 +779,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -803,7 +804,7 @@ class ManinMap:
                 psi[g] = psi_g
             return self.__class__(self._codomain, self._manin,
                                   psi, check=False).normalize()
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             S0N = Sigma0(self._manin.level())
             psi = self._right_action(S0N([1, 0, 0, ell]))
             for a in range(1, ell):
@@ -811,8 +812,7 @@ class ManinMap:
             if self._manin.level() % ell != 0:
                 psi += self._right_action(S0N([ell, 0, 0, 1]))
             return psi.normalize()
-        else:
-            raise ValueError('Algorithm must be either "naive" or "prep"')
+        raise ValueError('Algorithm must be either "naive" or "prep"')
 
     def p_stabilize(self, p, alpha, V):
         r"""
@@ -831,6 +831,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: f = phi._map

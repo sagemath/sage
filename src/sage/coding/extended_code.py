@@ -430,13 +430,12 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
                 word_list.append(last_pos)
                 l.append(vector(F, word_list))
             return l
-        else:
-            last_pos = F.zero()
-            for i in decoded:
-                last_pos += i
-            decoded_list = list(decoded)
-            decoded_list.append(last_pos)
-            return vector(F, decoded_list)
+        last_pos = F.zero()
+        for i in decoded:
+            last_pos += i
+        decoded_list = list(decoded)
+        decoded_list.append(last_pos)
+        return vector(F, decoded_list)
 
     def decoding_radius(self, *args, **kwargs):
         r"""

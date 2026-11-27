@@ -441,7 +441,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         Unramified case::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -466,7 +465,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: K = Qp(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -475,7 +473,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
             ...
             ValueError: element must have nonnegative valuation in order to compute residue
 
-            sage: # needs sage.libs.flint
             sage: R = ZpFM(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 3)

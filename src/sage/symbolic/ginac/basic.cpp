@@ -413,11 +413,13 @@ ex basic::collect(const ex & s, bool distributed) const
 
 	} else {
 		// Only one object specified
-                expairvec vec;
-                ex(*this).coefficients(s, vec);
-		for (const auto& term : vec)
-			x += term.first * power(s, term.second);
-                return x;
+		expairvec vec;
+		ex(*this).coefficients(s, vec);
+		exvector terms;
+		terms.reserve(vec.size());
+		for (const auto & term : vec)
+			terms.push_back(term.first * power(s, term.second));
+		return add(terms);
 	}
 	
 	// correct for lost fractional arguments and return

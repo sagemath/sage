@@ -174,8 +174,7 @@ class DiscreteValuationRings(Category_singleton):
             other = P(other)
             if self.valuation() >= other.valuation():
                 return P(self / other), P.zero()
-            else:
-                return P.zero(), self
+            return P.zero(), self
 
         def is_unit(self):
             """
@@ -205,8 +204,7 @@ class DiscreteValuationRings(Category_singleton):
             val = min(self.valuation(), other.valuation())
             if val is Infinity:
                 return self.parent()(0)
-            else:
-                return self.parent().uniformizer() ** val
+            return self.parent().uniformizer() ** val
 
         def lcm(self, other):
             """
@@ -218,8 +216,7 @@ class DiscreteValuationRings(Category_singleton):
             val = max(self.valuation(), other.valuation())
             if val is Infinity:
                 return self.parent()(0)
-            else:
-                return self.parent().uniformizer() ** val
+            return self.parent().uniformizer() ** val
 
 
 class DiscreteValuationFields(Category_singleton):

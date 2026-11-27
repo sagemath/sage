@@ -79,8 +79,7 @@ class Lseries_ell(SageObject):
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries()
             sage: L.taylor_series(series_prec=3)   # abs tol 1e-14
-            -1.27685190980159e-23 + (7.23588070754027e-24)*z + 0.759316500288427*z^2 + O(z^3)  # 32-bit
-            1.34667664606157e-19 + (-7.63157535163667e-20)*z + 0.759316500288427*z^2 + O(z^3)  # 64-bit
+            1.34667664606157e-19 + (-7.63157535163667e-20)*z + 0.759316500288427*z^2 + O(z^3)
         """
         D = self.dokchitser(prec)
         return D.taylor_series(a, series_prec, var)
@@ -741,12 +740,13 @@ class Lseries_ell(SageObject):
         """
         return self.dokchitser()(s)
 
-    def L1_vanishes(self):
+    def L1_vanishes(self) -> bool:
         r"""
-        Return whether or not `L(E,1) = 0`. The result is provably
-        correct if the Manin constant of the associated optimal
-        quotient is <= 2.  This hypothesis on the Manin constant
-        is true for all curves of conductor <= 40000 (by Cremona) and
+        Return whether or not `L(E,1) = 0`.
+
+        The result is provably correct if the Manin constant of the associated
+        optimal quotient is <= 2. This hypothesis on the Manin constant
+        is true for all optimal curves of conductor <= 500000 (by Cremona) and
         all semistable curves (i.e., squarefree conductor).
 
         ALGORITHM: see :meth:`L_ratio`.
@@ -815,7 +815,9 @@ class Lseries_ell(SageObject):
 
             sage: EllipticCurve([0,0,0,-193^2,0]).sha().an()
             4
-            sage: EllipticCurve([1, 0, 1, -131, 558]).sha().an()  # long time
+
+            sage: # long time, needs eclib
+            sage: EllipticCurve([1, 0, 1, -131, 558]).sha().an()
             1.00000000000000
 
         ALGORITHM: Compute the root number.  If it is -1 then `L(E,s)`

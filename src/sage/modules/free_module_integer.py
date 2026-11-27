@@ -505,8 +505,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         if self.rank() == self.degree():
             return abs(self.reduced_basis.determinant())
-        else:
-            return self.gram_matrix().determinant().sqrt()
+        return self.gram_matrix().determinant().sqrt()
 
     @cached_method
     def discriminant(self):
@@ -545,7 +544,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
         INPUT:
 
@@ -566,22 +565,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector().norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
         """
         if algorithm == "pari":
             if self._basis_is_LLL_reduced:
@@ -591,7 +590,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 B = self.reduced_basis.LLL()
                 qf = B*B.transpose()
 
-            count, length, vectors = qf.__pari__().qfminim()
+            count, length, vectors = qf.__pari__().qfminim(m=1)
             v = vectors.sage().columns()[0]
             w = v*B
         elif algorithm == "fplll":
@@ -801,7 +800,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding',
+                                   *args, lll_algorithm=None, **kwargs):
         r"""
         Compute a vector `w` in this lattice which is close to the target vector `t`.
         The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
@@ -817,10 +817,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
 
-        - ``algorithm`` -- string (default: 'embedding'):
+        - ``algorithm`` -- string (default: ``'embedding'``); the approximation
+          algorithm:
 
           - ``'embedding'`` -- embeds the lattice in a d+1 dimensional space
-            and seeks short vectors using LLL. This calls LLL twice but is
+            and seeks short vectors using LLL. This may call LLL twice but is
             usually still quick.
 
           - ``'nearest_plane'`` -- uses the "NEAREST PLANE" algorithm from [Bab86]_
@@ -829,9 +830,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             This yields slightly worse results than the other algorithms but is
             at least faster than ``'nearest_plane'``.
 
-        - ``*args`` -- passed through to :meth:`LLL`
+        - ``*args`` -- positional arguments passed through to :meth:`LLL`
+          after ``delta``
 
-        - ``**kwds`` -- passed through to :meth:`LLL`
+        - ``lll_algorithm`` -- string (default: ``None``); the algorithm passed
+          to :meth:`LLL`; when ``None``, use the default LLL algorithm
+
+        - ``**kwargs`` -- passed through to :meth:`LLL`
 
         OUTPUT: the vector `w` described above
 
@@ -841,6 +846,16 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L = IntegerLattice([[1, 0], [0, 1]])
             sage: L.approximate_closest_vector((-6, 5/3))
             (-6, 2)
+
+        Positional arguments and the choice of LLL algorithm are passed through
+        to :meth:`LLL` (:issue:`42731`)::
+
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), None, 'embedding', 3/4)
+            (1, 1)
+            sage: L = IntegerLattice([[1, 1], [1, 0]], lll_reduce=False)
+            sage: L.approximate_closest_vector((1, 1), lll_algorithm='NTL:LLL')
+            (1, 1)
 
         The quality of the approximation depends on ``delta``::
 
@@ -864,9 +879,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
+        if lll_algorithm is not None:
+            kwargs['algorithm'] = lll_algorithm
+
         # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
-            self.LLL(*args, delta=delta, **kwargs)
+            self.LLL(delta, *args, **kwargs)
 
         B = self._reduced_basis
         t = vector(t)
@@ -879,7 +897,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             L[-1, -1] = weight
 
             # The vector should be the last row but we iterate just in case
-            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
+            for v in reversed(L.LLL(delta, *args, **kwargs).rows()):
                 if abs(v[-1]) == weight:
                     return t - v[:-1]*v[-1].sign()
             raise ValueError('No suitable vector found in basis.'
@@ -993,5 +1011,4 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         if exact_form:
             return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
-        else:
-            return D**(1/r) * (r/(2*pi*e)).sqrt()
+        return D**(1/r) * (r/(2*pi*e)).sqrt()

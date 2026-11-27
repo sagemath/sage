@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
@@ -42,6 +42,10 @@ from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def _heckebasis(M) -> list:
@@ -246,10 +250,9 @@ class HeckeAlgebra_base(CachedRepresentation, Parent):
             if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
                 if x.parent().module().basis_matrix() == self.module().basis_matrix():
                     return HeckeAlgebraElement_matrix(self, x.matrix())
-                else:
-                    A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
-                                for i in range(x.parent().module().rank())])
-                    return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
+                A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
+                            for i in range(x.parent().module().rank())])
+                return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
 
         try:
             A = self.matrix_space()(x)

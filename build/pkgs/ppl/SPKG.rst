@@ -34,7 +34,7 @@ GPL v3+
 Upstream Contact
 ----------------
 
-- https://www.bugseng.com/ppl
+- https://bugseng.com/ppl
 
 Core Development Team
 

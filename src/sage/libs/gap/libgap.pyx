@@ -239,14 +239,15 @@ GAP to gracefully exit with an error as early as possible. We make use
 of this internal mechanism to prevent segmentation faults when GAP
 functions are interrupted.
 
-Specifically, we install GAP's own ``SIGINT`` handler (to catch
-Ctrl-C) before executing any long-running GAP code, and then later
-reinstall the original handler when the GAP code has finished. This is
-accomplished using the suggestively-named ``gap_sig_on()`` and
-``gap_sig_off()`` functions. After you have called ``gap_sig_on()``,
-if GAP receives Ctrl-C, it will invoke our custom ``error_handler()``
-that will set a :exc:`KeyboardInterrupt` containing the phrase "user
-interrupt". Eventually (as explained in the preceding paragraphs),
+Specifically, we install a handler that calls ``InterruptExecStat``
+for ``SIGINT`` (Ctrl-C) and ``SIGALRM`` (timeouts) before executing
+long-running GAP code, and then reinstall the original handlers when
+the GAP code has finished. This is accomplished using ``gap_sig_on()``
+and ``gap_sig_off()``. If GAP receives either signal during the call,
+it will invoke our custom ``error_handler()`` that sets a
+:exc:`KeyboardInterrupt` for ``SIGINT`` or an
+:class:`~cysignals.signals.AlarmInterrupt` for ``SIGALRM``.
+Eventually (as explained in the preceding paragraphs),
 control will jump back to the Cython wrapper for ``GAP_Enter()``, and
 this exception will be raised.
 
@@ -259,6 +260,11 @@ The safest pattern to use for interruptible libgap code is::
     finally:
         GAP_Leave()
         gap_sig_off()
+
+Initialization passes ``handleSignals=False`` to ``GAP_Initialize``.
+Since GAP nevertheless installs a ``SIGCHLD`` handler, we save and
+restore the host's signal action around initialization. Resetting it to
+``SIG_DFL`` would discard a handler installed by the embedding application.
 
 Before you attempt to change any of this, please make sure that
 you understand the issues that it is intended to fix, e.g.
@@ -330,7 +336,7 @@ from sage.misc.randstate cimport current_randstate
 
 
 ############################################################################
-### Gap  ###################################################################
+#    Gap    ################################################################
 ############################################################################
 # The libGap interpreter object Gap is the parent of the GapElements
 
@@ -380,7 +386,7 @@ class Gap(Parent):
 
         - ``x`` -- anything that defines a GAP object
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -485,7 +491,7 @@ class Gap(Parent):
         - ``gap_command`` -- string containing a valid gap command
           without the trailing semicolon
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -683,9 +689,9 @@ class Gap(Parent):
 
     def _an_element_(self):
         r"""
-        Return a :class:`GapElement`.
+        Return a :class:`~sage.libs.gap.element.GapElement`.
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -698,7 +704,7 @@ class Gap(Parent):
         """
         Return (integer) zero in GAP.
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -771,7 +777,8 @@ class Gap(Parent):
 
         OUTPUT:
 
-        A :class:`GapElement`. A :exc:`AttributeError` is raised
+        A :class:`~sage.libs.gap.element.GapElement`. A :exc:`AttributeError`
+        is raised
         if there is no such function or global variable.
 
         EXAMPLES::

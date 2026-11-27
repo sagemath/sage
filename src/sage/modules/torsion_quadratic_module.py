@@ -355,10 +355,9 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         if check:
             # figuring out the modulus can be expensive
             return TorsionQuadraticModule(V, W, check=check)
-        else:
-            return TorsionQuadraticModule(V, W, check=check,
-                                          modulus=self._modulus,
-                                          modulus_qf=self._modulus_qf)
+        return TorsionQuadraticModule(V, W, check=check,
+                                      modulus=self._modulus,
+                                      modulus_qf=self._modulus_qf)
 
     def all_submodules(self):
         r"""
@@ -1330,9 +1329,8 @@ def _brown_indecomposable(q, p):
             if q[0, 0].valuation(2) > v + 1 and q[1, 1].valuation(2) > v + 1:
                 # type U
                 return mod(0, 8)
-            else:
-                # type V
-                return mod(4 * v, 8)
+            # type V
+            return mod(4 * v, 8)
         u = q[0, 0].numerator()
         return mod(u + v * (u**2 - 1) / 2, 8)
     if p % 4 == 1:
@@ -1343,6 +1341,5 @@ def _brown_indecomposable(q, p):
         u = q[0, 0].numerator() // 2
         if legendre_symbol(u, p) == 1:
             return mod(1 + e, 8)
-        else:
-            return mod(-3 + e, 8)
+        return mod(-3 + e, 8)
     return mod(0, 8)

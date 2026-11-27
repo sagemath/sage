@@ -75,7 +75,6 @@ def O(*x, **kwds):
     the right precision cap to use. If you cast explicitly or use
     other means of element creation, you can get around this issue::
 
-        sage: # needs sage.rings.padics
         sage: K = Qp(11, 30)
         sage: K(11^-12) + O(11^15)
         11^-12 + O(11^15)
@@ -160,9 +159,8 @@ def O(*x, **kwds):
     if len(x) > 1:
         if isinstance(x[0], multi_power_series_ring_element.MPowerSeries):
             return multi_power_series_ring_element.MO(x, **kwds)
-        else:
-            raise ArithmeticError("O(%s) not defined" %
-                                  (', '.join(str(e) for e in x),))
+        raise ArithmeticError("O(%s) not defined" %
+                              (', '.join(str(e) for e in x),))
 
     x = x[0]
 
@@ -197,9 +195,8 @@ def O(*x, **kwds):
         if r >= 0:
             return Zp(p, prec=max(r, 20),
                       type='capped-rel')(0, absprec=r, **kwds)
-        else:
-            return Qp(p, prec=max(r, 20),
-                      type='capped-rel')(0, absprec=r, **kwds)
+        return Qp(p, prec=max(r, 20),
+                  type='capped-rel')(0, absprec=r, **kwds)
 
     if isinstance(x, PuiseuxSeries):
         # note that add_bigoh() of PuiseuxSeries adapts the precision

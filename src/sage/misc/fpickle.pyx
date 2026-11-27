@@ -116,9 +116,8 @@ def pickleMethod(method):
     if isinstance(method.__self__, type):
         # This is a class method, so get it from the type directly
         return (getattr, (method.__self__, method.__func__.__name__))
-    else:
-        cls = method.__self__.__class__
-        return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
+    cls = method.__self__.__class__
+    return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
 
 
 def unpickleMethod(im_name,

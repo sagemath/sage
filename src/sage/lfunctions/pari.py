@@ -112,7 +112,8 @@ class lfun_generic:
         self.poles = poles
         self.residues = residues
 
-        if isinstance(self.residues, (list, tuple)):
+        if (isinstance(self.poles, (list, tuple)) and
+                isinstance(self.residues, (list, tuple))):
             if len(self.poles) != len(self.residues):
                 raise ValueError("poles and residues do not match")
 
@@ -216,9 +217,13 @@ class lfun_generic:
         if pw.type() not in ('t_INT', 't_CLOSURE', 't_VEC'):
             raise TypeError("w (dual coefficients) must be a list or a function or the special value 0 or 1")
 
-        if not self.poles:
+        if isinstance(self.poles, (tuple, list)) and not self.poles:
             self._L = pari.lfuncreate([pv, pw, self.gammaV, self.weight,
                                        self.conductor, self.eps])
+        elif self.poles == 0:
+            # trying automatic pole reconstruction
+            self._L = pari.lfuncreate([pv, pw, self.gammaV, self.weight,
+                                       self.conductor, self.eps, 0])
         elif isinstance(self.residues, (list, tuple)):
             # pari expects pairs (pole, polar part as power series),
             # not residues
@@ -235,7 +240,7 @@ class lfun_generic:
                                        self.conductor, self.eps,
                                        poles])
         else:
-            # assuming a single pole
+            # assuming a single pole, given as a complex scalar
             self._L = pari.lfuncreate([pv, pw, self.gammaV, self.weight,
                                        self.conductor, self.eps,
                                        self.poles[0]])
@@ -351,7 +356,7 @@ def lfun_elliptic_curve(E):
         sage: E = EllipticCurve([1, a])
         sage: L = LFunction(lfun_elliptic_curve(E))
         sage: L(3)
-        1.00412346717019
+        1.0041234671...
     """
     return pari.lfuncreate(E)
 
@@ -532,12 +537,12 @@ def lfun_genus2(C):
         sage: L = LFunction(lfun_genus2(C))  # this one is broken
         ...
         sage: L(3)
-        0.965946926261520
+        0.965...
 
         sage: C = HyperellipticCurve(x^2 + x, x^3 + x^2 + 1)
         sage: L = LFunction(lfun_genus2(C))
         sage: L(2)
-        0.364286342944359
+        0.364286342944...
 
     TESTS::
 
@@ -573,8 +578,8 @@ class LFunction(SageObject):
         0.305999773834052
         sage: L.derivative(1, 2)
         0.373095594536324
-        sage: L.cost()
-        50
+        sage: L.cost()  # random
+        205
         sage: L.taylor_series(1, 4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2
         - 0.136791463097188*z^3 + O(z^4)
@@ -588,12 +593,12 @@ class LFunction(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
-        sage: L.cost()
-        163
+        sage: L.cost()  # random
+        666
         sage: L.derivative(1, E.rank())
         1.51863300057685
         sage: L.taylor_series(1, 4)
-        ...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
+        ...e-... + (...e-...)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
 
     .. RUBRIC:: Number field
 
@@ -604,8 +609,8 @@ class LFunction(SageObject):
         sage: L = K.zeta_function(algorithm='pari')
         sage: L.conductor
         400
-        sage: L.cost()
-        313
+        sage: L.cost()  # random
+        5499
         sage: L(2)
         1.10398438736918
         sage: L.taylor_series(2, 3)
@@ -644,8 +649,8 @@ class LFunction(SageObject):
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.cost()
-            4
+            sage: L.cost()  # random
+            8
         """
         if isinstance(lfun, lfun_generic):
             # preparation using motivic data
@@ -659,6 +664,10 @@ class LFunction(SageObject):
 
         self._conductor = ZZ(self._L[4])
         self._weight = ZZ(self._L[3])
+        try:
+            self._eps = ZZ(self._L[5])
+        except (TypeError, ValueError):
+            self._eps = self._L[5]
 
         self._max_im = max_im
 
@@ -701,6 +710,23 @@ class LFunction(SageObject):
         """
         return self._conductor
 
+    def sign(self):
+        """
+        Return the sign.
+
+        This complex number is the sign of the functional equation,
+        sometimes also called the root number.
+
+        See https://www.lmfdb.org/knowledge/show/lfunction.sign
+
+        EXAMPLES::
+
+            sage: from sage.lfunctions.pari import *
+            sage: L = LFunction(lfun_number_field(QQ)); L.sign()
+            1
+        """
+        return self._eps
+
     def cost(self, domain=None):
         """
         Return number of coefficients `a_n` that are needed in
@@ -720,19 +746,19 @@ class LFunction(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
-            27
+            sage: L.cost()  # random
+            112
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
-            591
+            sage: L.cost()  # random
+            2406
 
             sage: from sage.lfunctions.pari import lfun_generic, LFunction
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1,
             ....:        poles=[1], residues=[-1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.cost()
-            4
+            sage: L.cost()  # random
+            8
         """
         # domain syntax :
         #    [center, width, height]
@@ -744,10 +770,7 @@ class LFunction(SageObject):
             domain = [self._weight / 2, self._max_im]
 
         # it could be that this precision-manipulation is useless
-        saved_prec = pari.default("realbitprecision")
-        pari.default("realbitprecision", self.prec)
-        num = ZZ(pari.lfuncost(self._L, domain)[0])
-        pari.default("realbitprecision", saved_prec)
+        num = ZZ(pari.lfuncost(self._L, domain, self.prec)[0])
 
         return num
 
@@ -849,16 +872,28 @@ class LFunction(SageObject):
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200,algorithm='pari')
             sage: L.taylor_series(1, 3)
-            2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            ...e-... + (...e-...)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
         Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
             0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
+
+        Check that :issue:`25965` is fixed::
+
+            sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
+            L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
+            sage: L2.taylor_series(0,3)
+            0.000000000000000 - 0.357620466127498*z + 0.273373112603865*z^2 + 0.303362857047671*z^3 + O(z^4)
+            sage: L2.taylor_series(0,1)
+            O(z^1)
+            sage: L2(0)
+            0.000000000000000
         """
         pt = pari.Ser([s, 1], d=k)  # s + x + O(x^k)
         B = PowerSeriesRing(self._CC, var)
+        # note: more terms are given when the first terms vanish.
         return B(pari.lfun(self._L, pt, precision=self.prec))
 
     def zeros(self, maxi):
@@ -942,7 +977,7 @@ class LFunction(SageObject):
             sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1,
             ....:          poles=[1], residues=[1], v=pari('k->vector(k,n,1)'))
             sage: L = LFunction(lf)
-            sage: L.check_functional_equation()
+            sage: L.check_functional_equation()  # abs tol 1e-18
             4.33680868994202e-19
 
         If we choose the sign in functional equation for the
@@ -956,4 +991,9 @@ class LFunction(SageObject):
             sage: L.check_functional_equation()
             16.0000000000000
         """
-        return self._RR(2)**pari.lfuncheckfeq(self._L)
+        if not self._max_im:
+            quality = pari.lfuncheckfeq(self._L, 335/339)
+        else:
+            # check by pari at 335/339 + I/7
+            quality = pari.lfuncheckfeq(self._L)
+        return self._RR(2)**quality

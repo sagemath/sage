@@ -31,11 +31,11 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.modular.cusps as cusps
+from sage.modular import cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
 from sage.structure.sage_object import SageObject
-import sage.structure.formal_sum as formal_sum
+from sage.structure import formal_sum
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import latex

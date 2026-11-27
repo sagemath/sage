@@ -1004,7 +1004,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (-a-2).sign()
             -1
 
-            sage: # needs sage.symbolic
             sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^2 + 2*x + 7, 'b', embedding=CC(-1,-sqrt(6)))
             sage: b.sign()
@@ -1715,11 +1714,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (a+1/2-a)._integer_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce 1/2 to an integer
+            TypeError: no conversion of this number field element to an integer
         """
         cdef Integer res
         if mpz_cmp_ui(self.b, 0) != 0 or mpz_cmp_ui(self.denom, 1) != 0:
-            raise TypeError("Unable to coerce %s to an integer" % self)
+            raise TypeError(f"no conversion of this number field element to an integer")
         else:
             res = Integer.__new__(Integer)
             mpz_set(res.value, self.a)
@@ -1736,11 +1735,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (a+1/2)._rational_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a + 1/2 to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         cdef Rational res
-        if mpz_cmp_ui(self.b, 0)!=0:
-            raise TypeError("Unable to coerce %s to a rational" % self)
+        if mpz_cmp_ui(self.b, 0) != 0:
+            raise TypeError("no conversion of this number field element to a rational")
         else:
             res = <Rational>Rational.__new__(Rational)
             mpz_set(mpq_numref(res.value), self.a)
@@ -2419,12 +2418,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         test = 2 * (self - n)
         if test < 1:
             return n
-        elif test > 1:
+        if test > 1:
             return n + 1
-        elif n % 2 == 0:
+        if n % 2 == 0:
             return n
-        else:
-            return n + 1
+        return n + 1
 
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):

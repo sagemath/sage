@@ -326,8 +326,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         d = self.Gram_matrix().det()
         if d % 8 == 1 or d % 8 == 7:
             return 0
-        else:
-            return 4
+        return 4
 
     # Deal with 'odd' forms by diagonalizing, and then computing the octane.
     n = self.dim()

@@ -529,7 +529,7 @@ class Fields(CategoryWithAxiom):
                     return (zero, zero, zero)
                 c = ~a.leading_coefficient()
                 return (c * a, R(c), zero)
-            elif not a:
+            if not a:
                 c = ~b.leading_coefficient()
                 return (c * b, zero, R(c))
             u, d, v1, v3 = (R.one(), a, zero, b)
@@ -558,8 +558,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.characteristic() == 0:
                 return True
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
 
         def _test_characteristic_fields(self, **options):
             """

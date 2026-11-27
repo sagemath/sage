@@ -5,7 +5,7 @@ all.py -- much of sage is imported into this module, so you don't
 WARNING:
 
 Do not import from this module into other modules. Instead, import
-from the orginal location. The tool `import_statements` helps in
+from the original location. The tool `import_statements` helps in
 figuring out where that location is. For instance::
 
     sage: import_statements("TensorAlgebra")
@@ -110,9 +110,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 
 # Ignore a few warnings triggered by pythran 0.12.1
 warnings.filterwarnings('ignore', category=DeprecationWarning,
-                        message='\n\n  `numpy.distutils` is deprecated since NumPy 1.23.0',
-                        module='pythran.dist')
-warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message='pkg_resources is deprecated as an API|'
                         'Deprecated call to `pkg_resources.declare_namespace(.*)`',
                         module='pkg_resources|setuptools.sandbox')
@@ -128,6 +125,11 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message="module 'sre_constants' is deprecated",
                         module='pyparsing')
+
+# triggered by mpmath 1.4.1
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='bitcount function is deprecated',
+                        module='mpmath\\.libmp\\.libintmath')
 
 # importlib.resources.path and ...read_binary are deprecated in python 3.11,
 # but the replacement importlib.resources.files needs python 3.9
@@ -225,7 +227,7 @@ from sage.calculus.all import *
 from sage.cpython.all import *
 
 from sage.crypto.all import *
-import sage.crypto.mq as mq
+from sage.crypto import mq
 
 from sage.plot.all import *
 from sage.plot.plot3d.all import *

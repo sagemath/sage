@@ -91,7 +91,7 @@ def Realizations(self):
     .. SEEALSO::
 
         - :func:`Sets().WithRealizations <sage.categories.with_realizations.WithRealizations>`
-        - :class:`ClasscallMetaclass`
+        - :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass`
 
     .. TODO::
 
@@ -101,8 +101,7 @@ def Realizations(self):
     """
     if isinstance(self, Category):
         return RealizationsCategory.category_of(self)
-    else:
-        return getattr(self.__class__, "Realizations")(self)
+    return getattr(self.__class__, "Realizations")(self)
 
 
 Category.Realizations = Realizations

@@ -83,7 +83,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             The Demazure-Lusztig operator `T_i` is the linear map
             `R \to R` obtained by interpolating between the
             simple projection `\pi_i` (see
-            :meth:`CoxeterGroups.ElementMethods.simple_projection`)
+            :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.simple_projection`)
             and the simple reflection `s_i` so that `T_i` has
             eigenvalues `q_1` and `q_2`:
 

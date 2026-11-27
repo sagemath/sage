@@ -38,14 +38,14 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-linux.yml --name sage-dev
+            $ mamba env create --file environment-3.13-linux.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: macOS
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-macos.yml --name sage-dev
+            $ mamba env create --file environment-3.13-macos.yml --name sage-dev
             $ mamba activate sage-dev
 
     .. tab:: Windows
@@ -78,7 +78,7 @@ Using Conda
 
         .. code-block:: console
 
-            $ mamba env create --file environment-3.12-win.yml --name sage-dev
+            $ mamba env create --file environment-3.13-win.yml --name sage-dev
             $ conda activate sage-dev
             $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
             $ set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%
@@ -96,7 +96,7 @@ Using Conda
             >>> Integer(5) + 2.0
             7.0
 
-    A different Python version can be selected by replacing ``3.12`` with the
+    A different Python version can be selected by replacing ``3.13`` with the
     desired version.
 
 - To compile and install Sage in editable install, just use:
@@ -112,8 +112,33 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
-Using system package manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note::
+
+    If you edit Cython files, starting Sage will then recompile those
+    files and all their dependencies, which may take some time.  If
+    you want to see a message whenever this is happening, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true --no-build-isolation --editable .
+
+    instead.  Another convenient option is to skip building the
+    documentation.  To do so, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
+
+
+To rebuild the documentation after editing it, see
+:ref:`Building the manuals <section-building-manuals>` in the Sage Developer's
+Guide.
+
+
+.. _system_package_manager:
+
+Using the system package manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also install the dependencies via your system package manager.
 Note, however, that not all dependencies may be available for your system,
@@ -127,7 +152,7 @@ Depending on your distribution, install the following packages:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+    Not yet (fully) supported.
 
 .. tab:: Fedora
 
@@ -151,6 +176,11 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
+.. tab:: Homebrew (Linux and macOS)
+
+    The community formula ``dimpase/tap/sagemath-deps`` provides the build
+    dependencies. Follow :ref:`sec-homebrew-source` for the complete build
+    commands using this formula.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
@@ -212,20 +242,13 @@ Remarks
 
 .. note::
 
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
-
-.. note::
-
   You can update the conda lock files by running ``tools/update-conda.py``.
   In order to update the conda environment afterwards use::
 
-    $ mamba env update --file environment-3.12-linux.yml --name sage-dev
+    $ mamba env update --file environment-3.13-linux.yml --name sage-dev
 
+
+.. _section-meson-build-directory:
 
 Background information
 ======================
@@ -296,7 +319,7 @@ compilation.
 
   This will then install in the directory specified by ``--prefix``,
   in particular the root folder will be be installed to
-  ``/desired/install/path/lib/python3.12/site-packages/sage``.
+  ``/desired/install/path/lib/python3.13/site-packages/sage``.
   Usually, this directory is not on your Python path, so you have to use:
 
   .. code-block:: console
@@ -341,7 +364,7 @@ compilation.
 
   With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
   being ``/usr/local``, it may then install to
-  ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+  ``$DESTDIR/usr/local/lib/python3.13/site-packages/sage``.
 
   See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
   and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_

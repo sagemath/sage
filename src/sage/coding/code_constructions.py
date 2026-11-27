@@ -162,8 +162,7 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
         R.zero() in S1 or R.zero() in S2 or not S1.isdisjoint(S2)):
         if return_automorphism:
             return False, None
-        else:
-            return False
+        return False
 
     # now that we know that (S1,S2) is a partition, we look for an invertible
     # element b that maps S1 to S2 by multiplication
@@ -171,12 +170,10 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
         if b >= 2 and all(b * x in S2 for x in S1):
             if return_automorphism:
                 return True, b
-            else:
-                return True
+            return True
     if return_automorphism:
         return False, None
-    else:
-        return False
+    return False
 
 
 def _lift2smallest_field(a):

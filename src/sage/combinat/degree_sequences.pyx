@@ -85,7 +85,7 @@ Algorithms
 
 **Checking whether a given sequence is a degree sequence**
 
-This is tested using Erdos and Gallai's criterion. It is also checked that the
+This is tested using Erdős and Gallai's criterion. It is also checked that the
 given sequence is non-increasing and has length `n`.
 
 **Iterating through the sequences of length** `n`
@@ -357,7 +357,7 @@ class DegreeSequences:
         if sum(seq) % 2:
             return False
 
-        # Partial represents the left side of Erdos and Gallai's inequality,
+        # Partial represents the left side of Erdős and Gallai's inequality,
         # i.e. the sum of the i first integers.
         cdef int partial = 0
         cdef int i, d, dd, right
@@ -412,6 +412,7 @@ class DegreeSequences:
             True
         """
         yield from init(self._n)
+
 
 cdef class _DegreeSequenceEnumerator:
     """
@@ -485,13 +486,12 @@ cdef class _DegreeSequenceEnumerator:
         Return the degree sequence represented by the current counts.
         """
         cdef list s = []
-        cdef int i, j
+        cdef int i
         cdef int count
 
         for i in range(self.N - 1, -1, -1):
             count = self.seq[i]
-            for j in range(count):
-                s.append(i)
+            s.extend(i for _ in range(count))
 
         return tuple(s)
 

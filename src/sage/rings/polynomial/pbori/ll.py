@@ -203,6 +203,7 @@ class RingMap:
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.blocks import declare_ring, Block
         sage: to_ring = declare_ring([Block("x", 10)], globals())
@@ -231,6 +232,7 @@ class RingMap:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori.pbori import *
             sage: from sage.rings.polynomial.pbori.blocks import declare_ring, Block
             sage: to_ring = declare_ring([Block("x", 10)], globals())
@@ -271,6 +273,7 @@ class RingMap:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori.pbori import *
             sage: from sage.rings.polynomial.pbori.blocks import declare_ring, Block
             sage: to_ring = declare_ring([Block("x", 10)], globals())
@@ -288,6 +291,7 @@ class RingMap:
 
         EXAMPLES::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori.pbori import *
             sage: from sage.rings.polynomial.pbori.blocks import declare_ring, Block
             sage: to_ring = declare_ring([Block("x", 10)], globals())

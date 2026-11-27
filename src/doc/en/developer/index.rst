@@ -175,7 +175,6 @@ Packaging
 
    packaging
    downstream
-   packaging_sage_library
 
 
 Indices and tables

@@ -1,5 +1,7 @@
 r"""
 Homset categories
+
+.. automethod:: sage.categories.homsets::HomsetsCategory._test_homsets_category
 """
 # ****************************************************************************
 #  Copyright (C) 2014 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -112,12 +114,10 @@ class HomsetsCategory(FunctorialConstructionCategory, CategoryWithParameters):
         if category.full_super_categories():
             return Category.join([getattr(cat, cls._functor_category)()
                                   for cat in category.full_super_categories()])
-        else:
-            functor_category = getattr(category.__class__, cls._functor_category)
-            if isinstance(functor_category, type) and issubclass(functor_category, Category):
-                return Homsets()
-            else:
-                return HomsetsOf(Category.join(category.structure()))
+        functor_category = getattr(category.__class__, cls._functor_category)
+        if isinstance(functor_category, type) and issubclass(functor_category, Category):
+            return Homsets()
+        return HomsetsOf(Category.join(category.structure()))
 
     def _test_homsets_category(self, **options):
         r"""
@@ -264,7 +264,8 @@ class Homsets(Category_singleton):
         sage: AdditiveMagmas().AdditiveUnital().Homsets().is_subcategory(Homsets())
         True
 
-    This is tested in :meth:`HomsetsCategory._test_homsets_category`.
+    This is tested in
+    :meth:`~sage.categories.homsets.HomsetsCategory._test_homsets_category`.
     """
     def super_categories(self):
         """

@@ -268,6 +268,15 @@ cdef class Cache_ntl_gf2e(Cache_base):
             sage: M.<c> = GF(2^19, implementation="pari_ffelt")
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
+
+        But not between extensions of incompatible degrees (see :issue:`41899`)::
+
+            sage: L = GF(2^2, implementation='ntl')
+            sage: P = GF(2^3, implementation='pari_ffelt')
+            sage: L(P.gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
         """
         if isinstance(e, FiniteField_ntl_gf2eElement) and e.parent() is self._parent: return e
         cdef FiniteField_ntl_gf2eElement res = self._new()
@@ -277,47 +286,46 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         if isinstance(e, IntegerMod_abstract):
             e = e.lift()
+
         if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))
             return res
 
-        elif isinstance(e, float):
+        if isinstance(e, float):
             GF2E_conv_long(res.x,int(e))
             return res
 
-        elif isinstance(e, str):
+        if isinstance(e, str):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
-        elif isinstance(e, Vector):
+        if isinstance(e, Vector):
             if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)
             # Can't do the following since we can't cimport Integer because of circular imports.
-            #for i from 0 <= i < len(e):
-            #    if e[i]:
-            #        mpz_setbit(ztmp.value, i)
+            # for i from 0 <= i < len(e):
+            #     if e[i]:
+            #         mpz_setbit(ztmp.value, i)
             return self.fetch_int(ztmp)
 
-        elif isinstance(e, (list, tuple)):
+        if isinstance(e, (list, tuple)):
             if len(e) > self._degree:
                 # could reduce here...
                 raise ValueError("list is too long")
             ztmp = Integer(e,2)
             return self.fetch_int(ztmp)
 
-        elif isinstance(e, MPolynomial):
+        if isinstance(e, MPolynomial):
             if e.is_constant():
                 return self._parent(e.constant_coefficient())
-            else:
-                raise TypeError("no coercion defined")
+            raise TypeError("no coercion defined")
 
-        elif isinstance(e, Polynomial):
+        if isinstance(e, Polynomial):
             if e.is_constant():
                 return self._parent(e.constant_coefficient())
-            else:
-                return e(self._parent.gen())
+            return e(self._parent.gen())
 
-        elif isinstance(e, Rational):
+        if isinstance(e, Rational):
             num = e.numer()
             den = e.denom()
             if den % 2:
@@ -326,11 +334,16 @@ cdef class Cache_ntl_gf2e(Cache_base):
                 return self._zero_element
             raise ZeroDivisionError
 
-        elif isinstance(e, Gen):
-            pass # handle this in next if clause
+        if isinstance(e, Gen):
+            pass  # handle this in next if clause
 
         elif isinstance(e, FiniteFieldElement_pari_ffelt):
-            # Reduce to pari
+            # Require a field embedding GF(p^m) -> GF(p^n), i.e. m | n (same as Givaro).
+            F = self._parent
+            E = e.parent()
+            if not E.degree().divides(F.degree()):
+                raise TypeError(
+                    "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
 
         elif isinstance(e, GapElement):
@@ -606,8 +619,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         if not GF2E_IsZero(self.x):
             return True
-        else:
-            return False
+        return False
 
     def is_square(FiniteField_ntl_gf2eElement self):
         r"""
@@ -650,8 +662,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         a = self ** (self._cache._order // 2)
         if all:
             return [a]
-        else:
-            return a
+        return a
 
     cpdef _add_(self, right):
         """
@@ -1066,8 +1077,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         if GF2_IsOne(GF2E_trace(self.x)):
             return GF2_1
-        else:
-            return GF2_0
+        return GF2_0
 
     def weight(self):
         """
@@ -1280,6 +1290,19 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             ...
             ValueError: base does not have the provided order
 
+        Checks for :issue:`42047`::
+
+            sage: F.<t> = GF((2, 16))
+            sage: F.one().log(F.one())
+            0
+
+        ::
+
+            sage: F.<t> = GF((2, 42))
+            sage: z = t^41 + t^40 + t^37 + t^30 + t^27 + t^25 + t^24 + t^21 + t^11 + t^9 + t^7 + t^6 + t^3 + t + 1
+            sage: F.one().log(z)
+            0
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
@@ -1306,8 +1329,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         # Let's pass the known factorization of the order to PARI.
         fs, = self._parent.factored_unit_order()  # cached
-        ps = pari.Col(p for p,_ in fs)
-        vs = pari.Col(base_order.valuation(p) for p,_ in fs)
+        ps = pari.Col(p for p,_ in fs if p.divides(base_order))
+        vs = pari.Col(base_order.valuation(p) for p in ps)
         fac = pari.matconcat((ps, vs))
 
         x = pari.fflog(self, base, (base_order, fac))

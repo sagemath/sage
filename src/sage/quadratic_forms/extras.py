@@ -137,8 +137,7 @@ def extend_to_primitive(A_input):
     # Return the current information
     if vec_output_flag:
         return D.rows()
-    else:
-        return D
+    return D
 
 
 def least_quadratic_nonresidue(p):

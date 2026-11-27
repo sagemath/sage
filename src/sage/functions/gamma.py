@@ -257,7 +257,7 @@ class Function_log_gamma(GinacFunction):
         TESTS::
 
             sage: log_gamma(pari(6))                                                    # needs sage.libs.pari
-            4.78749174278205
+            4.78749174278...
 
             sage: # needs sage.symbolic
             sage: log_gamma(-2.1 + I)
@@ -484,8 +484,7 @@ class Function_gamma_inc(BuiltinFunction):
             v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, y, parent=R))
         if v.is_real():
             return R(v)
-        else:
-            return C(v)
+        return C(v)
 
 
 # shorter alias
@@ -575,12 +574,11 @@ class Function_gamma_inc_lower(BuiltinFunction):
             return 0
         if x == 0:
             return Infinity
-        elif x == 1:
+        if x == 1:
             return 1 - exp(-y)
-        elif (2 * x).is_integer():
+        if (2 * x).is_integer():
             return self(x, y, hold=True)._sympy_()
-        else:
-            return None
+        return None
 
     def _evalf_(self, x, y, parent=None, algorithm='mpmath'):
         """

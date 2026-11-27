@@ -686,27 +686,25 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
             # The graph is an ear (cycle) We should never be in this
             # case since we check for multi-cycles above
             return y + sum(x**i for i in range(1, ear.s))
-        else:
-            with ear.removed_from(G):
-                # result = sum(x^i for i in range(ear.s)) #single ear case
-                result = sum((prod(x + yy(1, em[e]-1) for e in ear.unlabeled_edges[i+1:])
-                              * prod(yy(0, em[e]-1) for e in ear.unlabeled_edges[:i]))
-                             for i in range(len(ear.unlabeled_edges)))
-                result *= recursive_tp()
+        with ear.removed_from(G):
+            # result = sum(x^i for i in range(ear.s)) #single ear case
+            result = sum((prod(x + yy(1, em[e]-1) for e in ear.unlabeled_edges[i+1:])
+                          * prod(yy(0, em[e]-1) for e in ear.unlabeled_edges[:i]))
+                         for i in range(len(ear.unlabeled_edges)))
+            result *= recursive_tp()
 
-                with contracted_edge(G, [ear.end_points[0],
-                                         ear.end_points[-1]]):
-                    result += prod(yy(0, em[e]-1)
-                                   for e in ear.unlabeled_edges)*recursive_tp()
+            with contracted_edge(G, [ear.end_points[0],
+                                     ear.end_points[-1]]):
+                result += prod(yy(0, em[e]-1)
+                               for e in ear.unlabeled_edges)*recursive_tp()
 
-            return result
+        return result
 
     # Theorem 2
     if len(em) == 1:  # the graph is just a multiedge
         return x + sum(y**i for i in range(1, em[unlabeled_edge]))
-    else:
-        with removed_multiedge(G, unlabeled_edge):
-            result = recursive_tp()
-            with contracted_edge(G, unlabeled_edge):
-                result += sum(y**i for i in range(em[unlabeled_edge]))*recursive_tp()
-        return result
+    with removed_multiedge(G, unlabeled_edge):
+        result = recursive_tp()
+        with contracted_edge(G, unlabeled_edge):
+            result += sum(y**i for i in range(em[unlabeled_edge]))*recursive_tp()
+    return result

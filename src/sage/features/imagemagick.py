@@ -87,7 +87,8 @@ class Magick(Executable):
                 '-loop', '0', filename_png, filename_gif]
 
         try:
-            result = run(cmd, cwd=base, capture_output=True, text=True)
+            result = run(cmd, cwd=base, capture_output=True, text=True,
+                         check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(cmd), e))
@@ -113,7 +114,7 @@ class ImageMagick(JoinFeature):
     A :class:`~sage.features.Feature` describing the presence of
     :ref:`ImageMagick <spkg_imagemagick>`
 
-    Currently, only the availability of the :class:`magick` (or :class:`convert`) program is checked.
+    Currently, only the availability of the ``magick`` (or ``convert``) program is checked.
 
     EXAMPLES::
 

@@ -194,8 +194,7 @@ class AmbientSpace(CombinatorialFreeModule):
         if isinstance(v, (list, tuple)):
             K = self.base_ring()
             return self._from_dict({i: K(c) for i, c in enumerate(v) if c})
-        else:
-            return CombinatorialFreeModule.__call__(self, v)
+        return CombinatorialFreeModule.__call__(self, v)
 
     def __getitem__(self, i):
         """

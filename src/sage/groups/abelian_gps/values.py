@@ -45,7 +45,8 @@ Here is `\ZZ_6` with value `-1` assigned to the generator::
     (6, 1, 1)
 
 The elements come with a coercion embedding into the
-:meth:`~AbelianGroupWithValues_class.values_group`, so you can use the
+:meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.values_group`,
+so you can use the
 group elements instead of the values::
 
     sage: # needs sage.rings.number_field
@@ -121,8 +122,9 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
         Integer Ring
 
     The group elements come with a coercion embedding into the
-    :meth:`values_group`, so you can use them like their
-    :meth:`~sage.groups.abelian_gps.value.AbelianGroupWithValuesElement.value`
+    :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.values_group`,
+    so you can use them like their
+    :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValuesElement.value`
     ::
 
         sage: G.values_embedding()
@@ -254,7 +256,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         Return the value of the group element.
 
         OUTPUT: the value according to the values for generators; see
-        :meth:`~AbelianGroupWithValues.gens_values`
+        :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.gens_values`
 
         EXAMPLES::
 
@@ -452,7 +454,9 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
         The values need to form a multiplicative group, but can be
         embedded in a larger structure. For example, if the values are
-        units in a ring then the :meth:`values_group` would be the
+        units in a ring then the
+        :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.values_group`
+        would be the
         whole ring.
 
         OUTPUT: the common parent of the values, containing the group
@@ -472,7 +476,8 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
     def values_embedding(self):
         """
-        Return the embedding of ``self`` in :meth:`values_group`.
+        Return the embedding of ``self`` in
+        :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.values_group`.
 
         OUTPUT: a morphism
 

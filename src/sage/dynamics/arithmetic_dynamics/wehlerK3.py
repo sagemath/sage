@@ -234,8 +234,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Point = list(P)
         if self.L(*Point) == 0 and self.Q(*Point) == 0:
             return True
-        else:
-            raise AttributeError("point not on surface")
+        raise AttributeError("point not on surface")
 
     def _Lcoeff(self, component, i):
         r"""
@@ -1286,10 +1285,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
                 J = phi(I)
                 if J.dimension() > 0:
-                    raise ValueError( "cannot distinguish points in the degenerate fiber")
+                    raise ValueError("cannot distinguish points in the degenerate fiber")
                 V = phi(I).variety()
                 if len(V) > 1:
-                    raise ValueError( "cannot distinguish points in the degenerate fiber")
+                    raise ValueError("cannot distinguish points in the degenerate fiber")
                 a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
 
         Point = [P[0][0], P[0][1], P[0][2], a, b, c]
@@ -2235,11 +2234,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             return self.nth_iterate_psi(P, abs(n), **kwds)
         if n == 0:
             return self
-        else:
-            Q = self.phi(P, **kwds)
-            for i in range(2, n+1):
-                Q = self.phi(Q, **kwds)
-            return Q
+        Q = self.phi(P, **kwds)
+        for i in range(2, n+1):
+            Q = self.phi(Q, **kwds)
+        return Q
 
     def nth_iterate_psi(self, P, n, **kwds):
         r"""
@@ -2289,11 +2287,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             return self.nth_iterate_phi(P, abs(n), **kwds)
         if n == 0:
             return self
-        else:
-            Q = self.psi(P, **kwds)
-            for i in range(2, n+1):
-                Q = self.psi(Q, **kwds)
-            return Q
+        Q = self.psi(P, **kwds)
+        for i in range(2, n+1):
+            Q = self.psi(Q, **kwds)
+        return Q
 
     def orbit_phi(self, P, N, **kwds):
         r"""

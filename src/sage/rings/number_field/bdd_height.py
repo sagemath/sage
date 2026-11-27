@@ -231,13 +231,18 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: bdd_norm_pr_ideal_gens(K, [1])
         {1: [1]}
 
-    ::
+    The choice of generators depends on the PARI version and platform,
+    but the absolute norms are the same::
 
-        sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
+        sage: from sage.rings.number_field.bdd_height import (
+        ....:     bdd_norm_pr_ideal_gens
+        ....: )
         sage: K.<g> = QuadraticField(123)
-        sage: bdd_norm_pr_ideal_gens(K, range(5))
-        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}  # 64-bit
-        {0: [0], 1: [1], 2: [g - 11], 3: [], 4: [2]}  # 32-bit
+        sage: d = bdd_norm_pr_ideal_gens(K, range(5))
+        sage: d  # random
+        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}
+        sage: {n: [abs(a.norm()) for a in gens] for n, gens in d.items()}
+        {0: [0], 1: [1], 2: [2], 3: [], 4: [4]}
 
     ::
 

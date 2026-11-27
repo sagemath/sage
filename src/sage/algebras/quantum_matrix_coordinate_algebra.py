@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Quantum Matrix Coordinate Algebras
 
@@ -19,7 +18,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.categories.algebras import Algebras
 from sage.categories.bialgebras import Bialgebras
 from sage.categories.hopf_algebras import HopfAlgebras
@@ -351,8 +350,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         """
         if all(t == 'c' or t[0] == t[1] for t, e in x._sorted_items()):
             return self.base_ring().one()
-        else:
-            return self.base_ring().zero()
+        return self.base_ring().zero()
 
     class Element(CombinatorialFreeModule.Element):
         """
@@ -586,7 +584,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         return self._m
 
     @cached_method
-    def algebra_generators(self) -> Family:
+    def algebra_generators(self) -> AbstractFamily:
         """
         Return the algebra generators of ``self``.
 

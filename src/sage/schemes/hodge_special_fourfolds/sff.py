@@ -5,7 +5,7 @@ This module provides computational support for studying Hodge-special fourfolds,
 
 For practical examples of using this module, refer to the :class:`Hodge_special_fourfold` class and the :func:`fourfold` function.
 
-For more computational details, see the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882 and references therein.
+For more computational details, see the paper at [Stagliano2024]_ and references therein.
 
 .. NOTE::
 
@@ -2806,7 +2806,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
     For cubic fourfolds and Gushel-Mukai fourfolds, it is possible to compute the Hodge-associated K3 surfaces.
     Currently, this functionality internally calls the Macaulay2 function ``associatedK3surface``, documented at: https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_associated__K3surface.html.
-    For further computational details, see the paper: https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882.
+    For further computational details, see the paper: [Stagliano2024]_.
 
     ::
 
@@ -3007,7 +3007,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         Currently, in this case the computation requires Macaulay2.
 
         For theoretical background, see Hassett's papers on special cubic fourfolds.
-        See also: https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882
+        See also: [Stagliano2024]_
 
         EXAMPLES::
 
@@ -3100,7 +3100,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         Detect and return a congruence of secant curves for the surface of ``self`` in the ambient fivefold of ``self``.
 
         This function works similar to the ``Macaulay2`` function ``detectCongruence``, documented at https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_detect__Congruence.html.
-        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882 for more computational details.
+        See also the paper at [Stagliano2024]_ for more computational details.
 
         INPUT:
 
@@ -3312,7 +3312,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         Count of parameters.
 
         This just runs the ``Macaulay2`` function ``parameterCount``, documented at https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/_parameter__Count.html.
-        See also the paper at https://www.tandfonline.com/doi/abs/10.1080/10586458.2023.2184882
+        See also the paper at [Stagliano2024]_
         for more computational details.
 
         OUTPUT:

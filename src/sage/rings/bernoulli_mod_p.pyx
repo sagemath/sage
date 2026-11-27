@@ -90,8 +90,7 @@ def verify_bernoulli_mod_p(data):
 
     if (sum + 2) % p == 0:
         return True
-    else:
-        return False
+    return False
 
 
 def bernoulli_mod_p(int p):

@@ -111,8 +111,7 @@ class FqfIsometry(AbelianGroupAutomorphism):
         """
         if x in self.parent().invariant_form():
             return x * self
-        else:
-            return AbelianGroupAutomorphism.__call__(self, x)
+        return AbelianGroupAutomorphism.__call__(self, x)
 
 
 class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):

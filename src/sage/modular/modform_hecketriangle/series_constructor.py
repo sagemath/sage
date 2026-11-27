@@ -554,7 +554,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             m = ZZ(m)
             if m < 0:
                 return ZZ(0)
-            elif m == 0:
+            if m == 0:
                 return ZZ(1)
 
             factor = -2*k / QQ(bernoulli(k)) / lamk

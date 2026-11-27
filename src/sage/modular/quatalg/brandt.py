@@ -137,7 +137,8 @@ EXAMPLES::
     sage: B = BrandtModule(23)
 
     sage: B.maximal_order()
-    Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+    Order of Quaternion Algebra (-1, -23) with base ring Rational Field
+    with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
 
     sage: B.right_ideals()
     (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
@@ -169,9 +170,12 @@ We decompose a Brandt module over both `\ZZ` and `\QQ`. ::
     Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
     sage: D = B.decomposition()
     sage: D
-    [Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-     Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-     Subspace of dimension 2 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring]
+    [Subspace of dimension 1 of Brandt module of dimension 4
+     of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 1 of Brandt module of dimension 4
+     of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 2 of Brandt module of dimension 4
+     of level 43 of weight 2 over Integer Ring]
     sage: D[0].basis()
     ((0, 0, 1, -1),)
     sage: D[1].basis()
@@ -221,8 +225,10 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp, richcmp_method
 
-lazy_import('sage.algebras.quatalg.quaternion_algebra', ['QuaternionAlgebra', 'basis_for_quaternion_lattice'])
-lazy_import('sage.algebras.quatalg.quaternion_algebra_cython', 'rational_matrix_from_rational_quaternions')
+lazy_import('sage.algebras.quatalg.quaternion_algebra',
+            ['QuaternionAlgebra', 'basis_for_quaternion_lattice'])
+lazy_import('sage.algebras.quatalg.quaternion_algebra_cython',
+            'rational_matrix_from_rational_quaternions')
 
 
 cache = {}
@@ -347,143 +353,22 @@ def class_number(p, r, M):
     return Integer(h)
 
 
-def maximal_order(A):
-    """
-    Return a maximal order in the quaternion algebra ramified
-    at `p` and infinity.
-
-    This is an implementation of Proposition 5.2 of [Piz1980]_.
-
-    INPUT:
-
-    - ``A`` -- quaternion algebra ramified precisely at `p` and infinity
-
-    OUTPUT: a maximal order in `A`
-
-    EXAMPLES::
-
-        sage: A = BrandtModule(17).quaternion_algebra()
-
-        sage: sage.modular.quatalg.brandt.maximal_order(A)
-        doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-
-        sage: A = QuaternionAlgebra(17,names='i,j,k')
-        sage: A.maximal_order()
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
-    return A.maximal_order()
-
-
-def basis_for_left_ideal(R, gens):
-    """
-    Return a basis for the left ideal of `R` with given generators.
-
-    INPUT:
-
-    - ``R`` -- quaternion order
-    - ``gens`` -- list of elements of `R`
-
-    OUTPUT: list of four elements of `R`
-
-    EXAMPLES::
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
-        doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
-        [3, 3/2 + 3/2*i, 3*j, i + 3/2*j + 1/2*k]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
-    return R._left_ideal_basis(gens)
-
-
-def right_order(R, basis):
-    """
-    Given a basis for a left ideal `I`, return the right order in the
-    quaternion order `R` of elements `x` such that `I x` is contained in `I`.
-
-    INPUT:
-
-    - ``R`` -- order in quaternion algebra
-    - ``basis`` -- basis for an ideal `I`
-
-    OUTPUT: order in quaternion algebra
-
-    EXAMPLES:
-
-    We do a consistency check with the ideal equal to a maximal order::
-
-        sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-        sage: basis
-        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
-    return R._right_order_from_ideal_basis(basis)
-
-
-def quaternion_order_with_given_level(A, level):
-    """
-    Return an order in the quaternion algebra A with given level.
-
-    This is implemented only when the base field is the rational numbers.
-
-    INPUT:
-
-    - ``level`` -- the level of the order to be returned. Currently this
-      is only implemented when the level is divisible by at
-      most one power of a prime that ramifies in this quaternion algebra.
-
-    EXAMPLES::
-
-        sage: from sage.modular.quatalg.brandt import quaternion_order_with_given_level, maximal_order
-        sage: A.<i,j,k> = QuaternionAlgebra(5)
-        sage: level = 2 * 5 * 17
-        sage: O = quaternion_order_with_given_level(A, level)
-        doctest:...:  DeprecationWarning: The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        sage: M = A.maximal_order()
-        sage: L = O.free_module()
-        sage: N = M.free_module()
-        sage: L.index_in(N) == level/5  #check that the order has the right index in the maximal order
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
-    return A.order_with_level(level)
-
-
 class BrandtSubmodule(HeckeSubmodule):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this Brandt submodule.
 
         EXAMPLES::
 
             sage: BrandtModule(11)[0]._repr_()
-            'Subspace of dimension 1 of Brandt module of dimension 2 of level 11 of weight 2 over Rational Field'
+            'Subspace of dimension 1 of Brandt module of dimension 2 of level 11
+            of weight 2 over Rational Field'
         """
         return "Subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
 
 class BrandtModuleElement(HeckeModuleElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -497,7 +382,7 @@ class BrandtModuleElement(HeckeModuleElement):
             x = x.element()
         HeckeModuleElement.__init__(self, parent, parent.free_module()(x))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 
@@ -757,7 +642,8 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: BrandtModule(17).maximal_order()
-            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field
+            with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
@@ -772,11 +658,14 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: BrandtModule(7).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field
+            with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
             sage: BrandtModule(7,13).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 12*k, 1/2*i + 9/2*k, j + 11*k, 13*k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field
+            with basis (1/2 + 1/2*j + 12*k, 1/2*i + 9/2*k, j + 11*k, 13*k)
             sage: BrandtModule(7,3*17).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field
+            with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
         """
         return self.quaternion_algebra().order_with_level(self.level())
 
@@ -861,11 +750,11 @@ class BrandtModule_class(AmbientHeckeModule):
                     if not w:
                         continue
                     beta = sum(Integer(w[i]) * B[i] for i in range(4))
-                    v = [A(1), alpha, beta, alpha * beta]
-                    M = rational_matrix_from_rational_quaternions(v)
+                    v1 = [A(1), alpha, beta, alpha * beta]
+                    M = rational_matrix_from_rational_quaternions(v1)
                     e = M.determinant()
                     if e and not (d / e).valuation(p):
-                        S = A.quaternion_order(v)
+                        S = A.quaternion_order(v1)
                         break
                 if S is not None:
                     break
@@ -1072,7 +961,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [0 0 1]
             [0 1 0]
 
-        An example where the Hecke operator isn't symmetric::
+        An example where the Hecke operator is not symmetric::
 
             sage: B = BrandtModule(43)
             sage: B._compute_hecke_matrix_directly(2)
@@ -1261,8 +1150,8 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(1009)
             sage: Is = B.right_ideals()
             sage: n = len(Is)
-            sage: prod(not Is[i].is_right_equivalent(Is[j]) for i in range(n) for j in range(i))
-            1
+            sage: all(not Is[i].is_right_equivalent(Is[j]) for i in range(n) for j in range(i))
+            True
         """
         # TODO: move this code to orders, along with cyclic_submodules()
         p = self._smallest_good_prime()
@@ -1475,7 +1364,8 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: B = BrandtModule(11); B.eisenstein_subspace()
-            Subspace of dimension 1 of Brandt module of dimension 2 of level 11 of weight 2 over Rational Field
+            Subspace of dimension 1 of Brandt module of dimension 2 of level 11
+            of weight 2 over Rational Field
             sage: B.eisenstein_subspace() is B.eisenstein_subspace()
             True
             sage: BrandtModule(3,11).eisenstein_subspace().basis()
@@ -1577,12 +1467,14 @@ def benchmark_magma(levels, silent=False):
 
     EXAMPLES::
 
-        sage: a = sage.modular.quatalg.brandt.benchmark_magma([(11,1), (37,1), (43,1), (97,1)])  # optional - magma
+        sage: # optional - magma
+        sage: bench = sage.modular.quatalg.brandt.benchmark_magma
+        sage: a = bench([(11,1), (37,1), (43,1), (97,1)])
         ('magma', 11, 1, ...)
         ('magma', 37, 1, ...)
         ('magma', 43, 1, ...)
         ('magma', 97, 1, ...)
-        sage: a = sage.modular.quatalg.brandt.benchmark_magma([(11,2), (37,2), (43,2), (97,2)])  # optional - magma
+        sage: a = bench([(11,2), (37,2), (43,2), (97,2)])
         ('magma', 11, 2, ...)
         ('magma', 37, 2, ...)
         ('magma', 43, 2, ...)
@@ -1592,7 +1484,7 @@ def benchmark_magma(levels, silent=False):
     from sage.interfaces.magma import magma
     for p, M in levels:
         t = magma.cputime()
-        magma.eval('HeckeOperator(BrandtModule(%s, %s),2)' % (p, M))
+        magma.eval(f'HeckeOperator(BrandtModule({p}, {M}),2)')
         tm = magma.cputime(t)
         v = ('magma', p, M, tm)
         if not silent:
@@ -1617,12 +1509,13 @@ def benchmark_sage(levels, silent=False):
 
     EXAMPLES::
 
-        sage: a = sage.modular.quatalg.brandt.benchmark_sage([(11,1), (37,1), (43,1), (97,1)])
+        sage: bench = sage.modular.quatalg.brandt.benchmark_sage
+        sage: a = bench([(11,1), (37,1), (43,1), (97,1)])
         ('sage', 11, 1, ...)
         ('sage', 37, 1, ...)
         ('sage', 43, 1, ...)
         ('sage', 97, 1, ...)
-        sage: a = sage.modular.quatalg.brandt.benchmark_sage([(11,2), (37,2), (43,2), (97,2)])
+        sage: a = bench([(11,2), (37,2), (43,2), (97,2)])
         ('sage', 11, 2, ...)
         ('sage', 37, 2, ...)
         ('sage', 43, 2, ...)

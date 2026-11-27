@@ -5,6 +5,7 @@ AUTHORS:
 
 - Chris Berg, Jeff Ferreira (2012-9): initial version
 """
+from collections import Counter
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
@@ -13,6 +14,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.combinat import CombinatorialElement
 from sage.rings.integer import Integer
@@ -187,19 +189,16 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
     def weight(self):
         r"""
-        Return a composition where entry `i` is the number of times that `i` appears in
-        ``self``.
+        Return a (weak) composition where entry `i` is the
+        number of times that `i` appears in ``self``.
 
         EXAMPLES::
 
             sage: CompositionTableau([[1],[3,2],[4,4]]).weight()
             [1, 1, 1, 2, 0]
         """
-        w = {i: 0 for i in range(1, self.size() + 1)}
-        for row in self:
-            for i in row:
-                w[i] += 1
-        return Composition([w[i] for i in range(1, self.size() + 1)])
+        w = Counter(i for row in self for i in row)
+        return IntegerVectors()([w[i] for i in range(1, self.size() + 1)])
 
     def descent_set(self):
         r"""

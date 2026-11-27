@@ -20,6 +20,7 @@ def fglm(I, from_ring, to_ring):
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: from sage.rings.polynomial.pbori.fglm import fglm
@@ -44,6 +45,7 @@ def vars_real_divisors(monomial, monomial_set):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: dp_asc = OrderCode.dp_asc
@@ -71,6 +73,7 @@ def m_k_plus_one(completed_elements, variables):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: from sage.rings.polynomial.pbori.fglm import m_k_plus_one

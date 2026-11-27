@@ -3,7 +3,7 @@ from sage.structure.element cimport Element
 cdef class Spin(Element):
     cdef bint* _value
     cdef int _n
-    cdef long _hash
+    cdef Py_hash_t _hash
 
     cdef Spin _new_c(self, bint* value)
 

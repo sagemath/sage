@@ -14,7 +14,7 @@ AUTHORS:
 #                              and Emily A. Kirkman
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 
 

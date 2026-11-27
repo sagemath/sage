@@ -137,8 +137,7 @@ If you want to create a new directory (`package
 <https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
 Sage library :sage_root:`src/sage` (say, ``measure_theory``), that
 directory will usually contain an empty file ``__init__.py``, which
-marks the directory as an ordinary package (see
-:ref:`section_namespace_packages`), and also a file ``all.py``,
+marks the directory as an ordinary package, and also a file ``all.py``,
 listing imports from this package that are user-facing and important
 enough to be in the global namespace of Sage at startup.  The file
 ``all.py`` might look like this::
@@ -157,7 +156,7 @@ Then in the file :sage_root:`src/sage/all.py`, add a line ::
 
     from sage.measure_theory.all import *
 
-Adding new top-level packages below :mod:`sage` should be done
+Adding new top-level packages below ``sage`` should be done
 sparingly.  It is often better to create subpackages of existing
 packages.
 
@@ -434,14 +433,18 @@ information. You can use the existing functions of Sage as templates.
        `p`. For any odd integer `k` between 1 and `p - 1`, inclusive,
        `g^k` is a generator modulo `p` if and only if `\gcd(k, p-1) = 1`.
 
-   The bibliographical reference should go in Sage's master
-   bibliography file,
-   :sage_root:`src/doc/en/reference/references/index.rst`:
+   The bibliographical reference should go in one of Sage's shared
+   bibliography files, for example
+   :sage_root:`src/doc/references/reference-database.bib`:
 
-   .. CODE-BLOCK:: rest
+   .. CODE-BLOCK:: bibtex
 
-       .. [Nat2000] \M. B. Nathanson. Elementary Methods in Number Theory.
-          Springer, 2000.
+       @book{Nat2000,
+         author = {Nathanson, Melvyn B.},
+         title = {{Elementary Methods in Number Theory}},
+         publisher = {Springer},
+         year = {2000}
+       }
 
 -  A **NOTE** block for tips/tricks (optional).
 
@@ -497,8 +500,8 @@ information. You can use the existing functions of Sage as templates.
 
 - A **REFERENCES** block to list related books or papers (optional).
 
-  Almost all bibliographic information should be put in the master bibliography
-  file, see below. Citations will then link to the master bibliography where
+  Almost all bibliographic information should be put in the shared bibliography
+  files, see below. Citations will then link to the bibliography where
   the reader can find the bibliographic details (see below for citation
   syntax).  REFERENCE blocks in individual docstrings are therefore usually not
   necessary.
@@ -506,7 +509,7 @@ information. You can use the existing functions of Sage as templates.
   Nevertheless, a REFERENCE block can be useful if there are relevant sources
   which are not explicitly mentioned in the docstring or if the docstring is
   particularly long. In that case, add the bibliographic information to the
-  master bibliography file, if not already present, and add a reference block
+  shared bibliography files, if not already present, and add a reference block
   to your docstring as follows:
 
   .. CODE-BLOCK:: rest
@@ -520,7 +523,7 @@ information. You can use the existing functions of Sage as templates.
       - [Voe2003]_
 
   Note the trailing underscores which makes the citations into hyperlinks. See
-  below for more about the master bibliography file. For more about citations,
+  below for more about the shared bibliography files. For more about citations,
   see the `Sphinx/reST markup for citations
   <https://www.sphinx-doc.org/rest.html#citations>`_. For links to GitHub issues and PRs
   or wikipedia, see :ref:`chapter-sage_manuals_links`.
@@ -604,25 +607,35 @@ introduction. Sage imposes these styles:
 
       If ``check`` is ``True``, then ...
 
-Sage's master **BIBLIOGRAPHY** file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sage's shared **BIBLIOGRAPHY** files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All bibliographical references should be stored in the master
-bibliography file,
-:sage_root:`src/doc/en/reference/references/index.rst`, in the
-format
+All bibliographical references should be stored in BibTeX files in
+:sage_root:`src/doc/references/`, for example
+:sage_root:`src/doc/references/reference-database.bib`:
 
-.. CODE-BLOCK:: rest
+.. CODE-BLOCK:: bibtex
 
-  .. [Gau1801] \C. F. Gauss, *Disquisitiones Arithmeticae*, 1801.
+  @book{Gau1801,
+    author = {Gauss, Carl Friedrich},
+    title = {{Disquisitiones Arithmeticae}},
+    publisher = {Gerhard Fleischer},
+    year = {1801}
+  }
 
-  .. [RSA1978] \R. Rivest, A. Shamir, L. Adleman,
-               "A Method for Obtaining Digital Signatures and
-               Public-Key Cryptosystems".
-               Communications of the ACM **21** (February 1978),
-               120–126. :doi:`10.1145/359340.359342`.
+  @article{RSA1978,
+    author = {Rivest, Ronald L. and Shamir, Adi and Adleman, Leonard},
+    title = {{A Method for Obtaining Digital Signatures and
+              Public-Key Cryptosystems}},
+    journal = {Communications of the ACM},
+    volume = {21},
+    number = {2},
+    pages = {120--126},
+    year = {1978},
+    doi = {10.1145/359340.359342}
+  }
 
-The part in brackets is the citation key: given these examples, you
+The identifier after the entry type is the citation key: given these examples, you
 could then use ``[Gau1801]_`` in a docstring to provide a link to the
 first reference. Note the trailing underscore which makes the citation a
 hyperlink.
@@ -633,10 +646,32 @@ authors, use the first letter of each of the family names followed by the
 year. Note that the year should be four digits, not just the last two -- Sage
 already has references from both 1910 and 2010, for example.
 
-When abbreviating the first name of an author in a bibliography
-listing, be sure to put a backslash in front of it. This ensures
-that the letter (``C.`` in the example above) will not be
-interpreted as a list enumerator.
+All ``.bib`` files in this directory form one shared citation database.
+Citation keys must be unique across all files. To add another bibliography
+file, list it in :sage_root:`src/doc/references/meson.build` so Meson copies it
+into the documentation build directory. The ``sage-docbuild`` wheel includes
+all these ``.bib`` files automatically.
+
+Entries may appear in any order in each BibTeX file; the rendered bibliography
+is sorted independently, case-insensitively by citation key. Keep existing
+keys unchanged. Use ``and`` between authors. Protect capitalization in
+titles with braces, and preserve DOI identifiers in the ``doi`` field.
+DOI content negotiation can provide a BibTeX entry, but check it against the
+source and retain additional notes and links. Documentation builds use the
+checked-in databases and do not fetch metadata.
+
+Entries migrated from the former reST database have an ``annotation`` field
+containing their complete original description in TeX, including mathematical
+expressions and hyperlinks. Sage displays this description to preserve all
+the existing information. Keep the ordinary ``author``, ``editor``, ``title``,
+and publication fields accurate too: rendering an ``annotation`` does not
+validate them. Check that retrieved DOI metadata identifies the cited work
+and edition, rather than a book review or a different version of a paper.
+For new entries, use ordinary BibTeX fields; ``annotation`` is optional.
+
+Both ``[Gau1801]_`` and ``:cite:p:`Gau1801``` work. Each separately built
+manual includes its cited references, so citations also resolve in standalone
+PDFs. The reference catalogue lists every entry.
 
 For more about citations, see the `Sphinx/reST markup for citations
 <https://www.sphinx-doc.org/rest.html#citations>`_.
@@ -705,12 +740,22 @@ indentation:
         """
         <body of the function>
 
-The master bibliography file would contain
+One of the shared bibliography files would contain
 
-.. CODE-BLOCK:: rest
+.. CODE-BLOCK:: bibtex
 
-        .. [BCDT2001] Breuil, Conrad, Diamond, Taylor,
-                      "Modularity ...."
+        @article{BCDT2001,
+          author = {Breuil, Christophe and Conrad, Brian and
+                    Diamond, Fred and Taylor, Richard},
+          title = {{On the modularity of elliptic curves over Q:
+                    wild 3-adic exercises}},
+          journal = {Journal of the American Mathematical Society},
+          volume = {14},
+          number = {4},
+          pages = {843--939},
+          year = {2001},
+          doi = {10.1090/S0894-0347-01-00370-8}
+        }
 
 You are strongly encouraged to:
 
@@ -1152,7 +1197,10 @@ framework. Here is a comprehensive list:
       This doctest passes too, as the output is not checked
 
   Doctests are expected to pass with any state of the pseudorandom number
-  generators (PRNGs).
+  generators (PRNGs): the doctest framework starts each run from a randomly
+  chosen seed, which is echoed in the ``sage -t`` output as
+  ``--random-seed=SEED`` and can be passed back to ``sage -t`` to reproduce
+  a failure (see :ref:`chapter-doctesting`).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
@@ -1179,6 +1227,14 @@ framework. Here is a comprehensive list:
   guaranteed to terminate. However, there is a
   nonzero probability of a timeout.
 
+  As a last resort, an example that needs reproducible pseudorandom values
+  can fix the seed explicitly with
+  :func:`~sage.misc.randstate.set_random_seed`::
+
+      sage: set_random_seed(0)
+      sage: ZZ.random_element(100)
+      75
+
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
 
@@ -1186,7 +1242,7 @@ framework. Here is a comprehensive list:
   take more than about 30 seconds::
 
       sage: E = EllipticCurve([0, 0, 1, -1, 0])
-      sage: E.regulator()        # long time (1 second)
+      sage: E.regulator()        # long time (1 second) # abs tol 1e-15
       0.0511114082399688
 
 - **tol** or **tolerance:** The numerical values returned by the line are only
@@ -1357,6 +1413,15 @@ framework. Here is a comprehensive list:
        the doctests in this file will be skipped unless the
        appropriate conditions are met.
 
+  - **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
+    64-bit machines, the ``32_bit`` feature can be used::
+
+        sage: h = hash(2^31 + 2^13)
+        sage: h  # needs 32_bit
+        8193
+        sage: h  # needs !32_bit
+        2147491840
+
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
   flag. This prevents ``sage --coverage <file>`` from reporting the docstring as
@@ -1371,16 +1436,8 @@ framework. Here is a comprehensive list:
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
 
-          sage: 1+1 # indirect doctest
+          sage: 1+1  # indirect doctest
           2
-
-- **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
-  64-bit machines. Note that this particular flag is to be applied on the
-  **output** lines, not the input lines::
-
-      sage: hash(2^31 + 2^13)
-      8193                      # 32-bit
-      2147491840                # 64-bit
 
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.

@@ -198,7 +198,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None,
                 all(isinstance(x, Tableau) for x in RSK_data):
             from sage.combinat.rsk import RSK_inverse
             return RSK_inverse(*RSK_data, output='word')
-        elif isinstance(RSK_data, (tuple, list)) and len(RSK_data) == 2 and \
+        if isinstance(RSK_data, (tuple, list)) and len(RSK_data) == 2 and \
                 all(isinstance(x, (list, tuple)) for x in RSK_data):
             from sage.combinat.rsk import RSK_inverse
             P, Q = map(Tableau, RSK_data)

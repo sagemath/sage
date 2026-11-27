@@ -444,8 +444,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
         """
         if base_ring == QQ:
             return m.sparse_matrix()
-        else:
-            return m
+        return m
 
     if not base_ring.is_field():
         raise ValueError('the coefficient ring must be a field')

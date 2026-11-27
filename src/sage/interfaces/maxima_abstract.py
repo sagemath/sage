@@ -121,6 +121,38 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Interface.__init__(self, name)
 
+    def set_seed(self, seed=None):
+        """
+        Seed Maxima's random number generator and return the seed.
+
+        Maxima uses the integer seed modulo `2^{32}`.  If ``seed`` is
+        ``None``, choose a seed using
+        :meth:`~sage.interfaces.interface.Interface.rand_seed`.
+
+        EXAMPLES::
+
+            sage: maxima.set_seed(1)
+            1
+            sage: [maxima.random(100) for i in range(5)]
+            [45, 39, 24, 68, 63]
+            sage: maxima.get_seed()
+            1
+
+        The Pexpect interface uses the same method::
+
+            sage: from sage.interfaces.maxima import Maxima
+            sage: m = Maxima()
+            sage: m.set_seed(1)
+            1
+            sage: [m.random(100) for i in range(5)]
+            [45, 39, 24, 68, 63]
+        """
+        if seed is None:
+            seed = self.rand_seed()
+        self.set_random_state(self.make_random_state(seed))
+        self._seed = seed
+        return seed
+
     ###########################################
     # Interactive help
     ###########################################
@@ -168,8 +200,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             res = res[res.find('\n')+1:]
 
             return AsciiArtString(res)
-        else:
-            subprocess.check_call(cmd, shell=True, env=env)
+        subprocess.check_call(cmd, shell=True, env=env)
 
     def help(self, s):
         r"""
@@ -438,8 +469,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         if t:
             return float(self.eval('elapsed_run_time()')) - t
-        else:
-            return float(self.eval('elapsed_run_time()'))
+        return float(self.eval('elapsed_run_time()'))
 
     def version(self):
         r"""
@@ -866,11 +896,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
             y = 3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
-            y = %k1*%e^x+%k2*%e^-x+3*x
+            y = 3*x+%e^-x*%k2+%e^x*%k1
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y = (%c-3*(...-x...-1)*%e^-x)*%e^x
+            y = %e^x*(%c-3*%e^-x*(-x-1))
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
-            y = -...%e^-1*(5*%e^x-3*%e*x-3*%e)...
+            y = %e^-1*(3*%e*x-5*%e^x+3*%e)
         """
         if not isinstance(vars, str):
             str_vars = '%s, %s' % (vars[1], vars[0])
@@ -910,20 +940,20 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
-            f(x) = x*%e^x+%e^x
+            f(x) = %e^x*x+%e^x
 
         ::
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: f = maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"])
             sage: f
-            f(x) = x*%e^x*('at('diff(f(x),x,1),x = 0))-f(0)*x*%e^x+f(0)*%e^x
+            f(x) = %e^x*x*('at('diff(f(x),x,1),x = 0))-%e^x*f(0)*x+%e^x*f(0)
             sage: print(f)
-                                               !
-                                   x  d        !                  x          x
-                        f(x) = x %e  (-- (f(x))!     ) - f(0) x %e  + f(0) %e
-                                      dx       !
-                                               !x = 0
+                                                                      │
+                                                        x    d        │           x            x
+                                               f(x) = %e  x (── (f(x))│     ) - %e  f(0) x + %e  f(0)
+                                                             dx       │
+                                                                      │x = 0
 
         .. NOTE::
 
@@ -1136,10 +1166,10 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: f = maxima('1/(x-1)^3'); f
             1/(x-1)^3
             sage: print(f)
-                                                  1
-                                               --------
-                                                      3
-                                               (x - 1)
+                                                     1
+                                                  ────────
+                                                         3
+                                                  (x - 1)
         """
         return self.display2d(onscreen=False)
 
@@ -1205,9 +1235,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         try:
             if P.eval("is (%s < %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, -1)
-            elif P.eval("is (%s > %s)" % (self.name(), other.name())) == P._true_symbol():
+            if P.eval("is (%s > %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 1)
-            elif P.eval("is (%s = %s)" % (self.name(), other.name())) == P._true_symbol():
+            if P.eval("is (%s = %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 0)
         except TypeError:
             pass
@@ -1600,10 +1630,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         I = InterfaceElement.__getattr__(self, 'integrate')
         if min is None:
             return I(var)
-        else:
-            if max is None:
-                raise ValueError("neither or both of min/max must be specified.")
-            return I(var, min, max)
+        if max is None:
+            raise ValueError("neither or both of min/max must be specified.")
+        return I(var, min, max)
 
     integrate = integral
 
@@ -1708,15 +1737,13 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             start, stop, step = i.start or 0, i.stop or len(self), i.step or 1
             if start >= 0 and stop >= 0 and step >= 0:
                 return list(islice(self, start, stop, step))
-            else:
-                # Hard to tackle slices esp with negative step
-                return list(self)[i]
-        else:
-            i = operator.index(i)
-            if i < 0 or i >= len(self):
-                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
-            # If you change the i+1 to i below, better change __iter__ as well.
-            return InterfaceElement.__getitem__(self, i+1)
+            # Hard to tackle slices esp with negative step
+            return list(self)[i]
+        i = operator.index(i)
+        if i < 0 or i >= len(self):
+            raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+        # If you change the i+1 to i below, better change __iter__ as well.
+        return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """
@@ -1798,9 +1825,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left(  {\it \_symbol}_{0}\right)\right|_{  {\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left({\it \_symbol}_{0}  \right)\right|_{{\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
-            {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
+            {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,{\it y}  }}\,f\left({\it x} , {\it y} , {\it d}  \right)
             sage: latex(maxima(d/(d-2)))
             {{{\it d}}\over{{\it d}-2}}
         """
@@ -1929,9 +1956,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: f.partial_fraction_decomposition('x')
             1/(2*(x-1))-1/(2*(x+1))
             sage: print(f.partial_fraction_decomposition('x'))
-                                 1           1
-                             --------- - ---------
-                             2 (x - 1)   2 (x + 1)
+                                     1           1
+                                 ───────── - ─────────
+                                 2 (x - 1)   2 (x + 1)
         """
         return self.partfrac(var)
 
@@ -2113,8 +2140,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         if self.__latex is None:
             return r'\mathrm{%s}' % self.__defn
-        else:
-            return self.__latex
+        return self.__latex
 
     def arguments(self, split=True):
         r"""
@@ -2143,8 +2169,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         if split:
             return self.__args.split(',') if self.__args != '' else []
-        else:
-            return self.__args
+        return self.__args
 
     def definition(self):
         """

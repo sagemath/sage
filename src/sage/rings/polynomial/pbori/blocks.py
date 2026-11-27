@@ -360,6 +360,7 @@ def declare_ring(blocks, context=None):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import *
         sage: declare_ring([Block("x",10),Block("y",5)],globals())
         Boolean PolynomialRing in x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, y0, y1, y2, y3, y4
@@ -410,6 +411,7 @@ def main_test():
     """
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.blocks import main_test
         sage: main_test()
         x(0)

@@ -58,7 +58,7 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.misc.prandom as random
-import sage.modules.free_module_element as free_module_element
+from sage.modules import free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm
@@ -162,29 +162,6 @@ def kronecker_character_upside_down(d):
 
     G = DirichletGroup(d, QQ)
     return G([kronecker(u.lift(), d) for u in G.unit_gens()])
-
-
-def is_DirichletCharacter(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of type ``DirichletCharacter``.
-
-    EXAMPLES::
-
-        sage: from sage.modular.dirichlet import is_DirichletCharacter
-        sage: is_DirichletCharacter(trivial_character(3))
-        doctest:warning...
-        DeprecationWarning: The function is_DirichletCharacter is deprecated;
-        use 'isinstance(..., DirichletCharacter)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_DirichletCharacter([1])
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_DirichletCharacter is deprecated; "
-                "use 'isinstance(..., DirichletCharacter)' instead.")
-    return isinstance(x, DirichletCharacter)
 
 
 class DirichletCharacter(MultiplicativeGroupElement):
@@ -355,8 +332,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         m = m % N
         if self.values.is_in_cache() or m != N - 1:
             return self.values()[m]
-        else:
-            return self.__eval_at_minus_one()
+        return self.__eval_at_minus_one()
 
     def change_ring(self, R):
         """
@@ -382,7 +358,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta12 to a rational
+            TypeError: no conversion of this number field element to a rational
 
         We test the case where `R` is a map (:issue:`18072`)::
 
@@ -781,7 +757,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             Z = LFunction(lfun_character(self), prec=prec)
             Z.rename('PARI L-function associated to %s' % self)
             return Z
-        elif algorithm == 'lcalc':
+        if algorithm == 'lcalc':
             from sage.libs.lcalc.lcalc_Lfunction import Lfunction_from_character
             return Lfunction_from_character(self)
 
@@ -1001,7 +977,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             xx = S.gen()
             return matrix(m).charpoly(xx)
 
-        elif algorithm == "pari":
+        if algorithm == "pari":
             # Use pari
             G, chi = self._pari_init_()
             K = pari.charker(G, chi)
@@ -1010,8 +986,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             x = P.gen()
             return H.sage({"x": x})
 
-        else:
-            raise NotImplementedError("algorithm must be one of 'pari' or 'sage'")
+        raise NotImplementedError("algorithm must be one of 'pari' or 'sage'")
 
     def fixed_field(self):
         r"""
@@ -1378,7 +1353,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         m = G.modulus()
         if isinstance(K, sage.rings.abc.ComplexField):
             return self.gauss_sum_numerical(a=a)
-        elif isinstance(K, sage.rings.abc.AlgebraicField):
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
         elif isinstance(K, (sage.rings.abc.NumberField_cyclotomic,
@@ -2095,7 +2070,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         mod = self.parent().modulus()
         if mod == 1:
             return [R.one()]
-        elif mod == 2:
+        if mod == 2:
             return [R.zero(), R.one()]
 
         result_list = [R.zero()] * mod
@@ -2815,7 +2790,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             sage: H = DirichletGroup(16, QQ); H(DirichletGroup(16).1)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta4 to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         R = self.base_ring()
         try:
@@ -2825,7 +2800,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             pass
         if isinstance(x, list):  # list of values on each unit generator
             return self.element_class(self, x)
-        elif not isinstance(x, DirichletCharacter):
+        if not isinstance(x, DirichletCharacter):
             raise TypeError("cannot convert %s to an element of %s" % (x, self))
         elif not x.conductor().divides(self.modulus()):
             raise TypeError("conductor must divide modulus")

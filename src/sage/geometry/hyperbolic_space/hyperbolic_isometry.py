@@ -165,8 +165,7 @@ class HyperbolicIsometry(Morphism):
         """
         if self.domain().is_isometry_group_projective():
             return r"\pm " + latex(self._matrix)
-        else:
-            return latex(self._matrix)
+        return latex(self._matrix)
 
     def __eq__(self, other):
         r"""
@@ -794,13 +793,12 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         if M_cls == 'parabolic':
             if abs(M[1, 0]) < EPSILON:
                 return [pt(infinity)]
-            else:
-                # boundary point
-                return [pt((M[0,0] - M[1,1]) / (2*M[1,0]))]
-        elif M_cls == 'elliptic':
+            # boundary point
+            return [pt((M[0,0] - M[1,1]) / (2*M[1,0]))]
+        if M_cls == 'elliptic':
             d = sqrt(tau - 4)
             return [pt((M[0,0] - M[1,1] + sign(M[1,0])*d) / (2*M[1,0]))]
-        elif M_cls == 'hyperbolic':
+        if M_cls == 'hyperbolic':
             if M[1,0] != 0:  # if the isometry does not fix infinity
                 d = sqrt(tau - 4)
                 p_1 = (M[0,0] - M[1,1]+d) / (2*M[1,0])

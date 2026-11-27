@@ -87,7 +87,7 @@ class FreeModulePseudoMorphism(Morphism):
 
     This class is not supposed to be instantiated directly; the user
     should use instead the method
-    :meth:`sage.rings.module.free_module.FreeModule_generic.pseudohom`
+    :meth:`~sage.modules.free_module.FreeModule_generic.pseudohom`
     to create a pseudomorphism.
 
     TESTS::
@@ -343,8 +343,7 @@ class FreeModulePseudoMorphism(Morphism):
         """
         if self._side == "left":
             return self._matrix.__copy__()
-        else:
-            return self._matrix.transpose()
+        return self._matrix.transpose()
 
     def twisting_derivation(self):
         r"""

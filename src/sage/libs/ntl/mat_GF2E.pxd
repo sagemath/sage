@@ -2,9 +2,9 @@ from sage.libs.ntl.types cimport mat_GF2E_c, vec_GF2E_c, GF2E_c
 
 
 cdef extern from "ntlwrap.h":
-    void mat_GF2E_add "add"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
-    void mat_GF2E_sub "sub"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
-    void mat_GF2E_mul "mul"( mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
+    void mat_GF2E_add "add"(mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
+    void mat_GF2E_sub "sub"(mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
+    void mat_GF2E_mul "mul"(mat_GF2E_c x, mat_GF2E_c a, mat_GF2E_c b)
     void mat_GF2E_negate "NTL::negate"(mat_GF2E_c x, mat_GF2E_c a)
     void mat_GF2E_power "NTL::power"(mat_GF2E_c t, mat_GF2E_c x, long e)
     GF2E_c mat_GF2E_determinant "determinant"(mat_GF2E_c m)

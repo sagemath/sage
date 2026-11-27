@@ -1081,31 +1081,39 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x ** 2) % 6)
             sage: D.cycles()
-            [[1], [4], [3], [0]]
+            [[0], [1], [4], [3]]
             sage: D = DiscreteDynamicalSystem(tuple(range(11)), lambda x: (x ** 2 - 1) % 11)
             sage: D.cycles()
-            [[10, 0], [8], [4]]
+            [[0, 10], [8], [4]]
 
             sage: F = finite_dynamical_systems.one_line([4, 7, 2, 6, 2, 10, 9, 11, 5, 6, 12, 12, 12, 6])
             sage: F.cycles()
-            [[6, 10], [12], [9, 5, 2, 7]]
+            [[6, 10], [2, 7, 9, 5], [12]]
+
+        TESTS:
+
+        Check that creating the orbit decomposition is done efficiently::
+
+            sage: BS = finite_dynamical_systems.bulgarian_solitaire
+            sage: len(BS(32).cycles())
+            10
         """
-        l = list(self)
+        l = set(self)
         cycs = []
         while l:
-            start = l[-1]
-            (orb, ix) = self.orbit(start, preperiod=True)
-            if orb[ix] in l:
+            start = l.pop()
+            orb, ix = self.orbit(start, preperiod=True)
+            if orb[ix] == start or orb[ix] in l:
                 # This means we've actually found a new cycle,
                 # not just a new path to an old cycle.
                 cycs.append(orb[ix:])
-            for j in orb:
+            for j in orb[1:]:
                 try:
                     l.remove(j)
-                except ValueError:
+                except KeyError:
                     # Here we break out of the for-loop, because
                     # if ``j`` has already been removed from
                     # ``l``, then all later elements of the orbit
@@ -1140,7 +1148,7 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
         sage: D.evolution()(4)
         1
         sage: D.orbits()
-        [[4, 1, 3, 0, 2]]
+        [[0, 2, 4, 1, 3]]
         sage: D.inverse_evolution()(2)
         0
         sage: D.inverse_evolution()(1)
@@ -1184,13 +1192,21 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
+
+        TESTS:
+
+        Check that creating the orbit decomposition is done efficiently::
+
+            sage: D = DiscreteDynamicalSystem(StandardTableaux(10), lambda T: T.promotion(), inverse=True)
+            sage: sum(D.orbit_lengths())
+            9496
         """
         phi = self._phi
-        l = list(self)
+        l = set(self)
         orbs = []
         while l:
             start = l.pop()
@@ -1224,10 +1240,10 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
         """
         return self.orbits()
 

@@ -1,0 +1,69 @@
+)abb package EXPORTI InputFormExport
+++ For domains whose InputForm can be used without change, such as
+++ INT, PI, EXPR INT.  Do not use for constructors such as LIST, FRAC or
+++ POLY.
+InputFormExport(R: ConvertibleTo InputForm) : with
+        sexport: R -> SExpression
+    == add
+        sexport(obj: R): SExpression ==
+            convert(convert(obj)@InputForm)@SExpression
+
+)abb package EXPORTF FiniteExport
+++ For domains like PF and FF.
+FiniteExport(R: Finite) : with
+        sexport: R -> SExpression
+    == add
+        sexport(obj: R): SExpression ==
+            convert(lookup obj)@SExpression
+
+)abb package EXPORTA AggregateExport
+AggregateExport(T: Type, S: Join(HomogeneousAggregate(T), finiteAggregate), sexportT : T -> SExpression) : with
+        sexport: S -> SExpression
+    == add
+        sexport(obj: S): SExpression ==
+            convert([sexportT e for e in parts obj])@SExpression
+
+)abb package EXPORT1 UnaryExport
+++ For domain constructors depending only on a single type
+UnaryExport(T : Type, sexportT : T -> SExpression) : with
+        sexport: List T -> SExpression
+        sexport: Vector T -> SExpression
+        sexport: Fraction T -> SExpression
+        sexport: Factored T -> SExpression
+        sexport: Matrix T -> SExpression
+        sexport: Polynomial T -> SExpression
+    == add
+        sexport(obj: List T): SExpression ==
+            convert([sexportT e for e in obj])@SExpression
+
+        sexport(obj: Vector T): SExpression == sexport entries obj
+
+        if T has IntegralDomain then
+            sexport(obj: Fraction T): SExpression ==
+                num := sexportT numer obj
+                den := sexportT denom obj
+                convert([num, den])@SExpression
+
+            sexport(obj: Factored T): SExpression ==
+                u := sexportT unit obj
+                l := [convert([sexportT(f.factor),
+                               convert(f.exponent)@SExpression])@SExpression
+                      for f in factors obj]
+                convert([u, convert(l)@SExpression])@SExpression
+
+        if T has AbelianMonoid then
+            sexport(obj: Matrix T): SExpression ==
+                convert([convert([sexportT e for e in row])@SExpression
+                         for row in listOfLists obj])@SExpression
+
+        if T has Ring then
+            monomial(ie: IndexedExponents Symbol): SExpression ==
+	        l: List SExpression := [convert([convert(t.k)@SExpression,
+                                                 convert((t.c)::Integer)@SExpression])@SExpression
+                                        for t in listOfTerms(ie)]
+                convert(l)@SExpression
+
+            sexport(obj: Polynomial T): SExpression ==
+                l := listOfTerms obj
+                convert([convert([monomial(mon.k), sexportT(mon.c)])@SExpression
+		         for mon in l])@SExpression

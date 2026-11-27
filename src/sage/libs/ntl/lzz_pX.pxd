@@ -22,7 +22,7 @@ cdef extern from "ntlwrap.h":
     zz_p_c zz_pX_LeadCoeff "LeadCoeff"(zz_pX_c x)
     zz_p_c zz_pX_ConstTerm "ConstTerm" (zz_pX_c x)
     void zz_pX_negate "NTL::negate"(zz_pX_c x, zz_pX_c a)
-    void zz_pX_trunc "trunc"(zz_pX_c x, zz_pX_c a, long n) ## x = a % X^n
+    void zz_pX_trunc "trunc"(zz_pX_c x, zz_pX_c a, long n)  # x = a % X^n
     void zz_pX_MulTrunc "MulTrunc"(zz_pX_c x, zz_pX_c a, zz_pX_c b, long n)
     void zz_pX_SqrTrunc "SqrTrunc"(zz_pX_c x, zz_pX_c a, long n)
     void zz_pX_InvTrunc "InvTrunc"(zz_pX_c x, zz_pX_c a, long n)
@@ -41,7 +41,7 @@ cdef extern from "ntlwrap.h":
     void zz_pX_eval "eval" (zz_p_c fa, zz_pX_c f, zz_p_c a)
     void zz_pX_MakeMonic "MakeMonic"(zz_pX_c x)
 
-    void zz_pX_Modulus_build "build"(zz_pX_Modulus_c F, zz_pX_c f) # MUST be called before using the modulus
+    void zz_pX_Modulus_build "build"(zz_pX_Modulus_c F, zz_pX_c f)  # MUST be called before using the modulus
     long zz_pX_Modulus_deg "deg"(zz_pX_Modulus_c F)
 
     void zz_pX_MulMod_pre "MulMod"(zz_pX_c x, zz_pX_c a, zz_pX_c b, zz_pX_Modulus_c F)

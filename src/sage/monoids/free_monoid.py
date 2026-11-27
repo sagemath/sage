@@ -220,9 +220,9 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             P = x.parent()
             if P is self:
                 return x
-            elif P == self:
+            if P == self:
                 return self.element_class(self, x._element_list, check)
-            elif all(v in self.variable_names()
+            if all(v in self.variable_names()
                      for v in P.variable_names()):
                 reindex = [next(j for j, w in enumerate(self.variable_names())
                                 if v == w)

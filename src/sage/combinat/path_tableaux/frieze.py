@@ -253,8 +253,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         if self[1] == 1 and self[-2] == 1:
             return len(self)
-        else:
-            return None
+        return None
 
     def is_positive(self):
         r"""
@@ -430,8 +429,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         if R.has_coerce_map_from(self.parent().base_ring()):
             return FriezePattern(list(self), field=R)
-        else:
-            raise TypeError("no base extension defined")
+        raise TypeError("no base extension defined")
 
 
 class FriezePatterns(PathTableaux):

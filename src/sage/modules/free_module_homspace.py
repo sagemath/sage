@@ -27,8 +27,7 @@ We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
      from Ambient free module of rank 3 over the principal ideal domain Integer Ring
        to Ambient free module of rank 2 over the principal ideal domain Integer Ring
        in Category of finite dimensional modules with basis over
-          (Dedekind domains and euclidean domains
-           and noetherian rings
+          (euclidean domains and noetherian rings
            and infinite enumerated sets and metric spaces)
     sage: B = H.basis()
     sage: len(B)
@@ -249,7 +248,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         R = self.codomain().base_ring()
         if side == "left":
             return MatrixSpace(R, self.domain().rank(), self.codomain().rank())
-        elif side == "right":
+        if side == "right":
             return MatrixSpace(R, self.codomain().rank(), self.domain().rank())
 
     @cached_method

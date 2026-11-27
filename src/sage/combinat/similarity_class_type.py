@@ -145,24 +145,15 @@ classes which are selftranspose can also be counted::
 
 REFERENCES:
 
-.. [Green55] Green, J. A.  *The characters of the finite general linear groups*.
-   Trans. Amer. Math. Soc.  80  (1955), 402--447.
-   :doi:`10.1090/S0002-9947-1955-0072878-2`
+- [Green55]_
 
-.. [Morrison06] Morrison, Kent E.
-   *Integer sequences and matrices over finite fields*.
-   J. Integer Seq. 9 (2006), no. 2, Article 06.2.1, 28 pp.
-   https://cs.uwaterloo.ca/journals/JIS/VOL9/Morrison/morrison37.html
+- [Morrison06]_
 
-.. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
-   over local rings of length two*. :arxiv:`1212.6157`
+- [PSS13]_
 
-.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
-   interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
+- [PR22]_
 
-.. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
-   abelian p-groups*. Publ. Math. Debrecen 90.1-2.
-   :doi:`10.5486/PMD.2017.7466`
+- [R17]_
 
 AUTHOR:
 
@@ -276,8 +267,7 @@ def primitives(n, invertible=False, q=None):
     p = sum(moebius(n // d) * q**d for d in divisors(n)) / n
     if invertible and n == 1:
         return p - 1
-    else:
-        return p
+    return p
 
 
 @cached_function
@@ -809,16 +799,15 @@ class SimilarityClassType(CombinatorialElement):
             f = [dict(list(p.factor())) for p in L]
             d = {p: Partition([h[p] for h in f if p in h]) for p in f[0]}
             return SimilarityClassType([[p.degree(), d[p]] for p in d])
-        else:
-            ret = []
-            for l in tau:
-                if isinstance(l, PrimarySimilarityClassType):
-                    ret.append(l)
-                else:
-                    ret.append(PrimarySimilarityClassType(*l))
-            n = sum([PT.size() for PT in ret])
-            T = SimilarityClassTypes(n)
-            return T(tau)
+        ret = []
+        for l in tau:
+            if isinstance(l, PrimarySimilarityClassType):
+                ret.append(l)
+            else:
+                ret.append(PrimarySimilarityClassType(*l))
+        n = sum([PT.size() for PT in ret])
+        T = SimilarityClassTypes(n)
+        return T(tau)
 
     def __init__(self, parent, tau):
         """
@@ -1056,16 +1045,15 @@ class SimilarityClassType(CombinatorialElement):
         r"""
         Return the invariant subspace generating function of ``self``.
 
-        The invariant subspace generating function is the function is the
-        polynomial
+        The invariant subspace generating function is the polynomial
 
         .. MATH::
 
             \sum_{j\geq 0} a_j(q) t^j,
 
-        where `a_j(q)` denotes the number of `j`-dimensional invariant subspaces
-        of dimensiona `j` for any matrix with the similarity class type ``self``
-        with entries in a field of order `q`.
+        where `a_j(q)` denotes the number of `j`-dimensional invariant
+        subspaces for any matrix with the similarity class type
+        ``self`` with entries in a field of order `q`.
 
         EXAMPLES::
 
@@ -1290,12 +1278,11 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
         """
         if sumover == "matrices":
             return sum([tau.statistic(stat, q=q)*tau.number_of_matrices(invertible=invertible, q=q) for tau in self])
-        elif sumover == "classes":
+        if sumover == "classes":
             return sum([tau.statistic(stat, q=q)*tau.number_of_classes(invertible=invertible, q=q) for tau in self])
-        elif sumover == "types":
+        if sumover == "types":
             return sum([tau.statistic(stat, invertible=invertible, q=q) for tau in self])
-        else:
-            raise ValueError("invalid parameter %s" % (sumover))
+        raise ValueError("invalid parameter %s" % (sumover))
 
 ################################################################################
 #                 Similarity over rings of length two                          #
@@ -1478,24 +1465,21 @@ def ext_orbits(input_data, q=None, selftranspose=False):
             return q.parent()(1)
         if max(la) == 1:
             return matrix_similarity_classes(len(la), q=q)
-        elif len(la) == 1:
+        if len(la) == 1:
             return q**la.size()
-        elif len(la) == 2 and list(la).count(1) == 1:  # see Table 3
+        if len(la) == 2 and list(la).count(1) == 1:  # see Table 3
             m = max(la) - 1
             if selftranspose:
                 return q**(m + 2) + q**(m + 1) - q**m
-            else:
-                return q**(m + 2) + q**(m + 1) + q**m
-        elif len(la) == 3 and list(la).count(1) == 2:  # see Table 4
+            return q**(m + 2) + q**(m + 1) + q**m
+        if len(la) == 3 and list(la).count(1) == 2:  # see Table 4
             m = max(la) - 1
             if not selftranspose:
                 return q**m*(q**3 + 2*q**2 + 2*q + 2)
-            else:
-                return q**m*(q**3 + 2*q**2)
-        elif min(la) == 2 and max(la) == 2:
+            return q**m*(q**3 + 2*q**2)
+        if min(la) == 2 and max(la) == 2:
             return matrix_similarity_classes_length_two(len(la), q=q, selftranspose=selftranspose)
-        else:
-            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits' % (la))
+        raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits' % (la))
     elif case == 'pri':
         tau = data
         return ext_orbits(tau.partition(), q=q, selftranspose=selftranspose).substitute(q=q**tau.degree())
