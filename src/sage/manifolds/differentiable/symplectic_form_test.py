@@ -1,16 +1,20 @@
 # pylint: disable=missing-function-docstring
+from __future__ import annotations
 import pytest
-from _pytest.fixtures import FixtureRequest
 
 from sage.manifolds.differentiable.examples.sphere import Sphere
 from sage.manifolds.differentiable.examples.symplectic_space import (
     StandardSymplecticSpace,
 )
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 from sage.manifolds.manifold import Manifold
 from sage.symbolic.function_factory import function
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.scalarfield import DiffScalarField
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from _pytest.fixtures import FixtureRequest
 
 
 class TestGenericSymplecticForm:

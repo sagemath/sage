@@ -6,15 +6,19 @@ warning(
   'Documentation building enabled, generating targets may be slow. To disable this, pass -Dbuild-docs=false.',
 )
 
-sphinx_check = py_module.find_installation(required: false, modules: ['sphinx'])
+sphinx_check = py_module.find_installation(
+  required: false,
+  modules: ['sphinx', 'sphinxcontrib.bibtex'],
+)
 if not sphinx_check.found()
   warning(
-    'Python package "sphinx" is not installed. Documentation build not enabled.',
+    'Sphinx or sphinxcontrib-bibtex is not installed. Install the docs dependencies to build documentation.',
   )
   subdir_done()
 endif
 
 doc_src = []
+subdir('references')
 subdir('el')
 subdir('ca')
 subdir('zh')
@@ -39,7 +43,7 @@ doc_bootstrap = custom_target(
     files('../../tools/bootstrap-docs.py'),
     meson.current_build_dir(),
   ],
-  env: {'SAGE_ROOT': root},
+  env: {'SAGE_ROOT': meson.global_source_root()},
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
   # so let's collect all source-related targets here.
@@ -71,7 +75,7 @@ foreach type : ['inventory', 'html', 'pdf']
       short_ref = ref
     endif
     deps = []
-    deps += doc_bootstrap
+    deps += [doc_bootstrap, doc_bibliographies]
     if short_ref == 'repl'
       deps += doc_src_repl
     endif
@@ -133,7 +137,7 @@ other_documents = run_command(
 ).stdout().strip()
 other_documents_inventory = []
 foreach doc : other_documents.splitlines()
-  if doc == 'en/installation'
+  if doc in ['en/developer', 'en/installation']
     short_doc = doc.replace('/', '-')
     target = custom_target(
       'doc-inventory-other-' + short_doc,
@@ -150,7 +154,7 @@ foreach doc : other_documents.splitlines()
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory,
+      depends: reference_inventory + [doc_bibliographies],
     )
     other_documents_inventory += target
   endif
@@ -175,7 +179,7 @@ foreach type : ['html', 'pdf']
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory + other_documents_inventory,
+      depends: reference_inventory + other_documents_inventory + [doc_bibliographies],
     )
     if type == 'html'
       other_documents_html += target

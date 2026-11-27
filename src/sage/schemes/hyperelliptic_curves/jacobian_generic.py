@@ -19,10 +19,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
+from sage.categories.fields import Fields
 from sage.schemes.hyperelliptic_curves import (
     jacobian_homset_inert,
     jacobian_homset_ramified,
@@ -30,6 +31,10 @@ from sage.schemes.hyperelliptic_curves import (
     jacobian_morphism,
 )
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class HyperellipticJacobian_generic(Jacobian_generic):
@@ -64,6 +69,21 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     If the hyperelliptic curve is ramified or inert, then `n` can be deduced
     from `\deg(u)` and `g`. In these cases, `n` is omitted in the description.
     """
+    def __init__(self, C, *args, **kwds):
+        r"""
+        Initialize a Jacobian from a curve ``C``.
+
+        TESTS::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^5 + x, 0)
+            sage: J = C.jacobian()
+            sage: J.base_field()
+            Finite Field of size 419
+        """
+        if C.base_ring() in Fields():
+            self.base_field = self.base_ring  # compatibility alias
+        super().__init__(C, *args, **kwds)
 
     def dimension(self) -> Integer:
         r"""

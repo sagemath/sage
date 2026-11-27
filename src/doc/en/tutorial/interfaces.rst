@@ -252,6 +252,12 @@ functions, has plotting capabilities via gnuplot, and has methods to
 solve and manipulate matrices (such as row reduction, eigenvalues and
 eigenvectors), and polynomial equations.
 
+The default ``maxima`` interface loads Maxima into Sage through the ECL
+library, using the same session as Sage's symbolic calculus. Maxima settings
+and assumptions are shared with that session. For an independent Maxima
+process, use ``from sage.interfaces.maxima import Maxima`` followed by
+``m = Maxima()``.
+
 We illustrate the Sage/Maxima interface by constructing the matrix
 whose :math:`i,j` entry is :math:`i/j`, for
 :math:`i,j=1,\ldots,4`.

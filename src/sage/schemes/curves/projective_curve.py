@@ -1700,6 +1700,18 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: C.tangent_line(p)
             Projective Curve over Rational Field
              defined by -2*x + y + w, -3*x + z + 2*w
+
+        TESTS:
+
+        The name of the base field generator does not matter (:issue:`34100`)::
+
+            sage: # needs sage.rings.number_field
+            sage: E = EllipticCurve("19a1")
+            sage: K.<z> = CyclotomicField(3)
+            sage: EK = E.base_extend(K)
+            sage: EK.tangent_line(EK(5, 9))
+            Projective Plane Curve over Cyclotomic Field of order 3 and degree 2
+             defined by -4*x + y + 11*z
         """
         for i in range(len(p)):
             if p[i]:

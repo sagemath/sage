@@ -38,7 +38,7 @@ Sageのかなりの部分がPythonを使って実装されているものの，�
     over Rational Field
     sage: E.anlist(10)
     [0, 1, 1, 0, -1, -3, 0, -1, -3, -3, -3]
-    sage: E.rank()
+    sage: E.rank()  # needs eclib
     1
 
     sage: k = 1/(sqrt(3)*I + 3/4 + sqrt(73)*5/9); k

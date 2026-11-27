@@ -37,16 +37,17 @@ defined, and ``["GF", 4]`` would have raised an error, because to
 define the field with four elements in Sage, you also need to specify
 the name of a generator.)
 
-To see evidence of the results of the code here, run ``sage --docbuild
-tutorial latex`` (for example), and look at the resulting LaTeX file in
-``SAGE_DOC/latex/en/tutorial/``.  The preamble should
-contain '\newcommand' lines for each of the entries in ``macros``.
+To see evidence of the results of the code here, run ``meson compile -C
+builddir doc-pdf-other-en-tutorial`` (for example), where ``builddir`` is the
+Meson build directory, and look at the resulting LaTeX file in
+``builddir/src/doc/latex/en/tutorial/``.  The preamble should contain
+'\newcommand' lines for each of the entries in ``macros``.
 """
 
 import importlib
 
 
-def produce_latex_macro(name, *sample_args):
+def produce_latex_macro(name: str, *sample_args: object) -> str:
     r"""
     Produce a string defining a LaTeX macro.
 
@@ -99,7 +100,9 @@ def produce_latex_macro(name, *sample_args):
     return newcommand + defn
 
 
-def convert_latex_macro_to_mathjax(macro):
+def convert_latex_macro_to_mathjax(
+    macro: str,
+) -> tuple[str, str] | tuple[str, list[str | int]]:
     r"""
     This converts a LaTeX macro definition (\newcommand...) to a
     MathJax macro definition (MathJax.Macro...).
@@ -143,10 +146,10 @@ def convert_latex_macro_to_mathjax(macro):
 # form [name, arguments], which will be passed to the function
 # produce_latex_macro: see that for more documentation.
 #
-# To see the results of this, run 'sage --docbuild tutorial latex' (for
-# example -- you could replace 'tutorial' with your favorite piece of
-# documentation), and look at the resulting tex file in
-# SAGE_DOC/latex/en/tutorial.  The preamble should contain
+# To see the results of this, run
+# 'meson compile -C builddir doc-pdf-other-en-tutorial', where builddir is
+# the Meson build directory, and look at the resulting tex file in
+# builddir/src/doc/latex/en/tutorial.  The preamble should contain
 # \newcommand's for each of the entries here.
 macros = [["ZZ"],
           ["NN"],
@@ -177,7 +180,7 @@ latex_macros = [r"\newcommand{\SL}{\mathrm{SL}}",
 sage_configurable_latex_macros = [r"\newcommand{\Bold}[1]{\mathbf{#1}}"]
 
 
-def sage_latex_macros():
+def sage_latex_macros() -> list[str]:
     r"""
     Return list of LaTeX macros for Sage. This just runs the function
     :func:`produce_latex_macro` on the list ``macros`` defined in this
@@ -193,7 +196,7 @@ def sage_latex_macros():
     return [produce_latex_macro(*x) for x in macros] + latex_macros + sage_configurable_latex_macros
 
 
-def sage_mathjax_macros():
+def sage_mathjax_macros() -> dict[str, str | list[str | int]]:
     r"""
     Return Sage's macro definitions for usage with MathJax.
 

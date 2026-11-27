@@ -191,7 +191,7 @@ def _normal_label(g, comb_emb, external_face):
     v1, v2, v3 = external_vertices
     v1_neighbors = Set(g.neighbors(v1))
 
-    neighbor_count = {v: 0 for v in g}
+    neighbor_count = dict.fromkeys(g, 0)
     for v in g.neighbors(v1):
         neighbor_count[v] = len(v1_neighbors.intersection(Set(g.neighbors(v))))
 

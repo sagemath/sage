@@ -20,6 +20,7 @@ import builtins
 import functools
 import os
 import sys
+import types
 import typing
 
 from sphinx.ext import intersphinx
@@ -116,10 +117,11 @@ def set_intersphinx_mappings(app, config):
     if app.config.multidoc_first_pass == 1 or not os.path.exists(invpath):
         return
 
-    install_path = os.path.join(SAGE_DOC, "html", "en", "installation")
-    install_inv = os.path.join(SAGE_DOC, "inventory", "en", "installation", "objects.inv")
-    if os.path.exists(install_inv):
-        app.config.intersphinx_mapping['installation'] = (install_path, install_inv)
+    for manual in ('developer', 'installation'):
+        manual_path = os.path.join(SAGE_DOC, "html", "en", manual)
+        manual_inv = os.path.join(SAGE_DOC, "inventory", "en", manual, "objects.inv")
+        if os.path.exists(manual_inv):
+            app.config.intersphinx_mapping[manual] = (manual_path, manual_inv)
 
     app.config.intersphinx_mapping.update({key: _intersphinx_mapping(key)
                                            for key in _intersphinx_targets})
@@ -408,6 +410,12 @@ def _type_parameter_names(modname):
         sage: sorted(_type_parameter_names('no.such.module'))
         []
 
+    Overloads can declare type parameters that the implementation does not::
+
+        sage: import sage.matrix.special
+        sage: sorted(_type_parameter_names('sage.matrix.special'))
+        ['F']
+
     The answer for a module that is not imported is not remembered: importing
     it later is what gives it type parameters to find::
 
@@ -442,7 +450,17 @@ def _type_parameters_of_imported_module(modname):
     def type_params(obj):
         if isinstance(obj, LazyImport):
             return set()
-        return {tp.__name__ for tp in safe_getattr(obj, '__type_params__', ())}
+        if isinstance(obj, (staticmethod, classmethod)):
+            obj = obj.__func__
+        names = {tp.__name__ for tp in safe_getattr(obj, '__type_params__', ())}
+        if isinstance(obj, types.FunctionType):
+            for overload in typing.get_overloads(obj):
+                # Either decorator order can put a descriptor in the registry.
+                func = (overload.__func__ if isinstance(overload, (staticmethod, classmethod))
+                        else overload)
+                names.update(tp.__name__ for tp in
+                             safe_getattr(func, '__type_params__', ()))
+        return names
 
     names = set()
     seen_bases = set()
@@ -483,6 +501,21 @@ def _is_type_parameter(node, reftarget):
         sage: _is_type_parameter(node, 'typing.Any')
         False
         sage: _is_type_parameter(node, 'Parent')
+        False
+
+    The same applies to parameters declared only by overloads::
+
+        sage: import sage.matrix.special
+        sage: node = {'py:module': 'sage.matrix.special'}
+        sage: _is_type_parameter(node, 'F')
+        True
+        sage: _is_type_parameter(node, 'typing.F')
+        True
+        sage: _is_type_parameter(node, 'unrelated.F')
+        False
+        sage: _is_type_parameter(node, 'UnknownType')
+        False
+        sage: _is_type_parameter(node, 'typing.Any')
         False
     """
     name = reftarget.removeprefix('typing.')

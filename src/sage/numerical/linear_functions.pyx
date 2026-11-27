@@ -1022,7 +1022,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: p = MixedIntegerLinearProgram(solver='Highs')
             sage: LF = p.linear_functions_parent()
             sage: LF({-1: -15, 2 : -5.1, 3 : 2/3})
             -15 - 5.1*x_2 + 0.6666666666666666*x_3

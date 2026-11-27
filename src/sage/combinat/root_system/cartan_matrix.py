@@ -1023,11 +1023,9 @@ class CartanMatrix(Base, CartanType_abstract,
             [[], [2], [2]]
         """
         iset = list(range(self.ncols()))
-        ret = []
-        for l in powerset(iset):
-            if not proper or (proper and l != iset):
-                ret.append(self.matrix_from_rows_and_columns(l,l))
-        return ret
+        return [self.matrix_from_rows_and_columns(l, l)
+                for l in powerset(iset)
+                if not proper or l != iset]
 
     @cached_method
     def indecomposable_blocks(self):

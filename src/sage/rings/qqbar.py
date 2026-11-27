@@ -422,9 +422,9 @@ Here are examples of all of these conversions::
     ....:             return None
     ....:     return [convert_test(_) for _ in all_vals]
     sage: convert_test_all(float)
-    [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
+    [42.0, 3.142857142857143, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(complex)
-    [(42+0j), (3.1428571428571432+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951536j)]
+    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951535j)]
     sage: convert_test_all(RDF)
     [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(CDF)
@@ -577,6 +577,7 @@ AUTHOR:
 """
 
 import itertools
+import math
 import operator
 
 import sage.rings.abc
@@ -5121,9 +5122,9 @@ class AlgebraicNumber(AlgebraicNumber_base):
         EXAMPLES::
 
             sage: QQbar(sqrt(2)).__float__()                                            # needs sage.symbolic
-            1.414213562373095
+            1.4142135623730951
             sage: float(QQbar(-22/7))
-            -3.1428571428571432
+            -3.142857142857143
             sage: float(QQbar.zeta(3))
             Traceback (most recent call last):
             ...
@@ -5133,29 +5134,41 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def __complex__(self):
         r"""
-        Compute a good complex approximation to ``self``.
+        Compute a complex approximation to ``self``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(2)).__complex__()                                          # needs sage.symbolic
-            (1.414213562373095+0j)
+            sage: QQbar(2).sqrt().__complex__()
+            (1.4142135623730951+0j)
             sage: complex(QQbar.zeta(3))
             (-0.5+0.8660254037844386j)
+
+        TESTS:
+
+        Exact zero elements should not have non-zero complex
+        approximations::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = QQbar((a^2 - a*a).abs())
+            sage: complex(z)
+            0j
+
         """
-        return CC(self).__complex__()
+        return complex(self.real().__float__(),
+                       self.imag().__float__())
 
     def _complex_double_(self, cdf):
         r"""
-        Compute a good approximation to ``self`` in CDF.
+        Compute an approximation to ``self`` in ``cdf``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(-5))._complex_double_(CDF)                                 # needs sage.symbolic
+            sage: QQbar(-5).sqrt()._complex_double_(CDF)
             2.23606797749979*I
             sage: CDF(QQbar.zeta(12))
             0.8660254037844386 + 0.5*I
         """
-        return cdf(CC(self))
+        return cdf(self.__complex__())
 
     def _interval_fast(self, prec):
         r"""
@@ -6171,14 +6184,159 @@ class AlgebraicReal(AlgebraicNumber_base):
         r"""
         Compute a good float approximation to ``self``.
 
+        The result is correctly rounded, including close to zero and the
+        overflow boundary, with one signed-zero convention: if a very small
+        interval still contains zero after both endpoints round to zero, the
+        result is canonicalized to positive zero.  This avoids an arbitrarily
+        expensive exact sign computation merely to determine the sign bit of
+        an underflowed result.
+
         EXAMPLES::
 
             sage: AA(golden_ratio).__float__()                                          # needs sage.symbolic
             1.618033988749895
             sage: float(AA(sqrt(11)))                                                   # needs sage.symbolic
             3.3166247903554
+
+        In particular, an interval containing an exact zero must not be
+        converted to a small nonzero floating-point number::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = (a^2 - a*a).abs()
+            sage: float(z)
+            0.0
+            sage: type(z._descr).__name__
+            'ANUnaryExpr'
+            sage: z = a^2 - a*a
+            sage: float(z)
+            0.0
+            sage: type(z._descr).__name__
+            'ANBinaryExpr'
+
+        Refining such an interval must not discard nonzero values that a
+        Python ``float`` can represent.  The last example below genuinely
+        starts with an interval containing zero::
+
+            sage: float(AA(2)^(-213))
+            7.596454196607839e-65
+            sage: float(AA(2)^(-1000))
+            9.332636185032189e-302
+            sage: float(AA(2)^(-1074))
+            5e-324
+            sage: float(QQbar(AA(2)^(-1000)))
+            9.332636185032189e-302
+            sage: x = AA(2)^(-1074) + a^2 - a*a
+            sage: x._value.contains_zero()
+            True
+            sage: float(x)
+            5e-324
+
+        Rounding on both sides of the smallest-subnormal midpoint and at
+        the overflow boundary agrees with direct rational conversion::
+
+            sage: h = QQ(1) / 2^1075
+            sage: q = h + QQ(1) / 2^1200
+            sage: float(AA(q)).hex() == float(q).hex()
+            True
+            sage: q = 3*h - QQ(1) / 2^1200
+            sage: float(AA(q)).hex() == float(q).hex()
+            True
+            sage: float(AA(-h)).hex() == float(-h).hex()
+            True
+            sage: m = QQ(1) + QQ(1) / 2^53
+            sage: float(AA(m)).hex() == float(m).hex()
+            True
+            sage: float(AA(-m)).hex() == float(-m).hex()
+            True
+            sage: T = QQ(2)^1024 - QQ(2)^970
+            sage: float(AA(T - 1)).hex() == float(T - 1).hex()
+            True
+            sage: float(AA(T))
+            inf
+            sage: float(AA(-T))
+            -inf
+
+        Ensure that signed zero is handled correctly even in the
+        adjacent-endpoints case::
+
+            sage: q = QQ(2)^(-1077)
+            sage: x = (AA(2).sqrt()^2 - 2) / 2^1012 + q
+            sage: x == q
+            True
+            sage: float(x).hex()
+            '0x0.0p+0'
+            sage: float(q).hex() == float(x).hex()
+            True
+
         """
-        return float(RR(self))
+        value = self._value
+        if value.is_zero():
+            return 0.0
+
+        # Algorithm: call self._more_precision() to refine the
+        # interval until the floating point approximations to the
+        # lower and upper endpoints are either equal, or adjacent.
+        while True:
+            # Converting an MPFI endpoint directly would preserve its
+            # directed rounding mode.  Convert its exact rational value
+            # instead, so that Python performs one round-to-nearest step.
+            lower = float(value.lower().exact_rational())
+            upper = float(value.upper().exact_rational())
+
+            # If the endpoint approximations are equal, then modulo
+            # signed zero, we just return one of them. Care is needed
+            # only because +0.0 == -0.0 in python.
+            if lower == upper:
+                if lower != 0.0:
+                    return lower
+                if value.upper() < 0:
+                    return -0.0
+                return 0.0
+
+            # The endpoints are not equal, but they are adjacent.
+            if math.nextafter(lower, math.inf) == upper:
+                # There are two sub-cases here. If we are lucky, the
+                # true value lies closer to one endpoint, and further
+                # refining the interval will eventually producer equal
+                # endpoints. What we would like do is check whether or
+                # not value.contains(lower) or value.contains(upper),
+                # and (if so) further refine in hope that the
+                # endpoints become equal. However, there is no such
+                # containment check for non-zero numbers! Instead we
+                # settle for value.contains_zero(), when one of the
+                # endpoints is zero.
+                #
+                # Note: this is more than a mere optimization; it
+                # allows us to ignore signed zero issues in the
+                # midpoint comparisons below.
+                if (lower == 0.0 or upper == 0.0):
+                    if value.contains_zero():
+                        self._more_precision()
+                        value = self._value
+                        continue
+
+                # If they're adjacent and if we can't be sure that
+                # further refinement will do any good (the true value
+                # can lie exactly halfway between two floats, for
+                # example), we just have to compute the midpoint and
+                # see which side, if any, the true value lies on.
+                two = QQ(2)
+                if math.isinf(lower) or math.isinf(upper):
+                    midpoint = two**1024 - two**970
+                    if lower < 0:
+                        midpoint = -midpoint
+                else:
+                    midpoint = (QQ(lower) + QQ(upper)) / two
+
+                if self < midpoint:
+                    return lower
+                if self > midpoint:
+                    return upper
+                return float(midpoint)
+
+            # Endpoints are neither equal nor adjacent, keep going.
+            self._more_precision()
+            value = self._value
 
     def _complex_mpfr_field_(self, field):
         r"""

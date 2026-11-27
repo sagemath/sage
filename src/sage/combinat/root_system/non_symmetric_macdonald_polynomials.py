@@ -355,18 +355,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     REFERENCES:
 
-    .. [HaimanICM] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics,
-       Proceedings of the International Congress of Mathematicians,
-       Madrid 2006, Vol. III, 843-872.
+    - [HaimanICM]_
 
-    .. [HHL06] \J. Haglund, M. Haiman and N. Loehr,
-       A combinatorial formula for nonsymmetric Macdonald polynomials,
-       Amer. J. Math. 130, No. 2 (2008), 359-383.
+    - [HHL06]_
 
-    .. [LNSSS12] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, M. Shimozono,
-       A uniform model for Kirillov-Reshetikhin crystals I: Lifting
-       the parabolic quantum Bruhat graph, preprint :arxiv:`1211.2042`
-       [math.QA]
+    - [LNSSS12]_
 
     .. RUBRIC:: More examples
 
@@ -1735,7 +1728,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             - This method is only really needed for
               `\lambda^\vee=\alpha^\vee_i` with `i=0,...,n`.
 
-        See Corollary 6.11 of [Haiman06]_.
+        See Corollary 6.11 of [HaimanICM]_.
 
         EXAMPLES::
 
@@ -1803,11 +1796,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             1/(q*t^2)
 
         The expected value can more or less be read off from equation
-        (37), Corollary 6.15 of [Haiman06]_
+        (37), Corollary 6.15 of [HaimanICM]_
 
         .. TODO::
 
-            - Use proposition 6.9 of [Haiman06]_ to check the action
+            - Use proposition 6.9 of [HaimanICM]_ to check the action
               of the `Y` s on monomials.
 
             - Generalize to any `q_1`, `q_2`.
@@ -1824,7 +1817,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         assert L0.is_parent_of(mu)
         # Should we view mu as a translation, and ask for its alcove walk?
         muaff = self.affine_lift(mu) # embeds mu at level 1 in L_prime
-        w = reversed(mu.reduced_word(I0, positive=False)) # the reduced word for w_\mu, Prop. 6.9 of [Haiman06]_
+        w = reversed(mu.reduced_word(I0, positive=False)) # the reduced word for w_\mu, Prop. 6.9 of [HaimanICM]_
         # mu should be scaled to make sure it implements a translation
         #w = reversed(L.reduced_word_of_translation(L(mu)))
         #x = L.embed_at_level(L0.rho(),1)

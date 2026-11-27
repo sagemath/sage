@@ -30,10 +30,11 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 import operator
+
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -483,7 +484,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         :meth:`~sage.categories.crystals.Crystals.ParentMethods.subcrystal`.
     """
 
-    def __init__(self, crystals, generators, cartan_type):
+    def __init__(self, crystals, generators, cartan_type) -> None:
         """
         EXAMPLES::
 
@@ -499,7 +500,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         self._cartan_type = cartan_type
         self.module_generators = tuple([self(*x) for x in generators])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -525,7 +526,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         Merge this into :class:`TensorProductOfCrystals`.
     """
 
-    def __init__(self, crystals, **options):
+    def __init__(self, crystals, **options) -> None:
         """
         TESTS::
 
@@ -701,7 +702,7 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSu
 
 
 #########################################################
-## Crystal of tableaux
+#  Crystal of tableaux
 
 class CrystalOfTableaux(CrystalOfWords):
     r"""
