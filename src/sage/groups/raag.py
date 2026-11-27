@@ -333,52 +333,65 @@ class RightAngledArtinGroup(ArtinGroup):
             1
             sage: (a*b*c*d*e)^2 * (a*b*c*d*e)^-2
             1
+            sage: G([(0, 0)])
+            1
+            sage: G([(0, -1), (4, 1)]) * G([(4, -1), (1, 1), (3, -1)])
+            v0^-1*v3^-1*v1
+            sage: G([(0, -1), (4, 1), (4, -1), (1, 1), (3, -1)])
+            v0^-1*v3^-1*v1
+            sage: G([(2, 1), (4, 1), (0, 1), (2, -1)])
+            v4*v0
         """
-        pos = 0
         G = self._graph
         v = G.vertices(sort=True)
-        w = [list(x) for x in word]  # Make a (2 level) deep copy
-        while pos < len(w):
-            comm_set = [w[pos][0]]
-            # The current set of totally commuting elements
-            i = pos + 1
+        w = [list(x) for x in word if x[1]]  # Make a (2 level) deep copy
 
+        def commutes(left, right):
+            return not G.has_edge(v[left], v[right])
+
+        # First reduce syllables from the same vertex group whenever they can
+        # be shuffled together through commuting syllables.
+        while True:
+            changed = False
+            i = 0
             while i < len(w):
-                letter = w[i][0]  # The current letter
-                # Check if this could fit in the commuting set
-                if letter in comm_set:
-                    # Try to move it in
-                    if any(G.has_edge(v[w[j][0]], v[letter])
-                           for j in range(pos + len(comm_set), i)):
-                        # We can't, so go onto the next letter
-                        i += 1
-                        continue
-                    j = comm_set.index(letter)
-                    w[pos + j][1] += w[i][1]
-                    w.pop(i)
-                    i -= 1  # Since we removed a syllable
-                    # Check cancellations
-                    if w[pos + j][1] == 0:
-                        w.pop(pos + j)
-                        comm_set.pop(j)
-                        i -= 1
-                        if not comm_set:
-                            pos = 0
-                            # Start again since cancellation can be pronounced effects
-                            break
-                elif all(not G.has_edge(v[w[j][0]], v[letter])
-                         for j in range(pos, i)):
-                    j = 0
-                    for x in comm_set:
-                        if x > letter:
-                            break
-                        j += 1
-                    w.insert(pos + j, w.pop(i))
-                    comm_set.insert(j, letter)
-
+                letter = w[i][0]
+                j = i + 1
+                while j < len(w) and commutes(letter, w[j][0]):
+                    if w[j][0] == letter:
+                        w[i][1] += w[j][1]
+                        w.pop(j)
+                        if not w[i][1]:
+                            w.pop(i)
+                        changed = True
+                        break
+                    j += 1
+                if changed:
+                    break
                 i += 1
-            pos += len(comm_set)
-        return tuple(w)
+
+            if not changed:
+                break
+
+        # Rebuild the Foata normal form: syllables in the same layer commute,
+        # and every syllable is placed in the earliest possible layer.
+        layers = []
+        heights = []
+        for j, letter in enumerate(w):
+            height = 0
+            for i in range(j):
+                if w[i][0] == letter[0] or not commutes(w[i][0], letter[0]):
+                    height = max(height, heights[i] + 1)
+            heights.append(height)
+            while len(layers) <= height:
+                layers.append([])
+            layers[height].append(letter)
+
+        normal = []
+        for layer in layers:
+            layer.sort(key=lambda letter: letter[0])
+            normal.extend(layer)
+        return tuple(normal)
 
     def cohomology(self, F=None):
         """
