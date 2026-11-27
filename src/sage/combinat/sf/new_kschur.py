@@ -223,15 +223,13 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         r"""
         Return the `k`-bounded basis called the K-`k`-Schur basis.
 
-        See [Morse11]_ and [LamSchillingShimozono10]_.
+        See [Morse2011]_ and [LamSchillingShimozono2010]_.
 
         REFERENCES:
 
-        .. [Morse11] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-           Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+        - [Morse2011]_
 
-        .. [LamSchillingShimozono10] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-           Compositio Math. 146 (2010), 811-852.
+        - [LamSchillingShimozono2010]_
 
         EXAMPLES::
 
@@ -1189,7 +1187,7 @@ class kSplit(CombinatorialFreeModule):
             \{ s_{\lambda}^{(k)}[X;t] \}_{\lambda_1 \le k}
 
         where `Q'_\lambda[X;t]` are the Hall-Littlewood symmetric functions
-        (using the notation of [MAC]_) and `s_{\lambda}^{(k)}[X;t]` are the
+        (using the notation of [Mac1995]_) and `s_{\lambda}^{(k)}[X;t]` are the
         `k`-Schur functions.  If `t` is not a root of unity, then
 
         .. MATH::
@@ -1201,7 +1199,7 @@ class kSplit(CombinatorialFreeModule):
         The `k`-split basis has the property that `Q'_\lambda[X;t]` expands
         positively in the `k`-split basis and the `k`-split basis
         conjecturally expands positively in the `k`-Schur functions.
-        See [LLMSSZ]_ p. 81.
+        See [LLMSSZ2013]_ p. 81.
 
         The `k`-split basis is defined recursively using the
         Hall-Littlewood creation operator defined in [SZ2001]_.  If a
@@ -1404,11 +1402,9 @@ class K_kSchur(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [Morse2011] \J. Morse, Combinatorics of the K-theory of affine Grassmannians,
-        Adv. in Math., Volume 229, Issue 5, pp. 2950--2984.
+    - [Morse2011]_
 
-    .. [LamSchillingShimozono2010] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
-        Compositio Math. 146 (2010), 811-852.
+    - [LamSchillingShimozono2010]_
     """
 
     def __init__(self, kBoundedRing):

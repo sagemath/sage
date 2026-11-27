@@ -164,7 +164,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
                 sage: x.value
                 {'a': 2, 'b': 0, 'c': 1, 'd': 5}
             """
-            d = {a: 0 for a in parent.alphabet}
+            d = dict.fromkeys(parent.alphabet, 0)
             d.update(iterable)
             ElementWrapper.__init__(self, parent, d)
 

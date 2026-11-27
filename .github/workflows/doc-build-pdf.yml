@@ -1,35 +1,24 @@
 name: Build documentation (PDF)
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
-  PYTHON_VERSION: 3.12
+  PYTHON_VERSION: 3.13
 
 jobs:
   doc-pdf:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Maximize available disk space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
           # Remove pre-installed packages like Docker, Android, .NET, etc.
           # We only keep the basic essentials (like compilers, etc.)
-          tool-cache: true
+          preinstalled-runtimes: true
 
       - name: Merge CI fixes from sagemath/sage
         run: |

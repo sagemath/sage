@@ -481,6 +481,10 @@ if [ -n "$SAGE_BROWSER" ]; then
     export BROWSER="$SAGE_BROWSER"
 fi
 
+# Let interrupts cancel OpenMP parallel loops, e.g. in M4RI. The OpenMP
+# runtime only reads this at startup.
+export OMP_CANCELLATION="${OMP_CANCELLATION:-true}"
+
 ############ compilation flags
 
 # Setting Sage-related compilation flags.

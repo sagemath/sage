@@ -100,7 +100,7 @@ except Exception:
     '''
     pari_version = cc.run(
       pari_version_code,
-      args: ['-v'],
+      args: ['-v', '-D_POSIX_C_SOURCE=200112L'],
       name: 'pari version',
       dependencies: [pari],
       required: true,
@@ -195,11 +195,14 @@ png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
 # We actually want >= 20250122, but the version number is not updated in the pkgconfig
 # https://github.com/conda-forge/eclib-feedstock/issues/48
-# To old versions of eclib don't ship a pkg-config file, so this should be rather safe
+# Later releases change scalar and the modular-symbols API used by our bindings.
+# Use the bundled version until the bindings support that API.
 ec = dependency(
   'eclib',
-  version: '>=20231211',
+  version: ['>=20231211', '<=20250627'],
   required: get_option('eclib'),
+  # The fallback requires PARI, which is unavailable in our Windows build.
+  allow_fallback: not is_windows,
   disabler: true,
 )
 ecm = cc.find_library('ecm', required: false, disabler: true)
@@ -287,11 +290,6 @@ add_project_arguments('-X embedsignature=True', language: 'cython')
 add_project_arguments('--embed-positions', language: 'cython')
 add_project_arguments('-X fast_getattr=True', language: 'cython')
 #add_project_arguments('-X language_level="3"', language : 'cython')
-add_project_arguments('-X legacy_implicit_noexcept=True', language: 'cython')
-add_project_arguments(
-  '-X preliminary_late_includes_cy28=True',
-  language: 'cython',
-)
 
 inc_cpython = include_directories('sage/cpython')
 inc_rings = include_directories('sage/rings')

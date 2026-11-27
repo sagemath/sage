@@ -528,9 +528,9 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
 
     The treewidth of a 2-dimensional grid is its smallest side::
 
-        sage: graphs.Grid2dGraph(2,5).treewidth()
+        sage: graphs.Grid2dGraph(2, 5).treewidth()
         2
-        sage: graphs.Grid2dGraph(3,5).treewidth()
+        sage: graphs.Grid2dGraph(3, 5).treewidth()
         3
 
     When parameter ``kmin`` is specified, the method searches for a
@@ -586,7 +586,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: g = graphs.PathGraph(10)
         sage: td = g.treewidth(certificate=True)
         sage: for bag in td:
-        ....:    g.delete_edges(list(combinations(bag,2)))
+        ....:    g.delete_edges(list(combinations(bag, 2)))
         sage: g.size()
         0
 
@@ -595,13 +595,13 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         sage: g = Graph()
         sage: for i in range(3):
         ....:     for j in range(2):
-        ....:         g.add_path([i,(i,j),(i+1)%3])
+        ....:         g.add_path([i, (i, j), (i + 1) % 3])
         sage: g.treewidth()
         2
 
     The decomposition is a tree (:issue:`23546`)::
 
-        sage: g = Graph({0:[1,2], 3:[4,5]})
+        sage: g = Graph({0: [1, 2], 3: [4, 5]})
         sage: t = g.treewidth(certificate=True)
         sage: t.is_tree()
         True

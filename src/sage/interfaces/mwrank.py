@@ -1,5 +1,14 @@
+# sage.doctest: needs eclib
 r"""
 Interface to mwrank
+
+TESTS:
+
+The module now raises a deprecation warning::
+
+    sage: import sage.interfaces.mwrank
+    ...DeprecationWarning...
+
 """
 
 # ****************************************************************************
@@ -22,6 +31,9 @@ import re
 import weakref
 
 from sage.interfaces.expect import Expect
+from sage.misc.superseded import deprecation
+
+deprecation(41990, "the pexpect interface to the mwrank program is deprecated, please use the library interface (sage.libs.eclib) instead")
 
 instances = {}
 
