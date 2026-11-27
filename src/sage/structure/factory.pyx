@@ -436,6 +436,43 @@ cdef class UniqueFactory(SageObject):
             pass
         return obj
 
+    cpdef cached_object(self, key):
+        """
+        Return the object stored in the cache for ``key``, or ``None``.
+
+        Unlike calling the factory, this never creates an object: it
+        performs a single lookup in the cache. The key is used as is,
+        without normalisation through :meth:`create_key`, and a key that
+        is unhashable (hence possibly cached in transformed form by
+        :meth:`get_object`) gives ``None``.
+
+        This allows time-critical code to probe the cache directly and
+        fall back to an ordinary factory call on a cache miss, skipping
+        the generic ``__call__``/``create_key``/``get_object`` machinery
+        when the object already exists; see
+        :func:`sage.rings.finite_rings.integer_mod.Mod` (:issue:`36518`).
+
+        EXAMPLES::
+
+            sage: from sage.structure.test_factory import test_factory
+            sage: a = test_factory(36518, 'cached'); a
+            Making object (36518, 'cached')
+            <sage.structure.test_factory.A object at ...>
+            sage: test_factory.cached_object((36518, 'cached')) is a
+            True
+
+        A miss, including an unhashable key, gives ``None``::
+
+            sage: test_factory.cached_object((36518, 'nothing')) is None
+            True
+            sage: test_factory.cached_object([36518]) is None
+            True
+        """
+        try:
+            return self._cache[self.get_version(sage_version), key]
+        except (KeyError, TypeError):
+            return None
+
     cpdef get_version(self, sage_version):
         """
         This is provided to allow more or less granular control over
