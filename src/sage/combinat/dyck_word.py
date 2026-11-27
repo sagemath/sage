@@ -2452,6 +2452,109 @@ class DyckWord_complete(DyckWord):
         res.append(returns.index(cut - 1))
         return res
 
+    def to_kupisch_series(self) -> list:
+        r"""
+        Return the Kupisch series of the Nakayama algebra corresponding
+        to ``self``.
+
+        A Nakayama algebra `A` whose quiver is the linear quiver with
+        vertices `0, 1, \ldots, n` is determined by its *Kupisch series*
+        `[c_0, c_1, \ldots, c_n]`, where `c_i` is the dimension of the
+        indecomposable projective module `e_i A`. A sequence of positive
+        integers is the Kupisch series of a connected such algebra if and
+        only if `c_n = 1` and `2 \leq c_i \leq c_{i+1} + 1` for `i < n`.
+
+        Dyck paths of semilength `n` are in bijection with these algebras:
+        the Dyck path with area sequence `[a_1, a_2, \ldots, a_n]`
+        corresponds to the algebra with Kupisch series
+        `[a_n + 2, a_{n-1} + 2, \ldots, a_1 + 2, 1]`. This is the
+        convention of `FindStat
+        <https://www.findstat.org/CollectionsDatabase/DyckPaths/NakayamaAlgebras/>`_.
+        The reversed Dyck path (see :meth:`reverse`) corresponds to the
+        opposite algebra.
+
+        .. SEEALSO::
+
+            :meth:`to_cokupisch_series`,
+            :meth:`~sage.combinat.dyck_word.CompleteDyckWords.from_kupisch_series`
+
+        EXAMPLES::
+
+            sage: DyckWord([]).to_kupisch_series()
+            [1]
+            sage: DyckWord([1, 0]).to_kupisch_series()
+            [2, 1]
+            sage: DyckWord([1, 1, 0, 0]).to_kupisch_series()
+            [3, 2, 1]
+            sage: DyckWord([1, 0, 1, 0, 1, 0]).to_kupisch_series()
+            [2, 2, 2, 1]
+            sage: DyckWord([1, 1, 0, 0, 1, 0]).to_kupisch_series()
+            [2, 3, 2, 1]
+            sage: DyckWord([1, 1, 0, 1, 1, 0, 0, 1, 0, 0]).to_kupisch_series()
+            [3, 4, 3, 3, 2, 1]
+
+        TESTS::
+
+            sage: all(DyckWords().from_kupisch_series(dw.to_kupisch_series()) == dw
+            ....:     for i in range(7) for dw in DyckWords(i))
+            True
+        """
+        return [a + 2 for a in reversed(self.to_area_sequence())] + [1]
+
+    def to_cokupisch_series(self) -> list:
+        r"""
+        Return the co-Kupisch series of the Nakayama algebra corresponding
+        to ``self``.
+
+        The *co-Kupisch series* of a Nakayama algebra `A` whose quiver is
+        the linear quiver with vertices `0, 1, \ldots, n` is
+        `[d_0, d_1, \ldots, d_n]`, where `d_i` is the dimension of the
+        indecomposable injective module `D(A e_i)`. A sequence of positive
+        integers is the co-Kupisch series of a connected such algebra if
+        and only if `d_0 = 1` and `2 \leq d_i \leq d_{i-1} + 1` for `i > 0`.
+
+        The algebra corresponding to ``self`` is the one whose Kupisch
+        series is :meth:`to_kupisch_series`. Its co-Kupisch series is the
+        Kupisch series of the opposite algebra, read backwards, so it is
+        obtained from the area sequence `[b_1, \ldots, b_n]` of the
+        reversed Dyck path as `[1, b_1 + 2, \ldots, b_n + 2]`.
+
+        .. SEEALSO::
+
+            :meth:`to_kupisch_series`,
+            :meth:`~sage.combinat.dyck_word.CompleteDyckWords.from_cokupisch_series`
+
+        EXAMPLES::
+
+            sage: DyckWord([]).to_cokupisch_series()
+            [1]
+            sage: DyckWord([1, 0]).to_cokupisch_series()
+            [1, 2]
+            sage: DyckWord([1, 1, 0, 0]).to_cokupisch_series()
+            [1, 2, 3]
+            sage: DyckWord([1, 1, 0, 0, 1, 0]).to_cokupisch_series()
+            [1, 2, 2, 3]
+            sage: DyckWord([1, 1, 0, 1, 1, 0, 0, 1, 0, 0]).to_cokupisch_series()
+            [1, 2, 3, 3, 4, 3]
+
+        TESTS:
+
+        The dimension of `D(A e_i)` is the number of indecomposable
+        projective modules `e_j A` having the simple module at `i` as a
+        composition factor, that is, with `j \leq i \leq j + c_j - 1`::
+
+            sage: def cokupisch(c):
+            ....:     return [sum(1 for j in range(i + 1) if j + c[j] - 1 >= i)
+            ....:             for i in range(len(c))]
+            sage: all(dw.to_cokupisch_series() == cokupisch(dw.to_kupisch_series())
+            ....:     for i in range(7) for dw in DyckWords(i))
+            True
+            sage: all(DyckWords().from_cokupisch_series(dw.to_cokupisch_series()) == dw
+            ....:     for i in range(7) for dw in DyckWords(i))
+            True
+        """
+        return [1] + [b + 2 for b in self.reverse().to_area_sequence()]
+
     @combinatorial_map(name="To Ordered tree")
     def to_ordered_tree(self):
         r"""
@@ -3887,6 +3990,96 @@ class CompleteDyckWords(DyckWords):
             dyck_word.append(open_symbol)
         dyck_word.extend([close_symbol] * (2 * len(code) - len(dyck_word)))
         return self.element_class(self, dyck_word)
+
+    def from_kupisch_series(self, kupisch) -> DyckWord:
+        r"""
+        Return the Dyck word corresponding to the Nakayama algebra with
+        Kupisch series ``kupisch``.
+
+        This is the inverse of :meth:`DyckWord_complete.to_kupisch_series`,
+        see there for the definitions and the convention.
+
+        INPUT:
+
+        - ``kupisch`` -- list of positive integers `[c_0, \ldots, c_n]` with
+          `c_n = 1` and `2 \leq c_i \leq c_{i+1} + 1` for `i < n`
+
+        EXAMPLES::
+
+            sage: DyckWords().from_kupisch_series([1])
+            []
+            sage: DyckWords().from_kupisch_series([2, 1])
+            [1, 0]
+            sage: DyckWords().from_kupisch_series([2, 3, 2, 1])
+            [1, 1, 0, 0, 1, 0]
+            sage: DyckWords().from_kupisch_series([3, 4, 3, 3, 2, 1])
+            [1, 1, 0, 1, 1, 0, 0, 1, 0, 0]
+
+        TESTS::
+
+            sage: DyckWords().from_kupisch_series([])
+            Traceback (most recent call last):
+            ...
+            ValueError: [] is not the Kupisch series of a connected Nakayama algebra with linear quiver
+            sage: DyckWords().from_kupisch_series([3, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: [3, 1] is not the Kupisch series of a connected Nakayama algebra with linear quiver
+            sage: DyckWords().from_kupisch_series([2, 2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] is not the Kupisch series of a connected Nakayama algebra with linear quiver
+        """
+        c = list(kupisch)
+        if (not c or c[-1] != 1
+                or any(not 2 <= c[i] <= c[i + 1] + 1 for i in range(len(c) - 1))):
+            raise ValueError(f"{c} is not the Kupisch series of a connected "
+                             "Nakayama algebra with linear quiver")
+        return self.from_area_sequence([x - 2 for x in reversed(c[:-1])])
+
+    def from_cokupisch_series(self, cokupisch) -> DyckWord:
+        r"""
+        Return the Dyck word corresponding to the Nakayama algebra with
+        co-Kupisch series ``cokupisch``.
+
+        This is the inverse of :meth:`DyckWord_complete.to_cokupisch_series`,
+        see there and :meth:`DyckWord_complete.to_kupisch_series` for the
+        definitions and the convention.
+
+        INPUT:
+
+        - ``cokupisch`` -- list of positive integers `[d_0, \ldots, d_n]`
+          with `d_0 = 1` and `2 \leq d_i \leq d_{i-1} + 1` for `i > 0`
+
+        EXAMPLES::
+
+            sage: DyckWords().from_cokupisch_series([1])
+            []
+            sage: DyckWords().from_cokupisch_series([1, 2])
+            [1, 0]
+            sage: DyckWords().from_cokupisch_series([1, 2, 2, 3])
+            [1, 1, 0, 0, 1, 0]
+            sage: DyckWords().from_cokupisch_series([1, 2, 3, 3, 4, 3])
+            [1, 1, 0, 1, 1, 0, 0, 1, 0, 0]
+
+        TESTS::
+
+            sage: DyckWords().from_cokupisch_series([2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 1] is not the co-Kupisch series of a connected Nakayama algebra with linear quiver
+            sage: DyckWords().from_cokupisch_series([1, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 3] is not the co-Kupisch series of a connected Nakayama algebra with linear quiver
+        """
+        d = list(cokupisch)
+        if (not d or d[0] != 1
+                or any(not 2 <= d[i] <= d[i - 1] + 1 for i in range(1, len(d)))):
+            raise ValueError(f"{d} is not the co-Kupisch series of a connected "
+                             "Nakayama algebra with linear quiver")
+        reversed_path = self.from_area_sequence([x - 2 for x in d[1:]])
+        return self.element_class(self, list(reversed_path.reverse()))
 
     def from_noncrossing_partition(self, ncp) -> DyckWord:
         r"""
