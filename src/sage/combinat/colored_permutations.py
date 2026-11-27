@@ -571,9 +571,18 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             sage: S = SignedPermutations(4)
             sage: S.index_set()
             (1, 2, 3, 4)
+
+        The groups of rank one have one simple reflection::
+
+            sage: SignedPermutations(1).index_set()
+            (1,)
+            sage: ColoredPermutations(3, 1).index_set()
+            (1,)
+            sage: SignedPermutations(1)([-1]).reduced_word()
+            [1]
         """
         n = self._n
-        if self._m != 1 and self._n > 1:
+        if self._m != 1 and (self._n > 1 or self._p == 1):
             n += 1
         if self._p != 1 and self._p != self._m:
             n += 1
