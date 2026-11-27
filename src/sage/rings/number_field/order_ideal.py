@@ -109,7 +109,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
     r"""
     An ideal of a not necessarily maximal order in a number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, *gens, coerce=True):
         r"""
         Ideals of not necessarily maximal orders.
 
@@ -126,12 +126,24 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
              in Number Field in t with defining polynomial x^3 - 40
             sage: I.norm()
             13
+
+        TESTS:
+
+        Make sure the constructor accepts both lists as well as arbitrary
+        arguments::
+
+            sage: R.<x> = QQ[]
+            sage: K.<t> = NumberField(x^3 - 40)
+            sage: O = K.order(t)
+            sage: I = O.ideal([13, t-1]); J = O.ideal(13, t-1)
+            sage: I == J
+            True
         """
         if not isinstance(O, sage.rings.number_field.order.Order):
             raise TypeError('not a number-field order')
 
-        if not isinstance(gens, (list, tuple)):
-            gens = [gens]
+        if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+            gens = gens[0]
 
         if coerce:
             gens = Sequence(gens, O)
@@ -381,7 +393,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     r"""
     An ideal of a not necessarily maximal order in a *quadratic* number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, *gens, coerce=True):
         r"""
         Ideals of *quadratic* orders are implemented by a specialized
         class because they have some extra features not present in
@@ -401,10 +413,10 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             True
         """
         from sage.quadratic_forms.binary_qf import BinaryQF
-        if isinstance(gens, BinaryQF):
-            gens = _gens_from_bqf(O, gens)
+        if len(gens) == 1 and isinstance(gens[0], BinaryQF):
+            gens = _gens_from_bqf(O, gens[0])
             coerce = False
-        super().__init__(O, gens, coerce=coerce)
+        super().__init__(O, *gens, coerce=coerce)
 
     def conjugate(self):
         r"""
