@@ -2,6 +2,7 @@ r"""
 Iterable of the keys of a Mapping associated with nonzero values
 """
 from collections.abc import MappingView, Sequence, Set
+from collections.abc import Iterator
 
 
 class SupportView(MappingView, Sequence, Set):
@@ -95,7 +96,7 @@ class SupportView(MappingView, Sequence, Set):
                 return key
         raise IndexError
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         TESTS::
 

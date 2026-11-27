@@ -64,6 +64,7 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 import operator
 from collections import OrderedDict
 
@@ -77,6 +78,10 @@ from sage.structure.parent import Parent
 from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def _compare_formal_sums(self_data, other_data, zero, op) -> bool:
@@ -196,7 +201,7 @@ class FormalSum(ModuleElement):
             except (IndexError, KeyError) as msg:
                 raise TypeError("%s\nInvalid formal sum" % msg)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         EXAMPLES::
 

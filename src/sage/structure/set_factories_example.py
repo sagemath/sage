@@ -31,6 +31,7 @@ where `(a, b)\in S`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.set_factories import (
@@ -40,6 +41,10 @@ from sage.sets.family import LazyFamily
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 from sage.misc.lazy_attribute import lazy_attribute
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 MAX = 5
 
@@ -357,7 +362,7 @@ class PairsX_(ParentWithSetFactory, UniqueRepresentation):
         if x != self._x:
             raise ValueError("Wrong first coordinate")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         TESTS::
 
@@ -515,7 +520,7 @@ class SingletonPair(ParentWithSetFactory, UniqueRepresentation):
         if el.value != self._xy:
             raise ValueError("Wrong coordinate")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         TESTS::
 
