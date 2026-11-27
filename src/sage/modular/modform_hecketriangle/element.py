@@ -37,8 +37,8 @@ class FormsElement(FormsRingElement):
 
         OUTPUT:
 
-        A (Hecke) modular form element corresponding to the given rational function
-        with the given parent space.
+        A (Hecke) modular form element corresponding to the given
+        rational function with the given parent space.
 
         EXAMPLES::
 
@@ -77,7 +77,7 @@ class FormsElement(FormsRingElement):
             try:
                 self.coordinate_vector()
             except TypeError:
-                raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
+                raise ValueError(f"{rat} does not correspond to an element of {parent}")
 
     def _repr_(self) -> str:
         """
@@ -95,9 +95,7 @@ class FormsElement(FormsRingElement):
 
         return self._qexp_repr()
 
-    # This function is just listed here to emphasize the choice used
-    # for the latex representation of ``self``
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 
@@ -180,26 +178,24 @@ class FormsElement(FormsRingElement):
         """
         return self.parent().ambient_coordinate_vector(self)
 
-    def lseries(self, num_prec=None, max_imaginary_part=0, max_asymp_coeffs=40):
+    def lseries(self, num_prec=53, max_imaginary_part=0):
         r"""
         Return the `L`-series of ``self`` if ``self`` is modular and holomorphic.
 
-        This relies on the (pari) based function ``Dokchitser``.
+        This relies on the implementation in PARI.
 
         INPUT:
 
-        - ``num_prec`` -- integer denoting the to-be-used numerical precision.
-          If integer ``num_prec=None`` (default) the default
-          numerical precision of the parent of ``self`` is used.
+        - ``num_prec`` -- integer (default: 53); giving the required precision
 
         - ``max_imaginary_part`` -- a real number (default: 0), indicating up
           to which imaginary part the `L`-series is going to be studied
 
-        - ``max_asymp_coeffs`` -- integer (default: 40)
+        - ``max_asymp_coeffs`` -- ignored
 
         OUTPUT:
 
-        An interface to Tim Dokchitser's program for computing `L`-series, namely
+        An interface to PARI functions for computing `L`-series, namely
         the series given by the Fourier coefficients of ``self``.
 
         EXAMPLES::
@@ -207,8 +203,7 @@ class FormsElement(FormsRingElement):
             sage: from sage.modular.modform.eis_series import eisenstein_series_lseries
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: f = ModularForms(n=3, k=4).E4()/240
-            sage: L = f.lseries()
-            sage: L
+            sage: L = f.lseries(); L
             L-series associated to the modular form 1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + O(q^5)
             sage: L.conductor
             1
@@ -261,7 +256,7 @@ class FormsElement(FormsRingElement):
             -13.0290184579...
 
             sage: # long time
-            sage: f = (ModularForms(n=17, k=24).Delta()^2)
+            sage: f = ModularForms(n=17, k=24).Delta()^2
             sage: L = f.lseries()
             sage: L.check_functional_equation() < 2^(-50)
             True
@@ -285,64 +280,50 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -23.9781792831...
         """
-        from sage.rings.integer_ring import ZZ
-        from sage.symbolic.constants import pi
-        from sage.misc.functional import sqrt
-        from sage.lfunctions.dokchitser import Dokchitser
+        from sage.rings.integer import Integer
+        from sage.lfunctions.pari import lfun_generic, LFunction
+        from sage.libs.pari import pari
 
-        if (not (self.is_modular() and self.is_holomorphic()) or self.weight() == 0):
-            raise NotImplementedError("L-series are only implemented for non-trivial holomorphic modular forms.")
-
-        if num_prec is None:
-            num_prec = self.parent().default_num_prec()
+        if (not (self.is_modular() and self.is_holomorphic())
+                or self.weight() == 0):
+            raise NotImplementedError("L-series are only implemented for "
+                                      "non-trivial holomorphic modular forms")
 
         conductor = self.group().lam()**2
         if self.group().is_arithmetic():
-            conductor = ZZ(conductor)
+            conductor = Integer(conductor)
         else:
-            conductor = conductor.n(num_prec)
-
-        gammaV = [0, 1]
-        weight = self.weight()
-        eps = self.ep()
-
-        # L^*(s) = cor_factor * (2*pi)^(-s)gamma(s)*L(f,s),
-        cor_factor = (2 * sqrt(pi)).n(num_prec)
+            minpoly = conductor.minpoly()._pari_init_()
+            # conductor is 4 cos(2 i pi / 2n)^2
+            # how to pick up the correct real root ?
+            pari_conductor = pari(f"()->polrootsreal({minpoly}, [0,4])[1]")
+            # conductor in a number field with real embedding or in AA
+            # TODO : pass this to PARI as a zero-arity enclosure ()->
+            conductor = pari_conductor  # conductor.n(num_prec)
 
         if self.is_cuspidal():
             poles = []
             residues = []
         else:
-            poles = [weight]
-            val_inf = self.q_expansion_fixed_d(prec=1, d_num_prec=num_prec)[0]
-            residue = eps * val_inf * cor_factor
+            poles = 0   # automatic, instead of [weight]
+            residues = [None]
 
-            # (pari) BUG?
-            # The residue of the above L^*(s) differs by a factor -1 from
-            # the residue pari expects (?!?).
-            residue *= -1
+        Lpari = lfun_generic(conductor=conductor,
+                             gammaV=[0, 1],
+                             weight=self.weight(),
+                             eps=self.ep(),
+                             poles=poles,
+                             residues=residues)
+        L = LFunction(Lpari, prec=num_prec, max_im=max_imaginary_part)
+        nterms = Integer(L.cost())
+        an_list = list(self.q_expansion_vector(min_exp=0,
+                                               max_exp=nterms + 1,
+                                               fix_d=True))
+        Lpari.init_coeffs(an_list[1:])
+        L = LFunction(Lpari, prec=num_prec, max_im=max_imaginary_part)
+        is_good = L.check_functional_equation()
+        assert is_good < 1e-10, is_good
 
-            residues = [residue]
-
-        L = Dokchitser(conductor=conductor,
-                       gammaV=gammaV,
-                       weight=weight,
-                       eps=eps,
-                       poles=poles,
-                       residues=residues,
-                       prec=num_prec)
-
-        # TODO for later: Figure out the correct coefficient growth and do L.set_coeff_growth(...)
-
-        # n_coeffs = L.cost()
-        n_coeffs = L.cost(1.2)
-        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=n_coeffs + 1, fix_d=True))
-        pari_precode = "coeff = {};".format(coeff_vector)
-
-        L.init_coeffs(v="coeff[k+1]", pari_precode=pari_precode,
-                      max_imaginary_part=max_imaginary_part,
-                      max_asymp_coeffs=max_asymp_coeffs)
-        L.check_functional_equation()
-        L.rename("L-series associated to the {} form {}".format("cusp" if self.is_cuspidal() else "modular", self))
-
+        mf = "cusp" if self.is_cuspidal() else "modular"
+        L.rename(f"L-series associated to the {mf} form {self}")
         return L
