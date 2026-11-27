@@ -262,7 +262,9 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             message="SPKG_TYPE"
             m4_case(SPKG_SOURCE, [none], [], [dnl
                 dnl Non-dummy optional/experimental package, advertise how to install
-                message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG version $SPKG_VERSION"
+                AS_CASE(["$SPKG_VERSION"],
+                    [none], [message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG"],
+                            [message="$message, use \"$srcdir/configure --enable-SPKG_NAME\" to install SPKG version $SPKG_VERSION"])
             ])
         ])
     ])
@@ -271,14 +273,6 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
         m4_define([in_sdist], [no])
         uninstall_message=", use \"$srcdir/configure --disable-SPKG_NAME\" to uninstall"
     ])
-    dnl Issue #29629: Temporary solution for Sage 9.1: Do not advertise installing pip packages
-    dnl using ./configure --enable-SPKG
-    m4_case(SPKG_SOURCE,
-      [pip], [dnl
-        message="SPKG_TYPE pip package; use \"./sage -i SPKG_NAME\" to install"
-        install_message="SPKG_TYPE pip package (installed)"
-        uninstall_message=
-    ])dnl
     dnl
     SAGE_PACKAGE_VERSIONS="${SAGE_PACKAGE_VERSIONS}$(printf '\nvers_')SPKG_NAME = ${SPKG_VERSION}"
     dnl
