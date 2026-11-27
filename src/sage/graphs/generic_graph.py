@@ -7609,6 +7609,20 @@ class GenericGraph(GenericGraph_pyx):
             ....:  for k in range(1, 8)]
             [0, 1, 2, 3, 4, 5, 6]
 
+        The Desrosiers-Langevin constraints of the MILP formulation are not
+        used for the pairs of vertices that contain the root, as they would
+        forbid a vertex adjacent to the root to be at depth `n - 1`. For
+        instance, the two spanning trees of `K_4` are paths, and the root is
+        an end of one of them::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: len(K4.edge_disjoint_spanning_trees(2, algorithm='MILP'))             # needs sage.numerical.mip
+            2
+            sage: D = DiGraph([(0, 1), (0, 2), (0, 3), (1, 0), (1, 3), (2, 0), (2, 1),
+            ....:              (3, 0), (3, 2)])
+            sage: len(D.edge_disjoint_spanning_trees(2, root=0, algorithm='MILP'))      # needs sage.numerical.mip
+            2
+
         The ``'Gabow'`` algorithm packs edge-disjoint spanning arborescences
         in directed graphs::
 
@@ -7820,13 +7834,16 @@ class GenericGraph(GenericGraph_pyx):
 
             # We use the Miller-Tucker-Zemlin subtour elimination constraints
             # combined with the Desrosiers-Langevin strengthening constraints
-            # (only when n is large enough to avoid corner cases). A tree uses
-            # at most one of the parallel arcs from u to v, so the sum of their
-            # variables plays the role of the variable of a simple graph.
+            # (only when n is large enough to avoid corner cases). The latter
+            # are not used for the pairs of vertices that contain the root:
+            # they would forbid a vertex adjacent to the root to be at depth
+            # n - 1 in a tree. A tree uses at most one of the parallel arcs
+            # from u to v, so the sum of their variables plays the role of the
+            # variable of a simple graph.
             for (u, v), parallel in arcs_between.items():
                 uv = p.sum(edge[a, c] for a in parallel)
                 back = arcs_between.get((v, u))
-                if n > 3 and back:
+                if n > 3 and back and root not in (u, v):
                     # DL
                     vu = p.sum(edge[a, c] for a in back)
                     p.add_constraint(pos[u, c] + (n - 1)*uv + (n - 3)*vu
@@ -19269,6 +19286,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: d4 = g.shortest_path_lengths((0,0), algorithm='Bellman-Ford_Boost')
             sage: d1 == d2 == d3 == d4                                                  # needs networkx
             True
+
+        Single-vertex graphs return a length of 0, not a path list
+        (see :issue:`43186`)::
+
+            sage: Graph(1).shortest_path_lengths(0, algorithm='Dijkstra_NetworkX')      # needs networkx
+            {0: 0}
         """
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
@@ -19286,7 +19309,7 @@ class GenericGraph(GenericGraph_pyx):
             import networkx
             # If this is not present, an error might be raised by NetworkX
             if self.n_vertices() == 1 and next(self.vertex_iterator()) == u:
-                return {u: [u]}
+                return {u: 0}
             if by_weight:
                 if self.is_directed():
                     G = networkx.DiGraph([(e[0], e[1], {'weight': weight_function(e)}) for e in self.edge_iterator()])

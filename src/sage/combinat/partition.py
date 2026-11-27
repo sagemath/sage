@@ -4375,7 +4375,7 @@ class Partition(CombinatorialElement):
         partitions).
 
         These are also known as **path sequences**, **Maya diagrams**,
-        **plus-minus diagrams**, **Comet code** [Sta-EC2]_, among others.
+        **plus-minus diagrams**, **Comet code** [EnumComb2]_, among others.
 
         OUTPUT:
 
