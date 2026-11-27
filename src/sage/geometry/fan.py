@@ -3234,10 +3234,10 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         except AttributeError:
             pass
 
-        def is_not_facet(I):
+        def is_not_facet(I) -> bool:
             return all(not (I <= f) for f in facets)
 
-        def is_in_SR(I):
+        def is_in_SR(I) -> bool:
             return all(not (I >= sr) for sr in SR)
 
         # Generators of SR are index sets I = {i1, ..., ik}

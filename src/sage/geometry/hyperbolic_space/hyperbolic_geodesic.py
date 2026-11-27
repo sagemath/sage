@@ -81,7 +81,7 @@ the same::
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from sage.functions.hyperbolic import sinh, cosh, arcsinh
+from sage.functions.hyperbolic import arcsinh, cosh, sinh
 from sage.functions.log import exp
 from sage.functions.other import real, imag
 from sage.functions.trig import arccos
@@ -163,7 +163,6 @@ class HyperbolicGeodesic(SageObject):
             sage: A._cached_geodesic
             Geodesic in UHP from I to 3/5*I + 4/5
         """
-
         M = self._model.realization_of().a_realization()
         return self.to_model(M)
 
@@ -187,7 +186,6 @@ class HyperbolicGeodesic(SageObject):
             sage: g.complete()._complete
             True
         """
-
         if self._model.is_bounded():
             return (self._start.is_boundary() and self._end.is_boundary())
         return False  # All non-bounded geodesics start life incomplete.
@@ -214,7 +212,6 @@ class HyperbolicGeodesic(SageObject):
             sage: HM.get_geodesic((0,0,1), (0, 1, sqrt(Integer(2))))
             Geodesic in HM from (0, 0, 1) to (0, 1, sqrt(2))
         """
-
         msg = "Geodesic in {0} from {1} to {2}"
         return msg.format(self._model.short_name(),
                           self._start.coordinates(),
@@ -280,7 +277,6 @@ class HyperbolicGeodesic(SageObject):
             sage: g.end()
             Point in UHP 3*I
         """
-
         return self._end
 
     def endpoints(self):
@@ -293,7 +289,6 @@ class HyperbolicGeodesic(SageObject):
             sage: g.endpoints()
             [Point in UHP I, Point in UHP 3*I]
         """
-
         return [self._start, self._end]
 
     def model(self):
@@ -337,7 +332,6 @@ class HyperbolicGeodesic(SageObject):
             sage: UHP.get_geodesic(I, 2*I).to_model('PD')
             Geodesic in PD from 0 to 1/3*I
         """
-
         if isinstance(model, str):
             model = getattr(self._model.realization_of(), model)()
         if not model.is_bounded() and self.length() == infinity:
@@ -383,7 +377,6 @@ class HyperbolicGeodesic(SageObject):
             sage: g.update_graphics(True, size = 20); g.graphics_options()
             {'color': 'blue', 'size': 20}
         """
-
         if not update:
             self._graphics_options = {}
         self._graphics_options.update(**options)
@@ -392,7 +385,7 @@ class HyperbolicGeodesic(SageObject):
     # Boolean Methods #
     ###################
 
-    def is_complete(self):
+    def is_complete(self) -> True:
         r"""
         Return ``True`` if ``self`` is a complete geodesic (that is, both
         endpoints are on the ideal boundary) and ``False`` otherwise.
@@ -438,10 +431,9 @@ class HyperbolicGeodesic(SageObject):
             sage: UHP.get_geodesic(2,5).is_complete()
             True
         """
-
         return self._complete
 
-    def is_asymptotically_parallel(self, other):
+    def is_asymptotically_parallel(self, other) -> True:
         r"""
         Return ``True`` if ``self`` and ``other`` are asymptotically
         parallel and ``False`` otherwise.
@@ -483,13 +475,12 @@ class HyperbolicGeodesic(SageObject):
             sage: g.is_asymptotically_parallel(g)
             False
         """
-
         p1, p2 = self.complete().endpoints()
         q1, q2 = other.complete().endpoints()
         return ((self != other) and ((p1 in [q1, q2]) or (p2 in [q1, q2])) and
                 self.model() is other.model())
 
-    def is_ultra_parallel(self, other):
+    def is_ultra_parallel(self, other) -> True:
         r"""
         Return ``True`` if ``self`` and ``other`` are ultra parallel
         and ``False`` otherwise.
@@ -532,12 +523,11 @@ class HyperbolicGeodesic(SageObject):
             sage: g.is_ultra_parallel(g)
             False
         """
-
         A = self.reflection_involution()
         B = other.reflection_involution()
         return (A * B).classification() == 'hyperbolic'
 
-    def is_parallel(self, other):
+    def is_parallel(self, other) -> True:
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
         ultra parallel or asymptotically parallel and ``False`` otherwise.
@@ -598,14 +588,13 @@ class HyperbolicGeodesic(SageObject):
             sage: g.is_parallel(g)
             False
         """
-
         A = self.reflection_involution()
         B = other.reflection_involution()
         return (A * B).classification() in ['parabolic', 'hyperbolic']
 
     def ideal_endpoints(self):
         r"""
-        Return the ideal endpoints in bounded models.  Raise a
+        Return the ideal endpoints in bounded models. Raise a
         :exc:`NotImplementedError` in models that are not bounded.
 
         EXAMPLES::
@@ -630,7 +619,6 @@ class HyperbolicGeodesic(SageObject):
             NotImplementedError: boundary points are not implemented in
              the HM model
         """
-
         if not self._model.is_bounded():
             errtxt = "boundary points are not implemented in the " + \
                      "{0} model".format(self._model.short_name())
@@ -730,7 +718,6 @@ class HyperbolicGeodesic(SageObject):
             sage: parent(gc.start().coordinates())
             Real Field with 53 bits of precision
         """
-
         if self._model.is_bounded():
             return self._model.get_geodesic(*self.ideal_endpoints())
 
@@ -790,7 +777,6 @@ class HyperbolicGeodesic(SageObject):
             sage: bool(moebius_transform(R.matrix(), 0) == 0)
             True
         """
-
         ri = self._cached_geodesic.reflection_involution()
         return ri.to_model(self._model)
 
@@ -833,7 +819,6 @@ class HyperbolicGeodesic(SageObject):
             ...
             ValueError: geodesics intersect; no common perpendicular exists
         """
-
         if not self.is_parallel(other):
             raise ValueError('geodesics intersect; ' +
                              'no common perpendicular exists')
@@ -855,7 +840,6 @@ class HyperbolicGeodesic(SageObject):
 
             sage: PD = HyperbolicPlane().PD()
         """
-
         if self == other:
             return self
         if self.is_parallel(other):
@@ -906,7 +890,6 @@ class HyperbolicGeodesic(SageObject):
             sage: bool(h.intersection(g)[0].coordinates() - g.midpoint().coordinates() < 10**-9)
             True
         """
-
         P = self._cached_geodesic.perpendicular_bisector()
         return P.to_model(self._model)
 
@@ -929,7 +912,6 @@ class HyperbolicGeodesic(SageObject):
             ...
             ValueError: the length must be finite
         """
-
         UHP = self._model.realization_of().a_realization()
         P = self.to_model(UHP).midpoint()
         return self._model(P)
@@ -975,7 +957,6 @@ class HyperbolicGeodesic(SageObject):
             sage: parent(_)
             Real Field with 53 bits of precision
         """
-
         return self._model.dist(self, other)
 
     def angle(self, other):
@@ -1004,7 +985,6 @@ class HyperbolicGeodesic(SageObject):
             h = PD.get_geodesic(4.0/5.0*I + 3.0/5.0, I)
             sphinx_plot(g.plot()+h.plot(color='orange'))
         """
-
         return self._cached_geodesic.angle(other)
 
     def length(self):
@@ -1017,7 +997,6 @@ class HyperbolicGeodesic(SageObject):
             sage: g.length()
             arccosh(9/4)
         """
-
         return self._model._dist_points(self._start.coordinates(),
                                         self._end.coordinates())
 
@@ -1147,7 +1126,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g.plot(boundary=False)
             Graphics object consisting of 1 graphics primitive
         """
-
         opts = {'axes': False, 'aspect_ratio': 1}
         opts.update(self.graphics_options())
         opts.update(options)
@@ -1281,7 +1259,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             ...
             ValueError: geodesics intersect; no common perpendicular exists
         """
-
         # Make sure both are in the same model
         if other._model is not self._model:
             other = other.to_model(self._model)
@@ -1434,7 +1411,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g1.intersection(g2)
             Geodesic in UHP from 3.00000000000000*I to +infinity
         """
-
         UHP = self.model()
         # Both geodesic need to be UHP geodesics for this to work
         if other.model() != UHP:
@@ -1872,7 +1848,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: h2.angle(g)
             arccos(1/3)
         """
-
         if self.is_parallel(other):
             raise ValueError("geodesics do not intersect")
 
@@ -1985,9 +1960,9 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         """
+        from sage.rings.complex_double import CDF
         from sage.structure.element import Element
         from sage.symbolic.expression import Expression
-        from sage.rings.complex_double import CDF
 
         if isinstance(a, (int, float, complex)):  # Python number
             a = CDF(a)
@@ -2093,7 +2068,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [     y - z -x*(y - z)]
             [    -x + y  (x - y)*z]
         """
-
         if p0 == infinity:
             return matrix([[0, -(p1 - p2)], [-1, p2]])
         if p1 == infinity:
@@ -2187,7 +2161,6 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
             H = h.plot(thickness=6, color='orange')
             sphinx_plot(G+H)
         """
-
         opts = {'axes': False, 'aspect_ratio': 1}
         opts.update(self.graphics_options())
         opts.update(options)
@@ -2330,8 +2303,8 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
              (-0.942533..., -1.307681..., 1.896945...),
              (-3.0, -3.0, 4.358898...)]
         """
-        from sage.plot.misc import setup_for_eval_on_grid
         from sage.arith.srange import xsrange
+        from sage.plot.misc import setup_for_eval_on_grid
 
         x = SR.var('x')
         v1, u2 = (vector(k.coordinates()) for k in self.endpoints())
@@ -2375,7 +2348,6 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
 
             sphinx_plot(HyperbolicPlane().HM().random_geodesic().plot())
         """
-
         x = SR.var('x')
         opts = self.graphics_options()
         opts.update(graphics_options)

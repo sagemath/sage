@@ -3012,7 +3012,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     __and__ = intersection
 
-    def is_equivalent(self, other):
+    def is_equivalent(self, other) -> bool:
         r"""
         Check if ``self`` is "mathematically" the same as ``other``.
 
@@ -3063,7 +3063,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             return False
         return self._PPL_cone() == other._PPL_cone()
 
-    def is_face_of(self, cone):
+    def is_face_of(self, cone) -> bool:
         r"""
         Check if ``self`` forms a face of another ``cone``.
 
@@ -3124,7 +3124,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         cone_face.add_constraints(supporting_hyperplanes)
         return cone_face == self._PPL_cone()
 
-    def is_isomorphic(self, other):
+    def is_isomorphic(self, other) -> bool:
         r"""
         Check if ``self`` is in the same `GL(n, \ZZ)`-orbit as ``other``.
 
@@ -3244,7 +3244,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             return False
         return self.rays().matrix().elementary_divisors() == [1] * self.n_rays()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is the empty set.
 
@@ -4494,7 +4494,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         return vector(ZZ, p.get_values(x, convert=ZZ, tolerance=integrality_tolerance))
 
-    def is_solid(self):
+    def is_solid(self) -> bool:
         r"""
         Check if this cone is solid.
 
@@ -4533,7 +4533,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     is_full_dimensional = is_solid
 
-    def is_proper(self):
+    def is_proper(self) -> bool:
         r"""
         Check if this cone is proper.
 
@@ -4578,7 +4578,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return (self.is_strictly_convex() and self.is_solid())
 
-    def is_full_space(self):
+    def is_full_space(self) -> bool:
         r"""
         Check if this cone is equal to its ambient vector space.
 
@@ -4675,7 +4675,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return self.linear_subspace().dimension()
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -6650,7 +6650,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=8,
         # to avoid pointless loops with r=0 or r=1
         min_rays = 2
 
-    def is_valid(K):
+    def is_valid(K) -> bool:
         r"""
         Check if the given cone is valid; that is, if its ambient
         dimension and number of rays meet the upper and lower bounds

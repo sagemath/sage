@@ -336,7 +336,7 @@ class HyperbolicIsometry(Morphism):
         """
         return self.__class__(self.domain(), self.matrix().__invert__())
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         Return ``True`` if ``self`` is the identity isometry.
 

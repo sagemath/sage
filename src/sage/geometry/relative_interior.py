@@ -214,7 +214,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         """
         return self._polyhedron
 
-    def is_universe(self):
+    def is_universe(self) -> bool:
         r"""
         Return whether ``self`` is the whole ambient space.
 
@@ -234,7 +234,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         assert not self._polyhedron.is_universe()
         return False
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return whether ``self`` is closed.
 
