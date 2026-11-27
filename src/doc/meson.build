@@ -179,7 +179,9 @@ foreach type : ['html', 'pdf']
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory + other_documents_inventory + [doc_bibliographies],
+      depends: reference_inventory + other_documents_inventory + [
+        doc_bibliographies,
+      ],
     )
     if type == 'html'
       other_documents_html += target
