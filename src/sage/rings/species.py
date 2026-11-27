@@ -2541,7 +2541,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             result += c * summand
         return result
 
-    def _compose_with_weighted_singletons(self, names, multiplicities, degrees):
+    def _compose_with_weighted_singletons(self, names, multiplicities, degrees,
+                                        include=None, exclude=None):
         r"""
         Compute the composition with
         `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \ldots)`
@@ -2700,12 +2701,20 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         left = self._compose_with_singletons(names, degrees)
         P = left.parent()
         right = P._exponential(multiplicities,
-                               list(chain.from_iterable(degrees)))
+                               list(chain.from_iterable(degrees)),
+                               include=include, exclude=exclude)
         return left.hadamard_product(right)
 
-    def __call__(self, *args):
+    def __call__(self, *args, include=None, exclude=None):
         r"""
         Substitute the arguments into ``self``.
+
+        INPUT:
+
+        - ``include`` -- list of weight variables treated as degree one
+          by the Adams operations
+        - ``exclude`` -- list of weight variables fixed by the Adams
+          operations; mutually exclusive with ``include``
 
         EXAMPLES::
 
@@ -2736,6 +2745,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2 = P(SymmetricGroup(2))
             sage: E2(q*X)
             q^2*E_2
+            sage: E2(q*X, include=[])
+            q*E_2 + (1/2*q^2-1/2*q)*X^2
+            sage: E2(q*X, exclude=[q])
+            q*E_2 + (1/2*q^2-1/2*q)*X^2
 
         TESTS::
 
@@ -2788,6 +2801,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             5
         """
         P = self.parent()
+        if include is not None and exclude is not None:
+            raise ValueError("include and exclude cannot be specified together")
         if len(args) != P._arity:
             raise ValueError("number of args must match arity of self")
         if len(set(arg.parent() for arg in args)) > 1:
@@ -2848,7 +2863,9 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 # each degree is a weak composition of the degree of F in sort i
                 FX = F._compose_with_weighted_singletons(names,
                                                          multiplicities,
-                                                         degrees)
+                                                         degrees,
+                                                         include=include,
+                                                         exclude=exclude)
                 FG = [(M(*molecules), c) for M, c in FX]
                 result += P0.sum_of_terms(FG)
         return result
@@ -3338,7 +3355,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                       * self._powersum(s, n-i)
                       for i in range(1, n)))
 
-    def _exponential(self, multiplicities, degrees):
+    def _exponential(self, multiplicities, degrees,
+                     include=None, exclude=None):
         r"""
         Return `E(\sum_i m_i X_i)` in the specified degrees.
 
@@ -3398,15 +3416,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P._exponential([1], [0]).parent()
             Polynomial species in X over Rational Field
         """
-        def stretch(c, k):
-            r"""
-            Substitute in ``c`` all variables appearing in the
-            base ring with their ``k``-th power.
-            """
-            if callable(c):
-                B = self.base_ring()
-                return c(*[g ** k for g in B.gens() if g != B.one()])
-            return c
+        from sage.combinat.sf.sfa import _raise_variables, _variables_recursive
+        degree_one = _variables_recursive(self.base_ring(),
+                                          include=include, exclude=exclude)
 
         def factor(s, c, d):
             r"""
@@ -3415,7 +3427,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             We use Proposition 2 in [Labelle2008]_.
             """
             return self.sum(~ mu.centralizer_size()
-                            * self.prod(stretch(c, k)
+                            * self.prod(_raise_variables(c, k, degree_one)
                                         * self._powersum(s, k) for k in mu)
                             for mu in Partitions(d))
 

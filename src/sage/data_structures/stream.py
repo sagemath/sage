@@ -94,6 +94,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import islice
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
@@ -104,13 +105,17 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.action import Action
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.categories.tensor import tensor
+from sage.rings.rational_field import QQ
 from sage.categories.quotient_fields import QuotientFields
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
-from sage.misc.cachefunc import cached_method
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic
+from sage.combinat.free_module import CombinatorialFreeModule_Tensor
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -256,6 +261,12 @@ class Stream:
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
+
+        This includes streams which are cached as an implementation
+        detail, notably the powers of inner streams: the cached
+        coefficients of all these streams can become stale when an
+        uninitialized stream is defined.  The implicit definition
+        machinery traverses this graph to find its dependencies.
 
         EXAMPLES::
 
@@ -913,7 +924,7 @@ class Stream_exact(Stream):
         """
         return True
 
-    def _polynomial_part(self, R):
+    def _initial_part(self, R):
         """
         Return the initial part of ``self`` as a Laurent polynomial in ``R``.
 
@@ -922,7 +933,7 @@ class Stream_exact(Stream):
             sage: from sage.data_structures.stream import Stream_exact
             sage: s = Stream_exact([2], order=-1, degree=2, constant=1)
             sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-            sage: s._polynomial_part(L._laurent_poly_ring)
+            sage: s._initial_part(L._stream_exact_ring)
             2*z^-1
         """
         v = self._approximate_order
@@ -1608,14 +1619,14 @@ class Stream_uninitialized(Stream):
             sage: len(pool.variables())
             0
         """
-        if hasattr(self, '_pool'):
-            # self._good_cache[0] is a lower bound
+        if hasattr(self, '_pool') and hasattr(self, '_good_cache'):
+            # self._good_cache is a lower bound
             if self._coefficient_ring == self._base_ring:
-                for c in self._cache[self._good_cache[0]:]:
+                for c in self._cache[self._good_cache:]:
                     if c.parent() is self._PF:
                         self._pool.del_variable(c.numerator())
             else:
-                for c in self._cache[self._good_cache[0]:]:
+                for c in self._cache[self._good_cache:]:
                     for c0 in c.coefficients():
                         if c0.parent() is self._PF:
                             self._pool.del_variable(c0.numerator())
@@ -1701,16 +1712,6 @@ class Stream_uninitialized(Stream):
         """
         assert self._target is None
 
-        for i, val in enumerate(initial_values):
-            if val:
-                self._approximate_order += i
-                self._true_order = True
-                self._cache = initial_values[i:]
-                break
-        else:
-            self._approximate_order += len(initial_values)
-            self._cache = []
-
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
         self._PF = CoefficientRing(self._base_ring)
@@ -1719,11 +1720,26 @@ class Stream_uninitialized(Stream):
             self._U = self._PF
         else:
             self._U = self._coefficient_ring.change_ring(self._PF)
+
+        # the initial values are cached, coerced into the coefficient
+        # ring, since cached coefficients are assumed to be ring
+        # elements, e.g., by _is_determined
+        for i, val in enumerate(initial_values):
+            if val:
+                self._approximate_order += i
+                self._true_order = True
+                self._cache = [self._coefficient_ring(v)
+                               for v in initial_values[i:]]
+                break
+        else:
+            self._approximate_order += len(initial_values)
+            self._cache = []
         self._pool = VariablePool(self._P)
         self._uncomputed = True
         self._eqs = equations
         self._series = series
         self._terms_of_degree = terms_of_degree
+        self._good_cache = self._compute_good_cache([self])[0]
         # currently name is used only for error messages
         if self._name is None:
             # if used for something global (e.g. an expression tree)
@@ -1733,19 +1749,15 @@ class Stream_uninitialized(Stream):
                 self._name += str(self._series.index(self))
         self._max_lookahead = max_lookahead
 
-    @lazy_attribute
     def _input_streams(self):
         r"""
-        Return the list of streams which have a cache and an implicitly
-        defined ``self`` depends on.
+        Return the cached streams on which an implicitly defined
+        ``self`` depends, computed by a fresh traversal.
 
-        ``self`` is the first stream in this list.
-
-        .. WARNING::
-
-            All caches must have been created before this is called.
-            Currently, the first invocation is via
-            :meth:`_good_cache` in :meth:`__getitem__`.
+        ``self`` is the first stream in this list.  The traversal follows
+        :meth:`input_streams` and is identity based, so cycles are safe.
+        Streams created since an earlier traversal, notably the powers of
+        an inner stream, are included.
 
         EXAMPLES:
 
@@ -1756,7 +1768,7 @@ class Stream_uninitialized(Stream):
             sage: M = Stream_map_coefficients(C, lambda c: c, True)
             sage: S = Stream_shift(M, -1)
             sage: C.define(S)
-            sage: C._input_streams == [C, M]
+            sage: C._input_streams() == [C, M]
             True
 
             sage: terms_of_degree = lambda n, R: [R.one()]
@@ -1765,11 +1777,8 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C._input_streams
-            [<sage.data_structures.stream.Stream_uninitialized object at 0x...>,
-             <sage.data_structures.stream.Stream_sub object at 0x...>,
-             <sage.data_structures.stream.Stream_add object at 0x...>,
-             <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
+            sage: len(C._input_streams())
+            4
         """
         known = [self]
         visited = [self]
@@ -1785,19 +1794,15 @@ class Stream_uninitialized(Stream):
                     known.append(y)
         return known
 
-    @lazy_attribute
-    def _good_cache(self):
+    def _compute_good_cache(self, streams):
         r"""
-        The number of coefficients in each :meth:`_input_streams` - in
-        the same order - that are free of undetermined coefficients.
+        Return the number of leading coefficients of each stream in
+        ``streams`` that are free of undetermined coefficients.
 
         This is used in :meth:`_subs_in_caches` to only substitute
-        items that may contain undetermined coefficients.
-
-        .. TODO::
-
-            It might be an better to share this across all uninitialized
-            series in one system.
+        items that may contain undetermined coefficients.  Only the
+        number for ``self`` itself, :attr:`_good_cache`, is retained
+        between substitutions.
 
         EXAMPLES::
 
@@ -1808,26 +1813,55 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C._good_cache
+            sage: C._compute_good_cache(C._input_streams())
             [0, 0, 0, 0]
             sage: C[1]
             1
-            sage: C._good_cache
+            sage: C._compute_good_cache(C._input_streams())
             [1, 0, 1, 0]
+            sage: C._good_cache
+            1
         """
         g = []
-        for c in self._input_streams:
+        for c in streams:
             if c._is_sparse:
                 vals = c._cache.values()
             else:
                 vals = c._cache
-            i = 0
-            for val in vals:
-                if val not in self._coefficient_ring:
+            # The number of determined coefficients is stored on the
+            # stream.  Substitutions never introduce variables, so the
+            # stored prefix stays determined and the walk resumes at
+            # it, instead of restarting at the first coefficient.
+            i = min(getattr(c, '_good_cache', 0), len(vals))
+            for val in islice(vals, i, None):
+                if not self._is_determined(val):
                     break
                 i += 1
+            c._good_cache = i
             g.append(i)
         return g
+
+    def _is_determined(self, val):
+        r"""
+        Return whether ``val`` is free of undetermined coefficients.
+
+        A value in an indexed free module may be constructed directly
+        from its coefficients, which can then be undetermined without
+        being coerced into the parent of the value; membership in the
+        coefficient ring is not sufficient for such values.
+
+        Values in ``self._P`` and ``self._PF`` are rejected without
+        testing membership in the coefficient ring: the failed
+        coercion underlying the membership test is expensive, and a
+        constant value in these rings is retracted to the base ring
+        by the next substitution, see :meth:`_subs_in_caches`.
+        """
+        if isinstance(val, IndexedFreeModuleElement):
+            return not any(e.parent() is self._P or e.parent() is self._PF
+                           for e in val.monomial_coefficients().values())
+        if val.parent() is self._P or val.parent() is self._PF:
+            return False
+        return val in self._coefficient_ring
 
     def __getitem__(self, n):
         """
@@ -1915,13 +1949,13 @@ class Stream_uninitialized(Stream):
         # define_implicitly
         if self._eqs is None:
             raise ValueError("stream is not yet defined")
-        if self._good_cache[0] > n - self._approximate_order:
+        if self._good_cache > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
         if self._uncomputed:
             for f in self._series:
                 f._uncomputed = False
-            while self._good_cache[0] < n - self._approximate_order + 1:
+            while self._good_cache < n - self._approximate_order + 1:
                 self._compute()
             for f in self._series:
                 f._uncomputed = True
@@ -1983,55 +2017,88 @@ class Stream_uninitialized(Stream):
                 return num.constant_coefficient() / den.constant_coefficient()
             return c
 
-        def fix_cache(j, s, ao):
+        def subs_coefficient(e):
+            """
+            Substitute in a coefficient in ``P`` or ``PF``, and
+            retract constants; leave other coefficients alone.
+            """
+            if e.parent() is self._P:
+                e = self._PF(e)
+            if e.parent() is self._PF:
+                return retract(subs(e, var, val))
+            return e
+
+        def fix_cache(good_cache, j, s, ao):
             if s._cache[ao]:
-                # TODO: perhaps, if not
-                # self._coefficient_ring.has_coerce_map_from(s._cache[ao].parent())
-                # we can be certain that there is still an
-                # undetermined coefficient -- if so, we could replace
-                # the following line for a performance improvement
-                if s._cache[ao] in self._coefficient_ring:
+                if self._is_determined(s._cache[ao]):
                     s._true_order = True
                 return False
             del s._cache[ao]
-            self._good_cache[j] -= 1
+            # the count is only decremented if the deleted entry was
+            # part of the determined prefix; the entry may also lie in
+            # the tail, having become zero by the substitution
+            if good_cache[j]:
+                good_cache[j] -= 1
             return True
 
-        for j, s in enumerate(self._input_streams):
-            m = len(s._cache) - self._good_cache[j]
-            if s._is_sparse:
-                # we traverse the cache beginning with the last
-                # element added, because only the last m elements
-                # added can contain variables
-                indices = reversed(s._cache)
-            else:
-                indices = range(-1, -m-1, -1)
-            # substitute variable and determine last good element
-            good = m
-            for i0, i in enumerate(indices):
-                c = s._cache[i]
-                if self._coefficient_ring == self._base_ring:
+        # Collect all cached streams on which ``self`` depends,
+        # following ``input_streams``; streams created since an earlier
+        # substitution, e.g. the powers of an inner series, are
+        # included.  For each of them, determine how many leading
+        # cached coefficients are already free of undetermined
+        # coefficients: only the remaining ones can contain ``var``.
+        streams = self._input_streams()
+        good_cache = self._compute_good_cache(streams)
+        try:
+            self._good_cache = good_cache[0]
+
+            for j, s in enumerate(streams):
+                m = len(s._cache) - good_cache[j]
+                if s._is_sparse:
+                    # only the last m elements added can contain
+                    # variables; we traverse them beginning with the
+                    # last one added
+                    indices = islice(reversed(s._cache), m)
+                else:
+                    indices = range(-1, -m-1, -1)
+                # substitute variable and determine last good element
+                good = m
+                for i0, i in enumerate(indices):
+                    c = s._cache[i]
                     if c.parent() == self._PF:
                         c = retract(subs(c, var, val))
                         if c.parent() is not self._base_ring:
                             good = m - i0 - 1
-                elif c.parent() == self._U:
-                    c = c.map_coefficients(lambda e: subs(e, var, val))
-                    try:
-                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
-                    except TypeError:
-                        good = m - i0 - 1
-                s._cache[i] = c
-            self._good_cache[j] += good
-            # fix approximate_order and true_order
-            ao = s._approximate_order
-            if s._is_sparse:
-                while ao in s._cache and fix_cache(j, s, ao):
-                    ao += 1
-            else:
-                while s._cache and fix_cache(j, s, 0):
-                    ao += 1
-            s._approximate_order = ao
+                    elif c.parent() == self._U:
+                        c = c.map_coefficients(lambda e: subs(e, var, val))
+                        try:
+                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                        except TypeError:
+                            good = m - i0 - 1
+                    elif isinstance(c, IndexedFreeModuleElement):
+                        # Values in other free modules, notably powersum
+                        # realizations, are constructed directly from
+                        # their coefficients, which may be undetermined
+                        # without being coerced into their parent.
+                        mc = {mon: e for mon, c0 in c.monomial_coefficients().items()
+                              if (e := subs_coefficient(c0))}
+                        c = c.parent().element_class(c.parent(), mc)
+                        if any(e.parent() is self._PF for e in mc.values()):
+                            good = m - i0 - 1
+                    s._cache[i] = c
+                good_cache[j] += good
+                # fix approximate_order and true_order
+                ao = s._approximate_order
+                if s._is_sparse:
+                    while ao in s._cache and fix_cache(good_cache, j, s, ao):
+                        ao += 1
+                else:
+                    while s._cache and fix_cache(good_cache, j, s, 0):
+                        ao += 1
+                s._approximate_order = ao
+                s._good_cache = good_cache[j]
+        finally:
+            self._good_cache = good_cache[0]
 
         self._pool.del_variable(var)
 
@@ -2040,6 +2107,10 @@ class Stream_uninitialized(Stream):
         Return the equations obtained by setting the elements
         ``eq._approximate_order + offset`` equal to zero, for each
         ``eq`` in ``self._eqs``.
+
+        The search is unbounded: if no equation determines a variable
+        at any degree, this loops forever, computing ever higher
+        coefficients.
 
         EXAMPLES::
 
@@ -3236,6 +3307,138 @@ class Stream_pseudo_diff_mul(Stream_binary):
         return self._left.is_nonzero() and self._right.is_nonzero()
 
 
+def _to_powersum(f, scalar_basis, is_sparse, is_tensor=False):
+    r"""
+    Return the stream of the coefficients of ``f`` in the powersum
+    realization of their algebra, factorwise for tensor valued
+    coefficients (``is_tensor``).
+
+    The conversion reflects the base ring of the coefficients of ``f``
+    and not only the base ring of a previously chosen basis; it extends
+    the coefficient ring by denominators when the conversion to the
+    powersum basis requires it.
+
+    A coefficient which is a scalar is lifted into ``scalar_basis``, a
+    tensor of powersum bases for tensor valued coefficients, first: in
+    practice the scalar is the constant term, the one of the ring.  For
+    single sort coefficients a scalar is whatever is not a symmetric
+    function, for tensor valued coefficients whatever does not live in
+    a tensor product of algebras with basis.
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_exact, _to_powersum
+        sage: h = SymmetricFunctions(ZZ).h()
+        sage: p = SymmetricFunctions(QQ).p()
+        sage: f = Stream_exact([h[2]], order=2)
+        sage: g = _to_powersum(f, p, True)
+        sage: [g[i] for i in range(3)]
+        [0, 0, 1/2*p[1, 1] + 1/2*p[2]]
+
+        The constant term, the one of the ring, is a scalar and lifted
+        into ``scalar_basis``::
+
+        sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
+        sage: L = LazySymmetricFunctions(p)
+        sage: g = _to_powersum((-L.one() + L(p[1]))._coeff_stream, p, True)
+        sage: [g[i] for i in range(2)]
+        [-p[], p[1]]
+
+        Coefficients determined implicitly are converted when they are
+        read, so that no undetermined coefficient survives in a cache::
+
+        sage: hq = SymmetricFunctions(QQ).h()
+        sage: L = LazySymmetricFunctions(hq)
+        sage: X = L(hq[1])
+        sage: q = L(p[2])
+        sage: U = L.undefined(1)
+        sage: L.define_implicitly([U], [U-X])
+        sage: g = -L.one() + U
+        sage: [q(g)[i] for i in range(2)]
+        [-h[], 0]
+
+        Tensor valued coefficients are converted factorwise, each factor
+        in the powersum realization of its algebra::
+
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: pt = tensor([p, p])
+        sage: L = LazySymmetricFunctions(pt)
+        sage: g = -L.one() + L(tensor([s[2], s[1]]))
+        sage: h = _to_powersum(g._coeff_stream, pt, True, is_tensor=True)
+        sage: [h[i] for i in range(4)]
+        [-p[] # p[], 0, 0, 1/2*p[1, 1] # p[1] + 1/2*p[2] # p[1]]
+    """
+
+    if is_tensor:
+        def is_scalar(x):
+            # whatever does not live in a tensor product of algebras
+            return not isinstance(x.parent(), CombinatorialFreeModule_Tensor)
+
+        def powersum(P):
+            # the powersum realization of each factor of P
+            return tensor([B.realization_of().p() for B in P.tensor_factors()])
+    else:
+        def is_scalar(x):
+            # whatever is not a symmetric function
+            return not isinstance(x, SymmetricFunctionAlgebra_generic.Element)
+
+        def powersum(P):
+            return P.realization_of().p()
+
+    def convert(x):
+        if is_scalar(x):
+            # a scalar coefficient, in practice the constant term, the
+            # one of the ring, is lifted into the algebra
+            x = scalar_basis(x)
+        P = x.parent()
+        p = powersum(P)
+        try:
+            return p(x)
+        except TypeError:
+            # The conversion to the powersum basis may require
+            # denominators absent from the coefficient ring, for
+            # example from the Schur to the powersum basis over ZZ.
+            from sage.categories.pushout import pushout
+            Qx = P.change_ring(pushout(P.base_ring(), QQ))
+            return powersum(Qx)(Qx(x))
+
+    return Stream_map_coefficients(f, convert, is_sparse)
+
+
+def _assume_positive_valuation(gs, degree_f, K0=1):
+    r"""
+    Check that the streams ``gs`` are admissible inner series and
+    sharpen their approximate orders.
+
+    An inner series with a nonzero coefficient below ``K0``, the
+    degree of the identity of its parent, is only admissible when the
+    outer series has finite support ``degree_f``.  When all
+    coefficients of an inner series below ``K0`` vanish, its
+    approximate order is raised to ``K0``.
+
+    An uninitialized inner series is not checked, since reading its
+    coefficients could trigger a premature computation; its constant
+    term is read when the coefficients of the composition are read.
+
+    Return whether a nonzero coefficient below ``K0`` was found, so
+    that the caller can bound the degrees of the outer series by
+    ``degree_f``.
+    """
+    nonzero = False
+    for g in gs:
+        if not g.is_uninitialized() and g._approximate_order < K0:
+            if any(g[i] for i in range(g._approximate_order, K0)):
+                if degree_f is None:
+                    raise ValueError(
+                        "can only compose with a series of positive valuation, "
+                        "or of valuation zero if the outer series has finite "
+                        "support")
+                nonzero = True
+            else:
+                g._approximate_order = K0
+    return nonzero
+
+
 class Stream_compose(Stream_inexact):
     r"""
     Return ``f`` composed by ``g``.
@@ -3273,12 +3476,37 @@ class Stream_compose(Stream_inexact):
             sage: Phi = P([a*b^2, a^2], constant=a*b, valuation=1)
             sage: c = Stream_compose(f, Phi, True)
             sage: TestSuite(c).run()
+
+        For an outer function of finite support, an inner series of
+        valuation zero is allowed.  As for plethysm, all degrees of the
+        outer function must then contribute whenever the constant term
+        is nonzero::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: f = L([1,1])
+            sage: g = 1 + L.gen()
+            sage: h = Stream_compose(f._coeff_stream, g, True)
+            sage: [h[n] for n in range(4)]
+            [2, 1, 0, 0]
         """
         gs = g._coeff_stream
-        if gs._true_order and gs._approximate_order <= 0:
-            raise ValueError("can only compose with a series of positive valuation")
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        # the constant term of the inner series sits at the degree of
+        # the identity of its parent, which is 1 for Dirichlet series
+        # and 0 otherwise
+        K0 = g.parent().one()._coeff_stream._approximate_order + 1
+        _assume_positive_valuation([gs], self._degree_f, K0)
         self._stream = f  # a Stream object
         self._input = g  # a LazyModuleElement
+        # the 0-th power is the multiplicative identity and the 1-st the
+        # inner element itself; higher powers are created on demand
+        self._pos_powers = [g.parent().one(), g]
+        # the (-k)-th power is at index k; only created once the order
+        # of the outer stream is known to be negative
+        self._neg_powers = []
         super().__init__(is_sparse, False)
 
     def input_streams(self):
@@ -3296,8 +3524,22 @@ class Stream_compose(Stream_inexact):
             sage: c = Stream_compose(f, Psi, True)
             sage: c.input_streams() == [f, Psi._coeff_stream]
             True
+
+        Cached powers are also returned, once created.  Each returned
+        stream can contain coefficients which become stale::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: z = L.gen()
+            sage: c = Stream_compose(f, z, True)
+            sage: c[2]
+            7
+            sage: len(c.input_streams()) > 2
+            True
         """
-        return [self._stream, self._input._coeff_stream]
+        return ([self._stream]
+                + [h._coeff_stream for h in self._pos_powers[1:]]
+                + [h._coeff_stream for h in self._neg_powers[1:]])
 
     def __hash__(self):
         r"""
@@ -3369,17 +3611,6 @@ class Stream_compose(Stream_inexact):
             [0, 3, 0, 0, 16]
         """
         # this is very likely not the true order
-        if self._stream._approximate_order < 0:
-            ginv = ~self._input
-            # The constant part makes no contribution to the negative.
-            # We need this for the case so self._neg_powers[0][n] => 0.
-            self._neg_powers = [self._input.parent().zero(), ginv]
-            for i in range(1, -self._stream._approximate_order):
-                # TODO: possibly we always want a dense cache here?
-                self._neg_powers.append(self._neg_powers[-1] * ginv)
-        # placeholder None to make this 1-based.
-        self._pos_powers = [self._input.parent().one(), self._input]
-
         if self._stream._approximate_order == 0:
             # Special case for inputs whose 1 element has a positive approximate
             #   order (mainly Dirichlet series).
@@ -3388,7 +3619,7 @@ class Stream_compose(Stream_inexact):
         return self._stream._approximate_order * self._input._coeff_stream._approximate_order
 
     def get_coefficient(self, n):
-        """
+        r"""
         Return the ``n``-th coefficient of ``self``.
 
         INPUT:
@@ -3413,27 +3644,68 @@ class Stream_compose(Stream_inexact):
              4*s[]*a^8 + 9*s[]*a^7 + (11*s[] + 4*s[2, 1])*a^6
               + (-6*s[] + 4*s[1, 1])*a^5 + (-12*s[] + 4*s[2])*a^4 - 16*s[]*a^3 + 4*s[]*a^2]
 
+        An inner series of valuation zero, whose constant term
+        therefore does not vanish, is not admissible when the outer
+        series has infinite support.  For Dirichlet series the
+        constant term sits at degree 1, the degree of the identity::
+
             sage: L = LazyDirichletSeriesRing(QQ, 't')
-            sage: f = Stream_function(lambda n: n+3, True, -2)
+            sage: f = Stream_function(lambda n: n, True, 0)
             sage: g = L(lambda n: n)
-            sage: c = Stream_compose(f, g, False)
-            sage: [c[i] for i in range(-2, 5)]  # indirect doctest
-            [0, 0, 0, 10, 20, 84, 504]
+            sage: Stream_compose(f, g, False)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        An outer series of negative order uses inverse powers of the
+        inner series::
+
+            sage: a = polygen(QQ, 'a')
+            sage: P = PseudoDifferentialOperatorRing(a)
+            sage: Phi = P([1, a^2, a + a^2], constant=a, valuation=1)
+            sage: Psi = Phi^2 + Phi
+            sage: f = Stream_function(lambda n: n+3, True, -2)
+            sage: c = Stream_compose(f, Psi, True)
+            sage: [c[i] for i in range(2)]
+            [3*a^4 - 2*a^2 - 8*a + 4, -4*a^6 + 6*a^4 + 18*a^3 - 8*a - 3]
+
+        An inner stream whose order is only bounded below uses its
+        positive powers also for negative degrees::
+
+            sage: from sage.data_structures.stream import Stream_exact
+            sage: Lz = LazyLaurentSeriesRing(QQ, 'z')
+            sage: g = Lz(lambda n: 1 if n in (-2, 0) else 0, valuation=-2)
+            sage: f = Stream_exact([1, 1], order=1)
+            sage: c = Stream_compose(f, g, True)
+            sage: c.get_coefficient(-1)
+            0
         """
         fv = self._stream._approximate_order
         gv = self._input._coeff_stream._approximate_order
-        if n < 0:
-            return sum(l * self._neg_powers[-k][n]
-                       for k in range(fv, n // gv + 1)
-                       if (l := self._stream[k]))
-        # n > 0
-        while len(self._pos_powers) <= n // gv:
-            # TODO: possibly we always want a dense cache here?
+        # the degree of the constant term of the inner series, see
+        # ``__init__``
+        K0 = self._pos_powers[0]._coeff_stream._approximate_order + 1
+        if _assume_positive_valuation([self._input._coeff_stream],
+                                      self._degree_f, K0):
+            K = self._degree_f
+        else:
+            K = n // max(gv, 1) + 1
+        while len(self._pos_powers) < K:
             self._pos_powers.append(self._pos_powers[-1] * self._input)
+        if fv < 0:
+            # the negative outer degrees use inverse powers of the
+            # inner element; None is a pad, so that the (-k)-th power
+            # is at index k, and the 0-th entry is never used
+            if not self._neg_powers:
+                self._neg_powers = [None, ~self._input]
+            while len(self._neg_powers) < 1 - fv:
+                self._neg_powers.append(self._neg_powers[-1] * self._neg_powers[1])
+        # Negative outer degrees use inverse powers of the inner
+        # element, nonnegative degrees use its positive powers.
         ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                   if (l := self._stream[k]))
 
-        return ret + sum(l * self._pos_powers[k][n] for k in range(n // gv + 1)
+        return ret + sum(l * self._pos_powers[k][n] for k in range(K)
                          if (l := self._stream[k]))
 
 
@@ -3471,10 +3743,52 @@ class Stream_cauchy_compose(Stream_binary):
             sage: f = Stream_function(lambda n: 1, True, 1)
             sage: g = Stream_function(lambda n: n^2, True, 1)
             sage: h = Stream_cauchy_compose(f, g, True)
+
+        Outer functions of finite support allow inner arguments of
+        valuation zero, using the same bound as ordinary plethysm::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: f = L([1,1])
+            sage: g = 1 + L.gen()
+            sage: h = Stream_cauchy_compose(f._coeff_stream, g._coeff_stream, True)
+            sage: [h[n] for n in range(4)]
+            [2, 1, 0, 0]
         """
-        if g._true_order and g._approximate_order <= 0:
-            raise ValueError("can only compose with a series of positive valuation")
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        _assume_positive_valuation([g], self._degree_f)
+        # the k-th power of the inner stream is at index k; None is a
+        # pad, since the 0-th power is the multiplicative identity;
+        # higher powers are created on demand
+        self._pos_powers = [None, g]
+        # the (-k)-th power is at index k; only created once the order
+        # of the outer stream is known to be negative
+        self._neg_powers = []
         super().__init__(f, g, is_sparse)
+
+    def input_streams(self):
+        r"""
+        Return the left and right streams, together with the power
+        streams created for composition.
+
+        These are all the streams whose cached coefficients can become
+        stale, not only the original input streams.  In particular, new
+        streams appear after evaluating a coefficient using a power::
+
+            sage: from sage.data_structures.stream import Stream_cauchy_compose, Stream_exact
+            sage: f = Stream_exact([0, 1], order=1)
+            sage: g = Stream_exact([1], order=1)
+            sage: len(Stream_cauchy_compose(f, g, True).input_streams())
+            2
+            sage: h = Stream_cauchy_compose(f, g, True)
+            sage: h[2]
+            1
+            sage: len(h.input_streams()) > 2
+            True
+        """
+        return [self._left] + self._pos_powers[1:] + self._neg_powers[1:]
 
     @lazy_attribute
     def _approximate_order(self):
@@ -3497,17 +3811,6 @@ class Stream_cauchy_compose(Stream_binary):
             check similarities with :class:`Stream_plethysm`
         """
         # this is very likely not the true order
-        if self._left._approximate_order < 0:
-            ginv = Stream_cauchy_invert(self._right)
-            # The constant part makes no contribution to the negative.
-            # We need this for the case so self._neg_powers[0][n] => 0.
-            self._neg_powers = [Stream_zero(), ginv]
-            for i in range(1, -self._left._approximate_order):
-                # TODO: possibly we always want a dense cache here?
-                self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1], ginv, self._is_sparse))
-        # placeholder None to make this 1-based.
-        self._pos_powers = [None, self._right]
-
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
@@ -3528,27 +3831,282 @@ class Stream_cauchy_compose(Stream_binary):
             527
             sage: [h[i] for i in range(10)]  # indirect doctest
             [0, 1, 6, 28, 124, 527, 2172, 8755, 34704, 135772]
+
+        A finite-support Laurent outer also uses positive as well as
+        inverse powers of the inner series, when the latter has a
+        nonzero constant term::
+
+            sage: from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+            sage: z = LazyLaurentSeriesRing(QQ, 'z').gen()
+            sage: h = Stream_cauchy_compose((z**-1+z)._coeff_stream,
+            ....:                             (1+z)._coeff_stream, True)
+            sage: [h[n] for n in (-1,0,1,2,3,4)]
+            [0, 2, 0, 1, -1, 1]
+
+        Requesting a negative degree directly also extends the positive
+        powers first::
+
+            sage: h = Stream_cauchy_compose((z+z**2+z**3)._coeff_stream,
+            ....:                             (1+z)._coeff_stream, True)
+            sage: [h.get_coefficient(n) for n in (-1,0,1,2)]
+            [0, 3, 6, 4]
         """
         fv = self._left._approximate_order
         gv = self._right._approximate_order
-        if n < 0:
-            return ZZ.sum(l * self._neg_powers[-k][n]
-                          for k in range(fv, n // gv + 1)
-                          if (l := self._left[k]))
-        # n > 0
-        while len(self._pos_powers) <= n // gv:
-            # TODO: possibly we always want a dense cache here?
+        if _assume_positive_valuation([self._right], self._degree_f):
+            K = self._degree_f
+        else:
+            K = n // max(gv, 1) + 1
+        while len(self._pos_powers) < K:
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
                                                       self._right,
                                                       self._is_sparse))
+        if fv < 0:
+            # the negative outer degrees use inverse powers of the
+            # inner stream; None is a pad, so that the (-k)-th power
+            # is at index k, and the 0-th entry is never used
+            if not self._neg_powers:
+                self._neg_powers = [None, Stream_cauchy_invert(self._right)]
+            while len(self._neg_powers) < 1 - fv:
+                self._neg_powers.append(Stream_cauchy_mul(self._neg_powers[-1],
+                                                           self._neg_powers[1],
+                                                           self._is_sparse))
+        # Negative outer degrees use inverse powers of the inner
+        # series, nonnegative degrees use its positive powers.  The
+        # constant outer term, the 0-th power of the inner series, is
+        # the multiplicative identity.
         ret = ZZ.sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
                      if (l := self._left[k]))
+        if not n and (l := self._left[0]):
+            ret += l
 
-        if not n:
-            ret += self._left[0]
-
-        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(1, n // gv + 1)
+        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(1, K)
                             if (l := self._left[k]))
+
+
+class Stream_compose_multi(Stream_inexact):
+    r"""
+    Return ``f`` composed by the tuple ``g`` of inner series.
+
+    This is the multivariate composition `f(g_1, \dots, g_k)`.  The
+    coefficients of the outer stream ``f`` are homogeneous polynomials,
+    which are evaluated at the inner series by splitting them into
+    their monomials and reading the corresponding products of powers
+    of the inner series.
+
+    INPUT:
+
+    - ``f`` -- a :class:`Stream` whose coefficients are homogeneous
+      polynomials
+
+    - ``g`` -- a tuple of :class:`LazyModuleElement`, the inner series
+
+    - ``is_sparse`` -- boolean
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_compose_multi
+        sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+        sage: f = 1/(1-a-b)
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+        sage: [h[n] for n in range(4)]
+        [1, a + b, a^2 + 2*a*b + b^2, a^3 + 3*a^2*b + 3*a*b^2 + b^3]
+
+        sage: h = Stream_compose_multi(f._coeff_stream, (a^2, b), True)
+        sage: [h[n] for n in range(5)]
+        [1, b, a^2 + b^2, 2*a^2*b + b^3, a^4 + 3*a^2*b^2 + b^4]
+
+        An inner series of valuation 0 is only admissible when the
+        outer series has finite support::
+
+        sage: g = 1 + b
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, g), True)
+        Traceback (most recent call last):
+        ...
+        ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        sage: f2 = L([1, a])
+        sage: h = Stream_compose_multi(f2._coeff_stream, (a, g), True)
+        sage: [h[n] for n in range(4)]
+        [1, a, 0, 0]
+
+        An uninitialized inner series is admissible; its constant term
+        is read when a coefficient of the composition is computed::
+
+        sage: A = L.undefined()
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, A), True)
+        sage: A.define(1 + b)
+        sage: h[0]
+        Traceback (most recent call last):
+        ...
+        ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+
+        sage: A = L.undefined()
+        sage: h = Stream_compose_multi(f._coeff_stream, (a, A), True)
+        sage: A.define(b)
+        sage: [h[n] for n in range(3)]
+        [1, a + b, a^2 + 2*a*b + b^2]
+    """
+    def __init__(self, f, g, is_sparse):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: TestSuite(h).run()
+        """
+        gs = tuple(g)
+        self._degree_f = (f._degree
+                          if isinstance(f, Stream_exact) and not f._constant
+                          else None)
+        _assume_positive_valuation([h._coeff_stream for h in gs],
+                                  self._degree_f)
+        self._stream = f  # a Stream object
+        self._input = gs  # a tuple of LazyModuleElement
+        self._coefficient_ring = gs[0].parent()._stream_coefficient_ring
+        # the powers of the inner series, keyed by their exponent
+        # tuple; the zero exponent is the multiplicative identity and
+        # the exponents with a single 1 are the inner series
+        # themselves, higher powers are created on demand
+        zero = (0,) * len(gs)
+        self._powers = {zero: gs[0].parent().one()}
+        for i, h in enumerate(gs):
+            self._powers[zero[:i] + (1,) + zero[i+1:]] = h
+        super().__init__(is_sparse, False)
+
+    def is_uninitialized(self):
+        r"""
+        Return whether an input stream is uninitialized.
+        """
+        return (self._stream.is_uninitialized()
+                or any(h._coeff_stream.is_uninitialized()
+                       for h in self._input))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: g = Stream_compose_multi(f._coeff_stream, (a, b), False)
+            sage: h == g
+            True
+        """
+        return (isinstance(other, type(self))
+                and self._stream == other._stream
+                and self._input == other._input)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        r"""
+        Return a lower bound for the order of ``self``.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = (a+b)/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a^2, b^2), True)
+            sage: h._approximate_order
+            2
+        """
+        return (self._stream._approximate_order
+                * min(h._coeff_stream._approximate_order
+                      for h in self._input))
+
+    def _power(self, m):
+        r"""
+        Return the product of the powers of the inner series given by
+        the exponent tuple ``m``, creating it if necessary.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: L.<a, b> = LazyPowerSeriesRing(QQ)
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: h._power((2, 1))[3]
+            a^2*b
+        """
+        m = tuple(m)
+        try:
+            return self._powers[m]
+        except KeyError:
+            pass
+        i = next(i for i, e in enumerate(m) if e)
+        m0 = m[:i] + (m[i] - 1,) + m[i+1:]
+        value = self._power(m0) * self._input[i]
+        self._powers[m] = value
+        return value
+
+    def get_coefficient(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+        """
+        if _assume_positive_valuation([h._coeff_stream for h in self._input],
+                                      self._degree_f):
+            K = self._degree_f
+        else:
+            K = n // max(min(h._coeff_stream._approximate_order
+                             for h in self._input), 1) + 1
+        r = self._coefficient_ring.zero()
+        zero_exp = (0,) * len(self._input)
+        for k in range(K):
+            c = self._stream[k]
+            if not c:
+                continue
+            try:
+                monomials = c.monomial_coefficients().items()
+            except AttributeError:
+                # a scalar coefficient is the constant monomial
+                monomials = [(zero_exp, c)]
+            for m, coeff in monomials:
+                # the scalar multiplication is done in the parent of the
+                # powers, so that the coefficients of the result are
+                # homogeneous polynomials
+                r += (coeff * self._power(m))[n]
+        return r
+
+    def input_streams(self):
+        r"""
+        Return the outer stream together with the power streams of the
+        inner series.
+
+        These are all the streams whose cached coefficients can become
+        stale when an uninitialized stream is defined.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_compose_multi
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, ('a', 'b'))
+            sage: a, b = L.gens()
+            sage: f = 1/(1-a-b)
+            sage: h = Stream_compose_multi(f._coeff_stream, (a, b), True)
+            sage: h.input_streams() == ([f._coeff_stream]
+            ....:                     + [p._coeff_stream for p in (L.one(), a, b)])
+            True
+
+        Cached powers are also returned, once created::
+
+            sage: h[3]
+            a^3 + 3*a^2*b + 3*a*b^2 + b^3
+            sage: len(h.input_streams()) > 4
+            True
+        """
+        return [self._stream] + [p._coeff_stream for p in self._powers.values()]
 
 
 class Stream_plethysm(Stream_binary):
@@ -3564,8 +4122,7 @@ class Stream_plethysm(Stream_binary):
     - ``g`` -- a :class:`Stream` with positive order, unless ``f`` is
       of :class:`Stream_exact`
     - ``p`` -- the ring of powersum symmetric functions containing ``g``
-    - ``ring`` -- (default: ``None``) the ring the result
-      should be in, by default ``p``
+    - ``ring`` -- the ring the result should be in
     - ``include`` -- list of variables to be treated as degree one
       elements instead of the default degree one elements
     - ``exclude`` -- list of variables to be excluded from the
@@ -3573,7 +4130,7 @@ class Stream_plethysm(Stream_binary):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
         sage: s = SymmetricFunctions(QQ).s()
         sage: p = SymmetricFunctions(QQ).p()
@@ -3597,7 +4154,7 @@ class Stream_plethysm(Stream_binary):
     This class also handles the plethysm of an exact stream with a
     stream of order `0`::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import Stream_exact
         sage: f = Stream_exact([s[1]], order=1)
         sage: g = Stream_function(lambda n: s[n], True, 0)
@@ -3609,21 +4166,21 @@ class Stream_plethysm(Stream_binary):
 
     Check corner cases::
 
-        sage: # needs sage.modules
+
         sage: f0 = Stream_exact([p([])])
         sage: f1 = Stream_exact([p[1]], order=1)
         sage: f2 = Stream_exact([p[2]], order=2 )
         sage: f11 = Stream_exact([p[1,1]], order=2 )
-        sage: r = Stream_plethysm(f0, f1, True, p); [r[n] for n in range(3)]
+        sage: r = Stream_plethysm(f0, f1, True, p, p); [r[n] for n in range(3)]
         [p[], 0, 0]
-        sage: r = Stream_plethysm(f0, f2, True, p); [r[n] for n in range(3)]
+        sage: r = Stream_plethysm(f0, f2, True, p, p); [r[n] for n in range(3)]
         [p[], 0, 0]
-        sage: r = Stream_plethysm(f0, f11, True, p); [r[n] for n in range(3)]
+        sage: r = Stream_plethysm(f0, f11, True, p, p); [r[n] for n in range(3)]
         [p[], 0, 0]
 
     Check that degree one elements are treated in the correct way::
 
-        sage: # needs sage.modules
+
         sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]; p = SymmetricFunctions(R).p()
         sage: f_s = a1*p[1] + a2*p[2] + a11*p[1,1]
         sage: g_s = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]
@@ -3632,56 +4189,69 @@ class Stream_plethysm(Stream_binary):
         ....:                   for k in range(f_s.degree()+1)])
         sage: g = Stream_exact([g_s.restrict_degree(k)
         ....:                   for k in range(g_s.degree()+1)])
-        sage: r = Stream_plethysm(f, g, True, p)
+        sage: r = Stream_plethysm(f, g, True, p, p)
         sage: r_s == sum(r[n] for n in range(2*(r_s.degree()+1)))
         True
 
-        sage: r_s - f_s(g_s, include=[])                                                # needs sage.modules
+        sage: r_s - f_s(g_s, include=[])
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
-        sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # needs sage.modules
-        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
+        sage: r2 = Stream_plethysm(f, g, True, p, p, include=[])
+        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
     """
-    def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
+    def __init__(self, f, g, is_sparse, p, ring, include=None, exclude=None):
         r"""
         Initialize ``self``.
 
         TESTS::
 
-            sage: # needs sage.modules
-            sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
+            sage: h = Stream_plethysm(f, g, True, p, p)
+
+        Outer coefficients whose powersum expansion requires denominators
+        are converted through the fraction field::
+
+            sage: sz = SymmetricFunctions(ZZ).s()
+            sage: pz = SymmetricFunctions(ZZ).p()
+            sage: f = Stream_exact([sz[2]], order=2)
+            sage: g = Stream_exact([pz[1]], order=1)
+            sage: h = Stream_plethysm(f, g, True, pz, pz)
+            sage: h[2]
+            1/2*p[1, 1] + 1/2*p[2]
         """
-        if isinstance(f, Stream_exact):
-            self._degree_f = f._degree
-        else:
-            self._degree_f = None
+        # the outer of a plethysm is a lazy symmetric function or
+        # species, a graded series whose constant tail is zero, so
+        # every exact stream has finite support
+        self._degree_f = f._degree if isinstance(f, Stream_exact) else None
+        _assume_positive_valuation([g], self._degree_f)
 
-        if g._true_order and g._approximate_order == 0 and self._degree_f is None:
-            raise ValueError("can only compute plethysm with a series of valuation 0 for symmetric functions of finite support")
-
-        if ring is None:
-            self._basis = p
-        else:
-            self._basis = ring
+        self._basis = ring
         self._p = p
-        g = Stream_map_coefficients(g, lambda x: p(x), is_sparse)
-        self._powers = [g]  # a cache for the powers of g in the powersum basis
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
         if HopfAlgebrasWithBasis(R).TensorProducts() in p.categories():
-            self._tensor_power = len(p._sets)
-            p_f = p._sets[0]
-            f = Stream_map_coefficients(f, lambda x: p_f(x), is_sparse)
+            # a tensor basis p reaching this single sort class either
+            # composes a single sort outer, as the classical plethysm
+            # does with a tensor valued inner, or comes from
+            # Stream_plethysm_multi, whose factor plethysms have the
+            # unit of the first tensor factor as their outer stream
+            self._is_tensor = True
+            # the outer stream is single sort, the inner tensor valued
+            f = _to_powersum(f, p.tensor_factors()[0], is_sparse)
+            g = _to_powersum(g, self._basis, is_sparse, is_tensor=True)
         else:
-            self._tensor_power = None
-            f = Stream_map_coefficients(f, lambda x: p(x), is_sparse)
+            self._is_tensor = False
+            f = _to_powersum(f, p, is_sparse)
+            g = _to_powersum(g, self._basis, is_sparse)
+        self._powers = [g]  # a cache for the powers of g in the powersum basis
+        self._stretched_streams = {}
         super().__init__(f, g, is_sparse)
 
     @lazy_attribute
@@ -3691,26 +4261,22 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: p[n], True, 1)
-            sage: h = Stream_plethysm(f, f, True, p)
+            sage: h = Stream_plethysm(f, f, True, p, p)
             sage: h._approximate_order
             1
             sage: [h[i] for i in range(5)]
             [0, p[1], 2*p[2], 2*p[3], 3*p[4]]
         """
         # this is very likely not the true order
-#        if self._right._approximate_order == 0 and self._degree_f is None:
-#            raise ValueError("can only compute plethysm with a series of "
-#                             " valuation 0 for symmetric functions of finite "
-#                             " support")
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
         r"""
-        Return the ``n``-th coefficient of ``self``.
+        Return the coefficient of total degree ``n``.
 
         INPUT:
 
@@ -3718,13 +4284,13 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[[1]*n], True, 1)
-            sage: h = Stream_plethysm(f, g, True, p)
+            sage: h = Stream_plethysm(f, g, True, p, p)
             sage: s(h.get_coefficient(5))
             4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]
             sage: [s(h.get_coefficient(i)) for i in range(6)]
@@ -3734,60 +4300,84 @@ class Stream_plethysm(Stream_binary):
              2*s[1, 1, 1] + s[2, 1] + s[3],
              3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4],
              4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]]
+
+        A nonzero constant term of the inner series does not allow the
+        bound to be truncated to the queried degree::
+
+            sage: from sage.rings.lazy_series_ring import LazySymmetricFunctions
+            sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).s())
+            sage: f = L(SymmetricFunctions(QQ).s()([2,1]))
+            sage: g = L(lambda n: SymmetricFunctions(QQ).s()([n])
+            ....:       if n else SymmetricFunctions(QQ).s()([]), valuation=0)
+            sage: C = f(g)
+            sage: bounded = sum(SymmetricFunctions(QQ).s()([k]) for k in range(4))
+            sage: all(C[n] == f.symmetric_function()(bounded).homogeneous_component(n)
+            ....:     for n in range(4))
+            True
+
+        The same holds for an inner series defined implicitly: when
+        its solution has a nonzero constant term, the plethysm is not
+        defined, which only shows when a coefficient is computed::
+
+            sage: L = LazySymmetricFunctions(SymmetricFunctions(QQ).p())
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: F = L(lambda n: p[n])
+            sage: A = L.undefined()
+            sage: c = F(A)
+            sage: L.define_implicitly([A], [A - p.one() - p[1]])
+            sage: c[p.one()]
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
         """
-        if not n:  # special case of 0
-            if self._right[0]:
-                assert self._degree_f is not None, "the plethysm with a lazy symmetric function of valuation 0 is defined only for symmetric functions of finite support"
-                K = self._degree_f
-            else:
-                K = 1
+        if _assume_positive_valuation([self._right], self._degree_f):
+            K = self._degree_f
         else:
-            K = n + 1
+            K = n // max(self._right._approximate_order, 1) + 1
 
-        return sum((c * self.compute_product(n, la)
-                    for k in range(self._left._approximate_order, K)
-                    if self._left[k]  # necessary, because it might be int(0)
-                    for la, c in self._left[k]),
-                   self._basis.zero())
+        return self._basis.sum(c * self._compute_product(n, la)
+                               for k in range(self._left._approximate_order, K)
+                               if (fk := self._left[k])  # fk might be int(0)
+                               for la, c in fk)
 
-    def compute_product(self, n, la):
+    def _compute_product(self, n, la):
         r"""
         Compute the product ``p[la](self._right)`` in degree ``n``.
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.compute_product(7, Partition([2, 1])); A
+            sage: h = Stream_plethysm(f, g, True, p, p)
+            sage: A = h._compute_product(7, Partition([2, 1])); A
             1/12*p[2, 2, 1, 1, 1] + 1/4*p[2, 2, 2, 1] + 1/6*p[3, 2, 2]
              + 1/12*p[4, 1, 1, 1] + 1/4*p[4, 2, 1] + 1/6*p[4, 3]
             sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)
             True
 
-            sage: # needs sage.modules
+
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
             ....:                                   for k in range(n+1)), True, 1)
-            sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.compute_product(7, Partition([2, 1]))
+            sage: h = Stream_plethysm(f, g, True, p2, p2)
+            sage: A = h._compute_product(7, Partition([2, 1]))
             sage: B = p[2, 1](sum(g[n] for n in range(7)))
             sage: B = p2.element_class(p2, {m: c for m, c in B
             ....:                           if sum(mu.size() for mu in m) == 7})
             sage: A == B
             True
 
-            sage: # needs sage.modules
+
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
-            sage: h = Stream_plethysm(f, g, True, p)
+            sage: h = Stream_plethysm(f, g, True, p, p)
             sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
-            sage: all(h.compute_product(k, Partition([2, 2, 1]))
+            sage: all(h._compute_product(k, Partition([2, 2, 1]))
             ....:      == B.restrict_degree(k) for k in range(7))
             True
         """
@@ -3807,12 +4397,12 @@ class Stream_plethysm(Stream_binary):
         exp.reverse()
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
             # prod does not short-cut zero, therefore
-            # ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
+            # ret += prod(self._stretched(i, m)[rao * m + d]
             #             for i, m, d in zip(wgt, exp, k))
             # is expensive
             lf = []
             for i, m, d in zip(wgt, exp, k):
-                f = self.stretched_power_restrict_degree(i, m, rao * m + d)
+                f = self._stretched(i, m)[rao * m + d]
                 if not f:
                     break
                 lf.append(f)
@@ -3821,37 +4411,37 @@ class Stream_plethysm(Stream_binary):
 
         return ret
 
-    @cached_method
-    def stretched_power_restrict_degree(self, i, m, d):
+    def _stretched(self, i, m):
         r"""
-        Return the degree ``d*i`` part of ``p([i]*m)(g)`` in
-        terms of ``self._basis``.
+        Return the stream of the stretched powers ``p([i]*m)(g)``.
+
+        Its ``d``-th coefficient is the degree ``i*d`` part of
+        ``p([i]*m)(self._right)``, in terms of ``self._basis``.
 
         INPUT:
 
         - ``i``, ``m`` -- positive integers
-        - ``d`` -- integer
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_exact([s[2], s[3]], 0, 4, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
+            sage: h = Stream_plethysm(f, g, True, p, p)
+            sage: A = h._stretched(2, 3)[6]
             sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
             True
 
-            sage: # needs sage.modules
+
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
             ....:                                   for k in range(n+1)), True, 1)
-            sage: h = Stream_plethysm(f, g, True, p2)
-            sage: A = h.stretched_power_restrict_degree(2, 3, 6)
+            sage: h = Stream_plethysm(f, g, True, p2, p2)
+            sage: A = h._stretched(2, 3)[6]
             sage: B = p[2,2,2](sum(g[n] for n in range(7)))     # long time
             sage: B = p2.element_class(p2, {m: c for m, c in B  # long time
             ....:                           if sum(mu.size() for mu in m) == 12})
@@ -3860,27 +4450,29 @@ class Stream_plethysm(Stream_binary):
         """
         # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
-            # TODO: possibly we always want a dense cache here?
             self._powers.append(Stream_cauchy_mul(self._powers[-1],
                                                   self._powers[0],
                                                   self._is_sparse))
-        power_d = self._powers[m-1][d]
-        # we have to check power_d for zero because it might be an
-        # integer and not a symmetric function
-        if power_d:
-            # _raise_variables(c, i, self._degree_one) cannot vanish
-            # because i is positive and c is nonzero
-            if self._tensor_power is None:
-                terms = {mon.stretch(i):
-                         _raise_variables(c, i, self._degree_one)
-                         for mon, c in power_d}
-            else:
-                terms = {tuple(mu.stretch(i) for mu in mon):
-                         _raise_variables(c, i, self._degree_one)
-                         for mon, c in power_d}
-            return self._basis(self._p.element_class(self._p, terms))
-
-        return self._basis.zero()
+        if (i, m) not in self._stretched_streams:
+            def stretched(power_d, i=i):
+                # power_d might be an integer and not a symmetric
+                # function
+                if power_d:
+                    # _raise_variables(c, i, self._degree_one) cannot
+                    # vanish because i is positive and c is nonzero
+                    if self._is_tensor:
+                        terms = {tuple(mu.stretch(i) for mu in mon):
+                                 _raise_variables(c, i, self._degree_one)
+                                 for mon, c in power_d}
+                    else:
+                        terms = {mon.stretch(i):
+                                 _raise_variables(c, i, self._degree_one)
+                                 for mon, c in power_d}
+                    return self._basis(self._p.element_class(self._p, terms))
+                return self._basis.zero()
+            self._stretched_streams[(i, m)] = Stream_map_coefficients(
+                self._powers[m-1], stretched, self._is_sparse)
+        return self._stretched_streams[(i, m)]
 
     def input_streams(self):
         r"""
@@ -3894,19 +4486,190 @@ class Stream_plethysm(Stream_binary):
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
-            sage: h = Stream_plethysm(f, g, True, p)
-            sage: h.input_streams()
-            [<sage.data_structures.stream.Stream_map_coefficients object at ...>]
+            sage: h = Stream_plethysm(f, g, True, p, p)
+            sage: len(h.input_streams())
+            2
             sage: [h[i] for i in range(1, 5)]
             [0,
              1/2*p[1, 1] - 1/2*p[2],
              1/3*p[1, 1, 1] - 1/3*p[3],
              1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
-            sage: h.input_streams()
-            [<sage.data_structures.stream.Stream_map_coefficients object at ...>,
-             <sage.data_structures.stream.Stream_cauchy_mul object at ...>]
+            sage: len(h.input_streams()) > 3
+            True
         """
-        return self._powers
+        return [self._left] + self._powers + list(self._stretched_streams.values())
+
+
+class Stream_plethysm_multi(Stream_inexact):
+    r"""
+    Return the multisort plethysm of a tensor-valued outer stream.
+
+    For a powersum monomial ``p[mu_0] # ... # p[mu_{r-1}]``, each
+    tensor factor is composed with its corresponding argument.  These
+    factors are then multiplied, with the degrees shared between the
+    arguments by a Cauchy product.  Thus all powersum conversion,
+    stretching, degree restriction, and dependency handling is delegated
+    to :class:`Stream_plethysm`; no separate Adams convention is
+    introduced here.
+
+    INPUT:
+
+    - ``f`` -- a stream whose coefficients belong to a tensor product of
+      symmetric function algebras
+    - ``gs`` -- tuple of streams, one for each tensor factor
+    - ``is_sparse`` -- boolean
+    - ``p`` -- the powersum basis of the result algebra
+    - ``ring`` -- the basis in which the result is returned
+    - ``p_outer`` -- the tensor powersum basis of the outer coefficients
+    - ``include``, ``exclude`` -- lists of weight variables, forwarded
+      to each factor plethysm
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_exact, Stream_plethysm_multi
+        sage: p = SymmetricFunctions(QQ).p()
+        sage: X = tensor([p[1], p[[]]])
+        sage: Y = tensor([p[[]], p[1]])
+        sage: f = Stream_exact([X+Y], order=1)
+        sage: g = Stream_exact([p[1]], order=1)
+        sage: h = Stream_plethysm_multi(f, (g, g), True, p, p,
+        ....:                           p_outer=tensor([p, p]))
+        sage: [h[n] for n in range(3)]
+        [0, 2*p[1], 0]
+        sage: X = tensor([p[1], p[[]]])
+        sage: Y = tensor([p[[]], p[1]])
+        sage: gx = Stream_exact([X], order=1)
+        sage: gy = Stream_exact([Y], order=1)
+        sage: H = Stream_plethysm_multi(f, (gx, gy), True,
+        ....:                           tensor([p, p]), tensor([p, p]),
+        ....:                           p_outer=tensor([p, p]))
+        sage: H[1]
+        p[] # p[1] + p[1] # p[]
+    """
+    def __init__(self, f, gs, is_sparse, p, ring, p_outer,
+                 include=None, exclude=None):
+        r"""
+        Initialize the multisort plethysm.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_plethysm_multi
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: f = Stream_function(lambda n: tensor([p[n], p[[]]]), True, 0)
+            sage: g0 = Stream_exact([p[[]]])
+            sage: g = Stream_exact([p[1]], order=1)
+            sage: Stream_plethysm_multi(f, (g0, g), True, p, p,
+            ....:                     p_outer=tensor([p, p]))
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a series of positive valuation, or of valuation zero if the outer series has finite support
+        """
+        from sage.categories.tensor import tensor
+        gs = tuple(gs)
+        if len(gs) != len(p_outer.tensor_factors()):
+            raise ValueError("the number of arguments must match the outer tensor power")
+
+        self._degree_f = f._degree if isinstance(f, Stream_exact) else None
+        _assume_positive_valuation(list(gs), self._degree_f)
+
+        self._basis = ring
+        self._p = p
+        self._arguments = gs
+
+        self._left = _to_powersum(f, p_outer, is_sparse, is_tensor=True)
+        if HopfAlgebrasWithBasis(p.base_ring()).TensorProducts() in p.categories():
+            factor_basis = p.tensor_factors()[0]
+        else:
+            factor_basis = p
+        unit = Stream_exact([factor_basis.one()])
+        self._plethysms = tuple(
+            Stream_plethysm(unit, g, is_sparse, p, ring,
+                            include=include, exclude=exclude)
+            for g in gs)
+        super().__init__(is_sparse, False)
+
+    def is_uninitialized(self):
+        r"""
+        Return whether an input stream is uninitialized.
+        """
+        return (self._left.is_uninitialized()
+                or any(h.is_uninitialized() for h in self._plethysms))
+
+    @lazy_attribute
+    def _approximate_order(self):
+        r"""
+        Return a lower bound for the order.
+        """
+        return self._left._approximate_order * min(
+            g._approximate_order for g in self._arguments)
+
+    def get_coefficient(self, n):
+        r"""
+        Return the coefficient of total degree ``n``.
+        """
+        if _assume_positive_valuation(list(self._arguments),
+                                      self._degree_f):
+            K = self._degree_f
+        else:
+            K = n // max(min(g._approximate_order for g in self._arguments), 1) + 1
+        return self._basis.sum(c * self._compute_product(n, tuple(la), 0, {})
+                               for k in range(self._left._approximate_order, K)
+                               if (fk := self._left[k])  # fk might be int(0)
+                               for la, c in fk)
+
+    def _compute_product(self, n, la, i, cache):
+        r"""
+        Return the product of the factors ``la[i:]`` in degree ``n``.
+        """
+        key = (n, i)
+        try:
+            return cache[key]
+        except KeyError:
+            pass
+        if i == len(la):
+            value = self._basis.zero() if n else self._basis.one()
+        elif not la[i]:
+            value = self._compute_product(n, la, i + 1, cache)
+        else:
+            orders = [self._plethysms[j]._right._approximate_order * sum(la[j])
+                      for j in range(i, len(la)) if la[j]]
+            if n < sum(orders):
+                value = self._basis.zero()
+            else:
+                terms = []
+                for k in range(orders[0], n - sum(orders[1:]) + 1):
+                    left = self._plethysms[i]._compute_product(k, la[i])
+                    if not left:
+                        continue
+                    right = self._compute_product(n - k, la, i + 1, cache)
+                    if right:
+                        terms.append(left * right)
+                value = self._basis.sum(terms)
+        cache[key] = value
+        return value
+
+    def input_streams(self):
+        r"""
+        Return the outer stream and each factor plethysm.
+
+        The factor plethysms own the power and stretched power streams
+        of their arguments, which are reachable through their own
+        ``input_streams``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_plethysm_multi
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: X = tensor([p[1], p[[]]])
+            sage: Y = tensor([p[[]], p[1]])
+            sage: f = Stream_exact([X+Y], order=1)
+            sage: g = Stream_exact([p[1]], order=1)
+            sage: h = Stream_plethysm_multi(f, (g,g), True, p, p,
+            ....:                           p_outer=tensor([p, p]))
+            sage: len(h.input_streams())
+            3
+        """
+        return [self._left] + list(self._plethysms)
 
 
 #####################################################################
@@ -4032,7 +4795,7 @@ class Stream_rmul(Stream_scalar):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import (Stream_rmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()
@@ -4074,7 +4837,7 @@ class Stream_lmul(Stream_scalar):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import (Stream_lmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()
@@ -4248,10 +5011,28 @@ class Stream_cauchy_invert(Stream_unary):
             -1
             sage: [h[i] for i in range(-2, 5)]
             [0, 1, 5, 1, 0, 0, 0]
+
+        An undefined stream is not reported as a nonexistent inverse::
+
+            sage: from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            sage: L = LazyPowerSeriesRing(QQ, 'z')
+            sage: A = L.undefined()
+            sage: h = Stream_cauchy_invert(A._coeff_stream)
+            sage: h._approximate_order
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
         """
         try:
             return -self._series.order()
-        except (ValueError, RecursionError):
+        except ValueError:
+            if self._series.is_uninitialized():
+                # the order of the inverse of a series whose stream is
+                # not yet defined cannot be computed; do not mask this
+                # error as a nonexistent inverse
+                raise
+            raise ValueError("inverse does not exist")
+        except RecursionError:
             raise ValueError("inverse does not exist")
 
     @lazy_attribute

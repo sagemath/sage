@@ -3476,6 +3476,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
+            sage: p[1](0)
+            0
 
         Fixed :issue:`41257`::
 
@@ -3603,8 +3605,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                           for i in part)
         ret = p._apply_module_morphism(p(self), f, codomain=p)
         if Px is R:
-            # special case for things in the base ring
-            return next(iter(ret._monomial_coefficients.values()))
+            # special case for things in the base ring; the plethysm
+            # may be zero, so there need not be a coefficient to return
+            return next(iter(ret._monomial_coefficients.values()), R.zero())
         return Px(ret)
 
     __call__ = plethysm
