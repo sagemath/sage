@@ -100,7 +100,7 @@ except Exception:
     '''
     pari_version = cc.run(
       pari_version_code,
-      args: ['-v'],
+      args: ['-v', '-D_POSIX_C_SOURCE=200112L'],
       name: 'pari version',
       dependencies: [pari],
       required: true,
@@ -290,11 +290,6 @@ add_project_arguments('-X embedsignature=True', language: 'cython')
 add_project_arguments('--embed-positions', language: 'cython')
 add_project_arguments('-X fast_getattr=True', language: 'cython')
 #add_project_arguments('-X language_level="3"', language : 'cython')
-add_project_arguments('-X legacy_implicit_noexcept=True', language: 'cython')
-add_project_arguments(
-  '-X preliminary_late_includes_cy28=True',
-  language: 'cython',
-)
 
 inc_cpython = include_directories('sage/cpython')
 inc_rings = include_directories('sage/rings')

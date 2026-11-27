@@ -158,8 +158,10 @@ Sage example in ./lp.tex, line 573::
 Sage example in ./lp.tex, line 586::
 
   sage: matching = p.get_values(matching, convert=ZZ, tolerance=1e-3)
-  sage: sorted(e for e, b in matching.items() if b == 1)
+  sage: sol = sorted(e for e, b in matching.items() if b == 1); sol  # random - depends on HiGHS version
   [(0, 5), (1, 2), (3, 4), (6, 8), (7, 9)]
+  sage: len(sol), len({v for e in sol for v in e})
+  (5, 10)
 
 Sage example in ./lp.tex, line 665::
 

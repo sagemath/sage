@@ -2308,10 +2308,10 @@ class Bijectionist(SageObject):
 
             sage: A = B = 'abc'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
-            sage: next(bij.solutions_iterator())
+            sage: next(bij.solutions_iterator())  # random - depends on HiGHS version
             {'a': 0, 'b': 0, 'c': 1}
 
-            sage: list(bij.solutions_iterator())
+            sage: sorted(bij.solutions_iterator(), key=lambda d: tuple(sorted(d.items())))
             [{'a': 0, 'b': 0, 'c': 1},
              {'a': 0, 'b': 1, 'c': 0},
              {'a': 1, 'b': 0, 'c': 0}]
@@ -2674,14 +2674,16 @@ class _BijectionistMILP:
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
             sage: it2 = bmilp.solutions_iterator(False, [bmilp._x[('c', 1)] == 1])
-            sage: next(it)
+            sage: n1 = next(it); n1  # random - depends on HiGHS version
             {'a': 0, 'b': 0, 'c': 1}
             sage: next(it2)
             {'a': 0, 'b': 0, 'c': 1}
-            sage: next(it)
+            sage: n2 = next(it); n2  # random - depends on HiGHS version
             {'a': 0, 'b': 1, 'c': 0}
-            sage: next(it)
+            sage: n3 = next(it); n3  # random - depends on HiGHS version
             {'a': 1, 'b': 0, 'c': 0}
+            sage: sorted([n1, n2, n3], key=lambda d: tuple(sorted(d.items())))
+            [{'a': 0, 'b': 0, 'c': 1}, {'a': 0, 'b': 1, 'c': 0}, {'a': 1, 'b': 0, 'c': 0}]
         """
         i = 0  # the first unconsidered element of _solution_cache
         while True:
