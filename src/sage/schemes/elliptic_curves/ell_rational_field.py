@@ -4851,8 +4851,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         ALGORITHM:
 
-        Compares the `a_p` values modulo `l` of the elliptic curves for all
-        good primes up to the Sturm bound. See Theorem 9.21 of [St2007]_.
+        The Frey-Mazur conjecture predicts that there are no non-isogenous
+        congruences for ``l \geq 19``, and has been verified for all pairs
+        of elliptic curves up to conductor 500000 in [CF2021]_. So, if
+        ``l \geq 19`` we check if the curves are isogenous first, and if
+        additionally the curves both have conductor less than 500000 we do not
+        do any further checks. Otherwise, we compare the `a_p` values modulo
+        `l` of the elliptic curves for all good primes up to the Sturm bound.
+        See Theorem 9.21 of [St2007]_.
 
 
         EXAMPLES::
@@ -4881,7 +4887,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             # Frey-Mazur conjecture has been proven up to conductor 500000
             if N1 < 500000 and N2 < 500000:
                 return self.is_isogenous(other)
-            elif self.is_isogenous(other):
+            if self.is_isogenous(other):
                 return True
 
         bound = sturm_bound(N1.lcm(N2))
