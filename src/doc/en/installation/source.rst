@@ -198,8 +198,11 @@ To compile and install Sage in editable install, then just use:
 
   .. code-block:: console
 
-    $ uv sync --frozen --inexact --no-install-project
-    $ uv sync --frozen --inexact --no-build-isolation
+    $ uv sync --frozen --inexact --extra databases --no-install-project
+    $ uv sync --frozen --inexact --extra databases --no-build-isolation
+
+The ``databases`` extra installs the optional databases (for example,
+for elliptic curves or graphs). Leave it out if you do not need them.
 
 You can then start Sage from the command line with ``./sage``
 or run the tests with ``./sage -t``.

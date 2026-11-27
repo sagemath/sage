@@ -11,6 +11,9 @@ problems.
 It is available on the `GraphClasses.org <http://www.graphclasses.org/>`_
 website maintained by H.N. de Ridder et al.
 
+Sage uses the ISGCI snapshot distributed with the ``graph-databases`` Python
+package. Database updates are provided by new releases of that package.
+
 How to use it?
 --------------
 
@@ -375,16 +378,15 @@ Methods
 -------
 """
 
-from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
-from sage.misc.unknown import Unknown
+import os
+
 from sage.features.databases import DatabaseGraphs
 from sage.misc.cachefunc import cached_method
-
-import os
-import zipfile
-from urllib.request import urlopen
-from ssl import create_default_context as default_context
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
 # ****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -488,6 +490,7 @@ class GraphClass(SageObject, CachedRepresentation):
         inclusion_digraph = GraphClasses().inclusion_digraph()
         if inclusion_digraph.shortest_path(self._gc_id, other._gc_id):
             return True
+        from sage.misc.unknown import Unknown
         return Unknown
 
     def __eq__(self, other):
@@ -669,7 +672,7 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes.get_class(-1)
             Traceback (most recent call last):
             ...
-            ValueError: The given class id does not exist in the ISGCI database. Is the db too old ? You can update it with graph_classes.update_db().
+            ValueError: The given class id does not exist in the ISGCI database. A newer graph-databases package release may contain it.
         """
         classes = self.classes()
         if id in classes:
@@ -682,8 +685,8 @@ class GraphClasses(UniqueRepresentation):
 
             return GraphClass(name, id)
         raise ValueError("The given class id does not exist in the ISGCI "
-                         "database. Is the db too old ? You can update it "
-                         "with graph_classes.update_db().")
+                         "database. A newer graph-databases package release "
+                         "may contain it.")
 
     @cached_method
     def classes(self):
@@ -779,38 +782,16 @@ class GraphClasses(UniqueRepresentation):
 
         return inclusion_digraph
 
-    def _download_db(self):
-        r"""
-        Download the current version of the ISGCI db.
-
-        EXAMPLES::
-
-            sage: graph_classes._download_db()  # optional - internet
-        """
-        import tempfile
-        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
-        u = urlopen('https://www.graphclasses.org/data.zip',
-                    context=default_context())
-        with tempfile.NamedTemporaryFile(suffix='.zip') as f:
-            f.write(u.read())
-            z = zipfile.ZipFile(f.name)
-
-            # Save a systemwide updated copy whenever possible
-            try:
-                z.extract(_XML_FILE, data_dir)
-                z.extract(_SMALLGRAPHS_FILE, data_dir)
-            except OSError:
-                pass
-
     def _parse_db(self):
         r"""
-        Parse the ISGCI database and stores its content in ``self``.
+        Parse the packaged ISGCI database and store its content in ``self``.
 
         EXAMPLES::
 
             sage: graph_classes._parse_db()
         """
         import xml.etree.ElementTree as ET
+
         from sage.graphs.graph import Graph
 
         data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
@@ -841,26 +822,21 @@ class GraphClasses(UniqueRepresentation):
 
     def update_db(self):
         r"""
-        Update the ISGCI database by downloading the latest version from
-        internet.
+        Deprecated compatibility method; no data is downloaded or changed.
 
-        This method downloads the ISGCI database from the website
-        `GraphClasses.org <http://www.graphclasses.org/>`_. It then extracts the
-        zip file and parses its XML content. The XML file is saved in the directory
-        controlled by the :class:`DatabaseGraphs` class (usually, ``$HOME/.sage/db``).
+        Update the ``graph-databases`` Python package to obtain a newer ISGCI
+        snapshot, then restart Sage to use it.
 
         EXAMPLES::
 
-            sage: graph_classes.update_db()  # optional - internet
-            Database downloaded
+            sage: graph_classes.update_db()
+            doctest:warning...
+            DeprecationWarning: graph_classes.update_db() no longer downloads data. Update the graph-databases package and restart Sage instead.
+            See https://github.com/sagemath/sage/issues/42878 for details.
         """
-        self._download_db()
-
-        print("Database downloaded")
-
-        self.classes.clear_cache()
-        self.inclusions.clear_cache()
-        self.inclusion_digraph.clear_cache()
+        from sage.misc.superseded import deprecation
+        deprecation(42878, "graph_classes.update_db() no longer downloads data. "
+                    "Update the graph-databases package and restart Sage instead.")
 
     def _get_ISGCI(self):
         r"""
@@ -876,9 +852,8 @@ class GraphClasses(UniqueRepresentation):
 
         .. NOTE::
 
-            This method returns the data contained in the most recent ISGCI
-            database present on the computer. See :meth:`update_db` to update
-            the latter.
+            This method loads the ISGCI snapshot distributed with the
+            ``graph-databases`` Python package.
 
         EXAMPLES::
 

@@ -84,8 +84,8 @@ jobs:
       - name: Build
         run: |
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project -v
-          uv sync --frozen --inexact --no-build-isolation -v
+          uv sync --frozen --inexact --extra databases --no-install-project -v
+          uv sync --frozen --inexact --extra databases --no-build-isolation -v
 
       - name: Test
         run: |
@@ -157,8 +157,8 @@ jobs:
           # Homebrew's cypari2 formula does not supply Python 3.15 bindings.
           pari_prefix=$(brew --prefix dimpase/tap/pari)
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
-          uv sync --frozen --inexact --no-build-isolation --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
+          uv sync --frozen --inexact --extra databases --no-install-project --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
+          uv sync --frozen --inexact --extra databases --no-build-isolation --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
 
       - name: Test
         run: |
