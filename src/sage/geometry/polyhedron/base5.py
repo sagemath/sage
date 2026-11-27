@@ -325,7 +325,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-            sage: polytopes.regular_polygon(4)._test_pyramid()                          # needs sage.rings.number_field
+            sage: polytopes.regular_polygon(4)._test_pyramid()
         """
         if tester is None:
             tester = self._tester(**options)
@@ -1119,7 +1119,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
             sage: C = polytopes.hypercube(5)
             sage: S = Polyhedron([[1]])
-            sage: C.join(S).is_combinatorially_isomorphic(C.pyramid())                  # needs sage.graphs
+            sage: C.join(S).is_combinatorially_isomorphic(C.pyramid())
             True
 
             sage: P = polytopes.simplex(backend='cdd')
@@ -1803,7 +1803,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Linear transformation without specified new base ring fails in this case::
 
-            sage: M*P                                                                   # needs sage.rings.number_field
+            sage: M*P
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *:
@@ -1836,7 +1836,7 @@ class Polyhedron_base5(Polyhedron_base4):
             A 3-dimensional polyhedron in RDF^4 defined as the convex hull of 5 vertices
             sage: (1/1 * proj_mat) * b3
             A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 5 vertices
-            sage: (AA(2).sqrt() * proj_mat) * b3                                        # needs sage.rings.number_field
+            sage: (AA(2).sqrt() * proj_mat) * b3
             A 3-dimensional polyhedron in AA^4 defined as the convex hull of 5 vertices
 
         Check that zero-matrices act correctly::
@@ -2094,7 +2094,7 @@ class Polyhedron_base5(Polyhedron_base4):
               A vertex at (-1/3, 1, 1),
               A vertex at (-1/3, 1, -1),
               A vertex at (-1/3, -1, -1))
-             sage: face_trunc.face_lattice().is_isomorphic(Cube.face_lattice())         # needs sage.combinat sage.graphs
+             sage: face_trunc.face_lattice().is_isomorphic(Cube.face_lattice())
              True
 
         TESTS:
@@ -2199,7 +2199,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: stacked_hexaprism.f_vector()
             (1, 13, 22, 11, 1)
 
-            sage: hexaprism.stack(square_face, position=4)                              # needs sage.rings.number_field
+            sage: hexaprism.stack(square_face, position=4)
             Traceback (most recent call last):
             ...
             ValueError: the chosen position is too large
@@ -2323,7 +2323,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: W1 = P_4.wedge(P_4.faces(1)[0]); W1
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 6 vertices
             sage: triangular_prism = polytopes.regular_polygon(3).prism()
-            sage: W1.is_combinatorially_isomorphic(triangular_prism)                    # needs sage.graphs
+            sage: W1.is_combinatorially_isomorphic(triangular_prism)
             True
 
             sage: Q = polytopes.hypersimplex(4,2)
@@ -2355,9 +2355,9 @@ class Polyhedron_base5(Polyhedron_base4):
              A vertex at (0, 1, 1, 0, -1))
 
             sage: C_3_7 = polytopes.cyclic_polytope(3,7)
-            sage: P_6 = polytopes.regular_polygon(6)                                    # needs sage.rings.number_field
-            sage: W4 = P_6.wedge(P_6.faces(1)[0])                                       # needs sage.rings.number_field
-            sage: W4.is_combinatorially_isomorphic(C_3_7.polar())                       # needs sage.graphs sage.rings.number_field
+            sage: P_6 = polytopes.regular_polygon(6)
+            sage: W4 = P_6.wedge(P_6.faces(1)[0])
+            sage: W4.is_combinatorially_isomorphic(C_3_7.polar())
             True
 
         REFERENCES:
@@ -2529,7 +2529,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Check that :issue:`28725` is fixed::
 
-            sage: polytopes.regular_polygon(3)._test_lawrence()                         # needs sage.rings.number_field
+            sage: polytopes.regular_polygon(3)._test_lawrence()
 
         Check that :issue:`30293` is fixed::
 

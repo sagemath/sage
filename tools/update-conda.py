@@ -3,6 +3,7 @@
 
 import argparse
 import subprocess
+import sys
 import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -35,7 +36,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13", "3.14"]
+pythons = ["3.13", "3.14"]
 tags = [""]
 
 
@@ -111,7 +112,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             )
             subprocess.run(
                 [
-                    "conda-lock",
+                    # conda-lock requires virtualenv <21, unlike Sage's
+                    # development environment. Run it in its own environment.
+                    "uv", "tool", "run", "--python", sys.executable,
+                    "--from", "conda-lock", "conda-lock",
                     "--mamba",
                     "--channel",
                     "conda-forge",
@@ -133,7 +137,9 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             with open(lock_file_gen, "r+") as f:
                 content = f.read()
                 f.seek(0, 0)
-                f.write(f"name: sage{tag or '-dev'}\n{content}")
+                f.write(
+                    f"name: sage{tag or '-dev'}\n{content}"
+                )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [
@@ -174,6 +180,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
         .replace("pkg:generic/highs", "highs")
+        .replace("pkg:generic/libatomic_ops", "libatomic_ops")
         .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
@@ -304,7 +311,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     # https://github.com/sagemath/sage/pull/40679
     if platform != "win-64":
         all_requirements.remove("maxima")
-        all_requirements.add("maxima < 5.48.0")
+        all_requirements.add("maxima ==5.49.0")
         all_requirements.remove("singular")
         all_requirements.add("singular ==4.4.1.p5")
 

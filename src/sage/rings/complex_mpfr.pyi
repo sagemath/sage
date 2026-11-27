@@ -22,5 +22,5 @@ class ComplexNumber(FieldElement):
     def norm_c(self) -> RealNumber:
         ...
 
-    def _new(self) -> 'ComplexNumber':
+    def _new(self) -> ComplexNumber:
         ...

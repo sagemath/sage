@@ -1,18 +1,7 @@
 name: Build & Test using Meson
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-  workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 permissions:
   contents: read
@@ -20,7 +9,7 @@ permissions:
 jobs:
   test:
     name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os == 'ubuntu' && 'ubuntu-26.04' || format('{0}-latest', matrix.os) }}
     env:
       SEPARATELY_TESTED_FLAKY_FILES: "src/sage/libs/singular/function.pyx src/sage/rings/polynomial/plural.pyx"
 
@@ -28,23 +17,19 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'macos', 'windows']
-        python: ['3.13', '3.14']
+        python: ['3.13', '3.14']  # TODO: Add 3.15
         tests: ['all']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
           # Test only changed files
           - os: 'ubuntu'
-            python: '3.13'
+            python: '3.14'  # TODO: Change to 3.15
             tests: 'new'
           # One additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: '3.13'
+            python: '3.14'  # TODO: Change to 3.15
             editable: true
-            tests: 'all'
-          # Test for python 3.12
-          - os: 'ubuntu'
-            python: '3.12'
             tests: 'all'
 
     steps:
@@ -64,8 +49,9 @@ jobs:
           # Reset the branch to develop
           git fetch origin develop
           git reset --soft origin/develop
-          # Exclude packages that are not installed in this conda test job.
-          git restore --source=origin/develop --staged --worktree -- src/sage_docbuild src/sage_setup
+          # Exclude the package that is not installed in this conda test job.
+          # Keep src/sage_setup changes because Meson uses them at build time.
+          git restore --source=origin/develop --staged --worktree -- src/sage_docbuild
           # Show uncommitted changes
           git status
 
@@ -74,7 +60,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ matrix.python }}-linux.yml') }}
       
       - name: Setup MSVC environment
         if: runner.os == 'windows'
@@ -133,22 +119,21 @@ jobs:
         shell: bash -l {0}
         run: |
           if [[ "$RUNNER_OS" != "Windows" ]]; then
+            # Let Meson discover the compiler through the ccache wrappers.
             export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-            export CC="ccache $CC"
-            export CXX="ccache $CXX"
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
 
-          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
+          # Use --no-deps and pip check below to verify that the environment file installs all necessary dependencies
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
-        if: matrix.tests == 'all' && matrix.python == '3.12'
+        if: matrix.tests == 'all' && matrix.python == '3.14'
         run: |
           python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then

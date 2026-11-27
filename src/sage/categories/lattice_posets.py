@@ -7,6 +7,7 @@ Lattice posets
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from typing import Any
 
 from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -492,6 +493,98 @@ class LatticePosets(Category):
                     True
                 """
                 return True
+
+            def brick_coloring(self) -> dict[tuple, Any]:
+                """
+                Return the coloring of edges by join-irreducible elements.
+
+                This is defined for all congruence uniform lattices in
+                the article [Muhle2017]_.
+
+                .. SEEALSO:: :meth:`core_label_order`
+
+                EXAMPLES::
+
+                    sage: P = posets.PentagonPoset()
+                    sage: P.brick_coloring()
+                    {(0, 1): 1, (0, 2): 2, (1, 4): 2, (2, 3): 3, (3, 4): 1}
+                """
+                # precomputation for speedup
+                self._hasse_diagram._leq_storage
+
+                H = self.hasse_diagram()
+                JoinIrr_covers = [(next(H.neighbor_in_iterator(j)), j)
+                                  for j in self.join_irreducibles()]
+
+                def perspective(i, j, u, v):
+                    if self.join(j, u) == v and self.meet(j, u) == i:
+                        return True
+                    return self.join(v, i) == j and self.meet(v, i) == u
+
+                return {uv: next(j for i, j in JoinIrr_covers
+                                 if perspective(i, j, *uv))
+                        for uv in H.edges(labels=False)}
+
+            def core_label_order(self):
+                """
+                Return the core-label order of this lattice.
+
+                This is a partial order on the same underlying set
+                whose relations are determined by the canonical
+                brick-coloring of the edges of the Hasse diagram.
+                This is defined for all congruence uniform lattices in
+                the article [Muhle2017]_.
+
+                This is also known as the shard intersection order,
+                in the terminology of Reading.
+
+                .. SEEALSO:: :meth:`brick_coloring`
+
+                EXAMPLES::
+
+                    sage: P = posets.PentagonPoset()
+                    sage: Q = P.core_label_order(); Q
+                    Finite poset containing 5 elements
+                    sage: Q.relations_number()
+                    12
+                    sage: Q.is_graded()
+                    True
+
+                    sage: P = posets.TamariLattice(4)
+                    sage: PQ = posets.NoncrossingPartitions(SymmetricGroup(4))
+                    sage: P.core_label_order().is_isomorphic(PQ)
+                    True
+
+                TESTS::
+
+                    sage: P = Poset({0:[1,2]}).order_ideals_lattice(); P
+                    Finite lattice containing 5 elements
+                    sage: P.core_label_order().bottom()
+                    {}
+                """
+                from sage.combinat.posets.all import Poset
+                from sage.graphs.traversals import BFS_with_condition
+
+                color = self.brick_coloring()
+                dg = self.hasse_diagram()
+
+                dico_face = {}
+                for x in dg:
+                    x_down = self.meet([x] + dg.neighbors_in(x))
+                    dico_face[x] = set(self.interval(x_down, x))
+
+                shard_sets: dict[Any, set] = {x: set() for x in dg}
+                for x in dg:
+                    def inface(y):
+                        return y in dico_face[x]
+
+                    for w, v in BFS_with_condition(dg, x, inface,
+                                                   backward=True):
+                        shard_sets[x].add(color[(v, w)])
+
+                data = {elt: frozenset(s) for elt, s in shard_sets.items()}
+                return Poset([list(self),
+                              lambda U, V: U != V and data[U].issubset(data[V])])
 
     class Stone(CategoryWithAxiom):
         """

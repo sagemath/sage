@@ -1425,9 +1425,11 @@ class MPowerSeries(PowerSeries):
                 if self._bg_value.list()[a] != 0:
                     return a
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
-        Return ``True`` if ``self`` is nilpotent. This occurs if
+        Return ``True`` if ``self`` is nilpotent.
+
+        This occurs if
 
         - ``self`` has finite precision and positive valuation, or
         - ``self`` is constant and nilpotent in base ring.
@@ -1493,7 +1495,7 @@ class MPowerSeries(PowerSeries):
         """
         return self._value().degree()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         A multivariate power series is a unit if and only if its constant
         coefficient is a unit.
@@ -1534,7 +1536,7 @@ class MPowerSeries(PowerSeries):
         """
         raise NotImplementedError("padded_list")
 
-    def is_square(self):
+    def is_square(self) -> bool:
         """
         Method from univariate power series not yet implemented.
 

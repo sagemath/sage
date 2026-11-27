@@ -1,7 +1,7 @@
 r"""
 Interface to TIDES
 
-This module contains tools to write the .c files needed for TIDES [TIDES]_ .
+This module contains tools to write the .c files needed for TIDES [ABBR2011]_ .
 
 Tides is an integration engine based on the Taylor method. It is implemented
 as a c library. The user must translate its initial value problem (IVP) into a
@@ -35,7 +35,7 @@ REFERENCES:
 
 - [ABBR2012]_
 
-- [TIDES]_
+- [ABBR2011]_
 """
 from pathlib import Path
 
@@ -397,7 +397,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
-    later with the min_tides library [TIDES]_.
+    later with the min_tides library [ABBR2011]_.
 
 
     TESTS::
@@ -665,7 +665,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
-    later with the tides library ([TIDES]_).
+    later with the tides library ([ABBR2011]_).
 
 
     TESTS::

@@ -150,7 +150,7 @@ class Polyhedron_QQ(Polyhedron_base):
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
             ....:     return lp.polyhedron(backend=backend)
-            sage: fibonacci_knapsack(20, 12).integral_points_count()  # does not finish with preprocess=False           # needs sage.combinat
+            sage: fibonacci_knapsack(20, 12).integral_points_count()  # does not finish with preprocess=False
             33
 
         TESTS:
@@ -947,7 +947,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         Here is an example for the square::
 
-            sage: # optional - pynormaliz, needs sage.groups
+            sage: # optional - pynormaliz
             sage: p = polytopes.hypercube(2, backend='normaliz'); p
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
             sage: aut_p = p.restricted_automorphism_group(
@@ -962,9 +962,9 @@ class Polyhedron_QQ(Polyhedron_base):
         TESTS::
 
             sage: P = Polyhedron(vertices=[[1, 1]], rays=[[1, 1]])
-            sage: aut_P = P.restricted_automorphism_group(output='permutation')         # needs sage.groups
-            sage: conj_list = aut_P.conjugacy_classes_representatives()                 # needs sage.groups
-            sage: P.fixed_subpolytopes(conj_list)                                       # needs sage.groups
+            sage: aut_P = P.restricted_automorphism_group(output='permutation')
+            sage: conj_list = aut_P.conjugacy_classes_representatives()
+            sage: P.fixed_subpolytopes(conj_list)
             Traceback (most recent call last):
             ...
             NotImplementedError: unbounded polyhedra are not supported

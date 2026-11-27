@@ -56,10 +56,10 @@ class EllipticCurveHom(Morphism):
             sage: P = E.lift_x(1)
             sage: E.isogeny(P)                        # indirect doctest
             Isogeny of degree 127 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2 to Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
-            sage: E.isogeny(P, algorithm='factored')  # indirect doctest
-            Composite morphism of degree 127:
+            sage: E.isogeny(P, codomain=EllipticCurve(GF(257^2), [3,-30]), algorithm='factored')  # indirect doctest
+            Composite morphism of degree 127 = 127*1:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
-              To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 227 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
             Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
@@ -132,9 +132,7 @@ class EllipticCurveHom(Morphism):
             ret = other._composition_impl(self, other)
 
         if ret is NotImplemented:
-            from sage.schemes.elliptic_curves.hom_composite import (
-                EllipticCurveHom_composite,
-            )
+            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             ret = EllipticCurveHom_composite.from_factors([other, self])
 
         return ret
@@ -1162,7 +1160,7 @@ class EllipticCurveHom(Morphism):
         assert not self.is_separable() or th.valuation() == +1, f"th has valuation {th.valuation()} (should be +1)"
         return th
 
-    def is_normalized(self):
+    def is_normalized(self) -> bool:
         r"""
         Determine whether this morphism is a normalized isogeny.
 
@@ -1288,7 +1286,7 @@ class EllipticCurveHom(Morphism):
         """
         return self.degree() // self.inseparable_degree()
 
-    def is_separable(self):
+    def is_separable(self) -> bool:
         r"""
         Determine whether or not this morphism is a separable isogeny.
 
@@ -1367,7 +1365,7 @@ class EllipticCurveHom(Morphism):
             raise ValueError('constant zero map is not an isogeny')
         return self.inseparable_degree().is_one()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Determine whether or not this morphism is surjective.
 
@@ -1398,7 +1396,7 @@ class EllipticCurveHom(Morphism):
         """
         return bool(self.degree())
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Determine whether or not this morphism has trivial kernel.
 
@@ -1476,7 +1474,7 @@ class EllipticCurveHom(Morphism):
             return False
         return self.separable_degree().is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Check whether this elliptic-curve morphism is the zero map.
 

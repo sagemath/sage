@@ -260,7 +260,6 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             NotImplemented
         """
         if isinstance(self, EllipticCurveHom_scalar) and isinstance(other, EllipticCurveHom_scalar):
-            assert self._domain == other._domain
             return EllipticCurveHom_scalar(self._domain, self._m * other._m)
         return NotImplemented
 

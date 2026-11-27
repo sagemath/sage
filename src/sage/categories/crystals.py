@@ -1859,7 +1859,7 @@ class CrystalMorphism(Morphism):
 
         index_set = cartan_type.index_set()
         if scaling_factors is None:
-            scaling_factors = {i: 1 for i in index_set}
+            scaling_factors = dict.fromkeys(index_set, 1)
         if virtualization is None:
             virtualization = {i: (i,) for i in index_set}
         elif not isinstance(virtualization, collections.abc.Mapping):

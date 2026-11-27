@@ -10,7 +10,6 @@ document.
 Sage example in ./lp.tex, line 14::
 
   sage: set_random_seed(158888)
-  sage: sage.numerical.backends.generic_backend.default_solver = "Glpk"
 
 Sage example in ./lp.tex, line 124::
 
@@ -69,8 +68,8 @@ Sage example in ./lp.tex, line 293::
 
   sage: p.solve()
   Traceback (most recent call last):
-    ...
-  MIPSolverException: GLPK: The LP (relaxation) problem has no dual feasible solution
+  ...
+  MIPSolverException: HiGHS: Problem is unbounded
 
 Sage example in ./lp.tex, line 301::
 
@@ -82,8 +81,8 @@ Sage example in ./lp.tex, line 306::
 
   sage: p.add_constraint( p[3] >= 6 ); p.solve()
   Traceback (most recent call last):
-    ...
-  MIPSolverException: GLPK: Problem has no feasible solution
+  ...
+  MIPSolverException: HiGHS: Problem is infeasible
 
 Sage example in ./lp.tex, line 319::
 
@@ -94,8 +93,8 @@ Sage example in ./lp.tex, line 319::
   4.75
   sage: p.set_integer(p[3]); p.solve()
   Traceback (most recent call last):
-    ...
-  MIPSolverException: GLPK: Problem has no feasible solution
+  ...
+  MIPSolverException: HiGHS: Problem is infeasible
 
 Sage example in ./lp.tex, line 360::
 
@@ -159,8 +158,10 @@ Sage example in ./lp.tex, line 573::
 Sage example in ./lp.tex, line 586::
 
   sage: matching = p.get_values(matching, convert=ZZ, tolerance=1e-3)
-  sage: sorted(e for e, b in matching.items() if b == 1)
-  [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+  sage: sol = sorted(e for e, b in matching.items() if b == 1); sol  # random - depends on HiGHS version
+  [(0, 5), (1, 2), (3, 4), (6, 8), (7, 9)]
+  sage: len(sol), len({v for e in sol for v in e})
+  (5, 10)
 
 Sage example in ./lp.tex, line 665::
 

@@ -495,18 +495,26 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         initial_v_int = Gbackend.get_vertex(initial_vertex)
     else:
         initial_v_int = -1
-    sig_on()
-    extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
-    sig_off()
+    if tree:
+        # We need the predecessors for extracting tree edges
+        sig_on()
+        extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
+        sig_off()
+    else:
+        sig_on()
+        extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, NULL, NULL, NULL)
+        sig_off()
     cdef list sigma = [Gbackend.vertex_label(vi) for vi in sigma_int]
-    cdef dict predecessor = {u: sigma[i] for u, i in zip(sigma, pred) if i != -1}
+    cdef list edges
+    if tree:
+        # Build the list of edges
+        edges = [(u, sigma[i]) for u, i in zip(sigma, pred) if i != -1]
 
     if reverse:
         sigma.reverse()
 
     if tree:
         from sage.graphs.digraph import DiGraph
-        edges = predecessor.items()
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
     return sigma
@@ -1866,3 +1874,52 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     return ([int_to_vertex[alpha[u]] for u in range(N)],
             [(int_to_vertex[u], int_to_vertex[v]) for u, v in F],
             [int_to_vertex[u] for u in range(N) if X[u]])
+
+
+def BFS_with_condition(G, v, condition, backward=False):
+    """
+    Perform a breadth-first-search under condition.
+
+    This returns an iterator over edges between the
+    allowed vertices. Some of these edges are traversed forward
+    during the search, but others are yielded but not traversed
+    when the target vertex has already been met.
+
+    INPUT:
+
+    - ``G`` -- a simple DiGraph without loops
+
+    - ``v`` -- a vertex of ``G`` ; the vertex ``v`` is assumed to
+      satisfy the condition
+
+    - ``condition`` -- a condition on vertices for them to be accepted
+
+    - ``backward`` -- optional boolean (default ``False``) whether to
+      move backwards along the edges
+
+    EXAMPLES::
+
+        sage: from sage.graphs.traversals import BFS_with_condition
+        sage: dg = DiGraph([[0,1],[1,3],[0,2],[2,3]])
+        sage: list(BFS_with_condition(dg, 0, lambda x: not x % 2))
+        [(0, 2)]
+
+    .. NOTE:: This code was kindly provided by Nathann Cohen.
+    """
+    neigh = G.neighbor_in_iterator if backward else G.neighbor_out_iterator
+    good_neighbors = [u for u in neigh(v)
+                      if condition(u)]
+    seen = set([v] + good_neighbors)
+    next_layer = [(v, u) for u in good_neighbors]
+    while next_layer:
+        yield from next_layer
+        next_next_layer = []
+        for _, w in next_layer:
+            for u in neigh(w):
+                if u in seen:
+                    yield (w, u)
+                    continue
+                if condition(u):
+                    seen.add(u)
+                    next_next_layer.append((w, u))
+        next_layer = next_next_layer

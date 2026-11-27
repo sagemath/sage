@@ -85,11 +85,21 @@ cdef class Matrix(Matrix0):
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
             [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
+
+        A PARI ``t_MAT`` is a vector of columns, so a matrix with no columns
+        has nowhere to record its number of rows.  The row count is therefore
+        lost for such a matrix, while the number of columns is preserved when
+        there are no rows::
+
+            sage: matrix(GF(5), 2, 0).__pari__()                                        # needs sage.libs.pari
+            [;]
+            sage: matrix(GF(5), 0, 3).__pari__()                                        # needs sage.libs.pari
+            matrix(0,3)
         """
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
 
-    def _gap_init_(self) -> str:
+    def _gap_init_(self):
         """
         Return a string defining a GAP representation of ``self``.
 
@@ -289,7 +299,7 @@ cdef class Matrix(Matrix0):
         """
         return '{' + ', '.join(v._mathematica_init_() for v in self.rows()) + '}'
 
-    def _magma_init_(self, magma) -> str:
+    def _magma_init_(self, magma):
         r"""
         Return a string that evaluates in the given Magma session to this
         matrix.
@@ -352,24 +362,23 @@ cdef class Matrix(Matrix0):
 
         One sparse matrix::
 
+            sage: # optional - magma
             sage: M = matrix(QQ,2,2,[4,6,55,0],sparse=True)
-            sage: T = magma(M); T    # optional - magma
+            sage: T = magma(M); T
             Sparse matrix with 2 rows and 2 columns over Rational Field
-            sage: T.Determinant()    # optional - magma
+            sage: T.Determinant()
             -330
         """
         if self.is_sparse():
             R = magma(self.base_ring())
-            s = "SparseMatrix({}, {}, {}, ["
-            s = s.format(R.name(), self.nrows(), self.ncols())
-            entries = ("<{}, {}, {}>".format(ij[0] + 1, ij[1] + 1,
-                                             mij._magma_init_(magma))
-                       for ij, mij in self.dict().items())
+            s = f"SparseMatrix({R.name()}, {self._nrows}, {self._ncols}, ["
+            entries = (f"<{i + 1}, {j + 1}, {mij._magma_init_(magma)}>"
+                       for (i, j), mij in self.dict().items())
             return s + ', '.join(entries) + "])"
-        else:
-            P = magma(self.parent())
-            v = [x._magma_init_(magma) for x in self.list()]
-            return '%s![%s]' % (P.name(), ','.join(v))
+
+        P = magma(self.parent())
+        v = (x._magma_init_(magma) for x in self.list())
+        return '%s![%s]' % (P.name(), ','.join(v))
 
     def _maple_init_(self):
         """

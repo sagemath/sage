@@ -3860,3 +3860,136 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             [     -3.0*I         2.0        -2.0]
         """
         return self.transpose()._normalize_columns().transpose()
+
+    def rank(self, tol=None, hermitian=False, rtol=None):
+        r"""
+        Compute the rank of this matrix.
+
+        This method wraps :func:`numpy.linalg.matrix_rank` and
+        determines the rank of the matrix by counting its nonzero
+        singular values subject to a tolerance.
+
+        INPUT:
+
+        - ``tol`` -- float (default: ``None``); absolute threshold
+          below which SVD values are considered zero. Leave
+          unspecified for the numpy default.
+
+        - ``hermitian`` -- bool (default: ``False``); whether or not
+          to assume that this matrix is Hermitian to improve
+          performance.
+
+        - ``rtol`` -- float (default: ``None``); relative (to the
+          largest singular value) threshold below which SVD values are
+          considered zero. Mutually exclusive to ``tol``. Leave
+          unspecified for the numpy default.
+
+        OUTPUT:
+
+        A nonnegative integer.
+
+        EXAMPLES::
+
+            sage: A = matrix.identity(RDF, 4)
+            sage: A.rank()
+            4
+            sage: A.change_ring(CDF).rank()
+            4
+            sage: A[3,3] = 0.0
+            sage: A.rank()
+            3
+            sage: A.change_ring(CDF).rank()
+            3
+
+        ::
+
+            sage: A = matrix.ones(RDF, 4)
+            sage: A.rank()
+            1
+            sage: B = A.change_ring(CDF)*I
+            sage: B.rank()
+            1
+
+        TESTS:
+
+        An example from the mailing list::
+
+            sage: A = matrix([[-3, 2, 1 ],
+            ....:             [ 2,-4, 4 ],
+            ....:             [ 1, 2,-5 ]])
+            sage: B = (2 * RDF(0.5) * A)
+            sage: A.rank() == B.rank()
+            True
+
+        The example from :issue:`7392`::
+
+            sage: A = matrix(RDF, [[1.5, 1.75],
+            ....:                  [1.5, 1.75]])
+            sage: A.rank()
+            1
+            sage: B = A.change_ring(CDF)*I
+            sage: B.rank()
+            1
+
+        If its entries are nice enough, changing the ring of a small
+        random matrix over an exact field to ``RDF`` or ``CDF`` should
+        not affect its rank. This is not a theoretical guarantee and
+        depends on the implementation of the SVD, but it serves as an
+        easy smoke test::
+
+            sage: entries = [ QQ.random_element(2^5)
+            ....:             for _ in range(16) ]
+            sage: A = matrix(QQ, 4, entries)
+            sage: B = A.change_ring(RDF)
+            sage: A.rank() == B.rank()
+            True
+            sage: F = GaussianIntegers().fraction_field()
+            sage: entries = [ F.random_element(2^5, 2^5)
+            ....:             for _ in range(16) ]
+            sage: A = matrix(F, 4, entries)
+            sage: B = A.change_ring(CDF)
+            sage: A.rank() == B.rank()
+            True
+
+        A real, symmetric, positive-definite example::
+
+            sage: alpha = RDF._random_nonzero_element().abs()
+            sage: A = matrix.random(RDF, 4)
+            sage: A = A*A.T + alpha*matrix.identity(RDF, 4)
+            sage: A.is_positive_definite()
+            True
+            sage: A.rank(hermitian=True)
+            4
+
+        And a Hermitian, complex, positive-definite one::
+
+            sage: alpha = CDF._random_nonzero_element().abs()
+            sage: A = matrix.random(CDF, 4)
+            sage: A = A*A.H + alpha*matrix.identity(CDF, 4)
+            sage: A.is_positive_definite()
+            True
+            sage: A.rank(hermitian=True)
+            4
+
+        """
+        key = ("rank", tol, hermitian, rtol)
+        cached = self.fetch(key)
+        if cached is not None:
+            return cached
+
+        global numpy
+        if numpy is None:
+            import numpy
+
+        # numpy-2.4.5 and newer do not need the special case
+        # for empty matrices
+        if self._nrows == 0 or self._ncols == 0:
+            result = 0
+        else:
+            result = numpy.linalg.matrix_rank(self.numpy(),
+                                              tol=tol,
+                                              hermitian=hermitian,
+                                              rtol=rtol)
+        result = sage.rings.integer.Integer(result)
+        self.cache(key, result)
+        return result

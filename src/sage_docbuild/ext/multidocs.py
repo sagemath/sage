@@ -18,14 +18,18 @@ More precisely this extension ensures the correct merging of
 - the javascript index
 - the citations
 """
+from __future__ import annotations
 import os
 import pickle
 import shutil
 import sphinx
-from sphinx.application import Sphinx
 from sphinx.util.console import bold
 from sage.env import SAGE_DOC
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx
 
 logger = sphinx.util.logging.getLogger(__name__)
 
