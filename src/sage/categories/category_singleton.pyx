@@ -1,6 +1,7 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Singleton categories
+
+.. automethod:: sage.categories.category_singleton::Category_singleton.__classcall__
 """
 # ****************************************************************************
 #  Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
@@ -11,7 +12,6 @@ Singleton categories
 # *****************************************************************************
 from cpython.type cimport PyType_IsSubtype
 
-from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
@@ -274,10 +274,11 @@ class Category_singleton(Category):
         Most of the time, ``args`` is meant to be empty. However some
         singleton categories, in particular axiom categories of
         singleton categories, may require a constant argument.
-        ``*args`` is passed down to :meth:`__init__`, and ignored upon
+        ``*args`` is passed down to ``__init__``, and ignored upon
         later calls.
 
-        .. SEEALSO:: :class:`sage.categories.category_with_axiomCategoryWithAxiom_singleton`
+        .. SEEALSO::
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom_singleton`
 
         TESTS::
 
@@ -315,10 +316,12 @@ class Category_singleton(Category):
             ...
             AssertionError: <class '__main__.MySubStuff'> is not a direct subclass of <class 'sage.categories.category_singleton.Category_singleton'>
         """
+        from sage.misc.constant_function import ConstantFunction
+        from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
+
         if isinstance(cls, DynamicMetaclass):  # cls is something like Rings_with_category
             cls = cls.__base__
         # TODO: find a better way to check that cls is an abstract class
-        from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
         assert (cls.__mro__[1] is Category_singleton or cls.__mro__[1] is CategoryWithAxiom_singleton), \
             "{} is not a direct subclass of {}".format(cls, Category_singleton)
         obj = super().__classcall__(cls, *args)

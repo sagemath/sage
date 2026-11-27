@@ -6,7 +6,7 @@ We iterate over the elements of a finite `\ZZ`-module. The action
 of `\ZZ` must be the natural one.
 
 This class is intended to provide optimizations for the
-:meth:`sage.free_module.FreeModule_generic:__iter__` method.
+``FreeModule_generic.__iter__`` method.
 
 AUTHORS:
 
@@ -57,14 +57,14 @@ will result in improved running times::
     True
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Thomas Feulner <thomas.feulner@uni-bayreuth.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cdef class FiniteZZsubmodule_iterator:
     r"""

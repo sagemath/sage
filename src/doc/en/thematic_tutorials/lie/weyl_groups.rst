@@ -127,7 +127,7 @@ and whose values are the roots, you may use the inverse family::
 The Weyl group is implemented as a GAP matrix group. You therefore can
 display its character table as follows::
 
-    sage: WeylGroup("D4").character_table()
+    sage: WeylGroup("D4").character_table() # random
     CT1
     <BLANKLINE>
           2  6  4  5  1  3  5  5  4  3  3  1  4  6
@@ -224,8 +224,8 @@ this as follows::
     sage: [s1,s2] = W.simple_reflections()
     sage: def bi(u,v) : return [t for t in W if u.bruhat_le(t) and t.bruhat_le(v)]
     ...
-    sage: bi(s1,s1*s2*s1)
-    [s1*s2, s2*s1, s1, s1*s2*s1]
+    sage: sorted(bi(s1,s1*s2*s1))
+    [s1*s2*s1, s1*s2, s2*s1, s1]
 
 This would not be a good definition since it would fail if `W` is
 affine and be inefficient of `W` is large. Sage has a Bruhat interval

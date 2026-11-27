@@ -1,10 +1,12 @@
 py.install_sources(
   '__init__.py',
-  'all__sagemath_objects.py',
   'ccobject.h',
   'cplusplus.pxd',
   'fast_callable.pxd',
+  'fast_callable.pyx',
   'fast_eval.pxd',
+  'fast_eval.pyx',
+  'memory.pyx',
   'mod_int.h',
   'mod_int.pxd',
   'stdsage.pxd',
@@ -12,9 +14,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'fast_callable' : files('fast_callable.pyx'),
-  'fast_eval' : files('fast_eval.pyx'),
-  'memory' : files('memory.pyx'),
+  'fast_callable': files('fast_callable.pyx'),
+  'fast_eval': files('fast_eval.pyx'),
+  'memory': files('memory.pyx'),
 }
 
 foreach name, pyx : extension_data

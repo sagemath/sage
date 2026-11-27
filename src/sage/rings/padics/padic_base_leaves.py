@@ -32,8 +32,9 @@ power of `p` that this element is stored modulo::
     22
 
 The number of times that `p` divides the element is called the
-valuation, and can be accessed with the methods :meth:`valuation` and
-:meth:`ordp`:
+valuation, and can be accessed with the methods
+:meth:`~sage.rings.padics.padic_generic_element.pAdicGenericElement.valuation` and
+:meth:`~sage.rings.padics.padic_generic_element.pAdicGenericElement.ordp`:
 
     sage: a.valuation()
     2
@@ -111,8 +112,9 @@ track precision of elements.::
     1 + 2*5^2 + 5^3
 
 `p`-adic rings and fields should be created using the creation
-functions :func:`Zp` and :func:`Qp` as above.  This will ensure that there is
-only one instance of `\ZZ_p` and `\QQ_p` of a given
+functions :data:`Zp <sage.rings.padics.factory.Zp>` and
+:data:`Qp <sage.rings.padics.factory.Qp>` as above.  This will ensure that
+there is only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
 class names.::
 
@@ -186,24 +188,24 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.structure.richcmp import op_LE
-
-from .generic_nodes import pAdicFieldBaseGeneric, \
-                          pAdicCappedRelativeFieldGeneric, \
-                          pAdicRingBaseGeneric, \
-                          pAdicCappedRelativeRingGeneric, \
-                          pAdicFixedModRingGeneric, \
-                          pAdicCappedAbsoluteRingGeneric, \
-                          pAdicFloatingPointRingGeneric, \
-                          pAdicFloatingPointFieldGeneric, \
-                          pAdicLatticeGeneric, \
-                          pAdicRelaxedGeneric
-from .padic_capped_relative_element import pAdicCappedRelativeElement
-from .padic_capped_absolute_element import pAdicCappedAbsoluteElement
-from .padic_fixed_mod_element import pAdicFixedModElement
-from .padic_floating_point_element import pAdicFloatingPointElement
-
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.generic_nodes import (
+    pAdicCappedAbsoluteRingGeneric,
+    pAdicCappedRelativeFieldGeneric,
+    pAdicCappedRelativeRingGeneric,
+    pAdicFieldBaseGeneric,
+    pAdicFixedModRingGeneric,
+    pAdicFloatingPointFieldGeneric,
+    pAdicFloatingPointRingGeneric,
+    pAdicLatticeGeneric,
+    pAdicRelaxedGeneric,
+    pAdicRingBaseGeneric,
+)
+from sage.rings.padics.padic_capped_absolute_element import pAdicCappedAbsoluteElement
+from sage.rings.padics.padic_capped_relative_element import pAdicCappedRelativeElement
+from sage.rings.padics.padic_fixed_mod_element import pAdicFixedModElement
+from sage.rings.padics.padic_floating_point_element import pAdicFloatingPointElement
+from sage.structure.richcmp import op_LE
 
 
 class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGeneric):
@@ -230,7 +232,6 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCR(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -280,7 +281,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
                 return True
-            elif (R.precision_cap() == self.precision_cap() and
+            if (R.precision_cap() == self.precision_cap() and
                   self._printer.richcmp_modes(R._printer, op_LE)):
                 return True
 
@@ -328,7 +329,6 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -380,7 +380,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
         if isinstance(R, pAdicRingCappedAbsolute) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
                 return True
-            elif (R.precision_cap() == self.precision_cap() and
+            if (R.precision_cap() == self.precision_cap() and
                   self._printer.richcmp_modes(R._printer, op_LE)):
                 return True
 
@@ -442,7 +442,6 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFP(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -490,7 +489,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
         if isinstance(R, pAdicRingFloatingPoint) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():
                 return True
-            elif R.precision_cap() == self.precision_cap() and self._printer.richcmp_modes(R._printer, op_LE):
+            if R.precision_cap() == self.precision_cap() and self._printer.richcmp_modes(R._printer, op_LE):
                 return True
 
     def _convert_map_from_(self, R):
@@ -537,7 +536,6 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFM(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -596,7 +594,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
         if isinstance(R, pAdicRingFixedMod) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():
                 return True
-            elif (R.precision_cap() == self.precision_cap() and
+            if (R.precision_cap() == self.precision_cap() and
                   self._printer.richcmp_modes(R._printer, op_LE)):
                 return True
 
@@ -663,7 +661,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = Qp(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -721,7 +718,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         if isinstance(R, pAdicFieldCappedRelative) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
                 return True
-            elif (R.precision_cap() == self.precision_cap() and
+            if (R.precision_cap() == self.precision_cap() and
                   self._printer.richcmp_modes(R._printer, op_LE)):
                 return True
 
@@ -779,8 +776,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             k = ZZ.random_element()
             a = ZZ.random_element(self.prime()**self.precision_cap())
             return self(self.prime()**k * a, absprec=k + self.precision_cap())
-        else:
-            raise NotImplementedError("Don't know %s algorithm" % algorithm)
+        raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
 
 class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
@@ -807,7 +803,6 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = QpFP(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -858,7 +853,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
         if isinstance(R, (pAdicRingFixedMod, pAdicRingFloatingPoint, pAdicFieldFloatingPoint)) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():
                 return True
-            elif R.precision_cap() == self.precision_cap() and self._printer.richcmp_modes(R._printer, op_LE):
+            if R.precision_cap() == self.precision_cap() and self._printer.richcmp_modes(R._printer, op_LE):
                 return True
 
     def _convert_map_from_(self, R):
@@ -905,7 +900,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
     .. SEEALSO::
 
-        :meth:`label`
+        :meth:`~sage.rings.padics.generic_nodes.pAdicLatticeGeneric.label`
 
     EXAMPLES::
 
@@ -1004,16 +999,15 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             relcap = x.valuation(p) + self._prec_cap_relative
             prec = min(relcap, prec)
             return self._element_class(self, x, prec=prec)
+        if prec is None:
+            cap = self._prec_cap_relative
         else:
-            if prec is None:
-                cap = self._prec_cap_relative
-            else:
-                cap = prec
-            x = ZZ.random_element(p**cap)
-            v = x.valuation(p)
-            if prec is None and v > 0:
-                x += p**cap * ZZ.random_element(p**v)
-            return self._element_class(self, x, prec=prec)
+            cap = prec
+        x = ZZ.random_element(p**cap)
+        v = x.valuation(p)
+        if prec is None and v > 0:
+            x += p**cap * ZZ.random_element(p**v)
+        return self._element_class(self, x, prec=prec)
 
 
 class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
@@ -1036,7 +1030,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
     .. SEEALSO::
 
-        :meth:`label`
+        :meth:`~sage.rings.padics.generic_nodes.pAdicLatticeGeneric.label`
 
     EXAMPLES::
 
@@ -1182,7 +1176,6 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(7)
             sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
             sage: R = ZpER(7, secure=True)
@@ -1221,7 +1214,6 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: K = QpER(7)
             sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
             sage: K = QpER(7, secure=True)

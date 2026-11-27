@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Dendriform Algebras
+Free dendriform algebras
 
 AUTHORS:
 
-Frédéric Chapoton (2017)
+- Frédéric Chapoton (2017)
 """
 # ****************************************************************************
 #       Copyright (C) 2010-2015 Frédéric Chapoton <chapoton@unistra.fr>,
@@ -313,7 +313,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(u.over(u))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
     def _an_element_(self):
         """
@@ -455,7 +455,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`prec`, :meth:`over`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`prec`, :meth:`over`, :meth:`under`
 
         EXAMPLES::
 
@@ -529,7 +529,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`over`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`over`, :meth:`under`
 
         EXAMPLES::
 
@@ -556,7 +556,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`prec`, :meth:`under`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`prec`, :meth:`under`
 
         EXAMPLES::
 
@@ -584,7 +584,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`product`, :meth:`succ`, :meth:`prec`, :meth:`over`
+            :meth:`product_on_basis`, :meth:`succ`, :meth:`prec`, :meth:`over`
 
         EXAMPLES::
 
@@ -627,7 +627,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         B = self.basis()
         Trees = B.keys()
-        if not x.node_number():
+        if not x.number_of_nodes():
             return self.one().tensor(self.one())
         L, R = list(x)
         try:
@@ -897,12 +897,11 @@ class DendriformFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return DendriformFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], DendriformFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

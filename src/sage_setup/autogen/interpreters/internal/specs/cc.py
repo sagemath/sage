@@ -8,13 +8,18 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from .python import MemoryChunkPyConstant
-from ..instructions import (params_gen, instr_funcall_1arg_mpc,
-                            instr_funcall_2args_mpc, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_1arg_mpc,
+    instr_funcall_2args_mpc,
+    params_gen,
+)
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpc, ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant
 
 
 class MemoryChunkCCRetval(MemoryChunk):
@@ -67,9 +72,9 @@ class MemoryChunkCCRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_parameter()
-            'mpc_t retval'
+            'mpfr_ptr retval_re, mpfr_ptr retval_im'
         """
-        return '%s %s' % (self.storage_type.c_reference_type(), self.name)
+        return f'mpfr_ptr {self.name}_re, mpfr_ptr {self.name}_im'
 
     def pass_argument(self):
         r"""
@@ -82,9 +87,9 @@ class MemoryChunkCCRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
-            '(<mpc_t>(retval.__re))'
+            'retval.__re, retval.__im'
         """
-        return je("""(<mpc_t>({{ myself.name }}.__re))""", myself=self)
+        return je("""{{ myself.name }}.__re, {{ myself.name }}.__im""", myself=self)
 
     def pass_call_c_argument(self):
         r"""
@@ -97,9 +102,9 @@ class MemoryChunkCCRetval(MemoryChunk):
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_call_c_argument()
-            'result'
+            'mpc_realref(result), mpc_imagref(result)'
         """
-        return "result"
+        return "mpc_realref(result), mpc_imagref(result)"
 
 
 class CCInterpreter(StackInterpreter):
@@ -144,12 +149,14 @@ class CCInterpreter(StackInterpreter):
             }
             <BLANKLINE>
 
-        This instruction makes use of the function cc_py_call_helper,
-        which is declared::
+        This instruction makes use of the function ``cc_py_call_helper``,
+        which is forward-declared in ``c_header``::
 
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpc.h>
+            <BLANKLINE>
+            int cc_py_call_helper(PyObject *, PyObject *, int, mpc_t *, __mpc_struct *);
             <BLANKLINE>
 
         So instructions where you need to interact with Python can
@@ -157,7 +164,7 @@ class CCInterpreter(StackInterpreter):
         """
 
         mc_retval = MemoryChunkCCRetval('retval', ty_mpc)
-        super(CCInterpreter, self).__init__(ty_mpc, mc_retval=mc_retval)
+        super().__init__(ty_mpc, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')
@@ -171,6 +178,8 @@ class CCInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpc.h>
+
+            int cc_py_call_helper(PyObject *, PyObject *, int, mpc_t *, __mpc_struct *);
             ''')
 
         self.pxd_header = ri(0,
@@ -208,7 +217,9 @@ class CCInterpreter(StackInterpreter):
             InstrSpec('load_const', pg('C[D]', 'S'),
                        code='mpc_set(o0, i0, MPC_RNDNN);'),
             InstrSpec('return', pg('S', ''),
-                       code='mpc_set(retval, i0, MPC_RNDNN);\nreturn 1;\n'),
+                       code='mpfr_set(retval_re, mpc_realref(i0), MPFR_RNDN);\n'
+                            'mpfr_set(retval_im, mpc_imagref(i0), MPFR_RNDN);\n'
+                            'return 1;\n'),
             InstrSpec('py_call', pg('P[D]S@D', 'S'),
                        uses_error_handler=True,
                        code="""

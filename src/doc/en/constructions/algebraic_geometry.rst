@@ -38,7 +38,7 @@ algorithm. Here is an example of the syntax:
     sage: C.rational_points(algorithm="bn")
     [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1), (3 : 1 : 1), (3 : 4 : 1)]
 
-The option ``algorithm="bn`` uses Sage's Singular interface and
+The option ``algorithm="bn"`` uses Sage's Singular interface and
 calls the ``brnoeth`` package.
 
 Here is another example using Sage's ``rational_points`` applied to

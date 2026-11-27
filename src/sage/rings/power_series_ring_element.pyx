@@ -104,6 +104,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.misc.misc
 import sage.arith.all as arith
 import sage.misc.latex
+from sage.structure.element import parent
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
@@ -113,36 +114,6 @@ _Fields = Fields()
 from sage.misc.derivative import multi_derivative
 from sage.structure.element cimport AlgebraElement, RingElement
 from sage.structure.richcmp cimport richcmp
-
-
-def is_PowerSeries(x):
-    """
-    Return ``True`` if ``x`` is an instance of a univariate
-    or multivariate power series.
-
-    EXAMPLES::
-
-        sage: R.<x> = PowerSeriesRing(ZZ)
-        sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: is_PowerSeries(1 + x^2)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: is_PowerSeries(x - x)
-        True
-        sage: is_PowerSeries(0)
-        False
-        sage: var('x')                                                                  # needs sage.symbolic
-        x
-        sage: is_PowerSeries(1 + x^2)                                                   # needs sage.symbolic
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38266,
-                       "The function is_PowerSeries is deprecated; "
-                       "use 'isinstance(..., PowerSeries)' instead.")
-    return isinstance(x, PowerSeries)
 
 
 cdef class PowerSeries(AlgebraElement):
@@ -313,7 +284,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: ((a+1)*t).change_ring(ZZ)                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a + 1 to an integer
+            TypeError: no conversion of this number field element to an integer
         """
         S = self._parent.change_ring(R)
         return S(self)
@@ -505,8 +476,7 @@ cdef class PowerSeries(AlgebraElement):
         exact = self._parent(self.list())
         if absprec is None:
             return exact
-        else:
-            return exact.add_bigoh(absprec)
+        return exact.add_bigoh(absprec)
 
     def __copy__(self):
         """
@@ -638,8 +608,7 @@ cdef class PowerSeries(AlgebraElement):
         """
         if self.is_zero():
             return 0
-        else:
-            return self.prec() - self.valuation()
+        return self.prec() - self.valuation()
 
     def _repr_(self):
         """
@@ -668,8 +637,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
+            return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
 
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         X = self._parent.variable_name()
@@ -753,8 +721,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "0 + \\cdots"
+            return "0 + \\cdots"
         s = " "
         v = self.list()
         m = len(v)
@@ -849,7 +816,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<m> = CDF[[]]
             sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
@@ -915,19 +881,18 @@ cdef class PowerSeries(AlgebraElement):
         """
         if self.prec() is infinity:
             return f.prec()
-        elif f.prec() is infinity:
+        if f.prec() is infinity:
             return self.prec()
         return min(self.prec(), f.prec())
 
     cdef common_prec_c(self, PowerSeries f):
         if self._prec is infinity:
             return f._prec
-        elif f._prec is infinity:
+        if f._prec is infinity:
             return self._prec
-        elif self._prec < f._prec:
+        if self._prec < f._prec:
             return self._prec
-        else:
-            return f._prec
+        return f._prec
 
     def _mul_prec(self, RingElement right_r):
         cdef PowerSeries right = <PowerSeries>right_r
@@ -1135,11 +1100,34 @@ cdef class PowerSeries(AlgebraElement):
             x + x^3
             sage: O(x^4)^(1/2)
             O(x^2)
+
+            sage: R.<x,t> = QQ[[]]
+            sage: f = (1+x)^(1+t)
+            sage: f.O(5)
+            1 + x + x*t + 1/2*x^2*t - 1/6*x^3*t + 1/2*x^2*t^2 + O(x, t)^5
+
+            sage: R.<x> = QQ[[]]
+            sage: (e^(e^x - 1)).O(5)
+            1 + x + x^2 + 5/6*x^3 + 5/8*x^4 + O(x^5)
+            sage: e^e^x
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: constant term of power series does not support exponentiation
+
+            sage: R.<x> = QQ[[]]
+            sage: S.<t> = QQ[] # a polynomial ring
+            sage: (1+x)^(1+t)
+            Traceback (most recent call last):
+            ...
+            ValueError: exponent must be a rational number or power series
         """
         try:
             right = QQ.coerce(r)
-        except TypeError:
-            raise ValueError("exponent must be a rational number")
+        except (TypeError, ValueError):
+            if r.parent() is self.parent():
+                return (r * self.log()).exp()
+            else:
+                raise ValueError("exponent must be a rational number or power series")
 
         if right.denominator() == 1:
             right = right.numerator()
@@ -1197,7 +1185,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7); f
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
@@ -1216,7 +1203,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7)
             sage: f >> 3
@@ -1302,7 +1288,6 @@ cdef class PowerSeries(AlgebraElement):
 
         Tests other implementations::
 
-            sage: # needs sage.libs.pari
             sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')
             sage: f = q - q^3 + O(q^10)
             sage: f.map_coefficients(lambda c: c - 2)
@@ -1312,8 +1297,7 @@ cdef class PowerSeries(AlgebraElement):
         res = pol.map_coefficients(f, new_base_ring)
         if res.base_ring() != pol.base_ring():
             return self.parent().change_ring(res.base_ring())(res, self.prec())
-        else:
-            return self.parent()(res, self.prec())
+        return self.parent()(res, self.prec())
 
     def jacobi_continued_fraction(self):
         r"""
@@ -1543,9 +1527,13 @@ cdef class PowerSeries(AlgebraElement):
         there is an element `y` in ``self.parent()``
         such that `y^2` equals ``self``.
 
-        ALGORITHM: If the base ring is a field, this is true whenever the
-        power series has even valuation and the leading coefficient is a
-        perfect square.
+        Apart from zero and constant series, this is only implemented when
+        the base ring is an integral domain of characteristic different
+        from `2`. Otherwise, a :exc:`NotImplementedError` is raised.
+
+        ALGORITHM: Over a field of characteristic different from `2`, this
+        is true whenever the power series has even valuation and the
+        leading coefficient is a perfect square.
 
         For an integral domain, it attempts the square root in the
         fraction field and tests whether or not the result lies in the
@@ -1568,13 +1556,69 @@ cdef class PowerSeries(AlgebraElement):
             sage: f = (1+t)^100
             sage: f.is_square()
             True
+
+        TESTS:
+
+        Over a ring with nilpotent elements, a square can have odd
+        valuation (:issue:`41220`)::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(16))
+            sage: ((x + 4)^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented over a non-integral domain
+
+        Even valuation does not justify testing the leading coefficient::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(9))
+            sage: ((3 + x^2)^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented over a non-integral domain
+
+        The restriction also applies to reduced rings with zero divisors::
+
+            sage: R.<x> = PowerSeriesRing(Zmod(15))
+            sage: ((3 + x)^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented over a non-integral domain
+
+        Zero and constant series can still be tested in the base ring::
+
+            sage: R(0).is_square(), O(x^5).is_square()
+            (True, True)
+            sage: R(4).is_square(), R(2).is_square()
+            (True, False)
+            sage: (4 + O(x^5)).is_square()
+            True
+
+        The field criterion does not apply in characteristic `2`::
+
+            sage: R.<x> = PowerSeriesRing(GF(2))
+            sage: (1 + x).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented in characteristic 2
         """
+        if self.is_zero():
+            return True
+        if self.degree() == 0:
+            return self[0].is_square()
+        base = self.base_ring()
+        if not base.is_integral_domain():
+            raise NotImplementedError(
+                "is_square() not implemented over a non-integral domain")
+        if base.characteristic() == 2:
+            raise NotImplementedError(
+                "is_square() not implemented in characteristic 2")
+
         val = self.valuation()
-        if val is not infinity and val % 2 == 1:
+        if val % 2 == 1:
             return False
         elif not self[val].is_square():
             return False
-        elif self.base_ring() in _Fields:
+        elif base in _Fields:
             return True
         else:
             try:
@@ -1642,7 +1686,6 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: # needs sage.rings.complex_double
             sage: K.<t> = PowerSeriesRing(CDF, 5)
             sage: v = sqrt(-1 + t + t^3, all=True); v
             [1.0*I - 0.5*I*t - 0.125*I*t^2 - 0.5625*I*t^3 - 0.2890625*I*t^4 + O(t^5),
@@ -1689,8 +1732,7 @@ cdef class PowerSeries(AlgebraElement):
             ans = self._parent(0).O(self.prec()/2)
             if all:
                 return [ans]
-            else:
-                return ans
+            return ans
 
         if all and not self.base_ring().is_integral_domain():
             raise NotImplementedError('all roots not implemented over a non-integral domain')
@@ -1710,8 +1752,7 @@ cdef class PowerSeries(AlgebraElement):
                 a = self.parent()([s], self.prec())
                 if all:
                     return [a, -a]
-                else:
-                    return a
+                return a
 
         val = self.valuation()
 
@@ -1765,8 +1806,7 @@ cdef class PowerSeries(AlgebraElement):
 
         if all:
             return [ans, -ans]  # since over an integral domain
-        else:
-            return ans
+        return ans
 
     def square_root(self):
         """
@@ -1887,8 +1927,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if val is infinity:
                 return self
-            else:
-                return self.parent()(0).O(val // n)
+            return self.parent()(0).O(val // n)
 
         if val is not infinity and val % n != 0:
             raise ValueError("power series valuation is not a multiple of %s" % n)
@@ -2572,7 +2611,6 @@ cdef class PowerSeries(AlgebraElement):
 
         Handle nonzero constant term (fixes :issue:`4477`)::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = PowerSeriesRing(RR)
             sage: (1 + x + x^2 + O(x^3)).exp()
             2.71828182845905 + 2.71828182845905*x + 4.07742274268857*x^2 + O(x^3)
@@ -2648,7 +2686,6 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ArithmeticError: constant term of power series is not 1
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<t> = PowerSeriesRing(RR)
             sage: (2 + t).log().exp()
             2.00000000000000 + 1.00000000000000*t + O(t^20)
@@ -2766,7 +2803,7 @@ cdef class PowerSeries(AlgebraElement):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           :meth:`~sage.rings.power_series_poly.PowerSeries_poly._derivative`
 
         EXAMPLES::
 
@@ -2987,8 +3024,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
         # base case
         if N == 0:
             return [f0]
-        else:
-            return [b[0] / N]
+        return [b[0] / N]
 
     L2 = (L + 1) >> 1    # ceil(L/2)
 

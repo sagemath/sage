@@ -1,9 +1,7 @@
-# sage_setup: distribution = sagemath-repl
 from sage.misc.lazy_import import lazy_import
 
 from sage.repl.preparse import preparse, implicit_multiplication
-
-lazy_import('sage.repl.interpreter', 'preparser')
+lazy_import('sage.repl.interpreter', ['preparser', 'inline_plots'])
 
 lazy_import('sage.repl.attach', [
     'attach', 'detach', 'attached_files', 'load_attach_path',

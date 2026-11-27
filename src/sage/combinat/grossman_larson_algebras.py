@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
-Grossman-Larson Hopf Algebras
+Grossman-Larson Hopf algebras
 
 AUTHORS:
 
@@ -130,8 +130,8 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
         Beware that the underlying combinatorial free module is based
         either on ``RootedTrees`` or on ``LabelledRootedTrees``, with no
         restriction on the labellings. This means that all code calling
-        the :meth:`basis` method would not give meaningful results, since
-        :meth:`basis` returns many "chaff" elements that do not belong to
+        the :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis`
+        method would not give meaningful results, since it returns many "chaff" elements that do not belong to
         the algebra.
 
     REFERENCES:
@@ -359,7 +359,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(RT([RT([])]))
             1
         """
-        return t.node_number() - 1
+        return t.number_of_nodes() - 1
 
     def _an_element_(self):
         """
@@ -508,7 +508,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             sage: A.counit_on_basis(RT([],'#'))
             1
         """
-        if x.node_number() == 1:
+        if x.number_of_nodes() == 1:
             return self.base_ring().one()
         return self.base_ring().zero()
 

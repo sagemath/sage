@@ -127,9 +127,9 @@ class PackageCreator(object):
             else:
                 dependencies = ''
             if source == 'wheel':
-                dependencies_order_only = 'pip $(PYTHON)'
+                dependencies_order_only = 'pip'
             else:
-                dependencies_order_only = '$(PYTHON_TOOLCHAIN) $(PYTHON)'
+                dependencies_order_only = '$(PYTHON_TOOLCHAIN)'
             f.write(dependencies + ' | ' + dependencies_order_only + '\n\n')
             f.write('----------\nAll lines of this file are ignored except the first.\n')
         if source == 'normal':

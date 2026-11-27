@@ -568,7 +568,7 @@ def hillman_grassl(M):
                 col_j_hook_mults += [(r, j)] * entry
         hook_mults += reversed(col_j_hook_mults)
     res = [[0] * rowlen for rowlen in lam]
-    for (r, s) in reversed(hook_mults):
+    for r, s in reversed(hook_mults):
         i = r
         j = lam[r] - 1
         while True:
@@ -638,9 +638,7 @@ def hillman_grassl_inverse(M):
     # in place.
     while True:
         for j, col_j in enumerate(Mt):
-            if all(entry == 0 for entry in col_j):
-                continue
-            else:
+            if any(entry != 0 for entry in col_j):
                 break
         else:  # all entries of Mt are 0.
             break

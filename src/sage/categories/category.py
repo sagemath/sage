@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Categories
 
@@ -91,6 +90,12 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
         sage: v = V.gen(1)                                                              # needs sage.modules
         sage: v.category()                                                              # needs sage.modules
         Category of elements of Vector space of dimension 3 over Rational Field
+
+.. automethod:: sage.categories.category::Category._test_category_graph
+
+.. automethod:: sage.categories.category::Category.__and__
+
+.. automethod:: sage.categories.category::Category.__or__
 """
 
 # ****************************************************************************
@@ -103,24 +108,30 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 # ****************************************************************************
 
 import inspect
+from typing import Self
 from warnings import warn
+
+from sage.categories.category_cy_helper import (
+    _flatten_categories,
+    _sort_uniq,
+    category_sort_key,
+    join_as_tuple,
+)
 from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
+from sage.misc.c3_controlled import C3_sorted_merge, _cmp_key, _cmp_key_named
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.unknown import Unknown
 from sage.misc.weak_dict import WeakValueDictionary
-
+from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
-
-from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
 
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie',
+                'Hecke', 'Dedekind', 'Stone']
 
 
 class Category(UniqueRepresentation, SageObject):
@@ -679,7 +690,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         return issubclass(category.parent_class, self.parent_class)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 
@@ -739,7 +750,7 @@ class Category(UniqueRepresentation, SageObject):
             return False
         return any(isinstance(cat, cls) for cat in c)
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -1026,7 +1037,7 @@ class Category(UniqueRepresentation, SageObject):
         Python will find a proper Method Resolution Order for those
         classes. For background, see :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`_cmp_key`.
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`.
 
         .. NOTE::
 
@@ -1045,7 +1056,7 @@ class Category(UniqueRepresentation, SageObject):
     # Methods handling of full subcategories
     ##########################################################################
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self:
         """
         Return whether ``self`` defines additional structure.
 
@@ -1396,7 +1407,7 @@ class Category(UniqueRepresentation, SageObject):
             classes. This method checks this.
 
         Note that if
-        :meth:`~sage.structure.category_object.CategoryObject._refine_category_`
+        ``_refine_category_``
         is called at unexpected times, the invariant might be false. Most
         commonly, this happens with rings like ``Zmod(n)`` or ``SR``, where
         a check like ``Zmod(n) in Fields()`` is needed (which checks the primality
@@ -1404,7 +1415,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            :meth:`CategoryWithParameters._make_named_class_key`
+            ``CategoryWithParameters._make_named_class_key``
 
         EXAMPLES::
 
@@ -1531,7 +1542,7 @@ class Category(UniqueRepresentation, SageObject):
               resolution orders. For background, see
               :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`CategoryWithParameters._make_named_class`
+        .. SEEALSO:: ``CategoryWithParameters._make_named_class``
 
         EXAMPLES::
 
@@ -1889,10 +1900,9 @@ class Category(UniqueRepresentation, SageObject):
         assert isinstance(category, Category)
         if join:
             return Category.join([self, category])
-        else:
-            if not category.is_subcategory(self):
-                raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
-            return category
+        if not category.is_subcategory(self):
+            raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
+        return category
 
     def _is_subclass(self, c):
         """
@@ -1961,14 +1971,13 @@ class Category(UniqueRepresentation, SageObject):
         """
         if self is other:  # useful? fast pathway
             return self
-        elif self.is_subcategory(other):
+        if self.is_subcategory(other):
             return other
-        elif other.is_subcategory(self):
+        if other.is_subcategory(self):
             # Useful fast pathway; try:
             # %time L = EllipticCurve('960d1').prove_BSD()
             return self
-        else:
-            return Category.join(self._meet_(sup) for sup in other._super_categories)
+        return Category.join(self._meet_(sup) for sup in other._super_categories)
 
     @staticmethod
     def meet(categories):
@@ -2211,10 +2220,9 @@ class Category(UniqueRepresentation, SageObject):
         """
         if axiom not in self.axioms():
             return self
-        else:
-            raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
+        raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
 
-    def _without_axioms(self, named=False):
+    def _without_axioms(self, named=False) -> Self:
         r"""
         Return the category without the axioms that have been added
         to create it.
@@ -2250,7 +2258,7 @@ class Category(UniqueRepresentation, SageObject):
         Return the categories after sorting them decreasingly according
         to their comparison key.
 
-        .. SEEALSO:: :meth:`_cmp_key`
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`
 
         INPUT:
 
@@ -2484,19 +2492,16 @@ class Category(UniqueRepresentation, SageObject):
         if not categories:
             if as_list:
                 return []
-            else:
-                # Since Objects() is the top category, it is the neutral element of join
-                from .objects import Objects
-                return Objects()
-        elif len(categories) == 1:
+            # Since Objects() is the top category, it is the neutral element of join
+            from .objects import Objects
+            return Objects()
+        if len(categories) == 1:
             category = categories[0]
             if as_list:
                 if isinstance(category, JoinCategory):
                     return category.super_categories()
-                else:
-                    return categories
-            else:
-                return category
+                return categories
+            return category
 
         # Get the cache key, and look into the cache
         # Ensure associativity and commutativity by flattening
@@ -2598,26 +2603,6 @@ class Category(UniqueRepresentation, SageObject):
             except AttributeError:
                 pass
         return cls(*args, **keywords)
-
-
-def is_Category(x):
-    """
-    Return ``True`` if `x` is a category.
-
-    EXAMPLES::
-
-        sage: sage.categories.category.is_Category(CommutativeAdditiveSemigroups())
-        doctest:warning...
-        DeprecationWarning: the function is_Category is deprecated;
-        use 'isinstance(..., Category)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        True
-        sage: sage.categories.category.is_Category(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_Category is deprecated; use 'isinstance(..., Category)' instead")
-    return isinstance(x, Category)
 
 
 @cached_function
@@ -2935,8 +2920,7 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
+            Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
@@ -2948,8 +2932,7 @@ class CategoryWithParameters(Category):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of Dedekind domains
-                 and Category of euclidean domains
+             Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
@@ -3076,8 +3059,7 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
+            Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
@@ -3279,7 +3261,7 @@ class JoinCategory(CategoryWithParameters):
         """
         Return a comparison key for ``self``.
 
-        See :meth:`Category._cmp_key` for the specifications.
+        See :class:`~sage.misc.c3_controlled.CmpKey` for the specifications.
 
         EXAMPLES:
 

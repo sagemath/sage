@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -18,7 +18,7 @@
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 include 'misc.pxi'
 include 'decl.pxi'
@@ -134,9 +134,9 @@ cdef class ntl_ZZ_pEContext_class():
         self.pc.restore_c()
         self.x.restore()
 
-    #def ZZ_pX(self, v=None):
-    #    from ntl_ZZ_pX import ntl_ZZ_pX
-    #    return ntl_ZZ_pX(v,modulus=self)
+    # def ZZ_pX(self, v=None):
+    #     from ntl_ZZ_pX import ntl_ZZ_pX
+    #     return ntl_ZZ_pX(v,modulus=self)
 
     def ZZ_pE(self, v=None):
         """
@@ -149,7 +149,7 @@ cdef class ntl_ZZ_pEContext_class():
             [4 3]
         """
         from sage.libs.ntl.ntl_ZZ_pE import ntl_ZZ_pE
-        return ntl_ZZ_pE(v,modulus=self)
+        return ntl_ZZ_pE(v, modulus=self)
 
     def ZZ_pEX(self, v=None):
         """
@@ -168,8 +168,9 @@ cdef class ntl_ZZ_pEContext_class():
         """
         Assert that this is currently-set NTL modulus.
 
-        Mostly for debugging purposes. If false, an assertion is raised. This method
-        segfaults if the NTL modulus has never been set before.
+        Mostly for debugging purposes. If false, an assertion is
+        raised. This method segfaults if the NTL modulus has never
+        been set before.
 
         EXAMPLES::
 
@@ -205,11 +206,12 @@ cdef class ntl_ZZ_pEContext_class():
             ccrepr(ZZ_pE_current_modulus().val())))
 
 
-def ntl_ZZ_pEContext( ntl_ZZ_pX f):
+def ntl_ZZ_pEContext(ntl_ZZ_pX f):
     """
     Create an ntl_ZZ_pEContext.
 
-    Such an object must be created before any ZZ_pE or ZZ_pEX objects can be used.
+    Such an object must be created before any ZZ_pE or ZZ_pEX
+    objects can be used.
 
     The context handling should be taken care of by the wrapper classes.
 

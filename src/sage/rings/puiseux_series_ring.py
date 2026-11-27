@@ -422,6 +422,25 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
         #     P.variable_name() == self.variable_name()):
         #     return True
 
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: P = PuiseuxSeriesRing(R, 'z')
+            sage: P.variable_names_recursive()
+            ('x', 'z')
+            sage: P.variable_names_recursive(1)
+            ('z',)
+        """
+        return self._laurent_series_ring.variable_names_recursive(depth)
+
     @cached_method
     def gen(self, n=0):
         r"""

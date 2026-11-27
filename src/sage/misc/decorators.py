@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Decorators
 
@@ -26,14 +25,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
-                       WRAPPER_UPDATES)
 from copy import copy
-
-from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
-                                   sage_getargspec)
-
+from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, partial, update_wrapper
 from inspect import FullArgSpec
+
+from sage.misc.sageinspect import sage_getargspec, sage_getsource, sage_getsourcelines
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
@@ -49,16 +45,11 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     implies, that if one uses ``sage_wraps`` in a decorator which intentionally
     changes the argument specification, one should add this information to
     the special attribute ``_sage_argspec_`` of the wrapping function (for an
-    example, see e.g. ``@options`` decorator in this module).
-
-    Note that in ``.pyx`` files which is compiled by Cython, because Sage uses
-    ``binding=False`` compiler directive by default, you need to explicitly
-    specify ``binding=True`` for all functions decorated with ``sage_wraps``::
+    example, see e.g. ``@options`` decorator in this module)::
 
         sage: import cython
         sage: def square(f):
         ....:     @sage_wraps(f)
-        ....:     @cython.binding(True)
         ....:     def new_f(x):
         ....:         return f(x)*f(x)
         ....:     return new_f
@@ -79,7 +70,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return x
         sage: g(2)
         4
-        sage: g(x)                                                                      # needs sage.symbolic
+        sage: g(x)
         x^2
         sage: g.__doc__
         'My little function'
@@ -116,7 +107,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)       # known bug
         '.../sage/rings/polynomial/multi_polynomial_ideal.py'
-        sage: sage_getsourcelines(I.interreduced_basis)                                 # needs sage.libs.singular
+        sage: sage_getsourcelines(I.interreduced_basis)
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
@@ -203,14 +194,13 @@ class infix_operator:
         ....: def dot(a, b):
         ....:     '''Dot product.'''
         ....:     return a.dot_product(b)
-        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
-        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
-        sage: u *dot* v                                                                 # needs sage.modules
+        sage: u = vector([1, 2, 3])
+        sage: v = vector([5, 4, 3])
+        sage: u *dot* v
         22
 
     An infix element-wise addition operator::
 
-        sage: # needs sage.modules
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])
@@ -226,7 +216,7 @@ class infix_operator:
         sage: @infix_operator('or')
         ....: def thendo(a, b):
         ....:     return b(a)
-        sage: x |thendo| cos |thendo| (lambda x: x^2)                                   # needs sage.symbolic
+        sage: x |thendo| cos |thendo| (lambda x: x^2)
         cos(x)^2
     """
 
@@ -292,9 +282,8 @@ class _infix_wrapper:
                 new = copy(self)
                 new.right = right
                 return new
-            else:
-                raise SyntaxError("Infix operator already has its "
-                                  "right argument")
+            raise SyntaxError("Infix operator already has its "
+                              "right argument")
         else:
             return self.function(self.left, right)
 
@@ -305,9 +294,8 @@ class _infix_wrapper:
                 new = copy(self)
                 new.left = left
                 return new
-            else:
-                raise SyntaxError("Infix operator already has its "
-                                  "left argument")
+            raise SyntaxError("Infix operator already has its "
+                              "left argument")
         else:
             return self.function(left, self.right)
 
@@ -354,8 +342,7 @@ def decorator_defaults(func):
         if len(kwds) == 0 and len(args) == 1:
             # call without parentheses
             return func(*args)
-        else:
-            return lambda f: func(f, *args, **kwds)
+        return lambda f: func(f, *args, **kwds)
     return my_wrap
 
 
@@ -742,6 +729,5 @@ def decorator_keywords(func):
     def wrapped(f=None, **kwargs):
         if f is None:
             return sage_wraps(func)(lambda f: func(f, **kwargs))
-        else:
-            return func(f, **kwargs)
+        return func(f, **kwargs)
     return wrapped

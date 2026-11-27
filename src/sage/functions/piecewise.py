@@ -261,10 +261,7 @@ class PiecewiseFunction(BuiltinFunction):
         def is_piecewise(ex):
             if ex.operator() is piecewise:
                 return True
-            for op in ex.operands():
-                if is_piecewise(op):
-                    return True
-            return False
+            return any(is_piecewise(op) for op in ex.operands())
         return is_piecewise(ex)
 
     @staticmethod
@@ -321,7 +318,7 @@ class PiecewiseFunction(BuiltinFunction):
 
     class EvaluationMethods:
 
-        def __pow__(self, parameters, variable, n):
+        def __pow__(self, parameters, variable, n):  # noqa: PLE0302
             """
             Return the `n`-th power of the piecewise function by applying the
             operation to each piece.
@@ -416,7 +413,7 @@ class PiecewiseFunction(BuiltinFunction):
                 intervals += list(domain)
             return RealSet(*intervals)
 
-        def __len__(self, parameters, variable):
+        def __len__(self, parameters, variable):  # noqa: PLE0302
             """
             Return the number of "pieces".
 
@@ -802,16 +799,21 @@ class PiecewiseFunction(BuiltinFunction):
                           y|-->1/2*y^2 + 3*y + 9/2 on (-3, 0),
                           y|-->3*y + 9/2 on (0, +oo); y)
 
-            ::
+            The output from this can change a bit depending on the
+            version of Maxima used, so we test for equality with a
+            known result on the sole piece::
 
+                sage: # long time
                 sage: f1(x) = e^(-abs(x))
                 sage: f = piecewise([[(-infinity, infinity), f1]])
                 sage: result = f.integral(definite=True)
                 ...
                 sage: result
                 2
-                sage: f.integral()
-                piecewise(x|-->-integrate(e^(-abs(x)), x, x, +Infinity) on (-oo, +oo); x)
+                sage: actual = f.integral().expression_at(0) # only one piece
+                sage: expected = -1/2*e^(-x)*sgn(x) - 1/2*e^x*sgn(x) - 1/2*e^(-x) + 1/2*e^x + sgn(x) - 1
+                sage: bool(actual == expected)
+                True
 
             ::
 
@@ -890,8 +892,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             if definite:
                 return SR(area)
-            else:
-                return piecewise(new_pieces)
+            return piecewise(new_pieces)
 
         def critical_points(self, parameters, variable):
             """

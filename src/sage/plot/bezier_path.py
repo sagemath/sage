@@ -392,7 +392,7 @@ def bezier_path(path, **options):
         sage: bp
         [[(1, 1), (2, 3), (3, 3)], [(4, 4), (5, 5)]]
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
     g._set_extra_kwds(g._extract_kwds_for_show(options))
     g.add_primitive(BezierPath(path, options))

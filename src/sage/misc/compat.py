@@ -1,4 +1,6 @@
-"""Cross-platform compatibility routines and wrappers."""
+"""
+Cross-platform compatibility routines and wrappers.
+"""
 
 # *****************************************************************************
 #       Copyright (C) 2017 William Stein <wstein@gmail.com>

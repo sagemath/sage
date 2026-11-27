@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs sage.modules
 r"""
 Cluster algebras
 
@@ -24,7 +23,7 @@ Accordingly this file provides three classes:
 - :class:`ClusterAlgebraElement`
 
 :class:`ClusterAlgebra`, constructed as a subobject of
-:class:`sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_generic`,
+:class:`sage.rings.polynomial.laurent_polynomial_ring_base.LaurentPolynomialRing_generic`,
 is the frontend of this implementation. It provides all the algebraic
 features (like ring morphisms), it computes cluster variables, it is
 responsible for controlling the exploration of the exchange graph and
@@ -649,7 +648,8 @@ class ClusterAlgebraSeed(SageObject):
         assert that they are built from consistent data nor that they
         really are seeds of ``parent``. If you create seeds with
         inconsistent data all sort of things can go wrong, even
-        :meth:`__eq__` is no longer guaranteed to give correct answers.
+        ``ClusterAlgebraSeed.__eq__``
+        is no longer guaranteed to give correct answers.
         Use at your own risk.
     """
     def __init__(self, B, C, G, parent, **kwargs):
@@ -1988,8 +1988,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
                 msg += "you can compute it by mutating from the initial seed along the sequence "
                 msg += str(self._path_dict[g_vector])
                 raise KeyError(msg)
-            else:
-                raise KeyError("the g-vector %s has not been found yet" % str(g_vector))
+            raise KeyError("the g-vector {} has not been found yet".format(g_vector))
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
@@ -2144,8 +2143,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         if isinstance(self.base(), LaurentPolynomialRing_generic):
             return tuple(map(self.retract, self.base().gens()))
-        else:
-            return ()
+        return ()
 
     def coefficient_names(self) -> tuple:
         r"""
@@ -2380,7 +2378,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()                                                       # needs sage.geometry.polyhedron
+            sage: A.cluster_fan()
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)
@@ -2624,12 +2622,12 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.algebras.cluster_algebra.theta_basis_F_polynomial`
+            :meth:`sage.algebras.cluster_algebra.ClusterAlgebra.theta_basis_F_polynomial`
         """
         g_vector = tuple(g_vector)
         F = self.theta_basis_F_polynomial(g_vector).subs(self._yhat)
         g_mon = prod(self.ambient().gen(i) ** g_vector[i] for i in range(self.rank()))
-        # we only return the monomal g_mon times the evaluated F-polynomial because this is how
+        # we only return the monomial g_mon times the evaluated F-polynomial because this is how
         # theta basis elements behave.
         return self.retract(g_mon * F)
 
@@ -2645,8 +2643,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         .. WARNING::
 
             Elements of the theta basis do not satisfy a separation of additions formula.
-            See the implementation of :meth:`sage.algebras.cluster_algebra.theta_basis_F_polynomial`
-            for further details.
+            See the algorithm below for implementation details.
 
         ALGORITHM:
 

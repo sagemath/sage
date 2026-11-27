@@ -25,7 +25,7 @@ identical because `M` carries additional information::
 
 This used to cause trouble with caching and made (absolute) number fields not
 unique when they should have been. The underlying technical problem is that the
-morphisms returned by :meth:`structure` can only be defined once the fields in
+morphisms returned by :meth:`~sage.rings.number_field.number_field.NumberField_generic.structure` can only be defined once the fields in
 question have been created. Therefore, these morphisms cannot be part of a key
 which uniquely identifies a number field.
 

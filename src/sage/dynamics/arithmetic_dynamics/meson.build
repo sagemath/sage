@@ -9,11 +9,12 @@ py.install_sources(
   'generic_ds.py',
   'product_projective_ds.py',
   'projective_ds.py',
+  'projective_ds_helper.pyx',
   'wehlerK3.py',
   subdir: 'sage/dynamics/arithmetic_dynamics',
 )
 
-extension_data = {'projective_ds_helper' : files('projective_ds_helper.pyx')}
+extension_data = {'projective_ds_helper': files('projective_ds_helper.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

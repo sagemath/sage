@@ -10,9 +10,8 @@ EXAMPLES::
     sage: v[1] = 42
     sage: v
     (0, 42, 0)
-    sage: v.numpy()
-    array([ 0, 42,  0])               # 64-bit
-    array([ 0, 42,  0], dtype=int64)  # 32-bit
+    sage: v.numpy(dtype="int8")
+    array([ 0, 42,  0], dtype=int8)
 
 TESTS::
 

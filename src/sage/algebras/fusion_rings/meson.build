@@ -3,16 +3,20 @@ py.install_sources(
   'all.py',
   'f_matrix.py',
   'fast_parallel_fmats_methods.pxd',
+  'fast_parallel_fmats_methods.pyx',
   'fast_parallel_fusion_ring_braid_repn.pxd',
+  'fast_parallel_fusion_ring_braid_repn.pyx',
   'fusion_double.py',
   'fusion_ring.py',
   'poly_tup_engine.pxd',
+  'poly_tup_engine.pyx',
   'shm_managers.pxd',
+  'shm_managers.pyx',
   subdir: 'sage/algebras/fusion_rings',
 )
 
 extension_data = {
-  'fast_parallel_fusion_ring_braid_repn' : files(
+  'fast_parallel_fusion_ring_braid_repn': files(
     'fast_parallel_fusion_ring_braid_repn.pyx',
   ),
 }

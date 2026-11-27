@@ -1,8 +1,12 @@
-coxeter3 = cc.find_library('coxeter3', required: false, disabler: true)
+coxeter3 = cc.find_library(
+  'coxeter3',
+  required: get_option('coxeter3'),
+  disabler: true,
+)
 py.install_sources(
   '__init__.py',
-  'all__sagemath_coxeter3.py',
   'coxeter.pxd',
+  'coxeter.pyx',
   'coxeter_group.py',
   'decl.pxd',
   subdir: 'sage/libs/coxeter3',
@@ -21,3 +25,7 @@ foreach name, pyx : extension_data_cpp
     dependencies: [py_dep, cysignals, coxeter3],
   )
 endforeach
+
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('COXETER3_ENABLED', coxeter3.found())

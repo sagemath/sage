@@ -1,5 +1,14 @@
 cd src/
 
+
+# Force linking to ncurses even with --as-needed linker flag on Linux
+# This ensures readline properly links to ncurses/tinfo for terminal handling
+# The --no-as-needed flag is a GNU ld option, so only use it on Linux with GCC
+if [ "$UNAME" = "Linux" ]; then
+    echo "Configuring readline to explicitly link ncurses on Linux..."
+    export LDFLAGS="-Wl,--no-as-needed $LDFLAGS"
+fi
+
 sdh_configure --with-curses --enable-shared --disable-static
 echo "Now building static and shared readline libraries..."
 sdh_make

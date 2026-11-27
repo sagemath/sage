@@ -49,11 +49,7 @@ from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
-import sage.rings.abc
 from sage.rings.integer_ring import ZZ
-
-# is_SymbolicVariable used to be defined here; re-export it
-from sage.symbolic.expression import _is_SymbolicVariable as is_SymbolicVariable
 
 import keyword
 import operator
@@ -63,7 +59,7 @@ KEYWORDS = set(keyword.kwlist).union(['exec', 'print', 'None', 'True',
                                       'False', 'nonlocal'])
 
 
-cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
+cdef class SymbolicRing(Parent):
     """
     Symbolic Ring, parent object for all symbolic expressions.
     """
@@ -543,6 +539,18 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             True
         """
         return True
+
+    def fraction_field(self):
+        """
+        Return ``self``, since the symbolic expression ring is (for the most
+        part) a field.
+
+        EXAMPLES::
+
+            sage: SR.fraction_field() is SR
+            True
+        """
+        return self
 
     def is_finite(self):
         """
@@ -1154,8 +1162,7 @@ cdef class NumpyToSRMorphism(Morphism):
     We check that :issue:`8949` and :issue:`9769` are fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
-        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        sage: _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: f(x) = x^2
         sage: f(numpy.int8('2'))                                                        # needs numpy
         4
@@ -1244,7 +1251,7 @@ cdef class UnderscoreSageMorphism(Morphism):
     def __init__(self, t, R):
         """
         A Morphism which constructs Expressions from an arbitrary Python
-        object by calling the :meth:`_sage_` method on the object.
+        object by calling the ``_sage_`` method on the object.
 
         EXAMPLES::
 

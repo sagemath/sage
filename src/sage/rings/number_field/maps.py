@@ -43,7 +43,7 @@ from sage.categories.map import Map
 from sage.categories.homset import Hom
 from sage.categories.morphism import IdentityMorphism
 
-import sage.rings.rational_field as rational_field
+from sage.rings import rational_field
 
 QQ = rational_field.RationalField()
 
@@ -63,7 +63,7 @@ class NumberFieldIsomorphism(Map):
         sage: isinstance(fr, sage.rings.number_field.maps.NumberFieldIsomorphism)
         True
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -75,7 +75,7 @@ class NumberFieldIsomorphism(Map):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -87,7 +87,7 @@ class NumberFieldIsomorphism(Map):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 

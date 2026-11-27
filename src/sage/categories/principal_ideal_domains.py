@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Principal ideal domains
 """
@@ -10,6 +9,7 @@ Principal ideal domains
 # *****************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
+from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 
 
@@ -28,7 +28,7 @@ class PrincipalIdealDomains(Category_singleton):
       sage: PrincipalIdealDomains()
       Category of principal ideal domains
       sage: PrincipalIdealDomains().super_categories()
-      [Category of unique factorization domains]
+      [Category of unique factorization domains, Category of Dedekind domains]
 
     See also :wikipedia:`Principal_ideal_domain`
 
@@ -39,12 +39,14 @@ class PrincipalIdealDomains(Category_singleton):
 
     def super_categories(self):
         """
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: PrincipalIdealDomains().super_categories()
-            [Category of unique factorization domains]
+        PIDs are Dedekind domains (see :issue:`42800`)::
+
+            sage: PolynomialRing(Zmod(17), names='x') in DedekindDomains()
+            True
         """
-        return [UniqueFactorizationDomains()]
+        return [UniqueFactorizationDomains(), DedekindDomains()]
 
     def additional_structure(self):
         """
@@ -200,7 +202,7 @@ class PrincipalIdealDomains(Category_singleton):
                 sage: R.gcd(f, g)
                 Traceback (most recent call last):
                 ...
-                TypeError: Unable to coerce 2*a to a rational
+                TypeError: no conversion of this number field element to a rational
                 sage: R.base_extend(S).gcd(f,g)
                 x^2 - 2
                 sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Display Manager
 
@@ -15,7 +14,9 @@ arbitrates between
 * User preferences: typeset vs. plain text vs. ascii art, etc.
 
 The display manager is a singleton class, Sage always has exactly one
-instance of it. Use :func:`get_display_manager` to obtain it.
+instance of it. Use
+:meth:`get_display_manager <sage.repl.rich_output.display_manager.DisplayManager.get_instance>`
+to obtain it.
 
 EXAMPLES::
 
@@ -35,12 +36,7 @@ EXAMPLES::
 from __future__ import annotations
 
 import warnings
-from typing import Any
-
-try:
-    from typing import Self  # type: ignore (Python >= 3.11)
-except ImportError:
-    from typing_extensions import Self  # type: ignore (Python 3.9, 3.10)
+from typing import Any, Self
 
 from sage.repl.rich_output.output_basic import (
     OutputAsciiArt,
@@ -217,8 +213,7 @@ class DisplayManager(SageObject):
         """
         Get the singleton instance.
 
-        This class method is equivalent to
-        :func:`get_display_manager`.
+        This class method is also exported as ``get_display_manager``.
 
         OUTPUT: the display manager singleton
 
@@ -230,8 +225,7 @@ class DisplayManager(SageObject):
         """
         if cls._instance is not None:
             return cls._instance
-        else:
-            return cls()
+        return cls()
 
     def _repr_(self):
         """
@@ -350,7 +344,7 @@ class DisplayManager(SageObject):
         """
         return self._preferences
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 
@@ -687,7 +681,6 @@ class DisplayManager(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.symbolic
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: plt = plot(sin)
@@ -737,9 +730,9 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=True)
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=False)
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support
@@ -779,7 +772,7 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj: Any) -> None | Any:
+    def displayhook(self, obj: Any) -> Any | None:
         """
         Implementation of the displayhook.
 

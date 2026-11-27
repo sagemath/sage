@@ -9,14 +9,18 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_infix, instr_funcall_2args,
-                            instr_unary, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_2args,
+    instr_infix,
+    instr_unary,
+    params_gen,
+)
 from ..memory import MemoryChunkConstants
 from ..storage import ty_double, ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class RDFInterpreter(StackInterpreter):
@@ -76,7 +80,7 @@ class RDFInterpreter(StackInterpreter):
             ValueError: negative number to a fractional power not real
         """
 
-        super(RDFInterpreter, self).__init__(ty_double)
+        super().__init__(ty_double)
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         # This is a randomly chosen number.  Whenever this number is
         # returned, the wrapper has to check whether an exception actually

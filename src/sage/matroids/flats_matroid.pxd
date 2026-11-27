@@ -4,7 +4,8 @@ from sage.matroids.set_system cimport SetSystem
 cdef class FlatsMatroid(Matroid):
     cdef frozenset _groundset
     cdef int _matroid_rank
-    cdef dict _F  # flats
+    cdef set _F  # flats
+    cdef dict _k_F  # k-flats (k = rank)
     cdef object _L  # lattice of flats
     cpdef frozenset groundset(self)
 
@@ -15,7 +16,7 @@ cdef class FlatsMatroid(Matroid):
     cpdef full_rank(self)
 
     # enumeration
-    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem flats(self, long k=*)
     cpdef list whitney_numbers(self)
     cpdef list whitney_numbers2(self)
 

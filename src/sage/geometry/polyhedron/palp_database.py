@@ -5,7 +5,7 @@ Access the PALP database(s) of reflexive lattice polytopes
 EXAMPLES::
 
     sage: from sage.geometry.polyhedron.palp_database import PALPreader
-    sage: for lp in PALPreader(2):                                                      # needs sage.graphs
+    sage: for lp in PALPreader(2):
     ....:     cone = Cone([(1,r[0],r[1]) for r in lp.vertices()])
     ....:     fan = Fan([cone])
     ....:     X = ToricVariety(fan)
@@ -330,14 +330,13 @@ class PALPreader(SageObject):
             output = self._output
         if output == 'polyhedron':
             return self._iterate_Polyhedron
-        elif output == 'ppl':
+        if output == 'ppl':
             return self._iterate_PPL
-        elif output == 'pointcollection':
+        if output == 'pointcollection':
             return self._iterate_PointCollection
-        elif output == 'list':
+        if output == 'list':
             return self._iterate_list
-        else:
-            raise TypeError('Unknown output format (={}).'.format(self._output))
+        raise TypeError('Unknown output format (={}).'.format(self._output))
 
     def __iter__(self):
         """
@@ -370,11 +369,10 @@ class PALPreader(SageObject):
         iterator = self._iterate()
         if isinstance(item, slice):
             return iterator(item.start, item.stop, item.step)
-        else:
-            try:
-                return next(iterator(item, item + 1, 1))
-            except StopIteration:
-                raise IndexError('Index out of range.')
+        try:
+            return next(iterator(item, item + 1, 1))
+        except StopIteration:
+            raise IndexError('Index out of range.')
 
 
 class Reflexive4dHodge(PALPreader):

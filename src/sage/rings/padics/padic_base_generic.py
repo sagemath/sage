@@ -167,7 +167,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         from sage.rings.integer_ring import ZZ
         return ZZ
 
-    def is_isomorphic(self, ring):
+    def is_isomorphic(self, ring) -> bool:
         r"""
         Return whether ``self`` and ``ring`` are isomorphic, i.e. whether
         ``ring`` is an implementation of `\ZZ_p` for the same prime as ``self``.
@@ -251,12 +251,11 @@ class pAdicBaseGeneric(pAdicGeneric):
             sage: Zp(5).discriminant()
             1
         """
-        if (K is None or K is self):
+        if K is None or K is self:
             return 1
-        else:
-            raise ValueError("Ground Ring must be a subring of self")
+        raise ValueError("Ground Ring must be a subring of self")
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether the Galois group is abelian, i.e. ``True``.
         #should this be automorphism group?
@@ -268,7 +267,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         return True
 
-    def is_normal(self):
+    def is_normal(self) -> bool:
         """
         Return whether or not this is a normal extension, i.e. ``True``.
 
@@ -356,8 +355,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         if (self.prime() == 2):
             return n.divides(2)
-        else:
-            return n.divides(self.prime() - 1)
+        return n.divides(self.prime() - 1)
 
     def zeta(self, n=None):
         r"""
@@ -385,8 +383,7 @@ class pAdicBaseGeneric(pAdicGeneric):
                 return self(-1)
             if n == 1:
                 return self(1)
-            else:
-                raise ValueError("No, %sth root of unity in self" % n)
+            raise ValueError("No, %sth root of unity in self" % n)
         else:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())
@@ -404,8 +401,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         if (self.prime() == 2):
             return 2
-        else:
-            return self.prime() - 1
+        return self.prime() - 1
 
     def plot(self, max_points=2500, **args):
         r"""
@@ -443,7 +439,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             args['pointsize'] = 1
         from sage.misc.mrange import cartesian_product_iterator
         from sage.rings.real_double import RDF
-        from sage.plot.all import points
+        from sage.plot.point import point as points
         p = self.prime()
         phi = 2*RDF.pi()/p
         V = RDF**2

@@ -17,7 +17,6 @@
 #   4ti2
 #   autotools
 #   [...]
-#   zlib
 #
 # * Find the package name given a tarball filename
 #

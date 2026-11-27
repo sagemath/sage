@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([hypothesis], [SAGE_PYTHON_PACKAGE_CHECK([hypothesis])])

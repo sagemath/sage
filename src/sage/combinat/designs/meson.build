@@ -9,28 +9,33 @@ py.install_sources(
   'database.py',
   'design_catalog.py',
   'designs_pyx.pxd',
+  'designs_pyx.pyx',
   'difference_family.py',
   'difference_matrices.py',
+  'evenly_distributed_sets.pyx',
   'ext_rep.py',
+  'gen_quadrangles_with_spread.pyx',
   'group_divisible_designs.py',
   'incidence_structures.py',
   'latin_squares.py',
   'orthogonal_arrays.py',
   'orthogonal_arrays_build_recursive.py',
+  'orthogonal_arrays_find_recursive.pyx',
   'resolvable_bibd.py',
   'steiner_quadruple_systems.py',
+  'subhypergraph_search.pyx',
   'twographs.py',
   subdir: 'sage/combinat/designs',
 )
 
 extension_data = {
-  'designs_pyx' : files('designs_pyx.pyx'),
-  'evenly_distributed_sets' : files('evenly_distributed_sets.pyx'),
-  'gen_quadrangles_with_spread' : files('gen_quadrangles_with_spread.pyx'),
-  'orthogonal_arrays_find_recursive' : files(
+  'designs_pyx': files('designs_pyx.pyx'),
+  'evenly_distributed_sets': files('evenly_distributed_sets.pyx'),
+  'gen_quadrangles_with_spread': files('gen_quadrangles_with_spread.pyx'),
+  'orthogonal_arrays_find_recursive': files(
     'orthogonal_arrays_find_recursive.pyx',
   ),
-  'subhypergraph_search' : files('subhypergraph_search.pyx'),
+  'subhypergraph_search': files('subhypergraph_search.pyx'),
 }
 
 foreach name, pyx : extension_data

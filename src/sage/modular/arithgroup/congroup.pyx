@@ -303,7 +303,7 @@ def generators_helper(coset_reps, level):
     try:
         reps = [Matrix_integer_dense(Mat2Z, lift_to_sl2z(c, d, level),
                                      False, True) for c, d in crs]
-    except Exception:
+    except (TypeError, ValueError, NotImplementedError):
         raise ArithmeticError("Error lifting to SL2Z: level=%s crs=%s" % (level, crs))
     ans = []
     cdef Py_ssize_t i

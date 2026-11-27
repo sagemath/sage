@@ -13,100 +13,104 @@ from sage.misc.call import attrcall
 from functools import reduce
 
 implications = {
- 'doubling_convex': ['doubling_any'],
- 'doubling_interval': ['doubling_lower', 'doubling_upper'],
- 'doubling_lower': ['doubling_convex', 'meet_semidistributive'],
- 'doubling_upper': ['doubling_convex', 'join_semidistributive'],
- 'cosectionally_complemented': ['complemented', 'coatomic', 'regular'],
- 'distributive': ['modular', 'semidistributive', 'join_distributive', 'meet_distributive', 'subdirectly_reducible', 'doubling_interval', 'extremal'],
- 'geometric': ['upper_semimodular', 'relatively_complemented'],
- 'isoform': ['uniform'],
- 'join_distributive': ['meet_semidistributive', 'upper_semimodular'],
- 'join_semidistributive': ['join_pseudocomplemented', 'interval_dismantlable'],
- 'lower_semimodular': ['graded'],
- 'meet_distributive': ['join_semidistributive', 'lower_semimodular'],
- 'meet_semidistributive': ['pseudocomplemented', 'interval_dismantlable'],
- 'modular': ['upper_semimodular', 'lower_semimodular', 'supersolvable'],
- 'orthocomplemented': ['self_dual', 'complemented'],
- 'planar': ['dismantlable'],
- 'dismantlable': ['sublattice_dismantlable'],
- 'interval_dismantlable': ['sublattice_dismantlable'],
- 'relatively_complemented': ['sectionally_complemented', 'cosectionally_complemented', 'isoform'],
- 'sectionally_complemented': ['complemented', 'atomic', 'regular'],
- 'semidistributive': ['join_semidistributive', 'meet_semidistributive'],
- 'simple': ['isoform'],
- 'supersolvable': ['graded'],
- 'uniform': ['regular'],
- 'uniq_orthocomplemented': ['orthocomplemented'],
- 'upper_semimodular': ['graded'],
- 'vertically_decomposable': ['subdirectly_reducible'],
+    'doubling_convex': ['doubling_any'],
+    'doubling_interval': ['doubling_lower', 'doubling_upper'],
+    'doubling_lower': ['doubling_convex', 'meet_semidistributive'],
+    'doubling_upper': ['doubling_convex', 'join_semidistributive'],
+    'cosectionally_complemented': ['complemented', 'coatomic', 'regular'],
+    'distributive': ['modular', 'semidistributive', 'join_distributive',
+                     'meet_distributive', 'subdirectly_reducible',
+                     'doubling_interval', 'extremal'],
+    'geometric': ['upper_semimodular', 'relatively_complemented'],
+    'isoform': ['uniform'],
+    'join_distributive': ['meet_semidistributive', 'upper_semimodular'],
+    'join_semidistributive': ['join_pseudocomplemented', 'interval_dismantlable'],
+    'lower_semimodular': ['graded'],
+    'meet_distributive': ['join_semidistributive', 'lower_semimodular'],
+    'meet_semidistributive': ['pseudocomplemented', 'interval_dismantlable'],
+    'modular': ['upper_semimodular', 'lower_semimodular', 'supersolvable'],
+    'orthocomplemented': ['self_dual', 'complemented'],
+    'planar': ['dismantlable'],
+    'dismantlable': ['sublattice_dismantlable'],
+    'interval_dismantlable': ['sublattice_dismantlable'],
+    'relatively_complemented': ['sectionally_complemented', 'cosectionally_complemented', 'isoform'],
+    'sectionally_complemented': ['complemented', 'atomic', 'regular'],
+    'semidistributive': ['join_semidistributive', 'meet_semidistributive'],
+    'simple': ['isoform'],
+    'supersolvable': ['graded'],
+    'uniform': ['regular'],
+    'uniq_orthocomplemented': ['orthocomplemented'],
+    'upper_semimodular': ['graded'],
+    'vertically_decomposable': ['subdirectly_reducible'],
 }
 
 dual_properties = [
- ['atomic', 'coatomic'],
- ['upper_semimodular', 'lower_semimodular'],
- ['sectionally_complemented', 'cosectionally_complemented'],
- ['join_distributive', 'meet_distributive'],
- ['join_semidistributive', 'meet_semidistributive'],
- ['pseudocomplemented', 'join_pseudocomplemented'],
- ['doubling_lower', 'doubling_upper'],
+    ['atomic', 'coatomic'],
+    ['upper_semimodular', 'lower_semimodular'],
+    ['sectionally_complemented', 'cosectionally_complemented'],
+    ['join_distributive', 'meet_distributive'],
+    ['join_semidistributive', 'meet_semidistributive'],
+    ['pseudocomplemented', 'join_pseudocomplemented'],
+    ['doubling_lower', 'doubling_upper'],
 ]
 
 selfdual_properties = ['distributive', 'modular', 'semidistributive', 'complemented',
- 'relatively_complemented', 'orthocomplemented', 'uniq_orthocomplemented', 'supersolvable', 'planar',
- 'dismantlable', 'vertically_decomposable', 'simple', 'isoform', 'uniform', 'regular',
- 'subdirectly_reducible', 'doubling_any', 'doubling_convex', 'doubling_interval',
- 'interval_dismantlable', 'interval_dismantlable']
+                       'relatively_complemented', 'orthocomplemented', 'uniq_orthocomplemented',
+                       'supersolvable', 'planar', 'dismantlable', 'vertically_decomposable',
+                       'simple', 'isoform', 'uniform', 'regular', 'subdirectly_reducible',
+                       'doubling_any', 'doubling_convex', 'doubling_interval',
+                       'interval_dismantlable', 'interval_dismantlable']
 
 dual_elements = [
- ['atoms', 'coatoms'],
- ['meet_irreducibles', 'join_irreducibles'],
- ['meet_primes', 'join_primes']
+    ['atoms', 'coatoms'],
+    ['meet_irreducibles', 'join_irreducibles'],
+    ['meet_primes', 'join_primes']
 ]
 
-two_to_one = [ ['distributive', 'dismantlable', 'planar'],
-               ['upper_semimodular', 'lower_semimodular', 'modular'],
-               ['meet_distributive', 'join_distributive', 'distributive'],
-               ['meet_semidistributive', 'join_semidistributive', 'semidistributive'],
-               ['lower_semimodular', 'meet_semidistributive', 'distributive'],
-               ['upper_semimodular', 'join_semidistributive', 'distributive'],
-               ['complemented', 'modular', 'relatively_complemented'],
-             ]
+two_to_one = [
+    ['distributive', 'dismantlable', 'planar'],
+    ['upper_semimodular', 'lower_semimodular', 'modular'],
+    ['meet_distributive', 'join_distributive', 'distributive'],
+    ['meet_semidistributive', 'join_semidistributive', 'semidistributive'],
+    ['lower_semimodular', 'meet_semidistributive', 'distributive'],
+    ['upper_semimodular', 'join_semidistributive', 'distributive'],
+    ['complemented', 'modular', 'relatively_complemented'],
+]
 
 mutually_exclusive = [
- ['doubling_any', 'simple'],
- ['vertically_decomposable', 'atomic'],
- ['vertically_decomposable', 'coatomic'],
- ['vertically_decomposable', 'regular'],
+    ['doubling_any', 'simple'],
+    ['vertically_decomposable', 'atomic'],
+    ['vertically_decomposable', 'coatomic'],
+    ['vertically_decomposable', 'regular'],
 ]
 
 set_inclusions = [
- ['atoms', 'join_irreducibles'],
- ['coatoms', 'meet_irreducibles'],
- ['double_irreducibles', 'join_irreducibles'],
- ['double_irreducibles', 'meet_irreducibles'],
- ['meet_primes', 'meet_irreducibles'],
- ['join_primes', 'join_irreducibles'],
+    ['atoms', 'join_irreducibles'],
+    ['coatoms', 'meet_irreducibles'],
+    ['double_irreducibles', 'join_irreducibles'],
+    ['double_irreducibles', 'meet_irreducibles'],
+    ['meet_primes', 'meet_irreducibles'],
+    ['join_primes', 'join_irreducibles'],
 ]
 
 sublattice_closed = ['distributive', 'modular', 'semidistributive', 'join_semidistributive', 'meet_semidistributive']
 
 
-def test_attrcall(name, L):
+def check_attrcall(name, L):
     """
     Return a function by name.
 
-    This is a helper function for test_finite_lattice(). This
+    This is a helper function for check_finite_lattice(). This
     will unify all Boolean-valued functions to a function without
     parameters.
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_attrcall
+        sage: from sage.tests.finite_poset import check_attrcall
         sage: N5 = posets.PentagonPoset()
-        sage: N5.is_modular() == test_attrcall('is_modular', N5)
+        sage: N5.is_modular() == check_attrcall('is_modular', N5)
         True
-        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
+        sage: N5.is_constructible_by_doublings('convex') == check_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
         True
     """
     if name == 'is_doubling_any':
@@ -124,7 +128,7 @@ def test_attrcall(name, L):
     return attrcall(name)(L)
 
 
-def test_finite_lattice(L):
+def check_finite_lattice(L):
     """
     Test several functions on a given finite lattice.
 
@@ -147,9 +151,9 @@ def test_finite_lattice(L):
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_finite_lattice
+        sage: from sage.tests.finite_poset import check_finite_lattice
         sage: L = posets.RandomLattice(10, 0.98)
-        sage: test_finite_lattice(L) is None  # Long time
+        sage: check_finite_lattice(L) is None  # Long time
         True
     """
     from sage.combinat.posets.lattices import LatticePoset
@@ -168,9 +172,9 @@ def test_finite_lattice(L):
         return None
 
     all_props = set(list(implications) + flatten(implications.values()))
-    P = {x: test_attrcall('is_' + x, L) for x in all_props}
+    P = {x: check_attrcall('is_' + x, L) for x in all_props}
 
-    ### Relations between boolean-valued properties ###
+    # ### Relations between boolean-valued properties ###
 
     # Direct one-property implications
     for prop1 in implications:
@@ -192,17 +196,17 @@ def test_finite_lattice(L):
     Ldual = L.dual()
     # Selfdual properties
     for p in selfdual_properties:
-        if P[p] != test_attrcall('is_'+p, Ldual):
+        if P[p] != check_attrcall('is_'+p, Ldual):
             raise ValueError("selfdual property %s error" % p)
     # Dual properties and elements
     for p1, p2 in dual_properties:
-        if P[p1] != test_attrcall('is_'+p2, Ldual):
+        if P[p1] != check_attrcall('is_'+p2, Ldual):
             raise ValueError("dual properties error %s" % p1)
     for e1, e2 in dual_elements:
         if set(attrcall(e1)(L)) != set(attrcall(e2)(Ldual)):
             raise ValueError("dual elements error %s" % e1)
 
-    ### Certificates ###
+    # ### Certificates ###
 
     # Return value must be a pair with correct result as first element.
     for p_ in all_props:
@@ -256,14 +260,14 @@ def test_finite_lattice(L):
             raise ValueError("compl. error 1")
     if not P['sectionally_complemented']:
         a, b = L.is_sectionally_complemented(certificate=True)[1]
-        L_ = L.sublattice(L.interval(L.bottom(), a))
+        L_ = L.interval_as_poset(L.bottom(), a)
         if L_.is_complemented():
             raise ValueError("sec. compl. error 1")
         if len(L_.complements(b)) > 0:
             raise ValueError("sec. compl. error 2")
     if not P['cosectionally_complemented']:
         a, b = L.is_cosectionally_complemented(certificate=True)[1]
-        L_ = L.sublattice(L.interval(a, L.top()))
+        L_ = L.interval_as_poset(a, L.top())
         if L_.is_complemented():
             raise ValueError("cosec. compl. error 1")
         if L_.complements(b):
@@ -353,16 +357,16 @@ def test_finite_lattice(L):
 
     if not P['join_distributive']:
         a = L.is_join_distributive(certificate=True)[1]
-        L_ = L.sublattice(L.interval(a, L.join(L.upper_covers(a))))
+        L_ = L.interval_as_poset(a, L.join(L.upper_covers(a)))
         if L_.is_distributive():
             raise ValueError("certificate error in is_join_distributive")
     if not P['meet_distributive']:
         a = L.is_meet_distributive(certificate=True)[1]
-        L_ = L.sublattice(L.interval(L.meet(L.lower_covers(a)), a))
+        L_ = L.interval_as_poset(L.meet(L.lower_covers(a)), a)
         if L_.is_distributive():
             raise ValueError("certificate error in is_meet_distributive")
 
-    ### Other ###
+    # ### Other ###
 
     # Other ways to recognize some boolean property
     if P['distributive'] != (set(L.join_primes()) == set(L.join_irreducibles())):
@@ -397,7 +401,7 @@ def test_finite_lattice(L):
     # Sublattice-closed properties
     L_ = L.sublattice(Subsets(L).random_element())
     for p in sublattice_closed:
-        if P[p] and not test_attrcall('is_'+p, L_):
+        if P[p] and not check_attrcall('is_'+p, L_):
             raise ValueError("property %s should apply to sublattices" % p)
 
     # Some sublattices
@@ -444,7 +448,7 @@ def test_finite_lattice(L):
         raise ValueError("error in neutral_elements")
 
 
-def test_finite_poset(P):
+def check_finite_poset(P):
     """
     Test several functions on a given finite poset.
 
@@ -458,9 +462,9 @@ def test_finite_poset(P):
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_finite_poset
+        sage: from sage.tests.finite_poset import check_finite_poset
         sage: P = posets.RandomPoset(10, 0.15)
-        sage: test_finite_poset(P) is None  # Long time
+        sage: check_finite_poset(P) is None  # Long time
         True
     """
     from sage.combinat.posets.posets import Poset
@@ -513,11 +517,13 @@ def test_finite_poset(P):
         raise ValueError("error 1 in dimension")
     if dim1 != len(linexts):
         raise ValueError("error 2 in dimension")
-    P_ = Poset( (P.list(), lambda a, b: all(linext.index(a) < linext.index(b) for linext in linexts)) )
+    P_ = Poset((P.list(),
+                lambda a, b: all(linext.index(a) < linext.index(b) for linext in linexts)))
     if P_ != Poset(P.hasse_diagram()):
         raise ValueError("error 3 in dimension")
     x = [P.random_linear_extension() for _ in range(dim1-1)]
-    P_ = Poset( (P.list(), lambda a, b: all(linext.index(a) < linext.index(b) for linext in x)) )
+    P_ = Poset((P.list(),
+                lambda a, b: all(linext.index(a) < linext.index(b) for linext in x)))
     if P_ == Poset(P.hasse_diagram()):
         raise ValueError("error 4 in dimension")
     if dim1-P_one_less.dimension() < 0:

@@ -16,7 +16,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from collections.abc import Iterator
+from __future__ import annotations
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
@@ -29,6 +29,10 @@ from sage.structure.element import Expression
 from sage.structure.parent import Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class ImageSubobject(Parent):
@@ -53,7 +57,9 @@ class ImageSubobject(Parent):
       - ``True``: ``map`` is known to be injective
       - ``'check'``: raise an error when ``map`` is not injective
 
-    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
+    - ``inverse`` -- function (optional); a map from `f(X)` to `X`;
+      if ``map.inverse_image`` exists, it is not recommended to provide this
+      as it will be used automatically
 
     EXAMPLES::
 
@@ -80,6 +86,17 @@ class ImageSubobject(Parent):
             sage: Im = f.image()
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
+
+        TESTS:
+
+        Implementing ``inverse_image`` automatically makes :meth:`__contains__` work::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y> = QQ[]
+            sage: R.hom([y^2]).inverse_image(y^4)
+            x^2
+            sage: y^4 in R.hom([y^2]).image()
+            True
         """
         if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
@@ -127,6 +144,11 @@ class ImageSubobject(Parent):
         Parent.__init__(self, category=category)
 
         self._map = map
+        if inverse is None:
+            try:
+                inverse = map.inverse_image
+            except AttributeError:
+                pass
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective

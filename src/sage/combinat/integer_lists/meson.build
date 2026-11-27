@@ -1,13 +1,15 @@
 py.install_sources(
   '__init__.py',
   'base.pxd',
+  'base.pyx',
   'invlex.pxd',
+  'invlex.pyx',
   'lists.py',
   'nn.py',
   subdir: 'sage/combinat/integer_lists',
 )
 
-extension_data = {'base' : files('base.pyx'), 'invlex' : files('invlex.pyx')}
+extension_data = {'base': files('base.pyx'), 'invlex': files('invlex.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

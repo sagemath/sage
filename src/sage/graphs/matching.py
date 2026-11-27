@@ -47,7 +47,9 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import itertools
 
+from sage.misc.decorators import rename_keyword
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
 
@@ -133,16 +135,16 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 
     if algorithm == "Edmonds":
         return len(G) == 2*G.matching(value_only=True,
-                                      use_edge_labels=False,
+                                      by_weight=False,
                                       algorithm='Edmonds')
-    elif algorithm == "LP_matching":
+    if algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
-                                      use_edge_labels=False,
+                                      by_weight=False,
                                       algorithm='LP',
                                       solver=solver,
                                       verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
-    elif algorithm == "LP":
+    if algorithm == "LP":
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
@@ -169,7 +171,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     graphs are special kind of matching covered graphs. Each maximal barrier of
     a bicritical graph is a singleton. Thus, for a bicritical graph, the
     canonical partition of the vertex set is the set of sets where each set is
-    an indiviudal vertex. Three-connected bicritical graphs, aka *bricks*, play
+    an individual vertex. Three-connected bicritical graphs, aka *bricks*, play
     an important role in the theory of matching covered graphs.
 
     This method implements the algorithm proposed in [LZ2001]_ and we
@@ -272,7 +274,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: G.is_bicritical()
         False
@@ -401,8 +403,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     if G.order() == 2:
         if G.is_connected():
             return (True, None) if coNP_certificate else True
-        else:
-            return (False, None) if coNP_certificate else False
+        return (False, None) if coNP_certificate else False
 
     # The graph must have an even number of vertices
     if G.order() % 2:
@@ -431,8 +432,8 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
         for component in components:
             if u is not None and not len(component) % 2:
                 v = component[0]
-                return (False, set([u, v]))
-            elif len(component) == 1:
+                return (False, {u, v})
+            if len(component) == 1:
                 u = component[0]
 
     # Bipartite graphs of order at least three are not bicritical
@@ -461,16 +462,18 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     else:
         # A maximum matching of the graph is computed
         M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
         if G.order() != M.order():
             u, v = next(M.edge_iterator(labels=False))
-            return (False, set([u, v])) if coNP_certificate else False
+            return (False, {u, v}) if coNP_certificate else False
 
-    # G is bicritical if and only if for each vertex u with its M-matched neighbor being v,
-    # every vertex of the graph distinct from v must be reachable from u through an even length
-    # M-alternating uv-path starting with an edge not in M and ending with an edge in M
+    # G is bicritical if and only if for each vertex u with its
+    # M-matched neighbor being v, every vertex of the graph distinct
+    # from v must be reachable from u through an even length
+    # M-alternating uv-path starting with an edge not in M and ending
+    # with an edge in M
 
     for u in G:
         v = next(M.neighbor_iterator(u))
@@ -479,7 +482,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
         for w in G:
             if w != v and w not in even:
-                return (False, set([v, w])) if coNP_certificate else False
+                return (False, {v, w}) if coNP_certificate else False
 
     return (True, None) if coNP_certificate else True
 
@@ -555,13 +558,13 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
     Friendship graphs are non-Hamiltonian factor-critical graphs::
 
-        sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]             # needs networkx
-        [True, True, True, True]
+        sage: all(graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5))             # needs networkx
+        True
 
     Bipartite graphs are not factor-critical::
 
-        sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5)        # needs numpy
-        sage: G.is_factor_critical()                                                # needs numpy
+        sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5)
+        sage: G.is_factor_critical()
         False
 
     Graphs with even order are not factor critical::
@@ -666,7 +669,6 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
                 R.pop()
                 # Set t as pred of all vertices of the chains and add
                 # vertices marked odd to the queue
-                import itertools
 
                 for a in itertools.chain(P, R):
                     pred[a] = t
@@ -938,7 +940,9 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         sage: G.is_matching_covered()
         Traceback (most recent call last):
         ...
-        ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+        ValueError: This method is not known to work on graphs with loops.
+        Perhaps this method can be updated to handle them, but in the meantime
+        if you want to use it please disallow loops using allow_loops().
 
     REFERENCES:
 
@@ -991,7 +995,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     else:
         # A maximum matching of the graph is computed
         M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
         if G.order() != M.order():
@@ -1070,8 +1074,10 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     return (True, None) if coNP_certificate else True
 
 
+@rename_keyword(deprecation=42750, use_edge_labels='by_weight')
 def matching(G, value_only=False, algorithm='Edmonds',
-             use_edge_labels=False, solver=None, verbose=0,
+             by_weight=False, weight_function=None, check_weight=True,
+             solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
     r"""
     Return a maximum weighted matching of the graph represented by the list
@@ -1103,12 +1109,19 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
-    - ``use_edge_labels`` -- boolean (default: ``False``)
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, computes a
+      weighted matching where each edge has the weight given by
+      ``weight_function``, or its label if ``weight_function`` is ``None``. If
+      ``False``, each edge has weight `1`.
 
-      - when set to ``True``, computes a weighted matching where each edge
-        is weighted by its label (if an edge has no label, `1` is assumed)
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l``, if ``l`` is not
+      ``None``, else `1` as a weight.
 
-      - when set to ``False``, each edge has weight `1`
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that the
+      ``weight_function`` outputs a number for each edge
 
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -1162,7 +1175,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     TESTS:
 
-    When ``use_edge_labels`` is set to ``False``, with Edmonds' algorithm
+    When ``by_weight`` is set to ``False``, with Edmonds' algorithm
     and LP formulation::
 
         sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
@@ -1171,13 +1184,30 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(g.matching(algorithm='LP'))                                    # needs sage.numerical.mip
         [(0, 1, 0), (2, 3, -5)]
 
-    When ``use_edge_labels`` is set to ``True``, with Edmonds' algorithm and
+    When ``by_weight`` is set to ``True``, with Edmonds' algorithm and
     LP formulation::
 
         sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-        sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
+        sage: g.matching(by_weight=True)                                      # needs sage.networkx
         [(1, 2, 999)]
-        sage: g.matching(algorithm='LP', use_edge_labels=True)                      # needs sage.numerical.mip
+        sage: g.matching(algorithm='LP', by_weight=True)                      # needs sage.numerical.mip
+        [(1, 2, 999)]
+
+    A ``weight_function`` can read the weight from anywhere in the edge, and
+    setting it implies ``by_weight=True``::
+
+        sage: g = Graph([(0, 1, {'cost': 1}), (1, 2, {'cost': 9}),
+        ....:            (2, 3, {'cost': 2})])
+        sage: g.matching(weight_function=lambda e: e[2]['cost'])                    # needs sage.networkx
+        [(1, 2, {'cost': 9})]
+
+    The ``use_edge_labels`` keyword is deprecated in favour of ``by_weight``::
+
+        sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
+        sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
+        doctest:warning...
+        DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+        See https://github.com/sagemath/sage/issues/42750 for details.
         [(1, 2, 999)]
 
     With loops and multiedges::
@@ -1185,11 +1215,23 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
         ....: , (1,2,3), (1,3,3), (2,3,3)]
         sage: g = Graph(edge_list, loops=True, multiedges=True)
-        sage: m = g.matching(use_edge_labels=True)                                  # needs sage.networkx
+        sage: m = g.matching(by_weight=True)                                  # needs sage.networkx
         sage: type(m)                                                               # needs sage.networkx
         <class 'sage.graphs.views.EdgesView'>
         sage: sorted(m)                                                             # needs sage.networkx
         [(0, 3, 3), (1, 2, 6)]
+
+    Self-loops are filtered out before the matching is computed, so they do
+    not affect the result.  This holds for vertices with any integer label,
+    including labels above 256, which CPython does not cache as identical
+    objects (so the loop filter must compare endpoints by value, not by
+    identity)::
+
+        sage: G = Graph([(300, 300), (300, 301), (302, 303)], loops=True)
+        sage: G.matching(value_only=True, algorithm='Edmonds')                      # needs networkx
+        2
+        sage: G.matching(value_only=True, algorithm='LP')                           # needs sage.numerical.mip
+        2
 
     TESTS:
 
@@ -1202,29 +1244,29 @@ def matching(G, value_only=False, algorithm='Edmonds',
         ...
         ValueError: algorithm must be set to either "Edmonds" or "LP"
     """
-    from sage.rings.real_mpfr import RR
-
-    def weight(x):
-        if x in RR:
-            return x
-        else:
-            return 1
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
 
     W = {}
     L = {}
-    for u, v, l in G.edge_iterator():
-        if u is v:
+    for e in G.edge_iterator():
+        u, v, l = e
+        if u == v:
             continue
         fuv = frozenset((u, v))
-        if fuv not in L or (use_edge_labels and W[fuv] < weight(l)):
+        if by_weight:
+            w = weight_function(e)
+            if fuv not in L or W[fuv] < w:
+                L[fuv] = l
+                W[fuv] = w
+        elif fuv not in L:
             L[fuv] = l
-            if use_edge_labels:
-                W[fuv] = weight(l)
 
     if algorithm == "Edmonds":
         import networkx
         g = networkx.Graph()
-        if use_edge_labels:
+        if by_weight:
             for (u, v), w in W.items():
                 g.add_edge(u, v, weight=w)
         else:
@@ -1232,22 +1274,22 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 g.add_edge(u, v)
         d = networkx.max_weight_matching(g)
         if value_only:
-            if use_edge_labels:
+            if by_weight:
                 return sum(W[frozenset(e)] for e in d)
             return Integer(len(d))
 
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
-    elif algorithm == "LP":
+    if algorithm == "LP":
         g = G
         from sage.numerical.mip import MixedIntegerLinearProgram
         # returns the weight of an edge considering it may not be
         # weighted ...
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)
         b = p.new_variable(binary=True)
-        if use_edge_labels:
+        if by_weight:
             p.set_objective(p.sum(w * b[fe] for fe, w in W.items()))
         else:
             p.set_objective(p.sum(b[fe] for fe in L))
@@ -1255,19 +1297,19 @@ def matching(G, value_only=False, algorithm='Edmonds',
         # the maximum matching
         for v in g:
             p.add_constraint(p.sum(b[frozenset(e)] for e in G.edge_iterator(vertices=[v], labels=False)
-                                    if e[0] != e[1]), max=1)
+                                   if e[0] != e[1]), max=1)
 
         p.solve(log=verbose)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         if value_only:
-            if use_edge_labels:
+            if by_weight:
                 return sum(w for fe, w in W.items() if b[fe])
             return Integer(sum(1 for fe in L if b[fe]))
 
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))])
                                 for u, v in L if b[frozenset((u, v))]],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
     raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
 
@@ -1378,8 +1420,6 @@ def perfect_matchings(G, labels=False):
     G_copy.allow_multiple_edges(False)
 
     # For each unlabeled matching, we yield all its possible labelings
-    import itertools
-
     for m in rec(G_copy):
         yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
@@ -1558,7 +1598,6 @@ def M_alternating_even_mark(G, vertex, matching):
         raise ValueError("the input is not a matching of the graph")
 
     # Build an M-alternating tree T rooted at vertex
-    import itertools
     from queue import Queue
 
     q = Queue()

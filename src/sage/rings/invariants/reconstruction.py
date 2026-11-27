@@ -54,11 +54,10 @@ def binary_quadratic_coefficients_from_invariants(discriminant, invariant_choice
                          'quadratic'.format(invariant_choice))
     if discriminant == 0:
         return (1, 0, 0)
-    else:
-        try:
-            return (1, 0, -discriminant/4)
-        except ZeroDivisionError:
-            return (0, 1, 0)
+    try:
+        return (1, 0, -discriminant/4)
+    except ZeroDivisionError:
+        return (0, 1, 0)
 
 
 def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='default'):
@@ -77,7 +76,8 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
     OUTPUT:
 
     A set of coefficients of a binary cubic, whose discriminant
-    is equal to the given ``discriminant`` up to a scaling.
+    is equal to the given ``discriminant`` (up to a scaling in
+    characteristic 2).
 
     EXAMPLES::
 
@@ -88,6 +88,11 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
         sage: R.<x> = QQ[]
         sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
         1
+        sage: coeffs = binary_cubic_coefficients_from_invariants(2)
+        sage: coeffs
+        (0, 1, -1, -1/4)
+        sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
+        2
 
     The two non-equivalent cubics `x^3` and `x^2*z` with discriminant 0 can't
     be distinguished based on their discriminant, hence an error is raised::
@@ -103,7 +108,9 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
     if discriminant == 0:
         raise ValueError('no unique reconstruction possible for binary '
                          'cubics with a double root')
-    else:
+    try:
+        return (0, 1, -1, (1 - discriminant)/4)
+    except ZeroDivisionError:
         return (0, 1, -1, 0)
 
 
@@ -293,37 +300,35 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
             else:
                 if B == 0:
                     return (1, 0, 0, 0, 0, 1)
-                else:
-                    return (0, 1, 0, 0, 1, 0)
+                return (0, 1, 0, 0, 1, 0)
         else:
             # case corresponding to using alpha and gamma as coordinates
             if A == 0:
                 return (1, 0, 0, 0, 1, 0)
-            else:
-                if scaling == 'normalized':
-                    # scaling z by (R/A**3)
-                    scale = [(-N)**-5*A**6*(R/A**3)**i for i in range(6)]
-                D = -N
-                Delta = C
-                a = [0]
-                a.append((2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1)
-                B0 = 2*K(3)**-1*A*R
-                B1 = A*N*B*K(3)**-1
-                C0 = 2*K(3)**-1*R
-                C1 = B*N
+            if scaling == 'normalized':
+                # scaling z by (R/A**3)
+                scale = [(-N)**-5*A**6*(R/A**3)**i for i in range(6)]
+            D = -N
+            Delta = C
+            a = [0]
+            a.append((2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1)
+            B0 = 2*K(3)**-1*A*R
+            B1 = A*N*B*K(3)**-1
+            C0 = 2*K(3)**-1*R
+            C1 = B*N
     else:
         # case corresponding to using alpha and beta as coordinates
         if R == 0:
             if A == 0:
                 return (1,0,10,0,-15,0)
-            elif scaling == 'normalized':
+            if scaling == 'normalized':
                 # scaling x by A and z by sqrt(A)
                 scale = [ (-M)**(-5)*sqrt(A)**(12+i) for i in range(6) ]
         else:
             if A == 0:
                 if B == 0:
                     return (1,0,0,1,0,0)
-                elif scaling == 'normalized':
+                if scaling == 'normalized':
                     # scaling y by R/B**2
                     scale = [ (-M)**(-3)*(R/B**2)**i for i in range(6) ]
             elif scaling == 'normalized':
@@ -347,8 +352,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     if scaling == 'coprime':
         from sage.arith.misc import gcd
         return tuple([coeffs[i]/gcd(coeffs) for i in range(6)])
-    else:
-        return coeffs
+    return coeffs
 
 
 ######################################################################

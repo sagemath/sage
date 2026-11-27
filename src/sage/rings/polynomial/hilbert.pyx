@@ -440,7 +440,6 @@ def first_hilbert_series(I, grading=None, return_grading=False):
 
         sage: from sage.rings.polynomial.hilbert import first_hilbert_series
 
-        sage: # needs sage.libs.singular
         sage: R = singular.ring(0,'(x,y,z)','dp')
         sage: I = singular.ideal(['x^2','y^2','z^2'])
         sage: first_hilbert_series(I)
@@ -525,8 +524,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
             if AN.Back is None: # We are back on top, i.e., fhs is the First Hilber Series of I
                 if return_grading:
                     return fhs, w
-                else:
-                    return fhs
+                return fhs
             if AN is AN.Back.Left: # We store fhs and proceed to the sibling
                 # ... unless there is no sibling
                 if AN.Back.Right is None:
@@ -561,7 +559,6 @@ def hilbert_poincare_series(I, grading=None):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.singular
         sage: from sage.rings.polynomial.hilbert import hilbert_poincare_series
         sage: R = PolynomialRing(QQ,'x',9)
         sage: I = [m.lm()
@@ -573,7 +570,6 @@ def hilbert_poincare_series(I, grading=None):
 
     The following example is taken from :issue:`20145`::
 
-        sage: # needs sage.libs.singular
         sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)
         sage: from sage.rings.polynomial.hilbert import first_hilbert_series
         sage: I = P.ideal(M.minors(2))

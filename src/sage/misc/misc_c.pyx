@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions (Cython)
 
@@ -23,7 +22,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -83,7 +81,8 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     .. SEEALSO::
 
-        For the symbolic product function, see :func:`sage.calculus.calculus.symbolic_product`.
+        :func:`sage.misc.functional.symbolic_prod` for symbolic products and
+        :func:`sage.misc.functional.symbolic_sum` for symbolic sums.
 
     EXAMPLES::
 
@@ -177,7 +176,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
     cdef Py_ssize_t k
     if count <= cutoff:
         prod = <object>PySequence_Fast_GET_ITEM(L, offset)
-        for k from offset < k < offset + count:
+        for k in range(offset + 1, offset + count):
             prod *= <object>PySequence_Fast_GET_ITEM(L, k)
         return prod
     else:
@@ -243,7 +242,7 @@ cpdef iterator_prod(L, z=None, bint multiply=True):
                 x = sub_prods[tip] * x
             else:
                 x = sub_prods[tip] + x
-            for j from 1 <= j < 64:
+            for j in range(1, 64):
                 if i & (1 << j):
                     break
                 tip -= 1
@@ -307,8 +306,7 @@ class NonAssociative:
         """
         if self.right is None:
             return str(self.left)
-        else:
-            return "(%s*%s)" % (self.left, self.right)
+        return "(%s*%s)" % (self.left, self.right)
 
     def __mul__(self, other):
         """
@@ -755,7 +753,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)                                                        # needs sage.libs.flint
+        sage: t^(sys.maxsize//2)
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

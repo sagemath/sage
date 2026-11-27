@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 """
 Catalog of simplicial complexes
 
@@ -28,10 +27,12 @@ All of these examples are accessible by typing
 - :meth:`~sage.topology.examples.DunceHat`
 - :meth:`~sage.topology.examples.FareyMap`
 - :meth:`~sage.topology.examples.GenusSix`
+- :meth:`~sage.topology.examples.HochschildSphere`
 - :meth:`~sage.topology.examples.K3Surface`
 - :meth:`~sage.topology.examples.KleinBottle`
 - :meth:`~sage.topology.examples.MatchingComplex`
 - :meth:`~sage.topology.examples.MooreSpace`
+- :meth:`~sage.topology.examples.NoncrossingBipartiteComplex`
 - :meth:`~sage.topology.examples.NotIConnectedGraphs`
 - :meth:`~sage.topology.examples.PoincareHomologyThreeSphere`
 - :meth:`~sage.topology.examples.QuaternionicProjectivePlane`
@@ -54,14 +55,14 @@ You can also get a list by typing ``simplicial_complexes.`` and hitting the
 EXAMPLES::
 
     sage: S = simplicial_complexes.Sphere(2) # the 2-sphere
-    sage: S.homology()                                                                  # needs sage.modules
+    sage: S.homology()
     {0: 0, 1: 0, 2: Z}
     sage: simplicial_complexes.SurfaceOfGenus(3)
     Triangulation of an orientable surface of genus 3
     sage: M4 = simplicial_complexes.MooreSpace(4)
-    sage: M4.homology()                                                                 # needs sage.modules
+    sage: M4.homology()
     {0: 0, 1: C4, 2: 0}
-    sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
+    sage: simplicial_complexes.MatchingComplex(6).homology()
     {0: 0, 1: Z^16, 2: 0}
 """
 
@@ -83,3 +84,7 @@ from sage.topology.simplicial_complex_examples import (Sphere, Simplex, Torus,
                                                        SumComplex,
                                                        RandomTwoSphere, ShiftedComplex,
                                                        RudinBall, ZieglerBall, DunceHat)
+
+from sage.combinat.posets.hochschild_lattice import hochschild_simplicial_complex as HochschildSphere
+
+from sage.combinat.posets.bubble_shuffle import noncrossing_bipartite_complex as NoncrossingBipartiteComplex

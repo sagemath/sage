@@ -15,7 +15,6 @@ AUTHOR::
 - Arpit Merchant (2016-08-04): improved docstrings, fixed doctests and
   refactored classes and methods
 """
-
 # ***************************************************************************
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
@@ -24,7 +23,7 @@ AUTHOR::
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 from sage.structure.element cimport parent
 from sage.rings.integer_ring import ZZ
@@ -190,7 +189,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 if n == N:
                     break
         NS = skew_ring(N)
-        type = [ ]
+        type = []
         degN = N.degree()
         P = self
         d = P.right_gcd(NS)
@@ -250,15 +249,15 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             R = <SkewPolynomial_finite_field_dense>skew_ring.random_element((e*r-1, e*r-1))
             R = Q*R
             X = <SkewPolynomial_finite_field_dense>Q._new_c(list(Q._coeffs), Q._parent)
-            lM = [ None ] * (e**2)
+            lM = [None] * (e**2)
             for j in range(e):
                 for i in range(e):
                     coeffs = [skew_ring._retraction(X[t*r+i]) for t in range(d)]
                     value = E(coeffs)
                     lM[i*e+j] = value
                 X = (R*X) % NS
-            M = MatrixSpace(E,e,e)(lM)
-            V = MatrixSpace(E,e,1)([ E([skew_ring._retraction(X[t*r+i]) for t in range(d)]) for i in range(e) ])
+            M = MatrixSpace(E, e, e)(lM)
+            V = MatrixSpace(E, e, 1)([E([skew_ring._retraction(X[t*r+i]) for t in range(d)]) for i in range(e)])
             try:
                 W = M._solve_right_nonsingular_square(V)
             except NotFullRankError:
@@ -267,14 +266,14 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             xx = PE(<list>W.list() + [E(-1)])
             if char2:
                 zz = yy = PE.gen()
-                for i in range(1,d):
+                for i in range(1, d):
                     zz = (zz*zz) % xx
                     yy += zz
                 dd = xx.gcd(yy)
                 if dd.degree() != 1:
                     continue
             else:
-                yy = PE.gen().__pow__(exp,xx) - 1
+                yy = PE.gen().__pow__(exp, xx) - 1
                 dd = xx.gcd(yy)
                 if dd.degree() != 1:
                     yy += 2
@@ -337,7 +336,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         center = F[0][0].parent()
         cardcenter = center.base_ring().cardinality()
         gencenter = center.gen()
-        count = [ ]
+        count = []
         total = 0
         for n, _ in F:
             if n == gencenter:
@@ -375,7 +374,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x', Frob]
 
             sage: P = S.random_element(degree=10)
-            sage: rightdiv = [ f for f in P.right_irreducible_divisors() ]   # indirect doctest
+            sage: rightdiv = [f for f in P.right_irreducible_divisors()]   # indirect doctest
             sage: len(rightdiv) == P.count_irreducible_divisors()
             True
             sage: len(rightdiv) == Set(rightdiv).cardinality()  # check no duplicates
@@ -385,7 +384,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             ....:     assert D.is_irreducible(), "not irreducible"
 
             sage: P = S.random_element(degree=10)
-            sage: leftdiv = [ f for f in P.left_irreducible_divisors() ]   # indirect doctest
+            sage: leftdiv = [f for f in P.left_irreducible_divisors()]   # indirect doctest
             sage: len(leftdiv) == P.count_irreducible_divisors()
             True
             sage: len(leftdiv) == Set(leftdiv).cardinality()  # check no duplicates
@@ -425,7 +424,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if m == 1:
                 yield P
                 continue
-            Q,_ = quo_rem(NS, P)
+            Q, _ = quo_rem(NS, P)
             if right:
                 P1 = self._rdivisor_c(N)
             else:
@@ -436,22 +435,22 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     if P1.degree() == degN:
                         break
                     while True:
-                        R = skew_ring.random_element((degrandom,degrandom))
+                        R = skew_ring.random_element((degrandom, degrandom))
                         if NS.right_gcd(R) == 1:
                             break
                     D = NS.right_gcd(D*R)
-            Q1,_ = quo_rem(P, P1)
+            Q1, _ = quo_rem(P, P1)
             degrandom = P.degree() - 1
             while True:
                 R = skew_ring.random_element((degrandom, degrandom))
-                _, g = quo_rem2(mul(R,Q), P)
-                if gcd2(g,P) != 1:
+                _, g = quo_rem2(mul(R, Q), P)
+                if gcd2(g, P) != 1:
                     continue
                 L = Q1
                 V = L
-                for i in range(1,m):
-                    L = gcd2(mul(g,L), P)
-                    V = gcd2(V,L)
+                for i in range(1, m):
+                    L = gcd2(mul(g, L), P)
+                    V = gcd2(V, L)
                 if V == 1:
                     break
             rng = xmrange_iter([kfixed]*degN, center)
@@ -461,7 +460,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     for j in range(i):
                         coeff = pol.pop()
                         _, f = quo_rem2(g*f + coeff, P)
-                    d = gcd2(mul(f,Q1), P)
+                    d = gcd2(mul(f, Q1), P)
                     d, _ = quo_rem2(P, d)
                     yield d
 
@@ -534,7 +533,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 Q1 = NS // P1
                 deg = P1.degree() - 1
                 while True:
-                    R = Q1 * skew_ring.random_element((deg,deg))
+                    R = Q1 * skew_ring.random_element((deg, deg))
                     if P1.right_gcd(R) == 1:
                         break
                 D = P1.right_gcd(D*R)
@@ -604,7 +603,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 return LD
         while True:
             while True:
-                R = skew_ring.random_element((deg,deg))
+                R = skew_ring.random_element((deg, deg))
                 if NS.right_gcd(R) == 1:
                     break
             D = NS.right_gcd(D*R)
@@ -633,13 +632,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         We can use this function to build the list of all monic
         irreducible divisors of `a`::
 
-            sage: rightdiv = [ d for d in a.right_irreducible_divisors() ]
+            sage: rightdiv = [d for d in a.right_irreducible_divisors()]
 
         Note that the algorithm is probabilistic. As a consequence, if we
         build again the list of right monic irreducible divisors of `a`, we
         may get a different ordering::
 
-            sage: rightdiv2 = [ d for d in a.right_irreducible_divisors() ]
+            sage: rightdiv2 = [d for d in a.right_irreducible_divisors()]
             sage: rightdiv == rightdiv2
             False
             sage: Set(rightdiv) == Set(rightdiv2)
@@ -668,13 +667,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         We can use this function to build the list of all monic
         irreducible divisors of `a`::
 
-            sage: leftdiv = [ d for d in a.left_irreducible_divisors() ]
+            sage: leftdiv = [d for d in a.left_irreducible_divisors()]
 
         Note that the algorithm is probabilistic. As a consequence, if we
         build again the list of left monic irreducible divisors of `a`, we
         may get a different ordering::
 
-            sage: leftdiv2 = [ d for d in a.left_irreducible_divisors() ]
+            sage: leftdiv2 = [d for d in a.left_irreducible_divisors()]
             sage: Set(leftdiv) == Set(leftdiv2)
             True
         """
@@ -727,7 +726,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         count = 0
         if val > 0:
             count = 1
-        for N,_ in F:
+        for N, _ in F:
             if N == gencenter:
                 continue
             degN = N.degree()
@@ -756,7 +755,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         cdef Py_ssize_t degrandom, m, mP, i
         cdef N
-        cdef list factors = [ (skew_ring.gen(), val) ]
+        cdef list factors = [(skew_ring.gen(), val)]
         cdef SkewPolynomial_finite_field_dense P, Q, P1, NS, g, right, Pn
         cdef unit = self.leading_coefficient()
         cdef Polynomial gencenter = skew_ring._working_center.gen()
@@ -774,13 +773,14 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             while True:
                 P = <SkewPolynomial_finite_field_dense>poly.right_gcd(NS)
                 mP = P.degree() / degN
-                if mP == 0: break
+                if mP == 0:
+                    break
                 if mP == 1:
                     factors.append((P, 1))
                     poly = poly // P
                     for i in range(1, m):
                         if poly.degree() == degN:
-                            factors.append((poly,1))
+                            factors.append((poly, 1))
                             break
                         P = poly.right_gcd(NS)
                         factors.append((P, 1))
@@ -799,7 +799,8 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                         g = <SkewPolynomial_finite_field_dense>skew_ring.random_element((degrandom, degrandom))
                         g = (Q*g).right_gcd(P)
                         Pn = right._left_lcm_cofactor(g)
-                        if Pn.degree() == degN: break
+                        if Pn.degree() == degN:
+                            break
                     Pn = Pn.right_monic()
                     factors.append((Pn, 1))
                     right = Pn * right
@@ -821,10 +822,10 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef gencenter = skew_ring._working_center.gen()
         cdef SkewPolynomial_finite_field_dense gen = <SkewPolynomial_finite_field_dense>skew_ring.gen()
 
-        cdef list factorsN = [ ]
-        cdef dict dict_divisor = { }
-        cdef dict dict_type = { }
-        cdef dict dict_right = { }
+        cdef list factorsN = []
+        cdef dict dict_divisor = {}
+        cdef dict dict_type = {}
+        cdef dict dict_right = {}
         cdef Py_ssize_t m
         cdef list type
 
@@ -846,7 +847,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef SkewPolynomial_finite_field_dense right = <SkewPolynomial_finite_field_dense>skew_ring.one()
         cdef SkewPolynomial_finite_field_dense L, R
         cdef SkewPolynomial_finite_field_dense NS, P, Q, D, D1, D2, d
-        cdef list factors = [ ]
+        cdef list factors = []
         cdef list maxtype
         cdef Py_ssize_t i, j, degN, deg
         cdef count, maxcount
@@ -862,7 +863,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 if <Py_ssize_t>(type[0]) == 1:
                     D1 = P
                 else:
-                    R = right._new_c(right._coeffs[:],skew_ring)
+                    R = right._new_c(right._coeffs[:], skew_ring)
                     R = R // dict_right[N]
                     D = R._left_lcm_cofactor(dict_divisor[N])
                     maxtype = list(type)
@@ -874,13 +875,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     deg = P.degree()-1
                     while True:
                         while True:
-                            R = <SkewPolynomial_finite_field_dense>skew_ring.random_element((deg,deg))
+                            R = <SkewPolynomial_finite_field_dense>skew_ring.random_element((deg, deg))
                             R = Q * R
                             if P.right_gcd(R).degree() == 0:
                                 break
                         D1 = P.right_gcd(D*R)
 
-                        L = left._new_c(list(left._coeffs),skew_ring)
+                        L = left._new_c(list(left._coeffs), skew_ring)
                         L = L // D1
                         degN = N.degree()
                         for j in range(len(type)):
@@ -903,13 +904,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     D2 = D2.right_monic()
                     while D2 == D1:
                         while True:
-                            R = <SkewPolynomial_finite_field_dense>skew_ring.random_element((deg,deg))
+                            R = <SkewPolynomial_finite_field_dense>skew_ring.random_element((deg, deg))
                             R = Q * R
                             if P.right_gcd(R).degree() == 0:
                                 break
                         D2 = P.right_gcd(D*R)
                     dict_divisor[N] = D1.left_lcm(D2)
-            factors.append((D1,1))
+            factors.append((D1, 1))
             left = left // D1
             right = D1 * right
             dict_right[N] = right._new_c(list(right._coeffs), skew_ring)
@@ -1051,7 +1052,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         We can use this function to build the list of factorizations
         of `a`::
 
-            sage: factorizations = [ F for F in a.factorizations() ]
+            sage: factorizations = [F for F in a.factorizations()]
 
         We do some checks::
 
@@ -1068,7 +1069,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         As a consequence, if we call it two times with the same input,
         we can get different orderings::
 
-            sage: factorizations2 = [ F for F in a.factorizations() ]
+            sage: factorizations2 = [F for F in a.factorizations()]
             sage: factorizations == factorizations2  # random
             False
             sage: sorted(factorizations) == sorted(factorizations2)

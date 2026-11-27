@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of commutative rings
 
@@ -32,7 +31,7 @@ from types import GeneratorType
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.structure.element import MonoidElement
-from sage.structure.richcmp import rich_to_bool, richcmp
+from sage.structure.richcmp import rich_to_bool, op_NE
 from sage.structure.sequence import Sequence
 
 
@@ -169,7 +168,7 @@ def Ideal(*args, **kwds):
         sage: S == U                                                                    # needs sage.libs.pari
         True
     """
-    if len(args) == 0:
+    if not args:
         raise ValueError("need at least one argument")
     if len(args) == 1 and args[0] == []:
         raise ValueError("unable to determine which ring to embed the ideal in")
@@ -207,54 +206,13 @@ def Ideal(*args, **kwds):
     return I
 
 
-def is_Ideal(x):
-    r"""
-    Return ``True`` if object is an ideal of a ring.
-
-    EXAMPLES:
-
-    A simple example involving the ring of integers. Note
-    that Sage does not interpret rings objects themselves as ideals.
-    However, one can still explicitly construct these ideals::
-
-        sage: from sage.rings.ideal import is_Ideal
-        sage: R = ZZ
-        sage: is_Ideal(R)
-        doctest:warning...
-        DeprecationWarning: The function is_Ideal is deprecated; use 'isinstance(..., Ideal_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        False
-        sage: 1*R; is_Ideal(1*R)
-        Principal ideal (1) of Integer Ring
-        True
-        sage: 0*R; is_Ideal(0*R)
-        Principal ideal (0) of Integer Ring
-        True
-
-    Sage recognizes ideals of polynomial rings as well::
-
-        sage: R = PolynomialRing(QQ, 'x'); x = R.gen()
-        sage: I = R.ideal(x^2 + 1); I
-        Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-        sage: is_Ideal(I)
-        True
-        sage: is_Ideal((x^2 + 1)*R)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_Ideal is deprecated; "
-                "use 'isinstance(..., Ideal_generic)' instead.")
-    return isinstance(x, Ideal_generic)
-
-
 class Ideal_generic(MonoidElement):
     """
     An ideal.
 
     See :func:`Ideal()`.
     """
-    def __init__(self, ring, gens, coerce=True, **kwds):
+    def __init__(self, ring, gens, coerce=True, **kwds) -> None:
         """
         Initialize this ideal.
 
@@ -285,7 +243,7 @@ class Ideal_generic(MonoidElement):
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Represent the list of generators.
 
@@ -319,13 +277,13 @@ class Ideal_generic(MonoidElement):
             s = repr(x)
             if '\n' in s:
                 has_return = True
-                s = s.replace('\n','\n  ')
+                s = s.replace('\n', '\n  ')
             L.append(s)
         if has_return:
             return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
         return '(%s)' % (', '.join(L))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -350,9 +308,9 @@ class Ideal_generic(MonoidElement):
         """
         return sum(self.__ring.random_element(*args, **kwds) * g for g in self.__gens)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare the generators of two ideals.
+        Compare two ideals with respect to set inclusion.
 
         INPUT:
 
@@ -362,17 +320,46 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: R = ZZ; I = ZZ*2; J = ZZ*(-2)
+            sage: R = ZZ
+            sage: I = ZZ*2
+            sage: J = ZZ*(-2)
             sage: I == J
             True
+
+        TESTS::
+
+            sage: R.<x> = ZZ[]
+            sage: I = R.ideal(1-2*x,2)
+            sage: I.is_trivial()  # needs sage.libs.singular
+            True
+            sage: R.ideal(x, 2) <= R.ideal(1)  # needs sage.libs.singular
+            True
         """
+        if self.is_zero():
+            return rich_to_bool(op, other.is_zero() - 1)
+        if other.is_zero():
+            return rich_to_bool(op, 1)  # self.is_zero() is already False
+
+        from sage.rings.integer_ring import ZZ
+        if self.ring().base_ring() is ZZ:
+            #assert self.ring().implementation() != "singular"
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            Rs = PolynomialRing(ZZ, self.ring().variable_names(), implementation="singular")
+            Is = Rs.ideal(self.gens())
+            Js = Rs.ideal(other.gens())
+            return Is.__richcmp__(Js, op)
+
         S = set(self.gens())
         T = set(other.gens())
         if S == T:
             return rich_to_bool(op, 0)
-        return richcmp(self.gens(), other.gens(), op)
+        if S < T:
+            return rich_to_bool(op, -1)
+        if S > T:
+            return rich_to_bool(op, +1)
+        raise NotImplementedError(f'ideal comparison in {self.ring()} is not implemented')
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 
@@ -416,7 +403,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this ideal is not `(0)`.
 
@@ -444,10 +431,7 @@ class Ideal_generic(MonoidElement):
             sage: bool(I)
             False
         """
-        for g in self.gens():
-            if not g.is_zero():
-                return True
-        return False
+        return any(not g.is_zero() for g in self.gens())
 
     def base_ring(self):
         r"""
@@ -489,7 +473,6 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: psi = CC['x'].hom([-CC['x'].0])
             sage: J = ideal([CC['x'].0 + 1]); J
             Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x
@@ -513,7 +496,6 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
-            sage: # needs sage.rings.number_fields
             sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
@@ -527,7 +509,6 @@ class Ideal_generic(MonoidElement):
 
         ::
 
-            sage: # needs sage.rings.number_fields
             sage: K.<a> = NumberField(x^2 + 5)
             sage: B = K.ideal([2, a + 1]); B
             Fractional ideal (2, a + 1)
@@ -548,7 +529,7 @@ class Ideal_generic(MonoidElement):
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -557,7 +538,7 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
-        import sage.misc.latex as latex
+        from sage.misc import latex
         return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
                                                   for g in self.gens()),
                                         latex.latex(self.ring()))
@@ -692,7 +673,7 @@ class Ideal_generic(MonoidElement):
         """
         return self.gens()
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         r"""
         Return ``True`` if the ideal is maximal in the ring containing the
         ideal.
@@ -730,10 +711,9 @@ class Ideal_generic(MonoidElement):
             # For rings of Krull dimension 0, or for integral domains of
             # Krull dimension 1, every nontrivial prime ideal is maximal.
             return self.is_prime()
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
-    def is_primary(self, P=None):
+    def is_primary(self, P=None) -> bool:
         r"""
         Return ``True`` if this ideal is primary (or `P`-primary, if
         a prime ideal `P` is specified).
@@ -761,7 +741,6 @@ class Ideal_generic(MonoidElement):
 
         Some examples from the Macaulay2 documentation::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x, y, z> = GF(101)[]
             sage: I = R.ideal([y^6])
             sage: I.is_primary()                                                        # needs sage.libs.singular
@@ -784,9 +763,8 @@ class Ideal_generic(MonoidElement):
         except (NotImplementedError, ValueError):
             raise NotImplementedError
         if P is None:
-            return (len(ass) == 1)
-        else:
-            return (len(ass) == 1) and (ass[0] == P)
+            return len(ass) == 1
+        return (len(ass) == 1) and (ass[0] == P)
 
     def primary_decomposition(self):
         r"""
@@ -803,7 +781,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         r"""
         Return ``True`` if this ideal is prime.
 
@@ -856,10 +834,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if len(ass) != 1:
             return False
-        if self == ass[0]:
-            return True
-        else:
-            return False
+        return self == ass[0]
 
     def associated_primes(self):
         r"""
@@ -891,7 +866,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def embedded_primes(self):
+    def embedded_primes(self) -> list:
         r"""
         Return the list of embedded primes of this ideal.
 
@@ -915,7 +890,7 @@ class Ideal_generic(MonoidElement):
         emb.sort()
         return emb
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal.
@@ -942,7 +917,7 @@ class Ideal_generic(MonoidElement):
             return True
         raise NotImplementedError
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this ideal is `(0)` or `(1)`.
 
@@ -1064,7 +1039,7 @@ class Ideal_generic(MonoidElement):
             try:
                 if self.ring().has_coerce_map_from(other):
                     return self
-            except (TypeError,ArithmeticError,ValueError):
+            except (TypeError, ArithmeticError, ValueError):
                 pass
             other = self.ring().ideal(other)
         return self._mul_(other)
@@ -1090,7 +1065,8 @@ class Ideal_generic(MonoidElement):
             sage: I._mul_(J)
             Ideal (x^3*y, x^2*y^2, x^3*z, x^2*y*z, x^4, x^3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
-        return self.ring().ideal([z for z in [x*y for x in self.gens() for y in other.gens()] if z])
+        return self.ring().ideal([z for x in self.gens() for y in other.gens()
+                                  if (z := x * y)])
 
     def __rmul__(self, other):
         """
@@ -1107,20 +1083,21 @@ class Ideal_generic(MonoidElement):
             try:
                 if self.ring().has_coerce_map_from(other):
                     return self
-            except (TypeError,ArithmeticError,ValueError):
+            except (TypeError, ArithmeticError, ValueError):
                 pass
             other = self.ring().ideal(other)
-        return self.ring().ideal([z for z in [y*x for x in self.gens() for y in other.gens()] if z])
+        return self.ring().ideal([z for x in self.gens() for y in other.gens()
+                                  if (z := y * x)])
 
     def norm(self):
         """
         Return the norm of this ideal.
 
         In the general case, this is just the ideal itself, since the ring it
-        lies in can't be implicitly assumed to be an extension of anything.
+        lies in cannot be implicitly assumed to be an extension of anything.
 
-        We include this function for compatibility with cases such as ideals in
-        number fields.
+        We include this function for compatibility with cases such as
+        ideals in number fields.
 
         EXAMPLES::
 
@@ -1137,10 +1114,10 @@ class Ideal_generic(MonoidElement):
         Return the absolute norm of this ideal.
 
         In the general case, this is just the ideal itself, since the ring it
-        lies in can't be implicitly assumed to be an extension of anything.
+        lies in cannot be implicitly assumed to be an extension of anything.
 
-        We include this function for compatibility with cases such as ideals in
-        number fields.
+        We include this function for compatibility with cases such as
+        ideals in number fields.
 
         .. TODO::
 
@@ -1219,7 +1196,7 @@ class Ideal_generic(MonoidElement):
         R = self.ring()
         macaulay2.use(R._macaulay2_(macaulay2))
         gens = [repr(x) for x in self.gens()]
-        if len(gens) == 0:
+        if not gens:
             gens = ['0']
         return macaulay2.ideal(gens)
 
@@ -1267,10 +1244,10 @@ class Ideal_principal(Ideal_generic):
     See :func:`Ideal()`.
     """
     # now Ideal_principal takes a list.
-    #def __init__(self, ring, gen):
+    # def __init__(self, ring, gen):
     #    Ideal_generic.__init__(self, ring, [gen])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1283,7 +1260,7 @@ class Ideal_principal(Ideal_generic):
         """
         return "Principal ideal (%s) of %s" % (self.gen(), self.ring())
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal. When the ideal construction is explicitly principal (i.e.
@@ -1349,7 +1326,7 @@ class Ideal_principal(Ideal_generic):
             raise ValueError(f"i (={i}) must be 0")
         return self.gens()[0]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in ``self``.
 
@@ -1371,7 +1348,7 @@ class Ideal_principal(Ideal_generic):
         except NotImplementedError:
             return self._contains_(self.ring()(x))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Very stupid constant hash function!
 
@@ -1387,21 +1364,40 @@ class Ideal_principal(Ideal_generic):
         """
         return 0
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare the two ideals.
+        Compare two ideals with respect to set inclusion.
 
-        EXAMPLES:
+        EXAMPLES::
+
+            sage: I = 5 * ZZ
+            sage: J = 7 * ZZ
+            sage: I == J
+            False
+            sage: I < J
+            False
+            sage: I > J
+            False
+            sage: I <= J
+            False
+            sage: I >= J
+            False
+            sage: I != J
+            True
 
         Comparison with non-principal ideal::
 
             sage: R.<x> = ZZ[]
             sage: I = R.ideal([x^3 + 4*x - 1, x + 6])
-            sage: J = [x^2] * R
+            sage: J = [x + 6] * R
             sage: I > J  # indirect doctest
             True
             sage: J < I  # indirect doctest
             True
+            sage: I < J  # indirect doctest
+            False
+            sage: J > I  # indirect doctest
+            False
 
         Between two principal ideals::
 
@@ -1414,32 +1410,22 @@ class Ideal_principal(Ideal_generic):
             True
             sage: I3 = P.ideal(x)
             sage: I > I3
-            True
+            False
         """
-        if not isinstance(other, Ideal_generic):
-            other = self.ring().ideal(other)
-
         try:
-            if not other.is_principal():
-                return rich_to_bool(op, -1)
-        except NotImplementedError:
-            # If we do not know if the other is principal or not, then we
-            #   fallback to the generic implementation
-            return Ideal_generic._richcmp_(self, other, op)
+            d1 = self.divides(other)
+            d2 = other.divides(self)
+            if d1 or d2:
+                return rich_to_bool(op, d1 - d2)
+            return op == op_NE
+        except (NotImplementedError, AttributeError):
+            # If we do not know if the other is principal or not,
+            # then we fall back to the generic implementation
+            pass
 
-        if self.is_zero():
-            if not other.is_zero():
-                return rich_to_bool(op, -1)
-            return rich_to_bool(op, 0)
+        return Ideal_generic._richcmp_(self, other, op)
 
-        # is other.gen() / self.gen() a unit in the base ring?
-        g0 = other.gen()
-        g1 = self.gen()
-        if g0.divides(g1) and g1.divides(g0):
-            return rich_to_bool(op, 0)
-        return rich_to_bool(op, 1)
-
-    def divides(self, other):
+    def divides(self, other) -> bool:
         """
         Return ``True`` if ``self`` divides ``other``.
 
@@ -1560,12 +1546,11 @@ class Ideal_pid(Ideal_principal):
         """
         if isinstance(other, Ideal_principal):
             return self.ring().ideal(self.gen().gcd(other.gen()))
-        elif self.gen() in other:
+        if self.gen() in other:
             return other
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if the ideal is prime.
 
@@ -1596,27 +1581,26 @@ class Ideal_pid(Ideal_principal):
             sage: RR.ideal(7).is_prime()
             False
         """
-        if self.is_zero(): # PIDs are integral domains by definition
+        if self.is_zero():  # PIDs are integral domains by definition
             return True
         g = self.gen()
-        if g.is_one():     # The ideal (1) is never prime
+        if g.is_one():      # The ideal (1) is never prime
             return False
         if hasattr(g, 'is_irreducible'):
             return g.is_irreducible()
 
         raise NotImplementedError
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
         Return whether this ideal is maximal.
 
-        Principal ideal domains have Krull dimension 1 (or 0), so an ideal is
-        maximal if and only if it's prime (and nonzero if the ring is not a
-        field).
+        Principal ideal domains have Krull dimension 1 (or 0), so an
+        ideal is maximal if and only if it is prime (and nonzero if the
+        ring is not a field).
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: p = R.ideal(t^2 + 2)
             sage: p.is_maximal()
@@ -1646,7 +1630,6 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: P = ZZ.ideal(61); P
             Principal ideal (61) of Integer Ring
             sage: F = P.residue_field(); F
@@ -1713,7 +1696,7 @@ class Ideal_fractional(Ideal_generic):
 
     See :func:`Ideal()`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1793,7 +1776,7 @@ def Cyclic(R, n=None, homog=False, singular=None):
     if not homog:
         I = singular.cyclic(n)
     else:
-        I = singular.cyclic(n).homog(R2.gen(n-1))
+        I = singular.cyclic(n).homog(R2.gen(n - 1))
     return R2.ideal(I).change_ring(R)
 
 
@@ -1844,7 +1827,7 @@ def Katsura(R, n=None, homog=False, singular=None):
     if not homog:
         I = singular.katsura(n)
     else:
-        I = singular.katsura(n).homog(R2.gen(n-1))
+        I = singular.katsura(n).homog(R2.gen(n - 1))
     return R2.ideal(I).change_ring(R)
 
 

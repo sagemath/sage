@@ -212,8 +212,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     #### Parent methods ####
 
@@ -351,7 +350,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             ) and self.codomain().has_coerce_map_from(other.codomain())
         return False
 
-    #!# check
+    # check
     def __call__(self, *args, **kwds):
         r"""
         Construct an element of ``self`` from the input.

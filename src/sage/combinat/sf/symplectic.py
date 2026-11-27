@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symplectic Symmetric Functions
+Symplectic symmetric functions
 
 AUTHORS:
 
@@ -21,10 +21,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import sfa
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.combinat.partition import Partitions
+from sage.libs.lrcalc import lrcalc
 from sage.misc.cachefunc import cached_method
+
+from . import sfa
 
 
 class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
@@ -56,17 +57,11 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
 
     REFERENCES:
 
-    .. [ChariKleber2000] Vyjayanthi Chari and Michael Kleber.
-       *Symmetric functions and representations of quantum affine algebras*.
-       :arxiv:`math/0011161v1`
+    - [ChariKleber2000]_
 
-    .. [KoikeTerada1987] \K. Koike, I. Terada, *Young-diagrammatic methods for
-       the representation theory of the classical groups of type Bn, Cn, Dn*.
-       J. Algebra 107 (1987), no. 2, 466-511.
+    - [KoikeTerada1987]_
 
-    .. [ShimozonoZabrocki2006] Mark Shimozono and Mike Zabrocki.
-       *Deformed universal characters for classical and affine algebras*.
-       Journal of Algebra, **299** (2006). :arxiv:`math/0404288`.
+    - [ShimozonoZabrocki2006]_
 
     EXAMPLES:
 
@@ -211,13 +206,14 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         """
         R = self.base_ring()
         n = sum(lam)
-        return self._s._from_dict({ mu: R.sum( (-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
-                                               for nu in Partitions(2*j)
-                                                   if all(nu.leg_length(i,i) == nu.arm_length(i,i)+1
-                                                          for i in range(nu.frobenius_rank()))
-                                             )
-                                    for j in range(n//2+1) # // 2 for horizontal dominoes
-                                    for mu in Partitions(n-2*j) })
+        return self._s._from_dict(
+            {mu: R.sum((-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
+                       for nu in Partitions(2 * j)
+                       if all(nu.leg_length(i, i) == nu.arm_length(i, i) + 1
+                              for i in range(nu.frobenius_rank()))
+                       )
+             for j in range(n // 2 + 1)  # // 2 for horizontal dominoes
+             for mu in Partitions(n - 2 * j)})
 
     @cached_method
     def _s_to_sp_on_basis(self, lam):
@@ -245,7 +241,9 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         """
         R = self.base_ring()
         n = sum(lam)
-        return self._from_dict({ mu: R.sum( lrcalc.lrcoef_unsafe(lam, mu, sum([[x,x] for x in nu], []))
-                                            for nu in Partitions(j) )
-                                 for j in range(n//2+1) # // 2 for vertical dominoes
-                                 for mu in Partitions(n-2*j) })
+        return self._from_dict(
+            {mu: R.sum(lrcalc.lrcoef_unsafe(lam, mu,
+                                            sum([[x, x] for x in nu], []))
+                       for nu in Partitions(j))
+             for j in range(n // 2 + 1)  # // 2 for vertical dominoes
+             for mu in Partitions(n - 2 * j)})

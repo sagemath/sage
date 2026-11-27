@@ -11,7 +11,7 @@ channels, and we borrow the nomenclature from communication theory, such as
 "transmission" and "positions" as the elements of transmitted vectors.
 Transmission can be achieved with two methods:
 
-- :meth:`Channel.transmit`. Considering a channel ``Chan`` and a message
+- :meth:`~sage.coding.channel.Channel.transmit`. Considering a channel ``Chan`` and a message
   ``msg``, transmitting ``msg`` with ``Chan`` can be done this way::
 
     Chan.transmit(msg)
@@ -20,8 +20,8 @@ Transmission can be achieved with two methods:
 
     Chan(msg)
 
-- :meth:`transmit_unsafe`. This does the exact same thing as
-  :meth:`transmit` except that it does not check if ``msg`` belongs to the
+- :meth:`~sage.coding.channel.Channel.transmit_unsafe`. This does the exact same thing as
+  :meth:`~sage.coding.channel.Channel.transmit` except that it does not check if ``msg`` belongs to the
   input space of ``Chan``::
 
     Chan.transmit_unsafe(msg)
@@ -137,7 +137,7 @@ class Channel(SageObject):
 
     - call the super constructor,
 
-    - override :meth:`transmit_unsafe`.
+    - override :meth:`~sage.coding.channel.Channel.transmit_unsafe`.
 
     While not being mandatory, it might be useful to reimplement representation methods (``_repr_`` and
     ``_latex_``).
@@ -210,7 +210,7 @@ class Channel(SageObject):
             sage: msg = F((4, 8, 15, 16, 23, 42))
             sage: set_random_seed(10)
             sage: Chan.transmit(msg)
-            (4, 8, 4, 16, 23, 53)
+            (4, 8, 28, 5, 23, 42)
 
         We can check that the input ``msg`` is not modified::
 
@@ -233,8 +233,7 @@ class Channel(SageObject):
         """
         if message in self.input_space():
             return self.transmit_unsafe(message)
-        else:
-            raise TypeError("Message must be an element of the input space for the given channel")
+        raise TypeError("Message must be an element of the input space for the given channel")
 
     #Alias for transmit method
     __call__ = transmit
@@ -398,7 +397,7 @@ class StaticErrorRateChannel(Channel):
             sage: msg = F((4, 8, 15, 16, 23, 42))
             sage: set_random_seed(10)
             sage: Chan.transmit_unsafe(msg)
-            (4, 8, 4, 16, 23, 53)
+            (4, 8, 28, 5, 23, 42)
 
         This checks that :issue:`19863` is fixed::
 
@@ -583,7 +582,8 @@ class ErrorErasureChannel(Channel):
             sage: msg = F((3, 14, 15, 9, 26, 53, 58, 9, 7, 9, 3))
             sage: set_random_seed(10)
             sage: Chan.transmit_unsafe(msg)
-            ((31, 0, 15, 9, 38, 53, 58, 9, 0, 9, 3), (0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0))
+            ((0, 0, 15, 9, 26, 53, 58, 8, 7, 9, 33),
+             (1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         """
         number_errors = randint(*self.number_errors())
         number_erasures = randint(*self.number_erasures())
@@ -750,7 +750,7 @@ class QarySymmetricChannel(Channel):
             sage: msg = F((3, 14, 15, 9, 26, 53, 58, 9, 7, 9, 3))
             sage: set_random_seed(10)
             sage: Chan.transmit_unsafe(msg)
-            (3, 14, 15, 53, 12, 53, 58, 9, 55, 9, 3)
+            (3, 14, 15, 58, 26, 53, 58, 9, 47, 20, 3)
         """
         epsilon = self.error_probability()
         V = self.input_space()

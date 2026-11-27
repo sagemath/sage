@@ -33,13 +33,6 @@ EXAMPLES::
      ['a', 1, 'b', 'c', 2],
      [1, 'a', 'b', 'c', 2]]
 
-References:
-
-.. [EilLan53] On the groups `H(\pi, n)`, I,
-    Samuel Eilenberg and
-    Saunders Mac Lane,
-    1953.
-
 Author:
 
 - Jean-Baptiste Priez
@@ -309,7 +302,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             return (ll1 + ll2).binomial(ll2)
 
         return sum(comp_binom(el1, el2)
-                   for (el1, el2) in itertools.product(self._l1, self._l2))
+                   for el1, el2 in itertools.product(self._l1, self._l2))
 
 
 class ShuffleProduct(ShuffleProduct_abstract):
@@ -718,7 +711,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
 
     If `c = a + b`, then the overlapping shuffle product with
     precisely `a + b - c` overlaps is plainly the shuffle product
-    (:class:`ShuffleProduct_w1w2`).
+    (:class:`~sage.combinat.words.shuffle_product.ShuffleProduct_w1w2`).
 
     INPUT:
 

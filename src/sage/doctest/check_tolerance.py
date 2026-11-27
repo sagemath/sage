@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Check tolerance when parsing docstrings
 """
@@ -24,9 +23,13 @@ Check tolerance when parsing docstrings
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 import re
 from sage.doctest.rif_tol import RIFtol, add_tolerance
-from sage.doctest.marked_output import MarkedOutput
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.doctest.marked_output import MarkedOutput
 
 
 # Regex pattern for float without the (optional) leading sign
@@ -172,10 +175,9 @@ def complex_match_to_real_and_imag(m: re.Match) -> tuple[str, str]:
         real_imag_unit = m.group('real_imag_unit')
         if real_imag_coeff is not None:
             return (real, real_imag_coeff)
-        elif real_imag_unit is not None:
+        if real_imag_unit is not None:
             return (real, real_imag_unit + '1')
-        else:
-            return (real, '0')
+        return (real, '0')
     only_imag = m.group('only_imag')
     if only_imag is not None:
         return ('0', only_imag)
@@ -196,8 +198,7 @@ def complex_star_repl(m: re.Match):
             '*',
             (m.group('unit_imag_post') or '').strip(),
         ])
-    else:
-        return '*'
+    return '*'
 
 
 def check_tolerance_complex_domain(want: MarkedOutput, got: str) -> tuple[str, str]:

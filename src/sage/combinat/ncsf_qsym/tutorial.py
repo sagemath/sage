@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Introduction to Quasisymmetric Functions
+Introduction to quasisymmetric functions
 
 In this document we briefly explain the quasisymmetric function bases and
 related functionality in Sage.   We assume the reader is familiar with the
@@ -260,7 +260,7 @@ These two operations endow `QSym` with the structure of a Hopf algebra. It is
 the dual Hopf algebra of the non-commutative symmetric functions `NCSF`. Under
 this duality, the Monomial basis of `QSym` is dual to the Complete basis of
 `NCSF`, and the Fundamental basis of `QSym` is dual to the Ribbon basis of
-`NCSF` (see [MR]_)::
+`NCSF` (see [MR1995]_)::
 
     sage: S = M.dual(); S
     Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
@@ -431,16 +431,9 @@ We demonstrate here the defining relation of the antipode::
 
 REFERENCES:
 
-.. [HHL05] *A combinatorial formula for Macdonald polynomials*.
-   Haiman, Haglund, and Loehr.
-   J. Amer. Math. Soc. 18 (2005), no. 3, 735-761.
+- [HHL05]_
 
-.. [LW12] *Quasisymmetric expansions of Schur-function plethysms*.
-   Loehr and Warrington.
-   Proc. Amer. Math. Soc. 140 (2012), no. 4, 1159-1171.
+- [LW12]_
 
-.. [KT97] *Noncommutative symmetric functions IV: Quantum linear groups and
-   Hecke algebras at* `q = 0`.
-   Krob and Thibon.
-   Journal of Algebraic Combinatorics 6 (1997), 339-376.
+- [KT1997]_
 """

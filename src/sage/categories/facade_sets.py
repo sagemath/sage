@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Facade Sets
 
@@ -37,10 +36,9 @@ class FacadeSets(CategoryWithAxiom):
         import sage.categories.examples.facade_sets as examples
         if choice == "union":
             return examples.IntegersCompletion()
-        elif choice == 'subset':
+        if choice == 'subset':
             return examples.PositiveIntegerMonoid()
-        else:
-            raise TypeError("choice should be 'union' or 'subset'")
+        raise TypeError("choice should be 'union' or 'subset'")
 
     class ParentMethods:
 
@@ -93,15 +91,14 @@ class FacadeSets(CategoryWithAxiom):
             """
             if self.is_parent_of(element):
                 return element
-            else:
-                parents = self.facade_for()
-                if parents is True:
-                    raise NotImplementedError
-                for parent in self.facade_for():
-                    try:
-                        return parent(element)
-                    except Exception:
-                        pass
+            parents = self.facade_for()
+            if parents is True:
+                raise NotImplementedError
+            for parent in self.facade_for():
+                try:
+                    return parent(element)
+                except Exception:
+                    pass
             raise ValueError("Can't coerce `%s` in any parent `%s` is a facade for" % (element, self))
 
         def facade_for(self):
@@ -110,8 +107,8 @@ class FacadeSets(CategoryWithAxiom):
 
             This default implementation assumes that ``self`` has
             an attribute ``_facade_for``, typically initialized by
-            :meth:`Parent.__init__`. If the attribute is not present, the method
-            raises a :exc:`NotImplementedError`.
+            :class:`~sage.structure.parent.Parent`. If the attribute is not
+            present, the method raises a :exc:`NotImplementedError`.
 
             EXAMPLES::
 
@@ -157,7 +154,8 @@ class FacadeSets(CategoryWithAxiom):
                 sage: S.is_parent_of(1/2)
                 False
 
-            This method differs from :meth:`__contains__` in two
+            This method differs from
+            :meth:`~sage.structure.parent.Parent.__contains__` in two
             ways.  First, this does not take into account the fact
             that ``self`` may be a strict subset of the parent(s)
             it is a facade for::
@@ -181,7 +179,7 @@ class FacadeSets(CategoryWithAxiom):
             from sage.structure.element import parent
             return parent(element) in parents
 
-        def __contains__(self, element):
+        def __contains__(self, element) -> bool:
             """
             Membership testing.
 
@@ -191,7 +189,7 @@ class FacadeSets(CategoryWithAxiom):
             .. warning::
 
                 this default implementation is currently
-                overridden by :meth:`Parent.__contains__`.
+                overridden by :meth:`~sage.structure.parent.Parent.__contains__`.
 
             EXAMPLES::
 

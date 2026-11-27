@@ -80,7 +80,7 @@ def file_and_line(obj):
 
     The following tests against a bug that was fixed in :issue:`11298`::
 
-        sage: edit_module.file_and_line(x)                                              # needs sage.symbolic
+        sage: edit_module.file_and_line(x)
         ('...sage/symbolic/expression...pyx', ...)
     """
     # d = inspect.getdoc(obj)
@@ -249,8 +249,6 @@ def edit(obj, editor=None, bg=None):
 
         sage: edit(edit)           # not tested
     """
-    global edit_template
-
     if editor:
         set_editor(editor)
     elif not edit_template:

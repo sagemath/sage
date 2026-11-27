@@ -7,12 +7,17 @@ inventory files. The documentation files are not written.
 from __future__ import annotations
 
 from os import path
-from typing import Any, Iterable
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
-from sphinx.application import Sphinx
 from sphinx.builders.dummy import DummyBuilder
 from sphinx.util.inventory import InventoryFile
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from sphinx.application import Sphinx
 
 INVENTORY_FILENAME = "objects.inv"
 
@@ -23,6 +28,8 @@ class InventoryBuilder(DummyBuilder):
     inventory files. The documentation files are not written.
     """
     name = "inventory"
+
+    #: The output-format identifier used by the inventory builder.
     format = "inventory"
     epilog = "The inventory file is in %(outdir)s."
 
@@ -61,6 +68,7 @@ class InventoryBuilder(DummyBuilder):
         """
         assert self.env is not None
 
+        Path(self.outdir).mkdir(parents=True, exist_ok=True)
         InventoryFile.dump(
             path.join(self.outdir, INVENTORY_FILENAME), self.env, self
         )

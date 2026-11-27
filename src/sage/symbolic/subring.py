@@ -98,9 +98,9 @@ Classes and Methods
 # ****************************************************************************
 
 import sage.rings.abc
-from .ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
+from sage.symbolic.ring import SR, SymbolicRing
 
 
 class SymbolicSubringFactory(UniqueFactory):
@@ -397,7 +397,7 @@ class GenericSymbolicSubring(SymbolicRing):
         """
         from sage.rings.infinity import InfinityRing
         from sage.rings.qqbar import AA, QQbar
-        from sage.rings.real_lazy import RLF, CLF
+        from sage.rings.real_lazy import CLF, RLF
 
         if isinstance(P, type):
             return SR._coerce_map_from_(P)
@@ -739,9 +739,9 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) is type(other):
+        if type(self) is type(other):
             return type(self)(self.vars | other.vars)
-        elif isinstance(other, SymbolicSubringRejectingVarsFunctor):
+        if isinstance(other, SymbolicSubringRejectingVarsFunctor):
             if not (self.vars & other.vars):
                 return other
 
@@ -864,7 +864,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         """
         if isinstance(P, SymbolicSubringRejectingVars):
             return self._vars_ <= P._vars_
-        elif isinstance(P, SymbolicSubringAcceptingVars):
+        if isinstance(P, SymbolicSubringAcceptingVars):
             return not (self._vars_ & P._vars_)
         return super()._coerce_map_from_(P)
 
@@ -928,9 +928,9 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) is type(other):
+        if type(self) is type(other):
             return type(self)(self.vars & other.vars)
-        elif isinstance(other, SymbolicSubringAcceptingVarsFunctor):
+        if isinstance(other, SymbolicSubringAcceptingVarsFunctor):
             if not (self.vars & other.vars):
                 return self
 

@@ -482,8 +482,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             if self._rational_point is not None:
                 if point:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
 
         B = self.base_ring()
 
@@ -727,7 +726,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             return self.Hom(Y)(x, check=False)
         return super().hom(x, Y)
 
-    def is_diagonal(self):
+    def is_diagonal(self) -> bool:
         r"""
         Return ``True`` if and only if the conic has the form
         `a x^2 + b y^2 + c z^2`.
@@ -746,7 +745,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         """
         return all(self.coefficients()[i] == 0 for i in [1, 2, 4])
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is smooth.
 
@@ -908,7 +907,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism=False); (p, i)
+            sage: p, i = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
@@ -934,6 +933,15 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             ...
             ValueError: The conic self (=Projective Conic Curve over Rational Field
             defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
+
+        The point must be on the conic (:issue:`34440`)::
+
+            sage: C = Conic(GF(7), [1, 1, -1])
+            sage: C.parametrization([1, 1, 0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Coordinates [1, 1, 0] do not define a point on
+            Projective Conic Curve over Finite Field of size 7 defined by x^2 + y^2 - z^2
         """
         if (self._parametrization is not None) and not point:
             par = self._parametrization
@@ -942,7 +950,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                 raise ValueError("The conic self (=%s) is not smooth, hence does not have a parametrization." % self)
             if point is None:
                 point = self.rational_point()
-            point = Sequence(point)
+            point = Sequence(self(point))
             B = self.base_ring()
             Q = PolynomialRing(B, 'x,y')
             x, y = Q.gens()

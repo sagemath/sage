@@ -66,8 +66,10 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.nu_dyck_word import NuDyckWords, NuDyckWord
 from sage.combinat.posets.lattices import LatticePoset
+from sage.rings.integer_ring import ZZ
 
 
 def NuTamariLattice(nu):
@@ -111,7 +113,8 @@ def NuTamariLattice(nu):
             new_ndw = ndw.mutate(i)
             if new_ndw is not None:
                 covers.append([ndw, new_ndw])
-    return LatticePoset([elements, covers])
+    cat = FiniteLatticePosets().Trim().CongruenceUniform()
+    return LatticePoset([elements, covers], cover_relations=True, category=cat)
 
 
 def delta_swap(p, k, delta):
@@ -220,7 +223,7 @@ def AltNuTamariLattice(nu, delta=None):
         Finite lattice containing 7 elements
         sage: AltNuTamariLattice('01001') == AltNuTamariLattice('01001', [2, 0])
         True
-        sage: nu = '00100100101'; P = AltNuTamariLattice(nu); Q = NuTamariLattice(nu); P == Q
+        sage: nu = '00100100101'; P = AltNuTamariLattice(nu); Q = NuTamariLattice(nu); P.is_isomorphic(Q)
         True
 
     TESTS::
@@ -241,6 +244,14 @@ def AltNuTamariLattice(nu, delta=None):
         Traceback (most recent call last):
         ...
         ValueError: delta is not a valid increment vector
+        sage: AltNuTamariLattice('010', [-1])
+        Traceback (most recent call last):
+        ...
+        ValueError: delta is not a valid increment vector
+        sage: AltNuTamariLattice('010', [1/2])
+        Traceback (most recent call last):
+        ...
+        ValueError: delta is not a valid increment vector
 
     REFERENCES:
 
@@ -258,7 +269,9 @@ def AltNuTamariLattice(nu, delta=None):
     deltamax = [len(a) for a in nu.split(sep='1')[1:]]
     if delta is None:
         delta = deltamax
-    elif len(delta) != len(deltamax) or any(delta[i] > deltamax[i] for i in range(len(delta))):
+    elif (len(delta) != len(deltamax)
+          or any(d not in ZZ or d < 0 or d > m
+                 for d, m in zip(delta, deltamax))):
         raise ValueError("delta is not a valid increment vector")
 
     def covers(p):

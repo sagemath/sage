@@ -246,10 +246,8 @@ class Point(GraphicPrimitive_xydata):
             all = [point3d(list(zip(self.xdata, self.ydata, zdata)), **options)]
             if len(all) == 1:
                 return all[0]
-            else:
-                return Graphics3dGroup(all)
-        else:
-            raise ValueError('incorrect number of heights given')
+            return Graphics3dGroup(all)
+        raise ValueError('incorrect number of heights given')
 
     def _repr_(self):
         """
@@ -583,7 +581,7 @@ def point2d(points, **options):
         sage: P = point((0.5, 0.5), legend_label='test')
     """
     from sage.plot.plot import xydata_from_point_list
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Expression
 
     # points could be a single number
@@ -599,7 +597,7 @@ def point2d(points, **options):
     l = len(points)
     if l == 0:
         return Graphics()
-    elif l == 2:  # special case for a single 2D point
+    if l == 2:  # special case for a single 2D point
         if all(isinstance(z, numbers.Real)
                or (isinstance(z, Expression) and not complex(z).imag)
                for z in points):

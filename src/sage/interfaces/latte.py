@@ -185,20 +185,18 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, 't')
-            tempd.cleanup()
-            return R(ans)
-    elif multivariate_generating_function:
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, 't')
+        tempd.cleanup()
+        return R(ans)
+    if multivariate_generating_function:
         with open(filename + '.rat') as f:
             ans = f.read()
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
+        raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
     else:
         if ans:  # Sometimes (when LattE's preproc does the work), no output appears on stdout.
             ans = ans.splitlines()[-1]
@@ -211,9 +209,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            tempd.cleanup()
-            return Integer(ans)
+        tempd.cleanup()
+        return Integer(ans)
 
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
@@ -413,8 +410,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     tempd.cleanup()
     if raw_output:
         return ans
-    else:
-        return Rational(ans)
+    return Rational(ans)
 
 
 def to_latte_polynomial(polynomial):

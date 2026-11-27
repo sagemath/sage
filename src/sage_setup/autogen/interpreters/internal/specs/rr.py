@@ -8,13 +8,18 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from .python import MemoryChunkPyConstant
-from ..instructions import (params_gen, instr_funcall_1arg_mpfr,
-                            instr_funcall_2args_mpfr, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_1arg_mpfr,
+    instr_funcall_2args_mpfr,
+    params_gen,
+)
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpfr, ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant
 
 
 class MemoryChunkRRRetval(MemoryChunk):
@@ -143,11 +148,13 @@ class RRInterpreter(StackInterpreter):
             }
 
         This instruction makes use of the function ``rr_py_call_helper``,
-        which is declared in ``wrapper_rr.h``::
+        which is forward-declared in ``c_header``::
 
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpfr.h>
+            <BLANKLINE>
+            int rr_py_call_helper(PyObject *, PyObject *, int, mpfr_t *, __mpfr_struct *);
             <BLANKLINE>
 
         The function ``rr_py_call_helper`` is implemented in Cython::
@@ -172,7 +179,7 @@ class RRInterpreter(StackInterpreter):
         """
 
         mc_retval = MemoryChunkRRRetval('retval', ty_mpfr)
-        super(RRInterpreter, self).__init__(ty_mpfr, mc_retval=mc_retval)
+        super().__init__(ty_mpfr, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')
@@ -186,6 +193,8 @@ class RRInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpfr.h>
+
+            int rr_py_call_helper(PyObject *, PyObject *, int, mpfr_t *, __mpfr_struct *);
             ''')
 
         self.pxd_header = ri(0,

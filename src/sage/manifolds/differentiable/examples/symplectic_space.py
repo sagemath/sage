@@ -94,7 +94,7 @@ class StandardSymplecticSpace(EuclideanSpace):
             sage: omega.display()
             omega = -dq∧dp
 
-        An isomomorphism of its tangent space (at any point) with an indefinite inner product space
+        An isomorphism of its tangent space (at any point) with an indefinite inner product space
         with distinguished basis::
 
             sage: Q_M_qp = omega[:]; Q_M_qp
@@ -155,7 +155,7 @@ class StandardSymplecticSpace(EuclideanSpace):
         self._symplectic_form = SymplecticFormParal(
             self, symplectic_name, symplectic_latex_name
         )
-        for i in range(0, dim_half):
+        for i in range(dim_half):
             q_index = 2 * i + 1
             self._symplectic_form.set_comp()[q_index, q_index + 1] = -1
 

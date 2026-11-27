@@ -41,8 +41,8 @@ isomorphic.
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
+from sage.categories.morphism import Morphism
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
 
 
@@ -109,7 +109,7 @@ class ChainHomotopy(Morphism):
         ...
         ValueError: the data do not define a valid chain homotopy
     """
-    def __init__(self, matrices, f, g=None):
+    def __init__(self, matrices, f, g=None) -> None:
         r"""
         Create a chain homotopy between the given chain maps
         from a dictionary of matrices.
@@ -190,7 +190,7 @@ class ChainHomotopy(Morphism):
         self._g = g
         Morphism.__init__(self, Hom(domain, codomain))
 
-    def is_algebraic_gradient_vector_field(self):
+    def is_algebraic_gradient_vector_field(self) -> bool:
         r"""
         An algebraic gradient vector field is a linear map
         `H: C \to C` such that `H H = 0`.
@@ -242,7 +242,7 @@ class ChainHomotopy(Morphism):
                     return False
         return True
 
-    def is_homology_gradient_vector_field(self):
+    def is_homology_gradient_vector_field(self) -> bool:
         r"""
         A homology gradient vector field is an algebraic gradient vector
         field `H: C \to C` (i.e., a chain homotopy satisfying `H
@@ -345,7 +345,7 @@ class ChainHomotopy(Morphism):
         matrices = {i-deg: matrix_dict[i].transpose() for i in matrix_dict}
         return ChainHomotopy(matrices, self._f.dual(), self._g.dual())
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         TESTS::
 
@@ -359,7 +359,7 @@ class ChainHomotopy(Morphism):
         """
         return hash(self._f) ^ hash(self._g) ^ hash(tuple(self._matrix_dictionary.items()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -422,7 +422,7 @@ class ChainContraction(ChainHomotopy):
         ....:                       1: zero_matrix(ZZ, 1),
         ....:                       2: identity_matrix(ZZ, 1)}, pi, iota)
     """
-    def __init__(self, matrices, pi, iota):
+    def __init__(self, matrices, pi, iota) -> None:
         r"""
         Create a chain contraction from the given data.
 
@@ -459,8 +459,8 @@ class ChainContraction(ChainHomotopy):
             ...
             ValueError: not an algebraic gradient vector field
         """
+        from sage.homology.chain_complex_morphism import ChainComplexMorphism
         from sage.matrix.constructor import identity_matrix
-        from .chain_complex_morphism import ChainComplexMorphism
 
         if not (pi.domain() == iota.codomain()
                 and pi.codomain() == iota.domain()):

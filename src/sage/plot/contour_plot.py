@@ -210,8 +210,6 @@ class ContourPlot(GraphicPrimitive):
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
-            if fill and label_options is None:
-                label_options['inline'] = False
             subplot.clabel(CS, **label_options)
         if options.get('colorbar', False):
             colorbar_options = options['colorbar_options']
@@ -237,6 +235,17 @@ def contour_plot(f, xrange, yrange, **options):
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``contour_plot(f, (xmin,xmax), (ymin,ymax), ...)``
+
+    The default for ``label_inline`` depends on whether contours are filled::
+
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=False, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        True
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=True, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        False
 
     INPUT:
 
@@ -881,7 +890,7 @@ def contour_plot(f, xrange, yrange, **options):
         sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
 
     region = options.pop('region')
@@ -1024,6 +1033,9 @@ def contour_plot(f, xrange, yrange, **options):
                              dtype=bool)
 
         xy_data_array[mask] = numpy.ma.masked
+
+    if options['label_options']['inline'] is None:
+        options['label_options']['inline'] = not options['fill']
 
     g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
 
@@ -1382,12 +1394,11 @@ def implicit_plot(f, xrange, yrange, **options):
                            borderstyle=linestyles,
                            incol=incol, bordercol=bordercol,
                            **options)
-    elif options['fill'] is False:
+    if options['fill'] is False:
         options.pop('fillcolor', None)
         return contour_plot(f, xrange, yrange, linewidths=linewidths,
                             linestyles=linestyles, **options)
-    else:
-        raise ValueError("fill=%s is not supported" % options['fill'])
+    raise ValueError("fill=%s is not supported" % options['fill'])
 
 
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,
@@ -1650,7 +1661,7 @@ def region_plot(f, xrange, yrange, **options):
         sage: region_plot([x^2 + y^2 == 1, x < y], (x,-1,1), (y,-1,1))
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.structure.element import Expression
     from warnings import warn
@@ -1780,7 +1791,7 @@ def equify(f):
         sage: f(2, 1)
         -1
     """
-    from sage.calculus.all import symbolic_expression
+    from sage.calculus.expr import symbolic_expression
     from sage.structure.element import Expression
     if not isinstance(f, Expression):
         return lambda x, y: -1 if f(x, y) else 1

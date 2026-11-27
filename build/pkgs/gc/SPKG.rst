@@ -10,7 +10,7 @@ The Boehm-Demers-Weiser conservative garbage collector.
 License
 -------
 
--  MIT-style (https://github.com/ivmai/bdwgc/blob/master/LICENSE)
+-  MIT-style (https://github.com/bdwgc/bdwgc/blob/master/LICENSE)
 
 
 Upstream Contact
@@ -19,7 +19,7 @@ Upstream Contact
 -  Ivan Maidanski
 
 Webpage:
--  https://github.com/ivmai/bdwgc/
+-  https://github.com/bdwgc/bdwgc/
 -  https://www.hboehm.info/gc/
 
 

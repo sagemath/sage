@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.symbolic
 r"""
-C-Finite Sequences
+C-finite sequences
 
 C-finite infinite sequences satisfy homogeneous linear recurrences with constant coefficients:
 
@@ -8,7 +8,7 @@ C-finite infinite sequences satisfy homogeneous linear recurrences with constant
 
     a_{n+d} = c_0a_n + c_1a_{n+1} + \cdots + c_{d-1}a_{n+d-1}, \quad d>0.
 
-CFiniteSequences are completely defined by their ordinary generating function (o.g.f., which
+They are completely defined by their ordinary generating function (o.g.f., which
 is always a :mod:`fraction <sage.rings.fraction_field_element>` of
 :mod:`polynomials <sage.rings.polynomial.polynomial_element>` over `\ZZ` or `\QQ` ).
 
@@ -65,9 +65,17 @@ can be guessed::
 
     :func:`fibonacci`, :class:`BinaryRecurrenceSequence`
 
-AUTHORS:
+.. TODO::
 
-- Ralf Stephan (2014): initial version
+    Implement a feature enabling::
+
+        sage: # not implemented
+        sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+        sage: latex(r)
+        \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
+        sage: r.egf()
+        exp(2*x)
+        sage: r = CFiniteSequence(1/(1-y-x*y), x)
 
 REFERENCES:
 
@@ -75,6 +83,10 @@ REFERENCES:
 - [KP2011]_
 - [SZ1994]_
 - [Zei2011]_
+
+AUTHORS:
+
+- Ralf Stephan (2014): initial version
 """
 
 # ****************************************************************************
@@ -740,26 +752,25 @@ class CFiniteSequence(FieldElement,
         """
         if self._deg == 0:
             return 'Finite sequence %s, offset %d' % (str(self._a), self._off)
+        if self._c[0] == 1:
+            cstr = 'a(n+%d) = a(n+%d)' % (self._deg, self._deg - 1)
+        elif self._c[0] == -1:
+            cstr = 'a(n+%d) = -a(n+%d)' % (self._deg, self._deg - 1)
         else:
-            if self._c[0] == 1:
-                cstr = 'a(n+%d) = a(n+%d)' % (self._deg, self._deg - 1)
-            elif self._c[0] == -1:
-                cstr = 'a(n+%d) = -a(n+%d)' % (self._deg, self._deg - 1)
-            else:
-                cstr = 'a(n+%d) = %s*a(n+%d)' % (self._deg, str(self._c[0]), self._deg - 1)
-            for i in range(1, self._deg):
-                j = self._deg - i - 1
-                if self._c[i] < 0:
-                    if self._c[i] == -1:
-                        cstr = cstr + ' - a(n+%d)' % (j,)
-                    else:
-                        cstr = cstr + ' - %d*a(n+%d)' % (-(self._c[i]), j)
-                elif self._c[i] > 0:
-                    if self._c[i] == 1:
-                        cstr = cstr + ' + a(n+%d)' % (j,)
-                    else:
-                        cstr = cstr + ' + %d*a(n+%d)' % (self._c[i], j)
-            cstr = cstr.replace('+0', '')
+            cstr = 'a(n+%d) = %s*a(n+%d)' % (self._deg, str(self._c[0]), self._deg - 1)
+        for i in range(1, self._deg):
+            j = self._deg - i - 1
+            if self._c[i] < 0:
+                if self._c[i] == -1:
+                    cstr = cstr + ' - a(n+%d)' % (j,)
+                else:
+                    cstr = cstr + ' - %d*a(n+%d)' % (-(self._c[i]), j)
+            elif self._c[i] > 0:
+                if self._c[i] == 1:
+                    cstr = cstr + ' + a(n+%d)' % (j,)
+                else:
+                    cstr = cstr + ' + %d*a(n+%d)' % (self._c[i], j)
+        cstr = cstr.replace('+0', '')
         astr = ', starting a(%s...) = [' % str(self._off)
         maxwexp = self.numerator().quo_rem(self.denominator())[0].degree() + 1
         for i in range(maxwexp + self._deg):
@@ -1267,16 +1278,3 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         if num == 0 or sequence != S(num / den).list():
             return 0
         return CFiniteSequence(num / den)
-
-
-r"""
-.. TODO::
-
-    sage: # not implemented
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
-    sage: latex(r)
-    \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()
-    exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x)
-"""

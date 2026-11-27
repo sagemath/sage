@@ -386,12 +386,11 @@ class FGP_Element(ModuleElement):
         v = self.vector()
         if base_ring is None or v.base_ring() is base_ring:
             return v.__copy__()
-        else:
-            return v.change_ring(base_ring)
+        return v.change_ring(base_ring)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -409,7 +408,7 @@ class FGP_Element(ModuleElement):
             sage: x + x == 2*x
             True
         """
-        return richcmp(self.vector(), right.vector(), op)
+        return richcmp(self.vector(), other.vector(), op)
 
     def additive_order(self):
         """

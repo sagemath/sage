@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tensor Product of Kirillov-Reshetikhin Tableaux
+Tensor product of Kirillov-Reshetikhin tableaux
 
 A tensor product of
 :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux`
@@ -8,10 +8,6 @@ which are tableaux of `r` rows and `s` columns which naturally arise in the
 bijection between rigged configurations and tableaux and which are in
 bijection with the elements of the Kirillov-Reshetikhin crystal `B^{r,s}`, see
 :func:`~sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinCrystal`.
-
-AUTHORS:
-
-- Travis Scrimshaw (2010-09-26): Initial version
 
 EXAMPLES:
 
@@ -44,6 +40,10 @@ Type `D_n^{(1)}` examples::
     [[1]] (X) [[-2], [2]] (X) [[1]]
     sage: T == T2
     False
+
+AUTHORS:
+
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************
@@ -210,9 +210,7 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
 
     REFERENCES:
 
-    .. [OSS2011] Masato Okado, Reiho Sakamoto, Anne Schilling,
-       Affine crystal structure on rigged configurations of type `D_n^{(1)}`,
-       J. Algebraic Combinatorics 37(3) (2013) 571-599 (:arxiv:`1109.3523` [math.QA])
+    - [OSS2011]_
 
     EXAMPLES:
 

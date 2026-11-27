@@ -1,1 +1,0 @@
-pytest pytest_mock gitpython cython auditwheel_or_delocate

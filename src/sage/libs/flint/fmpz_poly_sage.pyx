@@ -51,7 +51,6 @@ cdef class Fmpz_poly(SageObject):
             3  3 5 7
         """
         cdef Py_ssize_t i
-        cdef long c
         cdef Integer w
         if isinstance(v, str):
             if not fmpz_poly_set_str(self.poly, str_to_bytes(v)):

@@ -49,6 +49,7 @@ from sage.rings.complex_arb cimport (
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
 from sage.structure.element cimport Element, Matrix
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.structure.parent cimport Parent
 from sage.structure.sequence import Sequence
 
@@ -245,6 +246,13 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             100 x 0 dense matrix over Complex ball field with 53 bits
             of precision (use the '.str()' method to see the entries)
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``acb_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef ComplexBall z
         for t in ma.iter(coerce, True):
@@ -306,6 +314,53 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         z._parent = self._base_ring
         acb_set(z.value, acb_mat_entry(self.value, i, j))
         return z
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        .. warning::
+
+           This is very unsafe; it assumes ``iSrc``, ``jSrc``, ``iDst`` and
+           ``jDst`` are in the right range, and that ``src`` is a
+           Matrix_complex_ball_dense with the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a
+                    Matrix_complex_ball_dense with the same base ring as
+                    ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = MatrixSpace(CBF,3,4)(range(12))
+            sage: m
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [4.000000000000000 5.000000000000000 6.000000000000000 7.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.transpose()
+            [                0 4.000000000000000 8.000000000000000]
+            [1.000000000000000 5.000000000000000 9.000000000000000]
+            [2.000000000000000 6.000000000000000 10.00000000000000]
+            [3.000000000000000 7.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows([0,2])
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.matrix_from_columns([1,3])
+            [1.000000000000000 3.000000000000000]
+            [5.000000000000000 7.000000000000000]
+            [9.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [4.000000000000000 7.000000000000000]
+            [8.000000000000000 11.00000000000000]
+        """
+        cdef Matrix_complex_ball_dense _src = <Matrix_complex_ball_dense> src
+        acb_set(acb_mat_entry(self.value, iDst, jDst), acb_mat_entry(_src.value, iSrc, jSrc))
 
     cpdef _richcmp_(left, right, int op):
         r"""
@@ -457,10 +512,49 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             [11.00000000000000]
         """
         cdef Matrix_complex_ball_dense res = self._new(self._nrows, other._ncols)
-        sig_on()
-        acb_mat_mul(res.value, self.value, (<Matrix_complex_ball_dense> other).value, prec(self))
-        sig_off()
+        res._set_to_product(self, <Matrix0>other)
         return res
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using FLINT.
+
+        ``acb_mat_mul`` writes into a destination matrix, so the product is
+        computed straight into ``self`` at its own precision.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = matrix(CBF, 2, 3, range(6))
+            sage: B = matrix(CBF, 3, 2, range(6, 12))
+            sage: C = matrix(CBF, 2, 2, [1] * 4)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination::
+
+            sage: C.set_to_product(matrix(CBF, 2, 0), matrix(CBF, 0, 2))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_complex_ball_dense _left = <Matrix_complex_ball_dense>left
+        cdef Matrix_complex_ball_dense _right = <Matrix_complex_ball_dense>right
+
+        if self._nrows == 0 or self._ncols == 0:
+            return
+
+        sig_on()
+        acb_mat_mul(self.value, _left.value, _right.value, prec(self))
+        sig_off()
 
     cpdef _pow_int(self, n):
         r"""
@@ -558,11 +652,42 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             [3.000000000000000 6.000000000000000]
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 2 dense matrices over Complex ball field with 53 bits of precision
+
+        TESTS::
+
+            sage: m = matrix(CBF,2,3,range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [                0 1.000000000000000|2.000000000000000]
+            [-----------------------------------+-----------------]
+            [3.000000000000000 4.000000000000000|5.000000000000000]
+            sage: m.transpose()
+            [                0|3.000000000000000]
+            [1.000000000000000|4.000000000000000]
+            [-----------------+-----------------]
+            [2.000000000000000|5.000000000000000]
+
+            sage: m = matrix(CBF,0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(CBF,2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Py_ssize_t nc = self._ncols
         cdef Py_ssize_t nr = self._nrows
         cdef Matrix_complex_ball_dense trans = self._new(nc, nr)
         acb_mat_transpose(trans.value, self.value)
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            trans.subdivide(col_divs, row_divs)
         return trans
 
     def _solve_right_nonsingular_square(self, Matrix_complex_ball_dense rhs, check_rank=None):
@@ -681,7 +806,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         OUTPUT:
 
-        A :class:`~sage.structure.sequence.Sequence` of complex balls of
+        A :func:`~sage.structure.sequence.Sequence` of complex balls of
         length equal to the size of the matrix.
 
         Each element represents one eigenvalue with the correct multiplicities

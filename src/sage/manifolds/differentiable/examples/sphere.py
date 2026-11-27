@@ -739,10 +739,9 @@ class Sphere(PseudoRiemannianSubmanifold):
             self._init_coordinates[coordinates](names, default_pole=pole)
         if pole == 'north':
             return self._coordinates[coordinates][0]
-        elif pole == 'south':
+        if pole == 'south':
             return self._coordinates[coordinates][1]
-        else:
-            raise ValueError("pole must be 'north' or 'south'")
+        raise ValueError("pole must be 'north' or 'south'")
 
     def spherical_coordinates(self, names=None):
         r"""

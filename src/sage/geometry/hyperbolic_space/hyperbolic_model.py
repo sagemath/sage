@@ -82,7 +82,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh
+from sage.functions.hyperbolic import acosh as arccosh
 from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
@@ -109,7 +109,7 @@ from sage.geometry.hyperbolic_space.hyperbolic_coercion import (
 lazy_import('sage.modules.free_module_element', 'vector')
 
 #####################################################################
-## Abstract model
+#  Abstract model
 
 
 class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
@@ -169,7 +169,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self.get_point(x, is_boundary, **graphics_options)
 
-    def name(self):  # Abstract
+    def name(self) -> str:  # Abstract
         """
         Return the name of this model.
 
@@ -181,7 +181,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._name
 
-    def short_name(self):
+    def short_name(self) -> str:
         """
         Return the short name of this model.
 
@@ -193,7 +193,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._short_name
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
         Return ``True`` if ``self`` is a bounded model.
 
@@ -210,7 +210,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._bounded
 
-    def is_conformal(self):
+    def is_conformal(self) -> bool:
         """
         Return ``True`` if ``self`` is a conformal model.
 
@@ -222,7 +222,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._conformal
 
-    def is_isometry_group_projective(self):
+    def is_isometry_group_projective(self) -> bool:
         """
         Return ``True`` if the isometry group of ``self`` is projective.
 
@@ -761,7 +761,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
 
 #####################################################################
-## Upper half plane model
+#  Upper half plane model
 
 class HyperbolicModelUHP(HyperbolicModel):
     r"""
@@ -920,7 +920,7 @@ class HyperbolicModelUHP(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: hp = HyperbolicPlane().UHP().get_background_graphic()                 # needs sage.plot
+            sage: hp = HyperbolicPlane().UHP().get_background_graphic()
         """
         from sage.plot.line import line
         bd_min = bdry_options.get('bd_min', -5)
@@ -1091,9 +1091,9 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: B.preserves_orientation()                                             # needs scipy
             False
         """
-        a, b, c, d = [RR.random_element() for k in range(4)]
-        while abs(a*d - b*c) < EPSILON:
-            a, b, c, d = [RR.random_element() for k in range(4)]
+        a, b, c, d = (RR.random_element() for k in range(4))
+        while abs(a * d - b * c) < EPSILON:
+            a, b, c, d = (RR.random_element() for k in range(4))
         M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:
@@ -1132,7 +1132,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         return B.inverse() * A
 
 #####################################################################
-## Poincaré disk model
+#  Poincaré disk model
 
 
 class HyperbolicModelPD(HyperbolicModel):
@@ -1254,14 +1254,14 @@ class HyperbolicModelPD(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().PD().get_background_graphic()                # needs sage.plot
+            sage: circ = HyperbolicPlane().PD().get_background_graphic()
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
 
 
 #####################################################################
-## Klein disk model
+#  Klein disk model
 
 class HyperbolicModelKM(HyperbolicModel):
     r"""
@@ -1367,7 +1367,7 @@ class HyperbolicModelKM(HyperbolicModel):
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 <
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 <
                     EPSILON)
 
     def get_background_graphic(self, **bdry_options):
@@ -1378,13 +1378,13 @@ class HyperbolicModelKM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().KM().get_background_graphic()                # needs sage.plot
+            sage: circ = HyperbolicPlane().KM().get_background_graphic()
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
 
 #####################################################################
-## Hyperboloid model
+#  Hyperboloid model
 
 
 class HyperbolicModelHM(HyperbolicModel):
@@ -1477,7 +1477,7 @@ class HyperbolicModelHM(HyperbolicModel):
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
 
     def get_background_graphic(self, **bdry_options):
         r"""
@@ -1487,7 +1487,7 @@ class HyperbolicModelHM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: H = HyperbolicPlane().HM().get_background_graphic()                   # needs sage.plot
+            sage: H = HyperbolicPlane().HM().get_background_graphic()
         """
         from sage.plot.plot3d.all import plot3d
         from sage.symbolic.ring import SR

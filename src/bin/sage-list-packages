@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 r"""
 Script to list the Sage packages
 

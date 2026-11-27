@@ -342,8 +342,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         """
         if self._name is None:
             return r'\text{' + repr(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def _new_instance(self, name=None, latex_name=None):
         r"""
@@ -600,7 +599,8 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         To rename a homogeneous component individually, we simply access the
         homogeneous component and use its
-        :meth:`~sage.manifolds.differentiable.tensorfield.set_name` method::
+        :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.set_name`
+        method::
 
             sage: F[0].set_name(name='g'); F.display()
             eta = g + F_1 + F_2 + F_3 + F_4
@@ -713,7 +713,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         from sage.structure.richcmp import op_EQ, op_NE
         if op == op_NE:
             return not self == other
-        elif op == op_EQ:
+        if op == op_EQ:
             # Compare all elements separately:
             return all(self[j] == other[j] for j in self.irange())
         # Fall back on default implementation:

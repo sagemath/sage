@@ -20,10 +20,14 @@
 
 #include "pynac-config.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-register"
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include "factory/factory.h"
-#pragma clang diagnostic pop
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #include "upoly.h"
 #include "normal.h"
@@ -76,7 +80,7 @@ static CanonicalForm num2canonical(const numeric& n, ex_int_umap& map, exvector&
         try {
                 return n.to_canonical();
         }
-        catch (std::runtime_error) {
+        catch (const std::runtime_error&) {
                 if (not n.is_real()) {
                         numeric re = n.real();
                         numeric im = n.imag();
@@ -233,7 +237,7 @@ const CanonicalForm ex::to_canonical(ex_int_umap& amap,
                                 try {
                                         return ::power(var, n.to_long());
                                 }
-                                catch (std::runtime_error) {
+                                catch (const std::runtime_error&) {
                                         throw std::runtime_error("exponent too big");
                                 }
                         }
@@ -261,7 +265,7 @@ const CanonicalForm ex::to_canonical(ex_int_umap& amap,
                         try {
                                 return ::power(var, n.to_long());
                         }
-                        catch (std::runtime_error) {
+                        catch (const std::runtime_error&) {
                                 throw std::runtime_error("exponent too big");
                         }
                 }
@@ -672,4 +676,3 @@ ex resultantpoly(const ex & ee1, const ex & ee2, const ex & s)
 
 
 } // namespace GiNaC
-

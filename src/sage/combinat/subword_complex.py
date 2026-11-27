@@ -98,11 +98,6 @@ AUTHORS:
 
 - Christian Stump: initial version
 - Vincent Pilaud: greedy flip algorithm, minor improvements, documentation
-
-REFERENCES:
-
-.. [KnuMil] Knutson and Miller. *Subword complexes in Coxeter groups*. Adv. Math., 184(1):161-176, 2004.
-.. [PilStu] Pilaud and Stump. *Brick polytopes of spherical subword complexes and generalized associahedra*. Adv. Math. 276:1-61, 2015.
 """
 # ****************************************************************************
 #       Copyright (C) 2015      Christian Stump <christian.stump@gmail.com>
@@ -349,7 +344,7 @@ class SubwordComplexFacet(Simplex, Element):
         Phi = self.parent().group().roots()
         return [Phi[i] for i in self._root_configuration_indices()]
 
-    def kappa_preimage(self):
+    def kappa_preimage(self) -> list:
         r"""
         Return the fiber of ``self`` under the `\kappa` map.
 
@@ -403,7 +398,7 @@ class SubwordComplexFacet(Simplex, Element):
                 if all(w.action_on_root_indices(i, side='left') < N
                        for i in root_conf)]
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a vertex of the brick polytope
         of ``self.parent``.
@@ -572,8 +567,7 @@ class SubwordComplexFacet(Simplex, Element):
             if self._extended_weight_conf is None:
                 self._extended_weight_conf = V_weights
             return V_weights
-        else:
-            return self._extended_weight_conf
+        return self._extended_weight_conf
 
     def weight_configuration(self):
         r"""
@@ -735,8 +729,7 @@ class SubwordComplexFacet(Simplex, Element):
         new_facet._extended_root_conf_indices = tuple(R)
         if return_position:
             return new_facet, j
-        else:
-            return new_facet
+        return new_facet
 
     # plot and show
 
@@ -1192,8 +1185,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         if self._cartan_type is None:
             return "Subword complex of unknown type for Q = {} and pi = {}".format(self._Q, self._pi.reduced_word())
-        else:
-            return 'Subword complex of type {} for Q = {} and pi = {}'.format(self.cartan_type(), self._Q, self._pi.reduced_word())
+        return 'Subword complex of type {} for Q = {} and pi = {}'.format(self.cartan_type(), self._Q, self._pi.reduced_word())
 
     def __call__(self, F, facet_test=True):
         r"""
@@ -1383,8 +1375,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         if self._facets_dict:
             return [self._facets_dict[tuple(F)] for F in self._facets]
-        else:
-            return [self(F, facet_test=False) for F in self._facets]
+        return [self(F, facet_test=False) for F in self._facets]
 
     def __iter__(self):
         r"""
@@ -1445,7 +1436,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     # topological properties
 
-    def is_sphere(self):
+    def is_sphere(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a sphere.
 
@@ -1472,7 +1463,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         w = W.demazure_product(self._Q)
         return w == self._pi
 
-    def is_ball(self):
+    def is_ball(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a ball.
 
@@ -1499,7 +1490,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         return not self.is_sphere()
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         r"""
         Return ``True`` since all subword complexes are pure.
 
@@ -1541,7 +1532,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
     # root and weight
 
     @cached_method
-    def is_root_independent(self):
+    def is_root_independent(self) -> bool:
         r"""
         Return ``True`` if ``self`` is root-independent.
 
@@ -1569,7 +1560,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         return M.rank() == max(M.ncols(), M.nrows())
 
     @cached_method
-    def is_double_root_free(self):
+    def is_double_root_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` is double-root-free.
 
@@ -1996,7 +1987,7 @@ def _greedy_facet(Q, w, side='negative', n=None, pos=0, l=None, elems=[]):
 
     if l == 0:
         return elems + list(range(pos, n))
-    elif n < l:
+    if n < l:
         return []
 
     s = Q[pos]

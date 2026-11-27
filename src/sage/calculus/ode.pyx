@@ -37,10 +37,10 @@ cdef class PyFunctionWrapper:
         self.y_n = x
 
 cdef class ode_system:
-    cdef int c_j(self, double t, double *y, double *dfdy, double *dfdt) noexcept:
+    cdef int c_j(self, double t, const double *y, double *dfdy, double *dfdt) noexcept:
         return 0
 
-    cdef int c_f(self, double t, double* y, double* dydt) noexcept:
+    cdef int c_f(self, double t, const double* y, double* dydt) noexcept:
         return 0
 
 cdef int c_jac_compiled(double t, const double *y, double *dfdy, double *dfdt, void *params) noexcept:
@@ -303,35 +303,32 @@ class ode_solver():
     is slow on systems that require many function evaluations.  It
     is possible to pass a compiled function by deriving from the
     class :class:`ode_system` and overloading ``c_f`` and ``c_j`` with C
-    functions that specify the system. The following will work in the
-    notebook:
+    functions that specify the system. (You can also use the ``%%cython``
+    cell magic, see :meth:`~sage.repl.ipython_extension.SageMagics.cython`.) ::
 
-    .. code-block:: cython
-
-          %cython
-          cimport sage.calculus.ode
-          import sage.calculus.ode
-          from sage.libs.gsl.all cimport *
-
-          cdef class van_der_pol(sage.calculus.ode.ode_system):
-              cdef int c_f(self, double t, double *y, double *dydt):
-                  dydt[0]=y[1]
-                  dydt[1]=-y[0]-1000*y[1]*(y[0]*y[0]-1)
-                  return GSL_SUCCESS
-              cdef int c_j(self, double t, double *y, double *dfdy, double *dfdt):
-                  dfdy[0]=0
-                  dfdy[1]=1.0
-                  dfdy[2]=-2.0*1000*y[0]*y[1]-1.0
-                  dfdy[3]=-1000*(y[0]*y[0]-1.0)
-                  dfdt[0]=0
-                  dfdt[1]=0
-                  return GSL_SUCCESS
+        sage: cython('''
+        ....: cimport sage.calculus.ode
+        ....: import sage.calculus.ode
+        ....: from sage.libs.gsl.all cimport *
+        ....:
+        ....: cdef class van_der_pol(sage.calculus.ode.ode_system):
+        ....:     cdef int c_f(self, double t, const double *y, double *dydt) noexcept:
+        ....:         dydt[0]=y[1]
+        ....:         dydt[1]=-y[0]-1000*y[1]*(y[0]*y[0]-1)
+        ....:         return GSL_SUCCESS
+        ....:     cdef int c_j(self, double t, const double *y, double *dfdy, double *dfdt) noexcept:
+        ....:         dfdy[0]=0
+        ....:         dfdy[1]=1.0
+        ....:         dfdy[2]=-2.0*1000*y[0]*y[1]-1.0
+        ....:         dfdy[3]=-1000*(y[0]*y[0]-1.0)
+        ....:         dfdt[0]=0
+        ....:         dfdt[1]=0
+        ....:         return GSL_SUCCESS
+        ....: ''')
 
     After executing the above block of code you can do the
-    following (WARNING: the following is *not* automatically
-    doctested)::
+    following::
 
-        sage: # not tested
         sage: T = ode_solver()
         sage: T.algorithm = "bsimp"
         sage: vander = van_der_pol()
@@ -455,7 +452,7 @@ class ode_solver():
             raise MemoryError("error allocating memory")
         result = []
         v = [0] * dim
-        cdef gsl_odeiv_step_type * T
+        cdef const gsl_odeiv_step_type * T
 
         for i in range(dim):  # copy initial conditions into C array
             y[i] = self.y_0[i]

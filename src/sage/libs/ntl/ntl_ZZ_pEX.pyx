@@ -88,7 +88,7 @@ cdef class ntl_ZZ_pEX():
             for i from 0 <= i < len(v):
                 x = v[i]
                 if not isinstance(x, ntl_ZZ_pE):
-                    cc = ntl_ZZ_pE(x,self.c)
+                    cc = ntl_ZZ_pE(x, self.c)
                     self.c.restore_c()
                 else:
                     if self.c is not (<ntl_ZZ_pE>x).c:
@@ -112,7 +112,7 @@ cdef class ntl_ZZ_pEX():
         ## way to short-circuit __init__ (or just call##
         ## _new in your own code).                    ##
         ################################################
-        if modulus is None and v is None: # we also check for v is None so that a user can specify the modulus by v.
+        if modulus is None and v is None:  # we also check for v is None so that a user can specify the modulus by v.
             return
         if isinstance(modulus, ntl_ZZ_pEContext_class):
             self.c = <ntl_ZZ_pEContext_class>modulus
@@ -190,7 +190,7 @@ cdef class ntl_ZZ_pEX():
             [[3 2] [1 2] [1 2]]
         """
         cdef ntl_ZZ_pEX r = self._new()
-        #self.c.restore_c() ## _new() restores
+        # self.c.restore_c() ## _new() restores
         r.x = self.x
         return r
 
@@ -228,7 +228,7 @@ cdef class ntl_ZZ_pEX():
         if isinstance(a, ntl_ZZ_pE):
             _a = <ntl_ZZ_pE> a
         else:
-            _a = ntl_ZZ_pE(a,self.c)
+            _a = ntl_ZZ_pE(a, self.c)
         self.c.restore_c()
         ZZ_pEX_SetCoeff(self.x, i, _a.x)
 
@@ -254,7 +254,7 @@ cdef class ntl_ZZ_pEX():
         self.c.restore_c()
         r = ntl_ZZ_pE.__new__(ntl_ZZ_pE)
         r.c = self.c
-        r.x = ZZ_pEX_coeff( self.x, i)
+        r.x = ZZ_pEX_coeff(self.x, i)
         sig_off()
         return r
 
@@ -376,7 +376,7 @@ cdef class ntl_ZZ_pEX():
         cdef int divisible
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
-        #self.c.restore_c() # _new restores context
+        # self.c.restore_c() # _new restores context
         divisible = ZZ_pEX_divide(r.x, self.x, other.x)
         sig_off()
         if not divisible:
@@ -443,7 +443,7 @@ cdef class ntl_ZZ_pEX():
         # self.c.restore_c() # _new() restores the context
         ZZ_pEX_DivRem(q.x, r.x, self.x, other.x)
         sig_off()
-        return q,r
+        return q, r
 
     def square(self):
         """
@@ -583,7 +583,7 @@ cdef class ntl_ZZ_pEX():
         # The following line is what we should have.  However, strangely this is *broken*
         # on PowerPC Intel in NTL, so we program around
         # the problem.  (William Stein)
-        #return bool(ZZ_pEX_is_monic(self.x))
+        # return bool(ZZ_pEX_is_monic(self.x))
 
         if ZZ_pEX_IsZero(self.x):
             return False
@@ -721,7 +721,7 @@ cdef class ntl_ZZ_pEX():
             sage: f^2 / eight
             [[2 1] [8 1] [9 1] [2] [1]]
         """
-        #If check = True, need to check that ZZ_pE is a field.
+        # If check = True, need to check that ZZ_pE is a field.
         self.c.restore_c()
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
@@ -758,7 +758,7 @@ cdef class ntl_ZZ_pEX():
         sig_on()
         ZZ_pEX_XGCD(r.x, s.x, t.x, self.x, other.x)
         sig_off()
-        return (r,s,t)
+        return (r, s, t)
 
     def degree(self):
         """
@@ -867,7 +867,7 @@ cdef class ntl_ZZ_pEX():
         sig_off()
         return r
 
-    #def factor(self, verbose=False):
+    # def factor(self, verbose=False):
     #    cdef ZZ_pX_c** v
     #    cdef long* e
     #    cdef long i, n
@@ -881,7 +881,7 @@ cdef class ntl_ZZ_pEX():
     #    free(e)
     #    return F
 
-    #def linear_roots(self):
+    # def linear_roots(self):
     #    """
     #    Assumes that input is monic, and has deg(f) distinct roots.
     #    Returns the list of roots.
@@ -996,11 +996,12 @@ cdef class ntl_ZZ_pEX():
     def invert_and_truncate(self, long m):
         """
         Compute and return the inverse of ``self`` modulo `x^m`.
+
         The constant term of ``self`` must be invertible.
 
         EXAMPLES::
 
-            sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 11))
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 11))
             sage: a = ntl.ZZ_pE([3,2], c)
             sage: b = ntl.ZZ_pE([1,2], c)
             sage: f = ntl.ZZ_pEX([a, b, b])
@@ -1012,7 +1013,7 @@ cdef class ntl_ZZ_pEX():
         """
         if m < 0:
             raise ArithmeticError("m (=%s) must be positive" % m)
-        #Need to check here if constant term is invertible
+        # Need to check here if constant term is invertible
         cdef ntl_ZZ_pEX r = self._new()
         if m > 0:
             sig_on()
@@ -1066,7 +1067,7 @@ cdef class ntl_ZZ_pEX():
         sig_off()
         return r
 
-    #def trace_list(self):
+    # def trace_list(self):
     #    """
     #    Return the list of traces of the powers $x^i$ of the
     #    monomial x modulo this polynomial for i = 0, ..., deg(f)-1.

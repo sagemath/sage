@@ -589,7 +589,7 @@ def _cardinality_subfield(self, jpol):
     # Use special code for j = 0, 1728
     if j == 1728:
         return _cardinality_with_j_invariant_1728(self)
-    elif j == 0:
+    if j == 0:
         return _cardinality_with_j_invariant_0(self)
 
     # Recursive call which does all the real work:
@@ -603,6 +603,5 @@ def _cardinality_subfield(self, jpol):
     # are quadratic.
     if self.is_isomorphic(E0.base_extend(phi)):
         return N
-    else:
-        q = k.cardinality()
-        return 2 * (q + 1) - N
+    q = k.cardinality()
+    return 2 * (q + 1) - N

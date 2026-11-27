@@ -1,13 +1,12 @@
-# sage_setup: distribution = sagemath-categories
 """
 Examples of posets
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -54,7 +53,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -68,7 +67,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -104,7 +103,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
             sage: B.an_element()
             {1, 4, 6}
         """
-        return self(Set([1,4,6]))
+        return self(Set([1, 4, 6]))
 
     class Element(ElementWrapper):
 
@@ -137,7 +136,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
 
     element_class = type(Set([]))
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -151,7 +150,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, facade=(PositiveIntegers(),), category=Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

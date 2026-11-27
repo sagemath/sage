@@ -145,12 +145,14 @@ EXAMPLES::
 # ****************************************************************************
 
 import os
-from .expect import Expect, ExpectElement
+
 import pexpect
-from sage.misc.verbose import verbose
+
+from sage.cpython.string import bytes_to_str
+from sage.interfaces.expect import Expect, ExpectElement
 from sage.misc.instancedoc import instancedoc
 from sage.misc.temporary_file import tmp_filename
-from sage.cpython.string import bytes_to_str
+from sage.misc.verbose import verbose
 
 
 class Octave(Expect):
@@ -186,6 +188,7 @@ class Octave(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.octave import octave
             sage: octave == loads(dumps(octave))
             True
         """
@@ -635,14 +638,13 @@ class OctaveElement(ExpectElement):
         if self.isinteger():
             import sage.rings.integer_ring
             return sage.rings.integer_ring.ZZ
-        elif self.isreal():
+        if self.isreal():
             import sage.rings.real_double
             return sage.rings.real_double.RDF
-        elif self.iscomplex():
+        if self.iscomplex():
             import sage.rings.complex_double
             return sage.rings.complex_double.CDF
-        else:
-            raise TypeError("no Sage ring associated to this element.")
+        raise TypeError("no Sage ring associated to this element.")
 
     def __bool__(self):
         r"""
@@ -777,8 +779,7 @@ class OctaveElement(ExpectElement):
         R = self._get_sage_ring()
         if self.iscomplex():
             return to_complex(str(self), R)
-        else:
-            return R(str(self))
+        return R(str(self))
 
     def _sage_(self):
         """
@@ -808,12 +809,11 @@ class OctaveElement(ExpectElement):
         """
         if self.isscalar():
             return self._scalar_()
-        elif self.isvector():
+        if self.isvector():
             return self._vector_()
-        elif self.ismatrix():
+        if self.ismatrix():
             return self._matrix_()
-        else:
-            raise NotImplementedError('octave type is not recognized')
+        raise NotImplementedError('octave type is not recognized')
 
 
 # An instance

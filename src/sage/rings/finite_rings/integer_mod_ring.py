@@ -61,6 +61,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+# This import is deliberately at runtime visibility (not inside a
+# TYPE_CHECKING block): the class-level ``__call__`` annotation below is
+# resolved by typing.get_type_hints - in the TESTS block of this module
+# and by downstream stub generators - which evaluates the annotation
+# string in the module namespace, so the name must exist there.
+from collections.abc import Callable  # noqa: TC003
 
 import sage.misc.prandom as random
 
@@ -71,9 +79,9 @@ from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
-import sage.rings.integer as integer
-import sage.rings.integer_ring as integer_ring
-import sage.rings.quotient_ring as quotient_ring
+from sage.rings import integer
+from sage.rings import integer_ring
+from sage.rings import quotient_ring
 
 try:
     from sage.libs.pari import pari
@@ -137,7 +145,8 @@ class IntegerModFactory(UniqueFactory):
         Testing whether a quotient ring `\ZZ / n\ZZ` is a field can of
         course be very costly. By default, it is not tested whether `n`
         is prime or not, in contrast to
-        :func:`~sage.rings.finite_rings.finite_field_constructor.GF`. If the user
+        :class:`GF <sage.rings.finite_rings.finite_field_constructor.FiniteFieldFactory>`.
+        If the user
         is sure that the modulus is prime and wants to avoid a primality
         test, (s)he can provide ``category=Fields()`` when constructing
         the quotient ring, and then the result will behave like a field.
@@ -202,7 +211,40 @@ class IntegerModFactory(UniqueFactory):
     the ring factory::
 
         sage: IntegerModRing._cache.clear()
+
+    TESTS:
+
+    The return type exposed to static type checkers matches the runtime
+    type::
+
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
+        sage: from sage.rings.integer_ring import IntegerRing_class
+        sage: isinstance(Zmod(29), IntegerModRing_generic)
+        True
+        sage: isinstance(Integers(0), IntegerRing_class)
+        True
+
+    The ``__call__`` annotation resolves to the same union::
+
+        sage: import collections.abc
+        sage: import typing
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
+        sage: ann = typing.get_type_hints(IntegerModFactory)['__call__']
+        sage: typing.get_origin(ann) == collections.abc.Callable
+        True
+        sage: ann == collections.abc.Callable[..., IntegerModRing_generic | IntegerRing_class]
+        True
     """
+    # This class-level annotation is only there for the typing info: it
+    # lets static type checkers infer the return type of ``IntegerModRing``
+    # and its aliases without a forwarding ``__call__`` override, which
+    # would add a Python frame and a ``super()`` lookup to every factory
+    # call.  No value is assigned, so instances keep dispatching directly
+    # to the inherited ``UniqueFactory.__call__`` at full speed.  The
+    # unquoted forward reference is safe because this file has
+    # ``from __future__ import annotations``.
+    __call__: Callable[..., IntegerModRing_generic | integer_ring.IntegerRing_class]
+
     def get_object(self, version, key, extra_args):
         out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
@@ -242,8 +284,7 @@ class IntegerModFactory(UniqueFactory):
             order = -order
         if order == 0:
             return integer_ring.IntegerRing(**kwds)
-        else:
-            return IntegerModRing_generic(order, **kwds)
+        return IntegerModRing_generic(order, **kwds)
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -318,7 +359,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: FF.order()
         29
 
-        sage: # needs sage.groups
         sage: gens = FF.unit_gens()
         sage: a = gens[0]
         sage: a
@@ -350,7 +390,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
     By :issue:`15229`, there is a unique instance of the
     integral quotient ring of a given order. Using the
-    :func:`IntegerModRing` factory twice, and using
+    :class:`~sage.rings.abc.IntegerModRing` factory twice, and using
     ``is_field=True`` the second time, will update the
     category of the unique instance::
 
@@ -380,7 +420,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: Z16.characteristic()
         16
 
-        sage: # needs sage.groups
         sage: gens = Z16.unit_gens()
         sage: gens
         (15, 5)
@@ -459,7 +498,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             raise ZeroDivisionError("order must be positive")
         self.__order = order
         self._pyx_order = integer_mod.NativeIntStruct(order)
-        global default_category
         if category is None:
             category = default_category
         else:
@@ -503,25 +541,22 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of ``self`` in (Pan)Axiom.
+        Return a string representation of ``self`` in FriCAS.
 
         EXAMPLES::
 
             sage: Z7 = Integers(7)
-            sage: Z7._axiom_init_()
+            sage: Z7._fricas_init_()
             'IntegerMod(7)'
 
-            sage: axiom(Z7)  #optional - axiom
-            IntegerMod 7
-
-            sage: fricas(Z7) #optional - fricas
+            sage: fricas(Z7)  # optional - fricas
             IntegerMod(7)
         """
         return 'IntegerMod({})'.format(self.order())
 
-    _fricas_init_ = _axiom_init_
+    _axiom_init_ = _fricas_init_
 
     def krull_dimension(self):
         """
@@ -533,25 +568,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             0
         """
         return integer.Integer(0)
-
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Return an algebraic extension of ``self``. See
-        :meth:`sage.rings.ring.CommutativeRing.extension()` for more
-        information.
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t
-             over Ring of integers modulo 8 with modulus t^2 + 5
-        """
-        if self.modulus() == 1:
-            return self
-
-        from sage.rings.ring import CommutativeRing
-        return CommutativeRing.extension(self, poly, name, names, **kwds)
 
     @cached_method
     def is_prime_field(self) -> bool:
@@ -611,7 +627,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # optional - gap_package_polycyclic, needs sage.groups
+            sage: # optional - gap_package_polycyclic
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
@@ -623,11 +639,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         TESTS::
 
-            sage: IntegerModRing(1).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(1).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(2).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -641,7 +657,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_integral_domain()
             True
-            sage: Integers(389^2).is_integral_domain()                                  # needs sage.libs.pari
+            sage: Integers(389^2).is_integral_domain()
             False
 
         TESTS:
@@ -662,7 +678,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_unique_factorization_domain()
             True
-            sage: Integers(389^2).is_unique_factorization_domain()                      # needs sage.libs.pari
+            sage: Integers(389^2).is_unique_factorization_domain()
             False
         """
         return self.is_field(proof)
@@ -791,7 +807,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: Integers(15).fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
             sage: Integers(15)._pseudo_fraction_field()
             Ring of integers modulo 15
             sage: R.<x> = Integers(15)[]
@@ -856,7 +872,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: R = Integers(7); R
             Ring of integers modulo 7
             sage: R.multiplicative_generator()
@@ -931,7 +946,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         ::
 
-            sage: # needs sage.libs.pari
             sage: v = Integers(9*5).square_roots_of_one(); v
             (1, 19, 26, 44)
             sage: [x^2 for x in v]
@@ -1118,7 +1132,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K2 = GF(2)
             sage: K3 = GF(3)
             sage: K8 = GF(8, 'a')
@@ -1250,9 +1263,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is integer_ring.ZZ:
+        if S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             if isinstance(S, Field):
                 return None
             try:
@@ -1423,7 +1436,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         differ in various ways.  In the following example, the same
         cyclic factors are computed, but in a different order::
 
-            sage: # needs sage.groups
             sage: A = Zmod(15)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C4
@@ -1437,7 +1449,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         Here are two examples where the cyclic factors are isomorphic,
         but are ordered differently and have different generators::
 
-            sage: # needs sage.groups
             sage: A = Zmod(40)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
@@ -1448,7 +1459,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: H.gens_values()                                                       # needs sage.libs.pari
             (17, 31, 21)
 
-            sage: # needs sage.groups
             sage: A = Zmod(192)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
@@ -1480,7 +1490,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         We test the cases where the unit group is trivial::
 
-            sage: # needs sage.groups
             sage: A = Zmod(1)
             sage: A.unit_group()
             Trivial Abelian group
@@ -1774,11 +1783,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             [0, 32, 9]
             sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots()
             [(19, 1), (20, 2), (21, 3)]
-            sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False)
+            sage: sorted((x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False))
             [19, 20, 21]
 
         We can find roots without multiplicities over a ring whose modulus is
-        a prime power, even a big power:
+        a prime power, even a big power::
 
             sage: R.<x> = Zmod(7^3)[]
             sage: (x^2 + x + 1).roots(multiplicities=False)
@@ -1788,14 +1797,14 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             [1125899906842623]
 
         We can also find roots without multiplicities over a ring whose modulus
-        is a product of primes or prime powers:
+        is a product of primes or prime powers::
 
             sage: R.<x> = Zmod(60)[]
             sage: (x^2 - 1).roots(multiplicities=False)
             [29, 41, 49, 1, 59, 11, 19, 31]
 
         We may also ask for roots modulo a quotient of the ring over which the
-        polynomial is defined:
+        polynomial is defined::
 
             sage: R.<x> = Zmod(120)[]
             sage: (x^2 - 1).roots(multiplicities=False)
@@ -1809,7 +1818,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: x.roots()
             [(0, 1)]
 
-        Test polynomials with content:
+        Test polynomials with content::
 
             sage: R.<x> = Zmod(4)[]
             sage: (2*x).roots(multiplicities=False)
@@ -1817,16 +1826,16 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: R.<x> = Zmod(6)[]
             sage: (3*x).roots(multiplicities=False)
-            [0, 4, 2]
+            [0, 2, 4]
 
-        Test polynomial with many roots:
+        Test polynomial with many roots::
 
             sage: R.<x> = Zmod(6)[]
             sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)
             sage: len(f.roots(multiplicities=False))
             6
 
-        Test finding roots over large prime powers:
+        Test finding roots over large prime powers::
 
             sage: R.<x> = Zmod(2**16)[]
             sage: (x^3 + 5).roots(multiplicities=False)
@@ -1842,7 +1851,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: (x^3 + 8).roots(multiplicities=False)
             [14348905, 28697812, 43046719]
 
-        Test some larger primes:
+        Test some larger primes::
 
             sage: R.<x> = Zmod(41**4)[]
             sage: (x^2 + 2).roots(multiplicities=False)
@@ -1851,7 +1860,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: (x^2 + 3).roots(multiplicities=False)
             [3269879, 148922]
 
-        We can't find roots with multiplicities in non-fields:
+        We can't find roots with multiplicities in non-fields::
 
             sage: R.<x> = Zmod(6)[]
             sage: (x + 1).roots()
@@ -1870,7 +1879,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             NotImplementedError: root finding with multiplicities for this polynomial not implemented (try the multiplicities=False option)
 
         The zero polynomial has every residue class as a root, but we don't
-        support multiplicities even over fields (they would all be infinite).
+        support multiplicities even over fields (they would all be infinite).::
 
             sage: R.<x> = Zmod(6)[]
             sage: R.zero().roots()
@@ -1896,7 +1905,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R.zero().roots(multiplicities=False)
             [0, 1, 2, 3, 4, 5, 6, 7]
 
-        This method doesn't support root-finding over rings that aren't Z/nZ:
+        This method doesn't support root-finding over rings that aren't Z/nZ::
 
             sage: R.<x> = Zmod(120)[]
             sage: f = x^2 - 1
@@ -1906,11 +1915,62 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             NotImplementedError
 
         Sage allows us to coerce polynomials from one modulus to another,
-        and that makes the following defined:
+        and that makes the following defined::
 
             sage: R.<x> = Zmod(100)[]
             sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False)
             True
+
+        We can find roots of high degree polynomials in a reasonable time::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^128)
+            sage: R.<x> = Zmod(p)[]
+            sage: f = R.random_element(degree=5000)
+            sage: f.roots(multiplicities=False)
+            [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
+
+        Roots of 0 or 1 degree polynomials should be computable without factoring the order::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^512)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod(p*q)[]
+            sage: R(1).roots(multiplicities=False)
+            []
+            sage: R(x + 1).roots(multiplicities=False)
+            [3370329767268559825901742050737977765362112301264016666995728641595783763682895579491491312949884527233896437825100351818777861111199083287936712213803662588205628332090619063390145822822539640664875016851649375480771418576780687530310519702682544247717838214152013112397973300661385457793537189792695633500]
+            sage: R(p*x + 1).roots(multiplicities=False)
+            []
+
+        Even when leading coefficient of linear polynomial is not invertible::
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^10)
+            sage: q = random_prime(2^512)
+            sage: R.<x> = Zmod((p**2)*q)[]
+            sage: len(R(p*x + p*q).roots(multiplicities=False))
+            857
+
+        Test all linear polynomials modulo 10::
+
+            sage: N = 10 # maybe make a for loop
+            sage: R = Zmod(N)
+            sage: for f in R["x"].polynomials(1):
+            ....:     s1 = set(f.roots(multiplicities=False))
+            ....:     s2 = set(d for d in R if f(d) == 0)
+            ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
+
+        Check that :issue:`42796` is fixed::
+
+            sage: x = polygen(Zmod(4))
+            sage: f = 2*x - 2
+            sage: f.roots(multiplicities=False)
+            [1, 3]
+            sage: x = polygen(Zmod(9))
+            sage: f = 3*x - 3
+            sage: f.roots(multiplicities=False)
+            [1, 4, 7]
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1926,16 +1986,49 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                     " implemented (try the multiplicities=False option)"
                 )
             # Roots of non-zero polynomial over finite fields by factorization
-            return f._roots_from_factorization(f.factor(), multiplicities)
+            return f.change_ring(f.base_ring().field()).roots(multiplicities=multiplicities)
 
-        # Zero polynomial is a base case
+        # Constant and linear polynomials are base cases
         if deg < 0:
             # All residue classes are roots of the zero polynomial
             return [*map(self, range(self.cardinality()))]
+        if deg == 0:
+            return []
+        if deg == 1:
+            # assume form a*x + b
+            b, a = f.list()
+            if a.is_unit():
+                return [-b * (~a)]
+
+            al, bl = a.lift(), b.lift()
+
+            N = self.order()
+            g = N.gcd(al)
+
+            if bl % g != 0:
+                return []  # No solution
+
+            # whole eqn divided by g
+            N_by_g = N.divide_knowing_divisible_by(g)
+            a_by_g = al.divide_knowing_divisible_by(g)
+            b_by_g = bl.divide_knowing_divisible_by(g)
+            _R = Zmod(N_by_g)
+            _S = _R[f.parent().variable_name()]
+            f = _S([b_by_g, a_by_g])
+
+            # single root
+            _root = self(f.any_root())
+            inc = self(N_by_g)
+            return [_root + k * inc for k in range(g)]
 
         # Finite fields are a base case
         if self.is_field():
-            return f._roots_from_factorization(f.factor(), False)
+            return list(
+                map(
+                    f.base_ring(),
+                    f.change_ring(f.base_ring().field()).roots(multiplicities=False),
+                )
+            )
 
         # Otherwise, find roots modulo each prime power
         fac = self.factored_order()
@@ -1968,7 +2061,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
     #######################################################
     # Suppose for interfaces
     #######################################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         EXAMPLES::
 
@@ -1978,9 +2071,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
-        return 'ZmodnZ({})'.format(self.order())
+        return f'ZmodnZ({self.order()})'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         EXAMPLES::
 
@@ -1990,7 +2083,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: magma(R)  # indirect doctest, optional - magma
             Residue class ring of integers modulo 12345678900
         """
-        return 'Integers({})'.format(self.order())
+        return f'Integers({self.order()})'
 
     def degree(self):
         """

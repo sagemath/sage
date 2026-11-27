@@ -12,6 +12,8 @@ from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
+cimport sage.matrix.matrix0 as matrix0
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
@@ -69,7 +71,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: # needs sage.rings.number_field
             sage: S.<t> = PolynomialRing(QQ)
             sage: F.<q> = QQ.extension(t^4 + 1)
             sage: R.<x,y> = PolynomialRing(F)
@@ -98,6 +99,47 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_generic_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(9)
+            sage: m = matrix(K,3,4,[((i%9)//3)*z + i%3 for i in range(12)])
+            sage: m
+            [      0       1       2       z]
+            [  z + 1   z + 2     2*z 2*z + 1]
+            [2*z + 2       0       1       2]
+            sage: m.transpose()
+            [      0   z + 1 2*z + 2]
+            [      1   z + 2       0]
+            [      2     2*z       1]
+            [      z 2*z + 1       2]
+            sage: m.matrix_from_rows([0,2])
+            [      0       1       2       z]
+            [2*z + 2       0       1       2]
+            sage: m.matrix_from_columns([1,3])
+            [      1       z]
+            [  z + 2 2*z + 1]
+            [      0       2]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [  z + 1 2*z + 1]
+            [2*z + 2       2]
+        """
+        cdef Matrix_generic_dense _src = <Matrix_generic_dense>src
+        self._entries[iDst*self._ncols + jDst] = _src._entries[iSrc*_src._ncols + jSrc]
 
     def _reverse_unsafe(self):
         r"""
@@ -214,7 +256,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -238,7 +279,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -257,9 +297,68 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _multiply_classical(left, matrix.Matrix _right):
+    cdef void _set_to_product_classical(self, matrix0.Matrix _left, matrix0.Matrix _right) except *:
+        r"""
+        Set ``self`` to ``_left * _right`` using the classical `O(n^3)`
+        algorithm.
+
+        This overrides
+        :meth:`~sage.matrix.matrix0.Matrix._set_to_product_classical` to index
+        the underlying entry lists directly, instead of going through
+        :meth:`get_unsafe` and :meth:`set_unsafe`.  It is the shared core of
+        :meth:`_multiply_classical`, which allocates the result and then calls
+        this method, and of :meth:`set_to_product`, which writes into an
+        existing destination.
+
+        INPUT:
+
+        - ``_left`` -- a generic dense matrix over the base ring of ``self``
+        - ``_right`` -- a generic dense matrix over the base ring of ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: A = matrix(R, 2, 3, [x^i for i in range(6)], implementation='generic')
+            sage: B = matrix(R, 3, 1, [1, x, x^2], implementation='generic')
+            sage: C = matrix(R, 2, 1, implementation='generic')
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        The destination may be reused, and its previous entries are
+        overwritten::
+
+            sage: C.set_to_product(2*A, B)
+            sage: C == (2*A) * B
+            True
         """
-        Multiply the matrices left and right using the classical
+        cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
+        cdef Matrix_generic_dense left = <Matrix_generic_dense>_left
+        cdef Matrix_generic_dense right = <Matrix_generic_dense>_right
+
+        nr = left._nrows
+        nc = right._ncols
+        snc = left._ncols
+
+        R = left.base_ring()
+        if self._entries is None or len(self._entries) != nr * nc:
+            self._entries = [None] * (nr * nc)
+        zero = R.zero()
+        p = 0
+        for i in range(nr):
+            m = i * snc
+            for j in range(nc):
+                z = zero
+                for k in range(snc):
+                    z += left._entries[m + k] * right._entries[k * nc + j]
+                self._entries[p] = z
+                p += 1
+
+    def _multiply_classical(self, matrix.Matrix _right):
+        """
+        Multiply the matrices self and right using the classical
         `O(n^3)` algorithm.
 
         EXAMPLES:
@@ -300,32 +399,34 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
+
+        TESTS::
+
+            sage: Ext=ExteriorAlgebra(QQ,['p'])
+            sage: Ext.inject_variables(verbose=False)
+            sage: Mp = matrix(1,1,[[p]])
+            sage: Mp[0,0]*Mp[0,0]
+            0
+            sage: Mp*Mp
+            [0]
+
+            sage: # needs sage.modules
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
-        cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
 
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of left must equal number of rows of other.")
+        check_matrix_multiplication_sizes(self, right)
 
-        nr = left._nrows
-        nc = right._ncols
-        snc = left._ncols
-
-        R = left.base_ring()
-        cdef list v = [None] * (left._nrows * right._ncols)
-        zero = R.zero()
-        p = 0
-        for i in range(nr):
-            for j in range(nc):
-                z = zero
-                m = i*snc
-                for k in range(snc):
-                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
-                v[p] = z
-                p += 1
-
-        cdef Matrix_generic_dense A = left._new(nr, nc)
-        A._entries = v
+        cdef Matrix_generic_dense A = self._new(self._nrows, right._ncols)
+        A._set_to_product_classical(self, right)
         return A
 
     def _list(self):

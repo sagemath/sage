@@ -183,7 +183,7 @@ class TateCurve(SageObject):
         Delta = CuspForms(weight=12).basis()[0]
         j = (E4.q_expansion(prec + 3)) ** 3 / Delta.q_expansion(prec + 3)
         jinv = (1 / j).power_series()
-        q_in_terms_of_jinv = jinv.reverse()
+        q_in_terms_of_jinv = jinv.revert()
         R = Qp(self._p, prec=prec)
         qE = q_in_terms_of_jinv(R(1 / self._E.j_invariant()))
         self._q = qE
@@ -584,6 +584,7 @@ class TateCurve(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: e = EllipticCurve('130a1')
             sage: eq = e.tate_curve(5)
             sage: h = eq.padic_height(prec=10)
@@ -593,6 +594,7 @@ class TateCurve(SageObject):
 
         Check that it is a quadratic function::
 
+            sage: # needs eclib
             sage: h(3*P)-3^2*h(P)
             O(5^9)
         """
@@ -641,6 +643,7 @@ class TateCurve(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: eq = EllipticCurve('130a1').tate_curve(5)
             sage: eq.padic_regulator()
             2*5^-1 + 1 + 2*5 + 2*5^2 + 3*5^3 + 3*5^6 + 5^7 + 3*5^9 + 3*5^10 + 3*5^12 + 4*5^13 + 3*5^15 + 2*5^16 + 3*5^18 + 4*5^19 +  4*5^20 + 3*5^21 + 4*5^22 + O(5^23)

@@ -2,9 +2,11 @@ py.install_sources(
   '__init__.py',
   'abstract_code.py',
   'ag_code.py',
+  'ag_code_decoders.pyx',
   'all.py',
   'bch_code.py',
   'binary_code.pxd',
+  'binary_code.pyx',
   'bounds_catalog.py',
   'channel.py',
   'channels_catalog.py',
@@ -26,6 +28,7 @@ py.install_sources(
   'guava.py',
   'hamming_code.py',
   'information_set_decoder.py',
+  'kasami_codes.pyx',
   'linear_code.py',
   'linear_code_no_metric.py',
   'linear_rank_metric.py',
@@ -39,9 +42,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'ag_code_decoders' : files('ag_code_decoders.pyx'),
-  'binary_code' : files('binary_code.pyx'),
-  'kasami_codes' : files('kasami_codes.pyx'),
+  'ag_code_decoders': files('ag_code_decoders.pyx'),
+  'binary_code': files('binary_code.pyx'),
+  'kasami_codes': files('kasami_codes.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -64,10 +64,11 @@ def runsnake(command):
         - :class:`Profiler`
     """
     import cProfile
-    from sage.misc.temporary_file import tmp_filename
+
     from sage.misc.misc import get_main_globals
-    from sage.repl.preparse import preparse
     from sage.misc.superseded import deprecation
+    from sage.misc.temporary_file import tmp_filename
+    from sage.repl.preparse import preparse
 
     deprecation(39274, "just use the runsnake program directly")
 
@@ -111,28 +112,26 @@ def import_statement_string(module, names, lazy):
                 if name is None:
                     raise ValueError("cannot lazy import modules")
                 return "lazy_import('%s', '%s')" % (module, name)
-            else:
-                return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
+            return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
         obj_names = "[" + ", ".join("'" + name[0] + "'" for name in names) + "]"
         obj_aliases = "[" + ", ".join("'" + name[1] + "'" for name in names) + "]"
         return "lazy_import('%s', %s, %s)" % (module, obj_names, obj_aliases)
-    else:
-        import_module = False
-        name_list = []
-        for name, alias in names:
-            if name == alias:
-                if name is None:
-                    import_module = True
-                    continue
-                name_list.append(name)
-            else:
-                name_list.append("%s as %s" % (name, alias))
-        res = []
-        if import_module:
-            res.append("import %s" % module)
-        if name_list:
-            res.append("from %s import %s" % (module, ', '.join(name_list)))
-        return "\n".join(res)
+    import_module = False
+    name_list = []
+    for name, alias in names:
+        if name == alias:
+            if name is None:
+                import_module = True
+                continue
+            name_list.append(name)
+        else:
+            name_list.append("%s as %s" % (name, alias))
+    res = []
+    if import_module:
+        res.append("import %s" % module)
+    if name_list:
+        res.append("from %s import %s" % (module, ', '.join(name_list)))
+    return "\n".join(res)
 
 
 def load_submodules(module=None, exclude_pattern=None):
@@ -165,19 +164,19 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
-        load sage.geometry.cone... succeeded
-        load sage.geometry.cone_catalog... succeeded
+        load sage.geometry...
+        ...
         load sage.geometry.fan_isomorphism... succeeded
         ...
-        load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry)
         load sage.geometry.polyhedron.lattice_euclidean_group_element... succeeded
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    from .package_dir import walk_packages
     import importlib
+
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -236,7 +235,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     EXAMPLES::
 
         sage: import sage.misc.dev_tools as dt
-        sage: dt.find_objects_from_name('FareySymbol')                                  # needs sage.modular
+        sage: dt.find_objects_from_name('FareySymbol')
         [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
         sage: # needs sympy
@@ -262,7 +261,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
     same object may be included in the output::
 
-        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)                # needs sage.rings.real_mpfr
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
         [Real Field with 53 bits of precision,
          ...
          Real Field with 53 bits of precision,
@@ -275,8 +274,12 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     """
     from sage.misc.lazy_import import LazyImport
 
+    # Create a copy to avoid errors if the sys.modules dict changes
+    # while we are iterating over it.
+    mods = sys.modules.copy()
+
     obj = []
-    for smodule_name, smodule in sys.modules.items():
+    for smodule_name, smodule in mods.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -306,7 +309,7 @@ def import_statements(*objects, **kwds):
 
     EXAMPLES::
 
-        sage: import_statements(WeylGroup, lazy_attribute)                              # needs sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute)
         from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.misc.lazy_attribute import lazy_attribute
 
@@ -316,7 +319,7 @@ def import_statements(*objects, **kwds):
     If ``lazy`` is True, then :func:`lazy_import` statements are
     displayed instead::
 
-        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)                   # needs sage.libs.gap
+        sage: import_statements(WeylGroup, lazy_attribute, lazy=True)
         from sage.misc.lazy_import import lazy_import
         lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
         lazy_import('sage.misc.lazy_attribute', 'lazy_attribute')
@@ -334,7 +337,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(euler_phi)
         from sage.arith.misc import euler_phi
 
-        sage: import_statements(x)                                                      # needs sage.symbolic
+        sage: import_statements(x)
         from sage.calculus.predefined import x
 
     If you don't like the warning you can disable them with the option ``verbose``::
@@ -342,13 +345,13 @@ def import_statements(*objects, **kwds):
         sage: import_statements(ZZ, verbose=False)
         from sage.rings.integer_ring import Z
 
-        sage: import_statements(x, verbose=False)                                       # needs sage.symbolic
+        sage: import_statements(x, verbose=False)
         from sage.calculus.predefined import x
 
     If the object has several names, an other way to get the import
     statement you expect is to use a string instead of the object::
 
-        sage: import_statements(matrix)                                                 # needs sage.modules
+        sage: import_statements(matrix)
         # ** Warning **: several names for that object: Matrix, matrix
         from sage.matrix.constructor import Matrix
 
@@ -363,7 +366,7 @@ def import_statements(*objects, **kwds):
     The strings are allowed to be comma-separated names, and parenthesis
     are stripped for convenience::
 
-        sage: import_statements('(floor, ceil)')                                        # needs sage.symbolic
+        sage: import_statements('(floor, ceil)')
         from sage.functions.other import floor, ceil
 
     Specifying a string is also useful for objects that are not
@@ -440,9 +443,9 @@ def import_statements(*objects, **kwds):
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
         from sage.rings.cif import CIF
-        sage: import_statements(NaN)                                                    # needs sage.symbolic
+        sage: import_statements(NaN)
         from sage.symbolic.constants import NaN
-        sage: import_statements(pi)                                                     # needs sage.symbolic
+        sage: import_statements(pi)
         from sage.symbolic.constants import pi
         sage: import_statements('SAGE_ENV')
         from sage.env import SAGE_ENV
@@ -462,8 +465,9 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
-    import itertools
     import inspect
+    import itertools
+
     from sage.misc.lazy_import import LazyImport
 
     answer = defaultdict(list)
@@ -576,7 +580,7 @@ def import_statements(*objects, **kwds):
                 """
                 return all(ord(c) < 128 for c in s)
             if any(is_ascii(s)
-                   for (module_name, obj_names) in modules.items()
+                   for obj_names in modules.values()
                    for s in obj_names):
                 for module_name, obj_names in list(modules.items()):
                     if any(not is_ascii(s) for s in obj_names):
@@ -660,5 +664,4 @@ def import_statements(*objects, **kwds):
 
     if answer_as_str:
         return '\n'.join(res)
-    else:
-        print('\n'.join(res))
+    print('\n'.join(res))

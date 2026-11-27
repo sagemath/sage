@@ -1,9 +1,9 @@
 SAGE_SPKG_CONFIGURE([maxima], [
-  m4_pushdef([SAGE_MAXIMA_MINVER],["5.45.0"])dnl this version and higher allowed
+  m4_pushdef([SAGE_MAXIMA_MINVER],[5.48.0])dnl this version and higher allowed
   SAGE_SPKG_DEPCHECK([ecl], [
     dnl First check for the "maxima" executable in the user's PATH, because
     dnl we still use pexpect to communicate with it in a few places.
-    AC_CACHE_CHECK([for Maxima >= $SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
+    AC_CACHE_CHECK([for Maxima >= SAGE_MAXIMA_MINVER], [ac_cv_path_MAXIMA], [
         AC_PATH_PROGS_FEATURE_CHECK([MAXIMA], [maxima], [
             maxima_version=`$ac_path_MAXIMA --version 2>&1 | tail -n 1\
                 | $SED -n -e 's/Maxima *\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\)/\1/p'`
@@ -45,7 +45,16 @@ SAGE_SPKG_CONFIGURE([maxima], [
     dnl the maxima library (within ECL) by name instead of by
     dnl absolute path.
     SAGE_MAXIMA='${prefix}'/bin/maxima
-    SAGE_MAXIMA_FAS='${prefix}'/lib/ecl/maxima.fas
+    AS_IF([test x$sage_spkg_install_ecl = xyes], [
+      dnl The ECL SPKG version may have a Sage-specific patchlevel, which is
+      dnl not part of ECL's versioned library directory name.
+      ecl_version=${version_with_patchlevel_ecl%%.p*}
+    ], [
+      ecl_version=`ecl --norc \
+        --eval '(princ (lisp-implementation-version))' \
+        --eval '(quit)'`
+    ])
+    SAGE_MAXIMA_FAS='${prefix}'"/lib/ecl-${ecl_version}/maxima.fas"
   ])
 
   AC_SUBST(SAGE_MAXIMA, "${SAGE_MAXIMA}")

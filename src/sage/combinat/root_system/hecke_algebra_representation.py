@@ -282,8 +282,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
                                                  for l,c in rec)
         if scalar is None:
             return result
-        else:
-            return scalar * result
+        return scalar * result
 
     def straighten_word(self, word):
         r"""
@@ -357,7 +356,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: K = QQ['q1,q2'].fraction_field()
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
-            sage: x = KW.an_element(); x
+            sage: x = KW.an_element(); x # random
             123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
@@ -729,8 +728,10 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: w0 = W.long_element()
 
         To set the recurrence up properly, one often needs to customize
-        the :meth:`CherednikOperatorsEigenvectors.affine_lift`
-        and :meth:`CherednikOperatorsEigenvectors.affine_retract`
+        the
+        :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
+        and
+        :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_retract`
         methods. This would usually be done by subclassing
         :class:`CherednikOperatorsEigenvectors`; here we just override
         the methods directly.
@@ -748,20 +749,19 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         This step is taken care of automatically if one instead calls
         the specialization
-        :meth:`sage.coxeter_groups.CoxeterGroups.Algebras.demazure_lusztig_eigenvectors`.
+        :meth:`sage.categories.coxeter_group_algebras.CoxeterGroupAlgebras.ParentMethods.demazure_lusztig_eigenvectors`.
 
         Now we can compute all eigenvectors::
 
-            sage: [E[w] for w in W]
-            [2121 - 121 - 212 + 12 + 21 - 1 - 2 + ,
+            sage: [E[w] for w in sorted(W)]
+            [2121,
+             -2121 + 121,
              -2121 + 212,
-             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 - (q2/(-q1+q2))*21 + 2,
-             -(q2^2/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
-             -((q1^2+q2^2)/(q1^2-q1*q2+q2^2))*2121 - ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*121
-             - (q2^2/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
-             2121,
              (q2/(-q1+q2))*2121 - (q2/(-q1+q2))*121 - 212 + 12,
-             -2121 + 121]
+             -(q2^2/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
+             -((q1^2+q2^2)/(q1^2-q1*q2+q2^2))*2121 - ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*121 - (q2^2/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 - (q2/(-q1+q2))*21 + 2,
+             2121 - 121 - 212 + 12 + 21 - 1 - 2 + ]
         """
         if not self.cartan_type().is_affine():
             raise ValueError("The Cherednik operators are only defined for representations of affine Hecke algebra")

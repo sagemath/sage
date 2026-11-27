@@ -179,16 +179,20 @@ Python floats.
 import os
 import re
 
-import sage.interfaces.abc
-
-from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.env import DOT_SAGE
 from pexpect import EOF
-from sage.misc.multireplace import multiple_replace
+
+import sage.interfaces.abc
+from sage.env import DOT_SAGE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import rich_to_bool
-
 
 # The Axiom commands ")what thing det" ")show Matrix" and ")display
 # op det" commands, gives a list of all identifiers that begin in
@@ -196,19 +200,28 @@ from sage.structure.richcmp import rich_to_bool
 # axiom has a lot a lot of ways for getting documentation from the
 # system -- this could also be useful.
 
+
 class PanAxiom(ExtraTabCompletion, Expect):
     """
     Interface to a PanAxiom interpreter.
     """
-    def __init__(self, name='axiom', command='axiom -nox -noclef',
-                 script_subdirectory=None, logfile=None,
-                 server=None, server_tmpdir=None,
-                 init_code=[')lisp (si::readline-off)']):
+
+    def __init__(
+        self,
+        name="axiom",
+        command="axiom -nox -noclef",
+        script_subdirectory=None,
+        logfile=None,
+        server=None,
+        server_tmpdir=None,
+        init_code=[")lisp (si::readline-off)"],
+    ):
         """
         Create an instance of the Axiom interpreter.
 
         TESTS::
 
+            sage: from sage.interfaces.axiom import axiom
             sage: axiom == loads(dumps(axiom))
             True
         """
@@ -605,9 +618,9 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         P = self.parent()
         if 'true' in P.eval("(%s = %s) :: Boolean" % (self.name(), other.name())):
             return rich_to_bool(op, 0)
-        elif 'true' in P.eval("(%s < %s) :: Boolean" % (self.name(), other.name())):
+        if 'true' in P.eval("(%s < %s) :: Boolean" % (self.name(), other.name())):
             return rich_to_bool(op, -1)
-        elif 'true' in P.eval("(%s > %s) :: Boolean" % (self.name(), other.name())):
+        if 'true' in P.eval("(%s > %s) :: Boolean" % (self.name(), other.name())):
             return rich_to_bool(op, 1)
 
         return NotImplemented
@@ -671,8 +684,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         P = self._check_valid()
         if not isinstance(n, tuple):
             return P.new('%s(%s)' % (self._name, n))
-        else:
-            return P.new('%s(%s)' % (self._name, str(n)[1:-1]))
+        return P.new('%s(%s)' % (self._name, str(n)[1:-1]))
 
     def comma(self, *args):
         """
@@ -829,25 +841,25 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.real_mpfr import RealField
             from sage.rings.integer_ring import ZZ
+            from sage.rings.real_mpfr import RealField
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x, e, b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
             return R(ZZ(x) * ZZ(b)**ZZ(e))
-        elif type == "DoubleFloat":
+        if type == "DoubleFloat":
             from sage.rings.real_double import RDF
             return RDF(repr(self))
-        elif type in ["PositiveInteger", "Integer"]:
+        if type in ["PositiveInteger", "Integer"]:
             from sage.rings.integer_ring import ZZ
             return ZZ(repr(self))
-        elif type.startswith('Polynomial'):
+        if type.startswith('Polynomial'):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             base_ring = P(type.removeprefix('Polynomial '))._sage_domain()
             vars = str(self.variables())[1:-1]
             R = PolynomialRing(base_ring, vars)
             return R(self.unparsed_input_form())
-        elif type.startswith('Fraction'):
+        if type.startswith('Fraction'):
             return self.numer().sage() / self.denom().sage()
 
         # If all else fails, try using the unparsed input form
@@ -857,9 +869,8 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             if isinstance(vars, tuple):
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(),
                                                      locals={str(x): x for x in vars})
-            else:
-                return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(),
-                                                     locals={str(vars): vars})
+            return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(),
+                                                 locals={str(vars): vars})
         except Exception:
             raise NotImplementedError
 
@@ -884,10 +895,10 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         if name == 'Integer':
             from sage.rings.integer_ring import ZZ
             return ZZ
-        elif name == 'DoubleFloat':
+        if name == 'DoubleFloat':
             from sage.rings.real_double import RDF
             return RDF
-        elif name.startswith('Fraction '):
+        if name.startswith('Fraction '):
             return P(name.lstrip('Fraction '))._sage_domain().fraction_field()
 
         raise NotImplementedError
@@ -942,26 +953,6 @@ class PanAxiomExpectFunction(ExpectFunction):
 AxiomExpectFunction = PanAxiomExpectFunction
 
 
-def is_AxiomElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`AxiomElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.axiom import is_AxiomElement
-        sage: is_AxiomElement(2)
-        doctest:...: DeprecationWarning: the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_AxiomElement(axiom(2))  # optional - axiom
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_AxiomElement is deprecated; use isinstance(x, sage.interfaces.abc.AxiomElement) instead")
-
-    return isinstance(x, AxiomElement)
-
-
 # Instances
 axiom = Axiom(name='axiom')
 
@@ -998,5 +989,6 @@ def axiom_console():
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%axiom magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%axiom magics instead.')
     os.system('axiom -nox')

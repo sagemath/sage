@@ -1,0 +1,47 @@
+# Ask GAP for the directory where sysinfo.gap lives. This is to
+# support system GAP installations. This root-path gathering
+# command is borrowed from gap's spkg-configure.m4 and modified
+# to separate the paths with spaces.
+GAPRUN="gap -r -q --bare --nointeract -c"
+_cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths," "));'
+GAP_ROOT_PATHS=$(${GAPRUN} "${_cmd}")
+
+# Loop though GAP_ROOT_PATHS looking for sysinfo.gap
+GAP_ROOT=""
+for grp in $GAP_ROOT_PATHS; do
+    if [ -f "${grp}/sysinfo.gap" ]; then
+        GAP_ROOT=$grp
+        echo "found GAP root $GAP_ROOT"
+        break
+    fi
+done
+
+# Try the old sage default if nothing else worked.
+if [ -z "$GAP_ROOT" ]; then
+    GAP_ROOT="$SAGE_LOCAL/lib/gap"
+    echo "falling back to GAP root $GAP_ROOT"
+fi
+
+# And finally, throw an error ASAP if the build is going to fail anyway.
+if [ ! -f "${GAP_ROOT}/sysinfo.gap" ]; then
+    sdh_die "no sysinfo.gap in your gap root"
+fi
+
+# Where to install these packages
+PKG_DIR="$SAGE_LOCAL/lib/gap/pkg"
+
+install_compiled_pkg()
+{
+    local pkg="$1"
+    # Install the bin/ dir (where compiled modules should end up)
+    # under <prefix>/lib/gap; we then symlink to it later
+    sdh_install * "$SAGE_LOCAL/lib/gap/pkg/$pkg"
+}
+
+# Build and install
+
+cd src
+echo "Building GAP package semigroups"
+sdh_configure --with-gaproot="$GAP_ROOT"  --with-external-libsemigroups
+sdh_make
+install_compiled_pkg semigroups

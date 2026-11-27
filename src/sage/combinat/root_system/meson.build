@@ -4,6 +4,7 @@ py.install_sources(
   'ambient_space.py',
   'associahedron.py',
   'braid_move_calculator.py',
+  'braid_orbit.pyx',
   'branching_rules.py',
   'cartan_matrix.py',
   'cartan_type.py',
@@ -18,8 +19,10 @@ py.install_sources(
   'non_symmetric_macdonald_polynomials.py',
   'pieri_factors.py',
   'plot.py',
+  'reflection_group_c.pyx',
   'reflection_group_complex.py',
   'reflection_group_element.pxd',
+  'reflection_group_element.pyx',
   'reflection_group_real.py',
   'root_lattice_realization_algebras.py',
   'root_lattice_realizations.py',
@@ -59,9 +62,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'braid_orbit' : files('braid_orbit.pyx'),
-  'reflection_group_c' : files('reflection_group_c.pyx'),
-  'reflection_group_element' : files('reflection_group_element.pyx'),
+  'braid_orbit': files('braid_orbit.pyx'),
+  'reflection_group_c': files('reflection_group_c.pyx'),
+  'reflection_group_element': files('reflection_group_element.pyx'),
 }
 
 foreach name, pyx : extension_data
