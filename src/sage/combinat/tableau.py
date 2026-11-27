@@ -3516,7 +3516,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         This action of the symmetric group `S_n` on the set of all
         semistandard tableaux of given shape `\lambda` with entries
         in `\{ 1, 2, \ldots, n \}` is the one defined in
-        [Loth02]_ Theorem 5.6.3. In particular, the action of `s_i`
+        [Lot2002]_ Theorem 5.6.3. In particular, the action of `s_i`
         is denoted by `\sigma_i` in said source. (Beware of the typo
         in the definition of `\sigma_i`: it should say
         `\sigma_i ( a_i^r a_{i+1}^s ) = a_i^s a_{i+1}^r`, not
@@ -6894,7 +6894,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
 
         where `n` is the ``max_entry``, `c(u)` is the content of `u`,
         and `h(u)` is the hook length of `u`.
-        See [Sta-EC2]_ Corollary 7.21.4.
+        See [EnumComb2]_ Corollary 7.21.4.
 
         EXAMPLES::
 

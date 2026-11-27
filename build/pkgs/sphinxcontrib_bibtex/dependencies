@@ -1,0 +1,1 @@
+ sphinx pybtex pybtex_docutils | $(PYTHON_TOOLCHAIN) $(PYTHON)
