@@ -922,14 +922,29 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
 
-        It would be extremely nice to allow the following, but this
-        poses theoretical problems::
+        Implicit species are supported inside composition.  For example,
+        the compositional inverse of `E_{\\geq 1}` can be defined via
+        `E_{\\geq 1}(\\Omega) = X`::
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E1 = L.Sets().restrict(1)
             sage: Omega = L.undefined(1)
-            sage: L.define_implicitly([Omega], [E1(Omega) - X])
-            sage: Omega[1]  # not tested
+            sage: L.define_implicitly([Omega], [lambda: E1(Omega) - X])
+            sage: Omega[1], Omega[2]
+            (X, -E_2)
+            sage: Omega[:6] == E1.revert()[:6]
+            True
+
+        In particular, an inner argument whose coefficients are refined
+        and substituted while solving is reread for each new degree.
+        The same result is obtained explicitly and implicitly in the
+        rooted trees example::
+
+            sage: E = L.Sets()
+            sage: A = L.undefined(1); A.define(X*E(A))
+            sage: B = L.undefined(1); L.define_implicitly([B], [lambda: B - X*E(B)])
+            sage: all(A[n] == B[n] for n in range(8))
+            True
         """
         fP = self.parent()
         if include is not None and exclude is not None:
@@ -2248,15 +2263,9 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                     return R(c)
                 return c
 
-            # args_flat and weights contain one list for each g
-            weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
-                          for g in args]
-
             def flat(g):
                 # function needed to work around python's scoping rules
                 return itertools.chain.from_iterable(coeff(g, j) for j in itertools.count())
-
-            args_flat1 = [lazy_list(flat(g)) for g in args]
 
             def coefficient(n):
                 if not n:
@@ -2267,6 +2276,14 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                 # argument must have positive valuation
                 _assume_positive_valuation([g._coeff_stream for g in args],
                                            None)
+                # Rebuild the lazy views of the arguments for each call:
+                # while an argument is implicitly defined, its cached
+                # coefficients are substituted with concrete values.
+                # A lazy_list made at construction time would keep the
+                # previous undetermined coefficients forever.
+                weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
+                              for g in args]
+                args_flat1 = [lazy_list(flat(g)) for g in args]
                 result = R.zero()
                 for i in range(1, n // max(gv, 1) + 1):
                     # skip i=0 because it produces a term only for n=0
