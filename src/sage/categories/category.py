@@ -1272,7 +1272,7 @@ class Category(UniqueRepresentation, SageObject):
             result.add(self)
         return frozenset(result)
 
-    def is_full_subcategory(self, other):
+    def is_full_subcategory(self, other) -> bool:
         """
         Return whether ``self`` is a full subcategory of ``other``.
 

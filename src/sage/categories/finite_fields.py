@@ -96,7 +96,7 @@ class FiniteFields(CategoryWithAxiom):
         # TODO: local dvr ring?
 
     class ParentMethods:
-        def is_perfect(self):
+        def is_perfect(self) -> bool:
             r"""
             Return whether this field is perfect, i.e., every element has a `p`-th
             root. Always returns ``True`` since finite fields are perfect.
@@ -281,7 +281,8 @@ class FiniteFields(CategoryWithAxiom):
             a square root element.
 
             OUTPUT:
-              ``True`` if the element is a square ``False`` if not
+
+            ``True`` if the element is a square and ``False`` if not
 
             EXAMPLES::
 

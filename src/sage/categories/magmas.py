@@ -379,7 +379,7 @@ class Magmas(Category_singleton):
 
         class ParentMethods:
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 r"""
                 Return ``True`` if ``self`` is a field.
 
@@ -539,7 +539,7 @@ class Magmas(Category_singleton):
                 if hasattr(one, "is_mutable"):
                     tester.assertFalse(one.is_mutable())
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether ``self`` is empty.
 
@@ -1012,7 +1012,7 @@ class Magmas(Category_singleton):
 
         _mul_parent = sage.categories.coercion_methods._mul_parent
 
-        def is_idempotent(self):
+        def is_idempotent(self) -> bool:
             r"""
             Test whether ``self`` is idempotent.
 

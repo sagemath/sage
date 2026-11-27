@@ -302,7 +302,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.base_ring().sum(x.coefficients())
 
-        def is_integral_domain(self, proof=True):
+        def is_integral_domain(self, proof=True) -> bool:
             r"""
             Return ``True`` if ``self`` is an integral domain.
 

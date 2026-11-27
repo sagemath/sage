@@ -319,7 +319,7 @@ class SuperCrystals(Category_singleton):
                 return tuple(self.digraph().sinks())
 
         class ElementMethods:
-            def is_genuine_highest_weight(self, index_set=None):
+            def is_genuine_highest_weight(self, index_set=None) -> bool:
                 """
                 Return whether ``self`` is a genuine highest weight element.
 
@@ -352,7 +352,7 @@ class SuperCrystals(Category_singleton):
                 S = P.subcrystal(generators=P, index_set=index_set, category=P.category())
                 return any(self == x.value for x in S.genuine_highest_weight_vectors())
 
-            def is_genuine_lowest_weight(self, index_set=None):
+            def is_genuine_lowest_weight(self, index_set=None) -> bool:
                 """
                 Return whether ``self`` is a genuine lowest weight element.
 

@@ -472,7 +472,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ell = phi[0]
             return bsharp
 
-        def is_perfect(self, ell=None):
+        def is_perfect(self, ell=None) -> bool:
             r"""
             Check if ``self`` is a perfect crystal of level ``ell``.
 

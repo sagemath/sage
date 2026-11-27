@@ -47,10 +47,10 @@ class FinitePosets(CategoryWithAxiom):
 
     class ParentMethods:
 
-        ##########################################################################
+        ###########################################################
         # Properties of this poset
 
-        def is_lattice(self):
+        def is_lattice(self) -> bool:
             r"""
             Return whether the poset is a lattice.
 
@@ -91,7 +91,7 @@ class FinitePosets(CategoryWithAxiom):
             return (self.cardinality() == 0 or
                      (self.has_bottom() and self.is_join_semilattice()))
 
-        def is_self_dual(self):
+        def is_self_dual(self) -> bool:
             r"""
             Return whether the poset is *self-dual*.
 
@@ -131,7 +131,7 @@ class FinitePosets(CategoryWithAxiom):
         ##########################################################################
         # Properties of morphisms
 
-        def is_poset_isomorphism(self, f, codomain):
+        def is_poset_isomorphism(self, f, codomain) -> bool:
             r"""
             Return whether `f` is an isomorphism of posets from
             ``self`` to ``codomain``.
@@ -197,7 +197,7 @@ class FinitePosets(CategoryWithAxiom):
                     return False
             return True
 
-        def is_poset_morphism(self, f, codomain):
+        def is_poset_morphism(self, f, codomain) -> bool:
             r"""
             Return whether `f` is a morphism of posets from ``self``
             to ``codomain``, that is
@@ -1947,7 +1947,7 @@ class FinitePosets(CategoryWithAxiom):
             antichains = [tuple(a) for a in self.antichains()]
 
             @cached_function
-            def is_above(a, xb):
+            def is_above(a, xb) -> bool:
                 return any(self.is_lequal(xa, xb) for xa in a)
 
             def compare(a, b):

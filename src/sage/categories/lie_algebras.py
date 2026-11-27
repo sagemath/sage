@@ -222,7 +222,7 @@ class LieAlgebras(Category_over_base_ring):
                     2
                 """
 
-            def is_nilpotent(self):
+            def is_nilpotent(self) -> bool:
                 r"""
                 Return ``True`` since ``self`` is nilpotent.
 
@@ -525,7 +525,7 @@ class LieAlgebras(Category_over_base_ring):
             #category = kwds.pop("category", None)
             #return LieIdeal(gens, names, index_set, category)
 
-        def is_ideal(self, A):
+        def is_ideal(self, A) -> bool:
             """
             Return if ``self`` is an ideal of ``A``.
 

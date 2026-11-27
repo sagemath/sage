@@ -1922,7 +1922,7 @@ class CrystalMorphism(Morphism):
 
     # This is needed because is_injective is defined in a superclass, so
     #   we can't overwrite it with the category
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return if ``self`` is an injective crystal morphism.
 
@@ -1939,7 +1939,7 @@ class CrystalMorphism(Morphism):
     #   we can't overwrite it with the category
     # TODO: This could be moved to sets
     @cached_method
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Check if ``self`` is a surjective crystal morphism.
 

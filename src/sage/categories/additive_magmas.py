@@ -715,7 +715,7 @@ class AdditiveMagmas(Category_singleton):
                 # TODO: add a test that actually exercise this default implementation
                 return self(0)
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether this set is empty.
 
@@ -751,7 +751,7 @@ class AdditiveMagmas(Category_singleton):
             # TODO: merge with the implementation in Element which currently
             # overrides this one, and further requires self.parent()(0) to work.
             #
-            # def is_zero(self):
+            # def is_zero(self) -> bool:
             #     """
             #     Returns whether self is the zero of the magma
             #

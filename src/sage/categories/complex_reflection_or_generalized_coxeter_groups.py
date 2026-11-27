@@ -815,7 +815,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             return len(self.irreducible_component_index_sets())
 
-        def is_irreducible(self):
+        def is_irreducible(self) -> bool:
             r"""
             Return ``True`` if ``self`` is irreducible.
 
@@ -833,7 +833,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             return self.number_of_irreducible_components() == 1
 
-        def is_reducible(self):
+        def is_reducible(self) -> bool:
             r"""
             Return ``True`` if ``self`` is not irreducible.
 
@@ -1215,7 +1215,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 [0, 1, 1, 2]
             """
 
-        def is_reflection(self):
+        def is_reflection(self) -> bool:
             r"""
             Return whether ``self`` is a reflection.
 
