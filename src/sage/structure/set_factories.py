@@ -342,7 +342,7 @@ class SetFactory(UniqueRepresentation, SageObject):
         NotImplementedError: <abstract method add_constraints at ...>
     """
     @abstract_method
-    def __call__(self, *constraints, **consdict):
+    def __call__(self, *constraints, **consdict) -> None:
         r"""
         Construct the parent associated with the constraints in
         argument. This should return a :class:`Parent`.
@@ -377,7 +377,7 @@ class SetFactory(UniqueRepresentation, SageObject):
         """
 
     @abstract_method
-    def add_constraints(self, cons, *args, **opts):
+    def add_constraints(self, cons, *args, **opts) -> None:
         r"""
         Add constraints to the set of constraints `cons`.
 
@@ -431,7 +431,7 @@ class SetFactoryPolicy(UniqueRepresentation, SageObject):
         This class is a base class for policies, one should not try
         to create instances.
     """
-    def __init__(self, factory):
+    def __init__(self, factory) -> None:
         r"""
         TESTS::
 
@@ -512,7 +512,7 @@ class SetFactoryPolicy(UniqueRepresentation, SageObject):
                 'element_class': parent.element_class}
 
     @abstract_method
-    def element_constructor_attributes(self, constraints):
+    def element_constructor_attributes(self, constraints) -> None:
         r"""
         Element constructor attributes.
 
@@ -573,7 +573,7 @@ class SelfParentPolicy(SetFactoryPolicy):
         sage: isinstance(el, Foo)
         True
     """
-    def __init__(self, factory, Element):
+    def __init__(self, factory, Element) -> None:
         r"""
         TESTS::
 
@@ -606,7 +606,7 @@ class SelfParentPolicy(SetFactoryPolicy):
         """
         return self.self_element_constructor_attributes(self._Element)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -638,7 +638,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
         sage: P = XYPairs(); P.policy()
         Set factory policy for <class 'sage.structure.set_factories_example.XYPair'> with parent AllPairs[=Factory for XY pairs(())]
     """
-    def __init__(self, factory, top_constraints, Element):
+    def __init__(self, factory, top_constraints, Element) -> None:
         """
         TESTS::
 
@@ -681,7 +681,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
         return self.facade_element_constructor_attributes(
             factory(*self._top_constraints, policy=self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -740,7 +740,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
         sage: type(el) is P.element_class
         True
     """
-    def __init__(self, factory, parent):
+    def __init__(self, factory, parent) -> None:
         r"""
         TESTS::
 
@@ -779,7 +779,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
         return self.facade_element_constructor_attributes(
             self._parent_for._parent_for)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -815,7 +815,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
         sage: type(el)
         <... 'tuple'>
     """
-    def __init__(self, factory, constructor):
+    def __init__(self, factory, constructor) -> None:
         """
         TESTS::
 
@@ -848,7 +848,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
         return {'_element_constructor_': self._constructor,
                 '_parent_for': None}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -887,7 +887,7 @@ class ParentWithSetFactory(Parent):
         sage: P.category()
         Category of facade finite enumerated sets
     """
-    def __init__(self, constraints, policy, category=None):
+    def __init__(self, constraints, policy, category=None) -> None:
         r"""
         TESTS::
 
@@ -1016,7 +1016,7 @@ class ParentWithSetFactory(Parent):
                                          (args, options))
         return factory(*constr, policy=self._policy)
 
-    def _test_subset(self, **options):
+    def _test_subset(self, **options) -> None:
         r"""
         Test that subsets with no extra parameters returns ``self``.
 
@@ -1038,7 +1038,7 @@ class ParentWithSetFactory(Parent):
         tester.assertIs(self.subset(), self)
 
     @abstract_method
-    def check_element(self, x, check):
+    def check_element(self, x, check) -> None:
         r"""
         Check that ``x`` verifies the constraints of ``self``.
 
@@ -1082,7 +1082,7 @@ class ParentWithSetFactory(Parent):
             ValueError: Wrong second coordinate
         """
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Default implementation for ``__contains__``.
 

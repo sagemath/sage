@@ -533,7 +533,7 @@ class TestClass:
     """
     A class used for checking that introspection works
     """
-    def bla():
+    def bla() -> None:
         """
         bla ...
         """

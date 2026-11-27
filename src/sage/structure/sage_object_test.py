@@ -13,7 +13,7 @@ class SageObjectTests:
     def sage_object(self, *args, **kwargs) -> SageObject:
         raise NotImplementedError
 
-    def test_sage_unittest_testsuite(self, sage_object: SageObject):
+    def test_sage_unittest_testsuite(self, sage_object: SageObject) -> None:
         """
         Subclasses should override this method if they need to skip some tests.
         """

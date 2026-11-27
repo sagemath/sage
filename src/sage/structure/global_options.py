@@ -545,7 +545,7 @@ class Option:
     """
     __name__ = 'Option class'
 
-    def __init__(self, options, name):
+    def __init__(self, options, name) -> None:
         r"""
         Initialise an option by settings its ``name``, "parent" option class
         ``options`` and doc-string.
@@ -560,7 +560,7 @@ class Option:
         self.__doc__ = options._doc[name]
         super().__init__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation for this collection of options.
 
@@ -984,7 +984,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
     """
     __name__ = 'options'
 
-    def __init__(self, NAME=None, module='', option_class='', doc='', end_doc='', **options):
+    def __init__(self, NAME=None, module='', option_class='', doc='', end_doc='', **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -1075,7 +1075,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         # Add docstring footer
         self._docstring += "\nSee :class:`~sage.structure.global_options.GlobalOptions` for more features of these options."
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation for this collection of options.
 
@@ -1171,7 +1171,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
                 return self._display_values[option][self._value[option]]
             return self._value[option]
 
-    def __setitem__(self, option, value):
+    def __setitem__(self, option, value) -> None:
         r"""
         The ``__setitem__`` method is used to change the current values of the
         options. It also checks that the supplied options are valid and changes
@@ -1256,7 +1256,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         options = 'OPTIONS:\n\n{}\n\n'.format('\n'.join(self._doc[opt] for opt in sorted(self._doc)))
         return self._docstring.replace("@OPTIONS@", options)
 
-    def __setattr__(self, name, value=None):
+    def __setattr__(self, name, value=None) -> None:
         r"""
         Set the attribute ``name`` of the option class ``self`` equal to
         ``value``, if the attribute ``name`` exists.
@@ -1281,7 +1281,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         # General case: redirect to __setitem__
         self[name] = value
 
-    def __setstate__(self, state):
+    def __setstate__(self, state) -> None:
         r"""
         This is a custom :meth:`__setstate__` method for unpickling instances of
         the :class:`GlobalOptions` class.
@@ -1682,7 +1682,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         raise ValueError('%s is not a dispatchable option!' % option)
 
-    def _reset(self, option=None):
+    def _reset(self, option=None) -> None:
         r"""
         Reset options to their default value.
 
