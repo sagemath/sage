@@ -34,17 +34,6 @@ static inline void unset_ecl_signal_handler(void)
     sigaction(SIGSEGV, &sage_sigsegv_handler, NULL);
 }
 
-/* This MUST be a macro because sig_on() must be in the same
- * stack frame as ecl_sig_on(). */
-#define ecl_sig_on() \
-    (sig_on() && (set_ecl_signal_handler() , 1))
-
-static inline void ecl_sig_off(void)
-{
-    unset_ecl_signal_handler();
-    sig_off();
-}
-
 #if ECL_VERSION_NUMBER < 230909
 #define ecl_mpz_from_bignum(obj) ((obj)->big.big_num)
 #else

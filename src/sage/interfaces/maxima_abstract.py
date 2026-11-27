@@ -121,6 +121,38 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Interface.__init__(self, name)
 
+    def set_seed(self, seed=None):
+        """
+        Seed Maxima's random number generator and return the seed.
+
+        Maxima uses the integer seed modulo `2^{32}`.  If ``seed`` is
+        ``None``, choose a seed using
+        :meth:`~sage.interfaces.interface.Interface.rand_seed`.
+
+        EXAMPLES::
+
+            sage: maxima.set_seed(1)
+            1
+            sage: [maxima.random(100) for i in range(5)]
+            [45, 39, 24, 68, 63]
+            sage: maxima.get_seed()
+            1
+
+        The Pexpect interface uses the same method::
+
+            sage: from sage.interfaces.maxima import Maxima
+            sage: m = Maxima()
+            sage: m.set_seed(1)
+            1
+            sage: [m.random(100) for i in range(5)]
+            [45, 39, 24, 68, 63]
+        """
+        if seed is None:
+            seed = self.rand_seed()
+        self.set_random_state(self.make_random_state(seed))
+        self._seed = seed
+        return seed
+
     ###########################################
     # Interactive help
     ###########################################

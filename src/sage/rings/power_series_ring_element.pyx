@@ -284,7 +284,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: ((a+1)*t).change_ring(ZZ)                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a + 1 to an integer
+            TypeError: no conversion of this number field element to an integer
         """
         S = self._parent.change_ring(R)
         return S(self)

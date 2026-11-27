@@ -1860,7 +1860,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v``, ``k``, ``l``, ``mu`` -- - (integrs) parameters of the graph
+    - ``v``, ``k``, ``l``, ``mu`` -- - (integers) parameters of the graph
 
     OUTPUT:
 

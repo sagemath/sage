@@ -1,11 +1,15 @@
-from typing import assert_type
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, assert_type
 
 from sage.rings.polynomial.polynomial_element import Polynomial
 
-from sage.rings.finite_rings.element_base import FinitePolyExtElement
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.integer import Integer
+
+if TYPE_CHECKING:
+    from sage.rings.finite_rings.element_base import FinitePolyExtElement
+    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 F = GF(3**3, 'a')
 
