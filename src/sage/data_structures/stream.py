@@ -1618,7 +1618,7 @@ class Stream_uninitialized(Stream):
             sage: len(pool.variables())
             0
         """
-        if hasattr(self, '_pool'):
+        if hasattr(self, '_pool') and hasattr(self, '_good_cache'):
             # self._good_cache is a lower bound
             if self._coefficient_ring == self._base_ring:
                 for c in self._cache[self._good_cache:]:
@@ -1711,16 +1711,6 @@ class Stream_uninitialized(Stream):
         """
         assert self._target is None
 
-        for i, val in enumerate(initial_values):
-            if val:
-                self._approximate_order += i
-                self._true_order = True
-                self._cache = initial_values[i:]
-                break
-        else:
-            self._approximate_order += len(initial_values)
-            self._cache = []
-
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
         self._PF = CoefficientRing(self._base_ring)
@@ -1729,6 +1719,20 @@ class Stream_uninitialized(Stream):
             self._U = self._PF
         else:
             self._U = self._coefficient_ring.change_ring(self._PF)
+
+        # the initial values are cached, coerced into the coefficient
+        # ring, since cached coefficients are assumed to be ring
+        # elements, e.g., by _is_determined
+        for i, val in enumerate(initial_values):
+            if val:
+                self._approximate_order += i
+                self._true_order = True
+                self._cache = [self._coefficient_ring(v)
+                               for v in initial_values[i:]]
+                break
+        else:
+            self._approximate_order += len(initial_values)
+            self._cache = []
         self._pool = VariablePool(self._P)
         self._uncomputed = True
         self._eqs = equations
@@ -1839,10 +1843,18 @@ class Stream_uninitialized(Stream):
         from its coefficients, which can then be undetermined without
         being coerced into the parent of the value; membership in the
         coefficient ring is not sufficient for such values.
+
+        Values in ``self._P`` and ``self._PF`` are rejected without
+        testing membership in the coefficient ring: the failed
+        coercion underlying the membership test is expensive, and a
+        constant value in these rings is retracted to the base ring
+        by the next substitution, see :meth:`_subs_in_caches`.
         """
         if isinstance(val, IndexedFreeModuleElement):
             return not any(e.parent() is self._P or e.parent() is self._PF
                            for e in val.monomial_coefficients().values())
+        if val.parent() is self._P or val.parent() is self._PF:
+            return False
         return val in self._coefficient_ring
 
     def __getitem__(self, n):
