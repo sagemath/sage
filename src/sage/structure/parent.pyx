@@ -1593,13 +1593,27 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except KeyError:
             pass
 
-    cpdef register_coercion(self, mor):
+    cpdef register_coercion(self, mor, weak=False):
         r"""
         Update the coercion model to use `mor : P \to \text{self}` to coerce
         from a parent ``P`` into ``self``.
 
         For safety, an error is raised if another coercion has already
         been registered or discovered between ``P`` and ``self``.
+
+        INPUT:
+
+        - ``mor`` -- a :class:`Map` (with codomain ``self``) or a parent
+          from which ``self`` can construct a generic coerce map
+
+        - ``weak`` -- boolean (default: ``False``); if ``True``, the
+          registered map holds only weak references to its domain and
+          codomain, and ``self`` does not keep a strong reference to
+          the domain.  This is appropriate when the domain is a
+          short-lived object such as a transient subgroup whose
+          retention would otherwise cause a memory leak (see
+          :issue:`27358`).  Such a coercion becomes invalid once the
+          domain is garbage-collected.
 
         EXAMPLES::
 
@@ -1651,8 +1665,16 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         assert not (self._coercions_used and D in self._convert_from_hash), "conversion from %s to %s already registered or discovered" % (D, self)
 
         mor._is_coercion = True
-        self._coerce_from_list.append(mor)
-        self._registered_domains.append(D)
+        if weak:
+            # Do not keep a strong reference to the domain in
+            # ``_coerce_from_list`` or ``_registered_domains``; the
+            # ``_coerce_from_hash`` key is weak, so the entry will
+            # disappear automatically once the domain is
+            # garbage-collected (:issue:`27358`).
+            mor._make_weak_references()
+        else:
+            self._coerce_from_list.append(mor)
+            self._registered_domains.append(D)
         self._coerce_from_hash.set(D, mor)
 
     cpdef register_action(self, action):
@@ -1717,6 +1739,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             raise TypeError("actions must be actions")
         if action.actor() is not self and action.domain() is not self:
             raise ValueError("action must involve self")
+        # Pin the action's actor reference: the parent's ``_action_list``
+        # is the only thing keeping the actor alive for many registered
+        # actions (e.g. ``PSModSymAction(Sigma0(p), self)``), so allowing
+        # the coercion cache to later weaken this reference would let the
+        # actor be garbage-collected while the action is still in use
+        # (see :issue:`27358`).
+        action._pin_actor()
         self._action_list.append(action)
 
     cpdef register_conversion(self, mor):
@@ -2574,6 +2603,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             from sage.categories.action import Action
             if not isinstance(action, Action):
                 raise TypeError("_get_action_ must return None or an Action")
+            # Drop the cached action's strong reference to its actor so
+            # that this hashtable does not pin the actor in memory
+            # (:issue:`27358`).  Actions that were explicitly registered
+            # via :meth:`register_action` opt out of this via
+            # :meth:`Action._pin_actor`.
+            action._make_actor_weak()
 
         self._action_hash.set(S, op, self_on_left, action)
         return action

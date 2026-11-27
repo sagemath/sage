@@ -8,9 +8,9 @@ A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
 
 .. WARNING::
 
-    An :class:`Action` object only keeps a weak reference to the underlying set
-    which is acted upon. This decision was made in :issue:`715` in order to
-    allow garbage collection within the coercion framework (this is where
+    An :class:`Action` object only keeps a weak reference to the underlying
+    set which is acted upon. This decision was made in :issue:`715` in order
+    to allow garbage collection within the coercion framework (this is where
     actions are mainly used) and avoid memory leaks.
 
     ::
@@ -38,6 +38,12 @@ A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
         0
         sage: A
         Left action by <__main__.P ... at ...> on <__main__.P ... at ...>
+
+    Once an :class:`Action` is stored in a coercion cache, the cache layer
+    also weakens its reference to the actor ``G`` (:issue:`27358`); actions
+    explicitly registered via :meth:`~sage.structure.parent.Parent.register_action`
+    opt out via :meth:`Action._pin_actor` so the registered parent's
+    ``_action_list`` keeps the actor alive.
 
 AUTHOR:
 
@@ -89,14 +95,114 @@ cdef class Action(Functor):
 
     - ``op`` -- (default: ``None``) operation. This is not used by
       :class:`Action` itself, but other classes may use it
+
+    TESTS:
+
+    Check that repeated binary operations involving large numbers of
+    parents do not leak those parents into memory (:issue:`27358`)::
+
+        sage: import gc, operator
+        sage: for p in primes(2000):
+        ....:     F = GF(p)
+        ....:     M = MatrixSpace(F, 2)
+        ....:     V = F^2
+        ....:     _ = M.one() * V.zero()
+        sage: _ = gc.collect(); _ = gc.collect()
+        sage: n = len(list(primes(2000)))
+        sage: len([v for v in gc.get_objects() if type(v) is type(V)]) < n
+        True
     """
     def __init__(self, G, S, is_left=True, op=None):
-        from sage.categories.groupoid import Groupoid
-        Functor.__init__(self, Groupoid(G), category(S))
-        self.G = G
+        from sage.categories.objects import Objects
+        # Pass the singleton :class:`Objects` category as the Functor
+        # domain rather than ``Groupoid(G)``: the latter would pin
+        # ``G`` in memory forever through the
+        # :class:`UniqueRepresentation` cache key of ``Groupoid(G)``
+        # (see :issue:`27358`).
+        Functor.__init__(self, Objects(), category(S))
+        # Hold ``G`` strongly by default; the coercion cache layer
+        # (see :meth:`_make_actor_weak`) explicitly weakens this
+        # reference once it has stored the action, so cached actions
+        # do not pin their acting parents (:issue:`27358`).  Actions
+        # registered via :meth:`Parent.register_action` opt out via
+        # :meth:`_pin_actor`.  ``S`` is always held weakly
+        # (:issue:`715`).
+        self._G = G
+        self._G_weakref = None
+        self._pinned = False
         self.US = ref(S)
         self._is_left = is_left
         self.op = op
+
+    @property
+    def G(self):
+        """
+        The actor of this action.
+
+        EXAMPLES::
+
+            sage: from sage.categories.action import Action
+            sage: class P: pass
+            sage: g = P()
+            sage: s = P()
+            sage: A = Action(g, s)
+            sage: A.G is g
+            True
+
+        For cached actions the actor is held only weakly (see
+        :issue:`27358`); accessing :attr:`G` after the actor has been
+        garbage-collected raises :exc:`RuntimeError`.
+        """
+        return self._actor()
+
+    cdef _actor(self):
+        """
+        Return the actor parent ``G``.
+
+        Prefers the strong slot ``_G``; falls back to the weak slot
+        ``_G_weakref`` set by :meth:`_make_actor_weak`.  Raises
+        :exc:`RuntimeError` if the actor has been garbage-collected.
+        """
+        cdef G
+        if self._G is not None:
+            return self._G
+        if self._G_weakref is not None:
+            G = self._G_weakref()
+            if G is not None:
+                return G
+        raise RuntimeError("This action acted with an actor that became garbage collected")
+
+    cpdef _pin_actor(self):
+        """
+        Mark this action so that :meth:`_make_actor_weak` becomes a
+        no-op.
+
+        Called by :meth:`Parent.register_action` because the parent's
+        ``_action_list`` is the only thing keeping the actor alive for
+        a registered action; weakening would let the actor be
+        garbage-collected while the parent is still using the action
+        (see :issue:`27358`).
+        """
+        self._pinned = True
+
+    cpdef _make_actor_weak(self):
+        """
+        Convert the actor reference from strong to weak.
+
+        No-op if the action has been pinned via :meth:`_pin_actor`, if
+        the actor is already weakly held, or if the actor is not
+        weak-referenceable (some Python built-in types).  Used by the
+        coercion cache to avoid pinning actor parents through cached
+        actions (:issue:`27358`).
+        """
+        if self._pinned or self._G is None:
+            return
+        try:
+            self._G_weakref = ref(self._G)
+        except TypeError:
+            # Not weak-referenceable; keep the strong reference.
+            return
+        self._G = None
 
     def _apply_functor(self, x):
         return self(x)
@@ -169,12 +275,13 @@ cdef class Action(Functor):
             return self._act_convert(g, x)
         elif len(args) == 1:
             g = <object>PyTuple_GET_ITEM(args, 0)
-            if g in self.G:
-                return ActionEndomorphism(self, self.G(g))
-            elif g == self.G:
+            G = self._actor()
+            if g in G:
+                return ActionEndomorphism(self, G(g))
+            elif g == G:
                 return self.underlying_set()
             else:
-                raise TypeError("%s not an element of %s" % (g, self.G))
+                raise TypeError("%s not an element of %s" % (g, G))
         else:
             raise TypeError("actions should be called with 1 or 2 arguments")
 
@@ -183,9 +290,10 @@ cdef class Action(Functor):
         Let ``g`` act on ``x`` under this action, converting ``g``
         and ``x`` to the correct parents first.
         """
+        cdef G = self._actor()
         U = self.underlying_set()
-        if parent(g) is not self.G:
-            g = self.G(g)
+        if parent(g) is not G:
+            g = G(g)
         if parent(x) is not U:
             x = U(x)
         return self._act_(g, x)
