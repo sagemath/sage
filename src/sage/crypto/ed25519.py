@@ -17,6 +17,8 @@ three variants have different signature domains and are not interchangeable::
 
     sage: seed = bytes.fromhex("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60")
     sage: public_key = ed25519_public_key(seed)
+    doctest:...: FutureWarning: SageMath's digital signature functionality is experimental and might change in the future.
+                 See https://github.com/sagemath/sage/issues/41218 for details.
     sage: public_key.hex()
     'd75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a'
     sage: signature = ed25519_sign(seed, b"")
