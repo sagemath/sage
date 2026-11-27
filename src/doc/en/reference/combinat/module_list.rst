@@ -330,6 +330,7 @@ Comprehensive module list
     sage/combinat/posets/all
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint
+    sage/combinat/posets/semidistributivity
 
 ``sage.combinat.rigged_configurations``
 ---------------------------------------
