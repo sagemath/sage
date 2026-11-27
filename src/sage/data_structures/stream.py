@@ -1839,6 +1839,9 @@ class Stream_uninitialized(Stream):
         self._pending = set()
         self._verifying = False
         self._failure = None
+        # the kernel direction of the last undetermined linear system,
+        # for the error message of ``_compute``
+        self._kernel_info = None
 
     def _restart_with_larger_weight_support(self):
         r"""
@@ -1907,6 +1910,7 @@ class Stream_uninitialized(Stream):
         self._pending = set()
         self._verifying = False
         self._residual_eqs = None
+        self._kernel_info = None
         # rebuild the equations from the factories, so that no cache
         # holding variables of the previous refinement is reused
         eqs = []
@@ -2893,6 +2897,21 @@ class Stream_uninitialized(Stream):
             True
             sage: C._cache
             [1]
+
+            If nothing is determined although the system is feasible, its
+            kernel is nontrivial; the kernel direction is remembered for
+            the error message::
+
+            sage: D = Stream_uninitialized(0)
+            sage: E = Stream_uninitialized(0)
+            sage: eq = Stream_sub(D, E, True)
+            sage: D.define_implicitly([D, E], [], [eq], QQ, QQ, terms_of_degree)
+            sage: E.define_implicitly([D, E], [], [eq], QQ, QQ, terms_of_degree)
+            sage: D[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series0[0] += -1, series1[0] += -1:
+                coefficient [0]: -series1[0] + series0[0] == 0
         """
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         if self._weight_variables:
@@ -2950,6 +2969,12 @@ class Stream_uninitialized(Stream):
                 val = self._base_ring(sol)
                 self._subs_in_caches(var, val)
                 good = True
+        # If nothing is determined although the system is feasible, its
+        # kernel is nontrivial: the collected equations do not have a
+        # unique solution.  Remember the kernel direction for the error
+        # message of ``_compute``.
+        self._kernel_info = ((v, k) if not good and k.nrows() and k.ncols()
+                             else None)
         return good
 
     def _compute(self):
@@ -2996,12 +3021,30 @@ class Stream_uninitialized(Stream):
             if lin_coeffs and self._solve_linear_equations_and_subs(lin_coeffs):
                 return
 
+        lead = "could not determine any coefficients"
+        if self._kernel_info is not None:
+            # the collected linear system is feasible with a nontrivial
+            # kernel: report the kernel direction, so that an
+            # underdetermined system is recognized as such.  The solution
+            # itself need not be non-unique: equations beyond the
+            # collected ones (deeper lookahead, nonlinear parts) may
+            # still remove the direction.
+            v, k = self._kernel_info
+            p = {repr(var): name
+                 for var, name in self._pool.variables().items()}
+            entries = sorted(
+                ((p.get(repr(var)) or repr(var), entry)
+                 for var, entry in zip(v, k.column(0))),
+                key=lambda e: e[0])
+            direction = ", ".join("%s += %s" % e for e in entries if e[1])
+            lead += (", since the linear system has a nontrivial kernel;"
+                     " kernel direction: %s" % direction)
+
         if len(self._eqs) == 1:
             eq_str = "\n    ".join(self._eq_str(idx, eq)
                                    for idx, eq in all_coeffs[0])
             if lin_coeffs:
-                raise ValueError("could not determine any coefficients:\n    "
-                                 + eq_str)
+                raise ValueError(lead + ":\n    " + eq_str)
             raise ValueError("there are no linear equations:\n    "
                              + eq_str)
 
@@ -3010,8 +3053,7 @@ class Stream_uninitialized(Stream):
                                             for idx, eq in eqs)
                             for i, eqs in enumerate(all_coeffs))
         if lin_coeffs:
-            raise ValueError("could not determine any coefficients:\n"
-                             + eqs_str)
+            raise ValueError(lead + ":\n" + eqs_str)
         raise ValueError("there are no linear equations:\n"
                          + eqs_str)
 

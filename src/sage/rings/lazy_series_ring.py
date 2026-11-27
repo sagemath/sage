@@ -1455,7 +1455,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients:
+            <repr(...) failed: ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series[2] += 1, series[3] += 1/3*x + 1/3*y:
                 coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y)*series[1] == 0>
 
         Let us now try to only specify the degree 0 and degree 1
@@ -1468,7 +1468,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients:
+            <repr(...) failed: ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series[2] += 1, series[3] += 1/3*x + 1/3*y:
                 coefficient [3]: ... == 0>
 
         (Note that the order of summands of the equation in the error
@@ -1747,7 +1747,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A[1]
             Traceback (most recent call last):
             ...
-            ValueError: could not determine any coefficients:
+            ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: B[t] += -1, B[x*t] += 1, B[x*y] += -1:
             equation 0:
                 coefficient [x*y*t]: A[x*y] - A[t] == 0
             equation 1:
@@ -1764,8 +1764,25 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: B = T.undefined(name="B")
             sage: T.define_implicitly([A, B], [X*A - Y*B])
             sage: A
-            <repr(...) failed: ValueError: could not determine any coefficients:
+            <repr(...) failed: ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: A[p[] # p[1]] += -1, B[p[1] # p[]] += -1:
                 coefficient [p[1] # p[1]]: -B[p[1] # p[]] + A[p[] # p[1]] == 0>
+
+        A kernel direction can also indicate a genuinely non-unique
+        solution: with a weight variable `q`, the equation below only
+        forces the sum of the two degree-zero coefficients, since
+        `psi_2(q - 1) = q^2 - 1 = (1 + q)(q - 1)`::
+
+            sage: R = PolynomialRing(QQ, 'q'); q = R.gen()
+            sage: h = SymmetricFunctions(R).h()
+            sage: p = SymmetricFunctions(R).p()
+            sage: L = LazySymmetricFunctions(h)
+            sage: A = L.undefined()
+            sage: L.define_implicitly([A], [p([2])(A) - (1 + q)*A + q])
+            sage: A[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series[h[]] += -1, series[q*h[]] += 1:
+                coefficient [h[]]: (-q)*series[q*h[]] + (-q)*series[h[]] + q == 0
 
         An example we cannot solve because we only look at the next
         non-vanishing equations::
@@ -1778,7 +1795,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A[1]
             Traceback (most recent call last):
             ...
-            ValueError: could not determine any coefficients:
+            ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series[1] += -2, series[2] += 1:
             equation 0:
                 coefficient [0]: 2*series[2] + series[1] == 0
             equation 1:
