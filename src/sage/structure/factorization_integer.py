@@ -27,8 +27,8 @@ class IntegerFactorization(Factorization):
     - Sebastian Pancratz (2010-01-10)
     """
 
-    def __init__(self, x, unit=None, cr=False, sort=True, simplify=True,
-                 unsafe=False):
+    def __init__(self, x, unit=None, cr: bool=False, sort: bool=True, simplify: bool=True,
+                 unsafe: bool=False) -> None:
         """
         Set ``self`` to the factorization object with list ``x``,
         which must be a sorted list of pairs, where each pair contains
@@ -83,7 +83,7 @@ class IntegerFactorization(Factorization):
                              sort=sort,
                              simplify=simplify)
 
-    def __sort__(self, key=None):
+    def __sort__(self, key=None) -> None:
         """
         Sort the factors in this factorization.
 

@@ -263,7 +263,7 @@ test = ["coverage", "pytest"]
 # TODO: Fix those, and then remove the "ignore" rules below.
 # Obtained via ty check --output-format=concise 2>&1 | tee /tmp/ty-check.log; awk 'match($0,/(error)\[([^]]+)\]/,m){c[m[2]]++} END{for (k in c) printf "%7d %s\n", c[k], k}' /tmp/ty-check.log | sort -nr
 
-# 5665 unresolved-import
+# 5665 import-not-found
 # 4296 unresolved-attribute
 # 2354 unresolved-reference
 # 2336 missing-argument
@@ -299,6 +299,7 @@ test = ["coverage", "pytest"]
 "conflicting-declarations" = "ignore"
 "deprecated" = "ignore"
 "empty-body" = "ignore"
+"import-not-found" = "ignore"
 "inconsistent-mro" = "ignore"
 "index-out-of-bounds" = "ignore"
 "invalid-argument-type" = "ignore"
@@ -329,7 +330,6 @@ test = ["coverage", "pytest"]
 "unknown-argument" = "ignore"
 "unresolved-attribute" = "ignore"
 "unresolved-global" = "ignore"
-"unresolved-import" = "ignore"
 "unresolved-reference" = "ignore"
 "unsupported-base" = "ignore"
 "unsupported-operator" = "ignore"

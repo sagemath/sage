@@ -64,6 +64,7 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 import operator
 from collections import OrderedDict
 
@@ -77,6 +78,10 @@ from sage.structure.parent import Parent
 from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def _compare_formal_sums(self_data, other_data, zero, op) -> bool:
@@ -132,7 +137,7 @@ class FormalSum(ModuleElement):
     """
     A formal sum over a ring.
     """
-    def __init__(self, x, parent=None, check=True, reduce=True):
+    def __init__(self, x, parent=None, check: bool=True, reduce: bool=True) -> None:
         """
         INPUT:
 
@@ -196,7 +201,7 @@ class FormalSum(ModuleElement):
             except (IndexError, KeyError) as msg:
                 raise TypeError("%s\nInvalid formal sum" % msg)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         EXAMPLES::
 
@@ -225,7 +230,7 @@ class FormalSum(ModuleElement):
         """
         return self._data[n]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -361,7 +366,7 @@ class FormalSum(ModuleElement):
         """
         return not all(c.is_zero() for c, _ in self._data)
 
-    def reduce(self):
+    def reduce(self) -> None:
         """
         EXAMPLES::
 
@@ -418,7 +423,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         return UniqueRepresentation.__classcall__(cls, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -429,7 +434,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         return "Abelian Group of all Formal Finite Sums over %s" % self.base_ring()
 
-    def _element_constructor_(self, x, check=True, reduce=True):
+    def _element_constructor_(self, x, check: bool=True, reduce: bool=True):
         """
         Make a formal sum in ``self`` from x.
 
@@ -461,7 +466,7 @@ class FormalSums(UniqueRepresentation, Module):
         return self.element_class([(self.base_ring()(1), x)],
                                   check=False, reduce=False, parent=self)
 
-    def _coerce_map_from_(self, X):
+    def _coerce_map_from_(self, X) -> bool:
         r"""
         Return whether there is a coercion from ``X``.
 
@@ -526,7 +531,7 @@ class FormalSums(UniqueRepresentation, Module):
                     action = PrecomposedAction(action, None, extended._internal_coerce_map_from(self))
             return action
 
-    def _an_element_(self, check=False, reduce=False):
+    def _an_element_(self, check: bool=False, reduce: bool=False):
         """
         EXAMPLES::
 

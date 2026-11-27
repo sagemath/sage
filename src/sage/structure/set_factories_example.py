@@ -31,6 +31,7 @@ where `(a, b)\in S`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.set_factories import (
@@ -40,6 +41,10 @@ from sage.sets.family import LazyFamily
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 from sage.misc.lazy_attribute import lazy_attribute
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 MAX = 5
 
@@ -137,7 +142,7 @@ class XYPairsFactory(SetFactory):
                     res[i] = v
         set_args(args)
 
-        def parse_args(x=None, y=None):
+        def parse_args(x=None, y=None) -> None:
             set_args((x, y))
         parse_args(**opts)
         if res == (None, None):
@@ -156,7 +161,7 @@ class XYPairsFactory(SetFactory):
         """
         return TopMostParentPolicy(self, (), XYPair)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -185,7 +190,7 @@ class XYPair(ElementWrapper):
         ...
         ValueError: numbers must be in range(5)
     """
-    def __init__(self, parent, value, check=True):
+    def __init__(self, parent, value, check: bool=True) -> None:
         """
         TESTS::
 
@@ -229,7 +234,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
         sage: P = XYPairs(); P.list()
         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (0, 3), (1, 3), (2, 3), (3, 3), (4, 3), (0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
     """
-    def __init__(self, policy):
+    def __init__(self, policy) -> None:
         r"""
         TESTS::
 
@@ -275,7 +280,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
         """
         return Pairs_Y(letter, policy=self.facade_policy())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -285,7 +290,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
         """
         return "AllPairs"
 
-    def check_element(self, el, check):
+    def check_element(self, el, check) -> None:
         r"""
         TESTS::
 
@@ -310,7 +315,7 @@ class PairsX_(ParentWithSetFactory, UniqueRepresentation):
         sage: P = XYPairs(0); P.list()
         [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
     """
-    def __init__(self, x, policy):
+    def __init__(self, x, policy) -> None:
         r"""
         TESTS::
 
@@ -321,7 +326,7 @@ class PairsX_(ParentWithSetFactory, UniqueRepresentation):
         ParentWithSetFactory.__init__(self, (x, None), policy=policy,
                                       category=EnumeratedSets().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -357,7 +362,7 @@ class PairsX_(ParentWithSetFactory, UniqueRepresentation):
         if x != self._x:
             raise ValueError("Wrong first coordinate")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         TESTS::
 
@@ -392,7 +397,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
         sage: P = XYPairs(y=1); P.list()
         [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)]
     """
-    def __init__(self, y, policy):
+    def __init__(self, y, policy) -> None:
         r"""
         TESTS::
 
@@ -407,7 +412,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
             facade=True, keepkey=False,
             category=self.category())  # TODO remove and fix disjoint union.
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -476,7 +481,7 @@ class SingletonPair(ParentWithSetFactory, UniqueRepresentation):
         sage: P = XYPairs(0,1); P.list()
         [(0, 1)]
     """
-    def __init__(self, x, y, policy):
+    def __init__(self, x, y, policy) -> None:
         r"""
         TESTS::
 
@@ -487,7 +492,7 @@ class SingletonPair(ParentWithSetFactory, UniqueRepresentation):
         ParentWithSetFactory.__init__(self, (x, y), policy=policy,
                                       category=EnumeratedSets().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -515,7 +520,7 @@ class SingletonPair(ParentWithSetFactory, UniqueRepresentation):
         if el.value != self._xy:
             raise ValueError("Wrong coordinate")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         TESTS::
 

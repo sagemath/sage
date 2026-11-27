@@ -711,7 +711,7 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
             pass
         return d
 
-    def __setstate__(self, d):
+    def __setstate__(self, d) -> None:
         """
         Used for unpickling.
 
@@ -1207,7 +1207,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
         return super().__classcall__(cls, *args, **options)
 
     @classmethod
-    def _clear_cache_(cls):
+    def _clear_cache_(cls) -> None:
         """
         Remove all instances of this class from the cache.
 

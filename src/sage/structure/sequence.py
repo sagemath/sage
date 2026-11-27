@@ -73,7 +73,7 @@ from sage.misc.persist import register_unpickle_override
 from sage.structure.sage_object import SageObject
 
 
-def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
+def Sequence(x, universe=None, check: bool=True, immutable: bool=False, cr: bool=False, cr_str=None, use_sage_types: bool=False):
     r"""
     A mutable list of elements with a common guaranteed universe,
     which can be set immutable.
@@ -441,8 +441,8 @@ class Sequence_generic(SageObject, list):
         sage: v.universe()
         Finite Field of size 5
     """
-    def __init__(self, x, universe=None, check=True, immutable=False,
-                 cr=False, cr_str=None, use_sage_types=False):
+    def __init__(self, x, universe=None, check: bool=True, immutable: bool=False,
+                 cr: bool=False, cr_str=None, use_sage_types: bool=False) -> None:
         r"""
         Create a sequence.
 
@@ -488,7 +488,7 @@ class Sequence_generic(SageObject, list):
         list.__init__(self, x)
         self._is_immutable = immutable
 
-    def reverse(self):
+    def reverse(self) -> None:
         """
         Reverse the elements of self, in place.
 
@@ -501,7 +501,7 @@ class Sequence_generic(SageObject, list):
         self._require_mutable()
         list.reverse(self)
 
-    def __setitem__(self, n, value):
+    def __setitem__(self, n, value) -> None:
         """
         EXAMPLES::
 
@@ -560,7 +560,7 @@ class Sequence_generic(SageObject, list):
 
         return list.__getitem__(self, n)
 
-    def append(self, x):
+    def append(self, x) -> None:
         """
         EXAMPLES::
 
@@ -578,7 +578,7 @@ class Sequence_generic(SageObject, list):
         y = self.__universe(x)
         list.append(self, y)
 
-    def extend(self, iterable):
+    def extend(self, iterable) -> None:
         """
         Extend list by appending elements from the iterable.
 
@@ -593,7 +593,7 @@ class Sequence_generic(SageObject, list):
         v = [self.__universe(x) for x in iterable]
         list.extend(self, v)
 
-    def insert(self, index, object):
+    def insert(self, index, object) -> None:
         """
         Insert object before index.
 
@@ -622,7 +622,7 @@ class Sequence_generic(SageObject, list):
         self._require_mutable()
         return list.pop(self, index)
 
-    def remove(self, value):
+    def remove(self, value) -> None:
         """
         Remove first occurrence of ``value``.
 
@@ -636,7 +636,7 @@ class Sequence_generic(SageObject, list):
         self._require_mutable()
         list.remove(self, value)
 
-    def sort(self, key=None, reverse=False):
+    def sort(self, key=None, reverse: bool=False) -> None:
         """
         Sort this list *IN PLACE*.
 
@@ -698,7 +698,7 @@ class Sequence_generic(SageObject, list):
             return '[\n' + ',\n'.join(repr(x) for x in self) + '\n]'
         return list.__repr__(self)
 
-    def _repr_pretty_(self, p, cycle):
+    def _repr_pretty_(self, p, cycle) -> None:
         """
         For pretty printing in the Sage command prompt.
 
@@ -727,7 +727,7 @@ class Sequence_generic(SageObject, list):
         from sage.misc.latex import list_function as list_latex_function
         return list_latex_function(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -774,7 +774,7 @@ class Sequence_generic(SageObject, list):
         if self._is_immutable:
             raise ValueError("object is immutable; please change a copy instead.")
 
-    def set_immutable(self):
+    def set_immutable(self) -> None:
         """
         Make this object immutable, so it can never again be changed.
 
