@@ -17,23 +17,15 @@ information about each word, which provides a useful reference.
 
 REFERENCES:
 
-.. [AC03] \B. Adamczewski, J. Cassaigne, On the transcendence of real
-   numbers with a regular expansion, J. Number Theory 103 (2003)
-   27--37.
+- [AC03]_
 
-.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
-   critical exponent of generalized Thue-Morse words. *Discrete Math.
-   Theor. Comput.  Sci.* 9 (1):293--304, 2007.
+- [BmBGL07]_
 
-.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
-   and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
+- [BmBGL09]_
 
-.. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
-   Encyclopedia of Mathematics and its Applications, Cambridge
-   University Press, U.K., 2002.
+- [Lot2002]_
 
-.. [Fogg] Pytheas Fogg,
-   https://www.lirmm.fr/arith/wiki/PytheasFogg/S-adiques.
+- [Fogg]_
 
 EXAMPLES::
 
@@ -418,11 +410,9 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Brlek89] Brlek, S. 1989. «Enumeration of the factors in the Thue-Morse
-           word», *Discrete Appl. Math.*, vol. 24, p. 83--96.
+        - [Brlek89]_
 
-        .. [MH38] Morse, M., et G. A. Hedlund. 1938. «Symbolic dynamics»,
-           *American Journal of Mathematics*, vol. 60, p. 815--866.
+        - [MH38]_
         """
         W = InfiniteWords(alphabet)
         alphabet = W.alphabet()
@@ -739,7 +729,7 @@ class WordGenerator:
         the sequence: `s_0 = b, s_1 = a, \ldots, s_{n+1} = s_n^{d_n} s_{n-1}`
         for `n > 0`.
 
-        See Section 2.1 of [Loth02]_ for more details.
+        See Section 2.1 of [Lot2002]_ for more details.
 
         INPUT:
 
@@ -1034,9 +1024,7 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Kolakoski66] William Kolakoski, proposal 5304, American Mathematical Monthly
-           72 (1965), 674; for a partial solution, see "Self Generating Runs,"
-           by Necdet Üçoluk, Amer. Math. Mon. 73 (1966), 681-2.
+        - [Kolakoski66]_
         """
         a, b = alphabet
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:
@@ -1108,7 +1096,7 @@ class WordGenerator:
         The lower mechanical word `s_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s_{\alpha,\rho}(n) = \lfloor\alpha(n+1) + \rho\rfloor -
-        \lfloor\alpha n + \rho\rfloor`. [Loth02]_
+        \lfloor\alpha n + \rho\rfloor`. [Lot2002]_
 
         INPUT:
 
@@ -1166,7 +1154,7 @@ class WordGenerator:
         The upper mechanical word `s'_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s'_{\alpha,\rho}(n) = \lceil\alpha(n+1) + \rho\rceil -
-        \lceil\alpha n + \rho\rceil`. [Loth02]_
+        \lceil\alpha n + \rho\rceil`. [Lot2002]_
 
         INPUT:
 

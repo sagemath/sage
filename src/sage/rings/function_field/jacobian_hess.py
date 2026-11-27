@@ -204,7 +204,7 @@ class JacobianPoint(JacobianPoint_base):
         J = self.parent()
         idS, ids = self._data
         jdS, jds = other._data
-        return (J._normalize(idS / jdS, ids / jds) is not None) == (op is op_EQ)
+        return (self._data == other._data or J._normalize(idS / jdS, ids / jds) is not None) == (op is op_EQ)
 
     def _add_(self, other):
         """

@@ -100,19 +100,13 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     REFERENCES:
 
-    .. [HazWitt1] Michiel Hazewinkel. *Witt vectors. Part 1*.
-       :arxiv:`0804.3888v1`
+    - [HazWitt1]_
 
-    .. [DoranIV1996] William F. Doran IV.
-       *A Proof of Reutenauer's `-q_{(n)}` Conjecture*.
-       Journal of combinatorial theory, Series A 74, pp. 342-344 (1996),
-       article no. 0056. :doi:`10.1006/jcta.1996.0056`
+    - [DoranIV1996]_
 
-    .. [BorWi2004] James Borger, Ben Wieland.
-       *Plethystic algebra*.
-       :arxiv:`math/0407227v1`
+    - [BorWi2004]_
 
-    .. [GriRei18]_
+    - [GriRei18]_
 
     EXAMPLES:
 
@@ -529,7 +523,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier
         than necessary) description can be obtained by solving exercise
-        7.61 in Stanley's [STA]_.
+        7.61 in Stanley's [EnumComb2]_.
 
         Let `\lambda` be a partition. Let `n` be a positive integer. If
         the `n`-core of `\lambda` is nonempty, then

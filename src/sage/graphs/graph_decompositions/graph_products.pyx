@@ -184,8 +184,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     A 2d grid is the product of paths::
 
-        sage: g = graphs.Grid2dGraph(5,5)
-        sage: p1, p2 = is_cartesian_product(g, certificate = True)
+        sage: g = graphs.Grid2dGraph(5, 5)
+        sage: p1, p2 = is_cartesian_product(g, certificate=True)
         sage: p1.is_isomorphic(graphs.PathGraph(5))
         True
         sage: p2.is_isomorphic(graphs.PathGraph(5))
@@ -194,7 +194,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     Forgetting the graph's labels, then finding them back::
 
         sage: g.relabel()
-        sage: b,D = g.is_cartesian_product(g, relabeling=True)
+        sage: b, D = g.is_cartesian_product(g, relabeling=True)
         sage: b
         True
         sage: D  # random isomorphism
@@ -208,10 +208,10 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     product::
 
         sage: g = graphs.PetersenGraph().cartesian_product(graphs.CycleGraph(3))
-        sage: g1, g2 = is_cartesian_product(g, certificate = True)
-        sage: any( x.is_isomorphic(graphs.PetersenGraph()) for x in [g1,g2])
+        sage: g1, g2 = is_cartesian_product(g, certificate=True)
+        sage: any(x.is_isomorphic(graphs.PetersenGraph()) for x in [g1, g2])
         True
-        sage: any( x.is_isomorphic(graphs.CycleGraph(3)) for x in [g1,g2])
+        sage: any(x.is_isomorphic(graphs.CycleGraph(3)) for x in [g1, g2])
         True
 
     TESTS:
@@ -226,7 +226,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
         sage: Graph().is_cartesian_product()
         False
-        sage: Graph({0:[]}).is_cartesian_product()
+        sage: Graph({0: []}).is_cartesian_product()
         False
 
     Check the behaviour of parameter ``immutable``::

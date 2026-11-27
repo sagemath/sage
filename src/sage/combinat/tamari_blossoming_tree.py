@@ -28,9 +28,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections.abc import Iterator
+from __future__ import annotations
 from math import acos, cos, pi, sin
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.binary_tree import BinaryTree, from_tamari_sorting_tuple
@@ -57,6 +57,9 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class TamariBlossomingTree(Element, UniqueRepresentation,

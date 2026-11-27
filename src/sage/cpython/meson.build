@@ -1,7 +1,6 @@
 py.install_sources(
   '__init__.py',
   'all.py',
-  'atexit.pyx',
   'builtin_types.pyx',
   'cython_metaclass.h',
   'cython_metaclass.pxd',
@@ -27,7 +26,6 @@ py.install_sources(
 )
 
 extension_data = {
-  'atexit': files('atexit.pyx'),
   'builtin_types': files('builtin_types.pyx'),
   'cython_metaclass': files('cython_metaclass.pyx'),
   'debug': files('debug.pyx'),

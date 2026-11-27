@@ -3,18 +3,11 @@ Common combinatorial tools
 
 REFERENCES:
 
-.. [NCSF] Gelfand, Krob, Lascoux, Leclerc, Retakh, Thibon,
-   *Noncommutative Symmetric Functions*, Adv. Math. 112 (1995), no. 2, 218-348.
+- [NCSF]_
 
-.. [QSCHUR] Haglund, Luoto, Mason, van Willigenburg,
-   *Quasisymmetric Schur functions*, J. Comb. Theory Ser. A 118 (2011), 463-490.
-   http://www.sciencedirect.com/science/article/pii/S0097316509001745 ,
-   :arxiv:`0810.2489v2`.
+- [HLMvW2011]_
 
-.. [Tev2007] Lenny Tevlin,
-   *Noncommutative Analogs of Monomial Symmetric Functions,
-   Cauchy Identity, and Hall Scalar Product*,
-   :arxiv:`0712.2201v1`.
+- [Tev2007]_
 """
 from sage.misc.misc_c import prod
 from sage.arith.misc import factorial
@@ -145,7 +138,7 @@ def coeff_dab(I, J):
 
 def compositions_order(n):
     r"""
-    Return the compositions of `n` ordered as defined in [QSCHUR]_.
+    Return the compositions of `n` ordered as defined in [HLMvW2011]_.
 
     Let `S(\gamma)` return the composition `\gamma` after sorting. For
     compositions `\alpha` and `\beta`, we order `\alpha \rhd \beta` if

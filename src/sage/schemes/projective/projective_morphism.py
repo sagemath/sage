@@ -1234,7 +1234,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return self.__dehomogenization[n]
 
     @cached_method
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         r"""
         Return ``True`` if this map is a morphism.
 
@@ -2579,7 +2579,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         return Amb.subscheme(polys).reduce()
 
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         """
         Return ``True`` if the map is defined everywhere on the domain.
 

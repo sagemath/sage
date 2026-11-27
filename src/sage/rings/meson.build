@@ -102,6 +102,7 @@ py.install_sources(
   'quotient_ring_element.py',
   'rational.pxd',
   'rational.pyx',
+  'rational.pyi',
   'rational_field.py',
   'real_arb.pxd',
   'real_arb.pyx',
