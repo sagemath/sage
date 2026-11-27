@@ -39,7 +39,7 @@ custom_target('document', output: 'document-count',
 ''')
 
             def run(*args):
-                result = subprocess.run(args, text=True, capture_output=True)
+                result = subprocess.run(args, check=False, text=True, capture_output=True)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
             def compile_and_check(expected):
