@@ -4242,11 +4242,18 @@ def multinomial(*ks):
         ...
         ValueError: multinomial takes only one iterable argument
 
+    With no arguments, it is `1`, the same as for an empty list::
+
+        sage: multinomial()
+        1
+        sage: multinomial([])
+        1
+
     AUTHORS:
 
     - Gabriel Ebner
     """
-    if isinstance(ks[0], Iterable):
+    if ks and isinstance(ks[0], Iterable):
         if len(ks) > 1:
             raise ValueError("multinomial takes only one iterable argument")
         keys = ks[0]
