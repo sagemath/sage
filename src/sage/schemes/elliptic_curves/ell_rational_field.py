@@ -33,6 +33,8 @@ AUTHORS:
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
 
 - Maya Lin (2026): Added sturm_bound and optimized is_isogenous
+
+- Julianne Grageda (2026-11): Added is_congruent
 """
 
 ##############################################################################
@@ -116,7 +118,8 @@ CMJ = { 0: -3, 54000: -12, -12288000: -27, 1728: -4, 287496: -16,
 def sturm_bound(N: Integer) -> Integer:
     r"""
     Helper function for
-    :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_isogenous`.
+    :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_isogenous`
+    and :meth:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.is_congruent`.
 
     INPUT:
 
@@ -4836,6 +4839,62 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         maxp = sturm_bound(N)
 
         return self.aplist(maxp, python_ints=True) == other.aplist(maxp, python_ints=True)
+
+    def is_congruent(self, other: EllipticCurve_generic, l: Integer | int) -> bool:
+        r"""
+        Check if two elliptic curves are congruent modulo the prime ``l``.
+
+        INPUT:
+
+        - ``other`` -- another elliptic curve
+        - ``l`` -- prime integer
+
+        ALGORITHM:
+
+        The Frey-Mazur conjecture predicts that there are no non-isogenous
+        congruences for ``l \geq 19``, and has been verified for all pairs
+        of elliptic curves up to conductor 500000 in [CF2021]_. So, if
+        ``l \geq 19`` we check if the curves are isogenous first, and if
+        additionally the curves both have conductor less than 500000 we do not
+        do any further checks. Otherwise, we compare the `a_p` values modulo
+        `l` of the elliptic curves for all good primes up to the Sturm bound.
+        See Theorem 9.21 of [St2007]_.
+
+
+        EXAMPLES::
+
+            sage: E1 = EllipticCurve('11a1')
+            sage: E2 = EllipticCurve('26a1')
+            sage: E3 = EllipticCurve('34a1')
+            sage: E1.is_congruent(E1, 5)
+            True
+            sage: E1.is_congruent(E2, 2)
+            False
+            sage: E2.is_congruent(E3, 3)
+            True
+        """
+        if not isinstance(other, EllipticCurve_generic):
+            raise ValueError("second argument is not an elliptic curve")
+        if other.base_field() is not QQ:
+            raise ValueError("the base field of the second elliptic curve must be the rationals")
+        l = ZZ(l)
+        if not l.is_prime():
+            raise ValueError("l must be a prime")
+
+        N1 = self.conductor()
+        N2 = other.conductor()
+        if l >= 19:
+            # Frey-Mazur conjecture has been proven up to conductor 500000
+            if N1 < 500000 and N2 < 500000:
+                return self.is_isogenous(other)
+            if self.is_isogenous(other):
+                return True
+
+        bound = sturm_bound(N1.lcm(N2))
+        for p in prime_range(bound):
+            if p != l and self.is_good(p) and other.is_good(p) and (self.ap(p) - other.ap(p)) % l != 0:
+                return False
+        return True
 
     def isogeny_degree(self, other):
         r"""
