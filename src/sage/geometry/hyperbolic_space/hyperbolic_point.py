@@ -398,7 +398,7 @@ class HyperbolicPoint(Element):
             model = getattr(self.parent().realization_of(), model)()
         return model(self)
 
-    def is_boundary(self):
+    def is_boundary(self) -> bool:
         """
         Return ``True`` if ``self`` is a boundary point.
 

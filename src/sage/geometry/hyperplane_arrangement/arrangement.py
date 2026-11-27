@@ -1486,7 +1486,7 @@ class HyperplaneArrangementElement(Element):
         return self.rank() == self.dimension()
 
     @cached_method
-    def is_central(self, certificate=False):
+    def is_central(self, certificate=False) -> bool | tuple:
         r"""
         Test whether the intersection of all the hyperplanes is nonempty.
 

@@ -1103,7 +1103,7 @@ class FanMorphism(FreeModuleMorphism):
         i = prod((Q/S).invariants())
         return i if i > 0 else Infinity
 
-    def is_birational(self):
+    def is_birational(self) -> bool:
         r"""
         Check if ``self`` is birational.
 
@@ -1128,7 +1128,7 @@ class FanMorphism(FreeModuleMorphism):
         return self.index() == 1
 
     @cached_method
-    def is_bundle(self):
+    def is_bundle(self) -> bool:
         r"""
         Check if ``self`` is a bundle.
 
@@ -1223,7 +1223,7 @@ class FanMorphism(FreeModuleMorphism):
         return True
 
     @cached_method
-    def is_fibration(self):
+    def is_fibration(self) -> bool:
         r"""
         Check if ``self`` is a fibration.
 
@@ -1309,7 +1309,7 @@ class FanMorphism(FreeModuleMorphism):
         return True
 
     @cached_method
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Check if ``self`` is injective.
 
@@ -1380,7 +1380,7 @@ class FanMorphism(FreeModuleMorphism):
                    for d in range(1, Sigma.dim() + 1) for sigma in Sigma(d))
 
     @cached_method
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Check if ``self`` is surjective.
 
@@ -1443,7 +1443,7 @@ class FanMorphism(FreeModuleMorphism):
         return True
 
     @cached_method
-    def is_dominant(self):
+    def is_dominant(self) -> bool:
         r"""
         Return whether the fan morphism is dominant.
 

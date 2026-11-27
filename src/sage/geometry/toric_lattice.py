@@ -1571,7 +1571,7 @@ class ToricLattice_quotient(FGP_Module_class):
         raise NotImplementedError("quotients of toric lattices can only be "
                                   "extended to ZZ or QQ, not %s!" % R)
 
-    def is_torsion_free(self):
+    def is_torsion_free(self) -> bool:
         r"""
         Check if ``self`` is torsion-free.
 
