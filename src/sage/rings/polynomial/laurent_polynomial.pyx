@@ -905,6 +905,51 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return [i + self.__n for i in self.__u.exponents()]
 
+    def monomials(self) -> list:
+        """
+        Return the list of monomials of ``self``, in the order of
+        :meth:`exponents` and hence aligned with :meth:`coefficients`.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentPolynomialRing(QQ)
+            sage: f = -5/t^2 + t + t^2 - 10/3*t^3
+            sage: f.monomials()
+            [t^-2, t, t^2, t^3]
+            sage: f.coefficients()
+            [-5, 1, 1, -10/3]
+            sage: all(f.monomial_coefficient(m) == c
+            ....:        for m, c in zip(f.monomials(), f.coefficients()))
+            True
+        """
+        t = self.parent().gen()
+        return [t**e for e in self.exponents()]
+
+    def monomial_coefficient(self, mon):
+        """
+        Return the coefficient of the monomial ``mon`` in ``self``.
+
+        INPUT:
+
+        - ``mon`` -- a monomial in the parent of ``self``
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentPolynomialRing(QQ)
+            sage: f = -5/t^2 + t + t^2 - 10/3*t^3
+            sage: f.monomial_coefficient(t^2)
+            1
+            sage: f.monomial_coefficient(t^-2)
+            -5
+            sage: f.monomial_coefficient(t^7)
+            0
+        """
+        R = self.parent()
+        if mon.parent() is not R:
+            raise TypeError("the monomial must have the same parent as self")
+        return self.monomial_coefficients().get(mon.degree(),
+                                                R.base_ring().zero())
+
     def gradient(self) -> list:
         r"""
         Return a list of partial derivatives of this Laurent polynomial,

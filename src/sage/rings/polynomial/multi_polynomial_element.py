@@ -1447,7 +1447,57 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             25*y^2 + y + 30
             sage: f.subs({x: 5})
             25*y^2 + y + 30
+
+        Substituting a single generator is fast also when the ring has
+        many generators::
+
+            sage: R = PolynomialRing(QQ['t'], ['x%s' % i for i in range(60)])
+            sage: t = R.base_ring().gen()
+            sage: f = R.gen(0)**2 * R.gen(59) + R.gen(7)
+            sage: f.subs({R.gen(0): t}) == t**2 * R.gen(59) + R.gen(7)
+            True
         """
+        if not kwds:
+            if not fixed:
+                return self
+            if hasattr(fixed, "items"):
+                # substitute the given generators directly, without
+                # evaluating at all the generators of the ring: this
+                # avoids quadratic behaviour when the ring has many
+                # generators; integer keys address the generators by
+                # position and need no scan at all
+                from sage.rings.integer import Integer
+                positions = {}
+                generators = {}
+                for k, v in fixed.items():
+                    if isinstance(k, (int, Integer)):
+                        positions[k] = v
+                    else:
+                        generators[k] = v
+                if generators:
+                    for i, g in enumerate(self.parent().gens()):
+                        if g in generators:
+                            positions[i] = generators[g]
+                if not positions:
+                    return self
+                from sage.rings.polynomial.polydict import ETuple
+                terms = {}
+                for monom, coeff in self.monomial_coefficients().items():
+                    if not any(monom[i] for i in positions):
+                        # the monomial does not contain any of the
+                        # substituted generators
+                        terms[monom] = terms.get(monom, 0) + coeff
+                        continue
+                    c = coeff
+                    e = list(monom)
+                    for i, v in positions.items():
+                        if e[i]:
+                            c = c * v**e[i]
+                            e[i] = 0
+                    e = ETuple(e)
+                    terms[e] = terms.get(e, 0) + c
+                return self.parent()(terms) if terms else self.parent().zero()
+
         variables = list(self.parent().gens())
         for i in range(len(variables)):
             if str(variables[i]) in kwds:

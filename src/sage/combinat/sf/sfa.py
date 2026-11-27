@@ -3476,6 +3476,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
+            sage: p[1](0)
+            0
 
         Fixed :issue:`41257`::
 
@@ -3603,8 +3605,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                           for i in part)
         ret = p._apply_module_morphism(p(self), f, codomain=p)
         if Px is R:
-            # special case for things in the base ring
-            return next(iter(ret._monomial_coefficients.values()))
+            # special case for things in the base ring; the plethysm
+            # may be zero, so there need not be a coefficient to return
+            return next(iter(ret._monomial_coefficients.values()), R.zero())
         return Px(ret)
 
     __call__ = plethysm
@@ -6900,7 +6903,50 @@ def _raise_variables(c, n, variables):
         sage: S.<t> = R[]
         sage: _raise_variables(2*a + 3*b*t, 2, [a, t])
         3*b*t^2 + 2*a^2
+
+    The substitution is recursive: in an element of an infinite
+    polynomial ring, the variables are raised in the coefficients of
+    the underlying polynomial, and in a fraction, in numerator and
+    denominator::
+
+        sage: from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        sage: C = InfinitePolynomialRing(S)
+        sage: x = C.gen()
+        sage: f = x[0] * (a + 1)
+        sage: _raise_variables(f, 2, [a, t])
+        (a^2 + 1)*x_0
+        sage: PF = C.fraction_field()
+        sage: _raise_variables(PF(f) / (t + 1), 2, [a, t])
+        ((a^2 + 1)*x_0)/(t^2 + 1)
     """
+    if n == 1 or not variables:
+        return c
+    from sage.rings.fraction_field import FractionField_generic
+    from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial as InfinitePolynomialElement
+    from sage.rings.polynomial.infinite_polynomial_ring import (InfinitePolynomialRing_dense,
+                                                                 InfinitePolynomialRing_sparse)
+    if isinstance(c, InfinitePolynomialElement):
+        # An element of an infinite polynomial ring: recurse into base-ring
+        # variables in the underlying polynomial.  Own-ring generators
+        # are stretched only when they have been selected explicitly as
+        # weights; they are never inferred as weights by default.  The
+        # solver's unknown-coefficient generators therefore stay psi fixed.
+        P = c.parent()
+        own = {str(g): g ** n for g in variables if g.parent() is P}
+        other = [g for g in variables if g.parent() is not P]
+        if other:
+            c = P(c.polynomial().map_coefficients(
+                lambda r: _raise_variables(r, n, other)))
+        if own:
+            try:
+                c = c.subs(**own)
+            except AttributeError:
+                pass
+        return c
+    P = c.parent()
+    if isinstance(P, FractionField_generic) and isinstance(
+            P.base(), (InfinitePolynomialRing_dense, InfinitePolynomialRing_sparse)):
+        return P(_raise_variables(c.numerator(), n, variables)) / P(_raise_variables(c.denominator(), n, variables))
     try:
         return c.subs(**{str(g): g ** n for g in variables})
     except AttributeError:
