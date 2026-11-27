@@ -93,9 +93,7 @@ def Jacobian(X, **kwds):
           u^3 + v^3 + w^3
           To:   Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
           Defn: Defined on coordinates by sending (u : v : w) to
-                (-u^4*v^4*w - u^4*v*w^4 - u*v^4*w^4 :
-                 1/2*u^6*v^3 - 1/2*u^3*v^6 - 1/2*u^6*w^3 + 1/2*v^6*w^3 + 1/2*u^3*w^6 - 1/2*v^3*w^6 :
-                 u^3*v^3*w^3)
+                (v : -3/2*u + 3/2*w : -1/3*u - 1/3*w)
 
     TESTS:
 
@@ -156,6 +154,54 @@ def Jacobian_of_curve(curve, morphism=False):
     raise NotImplementedError('Jacobian for this curve is not implemented')
 
 
+def _plane_cubic_jacobian_morphism(polynomial, curve, jacobian):
+    """
+    Return an isomorphism from a plane cubic to its Jacobian, if available.
+
+    This is only applicable to homogeneous ternary cubics with a rational
+    flex.  If no such isomorphism can be constructed, ``None`` is returned
+    so that callers can fall back to the toric multicover.
+    """
+    try:
+        if (polynomial.parent().ngens() != 3 or
+                polynomial.nvariables() != 3 or
+                not polynomial.is_homogeneous() or
+                polynomial.total_degree() != 3):
+            return None
+    except AttributeError:
+        return None
+
+    from sage.schemes.elliptic_curves.constructor import EllipticCurve_from_cubic
+    from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
+    from sage.schemes.elliptic_curves.weierstrass_transform import (
+        WeierstrassTransformationWithInverse,
+    )
+
+    try:
+        cubic_map = EllipticCurve_from_cubic(polynomial, morphism=True)
+        iso = cubic_map.codomain().isomorphism_to(jacobian)
+        # ``WeierstrassIsomorphism.__call__`` is overridden to act on curves
+        # and points; we deliberately invoke the underlying ``baseWI.__call__``
+        # so that ``iso`` acts on a list of polynomials via the formal
+        # Weierstrass change of variables (u, r, s, t).
+        fwd_polys = baseWI.__call__(iso, list(cubic_map.defining_polynomials()))
+        inv_map = cubic_map.inverse()
+        inv_iso_polys = baseWI.__call__(
+            ~iso, list(jacobian.ambient_space().coordinate_ring().gens()))
+        inv_polys = [p(inv_iso_polys) for p in inv_map.defining_polynomials()]
+
+        # Both quotients below are nonzero scalars by a degree/irreducibility
+        # argument, but guard against any unforeseen failure and fall back.
+        fwd_post = 1 / (jacobian.defining_polynomial()(fwd_polys) / polynomial)
+        inv_post = 1 / (polynomial(inv_polys) / jacobian.defining_polynomial())
+    except (ArithmeticError, AttributeError, NotImplementedError,
+            TypeError, ValueError, ZeroDivisionError):
+        return None
+
+    return WeierstrassTransformationWithInverse(
+        curve, jacobian, fwd_polys, fwd_post, inv_polys, inv_post)
+
+
 def Jacobian_of_equation(polynomial, variables=None, curve=None):
     r"""
     Construct the Jacobian of a genus-one curve given by a polynomial.
@@ -169,16 +215,16 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
       (default). The inhomogeneous or homogeneous coordinates. By
       default, all variables in the polynomial are used.
 
-    - ``curve`` -- the genus-one curve defined by ``polynomial`` or #
-      ``None`` (default). If specified, suitable morphism from the
-      jacobian elliptic curve to the curve is returned.
+    - ``curve`` -- the genus-one curve defined by ``polynomial`` or
+      ``None`` (default). If specified, a suitable morphism from the
+      curve to the jacobian elliptic curve is returned.
 
     OUTPUT:
 
     An elliptic curve in short Weierstrass form isomorphic to the
     curve ``polynomial=0``. If the optional argument ``curve`` is
-    specified, a rational multicover from the Jacobian elliptic curve
-    to the genus-one curve is returned.
+    specified, a rational morphism from the genus-one curve to the
+    Jacobian elliptic curve is returned.
 
     EXAMPLES::
 
@@ -189,17 +235,15 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
         sage: Jacobian(f.subs(c=1))
         Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
 
-    If we specify the domain curve, the birational covering is returned::
+    If we specify the domain curve, an isomorphism is returned when
+    one can be constructed over the base field::
 
         sage: h = Jacobian(f, curve=Curve(f));  h
         Scheme morphism:
           From: Projective Plane Curve over Rational Field defined by a^3 + b^3 + 60*c^3
           To:   Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
           Defn: Defined on coordinates by sending (a : b : c) to
-                (-216000*a^4*b^4*c - 12960000*a^4*b*c^4 - 12960000*a*b^4*c^4
-                 : 108000*a^6*b^3 - 108000*a^3*b^6 - 6480000*a^6*c^3 + 6480000*b^6*c^3
-                   + 388800000*a^3*c^6 - 388800000*b^3*c^6
-                 : 216000*a^3*b^3*c^3)
+                (-c : -3/2*a + 3/2*b : 1/180*a + 1/180*b)
 
         sage: h([1,-1,0])
         (0 : 1 : 0)
@@ -209,10 +253,7 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
 
         sage: E = h.codomain()
         sage: E.defining_polynomial()(h.defining_polynomials()).factor()
-        (2519424000000000) * c^3 * b^3 * a^3 * (a^3 + b^3 + 60*c^3)
-        * (a^9*b^6 + a^6*b^9 - 120*a^9*b^3*c^3 + 900*a^6*b^6*c^3 - 120*a^3*b^9*c^3
-           + 3600*a^9*c^6 + 54000*a^6*b^3*c^6 + 54000*a^3*b^6*c^6 + 3600*b^9*c^6
-           + 216000*a^6*c^9 - 432000*a^3*b^3*c^9 + 216000*b^6*c^9)
+        (1/60) * (a^3 + b^3 + 60*c^3)
 
     By specifying the variables, we can also construct an elliptic
     curve over a polynomial ring::
@@ -227,6 +268,30 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
         sage: from sage.schemes.elliptic_curves.jacobian import Jacobian_of_equation
         sage: Jacobian_of_equation(f, variables=[a,b,c])
         Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
+
+    Check that the returned morphism is an isomorphism, not the degree
+    `9` toric multicover, for a plane cubic with a rational flex::
+
+        sage: P2.<u,v,w> = ProjectiveSpace(2, QQ)
+        sage: C = P2.subscheme(u^3 + v^3 + w^3)
+        sage: phi = Jacobian(C, morphism=True)
+        sage: Ps = [C([-1,0,1]), C([0,-1,1]), C([-1,1,0])]
+        sage: [phi(P) for P in Ps]
+        [(0 : 1 : 0), (3 : -9/2 : 1), (3 : 9/2 : 1)]
+        sage: [phi.inverse()(phi(P)) for P in Ps] == Ps
+        True
+
+    The same isomorphism is returned for an asymmetric cubic, where the
+    post-rescaling is a non-trivial constant::
+
+        sage: R.<a,b,c> = QQ[]
+        sage: g = a^3 + b^3 + 7*c^3
+        sage: hg = Jacobian(g, curve=Curve(g))
+        sage: Eg = hg.codomain()
+        sage: Eg.defining_polynomial()(hg.defining_polynomials()).factor()
+        (1/7) * (a^3 + b^3 + 7*c^3)
+        sage: hg.inverse()(hg(Curve(g)([1,-1,0])))
+        (-1 : 1 : 0)
     """
     from sage.schemes.toric.weierstrass import WeierstrassForm
     f, g = WeierstrassForm(polynomial, variables=variables)
@@ -239,6 +304,9 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
     E = EllipticCurve([f, g])
     if curve is None:
         return E
+    plane_cubic_morphism = _plane_cubic_jacobian_morphism(polynomial, curve, E)
+    if plane_cubic_morphism is not None:
+        return plane_cubic_morphism
     X, Y, Z = WeierstrassForm(polynomial, variables=variables, transformation=True)
     from sage.schemes.elliptic_curves.weierstrass_transform import WeierstrassTransformation
     return WeierstrassTransformation(curve, E, [X*Z, Y, Z**3], 1)
