@@ -1792,6 +1792,7 @@ class Stream_uninitialized(Stream):
         self._eqs = equations
         self._series = series
         self._terms_of_degree = terms_of_degree
+        self._nonlinear_coeffs = []
         self._good_cache = self._compute_good_cache([self])[0]
         # currently name is used only for error messages
         if self._name is None:
@@ -2418,6 +2419,7 @@ class Stream_uninitialized(Stream):
         """
         lin_coeffs = []
         all_coeffs = []  # only for the error message
+        nonlinear_coeffs = list(self._nonlinear_coeffs)
         for i, eq in enumerate(self._eqs):
             while True:
                 deg = eq._approximate_order + offset
@@ -2452,15 +2454,173 @@ class Stream_uninitialized(Stream):
                     raise ValueError(f"no solution as the coefficient of {idx} in equation {i} is {elt} != 0")
                 if coeff_num.degree() <= 1:
                     lin_coeffs.append(coeff_num)
-                elif coeff_num.is_monomial() and sum(1 for d in coeff_num.degrees() if d):
-                    # if we have a single variable, we can remove the
-                    # exponent - maybe we could also remove the
-                    # coefficient - are we computing in an integral
-                    # domain?
+                elif (coeff_num.is_monomial()
+                      and self._base_ring.is_integral_domain()
+                      and sum(1 for d in coeff_num.degrees() if d)):
+                    # In a domain, a*x^d = 0 with a != 0 implies x = 0.
+                    # This is deliberately not inferred over rings
+                    # with zero divisors (e.g. Zmod(4)): besides a, x
+                    # can itself be a nilpotent zerodivisor.  The test
+                    # above also covers the pre-existing behaviour for
+                    # monomials in several variables, which is retained
+                    # for compatibility with existing doctests.
                     c1 = coeff_num.coefficients()[0]
                     v = self._P(coeff_num.variables()[0])
                     lin_coeffs.append(c1 * v)
+                elif self._weight_variables:
+                    # split the coefficient by the weight monomials
+                    # and retry: the parts are equivalent equations,
+                    # and a part may be linear or a single variable
+                    # monomial although the coefficient is not (the
+                    # square of a refined coefficient has the single
+                    # variable monomial x^2 as its constant weight
+                    # part, which determines x to be zero).  In
+                    # contrast to the single variable monomial above,
+                    # a monomial in *several* variables does not
+                    # determine any of them: picking one would
+                    # exclude the solutions in which the others vanish
+                    for part in self._split_equations_by_weight([coeff_num]):
+                        if part.degree() <= 1:
+                            lin_coeffs.append(part)
+                        elif (part.is_monomial()
+                              and self._base_ring.is_integral_domain()
+                              and sum(1 for d in part.degrees() if d) == 1):
+                            c1 = part.coefficients()[0]
+                            v = self._P(part.variables()[0])
+                            lin_coeffs.append(c1 * v)
+                        else:
+                            nonlinear_coeffs.append(part)
+                else:
+                    nonlinear_coeffs.append(coeff_num)
+        self._nonlinear_coeffs = nonlinear_coeffs
         return lin_coeffs, all_coeffs
+
+    def _linear_consequences_by_monomial_multiples(self, nonlinear_rows,
+                                                   budget=16):
+        r"""
+        Return affine-linear consequences obtained from a budgeted
+        one-step Macaulay calculation.
+
+        The columns of a row are its monomials.  Multiplying a row by
+        a monomial is always a consequence of that row, but need not
+        remain linear.  We add a few pairs of monomial multiples
+        whose leading monomials cancel, and perform ordinary Gaussian
+        elimination on all the resulting rows.  Rows whose nonlinear
+        columns vanish are returned.  No Groebner basis is computed.
+
+        INPUT:
+
+        - ``nonlinear_rows`` -- a list of pool-ring elements, regarded
+          as equations set to zero
+        - ``budget`` -- maximum number of added multiples
+
+        All returned rows are necessary consequences.  No existence
+        claim is made.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: C = Stream_uninitialized(0)
+            sage: eq = Stream_sub(C, Stream_exact([1], order=0), True)
+            sage: C.define_implicitly([C], [], [eq], GF(2), GF(2), terms_of_degree)
+            sage: x = C._pool.new_variable('x')
+            sage: y = C._pool.new_variable('y')
+            sage: C._linear_consequences_by_monomial_multiples([x*x-x, x*y-1])
+            [FESDUMMY_0 + 1]
+        """
+        if not nonlinear_rows:
+            return []
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
+
+        # normalize into the current flat polynomial ring; its
+        # monomials are exponent tuples, so we can form the least
+        # common multiple of two monomials directly
+        P = self._P.polynomial_ring()
+        rows = [(P(r._p), r) for r in nonlinear_rows]
+        multiples = []
+
+        def lead(row):
+            # choose a monomial of maximal degree, so that a small
+            # common multiple has the best chance to cancel the
+            # nonlinear part.  monomial_coefficients() also accepts
+            # the flat exponent tuple for lookup, whereas monomials()
+            # returns polynomial monomials on some implementations.
+            monomials = list(row.monomial_coefficients())
+            return max(monomials, key=lambda m: (sum(m), tuple(m)))
+
+        for i, (f, _) in enumerate(rows):
+            if not f:
+                continue
+            try:
+                mf = lead(f)
+            except ValueError:
+                continue
+            for g, _ in rows[i + 1:]:
+                if len(multiples) >= budget:
+                    break
+                if not g:
+                    continue
+                try:
+                    mg = lead(g)
+                except ValueError:
+                    continue
+                lcm = [max(a, b) for a, b in zip(mf, mg)]
+                # keep only local moves: a large lowest common
+                # multiple usually produces rows with too many new
+                # monomial columns to be useful in this budgeted pass
+                if (sum(lcm) > max(sum(mf), sum(mg)) + 1
+                        or len(mf) != len(mg)):
+                    continue
+                ef = list(lcm)
+                eg = list(lcm)
+                for j, (a, b) in enumerate(zip(mf, mg)):
+                    ef[j] -= a
+                    eg[j] -= b
+                cf = f.monomial_coefficients()[mf]
+                cg = g.monomial_coefficients()[mg]
+                if ef == [0] * len(ef) and eg == [0] * len(eg):
+                    # the two leading monomials coincide; ordinary
+                    # row reduction already deals with this pair
+                    h = cg * f - cf * g
+                else:
+                    h = (cg * f * P({tuple(ef): 1})
+                         - cf * g * P({tuple(eg): 1}))
+                if h:
+                    multiples.append(h)
+            if len(multiples) >= budget:
+                break
+        if not multiples:
+            return []
+
+        extra = [InfinitePolynomial(self._P, h) for h in multiples]
+        # only rows coming from the nonlinear equations and their
+        # multiples are needed here; the ordinary linear rows have
+        # already been dealt with by the linear solver on every other
+        # path through _compute
+        eqs = [r for _, r in rows] + extra
+        try:
+            m1, v1 = PolynomialSequence(eqs).coefficients_monomials()
+            base = m1.base_ring()
+            if not base.is_field():
+                m1 = m1.change_ring(base.fraction_field())
+            reduced = m1.echelon_form()
+        except (TypeError, ValueError, ArithmeticError):
+            # a scalar ring for which cheap echelon reduction is not
+            # available; not having this strengthening is sound
+            return []
+        result = []
+        for i, row in enumerate(reduced.rows()):
+            if not row:
+                continue
+            if any(r.degree() > 1 for j, r in enumerate(v1) if row[j]):
+                continue
+            new = self._P.sum(row[j] * v1[j]
+                               for j in range(len(v1)) if row[j])
+            if new:
+                result.append(new)
+        return result
 
     def _split_equations_by_weight(self, equations):
         r"""
@@ -2579,9 +2739,9 @@ class Stream_uninitialized(Stream):
             sage: C._uncomputed = False
             sage: lin_coeffs, all_coeffs = C._collect_equations(0)
             sage: C._cache
-            [FESDUMMY_1]
+            [FESDUMMY_0]
             sage: lin_coeffs
-            [FESDUMMY_1 - 1]
+            [FESDUMMY_0 - 1]
             sage: C._solve_linear_equations_and_subs(lin_coeffs)
             True
             sage: C._cache
@@ -2674,10 +2834,18 @@ class Stream_uninitialized(Stream):
         # determine the next linear equations
         lin_coeffs = []
         all_coeffs = []  # only for the error message
+        self._nonlinear_coeffs = []
         for offset in range(self._max_lookahead):
             new_lin_coeffs, new_all_coeffs = self._collect_equations(offset)
             lin_coeffs.extend(new_lin_coeffs)
             all_coeffs.extend(new_all_coeffs)
+            if self._nonlinear_coeffs:
+                # also recover affine-linear consequences of nonlinear
+                # rows after multiplying by a few cheap monomials; these
+                # can determine coefficients which are invisible to the
+                # span of the collected linear rows alone
+                lin_coeffs.extend(self._linear_consequences_by_monomial_multiples(
+                    self._nonlinear_coeffs))
             if lin_coeffs and self._solve_linear_equations_and_subs(lin_coeffs):
                 return
 
@@ -3667,7 +3835,7 @@ class Stream_pseudo_diff_mul(Stream_binary):
             else:
                 num = base.numerator()
                 den = base.denominator()
-                if (len(set(num.variables()).update(den.variables())) > 1
+                if (len(set(num.variables()).union(den.variables())) > 1
                     or num.degree() > 1 or den.degree() > 1):
                     raise NotImplementedError("taking derivatives of unknowns not yet implemented")
                 numder = num.map_coefficients(lambda c: R(c).derivative(x))
