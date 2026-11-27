@@ -681,6 +681,150 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         from sage.graphs.digraph import DiGraph
         return DiGraph(d)
 
+    cpdef sample(self, ground_set=None):
+        r"""
+        Return a :class:`DisjointSet` corresponding to the sampling of
+        ``self`` over ``ground_set``.
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(6)
+            sage: d.union(0, 1)
+            sage: d.union(2, 3)
+            sage: d.union(4, 5)
+            sage: d
+            {{0, 1}, {2, 3}, {4, 5}}
+            sage: d.sample({0, 2, 4})
+            {{0}, {1}, {2}}
+            sage: d.sample({1, 3, 5})
+            {{0}, {1}, {2}}
+            sage: d.sample({0, 1, 2, 3})
+            {{0, 1}, {2, 3}}
+            sage: d.sample()
+            {}
+
+        TESTS:
+
+        Empty ground_set::
+
+            sage: d.sample(set())
+            {}
+
+        Single element::
+
+            sage: d.sample({0})
+            {{0}}
+            sage: d.sample({3})
+            {{0}}
+
+        All elements in the same block::
+
+            sage: e = DisjointSet(4)
+            sage: e.union(0, 1)
+            sage: e.union(1, 2)
+            sage: e.union(2, 3)
+            sage: e.sample({0, 1, 2, 3})
+            {{0, 1, 2, 3}}
+            sage: e.sample({0, 2})
+            {{0, 1}}
+
+        Full ground_set equals original set::
+
+            sage: d.sample({0, 1, 2, 3, 4, 5})
+            {{0, 1}, {2, 3}, {4, 5}}
+
+        Trivial DisjointSet (no unions)::
+
+            sage: f = DisjointSet(3)
+            sage: f.sample({0, 1, 2})
+            {{0}, {1}, {2}}
+        """
+        if ground_set is None:
+            return DisjointSet_of_integers(0)
+            
+        P = DisjointSet(len(ground_set))
+        root_map = dict()
+        ground_list = sorted(ground_set)
+        for i, elem in enumerate(ground_list):
+            root = self.find(elem)
+            if root in root_map:
+                P.union(root_map[root], i)
+            else:
+                root_map[root] = i
+        return P
+
+    cpdef move(self, int i, int j, inplace=False) except *:
+        r"""
+        Move element ``i`` to the set containing element ``j``.
+
+        INPUT:
+
+        - ``i`` -- element in ``self``
+        - ``j`` -- element in ``self``
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5)
+            sage: d.union(0, 1)
+            sage: d.union(2, 3)
+            sage: d
+            {{0, 1}, {2, 3}, {4}}
+            sage: d.move(1, 2)
+            sage: d
+            {{0}, {1, 2, 3}, {4}}
+            sage: d.move(4, 0)
+            sage: d
+            {{0, 4}, {1, 2, 3}}
+
+        With ``inplace=False`` (default), a copy is returned::
+
+            sage: d = DisjointSet(5)
+            sage: d.union(0, 1)
+            sage: d2 = d.move(1, 2, inplace=False)
+            sage: d
+            {{0, 1}, {2}, {3}, {4}}
+            sage: d2
+            {{0}, {1, 2}, {3}, {4}}
+        """
+        cdef int card = self._nodes.degree
+        if i < 0 or i >= card:
+            raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
+        if j < 0 or j >= card:
+            raise ValueError('j must be between 0 and %s (%s given)' % (card - 1, j))
+        
+        # Get current partition structure
+        cdef dict root_to_elems = self.root_to_elements_dict()
+        cdef int root_i = OP_find(self._nodes, i)
+        cdef int root_j = OP_find(self._nodes, j)
+        
+        # If already in same set, nothing to do
+        if root_i == root_j:
+            return self if inplace else self.copy()
+        
+        # Build new DisjointSet with i moved to j's set
+        cdef DisjointSet_of_integers ds = DisjointSet_of_integers(card)
+        cdef int elem
+        for root, elems in root_to_elems.items():
+            if root == root_i:
+                # Skip i from its original set
+                for elem in elems:
+                    if elem != i:
+                        ds.union(root, elem)
+            else:
+                for elem in elems:
+                    ds.union(root, elem)
+        # Add i to j's set
+        ds.union(i, j)
+        
+        if inplace:
+            # Copy the new structure back to self
+            for k in range(card):
+                self._nodes.parent[k] = ds._nodes.parent[k]
+            self._nodes.rank[k] = ds._nodes.rank[k]
+            self._nodes.num_cells = ds._nodes.num_cells
+            return self
+        return ds
+
 cdef class DisjointSet_of_hashables(DisjointSet_class):
     r"""
     Disjoint set of hashables.
@@ -1014,3 +1158,154 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             d[e] = [p]
         from sage.graphs.digraph import DiGraph
         return DiGraph(d)
+
+    cpdef sample(self, ground_set=None):
+        r"""
+        Return a :class:`DisjointSet` corresponding to the sampling of
+        ``self`` over ``ground_set``.
+
+        EXAMPLES::
+
+            sage: d = DisjointSet('abcdef')
+            sage: d.union('a', 'b')
+            sage: d.union('c', 'd')
+            sage: d.union('e', 'f')
+            sage: d
+            {{'a', 'b'}, {'c', 'd'}, {'e', 'f'}}
+            sage: d.sample({'a', 'c', 'e'})
+            {{0}, {1}, {2}}
+            sage: d.sample({'b', 'd', 'f'})
+            {{0}, {1}, {2}}
+            sage: d.sample({'a', 'b', 'c', 'd'})
+            {{0, 1}, {2, 3}}
+            sage: d.sample()
+            {}
+
+        TESTS:
+
+        Empty ground_set::
+
+            sage: d.sample(set())
+            {}
+
+        Single element::
+
+            sage: d.sample({'a'})
+            {{0}}
+            sage: d.sample({'d'})
+            {{0}}
+
+        All elements in the same block::
+
+            sage: e = DisjointSet('abcd')
+            sage: e.union('a', 'b')
+            sage: e.union('b', 'c')
+            sage: e.union('c', 'd')
+            sage: e.sample({'a', 'b', 'c', 'd'})
+            {{0, 1, 2, 3}}
+            sage: e.sample({'a', 'c'})
+            {{0, 1}}
+
+        Full ground_set equals original set::
+
+            sage: d.sample({'a', 'b', 'c', 'd', 'e', 'f'})
+            {{0, 1}, {2, 3}, {4, 5}}
+
+        Trivial DisjointSet (no unions)::
+
+            sage: f = DisjointSet('abc')
+            sage: f.sample({'a', 'b', 'c'})
+            {{0}, {1}, {2}}
+        """
+        if ground_set is None:
+            return DisjointSet_of_integers(0)
+            
+        P = DisjointSet_of_integers(len(ground_set))
+        root_map = dict()
+        ground_list = sorted(ground_set)
+        for i, elem in enumerate(ground_list):
+            root = self.find(elem)
+            if root in root_map:
+                P.union(root_map[root], i)
+            else:
+                root_map[root] = i
+        return P
+
+    cpdef move(self, e, f, inplace=False) except *:
+        r"""
+        Move element ``e`` to the set containing element ``f``.
+
+        INPUT:
+
+        - ``e`` -- element in ``self``
+        - ``f`` -- element in ``self``
+        - ``inplace`` -- boolean (default: ``False``); if ``True``, modify
+          ``self`` in place, otherwise return a modified copy
+
+        EXAMPLES::
+
+            sage: d = DisjointSet('abcde')
+            sage: d.union('a', 'b')
+            sage: d.union('c', 'd')
+            sage: d
+            {{'a', 'b'}, {'c', 'd'}, {'e'}}
+            sage: d.move('b', 'c')
+            sage: d
+            {{'a'}, {'b', 'c', 'd'}, {'e'}}
+            sage: d.move('e', 'a')
+            sage: d
+            {{'a', 'e'}, {'b', 'c', 'd'}}
+
+        With ``inplace=False`` (default), a copy is returned::
+
+            sage: d = DisjointSet('abcde')
+            sage: d.union('a', 'b')
+            sage: d2 = d.move('b', 'c', inplace=False)
+            sage: d
+            {{'a', 'b'}, {'c'}, {'d'}, {'e'}}
+            sage: d2
+            {{'a'}, {'b', 'c'}, {'d'}, {'e'}}
+
+        TESTS::
+
+            sage: d = DisjointSet('abc')
+            sage: d.move('x', 'a')
+            Traceback (most recent call last):
+            ...
+            KeyError: 'x'
+        """
+        cdef int i = <int> self._el_to_int[e]
+        cdef int j = <int> self._el_to_int[f]
+        
+        # Get current partition structure
+        cdef dict root_to_elems = self.root_to_elements_dict()
+        root_e = self.find(e)
+        root_f = self.find(f)
+        
+        # If already in same set, nothing to do
+        if root_e == root_f:
+            return self if inplace else self.__copy__()
+        
+        # Build new DisjointSet with e moved to f's set
+        cdef int card = self._nodes.degree
+        ds = DisjointSet_of_hashables(self._int_to_el)
+        for root, elems in root_to_elems.items():
+            if root == root_e:
+                # Skip e from its original set
+                for elem in elems:
+                    if elem != e:
+                        ds.union(root, elem)
+            else:
+                for elem in elems:
+                    ds.union(root, elem)
+        # Add e to f's set
+        ds.union(e, f)
+        
+        if inplace:
+            # Copy the new structure back to self
+            for k in range(card):
+                self._nodes.parent[k] = ds._nodes.parent[k]
+                self._nodes.rank[k] = ds._nodes.rank[k]
+            self._nodes.num_cells = ds._nodes.num_cells
+            return self
+        return ds
