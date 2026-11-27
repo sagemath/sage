@@ -16888,6 +16888,16 @@ class GenericGraph(GenericGraph_pyx):
             False
             sage: D.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)]
+
+        An edgeless digraph is not a cycle, and neither is a directed
+        cycle plus an isolated vertex (:issue:`43193`)::
+
+            sage: DiGraph(2).is_cycle(directed_cycle=False)
+            False
+            sage: D = digraphs.Circuit(3)
+            sage: D.add_vertex(3)
+            sage: D.is_cycle(directed_cycle=False)
+            False
         """
         if not self.order():
             # The empty graph is not a cycle
@@ -16901,10 +16911,12 @@ class GenericGraph(GenericGraph_pyx):
             if directed_cycle:
                 return g.order() == g.size() and g.is_strongly_connected()
 
-            # We make a copy of self ignoring the direction of edges
+            # We make a copy of self ignoring the direction of edges.
+            # Passing the vertices keeps isolated vertices (:issue:`43193`).
             from sage.graphs.graph import Graph
-            g = Graph(multiedges=True, loops=True)
-            g.add_edges(self.edge_iterator(labels=False))
+            g = Graph([self, self.edge_iterator(labels=False)],
+                      format="vertices_and_edges",
+                      multiedges=True, loops=True)
 
         return g.is_regular(k=2) and g.is_connected()
 
