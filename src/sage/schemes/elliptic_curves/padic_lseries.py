@@ -1015,7 +1015,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
     power_series = series
 
-    def is_ordinary(self):
+    def is_ordinary(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
@@ -1029,7 +1029,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         """
         return True
 
-    def is_supersingular(self):
+    def is_supersingular(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this L function is attached
         to is supersingular.
@@ -1362,7 +1362,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
     power_series = series
 
-    def is_ordinary(self):
+    def is_ordinary(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
@@ -1376,7 +1376,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         """
         return False
 
-    def is_supersingular(self):
+    def is_supersingular(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this L function is attached
         to is supersingular.

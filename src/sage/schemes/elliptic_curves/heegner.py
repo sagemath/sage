@@ -6148,7 +6148,7 @@ def class_number(D):
     return D.class_number()
 
 
-def is_inert(D, p):
+def is_inert(D, p) -> bool:
     r"""
     Return ``True`` if p is an inert prime in the field `\QQ(\sqrt{D})`.
 
@@ -6172,7 +6172,7 @@ def is_inert(D, p):
     return len(F) == 1 and F[0][1] == 1
 
 
-def is_split(D, p):
+def is_split(D, p) -> bool:
     r"""
     Return ``True`` if p is a split prime in the field `\QQ(\sqrt{D})`.
 
@@ -6196,7 +6196,7 @@ def is_split(D, p):
     return len(F) == 2
 
 
-def is_ramified(D, p):
+def is_ramified(D, p) -> bool:
     r"""
     Return ``True`` if p is a ramified prime in the field `\QQ(\sqrt{D})`.
 

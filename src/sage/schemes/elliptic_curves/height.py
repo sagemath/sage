@@ -135,7 +135,7 @@ class UnionOfIntervals:
         """
         return list(zip(self._endpoints[::2], self._endpoints[1::2]))
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return whether ``self`` is empty.
 

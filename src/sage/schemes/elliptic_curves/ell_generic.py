@@ -660,7 +660,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         d = lcm(x.denominator(), y.denominator())
         return R.curve().change_ring(GF(p))([x*d, y*d, d])
 
-    def is_x_coord(self, x):
+    def is_x_coord(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
@@ -1067,7 +1067,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a = self.ainvs()
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Test whether elements of this elliptic curve are represented exactly.
 
@@ -2873,7 +2873,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         return sorted(wm.WeierstrassIsomorphism(self, urst, other)
                       for urst in wm._isomorphisms(self, other))
 
-    def is_isomorphic(self, other, field=None):
+    def is_isomorphic(self, other, field=None) -> bool:
         """
         Return whether or not ``self`` is isomorphic to ``other``.
 

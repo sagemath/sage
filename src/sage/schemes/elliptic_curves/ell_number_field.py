@@ -521,7 +521,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         mat = self.height_pairing_matrix(points=points, precision=precision, normalised=normalised)
         return mat.det(algorithm='hessenberg')
 
-    def is_local_integral_model(self, *P):
+    def is_local_integral_model(self, *P) -> bool:
         r"""
         Test if ``self`` is integral at the prime ideal `P`, or at all the
         primes if `P` is a list or tuple.
@@ -583,7 +583,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         pi = self.base_field().uniformizer(P, 'negative')
         return EllipticCurve([ai[i]/pi**(e*[1,2,3,4,6][i]) for i in range(5)])
 
-    def is_global_integral_model(self):
+    def is_global_integral_model(self) -> bool:
         r"""
         Return whether ``self`` is integral at all primes.
 
@@ -1639,7 +1639,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         vals = [d.discriminant_valuation() for d in dat]
         return [P for P,v in zip(primes,vals) if D.valuation(P) > v]
 
-    def is_global_minimal_model(self):
+    def is_global_minimal_model(self) -> bool:
         r"""
         Return whether this elliptic curve is a global minimal model.
 
@@ -3086,7 +3086,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
                                 for E in codoms[:i])]
         return isogs
 
-    def is_isogenous(self, other, proof=True, maxnorm=100):
+    def is_isogenous(self, other, proof=True, maxnorm=100) -> bool:
         """
         Return whether or not ``self`` is isogenous to ``other``.
 
@@ -3734,7 +3734,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
                          % (field,self.base_field()))
 
     @cached_method
-    def is_Q_curve(self, maxp=100, certificate=False, verbose=False):
+    def is_Q_curve(self, maxp=100, certificate=False,
+                   verbose=False) -> bool | tuple:
         r"""
         Return ``True`` if this is a `\QQ`-curve, with optional certificate.
 

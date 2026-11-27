@@ -818,7 +818,7 @@ class PeriodLattice_ell(PeriodLattice):
             return w1w2
         return (w1, w2)
 
-    def is_real(self):
+    def is_real(self) -> bool:
         r"""
         Return ``True`` if this period lattice is real.
 
@@ -1178,7 +1178,7 @@ class PeriodLattice_ell(PeriodLattice):
         return self.E
 
     @property
-    def is_approximate(self):
+    def is_approximate(self) -> bool:
         """
         ``self.is_approximate`` is deprecated, use ``not self.curve().is_exact()`` instead.
 

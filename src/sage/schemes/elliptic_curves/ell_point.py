@@ -1228,7 +1228,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             return self[1]
         return self[1]/self[2]
 
-    def is_divisible_by(self, m):
+    def is_divisible_by(self, m) -> bool:
         """
         Return ``True`` if there exists a point `Q` defined over the same
         field as ``self`` such that `mQ` == ``self``.
@@ -3174,7 +3174,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         assert False  # unreachable unless there are only finitely many primes
 
-    def is_on_identity_component(self, embedding=None):
+    def is_on_identity_component(self, embedding=None) -> bool:
         r"""
         Return ``True`` iff this point is on the identity component of
         its curve with respect to a given (real or complex) embedding.

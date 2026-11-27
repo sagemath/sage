@@ -26,7 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring import polygen
 
 
-def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
+def is_Q_curve(E, maxp=100, certificate=False, verbose=False) -> bool | tuple:
     r"""
     Return whether ``E`` is a `\QQ`-curve, with optional certificate.
 

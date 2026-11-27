@@ -1425,7 +1425,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         raise ValueError(f'unknown algorithm {algorithm!r}')
 
-    def is_isogenous(self, other, field=None, proof=True):
+    def is_isogenous(self, other, field=None, proof=True) -> bool:
         """
         Return whether or not ``self`` is isogenous to ``other``.
 
@@ -1580,7 +1580,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         """
         return is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def is_ordinary(self, proof=True):
+    def is_ordinary(self, proof=True) -> bool:
         r"""
         Return ``True`` if this elliptic curve is ordinary, else ``False``.
 
@@ -2813,7 +2813,7 @@ def supersingular_j_polynomial(p, use_cache=True):
     return R
 
 
-def is_j_supersingular(j, proof=True):
+def is_j_supersingular(j, proof=True) -> bool:
     r"""
     Return ``True`` if `j` is a supersingular `j`-invariant.
 

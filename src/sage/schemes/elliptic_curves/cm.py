@@ -885,7 +885,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
 
 @cached_function
-def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
+def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None) -> tuple:
     r"""
     Return whether or not this is a CM `j`-invariant, and the CM discriminant if it is.
 

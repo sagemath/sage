@@ -95,7 +95,7 @@ from sage.rings.rational_field import QQ
 from .constructor import EllipticCurve, EllipticCurve_from_j
 
 
-def is_possible_j(j, S=[]):
+def is_possible_j(j, S=None) -> bool:
     r"""
     Test if the rational `j` is a possible `j`-invariant of an
     elliptic curve with good reduction outside `S`.
@@ -115,6 +115,8 @@ def is_possible_j(j, S=[]):
         sage: is_possible_j(-4096/11,[11])
         True
     """
+    if S is None:
+        S = []
     j = QQ(j)
     return (j.is_zero() and 3 in S) or (j == 1728) \
         or (j.is_S_integral(S) and j.prime_to_S_part(S).is_nth_power(3)
