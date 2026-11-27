@@ -13823,6 +13823,7 @@ cpdef new_Expression(parent, x):
 
     from sage.rings.infinity import (infinity, minus_infinity,
                                      unsigned_infinity)
+    from sage.rings.lazy_series import LazyCauchyProductSeries
     from sage.structure.factorization import Factorization
     from sage.categories.sets_cat import Sets
     from sage.rings.real_mpfr import RealNumber
@@ -13848,7 +13849,8 @@ cpdef new_Expression(parent, x):
         return new_Expression_from_GEx(parent, g_mInfinity)
     elif x is unsigned_infinity:
         return new_Expression_from_GEx(parent, g_UnsignedInfinity)
-    elif isinstance(x, (RingElement, Matrix)):
+    elif isinstance(x, (RingElement, Matrix)) and not isinstance(x, LazyCauchyProductSeries):
+        # TODO allow conversion from LazyCauchyProductSeries to SR results in some mysterious bug
         if x.parent().characteristic():
             raise TypeError('positive characteristic not allowed in symbolic computations')
         exp = x
