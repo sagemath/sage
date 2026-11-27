@@ -944,13 +944,14 @@ def K_grassmannian_pieces():
 
 def H_two_step_pieces():
     r"""
-    Define the puzzle pieces used in two step flags.
+    Return the cohomological puzzle pieces for two-step flag varieties.
 
-    This rule is currently only conjecturally true. See [BuchKreschTamvakis03]_.
+    This rule was conjectured in [BuchKreschTamvakis03]_ and proved in [BKPT2016]_.
 
     REFERENCES:
 
     - [BuchKreschTamvakis03]_
+    - [BKPT2016]_
 
     EXAMPLES::
 
@@ -974,28 +975,33 @@ def H_two_step_pieces():
 
 def HT_two_step_pieces():
     r"""
-    Define the puzzle pieces used in computing the equivariant two step puzzle pieces.
+    Return the equivariant puzzle pieces for two-step flag varieties.
 
-    For the puzzle pieces, see Figure 26 on page 22 of [CoskunVakil06]_.
+    The eight equivariant rhombi are given in [Buc2015]_, Theorem 2.1.
+    Figure 26 of [CoskunVakil06]_ omits two of them.
 
     REFERENCES:
 
+    - [Buc2015]_
     - [CoskunVakil06]_
 
     EXAMPLES::
 
        sage: from sage.combinat.knutson_tao_puzzles import HT_two_step_pieces
        sage: HT_two_step_pieces()
-       Nablas : [(21)0\21/0, 0\(21)0/21, 0\0/0, 0\10/1, 0\20/2, 10\1/0, 10\2(10)/2,
-       1\0/10, 1\1/1, 1\21/2, 1\T0|1/0, 2(10)\2/10, 20\2/0, 21\0/(21)0, 21\2/1, 21\T0|21/0,
-       21\T10|21/10, 2\0/20, 2\1/21, 2\10/2(10), 2\2/2, 2\T0|2/0, 2\T10|2/10, 2\T1|2/1]
-       Deltas : [(21)0/0\21, 0/0\0, 0/1\10, 0/21\(21)0, 0/2\20, 0/T0|1\1, 0/T0|21\21, 0/T0|2\2,
-       1/10\0, 1/1\1, 1/2\21, 1/T1|2\2, 10/0\1, 10/2\2(10), 10/T10|21\21, 10/T10|2\2, 2(10)/10\2,
-       2/2(10)\10, 2/20\0, 2/21\1, 2/2\2, 20/0\2, 21/(21)0\0, 21/1\2]
+       Nablas : [(21)0\21/0, 0\(21)0/21, 0\0/0, 0\10/1, 0\20/2, 10\1/0, 10\2(10)/2, 1\0/10, 1\1/1,
+       1\21/2, 1\T0|1/0, 2(10)\2/10, 2(10)\T0|2(10)/0, 20\2/0, 21\0/(21)0, 21\2/1, 21\T0|21/0,
+       21\T10|21/10, 2\0/20, 2\1/21, 2\10/2(10), 2\2/2, 2\T(21)0|2/(21)0, 2\T0|2/0, 2\T10|2/10,
+       2\T1|2/1]
+       Deltas : [(21)0/0\21, (21)0/T(21)0|2\2, 0/0\0, 0/1\10, 0/21\(21)0, 0/2\20, 0/T0|1\1,
+       0/T0|2(10)\2(10), 0/T0|21\21, 0/T0|2\2, 1/10\0, 1/1\1, 1/2\21, 1/T1|2\2, 10/0\1, 10/2\2(10),
+       10/T10|21\21, 10/T10|2\2, 2(10)/10\2, 2/2(10)\10, 2/20\0, 2/21\1, 2/2\2, 20/0\2, 21/(21)0\0,
+       21/1\2]
     """
     pieces = H_two_step_pieces()
     for label1, label2 in (('0', '1'), ('0', '2'), ('1', '2'),
-                           ('10', '2'), ('0', '21'), ('10', '21')):
+                           ('10', '2'), ('0', '21'), ('10', '21'),
+                           ('0', '2(10)'), ('(21)0', '2')):
         pieces.add_T_piece(label1, label2)
     return pieces
 
@@ -2259,6 +2265,16 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
              (('1', '2', '2', '0', '1'), 1),
              (('2', '1', '0', '1', '2'), y1 - y3),
              (('2', '1', '1', '0', '2'), 1)]
+
+        TESTS:
+
+        Each example needs a different equivariant rhombus added in
+        :issue:`43219`::
+
+            sage: ps.structure_constants('1002', '0210', '1200')
+            y1 - y4
+            sage: ps.structure_constants('2102', '0221', '2201')
+            y1 - y4
         """
         from collections import defaultdict
         R = PolynomialRing(Integers(), 'y', len(lamda) + 1)
