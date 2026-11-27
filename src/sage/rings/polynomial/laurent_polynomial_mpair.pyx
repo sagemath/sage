@@ -423,6 +423,26 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise TypeError('only integral Laurent polynomials available in Regina')
         return regina.Laurent2(pl)
 
+    def _magma_init_(self, magma):
+        """
+        Return a string that evaluates in Magma to this Laurent polynomial.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: magma = Magma()  # new session
+            sage: R.<y0,y1> = LaurentPolynomialRing(QQ, 2)
+            sage: f = y0^3 + 33*y1 + 5/y0/y1
+            sage: g = magma(f); g
+            ($.1^4*$.2 + 33*$.1*$.2^2 + 5)/($.1*$.2)
+        """
+        ring = self.parent().polynomial_ring()
+        num = self._poly._magma_init_(magma)
+        g = ring.gens()
+        den = ring.prod(g[i]**(-j) for i, j in enumerate(self._mon))
+        den_magma = den._magma_init_(magma)
+        return f"{num}/{den_magma}"
+
     def _latex_(self):
         r"""
         EXAMPLES::
@@ -672,7 +692,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: sorted(f.monomials())
             [x^-3*y^2, x^-2*y, x^-2*y^3, x^6]
         """
-        return [mon for coeff, mon in self]
+        return [mon for _, mon in self]
 
     def monomial_coefficient(self, mon):
         """
