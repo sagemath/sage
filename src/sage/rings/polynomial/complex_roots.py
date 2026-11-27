@@ -138,9 +138,7 @@ def intervals_disjoint(intvs):
                 row = []
             prev_imag = y_imag
             row.append(y)
-        if not row_disjoint():
-            return False
-        return True
+        return row_disjoint()
 
     for x in intvs:
         x_real = x.real()
@@ -151,9 +149,7 @@ def intervals_disjoint(intvs):
         prev_real = x_real
         column.append((x.imag(), x))
 
-    if not column_disjoint():
-        return False
-    return True
+    return column_disjoint()
 
 
 def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
@@ -297,9 +293,9 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
             all_rts = sort_complex_numbers_for_display(all_rts)
             if retval == 'interval':
                 return [(rt, mult) for (rt, fac, mult) in all_rts]
-            elif retval == 'algebraic':
+            if retval == 'algebraic':
                 return [(QQbar.polynomial_root(fac, rt), mult) for (rt, fac, mult) in all_rts]
-            elif retval == 'algebraic_real':
+            if retval == 'algebraic_real':
                 rts = []
                 for (rt, fac, mult) in all_rts:
                     qqbar_rt = QQbar.polynomial_root(fac, rt)

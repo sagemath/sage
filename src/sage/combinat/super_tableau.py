@@ -1,12 +1,11 @@
 r"""
-Super Tableaux
+Super tableaux
 
 AUTHORS:
 
 - Matthew Lancellotti (2007): initial version
-
-- Chaman Agrawal (2019-07-23): Modify standard and semistandard tableaux for
-  super tableaux.
+- Chaman Agrawal (2019-07-23): modify standard and semistandard tableaux for
+  super tableaux
 """
 
 # ****************************************************************************
@@ -86,7 +85,7 @@ class SemistandardSuperTableau(Tableau):
         Semistandard super tableaux
     """
     @staticmethod
-    def __classcall_private__(cls, t):
+    def __classcall_private__(cls, t, check=True):
         r"""
         This ensures that a SemistandardSuperTableau is only ever constructed
         as an element_class call of an appropriate parent.
@@ -112,7 +111,7 @@ class SemistandardSuperTableau(Tableau):
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
         SST = SemistandardSuperTableaux_all()
-        return SST.element_class(SST, t)
+        return SST.element_class(SST, t, check=check)
 
     def __init__(self, parent, t, check=True, preprocessed=False):
         r"""
@@ -261,7 +260,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`StandardSuperTableau` is only ever
         constructed as an ``element_class`` call of an appropriate parent.
@@ -279,7 +278,7 @@ class StandardSuperTableau(SemistandardSuperTableau):
             return t
 
         SST = StandardSuperTableaux_all()
-        return SST.element_class(SST, t)
+        return SST.element_class(SST, t, check=check)
 
     def check(self):
         r"""
@@ -391,7 +390,7 @@ class SemistandardSuperTableaux(SemistandardTableaux):
         """
         if isinstance(x, SemistandardSuperTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             x = SemistandardSuperTableau._preprocess(x)
             for row in x:
                 if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
@@ -408,8 +407,7 @@ class SemistandardSuperTableaux(SemistandardTableaux):
                            if (row[c].is_unprimed() or next[c].is_unprimed())):
                     return False
             return True
-        else:
-            return False
+        return False
 
 
 class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
@@ -533,10 +531,10 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
         if n is None:
             return StandardSuperTableaux_all()
 
-        elif n in _Partitions:
+        if n in _Partitions:
             return StandardSuperTableaux_shape(_Partitions(n))
 
-        elif n in SkewPartitions():
+        if n in SkewPartitions():
             raise NotImplementedError("standard super tableau for skew "
                                       "partitions is not implemented yet")
 
@@ -576,7 +574,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
         """
         if isinstance(x, StandardSuperTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             x = SemistandardSuperTableau._preprocess(x)
             flattened_list = [i for row in x for i in row]
             a = PrimedEntry('1p')
@@ -589,8 +587,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
                     (all(row[i] < row[i + 1] for row in x for i in range(len(row) - 1)) and
                      all(x[r][c] < x[r + 1][c] for r in range(len(x) - 1)
                          for c in range(len(x[r + 1])))))
-        else:
-            return False
+        return False
 
 
 class StandardSuperTableaux_all(StandardSuperTableaux,

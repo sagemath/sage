@@ -1,14 +1,9 @@
 r"""
-Ordered Multiset Partitions into Sets and the Minimaj Crystal
+Ordered multiset partitions into sets and the minimaj crystal
 
 This module provides element and parent classes for ordered multiset
 partitions. It also implements the minimaj crystal of Benkart et al.
 [BCHOPSY2017]_. (See :class:`MinimajCrystal`.)
-
-AUTHORS:
-
-- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
-  code provided by Anne Schilling.
 
 REFERENCES:
 
@@ -50,6 +45,11 @@ with 4 letters divided into 2 blocks::
      ((3, 1), (1, 2)), ((3, 1, 2), (2,)), ((3, 1), (1, 3)), ((3, 1), (2, 3)),
      ((3, 2), (2, 3)), ((2, 1), (1, 3)), ((2,), (1, 2, 3)), ((3,), (1, 2, 3)),
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
+
+AUTHORS:
+
+- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
+  code provided by Anne Schilling.
 """
 
 # ****************************************************************************
@@ -147,10 +147,9 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not co:
             P = OrderedMultisetPartitionsIntoSets([])
             return P.element_class(P, [])
-        else:
-            X = _concatenate(co)
-            P = OrderedMultisetPartitionsIntoSets(_get_weight(X))
-            return P.element_class(P, co)
+        X = _concatenate(co)
+        P = OrderedMultisetPartitionsIntoSets(_get_weight(X))
+        return P.element_class(P, co)
 
     def __init__(self, parent, data):
         """
@@ -448,8 +447,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         """
         if as_dict:
             return self._weight
-        else:
-            return self._multiset
+        return self._multiset
 
     def max_letter(self):
         """
@@ -468,8 +466,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         """
         if not self.letters():
             return None
-        else:
-            return max(self.letters())
+        return max(self.letters())
 
     def size(self):
         """
@@ -1042,7 +1039,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         w = []
         v = [0]
         for eblock in ew:
-            for (i,wj) in sorted(eblock, reverse=True):
+            for i, wj in sorted(eblock, reverse=True):
                 vj = v[-1]
                 if i == 0:
                     vj += 1
@@ -1430,12 +1427,10 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                     raise ValueError("cannot pass order as second argument and keyword argument")
                 if constraints == {}:
                     return OrderedMultisetPartitionsIntoSets_alph_d(frozenset(alph), order)
-                else:
-                    return OrderedMultisetPartitionsIntoSets_alph_d_constraints(frozenset(alph), order, **constraints)
-            elif frozenset(alph) == frozenset() and order == 0:
                 return OrderedMultisetPartitionsIntoSets_alph_d_constraints(frozenset(alph), order, **constraints)
-            else:
-                raise ValueError("alphabet=%s must be a nonempty set and order=%s must be a nonnegative integer" % (alph, order))
+            if frozenset(alph) == frozenset() and order == 0:
+                return OrderedMultisetPartitionsIntoSets_alph_d_constraints(frozenset(alph), order, **constraints)
+            raise ValueError("alphabet=%s must be a nonempty set and order=%s must be a nonnegative integer" % (alph, order))
 
         elif len(args) == 1: # treat as `size` or `multiset`
             X = args[0]
@@ -1457,20 +1452,17 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                 X_items = tuple(X.items())
                 if constraints == {}:
                     return OrderedMultisetPartitionsIntoSets_X(X_items)
-                else:
-                    return OrderedMultisetPartitionsIntoSets_X_constraints(X_items, **constraints)
+                return OrderedMultisetPartitionsIntoSets_X_constraints(X_items, **constraints)
 
-            elif X in ZZ and X >= 0:
+            if X in ZZ and X >= 0:
                 if "size" in constraints:
                     raise ValueError("cannot pass size as first argument and keyword argument")
                 if constraints == {}:
                     return OrderedMultisetPartitionsIntoSets_n(X)
-                else:
-                    return OrderedMultisetPartitionsIntoSets_n_constraints(X, **constraints)
+                return OrderedMultisetPartitionsIntoSets_n_constraints(X, **constraints)
 
-            else:
-                # zero arguments are passed?
-                raise ValueError("%s must be a nonnegative integer or a list or dictionary representing a multiset" % X)
+            # zero arguments are passed?
+            raise ValueError("%s must be a nonnegative integer or a list or dictionary representing a multiset" % X)
 
         elif len(args) > 2:
             raise ValueError("OrderedMultisetPartitonsIntoSets takes 1, 2, or 3 arguments")
@@ -1479,10 +1471,10 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             if "weight" in constraints:
                 X = constraints.pop("weight")
                 return OrderedMultisetPartitionsIntoSets(dict(X), **constraints)
-            elif "size" in constraints:
+            if "size" in constraints:
                 n = constraints.pop("size")
                 return OrderedMultisetPartitionsIntoSets(n, **constraints)
-            elif "alphabet" in constraints and "order" in constraints:
+            if "alphabet" in constraints and "order" in constraints:
                 A = constraints.pop("alphabet")
                 d = constraints.pop("order")
                 return OrderedMultisetPartitionsIntoSets(A, d, **constraints)
@@ -1560,7 +1552,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # pop keys with empty values, with the exception of 'size' or 'order'
         self.constraints = {}
-        for (key,val) in constraints.items():
+        for key, val in constraints.items():
             if val:
                 self.constraints[key] = val
             elif key in ("size", "order", "length") and val is not None:
@@ -1661,8 +1653,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         if omp in self:
             return self.element_class(self, list(map(frozenset, omp)))
-        else:
-            raise ValueError("cannot convert %s into an element of %s" % (lst, self))
+        raise ValueError("cannot convert %s into an element of %s" % (lst, self))
 
     Element = OrderedMultisetPartitionIntoSets
 
@@ -1796,8 +1787,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
         if isinstance(self, OrderedMultisetPartitionsIntoSets_all_constraints):
             P = OrderedMultisetPartitionsIntoSets(_get_weight(lst))
             return P.element_class(P, c)
-        else:
-            return self.element_class(self, c)
+        return self.element_class(self, c)
 
     def _from_list_with_zeros(self, lst_with_zeros):
         r"""
@@ -1835,10 +1825,8 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             if isinstance(self, OrderedMultisetPartitionsIntoSets_all_constraints):
                 P = OrderedMultisetPartitionsIntoSets(c.weight())
                 return P.element_class(P, c)
-            else:
-                return c
-        else:
-            raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)" % str(co))
+            return c
+        raise ValueError("ordered multiset partitions into sets do not have repeated entries within blocks (%s received)" % str(co))
 
     def __iter__(self):
         """
@@ -1946,14 +1934,15 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
         # slice by 'length'
         if "weight" in fc:
             return OrderedMultisetPartitionsIntoSets(fc["weight"], length=size, **self.constraints)
-        elif "alphabet" in fc and "size" in fc:
+        if "alphabet" in fc and "size" in fc:
             add_length = dict(self.constraints)
             add_length["length"] = size
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], fc["order"], **add_length)
 
         # slice by 'order'
         if "alphabet" in fc:
-            no_alpha = {k: v for (k, v) in self.constraints.items() if k != "alphabet"}
+            no_alpha = {k: v for k, v in self.constraints.items()
+                        if k != "alphabet"}
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], size, **no_alpha)
 
         # slice by 'size'
@@ -2027,7 +2016,12 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets(Integer(4))
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
             sage: C2 = OrderedMultisetPartitionsIntoSets(int(4))
             sage: C is C2
             True
@@ -2201,18 +2195,24 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets([1,1,4])
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets({1:2, 4:1})
             sage: C is C2
             True
+
         """
         self._X = X
         # sort the multiset
-        if all((k in ZZ and k > 0) for (k,v) in X):
-            self._Xtup = tuple([k for (k,v) in sorted(X) for _ in range(v)])
+        if all((k in ZZ and k > 0) for k, v in X):
+            self._Xtup = tuple([k for k, v in sorted(X) for _ in range(v)])
         else:
-            self._Xtup = tuple([k for (k,v) in sorted(X, key=str) for _ in range(v)])
+            self._Xtup = tuple([k for k, v in sorted(X, key=str) for _ in range(v)])
         OrderedMultisetPartitionsIntoSets.__init__(self, True)
 
     def _repr_(self):
@@ -2378,7 +2378,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
             sage: TestSuite(C).run()
         """
         self._X = X
-        self._Xtup = tuple(k for (k,v) in sorted(X) for _ in range(v))
+        self._Xtup = tuple(k for k, v in sorted(X) for _ in range(v))
         OrderedMultisetPartitionsIntoSets.__init__(self, True, weight=X, **constraints)
 
     def _repr_(self):
@@ -2414,7 +2414,12 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
         TESTS::
 
             sage: C = OrderedMultisetPartitionsIntoSets(3, 2)
-            sage: TestSuite(C).run()
+
+        We have to skip checking that elements are produced uniformly
+        at random by :meth:`random_element`, because this is not the
+        case.::
+
+            sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets([1,2,3], 2)
             sage: C is C2
@@ -2694,7 +2699,7 @@ def _is_finite(constraints):
     """
     if "weight" in constraints or "size" in constraints:
         return True
-    elif "alphabet" in constraints:
+    if "alphabet" in constraints:
         # Assume the alphabet is finite
         Bounds = set(["length", "max_length", "order", "max_order"])
         return Bounds.intersection(set(constraints)) != set()
@@ -2765,10 +2770,10 @@ def _base_iterator(constraints):
     """
     if "weight" in constraints:
         return _iterator_weight(constraints["weight"])
-    elif "size" in constraints:
+    if "size" in constraints:
         return _iterator_size(constraints["size"],
             constraints.get("length",None), constraints.get("alphabet",None))
-    elif "alphabet" in constraints:
+    if "alphabet" in constraints:
         A = constraints["alphabet"]
         # assumes `alphabet` is finite
         min_k = constraints.get("min_length", 0)
@@ -3315,8 +3320,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             breaks = tuple([0]+running_total([len(h) for h in t]))
             B,T = self._BT
             return self.element_class(self, (T(*[B(a) for a in _concatenate(t)]), breaks))
-        else:
-            raise ValueError("cannot convert %s into an element of %s" % (x, self))
+        raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
     def __contains__(self, x):
         """
@@ -3342,10 +3346,8 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         if isinstance(x, MinimajCrystal.Element):
             if x.parent() == self:
                 return True
-            else:
-                return list(x) in self._OMPs
-        else:
-            return x in self._OMPs
+            return list(x) in self._OMPs
+        return x in self._OMPs
 
     def from_tableau(self, t):
         r"""
@@ -3385,8 +3387,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         mu = _to_minimaj_blocks(t)
         if mu in self:
             return self(mu)
-        else:
-            raise ValueError("%s is not an element of %s" % (mu, self))
+        raise ValueError("%s is not an element of %s" % (mu, self))
 
     def val(self, q='q'):
         r"""

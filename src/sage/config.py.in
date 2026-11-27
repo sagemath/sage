@@ -1,0 +1,63 @@
+# In an editable install, these replace what (in a non-editable
+# install) would have been the installation path. The cython()
+# function needs them so that it can locate headers and such.
+MESON_SOURCE_ROOT = r"@MESON_SOURCE_ROOT@"
+MESON_BUILD_ROOT = r"@MESON_BUILD_ROOT@"
+
+VERSION = "@PACKAGE_VERSION@"
+
+# The path to the standalone maxima executable.
+MAXIMA = "@SAGE_MAXIMA@"
+
+# Set this to the empty string if your ECL can load maxima without
+# further prodding.
+MAXIMA_FAS = "@SAGE_MAXIMA_FAS@"
+MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@"
+
+# Set this to the empty string if your ECL can load Kenzo without further prodding.
+KENZO_FAS = @SAGE_KENZO_FAS@
+
+NTL_INCDIR = "@NTL_INCDIR@"
+NTL_LIBDIR = "@NTL_LIBDIR@"
+
+# Path to the ecl-config script
+ECL_CONFIG = "@SAGE_ECL_CONFIG@"
+
+# Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
+SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
+
+SAGE_ECMBIN = "@SAGE_ECMBIN@"
+
+# for sage_setup.setenv
+SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
+SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@"
+
+# Used in sage.repl.ipython_kernel.install
+THREEJS_DIR = @SAGE_THREEJS_DIR@
+
+# OpenMP flags, if available.
+OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
+OPENMP_CLIB = "@OPENMP_CLIB@"
+OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
+OPENMP_CXXLIB = "@OPENMP_CXXLIB@"
+
+# build-time feature flags
+defer_feature_checks = @DEFER_FEATURE_CHECKS@
+bliss_enabled = @BLISS_ENABLED@
+brial_enabled = @BRIAL_ENABLED@
+coxeter3_enabled = @COXETER3_ENABLED@
+eclib_enabled = @ECLIB_ENABLED@
+libbraiding_enabled = @LIBBRAIDING_ENABLED@
+libhomfly_enabled = @LIBHOMFLY_ENABLED@
+mcqd_enabled = @MCQD_ENABLED@
+meataxe_enabled = @MEATAXE_ENABLED@
+rankwidth_enabled = @RANKWIDTH_ENABLED@
+sirocco_enabled = @SIROCCO_ENABLED@
+tdlib_enabled = @TDLIB_ENABLED@
+
+
+def get_include_dirs():
+    from sage.misc.superseded import deprecation
+    deprecation(42525, "sage.config.get_include_dirs() has been moved to sage.misc.cython.get_include_dirs()")
+    from sage.misc.cython import get_include_dirs as _gid
+    return _gid()

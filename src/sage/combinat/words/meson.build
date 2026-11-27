@@ -12,7 +12,9 @@ py.install_sources(
   'shuffle_product.py',
   'suffix_trees.py',
   'word.py',
+  'word_char.pyx',
   'word_datatypes.pxd',
+  'word_datatypes.pyx',
   'word_generators.py',
   'word_infinite_datatypes.py',
   'word_options.py',
@@ -21,8 +23,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'word_char' : files('word_char.pyx'),
-  'word_datatypes' : files('word_datatypes.pyx'),
+  'word_char': files('word_char.pyx'),
+  'word_datatypes': files('word_datatypes.pyx'),
 }
 
 foreach name, pyx : extension_data

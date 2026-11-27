@@ -1,5 +1,5 @@
 r"""
-Catalog of Path Tableaux
+Catalog of path tableaux
 
 The ``path_tableaux`` object may be used to access examples of various path
 tableau objects currently implemented in Sage. Using tab-completion on this

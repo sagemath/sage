@@ -1,6 +1,8 @@
 # cython: wraparound=False, boundscheck=False
 # sage.doctest: needs sage.graphs
 r"""
+Reflection groups: auxiliary Cython functions
+
 This contains a few time-critical auxiliary cython functions for
 finite complex or real reflection groups.
 """
@@ -172,14 +174,12 @@ cdef class Iterator():
         if self.algorithm == "depth":
             if self.tracking_words:
                 return self.iter_words_depth()
-            else:
-                return self.iter_depth()
-        elif self.algorithm == "breadth":
+            return self.iter_depth()
+        if self.algorithm == "breadth":
             if self.tracking_words:
                 return self.iter_words_breadth()
-            else:
-                return self.iter_breadth()
-        elif self.algorithm == "parabolic":
+            return self.iter_breadth()
+        if self.algorithm == "parabolic":
             return self.iter_parabolic()
 
     def iter_depth(self):

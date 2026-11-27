@@ -35,8 +35,8 @@ class MesonEditable(Feature):
             sage: MesonEditable()._is_present()  # random
             FeatureTestResult('meson_editable', True)
         """
-        import sage
-        result = type(sage.__loader__).__module__ == '_sagemath_editable_loader'
+        from sage import __loader__ as ldr
+        result = (type(ldr).__module__ == "_sagemath_editable_loader")
         return FeatureTestResult(self, result)
 
 

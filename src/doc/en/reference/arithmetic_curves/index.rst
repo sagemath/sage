@@ -5,6 +5,7 @@ Elliptic curves
    :maxdepth: 1
 
    sage/schemes/elliptic_curves/constructor
+   sage/schemes/elliptic_curves/ell_edwards
    sage/schemes/elliptic_curves/jacobian
    sage/schemes/elliptic_curves/ell_point
    sage/schemes/elliptic_curves/ell_generic
@@ -25,6 +26,7 @@ Maps between them
    sage/schemes/elliptic_curves/hom_velusqrt
    sage/schemes/elliptic_curves/hom_scalar
    sage/schemes/elliptic_curves/hom_frobenius
+   sage/schemes/elliptic_curves/hom_fractional
    sage/schemes/elliptic_curves/isogeny_small_degree
    sage/schemes/elliptic_curves/mod_poly
 
@@ -109,22 +111,33 @@ Hyperelliptic curves
    sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field
    sage/schemes/hyperelliptic_curves/hyperelliptic_padic_field
    sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2
 
+   sage/schemes/hyperelliptic_curves/invariants
    sage/schemes/hyperelliptic_curves/mestre
-
    sage/schemes/hyperelliptic_curves/monsky_washnitzer
    sage/schemes/hyperelliptic_curves/hypellfrob
 
-   sage/schemes/hyperelliptic_curves/jacobian_generic
-   sage/schemes/hyperelliptic_curves/jacobian_g2
-   sage/schemes/hyperelliptic_curves/jacobian_homset
-   sage/schemes/hyperelliptic_curves/jacobian_morphism
-   sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils
-
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2
-   sage/schemes/hyperelliptic_curves/invariants
-   sage/schemes/hyperelliptic_curves/kummer_surface
-
    sage/interfaces/genus2reduction
+
+Jacobians of hyperelliptic curves
+------------------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/hyperelliptic_curves/jacobian_generic
+   sage/schemes/hyperelliptic_curves/jacobian_homset_generic
+   sage/schemes/hyperelliptic_curves/jacobian_homset_ramified
+   sage/schemes/hyperelliptic_curves/jacobian_homset_split
+   sage/schemes/hyperelliptic_curves/jacobian_homset_inert
+
+   sage/schemes/hyperelliptic_curves/jacobian_g2_generic
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_ramified
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_split
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_inert
+
+   sage/schemes/hyperelliptic_curves/jacobian_morphism
+
 
 .. include:: ../footer.txt

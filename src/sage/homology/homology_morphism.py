@@ -121,7 +121,7 @@ class InducedHomologyMorphism(Morphism):
         sage: g_star(a)
         -h_{1,0}
 
-        sage: T = S1.product(S1, is_mutable=False)
+        sage: T = S1.product(S1, immutable=True)
         sage: diag = Hom(S1,T).diagonal_morphism()
         sage: b,c = list(T.cohomology_ring().basis(1))
         sage: diag_c = diag.induced_homology_morphism(cohomology=True)

@@ -1,9 +1,16 @@
 r"""
-Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
+Sphinx configuration helpers for Sage documentation
+
+AUTHORS:
+
+- Matthias Koeppe, Kwankyu Lee (2022): initial version
+- Vincent Macri (2025-09-01): process_docstring_aliases
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,8 +20,8 @@ Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
 # ****************************************************************************
 
 from docutils import nodes
-from docutils.transforms import Transform
 from sphinx.ext.doctest import blankline_re
+from sphinx.transforms import SphinxTransform
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 default_role = 'math'
@@ -24,9 +31,52 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     """
     Change the docstrings for aliases to point to the original object.
     """
-    basename = name.rpartition('.')[2]
-    if hasattr(obj, '__name__') and obj.__name__ != basename:
-        docstringlines[:] = ['See :obj:`%s`.' % name]
+
+    if what not in ('function', 'method'):
+        # Alias detection doesn't make sense for modules.
+        # Alias handling is implemented for classes in:
+        # src/sage_docbuild/ext/sage_autodoc.py
+
+        # Since sage_autodoc is supposed to be replaced (issue #30893)
+        # we implement function/method alias handling here rather than
+        # where class alias handling is implemented.
+        return
+
+    if not hasattr(obj, '__name__'):
+        # obj has no __name__
+        # This usually happens with factory functions, which should have their
+        # own docstring anyway.
+        return  # Skip alias detection if __name__ is not present
+
+    obj_name = name.rpartition('.')[2]  # Unqualified name
+    original_name = obj.__name__
+
+    if obj_name == original_name or original_name.startswith('_'):
+        # If obj_name == original_name this is not an alias.
+
+        # If original_name starts with '_' then this is a public alias
+        # of a private function/method and so we keep the docstring.
+        return None
+
+    if what == 'method':
+        module = getattr(obj, '__module__', None)
+        qualname = getattr(obj, '__qualname__', None)
+        target = f'{module}.{qualname}' if module and qualname else original_name
+        # The target is fully qualified so that it resolves from any page;
+        # the tilde keeps the rendered text short ("alias of foo()").
+        docstringlines[:] = [f'alias of :meth:`~{target}`.']
+        return
+
+    # We now have `what == 'function'`
+
+    if original_name != '<lambda>':
+        docstringlines[:] = [f'alias of :func:`{original_name}`.']
+        return
+
+    # If original_name == '<lambda>' then the function is
+    # a lambda expression, hence not an alias of something
+    # with its own docstring.
+    return
 
 
 def process_directives(app, what, name, obj, options, docstringlines):
@@ -79,20 +129,6 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
             break
 
 
-def process_dollars(app, what, name, obj, options, docstringlines):
-    r"""
-    Replace dollar signs with backticks.
-
-    See sage.misc.sagedoc.process_dollars for more information.
-    """
-    if len(docstringlines) and name.find("process_dollars") == -1:
-        from sage.misc.sagedoc import process_dollars as sagedoc_dollars
-        s = sagedoc_dollars("\n".join(docstringlines))
-        lines = s.split("\n")
-        for i in range(len(lines)):
-            docstringlines[i] = lines[i]
-
-
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
     If we're including inherited members, omit their docstrings.
@@ -135,7 +171,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
         del docstringlines[len(lines)]
 
 
-class SagemathTransform(Transform):
+class SagemathTransform(SphinxTransform):
     """
     Transform for code-blocks.
 
@@ -146,22 +182,10 @@ class SagemathTransform(Transform):
     default_priority = 500
 
     def apply(self):
-        for node in self.document.traverse(nodes.literal_block):
+        for node in self.document.findall(nodes.literal_block):
             if node.get('language') is None and node.astext().startswith('sage:'):
                 node['language'] = 'ipycon'
                 source = node.rawsource
                 source = blankline_re.sub('', source)
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
-
-# This is only used by sage.misc.sphinxify
-
-
-def setup(app):
-    app.connect('autodoc-process-docstring', process_docstring_cython)
-    app.connect('autodoc-process-docstring', process_directives)
-    app.connect('autodoc-process-docstring', process_docstring_module_title)
-    app.connect('autodoc-process-docstring', process_dollars)
-    app.connect('autodoc-process-docstring', process_inherited)
-    app.connect('autodoc-process-docstring', skip_TESTS_block)
-    app.add_transform(SagemathTransform)

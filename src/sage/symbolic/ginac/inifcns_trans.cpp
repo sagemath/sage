@@ -379,7 +379,7 @@ static ex log_series(const ex &arg,
 	// maybe substitution of rel into arg fails because of a pole
 	try {
 		arg_pt = arg.subs(rel, subs_options::no_pattern);
-	} catch (pole_error) {
+	} catch (const pole_error&) {
 		must_expand_arg = true;
 	}
 	// or we are at the branch point anyways
@@ -407,7 +407,8 @@ static ex log_series(const ex &arg,
 			++extra_ord;
 		} while (!argser.is_terminating() && argser.nops()==1);
 
-		const symbol &s = ex_to<symbol>(rel.lhs());
+		const ex lhs = rel.lhs();
+		const symbol &s = ex_to<symbol>(lhs);
 		const ex &point = rel.rhs();
 		const numeric &num = argser.ldegree(s);
                 long n = num.to_long();
@@ -450,7 +451,8 @@ static ex log_series(const ex &arg,
 		// method:
 		// This is the branch cut: assemble the primitive series manually and
 		// then add the corresponding complex step function.
-		const symbol &s = ex_to<symbol>(rel.lhs());
+		const ex lhs = rel.lhs();
+		const symbol &s = ex_to<symbol>(lhs);
 		const ex &point = rel.rhs();
 		const symbol foo;
 		const ex replarg = series(log(arg), s==foo, order).subs(foo==point, subs_options::no_pattern);
@@ -668,7 +670,8 @@ static ex Li2_series(const ex &x, const relational &rel, int order, unsigned opt
 			// method:
 			// This is the branch cut: assemble the primitive series manually
 			// and then add the corresponding complex step function.
-			const symbol &s = ex_to<symbol>(rel.lhs());
+			const ex lhs = rel.lhs();
+			const symbol &s = ex_to<symbol>(lhs);
 			const ex point = rel.rhs();
 			const symbol foo;
 			epvector seq;

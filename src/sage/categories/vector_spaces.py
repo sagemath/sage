@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Vector Spaces
 """
@@ -146,9 +145,10 @@ class VectorSpaces(Category_module):
         structure: a bimodule morphism between two vector spaces is a
         vector space morphism.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 
@@ -184,7 +184,7 @@ class VectorSpaces(Category_module):
 
         _call_ = ModulesWithBasis.__dict__["_call_"]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return whether this category is abelian.
 

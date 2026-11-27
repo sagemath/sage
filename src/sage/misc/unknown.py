@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 The Unknown truth value
 
@@ -31,10 +30,9 @@ EXAMPLES::
     sage: def func(n):
     ....:     if n > 0:
     ....:         return True
-    ....:     elif n < 0:
+    ....:     if n < 0:
     ....:         return False
-    ....:     else:
-    ....:         return Unknown
+    ....:     return Unknown
 
 Using direct identification::
 
@@ -81,13 +79,16 @@ AUTHORS:
 # ****************************************************************************
 
 
+from typing import Any
+
+from sage.structure.richcmp import rich_to_bool, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import richcmp_method, rich_to_bool
 
 
 class UnknownError(TypeError):
     """
-    Raised whenever :class:`Unknown` is used in a boolean operation.
+    Raised whenever the :class:`UnknownClass` instance ``Unknown`` is used in a
+    boolean operation.
 
     EXAMPLES::
 
@@ -120,7 +121,7 @@ class UnknownClass(UniqueRepresentation):
 
         sage: TestSuite(Unknown).run()
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -129,7 +130,7 @@ class UnknownClass(UniqueRepresentation):
         """
         return "Unknown"
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         When evaluated in a boolean context ``Unknown`` raises a :exc:`UnknownError`.
 
@@ -146,7 +147,7 @@ class UnknownClass(UniqueRepresentation):
         """
         raise UnknownError('Unknown does not evaluate in boolean context')
 
-    def __and__(self, other):
+    def __and__(self, other: Any) -> Any:
         """
         The ``&`` logical operation.
 
@@ -164,12 +165,11 @@ class UnknownClass(UniqueRepresentation):
         """
         if other is False:
             return False
-        elif other is True or other is Unknown:
+        if other is True or other is Unknown:
             return self
-        else:
-            return NotImplemented
+        return NotImplemented
 
-    def __or__(self, other):
+    def __or__(self, other: Any) -> Any:
         """
         The ``|`` logical connector.
 
@@ -187,12 +187,11 @@ class UnknownClass(UniqueRepresentation):
         """
         if other is True:
             return True
-        elif other is False or other is Unknown:
+        if other is False or other is Unknown:
             return self
-        else:
-            return NotImplemented
+        return NotImplemented
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other: Any, op: int) -> bool:
         """
         Comparison of truth value.
 
@@ -215,8 +214,7 @@ class UnknownClass(UniqueRepresentation):
             return NotImplemented
         if other:
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, +1)
+        return rich_to_bool(op, +1)
 
 
-Unknown = UnknownClass()
+Unknown: UnknownClass = UnknownClass()

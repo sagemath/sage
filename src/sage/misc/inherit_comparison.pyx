@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Metaclass for inheriting comparison functions
 
@@ -52,7 +51,6 @@ cdef class InheritComparisonMetaclass(type):
 
     EXAMPLES::
 
-        sage: # needs sage.misc.cython
         sage: cython(
         ....: '''
         ....: cimport cython
@@ -94,7 +92,7 @@ cdef class InheritComparisonMetaclass(type):
 
 class InheritComparisonClasscallMetaclass(ClasscallMetaclass, InheritComparisonMetaclass):
     """
-    Combine :class:`ClasscallMetaclass` with
+    Combine :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass` with
     :class:`InheritComparisonMetaclass`.
 
     TESTS::

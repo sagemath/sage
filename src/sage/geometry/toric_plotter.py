@@ -3,7 +3,8 @@ Toric plotter
 
 This module provides a helper class :class:`ToricPlotter` for producing plots
 of objects related to toric geometry. Default plotting objects can be adjusted
-using :func:`options` and reset using :func:`reset_options`.
+using :func:`~sage.geometry.toric_plotter.options` and reset using
+:func:`~sage.geometry.toric_plotter.reset_options`.
 
 AUTHORS:
 
@@ -14,8 +15,8 @@ EXAMPLES:
 
 In most cases, this module is used indirectly, e.g. ::
 
-    sage: fan = toric_varieties.dP6().fan()                                             # needs palp sage.graphs
-    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
+    sage: fan = toric_varieties.dP6().fan()                                             # needs palp
+    sage: fan.plot()                                                                    # needs palp
     Graphics object consisting of 31 graphics primitives
 
 You may change default plotting options as follows::
@@ -25,12 +26,12 @@ You may change default plotting options as follows::
     sage: toric_plotter.options(show_rays=False)
     sage: toric_plotter.options("show_rays")
     False
-    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
+    sage: fan.plot()                                                                    # needs palp
     Graphics object consisting of 19 graphics primitives
     sage: toric_plotter.reset_options()
     sage: toric_plotter.options("show_rays")
     True
-    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
+    sage: fan.plot()                                                                    # needs palp
     Graphics object consisting of 31 graphics primitives
 """
 
@@ -115,7 +116,8 @@ class ToricPlotter(SageObject):
     INPUT:
 
     - ``all_options`` -- a :class:`dictionary <dict>`, containing any of the
-      options related to toric objects (see :func:`options`) and any other
+      options related to toric objects (see
+      :func:`~sage.geometry.toric_plotter.options`) and any other
       options that will be passed to lower level plotting functions
 
     - ``dimension`` -- integer (1, 2, or 3); dimension of toric objects to
@@ -132,10 +134,10 @@ class ToricPlotter(SageObject):
     directly. Instead, use plotting method of the object which you want to
     plot, e.g. ::
 
-        sage: fan = toric_varieties.dP6().fan()                                         # needs palp sage.graphs
-        sage: fan.plot()                                                                # needs palp sage.graphs sage.plot
+        sage: fan = toric_varieties.dP6().fan()                                         # needs palp
+        sage: fan.plot()                                                                # needs palp
         Graphics object consisting of 31 graphics primitives
-        sage: print(fan.plot())                                                         # needs palp sage.graphs sage.plot
+        sage: print(fan.plot())                                                         # needs palp
         Graphics object consisting of 31 graphics primitives
 
     If you do want to create your own plotting function for some toric
@@ -161,7 +163,7 @@ class ToricPlotter(SageObject):
     For example, the plot from the previous example can be obtained as
     follows::
 
-        sage: # needs palp sage.graphs sage.plot
+        sage: # needs palp
         sage: from sage.geometry.toric_plotter import ToricPlotter
         sage: options = dict()  # use default for everything
         sage: tp = ToricPlotter(options, fan.lattice().degree())
@@ -179,7 +181,7 @@ class ToricPlotter(SageObject):
     this case they can be passed to the constructor as an optional argument.
     In the example above, the toric plotter can be completely set up using ::
 
-        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())            # needs palp sage.graphs sage.plot
+        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())            # needs palp
 
     All options are exposed as attributes of toric plotters and can be modified
     after constructions, however you will have to manually call
@@ -378,7 +380,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_generators()                                                  # needs sage.plot
+            sage: tp.plot_generators()
             Graphics object consisting of 1 graphics primitive
         """
         generators = self.generators
@@ -427,7 +429,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
-            sage: tp.plot_labels("u", [(1.5,0)])                                        # needs sage.plot
+            sage: tp.plot_labels("u", [(1.5,0)])
             Graphics object consisting of 1 graphics primitive
         """
         result = Graphics()
@@ -459,7 +461,7 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_lattice()                                                     # needs sage.plot
+            sage: tp.plot_lattice()
             Graphics object consisting of 1 graphics primitive
         """
         if not self.show_lattice:
@@ -501,7 +503,7 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_points([(1,0), (0,1)])                                        # needs sage.plot
+            sage: tp.plot_points([(1,0), (0,1)])
             Graphics object consisting of 1 graphics primitive
         """
         return point(points, color=self.point_color, size=self.point_size,
@@ -523,7 +525,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_ray_labels()                                                  # needs sage.plot
+            sage: tp.plot_ray_labels()
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot_labels(self.ray_label,
@@ -542,7 +544,7 @@ class ToricPlotter(SageObject):
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_rays()                                                        # needs sage.plot
+            sage: tp.plot_rays()
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -582,14 +584,14 @@ class ToricPlotter(SageObject):
             sage: quadrant = Cone([(1,0), (0,1)])
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])                                             # needs sage.plot
+            sage: tp.plot_walls([quadrant])
             Graphics object consisting of 2 graphics primitives
 
         Let's also check that the truncating polyhedron is functioning
         correctly::
 
             sage: tp = ToricPlotter({"mode": "box"}, 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])                                             # needs sage.plot
+            sage: tp.plot_walls([quadrant])
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -677,12 +679,12 @@ class ToricPlotter(SageObject):
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_rays()                                                        # needs sage.plot
+            sage: tp.plot_rays()
             Traceback (most recent call last):
             ...
             AttributeError: 'ToricPlotter' object has no attribute 'rays'...
             sage: tp.set_rays([(0,1)])
-            sage: tp.plot_rays()                                                        # needs sage.plot
+            sage: tp.plot_rays()
             Graphics object consisting of 2 graphics primitives
         """
         d = self.dimension
@@ -752,7 +754,6 @@ def color_list(color, n):
 
     EXAMPLES::
 
-        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
         sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
@@ -833,9 +834,8 @@ def label_list(label, n, math_mode, index_set=None):
         index_set = range(n)
     if math_mode:
         label = label.strip("$")
-        return list("$%s_{%d}$" % (label, i) for i in index_set)
-    else:
-        return list("%s_%d" % (label, i) for i in index_set)
+        return ["$%s_{%d}$" % (label, i) for i in index_set]
+    return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):
@@ -846,7 +846,7 @@ def options(option=None, **kwds):
 
         This function provides access to global default options. Any of these
         options can be overridden by passing them directly to plotting
-        functions. See also :func:`reset_options`.
+        functions. See also :func:`~sage.geometry.toric_plotter.reset_options`.
 
     INPUT:
 
@@ -904,8 +904,8 @@ def options(option=None, **kwds):
         in particular you should plot the lattice on your own
         (:meth:`~ToricPlotter.plot_lattice` will use box mode which is likely
         to be unsuitable). While this method may not be suitable for general
-        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties.
-        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field`
+        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties
+        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
     Round
         The cut-off regions is a sphere centered at the origin.
@@ -997,10 +997,9 @@ def options(option=None, **kwds):
 
         sage: toric_plotter.options(wall_color='grey')
     """
-    global _options
     if option is None and not kwds:
         return copy(_options)
-    elif option is not None and not kwds:
+    if option is not None and not kwds:
         try:
             return _options[option]
         except KeyError:
@@ -1072,12 +1071,13 @@ def sector(ray1, ray2, **extra_options):
     EXAMPLES::
 
         sage: from sage.geometry.toric_plotter import sector
-        sage: sector((1,0), (0,1))                                                      # needs sage.symbolic
+        sage: sector((1,0), (0,1))
         Graphics object consisting of 1 graphics primitive
-        sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
+        sage: sector((3,2,1), (1,2,3))
         Graphics3d Object
     """
-    from sage.functions.all import arccos, arctan2
+    from sage.functions.trig import acos as arccos
+    from sage.functions.trig import arctan2
 
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)
@@ -1091,12 +1091,11 @@ def sector(ray1, ray2, **extra_options):
         if phi2 - phi1 > pi:
             phi1, phi2 = phi2, phi1 + 2 * pi
         return disk((0,0), r, (phi1, phi2), **extra_options)
-    else:
-        # Plot a polygon, 30 vertices per radian.
-        vertices_per_radian = 30
-        n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
-        dr = (ray2 - ray1) / n
-        points = (ray1 + i * dr for i in range(n + 1))
-        points = [r / pt.norm() * pt for pt in points]
-        points.append(vector(RDF, 3))
-        return polygon(points, **extra_options)
+    # Plot a polygon, 30 vertices per radian.
+    vertices_per_radian = 30
+    n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
+    dr = (ray2 - ray1) / n
+    points = (ray1 + i * dr for i in range(n + 1))
+    points = [r / pt.norm() * pt for pt in points]
+    points.append(vector(RDF, 3))
+    return polygon(points, **extra_options)

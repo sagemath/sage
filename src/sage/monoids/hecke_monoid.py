@@ -35,7 +35,7 @@ def HeckeMonoid(W):
     .. SEEALSO::
 
         - :class:`CoxeterGroups`
-        - :class:`CoxeterGroups.ParentMethods.simple_projections`
+        - :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.simple_projections`
         - :class:`IwahoriHeckeAlgebra`
 
     EXAMPLES::

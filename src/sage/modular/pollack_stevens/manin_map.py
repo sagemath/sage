@@ -10,6 +10,7 @@ provides basic arithmetic and right action of matrices.
 
 EXAMPLES::
 
+    sage: # needs eclib
     sage: E = EllipticCurve('11a')
     sage: phi = E.pollack_stevens_modular_symbol()
     sage: phi
@@ -43,12 +44,15 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.continued_fraction import convergents
-from .sigma0 import Sigma0
-from .fund_domain import t00, t10, t01, t11, M2Z
+from typing import Self
+
 from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.continued_fraction import convergents
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import coercion_model
+
+from .fund_domain import M2Z, t00, t01, t10, t11
+from .sigma0 import Sigma0
 
 
 def unimod_matrices_to_infty(r, s):
@@ -155,8 +159,7 @@ def unimod_matrices_from_infty(r, s):
             v.append(M2Z([-b, (-1) ** (j + 1) * a, -d, (-1) ** (j + 1) * c]))
             # The matrix connecting two consecutive convergents is added on
         return v
-    else:
-        return []
+    return []
 
 
 class ManinMap:
@@ -690,7 +693,7 @@ class ManinMap:
             D[ky] = self(gamma * ky) * gamma
         return self.__class__(self._codomain, self._manin, D, check=False)
 
-    def normalize(self):
+    def normalize(self) -> Self:
         r"""
         Normalize every value of ``self`` -- e.g., reduce each value's
         `j`-th moment modulo `p^{N-j}`.
@@ -776,6 +779,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -800,7 +804,7 @@ class ManinMap:
                 psi[g] = psi_g
             return self.__class__(self._codomain, self._manin,
                                   psi, check=False).normalize()
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             S0N = Sigma0(self._manin.level())
             psi = self._right_action(S0N([1, 0, 0, ell]))
             for a in range(1, ell):
@@ -808,8 +812,7 @@ class ManinMap:
             if self._manin.level() % ell != 0:
                 psi += self._right_action(S0N([ell, 0, 0, 1]))
             return psi.normalize()
-        else:
-            raise ValueError('Algorithm must be either "naive" or "prep"')
+        raise ValueError('Algorithm must be either "naive" or "prep"')
 
     def p_stabilize(self, p, alpha, V):
         r"""
@@ -828,6 +831,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: f = phi._map
@@ -846,5 +850,4 @@ class ManinMap:
             # construction functor in order to scale by something
             # outside the base ring.
             D[g] = W(self._eval_sl2(g) - (self(pmat * g) * pmat).scale(scalar))
-        ans = self.__class__(W, manin, D, check=False)
-        return ans
+        return self.__class__(W, manin, D, check=False)

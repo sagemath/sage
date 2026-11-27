@@ -5,10 +5,11 @@ py.install_sources(
   'picosat.py',
   'sat_lp.py',
   'satsolver.pxd',
+  'satsolver.pyx',
   subdir: 'sage/sat/solvers',
 )
 
-extension_data = {'satsolver' : files('satsolver.pyx')}
+extension_data = {'satsolver': files('satsolver.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

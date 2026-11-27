@@ -9,52 +9,19 @@ AUTHORS:
 - Alex Ghitza <aghitza@alum.mit.edu> (2009-04-17)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
-
-
-def is_Hypersurface(self):
-    """
-    Return ``True`` if ``self`` is a hypersurface, i.e. an object of the type
-    :class:`ProjectiveHypersurface` or :class:`AffineHypersurface`.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.hypersurface import is_Hypersurface
-        sage: R.<x, y, z> = ZZ[]
-        sage: H = ProjectiveHypersurface(x*z + y^2)
-        sage: is_Hypersurface(H)
-        doctest:warning...
-        DeprecationWarning: The function is_Hypersurface is deprecated; use 'isinstance(..., (ProjectiveHypersurface, AffineHypersurface))' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-
-    ::
-
-        sage: H = AffineHypersurface(x*z + y^2)
-        sage: is_Hypersurface(H)
-        True
-
-    ::
-
-        sage: H = ProjectiveSpace(QQ, 5)
-        sage: is_Hypersurface(H)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Hypersurface is deprecated; use 'isinstance(..., (ProjectiveHypersurface, AffineHypersurface))' instead.")
-    return isinstance(self, (ProjectiveHypersurface, AffineHypersurface))
 
 
 class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):

@@ -52,7 +52,7 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None,
 
         sage: from sage.graphs.graph_generators_pyx import RandomGNP
         sage: D = RandomGNP(10, .2, directed=True, seed=0)
-        sage: D.num_verts()
+        sage: D.n_vertices()
         10
         sage: D.edges(sort=True, labels=False)
         [(0, 3), (0, 6), (1, 7), (1, 9), (4, 6), (4, 7), (5, 4), (5, 6),
@@ -87,8 +87,8 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None,
 
     cdef int i, j
     edges = ((i, j) for i in range(n)
-                 for j in range((0 if directed else i + 1), n)
-                 if (i != j or loops) and random() < pp)
+             for j in range((0 if directed else i + 1), n)
+             if (i != j or loops) and random() < pp)
 
     return GT([range(n), edges], format='vertices_and_edges',
               loops=directed and loops, name=name, immutable=immutable)

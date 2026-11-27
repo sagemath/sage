@@ -87,7 +87,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
       sage: set([ [1], [2] ])
       Traceback (most recent call last):
       ...
-      TypeError: unhashable type: 'list'
+      TypeError: ...unhashable type: 'list'...
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
@@ -274,8 +274,6 @@ be negative. Use range to construct the list `[10, 7, 4, 1, -2]`.
 
 .. SEEALSO::
 
-    - :func:`xrange`: returns an iterator rather than building a list,
-      (only for Python2, replaced by range in Python 3).
     - :func:`srange`: like range but with Sage integers; see below.
     - :func:`xsrange`: like xrange but with Sage integers.
 
@@ -765,7 +763,7 @@ appear once and must be immutable::
     sage: d = {[1,2,3] : 12}
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
 Another way to add items to a dictionary is with the ``update()`` method which
 updates the dictionary from another dictionary::
@@ -1198,7 +1196,7 @@ Functions are defined using the *def* statement, and values are
 returned using the *return* keyword::
 
     sage: def f(x):
-    ....:     return x*x
+    ....:     return x * x
 
 ::
 
@@ -1210,8 +1208,7 @@ Functions can be recursive::
     sage: def fib(n):
     ....:     if n <= 1:
     ....:         return 1
-    ....:     else:
-    ....:         return fib(n-1) + fib(n-2)
+    ....:     return fib(n - 1) + fib(n - 2)
 
 ::
 

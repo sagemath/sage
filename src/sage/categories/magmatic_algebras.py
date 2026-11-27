@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Non-unital non-associative algebras
 """
@@ -199,10 +198,9 @@ class MagmaticAlgebras(Category_over_base_ring):
                     return self._product_from_product_on_basis_multiply
     #                return self._module_morphism(self._module_morphism(self.product_on_basis, position = 0, codomain=self),
     #                                                                                          position = 1)
-                elif hasattr(self, "product_by_coercion"):
+                if hasattr(self, "product_by_coercion"):
                     return self.product_by_coercion
-                else:
-                    return NotImplemented
+                return NotImplemented
 
             # Provides a product using the product_on_basis by calling linear_combination only once
             def _product_from_product_on_basis_multiply( self, left, right ):
@@ -227,7 +225,8 @@ class MagmaticAlgebras(Category_over_base_ring):
             class ParentMethods:
                 def to_finite_dimensional_algebra(self, names='e', assume_associative=True, assume_unital=True):
                     r"""
-                    Return ``self`` as a :class:`sage.algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
+                    Return ``self`` as a
+                    :class:`~sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
 
                     This forgets the indexing of the basis, flattening the
                     elements into vectors.

@@ -76,7 +76,6 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: type(t.element())                                                     # needs sage.libs.ntl
             <... 'sage.rings.fraction_field_FpT.FpTElement'>
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<t> = FunctionField(GF(131101))
             sage: t.element()
             t
@@ -356,8 +355,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         if all:
             return [self._parent(r) for r in self._x.sqrt(all=True)]
-        else:
-            return self._parent(self._x.sqrt())
+        return self._parent(self._x.sqrt())
 
     cpdef bint is_nth_power(self, n) noexcept:
         r"""
@@ -377,7 +375,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in Lemma
-        3 of [GiTr1996]_.
+        3 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -385,7 +383,6 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(3))
             sage: f = (x+1)/(x-1)
             sage: f.is_nth_power(1)
@@ -429,7 +426,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Corollary 3 of [GiTr1996]_.
+        Corollary 3 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -474,7 +471,6 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: K.<t> = FunctionField(QQ)
             sage: f = (t+1) / (t^2 - 1/3)
             sage: f.factor()
@@ -489,7 +485,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         P = self.parent()
         F = self._x.factor()
         from sage.structure.factorization import Factorization
-        return Factorization([(P(a),e) for a,e in F], unit=F.unit())
+        return Factorization([(P(a), e) for a, e in F], unit=F.unit())
 
     def inverse_mod(self, I):
         """

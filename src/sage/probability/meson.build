@@ -1,12 +1,13 @@
 py.install_sources(
   '__init__.py',
   'all.py',
+  'probability_distribution.pyx',
   'random_variable.py',
   subdir: 'sage/probability',
 )
 
 extension_data = {
-  'probability_distribution' : files('probability_distribution.pyx'),
+  'probability_distribution': files('probability_distribution.pyx'),
 }
 
 foreach name, pyx : extension_data

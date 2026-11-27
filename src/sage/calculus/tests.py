@@ -119,7 +119,7 @@ No problems here::
     sage: integrate(exp(1-x^2),x)
     1/2*sqrt(pi)*erf(x)*e
     sage: integrate(sin(x^2),x)
-    1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
+    1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) - 2*sqrt(2)*imag_part(erf((-1)^(1/4)*x)) + 2*sqrt(2)*real_part(erf((-1)^(1/4)*x)))
 
     sage: integrate((1-x^2)^n,x)  # long time
     x*hypergeometric((1/2, -n), (3/2,), x^2*exp_polar(2*I*pi))
@@ -204,7 +204,8 @@ Maple documentation::
     sage: f = exp(-x^2)*log(x)
     sage: f.nintegral(x, 0, 999)
     (-0.87005772672831..., 7.5584...e-10, 567, 0)
-    sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # long time  # todo: maple can do this
+    sage: ans = integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # long time  # random - ignore giac stderr output # todo: maple can do this
+    sage: ans  # long time
     integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
     sage: integral(integral(x*y^2, x, 0, y), y, -2, 2)
     32/5

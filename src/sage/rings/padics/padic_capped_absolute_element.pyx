@@ -25,7 +25,7 @@ include "CA_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "transcendantal.c":
+cdef extern from "transcendental.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -207,7 +207,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             7-adic Ring with capped absolute precision 10
 
         Note that reduction of ``c`` dropped to the precision of the unit part
-        of ``7^2``, see :meth:`_mod_`::
+        of ``7^2``, see ``_mod_``::
 
             sage: R(7^2).unit_part()
             1 + O(7^8)
@@ -232,7 +232,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
@@ -477,7 +477,6 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm='newton')   # indirect doctest

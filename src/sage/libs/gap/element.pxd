@@ -8,6 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.libs.gmp.types cimport mpz_t
 from sage.libs.gap.gap_includes cimport Obj, UInt
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, ModuleElement, RingElement
@@ -15,7 +16,7 @@ from sage.structure.element cimport Element, ModuleElement, RingElement
 cdef Obj make_gap_list(sage_list) except NULL
 cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL
 cdef Obj make_gap_record(sage_dict) except NULL
-cdef Obj make_gap_integer(sage_int) except NULL
+cdef Obj make_gap_integer(x) except NULL
 cdef Obj make_gap_string(sage_string) except NULL
 
 cdef GapElement make_any_gap_element(parent, Obj obj)
@@ -39,6 +40,8 @@ cdef class GapElement(RingElement):
     # the pointer to the GAP object (memory managed by GASMAN)
     cdef Obj value
 
+    cdef bint _check_contains(self, Element other) except -2
+
     # comparison
     cdef bint _compare_by_id
     cdef bint _compare_equal(self, Element other) except -2
@@ -57,7 +60,7 @@ cdef class GapElement(RingElement):
     cpdef GapElement deepcopy(self, bint mut)
 
 cdef class GapElement_Integer(GapElement):
-    pass
+    cdef inline int mpz_ro(self, mpz_t)
 
 cdef class GapElement_Rational(GapElement):
     pass

@@ -1,16 +1,16 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Virtual Crystals
+Virtual crystals
 
 These are the crystals that are subsets of a larger ambient crystal with
 virtual crystal operators.
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-10-16): Initial implementation
+- Travis Scrimshaw (2013-10-16): initial implementation
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,12 +22,12 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.subcrystal import Subcrystal
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.sets.family import Family
 
 
@@ -218,7 +218,7 @@ class VirtualCrystal(Subcrystal):
         Subcrystal.__init__(self, ambient, contained, generators,
                             cartan_type, index_set, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -232,7 +232,7 @@ class VirtualCrystal(Subcrystal):
         """
         return "Virtual crystal of {} of type {}".format(self._ambient, self._cartan_type)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 
@@ -319,7 +319,7 @@ class VirtualCrystal(Subcrystal):
             P = self.parent()
             sf = P._scaling_factors[i]
             for j in P._virtualization[i]:
-                s += [j]*sf
+                s += [j] * sf
             ret = self.value.e_string(s)
             if ret is None:
                 return None
@@ -344,7 +344,7 @@ class VirtualCrystal(Subcrystal):
             P = self.parent()
             sf = P._scaling_factors[i]
             for j in P._virtualization[i]:
-                s += [j]*sf
+                s += [j] * sf
             ret = self.value.f_string(s)
             if ret is None:
                 return None

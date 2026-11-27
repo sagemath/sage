@@ -303,10 +303,9 @@ cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     cdef uint64_t * p2 = (<uint64_t **> b)[0]
     if p1[0] > p2[0]:
         return 1
-    elif p1[0] == p2[0]:
+    if p1[0] == p2[0]:
         return 1 if p1[1] > p2[1] else -1
-    else:
-        return -1
+    return -1
 
 cdef int is_induced_admissible64(hypergraph h1, hypergraph * h2_induced, int n, hypergraph tmp1) noexcept:
     r"""
@@ -360,16 +359,16 @@ cdef class SubHypergraphSearch:
         self.points1 = H1._points
         self.points2 = H2._points
         self.induced = induced
-        cdef int n1 = H1.num_points()
-        cdef int n2 = H2.num_points()
+        cdef int n1 = H1.n_points()
+        cdef int n2 = H2.n_points()
 
-        if n2>64:
-            raise RuntimeError("H2 has {}>64 points".format(n2))
+        if n2 > 64:
+            raise RuntimeError(f"H2 has {n2}>64 points")
 
-        self.h1   = h_init(n1,H1._blocks)
-        self.h2   = h_init(n2,H2._blocks)
-        self.tmp1 = h_init(n1,H1._blocks) # No actual need to fill them,
-        self.tmp2 = h_init(n2,H2._blocks) # only allocate the memory
+        self.h1   = h_init(n1, H1._blocks)
+        self.h2   = h_init(n2, H2._blocks)
+        self.tmp1 = h_init(n1, H1._blocks)  # No actual need to fill them,
+        self.tmp2 = h_init(n2, H2._blocks)  # only allocate the memory
 
         self.step = <int *> sig_malloc((n2+1)*sizeof(int))
 

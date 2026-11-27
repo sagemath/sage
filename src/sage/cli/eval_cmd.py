@@ -1,8 +1,12 @@
-import argparse
+from __future__ import annotations
 
-from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse
 from sage.all import sage_globals
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
+    from sage.cli.options import CliOptions
 
 
 class EvalCmd:
@@ -37,9 +41,5 @@ class EvalCmd:
         Execute the given command.
         """
         code = preparse(self.options.command)
-        try:
-            eval(compile(code, "<cmdline>", "exec"), sage_globals())
-        except Exception as e:
-            print(f"An error occurred while executing the command: {e}")
-            return 1
+        eval(compile(code, "<cmdline>", "exec"), sage_globals())
         return 0

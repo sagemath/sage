@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Word Quasi-symmetric functions
+Word quasi-symmetric functions
 
 AUTHORS:
 
@@ -121,12 +121,11 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         if display == 'tight':
             disp = disp.replace(", ", ",")
             return disp
-        elif display == 'compact':
+        if display == 'compact':
             disp = disp.replace("}, ", ".").replace("}", "").replace("{", "")
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _repr_words(self, osp):
         """
@@ -158,11 +157,10 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         disp = repr(list(osp.to_packed_word()))
         if display == 'tight':
             return disp.replace(", ", ",")
-        elif display == 'compact':
+        if display == 'compact':
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _coerce_map_from_(self, R):
         r"""
@@ -386,7 +384,8 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
     Note that expressions above are output in terms of ordered set partitions,
     even when input as packed words. Output as packed words can be achieved
-    by modifying the global options. (See :meth:`OrderedSetPartitions.options`
+    by modifying the global options. (See
+    :attr:`~sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions.options`
     for further details.)::
 
         sage: M.options.objects = "words"
@@ -471,8 +470,14 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: A = algebras.WQSym(QQ)
             sage: TestSuite(A).run()  # long time
+
+            sage: M = algebras.WQSym(ZZ).M()
+            sage: M.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
     def _repr_(self):
@@ -498,7 +503,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.M()
 
-    _shorthands = tuple(['M', 'X', 'C', 'Q', 'Phi'])
+    _shorthands = ('M', 'X', 'C', 'Q', 'Phi')
 
     # add options to class
     class options(GlobalOptions):
@@ -734,12 +739,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -761,7 +766,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.reversed()): c for A, c in self},
                                     remove_zeros=False)
 
             def coalgebraic_complement(self):
@@ -770,12 +775,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -798,7 +803,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement()): c for A, c in self},
                                     remove_zeros=False)
 
             def star_involution(self):
@@ -807,12 +812,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -834,7 +839,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     X = Characteristic
@@ -894,8 +899,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         .. TODO::
 
-            Experiments suggest that :meth:`algebraic_complement`,
-            :meth:`coalgebraic_complement`, and :meth:`star_involution`
+            Experiments suggest that
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`,
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`,
+            and :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
             should have reasonable formulas on the C basis; at least
             the coefficients of the outputs on any element of the C
             basis seem to be always `0, 1, -1`.
@@ -1239,12 +1246,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1280,7 +1287,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1288,12 +1295,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1328,7 +1335,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1336,12 +1343,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -1363,7 +1370,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     Q = StronglyCoarser
@@ -1633,7 +1640,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return self.monomial(x)
             xlist = [(j, (k == 0))
                      for part in x
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # xlist is a list of the form
             # [(e_1, s_1), (e_2, s_2), ..., (e_n, s_n)],
             # where e_1, e_2, ..., e_n are the entries of the parts of
@@ -1643,7 +1650,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             m = max(max(part) for part in x)  # The degree of x
             ylist = [(m + j, (k == 0))
                      for part in y
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # ylist is like xlist, but for y instead of x, and with
             # a shift by m.
 
@@ -1748,7 +1755,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))
-                                      for (left, right) in deconcatenates)
+                                      for left, right in deconcatenates)
 
         class Element(WQSymBasis_abstract.Element):
             def algebraic_complement(self):
@@ -1757,12 +1764,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1797,7 +1804,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1805,12 +1812,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1845,7 +1852,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1853,12 +1860,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -1880,7 +1887,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
-                return Phi._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Phi._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                       remove_zeros=False)
 
     Phi = StronglyFiner
@@ -2041,18 +2048,6 @@ class WQSymBases(Category_realization_of_parent):
             """
             return False
 
-        def is_commutative(self):
-            """
-            Return whether ``self`` is commutative.
-
-            EXAMPLES::
-
-                sage: M = algebras.WQSym(ZZ).M()
-                sage: M.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
-
         def one_basis(self):
             """
             Return the index of the unit.
@@ -2199,7 +2194,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`coalgebraic_complement`, :meth:`star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
             EXAMPLES:
 
@@ -2262,7 +2257,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def coalgebraic_complement(self):
@@ -2353,7 +2348,7 @@ class WQSymBases(Category_realization_of_parent):
             definition of the coefficients `c_{A, P}`. In fact, both
             formulas are particular cases of the general formula for
             involutions described in the documentation of
-            :meth:`algebraic_complement`.
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`.
 
             If we let `\pi` be the canonical projection
             `WQSym \to QSym`, then each `f \in WQSym` satisfies
@@ -2361,7 +2356,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`algebraic_complement`, :meth:`star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
             EXAMPLES:
 
@@ -2427,7 +2422,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def star_involution(self):
@@ -2437,8 +2432,8 @@ class WQSymBases(Category_realization_of_parent):
 
             The star involution is the composition of the
             algebraic complement involution
-            (:meth:`algebraic_complement`) with the coalgebraic
-            complement involution (:meth:`coalgebraic_complement`).
+            (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`) with the coalgebraic
+            complement involution (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`).
             The composition can be performed in either order, as the
             involutions commute.
 
@@ -2483,7 +2478,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
             EXAMPLES:
 
@@ -2555,7 +2550,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed().complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed().complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def to_quasisymmetric_function(self):
@@ -2597,4 +2592,4 @@ class WQSymBases(Category_realization_of_parent):
             M = QuasiSymmetricFunctions(self.parent().base_ring()).Monomial()
             MW = self.parent().realization_of().M()
             return M.sum_of_terms((i.to_composition(), coeff)
-                                  for (i, coeff) in MW(self))
+                                  for i, coeff in MW(self))

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Example of a finite dimensional algebra with basis
@@ -63,7 +62,9 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         r"""
         Return the unit of this algebra.
 
-        .. SEEALSO:: :meth:`AlgebrasWithBasis.ParentMethods.one_basis`
+        .. SEEALSO::
+
+            :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`
 
         EXAMPLES::
 
@@ -77,7 +78,9 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         r"""
         Return the product of the two basis elements indexed by ``w1`` and ``w2``.
 
-        .. SEEALSO:: :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        .. SEEALSO::
+
+            :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`
 
         EXAMPLES::
 
@@ -107,15 +110,14 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         """
         if w1+w2 in self._nonzero_products:
             return self.monomial(self._nonzero_products[w1+w2])
-        else:
-            return self.zero()
+        return self.zero()
 
     @cached_method
     def algebra_generators(self):
         r"""
         Return algebra generators for this algebra.
 
-        .. SEEALSO:: :meth:`Algebras.ParentMethods.algebra_generators`.
+        .. SEEALSO:: :meth:`sage.categories.magmatic_algebras.MagmaticAlgebras.ParentMethods.algebra_generators`.
 
         EXAMPLES::
 

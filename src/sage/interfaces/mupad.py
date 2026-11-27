@@ -94,11 +94,15 @@ TESTS::
 
 import os
 
-from .expect import (Expect, ExpectElement, ExpectFunction,
-                    FunctionElement)
+from sage.env import DOT_SAGE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.env import DOT_SAGE
 from sage.misc.instancedoc import instancedoc
 
 COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj' % DOT_SAGE
@@ -290,8 +294,7 @@ command-line version of MuPAD.
         """
         if t is None:
             return float(str(self('time()')))/1000
-        else:
-            return float(str(self('time() - %s' % float(t))))/1000
+        return float(str(self('time() - %s' % float(t))))/1000
 
     def set(self, var, value):
         """
@@ -504,8 +507,7 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         name = self._name+"::"+attrname
         if P.eval('type(%s)' % name) == "DOM_DOMAIN":
             return MupadElement(P, name)
-        else:
-            return MupadFunctionElement(self._obj, name)
+        return MupadFunctionElement(self._obj, name)
 
     def _tab_completion(self):
         """
@@ -536,8 +538,7 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         P = self._obj.parent()
         if P.eval('type(%s)' % (self._obj.name())).strip() == "DOM_DOMAIN":
             return P.function_call(self._name, list(args))
-        else:
-            return P.function_call(self._name, [self._obj] + list(args))
+        return P.function_call(self._name, [self._obj] + list(args))
 
 
 @instancedoc
@@ -570,13 +571,11 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         try:
             if P.eval('type(%s::%s)' % (self.name(), attrname)).strip() == "DOM_DOMAIN":
                 return P.new("%s::%s" % (self.name(), attrname))
-            else:
-                return MupadFunctionElement(self, name)
+            return MupadFunctionElement(self, name)
         except RuntimeError as err:
             if 'Unknown slot' in str(err):
                 return MupadFunctionElement(self, attrname)
-            else:
-                raise err
+            raise err
 
     def _tab_completion(self):
         """

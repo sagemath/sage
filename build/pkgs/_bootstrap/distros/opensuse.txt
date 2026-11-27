@@ -2,4 +2,9 @@
 autoconf
 automake
 libtool
-pkgconfig
+# Python packages needed for configure and build
+python3
+python3-devel
+python3-setuptools
+pkgconfig(liblzma)
+xz

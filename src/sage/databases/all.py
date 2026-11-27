@@ -34,7 +34,7 @@ EXAMPLES::
     sage: oeis
     The On-Line Encyclopedia of Integer Sequences (https://oeis.org/)
 
-    sage: SymbolicData()
+    sage: SymbolicData() # optional - database_symbolic_data
     SymbolicData with ... ideals
 """
 

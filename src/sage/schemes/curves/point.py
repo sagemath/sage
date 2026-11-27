@@ -42,7 +42,7 @@ class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
     """
     Point of a projective curve over a field.
     """
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return whether this point is a singular point of the projective curve it is on.
 
@@ -98,7 +98,7 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
         """
         return self.codomain().tangents(self)
 
-    def is_ordinary_singularity(self):
+    def is_ordinary_singularity(self) -> bool:
         r"""
         Return whether this point is an ordinary singularity of the projective
         plane curve it is on.
@@ -127,7 +127,7 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
         """
         return self.codomain().is_ordinary_singularity(self)
 
-    def is_transverse(self, D):
+    def is_transverse(self, D) -> bool:
         r"""
         Return whether the intersection of the curve ``D`` at this point with
         the curve this point is on is transverse or not.
@@ -250,7 +250,7 @@ class IntegralProjectivePlaneCurvePoint_finite_field(ProjectivePlaneCurvePoint_f
 
 class AffineCurvePoint_field(SchemeMorphism_point_affine_field):
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return whether this point is a singular point of the affine curve it is on.
 
@@ -311,7 +311,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         """
         return self.codomain().tangents(self)
 
-    def is_ordinary_singularity(self):
+    def is_ordinary_singularity(self) -> bool:
         r"""
         Return whether this point is an ordinary singularity of the affine
         plane curve it is on.
@@ -336,7 +336,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         """
         return self.codomain().is_ordinary_singularity(self)
 
-    def is_transverse(self, D):
+    def is_transverse(self, D) -> bool:
         r"""
         Return whether the intersection of the curve ``D`` at this point with
         the curve this point is on is transverse or not.

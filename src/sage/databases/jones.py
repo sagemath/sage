@@ -73,7 +73,6 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.subset import powerset
-from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
 
@@ -112,7 +111,6 @@ class JonesDatabase:
         with open(path + "/" + filename) as f:
             data = f.read()
         data = data.replace("^", "**")
-        x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)
         s = tuple(S)
         if s in self.root:

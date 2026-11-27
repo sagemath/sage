@@ -158,13 +158,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             if self._rational_point is not None:
                 if point or obstruction:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
             if self._local_obstruction is not None:
                 if point or obstruction:
                     return False, self._local_obstruction
-                else:
-                    return False
+                return False
             if (not point) and self._finite_obstructions == [] and \
                self._infinite_obstructions == []:
                 if obstruction:
@@ -350,7 +348,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism=False); (p, i)
+            sage: p, i = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
@@ -376,6 +374,15 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ...
             ValueError: The conic self (=Projective Conic Curve over Rational Field defined
             by x^2 + y^2) is not smooth, hence does not have a parametrization.
+
+        The point must be on the conic (:issue:`34440`)::
+
+            sage: C = Conic(QQ, [1, 1, -1])
+            sage: C.parametrization([1, 1, 0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Coordinates [1, 1, 0] do not define a point on
+            Projective Conic Curve over Rational Field defined by x^2 + y^2 - z^2
         """
         if (self._parametrization is not None) and not point:
             par = self._parametrization
@@ -384,7 +391,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 raise ValueError("The conic self (=%s) is not smooth, hence does not have a parametrization." % self)
             if point is None:
                 point = self.rational_point()
-            point = Sequence(point)
+            point = Sequence(self(point))
             Q = PolynomialRing(QQ, 'x,y')
             x, y = Q.gens()
             gens = self.ambient_space().gens()

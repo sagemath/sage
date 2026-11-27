@@ -10,7 +10,11 @@ def compiler_directives(profile: bool):
         auto_pickle=False,
         # Do not create __test__ dictionary automatically from docstrings
         autotestdict=False,
-        binding=False,
+        # When enabled, functions will be bound to an instance when looked up as a
+        # class attribute (hence the name) and will emulate the attributes of
+        # Python functions, including introspections like argument names and
+        # annotations
+        binding=True,
         c_api_binop_methods=True,
         # Do not check for division by 0 (this is about 35% quicker than with check)
         cdivision=True,
@@ -20,9 +24,6 @@ def compiler_directives(profile: bool):
         fast_getattr=True,
         # Use Python 3 (including source code semantics) for module compilation
         language_level="3",
-        legacy_implicit_noexcept=True,
-        # Enable support for late includes (make declarations in Cython code available to C include files)
-        preliminary_late_includes_cy28=True,
         # Add hooks for Python profilers into the compiled C code
         profile=profile,
     )

@@ -15,7 +15,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
     cdef _mod_two(self)
     cdef _pickle_version0(self)
     cdef _unpickle_version0(self, data)
-    cpdef _export_as_string(self, int base=?)
+    cpdef _export_as_string(self, int base=?, bint comma=?)
     cdef void set_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, const mpz_t value) noexcept
     cdef void set_unsafe_double(self, Py_ssize_t i, Py_ssize_t j, double value) noexcept
     cdef inline void get_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, mpz_t value) noexcept
@@ -24,9 +24,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     # HNF Modn
     cdef int _hnf_modn(Matrix_integer_dense self, Matrix_integer_dense res,
-            unsigned int det) except -1
+                       unsigned int det) except -1
     cdef int* _hnf_modn_impl(Matrix_integer_dense self, unsigned int det,
-            Py_ssize_t nrows, Py_ssize_t ncols) except NULL
+                             Py_ssize_t nrows, Py_ssize_t ncols) except NULL
 
     cdef Matrix_integer_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols)
 

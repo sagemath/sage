@@ -38,6 +38,25 @@ cdef class SubstitutionMap(SageObject):
         return new_Expression_from_GEx(expr._parent,
                                        expr._gobj.subs_map(self._gmapobj, options))
 
+    def items(self):
+        """
+        Return the expression pairs in this substitution map.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression import make_map
+            sage: make_map({x: x+1}).items()
+            [(x, x + 1)]
+        """
+        from sage.symbolic.ring import SR
+        cdef GExMapIter iterator = self._gmapobj.begin()
+        pairs = []
+        while iterator != self._gmapobj.end():
+            pairs.append((new_Expression_from_GEx(SR, iterator.pair().first),
+                          new_Expression_from_GEx(SR, iterator.pair().second)))
+            iterator.inc()
+        return pairs
+
     def _repr_(self):
         """
         Return the string representation.
@@ -86,7 +105,7 @@ cpdef SubstitutionMap make_map(subs_dict):
         SubsMap
     """
     cdef GExMap smap
-    for k, v in subs_dict.iteritems():
+    for k, v in subs_dict.items():
         smap.insert(make_pair((<Expression>k)._gobj,
                               (<Expression>v)._gobj))
     return new_SubstitutionMap_from_GExMap(smap)

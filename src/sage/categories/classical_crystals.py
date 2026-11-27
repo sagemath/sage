@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Classical Crystals
@@ -65,6 +64,8 @@ class ClassicalCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -186,8 +187,7 @@ class ClassicalCrystals(Category_singleton):
                 x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
-            else:
-                return sum(coeff * f(c) for c, coeff in u)
+            return sum(coeff * f(c) for c, coeff in u)
 
         def character(self, R=None):
             """
@@ -288,6 +288,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -317,6 +319,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -371,6 +375,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 

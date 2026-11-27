@@ -1,11 +1,10 @@
-# sage_setup: distribution = sagemath-objects
 """
 Utility functions for namespace packages in Sage
 """
 from importlib import import_module
 
 
-def install_doc(package, doc):
+def install_doc(package: str, doc: str) -> None:
     """
     Install the docstring ``doc`` to the package.
 
@@ -22,7 +21,7 @@ def install_doc(package, doc):
     pkg.getdoc = lambda: doc  # enable help(sage.package)
 
 
-def install_dict(package, dic):
+def install_dict(package: str, dic: dict[str, str]) -> None:
     """
     Install ``dic`` to the ``__dict__`` of the package.
 

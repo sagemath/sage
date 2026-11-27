@@ -115,6 +115,17 @@ cpdef DisjointSet(arg):
         sage: DisjointSet(SP) == DisjointSet(5)
         True
 
+    The parts of the set partition are preserved (see :issue:`39714`)::
+
+        sage: s = SetPartition([[0, 1, 2, 3]])
+        sage: DisjointSet(s)
+        {{0, 1, 2, 3}}
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+        sage: s = SetPartition([[1, 3], [2, 5], [4]])
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+
     TESTS::
 
         sage: DisjointSet(0)
@@ -143,16 +154,24 @@ cpdef DisjointSet(arg):
         sage: DisjointSet([{}, {}])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'dict'
+        TypeError: ...unhashable type: 'dict'...
     """
     if isinstance(arg, (Integer, int)):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
-    elif isinstance(arg, SetPartition):
-        return DisjointSet(arg.base_set())
-    else:
-        return DisjointSet_of_hashables(arg)
+    if isinstance(arg, SetPartition):
+        d = DisjointSet_of_hashables(arg.base_set())
+        for part in arg:
+            it = iter(part)
+            try:
+                first = next(it)
+            except StopIteration:
+                continue
+            for x in it:
+                d.union(first, x)
+        return d
+    return DisjointSet_of_hashables(arg)
 
 cdef class DisjointSet_class(SageObject):
     r"""
@@ -186,7 +205,7 @@ cdef class DisjointSet_class(SageObject):
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
-        for l in (<dict?>self.root_to_elements_dict()).itervalues():
+        for l in (<dict?>self.root_to_elements_dict()).values():
             l.sort()
             res.append('{%s}' % ', '.join(repr(u) for u in l))
         res.sort()
@@ -206,7 +225,7 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return iter((<dict?>self.root_to_elements_dict()).itervalues())
+        return iter((<dict?>self.root_to_elements_dict()).values())
 
     def __richcmp__(self, other, int op):
         r"""
@@ -286,14 +305,14 @@ cdef class DisjointSet_class(SageObject):
 
             sage: d = DisjointSet(5)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 3, 4])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 3, 4])
 
         ::
 
             sage: d.union(2, 4)
             sage: d.union(1, 3)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 1, 2])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 1, 2])
         """
         return DisjointSet, (self._nodes.degree,), self.__getstate__()
 
@@ -500,7 +519,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_find`.
+            use ``OP_find``.
         """
         card = self._nodes.degree
         if i < 0 or i >= card:
@@ -542,7 +561,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_join`.
+            use ``OP_join``.
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:
@@ -730,7 +749,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{0}, {1}, {2}, {3}, {4}}
             sage: d = _
             sage: d.__reduce__()
-            (<built-in function DisjointSet>,
+            (<cyfunction DisjointSet at ...>,
              ([0, 1, 2, 3, 4],),
              [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)])
 
@@ -739,7 +758,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(2, 4)
             sage: d.union(1, 3)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>,
+            (<cyfunction DisjointSet at ...>,
              ([0, 1, 2, 3, 4],),
              [(0, 0), (1, 1), (2, 2), (3, 1), (4, 2)])
         """

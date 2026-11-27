@@ -26,9 +26,6 @@ David Avis, avis at cs dot mcgill dot edu.
 Dependencies
 ------------
 
-To build and install the "plrs" binary, a multi-thread version of lrs,
-need to first install the full Boost package ("sage -i boost").
-
 If the package finds an MPI C++ compiler script (mpic++), it also builds
 and installs the "mplrs" binary, a distributed version of lrs using MPI.
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kirillov-Reshetikhin Crystals
+Kirillov-Reshetikhin crystals
 """
 
 # ****************************************************************************
@@ -375,27 +375,24 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
     if ct.is_untwisted_affine():
         if ct.type() == 'A':
             return KR_type_A(ct, r, s)
-        elif ct.type() == 'D':
+        if ct.type() == 'D':
             if r < ct.rank()-2:
                 return KR_type_vertical(ct, r, s)
-            elif r in {ct.rank()-2, ct.rank()-1}:
+            if r in {ct.rank()-2, ct.rank()-1}:
                 return KR_type_spin(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.type() == 'B':
             if r < ct.rank()-1:
                 return KR_type_vertical(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Bn(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.type() == 'C':
             if r < ct.rank()-1:
                 return KR_type_C(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Cn(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct == CartanType(['E', 6, 1]) and r in [1, 6, 2]:
             return KR_type_E6(ct, r, s)
         elif ct == CartanType(['E', 7, 1]) and r in [7]:
@@ -405,17 +402,16 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
     else:
         if ct.dual().type() == 'B':
             return KR_type_vertical(ct, r, s)
-        elif ct.type() == 'BC':
+        if ct.type() == 'BC':
             return KR_type_box(ct, r, s)
-        elif ct.dual().type() == 'BC':
+        if ct.dual().type() == 'BC':
             return KR_type_A2(ct, r, s)
-        elif ct.dual().type() == 'C':
+        if ct.dual().type() == 'C':
             if r < ct.rank()-1:
                 return KR_type_box(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Dn_twisted(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.dual().type() == 'G':
             if r == 1:
                 return KR_type_D_tri1(ct, s)
@@ -1586,8 +1582,8 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
         sage: G = K.digraph()
         sage: Gdual = Kdual.digraph()
         sage: f = {0:2, 1:1, 2:0}
-        sage: Gnew = DiGraph(); Gnew.add_vertices(Gdual.vertices(sort=True)); Gnew.add_edges([(u,v,f[i]) for (u,v,i) in Gdual.edges(sort=True)])
-        sage: G.is_isomorphic(Gnew, edge_labels = True)
+        sage: Gnew = DiGraph(); Gnew.add_vertices(Gdual.vertices(sort=True)); Gnew.add_edges([(u,v,f[i]) for u, v, i in Gdual.edges(sort=True)])
+        sage: G.is_isomorphic(Gnew, edge_labels=True)
         True
     """
 
@@ -1996,7 +1992,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
             {1: 2, 2: 2, 3: 2, 4: 1}
         """
         C = self.cartan_type().classical()
-        p = {i: 2 for i in C.index_set()}
+        p = dict.fromkeys(C.index_set(), 2)
         if C.type() == 'B':
             p[C.rank()] = 1
         return p
@@ -2283,7 +2279,7 @@ class KR_type_Bn(KirillovReshetikhinGenericCrystal):
             {1: 2, 2: 2, 3: 1}
         """
         C = self.cartan_type().classical()
-        p = {i: 2 for i in C.index_set()}
+        p = dict.fromkeys(C.index_set(), 2)
         p[C.rank()] = 1
         return p
 
@@ -4045,7 +4041,7 @@ class AmbientRetractMap(Map):
         Map.__init__(self, Hom(ambient, base, SetsWithPartialMaps()))
 
         if similarity_factor_domain is None:
-            similarity_factor_domain = {i: 1 for i in index_set}
+            similarity_factor_domain = dict.fromkeys(index_set, 1)
         if automorphism is None:
             automorphism = lambda i: i
 

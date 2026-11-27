@@ -49,11 +49,11 @@ SAGE_SPKG_CONFIGURE([openssl], [
       sage_spkg_install_openssl=yes
   ])
 ], [dnl REQUIRED-CHECK
-  AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
   AC_REQUIRE([SAGE_SPKG_CONFIGURE_CURL])
-  dnl openssl is a dependency only of python3 and curl; so if we use system python3 and curl,
+  dnl openssl is a dependency only of curl; so if we use system curl,
   dnl we do not require it. (In particular, we do not need a specific version.)
-  AS_IF([test x$sage_spkg_install_python3 = xno -a x$sage_spkg_install_curl = xno], [
+  dnl We always use system python3 now.
+  AS_IF([test x$sage_spkg_install_curl = xno], [
     sage_require_openssl=no
   ])
 ])

@@ -5,7 +5,7 @@ SAGE_SPKG_CONFIGURE([gap], [
   m4_pushdef([GAP_MINVER],["4.13.0"])
   m4_pushdef([GAP_LTVER],["5.0.0"])
 
-  SAGE_SPKG_DEPCHECK([ncurses readline zlib], [
+  SAGE_SPKG_DEPCHECK([ncurses readline], [
     AC_PATH_PROG(GAP, gap)
     AS_IF([test -n "${GAP}"], [
       AC_MSG_CHECKING([for gap version >= GAP_MINVER, < GAP_LTVER])

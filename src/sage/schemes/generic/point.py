@@ -2,11 +2,11 @@
 Points on schemes
 """
 
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2006 William Stein
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -69,18 +69,10 @@ class SchemePoint(Element):
         """
         return "Point on %s" % self.__S
 
+
 ########################################################
 # Topological points on a scheme
 ########################################################
-
-
-def is_SchemeTopologicalPoint(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38296,
-                "The function is_SchemeTopologicalPoint is deprecated; "
-                "use 'isinstance(..., SchemeTopologicalPoint)' instead.")
-    return isinstance(x, SchemeTopologicalPoint)
-
 
 class SchemeTopologicalPoint(SchemePoint):
     """
@@ -190,7 +182,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this scheme point.
 
@@ -205,7 +197,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             'Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field'
         """
         return "Point on %s defined by the %s" % (self.scheme(),
-                                                self.prime_ideal())
+                                                  self.prime_ideal())
 
     def prime_ideal(self):
         """
@@ -221,7 +213,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return self.__P
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 

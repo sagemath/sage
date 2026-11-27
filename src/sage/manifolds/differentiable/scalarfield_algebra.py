@@ -244,7 +244,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     Since the Symbolic Ring is the base ring for the algebra ``CM``, the
     coercion of a symbolic expression ``s`` is performed by the operation
     ``s*CM.one()``, which invokes the reflected multiplication operator
-    :meth:`sage.manifolds.scalarfield.ScalarField._rmul_`. If the symbolic
+    ``ScalarField._rmul_``. If the symbolic
     expression does not involve any chart coordinate, the outcome is a
     constant scalar field::
 
@@ -424,12 +424,11 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
                          # the coercion map
-        elif isinstance(other, DiffScalarFieldAlgebra):
+        if isinstance(other, DiffScalarFieldAlgebra):
             return self._domain.is_subset(other._domain)
-        elif isinstance(other, ChartFunctionRing):
+        if isinstance(other, ChartFunctionRing):
             return self._domain.is_subset(other._chart.domain())
-        else:
-            return False
+        return False
 
     #### End of methods required for any Parent
 

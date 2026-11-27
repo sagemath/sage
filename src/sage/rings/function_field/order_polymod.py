@@ -23,9 +23,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from .ideal import FunctionFieldIdeal
 from .ideal_polymod import (
-    FunctionFieldIdeal_polymod,
     FunctionFieldIdeal_global,
-    FunctionFieldIdealInfinite_polymod
+    FunctionFieldIdeal_polymod,
+    FunctionFieldIdealInfinite_polymod,
 )
 from .order import FunctionFieldMaximalOrder, FunctionFieldMaximalOrderInfinite
 
@@ -35,13 +35,12 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
     Maximal orders of extensions of function fields.
     """
 
-    def __init__(self, field, ideal_class=FunctionFieldIdeal_polymod):
+    def __init__(self, field, ideal_class=FunctionFieldIdeal_polymod) -> None:
         """
         Initialize.
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -50,6 +49,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         FunctionFieldMaximalOrder.__init__(self, field, ideal_class)
 
         from sage.modules.free_module_element import vector
+
         from .function_field_polymod import FunctionField_integral
 
         if isinstance(field, FunctionField_integral):
@@ -105,7 +105,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         assert phi.degree() == n
 
         gen_vec = self._coordinate_vector(gen)
-        g = gen_vec.parent().gen(0) # x
+        g = gen_vec.parent().gen(0)  # x
         gen_vec_pow = [g]
         for i in range(n):
             g = mul_vecs(g, gen_vec)
@@ -118,7 +118,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         for g in basis:
             for c in W.coordinate_vector(to(g), check=False):
                 if not c.is_zero():
-                    supp += [f for f,_ in c.denominator().factor()]
+                    supp += [f for f, _ in c.denominator().factor()]
         supp = set(supp)
 
         self._kummer_gen = gen
@@ -136,7 +136,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 - x*Y + x^2 + 1)
             sage: O = L.maximal_order()
@@ -163,7 +162,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         f = F(f)
         # check if f is in this order
         if not all(e in self._module_base_ring for e in self.coordinate_vector(f)):
-            raise TypeError( "{} is not an element of {}".format(f, self) )
+            raise TypeError("{} is not an element of {}".format(f, self))
 
         return f
 
@@ -179,7 +178,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order(); O
@@ -195,7 +193,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         There is no check if the resulting object is really an ideal::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.equation_order()
@@ -219,7 +216,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order()
@@ -234,10 +230,10 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             defined by y^2 + 6*x^3 + 6
         """
         d = lcm([v.denominator() for v in vecs])
-        vecs = [[(d*c).numerator() for c in v] for v in vecs]
+        vecs = [[(d * c).numerator() for c in v] for v in vecs]
         return self._ideal_from_vectors_and_denominator(vecs, d, check=False)
 
-    def _ideal_from_vectors_and_denominator(self, vecs, d=1, check=True):
+    def _ideal_from_vectors_and_denominator(self, vecs, d=1, check: bool = True):
         """
         Return an ideal generated as a module by vectors divided by ``d`` over
         the polynomial ring underlying the rational function field.
@@ -253,7 +249,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order()
@@ -270,13 +265,14 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             defined by y^2 + 6*x^3 + 6
         """
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         R = self._module_base_ring._ring
 
-        d = R(d) # make it sure that d is in the polynomial ring
+        d = R(d)  # make it sure that d is in the polynomial ring
 
-        if check and not d.is_one(): # check if d is true denominator
+        if check and not d.is_one():  # check if d is true denominator
             M = []
             g = d
             for v in vecs:
@@ -286,7 +282,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                         break
                 else:
                     M += list(v)
-                    continue # for v in vecs
+                    continue  # for v in vecs
                 mat = matrix(R, vecs)
                 break
             else:
@@ -304,7 +300,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         i = 0
         while i < mat.nrows() and mat.row(i).is_zero():
             i += 1
-        hnf = mat[i:] # remove zero rows
+        hnf = mat[i:]  # remove zero rows
 
         return self.ideal_monoid().element_class(self, hnf, d)
 
@@ -318,7 +314,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 - 4)
@@ -353,7 +348,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 else:
                     gens = (gens,)
         F = self.function_field()
-        mgens = [b*F(g) for g in gens for b in self.basis()]
+        mgens = [b * F(g) for g in gens for b in self.basis()]
         return self.ideal_with_gens_over_base(mgens)
 
     def polynomial(self):
@@ -362,7 +357,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.equation_order()
@@ -384,7 +378,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.equation_order()
@@ -408,7 +401,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: O = L.maximal_order()
@@ -418,23 +410,28 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             y
             sage: O.gen(2)
             (1/(x^3 + x^2 + x))*y^2
+
+        TESTS::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
+            sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
+            sage: O = L.maximal_order()
             sage: O.gen(3)
             Traceback (most recent call last):
             ...
             IndexError: there are only 3 generators
         """
-        if not ( n >= 0 and n < self.ngens() ):
+        if not (0 <= n < self.ngens()):
             raise IndexError("there are only {} generators".format(self.ngens()))
 
         return self._basis[n]
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of the order.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order()
@@ -449,7 +446,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -470,7 +466,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -519,7 +514,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -536,7 +530,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -557,7 +550,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -571,12 +563,9 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         rows = []
         for u in self.basis():
-            row = []
-            for v in self.basis():
-                row.append((u*v).trace())
+            row = [(u * v).trace() for v in self.basis()]
             rows.append(row)
-        T = matrix(rows)
-        return T
+        return matrix(rows)
 
     @cached_method
     def decomposition(self, ideal):
@@ -589,7 +578,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: o = K.maximal_order()
@@ -618,7 +606,9 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             Use Kummer's theorem to shortcut this code if possible, like as
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
         """
-        from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
+        from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import (
+            FiniteDimensionalAlgebra,
+        )
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
@@ -641,7 +631,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # Given an element of the function field expressed as a K-vector times
         # the basis of this order, construct the n n-by-n matrices that show
         # how to multiply by each of the basis elements.
-        matrices = [matrix(o, [self.coordinate_vector(b1*b2) for b1 in self.basis()])
+        matrices = [matrix(o, [self.coordinate_vector(b1 * b2)
+                               for b1 in self.basis()])
                     for b2 in self.basis()]
 
         # Let O denote the maximal order self. When reduced modulo p,
@@ -666,10 +657,10 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 P._prime_below = ideal
                 P._relative_degree = n
                 P._ramification_index = 1
-                P._beta = [1] + [0]*(n-1)
+                P._beta = [1] + [0] * (n - 1)
             else:
                 Q = q.basis_matrix().apply_map(lambda e: e.lift())
-                P = self.ideal(p, *Q*vector(self.basis()))
+                P = self.ideal(p, *Q * vector(self.basis()))
 
                 # Now we compute an element beta in O but not in pO such that
                 # beta*P in pO.
@@ -691,7 +682,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 r = q
                 index = 1
                 while True:
-                    rq = r*q
+                    rq = r * q
                     if rq == r:
                         break
                     r = rq
@@ -728,13 +719,12 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
         sage: L.maximal_order_infinite()                                                # needs sage.rings.finite_rings
         Maximal infinite order of Function field in y defined by y^2 + y + (x^2 + 1)/x
     """
-    def __init__(self, field, category=None):
+    def __init__(self, field, category=None) -> None:
         """
         Initialize.
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
             sage: O = F.maximal_order_infinite()
@@ -759,7 +749,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -784,7 +773,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
         O = F.base_field().maximal_order_infinite()
         coordinates = self.coordinate_vector(f)
         if not all(c in O for c in coordinates):
-            raise TypeError("%r is not an element of %r" % (f,self))
+            raise TypeError("%r is not an element of %r" % (f, self))
 
         return f
 
@@ -795,7 +784,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -804,7 +792,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -821,7 +808,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -836,18 +822,17 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             ...
             IndexError: there are only 3 generators
         """
-        if not ( n >= 0 and n < self.ngens() ):
+        if not (0 <= n < self.ngens()):
             raise IndexError("there are only {} generators".format(self.ngens()))
 
         return self._basis[n]
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of the order.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -866,7 +851,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
@@ -876,7 +860,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -886,7 +869,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
         """
         if len(gens) == 1:
             gens = gens[0]
-            if type(gens) not in (list,tuple):
+            if not isinstance(gens, (list, tuple)):
                 gens = (gens,)
         mgens = [g * b for g in gens for b in self._basis]
         return self.ideal_with_gens_over_base(mgens)
@@ -924,6 +907,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             # factors removed. For a fractional ideal, we also need to find
             # the largest factor x^m that divides the denominator.
             from sage.matrix.special import block_matrix
+
             from .hermite_form_polynomial import reversed_hermite_form
 
             d = ideal.denominator()
@@ -943,12 +927,12 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             while True:
                 k = x * k
 
-                h2 = block_matrix([[h],[k]])
+                h2 = block_matrix([[h], [k]])
                 reversed_hermite_form(h2)
                 i = 0
                 while i < h2.nrows() and h2.row(i).is_zero():
                     i += 1
-                h2 = h2[i:] # remove zero rows
+                h2 = h2[i:]  # remove zero rows
 
                 if h2 == h1:
                     break
@@ -969,7 +953,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -979,7 +962,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             defined by s^2 + x*s + x^3 + x
         """
         F = self.function_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
         iO = iF.maximal_order()
         iI = iO.ideal_with_gens_over_base([to_iF(b) for b in I.gens_over_base()])
         return iI
@@ -991,7 +974,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
@@ -1003,7 +985,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1032,7 +1013,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             defined by y^2 + y + (x^2 + 1)/x, 1, 2)]
         """
         F = self.function_field()
-        iF,from_iF,to_iF = F._inversion_isomorphism()
+        iF, from_iF, to_iF = F._inversion_isomorphism()
 
         x = iF.base_field().gen()
         iO = iF.maximal_order()
@@ -1051,7 +1032,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1060,9 +1040,8 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             defined by y^2 + y + (x^2 + 1)/x
         """
         T = self._codifferent_matrix()
-        codiff_gens = []
-        for c in T.inverse().columns():
-            codiff_gens.append(sum([ci*bi for ci,bi in zip(c,self.basis())]))
+        codiff_gens = [sum([ci * bi for ci, bi in zip(c, self.basis())])
+                       for c in T.inverse().columns()]
         codiff = self.ideal_with_gens_over_base(codiff_gens)
         return ~codiff
 
@@ -1073,7 +1052,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1085,12 +1063,9 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         rows = []
         for u in self.basis():
-            row = []
-            for v in self.basis():
-                row.append((u*v).trace())
+            row = [(u * v).trace() for v in self.basis()]
             rows.append(row)
-        T = matrix(rows)
-        return T
+        return matrix(rows)
 
     def coordinate_vector(self, e):
         """
@@ -1105,7 +1080,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1134,13 +1108,12 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
         Maximal order of Function field in y defined by y^4 + x*y + 4*x + 1
     """
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize.
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -1162,7 +1135,6 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2 * (x^2 + x + 1)^2)
             sage: o = K.maximal_order()
@@ -1225,7 +1197,6 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: o = K.maximal_order()
@@ -1247,15 +1218,14 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         # Fp is isomorphic to the residue field o/p
         Fp, fr, to = o._residue_field_global(p)
-        P,X = Fp['X'].objgen()
+        P, X = Fp['X'].objgen()
 
-        V = Fp**n # Ob = O/pO
+        V = Fp**n  # Ob = O/pO
 
         mtable = []
         for i in range(n):
-            row = []
-            for j in range(n):
-                row.append( V([to(e) for e in self._mtable[i][j]]) )
+            row = [V([to(e) for e in self._mtable[i][j]])
+                   for j in range(n)]
             mtable.append(row)
 
         if p not in self._kummer_places:
@@ -1278,8 +1248,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 qgen = sum(fr(c[i]) * gen_vec_pow[i] for i in range(len(c)))
 
                 I = matrix.identity(o._ring, n)
-                for i in range(n):
-                    gen_vecs.append(mul_vecs(qgen,I[i]))
+                gen_vecs.extend(mul_vecs(qgen, I[i]) for i in range(n))
                 prime = self._ideal_from_vectors_and_denominator(gen_vecs)
 
                 # Compute an element beta in O but not in pO. How to find beta
@@ -1288,9 +1257,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
                 # p and qgen generates the prime; modulo pO, qgenb generates the prime
                 qgenb = [to(qgen[i]) for i in range(n)]
-                m = []
-                for i in range(n):
-                    m.append(sum(qgenb[j] * mtable[i][j] for j in range(n)))
+                m = [sum(qgenb[j] * mtable[i][j] for j in range(n))
+                     for i in range(n)]
                 beta = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
 
                 prime.is_prime.set_cache(True)
@@ -1314,9 +1282,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             Ob = matrix.identity(Fp, n)
 
             def bar(I):  # transfer to O/pO
-                m = []
-                for v in I._hnf:
-                    m.append([to(e) for e in v])
+                m = [[to(e) for e in v] for v in I._hnf]
                 h = matrix(m).echelon_form()
                 return cut_last_zero_rows(h)
 
@@ -1327,7 +1293,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
             def cut_last_zero_rows(h):
                 i = h.nrows()
-                while i > 0 and h.row(i-1).is_zero():
+                while i > 0 and h.row(i - 1).is_zero():
                     i -= 1
                 return h[:i]
 
@@ -1350,23 +1316,21 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 # compute a basis of Jb/Ib
                 sJb = Jb.row_space()
                 sIb = Ib.row_space()
-                sJbsIb,proj_sJbsIb,lift_sJbsIb = sJb.quotient_abstract(sIb)
+                sJbsIb, proj_sJbsIb, lift_sJbsIb = sJb.quotient_abstract(sIb)
                 supplement_basis = [lift_sJbsIb(v) for v in sJbsIb.basis()]
 
                 m = []
-                for b in V.gens(): # basis of Ob = O/pO
-                    b_row = [] # row vector representation of the map a -> a*b
+                for b in V.gens():  # basis of Ob = O/pO
+                    b_row = []  # row vector representation of the map a -> a*b
                     for a in supplement_basis:
-                        b_row += lift_sJbsIb(proj_sJbsIb( mul_vec(a,b) ))
+                        b_row += lift_sJbsIb(proj_sJbsIb(mul_vec(a, b)))
                     m.append(b_row)
-                return matrix(Fp,n,m).left_kernel().basis_matrix()
+                return matrix(Fp, n, m).left_kernel().basis_matrix()
 
             # Algorithm 6.2.5 of [Coh1993]
             def mul(Ib, Jb):
-                m = []
-                for v1 in Ib:
-                    for v2 in Jb:
-                        m.append(mul_vec(v1,v2))
+                m = [mul_vec(v1, v2)
+                     for v1 in Ib for v2 in Jb]
                 h = matrix(m).echelon_form()
                 return cut_last_zero_rows(h)
 
@@ -1376,24 +1340,24 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 return cut_last_zero_rows(h)
 
             # K_1, K_2, ...
-            Lb = IpOb = bar(Ip+pO)
+            Lb = IpOb = bar(Ip + pO)
             Kb = [Lb]
             while not Lb.is_zero():
-                Lb = mul(Lb,IpOb)
+                Lb = mul(Lb, IpOb)
                 Kb.append(Lb)
 
             # J_1, J_2, ...
-            Jb = [Kb[0]] + [div(Kb[j],Kb[j-1]) for j in range(1,len(Kb))]
+            Jb = [Kb[0]] + [div(Kb[j], Kb[j - 1]) for j in range(1, len(Kb))]
 
             # H_1, H_2, ...
-            Hb = [div(Jb[j],Jb[j+1]) for j in range(len(Jb)-1)] + [Jb[-1]]
+            Hb = [div(Jb[j], Jb[j + 1]) for j in range(len(Jb) - 1)] + [Jb[-1]]
 
             q = Fp.order()
 
             def split(h):
                 # VsW represents O/H as a vector space
-                W = h.row_space() # H/pO
-                VsW,to_VsW,lift_to_V = V.quotient_abstract(W)
+                W = h.row_space()  # H/pO
+                VsW, to_VsW, lift_to_V = V.quotient_abstract(W)
 
                 # compute the space K of elements in O/H that satisfy a^q-a=0
                 l = [lift_to_V(b) for b in VsW.basis()]
@@ -1403,8 +1367,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
                 if K.dimension() == 0:
                     return []
-                if K.dimension() == 1: # h is prime
-                    return [(liftb(h),VsW.dimension())] # relative degree
+                if K.dimension() == 1:  # h is prime
+                    return [(liftb(h), VsW.dimension())]  # relative degree
 
                 # choose a such that a^q - a is 0 but a is not in Fp
                 for a in K.basis():
@@ -1417,7 +1381,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
                 a = lift_to_V(a)
                 # compute the minimal polynomial of a
-                m = [to_VsW(Ob[0])] # 1 in VsW
+                m = [to_VsW(Ob[0])]  # 1 in VsW
                 apow = a
                 while True:
                     v = to_VsW(apow)
@@ -1435,22 +1399,22 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 # of them. We set f to the first factor and g to the product of the rest.
                 fac = minpol.factor()
                 f = fac[0][0]
-                g = (fac/f).expand()
-                d,u,v = f.xgcd(g)
+                g = (fac / f).expand()
+                d, u, v = f.xgcd(g)
 
-                assert d == 1, "Not relatively prime {} and {}".format(f,g)
+                assert d == 1, "Not relatively prime {} and {}".format(f, g)
 
                 # finally, idempotent!
-                e = lift_to_V(sum([c1*c2 for c1,c2 in zip(u*f,m)]))
+                e = lift_to_V(sum([c1 * c2 for c1, c2 in zip(u * f, m)]))
 
-                h1 = add(h, matrix([mul_vec(e,Ob[i]) for i in range(n)]))
-                h2 = add(h, matrix([mul_vec(Ob[0]-e,Ob[i]) for i in range(n)]))
+                h1 = add(h, matrix([mul_vec(e, Ob[i]) for i in range(n)]))
+                h2 = add(h, matrix([mul_vec(Ob[0] - e, Ob[i]) for i in range(n)]))
 
                 return split(h1) + split(h2)
 
             decomposition = []
             for i in range(len(Hb)):
-                index = i + 1 # Hb starts with H_1
+                index = i + 1  # Hb starts with H_1
                 for prime, degree in split(Hb[i]):
                     # Compute an element beta in O but not in pO. How to find beta
                     # is explained in Section 4.8.3 of [Coh1993]. We keep beta

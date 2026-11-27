@@ -7,6 +7,99 @@ Sage.
 
 
 .. index::
+   pair: calculus; assumptions
+
+Assumptions
+===========
+
+By default a symbolic variable is as general as possible: it may stand
+for a positive, negative, or complex value. Many calculus results hold
+only under extra hypotheses, and Sage will not apply them unless you
+say so. Use :func:`~sage.symbolic.assumptions.assume` to attach a
+hypothesis to a variable, ``assumptions()`` to list what is currently
+assumed, and :func:`~sage.symbolic.assumptions.forget` to remove
+assumptions again. For example, `\sqrt{x^2} = x` holds only for
+positive `x`::
+
+    sage: assume(x > 0)
+    sage: bool(sqrt(x^2) == x)
+    True
+    sage: assumptions()
+    [x > 0]
+    sage: forget()
+    sage: bool(sqrt(x^2) == x)
+    False
+
+Assumptions decide integrals and sums whose answers depend on a sign
+or range condition::
+
+    sage: n = var('n')
+    sage: assume(n + 1 > 0)
+    sage: integral(x^n, x)
+    x^(n + 1)/(n + 1)
+    sage: forget()
+
+::
+
+    sage: var('q, a, k')
+    (q, a, k)
+    sage: assume(abs(q) < 1)
+    sage: sum(a*q^k, k, 0, oo)
+    -a/(q - 1)
+    sage: forget()
+
+A variable can also be declared to have a property such as
+``'integer'``, ``'real'``, ``'positive'``, or ``'even'``::
+
+    sage: n = var('n')
+    sage: assume(n, 'integer')
+    sage: sin(n*pi)
+    0
+    sage: forget()
+
+Pass each relationship as a separate assumption. A chained comparison is
+not an error, but it is silently truncated to its first relation (Python
+evaluates ``0 < x < 1`` as ``(0 < x) and (x < 1)``, and the undecided
+first comparison short-circuits the ``and``), so only ``0 < x`` gets
+recorded::
+
+    sage: assume(0 < x < 1)
+    sage: assumptions()
+    [0 < x]
+    sage: forget()
+    sage: assume(0 < x, x < 1)
+    sage: assumptions()
+    [0 < x, x < 1]
+    sage: forget()
+
+For a temporary hypothesis, use
+:class:`~sage.symbolic.assumptions.assuming` in a ``with`` block: the
+assumption is in force inside the block and automatically forgotten
+afterwards::
+
+    sage: solve(x^2 == 4, x)
+    [x == -2, x == 2]
+    sage: with assuming(x > 0):
+    ....:     solve(x^2 == 4, x)
+    [x == 2]
+    sage: assumptions()
+    []
+
+A restriction can also be built into a variable when it is created,
+with the ``domain`` keyword (this too registers an assumption)::
+
+    sage: t = var('t', domain='positive')
+    sage: abs(t)
+    t
+    sage: forget()
+
+If you have used Maple's ``assume``/``about`` or Mathematica's
+``Assuming``, this is the corresponding mechanism in Sage; see
+:mod:`sage.symbolic.assumptions` for the full reference, including
+:func:`~sage.symbolic.assumptions.forget` of individual assumptions.
+
+
+.. index::
    pair: calculus; differentiation
 
 Differentiation
@@ -155,7 +248,7 @@ Sage can also compute symbolic definite integrals involving limits.
     (x, k, w)
     sage: f = x^3 * e^(k*x) * sin(w*x)
     sage: f.integrate(x)
-    ((24*k^3*w - 24*k*w^3 - (k^6*w + 3*k^4*w^3 + 3*k^2*w^5 + w^7)*x^3 + 6*(k^5*w + 2*k^3*w^3 + k*w^5)*x^2 - 6*(3*k^4*w + 2*k^2*w^3 - w^5)*x)*cos(w*x)*e^(k*x) - (6*k^4 - 36*k^2*w^2 + 6*w^4 - (k^7 + 3*k^5*w^2 + 3*k^3*w^4 + k*w^6)*x^3 + 3*(k^6 + k^4*w^2 - k^2*w^4 - w^6)*x^2 - 6*(k^5 - 2*k^3*w^2 - 3*k*w^4)*x)*e^(k*x)*sin(w*x))/(k^8 + 4*k^6*w^2 + 6*k^4*w^4 + 4*k^2*w^6 + w^8)
+    ((24*k^3*w*e^(k*x) - 24*k*w^3*e^(k*x) - (k^6*w*e^(k*x) + 3*k^4*w^3*e^(k*x) + 3*k^2*w^5*e^(k*x) + w^7*e^(k*x))*x^3 + 6*(k^5*w*e^(k*x) + 2*k^3*w^3*e^(k*x) + k*w^5*e^(k*x))*x^2 - 6*(3*k^4*w*e^(k*x) + 2*k^2*w^3*e^(k*x) - w^5*e^(k*x))*x)*cos(w*x) - (6*k^4*e^(k*x) - 36*k^2*w^2*e^(k*x) + 6*w^4*e^(k*x) - (k^7*e^(k*x) + 3*k^5*w^2*e^(k*x) + 3*k^3*w^4*e^(k*x) + k*w^6*e^(k*x))*x^3 + 3*(k^6*e^(k*x) + k^4*w^2*e^(k*x) - k^2*w^4*e^(k*x) - w^6*e^(k*x))*x^2 - 6*(k^5*e^(k*x) - 2*k^3*w^2*e^(k*x) - 3*k*w^4*e^(k*x))*x)*sin(w*x))/(k^8 + 4*k^6*w^2 + 6*k^4*w^4 + 4*k^2*w^6 + w^8)
     sage: integrate(1/x^2, x, 1, infinity)
     1
 
@@ -257,8 +350,7 @@ is one way to compute LT's and
     (s, t)
     sage: f = t^5*exp(t)*sin(t)
     sage: L = laplace(f, t, s); L
-    3840*(s - 1)^5/(s^2 - 2*s + 2)^6 - 3840*(s - 1)^3/(s^2 - 2*s + 2)^5 +
-    720*(s - 1)/(s^2 - 2*s + 2)^4
+    240*(3*s^5 - 15*s^4 + 20*s^3 - 12*s + 4)/(s^12 - 12*s^11 + 72*s^10 - 280*s^9 + 780*s^8 - 1632*s^7 + 2624*s^6 - 3264*s^5 + 3120*s^4 - 2240*s^3 + 1152*s^2 - 384*s + 64)
 
 is another way.
 

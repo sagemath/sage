@@ -48,9 +48,7 @@ import re
 from . import graph
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
-from sage.features.databases import DatabaseGraphs
 from sage.graphs.graph import Graph
-dblocation = DatabaseGraphs().absolute_filename()
 
 
 def degseq_to_data(degree_sequence):
@@ -994,6 +992,8 @@ class GraphDatabase(SQLDatabase):
                'sql': 'TEXT',
                'unique': False}}}
         """
+        from sage.features.databases import DatabaseGraphs
+        dblocation = DatabaseGraphs().absolute_filename()
         SQLDatabase.__init__(self, dblocation)
 
     def _gen_interact_func(self, display, **kwds):

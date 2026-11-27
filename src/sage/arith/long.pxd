@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.misc.cython
 r"""
 Fast conversion of Python objects to C long
@@ -51,8 +50,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         sage: a^(2**258)
         Traceback (most recent call last):
         ...
-        OverflowError: exponent must be at most 2147483647           # 32-bit
-        OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+        OverflowError: exponent must be at most ...
 
     See :issue:`22319`::
 
@@ -273,15 +271,18 @@ cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
         ....:     assert check_long_py(int(v)) == v
-        sage: check_long_py(int(2^60))
-        1152921504606846976                 # 64-bit
-        'Overflow (...)'                    # 32-bit
-        sage: check_long_py(int(2^61))
-        2305843009213693952                 # 64-bit
-        'Overflow (...)'                    # 32-bit
-        sage: check_long_py(int(2^62))
-        4611686018427387904                 # 64-bit
-        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^60))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^60))  # needs !32_bit
+        1152921504606846976
+        sage: check_long_py(int(2^61))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^61))  # needs !32_bit
+        2305843009213693952
+        sage: check_long_py(int(2^62))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^62))  # needs !32_bit
+        4611686018427387904
         sage: check_long_py(int(2^63))
         'Overflow (...)'
         sage: check_long_py(int(2^100))
@@ -386,10 +387,8 @@ cdef inline bint is_small_python_int(obj) noexcept:
     """
     Test whether Python object is a small Python integer.
 
-    Meaning that it can be converted to a C long. In Python 2,
-    this is equivalent to it being the ``int`` Python type. In Python
-    3, the ``int`` Python type has unlimited precision so we need to
-    check its range.
+    This means that it can be converted to a C long. In Python 3, the ``int``
+    Python type has unlimited precision so we need to check its range.
 
     EXAMPLES::
 

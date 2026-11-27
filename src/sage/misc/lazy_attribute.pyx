@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -6,6 +5,8 @@ AUTHORS:
 
 - Nicolas Thiery (2008): Initial version
 - Nils Bruin (2013-05): Cython version
+
+.. autoclass:: sage.misc.lazy_attribute::_lazy_attribute
 """
 
 # ****************************************************************************
@@ -71,7 +72,7 @@ cdef class _lazy_attribute():
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__
-            'sage.misc.lazy_attribute'
+            'sage.structure.parent'
         """
         raise NotImplementedError("Only instantiate wrapper python class")
 
@@ -85,9 +86,9 @@ cdef class _lazy_attribute():
             sage: g = lazy_attribute(sage.misc.banner.banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def banner() -> None:\n'
             sage: lines
-            95
+            102
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -354,9 +355,9 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
-        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
-        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
+        sage: cython('\n'.join(cython_code))
+        sage: P = MyParent(category=Rings())
+        sage: P.element_class    # indirect doctest
         <class '...MyElement'>
 
     .. rubric:: About descriptor specifications

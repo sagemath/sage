@@ -1,4 +1,3 @@
-# cython: binding=True
 # sage.doctest: needs sage.plot
 r"""
 Mandelbrot and Julia sets (Cython helper)
@@ -31,7 +30,7 @@ from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.ext.fast_callable import fast_callable
-from sage.calculus.all import symbolic_expression
+from sage.calculus.expr import symbolic_expression
 from sage.symbolic.ring import SR
 from sage.calculus.var import var
 from sage.rings.fraction_field import FractionField_generic
@@ -845,7 +844,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # If the critical points of f depend on c, we must compute the different
     # critical points for each c.
     else:
-        # Solve for critical points symbollically.
+        # Solve for critical points symbolically.
         with SR.temp_var() as w:
             df = f.derivative(z).polynomial(z).subs({z: w})
             critical_pts = solve(symbolic_expression(df) == 0, w)

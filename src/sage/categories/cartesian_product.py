@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Cartesian Product Functorial Construction
 
@@ -13,9 +12,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_import import lazy_import
-from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
+from typing import Self
+
+from sage.categories.covariant_functorial_construction import (
+    CovariantConstructionCategory,
+    CovariantFunctorialConstruction,
+)
 from sage.categories.pushout import MultivariateConstructionFunctor
+from sage.misc.lazy_import import lazy_import
 
 native_python_containers = {tuple, list, set, frozenset, range}
 
@@ -138,7 +142,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
 
         - handle the following plain Python containers as input:
           :class:`frozenset`, :class:`list`, :class:`set`,
-          :class:`tuple`, and :class:`xrange` (Python3 ``range``).
+          :class:`tuple`, and :class:`range`.
 
         - handle the empty list of factors.
 
@@ -245,7 +249,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
         # This method is only required for the capital `C`
         return "Cartesian products of %s" % (self.base_category()._repr_object_names())
 
-    def CartesianProducts(self):
+    def CartesianProducts(self) -> Self:
         """
         Return the category of (finite) Cartesian products of objects
         of ``self``.

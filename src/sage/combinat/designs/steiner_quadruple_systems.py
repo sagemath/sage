@@ -1,5 +1,5 @@
 r"""
-Steiner Quadruple Systems
+Steiner quadruple systems
 
 A Steiner Quadruple System on `n` points is a family `SQS_n \subset \binom {[n]}
 4` of `4`-sets, such that any set `S\subset [n]` of size three is a subset of
@@ -83,7 +83,7 @@ def two_n(B):
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     Y = []
 
     # Line 1
@@ -121,7 +121,7 @@ def three_n_minus_two(B):
         ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     A = n-1
     Y = []
     # relabel function
@@ -178,7 +178,7 @@ def three_n_minus_eight(B):
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if (n % 12) != 2:
         raise ValueError("n must be equal to 2 mod 12")
@@ -240,7 +240,7 @@ def three_n_minus_four(B):
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if n % 12 != 10:
         raise ValueError("n must be equal to 10 mod 12")
@@ -305,7 +305,7 @@ def four_n_minus_six(B):
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     f = n-2
     r = lambda i,ii,x : (2*(i % 2)+(ii % 2))*(n-2)+(x) % (n-2)
 
@@ -378,7 +378,7 @@ def twelve_n_minus_ten(B):
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     B14 = steiner_quadruple_system(14)
     r = lambda i,x : i % (n-1)+(x % 12)*(n-1)
 
@@ -474,7 +474,7 @@ def relabel_system(B):
         sage: relabel_system(SQS8)
         Incidence structure with 8 points and 14 blocks
     """
-    n = B.num_points()
+    n = B.n_points()
     B0 = B._blocks[0]
 
     label = {
@@ -487,10 +487,9 @@ def relabel_system(B):
     def get_label(x):
         if x in label:
             return label[x]
-        else:
-            total = len(label)-4
-            label[x] = total
-            return total
+        total = len(label)-4
+        label[x] = total
+        return total
 
     B = [[get_label(_) for _ in s] for s in B]
     return IncidenceStructure(n,B)
@@ -515,29 +514,24 @@ def P(alpha, m):
             if alpha % 2 == 0:
                 b = alpha // 2
                 return [(2*a, (2*a + 2*b + 1) % (2*m)) for a in range(m)]
-            else:
-                b = (alpha-1) // 2
-                return [(2*a, (2*a - 2*b - 1) % (2*m)) for a in range(m)]
-        else:
-            y = alpha - m
-            pairs = [(b,(2*y-b) % (2*m)) for b in range(y)]
-            pairs += [(c,(2*m+2*y-c-2) % (2*m)) for c in range(2*y+1,m+y-1)]
-            pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
-            return pairs
-    else:
-        if alpha < m-1:
-            if alpha % 2 == 0:
-                b = alpha // 2
-                return [(2*a,(2*a+2*b+1) % (2*m)) for a in range(m)]
-            else:
-                b = (alpha-1) // 2
-                return [(2*a,(2*a-2*b-1) % (2*m)) for a in range(m)]
-        else:
-            y = alpha-m+1
-            pairs = [(b,2*y-b) for b in range(y)]
-            pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
-            pairs += [(y,m+y)]
-            return pairs
+            b = (alpha-1) // 2
+            return [(2*a, (2*a - 2*b - 1) % (2*m)) for a in range(m)]
+        y = alpha - m
+        pairs = [(b,(2*y-b) % (2*m)) for b in range(y)]
+        pairs += [(c,(2*m+2*y-c-2) % (2*m)) for c in range(2*y+1,m+y-1)]
+        pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
+        return pairs
+    if alpha < m-1:
+        if alpha % 2 == 0:
+            b = alpha // 2
+            return [(2*a,(2*a+2*b+1) % (2*m)) for a in range(m)]
+        b = (alpha-1) // 2
+        return [(2*a,(2*a-2*b-1) % (2*m)) for a in range(m)]
+    y = alpha-m+1
+    pairs = [(b,2*y-b) for b in range(y)]
+    pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
+    pairs += [(y,m+y)]
+    return pairs
 
 
 def _missing_pair(n, l):

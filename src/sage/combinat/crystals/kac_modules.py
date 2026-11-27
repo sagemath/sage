@@ -10,7 +10,7 @@ Crystals of Kac modules of the general-linear Lie superalgebra
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.structure.parent import Parent
@@ -430,7 +430,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             """
             WLR = self.parent().weight_lattice_realization()
             e = WLR.basis()
-            return WLR.sum(-e[i]+e[j] for (i,j) in self.value)
+            return WLR.sum(-e[i] + e[j] for i, j in self.value)
 
 
 class CrystalOfKacModule(UniqueRepresentation, Parent):
@@ -595,7 +595,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
             ....:         assert y is None or y.e(i) == x
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -609,7 +609,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
             """
             return repr((self.value[0], to_dual_tableau(self.value[1]), self.value[2]))
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -680,11 +680,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                     if x is None:
                         return None
                     return type(self)(self.parent(), (x, self.value[1], self.value[2]))
-                else:
-                    x = self.value[2].e(i)
-                    if x is None:
-                        return None
-                    return type(self)(self.parent(), (self.value[0], self.value[1], x))
+                x = self.value[2].e(i)
+                if x is None:
+                    return None
+                return type(self)(self.parent(), (self.value[0], self.value[1], x))
             # else i < 0
             M = self.parent()._cartan_type.m + 1
             if self.value[0].phi(i) < self.value[1].epsilon(M+i):
@@ -692,11 +691,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 if x is None:
                     return None
                 return type(self)(self.parent(), (self.value[0], x, self.value[2]))
-            else:
-                x = self.value[0].e(i)
-                if x is None:
-                    return None
-                return type(self)(self.parent(), (x, self.value[1], self.value[2]))
+            x = self.value[0].e(i)
+            if x is None:
+                return None
+            return type(self)(self.parent(), (x, self.value[1], self.value[2]))
 
         def f(self, i):
             r"""
@@ -730,11 +728,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                     if x is None:
                         return None
                     return type(self)(self.parent(), (self.value[0], self.value[1], x))
-                else:
-                    x = self.value[0].f(i)
-                    if x is None:
-                        return None
-                    return type(self)(self.parent(), (x, self.value[1], self.value[2]))
+                x = self.value[0].f(i)
+                if x is None:
+                    return None
+                return type(self)(self.parent(), (x, self.value[1], self.value[2]))
             # else i < 0
             M = self.parent()._cartan_type.m + 1
             if self.value[0].phi(i) > self.value[1].epsilon(M+i):
@@ -742,11 +739,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 if x is None:
                     return None
                 return type(self)(self.parent(), (x, self.value[1], self.value[2]))
-            else:
-                x = self.value[1].f(M+i)
-                if x is None:
-                    return None
-                return type(self)(self.parent(), (self.value[0], x, self.value[2]))
+            x = self.value[1].f(M+i)
+            if x is None:
+                return None
+            return type(self)(self.parent(), (self.value[0], x, self.value[2]))
 
         def weight(self):
             r"""
@@ -774,7 +770,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
             return wt
 
 #####################################################################
-## Helper functions
+#  Helper functions
 
 
 def to_dual_tableau(elt):
@@ -821,7 +817,7 @@ def to_dual_tableau(elt):
     return Tableau(tab).conjugate()
 
 
-def latex_dual(elt):
+def latex_dual(elt) -> str:
     r"""
     Return a latex representation of a type `A_n` crystal tableau ``elt``
     expressed in terms of dual letters.

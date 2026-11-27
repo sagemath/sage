@@ -6,7 +6,7 @@ This module contains a class for spaces of modular symbols that use Glenn
 Stevens' conventions, as explained in [PS2011]_.
 
 There are two main differences between the modular symbols in this directory
-and the ones in :mod:`sage.modular.modsym`:
+and the ones in :mod:`~sage.modular.pollack_stevens.modsym`:
 
 - There is a shift in the weight: weight `k=0` here corresponds to weight `k=2`
   there.
@@ -48,6 +48,7 @@ classical modular symbols (or even elliptic curves) as follows::
 
 ::
 
+    sage: # needs eclib
     sage: E = EllipticCurve('37a1')
     sage: phi = E.pollack_stevens_modular_symbol(); phi
     Modular symbol of level 37 with values in Sym^0 Q^2
@@ -66,7 +67,7 @@ classical modular symbols (or even elliptic curves) as follows::
 # ****************************************************************************
 from sage.modules.module import Module
 from sage.modular.dirichlet import DirichletCharacter
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -552,8 +553,10 @@ class PollackStevensModularSymbolspace(Module):
         N = self.level()
         if N % p == 0:
             raise ValueError("the level is not prime to p")
-        from sage.modular.arithgroup.all import (Gamma, Gamma_class, Gamma0,
-                                                 Gamma0_class, Gamma1, Gamma1_class)
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class, Gamma0_constructor as Gamma0
+        from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class, Gamma1_constructor as Gamma1
+        from sage.modular.arithgroup.congroup_gamma import Gamma_class, Gamma_constructor as Gamma
+
         G = self.group()
         if isinstance(G, Gamma0_class):
             G = Gamma0(N * p)
@@ -618,8 +621,7 @@ class PollackStevensModularSymbolspace(Module):
         """
         if self.coefficient_module().is_symk():
             return PollackStevensModularSymbols(self.group(), coefficients=self.coefficient_module().lift(p, M, new_base_ring), sign=self.sign())
-        else:
-            raise TypeError("Coefficient module must be a Symk")
+        raise TypeError("Coefficient module must be a Symk")
 
     def change_ring(self, new_base_ring):
         r"""
@@ -856,6 +858,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
 
     EXAMPLES::
 
+        sage: # needs eclib
         sage: E = EllipticCurve('113a1')
         sage: symb = E.pollack_stevens_modular_symbol() # indirect doctest
         sage: symb
@@ -863,6 +866,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
         sage: symb.values()
         [-1/2, 1, -1, 0, 0, 1, 1, -1, 0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0]
 
+        sage: # needs eclib
         sage: E = EllipticCurve([0,1])
         sage: symb = E.pollack_stevens_modular_symbol()
         sage: symb.values()
@@ -973,7 +977,7 @@ def ps_modsym_from_simple_modsym_space(A, name='alpha'):
 
         sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
         sage: E = EllipticCurve('11a')
-        sage: f_E = E.pollack_stevens_modular_symbol(); f_E.values()
+        sage: f_E = E.pollack_stevens_modular_symbol(); f_E.values()  # needs eclib
         [-1/5, 1, 0]
         sage: A = ModularSymbols(11, sign=1, weight=2).decomposition()[0]
         sage: f_plus = ps_modsym_from_simple_modsym_space(A); f_plus.values()
@@ -989,7 +993,7 @@ def ps_modsym_from_simple_modsym_space(A, name='alpha'):
 
         sage: (-1/5)*vector(QQ, f_plus.values()) + (1/2)*vector(QQ, f_minus.values())
         (-1/5, 1, 0)
-        sage: vector(QQ, f_E.values())
+        sage: vector(QQ, f_E.values())  # needs eclib
         (-1/5, 1, 0)
 
     The next few examples all illustrate the ways in which exceptions are

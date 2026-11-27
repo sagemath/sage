@@ -17,23 +17,15 @@ information about each word, which provides a useful reference.
 
 REFERENCES:
 
-.. [AC03] \B. Adamczewski, J. Cassaigne, On the transcendence of real
-   numbers with a regular expansion, J. Number Theory 103 (2003)
-   27--37.
+- [AC03]_
 
-.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
-   critical exponent of generalized Thue-Morse words. *Discrete Math.
-   Theor. Comput.  Sci.* 9 (1):293--304, 2007.
+- [BmBGL07]_
 
-.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
-   and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
+- [BmBGL09]_
 
-.. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
-   Encyclopedia of Mathematics and its Applications, Cambridge
-   University Press, U.K., 2002.
+- [Lot2002]_
 
-.. [Fogg] Pytheas Fogg,
-   https://www.lirmm.fr/arith/wiki/PytheasFogg/S-adiques.
+- [Fogg]_
 
 EXAMPLES::
 
@@ -223,7 +215,7 @@ class LowerChristoffelWord(FiniteWord_list):
                     v = u * (cf[i]-1) + v
                 w = u + v
         else:
-            raise ValueError('Unknown algorithm (=%s)' % algorithm)
+            raise ValueError(f'unknown algorithm (={algorithm})')
         super().__init__(FiniteWords(alphabet), w)
         self.__p = p
         self.__q = q
@@ -249,11 +241,11 @@ class LowerChristoffelWord(FiniteWord_list):
             True
         """
         from sage.matrix.constructor import matrix
-        eta = {0:matrix(2,[2,1,1,1]), 1:matrix(2,[5,2,2,1])}
-        M = matrix(2,[1,0,0,1])
+        eta = {0: matrix(2, [2, 1, 1, 1]), 1: matrix(2, [5, 2, 2, 1])}
+        M = matrix(2, [1, 0, 0, 1])
         for a in self:
             M *= eta[a]
-        return M.trace()/3
+        return M.trace() / 3
 
     def standard_factorization(self):
         r"""
@@ -298,8 +290,8 @@ class LowerChristoffelWord(FiniteWord_list):
         w11 = w1.number_of_letter_occurrences(1)
         w20 = w2.number_of_letter_occurrences(0)
         w21 = w2.number_of_letter_occurrences(1)
-        return Factorization([LowerChristoffelWord(w11,w10),
-                              LowerChristoffelWord(w21,w20)])
+        return Factorization([LowerChristoffelWord(w11, w10),
+                              LowerChristoffelWord(w21, w20)])
 
     def __reduce__(self):
         r"""
@@ -418,11 +410,9 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Brlek89] Brlek, S. 1989. «Enumeration of the factors in the Thue-Morse
-           word», *Discrete Appl. Math.*, vol. 24, p. 83--96.
+        - [Brlek89]_
 
-        .. [MH38] Morse, M., et G. A. Hedlund. 1938. «Symbolic dynamics»,
-           *American Journal of Mathematics*, vol. 60, p. 815--866.
+        - [MH38]_
         """
         W = InfiniteWords(alphabet)
         alphabet = W.alphabet()
@@ -567,27 +557,28 @@ class WordGenerator:
         alphabet = W.alphabet()
         if alphabet.cardinality() != 2:
             raise TypeError("alphabet does not contain two distinct elements")
-        a,b = alphabet
+        a, b = alphabet
 
         if construction_method == "recursive":
             w = W(self._FibonacciWord_RecursiveConstructionIterator(alphabet),
                   datatype='iter')
             return w
 
-        elif construction_method in ("fixed point", "fixed_point"):
-            d = {b:[a],a:[a,b]}
+        if construction_method in ("fixed point", "fixed_point"):
+            d = {b: [a], a: [a, b]}
             w = self.FixedPointOfMorphism(d, a)
             return w
 
-        elif construction_method == "function":
+        if construction_method == "function":
             from sage.functions.other import floor
             from sage.misc.functional import sqrt
-            phi = (1 + sqrt(5))/2 # the golden ratio
-            f = lambda n:a if floor((n+2)*phi) - floor((n+1)*phi) == 2 else b
+            phi = (1 + sqrt(5))/2  # the golden ratio
+
+            def f(n):
+                return a if floor((n+2)*phi) - floor((n+1)*phi) == 2 else b
             return W(f)
 
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _FibonacciWord_RecursiveConstructionIterator(self, alphabet=(0, 1)):
         r"""
@@ -605,7 +596,7 @@ class WordGenerator:
             [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1]
         """
         Fib0 = [0]
-        Fib1 = [0,1]
+        Fib1 = [0, 1]
         n = 0
         while True:
             it = iter(Fib1[n:])
@@ -690,9 +681,9 @@ class WordGenerator:
         if len(set(alphabet)) != 2:
             raise TypeError("alphabet does not contain two distinct elements")
         from functools import partial
-        f = partial(self._CodingOfRotationWord_function,alpha=alpha,beta=beta,x=x,alphabet=alphabet)
-        w = InfiniteWords(alphabet)(f, datatype='callable')
-        return w
+        f = partial(self._CodingOfRotationWord_function,
+                    alpha=alpha, beta=beta, x=x, alphabet=alphabet)
+        return InfiniteWords(alphabet)(f, datatype='callable')
 
     def _CodingOfRotationWord_function(self, n, alpha, beta, x=0, alphabet=(0, 1)):
         r"""
@@ -716,8 +707,7 @@ class WordGenerator:
             fracH += 1
         if 0 <= fracH < beta:
             return alphabet[1]
-        else:
-            return alphabet[0]
+        return alphabet[0]
 
     @rename_keyword(cf='slope')
     def CharacteristicSturmianWord(self, slope, alphabet=(0, 1), bits=None):
@@ -739,7 +729,7 @@ class WordGenerator:
         the sequence: `s_0 = b, s_1 = a, \ldots, s_{n+1} = s_n^{d_n} s_{n-1}`
         for `n > 0`.
 
-        See Section 2.1 of [Loth02]_ for more details.
+        See Section 2.1 of [Lot2002]_ for more details.
 
         INPUT:
 
@@ -896,7 +886,7 @@ class WordGenerator:
         else:
             raise TypeError("slope (=%s) must be a real number" % slope +
                             "or an iterable")
-        w = parent(self._CharacteristicSturmianWord_LetterIterator(cf,alphabet),
+        w = parent(self._CharacteristicSturmianWord_LetterIterator(cf, alphabet),
                    datatype='iter')
         return w
 
@@ -1034,9 +1024,7 @@ class WordGenerator:
 
         REFERENCES:
 
-        .. [Kolakoski66] William Kolakoski, proposal 5304, American Mathematical Monthly
-           72 (1965), 674; for a partial solution, see "Self Generating Runs,"
-           by Necdet Üçoluk, Amer. Math. Mon. 73 (1966), 681-2.
+        - [Kolakoski66]_
         """
         a, b = alphabet
         if a not in ZZ or a <= 0 or b not in ZZ or b <= 0 or a == b:
@@ -1108,7 +1096,7 @@ class WordGenerator:
         The lower mechanical word `s_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s_{\alpha,\rho}(n) = \lfloor\alpha(n+1) + \rho\rfloor -
-        \lfloor\alpha n + \rho\rfloor`. [Loth02]_
+        \lfloor\alpha n + \rho\rfloor`. [Lot2002]_
 
         INPUT:
 
@@ -1166,7 +1154,7 @@ class WordGenerator:
         The upper mechanical word `s'_{\alpha,\rho}` with
         slope `\alpha` and intercept `\rho` is defined by
         `s'_{\alpha,\rho}(n) = \lceil\alpha(n+1) + \rho\rceil -
-        \lceil\alpha n + \rho\rceil`. [Loth02]_
+        \lceil\alpha n + \rho\rceil`. [Lot2002]_
 
         INPUT:
 
@@ -1382,8 +1370,8 @@ class WordGenerator:
         if alphabet is None:
             alphabet = list(range(m))
         if len(set(alphabet)) != m:
-            raise TypeError("alphabet does not contain %s distinct elements" % m)
-        return FiniteWords(alphabet)([alphabet[randint(0,m-1)] for i in range(n)])
+            raise TypeError(f"alphabet does not contain {m} distinct elements")
+        return FiniteWords(alphabet)([alphabet[randint(0, m - 1)] for i in range(n)])
 
     LowerChristoffelWord = LowerChristoffelWord
 
@@ -1481,22 +1469,21 @@ class WordGenerator:
         [BmBGL09]_
         """
         from sage.combinat.words.morphism import WordMorphism
-        W = FiniteWords([0,1,2,3])
-        bar = WordMorphism({0:0,1:3,3:1,2:2},codomain=W)
+        W = FiniteWords([0, 1, 2, 3])
+        bar = WordMorphism({0: 0, 1: 3, 3: 1, 2: 2}, codomain=W)
         if n == 0:
             a = [] if q_0 is None else [q_0]
             return W(a)
-        elif n == 1:
+        if n == 1:
             b = [] if q_1 is None else [q_1]
             return W(b)
-        elif n % 3 == 2:
-            u = self._fibonacci_tile(n-1,q_0,q_1)
-            v = self._fibonacci_tile(n-2,q_0,q_1)
+        if n % 3 == 2:
+            u = self._fibonacci_tile(n - 1, q_0, q_1)
+            v = self._fibonacci_tile(n - 2, q_0, q_1)
             return u * v
-        else:
-            u = self._fibonacci_tile(n-1,q_0,q_1)
-            v = bar(self._fibonacci_tile(n-2,q_0,q_1))
-            return u * v
+        u = self._fibonacci_tile(n - 1, q_0, q_1)
+        v = bar(self._fibonacci_tile(n - 2, q_0, q_1))
+        return u * v
 
     def fibonacci_tile(self, n):
         r"""
@@ -1512,8 +1499,8 @@ class WordGenerator:
         w = self._fibonacci_tile(3*n+1)
         w = w**4
         from sage.combinat.words.paths import WordPaths
-        P = WordPaths([0,1,2,3])
-        l = list(w.partial_sums(start=3,mod=4))
+        P = WordPaths([0, 1, 2, 3])
+        l = list(w.partial_sums(start=3, mod=4))
         return P(l)[:-1]
 
     def dual_fibonacci_tile(self, n):
@@ -1528,11 +1515,11 @@ class WordGenerator:
             Path: 3212303230103230321232101232123032123210...
             Path: 3212303230103230321232101232123032123210...
         """
-        w = self._fibonacci_tile(3*n+1,3,3)
+        w = self._fibonacci_tile(3*n+1, 3, 3)
         w = w**4
         from sage.combinat.words.paths import WordPaths
-        P = WordPaths([0,1,2,3])
-        l = list(w.partial_sums(start=3,mod=4))
+        P = WordPaths([0, 1, 2, 3])
+        l = list(w.partial_sums(start=3, mod=4))
         return P(l)[:-1]
 
     def _s_adic_iterator(self, sequence, letters):
@@ -1621,17 +1608,17 @@ class WordGenerator:
         - Sébastien Labbé (2009-12-18): initial version
         """
         from itertools import tee
-        sequence_it,sequence = tee(sequence)
+        sequence_it, sequence = tee(sequence)
         m = next(sequence_it)
         codomain = m.codomain()
         p = codomain.identity_morphism()
-        letters_it,letters = tee(letters)
+        letters_it, letters = tee(letters)
         precedent_letter = m(next(letters_it))[0]
 
         yield precedent_letter
-        for (i,(m,a)) in enumerate(zip(sequence, letters)):
+        for (i, (m, a)) in enumerate(zip(sequence, letters)):
             if not precedent_letter == m(a)[0]:
-                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)" % (i+1,a,i+1,m,i,precedent_letter))
+                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)" % (i+1, a, i+1, m, i, precedent_letter))
             w = p(m(a)[1:])
             yield from w
             p = p * m
@@ -1880,7 +1867,7 @@ class WordGenerator:
             raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method" % morphisms)
 
         from sage.combinat.words.word import FiniteWord_class
-        if isinstance(sequence,(tuple,list,str,FiniteWord_class)) \
+        if isinstance(sequence, (tuple, list, str, FiniteWord_class)) \
         and hasattr(letters, "__len__") and len(letters) == 1:
             from sage.misc.misc_c import prod
             return prod(seq)(letters)
@@ -1894,7 +1881,7 @@ class WordGenerator:
         kwds['data'] = self._s_adic_iterator(seq, letters)
         kwds['datatype'] = 'iter'
         kwds['caching'] = True
-        #kwds['check'] = False
+        # kwds['check'] = False
         return W.shift()(**kwds)
 
     def PalindromicDefectWord(self, k=1, alphabet='ab'):

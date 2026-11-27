@@ -342,13 +342,10 @@ def has_blum_prime(lbound, ubound) -> bool:
     if lbound > ubound:
         raise ValueError("The lower bound must be less than the upper bound.")
     # now test for presence of a Blum prime
-    for p in primes(lbound, ubound + 1):
-        if mod(p, 4).lift() == 3:
-            return True
-    return False
+    return any(mod(p, 4).lift() == 3 for p in primes(lbound, ubound + 1))
 
 
-def is_blum_prime(n):
+def is_blum_prime(n) -> bool:
     r"""
     Determine whether or not ``n`` is a Blum prime.
 
@@ -378,12 +375,8 @@ def is_blum_prime(n):
     if n < 0:
         return False
     if is_prime(n):
-        if mod(n, 4).lift() == 3:
-            return True
-        else:
-            return False
-    else:
-        return False
+        return mod(n, 4).lift() == 3
+    return False
 
 
 def least_significant_bits(n, k):

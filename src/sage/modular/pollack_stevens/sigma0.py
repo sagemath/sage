@@ -205,9 +205,10 @@ class Sigma0Element(MonoidElement):
 
             sage: from sage.modular.pollack_stevens.sigma0 import Sigma0
             sage: s = Sigma0(3)([1,4,3,3])
-            sage: hash(s) # indirect doctest
-            8095169151987216923  # 64-bit
-            619049499            # 32-bit
+            sage: hash32 = 619049499
+            sage: hash64 = 8095169151987216923
+            sage: hash(s) in [hash32, hash64]  # indirect doctest
+            True
         """
         return hash(self.matrix())
 

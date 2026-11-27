@@ -1,3 +1,4 @@
+# sage.doctest: needs sloane_database
 """
 Local copy of the On-Line Encyclopedia of Integer Sequences
 
@@ -11,21 +12,21 @@ To look up a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia[60843]  # optional - sloane_database
+    sage: SloaneEncyclopedia[60843]
     [1, 6, 21, 107, 47176870]
 
 To get the name of a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.sequence_name(1)  # optional - sloane_database
+    sage: SloaneEncyclopedia.sequence_name(1)
     'Number of groups of order n.'
 
 To search locally for a particular subsequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 1)    # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 1)
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, 13, 13, 16, 16, 16, 17, 19, 19, 23, 23, 23, 23, 25, 25, 27, 27, 29, 29, 31, 31, 32, 37, 37, 37, 37, 37, 41, 41, 41, 41, 43, 43, 47, 47, 47, 47, 49, 49, 53, 53, 53, 53, 59, 59, 59, 59, 59, 59, 61, 61, 64, 64, 64, 67, 67, 67, 71, 71, 71, 71, 73])]
 
 The default maximum number of results is 30, but to return up to
@@ -33,7 +34,7 @@ The default maximum number of results is 30, but to return up to
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)  # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, ...
 
 Results in either case are of the form [ (number, list) ].
@@ -87,7 +88,7 @@ from urllib.request import urlretrieve
 import ssl
 
 from sage.misc.verbose import verbose
-from sage.env import SAGE_SHARE
+from sage.env import DOT_SAGE, sage_data_paths
 from sage.rings.integer_ring import ZZ
 
 
@@ -101,7 +102,12 @@ class SloaneEncyclopediaClass:
         """
         Initialize the database but do not load any of the data.
         """
-        self.__path__ = os.path.join(SAGE_SHARE, 'sloane')
+        self.__path__ = os.path.join(DOT_SAGE, 'db', 'sloane')
+        for path in sage_data_paths('sloane'):
+            file_oeis = os.path.join(path, 'sloane-oeis.bz2')
+            file_names = os.path.join(path, 'sloane-names.bz2')
+            if os.path.exists(file_oeis) and os.path.exists(file_names):
+                self.__path__ = path
         self.__file__ = os.path.join(self.__path__, 'sloane-oeis.bz2')
         self.__file_names__ = os.path.join(self.__path__, 'sloane-names.bz2')
         self.__loaded__ = False
@@ -155,7 +161,7 @@ class SloaneEncyclopediaClass:
 
         EXAMPLES::
 
-            sage: SloaneEncyclopedia.is_installed()  # optional - sloane_database
+            sage: SloaneEncyclopedia.is_installed()
             True
         """
         return os.path.exists(self.__file__) and os.path.exists(self.__file_names__)
@@ -333,7 +339,7 @@ class SloaneEncyclopediaClass:
 
         EXAMPLES::
 
-            sage: SloaneEncyclopedia.sequence_name(1) # optional - sloane_database
+            sage: SloaneEncyclopedia.sequence_name(1)
             'Number of groups of order n.'
         """
         self.load()

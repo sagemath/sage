@@ -1,4 +1,5 @@
-"""Symbolic Integration via External Software
+"""
+Symbolic Integration via External Software
 
 TESTS::
 
@@ -30,12 +31,7 @@ def maxima_integrator(expression, v, a=None, b=None):
     Check that :issue:`25817` is fixed::
 
         sage: maxima_integrator(log(e^x*log(x)*sin(x))/x^2, x)
-        1/2*(x*(Ei(-log(x)) + conjugate(Ei(-log(x))))
-        - 2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2
-        + 2*x*cos(x) + x), x) + 2*x*integrate(sin(x)/(x*cos(x)^2
-        + x*sin(x)^2 - 2*x*cos(x) + x), x) + 2*x*log(x) + 2*log(2)
-        - log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1) - log(cos(x)^2
-        + sin(x)^2 - 2*cos(x) + 1) - 2*log(log(x)))/x
+        -1/2*(2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2 + 2*x*cos(x) + x), x) - 2*x*integrate(sin(x)/(x*cos(x)^2 + x*sin(x)^2 - 2*x*cos(x) + x), x) - 2*x*log(x) - 2*x*real_part(Ei(-log(x))) - 2*log(2) + log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1) + log(cos(x)^2 + sin(x)^2 - 2*cos(x) + 1) + 2*log(log(x)))/x
     """
     from sage.calculus.calculus import maxima
     if not isinstance(expression, Expression):
@@ -249,7 +245,7 @@ def libgiac_integrator(expression, v, a=None, b=None):
     try:
         from sage.libs.giac import libgiac
     except ImportError:
-        # If libgiac isn't available, return a symbolic answer
+        # If libgiac is not available, return a symbolic answer
         # (without actually integrating anything). This is essentially
         # the failure case of any integration: see below for what we
         # do if libgiac is *available* but unable to do much.
@@ -265,5 +261,4 @@ def libgiac_integrator(expression, v, a=None, b=None):
         result = libgiac.integrate(Pygen(expression), v, a, b)
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result.sage()
+    return result.sage()

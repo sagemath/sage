@@ -54,8 +54,7 @@ class CurveArrow(GraphicPrimitive):
         EXAMPLES::
 
             sage: import numpy  # to ensure numpy 2.0 compatibility
-            sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     _ = numpy.set_printoptions(legacy="1.25")
+            sage: _ = numpy.set_printoptions(legacy="1.25")
             sage: from sage.plot.arrow import CurveArrow
             sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],
             ....:                options={})
@@ -650,7 +649,7 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
         sage: A = arrow2d((-1,-1), (2,3), legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
 

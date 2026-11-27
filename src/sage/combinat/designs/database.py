@@ -40,19 +40,11 @@ This module implements:
 
 REFERENCES:
 
-.. [DesignHandbook] Handbook of Combinatorial Designs (2ed)
-  Charles Colbourn, Jeffrey Dinitz
-  Chapman & Hall/CRC
-  2012
+- [DesignHandbook]_
 
-.. [Aschbacher71] \M. Aschbacher,
-  On collineation groups of symmetric block designs.
-  J. Combinatorial Theory Ser. A 11 (1971), pp. 272–281.
+- [Aschbacher71]_
 
-.. [Hall71] \M. Hall, Jr.,
-  Combinatorial designs and groups.
-  Actes du Congrès International des Mathématiciens (Nice, 1970),
-  v.3, pp. 217–222. Gauthier-Villars, Paris, 1971.
+- [Hall71]_
 
 Functions
 ---------
@@ -191,9 +183,7 @@ def MOLS_14_4():
 
     REFERENCE:
 
-    .. [Todorov12] \D.T. Todorov,
-      Four mutually orthogonal Latin squares of order 14,
-      Journal of Combinatorial Designs 2012, vol.20 n.8 pp.363-367
+    - [Todorov12]_
     """
     M = """
         bjihgkecalnfmd  bfmcenidgjhalk  bcdefghijklmna  bcdefghijklmna
@@ -1110,7 +1100,8 @@ def OA_10_205():
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
     pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
-    baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
+    baer_subplane = {i * pplane_size / baer_subplane_size
+                     for i in range(baer_subplane_size)}
 
     p = list(baer_subplane)[0]
 
@@ -1529,8 +1520,8 @@ def OA_17_560():
     # We remove all elements except those from F_{p^alpha} in the last three
     # columns
 
-    elements_of_subgroup = set([x for x in G_set if x.polynomial().degree() < beta])
-    relabel = {G_to_int[v]:i for i,v in enumerate(elements_of_subgroup)}
+    elements_of_subgroup = {x for x in G_set if x.polynomial().degree() < beta}
+    relabel = {G_to_int[v]: i for i, v in enumerate(elements_of_subgroup)}
     for x in range(p**alpha):
         if x not in relabel:
             relabel[x] = None
@@ -3245,10 +3236,7 @@ def DM_12_6_1():
 
     REFERENCES:
 
-    .. [Hanani75] Haim Hanani,
-      Balanced incomplete block designs and related designs,
-      :doi:`10.1016/0012-365X(75)90040-0`,
-      Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369.
+    - [Hanani75]_
     """
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(2).cartesian_product(AdditiveCyclic(6))
@@ -3978,10 +3966,7 @@ def DM_60_6_1():
 
     REFERENCES:
 
-    .. [JulianAbel13] Existence of Five MOLS of Orders 18 and 60
-      R. Julian R. Abel
-      Journal of Combinatorial Designs
-      2013
+    - [JulianAbel13]_
 
     http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
 
@@ -4274,11 +4259,7 @@ def BIBD_45_9_8(from_code=False):
 
     REFERENCE:
 
-    .. [HT95] \W. Huffman and V. Tonchev,
-       The existence of extremal self-dual `[50, 25, 10]` codes and
-       quasi-symmetric `2-(49, 9, 6)` designs,
-       Designs, Codes and Cryptography
-       September 1995, Volume 6, Issue 2, pp 97-106
+    - [HT95]_
     """
     if from_code:
         from sage.coding.code_constructions import ExtendedQuadraticResidueCode
@@ -4613,10 +4594,7 @@ def HigmanSimsDesign():
 
     REFERENCE:
 
-    .. [KY04] \S. Klee and L. Yates,
-       Tight Subdesigns of the Higman-Sims Design,
-       Rose-Hulman Undergraduate Math. J 5.2 (2004).
-       https://www.rose-hulman.edu/mathjournal/archives/2004/vol5-n2/paper9/v5n2-9pd.pdf
+    - [KY04]_
     """
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
@@ -5610,4 +5588,4 @@ __doc__ = __doc__.format(
     LIST_OF_EDS=LIST_OF_EDS,
     LIST_OF_CA_CONSTRUCTIONS=LIST_OF_CA_CONSTRUCTIONS)
 del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD, LIST_OF_CA_CONSTRUCTIONS
-del PolynomialRing, ZZ, a,
+del PolynomialRing, ZZ, a, f,

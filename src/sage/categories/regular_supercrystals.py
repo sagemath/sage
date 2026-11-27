@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
@@ -89,6 +88,8 @@ class RegularSuperCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
     def super_categories(self):
@@ -125,8 +126,7 @@ class RegularSuperCrystals(Category_singleton):
                 x = x.e(i)
                 if x is None:
                     return string_length
-                else:
-                    string_length += 1
+                string_length += 1
 
         def phi(self, i):
             r"""
@@ -150,8 +150,7 @@ class RegularSuperCrystals(Category_singleton):
                 x = x.f(i)
                 if x is None:
                     return string_length
-                else:
-                    string_length += 1
+                string_length += 1
 
     class TensorProducts(TensorProductsCategory):
         """

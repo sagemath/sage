@@ -57,10 +57,6 @@ cdef class CVXPYBackend:
 
     Open-source solvers provided by optional packages::
 
-        sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLPK'); p.solve()             # needs cvxopt
-        0.0
-        sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLPK_MI'); p.solve()          # needs cvxopt
-        0.0
         sage: p = MixedIntegerLinearProgram(solver='CVXPY/CVXOPT'); p.solve()           # needs cvxopt
         0.0
         sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLOP'); p.solve()            # optional - ortools
@@ -501,8 +497,7 @@ cdef class CVXPYBackend:
         else:
             if variable < len(self.objective_coefficients):
                 return self.objective_coefficients[variable]
-            else:
-                return 0
+            return 0
 
     cpdef int solve(self) except -1:
         """
@@ -667,10 +662,8 @@ cdef class CVXPYBackend:
         if name is None:
             if self.prob_name is not None:
                 return self.prob_name
-            else:
-                return ""
-        else:
-            self.prob_name = str(name)
+            return ""
+        self.prob_name = str(name)
 
     cpdef row(self, int i):
         """

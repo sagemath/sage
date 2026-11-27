@@ -35,7 +35,6 @@ from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.misc.lazy_import import lazy_import
 from sage.misc.random_testing import random_testing
 
 
@@ -85,7 +84,7 @@ def corneil_habib_paul_tedder_algorithm(G):
         ....:                                                         3, 4, 0.2)
         sage: recreate_decomposition(10, corneil_habib_paul_tedder_algorithm,
         ....:                                                         4, 5, 0.2)
-        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,
+        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,  # long time (:issue:`39569`)
         ....:                                                         6, 5, 0.2)
 
         sage: H = Graph('Hv|mmjz', format='graph6')
@@ -131,7 +130,7 @@ cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
     else:  # is_prime
         node = Node(NodeType.PRIME)
     node.children.extend(_md_tree_node_to_md_tree_inner_rec(c, Gb)
-                                                    for c in deref(n).children)
+                         for c in deref(n).children)
     return node
 
 
@@ -434,8 +433,8 @@ def gamma_classes(graph):
 
     Ensure that the returned vertex sets from some random graphs are modules::
 
-        sage: from sage.graphs.graph_decompositions.modular_decomposition import test_gamma_modules
-        sage: test_gamma_modules(2, 10, 0.5)
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import check_gamma_modules
+        sage: check_gamma_modules(2, 10, 0.5)
     """
     from itertools import chain
     from sage.sets.disjoint_set import DisjointSet
@@ -530,7 +529,8 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Modular Decomposition tree containing both parallel and series modules::
 
-        sage: d = {2:[4,3,5], 1:[4,3,5], 5:[3,2,1,4], 3:[1,2,5], 4:[1,2,5]}
+        sage: d = {2: [4, 3, 5], 1: [4, 3, 5], 5: [3, 2, 1, 4],
+        ....:      3: [1, 2, 5], 4: [1, 2, 5]}
         sage: g = Graph(d)
         sage: print_md_tree(habib_maurer_algorithm(g))
         SERIES
@@ -544,13 +544,14 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Graph from Marc Tedder implementation of modular decomposition::
 
-        sage: d = {1:[5,4,3,24,6,7,8,9,2,10,11,12,13,14,16,17], 2:[1],
-        ....:       3:[24,9,1], 4:[5,24,9,1], 5:[4,24,9,1], 6:[7,8,9,1],
-        ....:       7:[6,8,9,1], 8:[6,7,9,1], 9:[6,7,8,5,4,3,1], 10:[1],
-        ....:       11:[12,1], 12:[11,1], 13:[14,16,17,1], 14:[13,17,1],
-        ....:       16:[13,17,1], 17:[13,14,16,18,1], 18:[17], 24:[5,4,3,1]}
+        sage: d = {1: [5, 4, 3, 24, 6, 7, 8, 9, 2, 10, 11, 12, 13, 14, 16, 17],
+        ....:      2: [1], 3: [24, 9, 1], 4: [5, 24, 9, 1], 5: [4, 24, 9, 1],
+        ....:      6: [7, 8, 9, 1], 7: [6, 8, 9, 1], 8: [6, 7, 9, 1],
+        ....:      9: [6, 7, 8, 5, 4, 3, 1], 10: [1], 11: [12, 1], 12: [11, 1],
+        ....:      13: [14, 16, 17, 1], 14: [13, 17, 1], 16: [13, 17, 1],
+        ....:      17: [13, 14, 16, 18, 1], 18: [17], 24: [5, 4, 3, 1]}
         sage: g = Graph(d)
-        sage: test_modular_decomposition(habib_maurer_algorithm(g), g)
+        sage: check_modular_decomposition(habib_maurer_algorithm(g), g)
         True
 
     Tetrahedral Graph is Series::
@@ -564,7 +565,8 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
     Modular Decomposition tree containing both parallel and series modules::
 
-        sage: d = {2:[4,3,5], 1:[4,3,5], 5:[3,2,1,4], 3:[1,2,5], 4:[1,2,5]}
+        sage: d = {2: [4, 3, 5], 1: [4, 3, 5], 5: [3, 2, 1, 4],
+        ....:      3: [1, 2, 5], 4: [1, 2, 5]}
         sage: g = Graph(d)
         sage: print_md_tree(habib_maurer_algorithm(g))
         SERIES
@@ -706,7 +708,7 @@ def modular_decomposition(G, algorithm=None):
 # Below functions are implemented to test the modular decomposition tree
 # ============================================================================
 # Function implemented for testing
-def test_modular_decomposition(tree_root, graph):
+def check_modular_decomposition(tree_root, graph):
     """
     Test the input modular decomposition tree using recursion.
 
@@ -722,21 +724,21 @@ def test_modular_decomposition(tree_root, graph):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: g = graphs.HexahedralGraph()
-        sage: test_modular_decomposition(modular_decomposition(g), g)
+        sage: check_modular_decomposition(modular_decomposition(g), g)
         True
     """
     if tree_root.node_type != NodeType.NORMAL:
         for module in tree_root.children:
-            if not test_module(module, graph):
+            if not check_module(module, graph):
                 # test whether modules pass the defining
                 # characteristics of modules
                 return False
-            if not test_modular_decomposition(module,
-                                              graph.subgraph(get_vertices(module))):
+            if not check_modular_decomposition(module,
+                                               graph.subgraph(get_vertices(module))):
                 # recursively test the modular decomposition subtrees
                 return False
 
-        if not test_maximal_modules(tree_root, graph):
+        if not check_maximal_modules(tree_root, graph):
             # test whether the mdoules are maximal in nature
             return False
 
@@ -744,7 +746,7 @@ def test_modular_decomposition(tree_root, graph):
 
 
 # Function implemented for testing
-def test_maximal_modules(tree_root, graph):
+def check_maximal_modules(tree_root, graph):
     r"""
     Test the maximal nature of modules in a modular decomposition tree.
 
@@ -772,7 +774,7 @@ def test_maximal_modules(tree_root, graph):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: g = graphs.HexahedralGraph()
-        sage: test_maximal_modules(modular_decomposition(g), g)
+        sage: check_maximal_modules(modular_decomposition(g), g)
         True
     """
     if tree_root.node_type != NodeType.NORMAL:
@@ -865,7 +867,7 @@ def get_module_type(graph):
     """
     if not graph.is_connected():
         return NodeType.PARALLEL
-    elif graph.complement().is_connected():
+    if graph.complement().is_connected():
         return NodeType.PRIME
     return NodeType.SERIES
 
@@ -947,7 +949,7 @@ def form_module(index, other_index, tree_root, graph):
 
 
 # Function implemented for testing
-def test_module(module, graph):
+def check_module(module, graph):
     """
     Test whether input module is actually a module.
 
@@ -964,9 +966,9 @@ def test_module(module, graph):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: g = graphs.HexahedralGraph()
         sage: tree_root = modular_decomposition(g)
-        sage: test_module(tree_root, g)
+        sage: check_module(tree_root, g)
         True
-        sage: test_module(tree_root.children[0], g)
+        sage: check_module(tree_root.children[0], g)
         True
     """
     # A single vertex is a module
@@ -1101,8 +1103,7 @@ def tree_to_nested_tuple(root):
     """
     if root.node_type == NodeType.NORMAL:
         return root.children[0]
-    else:
-        return (root.node_type, [tree_to_nested_tuple(x) for x in root.children])
+    return (root.node_type, [tree_to_nested_tuple(x) for x in root.children])
 
 
 def nested_tuple_to_tree(nest):
@@ -1201,7 +1202,7 @@ def relabel_tree(root, perm):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: tuple_tree = (NodeType.SERIES, 1, 2, (NodeType.PARALLEL, 3, 4))
         sage: tree = nested_tuple_to_tree(tuple_tree)
-        sage: print_md_tree(relabel_tree(tree, (4,3,2,1)))
+        sage: print_md_tree(relabel_tree(tree, (4, 3, 2, 1)))
         SERIES
          4
          3
@@ -1211,7 +1212,6 @@ def relabel_tree(root, perm):
     """
     # If perm is not a dictionary, we build one !
     if perm is None:
-
         # vertices() returns a sorted list:
         # this guarantees consistent relabeling
         perm = {v: i for i, v in enumerate(get_vertices(root))}
@@ -1253,7 +1253,7 @@ def relabel_tree(root, perm):
 # =============================================================================
 
 @random_testing
-def test_gamma_modules(trials, vertices, prob, verbose=False):
+def check_gamma_modules(trials, vertices, prob, verbose=False):
     r"""
     Verify that the vertices of each gamma class of a random graph are modules
     of that graph.
@@ -1272,7 +1272,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
-        sage: test_gamma_modules(3, 7, 0.5)
+        sage: check_gamma_modules(3, 7, 0.5)
     """
     from sage.graphs.generators.random import RandomGNP
     for _ in range(trials):
@@ -1314,9 +1314,9 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
             print(random_perm)
         t1 = algorithm(g1)
         t2 = algorithm(g2)
-        assert test_modular_decomposition(t1, g1)
-        assert test_modular_decomposition(t2, g2)
-        t1p = relabel_tree(t1, random_perm)
+        assert check_modular_decomposition(t1, g1)
+        assert check_modular_decomposition(t2, g2)
+        t1p = relabel_tree(t1, list(random_perm))
         assert equivalent_trees(t1p, t2)
         if verbose:
             print("Passes!")
@@ -1340,7 +1340,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: set_random_seed(0)
         sage: tree_to_nested_tuple(random_md_tree(2, 5, 0.5))
-        (PRIME, [0, 1, (PRIME, [2, 3, 4, 5, 6]), 7, (PARALLEL, [8, 9, 10])])
+        (PRIME, [0, (PRIME, [1, 2, 3, 4]), 5, 6])
     """
 
     from sage.misc.prandom import choice, randint, random
@@ -1503,7 +1503,7 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
     - ``graph_gen`` -- function; a function that can be called without argument
       and returns a random graph.
 
-    - ``verbose`` -- boolean (defaul: ``False``); enable printing debug
+    - ``verbose`` -- boolean (default: ``False``); enable printing debug
       information.
 
     OUTPUT: ``None``. Raises an ``AssertionError`` on failure.
@@ -1530,3 +1530,309 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
         assert equivalent_trees(MD[0], MD[1])
         if verbose:
             print("Passes!")
+
+
+# ============================================================================
+# Method for computing the modular width of the graph
+# ============================================================================
+
+def modular_width(G):
+    r"""
+    Return the modular-width of ``G``.
+
+    The modular-width of a graph `G` is the maximum cardinality of the prime
+    nodes/modules in its modular decomposition tree. By convention, series and
+    parallel nodes/modules have width 2. Because cographs have only parallel or
+    series nodes in their modular decomposition tree, the modular-width of any
+    cograph of order at least 2 is 2. We set the modular-width of the empty
+    graph to 0 and the graph with a single vertex to 1.
+
+    EXAMPLES:
+
+    The Bull graph and the Petersen graph are prime::
+
+        sage: G = graphs.BullGraph()
+        sage: G.modular_decomposition()
+        (PRIME, [1, 2, 0, 3, 4])
+        sage: G.modular_width()
+        5
+        sage: G = graphs.PetersenGraph()
+        sage: G.modular_decomposition()
+        (PRIME, [1, 4, 5, 0, 6, 2, 3, 9, 7, 8])
+        sage: G.modular_width()
+        10
+
+    The modular-width of a graph on more than 2 vertices is 2 if it is a cograph
+    and is strictly larger otherwise::
+
+        sage: G = graphs.RandomGNP(randint(2, 20), random())
+        sage: mw = G.modular_width()
+        sage: is_cograph = G.is_cograph()
+        sage: (is_cograph and mw == 2) or (not is_cograph and mw > 2)
+        True
+
+    Graph from the :wikipedia:`Modular_decomposition`::
+
+        sage: G = Graph('Jv\\zoKF@wN?', format='graph6')
+        sage: G.relabel([1..11])
+        sage: G.modular_decomposition()
+        (PRIME,
+         [(SERIES, [4, (PARALLEL, [2, 3])]),
+          1,
+          5,
+          (PARALLEL, [6, 7]),
+          (SERIES, [(PARALLEL, [10, 11]), 9, 8])])
+        sage: G.modular_width()
+        5
+
+    All graphs on at most 4 vertices are cographs except the path graph of order
+    4, `P_4`, which is prime and has modular-width 4::
+
+        sage: [g.is_isomorphic(graphs.PathGraph(4))
+        ....:  for n in range(5) for g in graphs(n) if not g.is_cograph()]
+        [True]
+        sage: [g.modular_width() for n in range(5) for g in graphs(n)]
+        [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2]
+
+    TESTS::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import modular_width
+        sage: modular_width(DiGraph())
+        Traceback (most recent call last):
+        ...
+        ValueError: this method is for undirected graphs only
+    """
+    if G.is_directed():
+        raise ValueError("this method is for undirected graphs only")
+
+    if G.order() < 2:
+        return G.order()
+    if G.is_cograph():
+        return 2
+
+    # Get the modular decomposition of G
+    D = modular_decomposition(G)
+
+    stack = [D]
+    width = 2
+    while stack:
+        u = stack.pop()
+        if u.node_type == NodeType.PRIME:
+            width = max(width, len(u.children))
+        stack.extend(v for v in u.children if v.node_type != NodeType.NORMAL)
+
+    return width
+
+
+# ============================================================================
+# Method for building the quotient graph
+# ============================================================================
+
+def graph_from_quotient(Q, immutable=None):
+    r"""
+    Return the source graph of the quotient graph ``Q``.
+
+    This method is mostly for testing method :meth:`quotient_graph`. It works
+    only when the vertices are labeled with graphs, each representing the
+    subgraph of the original graph induced by a module of the decomposition. The
+    returned graph is isomorphic to the original graph.
+
+    INPUT:
+
+    - ``Q`` -- a Sage graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its quotient will behave the same way.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import graph_from_quotient
+        sage: G = graphs.RandomChordalGraph(20)
+        sage: Q = quotient_graph(G, style='graph')
+        sage: H = graph_from_quotient(Q)
+        sage: H.is_isomorphic(G)
+        True
+
+    TESTS::
+
+        sage: graph_from_quotient(quotient_graph(Graph(2), style='integer'))
+        Traceback (most recent call last):
+        ...
+        ValueError: the vertices must be labeled with graphs
+        sage: graph_from_quotient(quotient_graph(Graph(2), style='tuple'))
+        Traceback (most recent call last):
+        ...
+        ValueError: the vertices must be labeled with graphs
+    """
+    from sage.graphs.graph import Graph
+
+    if immutable is None:
+        immutable = Q.is_immutable()
+
+    if not Q:
+        return Graph(immutable=immutable)
+
+    u = next(Q.vertex_iterator())
+    if not isinstance(u, Graph):
+        raise ValueError("the vertices must be labeled with graphs")
+
+    # Each vertex of the quotient graph corresponds to a module and its label
+    # contains the edges of the subgraph induced by the module. Each edge of
+    # the quotient graph corresponds to a complete bipartite graph between the
+    # vertices of the corresponding modules.
+    vertices = (u for g in Q for u in g)
+    E1 = (e for g in Q for e in g.edge_iterator(labels=False))
+    E2 = ((u, v) for A, B in Q.edges(labels=False) for u in A for v in B)
+
+    from itertools import chain
+    return Graph([vertices, chain(E1, E2)], format='vertices_and_edges',
+                 immutable=immutable)
+
+
+def quotient_graph(G, style='integer', immutable=None):
+    r"""
+    Return the quotient graph from the modular decomposition of ``G``.
+
+    The quotient graph `Q` of a graph `G` is defined with respect to a partition
+    of the vertices of `G` into blocks. The quotient graph has one vertex per
+    block of the partition and there is an edge `(u, v)` in `Q` if some vertex
+    of the block corresponding to `u` is adjacent in `G` to some vertex in the
+    block corresponding to `v`.  See :wikipedia:`Quotient_graph` for more
+    details.
+
+    Here, the partition of the vertices of `G` is given by the modules of its
+    modular decomposition.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``style`` -- string (default: ``'integer'``); one of
+
+      - ``'integer'`` -- the vertices of the quotient graph are labeled as
+        integers in `0 \ldots |V(Q)| - 1`, where `V(Q)` is the vertex set of the
+        quotient graph `Q`.
+
+      - ``'tuple'`` -- the label of each vertex is a tuple of the vertices in
+        the module it represents
+
+      - ``'graph'`` -- the label of each vertex is the subgraph of `G` induced
+        by the vertices in the module it represents
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its quotient will behave the same way.
+
+    EXAMPLES:
+
+    The quotient graph of a star has a single edge::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import quotient_graph
+        sage: [quotient_graph(graphs.StarGraph(n)).size() for n in range(2, 8)]
+        [1, 1, 1, 1, 1, 1]
+
+    When the style of the vertices of the quotient graph is
+    ``'graph'``, it is possible to reconstruct the original graph from
+    the quotient graph::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import graph_from_quotient
+        sage: G = graphs.RandomChordalGraph(20)
+        sage: Q = quotient_graph(G, style='graph')
+        sage: H = graph_from_quotient(Q)
+        sage: H.is_isomorphic(G)
+        True
+
+    TESTS:
+
+    Small cases::
+
+        sage: for style in ('integer', 'tuple', 'graph'):
+        ....:     for n in range(3):
+        ....:         print(quotient_graph(Graph(n), style=style).vertices())
+        []
+        [0]
+        [0, 1]
+        []
+        [(0,)]
+        [(0,), (1,)]
+        []
+        [Subgraph of (): Graph on 1 vertex]
+        [Subgraph of (): Graph on 1 vertex, Subgraph of (): Graph on 1 vertex]
+        sage: quotient_graph(Graph(), style='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter style must be 'integer', 'tuple' or 'graph'
+
+    Check the behavior of parameter immutable::
+
+        sage: mu = [Graph(n) for n in range(4)]
+        sage: any(quotient_graph(g).is_immutable() for g in mu)
+        False
+        sage: all(quotient_graph(g, immutable=True).is_immutable() for g in mu)
+        True
+        sage: im = [Graph(n, immutable=True) for n in range(4)]
+        sage: all(quotient_graph(g).is_immutable() for g in im)
+        True
+        sage: any(quotient_graph(g, immutable=False).is_immutable() for g in mu)
+        False
+    """
+    if G.is_directed():
+        raise ValueError("this method is for undirected graphs only")
+    if style not in ('integer', 'tuple', 'graph'):
+        raise ValueError("parameter style must be 'integer', 'tuple' or 'graph'")
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    from sage.graphs.graph import Graph
+    from itertools import combinations
+
+    if G.order() < 2:
+        if style == 'integer':
+            return Graph(G.order(), immutable=immutable)
+        vertices = [(u,) for u in G]
+        if style == 'graph':
+            vertices = [G.subgraph(v, immutable=True) for v in vertices]
+        return Graph([vertices, []], format='vertices_and_edges',
+                     immutable=immutable)
+
+    # Get the modular decomposition of G
+    D = modular_decomposition(G)
+    # Each child of the root is a module to which we associate a vertex of the
+    # quotient graph. For each module, we extract the corresponding list of
+    # vertices from G.
+    vertices = [tuple(get_vertices(y)) for y in D.children]
+    n = len(vertices)
+
+    # We now get the edges of the quotient graph according the type of the root.
+    # Recall that there is no edge between modules if PARALLEL
+    edges = []
+    node_type = D.node_type
+    if node_type == NodeType.SERIES:
+        # The modules form a clique
+        edges = combinations(range(n), 2)
+
+    elif node_type == NodeType.PRIME:
+        # Modules A and B are connected if there is a join (complete bipartite)
+        # in G between the vertices in A and the vertices in B. It suffices to
+        # check a single pair
+        if G.size() > n**2:
+            edges = ((u, v) for u, v in combinations(range(n), 2)
+                        if G.has_edge(vertices[u][0], vertices[v][0]))
+        else:
+            v_to_e = {u: i for i, vv in enumerate(vertices) for u in vv}
+            edges = ((v_to_e[u], v_to_e[v])
+                         for u, v in G.edge_iterator(labels=False)
+                         if v_to_e[u] != v_to_e[v])
+
+    elif node_type != NodeType.PARALLEL:
+        raise ValueError(f"unrecognized node type from the modular decomposition: {node_type}")
+
+    Q = Graph([range(n), edges], format='vertices_and_edges')
+
+    if style == 'tuple':
+        Q.relabel(vertices)
+    elif style == 'graph':
+        Q.relabel([G.subgraph(v, immutable=True) for v in vertices])
+    return Q.copy(immutable=True) if immutable else Q

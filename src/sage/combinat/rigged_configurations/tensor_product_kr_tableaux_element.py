@@ -1,13 +1,13 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tensor Product of Kirillov-Reshetikhin Tableaux Elements
+Tensor product of Kirillov-Reshetikhin tableaux elements
 
 A tensor product of
 :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableauxElement`.
 
 AUTHORS:
 
-- Travis Scrimshaw (2010-09-26): Initial version
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************
@@ -290,7 +290,8 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
               1  2 (X)   1  4 (X)   4
               2  3
 
-        Let `\ast` denote the :meth:`Lusztig involution<lusztig_involution>`,
+        Let `\ast` denote the
+        :meth:`Lusztig involution<sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element.TensorProductOfKirillovReshetikhinTableauxElement.lusztig_involution>`,
         we check that `\ast \circ \mathrm{ls} \circ \ast = \mathrm{rs}`::
 
             sage: all(x.lusztig_involution().left_split().lusztig_involution() == x.right_split() for x in KRT)
@@ -386,7 +387,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
             <BLANKLINE>
 
         This is invertible by calling
-        :meth:`~sage.combinat.rigged_configurations.rigged_configuration_element.RiggedConfigurationElement.to_tensor_product_of_kirillov_reshetikhin_tableaux()`::
+        :meth:`~sage.combinat.rigged_configurations.rigged_configuration_element.KRRiggedConfigurationElement.to_tensor_product_of_kirillov_reshetikhin_tableaux()`::
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['D', 4, 1], [[2,2]])
             sage: T = KRT(pathlist=[[2,1,4,3]])

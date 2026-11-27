@@ -133,7 +133,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         ::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(CDF, [[        2,   4 + 2*I,   6 - 4*I],
             ....:                  [ -2*I + 4,        11, 10 - 12*I],
             ....:                  [  4*I + 6, 10 + 12*I,        37]])
@@ -164,7 +163,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         ::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
             sage: n = ZZ.random_element(1,5)
             sage: A = matrix.random(CDF, n, sparse=True)
             sage: I = matrix.identity(CDF, n, sparse=True)
@@ -175,8 +173,19 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: B = A.dense_matrix()
             sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
+
+        The result is cached, hence immutable::
+
+            sage: A = matrix(RDF, [[4, 2], [2, 5]], sparse=True)
+            sage: L = A.cholesky()
+            sage: L.is_immutable()
+            True
+            sage: L[0, 0] = 100
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead...
         """
-        cdef Matrix L # output matrix
+        cdef Matrix L  # output matrix
 
         L = self.fetch('cholesky')
         if L is not None:
@@ -242,6 +251,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           (cvx_L.I[k], cvx_L.J[k]): cvx_L.V[k]
           for k in range(len(cvx_L.V))
         })
+        L.set_immutable()
 
         self.cache('cholesky', L)
         return L

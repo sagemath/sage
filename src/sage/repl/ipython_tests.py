@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 '''
 Tests for the IPython integration
 
@@ -62,7 +61,8 @@ as long as ``embedsignature=True`` is set
     Signature:      f(a)
     ...
 
-Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
+Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`.
+The section underline depends on the available docstring formatter::
 
     sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
     sage: shell = get_test_shell()                           # optional - rpy2
@@ -73,7 +73,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
     File:            .../sage/interfaces/r.py
     Docstring:...
     title
-    *****
+    ...
     <BLANKLINE>
     Fitting Linear Models
     ...

@@ -611,8 +611,10 @@ We conclude with a rank `3 + 1` alcove walk::
 
     #. Draw the tiling of 3D space by the fundamental polygons for
        types A,B,C,D. Hints: use the ``wireframe`` option of
-       :meth:`RootLatticeRealizations.ParentMethods.plot_alcoves` and
-       the ``color`` option of :meth:`plot` to only draw the alcove
+       :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot_alcoves`
+       and the ``color`` option of
+       :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot`
+       to only draw the alcove
        facets indexed by `0`.
 
 .. TOPIC:: Solution
@@ -1011,7 +1013,7 @@ class PlotOptions:
                     label = "$"+str(latex(label))+"$"
                 from sage.plot.text import text
                 return text(label, position, fontsize=15, rgbcolor=rgbcolor)
-            elif self.dimension == 3:
+            if self.dimension == 3:
                 # LaTeX labels not yet supported in 3D
                 if isinstance(label, str):
                     label = label.replace("{","").replace("}","").replace("$","").replace("_","")
@@ -1019,8 +1021,7 @@ class PlotOptions:
                     label = str(label)
                 from sage.plot.plot3d.shapes2 import text3d
                 return text3d(label, position, rgbcolor=rgbcolor)
-            else:
-                raise NotImplementedError("Plots in dimension > 3")
+            raise NotImplementedError("Plots in dimension > 3")
         else:
             return self.empty()
 
@@ -1082,8 +1083,7 @@ class PlotOptions:
         ct = self.space.cartan_type()
         if ct.is_affine() and ct.special_node() == self.index_of_object(i):
             return 2
-        else:
-            return 1
+        return 1
 
     def color(self, i):
         r"""
@@ -1170,8 +1170,7 @@ class PlotOptions:
         """
         if self.level is not None:
             return x * self.level / x.level()
-        else:
-            return x
+        return x
 
     def empty(self, *args):
         r"""
@@ -1443,8 +1442,7 @@ class PlotOptions:
                                   key=lambda x: list(reversed(x)))
                 result += self.text(label, 1.05*vector(vertices[-1]))
             return result
-        else:
-            return self.empty()
+        return self.empty()
 
     def reflection_hyperplane(self, coroot, as_polyhedron=False):
         r"""

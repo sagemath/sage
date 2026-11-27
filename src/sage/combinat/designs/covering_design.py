@@ -20,13 +20,9 @@ design from this database, we include extra information:
 
 REFERENCES:
 
-.. [1] La Jolla Covering Repository,
-  https://dmgordon.org/cover
+- [LJCR]_
 
-.. [2] Daniel M. Gordon and Douglas R. Stinson, *Coverings*,
-  Chapter 1 in: Charles J. Colbourn and Jeffrey H. Dinitz,
-  *Handbook of Combinatorial Designs*, 2nd Edition, 2006.
-  https://www.dmgordon.org/papers/hcd.pdf
+- [GS2006]_
 
 AUTHORS:
 
@@ -311,10 +307,7 @@ class CoveringDesign(SageObject):
             for z in Skt:
                 y = (a[x] for x in z)
                 tset[tuple(y)] = True
-        for i in Svt:
-            if not tset[tuple(i)]:  # uncovered
-                return False
-        return True                 # everything was covered
+        return all(tset[tuple(i)] for i in Svt)                 # everything was covered
 
     def v(self):
         """

@@ -643,23 +643,21 @@ class TopologicalManifold(ManifoldSubset):
                 return "{}-dimensional {} manifold {}".format(self._dim,
                                                           self._structure.name,
                                                           self._name)
-            elif self._field_type == 'complex':
+            if self._field_type == 'complex':
                 if isinstance(self._structure, DifferentialStructure):
                     return "{}-dimensional complex manifold {}".format(
                                                                     self._dim,
                                                                     self._name)
-                else:
-                    return "Complex {}-dimensional {} manifold {}".format(
-                                                          self._dim,
-                                                          self._structure.name,
-                                                          self._name)
+                return "Complex {}-dimensional {} manifold {}".format(
+                                                      self._dim,
+                                                      self._structure.name,
+                                                      self._name)
             return "{}-dimensional {} manifold {} over the {}".format(
                                                           self._dim,
                                                           self._structure.name,
                                                           self._name,
                                                           self._field)
-        else:
-            return "Open subset {} of the {}".format(self._name, self._manifold)
+        return "Open subset {} of the {}".format(self._name, self._manifold)
 
     def _an_element_(self):
         r"""
@@ -1556,7 +1554,7 @@ class TopologicalManifold(ManifoldSubset):
 
         They can be recovered by the operator ``[:]`` applied to the chart::
 
-            sage: (x, y) = X[:]
+            sage: x, y = X[:]
             sage: y
             y
             sage: type(y)
@@ -3000,7 +2998,7 @@ def Manifold(
                                    latex_name=latex_name,
                                    start_index=start_index,
                                    unique_tag=unique_tag())
-    elif structure in ['differentiable', 'diff', 'smooth']:
+    if structure in ['differentiable', 'diff', 'smooth']:
         if 'diff_degree' in extra_kwds:
             diff_degree = extra_kwds['diff_degree']
             if structure == 'smooth' and diff_degree != infinity:
@@ -3025,7 +3023,7 @@ def Manifold(
                                       latex_name=latex_name,
                                       start_index=start_index,
                                       unique_tag=unique_tag())
-    elif structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
+    if structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
         diff_degree = extra_kwds.get('diff_degree', infinity)
         metric_name = extra_kwds.get('metric_name', None)
         metric_latex_name = extra_kwds.get('metric_latex_name', None)
@@ -3052,13 +3050,13 @@ def Manifold(
             ambient = extra_kwds['ambient']
             if structure == 'degenerate_metric':
                 return DegenerateSubmanifold(dim, name, ambient=ambient,
-                                               metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+                                             metric_name=metric_name,
+                                             signature=signature,
+                                             diff_degree=diff_degree,
+                                             latex_name=latex_name,
+                                             metric_latex_name=metric_latex_name,
+                                             start_index=start_index,
+                                             unique_tag=unique_tag())
             return PseudoRiemannianSubmanifold(dim, name, ambient=ambient,
                                                metric_name=metric_name,
                                                signature=signature,
@@ -3068,13 +3066,13 @@ def Manifold(
                                                start_index=start_index,
                                                unique_tag=unique_tag())
         if structure == 'degenerate_metric':
-                return DegenerateManifold(dim, name, metric_name=metric_name,
-                                               signature=signature,
-                                               diff_degree=diff_degree,
-                                               latex_name=latex_name,
-                                               metric_latex_name=metric_latex_name,
-                                               start_index=start_index,
-                                               unique_tag=unique_tag())
+            return DegenerateManifold(dim, name, metric_name=metric_name,
+                                      signature=signature,
+                                      diff_degree=diff_degree,
+                                      latex_name=latex_name,
+                                      metric_latex_name=metric_latex_name,
+                                      start_index=start_index,
+                                      unique_tag=unique_tag())
         return PseudoRiemannianManifold(dim, name, metric_name=metric_name,
                                         signature=signature,
                                         diff_degree=diff_degree,
@@ -3082,7 +3080,7 @@ def Manifold(
                                         metric_latex_name=metric_latex_name,
                                         start_index=start_index,
                                         unique_tag=unique_tag())
-    raise NotImplementedError("manifolds of type {} are ".format(structure) +
+    raise NotImplementedError(f"manifolds of type {structure} are " +
                               "not implemented")
 
 

@@ -462,7 +462,8 @@ cpdef executor(tuple params):
 
     - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
-      is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
+      is the ``id`` of the :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix`
+      object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.
 
     .. NOTE::

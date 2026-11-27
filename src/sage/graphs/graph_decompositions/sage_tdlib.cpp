@@ -1,5 +1,3 @@
-// sage.setup: distribution = sagemath-tdlib
-
 #include <boost/tuple/tuple.hpp>
 #include <map>
 

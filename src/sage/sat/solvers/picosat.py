@@ -18,10 +18,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .satsolver import SatSolver
-
-from sage.misc.lazy_import import lazy_import
 from sage.features.sat import Pycosat
+from sage.misc.lazy_import import lazy_import
+from sage.sat.solvers.satsolver import SatSolver
 
 lazy_import('pycosat', ['solve'], feature=Pycosat())
 
@@ -167,8 +166,7 @@ class PicoSAT(SatSolver):
         # sol = pycosat.solve(self._clauses)
         if sol == 'UNSAT':
             return False
-        else:
-            return (None,) + tuple([s > 0 for s in sol])
+        return (None,) + tuple([s > 0 for s in sol])
 
     def __repr__(self):
         r"""

@@ -122,6 +122,11 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 # Lazy Laurent series ring
 lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
                                             'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
+lazy_import('sage.rings.lazy_series_ring', 'LazyPseudoDifferentialOperatorRing',
+            as_="PseudoDifferentialOperatorRing")
+
+# Lazy combinatorial species
+lazy_import('sage.rings.lazy_species', 'LazyCombinatorialSpecies')
 
 # Tate algebras
 from sage.rings.tate_algebra import TateAlgebra

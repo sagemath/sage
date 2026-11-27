@@ -407,8 +407,9 @@ cdef path_term_t *term_copy_recursive(path_term_t *T) except NULL:
     return first
 
 # Hash of a term; probably not a good one.
-cdef inline long term_hash(path_term_t *T) noexcept:
-    return (<long>hash(<object>T.coef)+(T.mon.l_len<<5)+(T.mon.pos<<10))^bitset_hash(T.mon.path.data)
+cdef inline Py_hash_t term_hash(path_term_t *T) noexcept:
+    return (hash(<object>T.coef) + (T.mon.l_len << 5) +
+            (T.mon.pos << 10)) ^ bitset_hash(T.mon.path.data)
 
 # Recall that a monomial a*I*b (with I a generator of a free module)
 # is encoded by a path a*s*b for some monomial s that refers to a
@@ -749,9 +750,9 @@ cdef bint poly_richcmp(path_poly_t *P1, path_poly_t *P2, path_order_t cmp_terms,
     return rich_to_bool(op, 1)
 
 # Hash of a polynomial. Probably not a very strong hash.
-cdef inline long poly_hash(path_poly_t *P) noexcept:
+cdef inline Py_hash_t poly_hash(path_poly_t *P) noexcept:
     cdef path_term_t *T = P.lead
-    cdef long out = 0
+    cdef Py_hash_t out = 0
     while T != NULL:
         out = out<<7 | (out>>(sizeof(long)-7))
         out += term_hash(T)

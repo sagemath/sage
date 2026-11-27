@@ -47,8 +47,7 @@ def find_primitive_p_divisible_vector__random(self, p):
         a = self(v)
         if a in ZZ and (a % p == 0) and (v != 0):
             return v
-        else:
-            v[ZZ.random_element(n)] = ZZ.random_element(p)
+        v[ZZ.random_element(n)] = ZZ.random_element(p)
             # Replace a random entry and try again.
     raise RuntimeError("unable to find a p divisible vector")
 

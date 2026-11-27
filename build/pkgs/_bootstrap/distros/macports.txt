@@ -3,4 +3,7 @@ gettext
 autoconf
 automake
 libtool
-pkgconfig
+# Python packages needed for configure and build
+python313
+py-setuptools
+xz

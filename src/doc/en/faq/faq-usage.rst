@@ -31,7 +31,7 @@ release of Sage.
 The Sage Jupyter notebook runs within a web browser. To start the notebook,
 issue the following command in a terminal, if ``sage`` is in your ``PATH``
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -notebook
 
@@ -61,14 +61,14 @@ needs to have a working C compiler if you want to compile Sage
 from source. On
 Debian/Ubuntu, you can install these prerequisites as follows:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sudo apt-get install build-essential m4
 
 If you have a multi-core system, you can opt for a parallel build of
 Sage. The command
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ export MAKEFLAGS='-j8'
 
@@ -79,7 +79,7 @@ cores on your system. Some Sage installations may have OpenMP-enabled BLAS
 the environment variable OMP_NUM_THREADS; however, it is known to not
 play well with Python parallelism, and you might want to
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ export OMP_NUM_THREADS=1
 
@@ -89,43 +89,42 @@ in case of crashes or hangs.
 More details may be found in `Installation Manual <https://doc.sagemath.org/html/en/installation/index.html>`_.
 
 
-How to get Sage's Python to recognize my system's Tcl/Tk install?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+How to get Sage to recognize my system's Tcl/Tk install?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-It may be that you have Tcl/Tk installed and that your system's Python
-recognizes it but Sage's Python does not. Normally speaking, there is little
-need to build Sage's Python nowadays (anno 2023), but if you do, here it is.
-Make sure you installed the Tcl/Tk development library.  On Ubuntu, this is the
-command
+Sage uses the Python interpreter selected at build time. To use Tcl/Tk
+libraries in Sage, make sure that this Python installation provides the
+``tkinter`` module. On Ubuntu, this is usually done by installing
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    $ sudo apt-get install tk8.5-dev
+    $ sudo apt-get install python3-tk
 
-or something along that line. Next, reinstall Sage's Python:
+or a similarly named package such as ``python3-tkinter``.
 
-.. CODE-BLOCK:: shell-session
+If you are using an external Python, first check that exact interpreter:
 
-    $ make python3-clean python3-uninstall && make python3
+.. code-block:: console
 
-This will pick up the Tcl/Tk library automatically. After successfully
-reinstalling Sage's Python, from within the Sage command line interface,
-issue these commands:
+    $ "$PYTHON3" -c "import tkinter"
 
-.. CODE-BLOCK:: python
+After rebuilding or reinstalling Sage against that Python, you can also check
+from the Sage command line interface that Tcl/Tk is available:
 
-    import _tkinter
-    import Tkinter
+.. code-block:: python
 
-If they do not raise an :class:`ImportError` then it worked.
+    import tkinter
+
+If this does not raise an :class:`ImportError`, then it worked.
 
 
 How do I import Sage into a Python script?
 """"""""""""""""""""""""""""""""""""""""""
 
 You can import Sage as a library in a Python script. One caveat is
-that you need to run that Python script using the version of Python
-that is bundled with Sage (Sage 9.2 ships with Python 3.7.x).
+that you need to run that Python script inside Sage's Python
+environment. In a source build, Sage creates this environment from the
+external Python selected at build time.
 To import Sage, put the following in your Python script:
 
 .. CODE-BLOCK:: python
@@ -133,11 +132,10 @@ To import Sage, put the following in your Python script:
     from sage.all import *
 
 When you want to run your script, you need to invoke Sage with the
-option ``-python`` which would run your script using the version of
-Python that comes with Sage. For example, if Sage is in your ``PATH``
-variable then you can do this:
+option ``-python`` which runs your script inside that environment. For
+example, if Sage is in your ``PATH`` variable then you can do this:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -python /path/to/my/script.py
 
@@ -146,7 +144,7 @@ itself. A Sage script has the file extension ``.sage`` and is more or
 less a Python script but uses Sage-specific functions and
 commands. You can then run that Sage script like so:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage /path/to/my/script.sage
 
@@ -458,7 +456,7 @@ When I start Sage, SELinux complains that "/path/to/libpari-gmp.so.2" requires t
 
 The problem can be fixed by running the following command:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ chcon -t textrel_shlib_t /path/to/libpari-gmp.so.2
 
@@ -647,17 +645,17 @@ You will need to do this from the command line.  Just run a command like this.
 
 * Linux (assuming you have Sage in ``/usr/bin``):
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
-    $ env BROWSER=opera /usr/bin/sage --notebook
+      $ env BROWSER=opera /usr/bin/sage --notebook
 
 * Mac (assuming you are in the directory of your downloaded Sage).
   With the Jupyter notebook:
 
-  .. CODE-BLOCK:: shell-session
+  .. code-block:: console
 
-    $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
-    $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
+      $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
 
 
 Where is the source code for ``<function>``?

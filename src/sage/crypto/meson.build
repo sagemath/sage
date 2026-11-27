@@ -2,13 +2,16 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'boolean_function.pxd',
+  'boolean_function.pyx',
   'cipher.py',
   'classical.py',
   'classical_cipher.py',
   'cryptosystem.py',
+  'ed25519.py',
   'lattice.py',
   'lfsr.py',
   'lwe.py',
+  'sbox.pyx',
   'sboxes.py',
   'stream.py',
   'stream_cipher.py',
@@ -17,8 +20,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'boolean_function' : files('boolean_function.pyx'),
-  'sbox' : files('sbox.pyx'),
+  'boolean_function': files('boolean_function.pyx'),
+  'sbox': files('sbox.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -33,6 +36,5 @@ foreach name, pyx : extension_data
 endforeach
 
 install_subdir('block_cipher', install_dir: sage_install_dir / 'crypto')
-install_subdir('key_exchange', install_dir: sage_install_dir / 'crypto')
 install_subdir('mq', install_dir: sage_install_dir / 'crypto')
 install_subdir('public_key', install_dir: sage_install_dir / 'crypto')

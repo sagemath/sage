@@ -47,7 +47,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.all import parent
+from sage.structure.element import parent
 from math import log, ceil
 
 # -------------------------------------------------------------------

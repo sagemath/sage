@@ -1,8 +1,8 @@
 """
-Cycle Species
+Cycle species
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@ Cycle Species
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.arith.misc import divisors, euler_phi
 from sage.combinat.species.misc import accept_size
@@ -25,6 +25,10 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.CycleSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
+
             sage: S.structures(["a","b","c"])[0]
             ('a', 'b', 'c')
         """
@@ -59,8 +63,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Return the transport of this structure along the permutation
-        perm.
+        Return the transport of this structure along the permutation ``perm``.
 
         EXAMPLES::
 
@@ -72,10 +75,10 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             ('a', 'c', 'b')
         """
         p = self.permutation_group_element()
-        p = perm*p*~perm
+        p = perm * p * ~perm
         new_list = [1]
-        for i in range(len(self._list)-1):
-            new_list.append( p(new_list[-1]) )
+        for i in range(len(self._list) - 1):
+            new_list.append(p(new_list[-1]))
         return CycleSpeciesStructure(self.parent(), self._labels, new_list)
 
     def automorphism_group(self):

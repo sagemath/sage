@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # Copyright (c) 2009, Tom Boothby <boothby@math.washington.edu>
 # All rights reserved.
 #
@@ -154,7 +153,7 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: g = ArgumentFixer(number_of_partitions); g                            # needs sage.combinat
+            sage: g = ArgumentFixer(number_of_partitions); g
             Argument Fixer of <function number_of_partitions at 0x...>
         """
         return "Argument Fixer of %s" % self.f
@@ -211,7 +210,7 @@ cdef class ArgumentFixer:
         cdef dict defaults = self._defaults
         cdef int i
         cdef dict kwargs_ = dict(kwargs)
-        for i from 0<=i<self._nargs:
+        for i in range(self._nargs):
             name = arg_names[i]
             if i >= lenargs:
                 if name in kwargs_:

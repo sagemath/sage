@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 r"""
 Decomposition by clique minimal separators
@@ -458,9 +457,9 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
         # Format and return the result
         if tree:
             return make_tree(A, Sc)
-        elif rooted_tree:
+        if rooted_tree:
             return make_labelled_rooted_tree(A, Sc)
-        elif separators:
+        if separators:
             return A, Sh, Sc
         return A, Sc
 

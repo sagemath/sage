@@ -268,7 +268,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Proposition 12 of [GiTr1996]_.
+        Proposition 12 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -328,7 +328,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         If ``n`` is a power of the characteristic of the field and the constant
         base field is perfect, then this uses the algorithm described in
-        Proposition 12 of [GiTr1996]_.
+        Proposition 12 of [GT1996]_.
 
         .. SEEALSO::
 
@@ -336,7 +336,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -399,7 +398,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(self._parent._base, deg)
         M = MS(v)
-        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0,1]+[0]*(deg-2))).list())
+        y = self._parent._base.polynomial_ring()(M.solve_left(MS.column_space()([0, 1]+[0]*(deg-2))).list())
 
         f = self._x(y).map_coefficients(lambda c: c.nth_root(char))
         return self._parent(f)

@@ -104,7 +104,7 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k2.<a> = GF(2^17)
             sage: k1 == k2
             False
-            sage: k3.<a> = GF(2^16, impl='pari_ffelt')
+            sage: k3.<a> = GF(2^16, implementation="pari_ffelt")
             sage: k1 == k3
             False
 
@@ -166,6 +166,10 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k.<a> = GF(2^64)
             sage: k.degree()
             64
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return self._cache.degree()
 
@@ -225,7 +229,7 @@ class FiniteField_ntl_gf2e(FiniteField):
 
             This generator is not guaranteed to be a generator for the
             multiplicative group.  To obtain the latter, use
-            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.multiplicative_generator`
             or use the ``modulus="primitive"`` option when constructing
             the field.
 
@@ -239,9 +243,9 @@ class FiniteField_ntl_gf2e(FiniteField):
 
         TESTS::
 
-            sage: GF(2, impl='ntl').gen()
+            sage: GF(2, implementation='ntl').gen()
             1
-            sage: GF(2, impl='ntl', modulus=polygen(GF(2)) ).gen()
+            sage: GF(2, implementation='ntl', modulus=polygen(GF(2)) ).gen()
             0
             sage: GF(2^19, 'a').gen(1)
             Traceback (most recent call last):
@@ -267,7 +271,9 @@ class FiniteField_ntl_gf2e(FiniteField):
 
     def from_integer(self, number):
         r"""
-        Given an integer `n` less than :meth:`cardinality` with base `2`
+        Given an integer `n` less than
+        :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.cardinality`
+        with base `2`
         representation `a_0 + 2 \cdot a_1 + \cdots + 2^k a_k`, returns
         `a_0 + a_1 \cdot x + \cdots + a_k x^k`, where `x` is the
         generator of this finite field.

@@ -1,12 +1,12 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Induced Crystals
+Induced crystals
 
 We construct a crystal structure on a set induced by a bijection `\Phi`.
 
 AUTHORS:
 
-- Travis Scrimshaw (2014-05-15): Initial implementation
+- Travis Scrimshaw (2014-05-15): initial implementation
 """
 
 #*****************************************************************************
@@ -21,7 +21,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -174,7 +174,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
 
         self.module_generators = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -218,7 +218,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
         except (TypeError, ValueError, AttributeError):
             raise TypeError("unable to convert {!r} to {}".format(x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 

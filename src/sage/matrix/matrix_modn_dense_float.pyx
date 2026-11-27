@@ -61,7 +61,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         TESTS::
 
-            sage: A = random_matrix(GF(7), 4, 4)
+            sage: A = random_matrix(GF(7), 4, 4, implementation='linbox')
             sage: type(A[0,0])
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
         """
@@ -73,25 +73,30 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(7), 4, 4)
+            sage: A = random_matrix(GF(7), 4, 4, implementation='linbox')
             sage: l = A.list()
-            sage: A[0,0] = 12
-            sage: A.list()[0] == 12
-            True
+            sage: A[0,0] = 12; A
+            [5 ...]
             sage: l[1:] == A.list()[1:]
             True
 
-            sage: B = random_matrix(Integers(100), 4, 4)
+            sage: B = random_matrix(Integers(100), 4, 4, implementation='linbox')
             sage: l = B.list()
-            sage: B[0,0] = 422
-            sage: B.list()[0] == 22
-            True
+            sage: B[0,0] = 422; B
+            [22 ...]
             sage: l[1:] == B.list()[1:]
             True
         """
         self._matrix[i][j] = <float>value
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef unsigned long get_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+        cdef float result = (<Matrix_modn_dense_template>self)._matrix[i][j]
+        return <int_fast64_t>result
+
+    cdef void set_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j, unsigned long value) noexcept:
+        self._matrix[i][j] = <float>value
+
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
         r"""
         Set the (i,j) entry with no bounds-checking, or any other checks.
 
@@ -99,26 +104,31 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(13), 4, 4)
+            sage: A = random_matrix(GF(13), 4, 4, implementation='linbox')
             sage: l = A.list()
             sage: K = A.base_ring()
             sage: x = K(27)
-            sage: A[0,0] = x
-            sage: A[0,0] == x
+            sage: A[0, 0] = x
+            sage: A[0, 0] == x
             True
             sage: l[1:] == A.list()[1:]
             True
+            sage: A[0, 0]
+            1
 
-            sage: B = random_matrix(Integers(200), 4, 4)
+            sage: B = random_matrix(Integers(200), 4, 4, implementation='linbox')
             sage: l = B.list()
             sage: R = B.base_ring()
             sage: x = R(311)
-            sage: B[0,0] = x
+            sage: B[0, 0] = x
             sage: B.list()[0] == x
             True
             sage: l[1:] == B.list()[1:]
             True
+            sage: B[0, 0]
+            111
         """
+        v = <float>(<IntegerMod_int>x).ivalue
         self._matrix[i][j] = <float>(<IntegerMod_int>x).ivalue
 
     cdef IntegerMod_int get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
@@ -132,22 +142,56 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: R = Integers(100)
-            sage: l = [R.random_element() for _ in range(4*4)]
-            sage: A = matrix(Integers(100), 4, 4, l)
-            sage: a = A[0,0]
-            sage: a == l[0]
-            True
-            sage: a in R
-            True
-
-            sage: l = [R.random_element() for _ in range(4*4)]
-            sage: B = matrix(Integers(100), 4, 4, l)
-            sage: b = B[0,0]
-            sage: b == l[0]
-            True
-            sage: b in R
+            sage: A = matrix(Integers(100),
+            ....:            [[4, 95, 83, 47],
+            ....:            [44, 57, 91, 53],
+            ....:            [75, 53, 15, 39],
+            ....:            [26, 25, 10, 74]],
+            ....:            implementation='linbox')
+            sage: a = A[0,0]; a
+            4
+            sage: a in A.base_ring()
             True
         """
         cdef float result = (<Matrix_modn_dense_template>self)._matrix[i][j]
         return (<Matrix_modn_dense_float>self)._get_template._new_c(<int_fast32_t>result)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_dense_float
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(131),3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_modn_dense_float _src = <Matrix_modn_dense_float>src
+        self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]

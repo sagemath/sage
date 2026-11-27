@@ -19,7 +19,7 @@ from sage.symbolic.function import BuiltinFunction
 #  Table of available integration routines
 ##################################################################
 
-import sage.symbolic.integration.external as external
+from sage.symbolic.integration import external
 
 # Add new integration routines to the dictionary below. This will make them
 # accessible with the 'algorithm' keyword parameter of top level integrate().
@@ -109,8 +109,10 @@ class IndefiniteIntegral(BuiltinFunction):
 
         Check that :issue:`28842` is fixed::
 
-            sage: integrate(1/(x^4 + x^3 + 1), x)
-            integrate(1/(x^4 + x^3 + 1), x)
+            sage: R = integrate(1/(x^4 + x^3 + 1), x)
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: R.operator() is root_sum
+            True
 
         Check that :issue:`32002` is fixed. This needs giac since only
         giac can integrate it in any case::
@@ -144,10 +146,9 @@ class IndefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                else:
-                    uneval = integral(SR.wild(0), x, hold=True)
-                    if not A.has(uneval):
-                        return A
+                uneval = integral(SR.wild(0), x, hold=True)
+                if not A.has(uneval):
+                    return A
         return A
 
     def _tderivative_(self, f, x, diff_param=None):
@@ -164,8 +165,7 @@ class IndefiniteIntegral(BuiltinFunction):
         """
         if x.has(diff_param):
             return f * x.derivative(diff_param)
-        else:
-            return f.derivative(diff_param).integral(x)
+        return f.derivative(diff_param).integral(x)
 
     def _print_latex_(self, f, x):
         r"""
@@ -210,10 +210,10 @@ class DefiniteIntegral(BuiltinFunction):
 
             sage: # needs sage.libs.giac
             sage: ex = 1/max_symbolic(x, 1)**2
-            sage: integral(ex, x, 0, 2, algorithm='giac')
+            sage: result = integral(ex, x, 0, 2, algorithm='giac') # random
+            sage: result
             3/2
-            sage: result = integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac')
-            ...
+            sage: result = integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac') # random
             sage: result
             2
         """
@@ -272,10 +272,9 @@ class DefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                else:
-                    uneval = integral(SR.wild(0), x, a, b, hold=True)
-                    if not A.has(uneval):
-                        return A
+                uneval = integral(SR.wild(0), x, a, b, hold=True)
+                if not A.has(uneval):
+                    return A
         return A
 
     def _evalf_(self, f, x, a, b, parent=None, algorithm=None):
@@ -354,7 +353,8 @@ class DefiniteIntegral(BuiltinFunction):
             sage: f = function('f')
             sage: print_latex(f(x),x,0,1)
             '\\int_{0}^{1} f\\left(x\\right)\\,{d x}'
-            sage: latex(integrate(tan(x)/x, x, 0, 1))
+            sage: ans = latex(integrate(tan(x)/x, x, 0, 1)) # random - ignore giac stderr output
+            sage: ans
             \int_{0}^{1} \frac{\tan\left(x\right)}{x}\,{d x}
         """
         from sage.misc.latex import latex
@@ -488,7 +488,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         To integrate a polynomial over a polytope, use the optional
         ``latte_int`` package
-        :meth:`sage.geometry.polyhedron.base.Polyhedron_base.integrate`.
+        :meth:`~sage.geometry.polyhedron.base7.Polyhedron_base7.integrate`.
 
     EXAMPLES::
 
@@ -614,10 +614,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
                  x y  + Sqrt[--] FresnelS[Sqrt[--] x]
                              2                 Pi
         sage: print(f.integral(x))
-        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x)
-                                + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x)
-                                - (I - 1)*sqrt(2)*erf(sqrt(-I)*x)
-                                + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
+        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) - 2*sqrt(2)*imag_part(erf((-1)^(1/4)*x)) + 2*sqrt(2)*real_part(erf((-1)^(1/4)*x)))
 
     Alternatively, just use algorithm='mathematica_free' to integrate via Mathematica
     over the internet (does NOT require a Mathematica license!)::
@@ -646,12 +643,15 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no closed form integral. Notice
-    that the answer comes back as an expression that contains an
-    integral itself. ::
+    A rational function can have a compact antiderivative represented
+    using a :class:`~sage.symbolic.rootsum.RootSumFunction` over a resolvent
+    polynomial.  Expanding it into individual logarithmic terms is not
+    necessary. ::
 
-        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x); A
-        integrate(1/((x^4 + x + 1)*(x - 4)), x)
+        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x)
+        sage: from sage.symbolic.rootsum import root_sum
+        sage: any(op.operator() is root_sum for op in A.operands())
+        True
 
     Sometimes, in this situation, using the algorithm "maxima"
     gives instead a partially integrated answer::
@@ -684,12 +684,14 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
     The following definite integral is not found by maxima::
 
         sage: f(x) = (x^4 - 3*x^2 + 6) / (x^6 - 5*x^4 + 5*x^2 + 4)
-        sage: integrate(f(x), x, 1, 2, algorithm='maxima')
+        sage: integrate(f(x), x, 1, 2, algorithm='maxima')  # long time
         integrate((x^4 - 3*x^2 + 6)/(x^6 - 5*x^4 + 5*x^2 + 4), x, 1, 2)
 
     but is nevertheless computed::
 
-        sage: integrate(f(x), x, 1, 2)
+        sage: # long time
+        sage: ans = integrate(f(x), x, 1, 2)  # random - ignore giac stderr output
+        sage: ans
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Both fricas and sympy give the correct result::
@@ -999,46 +1001,6 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: bool(actual == expected)
         True
 
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(cos(x + abs(x)), x)
-        ...
-        sage: result
-        sin(x*sgn(x) + x)/(sgn(x) + 1)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/(1 + abs(x)), x)
-        ...
-        sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/sqrt(abs(x)), x)
-        ...
-        sage: result
-        2*sqrt(x*sgn(x))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(1/(1 + abs(x)), x)
-        ...
-        sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
-
-    ::
-
-        sage: # needs sage.libs.giac
-        sage: result = integrate(cos(x + abs(x)), x)
-        ...
-        sage: result
-        sin(x*sgn(x) + x)/(sgn(x) + 1)
-
     Some tests for :issue:`17468`::
 
         sage: integral(log(abs(2*sin(x))), x, 0, pi/3)
@@ -1051,8 +1013,8 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: f = log(sin(x))*sin(x)^2
         sage: g = integrate(f, x) ; g
         1/4*I*x^2
+        - 1/2*I*x*arctan2(-sin(x), -cos(x) + 1)
         - 1/2*I*x*arctan2(sin(x), cos(x) + 1)
-        + 1/2*I*x*arctan2(sin(x), -cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 + 2*cos(x) + 1)
         - 1/4*x*log(cos(x)^2 + sin(x)^2 - 2*cos(x) + 1)
         + 1/4*(2*x - sin(2*x))*log(sin(x))
@@ -1076,7 +1038,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: assume(a > 0)
         sage: assume(a < 1)
         sage: integrate(x*log(1/(a*x+(1-x)^2)), x, 0, 1, algorithm='maxima')
-        1/4*a^2*log(a) + 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)*(a - 2)/(a^2 - 4*a)) - 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - a*log(a) - sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)*(a - 2)/(a^2 - 4*a)) + sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - 1/2*a + 3/2
+        1/4*a^2*log(a) - 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)/(a - 4)) + 1/2*sqrt(-a^2 + 4*a)*a*arctan(sqrt(-a^2 + 4*a)*(a - 2)/((a - 4)*a)) - a*log(a) + sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)/(a - 4)) - sqrt(-a^2 + 4*a)*arctan(sqrt(-a^2 + 4*a)*(a - 2)/((a - 4)*a)) - 1/2*a + 3/2
 
     Check that :issue:`25905` is fixed::
 
@@ -1107,8 +1069,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         return integrator(expression, v, a, b)
     if a is None:
         return indefinite_integral(expression, v, hold=hold)
-    else:
-        return definite_integral(expression, v, a, b, hold=hold)
+    return definite_integral(expression, v, a, b, hold=hold)
 
 
 integral = integrate

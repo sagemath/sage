@@ -82,7 +82,7 @@ cdef class PathAlgebraElement(RingElement):
     # This ordering has to be passed as an argument to all boilerplate
     # functions.
     cdef path_order_t cmp_terms
-    cdef long _hash
+    cdef Py_hash_t _hash
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
     cpdef ssize_t degree(self) except -2

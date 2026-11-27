@@ -1,1 +1,1 @@
-libsymmetrica2-dev
+libsymmetrica-dev

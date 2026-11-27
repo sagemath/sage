@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Cutwidth
 
@@ -317,16 +316,16 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         sage: K = graphs.CompleteGraph(6)
         sage: cw,L = cutwidth(K); cw
         9
-        sage: cw,L = cutwidth(K+K); cw
+        sage: cw,L = cutwidth(K + K); cw
         9
 
     The cutwidth of a `p\times q` Grid Graph with `p\leq q` is `p+1`::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
-        sage: G = graphs.Grid2dGraph(3,3)
+        sage: G = graphs.Grid2dGraph(3, 3)
         sage: cw,L = cutwidth(G); cw
         4
-        sage: G = graphs.Grid2dGraph(3,5)
+        sage: G = graphs.Grid2dGraph(3, 5)
         sage: cw,L = cutwidth(G); cw
         4
 
@@ -338,7 +337,7 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth(G, algorithm='exponential')
-        ....:     vm, lm = cutwidth(G, algorithm='MILP', solver='GLPK')
+        ....:     vm, lm = cutwidth(G, algorithm='MILP')
         ....:     if ve != vm:
         ....:        raise ValueError("Something goes wrong!")
 
@@ -372,7 +371,7 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         sage: G = Graph([(0, 1)])
         sage: cutwidth(G, algorithm='exponential')
         (1, [0, 1])
-        sage: cutwidth(G, algorithm='MILP', solver='GLPK')                              # needs sage.numerical.mip
+        sage: cutwidth(G, algorithm='MILP')
         (1, [0, 1])
 
     Cutwidth of a disconnected graph::
@@ -382,7 +381,7 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         sage: G.add_edge(2, 3)
         sage: cutwidth(G, algorithm='exponential')
         (1, [2, 3, 0, 1, 4])
-        sage: cutwidth(G, algorithm='MILP', solver='GLPK')                              # needs sage.numerical.mip
+        sage: cutwidth(G, algorithm='MILP')
         (1, [2, 3, 0, 1, 4])
     """
     from sage.graphs.graph import Graph
@@ -675,7 +674,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
         sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth.cutwidth_dyn(G)
-        ....:     vm, lm = cutwidth.cutwidth_MILP(G, solver='GLPK')
+        ....:     vm, lm = cutwidth.cutwidth_MILP(G)
         ....:     if ve != vm:
         ....:        print("The solution is not optimal!")
 
@@ -683,7 +682,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth_MILP
         sage: G = graphs.CycleGraph(3)
-        sage: cutwidth_MILP(G, lower_bound=G.size()+1)                                  # needs sage.numerical.mip
+        sage: cutwidth_MILP(G, lower_bound=G.size() + 1)                                # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         MIPSolverException: ...

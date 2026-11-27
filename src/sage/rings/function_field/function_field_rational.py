@@ -25,17 +25,26 @@ Function Fields: rational
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
+
 from sage.arith.functions import lcm
+from sage.categories.function_fields import FunctionFields
+from sage.categories.homset import Hom
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.structure.category_object import CategoryObject
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.element_rational import FunctionFieldElement_rational
 from sage.rings.integer import Integer
-from sage.categories.homset import Hom
-from sage.categories.function_fields import FunctionFields
+from sage.structure.category_object import CategoryObject
 
-from .element import FunctionFieldElement
-from .element_rational import FunctionFieldElement_rational
 from .function_field import FunctionField
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from .place_rational import FunctionFieldPlace_rational
 
 
 class RationalFunctionField(FunctionField):
@@ -107,7 +116,6 @@ class RationalFunctionField(FunctionField):
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
 
-        sage: # needs sage.rings.number_field
         sage: A.<z> = QQ[]
         sage: NF.<i> = NumberField(z^2 + 1)
         sage: R.<x> = FunctionField(NF)
@@ -126,7 +134,7 @@ class RationalFunctionField(FunctionField):
     """
     Element = FunctionFieldElement_rational
 
-    def __init__(self, constant_field, names, category=None):
+    def __init__(self, constant_field, names, category=None) -> None:
         """
         Initialize.
 
@@ -170,8 +178,8 @@ class RationalFunctionField(FunctionField):
         from .maps import FractionFieldToFunctionField
         self.register_coercion(hom.__make_element_class__(FractionFieldToFunctionField)(hom.domain(), hom.codomain()))
 
-        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         from sage.categories.morphism import SetMorphism
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
         R.register_conversion(SetMorphism(self.Hom(R, SetsWithPartialMaps()), self._to_polynomial))
 
         self._gen = self(R.gen())
@@ -192,7 +200,7 @@ class RationalFunctionField(FunctionField):
         from .constructor import FunctionField
         return FunctionField, (self._constant_field, self._names)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return hash of the function field.
 
@@ -206,7 +214,7 @@ class RationalFunctionField(FunctionField):
         """
         return self._hash
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of the function field.
 
@@ -219,7 +227,7 @@ class RationalFunctionField(FunctionField):
         return "Rational function field in %s over %s" % (
             self.variable_name(), self._constant_field)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionFieldElement_rational:
         r"""
         Coerce ``x`` into an element of the function field, possibly not canonically.
 
@@ -379,7 +387,6 @@ class RationalFunctionField(FunctionField):
 
         Factoring over a function field over a non-prime finite field::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<t> = FunctionField(k)
             sage: S.<X> = R[]
@@ -391,7 +398,6 @@ class RationalFunctionField(FunctionField):
 
         Factoring over a function field over a tower of finite fields::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(4)
             sage: R.<b> = k[]
             sage: l.<b> = k.extension(b^2 + b + a)
@@ -429,38 +435,6 @@ class RationalFunctionField(FunctionField):
         from sage.structure.factorization import Factorization
         return Factorization(w, unit=unit)
 
-    def extension(self, f, names=None):
-        """
-        Create an extension `L = K[y]/(f(y))` of the rational function field.
-
-        INPUT:
-
-        - ``f`` -- univariate polynomial over self
-
-        - ``names`` -- string or length-1 tuple
-
-        OUTPUT: a function field
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^5 - x^3 - 3*x + x*y)                                    # needs sage.rings.function_field
-            Function field in y defined by y^5 + x*y - x^3 - 3*x
-
-        A nonintegral defining polynomial::
-
-            sage: K.<t> = FunctionField(QQ); R.<y> = K[]
-            sage: K.extension(y^3 + (1/t)*y + t^3/(t+1))                                # needs sage.rings.function_field
-            Function field in y defined by y^3 + 1/t*y + t^3/(t + 1)
-
-        The defining polynomial need not be monic or integral::
-
-            sage: K.extension(t*y^3 + (1/t)*y + t^3/(t+1))                              # needs sage.rings.function_field
-            Function field in y defined by t*y^3 + 1/t*y + t^3/(t + 1)
-        """
-        from . import constructor
-        return constructor.FunctionFieldExtension(f, names)
-
     @cached_method
     def polynomial_ring(self, var='x'):
         """
@@ -481,7 +455,7 @@ class RationalFunctionField(FunctionField):
         return self[var]
 
     @cached_method(key=lambda self, base, basis, map: map)
-    def free_module(self, base=None, basis=None, map=True):
+    def free_module(self, base=None, basis=None, map: bool = True):
         """
         Return a vector space `V` and isomorphisms from the field to `V` and
         from `V` to the field.
@@ -534,7 +508,7 @@ class RationalFunctionField(FunctionField):
         """
         if basis is not None:
             raise NotImplementedError
-        from .maps import MapVectorSpaceToFunctionField, MapFunctionFieldToVectorSpace
+        from .maps import MapFunctionFieldToVectorSpace, MapVectorSpaceToFunctionField
         if base is None:
             base = self
         elif base is not self:
@@ -546,7 +520,7 @@ class RationalFunctionField(FunctionField):
         to_V = MapFunctionFieldToVectorSpace(self, V)
         return (V, from_V, to_V)
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, *args, **kwds) -> FunctionFieldElement_rational:
         """
         Create a random element of the rational function field.
 
@@ -560,7 +534,7 @@ class RationalFunctionField(FunctionField):
         """
         return self(self._field.random_element(*args, **kwds))
 
-    def degree(self, base=None):
+    def degree(self, base=None) -> Integer:
         """
         Return the degree over the base field of the rational function
         field.  Since the base field is the rational function field itself, the
@@ -604,7 +578,7 @@ class RationalFunctionField(FunctionField):
             raise IndexError("Only one generator.")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> Literal[1]:
         """
         Return the number of generators, which is 1.
 
@@ -656,7 +630,6 @@ class RationalFunctionField(FunctionField):
         We construct a map from a rational function field into a
         non-rational extension field::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
             sage: f = K.hom(y^2 + y  + 2); f
@@ -771,7 +744,7 @@ class RationalFunctionField(FunctionField):
         """
         return self.divisor_group().zero()
 
-    def genus(self):
+    def genus(self) -> Integer:
         """
         Return the genus of the function field, namely 0.
 
@@ -822,10 +795,9 @@ class RationalFunctionField(FunctionField):
         if name == self.variable_name():
             id = Hom(self, self).identity()
             return self, id, id
-        else:
-            from .constructor import FunctionField
-            ret = FunctionField(self.constant_base_field(), name)
-            return ret, ret.hom(self.gen()), self.hom(ret.gen())
+        from .constructor import FunctionField
+        ret = FunctionField(self.constant_base_field(), name)
+        return ret, ret.hom(self.gen()), self.hom(ret.gen())
 
     def residue_field(self, place, name=None):
         """
@@ -902,26 +874,9 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         if degree == 1:
             return [self.place_infinite()] + self.places_finite(degree)
-        else:
-            return self.places_finite(degree)
+        return self.places_finite(degree)
 
-    def places_finite(self, degree=1):
-        """
-        Return the finite places of the degree.
-
-        INPUT:
-
-        - ``degree`` -- (default: 1) a positive integer
-
-        EXAMPLES::
-
-            sage: F.<x> = FunctionField(GF(5))
-            sage: F.places_finite()                                                     # needs sage.libs.pari
-            [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
-        """
-        return list(self._places_finite(degree))
-
-    def _places_finite(self, degree=1):
+    def _places_finite(self, degree=1) -> Iterator[FunctionFieldPlace_rational]:
         """
         Return a generator for all monic irreducible polynomials of the degree.
 
@@ -956,9 +911,10 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         return self.maximal_order_infinite().prime_ideal().place()
 
-    def get_place(self, degree):
-        """
-        Return a place of ``degree``.
+    def get_finite_place(self, degree) -> FunctionFieldPlace_rational | None:
+        r"""
+        Return a finite place of degree ``degree`` if one exists.
+        If no finite place of the specified degree exists, return ``None``.
 
         INPUT:
 
@@ -979,10 +935,27 @@ class RationalFunctionField_global(RationalFunctionField):
             sage: K.get_place(5)                                                        # needs sage.libs.pari
             Place (x^5 + x^2 + 1)
         """
-        for p in self._places_finite(degree):
-            return p
+        return next(self._places_finite(degree), None)
 
-        assert False, "there is a bug around"
+    def get_infinite_place(self, degree=1) -> FunctionFieldPlace_rational | None:
+        r"""
+        Return an infinite place of degree ``degree`` if one exists.
+        If no infinite place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- defaults to `1` since a rational function field's
+                        infinite place is always degree `1`.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(5))
+            sage: K.get_infinite_place(3) is None
+            True
+        """
+        if degree != 1:
+            return None
+        return self.place_infinite()
 
     @cached_method
     def higher_derivation(self):

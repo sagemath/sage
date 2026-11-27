@@ -46,32 +46,6 @@ Recall an example from abelian groups::
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
 
 
-def is_AbelianGroupElement(x):
-    """
-    Return ``True`` if ``x`` is an abelian group element, i.e., an element of
-    type :class:`AbelianGroupElement`.
-
-    EXAMPLES: Though the integer 3 is in the integers, and the integers
-    have an abelian group structure, 3 is not an AbelianGroupElement::
-
-        sage: from sage.groups.abelian_gps.abelian_group_element import is_AbelianGroupElement
-        sage: is_AbelianGroupElement(3)
-        doctest:warning...
-        DeprecationWarning: The function is_AbelianGroupElement is deprecated;
-        use 'isinstance(..., AbelianGroupElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: F = AbelianGroup(5, [3,4,5,8,7], 'abcde')
-        sage: is_AbelianGroupElement(F.0)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_AbelianGroupElement is deprecated; "
-                "use 'isinstance(..., AbelianGroupElement)' instead.")
-    return isinstance(x, AbelianGroupElement)
-
-
 class AbelianGroupElement(AbelianGroupElementBase):
     """
     Elements of an

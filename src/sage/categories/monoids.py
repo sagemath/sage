@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -201,7 +200,7 @@ class Monoids(CategoryWithAxiom):
 
             - ``generators`` -- a finite family of elements of
               ``self``, or a list, iterable, ... that can be converted
-              into one (see :class:`Family`).
+              into one (see :func:`~sage.sets.family.Family`).
 
             - ``category`` -- a category
 
@@ -274,7 +273,7 @@ class Monoids(CategoryWithAxiom):
             """
             return left * ~right
 
-        def is_one(self):
+        def is_one(self) -> bool:
             r"""
             Return whether ``self`` is the one of the monoid.
 
@@ -529,8 +528,7 @@ class Monoids(CategoryWithAxiom):
                 """
                 Return the unit of the monoid, which indexes the unit of
                 this algebra, as per
-                :meth:`AlgebrasWithBasis.ParentMethods.one_basis()
-                <sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.one_basis>`.
+                :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
                 EXAMPLES::
 
@@ -603,7 +601,7 @@ class Monoids(CategoryWithAxiom):
 
         class ElementMethods:
 
-            def is_central(self):
+            def is_central(self) -> bool:
                 r"""
                 Return whether the element ``self`` is central.
 
@@ -717,9 +715,8 @@ class Monoids(CategoryWithAxiom):
                 orders = [x.multiplicative_order() for x in self.cartesian_factors()]
                 if any(o is Infinity for o in orders):
                     return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
+                from sage.arith.functions import LCM_list
+                return LCM_list(orders)
 
             def __invert__(self):
                 """

@@ -19,11 +19,12 @@ Witt symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from . import multiplicative
 from sage.arith.misc import divisors
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.partitions import ZS1_iterator
 from sage.misc.cachefunc import cached_method
+
+from . import multiplicative
 
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -99,19 +100,13 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     REFERENCES:
 
-    .. [HazWitt1] Michiel Hazewinkel. *Witt vectors. Part 1*.
-       :arxiv:`0804.3888v1`
+    - [HazWitt1]_
 
-    .. [DoranIV1996] William F. Doran IV.
-       *A Proof of Reutenauer's `-q_{(n)}` Conjecture*.
-       Journal of combinatorial theory, Series A 74, pp. 342-344 (1996),
-       article no. 0056. :doi:`10.1006/jcta.1996.0056`
+    - [DoranIV1996]_
 
-    .. [BorWi2004] James Borger, Ben Wieland.
-       *Plethystic algebra*.
-       :arxiv:`math/0407227v1`
+    - [BorWi2004]_
 
-    .. [GriRei18]_
+    - [GriRei18]_
 
     EXAMPLES:
 
@@ -298,7 +293,6 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             return self._h.one()
         P = self._indices
         if len(lam) == 1:
-            R = self.base_ring()
             n = lam[0]
             it = ZS1_iterator(n)
             next(it)  # skip the first partition, which is [n]
@@ -486,7 +480,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         """
         from sage.categories.tensor import tensor
         return self.tensor_square().sum(coeff * tensor([self(self._h[x]), self(self._h[y])])
-                                        for ((x,y), coeff) in self._h(elt).coproduct())
+                                        for ((x, y), coeff) in self._h(elt).coproduct())
 
     def verschiebung(self, n):
         r"""
@@ -523,13 +517,13 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         (German for "shift") endomorphism of the Witt vectors.
 
         The `n`-th Verschiebung operator is adjoint to the `n`-th
-        Frobenius operator (see :meth:`frobenius` for its definition)
-        with respect to the Hall scalar product (:meth:`scalar`).
+        Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.adams_operator` for its definition)
+        with respect to the Hall scalar product (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier
         than necessary) description can be obtained by solving exercise
-        7.61 in Stanley's [STA]_.
+        7.61 in Stanley's [EnumComb2]_.
 
         Let `\lambda` be a partition. Let `n` be a positive integer. If
         the `n`-core of `\lambda` is nonempty, then
@@ -697,7 +691,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             EXAMPLES::

@@ -163,9 +163,8 @@ class QmodnZ_Element(AdditiveGroupElement):
         """
         if self._x == 0:
             return self
-        else:
-            QZ = self.parent()
-            return QZ.element_class(QZ, QZ.n - self._x, True)
+        QZ = self.parent()
+        return QZ.element_class(QZ, QZ.n - self._x, True)
 
     def _add_(self, other):
         r"""
@@ -296,18 +295,20 @@ class QmodnZ_Element(AdditiveGroupElement):
 
             sage: G = QQ/(4*ZZ)
             sage: g = G(4/5)
-            sage: hash(g)
-            2135587864 # 32-bit
-            -7046029254386353128 # 64-bit
-            sage: hash(G(3/4))
-            527949074 # 32-bit
-            3938850096065010962 # 64-bit
+            sage: hash32 = 2135587864
+            sage: hash64 = -7046029254386353128
+            sage: hash(g) in [hash32, hash64]
+            True
+            sage: hash32 = 527949074
+            sage: hash64 = 3938850096065010962
+            sage: hash(G(3/4)) in [hash32, hash64]
+            True
             sage: hash(G(1))
             1
         """
         return hash(self._x)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two elements.
 
@@ -322,9 +323,8 @@ class QmodnZ_Element(AdditiveGroupElement):
             True
         """
         if op == op_EQ or op == op_NE:
-            return richcmp(self._x, right._x, op)
-        else:
-            return NotImplemented
+            return richcmp(self._x, other._x, op)
+        return NotImplemented
 
     def additive_order(self):
         r"""

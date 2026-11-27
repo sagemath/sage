@@ -1,0 +1,2 @@
+cd "${SAGE_ROOT}"
+./sage -t --long build/pkgs/sagelib/tests/*.py

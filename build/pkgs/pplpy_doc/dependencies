@@ -1,4 +1,4 @@
-pplpy | sphinx
+pplpy cysignals gmpy2 | sphinx
 
 ----------
 All lines of this file are ignored except the first.
