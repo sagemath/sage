@@ -1623,7 +1623,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             0
 
             sage: E = EllipticCurve([-39,123])
-            sage: E.rank()
+            sage: E.rank()  # needs eclib
             1
             sage: Z = LFunctionZeroSum(E)
             sage: Z.analytic_rank_upper_bound(max_Delta=1)

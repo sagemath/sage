@@ -54,16 +54,19 @@ module.exports = async ({github, context, core}) => {
     add('docker');
   } else if (eventName === 'push') {
     if (ref === 'refs/heads/master' || ref === 'refs/heads/develop') {
-      add(...regular);
-      if (ref === 'refs/heads/develop') add(...docs);
+      add(...regular, ...docs, 'uv', 'distro');
     } else if (ref.startsWith('refs/tags/')) {
       const tag = ref.slice('refs/tags/'.length);
-      // The previous '*' tag filter excludes slashes.
-      if (!tag.includes('/')) add('distro', 'uv');
       if (/^\d+\.\d+(?:\.\d+)?(?:\.(?:beta|rc)\d+)?$/.test(tag)) {
         add('livedoc', 'docker', 'release');
       }
     }
   }
+  // Publish to PyPI from release tags and manual runs, never from PRs or branch pushes.
+  const publish = eventName === 'workflow_dispatch' ||
+    (eventName === 'push' && ref.startsWith('refs/tags/'));
+  core.info(`Selected workflows: ${[...selected].sort().join(', ') || 'none'}`);
+  core.info(`Publish to PyPI: ${publish}`);
   for (const name of workflows) core.setOutput(name, selected.has(name));
+  core.setOutput('publish_to_pypi', publish);
 };
