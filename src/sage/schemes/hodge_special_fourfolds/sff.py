@@ -1807,7 +1807,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             B = ideal([R.lift(b) for b in B.gens()]) + R.defining_ideal()
         assert phiJ.ring() is self.source().ambient_space().coordinate_ring() and B.ring() is self.source().ambient_space().coordinate_ring()
         K = B.ring().base_ring()
-        if len(set([b.degree() for b in B.gens()])) == 1:
+        if len({b.degree() for b in B.gens()}) == 1:
             B = ideal(sum([K.random_element() * b for b in B.gens()]))
             assert B.is_homogeneous()
         F = (phiJ.saturation(B))[0]
@@ -3210,9 +3210,9 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                     W.extend(E)
             if degree is None and len(W) > 1:
                 if not hasattr(self,"_possible_degrees_for_curves_of_congruence"):
-                    self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
+                    self._possible_degrees_for_curves_of_congruence = {w.degree() for w in W}
                 else:
-                    self._possible_degrees_for_curves_of_congruence = self._possible_degrees_for_curves_of_congruence.intersection(set([w.degree() for w in W]))
+                    self._possible_degrees_for_curves_of_congruence = self._possible_degrees_for_curves_of_congruence.intersection({w.degree() for w in W})
                     if len(self._possible_degrees_for_curves_of_congruence) == 0:
                         raise RuntimeError("function 'congruence' failed (with previous runs)")
                 if verbose:
@@ -3221,7 +3221,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             if len(W) == 0:
                 raise RuntimeError("function 'congruence' failed")
             assert p.is_subset(W[0])
-            self._possible_degrees_for_curves_of_congruence = set([w.degree() for w in W])
+            self._possible_degrees_for_curves_of_congruence = {w.degree() for w in W}
             return W[0]
 
         p = self.ambient_fivefold().point(verbose=verbose, algorithm=algorithm_for_point) if point is None else point
@@ -3403,7 +3403,8 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         except AttributeError:
             if verbose:
                 print("-- running Macaulay2 computation... --")
-            X = macaulay2(self,'X')
+            # keep a reference: the Macaulay2 variable X is cleared when this object is deleted
+            X = macaulay2(self,'X')  # noqa: F841
             s = "E = associatedK3surface" if not isinstance(self,_Intersection_of_three_quadrics_in_P7) else "E = associatedCastelnuovoSurface"
             s = s + "(X,Verbose=>true);" if verbose else s + "(X,Verbose=>false);"
             _print_partial_M2_output(s) if verbose else macaulay2.eval(s)
@@ -4004,7 +4005,8 @@ class _Doubly_special_cubic_fourfold(_Cubic_fourfold):
             return data[key]
         if verbose:
             print("-- running Macaulay2 function polarizedK3surface()... --")
-        X = macaulay2(self,'X')
+        # keep a reference: the Macaulay2 variable X is cleared when this object is deleted
+        X = macaulay2(self,'X')  # noqa: F841
         opts = "Verbose=>" + ("true" if verbose else "false")
         if fano_map_type is not None:
             opts = opts + ', FanoMapType=>"' + fano_map_type + '"'
@@ -4356,8 +4358,7 @@ def _expr_var_1(X):
             c = " of coordinates " + str(X._coordinates())
             c_l = "\\mbox{ of coordinates }" + latex(X._coordinates())
             return ("one-point scheme in PP^" + str(n) + c, "\\mbox{one-point scheme in }" + "\\mathbb{P}^{" + latex(n) + "}" + c_l)
-        else:
-            return ("0-dimensional subscheme of degree " + str(X.degree()) + " in PP^" + str(n), latex(0) + "\\mbox{-dimensional subscheme of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
+        return ("0-dimensional subscheme of degree " + str(X.degree()) + " in PP^" + str(n), latex(0) + "\\mbox{-dimensional subscheme of degree }" + latex(X.degree()) + "\\mbox{ in }\\mathbb{P}^{" + latex(n) + "}")
     cutOut = ""
     if len(degs) > 1:
         if degs.count(degs[0]) == len(degs):
