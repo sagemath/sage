@@ -2430,26 +2430,47 @@ def power_mod(a, n, m):
         ...
         ZeroDivisionError: modulus must be nonzero
 
+    The `0`-th power is `1` reduced modulo `m`, so it is `0` modulo `1` and `-1`::
+
+        sage: power_mod(2, 0, 1), power_mod(2, 0, -1)
+        (0, 0)
+
     Tests with numpy and gmpy2 numbers::
 
         sage: from numpy import int32                                                   # needs numpy
         sage: power_mod(int32(2), int32(390), int32(391))                               # needs numpy
         ...285...
+        sage: power_mod(int32(2), int32(0), int32(391))                                 # needs numpy
+        ...1...
+        sage: power_mod(int32(2), int32(390), int32(1))                                 # needs numpy
+        ...0...
         sage: from gmpy2 import mpz
         sage: power_mod(mpz(2), mpz(390), mpz(391))
         mpz(285)
+        sage: power_mod(mpz(2), mpz(0), mpz(391)), power_mod(mpz(2), mpz(390), mpz(1))
+        (mpz(1), mpz(0))
+
+    Python integers give Python integers, also for the exponent `0` and the
+    modulus `1`::
+
+        sage: power_mod(int(2), int(0), int(391)), power_mod(int(2), int(390), int(1))
+        (1, 0)
+        sage: type(power_mod(int(2), int(0), int(391)))
+        <class 'int'>
     """
     if not m:
         raise ZeroDivisionError("modulus must be nonzero")
 
     a = a % m  # this should coerce into a ring containing both a and m
 
+    # Python, numpy and gmpy2 numbers have no parent, so the results for
+    # the modulus 1 and the exponent 0 are computed from a.
     if m == 1:
-        return a.parent().zero()
+        return a
 
     n = Integer(n)
     if not n:
-        return a.parent().one()
+        return a**0 % m
     if n < 0:
         a = inverse_mod(a, m)
         n = -n
