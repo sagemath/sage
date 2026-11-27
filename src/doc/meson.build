@@ -109,6 +109,9 @@ foreach type : ['inventory', 'html', 'pdf']
         meson.current_build_dir(),
       ],
       depends: deps,
+      # Ninja can't track the doc sources (docstrings, reST), so always run and
+      # let Sphinx rebuild only what changed (gh-40582).
+      build_always_stale: true,
     )
     if short_ref == 'references'
       bibliography += target
@@ -180,6 +183,7 @@ foreach type : ['html', 'pdf']
         meson.current_build_dir(),
       ],
       depends: reference_inventory + other_documents_inventory,
+      build_always_stale: true,
     )
     if type == 'html'
       other_documents_html += target
