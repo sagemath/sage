@@ -48,6 +48,21 @@ is used by :func:`~sage.calculus.calculus.symbolic_product`::
     sage: exact_product(factorial(k)/factorial(k + 2)*2^k, k, 0, n)
     2^(1/2*n^2 + 1/2*n)/((n + 2)*factorial(n + 1)^2)
 
+Infinite sums of hypergeometric terms are evaluated in hypergeometric
+notation by :func:`hypergeometric_sum`::
+
+    sage: k, a = var('k a')
+    sage: from sage.symbolic.gamma_products import hypergeometric_sum
+    sage: hypergeometric_sum(rising_factorial(a, k)*x^k/factorial(k), k, 0, oo)
+    hypergeometric((a,), (), x)
+
+The method :meth:`~sage.symbolic.expression.Expression.to_hypergeometric`
+applies this to every unevaluated sum in an expression::
+
+    sage: k = var('k')
+    sage: sum(1/factorial(k), k, 0, oo, hold=True).to_hypergeometric()
+    hypergeometric((), (), 1)
+
 ALGORITHM:
 
 The expression ``E`` is hypergeometric, so the ratio ``E(n+1)/E(n)``
@@ -91,13 +106,14 @@ import operator
 from collections import Counter
 
 from sage.arith.functions import lcm
-from sage.arith.misc import divisors, factor
+from sage.arith.misc import divisors, factor, inverse_mod
 from sage.calculus.calculus import symbolic_sum
 from sage.functions.gamma import gamma
 from sage.functions.log import exp
 from sage.functions.other import binomial, factorial, symbolic_product
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
+from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
@@ -197,6 +213,36 @@ def _rational_atom(ex, n):
     if lin is None:
         return None
     return c, lin[0], lin[1]
+
+
+def _linear_symbolic(ex, n):
+    r"""
+    Return ``(a, b)`` if ``ex == a*n + b`` with ``a`` and ``b`` independent
+    of ``n``, else ``None``.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    - ``n`` -- the variable
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _linear_symbolic
+        sage: k, x = var('k x')
+        sage: _linear_symbolic(x*k + 2, k)
+        (x, 2)
+        sage: _linear_symbolic(k^2, k) is None
+        True
+        sage: _linear_symbolic(sin(x), k)
+        (0, sin(x))
+    """
+    if not ex.is_polynomial(n):
+        return None
+    coeffs = {d: c for c, d in ex.coefficients(n)}
+    if not set(coeffs) <= {0, 1}:
+        return None
+    return coeffs.get(1, SR(0)), coeffs.get(0, SR(0))
 
 
 def _strip_exponentials(E, n):
@@ -306,6 +352,71 @@ def _strip_exponentials(E, n):
         raise ValueError("expression is not hypergeometric "
                          "(exponential part grows like (%s)^n)" % growth)
     return new, const
+
+
+def _split_envelope(E, n):
+    r"""
+    Split ``E`` into a part free of exponentials and its exponential envelope.
+
+    INPUT:
+
+    - ``E`` -- a symbolic expression
+
+    - ``n`` -- the variable
+
+    OUTPUT: a pair ``(h, z)`` of symbolic expressions such that
+    ``E == h*z^n``, where every atom ``c^(a*n + b)`` of ``E``, with ``c``
+    independent of ``n`` and ``a*n + b`` linear in ``n``, is replaced by
+    the constant ``c^b``, and ``z`` is the product of the ``c^a``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _split_envelope
+        sage: k, x = var('k x')
+        sage: _split_envelope(2^(3*k + 1)*x^k*(k + 1), k)
+        (2*k + 2, 8*x)
+        sage: _split_envelope(e^(2*k)*sin(x), k)
+        (sin(x), e^2)
+        sage: _split_envelope((x^k + 1)^2, k)
+        ((x^k + 1)^2, 1)
+    """
+    z = SR(1)
+
+    def walk(ex, mult):
+        nonlocal z
+        op = ex.operator()
+        if op is None:
+            return ex
+        args = ex.operands()
+        if op == EXP_OP:
+            lin = _linear_symbolic(args[0], n)
+            if lin is None:
+                return ex
+            a, b = lin
+            z *= E_CONST ** (a * mult)
+            return E_CONST ** (b * mult)
+        if op == operator.pow:
+            base, expo = args
+            if n not in base.variables():
+                lin = _linear_symbolic(expo, n)
+                if lin is not None:
+                    a, b = lin
+                    z *= base ** (a * mult)
+                    return base ** (b * mult)
+            # integer exponent: descend, tracking the multiplicity
+            try:
+                k = ZZ(expo)
+            except (TypeError, ValueError):
+                k = None
+            if k is not None:
+                return walk(base, mult * k) ** expo
+            return ex
+        if op in (mul_vararg, operator.mul):
+            return op(*[walk(arg, mult) for arg in args])
+        # atoms in a non-multiplicative context cannot be factored out
+        return ex
+
+    return walk(E, 1), z
 
 
 def _factor_ratio(R, n, constp=None):
@@ -1763,3 +1874,458 @@ def exact_product(f, var, a, b):
 
     res = prod(parts)
     return res
+
+
+def hypergeometric_sum(f, var, a, b):
+    r"""
+    Evaluate the infinite sum of a hypergeometric term in hypergeometric
+    notation.
+
+    The summand must be hypergeometric in the summation variable: its term
+    ratio, reduced by applying the recurrence of the gamma function, must
+    factor into a constant times integer powers of linear polynomials.  The
+    summation variable must not occur in the coefficients of these
+    polynomials, but arbitrary other symbols may occur, both in the term and
+    in its parameters.
+
+    INPUT:
+
+    - ``f`` -- a symbolic expression, the term of the sum
+
+    - ``var`` -- the summation variable
+
+    - ``a`` -- the lower bound, a rational number
+
+    - ``b`` -- the upper bound, ``oo`` or ``-oo``
+
+    As in Sage's symbolic sums, the summation variable runs over ``a``,
+    ``a + 1``, ``a + 2``, ..., also for non-integral lower bounds.  Since
+    a hypergeometric term is a product of gamma functions, it is defined
+    for non-integral arguments, unless one of the gamma functions has a
+    pole there.
+
+    OUTPUT: the sum `\sum_{k=a}^{b} f(k)`, a constant times
+    ``hypergeometric(A, B, z)``.  Identical parameters in ``A`` and ``B``
+    are eliminated, in particular the parameter `1` accounting for the
+    implicit `1/k!` of the hypergeometric series.
+
+    See also
+    :meth:`~sage.symbolic.expression.Expression.to_hypergeometric`, which
+    rewrites every unevaluated symbolic sum in an expression in this form.
+
+    A :exc:`ValueError` is raised if the term is not hypergeometric, if the
+    term is not defined at some point of the range, or if the bounds are not
+    of the required form.  In particular, a term which is zero at some point
+    of the range, but not identically zero from then on, is not
+    hypergeometric, and a terminating series must terminate via a negative
+    integer numerator parameter.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import hypergeometric_sum
+        sage: k, x, a = var('k x a')
+        sage: hypergeometric_sum(rising_factorial(a, k)*x^k/factorial(k), k, 0, oo)
+        hypergeometric((a,), (), x)
+
+        The binomial series is a hypergeometric series with a single
+        numerator parameter, which cancels the implicit parameter 1::
+
+            sage: hypergeometric_sum(binomial(a, k)*x^k, k, 0, oo)
+            hypergeometric((-a,), (), -x)
+
+        The Bessel function of the first kind::
+
+            sage: hypergeometric_sum((-1)^k*x^(2*k)/(4^k*factorial(k)^2), k, 0, oo)
+            hypergeometric((), (1,), -1/4*x^2)
+            sage: hypergeometric_sum((-1)^k*x^(2*k)/(4^k*factorial(k)^2), k, 0, oo).simplify_hypergeometric()
+            bessel_J(0, x)
+
+        Nonzero lower bounds shift the parameters, leading zeroes of the
+        term are skipped::
+
+            sage: hypergeometric_sum(k^2*x^k/factorial(k), k, 1, oo)
+            x*hypergeometric((2,), (1,), x)
+
+            sage: hypergeometric_sum(k^3*x^k/factorial(k), k, 0, oo)
+            x*hypergeometric((2, 2), (1, 1), x)
+
+        Gamma values with a symbolic shift contribute a constant prefactor::
+
+            sage: hypergeometric_sum(gamma(k + a)/(gamma(a)*factorial(k))*x^k, k, 0, oo)
+            hypergeometric((a,), (), x)
+
+        Non-integral lower bounds make the summation variable run over
+        ``a + Z``, exactly as in Sage's symbolic sums::
+
+            sage: hypergeometric_sum(x^k, k, 1/2, oo).simplify_hypergeometric()
+            -sqrt(x)/(x - 1)
+            sage: sum(x^k, k, 1/2, 5/2)
+            (x^2 + x + 1)*sqrt(x)
+
+        Symbolic parameters may also occur in the denominator::
+
+            sage: hypergeometric_sum(factorial(k)*x^k/rising_factorial(a, k), k, 0, oo)
+            hypergeometric((1, 1), (a,), x)
+
+        TESTS::
+
+        The term ratio is verified numerically against direct summation::
+
+            sage: f = binomial(2*k, k)^2*x^k/factorial(4*k)
+            sage: r = hypergeometric_sum(f, k, 0, oo)
+            sage: bool(abs(r.subs(x=1/8).n(50)
+            ....:           - sum(f.subs({x: 1/8, k: m}).n(50) for m in range(30))) < 1e-12)
+            True
+
+        Sums to negative infinity negate the summation variable::
+
+            sage: hypergeometric_sum(2^k, k, -2, -oo).simplify_hypergeometric()
+            1/2
+
+        Leading zeroes of the term may hide poles of the gamma function::
+
+            sage: hypergeometric_sum(1/gamma(k - 2), k, 0, oo).simplify_hypergeometric()
+            e
+
+        A term which vanishes on the whole summation lattice sums to
+        zero.  The vanishing may be caused by a factor whose term ratio is
+        not rational in the summation variable, as long as a factor
+        ``1/gamma(A*k + B)`` with ``A`` a negative integer and ``B`` a
+        nonpositive integer forces every term to zero; the term is then
+        verified at the poles of the remaining factors and at the first
+        few lattice points, and other factors are assumed to be defined
+        generically beyond those, as everywhere else in this module::
+
+            sage: hypergeometric_sum(1/gamma(-k), k, 0, oo)
+            0
+            sage: hypergeometric_sum(sin(pi*k), k, 0, oo)
+            0
+            sage: hypergeometric_sum(sin(k)/gamma(-k), k, 0, oo)
+            0
+            sage: try:
+            ....:     hypergeometric_sum(1/((k - 2)*gamma(-k)), k, 0, oo)
+            ....: except ValueError as err:
+            ....:     print('ValueError: %s' % err)
+            ValueError: the term 1/((k - 2)*gamma(-k)) is not defined in the range
+
+        Terms whose term ratio does not factor into linear factors are
+        rejected::
+
+            sage: hypergeometric_sum(2^(k^2), k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term 2^(k^2) is not hypergeometric in k
+            sage: hypergeometric_sum(sin(k)*x^k, k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term x^k*sin(k) is not hypergeometric in k
+
+        So are terms with a pole in the range::
+
+            sage: hypergeometric_sum(1/(k - 2), k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term 1/(k - 2) is not defined in the range
+
+        A term whose evaluation at a lattice point is indeterminate, for
+        instance because a zero cancels a pole of a gamma factor, is
+        rejected as well::
+
+            sage: hypergeometric_sum(gamma(-k - 2)/gamma(-k - 3), k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term cannot be evaluated at the lower bound 0
+
+        A term may be defined everywhere, but still fail to be
+        hypergeometric, because its term ratio has a pole inside the range;
+        however, a numerator parameter which terminates the series before
+        the pole makes the pole immaterial::
+
+            sage: hypergeometric_sum((k - 3)*x^k/factorial(k), k, 0, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the term (k - 3)*x^k/factorial(k) is not hypergeometric in k
+            sage: hypergeometric_sum((k - 4)/gamma(3 - k), k, 0, oo).simplify_hypergeometric()
+            -7
+
+        The bounds must have the required form::
+
+            sage: n = var('n')
+            sage: hypergeometric_sum(x^k, k, 0, n)
+            Traceback (most recent call last):
+            ...
+            ValueError: the upper bound n is not infinite
+            sage: hypergeometric_sum(x^k, k, x, oo)
+            Traceback (most recent call last):
+            ...
+            ValueError: the lower bound x is not rational
+    """
+    if not (isinstance(var, Expression) and var.is_symbol()):
+        raise TypeError("the variable must be a symbol")
+    try:
+        aq = QQ(a)
+    except (TypeError, ValueError):
+        raise ValueError("the lower bound %s is not rational" % a) from None
+    if b == minus_infinity:
+        return hypergeometric_sum(f.subs({var: -var}), var, -aq, infinity)
+    if not b == infinity:
+        # note that the comparison with a symbolic bound must not evaluate
+        # to a relational
+        raise ValueError("the upper bound %s is not infinite" % b)
+
+    j = SR.temp_var()
+    g = f.subs({var: aq + j})
+    if g.is_trivial_zero():
+        return SR(0)
+
+    # a factor gamma(A*j + B)^(-1), where A is a negative integer and B a
+    # nonpositive integer, vanishes on the whole summation lattice, so that
+    # every term of the sum is zero, unless another factor has a pole on
+    # the lattice, where the vanishing becomes indeterminate.  The poles of
+    # gamma factors with positive slope, and the zeros of polynomial
+    # factors, are at computable lattice positions, and the term is
+    # checked there, as well as at the first few lattice points; beyond
+    # those, other factors are assumed to be defined generically, as
+    # everywhere else in this module.  Recognizing this before validating
+    # the term ratio is necessary, because the ratio of such a term need
+    # not be rational in the summation variable
+    annihilates = undecidable = False
+    positions = [range(8)]
+    gt = g.to_gamma()
+    for base, e in _mult_split(gt):
+        if base.operator() == GAMMA_OP:
+            lin = _linear_symbolic(base.operands()[0], j)
+            if lin is None:
+                # a nonlinear argument: its poles cannot be tracked
+                if e > 0:
+                    undecidable = True
+                continue
+            try:
+                A, B = QQ(lin[0]), QQ(lin[1])
+            except (TypeError, ValueError, ArithmeticError):
+                # symbolic slope or constant term: defined generically
+                continue
+            if e < 0:
+                if A in ZZ and A <= -1 and B in ZZ and B <= 0:
+                    annihilates = True
+            elif A > 0:
+                # the argument A*j + B of a gamma factor with positive
+                # exponent is an integer at the lattice points j congruent
+                # to j0 modulo q, where A = p/q in lowest terms, provided
+                # that the denominator of B divides q, and it is nonpositive
+                # for j <= -B/A; these are exactly its poles on the lattice
+                p_, q_ = A.numerator(), A.denominator()
+                s, t = B.numerator(), B.denominator()
+                if q_ % t == 0:
+                    j0 = (-s * (q_ // t) * inverse_mod(p_, q_)) % q_
+                    last = (-B/A).floor()
+                    if j0 <= last:
+                        positions.append(range(j0, last + 1, q_))
+            elif A < 0 and A.denominator() % B.denominator() == 0:
+                # a negative slope has poles without a bound above, provided
+                # that its argument is an integer somewhere on the lattice
+                undecidable = True
+        elif e < 0 and base.is_polynomial(j):
+            try:
+                zeros = [(ZZ(r), m) for r, m in
+                         PolynomialRing(QQ, str(j))(base).roots()
+                         if r in ZZ and r >= 0]
+            except (TypeError, ValueError, ArithmeticError, NotImplementedError):
+                # nonrational coefficients: still find the root of a
+                # linear factor exactly
+                zeros = []
+                lin = _linear_symbolic(base, j)
+                if lin is not None and not lin[0].is_trivial_zero():
+                    root = -lin[1]/lin[0]
+                    if root in ZZ and root >= 0:
+                        zeros.append((ZZ(root), 1))
+            positions.extend(range(r, r + 1) for r, m in zeros)
+    if annihilates and not undecidable:
+        # the annihilating factor forces every term to zero; a failure of
+        # the evaluation, or a nonfinite value, at one of the checked
+        # positions marks a pole of the remaining factors
+        try:
+            for rng in positions:
+                for pos in rng:
+                    t = gt.subs({j: pos})
+                    if t.is_infinity() or not (t - t).is_trivial_zero():
+                        raise ValueError("the term %s is not defined in the "
+                                         "range" % f)
+                    if not t.is_trivial_zero():
+                        # contradicts the annihilating factor: fall back to
+                        # the term ratio
+                        undecidable = True
+                        break
+                if undecidable:
+                    break
+        except (ValueError, ArithmeticError, TypeError, RuntimeError) as exc:
+            raise ValueError("the term %s is not defined in the "
+                             "range" % f) from exc
+        if not undecidable:
+            return SR(0)
+
+    # the term is hypergeometric iff its term ratio, reduced by the
+    # recurrence of the gamma function, factors into linear polynomials;
+    # compute the ratio before skipping leading zeros, since its poles at
+    # nonnegative integers are the only positions at which a vanishing
+    # term can be followed by a nonzero one, and therefore bound the number
+    # of leading zeros
+    h0, _ = _split_envelope(g.to_gamma(), j)
+    Rf0 = (h0.subs({j: j + 1}) / h0).gamma_normalize().factor()
+    bound = 0
+    for ex, side in ((Rf0.numerator(), 1), (Rf0.denominator(), -1)):
+        for base, e in _mult_split(ex):
+            lin = _linear_symbolic(base, j)
+            if lin is None:
+                raise ValueError("the term %s is not hypergeometric in %s"
+                                 % (f, var))
+            if side < 0:
+                A, B = lin
+                if A.is_trivial_zero():
+                    # a constant factor has no zeros
+                    continue
+                try:
+                    pole = ZZ(-B/A)
+                except (TypeError, ValueError, ArithmeticError):
+                    # the position of the pole depends on symbolic parameters
+                    continue
+                if pole >= 0:
+                    bound = max(bound, pole + 1)
+
+    try:
+        skipped = 0
+        while g.subs({j: 0}).is_trivial_zero():
+            if skipped == bound:
+                # beyond the last pole of the term ratio, a vanishing term
+                # is followed by a vanishing one: every term on the
+                # summation lattice vanishes
+                return SR(0)
+            g = g.subs({j: j + 1})
+            skipped += 1
+        g0 = g.subs({j: 0})
+        undefined = g0.is_infinity() or not (g0 - g0).is_trivial_zero()
+    except (ValueError, ArithmeticError, RuntimeError) as exc:
+        raise ValueError("the term cannot be evaluated at the "
+                        "lower bound %s" % a) from exc
+    if undefined:
+        raise ValueError("the term is not defined at the lower bound %s" % a)
+
+    # split off the exponential envelope:  g = h * z^j
+    h, z = _split_envelope(g.to_gamma(), j)
+    R = (h.subs({j: j + 1}) / h).gamma_normalize()
+    Rf = R.factor()
+
+    ap, bq = [], []
+    for ex, side in ((Rf.numerator(), 1), (Rf.denominator(), -1)):
+        for base, e in _mult_split(ex):
+            lin = _linear_symbolic(base, j)
+            if lin is None:
+                raise ValueError("the term %s is not hypergeometric in %s"
+                                 % (f, var))
+            A, B = lin
+            if A.is_trivial_zero():
+                z *= base ** (e * side)
+            else:
+                z *= A ** (e * side)
+                (ap if side > 0 else bq).extend([B/A] * e)
+
+    # the implicit 1/j! of the hypergeometric series, and pairwise
+    # cancellation of identical parameters
+    ap.append(SR(1))
+    for q in list(bq):
+        if q in ap:
+            ap.remove(q)
+            bq.remove(q)
+
+    # a nonpositive integer denominator parameter is a pole of the term
+    # ratio inside the range: either the term is undefined there, or the
+    # term vanishes and the recurrence of the ratio breaks.  However, a
+    # numerator parameter which is a nonpositive integer terminates the
+    # series, and a pole at or beyond the termination is immaterial as long
+    # as the term does not resume after it
+    terminate = min((-ZZ(q) for q in ap if q in ZZ and q <= 0),
+                    default=None)
+    for q in bq:
+        if q in ZZ and q <= 0:
+            m = ZZ(-q)
+            try:
+                values = (g.subs({j: m}), g.subs({j: m + 1}))
+                undefined = any(v.is_infinity() or not (v - v).is_trivial_zero()
+                               for v in values)
+            except (ValueError, ArithmeticError, TypeError, RuntimeError):
+                # RuntimeError covers indeterminate evaluations such as
+                # 0 * infinity at a zero of the term cancelling a pole of
+                # a gamma factor
+                undefined = True
+            if undefined:
+                raise ValueError("the term %s is not defined in the range" % f)
+            if (terminate is not None and m >= terminate
+                    and values[1].is_trivial_zero()):
+                # the series has terminated before the pole, and the term
+                # does not resume after it
+                continue
+            raise ValueError("the term %s is not hypergeometric in %s"
+                             % (f, var))
+
+    from sage.functions.hypergeometric import hypergeometric
+    return g0 * hypergeometric(ap, bq, z)
+
+
+def _to_hypergeometric(ex):
+    r"""
+    Rewrite every unevaluated symbolic sum in ``ex`` in hypergeometric
+    notation.
+
+    INPUT:
+
+    - ``ex`` -- a symbolic expression
+
+    Every subexpression which is an unevaluated symbolic sum is replaced by
+    its hypergeometric form, see :func:`hypergeometric_sum`.  Sums which are
+    not hypergeometric, or whose bounds are not of the required form, raise
+    a :exc:`ValueError`.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.gamma_products import _to_hypergeometric
+        sage: k, x = var('k x')
+        sage: _to_hypergeometric(sum(k^2*x^k/factorial(k), k, 1, oo, hold=True))
+        x*hypergeometric((2,), (1,), x)
+        sage: _to_hypergeometric(sum(k^2*x^k/factorial(k), k, 1, oo, hold=True)
+        ....:                      + 2*sum(k^3*x^k/factorial(k), k, 0, oo, hold=True))
+        2*x*hypergeometric((2, 2), (1, 1), x) + x*hypergeometric((2,), (1,), x)
+
+        Subexpressions which do not contain an unevaluated sum are kept, in
+        particular unevaluated products are not evaluated::
+
+            sage: from sage.calculus.calculus import symbolic_product
+            sage: _to_hypergeometric(symbolic_product(k, k, 1, oo, hold=True))
+            product(k, k, 1, +Infinity)
+            sage: _to_hypergeometric(sin(sum(1/factorial(k), k, 0, oo, hold=True)))
+            sin(hypergeometric((), (), 1))
+
+        A sum which is not hypergeometric is rejected::
+
+            sage: _to_hypergeometric(sum(sin(k)*x^k, k, 0, oo, hold=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: the term x^k*sin(k) is not hypergeometric in k
+    """
+    from sage.functions.other import Function_prod, Function_sum
+
+    def walk(ex):
+        op = ex.operator()
+        if op is None:
+            return ex
+        args = ex.operands()
+        new = [walk(a) for a in args]
+        if isinstance(op, Function_sum):
+            return hypergeometric_sum(*new)
+        if all(n is a for n, a in zip(new, args)):
+            return ex
+        if isinstance(op, Function_prod):
+            # keep unevaluated products unevaluated
+            return op(*new, hold=True)
+        return op(*new)
+
+    return walk(ex)
