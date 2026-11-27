@@ -94,6 +94,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import islice
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
@@ -1827,11 +1828,16 @@ class Stream_uninitialized(Stream):
                 vals = c._cache.values()
             else:
                 vals = c._cache
-            i = 0
-            for val in vals:
+            # The number of determined coefficients is stored on the
+            # stream.  Substitutions never introduce variables, so the
+            # stored prefix stays determined and the walk resumes at
+            # it, instead of restarting at the first coefficient.
+            i = min(getattr(c, '_good_cache', 0), len(vals))
+            for val in islice(vals, i, None):
                 if not self._is_determined(val):
                     break
                 i += 1
+            c._good_cache = i
             g.append(i)
         return g
 
@@ -2028,7 +2034,11 @@ class Stream_uninitialized(Stream):
                     s._true_order = True
                 return False
             del s._cache[ao]
-            good_cache[j] -= 1
+            # the count is only decremented if the deleted entry was
+            # part of the determined prefix; the entry may also lie in
+            # the tail, having become zero by the substitution
+            if good_cache[j]:
+                good_cache[j] -= 1
             return True
 
         # Collect all cached streams on which ``self`` depends,
@@ -2045,10 +2055,10 @@ class Stream_uninitialized(Stream):
             for j, s in enumerate(streams):
                 m = len(s._cache) - good_cache[j]
                 if s._is_sparse:
-                    # we traverse the cache beginning with the last
-                    # element added, because only the last m elements
-                    # added can contain variables
-                    indices = reversed(s._cache)
+                    # only the last m elements added can contain
+                    # variables; we traverse them beginning with the
+                    # last one added
+                    indices = islice(reversed(s._cache), m)
                 else:
                     indices = range(-1, -m-1, -1)
                 # substitute variable and determine last good element
@@ -2086,6 +2096,7 @@ class Stream_uninitialized(Stream):
                     while s._cache and fix_cache(good_cache, j, s, 0):
                         ao += 1
                 s._approximate_order = ao
+                s._good_cache = good_cache[j]
         finally:
             self._good_cache = good_cache[0]
 
