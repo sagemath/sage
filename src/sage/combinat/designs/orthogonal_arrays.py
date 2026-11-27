@@ -488,7 +488,7 @@ def wilson_construction(OA, k, r, m, u, check=True, explain_construction=False):
     - An `OA(k,u_i)` for every `1\leq i\leq s`
 
     Then there exists an `OA(k,rm+\sum u_i)`. The construction is a
-    generalization of Lemma 3.16 in [HananiBIBD]_.
+    generalization of Lemma 3.16 in [Hanani75]_.
 
     **Brouwer-Van Rees form:**
 
@@ -536,9 +536,7 @@ def wilson_construction(OA, k, r, m, u, check=True, explain_construction=False):
 
     REFERENCE:
 
-    .. [HananiBIBD] Balanced incomplete block designs and related designs,
-      Haim Hanani,
-      Discrete Mathematics 11.3 (1975) pages 255-369.
+    - [Hanani75]_
 
     EXAMPLES::
 

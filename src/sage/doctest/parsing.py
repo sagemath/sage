@@ -472,7 +472,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     if isinstance(tags, collections.abc.Mapping):
         new_tags = dict(tags)
     elif tags is not None:
-        new_tags = {tag: None for tag in tags}
+        new_tags = dict.fromkeys(tags)
     else:
         new_tags = dict(current_tags)
 
@@ -480,7 +480,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         if isinstance(add_tags, collections.abc.Mapping):
             new_tags.update(add_tags)
         else:
-            new_tags.update({tag: None for tag in add_tags})
+            new_tags.update(dict.fromkeys(add_tags))
 
     if remove_tags is not None:
         for tag in remove_tags:
@@ -1479,18 +1479,6 @@ class SageOutputChecker(doctest.OutputChecker):
             # suppress R warnings
             r_warning_regex = re.compile(r'R\[write to console\]:.*')
             got = r_warning_regex.sub('', got)
-            did_fixup = True
-
-        if "Overriding pythran description" in got:
-            # Some signatures changed in numpy-1.25.x that may yet be
-            # reverted, but which pythran would otherwise warn about.
-            # Pythran has a special case for numpy.random that hides
-            # the warning -- I guess until we know if the changes will
-            # be reverted -- but only in v0.14.0 of pythran. Ignoring
-            # This warning allows us to support older pythran with e.g.
-            # numpy-1.25.2.
-            pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
-            got = pythran_numpy_warning_regex.sub('', got)
             did_fixup = True
 
         if "ld_classic is deprecated" in got:

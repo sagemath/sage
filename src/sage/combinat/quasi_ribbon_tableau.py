@@ -215,16 +215,13 @@ class QuasiRibbonTableau(SkewTableau):
             word: 213243
         """
         rows = self.rows()
-        word = []
-
-        for col in range(self.width()):
-            for row in rows[::-1]:
-                if col < len(row) and row[col] is not None:
-                    word.append(row[col])
-
+        word = [row[col]
+                for col in range(self.width())
+                for row in rows[::-1]
+                if col < len(row) and row[col] is not None]
         return Words(PositiveIntegers())(word)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

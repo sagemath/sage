@@ -25,12 +25,16 @@ letter, see chapter 3 of the book [BR2010b]_::
     sage: w[10000000]                                                                   # needs sage.modules
     'b'
 """
-from collections.abc import Iterator
+from __future__ import annotations
 from itertools import chain
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modules.free_module_element', 'vector')
 

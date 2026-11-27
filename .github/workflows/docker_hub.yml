@@ -16,12 +16,12 @@ env:
 jobs:
   build-and-push:
     name: Build Docker image and push to DockerHub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Maximize build disk space
-        uses: jlumbroso/free-disk-space@main
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
-          tool-cache: false
+          preinstalled-runtimes: false
           android: true
           dotnet: true
           haskell: true

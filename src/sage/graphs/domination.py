@@ -144,7 +144,7 @@ def is_redundant(G, dom, focus=None):
     #  - (2, None) if v has >= 2 neighbors in dom
 
     # Initialization
-    dominator = {v: (0, None) for v in focus}
+    dominator = dict.fromkeys(focus, (0, None))
 
     for x in dom:
         for v in G.neighbor_iterator(x, closed=True):

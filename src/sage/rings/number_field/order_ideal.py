@@ -68,8 +68,6 @@ from sage.rings.ideal import Ideal_generic
 
 import sage.rings.number_field.order
 
-# TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
-
 
 def NumberFieldOrderIdeal(O, *args, **kwds):
     r"""
@@ -208,6 +206,38 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         x = self.ring()(x)
         return vector(QQ, x.list()) in self._module
+
+    def _acted_upon_(self, other, self_on_left):
+        r"""
+        Multiply this ideal by an element of the number field.
+
+        Multiplying by such an element on the right (``I*u``) already works
+        through :meth:`~sage.rings.ideal.Ideal_generic.__mul__`. This lets
+        the coercion framework handle multiplication on the left (``u*I``)
+        in the same way.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 7)
+            sage: O = K.order(3*a)
+            sage: I = O.ideal(3)
+            sage: u = I.ring().number_field()(5)
+            sage: u * I == I * u
+            True
+
+        TESTS:
+
+        Ideals of orders in quadratic fields work the same way::
+
+            sage: K.<i> = QuadraticField(-1)
+            sage: O = K.order(5*i)
+            sage: J = O.ideal([13, 5*i - 1])
+            sage: K(2) * J == J * 2
+            True
+        """
+        if self.ring().number_field().has_coerce_map_from(other.parent()):
+            return self * other
 
     def free_module(self):
         r"""
