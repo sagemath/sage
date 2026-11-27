@@ -913,7 +913,7 @@ class Stream_exact(Stream):
         """
         return True
 
-    def _polynomial_part(self, R):
+    def _initial_part(self, R):
         """
         Return the initial part of ``self`` as a Laurent polynomial in ``R``.
 
@@ -922,7 +922,7 @@ class Stream_exact(Stream):
             sage: from sage.data_structures.stream import Stream_exact
             sage: s = Stream_exact([2], order=-1, degree=2, constant=1)
             sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-            sage: s._polynomial_part(L._laurent_poly_ring)
+            sage: s._initial_part(L._stream_exact_ring)
             2*z^-1
         """
         v = self._approximate_order
@@ -3573,7 +3573,7 @@ class Stream_plethysm(Stream_binary):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
         sage: s = SymmetricFunctions(QQ).s()
         sage: p = SymmetricFunctions(QQ).p()
@@ -3597,7 +3597,7 @@ class Stream_plethysm(Stream_binary):
     This class also handles the plethysm of an exact stream with a
     stream of order `0`::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import Stream_exact
         sage: f = Stream_exact([s[1]], order=1)
         sage: g = Stream_function(lambda n: s[n], True, 0)
@@ -3609,7 +3609,7 @@ class Stream_plethysm(Stream_binary):
 
     Check corner cases::
 
-        sage: # needs sage.modules
+
         sage: f0 = Stream_exact([p([])])
         sage: f1 = Stream_exact([p[1]], order=1)
         sage: f2 = Stream_exact([p[2]], order=2 )
@@ -3623,7 +3623,7 @@ class Stream_plethysm(Stream_binary):
 
     Check that degree one elements are treated in the correct way::
 
-        sage: # needs sage.modules
+
         sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]; p = SymmetricFunctions(R).p()
         sage: f_s = a1*p[1] + a2*p[2] + a11*p[1,1]
         sage: g_s = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]
@@ -3636,11 +3636,11 @@ class Stream_plethysm(Stream_binary):
         sage: r_s == sum(r[n] for n in range(2*(r_s.degree()+1)))
         True
 
-        sage: r_s - f_s(g_s, include=[])                                                # needs sage.modules
+        sage: r_s - f_s(g_s, include=[])
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
-        sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # needs sage.modules
-        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
+        sage: r2 = Stream_plethysm(f, g, True, p, include=[])
+        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
     """
     def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
@@ -3649,7 +3649,7 @@ class Stream_plethysm(Stream_binary):
 
         TESTS::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -3691,7 +3691,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: p[n], True, 1)
@@ -3718,7 +3718,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -3756,7 +3756,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -3769,7 +3769,7 @@ class Stream_plethysm(Stream_binary):
             sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)
             True
 
-            sage: # needs sage.modules
+
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
@@ -3782,7 +3782,7 @@ class Stream_plethysm(Stream_binary):
             sage: A == B
             True
 
-            sage: # needs sage.modules
+
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
@@ -3834,7 +3834,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
+
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -3845,7 +3845,7 @@ class Stream_plethysm(Stream_binary):
             sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
             True
 
-            sage: # needs sage.modules
+
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
@@ -4032,7 +4032,7 @@ class Stream_rmul(Stream_scalar):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import (Stream_rmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()
@@ -4074,7 +4074,7 @@ class Stream_lmul(Stream_scalar):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+
         sage: from sage.data_structures.stream import (Stream_lmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()

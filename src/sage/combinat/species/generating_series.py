@@ -442,7 +442,10 @@ class CycleIndexSeries(LazySymmetricFunction):
             sage: E.pointing()[:8] == (X*E)[:8]                                         # needs sage.modules
             True
         """
-        X = self.parent()([1], valuation=1)
+        P = self.parent()
+        # the basis element p[1] as a series (a bare list would be a
+        # list of coefficients)
+        X = P(P._flat_data_ring([1]))
         return X * self.derivative_with_respect_to_p1()
 
     def exponential(self):
