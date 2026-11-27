@@ -16911,13 +16911,12 @@ class GenericGraph(GenericGraph_pyx):
             if directed_cycle:
                 return g.order() == g.size() and g.is_strongly_connected()
 
-            # We make a copy of self ignoring the direction of edges
+            # We make a copy of self ignoring the direction of edges.
+            # Passing the vertices keeps isolated vertices (:issue:`43193`).
             from sage.graphs.graph import Graph
-            g = Graph(multiedges=True, loops=True)
-            # Edges alone drop isolated vertices. The empty copy is vacuously
-            # 2-regular and connected (:issue:`43193`).
-            g.add_vertices(self.vertex_iterator())
-            g.add_edges(self.edge_iterator(labels=False))
+            g = Graph([self, self.edge_iterator(labels=False)],
+                      format="vertices_and_edges",
+                      multiedges=True, loops=True)
 
         return g.is_regular(k=2) and g.is_connected()
 
