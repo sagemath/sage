@@ -98,6 +98,7 @@ class pAdicLseries(SageObject):
 
     An ordinary example::
 
+        sage: # needs eclib
         sage: e = EllipticCurve('389a')
         sage: L = e.padic_lseries(5)
         sage: L.series(0)
@@ -115,6 +116,7 @@ class pAdicLseries(SageObject):
 
     A prime p such that E[p] is reducible::
 
+        sage: # needs eclib
         sage: L = EllipticCurve('11a').padic_lseries(5)
         sage: L.series(1)
         5 + O(5^2) + O(T)
@@ -125,6 +127,7 @@ class pAdicLseries(SageObject):
 
     An example showing the calculation of nontrivial Teichmueller twists::
 
+        sage: # needs eclib
         sage: E = EllipticCurve('11a1')
         sage: lp = E.padic_lseries(7)
         sage: lp.series(4,eta=1)
@@ -136,6 +139,7 @@ class pAdicLseries(SageObject):
 
     (Note that the last series vanishes at `T = 0`, which is consistent with ::
 
+        sage: # needs eclib
         sage: E.quadratic_twist(-7).rank()
         1
 
@@ -145,6 +149,7 @@ class pAdicLseries(SageObject):
 
     The load-dumps test::
 
+        sage: # needs eclib
         sage: lp = EllipticCurve('11a').padic_lseries(5)
         sage: lp == loads(dumps(lp))
         True
@@ -165,6 +170,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(3)
             sage: Lp.series(2,prec=3)
@@ -200,6 +206,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(5)
             sage: lp.modular_symbol(1/7,sign=-1)  #indirect doctest
@@ -213,6 +220,7 @@ class pAdicLseries(SageObject):
 
         TESTS::
 
+            sage: # needs eclib
             sage: lp1 = EllipticCurve('11a1').padic_lseries(5)
             sage: lp2 = EllipticCurve('11a1').padic_lseries(7)
             sage: lp3 = EllipticCurve('11a2').padic_lseries(5)
@@ -233,6 +241,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.elliptic_curve()
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -245,6 +254,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.prime()
             5
@@ -257,6 +267,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: e = EllipticCurve('37a')
             sage: e.padic_lseries(3)._repr_()
             '3-adic L-series of Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
@@ -296,6 +307,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(5)
             sage: [lp.modular_symbol(r) for r in [0,1/5,oo,1/11]]
@@ -305,6 +317,7 @@ class pAdicLseries(SageObject):
             sage: [lp.modular_symbol(r,quadratic_twist=-20) for r in [0,1/5,oo,1/11]]
             [1, 1, 0, 1/2]
 
+            sage: # needs eclib
             sage: E = EllipticCurve('20a1')
             sage: Et = E.quadratic_twist(-4)
             sage: lpt = Et.padic_lseries(5)
@@ -385,6 +398,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('37a')
             sage: L = E.padic_lseries(5)
             sage: L.measure(1,2, prec=9)
@@ -394,6 +408,7 @@ class pAdicLseries(SageObject):
             sage: L.measure(1,2, quadratic_twist=-4,prec=15)
             4 + 4*5 + 4*5^2 + 3*5^3 + 2*5^4 + 5^5 + 3*5^6 + 5^8 + 2*5^9 + 3*5^12 + 2*5^13 + 4*5^14 + O(5^15)
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: a = E.quadratic_twist(-3).padic_lseries(5).measure(1,2,prec=15)
             sage: b = E.padic_lseries(5).measure(1,2, quadratic_twist=-3,prec=15)
@@ -462,6 +477,7 @@ class pAdicLseries(SageObject):
 
         An ordinary prime::
 
+            sage: # needs eclib
             sage: L = E.padic_lseries(5)
             sage: alpha = L.alpha(10); alpha
             3 + 2*5 + 4*5^2 + 2*5^3 + 5^4 + 4*5^5 + 2*5^7 + 5^8 + 5^9 + O(5^10)
@@ -470,6 +486,7 @@ class pAdicLseries(SageObject):
 
         A supersingular prime::
 
+            sage: # needs eclib
             sage: L = E.padic_lseries(3)
             sage: alpha = L.alpha(10); alpha
             alpha + O(alpha^21)
@@ -478,6 +495,7 @@ class pAdicLseries(SageObject):
 
         A reducible prime::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.alpha(5)
             1 + 4*5 + 3*5^2 + 2*5^3 + 4*5^4 + O(5^5)
@@ -531,6 +549,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(3)
             sage: L.order_of_vanishing()
             0
@@ -590,6 +609,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(7)
             sage: L.teichmuller(1)
             [0, 1, 2, 3, 4, 5, 6]
@@ -609,6 +629,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(2)
             sage: Lp._e_bounds(1,10)
@@ -619,7 +640,6 @@ class pAdicLseries(SageObject):
             [+Infinity, 3, 2, 2, 1, 1, 1, 1, 0, 0]
             sage: Lp._e_bounds(4,10)
             [+Infinity, 4, 3, 3, 2, 2, 2, 2, 1, 1]
-
             sage: Lp = E.padic_lseries(3)
             sage: Lp._e_bounds(0, 4)
             [+Infinity, 0, 0, 0]
@@ -646,6 +666,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._pAdicLseries__series = {}  # clear cached series
@@ -673,6 +694,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp.series(3,prec=5)
@@ -698,6 +720,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('37b1')
             sage: lp = E.padic_lseries(3)
             sage: lp._quotient_of_periods_to_twist(-20)
@@ -715,6 +738,7 @@ class pAdicLseries(SageObject):
             sage: lp._quotient_of_periods_to_twist(12)
             1
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Et = E.quadratic_twist(-3)
             sage: lpt = Et.padic_lseries(5)
@@ -775,6 +799,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         We compute some `p`-adic `L`-functions associated to the elliptic
         curve 11a::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: p = 3
             sage: E.is_ordinary(p)
@@ -787,6 +812,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         `p`-adic `L`-function has an extra 0 (compared to the non
         `p`-adic `L`-function)::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a')
             sage: p = 11
             sage: E.is_ordinary(p)
@@ -797,6 +823,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         We compute a `p`-adic `L`-function that vanishes to order 2::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('389a')
             sage: p = 3
             sage: E.is_ordinary(p)
@@ -811,6 +838,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         Checks if the precision can be changed (:issue:`5846`)::
 
+            sage: # needs eclib
             sage: L.series(3,prec=4)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + O(T^4)
             sage: L.series(3,prec=6)
@@ -819,6 +847,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         Rather than computing the `p`-adic `L`-function for the curve '15523a1', one can
         compute it as a quadratic_twist::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('43a1')
             sage: lp = E.padic_lseries(3)
             sage: lp.series(2,quadratic_twist=-19)
@@ -839,11 +868,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         It should now also work with `p=2` (:issue:`20798`)::
 
+            sage: # needs eclib
             sage: E = EllipticCurve("53a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(7)
             O(2^8) + (1 + 2^2 + 2^3 + O(2^5))*T + (1 + 2^3 + O(2^4))*T^2 + (2^2 + 2^3 + O(2^4))*T^3 + (2 + 2^2 + O(2^3))*T^4 + O(T^5)
 
+            sage: # needs eclib
             sage: E = EllipticCurve("109a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(6)
@@ -991,6 +1022,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.is_ordinary()
             True
@@ -1004,6 +1036,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.is_supersingular()
             False
@@ -1028,6 +1061,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._c_bound()
@@ -1036,16 +1070,17 @@ class pAdicLseriesOrdinary(pAdicLseries):
             0
             sage: EllipticCurve('11a3').padic_lseries(5)._c_bound()
             2
-            sage: EllipticCurve('11a3').padic_lseries(5, implementation='sage')._c_bound()
-            2
             sage: EllipticCurve('50b1').padic_lseries(3)._c_bound()
             0
-            sage: EllipticCurve('50b1').padic_lseries(3, implementation='sage')._c_bound()
-            1
             sage: l = EllipticCurve("11a1").padic_lseries(5)
             sage: ls = l.series(1,eta=1);
             sage: l._c_bound(sign=-1)
             0
+
+            sage: EllipticCurve('11a3').padic_lseries(5, implementation='sage')._c_bound()
+            2
+            sage: EllipticCurve('50b1').padic_lseries(3, implementation='sage')._c_bound()
+            1
         """
         E = self._E
         p = self._p
@@ -1125,6 +1160,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._prec_bounds(3,10)
@@ -1136,6 +1172,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: Lp._prec_bounds(15,10)
             [+Infinity, 13, 13, 13, 13, 12, 12, 12, 12, 12]
 
+            sage: # needs eclib
             sage: Lp = E.padic_lseries(3)
             sage: Lp._prec_bounds(15,10)
             [+Infinity, 14, 14, 13, 13, 13, 13, 13, 13, 12]
@@ -1187,6 +1224,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         A supersingular example, where we must compute to higher precision to see anything::
 
+            sage: # needs eclib
             sage: e = EllipticCurve('37a')
             sage: L = e.padic_lseries(3); L
             3-adic L-series of Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -1199,6 +1237,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         An example where we only compute the leading term (:issue:`15737`)::
 
+            sage: # needs eclib
             sage: E = EllipticCurve("17a1")
             sage: L = E.padic_lseries(3)
             sage: L.series(4,prec=1)
@@ -1206,6 +1245,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         It works also for `p=2`::
 
+            sage: # needs eclib
             sage: E = EllipticCurve("11a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(10)
@@ -1329,6 +1369,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(19)
             sage: L.is_ordinary()
             False
@@ -1342,6 +1383,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: L = EllipticCurve('11a').padic_lseries(19)
             sage: L.is_supersingular()
             True
@@ -1357,6 +1399,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(19)
             sage: Lp._prec_bounds(3,5)
@@ -1380,6 +1423,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve("14a1")
             sage: lp = E.padic_lseries(5)
             sage: K = lp.alpha().parent()
@@ -1426,6 +1470,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: L.Dp_valued_series(4)  # long time (9s on sage.math, 2011)
@@ -1471,6 +1516,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: phi = L.frobenius(5)
@@ -1533,12 +1579,14 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(19)
             sage: lp.frobenius(prec=1,algorithm='approx')   #indirect doctest
             [          O(19^0) 4*19^-1 + O(19^0)]
             [       14 + O(19)           O(19^0)]
 
+            sage: # needs eclib
             sage: E = EllipticCurve('17a1')
             sage: lp = E.padic_lseries(3)
             sage: lp.frobenius(prec=3,algorithm='approx')
@@ -1620,6 +1668,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: L.bernardi_sigma_function(prec=5) # Todo: some sort of consistency check!?
@@ -1659,6 +1708,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('53a')
             sage: L = E.padic_lseries(5)
             sage: h = L.Dp_valued_height(7)
@@ -1715,6 +1765,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs eclib
             sage: E = EllipticCurve('43a')
             sage: L = E.padic_lseries(7)
             sage: L.Dp_valued_regulator(7)

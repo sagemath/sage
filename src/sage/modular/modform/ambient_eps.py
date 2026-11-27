@@ -204,7 +204,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: m.change_ring(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce zeta6 to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         if self.base_ring() == base_ring:
             return self
