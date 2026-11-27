@@ -1059,12 +1059,37 @@ class Stream_function(Stream_inexact):
             ....:     return g.input_streams()
             sage: fun()
             [<sage.data_structures.stream.Stream_exact object at 0x...>]
+
+        Lazy series and lists thereof in the closure are followed::
+
+            sage: def fun2():
+            ....:     class FakeLazySeries:
+            ....:         def __init__(self, stream):
+            ....:             self._coeff_stream = stream
+            ....:     f = Stream_exact([1,3,5], constant=7)
+            ....:     g = Stream_function(lambda n: FakeLazySeries(f)[n], False, 0)
+            ....:     return g.input_streams()
+            sage: fun2()
+            [<sage.data_structures.stream.Stream_exact object at 0x...>]
         """
         closure = self.get_coefficient.__closure__
         if closure is None:
             return []
-        return [cell.cell_contents for cell in closure
-                if isinstance(cell.cell_contents, Stream)]
+        ret = []
+
+        def append(c):
+            if isinstance(c, Stream):
+                ret.append(c)
+            elif hasattr(c, "_coeff_stream"):
+                # a lazy series in the closure: its stream is an input
+                ret.append(c._coeff_stream)
+            elif isinstance(c, (list, tuple)):
+                for e in c:
+                    append(e)
+
+        for cell in closure:
+            append(cell.cell_contents)
+        return ret
 
     def __hash__(self):
         """
@@ -2007,7 +2032,8 @@ class Stream_uninitialized(Stream):
         A value in an indexed free module may be constructed directly
         from its coefficients, which can then be undetermined without
         being coerced into the parent of the value; membership in the
-        coefficient ring is not sufficient for such values.
+        coefficient ring is not sufficient for such values, and the
+        inspection recurses into their coefficients.
 
         Values in ``self._P`` and ``self._PF`` are rejected without
         testing membership in the coefficient ring: the failed
@@ -2016,11 +2042,35 @@ class Stream_uninitialized(Stream):
         by the next substitution, see :meth:`_subs_in_caches`.
         """
         if isinstance(val, IndexedFreeModuleElement):
-            return not any(e.parent() is self._P or e.parent() is self._PF
+            return not any(self._coefficient_may_be_undetermined(e)
                            for e in val.monomial_coefficients().values())
         if val.parent() is self._P or val.parent() is self._PF:
             return False
         return val in self._coefficient_ring
+
+    def _coefficient_may_be_undetermined(self, e):
+        r"""
+        Return whether ``e``, a coefficient of a cached value, may
+        contain an undetermined coefficient, inspecting elements of
+        indexed free modules recursively.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: C = Stream_uninitialized(0)
+            sage: eq = Stream_sub(C, Stream_exact([1], order=0), True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C._coefficient_may_be_undetermined(QQ(1))
+            False
+            sage: v = C._pool.new_variable('vnd')
+            sage: C._coefficient_may_be_undetermined(v)
+            True
+        """
+        if isinstance(e, IndexedFreeModuleElement):
+            return any(self._coefficient_may_be_undetermined(c0)
+                       for c0 in e.monomial_coefficients().values())
+        return e.parent() is self._P or e.parent() is self._PF
 
     def __getitem__(self, n):
         """
@@ -2297,12 +2347,49 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
+        P = self._P.polynomial_ring()
+        try:
+            # substituting the variable by its position in the flat
+            # polynomial ring avoids scanning all the generators for
+            # every substituted coefficient
+            position = P.gens().index(P(var._p))
+            # the variable in the current flat ring, for cheap degree
+            # queries
+            var_gen = P.gens()[position]
+        except ValueError:
+            position = None
+            var_gen = P(var._p)
+
         def subs(c, var, val):
-            P = self._P.polynomial_ring()
-            num = P(c.numerator()._p).subs({P(var._p): val})
-            den = P(c.denominator()._p).subs({P(var._p): val})
-            return self._PF(InfinitePolynomial(self._P, num),
-                            InfinitePolynomial(self._P, den))
+            if c.parent() != self._PF:
+                # e.g. a scalar; it cannot contain the variable
+                return c
+            num = c.numerator()._p
+            den = c.denominator()._p
+            if num.parent() is not P:
+                # a coefficient polynomial from an older flat ring: the
+                # ring may have grown at the front, so exponent vectors
+                # are shifted and a position would not address the
+                # variable
+                num = P(num).subs({var_gen: val})
+                den = P(den).subs({var_gen: val})
+            elif num.degree(var_gen) < 1 and den.degree(var_gen) < 1:
+                # the fraction does not contain the variable
+                return c
+            else:
+                num = num.subs({position: val})
+                den = den.subs({position: val})
+            # Construct the fraction directly, but reduce it.  Passing
+            # ``reduce=False`` would preserve unreduced fractions in the
+            # coefficient caches; downstream operations on them are not
+            # robust and can even corrupt the heap (observed as
+            # ``malloc``/``solve_right`` failures in the lazy series
+            # doctests).  ``coerce=False`` only avoids re-coercion of the
+            # numerator and denominator.
+            return FractionFieldElement(self._PF,
+                                         InfinitePolynomial(self._P, num),
+                                         InfinitePolynomial(self._P, den),
+                                         coerce=False)
 
         def retract(c):
             num = c.numerator()
@@ -2311,16 +2398,40 @@ class Stream_uninitialized(Stream):
                 return num.constant_coefficient() / den.constant_coefficient()
             return c
 
-        def subs_coefficient(e):
-            """
-            Substitute in a coefficient in ``P`` or ``PF``, and
-            retract constants; leave other coefficients alone.
+        def substitute(e):
+            r"""
+            Substitute in a coefficient in ``P`` or ``PF``, retract
+            constants, and recurse into elements of other free modules
+            whose coefficients may be undetermined although their
+            parent does not reflect the coefficient ring.
             """
             if e.parent() is self._P:
                 e = self._PF(e)
             if e.parent() is self._PF:
                 return retract(subs(e, var, val))
+            if (isinstance(e, IndexedFreeModuleElement)
+                    and may_contain_variable(e)):
+                # e.g. a powersum realization or a polynomial species
+                # whose coefficients may live in the coefficient ring
+                mc = {mon: e0 for mon, c0 in e.monomial_coefficients().items()
+                      if (e0 := substitute(c0))}
+                return e.parent().element_class(e.parent(), mc)
             return e
+
+        def may_contain_variable(e):
+            r"""
+            Return whether the element ``e`` may contain an
+            undetermined coefficient of the present system: this is
+            the case exactly if ``e`` is an element of the pool ring
+            or of a free module some of whose coefficients may
+            contain one.
+            """
+            if e.parent() is self._P or e.parent() is self._PF:
+                return True
+            if isinstance(e, IndexedFreeModuleElement):
+                return any(may_contain_variable(c0)
+                           for c0 in e.monomial_coefficients().values())
+            return False
 
         def fix_cache(good_cache, j, s, ao):
             if s._cache[ao]:
@@ -2371,13 +2482,14 @@ class Stream_uninitialized(Stream):
                             good = m - i0 - 1
                     elif isinstance(c, IndexedFreeModuleElement):
                         # Values in other free modules, notably powersum
-                        # realizations, are constructed directly from
-                        # their coefficients, which may be undetermined
-                        # without being coerced into their parent.
+                        # realizations and polynomial species, may be
+                        # constructed directly from their coefficients,
+                        # which may be undetermined without being
+                        # coerced into their parent.
                         mc = {mon: e for mon, c0 in c.monomial_coefficients().items()
-                              if (e := subs_coefficient(c0))}
+                              if (e := substitute(c0))}
                         c = c.parent().element_class(c.parent(), mc)
-                        if any(e.parent() is self._PF for e in mc.values()):
+                        if any(may_contain_variable(e) for e in mc.values()):
                             good = m - i0 - 1
                     s._cache[i] = c
                 good_cache[j] += good
@@ -2393,6 +2505,41 @@ class Stream_uninitialized(Stream):
                 s._good_cache = good_cache[j]
         finally:
             self._good_cache = good_cache[0]
+
+        # Check that no undetermined cached element still contains the
+        # variable; otherwise an invisible stale cache entry would
+        # later cause a hard to debug error.  Only the entries beyond
+        # the determined prefix can contain it.
+        def contains_variable(c):
+            if isinstance(c, IndexedFreeModuleElement):
+                return any(contains_variable(e)
+                           for e in c.monomial_coefficients().values())
+            if c.parent() is self._PF:
+                num = c.numerator()._p
+                den = c.denominator()._p
+                if position is not None and num.parent() == P:
+                    return (any(position < len(monom) and monom[position]
+                                for monom in num.monomial_coefficients())
+                            or any(position < len(monom) and monom[position]
+                                   for monom in den.monomial_coefficients()))
+                return (var in c.numerator().variables()
+                        or var in c.denominator().variables())
+            if c.parent() is self._P:
+                return var in c.variables()
+            return False
+
+        for j, s in enumerate(streams):
+            m = len(s._cache) - good_cache[j]
+            if s._is_sparse:
+                indices = islice(reversed(s._cache), m)
+            else:
+                indices = range(-1, -m-1, -1)
+            for i in indices:
+                if contains_variable(s._cache[i]):
+                    raise RuntimeError(
+                        "internal error: the variable %s is still contained"
+                        " in entry %s of the cache of input stream %s"
+                        % (var, i, j))
 
         self._pool.del_variable(var)
 
@@ -2415,7 +2562,7 @@ class Stream_uninitialized(Stream):
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
             sage: C._uncomputed = False
             sage: C._collect_equations(0)
-            ([], [[(0, -FESDUMMY_0^2 + FESDUMMY_0)]])
+            ([], [[(0, -FESDUMMY_...^2 + FESDUMMY_...)]])
         """
         lin_coeffs = []
         all_coeffs = []  # only for the error message
@@ -2527,7 +2674,7 @@ class Stream_uninitialized(Stream):
             sage: x = C._pool.new_variable('x')
             sage: y = C._pool.new_variable('y')
             sage: C._linear_consequences_by_monomial_multiples([x*x-x, x*y-1])
-            [FESDUMMY_0 + 1]
+            [FESDUMMY_... + 1]
         """
         if not nonlinear_rows:
             return []
@@ -2665,7 +2812,7 @@ class Stream_uninitialized(Stream):
             ....:     weight_variables=(q,))
             sage: x = C._pool.new_variable('x')
             sage: C._split_equations_by_weight([(q+1)/q*x - 1/q])
-            [FESDUMMY_0, FESDUMMY_0 - 1]
+            [FESDUMMY_..., FESDUMMY_... - 1]
         """
         def weight_decomposition(c):
             r"""
@@ -2739,9 +2886,9 @@ class Stream_uninitialized(Stream):
             sage: C._uncomputed = False
             sage: lin_coeffs, all_coeffs = C._collect_equations(0)
             sage: C._cache
-            [FESDUMMY_0]
+            [FESDUMMY_...]
             sage: lin_coeffs
-            [FESDUMMY_0 - 1]
+            [FESDUMMY_... - 1]
             sage: C._solve_linear_equations_and_subs(lin_coeffs)
             True
             sage: C._cache
