@@ -5042,6 +5042,18 @@ class Stream_plethysm(Stream_binary):
              3*s[1, 1, 1, 1] + 2*s[2, 1, 1] + s[2, 2] + s[3, 1] + s[4],
              4*s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 2*s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[4, 1] + s[5]]
 
+        An inner series of valuation 0 is only admissible when the
+        outer series has finite support; then every outer degree
+        contributes at every output degree::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_plethysm
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: f = Stream_exact([p([1,1,1,1,1])], order=5)
+            sage: g = Stream_function(lambda n: p([]) if n == 0 else p([n]), True, 0)
+            sage: h = Stream_plethysm(f, g, True, p, p)
+            sage: [h[n] for n in range(3)]
+            [p[], 5*p[1], 10*p[1, 1] + 5*p[2]]
+
         A nonzero constant term of the inner series does not allow the
         bound to be truncated to the queried degree::
 

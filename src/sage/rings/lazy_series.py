@@ -7071,6 +7071,25 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: [f(S(p[1]))[n] for n in range(5)]
             [h[], 0, h[2], 0, h[2, 2]]
 
+        Plethysm inside an implicit definition works, also over base
+        rings in which the powersum basis requires denominators::
+
+            sage: h = SymmetricFunctions(ZZ).h()
+            sage: L = LazySymmetricFunctions(h)
+            sage: X = L(h[1]); E2 = L(h[2])
+            sage: A = L.undefined(1)
+            sage: L.define_implicitly([A], [lambda: A - X - E2(A)])
+            sage: [A[i] for i in range(4)]
+            [0, h[1], h[2], h[2, 1]]
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: z = L(p[1])
+            sage: A = L.undefined(1)
+            sage: L.define_implicitly([A], [lambda: A - z - A(z)/2])
+            sage: [A[i] for i in range(3)]
+            [0, 2*p[1], 0]
+
         TESTS::
 
             sage: s = SymmetricFunctions(QQ).s()

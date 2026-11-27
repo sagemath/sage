@@ -1337,6 +1337,27 @@ class LazySeriesRing(UniqueRepresentation, Parent):
           (i.e., approximate) order of each equation to extract
           linear equations from
 
+        .. NOTE::
+
+            A returned coefficient is determined by the retained
+            (linear or specially collected) equations, subject to the
+            currently searched weight-degree support.  Residuals that
+            still contain undetermined coefficients are pending and
+            are checked again later; they are not a certificate that
+            the returned coefficient extends to a full solution, nor
+            that it is unique.  In particular, nonlinear systems can
+            have several solutions and no computable uniqueness cap is
+            available in general.
+
+            Errors are therefore unsatisfiability certificates only
+            in elementary cases (e.g. a nonzero constant equation).
+            "Could not determine any coefficients" means that the
+            collected equations did not determine a sufficient
+            coefficient; "no solution within the searched weight-degree
+            support" means that the support bound was exhausted.  Both
+            are different from a proof that the original system has no
+            solution.
+
         EXAMPLES::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
