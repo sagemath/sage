@@ -2031,13 +2031,20 @@ cdef class NCPolynomial_plural(RingElement):
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
         return singular_polynomial_deg(p, NULL, r)
 
-    def degrees(self):
-        """
-        Return a tuple with the maximal degree of each variable in
-        this polynomial.
+    def degrees(self, as_ETuples=False):
+        r"""
+        Return the maximal degree of each variable in this polynomial.
 
-        The list of degrees is ordered by the order
-        of the generators.
+        The list of degrees is ordered by the order of the generators.
+
+        INPUT:
+
+        - ``as_ETuples`` -- boolean (default: ``False``); if ``True``, return
+          the result as an :class:`~sage.rings.polynomial.polydict.ETuple`,
+          otherwise return a plain :class:`tuple`
+
+        OUTPUT: an :class:`~sage.rings.polynomial.polydict.ETuple` or a
+        :class:`tuple` with the degree of each variable
 
         EXAMPLES::
 
@@ -2049,9 +2056,16 @@ cdef class NCPolynomial_plural(RingElement):
             3*y0*y1^2*y2
             sage: q.degrees()
             (1, 2, 1)
+            sage: type(q.degrees())
+            <class 'tuple'>
+            sage: q.degrees(as_ETuples=True)
+            (1, 2, 1)
+            sage: type(q.degrees(as_ETuples=True))
+            <class 'sage.rings.polynomial.polydict.ETuple'>
             sage: (q + y0^5).degrees()
             (5, 2, 1)
         """
+        from sage.rings.polynomial.polydict import ETuple
         cdef poly *p = self._poly
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
         cdef int i
@@ -2060,7 +2074,10 @@ cdef class NCPolynomial_plural(RingElement):
             for i from 0 <= i < r.N:
                 d[i] = max(d[i], p_GetExp(p, i+1, r))
             p = pNext(p)
+        if as_ETuples:
+            return ETuple(d)
         return tuple(d)
+
 
     def coefficient(self, degrees):
         """
