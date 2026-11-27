@@ -193,7 +193,7 @@ class SuperModules(SuperModulesCategory):
             """
             return self.degree() % 2
 
-        def is_even(self):
+        def is_even(self) -> bool:
             """
             Return if ``self`` is an even element.
 
@@ -210,7 +210,7 @@ class SuperModules(SuperModulesCategory):
             """
             return self.is_even_odd() == 0
 
-        def is_odd(self):
+        def is_odd(self) -> bool:
             """
             Return if ``self`` is an odd element.
 

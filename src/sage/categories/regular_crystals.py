@@ -130,7 +130,7 @@ class RegularCrystals(Category_singleton):
         return None
 
     class MorphismMethods:
-        def is_isomorphism(self):
+        def is_isomorphism(self) -> bool:
             """
             Check if ``self`` is a crystal isomorphism, which is true
             if and only if this is a strict embedding with the same number

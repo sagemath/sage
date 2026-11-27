@@ -2895,7 +2895,7 @@ class CoxeterGroups(Category_singleton):
                     i = 0
             return sorting_word
 
-        def is_coxeter_sortable(self, c, sorting_word=None):
+        def is_coxeter_sortable(self, c, sorting_word=None) -> bool:
             r"""
             Return whether ``self`` is ``c``-sortable.
 

@@ -64,7 +64,7 @@ class Bialgebras(Category_over_base_ring):
 
     class ElementMethods:
 
-        def is_primitive(self):
+        def is_primitive(self) -> bool:
             """
             Return whether ``self`` is a primitive element.
 
@@ -81,7 +81,7 @@ class Bialgebras(Category_over_base_ring):
             one = self.parent().one()
             return self.coproduct() == one.tensor(self) + self.tensor(one)
 
-        def is_grouplike(self):
+        def is_grouplike(self) -> bool:
             """
             Return whether ``self`` is a grouplike element.
 

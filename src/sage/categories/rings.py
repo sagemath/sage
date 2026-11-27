@@ -444,7 +444,7 @@ class Rings(CategoryWithAxiom):
             """
             raise NotImplementedError
 
-        def is_noetherian(self):
+        def is_noetherian(self) -> bool:
             """
             Return ``True`` if this ring is Noetherian.
 
@@ -457,7 +457,7 @@ class Rings(CategoryWithAxiom):
             """
             return False
 
-        def is_prime_field(self):
+        def is_prime_field(self) -> bool:
             r"""
             Return ``True`` if this ring is one of the prime fields `\QQ` or
             `\GF{p}`.
@@ -532,7 +532,7 @@ class Rings(CategoryWithAxiom):
             """
             return self.one() == self.zero()
 
-        def is_subring(self, other):
+        def is_subring(self, other) -> bool:
             """
             Return ``True`` if the canonical map from ``self`` to ``other`` is
             injective.
@@ -580,7 +580,7 @@ class Rings(CategoryWithAxiom):
             except (TypeError, AttributeError):
                 return False
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return ``True`` if this ring is a field.
 

@@ -117,7 +117,7 @@ class IntegralDomains(CategoryWithAxiom):
         return Category_contains_method_by_parent_class(cls())
 
     class ParentMethods:
-        def is_integral_domain(self, proof=True):
+        def is_integral_domain(self, proof=True) -> bool:
             r"""
             Return ``True``, since this in an object of the category
             of integral domains.
@@ -142,7 +142,7 @@ class IntegralDomains(CategoryWithAxiom):
             """
             return True
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             r"""
             Return ``True`` if this ring is a field.
 

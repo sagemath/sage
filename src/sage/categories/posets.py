@@ -449,7 +449,7 @@ class Posets(Category):
                 I = self.order_ideal_toggle(I, v)
             return I
 
-        def is_order_ideal(self, o):
+        def is_order_ideal(self, o) -> bool:
             """
             Return whether ``o`` is an order ideal of ``self``, assuming ``self``
             has no infinite descending path.
@@ -475,7 +475,7 @@ class Posets(Category):
             """
             return all((u in self and all(x in o for x in self.lower_covers(u))) for u in o)
 
-        def is_order_filter(self, o):
+        def is_order_filter(self, o) -> bool:
             """
             Return whether ``o`` is an order filter of ``self``, assuming ``self``
             has no infinite ascending path.
@@ -501,7 +501,7 @@ class Posets(Category):
             """
             return all((u in self and all(x in o for x in self.upper_covers(u))) for u in o)
 
-        def is_chain_of_poset(self, o, ordered=False):
+        def is_chain_of_poset(self, o, ordered=False) -> bool:
             """
             Return whether an iterable ``o`` is a chain of ``self``,
             including a check for ``o`` being ordered from smallest
@@ -622,7 +622,7 @@ class Posets(Category):
                         return False
             return True
 
-        def is_antichain_of_poset(self, o):
+        def is_antichain_of_poset(self, o) -> bool:
             """
             Return whether an iterable ``o`` is an antichain of
             ``self``.
@@ -748,7 +748,7 @@ class Posets(Category):
             [Category of posets]
         """
         class ParentMethods:
-            def is_bounded(self):
+            def is_bounded(self) -> bool:
                 """
                 Return whether ``self`` is a bounded poset.
 

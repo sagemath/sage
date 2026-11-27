@@ -71,7 +71,7 @@ class SimplicialSets(Category_singleton):
         return [Sets()]
 
     class ParentMethods:
-        def is_finite(self):
+        def is_finite(self) -> bool:
             """
             Return ``True`` if this simplicial set is finite, i.e., has a
             finite number of nondegenerate simplices.
@@ -86,7 +86,7 @@ class SimplicialSets(Category_singleton):
             """
             return SimplicialSets.Finite() in self.categories()
 
-        def is_pointed(self):
+        def is_pointed(self) -> bool:
             """
             Return ``True`` if this simplicial set is pointed, i.e., has a
             base point.
@@ -991,7 +991,7 @@ class SimplicialSets(Category_singleton):
                 opt_verb.reset_default()
                 return AM.quotient_module(SM)
 
-            def is_simply_connected(self):
+            def is_simply_connected(self) -> bool:
                 """
                 Return ``True`` if this pointed simplicial set is simply connected.
 
