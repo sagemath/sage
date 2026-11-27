@@ -262,8 +262,8 @@ class Sha(SageObject):
 
         A rank 5 curve::
 
-            sage: # long time, abs tol 1e-12, needs eclib
-            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)
+            sage: # long time, needs eclib
+            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(proof=False)  # abs tol 1e-12
             1.0
 
         See :issue:`1115`::
