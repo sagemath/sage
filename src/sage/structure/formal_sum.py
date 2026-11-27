@@ -132,7 +132,7 @@ class FormalSum(ModuleElement):
     """
     A formal sum over a ring.
     """
-    def __init__(self, x, parent=None, check=True, reduce=True) -> None:
+    def __init__(self, x, parent=None, check: bool=True, reduce: bool=True) -> None:
         """
         INPUT:
 
@@ -429,7 +429,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         return "Abelian Group of all Formal Finite Sums over %s" % self.base_ring()
 
-    def _element_constructor_(self, x, check=True, reduce=True):
+    def _element_constructor_(self, x, check: bool=True, reduce: bool=True):
         """
         Make a formal sum in ``self`` from x.
 
@@ -526,7 +526,7 @@ class FormalSums(UniqueRepresentation, Module):
                     action = PrecomposedAction(action, None, extended._internal_coerce_map_from(self))
             return action
 
-    def _an_element_(self, check=False, reduce=False):
+    def _an_element_(self, check: bool=False, reduce: bool=False):
         """
         EXAMPLES::
 

@@ -224,7 +224,7 @@ class Factorization(SageObject):
         ...
         TypeError: no conversion of this rational to integer
     """
-    def __init__(self, x, unit=None, cr=False, sort=True, simplify=True) -> None:
+    def __init__(self, x, unit=None, cr: bool=False, sort: bool=True, simplify: bool=True) -> None:
         """
         Create a :class:`Factorization` object.
 

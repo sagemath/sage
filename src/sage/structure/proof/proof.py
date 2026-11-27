@@ -17,7 +17,7 @@ class _ProofPref(SageObject):
     A ``False`` flag means that the subsystem can use faster methods to return
     answers that have a very small probability of being wrong.
     """
-    def __init__(self, proof=True) -> None:
+    def __init__(self, proof: bool=True) -> None:
         self._require_proof = {}
         self._require_proof["arithmetic"] = proof
         self._require_proof["elliptic_curve"] = proof

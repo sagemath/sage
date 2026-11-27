@@ -126,7 +126,7 @@ from sage.misc.inherit_comparison import InheritComparisonMetaclass, InheritComp
 
 
 def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
-                  prepend_cls_bases=True, cache=True):
+                  prepend_cls_bases: bool=True, cache: bool=True):
     r"""
     INPUT:
 
@@ -336,7 +336,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
 
 @weak_cached_function
-def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, prepend_cls_bases=True):
+def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, prepend_cls_bases: bool=True):
     r"""
     See sage.structure.dynamic_class.dynamic_class? for indirect doctests.
 

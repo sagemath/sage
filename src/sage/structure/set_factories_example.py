@@ -185,7 +185,7 @@ class XYPair(ElementWrapper):
         ...
         ValueError: numbers must be in range(5)
     """
-    def __init__(self, parent, value, check=True) -> None:
+    def __init__(self, parent, value, check: bool=True) -> None:
         """
         TESTS::
 
