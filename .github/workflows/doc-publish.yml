@@ -45,13 +45,63 @@ jobs:
             });
             core.setOutput('available', artifacts.some(a => a.name === 'doc' && !a.expired));
 
-      - name: Get information about workflow origin
-        uses: potiuk/get-workflow-origin@v1_5
+      - name: Resolve documentation preview destination
         id: source-run-info
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          sourceRunId: ${{ github.event.workflow_run.id }}
+        uses: actions/github-script@v9
         if: steps.artifact.outputs.available == 'true'
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const repositoryId = context.payload.repository.id;
+            const head = run.head_repository;
+
+            if (run.event === 'push') {
+              if (head?.id === repositoryId && run.head_branch === 'develop') {
+                core.setOutput('alias', 'doc-develop');
+              }
+              return;
+            }
+            if (run.event !== 'pull_request') return;
+            if (!head?.owner?.login || !run.head_branch || !run.head_sha) {
+              throw new Error(`Run ${run.id} has incomplete PR head metadata`);
+            }
+
+            const sameBranch = pr =>
+              pr.base.repo.id === repositoryId &&
+              pr.head.repo?.id === head.id &&
+              pr.head.ref === run.head_branch;
+            const isCurrent = pr =>
+              sameBranch(pr) && pr.state === 'open' && pr.head.sha === run.head_sha;
+
+            // Check the live PR, not just the SHA recorded with the old run.
+            const linked = (run.pull_requests ?? []).filter(pr => pr.base.repo.id === repositoryId);
+            let candidates = await Promise.all(linked.map(async pr => {
+              const {data} = await github.rest.pulls.get({...context.repo, pull_number: pr.number});
+              return data;
+            }));
+            let matches = candidates.filter(isCurrent);
+
+            // GitHub can omit pull_requests for runs from forks.
+            if (matches.length === 0) {
+              const open = await github.paginate(github.rest.pulls.list, {
+                ...context.repo, state: 'open', head: `${head.owner.login}:${run.head_branch}`,
+                per_page: 100,
+              });
+              candidates = [...candidates, ...open];
+              matches = open.filter(isCurrent);
+            }
+
+            if (matches.length === 0 && candidates.some(sameBranch)) {
+              core.notice(`Skipping preview for run ${run.id}: the PR is closed or its head has changed`);
+              return;
+            }
+            if (matches.length !== 1 || !Number.isSafeInteger(matches[0].number) || matches[0].number < 1) {
+              throw new Error(`Cannot identify a unique open PR for documentation run ${run.id}`);
+            }
+
+            core.setOutput('pullRequestNumber', matches[0].number);
+            core.setOutput('sourceHeadSha', run.head_sha);
+            core.setOutput('alias', `doc-pr-${matches[0].number}`);
 
       - name: Download doc
         id: download-doc
@@ -61,7 +111,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
-        if: steps.source-run-info.outputs.sourceEvent == 'pull_request' || (steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch == 'develop')
+        if: steps.source-run-info.outputs.alias != ''
 
       - name: Extract doc
         run: unzip doc.zip -d doc
@@ -75,8 +125,8 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_MESSAGE:  doc-${{ steps.source-run-info.outputs.pullRequestNumber && format('pr-{0}', steps.source-run-info.outputs.pullRequestNumber) || 'develop' }}
-          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.pullRequestNumber && format('pr-{0}', steps.source-run-info.outputs.pullRequestNumber) || 'develop' }}
+          NETLIFY_MESSAGE:  ${{ steps.source-run-info.outputs.alias }}
+          NETLIFY_ALIAS: ${{ steps.source-run-info.outputs.alias }}
         if: steps.download-doc.outcome == 'success'
 
       # Add deployment as status check, PR comment and annotation we could use
@@ -91,7 +141,7 @@ jobs:
           message: |
             [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/html/en) (built with commit ${{ steps.source-run-info.outputs.sourceHeadSha }}; [changes](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/CHANGES.html)) is ready! :tada:
             This preview will update shortly after each push to this PR.
-        if: steps.download-doc.outcome == 'success'
+        if: steps.deploy-netlify.outcome == 'success' && steps.source-run-info.outputs.pullRequestNumber != ''
 
       - name: Update deployment status PR check
         uses: myrotvorets/set-commit-status-action@v2.0.1

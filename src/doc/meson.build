@@ -75,7 +75,7 @@ foreach type : ['inventory', 'html', 'pdf']
       short_ref = ref
     endif
     deps = []
-    deps += doc_bootstrap
+    deps += [doc_bootstrap, doc_bibliographies]
     if short_ref == 'repl'
       deps += doc_src_repl
     endif
@@ -154,7 +154,7 @@ foreach doc : other_documents.splitlines()
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory,
+      depends: reference_inventory + [doc_bibliographies],
     )
     other_documents_inventory += target
   endif
@@ -179,7 +179,9 @@ foreach type : ['html', 'pdf']
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory + other_documents_inventory,
+      depends: reference_inventory + other_documents_inventory + [
+        doc_bibliographies,
+      ],
     )
     if type == 'html'
       other_documents_html += target
