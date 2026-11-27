@@ -17,7 +17,7 @@ class FractionFieldElement:
     def reduce(self) -> None:
         ...
 
-    def __copy__(self) -> 'FractionFieldElement':
+    def __copy__(self) -> FractionFieldElement:
         ...
 
     def numerator(self) -> Any:
@@ -29,16 +29,16 @@ class FractionFieldElement:
     def is_square(self, root: bool = False) -> Union[bool, tuple[bool, Any]]:
         ...
 
-    def nth_root(self, n: int) -> 'FractionFieldElement':
+    def nth_root(self, n: int) -> FractionFieldElement:
         ...
 
     def __hash__(self) -> int:
         ...
 
-    def __call__(self, *x: Any, **kwds: Any) -> 'FractionFieldElement':
+    def __call__(self, *x: Any, **kwds: Any) -> FractionFieldElement:
         ...
 
-    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> 'FractionFieldElement':
+    def subs(self, in_dict: dict | None = None, *args: Any, **kwds: Any) -> FractionFieldElement:
         ...
 
     def _is_atomic(self) -> bool:
@@ -53,13 +53,13 @@ class FractionFieldElement:
     def _magma_init_(self, magma: Any) -> str:
         ...
 
-    def _add_(self, right: 'FractionFieldElement') -> 'FractionFieldElement':
+    def _add_(self, right: FractionFieldElement) -> FractionFieldElement:
         ...
 
-    def _mul_(self, right: 'FractionFieldElement') -> 'FractionFieldElement':
+    def _mul_(self, right: FractionFieldElement) -> FractionFieldElement:
         ...
 
-    def _div_(self, right: 'FractionFieldElement') -> 'FractionFieldElement':
+    def _div_(self, right: FractionFieldElement) -> FractionFieldElement:
         ...
 
     def __int__(self) -> int:
@@ -71,25 +71,25 @@ class FractionFieldElement:
     def __complex__(self) -> complex:
         ...
 
-    def _rational_(self) -> 'FractionFieldElement':
+    def _rational_(self) -> FractionFieldElement:
         ...
 
-    def _conversion(self, R: Any) -> 'FractionFieldElement':
+    def _conversion(self, R: Any) -> FractionFieldElement:
         ...
 
-    def __pow__(self, right: int, dummy: Any) -> 'FractionFieldElement':
+    def __pow__(self, right: int, dummy: Any) -> FractionFieldElement:
         ...
 
-    def __neg__(self) -> 'FractionFieldElement':
+    def __neg__(self) -> FractionFieldElement:
         ...
 
-    def __abs__(self) -> 'FractionFieldElement':
+    def __abs__(self) -> FractionFieldElement:
         ...
 
-    def __invert__(self) -> 'FractionFieldElement':
+    def __invert__(self) -> FractionFieldElement:
         ...
 
-    def _richcmp_(self, other: 'FractionFieldElement', op: int) -> bool:
+    def _richcmp_(self, other: FractionFieldElement, op: int) -> bool:
         ...
 
     def valuation(self, v: Any = None) -> int:
@@ -104,16 +104,16 @@ class FractionFieldElement:
     def is_one(self) -> bool:
         ...
 
-    def _symbolic_(self, ring: Any) -> 'FractionFieldElement':
+    def _symbolic_(self, ring: Any) -> FractionFieldElement:
         ...
 
     def __reduce__(self) -> tuple:
         ...
 
-    def _evaluate_polynomial(self, pol: Any) -> 'FractionFieldElement':
+    def _evaluate_polynomial(self, pol: Any) -> FractionFieldElement:
         ...
 
-    def specialization(self, D: Any = None, phi: Any = None) -> 'FractionFieldElement':
+    def specialization(self, D: Any = None, phi: Any = None) -> FractionFieldElement:
         ...
 
 class FractionFieldElement_1poly_field(FractionFieldElement):

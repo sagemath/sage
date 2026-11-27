@@ -646,6 +646,23 @@ class DiGraph(GenericGraph):
             {0: 'foo'}
             sage: DiGraph(g).get_vertices()
             {0: 'foo'}
+
+        Check that vertex attributes are properly set (:issue:`42841`)::
+
+            sage: G = DiGraph(2)
+            sage: G.get_vertices()
+            {0: None, 1: None}
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = DiGraph(G)
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: G.get_vertices()
+            {0: 'abc', 1: None}
+            sage: H = DiGraph(G)
+            sage: H.get_vertices()
+            {0: 'abc', 1: None}
         """
         msg = ''
         GenericGraph.__init__(self)
@@ -797,7 +814,8 @@ class DiGraph(GenericGraph):
                 weighted = data.weighted()
             if data.get_pos() is not None:
                 pos = data.get_pos()
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
             self.name(data.name())
         elif format == 'rule':
@@ -1204,6 +1222,21 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: there is no dense immutable backend at the moment
+
+        Check that attribute ``_assoc`` is properly set (:issue:`42841`)::
+
+            sage: G = DiGraph(2)
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: hasattr(G, '_assoc')
+            True
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            True
         """
         # Which data structure should be used ?
         if data_structure is not None:
@@ -1255,7 +1288,6 @@ class DiGraph(GenericGraph):
         # Copy attributes '_assoc' and '_embedding' if set
         G._copy_attribute_from(self, '_assoc')
         G._copy_attribute_from(self, '_embedding')
-        G.set_vertices(self.get_vertices())
 
         return G
 
@@ -2490,7 +2522,29 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
+
+        Check that the method returns a scalar when ``v`` is a vertex,
+        and otherwise a list (see :issue:`43186`)::
+
+            sage: DiGraph(1).eccentricity()
+            [0]
+            sage: DiGraph(1).eccentricity(by_weight=True)
+            [0]
+            sage: DiGraph(1).eccentricity(0)
+            0
+            sage: DiGraph(1).radius(by_weight=True)
+            0
+            sage: DiGraph(1).diameter(algorithm='Dijkstra_Boost')
+            0
         """
+        if v is not None and not isinstance(v, list):
+            # a single vertex is given: return a single value
+            ecc = self.eccentricity(v=[v], by_weight=by_weight, algorithm=algorithm,
+                                    weight_function=weight_function,
+                                    check_weight=check_weight, dist_dict=dist_dict,
+                                    with_labels=with_labels)
+            return ecc if with_labels else ecc[0]
+
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
@@ -2511,8 +2565,6 @@ class DiGraph(GenericGraph):
                 algorithm = 'Dijkstra_Boost'
 
         if v is not None:
-            if not isinstance(v, list):
-                v = [v]
             v_set = set(v)
 
         if v is None or all(u in v_set for u in self):
@@ -2559,10 +2611,6 @@ class DiGraph(GenericGraph):
 
         if with_labels:
             return ecc
-        if len(ecc) == 1:
-            # return single value
-            v, = ecc.values()
-            return v
         return [ecc[u] for u in v]
 
     def radius(self, by_weight=False, algorithm=None, weight_function=None,
@@ -3234,12 +3282,12 @@ class DiGraph(GenericGraph):
         )
 
         NEG_INF = float('-inf')
-        pred = {v: None for v in self}
+        pred = dict.fromkeys(self)
 
         if source is None:
-            dist = {v: 0 for v in self}
+            dist = dict.fromkeys(self, 0)
         else:
-            dist = {v: NEG_INF for v in self}
+            dist = dict.fromkeys(self, NEG_INF)
             dist[source] = 0
 
         for u in topo_order:
@@ -3530,7 +3578,7 @@ class DiGraph(GenericGraph):
         g = 0
 
         for component in self.strongly_connected_components():
-            levels = {s: None for s in component}
+            levels = dict.fromkeys(component)
             vertices_in_scc = levels  # considers level as a set
             s = component[0]
             levels[s] = 0

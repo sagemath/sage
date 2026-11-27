@@ -33,14 +33,14 @@ class SagecodeTransform(SphinxTransform):
 
     Effectively a code block like::
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: 1 + 1
             2
 
     is transformed into::
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: 1 + 1
             2

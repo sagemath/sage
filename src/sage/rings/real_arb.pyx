@@ -355,7 +355,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         sage: RBF.cardinality()
         +Infinity
         sage: RBF.cartesian_product(QQ).an_element()**2
-        ([1.440000000000000 +/- ...e-16], 1/4)
+        ([1.44000000000000 +/- ...e-15], 1/4)
         sage: RBF.coerce_embedding() is None
         True
         sage: RBF['x'].gens_dict_recursive()

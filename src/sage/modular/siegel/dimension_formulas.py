@@ -22,44 +22,21 @@ Alex Ghitza
 
 REFERENCES:
 
-- [BFvdG2014] Jonas Bergström, Carel Faber, Gerard van der Geer,
-  *Siegel modular forms of degree three and the cohomology of local systems*,
-  Sel. Math. New Ser. (2014) 20:83-124.
-  :doi:`10.1007/s00029-013-0118-6`
+- [BFvdG2014]_
 
-- [Ibu2008] Tomoyoshi Ibukiyama,
-  *A conjecture on a Shimura type correspondence for Siegel modular forms,
-  and Harder’s conjecture on congruences*.
-  in Modular forms on Schiermonnikoog. 107-144 (2008).
-  `doi:`10.1017/CBO9780511543371.010`
+- [Ibu2008]_
 
-- [Ibu2012] Tomoyoshi Ibukiyama,
-  *Lifting conjectures from vector valued Siegel modular forms of degree two*.
-  Comment. Math. Univ. St. Pauli 61, No. 1, 87-102 (2012).
+- [Ibu2012]_
 
-- [IbWa2009] Tomoyoshi Ibukiyama and Satoshi Wakatsuki,
-  *Siegel modular forms of small weight and the Witt operator*,
-  in Quadratic forms – algebra, arithmetic, and geometry.
-  Contemporary Mathematics 493, 189-209 (2009).
+- [IbWa2009]_
 
-- [Peter2015] Dan Petersen, *Cohomology of
-  local systems on the moduli of principally polarized abelian surfaces*,
-  Pac. J. Math. 275, No. 1, 39-61 (2015).
-  :doi:`10.2140/pjm.2015.275.39`
+- [Peter2015]_
 
-- [vdG2008] Gerard van der Geer, *Siegel modular forms and their applications*,
-  in The 1-2-3 of modular forms. Springer Universitext, 181-245 (2008).
-  :doi:`10.1007/978-3-540-74119-0_3`
+- [vdG2008]_
 
-- [Tsu1983] Ryuji Tsushima, *An explicit dimension formula for the spaces
-  of generalized automorphic forms with respect to Sp(2,Z)*,
-  Proc. Japan Acad., Ser. A 59, 139-142 (1983).
-  :doi:`10.3792/pjaa.59.139`
+- [Tsu1983]_
 
-- [Take2016] Sho Takemori, *Structure theorems for vector valued Siegel
-  modular forms of degree 2 and weight det^k otimes Sym(10)*,
-  Int. J. Math. 27, No. 12, Article ID 1650101, 33 p. (2016).
-  :doi:`10.1142/S0129167X16501019`
+- [Take2016]_
 """
 from sage.modular.dims import dimension_cusp_forms, dimension_modular_forms
 from sage.rings.integer_ring import ZZ

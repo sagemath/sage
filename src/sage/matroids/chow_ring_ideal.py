@@ -645,7 +645,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
 
           (\sum_{F \subseteq G} \mu(F, G) x_{G}) (\sum_{F' \subseteq G'} \mu(F', G') x_{G'})
 
-      for all incomparable flats `F` and `F'` of the the matroid, where `\mu`
+      for all incomparable flats `F` and `F'` of the matroid, where `\mu`
       is the Moebius function of the lattice of flats.
 
     INPUT:

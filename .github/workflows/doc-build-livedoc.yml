@@ -1,39 +1,30 @@
 name: Build live documentation
 
 on:
-  push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
 
 env:
-  PYTHON_VERSION: 3.12
+  PYTHON_VERSION: 3.13
   SAGE_USE_CDNS: "yes"
   SAGE_LIVE_DOC: "yes"
   SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
 jobs:
   livedoc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Maximize available disk space
-        uses: jlumbroso/free-disk-space@v1.3.1
+        uses: jlumbroso/free-disk-space@v2.0.0
         with:
           # Remove pre-installed packages like Docker, Android, .NET, etc.
           # We only keep the basic essentials (like compilers, etc.)
-          tool-cache: true
+          preinstalled-runtimes: true
 
       - name: Cache conda packages
         uses: actions/cache@v6
@@ -101,7 +92,7 @@ jobs:
           path: livedoc.zip
 
       - name: Upload docs to release
-        uses: softprops/action-gh-release@v3.0.1
+        uses: softprops/action-gh-release@v3.0.4
         with:
           files: livedoc.zip
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}

@@ -337,17 +337,9 @@ Sage no longer builds its own Python interpreter, so you need to provide one
 either from your system package manager or from a tool such as ``uv``.
 
 Sage's ``./configure`` currently accepts Python versions in the range
-``>= 3.12`` and ``< 3.15``. It also checks that the interpreter provides the
+``>= 3.13`` and ``< 3.16``. It also checks that the interpreter provides the
 modules ``sqlite3``, ``ctypes``, ``math``, ``hashlib``, ``socket``, ``ssl``,
 ``ensurepip``, and ``zlib``.
-
-On Python 3.12 and newer, Sage additionally checks for ``setuptools`` because
-``distutils`` was removed from the Python standard library. The configure test
-creates a fresh virtual environment from the selected interpreter and then
-imports ``setuptools`` there before compiling small C and C++ extension
-modules. Therefore it is not enough to install ``setuptools`` into an
-unrelated project environment; it needs to be available from the Python
-interpreter that you pass to ``./configure``.
 
 For a ``uv``-managed Python, ``uv`` marks the interpreter as externally
 managed, so installing ``setuptools`` into it requires
@@ -359,8 +351,8 @@ actual Python executable path. One way to prepare such a Python is::
     $ uv pip install --python "$PYTHON3" --break-system-packages setuptools
     $ ./configure --with-python="$PYTHON3"
 
-You can replace ``3.13`` by another supported minor version such as ``3.12``
-or ``3.14``. After ``./configure`` succeeds, continue with the usual build
+You can replace ``3.14`` by another supported minor version such as ``3.13``
+or ``3.15``. After ``./configure`` succeeds, continue with the usual build
 step::
 
     $ make

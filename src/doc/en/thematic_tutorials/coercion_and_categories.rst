@@ -1582,8 +1582,8 @@ that can be found in most algebraic structures.
 ::
 
     sage: P.an_element(); P.some_elements()
-    (2):(1)
-    [(2):(1)]
+    (6):(5)
+    [(6):(5)]
 
 .. end of output
 

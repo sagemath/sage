@@ -368,7 +368,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         """
         return self._column_multipliers
 
-    def is_generalized(self):
+    def is_generalized(self) -> bool:
         r"""
         Return whether ``self`` is a Generalized Reed-Solomon code or
         a regular Reed-Solomon code.
@@ -1190,7 +1190,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT:
 
@@ -1264,9 +1264,9 @@ class GRSBerlekampWelchDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self`` message space
+        OUTPUT: a polynomial in the message space of ``self``
 
         EXAMPLES::
 
@@ -1315,7 +1315,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -1578,7 +1578,7 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT:
 
@@ -1640,9 +1640,9 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT: a vector of ``self`` message space
+        OUTPUT: a polynomial in the message space of ``self``
 
         EXAMPLES::
 
@@ -1691,7 +1691,7 @@ class GRSGaoDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -2232,7 +2232,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Correct the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and return a codeword.
 
         .. NOTE::
 
@@ -2316,7 +2316,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a codeword of ``self``
+        - ``r`` -- a vector of the ambient space of ``self.code()``
 
         OUTPUT: a vector of ``self`` message space
 

@@ -650,7 +650,8 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
-            sage: gi = Graph({ 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, data_structure='static_sparse')
+            sage: gi = Graph({0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2},
+            ....:             4: {0: 2}}, data_structure='static_sparse')
             sage: (0, 4, 2) in gi.edges(sort=False)
             True
             sage: gi.has_edge(0, 4)
@@ -658,8 +659,11 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
-            sage: G = Graph({1:{2:28, 6:10}, 2:{3:16, 7:14}, 3:{4:12}, 4:{5:22, 7:18}, 5:{6:25, 7:24}})
-            sage: GI = Graph({1:{2:28, 6:10}, 2:{3:16, 7:14}, 3:{4:12}, 4:{5:22, 7:18}, 5:{6:25, 7:24}}, data_structure='static_sparse')
+            sage: G = Graph({1: {2: 28, 6: 10}, 2: {3: 16, 7: 14}, 3: {4: 12},
+            ....:            4: {5: 22, 7: 18}, 5: {6: 25, 7: 24}})
+            sage: GI = Graph({1: {2: 28, 6: 10}, 2: {3: 16, 7: 14}, 3: {4: 12},
+            ....:             4: {5: 22, 7: 18}, 5: {6: 25, 7: 24}},
+            ....:             data_structure='static_sparse')
             sage: G == GI
             True
 
@@ -814,7 +818,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.add_edge(1,2,3,True)
+            sage: g.add_edge(1, 2, 3, True)
             Traceback (most recent call last):
             ...
             ValueError: graph is immutable; please change a copy instead (use function copy())
@@ -912,7 +916,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.del_edge(1,2,3,True)
+            sage: g.del_edge(1, 2, 3, True)
             Traceback (most recent call last):
             ...
             ValueError: graph is immutable; please change a copy instead (use function copy())
@@ -927,7 +931,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.del_edges([[1,2,3]], True)
+            sage: g.del_edges([[1, 2, 3]], True)
             Traceback (most recent call last):
             ...
             ValueError: graph is immutable; please change a copy instead (use function copy())
@@ -942,7 +946,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.set_edge_label(1,2,3,True)
+            sage: g.set_edge_label(1, 2, 3, True)
             Traceback (most recent call last):
             ...
             ValueError: graph is immutable; please change a copy instead (use function copy())
@@ -1635,7 +1639,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g = DiGraph({0: [0, 1, 1]}, loops=True, multiedges=True, immutable=True)
             sage: g.neighbors(0)
             [0, 1]
-            sage: g = DiGraph({0: [1, 1], 1:[0, 0]}, multiedges=True, immutable=True)
+            sage: g = DiGraph({0: [1, 1], 1: [0, 0]}, multiedges=True, immutable=True)
             sage: g.neighbors(0)
             [1]
             sage: g.neighbors(1)
