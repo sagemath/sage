@@ -249,7 +249,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
             raise ValueError('domain and codomain must be equal')
         return self.domain().identity_morphism()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Assuming this homset is an endomorphism ring, check whether
         it is a commutative ring.

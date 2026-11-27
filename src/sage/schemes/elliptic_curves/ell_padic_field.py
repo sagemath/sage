@@ -463,7 +463,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             self((x, 0, 1)) for x in f.roots(multiplicities=False)
         ]
 
-    def is_in_weierstrass_disc(self, P):
+    def is_in_weierstrass_disc(self, P) -> bool:
         """
         Check if `P` is in a Weierstrass disc.
 
@@ -491,7 +491,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         return not (P[1].valuation() == 0 and P != self(0, 1, 0))
 
-    def is_weierstrass(self, P):
+    def is_weierstrass(self, P) -> bool:
         """
         Check if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic
         involution).

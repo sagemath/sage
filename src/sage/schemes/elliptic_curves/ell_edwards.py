@@ -320,7 +320,7 @@ class TwistedEdwardsCurve(UniqueRepresentation, Parent):
         r"""Return the coefficient ``d``."""
         return self._d
 
-    def is_on_curve(self, x, y=None):
+    def is_on_curve(self, x, y=None) -> bool:
         r"""Return whether the given affine coordinates satisfy the equation."""
         if y is None:
             try:

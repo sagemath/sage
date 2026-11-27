@@ -154,7 +154,7 @@ class baseWI:
         """
         return repr(self.tuple())
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` if this is the identity isomorphism.
 
@@ -982,7 +982,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return Integer(1)
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Check if this Weierstrass isomorphism is the identity.
 
