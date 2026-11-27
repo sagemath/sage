@@ -1784,6 +1784,19 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             ValueError: could not determine any coefficients, since the linear system has a nontrivial kernel; kernel direction: series[h[]] += -1, series[q*h[]] += 1:
                 coefficient [h[]]: (-q)*series[q*h[]] + (-q)*series[h[]] + q == 0
 
+        An equation that is not a lazy series of this ring, e.g. one
+        mentioning a weight that is not in the base ring, is rejected
+        with a hint::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: L = LazySymmetricFunctions(m)
+            sage: R.<q> = QQ[]
+            sage: A = L.undefined()
+            sage: L.define_implicitly([A], [q*L(m[1]) - L(m[2])])
+            Traceback (most recent call last):
+            ...
+            ValueError: the equation ... is not an element of Lazy completion of Symmetric Functions over Rational Field in the monomial basis: the equations must be lazy series of this ring, built from the undefined series
+
         An example we cannot solve because we only look at the next
         non-vanishing equations::
 
@@ -1819,6 +1832,18 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         # allow the solver to verify the residual of the solution on
         # freshly built equations after solving
         from sage.structure.element import Element
+
+        def equation_stream(eq):
+            if eq.parent() is not self:
+                try:
+                    eq = self(eq)
+                except (ArithmeticError, TypeError, ValueError):
+                    raise ValueError(
+                        "the equation %s is not an element of %s: the"
+                        " equations must be lazy series of this ring,"
+                        " built from the undefined series" % (eq, self)) from None
+            return eq._coeff_stream
+
         factories = []
         eqs = []
         if not isinstance(equations, (list, tuple)):
@@ -1829,7 +1854,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                          else [built])
         for eq in equations:
             if isinstance(eq, Element):
-                eqs.append(eq._coeff_stream)
+                eqs.append(equation_stream(eq))
             else:
                 # an equation factory: a callable returning an
                 # equation or a list of equations, typically closing
@@ -1838,9 +1863,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 factories.append(eq)
                 built = eq()
                 if isinstance(built, (list, tuple)):
-                    eqs.extend(e._coeff_stream for e in built)
+                    eqs.extend(equation_stream(e) for e in built)
                 else:
-                    eqs.append(built._coeff_stream)
+                    eqs.append(equation_stream(built))
         if not factories:
             factories = None
         for f, ic in zip(s, ics):
