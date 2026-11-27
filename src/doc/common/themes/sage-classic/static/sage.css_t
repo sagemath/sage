@@ -10,6 +10,7 @@
 
 /* -- page layout ----------------------------------------------------------- */
 
+
 html {
     /* CSS hack for macOS's scrollbar */
     background-color: #FFFFFF;
@@ -22,6 +23,10 @@ body {
     color: #000;
     margin: 0;
     padding: 0;
+}
+
+:lang(fa) h1, h2, h3, h4, h5, h6, p, a, ul, ol, li {
+    direction: rtl;
 }
 
 div.document {
