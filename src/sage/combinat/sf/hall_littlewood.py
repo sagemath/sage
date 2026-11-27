@@ -569,6 +569,32 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         Methods for elements of a Hall-Littlewood basis that are common to all bases.
         """
 
+        def __pow__(self, n):
+            r"""
+            Return the power of ``self``.
+
+            Multiplication is performed by converting to the Schur basis,
+            which is significantly faster than binary exponentiation or
+            naive multiplication for Hall-Littlewood polynomials.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self`` in the Hall-Littlewood basis
+
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
+
+                sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood().P()
+                sage: len(HLP([2,1])^4)  # long time
+                63
+            """
+            P = self.parent()
+
+            return P(P._s(self).__pow__(n))
+
         def expand(self, n, alphabet='x'):
             r"""
             Expand the symmetric function as a symmetric polynomial in ``n`` variables.

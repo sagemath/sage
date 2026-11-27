@@ -519,6 +519,30 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             # introduce singularities, because it is not a Z-basis
             return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
 
+        def __pow__(self, n):
+            r"""
+            Return the power of ``self``.
+
+            Binary exponentiation leads to an explosion in the number of terms
+            for monomial polynomials. Naive multiplication is significantly faster.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self``
+
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
+
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: f = m([3,2,1])
+                sage: len(f^6)  # long time
+                11295
+            """
+            return self._pow_naive(n)
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
