@@ -126,7 +126,7 @@ cdef class ntl_mat_GF2():
     cdef ntl_mat_GF2 _new(self):
         cdef ntl_mat_GF2 r
         r = ntl_mat_GF2.__new__(ntl_mat_GF2)
-        r.x.SetDims(self.x.NumRows(),self.x.NumCols())
+        r.x.SetDims(self.x.NumRows(), self.x.NumCols())
         return r
 
     def __reduce__(self):
@@ -355,7 +355,7 @@ cdef class ntl_mat_GF2():
             raise IndexError("array index out of range")
 
         cdef ntl_GF2 e = self._new_element()
-        e.x = self.x.get( i+1, j+1 )
+        e.x = self.x.get(i + 1, j + 1)
         return e
 
     def determinant(self):
@@ -436,7 +436,8 @@ cdef class ntl_mat_GF2():
             True
         """
         cdef Py_ssize_t i, j
-        return [self[i,j] for i in range(self.NumRows()) for j in range(self.x.NumCols())]
+        return [self[i, j] for i in range(self.NumRows())
+                for j in range(self.x.NumCols())]
 
     def IsZero(self):
         r"""
@@ -471,13 +472,13 @@ cdef class ntl_mat_GF2():
         """
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
         from sage.matrix.constructor import matrix
-        m = matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
+        m = matrix(FiniteField(2), self.x.NumRows(), self.x.NumCols())
 
         cdef Py_ssize_t i, j
 
-        for i from 0 <= i < self.x.NumRows():
-            for j from 0 <= j < self.x.NumCols():
-                m[i,j] = GF2_conv_to_long(self.x.get( i+1, j+1))
+        for i in range(self.x.NumRows()):
+            for j in range(self.x.NumCols()):
+                m[i, j] = GF2_conv_to_long(self.x.get(i + 1, j + 1))
         return m
 
     def transpose(ntl_mat_GF2 self):

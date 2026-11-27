@@ -223,7 +223,7 @@ Sage example in ./graphtheory.tex, line 1625::
 Sage example in ./graphtheory.tex, line 1635::
 
   sage: P = Permutations([0,1,2,3]); P.random_element()
-  [3, 2, 1, 0]
+  [0, 2, 3, 1]
 
 Sage example in ./graphtheory.tex, line 1646::
 

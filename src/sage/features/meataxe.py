@@ -12,33 +12,46 @@ Feature for testing the presence of ``meataxe``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.config import meataxe_enabled
+from sage.features.build_feature import BuildModule
 
-from . import PythonModule
-from .join_feature import JoinFeature
-
-
-class Meataxe(JoinFeature):
+class Meataxe(BuildModule):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the Sage modules
-    that depend on the :ref:`meataxe <spkg_meataxe>` library.
+    A :class:`~sage.features.Feature` describing the presence of
+    the Sage modules that depend on the :ref:`meataxe <spkg_meataxe>`
+    library.
 
     EXAMPLES::
 
         sage: from sage.features.meataxe import Meataxe
-        sage: Meataxe().is_present()  # optional - meataxe
+        sage: Meataxe().is_present()  # needs meataxe
         FeatureTestResult('meataxe', True)
+        sage: Meataxe().is_present()  # needs !meataxe
+        FeatureTestResult('meataxe', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !meataxe`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.meataxe import Meataxe
+        sage: Meataxe().is_present_at_runtime()  # needs meataxe
+        FeatureTestResult('meataxe', True)
+
     """
+    _enabled_in_build = meataxe_enabled
+
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.meataxe import Meataxe
-            sage: isinstance(Meataxe(), Meataxe)
-            True
+            sage: Meataxe()
+            Feature('meataxe')
+
         """
-        JoinFeature.__init__(self, 'meataxe',
-                             [PythonModule('sage.matrix.matrix_gfpn_dense',
-                                           spkg='meataxe')])
+        module_name = "sage.matrix.matrix_gfpn_dense"
+        super().__init__("meataxe", module_name)
 
 
 def all_features():

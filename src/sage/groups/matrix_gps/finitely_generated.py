@@ -271,6 +271,24 @@ def MatrixGroup(*gens, **kwds):
         Traceback (most recent call last):
         ...
         AttributeError: 'LinearMatrixGroup_generic_with_category' object has no attribute 'gens'...
+
+    Matrices over relative number fields supported by GAP construct
+    GAP-backed groups.  This includes towers whose relative generator is not
+    a primitive element of the absolute field (here ``b`` does not generate
+    ``L`` over ``QQ``, so entries are reconstructed from the relative basis)::
+
+        sage: # needs sage.libs.gap
+        sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
+        sage: R.<x> = QQ[]
+        sage: K.<a> = NumberField(x^2 + 1)
+        sage: S.<y> = K[]
+        sage: L.<b> = K.extension(y^2 - 2)
+        sage: M = matrix(L, 2, [1, a*b, 0, 1])
+        sage: G = MatrixGroup([M])
+        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
+        True
+        sage: G.gen(0).matrix() == M
+        True
     """
     if isinstance(gens[-1], dict):   # hack for unpickling
         kwds.update(gens[-1])
@@ -408,7 +426,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         return tuple(self.element_class(self, x, check=False, convert=False)
                      for x in self._gens_matrix)
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the `i`-th generator.
 
@@ -420,7 +438,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
             sage: G = H.subgroup([h1, h2])
-            sage: G.gen(0)
+            sage: G.gen()
             [1 0]
             [2 1]
             sage: G.gen(0).matrix() == h1.matrix()

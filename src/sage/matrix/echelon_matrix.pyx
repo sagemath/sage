@@ -105,33 +105,33 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
         sage: all(a.is_immutable() and a.echelon_form() == a for a in it)
         True
     """
-    cdef Matrix m0,m,mm
+    cdef Matrix m0, m, mm
     cdef Py_ssize_t i
     n = int(n)
     k = int(k)
 
     if n < k:
         raise NotImplementedError("echelon matrix with fewer rows than columns "
-                "i.e. not full rank) are not implemented")
+                                  "i.e. not full rank) are not implemented")
 
     from sage.matrix.matrix_space import MatrixSpace
-    from itertools import combinations,product
+    from itertools import combinations, product
 
     copy = copy or set_immutable
 
-    m0 = MatrixSpace(K,k,n,sparse=sparse)()
+    m0 = MatrixSpace(K, k, n, sparse=sparse)()
     Klist = list(K)
     K1 = K.one()
 
     # First, we select which columns will be pivots:
-    for pivots in combinations(range(n),k):
+    for pivots in combinations(range(n), k):
         m = m0.__copy__()
         free_positions = []
         for i in range(k):
-            m[i,pivots[i]] = K1
-            for j in range(pivots[i]+1,n):
+            m[i, pivots[i]] = K1
+            for j in range(pivots[i]+1, n):
                 if j not in pivots:
-                    free_positions.append((i,j))
+                    free_positions.append((i, j))
 
         # Next, we fill in those entries that are not
         # determined by the echelon form alone:
@@ -142,9 +142,9 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
 
             if copy:
                 mm = m.__copy__()
-                mm.cache('pivots',pivots)
-                mm.cache('rank',k)
-                mm.cache('in_echelon_form',True)
+                mm.cache('pivots', pivots)
+                mm.cache('rank', k)
+                mm.cache('in_echelon_form', True)
                 if set_immutable:
                     mm.set_immutable()
                 yield mm

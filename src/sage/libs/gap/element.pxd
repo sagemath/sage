@@ -8,6 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.libs.gmp.types cimport mpz_t
 from sage.libs.gap.gap_includes cimport Obj, UInt
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, ModuleElement, RingElement
@@ -59,7 +60,7 @@ cdef class GapElement(RingElement):
     cpdef GapElement deepcopy(self, bint mut)
 
 cdef class GapElement_Integer(GapElement):
-    pass
+    cdef inline int mpz_ro(self, mpz_t)
 
 cdef class GapElement_Rational(GapElement):
     pass

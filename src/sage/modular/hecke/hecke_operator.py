@@ -429,8 +429,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
         if not isinstance(other, HeckeAlgebraElement_matrix):
             if isinstance(other, HeckeOperator):
                 return richcmp(self, other.matrix_form(), op)
-            else:
-                raise RuntimeError("Bug in coercion code")  # can't get here
+            raise RuntimeError("Bug in coercion code")  # can't get here
 
         return richcmp(self.__matrix, other.__matrix, op)
 
@@ -602,8 +601,7 @@ class HeckeOperator(HeckeAlgebraElement):
         if not isinstance(other, HeckeOperator):
             if isinstance(other, HeckeAlgebraElement_matrix):
                 return richcmp(self.matrix_form(), other, op)
-            else:
-                raise RuntimeError("Bug in coercion code")  # can't get here
+            raise RuntimeError("Bug in coercion code")  # can't get here
 
         if self.__n == other.__n:
             return rich_to_bool(op, 0)

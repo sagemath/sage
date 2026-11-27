@@ -153,7 +153,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         ##############
         # Dual bases #
         ##############
-        elif isinstance(x, sfa.SymmetricFunctionAlgebra_generic.Element) and hasattr(x, 'dual'):
+        if isinstance(x, sfa.SymmetricFunctionAlgebra_generic.Element) and hasattr(x, 'dual'):
             # Check to see if it is the dual of some other basis
             # If it is, try to coerce its corresponding element
             # in the other basis
@@ -173,20 +173,19 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         # One cannot use anymore self.element_class: it is build by
         # the category mechanism, and depends on the coeff ring.
 
-        elif isinstance(x, self.Element):
+        if isinstance(x, self.Element):
             P = x.parent()
             # same base ring
             if P is self:
                 return x
             # different base ring
-            else:
-                return eclass(self, {la: rc for la, c in x._monomial_coefficients.items()
-                                     if (rc := R(c))})
+            return eclass(self, {la: rc for la, c in x._monomial_coefficients.items()
+                                 if (rc := R(c))})
 
         ##################################################
         # Classical Symmetric Functions, different basis #
         ##################################################
-        elif isinstance(x, SymmetricFunctionAlgebra_classical.Element):
+        if isinstance(x, SymmetricFunctionAlgebra_classical.Element):
 
             P = x.parent()
             m = x.monomial_coefficients()
@@ -203,14 +202,13 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                     return self._from_dict(t(m)._monomial_coefficients,
                                            coerce=True)
                 return self.zero()
-            else:
-                f = lambda part: self._from_dict(t({part: ZZ.one()})._monomial_coefficients)
-                return self._apply_module_endomorphism(x, f)
+            f = lambda part: self._from_dict(t({part: ZZ.one()})._monomial_coefficients)
+            return self._apply_module_endomorphism(x, f)
 
         ###############################
         # Hall-Littlewood Polynomials #
         ###############################
-        elif isinstance(x, hall_littlewood.HallLittlewood_generic.Element):
+        if isinstance(x, hall_littlewood.HallLittlewood_generic.Element):
             #
             # Qp: Convert to Schur basis and then convert to self
             #
@@ -222,7 +220,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
             #
             # Q: Convert to P basis and then convert to self
             #
-            elif isinstance(x, hall_littlewood.HallLittlewood_q.Element):
+            if isinstance(x, hall_littlewood.HallLittlewood_q.Element):
                 return self(x.parent()._P(x))
 
         #######
@@ -256,19 +254,18 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                 P = x.parent()
                 sx = P._s._from_cache(x, P._s_cache, P._self_to_s_cache, q=P.q, t=P.t)
                 return self(sx)
-            elif isinstance(x, (macdonald.MacdonaldPolynomials_q.Element,
+            if isinstance(x, (macdonald.MacdonaldPolynomials_q.Element,
                                 macdonald.MacdonaldPolynomials_p.Element)):
                 J = x.parent()._J
                 jx = J(x)
                 sx = J._s._from_cache(jx, J._s_cache, J._self_to_s_cache, q=J.q, t=J.t)
                 return self(sx)
-            elif isinstance(x, (macdonald.MacdonaldPolynomials_h.Element,
+            if isinstance(x, (macdonald.MacdonaldPolynomials_h.Element,
                                 macdonald.MacdonaldPolynomials_ht.Element)):
                 P = x.parent()
                 sx = P._self_to_s(x)
                 return self(sx)
-            else:
-                raise TypeError
+            raise TypeError
 
         ####################
         # Jack Polynomials #
@@ -281,8 +278,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
             if isinstance(x, (jack.JackPolynomials_j.Element,
                               jack.JackPolynomials_q.Element)):
                 return self(x.parent()._P(x))
-            else:
-                raise TypeError
+            raise TypeError
 
         ####################################################
         # Bases defined by orthogonality and triangularity #
@@ -292,8 +288,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
             P = x.parent()
             if self is P._sf_base:
                 return P._sf_base._from_cache(x, P._base_cache, P._self_to_base_cache)
-            else:
-                return self( P._sf_base(x) )
+            return self( P._sf_base(x) )
 
         #################################
         # Last shot -- try calling R(x) #

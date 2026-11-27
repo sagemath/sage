@@ -131,8 +131,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         """
         if n == 1:
             return self.ground_ring().residue_ring(1)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     #def discriminant(self, K=None):
     #    if K is self:
@@ -154,10 +153,10 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     #    ##
     #    raise NotImplementedError
 
-    #def is_abelian(self):
+    #def is_abelian(self) -> bool:
     #    raise NotImplementedError
 
-    #def is_normal(self):
+    #def is_normal(self) -> bool:
     #    raise NotImplementedError
 
     def gen(self, n=0):
@@ -191,8 +190,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         """
         if n is infinity:
             return self(0)
-        else:
-            return self(1) << n
+        return self(1) << n
 
     def uniformizer(self):
         """

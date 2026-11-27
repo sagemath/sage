@@ -116,9 +116,8 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         if isinstance(R, FiniteField):
             return AffineSpace_finite_field(n, R, names,
                                             ambient_projective_space, default_embedding_index)
-        else:
-            return AffineSpace_field(n, R, names,
-                                     ambient_projective_space, default_embedding_index)
+        return AffineSpace_field(n, R, names,
+                                 ambient_projective_space, default_embedding_index)
     return AffineSpace_generic(n, R, names, ambient_projective_space, default_embedding_index)
 
 
@@ -254,7 +253,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             if not isinstance(self.base_ring(), FiniteField):
                 raise TypeError("base ring (= %s) must be a finite field" % self.base_ring())
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
 
@@ -624,8 +623,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         if isinstance(R, Map):
             return AffineSpace(self.dimension_relative(), R.codomain(), self.variable_names())
-        else:
-            return AffineSpace(self.dimension_relative(), R, self.variable_names())
+        return AffineSpace(self.dimension_relative(), R, self.variable_names())
 
     def coordinate_ring(self):
         """
@@ -927,7 +925,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
-        elif kind == 'second':
+        if kind == 'second':
             if monic and self.base().characteristic() != 2:
                 f = DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
                 f = f.homogenize(1)
@@ -935,8 +933,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_U(n, self.gen(0))], domain=self)
-        else:
-            raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
+        raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
 
     def origin(self):
         """

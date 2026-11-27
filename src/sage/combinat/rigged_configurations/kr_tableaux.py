@@ -6,7 +6,7 @@ Kirillov-Reshetikhin tableaux are rectangular tableaux with `r` rows and
 `s` columns that naturally arise under the bijection between rigged
 configurations and tableaux [RigConBijection]_. They are in bijection with
 the elements of the Kirillov-Reshetikhin crystal `B^{r,s}` under the (inverse)
-filling map [OSS13]_ [SS2015]_. They do not have to satisfy the semistandard row or column
+filling map [OSS2011]_ [SS2015]_. They do not have to satisfy the semistandard row or column
 restrictions. These tensor products are the result from the bijection from
 rigged configurations [RigConBijection]_.
 
@@ -15,9 +15,7 @@ and :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.Tens
 
 REFERENCES:
 
-.. [OSS13] Masato Okado, Reiho Sakamoto, and Anne Schilling.
-   *Affine crystal structure on rigged configurations of type* `D_n^{(1)}`.
-   J. Algebraic Combinatorics, **37** (2013). 571-599. :arxiv:`1109.3523`.
+- [OSS2011]_
 
 AUTHORS:
 
@@ -1153,7 +1151,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     def to_kirillov_reshetikhin_crystal(self):
         r"""
         Construct a
-        :func:`~sage.combinat.crystals.kirillov_reshetihkin.KashiwaraNakashimaTableaux`
+        :func:`~sage.combinat.crystals.kirillov_reshetikhin.KashiwaraNakashimaTableaux`
         element from ``self``.
 
         We construct the Kirillov-Reshetikhin crystal element as follows:
@@ -1451,7 +1449,8 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
         r"""
         Return the image of ``self`` under the right column splitting map.
 
-        Let `\ast` denote the :meth:`Lusztig involution<lusztig_involution>`,
+        Let `\ast` denote the
+        :meth:`Lusztig involution<sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element.TensorProductOfKirillovReshetikhinTableauxElement.lusztig_involution>`,
         and `\mathrm{ls}` as the :meth:`left splitting map<left_split>`.
         The right splitting map is defined as
         `\mathrm{rs} := \ast \circ \mathrm{ls} \circ \ast`.
@@ -1803,7 +1802,8 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
 
         The Kashiwara-Nakashima version is not implemented due to the
         non-trivial multiplicities of classical components, so
-        :meth:`classical_decomposition` does not work.
+        :meth:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux.classical_decomposition`
+        does not work.
     """
 
     def __init__(self, cartan_type, r, s):

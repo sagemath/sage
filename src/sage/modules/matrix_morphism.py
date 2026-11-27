@@ -618,13 +618,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if right.side() == "left":
                 return H(right.matrix() * self.matrix(), side=self.side())
-            else:
-                return H(right.matrix().transpose() * self.matrix(), side=self.side())
-        else:
-            if right.side() == "right":
-                return H(self.matrix() * right.matrix(), side=self.side())
-            else:
-                return H(right.matrix() * self.matrix().transpose(), side='left')
+            return H(right.matrix().transpose() * self.matrix(), side=self.side())
+        if right.side() == "right":
+            return H(self.matrix() * right.matrix(), side=self.side())
+        return H(right.matrix() * self.matrix().transpose(), side='left')
 
     def __add__(self, right):
         """
@@ -700,12 +697,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if right.side() == "left":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "right":
+            if right.side() == "right":
                 return self.parent()(self.matrix() + right.matrix().transpose(), side='left')
         if self.side() == "right":
             if right.side() == "right":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "left":
+            if right.side() == "left":
                 return self.parent()(self.matrix().transpose() + right.matrix(), side='left')
 
     def __neg__(self):
@@ -771,12 +768,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if other.side() == "left":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
-            elif other.side() == "right":
+            if other.side() == "right":
                 return self.parent()(self.matrix() - other.matrix().transpose(), side='left')
         if self.side() == "right":
             if other.side() == "right":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
-            elif other.side() == "left":
+            if other.side() == "left":
                 return self.parent()(self.matrix().transpose() - other.matrix(), side='left')
 
     def base_ring(self):
@@ -829,12 +826,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
                             cr=True, check=False)
-        else:
-            B = D.basis_matrix()
-            R = D.base_ring()
-            return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
-                                         check=False) for V, _ in E],
-                            cr=True, check=False)
+        B = D.basis_matrix()
+        R = D.base_ring()
+        return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
+                                     check=False) for V, _ in E],
+                        cr=True, check=False)
 
     def kernel(self):
         """
@@ -885,6 +881,54 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             B = V.basis_matrix() * D.basis_matrix()
             V = B.row_module(D.base_ring())
         return self.domain().submodule(V, check=False)
+
+    def kernel_basis(self):
+        r"""
+        Return a basis of the kernel of this morphism, in echelon form.
+
+        The basis is taken from :meth:`kernel`, so it spans the kernel and
+        respects the matrix convention determined by :meth:`side`: every
+        returned vector is mapped to zero by this morphism.
+
+        EXAMPLES:
+
+        For a ``side='left'`` morphism (the default), ``f(x) = x*M``, so the
+        relevant kernel is the *left* kernel of the matrix::
+
+            sage: A = linear_transformation(matrix([[0, -1], [0, 0]]))
+            sage: A.kernel_basis()
+            ((0, 1),)
+            sage: all(A(v).is_zero() for v in A.kernel_basis())
+            True
+
+        The convention is respected for both sides, so the result is
+        consistent with :meth:`kernel`::
+
+            sage: B = linear_transformation(matrix([[0, -1], [0, 0]]), side='right')
+            sage: B.kernel_basis()
+            ((1, 0),)
+            sage: all(B(v).is_zero() for v in B.kernel_basis())
+            True
+
+        This also works for free module morphisms that are not vector
+        space morphisms::
+
+            sage: V = ZZ^2
+            sage: phi = V.hom(matrix([[0, -1], [0, 0]]))
+            sage: phi.kernel_basis()
+            ((0, 1),)
+            sage: all(phi(v).is_zero() for v in phi.kernel_basis())
+            True
+
+        TESTS:
+
+        Check that :issue:`40933` is fixed::
+
+            sage: A = linear_transformation(matrix([[0, -1], [0, 0]]))
+            sage: A.kernel_basis()[0] in A.kernel()
+            True
+        """
+        return tuple(self.kernel().basis())
 
     def image(self):
         """
@@ -1041,8 +1085,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         if self.side() == "left":
             return self._matrix.left_nullity()
-        else:
-            return self._matrix.right_nullity()
+        return self._matrix.right_nullity()
 
     def is_bijective(self) -> bool:
         r"""
@@ -1422,8 +1465,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         try:
             if self.side() == "right":
                 return H(self.matrix().transpose().restrict_codomain(V).transpose(), side='right')
-            else:
-                return H(self.matrix().restrict_codomain(V))
+            return H(self.matrix().restrict_codomain(V))
         except Exception:
             return H(self.matrix().restrict_codomain(V))
 

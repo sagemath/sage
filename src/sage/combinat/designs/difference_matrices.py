@@ -231,8 +231,7 @@ def difference_matrix(g, k, lmbda=1, existence=False, check=True):
         if k is None:
             if existence:
                 return g
-            else:
-                k = g
+            k = g
         elif existence:
             return True
         F = FiniteField(g,'x')

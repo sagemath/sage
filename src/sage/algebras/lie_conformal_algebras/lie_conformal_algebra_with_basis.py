@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebras With Basis
 

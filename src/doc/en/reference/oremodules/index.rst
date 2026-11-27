@@ -18,7 +18,7 @@ according to the rule
 
     \partial(x y) = \theta(x) \partial(y) + \partial(x) y
 
-We refer to :mod:`sage.rings.polynomial.ore_polynomial_ring.OrePolynomial`
+We refer to :class:`~sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`
 for more details.
 
 A Ore module over `(R, \theta, \partial)` is by definition a

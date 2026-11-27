@@ -893,8 +893,7 @@ class TernaryQF(SageObject):
             q, M = _find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat)
             M = matrix(3, M)
             return TernaryQF(q), M*M.det()
-        else:
-            return TernaryQF(_find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat))
+        return TernaryQF(_find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat))
 
     def find_p_neighbors(self, p, mat=False):
         """
@@ -1163,35 +1162,35 @@ class TernaryQF(SageObject):
         a, b, c, r, s, t = self.coefficients()
         if n == 1:
             return (a == t) and (s == 2*r)
-        elif n == 2:
+        if n == 2:
             return (a == s) and (t == 2*r)
-        elif n == 3:
+        if n == 3:
             return (b == r) and (t == 2*s)
-        elif n == 4:
+        if n == 4:
             return (a == -t)
-        elif n == 5:
+        if n == 5:
             return (a == -s)
-        elif n == 6:
+        if n == 6:
             return (b == -r)
-        elif n == 7:
+        if n == 7:
             return (a + b + r + s + t == 0) and (2*a + 2*s + t == 0)
-        elif n == 8:
+        if n == 8:
             return (a == b) and (r == s)
-        elif n == 9:
+        if n == 9:
             return (b == c) and (s == t)
-        elif n == 10:
+        if n == 10:
             return (r == s) and (r == 0)
-        elif n == 11:
+        if n == 11:
             return (r == t) and (r == 0)
-        elif n == 12:
+        if n == 12:
             return (s == t) and (s == 0)
-        elif n == 13:
+        if n == 13:
             return (r == s) and (s == t) and (t == a)
-        elif n == 14:
+        if n == 14:
             return (a == s) and (a == t)
-        elif n == 15:
+        if n == 15:
             return (a == b) and (a + b + r + s + t == 0)
-        elif n == 16:
+        if n == 16:
             return (a == b) and (b == c) and (a + b + r + s + t == 0)
 
     def _borders(self):
@@ -1285,12 +1284,11 @@ class TernaryQF(SageObject):
                                 (1, 0, 1, 0, 0, -1, 0, 1, 0),
                                 (1, 1, 0, 0, 0, 1, 0, -1, 0),
                                 (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-                    else:
-                        # borders 1, 2, 14
-                        return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                                (-1, -1, 0, 0, 1, 0, 0, 0, -1),
-                                (-1, 0, -1, 0, -1, 0, 0, 0, 1),
-                                (1, 1, 1, 0, -1, 0, 0, 0, -1)]
+                    # borders 1, 2, 14
+                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                            (-1, -1, 0, 0, 1, 0, 0, 0, -1),
+                            (-1, 0, -1, 0, -1, 0, 0, 0, 1),
+                            (1, 1, 1, 0, -1, 0, 0, 0, -1)]
             else:
                 # borders 1
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
@@ -1322,16 +1320,14 @@ class TernaryQF(SageObject):
                             (1, -1, 0, 0, -1, 0, 0, 0, -1),
                             (1, -1, 0, 1, 0, 0, 0, 0, 1),
                             (1, 0, 0, 1, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 4, 10
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 0, 0, 0, 1),
-                            (-1, 1, 0, 0, 1, 0, 0, 0, -1),
-                            (1, -1, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 4
+                # borders 4, 10
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, -1, 0, 0, 0, 1),
+                        (-1, 1, 0, 0, 1, 0, 0, 0, -1),
                         (1, -1, 0, 0, -1, 0, 0, 0, -1)]
+            # borders 4
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (1, -1, 0, 0, -1, 0, 0, 0, -1)]
 
         if self._border(5):
             if self._border(6):
@@ -1380,16 +1376,14 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, 0, -1, 0, 1, -1),
                             (1, 0, 0, 0, 0, 1, 0, -1, 1),
                             (1, 0, 0, 0, 1, -1, 0, 1, 0)]
-                else:
-                    # borders 6, 12
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 1, 0, 0, 1),
-                            (-1, 0, 0, 0, 1, -1, 0, 0, -1),
-                            (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 6
+                # borders 6, 12
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, 1, -1, 0, 0, -1)]
+                        (-1, 0, 0, 0, -1, 1, 0, 0, 1),
+                        (-1, 0, 0, 0, 1, -1, 0, 0, -1),
+                        (1, 0, 0, 0, -1, 0, 0, 0, -1)]
+            # borders 6
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, 1, -1, 0, 0, -1)]
 
         if self._border(7):
             if self._border(8) and self._border(15):
@@ -1420,23 +1414,21 @@ class TernaryQF(SageObject):
                                 (1, 0, -1, 0, 0, -1, 0, 1, -1),
                                 (1, 0, -1, 1, 0, 0, 1, -1, 0),
                                 (1, 0, 0, 1, -1, 0, 1, 0, -1)]
-                    else:
-                        # borders 7, 8, 15, 16
-                        return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                                (-1, 0, 0, -1, 0, 1, -1, 1, 0),
-                                (-1, 0, 1, 0, -1, 1, 0, 0, 1),
-                                (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                                (0, -1, 1, 0, -1, 0, 1, -1, 0),
-                                (0, 1, -1, 1, 0, -1, 0, 0, -1),
-                                (0, 1, 0, 0, 1, -1, -1, 1, 0),
-                                (1, 0, -1, 1, 0, 0, 1, -1, 0)]
-                else:
-                    # borders 7, 8, 15
+                    # borders 7, 8, 15, 16
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                            (-1, 0, 0, -1, 0, 1, -1, 1, 0),
                             (-1, 0, 1, 0, -1, 1, 0, 0, 1),
                             (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 1, -1, 1, 0, -1, 0, 0, -1)]
-            elif self._border(9):
+                            (0, -1, 1, 0, -1, 0, 1, -1, 0),
+                            (0, 1, -1, 1, 0, -1, 0, 0, -1),
+                            (0, 1, 0, 0, 1, -1, -1, 1, 0),
+                            (1, 0, -1, 1, 0, 0, 1, -1, 0)]
+                # borders 7, 8, 15
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 1, 0, -1, 1, 0, 0, 1),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 1, -1, 1, 0, -1, 0, 0, -1)]
+            if self._border(9):
                 # borders 7, 9
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, 0, 0, 0, 0, -1, 0, -1, 0),
@@ -1444,10 +1436,9 @@ class TernaryQF(SageObject):
                         (-1, 1, 0, 0, 1, 0, 0, 1, -1),
                         (1, -1, 0, 0, -1, 1, 0, -1, 0),
                         (1, 0, -1, 0, 0, -1, 0, 1, -1)]
-            else:
-                # borders 7
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 1, 0, -1, 1, 0, 0, 1)]
+            # borders 7
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 1, 0, -1, 1, 0, 0, 1)]
 
         if self._border(8):
             if self._border(9):
@@ -1477,7 +1468,7 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, -1, 0, 0, 0, -1),
                             (1, 0, 0, 0, 0, -1, 0, 1, 0),
                             (1, 0, 0, 0, 0, 1, 0, -1, 0)]
-                elif self._border(13) and self._border(14):
+                if self._border(13) and self._border(14):
                     # borders 8, 9, 13, 14
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                             (-1, -1, -1, 0, 0, 1, 0, 1, 0),
@@ -1503,15 +1494,14 @@ class TernaryQF(SageObject):
                             (1, 1, 1, -1, 0, 0, 0, -1, 0),
                             (1, 1, 1, 0, -1, 0, 0, 0, -1),
                             (1, 1, 1, 0, 0, -1, -1, 0, 0)]
-                else:
-                    # borders 8, 9
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 0, -1, 0, -1, 0, -1, 0, 0),
-                            (0, 0, 1, 1, 0, 0, 0, 1, 0),
-                            (0, 1, 0, 0, 0, 1, 1, 0, 0)]
-            elif self._border(10):
+                # borders 8, 9
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 0, -1, 0, -1, 0, -1, 0, 0),
+                        (0, 0, 1, 1, 0, 0, 0, 1, 0),
+                        (0, 1, 0, 0, 0, 1, 1, 0, 0)]
+            if self._border(10):
                 if self._border(11) and self._border(12):
                     # borders 8, 10, 11, 12
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
@@ -1522,13 +1512,12 @@ class TernaryQF(SageObject):
                             (0, 1, 0, -1, 0, 0, 0, 0, 1),
                             (0, 1, 0, 1, 0, 0, 0, 0, -1),
                             (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 8, 10
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 0, 0, 0, 1),
-                            (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 1, 0, 1, 0, 0, 0, 0, -1)]
-            elif self._border(14):
+                # borders 8, 10
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, -1, 0, 0, 0, 1),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 1, 0, 1, 0, 0, 0, 0, -1)]
+            if self._border(14):
                 # borders 8, 13, 14
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, -1, -1, 1, 0, 0, 0, 0, 1),
@@ -1536,10 +1525,9 @@ class TernaryQF(SageObject):
                         (0, -1, 0, -1, 0, 0, 0, 0, -1),
                         (0, 1, 0, -1, -1, -1, 0, 0, 1),
                         (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 8
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (0, -1, 0, -1, 0, 0, 0, 0, -1)]
+            # borders 8
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (0, -1, 0, -1, 0, 0, 0, 0, -1)]
 
         if self._border(9):
             if self._border(12):
@@ -1553,26 +1541,24 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, -1, 0, 0, 0, -1),
                             (1, 0, 0, 0, 0, -1, 0, 1, 0),
                             (1, 0, 0, 0, 0, 1, 0, -1, 0)]
-                else:
-                    # borders 9, 12
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (-1, 0, 0, 0, 0, 1, 0, 1, 0),
-                            (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            elif self._border(14):
+                # borders 9, 12
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (-1, 0, 0, 0, 0, 1, 0, 1, 0),
+                        (1, 0, 0, 0, -1, 0, 0, 0, -1)]
+            if self._border(14):
                 if self._border(13):
                     # borders 9, 13, 14
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                             (-1, -1, -1, 0, 0, 1, 0, 1, 0),
                             (-1, 0, 0, 0, 0, -1, 0, -1, 0),
                             (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 9, 14
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, -1, -1, 0, 0, 1, 0, 1, 0),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-            elif self._border(15):
+                # borders 9, 14
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, -1, -1, 0, 0, 1, 0, 1, 0),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (1, 1, 1, 0, -1, 0, 0, 0, -1)]
+            if self._border(15):
                 # borders 9, 15, 16
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, 0, 0, -1, 0, 1, -1, 1, 0),
@@ -1582,10 +1568,9 @@ class TernaryQF(SageObject):
                         (0, 1, -1, -1, 1, 0, 0, 1, 0),
                         (0, 1, -1, 1, 0, -1, 0, 0, -1),
                         (1, 0, 0, 1, -1, 0, 1, 0, -1)]
-            else:
-                # borders 9
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, 0, -1, 0, -1, 0)]
+            # borders 9
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, 0, -1, 0, -1, 0)]
 
         if self._border(10):
             if self._border(11) and self._border(12):
@@ -1594,10 +1579,9 @@ class TernaryQF(SageObject):
                         (-1, 0, 0, 0, -1, 0, 0, 0, 1),
                         (-1, 0, 0, 0, 1, 0, 0, 0, -1),
                         (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 10
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, -1, 0, 0, 0, 1)]
+            # borders 10
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, -1, 0, 0, 0, 1)]
 
         if self._border(11):
             # borders 11
@@ -1626,10 +1610,9 @@ class TernaryQF(SageObject):
                         (-1, 0, 0, -1, 0, 1, -1, 1, 0),
                         (0, -1, 1, 0, -1, 0, 1, -1, 0),
                         (0, 1, -1, 1, 0, -1, 0, 0, -1)]
-            else:
-                # borders 15
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (0, 1, -1, 1, 0, -1, 0, 0, -1)]
+            # borders 15
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (0, 1, -1, 1, 0, -1, 0, 0, -1)]
 
         return [(1, 0, 0, 0, 1, 0, 0, 0, 1)]
 
@@ -1759,9 +1742,8 @@ class TernaryQF(SageObject):
                     if self._border(9):
                         # borders 1, 2, 9, 14
                         return 8
-                    else:
-                        # borders 1, 2, 14
-                        return 4
+                    # borders 1, 2, 14
+                    return 4
             else:
                 # borders 1
                 return 2
@@ -1779,12 +1761,10 @@ class TernaryQF(SageObject):
                 if self._border(8):
                     # borders 4, 8, 10
                     return 12
-                else:
-                    # borders 4, 10
-                    return 4
-            else:
-                # borders 4
-                return 2
+                # borders 4, 10
+                return 4
+            # borders 4
+            return 2
 
         if self._border(5):
             if self._border(6):
@@ -1808,12 +1788,10 @@ class TernaryQF(SageObject):
                 if self._border(9):
                     # borders 6, 9, 12
                     return 12
-                else:
-                    # borders 6, 12
-                    return 4
-            else:
-                # borders 6
-                return 2
+                # borders 6, 12
+                return 4
+            # borders 6
+            return 2
 
         if self._border(7):
             if self._border(8) and self._border(15):
@@ -1821,73 +1799,63 @@ class TernaryQF(SageObject):
                     if self._border(9):
                         # borders 7, 8, 9, 15, 16
                         return 24
-                    else:
-                        # borders 7, 8, 15, 16
-                        return 8
-                else:
-                    # borders 7, 8, 15
-                    return 4
-            elif self._border(9):
+                    # borders 7, 8, 15, 16
+                    return 8
+                # borders 7, 8, 15
+                return 4
+            if self._border(9):
                 # borders 7, 9
                 return 6
-            else:
-                # borders 7
-                return 2
+            # borders 7
+            return 2
 
         if self._border(8):
             if self._border(9):
                 if self._border(10) and self._border(11) and self._border(12):
                     # borders 8, 9, 10, 11, 12
                     return 24
-                elif self._border(13) and self._border(14):
+                if self._border(13) and self._border(14):
                     # borders 8, 9, 13, 14
                     return 24
-                else:
-                    # borders 8, 9
-                    return 6
-            elif self._border(10):
+                # borders 8, 9
+                return 6
+            if self._border(10):
                 if self._border(11) and self._border(12):
                     # borders 8, 10, 11, 12
                     return 8
-                else:
-                    # borders 8, 10
-                    return 4
-            elif self._border(14):
+                # borders 8, 10
+                return 4
+            if self._border(14):
                 # borders 8, 13, 14
                 return 6
-            else:
-                # borders 8
-                return 2
+            # borders 8
+            return 2
 
         if self._border(9):
             if self._border(12):
                 if self._border(10) and self._border(11):
                     # borders 9, 10, 11, 12
                     return 8
-                else:
-                    # borders 9, 12
-                    return 4
-            elif self._border(14):
+                # borders 9, 12
+                return 4
+            if self._border(14):
                 if self._border(13):
                     # borders 9, 13, 14
                     return 4
-                else:
-                    # borders 9, 14
-                    return 4
-            elif self._border(15):
+                # borders 9, 14
+                return 4
+            if self._border(15):
                 # borders 9, 15, 16
                 return 8
-            else:
-                # borders 9
-                return 2
+            # borders 9
+            return 2
 
         if self._border(10):
             if self._border(11) and self._border(12):
                 # borders 10, 11, 12
                 return 4
-            else:
-                # borders 10
-                return 2
+            # borders 10
+            return 2
 
         if self._border(11):
             # borders 11
@@ -1909,9 +1877,8 @@ class TernaryQF(SageObject):
             if self._border(16):
                 # borders 15, 16
                 return 4
-            else:
-                # borders 15
-                return 2
+            # borders 15
+            return 2
 
         return 1
 

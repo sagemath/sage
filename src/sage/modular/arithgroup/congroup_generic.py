@@ -39,7 +39,8 @@ def CongruenceSubgroup_constructor(*args):
 
     The allowed inputs are as follows:
 
-    - A :class:`~sage.groups.matrix_gps.matrix_group.MatrixGroup` object. This
+    - An object returned by
+      :func:`~sage.groups.matrix_gps.finitely_generated.MatrixGroup`. This
       must be a group of matrices over `\ZZ / N\ZZ` for some `N`, with
       determinant 1, in which case the function will return the group of
       matrices in `SL(2, \ZZ)` whose reduction mod `N` is in the given group.
@@ -111,8 +112,7 @@ def CongruenceSubgroup_constructor(*args):
     if GG in ZZ:
         from .all import Gamma
         return Gamma(GG)
-    else:
-        return CongruenceSubgroupFromGroup(GG)
+    return CongruenceSubgroupFromGroup(GG)
 
 
 class CongruenceSubgroupBase(ArithmeticSubgroup):
@@ -196,7 +196,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         if not isinstance(other, ArithmeticSubgroup):
             return False
 
-        elif isinstance(other, CongruenceSubgroupBase):
+        if isinstance(other, CongruenceSubgroupBase):
             if self.level() == other.level() == 1:
                 return True
                 # shouldn't come up except with pickling/unpickling
@@ -210,9 +210,8 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         if isinstance(other, ArithmeticSubgroup_Permutation_class):
             return self.as_permutation_group() == other
 
-        else:
-            # we shouldn't ever get here
-            raise NotImplementedError
+        # we shouldn't ever get here
+        raise NotImplementedError
 
     def __ne__(self, other):
         """
@@ -349,12 +348,11 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         if self.is_even():
             return self
-        else:
-            from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+        from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 
-            G = self.image_mod_n()
-            H = MatrixGroup([ g.matrix() for g in G.gens()] + [G.matrix_space()(-1)])
-            return CongruenceSubgroup_constructor(H)
+        G = self.image_mod_n()
+        H = MatrixGroup([ g.matrix() for g in G.gens()] + [G.matrix_space()(-1)])
+        return CongruenceSubgroup_constructor(H)
 
     def _repr_(self):
         r"""
@@ -522,19 +520,17 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
             raise ValueError("one level must divide the other")
         if isinstance(self, Gamma0_class):
             return Gamma0(level)
-        elif isinstance(self, Gamma1_class):
+        if isinstance(self, Gamma1_class):
             return Gamma1(level)
-        elif isinstance(self, GammaH_class):
+        if isinstance(self, GammaH_class):
             H = self._generators_for_H()
             if level > N:
                 d = level // N
                 diffs = [ N*i for i in range(d) ]
                 newH = [ h + diff for h in H for diff in diffs ]
                 return GammaH(level, [x for x in newH if gcd(level, x) == 1])
-            else:
-                return GammaH(level, [ h % level for h in H ])
-        else:
-            raise NotImplementedError
+            return GammaH(level, [ h % level for h in H ])
+        raise NotImplementedError
 
 
 def _minimize_level(G):

@@ -33,13 +33,13 @@ to run these examples inside a module.) ::
 Test2 will be slightly faster than test1, but they give the same answer::
 
     sage: with seed(0): test1()
-    5169
+    5138
     sage: with seed(0): test2()
-    5169
+    5138
     sage: with seed(1): test1()
-    5097
+    4962
     sage: with seed(1): test2()
-    5097
+    4962
     sage: timeit('test1()') # random
     625 loops, best of 3: 590 us per loop
     sage: timeit('test2()') # random
@@ -79,7 +79,7 @@ def _pyrand():
 
 def getrandbits(k):
     r"""
-    getrandbits(k) -> x.  Generates a long int with k random bits.
+    Return a long integer with ``k`` random bits.
 
     EXAMPLES::
 
@@ -147,9 +147,9 @@ def choice(seq):
 
     EXAMPLES::
 
-        sage: s = [choice(list(primes(10, 100))) for i in range(5)]; s  # random        # needs sage.libs.pari
+        sage: s = [choice(list(primes(10, 100))) for i in range(5)]; s  # random
         [17, 47, 11, 31, 47]
-        sage: all(t in primes(10, 100) for t in s)                                      # needs sage.libs.pari
+        sage: all(t in primes(10, 100) for t in s)
         True
     """
     return _pyrand().choice(seq)
@@ -236,9 +236,9 @@ def uniform(a, b):
         sage: 0.0 <= s <= 1.0
         True
 
-        sage: s = uniform(e, pi); s  # random                                           # needs sage.symbolic
+        sage: s = uniform(e, pi); s  # random
         0.5143475134191677*pi + 0.48565248658083227*e
-        sage: bool(e <= s <= pi)                                                        # needs sage.symbolic
+        sage: bool(e <= s <= pi)
         True
     """
     return _pyrand().uniform(a, b)

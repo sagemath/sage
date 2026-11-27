@@ -27,7 +27,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
     ``submodule`` should be a free submodule admitting a basis in
     unitriangular echelon form. Typically ``submodule`` is a
     :class:`SubmoduleWithBasis` as returned by
-    :meth:`Modules.WithBasis.ParentMethods.submodule`.
+    :meth:`ModulesWithBasis.ParentMethods.submodule <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule>`.
 
     The ``lift`` method should have a method
     ``.cokernel_basis_indices`` that computes the indexing set of a
@@ -39,9 +39,9 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
     modulo ``submodule``.
 
     This is meant to be constructed via
-    :meth:`Modules.WithBasis.FiniteDimensional.ParentMethods.quotient_module`
+    :meth:`ModulesWithBasis.ParentMethods.quotient_module <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module>`
 
-    This differs from :class:`sage.rings.quotient_ring.QuotientRing`
+    This differs from :func:`~sage.rings.quotient_ring.QuotientRing`
     in the following ways:
 
     - ``submodule`` needs not be an ideal. If it is, the
@@ -58,10 +58,10 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
 
     .. SEEALSO::
 
-        - :meth:`Modules.WithBasis.ParentMethods.submodule`
-        - :meth:`Modules.WithBasis.FiniteDimensional.ParentMethods.quotient_module`
+        - :meth:`ModulesWithBasis.ParentMethods.submodule <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule>`
+        - :meth:`ModulesWithBasis.ParentMethods.quotient_module <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module>`
         - :class:`SubmoduleWithBasis`
-        - :class:`sage.rings.quotient_ring.QuotientRing`
+        - :func:`~sage.rings.quotient_ring.QuotientRing`
     """
     @staticmethod
     def __classcall_private__(cls, submodule, category=None):
@@ -187,11 +187,11 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
     :class:`CombinatorialFreeModule`.
 
     This is meant to be constructed via
-    :meth:`Modules.WithBasis.ParentMethods.submodule`.
+    :meth:`ModulesWithBasis.ParentMethods.submodule <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule>`.
 
     .. SEEALSO::
 
-        - :meth:`Modules.WithBasis.ParentMethods.submodule`
+        - :meth:`ModulesWithBasis.ParentMethods.submodule <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule>`
         - :class:`QuotientModuleWithBasis`
     """
     @staticmethod

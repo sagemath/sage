@@ -64,9 +64,10 @@ class WeylGroups(Category_singleton):
         Indeed, the category of Weyl groups defines no additional
         structure: Weyl groups are a special class of Coxeter groups.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

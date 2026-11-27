@@ -149,7 +149,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             EXAMPLES::
@@ -204,14 +204,14 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             (German for "shift") endomorphism of the Witt vectors.
 
             The `n`-th Verschiebung operator is adjoint to the `n`-th
-            Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.frobenius`
+            Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.adams_operator`
             for its definition) with respect to the Hall scalar product
             (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
             The action of the `n`-th Verschiebung operator on the Schur basis
             can also be computed explicitly. The following (probably clumsier
             than necessary) description can be obtained by solving exercise
-            7.61 in Stanley [STA]_.
+            7.61 in Stanley [EnumComb2]_.
 
             Let `\lambda` be a partition. Let `n` be a positive integer. If
             the `n`-core of `\lambda` is nonempty, then

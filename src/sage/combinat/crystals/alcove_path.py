@@ -366,7 +366,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         """
         if isinstance(data, tuple):
             return self.element_class(self, data)
-        elif isinstance(data, list):
+        if isinstance(data, list):
             lambda_chain = self._R.lambda_chain()
             # data starts indexing at 0
             return self.element_class(self, tuple(sorted([lambda_chain[i] for i in data])))
@@ -930,8 +930,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
                 return_value.i_string = [['e', i]]
 
             return return_value
-        else:
-            return None
+        return None
 
     @cached_method
     def _gi(self, i):
@@ -1058,8 +1057,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
                 return_value.i_string = [['f', i]]
 
             return return_value
-        else:
-            return None
+        return None
 
     @staticmethod
     def _sign(root):
@@ -1077,8 +1075,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         """
         if root.is_positive_root():
             return 1
-        else:
-            return -1
+        return -1
 
     def _eps(self, root):
         r"""
@@ -1099,8 +1096,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         """
         if root in self.value:
             return -1
-        else:
-            return 1
+        return 1
 
     def path(self):
         """
@@ -1220,7 +1216,10 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                 return self.parent().module_generators[0]
 
             n = self.parent()._cartan_type.rank()
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             shift = self._shift
             while y.is_admissible():
                 # The only element with a shift of 0 is the highest weight element.
@@ -1259,7 +1258,9 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                  (alpha[0] + alpha[1] + alpha[3], -1),
                  (alpha[1] + alpha[3] + alpha[4] + alpha[5], -1))
             """
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             y = self.projection().f(i)
             if y is not None:
                 return type(self)(self.parent(),
@@ -1388,7 +1389,10 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
                 k = self._shift
             elif k < self._shift:
                 return None
-            s = lambda rt: int(sum(rt.associated_coroot().coefficients()))
+
+            def s(rt):
+                return int(sum(rt.associated_coroot().coefficients()))
+
             n = self.parent()._cartan_type.rank()
             A = CrystalOfAlcovePaths(self.parent()._cartan_type, [k] * n)
             return A(tuple([A._R(rt, h + k*s(rt)) for rt, h in self.value]))
@@ -1790,8 +1794,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
 
     if not G.is_isomorphic(GT):
         return False
-    else:
-        print("G2 example passed.")
+    print("G2 example passed.")
 
     # Some examples from Hong--Kang:
 
@@ -1816,8 +1819,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
 
     if not G.is_isomorphic(GT):
         return False
-    else:
-        print("C3 example passed.")
+    print("C3 example passed.")
 
     # type B, fig. 8.1 pg. 172
     C = clss(['B', 3], [2, 0, 0])
@@ -1854,8 +1856,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
 
     if not G.is_isomorphic(GT):
         return False
-    else:
-        print("B3 example 1 passed.")
+    print("B3 example 1 passed.")
 
     C = clss(['B', 3], [0, 1, 0])
     G = C.digraph()
@@ -1885,8 +1886,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
 
     if not G.is_isomorphic(GT):
         return False
-    else:
-        print("B3 example 2 passed.")
+    print("B3 example 2 passed.")
 
     # type B, fig. 8.3 pg. 174
 

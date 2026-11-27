@@ -430,7 +430,7 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
                 pcl_in_dict = [p for p in list(pcl) if p in pos_dict.keys()]
                 newP.extend(list(pcl - set([pcl_in_dict[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
-        elif B is not None:
+        if B is not None:
             pcls = list({frozenset(set(M1.closure([p])) - L)
                          for p in list(P)})
             newP = []
@@ -442,10 +442,8 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
                 else:
                     newP.extend(list(pcl - set([pcl_list[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
-        else:
-            return [M1.delete(L | P), L, P]
-    else:
         return [M1.delete(L | P), L, P]
+    return [M1.delete(L | P), L, P]
 
 
 def addlp(M, M1, L, P, ptsdict, G=None, limits=None) -> tuple:
@@ -628,12 +626,11 @@ def lineorders_union(lineorders1, lineorders2) -> list:
                 lineorders.append(order)
                 lineorders.remove(lo)
         return lineorders
-    elif lineorders1 is None and lineorders2 is not None:
+    if lineorders1 is None and lineorders2 is not None:
         return lineorders2
-    elif lineorders1 is not None:
+    if lineorders1 is not None:
         return lineorders1
-    else:
-        return None
+    return None
 
 
 def posdict_is_sane(M1, pos_dict) -> bool:
@@ -785,7 +782,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         G.axes_range(xmin=limits[0]-0.5, xmax=limits[1]+0.5,
                      ymin=limits[2]-0.5, ymax=limits[3]+0.5)
         return G
-    elif M.rank() == 1:
+    if M.rank() == 1:
         if M._cached_info is not None and \
            'plot_positions' in M._cached_info.keys() and \
            M._cached_info['plot_positions'] is not None:

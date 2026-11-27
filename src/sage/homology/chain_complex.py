@@ -1266,8 +1266,7 @@ class ChainComplex_class(Parent):
             for deg in self.nonzero_degrees():
                 answer[deg] = self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
             return answer
-        else:
-            return self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
+        return self._homology_in_degree(deg, base_ring, verbose, generators, algorithm)
 
     def _homology_in_degree(self, deg, base_ring, verbose, generators, algorithm):
         """
@@ -1282,8 +1281,7 @@ class ChainComplex_class(Parent):
         if deg not in self.nonzero_degrees():
             if generators:
                 return []
-            else:
-                return HomologyGroup(0, base_ring)
+            return HomologyGroup(0, base_ring)
         if verbose:
             print('Computing homology of the chain complex in dimension %s...' % deg)
 
@@ -1308,10 +1306,8 @@ class ChainComplex_class(Parent):
                 if kernel_basis:
                     return [(HomologyGroup(1, base_ring), self({deg: gen}))
                             for gen in d_out.right_kernel().basis()]
-                else:
-                    return []
-            else:
-                return HomologyGroup(d_out_nullity, base_ring)
+                return []
+            return HomologyGroup(d_out_nullity, base_ring)
 
         if generators:
             orders, gens = self._homology_generators_snf(d_in, d_out, d_out_rank)
@@ -1382,7 +1378,7 @@ class ChainComplex_class(Parent):
         (N, P, Q) = d_in_induced.smith_form()
         all_divs = [self.base_ring().zero()]*N.nrows()
         non_triv = 0
-        for i in range(0, N.nrows()):
+        for i in range(N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
@@ -1442,8 +1438,7 @@ class ChainComplex_class(Parent):
         if isinstance(H, dict):
             return {deg: homology_group.dimension()
                     for deg, homology_group in H.items()}
-        else:
-            return H.dimension()
+        return H.dimension()
 
     def torsion_list(self, max_prime, min_prime=2):
         r"""
@@ -1684,8 +1679,7 @@ class ChainComplex_class(Parent):
             C_n = self.free_module(n)
             if C_n.rank() == 0:
                 return AsciiArt([' 0 '])
-            else:
-                return AsciiArt([' C_{0} '.format(n)])
+            return AsciiArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():
@@ -1747,8 +1741,7 @@ class ChainComplex_class(Parent):
             C_n = self.free_module(n)
             if not C_n.rank():
                 return UnicodeArt([' 0 '])
-            else:
-                return UnicodeArt([' C_{0} '.format(n)])
+            return UnicodeArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():

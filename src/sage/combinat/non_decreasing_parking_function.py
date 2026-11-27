@@ -117,8 +117,7 @@ def NonDecreasingParkingFunctions(n=None):
     """
     if n is None:
         return NonDecreasingParkingFunctions_all()
-    else:
-        return NonDecreasingParkingFunctions_n(n)
+    return NonDecreasingParkingFunctions_n(n)
 
 
 def is_a(x, n=None) -> bool:

@@ -5,15 +5,15 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.libs.gmp.mpz cimport mpz_get_si
 include 'misc.pxi'
@@ -106,7 +106,7 @@ cdef class ntl_zz_pContext_class():
         self.x.restore()
 
 
-def ntl_zz_pContext( v ):
+def ntl_zz_pContext(v):
     """
     Creation function for a zz_p context.
 

@@ -67,8 +67,7 @@ def _make_color_list(n, colors=None, color_map=None, randomize=False):
     TESTS::
 
         sage: import numpy as np
-        sage: if int(np.version.short_version[0]) > 1:
-        ....:     _ = np.set_printoptions(legacy="1.25")
+        sage: _ = np.set_printoptions(legacy="1.25")
         sage: from sage.combinat.fully_packed_loop import _make_color_list
         sage: _make_color_list(5)
         sage: _make_color_list(5, ['blue', 'red'])
@@ -973,8 +972,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: fpl._link_or_loop_from((1,1))
             [(1, 1), (2, 1), (2, 2), (1, 2), (1, 1)]
         """
-        global R, L, U, D, FPL_turns, FPL_edges
-
         orbit = [pos]
         sv = self._six_vertex_model
         n = len(sv)
@@ -1028,8 +1025,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                 assert orbit2[0] == (i1, j1) and orbit2[1] == (i0, j0)
                 return orbit2[:1:-1] + orbit
             return orbit
-        else:
-            return orbit
+        return orbit
 
     def link_pattern(self):
         r"""
@@ -1137,8 +1133,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: D == E
             True
         """
-        global L, R, U, D, FPL_turns
-
         link_pattern = []
         n = len(self._six_vertex_model)
         seen = [False] * (2*n)
@@ -1487,11 +1481,11 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         i, j = pos
         if i == -1:
             return j//2
-        elif j == n:
+        if j == n:
             return (n + 1) // 2 + i // 2
-        elif i == n:
+        if i == n:
             return n + (n - j) // 2
-        elif j == -1:
+        if j == -1:
             return 3 * n // 2 + (n - i) // 2
 
     def _boundaries(self):

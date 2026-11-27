@@ -47,7 +47,20 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                     PULL_URL="https://github.com/$REPO/pull/$a"
                     PULL_SHORT="$REPO#$a"
                     PULL_FILE="$REPO_FILE-$a"
-                    PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch
+                    DOWNLOAD_SUCCESS=
+                    for RETRY in 1 2 3; do
+                        if PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch; then
+                            DOWNLOAD_SUCCESS=yes
+                            break
+                        else
+                            echo "Download attempt $RETRY/3 failed for $PULL_URL.patch"
+                            sleep $((RETRY * 5))
+                        fi
+                    done
+                    if [ -z "$DOWNLOAD_SUCCESS" ]; then
+                        echo "Failed to download $PULL_URL.patch after 3 attempts, skipping"
+                        continue
+                    fi
                     date -u +"%Y-%m-%dT%H:%M:%SZ" > $PULL_FILE.date  # Record the date, for future reference
                     LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' $PULL_FILE.patch | tail -n 1)
                     COMMITS_URL="https://github.com/$REPO/commits/$LAST_SHA"

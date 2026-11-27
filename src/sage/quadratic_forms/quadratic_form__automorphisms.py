@@ -90,8 +90,7 @@ def basis_of_short_vectors(self, show_lengths=False):
     if show_lengths:
         pivot_lengths = tuple(self(v) for v in basis)
         return basis, pivot_lengths
-    else:
-        return basis
+    return basis
 
 
 def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
@@ -290,7 +289,7 @@ def automorphism_group(self):
     """
     Return the group of automorphisms of the quadratic form.
 
-    OUTPUT: a :class:`MatrixGroup`
+    OUTPUT: a :func:`~sage.groups.matrix_gps.finitely_generated.MatrixGroup`
 
     EXAMPLES::
 

@@ -582,8 +582,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
         sorted_numbers = [curve[1] for curve in iso_class]
         lmfdb_number = str(sorted_numbers.index(cremona_number)+1)
         return N + '.' + lmfdb_iso + lmfdb_number
-    else:
-        return N + '.' + lmfdb_iso
+    return N + '.' + lmfdb_iso
 
 
 def lmfdb_to_cremona(lmfdb_label, CDB=None):
@@ -630,8 +629,7 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
         iso_class = sorted([(curve[0],i+1) for i,curve in enumerate(classes[class_to_int(cremona_iso)])])
         cremona_number = str(iso_class[int(lmfdb_number)-1][1])
         return N + cremona_iso + cremona_number
-    else:
-        return N + cremona_iso
+    return N + cremona_iso
 
 
 class MiniCremonaDatabase(SQLDatabase):
@@ -1717,5 +1715,4 @@ def CremonaDatabase(name=None, mini=None):
 
     if mini:
         return MiniCremonaDatabase(name)
-    else:
-        return LargeCremonaDatabase(name)
+    return LargeCremonaDatabase(name)

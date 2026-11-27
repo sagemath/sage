@@ -43,7 +43,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     .. SEEALSO::
 
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
+        - ``RootLatticeRealizations.ParentMethods._plot_projection``
     """
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
@@ -105,11 +105,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, -1, 0, 1),
              (0, 0, -1, 1)]
         """
-        res = []
-        for j in range(self.n-1):
-            for i in range(j+1,self.n):
-                res.append(  self.root(i,j) )
-        return res
+        return [self.root(i, j)
+                for j in range(self.n - 1)
+                for i in range(j + 1, self.n)]
 
     def positive_roots(self):
         """
@@ -124,11 +122,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, 1, 0, -1),
              (0, 0, 1, -1)]
         """
-        res = []
-        for j in range(self.n):
-            for i in range(j):
-                res.append(  self.root(i,j) )
-        return res
+        return [self.root(i, j) for j in range(self.n) for i in range(j)]
 
     def highest_root(self):
         """
@@ -138,7 +132,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
            sage: e.highest_root()
            (1, 0, 0, -1)
         """
-        return self.root(0,self.n-1)
+        return self.root(0, self.n - 1)
 
     def fundamental_weight(self, i):
         """
@@ -176,7 +170,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
     """
     Cartan Type `A_n`.
 
-    .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
     """
 
     def __init__(self, n):

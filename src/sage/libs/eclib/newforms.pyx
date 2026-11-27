@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 """
 Modular symbols using eclib newforms
 """
@@ -374,11 +375,10 @@ cdef class ECModularSymbol:
 
         if sign == +1:
             return Rational((rational_num(_sp), rational_den(_sp)))
-        elif sign == -1:
+        if sign == -1:
             return Rational((rational_num(_sm), rational_den(_sm)))
-        else:
-            return [Rational((rational_num(_sp), rational_den(_sp))),
-                    Rational((rational_num(_sm), rational_den(_sm)))]
+        return [Rational((rational_num(_sp), rational_den(_sp))),
+                Rational((rational_num(_sm), rational_den(_sm)))]
 
     def __reduce__(self):
         """

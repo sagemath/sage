@@ -155,8 +155,7 @@ def construct_phi(matrices):
         phi.update([get_immutable(multiply_reduce(A, B)) for A in matrices for B in phi])
         if len(phi) == length:
             return list(phi)
-        else:
-            length = len(phi)
+        length = len(phi)
     raise RuntimeError('Phi too large.')
 
 

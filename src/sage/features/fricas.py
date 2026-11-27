@@ -67,7 +67,7 @@ class FriCAS(Executable):
             sage: FriCAS().is_functional()  # optional - fricas
             FeatureTestResult('fricas', True)
         """
-        command = ['fricas -nosman -eval ")quit"']
+        command = ['fricas -nosman -- -eval ")quit"']
         try:
             lines = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as e:

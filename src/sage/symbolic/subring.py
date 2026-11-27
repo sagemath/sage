@@ -739,9 +739,9 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) is type(other):
+        if type(self) is type(other):
             return type(self)(self.vars | other.vars)
-        elif isinstance(other, SymbolicSubringRejectingVarsFunctor):
+        if isinstance(other, SymbolicSubringRejectingVarsFunctor):
             if not (self.vars & other.vars):
                 return other
 
@@ -864,7 +864,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         """
         if isinstance(P, SymbolicSubringRejectingVars):
             return self._vars_ <= P._vars_
-        elif isinstance(P, SymbolicSubringAcceptingVars):
+        if isinstance(P, SymbolicSubringAcceptingVars):
             return not (self._vars_ & P._vars_)
         return super()._coerce_map_from_(P)
 
@@ -928,9 +928,9 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) is type(other):
+        if type(self) is type(other):
             return type(self)(self.vars & other.vars)
-        elif isinstance(other, SymbolicSubringAcceptingVarsFunctor):
+        if isinstance(other, SymbolicSubringAcceptingVarsFunctor):
             if not (self.vars & other.vars):
                 return self
 

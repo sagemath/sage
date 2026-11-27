@@ -52,13 +52,13 @@ def example_type_space(example_no=0):
     if example_no == 0:
         # a fairly generic example
         return TypeSpace(Newform_constructor('98b', names='a'), 7)
-    elif example_no == 1:
+    if example_no == 1:
         # a non-minimal example
         return TypeSpace(Newform_constructor('98a', names='a'), 7)
-    elif example_no == 2:
+    if example_no == 2:
         # a smaller example with QQ coefficients
         return TypeSpace(Newform_constructor('50a'), 5)
-    elif example_no == 3:
+    if example_no == 3:
         # a ramified (odd p-power level) case
         return TypeSpace(Newform_constructor('27a'), 3)
 
@@ -444,8 +444,7 @@ class TypeSpace(SageObject):
         if self.conductor() % 2 == 1:
             return self._rho_ramified(g)
 
-        else:
-            return self._rho_unramified(g)
+        return self._rho_unramified(g)
 
     @cached_method
     def _second_gen_unramified(self):
@@ -717,8 +716,7 @@ class TypeSpace(SageObject):
             if all(x.valuation(p) > 0 for x in g):
                 eps = self.form().character()(crt(1, p, f, self.tame_level()))
                 return ~eps * p**(self.form().weight() - 2) * self.rho([x // p for x in g])
-            else:
-                raise ArithmeticError(f"g(={g}) not in K")
+            raise ArithmeticError(f"g(={g}) not in K")
 
         else:
             m = matrix(ZZ, 2, g)

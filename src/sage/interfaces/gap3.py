@@ -536,8 +536,7 @@ class Gap3(Gap_generic):
         """
         if t is not None:
             return self.cputime() - t
-        else:
-            return eval(self.eval('Runtime();')) / 1000.0
+        return eval(self.eval('Runtime();')) / 1000.0
 
     def console(self):
         r"""

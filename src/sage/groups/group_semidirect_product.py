@@ -87,9 +87,8 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
         if par.act_to_right():
             return self.__class__(par, (~g, par._twist(g, ~h)))
-        else:
-            hi = ~h
-            return self.__class__(par, (par._twist(hi, ~g), hi))
+        hi = ~h
+        return self.__class__(par, (par._twist(hi, ~g), hi))
 
     def to_opposite(self):
         r"""

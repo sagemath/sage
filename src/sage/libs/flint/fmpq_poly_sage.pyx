@@ -1,5 +1,9 @@
-# Functions removed from flint but still needed in Sage. Code adapted from
-# earlier versions of flint.
+r"""
+FLINT ``fmpq_poly`` compatibility helpers
+
+This module implements functions that were removed from FLINT but are still
+needed by Sage. The code is adapted from earlier versions of FLINT.
+"""
 
 from sage.libs.gmp.mpq cimport *
 from sage.libs.flint.fmpz cimport *

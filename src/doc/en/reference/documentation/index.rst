@@ -23,3 +23,6 @@ Sphinx Extensions
    sage_docbuild/ext/inventory_builder
    sage_docbuild/ext/sage_autodoc
    sage_docbuild/ext/multidocs
+   sage_docbuild/ext/crossrefs
+   sage_docbuild/ext/livedoc
+   sage_docbuild/ext/members

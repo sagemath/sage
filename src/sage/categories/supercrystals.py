@@ -63,9 +63,8 @@ class SuperCrystals(Category_singleton):
             if cartan_type.letter == 'Q':
                 from sage.combinat.crystals.tensor_product import FullTensorProductOfQueerSuperCrystals
                 return FullTensorProductOfQueerSuperCrystals((self,) + tuple(crystals), **options)
-            else:
-                from sage.combinat.crystals.tensor_product import FullTensorProductOfSuperCrystals
-                return FullTensorProductOfSuperCrystals((self,) + tuple(crystals), **options)
+            from sage.combinat.crystals.tensor_product import FullTensorProductOfSuperCrystals
+            return FullTensorProductOfSuperCrystals((self,) + tuple(crystals), **options)
 
     class Finite(CategoryWithAxiom):
         class ParentMethods:

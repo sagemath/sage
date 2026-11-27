@@ -198,13 +198,12 @@ def bch_bound(n, D, arithmetic=False):
     if not arithmetic:
         one_len, offset = longest_streak(1)
         return (one_len + 1, (1, offset))
-    else:
-        n = Integer(n)
-        longest_streak_list = [(longest_streak(step), step)
-                               for step in n.coprime_integers(n // 2 + 1)
-                               if step >= 1]
-        (max_len, offset), step = max(longest_streak_list)
-        return (max_len + 1, (step, offset))
+    n = Integer(n)
+    longest_streak_list = [(longest_streak(step), step)
+                           for step in n.coprime_integers(n // 2 + 1)
+                           if step >= 1]
+    (max_len, offset), step = max(longest_streak_list)
+    return (max_len + 1, (step, offset))
 
 
 class CyclicCode(AbstractLinearCode):
@@ -504,11 +503,10 @@ class CyclicCode(AbstractLinearCode):
         """
         if not isinstance(other, CyclicCode):
             return False
-        else:
-            R = self._polynomial_ring
-            return (self.base_field() == other.base_field() and
-                    self.length() == other.length() and
-                    self.generator_polynomial() == R(other.generator_polynomial()))
+        R = self._polynomial_ring
+        return (self.base_field() == other.base_field() and
+                self.length() == other.length() and
+                self.generator_polynomial() == R(other.generator_polynomial()))
 
     def _repr_(self):
         r"""
@@ -639,38 +637,37 @@ class CyclicCode(AbstractLinearCode):
                 (primitive_root is None or
                  primitive_root == self._primitive_root)):
             return self._defining_set
+        F = self.base_field()
+        n = self.length()
+        q = F.cardinality()
+        g = self.generator_polynomial()
+
+        s = Zmod(n)(q).multiplicative_order()
+
+        if primitive_root is None:
+            Fsplit, FE = F.extension(Integer(s), map=True)
+            alpha = Fsplit.zeta(n)
         else:
-            F = self.base_field()
-            n = self.length()
-            q = F.cardinality()
-            g = self.generator_polynomial()
+            try:
+                alpha = primitive_root
+                Fsplit = alpha.parent()
+                FE = Hom(Fsplit, F)[0]
+            except ValueError:
+                raise ValueError("primitive_root does not belong to the "
+                                 "right splitting field")
+            if alpha.multiplicative_order() != n:
+                raise ValueError("primitive_root must have multiplicative "
+                                 "order equal to the code length")
 
-            s = Zmod(n)(q).multiplicative_order()
+        Rsplit = Fsplit['xx']
+        gsplit = Rsplit([FE(coeff) for coeff in g])
+        roots = gsplit.roots(multiplicities=False)
+        D = [root.log(alpha) for root in roots]
 
-            if primitive_root is None:
-                Fsplit, FE = F.extension(Integer(s), map=True)
-                alpha = Fsplit.zeta(n)
-            else:
-                try:
-                    alpha = primitive_root
-                    Fsplit = alpha.parent()
-                    FE = Hom(Fsplit, F)[0]
-                except ValueError:
-                    raise ValueError("primitive_root does not belong to the "
-                                     "right splitting field")
-                if alpha.multiplicative_order() != n:
-                    raise ValueError("primitive_root must have multiplicative "
-                                     "order equal to the code length")
-
-            Rsplit = Fsplit['xx']
-            gsplit = Rsplit([FE(coeff) for coeff in g])
-            roots = gsplit.roots(multiplicities=False)
-            D = [root.log(alpha) for root in roots]
-
-            self._field_embedding = FE
-            self._primitive_root = alpha
-            self._defining_set = sorted(D)
-            return self._defining_set
+        self._field_embedding = FE
+        self._primitive_root = alpha
+        self._defining_set = sorted(D)
+        return self._defining_set
 
     def primitive_root(self):
         r"""
@@ -699,9 +696,8 @@ class CyclicCode(AbstractLinearCode):
         """
         if hasattr(self, "_primitive_root"):
             return self._primitive_root
-        else:
-            self.defining_set()
-            return self._primitive_root
+        self.defining_set()
+        return self._primitive_root
 
     @cached_method
     def check_polynomial(self):

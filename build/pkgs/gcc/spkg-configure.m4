@@ -158,15 +158,16 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
         AX_GXX_VERSION()
 
         if test $IS_REALLY_GCC = yes ; then
+            GXX_FULL_VERSION="`$CXX -dumpfullversion -dumpversion 2>/dev/null || $CXX -dumpversion`"
             # Add the .0 because Debian/Ubuntu gives version numbers like
             # 4.6 instead of 4.6.4 (Issue #18885)
-            AS_CASE(["$GXX_VERSION.0"],
-                [[[0-7]].*|8.[[0-3]].*], [
-                    # Install our own GCC if the system-provided one is older than gcc 8.4
+            AS_CASE(["$GXX_FULL_VERSION.0"],
+                [[[0-9]].*|10.[[0-2]].*], [
+                    # Install our own GCC if the system-provided one is older than gcc 10.3
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
-                [1[[6-9]].*], [
-                    # Install our own GCC if the system-provided one is newer than 15.x.
+                [1[[7-9]].*], [
+                    # Install our own GCC if the system-provided one is newer than 16.x.
                     # See https://github.com/sagemath/sage/issues/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ])
@@ -236,12 +237,14 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     AC_LANG_PUSH([C])
     AX_OPENMP([
         AC_SUBST(OPENMP_CFLAGS)
+        AC_SUBST(OPENMP_CLIB)
     ])
     AC_LANG_POP()
 
     AC_LANG_PUSH([C++])
     AX_OPENMP([
         AC_SUBST(OPENMP_CXXFLAGS)
+        AC_SUBST(OPENMP_CXXLIB)
     ])
     AC_LANG_POP()
 

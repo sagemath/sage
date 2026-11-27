@@ -13,7 +13,7 @@ Lyndon words
 
 from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
-from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.necklace import _sfc
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords
@@ -43,7 +43,7 @@ def LyndonWords(e=None, k=None):
 
     or
 
-    - ``e`` -- a composition
+    - ``e`` -- a weak composition
 
     OUTPUT: a combinatorial class of Lyndon words
 
@@ -78,17 +78,17 @@ def LyndonWords(e=None, k=None):
     """
     if e is None and k is None:
         return LyndonWords_class()
-    elif isinstance(e, (int, Integer)):
+    if isinstance(e, (int, Integer)):
         if e > 0:
             if not isinstance(k, (int, Integer)):
                 raise TypeError("k must be a nonnegative integer")
             if k < 0:
                 raise TypeError("k must be a nonnegative integer")
             return LyndonWords_nk(Integer(e), Integer(k))
-    elif e in Compositions():
-        return LyndonWords_evaluation(Composition(e))
+    elif e in IntegerVectors():
+        return LyndonWords_evaluation(IntegerVectors()(e))
 
-    raise TypeError("e must be a positive integer or a composition")
+    raise TypeError("e must be a positive integer or a weak composition")
 
 
 def LyndonWord(data, check=True):
@@ -203,7 +203,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             sage: LW21 == loads(dumps(LW21))
             True
         """
-        self._e = e
+        self._e = list(e)
         self._words = FiniteWords(len(e))
 
         from sage.categories.enumerated_sets import EnumeratedSets
@@ -261,8 +261,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             ev_dict = w.evaluation_dict()
             evaluation = [ev_dict.get(x, 0) for x in self._words.alphabet()]
             return evaluation == self._e and w.is_lyndon()
-        else:
-            return False
+        return False
 
     def cardinality(self):
         """
@@ -443,10 +442,9 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         """
         if self._k == 0:
             return Integer(1)
-        else:
-            s = Integer(0)
-            for d in divisors(self._k):
-                s += moebius(d) * self._n**(self._k // d)
+        s = Integer(0)
+        for d in divisors(self._k):
+            s += moebius(d) * self._n**(self._k // d)
         return s // self._k
 
     def __iter__(self):
@@ -645,7 +643,6 @@ def standard_unbracketing(sblw):
         if x < y and (len(t) == 0 or y <= t):
             x += y
             return x, y
-        else:
-            raise ValueError("not a standard bracketing of a Lyndon word")
+        raise ValueError("not a standard bracketing of a Lyndon word")
     lw, _ = standard_unbracketing_rec(sblw)
     return FiniteWords(list(set(lw)))(lw, datatype='list', check=False)

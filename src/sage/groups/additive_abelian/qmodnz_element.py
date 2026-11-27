@@ -163,9 +163,8 @@ class QmodnZ_Element(AdditiveGroupElement):
         """
         if self._x == 0:
             return self
-        else:
-            QZ = self.parent()
-            return QZ.element_class(QZ, QZ.n - self._x, True)
+        QZ = self.parent()
+        return QZ.element_class(QZ, QZ.n - self._x, True)
 
     def _add_(self, other):
         r"""
@@ -309,7 +308,7 @@ class QmodnZ_Element(AdditiveGroupElement):
         """
         return hash(self._x)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two elements.
 
@@ -324,9 +323,8 @@ class QmodnZ_Element(AdditiveGroupElement):
             True
         """
         if op == op_EQ or op == op_NE:
-            return richcmp(self._x, right._x, op)
-        else:
-            return NotImplemented
+            return richcmp(self._x, other._x, op)
+        return NotImplemented
 
     def additive_order(self):
         r"""

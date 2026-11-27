@@ -118,8 +118,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         if isinstance(other, Gamma_class):
             return richcmp(self.level(), other.level(), op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def index(self):
         r"""

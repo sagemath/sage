@@ -187,8 +187,7 @@ class ClassicalCrystals(Category_singleton):
                 x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
-            else:
-                return sum(coeff * f(c) for c, coeff in u)
+            return sum(coeff * f(c) for c, coeff in u)
 
         def character(self, R=None):
             """

@@ -638,7 +638,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         If ``subdivide`` is ``True``, the Jordan blocks in the
         returned matrix ``J`` are indicated by a subdivision in
-        the sense of :meth:`~sage.matrix.matrix2.subdivide`.
+        the sense of :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
 
         EXAMPLES:
 
@@ -710,7 +710,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: matrix([[a, b], [c, d]], sparse=True).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
-        
+
         Check that :issue:`40803` is fixed::
 
             sage: matrix([[a, 0], [0, a]], sparse=True).jordan_form()
@@ -1015,8 +1015,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             return 1
         if entry:
             return 0
-        else:
-            return 1
+        return 1
 
     def function(self, *args):
         """

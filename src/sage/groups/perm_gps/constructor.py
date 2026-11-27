@@ -161,8 +161,10 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
 
     INPUT:
 
-    - ``g`` -- a :class:`list`, :class:`tuple`, :class:`string`, :class:`GapElement`,
-      :class:`PermutationGroupElement`, or :class:`Permutation`
+    - ``g`` -- a :class:`list`, :class:`tuple`, string,
+      :class:`~sage.libs.gap.element.GapElement`,
+      :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`,
+      or :class:`~sage.combinat.permutation.Permutation`
 
     - ``convert_dict`` -- (optional) a dictionary used to convert the
       points to a number compatible with GAP
@@ -241,7 +243,7 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
         if as_cycles:
             return g.cycle_tuples()
         return g._list
-    elif isinstance(g, permgroup_element.PermutationGroupElement):
+    if isinstance(g, permgroup_element.PermutationGroupElement):
         if not as_cycles:
             l = list(range(1, g.parent().degree() + 1))
             return g._act_on_list_on_position(l)

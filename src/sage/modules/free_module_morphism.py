@@ -40,7 +40,7 @@ TESTS::
 # returns a vector that the defining matrix can hit from the left, or
 # be coercible into vector space of appropriate dimension.
 
-import sage.modules.free_module as free_module
+from sage.modules import free_module
 
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
@@ -493,8 +493,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         if self.base_ring().is_field():
             if self.is_endomorphism():
                 return self.matrix().eigenvalues(extend=extend)
-            else:
-                raise TypeError("not an endomorphism")
+            raise TypeError("not an endomorphism")
         else:
             raise NotImplementedError("module must be a vector space")
 
@@ -551,8 +550,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                     svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
                     resu.append((i[0], svectors, i[2]))
                 return resu
-            else:
-                raise TypeError("not an endomorphism")
+            raise TypeError("not an endomorphism")
         else:
             raise NotImplementedError("module must be a vector space")
 
@@ -679,8 +677,7 @@ class BaseIsomorphism1D(Morphism):
         """
         if isinstance(other, BaseIsomorphism1D):
             return richcmp(self._basis, other._basis, op)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
 
 class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):

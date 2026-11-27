@@ -130,15 +130,13 @@ class Word_class(SageObject):
             letters = [str(a) for a in letters]
             if all(len(a) == 1 for a in letters):
                 return ''.join(letters) + suffix
-            elif suffix == "...":
+            if suffix == "...":
                 return ls.join(letters) + ls + suffix
-            else:
-                return ls.join(letters)
-        elif word_options['display'] == 'list':
+            return ls.join(letters)
+        if word_options['display'] == 'list':
             if suffix == "...":
                 return "[%s, %s]" % (str(letters)[1:-1], suffix)
-            else:
-                return str(letters)
+            return str(letters)
 
     __str__ = string_rep
 
@@ -1085,10 +1083,9 @@ class Word_class(SageObject):
 
         if self.is_finite():
             return self._parent(it)
-        else:
-            from sage.combinat.words.words import Words
-            parent = Words(self._parent.alphabet())
-            return parent(it)
+        from sage.combinat.words.words import Words
+        parent = Words(self._parent.alphabet())
+        return parent(it)
 
     def prefixes_iterator(self, max_length=None):
         r"""
@@ -1571,7 +1568,7 @@ class Word_class(SageObject):
         lm = self.length()
         if lf == 0:
             return start
-        elif lm == 0:
+        if lm == 0:
             return None
         occ = other.last_position_dict()
         suff = other.good_suffix_table()

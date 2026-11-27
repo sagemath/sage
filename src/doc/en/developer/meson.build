@@ -13,7 +13,6 @@ doc_sources = [
   'github.rst',
   'index.rst',
   'packaging.rst',
-  'packaging_sage_library.rst',
   'portability_platform_table.rst',
   'portability_testing.rst',
   'review.rst',

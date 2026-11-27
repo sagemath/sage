@@ -388,9 +388,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         if len(conjunction) == 1:
             return conjunction[0]
-        else:
-            # lists express 'and'
-            return conjunction
+        # lists express 'and'
+        return conjunction
 
     @staticmethod
     def _realset_restriction(expr, realset):
@@ -432,9 +431,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         if len(disjunction) == 1:
             return disjunction[0]
-        else:
-            # tuples express 'or'
-            return tuple(disjunction)
+        # tuples express 'or'
+        return tuple(disjunction)
 
     @staticmethod
     def _polyhedron_restriction(expr, polyhedron, relint=False):
@@ -482,9 +480,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         if len(conjunction) == 1:
             return conjunction[0]
-        else:
-            # lists express 'and'
-            return conjunction
+        # lists express 'and'
+        return conjunction
 
     @staticmethod
     def _coord_def(map, codomain_subset):

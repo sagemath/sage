@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Affine Lie Conformal Algebra
 
@@ -134,7 +133,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
 
     def cartan_type(self):
         """
-        The Cartan type of this Lie conformal algbera.
+        Return the Cartan type of this Lie conformal algebra.
 
         EXAMPLES::
 

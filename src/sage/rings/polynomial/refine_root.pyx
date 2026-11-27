@@ -10,15 +10,15 @@ AUTHORS:
 - Carl Witty (2007-11-18): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Carl Witty
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.real_mpfi import RealIntervalField
@@ -38,7 +38,6 @@ def refine_root(ip, ipd, irt, fld):
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: from sage.rings.polynomial.refine_root import refine_root
         sage: x = polygen(ZZ)
         sage: p = x^9 - 1

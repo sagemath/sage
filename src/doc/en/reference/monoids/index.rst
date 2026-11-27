@@ -13,7 +13,9 @@ commutative monoids (trace monoids).
    sage/monoids/free_monoid_element
    sage/monoids/free_abelian_monoid
    sage/monoids/free_abelian_monoid_element
+   sage/monoids/hypoplactic_monoid
    sage/monoids/indexed_free_monoid
+   sage/monoids/plactic_monoid
    sage/monoids/string_monoid
    sage/monoids/string_monoid_element
    sage/monoids/string_ops

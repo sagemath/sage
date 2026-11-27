@@ -12,7 +12,7 @@ Number fields
 # *****************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from sage.categories.basic import Fields
+from sage.categories.fields import Fields
 
 
 class NumberFields(Category_singleton):
@@ -164,7 +164,7 @@ class NumberFields(Category_singleton):
                 sage: QQ.zeta_function()                                                # needs sage.symbolic
                 PARI zeta function associated to Rational Field
             """
-            from sage.lfunctions.pari import lfun_number_field, LFunction
+            from sage.lfunctions.pari import LFunction, lfun_number_field
             Z = LFunction(lfun_number_field(self), prec=prec,
                           max_im=max_imaginary_part)
             Z.rename(f'PARI zeta function associated to {self}')

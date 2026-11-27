@@ -27,7 +27,7 @@ from sage.rings.integer import Integer
 
 import sage.arith.misc as arith
 
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix import matrix_space
 from sage.matrix.constructor import matrix
 
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound
@@ -763,8 +763,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         if d is None or d == 0:
             self.__is_new[p] = True
             return self
-        else:
-            self.__is_new[p] = False
+        self.__is_new[p] = False
         ns = self.submodule(d.kernel(), check=False)
         ns.__is_new = {p: True}
         ns._is_full_hecke_module = True

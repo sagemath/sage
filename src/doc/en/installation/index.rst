@@ -12,6 +12,12 @@ If you are planning to do development on SageMath, please refer instead to the
 `Sage Developer's Guide <../developer/walkthrough.html>`_ for instructions on
 obtaining the source code and building SageMath.
 
+Local installation options
+==========================
+
+Depending on your operating system, various installation options are available. Select from the
+options below to find instructions for your operating system.
+
 .. tab:: Linux
 
   .. tab:: Conda
@@ -30,6 +36,11 @@ obtaining the source code and building SageMath.
     ``conda activate sage`` and start SageMath by typing ``sage``.
     
     For more details, see section :ref:`sec-installation-conda`.
+
+  .. tab:: Homebrew (Linuxbrew)
+
+    To install SageMath on x86-64 or ARM64 Linux with Homebrew, follow
+    :ref:`sec-installation-homebrew`.
 
   .. tab:: Arch Linux/Manjaro
 
@@ -68,7 +79,15 @@ obtaining the source code and building SageMath.
     version of SageMath is only available on a newer version of the
     distribution, consider upgrading your distribution.
 
+    Alternatively, the 3-manifolds project provides a `SageMath AppImage <https://github.com/3-manifolds/sage_appimage>`_.
+    It provides a self-contained binary distribution of SageMath that should be able to run on a wide variety of Linux
+    systems. Beware that it is not packaged with Cython, so building certain sagemath programs or installing certain
+    optional packages is not possible.
+
 .. tab:: macOS 
+
+  - To install SageMath with Homebrew on Apple Silicon, follow
+    :ref:`sec-installation-homebrew`.
 
   - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
     from the 3-manifolds project.  It is a signed and notarized app, which
@@ -182,6 +201,7 @@ More information
    :maxdepth: 2
 
    conda
+   homebrew
    source
    source-distro
    launching
