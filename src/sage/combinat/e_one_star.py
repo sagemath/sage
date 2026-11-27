@@ -47,13 +47,9 @@ AUTHORS:
 
 REFERENCES:
 
-.. [AI] \P. Arnoux, S. Ito,
-   Pisot substitutions and Rauzy fractals,
-   Bull. Belg. Math. Soc. 8 (2), 2001, pp. 181--207
+- [AI]_
 
-.. [SAI] \Y. Sano, P. Arnoux, S. Ito,
-   Higher dimensional extensions of substitutions and their dual maps,
-   J. Anal. Math. 83, 2001, pp. 183--206
+- [SAI]_
 
 EXAMPLES:
 
@@ -405,8 +401,7 @@ class Face(SageObject):
         """
         if isinstance(other, Face):
             return Patch([self, other])
-        else:
-            return Patch(other).union(self)
+        return Patch(other).union(self)
 
     def vector(self):
         r"""
@@ -801,8 +796,7 @@ class Patch(SageObject):
             L = list(self)
             L.sort(key=lambda x: (x.vector(), x.type()))
             return "Patch: %s" % L
-        else:
-            return "Patch of %s faces" % len(self)
+        return "Patch of %s faces" % len(self)
 
     def union(self, other) -> Patch:
         r"""
@@ -823,8 +817,7 @@ class Patch(SageObject):
         """
         if isinstance(other, Face):
             return Patch(self._faces.union([other]))
-        else:
-            return Patch(self._faces.union(other))
+        return Patch(self._faces.union(other))
 
     def difference(self, other) -> Patch:
         r"""
@@ -845,8 +838,7 @@ class Patch(SageObject):
         """
         if isinstance(other, Face):
             return Patch(self._faces.difference([other]))
-        else:
-            return Patch(self._faces.difference(other))
+        return Patch(self._faces.difference(other))
 
     def dimension(self) -> int | None:
         r"""
@@ -1146,8 +1138,7 @@ class Patch(SageObject):
             G.set_aspect_ratio(1)
             return G
 
-        else:
-            raise NotImplementedError("plotting is implemented only for patches in two or three dimensions.")
+        raise NotImplementedError("plotting is implemented only for patches in two or three dimensions.")
 
     def plot3d(self):
         r"""
@@ -1495,7 +1486,7 @@ class E1Star(SageObject):
         """
         if iterations == 0:
             return Patch(patch)
-        elif iterations < 0:
+        if iterations < 0:
             raise ValueError("iterations (=%s) must be >= 0" % iterations)
         else:
             old_faces = patch

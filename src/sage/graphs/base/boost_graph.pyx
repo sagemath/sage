@@ -49,10 +49,13 @@ Functions
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from libcpp.set cimport set as cset
 from libcpp.pair cimport pair
+
+from numbers import Integral
+
+from sage.rings.integer import Integer
 
 
 cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, reverse=False):
@@ -94,6 +97,22 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
             g.add_edge(vertex_to_int[u], vertex_to_int[v])
 
 
+cdef inline update_distance_type(distance_type, weight):
+    r"""
+    Return the type of the distances once ``weight`` is added to the weights.
+
+    ``distance_type`` is the type for the previous weights: ``None`` if there
+    is none, their type if they are integers (see :class:`numbers.Integral`)
+    of the same type, ``Integer`` if they are integers of different types,
+    and ``float`` otherwise.
+    """
+    if distance_type is float or type(weight) is distance_type:
+        return distance_type
+    if isinstance(weight, Integral):
+        return type(weight) if distance_type is None else Integer
+    return float
+
+
 cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
                                           g_sage,
                                           vertex_to_int,
@@ -127,6 +146,14 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
 
     - ``reverse`` -- boolean (default: ``False``); when set to ``True``, the
       Boost graph is initialized with reversed edges
+
+    OUTPUT:
+
+    The type of the distances computed from these weights: the type of the
+    weights if they are integers (see :class:`numbers.Integral`) of the same
+    type, ``Integer`` if they are integers of different types, ``float``
+    otherwise, and ``int`` if all weights are set to 1 or ``g_sage`` has no
+    edge.
     """
     from sage.graphs.generic_graph import GenericGraph
 
@@ -142,23 +169,26 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
     for i in range(N):
         g.add_vertex()
 
+    distance_type = None
     if weight_function is not None:
         if reverse:
             for e in g_sage.edge_iterator():
-                g.add_edge(vertex_to_int[e[1]],
-                           vertex_to_int[e[0]],
-                           float(weight_function(e)))
+                w = weight_function(e)
+                distance_type = update_distance_type(distance_type, w)
+                g.add_edge(vertex_to_int[e[1]], vertex_to_int[e[0]], float(w))
         else:
             for e in g_sage.edge_iterator():
-                g.add_edge(vertex_to_int[e[0]],
-                           vertex_to_int[e[1]],
-                           float(weight_function(e)))
+                w = weight_function(e)
+                distance_type = update_distance_type(distance_type, w)
+                g.add_edge(vertex_to_int[e[0]], vertex_to_int[e[1]], float(w))
     elif g_sage.weighted():
         if reverse:
             for u, v, w in g_sage.edge_iterator():
+                distance_type = update_distance_type(distance_type, w)
                 g.add_edge(vertex_to_int[v], vertex_to_int[u], float(w))
         else:
             for u, v, w in g_sage.edge_iterator():
+                distance_type = update_distance_type(distance_type, w)
                 g.add_edge(vertex_to_int[u], vertex_to_int[v], float(w))
     else:
         if reverse:
@@ -167,6 +197,11 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
         else:
             for u, v in g_sage.edge_iterator(labels=False):
                 g.add_edge(vertex_to_int[u], vertex_to_int[v], 1)
+
+    # A sum of booleans is not a boolean
+    if distance_type is None or distance_type is bool:
+        return int
+    return distance_type
 
 
 cdef boost_edge_connectivity(BoostVecGenGraph *g):
@@ -212,7 +247,7 @@ cpdef edge_connectivity(g):
     Vertex-labeled graphs::
 
         sage: from sage.graphs.base.boost_graph import edge_connectivity
-        sage: g = graphs.GridGraph([2,2])
+        sage: g = graphs.GridGraph([2, 2])
         sage: edge_connectivity(g)
         (2, [((0, 0), (0, 1)), ((0, 0), (1, 0))])
     """
@@ -305,13 +340,13 @@ cpdef clustering_coeff(g, vertices=None):
         sage: g = graphs.CompleteGraph(5)
         sage: clustering_coeff(g)
         (1.0, {0: 1.0, 1: 1.0, 2: 1.0, 3: 1.0, 4: 1.0})
-        sage: clustering_coeff(g, vertices = [0,1,2])
+        sage: clustering_coeff(g, vertices=[0, 1, 2])
         (1.0, {0: 1.0, 1: 1.0, 2: 1.0})
 
     Of a non-clique graph with triangles::
 
         sage: g = graphs.IcosahedralGraph()
-        sage: clustering_coeff(g, vertices=[1,2,3])
+        sage: clustering_coeff(g, vertices=[1, 2, 3])
         (0.5, {1: 0.5, 2: 0.5, 3: 0.5})
 
     With labels::
@@ -394,7 +429,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     An undirected grid is biconnected, and its dominator tree is a star
     (everyone's parent is the root)::
 
-        sage: g = graphs.GridGraph([2,2]).dominator_tree((0,0))
+        sage: g = graphs.GridGraph([2, 2]).dominator_tree((0, 0))
         sage: g.to_dictionary()
         {(0, 0): [(0, 1), (1, 0), (1, 1)], (0, 1): [(0, 0)], (1, 0): [(0, 0)], (1, 1): [(0, 0)]}
 
@@ -407,7 +442,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
          sage: G = 2 * graphs.CycleGraph(3)
          sage: v = 0
          sage: w = 3
-         sage: G.add_edge(v,w)
+         sage: G.add_edge(v, w)
          sage: G.dominator_tree(1, return_dict=True)
          {0: 1, 1: None, 2: 1, 3: 0, 4: 3, 5: 3}
 
@@ -422,7 +457,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
 
     If the output is a dictionary::
 
-        sage: graphs.GridGraph([2,2]).dominator_tree((0,0), return_dict=True)
+        sage: graphs.GridGraph([2, 2]).dominator_tree((0, 0), return_dict=True)
         {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 0)}
 
     TESTS:
@@ -441,7 +476,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False):
         Traceback (most recent call last):
         ...
         ValueError: the input root must be a vertex of the given graph
-        sage: graphs.GridGraph([2,2]).dominator_tree(0)
+        sage: graphs.GridGraph([2, 2]).dominator_tree(0)
         Traceback (most recent call last):
         ...
         ValueError: the input root must be a vertex of the given graph
@@ -541,11 +576,11 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(10))
         (1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]))
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]))
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='reverse_cuthill_mckee')
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]), algorithm='reverse_cuthill_mckee')
         (3, [(2, 2), (1, 2), (2, 1), (0, 2), (1, 1), (2, 0), (0, 1), (1, 0), (0, 0)])
-        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='king')
+        sage: bandwidth_heuristics(graphs.GridGraph([3, 3]), algorithm='king')
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
 
     TESTS:
@@ -575,7 +610,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
+        sage: bandwidth_heuristics(graphs.RandomGNM(10, 0))                             # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     """
     from sage.graphs.graph import Graph
@@ -664,7 +699,9 @@ cpdef min_spanning_tree(g,
         sage: min_spanning_tree(graphs.PathGraph(4))
         [(0, 1, None), (1, 2, None), (2, 3, None)]
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}), (0,2,{'name':'b','weight':3}), (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
+        ....:            (0, 2, {'name': 'b', 'weight': 3}),
+        ....:            (1, 2, {'name': 'b', 'weight': 1})])
         sage: min_spanning_tree(G, weight_function=lambda e: e[2]['weight'])
         [(0, 1, {'name': 'a', 'weight': 1}), (1, 2, {'name': 'b', 'weight': 1})]
 
@@ -686,13 +723,13 @@ cpdef min_spanning_tree(g,
 
     If the weight is not a number::
 
-        sage: g = Graph([(0,1,1), (1,2,'a')], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 'a')], weighted=True)
         sage: min_spanning_tree(g)
         Traceback (most recent call last):
         ...
         ValueError: could not convert string to float:...
 
-        sage: g = Graph([(0,1,1), (1,2,[1,2,3])], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, [1, 2, 3])], weighted=True)
         sage: min_spanning_tree(g)
         Traceback (most recent call last):
         ...
@@ -744,7 +781,7 @@ cpdef min_spanning_tree(g,
     return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
-cpdef blocks_and_cut_vertices(g):
+cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
     r"""
     Compute the blocks and cut vertices of the graph.
 
@@ -754,6 +791,9 @@ cpdef blocks_and_cut_vertices(g):
     INPUT:
 
     - ``g`` -- the input Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     OUTPUT:
 
@@ -772,9 +812,28 @@ cpdef blocks_and_cut_vertices(g):
         sage: blocks_and_cut_vertices(g)
         ([[8, 9], [7, 8], [0, 1, 2, 3, 5, 4, 6, 7]], [8, 7])
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}), (0,2,{'name':'b','weight':3}), (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0, 1, {'name': 'a', 'weight': 1}),
+        ....:            (0, 2, {'name': 'b', 'weight': 3}),
+        ....:            (1, 2, {'name': 'b', 'weight': 1})])
         sage: blocks_and_cut_vertices(G)
         ([[0, 1, 2]], [])
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.WindmillGraph(4, 3)
+        sage: blocks_and_cut_vertices(G)
+        ([[0, 1, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G = graphs.PathGraph(3)
+        sage: blocks_and_cut_vertices(G)
+        ([[1, 2], [0, 1]], [1])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0], [2]], [])
 
     TESTS:
 
@@ -784,14 +843,37 @@ cpdef blocks_and_cut_vertices(g):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check that vertices that are not integers are handled correctly when the
+    graph has loops or multiple edges, or when ``forbidden_vertices`` is
+    given (see :issue:`42979`)::
+
+        sage: G = Graph([('a', 'b'), ('b', 'c'), ('b', 'c'), ('c', 'c')],
+        ....:           loops=True, multiedges=True)
+        sage: blocks_and_cut_vertices(G)
+        ([['b', 'c'], ['a', 'b']], ['b'])
+        sage: G = graphs.PathGraph(3).relabel(['a', 'b', 'c'], inplace=False)
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['a'])
+        ([['b', 'c']], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=['b'])
+        ([['a'], ['c']], [])
     """
     from sage.graphs.generic_graph import GenericGraph
 
     if not isinstance(g, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    if g.allows_loops() or g.allows_multiple_edges() or g.is_directed():
-        g = g.to_simple()
+    cdef set forbidden = set() if forbidden_vertices is None else set(forbidden_vertices)
+
+    if (g.allows_loops() or g.allows_multiple_edges()
+            or g.is_directed() or forbidden):
+        # Build the underlying undirected graph without loops or multiple edges,
+        # and without the forbidden vertices
+        V = [x for x in g if x not in forbidden]
+        E = [(x, y) for x, y in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
+             if x != y and x not in forbidden and y not in forbidden]
+        from sage.graphs.graph import Graph
+        g = Graph([V, E], format='vertices_and_edges')
 
     cdef BoostVecGraph g_boost
     cdef vector[vector[v_index]] result
@@ -885,24 +967,25 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     A pair of dictionaries ``(distances, predecessors)`` such that, for each
     vertex ``v``, ``distances[v]`` is the distance from ``start`` to ``v``,
     ``predecessors[v]`` is the last vertex in a shortest path from ``start`` to
-    ``v``.
+    ``v``. The distances are integers if all the weights are integers (see
+    :class:`numbers.Integral`), and floats otherwise.
 
     EXAMPLES:
 
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         ({0: 1, 1: 0, 2: 2, 3: 3}, {0: 1, 1: None, 2: 1, 3: 2})
-        sage: g = graphs.GridGraph([2,2])
-        sage: shortest_paths(g,(0,0),weight_function=lambda e:2)
+        sage: g = graphs.GridGraph([2, 2])
+        sage: shortest_paths(g, (0, 0), weight_function=lambda e:2)
         ({(0, 0): 0, (0, 1): 2, (1, 0): 2, (1, 1): 4},
          {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 1)})
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         ({1: 0, 2: 2, 3: 3}, {1: None, 2: 1, 3: 2})
 
@@ -918,7 +1001,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     If there is a negative cycle::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1)
         Traceback (most recent call last):
         ...
@@ -927,7 +1010,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     If Dijkstra is used with negative weights::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: shortest_paths(g, 1, algorithm='Dijkstra')
         Traceback (most recent call last):
         ...
@@ -939,6 +1022,27 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
         Traceback (most recent call last):
         ...
         ValueError: the starting vertex 55 is not in the graph
+
+    The distances are integers if all the weights are integers, and floats
+    otherwise, whatever the order of the edges (:issue:`43164`)::
+
+        sage: shortest_paths(Graph([(0, 1, 1), (1, 2, 2)], weighted=True), 0)
+        ({0: 0, 1: 1, 2: 3}, {0: None, 1: 0, 2: 1})
+        sage: d, _ = shortest_paths(Graph([(0, 1, int(1)), (1, 2, 2)], weighted=True), 0)
+        sage: d, type(d[2])
+        ({0: 0, 1: 1, 2: 3}, <class 'sage.rings.integer.Integer'>)
+        sage: shortest_paths(Graph([(0, 1, 1), (1, 2, 1/2)], weighted=True), 0)
+        ({0: 0.0, 1: 1.0, 2: 1.5}, {0: None, 1: 0, 2: 1})
+        sage: shortest_paths(Graph([(0, 1, 1/2), (1, 2, 1)], weighted=True), 0)
+        ({0: 0.0, 1: 0.5, 2: 1.5}, {0: None, 1: 0, 2: 1})
+        sage: shortest_paths(Graph([(0, 1, int(1)), (1, 2, float(0.5))], weighted=True), 0)
+        ({0: 0.0, 1: 1.0, 2: 1.5}, {0: None, 1: 0, 2: 1})
+        sage: G = Graph([(0, 1, 'a'), (1, 2, 'b')])
+        sage: w = {'a': 1, 'b': 1/2}
+        sage: shortest_paths(G, 0, weight_function=lambda e: w[e[2]])
+        ({0: 0.0, 1: 1.0, 2: 1.5}, {0: None, 1: 0, 2: 1})
+        sage: shortest_paths(Graph([(0, 1, True), (1, 2, True)], weighted=True), 0)
+        ({0: 0, 1: 1, 2: 2}, {0: None, 1: 0, 2: 1})
     """
     from sage.graphs.generic_graph import GenericGraph
 
@@ -978,13 +1082,13 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
 
     if algorithm in ['Bellman-Ford', 'Bellman-Ford_Boost']:
         if g.is_directed():
-            boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
+            correct_type = boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
             vi = v_to_int[start]
             sig_on()
             result = g_boost_dir.bellman_ford_shortest_paths(vi)
             sig_off()
         else:
-            boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
+            correct_type = boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
             vi = v_to_int[start]
             sig_on()
             result = g_boost_und.bellman_ford_shortest_paths(vi)
@@ -995,13 +1099,13 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     elif algorithm in ['Dijkstra', 'Dijkstra_Boost']:
         try:
             if g.is_directed():
-                boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
+                correct_type = boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
                 vi = v_to_int[start]
                 sig_on()
                 result = g_boost_dir.dijkstra_shortest_paths(vi)
                 sig_off()
             else:
-                boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
+                correct_type = boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
                 vi = v_to_int[start]
                 sig_on()
                 result = g_boost_und.dijkstra_shortest_paths(vi)
@@ -1016,17 +1120,6 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
 
     dist = {}
     pred = {}
-
-    if weight_function is not None:
-        correct_type = type(weight_function(next(g.edge_iterator())))
-    elif g.weighted():
-        correct_type = type(next(g.edge_iterator())[2])
-    else:
-        correct_type = int
-    # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
 
     import sys
     for v in range(g.num_verts()):
@@ -1062,7 +1155,7 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
     TESTS::
 
         sage: from sage.graphs.base.boost_graph import johnson_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: expected = {0: {0: None, 1: 0, 2: 1, 3: 2},
         ....:             1: {0: 1, 1: None, 2: 1, 3: 2},
         ....:             2: {0: 1, 1: 2, 2: None, 3: 2},
@@ -1128,14 +1221,16 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     predecessors, the dictionary of distances, or a pair of dictionaries
     ``(distances, predecessors)`` where ``distance[u][v]`` denotes the distance
     of a shortest path from `u` to `v` and ``predecessors[u][v]`` indicates the
-    predecessor of `w` on a shortest path from `u` to `v`.
+    predecessor of `w` on a shortest path from `u` to `v`. The distances are
+    integers if all the weights are integers (see :class:`numbers.Integral`),
+    and floats otherwise.
 
     EXAMPLES:
 
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: 3, 3: 4},
          1: {0: 1, 1: 0, 2: 2, 3: 3},
@@ -1150,13 +1245,13 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: -1, 3: 0},
          1: {1: 0, 2: -2, 3: -1},
          2: {2: 0, 3: 1},
          3: {3: 0}}
-        sage: g = DiGraph([(1,2,3),(2,3,2),(1,4,1),(4,2,1)], weighted=True)
+        sage: g = DiGraph([(1, 2, 3), (2, 3, 2), (1, 4, 1), (4, 2, 1)], weighted=True)
         sage: johnson_shortest_paths(g, distances=False, predecessors=True)
         {1: {1: None, 2: 4, 3: 2, 4: 1},
          2: {2: None, 3: 2},
@@ -1174,11 +1269,19 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
 
     If there is a negative cycle::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: johnson_shortest_paths(g)
         Traceback (most recent call last):
         ...
         ValueError: the graph contains a negative cycle
+
+    The distances are floats if some weights are not integers, and the
+    predecessors are computed with the same type (:issue:`43164`)::
+
+        sage: g = Graph([(0, 1, int(1)), (1, 2, 0.5), (0, 2, 1.9)], weighted=True)
+        sage: dist, pred = johnson_shortest_paths(g, predecessors=True)
+        sage: dist[0], pred[0]
+        ({0: 0.0, 1: 1.0, 2: 1.5}, {0: None, 1: 0, 2: 1})
     """
     from sage.graphs.generic_graph import GenericGraph
     cdef dict dist = {}
@@ -1205,29 +1308,18 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     cdef vector[vector[double]] result
 
     if g.is_directed():
-        boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
+        correct_type = boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
         sig_on()
         result = g_boost_dir.johnson_shortest_paths()
         sig_off()
     else:
-        boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
+        correct_type = boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
         sig_on()
         result = g_boost_und.johnson_shortest_paths()
         sig_off()
 
     if not result.size():
         raise ValueError("the graph contains a negative cycle")
-
-    if weight_function is not None:
-        correct_type = type(weight_function(next(g.edge_iterator())))
-    elif g.weighted():
-        correct_type = type(next(g.edge_iterator())[2])
-    else:
-        correct_type = int
-    # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
 
     import sys
     if distances:
@@ -1284,14 +1376,16 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     predecessors, the dictionary of distances, or a pair of dictionaries
     ``(distances, predecessors)`` where ``distance[u][v]`` denotes the distance
     of a shortest path from `u` to `v` and ``predecessors[u][v]`` indicates the
-    predecessor of `w` on a shortest path from `u` to `v`.
+    predecessor of `w` on a shortest path from `u` to `v`. The distances are
+    integers if all the weights are integers (see :class:`numbers.Integral`),
+    and floats otherwise.
 
     EXAMPLES:
 
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import floyd_warshall_shortest_paths
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: 3, 3: 4},
          1: {0: 1, 1: 0, 2: 2, 3: 3},
@@ -1306,13 +1400,13 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         {0: {0: 0, 1: 1, 2: -1, 3: 0},
          1: {1: 0, 2: -2, 3: -1},
          2: {2: 0, 3: 1},
          3: {3: 0}}
-        sage: g = DiGraph([(1,2,3),(2,3,2),(1,4,1),(4,2,1)], weighted=True)
+        sage: g = DiGraph([(1, 2, 3), (2, 3, 2), (1, 4, 1), (4, 2, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g, distances=False, predecessors=True)
         {1: {1: None, 2: 4, 3: 2, 4: 1},
          2: {2: None, 3: 2},
@@ -1330,11 +1424,19 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
 
     If there is a negative cycle:
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: floyd_warshall_shortest_paths(g)
         Traceback (most recent call last):
         ...
         ValueError: the graph contains a negative cycle
+
+    The distances are floats if some weights are not integers, and the
+    predecessors are computed with the same type (:issue:`43164`)::
+
+        sage: g = Graph([(0, 1, int(1)), (1, 2, 0.5), (0, 2, 1.9)], weighted=True)
+        sage: dist, pred = floyd_warshall_shortest_paths(g, predecessors=True)
+        sage: dist[0], pred[0]
+        ({0: 0.0, 1: 1.0, 2: 1.5}, {0: None, 1: 0, 2: 1})
     """
     from sage.graphs.generic_graph import GenericGraph
     cdef dict dist = {}
@@ -1361,29 +1463,18 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     cdef vector[vector[double]] result
 
     if g.is_directed():
-        boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
+        correct_type = boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
         sig_on()
         result = g_boost_dir.floyd_warshall_shortest_paths()
         sig_off()
     else:
-        boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
+        correct_type = boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
         sig_on()
         result = g_boost_und.floyd_warshall_shortest_paths()
         sig_off()
 
     if not result.size():
         raise ValueError("the graph contains a negative cycle")
-
-    if weight_function is not None:
-        correct_type = type(weight_function(next(g.edge_iterator())))
-    elif g.weighted():
-        correct_type = type(next(g.edge_iterator())[2])
-    else:
-        correct_type = int
-    # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
 
     import sys
     if distances:
@@ -1431,14 +1522,14 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         {0: 0.375, 1: 0.5, 2: 0.5, 3: 0.375}
 
     Directed graphs::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(1,3,4),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (1, 3, 4), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         {0: inf, 1: -0.4444444444444444, 2: 0.3333333333333333}
 
@@ -1455,7 +1546,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
     If there is a negative cycle::
 
         sage: from sage.graphs.base.boost_graph import johnson_closeness_centrality
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: johnson_closeness_centrality(g)
         Traceback (most recent call last):
         ...
@@ -1675,7 +1766,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
         sage: G = graphs.RandomGNP(20, 0.7)
         sage: eccentricity_DHV(G) == G.eccentricity()
         True
-        sage: G = Graph([(0,1,-1)], weighted=True)
+        sage: G = Graph([(0, 1, -1)], weighted=True)
         sage: eccentricity_DHV(G)
         Traceback (most recent call last):
         ...
@@ -1839,7 +1930,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
     EXAMPLES::
 
         sage: from sage.graphs.base.boost_graph import radius_DHV
-        sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
+        sage: G = Graph([(0, 1, 1), (1, 2, 1), (0, 2, 3)])
         sage: radius_DHV(G)
         1.0
         sage: G = graphs.PathGraph(7)
@@ -1981,10 +2072,10 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
+        sage: G = graphs.RandomBarabasiAlbert(17, 6)                                    # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm='Dijkstra_Boost')                 # needs networkx
         True
-        sage: G = Graph([(0,1,-1)], weighted=True)
+        sage: G = Graph([(0, 1, -1)], weighted=True)
         sage: diameter_DHV(G)
         Traceback (most recent call last):
         ...
@@ -2544,7 +2635,7 @@ cpdef diameter(G, algorithm=None, source=None,
 
     DiGraph containing negative cycle::
 
-        sage: G = DiGraph([(0,1,-2), (1,0,1)])
+        sage: G = DiGraph([(0, 1, -2), (1, 0, 1)])
         sage: diameter(G, algorithm='2Dsweep', weight_function=lambda e:e[2])
         Traceback (most recent call last):
         ...
@@ -2684,17 +2775,17 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
     Undirected graphs::
 
         sage: from sage.graphs.base.boost_graph import shortest_paths_from_vertices
-        sage: g = Graph([(0,1,1),(1,2,2),(1,3,4),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,[1,2])
+        sage: g = Graph([(0, 1, 1), (1, 2, 2), (1, 3, 4), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, [1, 2])
         ({1: {0: 1.0, 1: 0.0, 2: 2.0, 3: 3.0}, 2: {0: 3.0, 1: 2.0, 2: 0.0, 3: 1.0}},
          {1: {0: 1, 1: None, 2: 1, 3: 2}, 2: {0: 1, 1: 2, 2: None, 3: 2}})
 
     Directed graphs::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-1),(2,0,2),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,1)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -1), (2, 0, 2), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, 1)
         ({1: {0: 1.0, 1: 0.0, 2: -1.0, 3: 0.0}}, {1: {0: 2, 1: None, 2: 1, 3: 2}})
-        sage: shortest_paths_from_vertices(g, 1, [0,1,2,3])
+        sage: shortest_paths_from_vertices(g, 1, [0, 1, 2, 3])
         ({1: [1.0, 0.0, -1.0, 0.0]}, {1: [2, None, 1, 2]})
 
     TESTS:
@@ -2708,7 +2799,7 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
 
     If there is a negative cycle::
 
-        sage: g = DiGraph([(0,1,1),(1,2,-2),(2,0,0.5),(2,3,1)], weighted=True)
+        sage: g = DiGraph([(0, 1, 1), (1, 2, -2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
         sage: shortest_paths_from_vertices(g, 1)
         Traceback (most recent call last):
         ...
@@ -2716,15 +2807,15 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
 
     If the given ordering is not valid::
 
-        sage: g = DiGraph([(0,1,1),(1,2,2),(2,0,0.5),(2,3,1)], weighted=True)
-        sage: shortest_paths_from_vertices(g,1,[0,1])
+        sage: g = DiGraph([(0, 1, 1), (1, 2, 2), (2, 0, 0.5), (2, 3, 1)], weighted=True)
+        sage: shortest_paths_from_vertices(g, 1, [0, 1])
         Traceback (most recent call last):
         ...
         ValueError: Given ordering is not valid
 
     If Dijkstra is used with negative weights::
 
-        sage: g = Graph([(0,1,1),(1,2,-2),(1,3,4)], weighted=True)
+        sage: g = Graph([(0, 1, 1), (1, 2, -2), (1, 3, 4)], weighted=True)
         sage: shortest_paths_from_vertices(g, 1, algorithm='Dijkstra')
         Traceback (most recent call last):
         ...
@@ -2900,7 +2991,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
     EXAMPLES:
 
         sage: from sage.graphs.base.boost_graph import wiener_index
-        sage: g = Graph([(0,1,9), (1,2,7), (2,3,4), (3,0,3)])
+        sage: g = Graph([(0, 1, 9), (1, 2, 7), (2, 3, 4), (3, 0, 3)])
         sage: wiener_index(g)
         8.0
         sage: g.weighted(True)

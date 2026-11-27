@@ -1,5 +1,5 @@
-Roman-numerals-py: Manipulate well-formed Roman numerals
-========================================================
+roman-numerals: Manipulate well-formed Roman numerals
+======================================================
 
 Description
 -----------
@@ -23,4 +23,4 @@ BSD licence or the CC0 1.0 Universal licence
 Upstream Contact
 ----------------
 
-https://pypi.org/project/roman-numerals-py/
+https://pypi.org/project/roman-numerals/

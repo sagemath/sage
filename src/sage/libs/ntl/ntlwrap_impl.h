@@ -10,6 +10,9 @@
 
 #include <NTL/ZZ_limbs.h>
 
+// PARI also defines coeff(a, i, j) as a macro. Parenthesize NTL's coeff
+// below so both libraries can be included in the same Cython module.
+
 //////// ZZ //////////
 
 /* Return value is only valid if the result should fit into an int.
@@ -23,7 +26,7 @@ static CYTHON_INLINE int ZZ_to_int(const ZZ* x)
    Assumes output has been mpz_init'd.
    AUTHOR: David Harvey
            Joel B. Mohler moved the ZZX_getitem_as_mpz code out to this function (2007-03-13) */
-static void ZZ_to_mpz(mpz_t output, const struct ZZ* x)
+static void ZZ_to_mpz(mpz_t output, const ZZ* x)
 {
     mpz_import(output, x->size(), -1, sizeof(mp_limb_t), 0, 0, ZZ_limbs_get(*x));
     if (sign(*x) < 0)
@@ -32,7 +35,7 @@ static void ZZ_to_mpz(mpz_t output, const struct ZZ* x)
 
 /* Copies the mpz_t into the ZZ
    AUTHOR: Joel B. Mohler (2007-03-15) */
-static void mpz_to_ZZ(struct ZZ* output, mpz_srcptr x)
+static void mpz_to_ZZ(ZZ* output, mpz_srcptr x)
 {
     unsigned char stack_bytes[4096];
     size_t size = (mpz_sizeinbase(x, 2) + 7) / 8;
@@ -48,7 +51,7 @@ static void mpz_to_ZZ(struct ZZ* output, mpz_srcptr x)
         free(bytes);
 }
 
-static long ZZ_remove(struct ZZ &dest, const struct ZZ &src, const struct ZZ &f)
+static long ZZ_remove(ZZ &dest, const ZZ &src, const ZZ &f)
 {
     // Based on the code for mpz_remove
     ZZ fpow[40];            // inexaustible...until year 2020 or so
@@ -119,7 +122,7 @@ static CYTHON_INLINE int ZZ_p_to_int(const ZZ_p& x )
 }
 
 
-static CYTHON_INLINE void ZZ_p_modulus(struct ZZ* mod, const struct ZZ_p* x)
+static CYTHON_INLINE void ZZ_p_modulus(ZZ* mod, const ZZ_p* x)
 {
     (*mod) = x->modulus();
 }
@@ -129,7 +132,7 @@ static CYTHON_INLINE void ZZ_p_modulus(struct ZZ* mod, const struct ZZ_p* x)
 //////// ZZX //////////
 ///////////////////////////////////////////////
 
-static char* ZZX_repr(struct ZZX* x)
+static char* ZZX_repr(ZZX* x)
 {
     std::ostringstream instore;
     instore << (*x);
@@ -139,13 +142,13 @@ static char* ZZX_repr(struct ZZX* x)
     return buf;
 }
 
-static CYTHON_INLINE struct ZZX* ZZX_copy(struct ZZX* x) {
+static CYTHON_INLINE ZZX* ZZX_copy(ZZX* x) {
     return new ZZX(*x);
 }
 
 /* Sets ith coefficient of x to value.
    AUTHOR: David Harvey (2006-06-08) */
-static CYTHON_INLINE void ZZX_setitem_from_int(struct ZZX* x, long i, int value)
+static CYTHON_INLINE void ZZX_setitem_from_int(ZZX* x, long i, int value)
 {
     SetCoeff(*x, i, value);
 }
@@ -153,76 +156,76 @@ static CYTHON_INLINE void ZZX_setitem_from_int(struct ZZX* x, long i, int value)
 /* Returns ith coefficient of x.
    Return value is only valid if the result should fit into an int.
    AUTHOR: David Harvey (2006-06-08) */
-static CYTHON_INLINE int ZZX_getitem_as_int(struct ZZX* x, long i)
+static CYTHON_INLINE int ZZX_getitem_as_int(ZZX* x, long i)
 {
-    return ZZ_to_int(&coeff(*x, i));
+    return ZZ_to_int(&(coeff)(*x, i));
 }
 
 /* Copies ith coefficient of x to output.
    Assumes output has been mpz_init'd.
    AUTHOR: David Harvey (2007-02) */
-static CYTHON_INLINE void ZZX_getitem_as_mpz(mpz_t output, struct ZZX* x, long i)
+static CYTHON_INLINE void ZZX_getitem_as_mpz(mpz_t output, ZZX* x, long i)
 {
-    const ZZ& z = coeff(*x, i);
+    const ZZ& z = (coeff)(*x, i);
     ZZ_to_mpz(output, &z);
 }
 
-static CYTHON_INLINE struct ZZX* ZZX_div(struct ZZX* x, struct ZZX* y, int* divisible)
+static CYTHON_INLINE ZZX* ZZX_div(ZZX* x, ZZX* y, int* divisible)
 {
-    struct ZZX* z = new ZZX();
+    ZZX* z = new ZZX();
     *divisible = divide(*z, *x, *y);
     return z;
 }
 
 
-static CYTHON_INLINE void ZZX_quo_rem(struct ZZX* x, struct ZZX* other, struct ZZX** r, struct ZZX** q)
+static CYTHON_INLINE void ZZX_quo_rem(ZZX* x, ZZX* other, ZZX** r, ZZX** q)
 {
-    struct ZZX *qq = new ZZX(), *rr = new ZZX();
+    ZZX *qq = new ZZX(), *rr = new ZZX();
     DivRem(*qq, *rr, *x, *other);
     *r = rr; *q = qq;
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_square(struct ZZX* x)
+static CYTHON_INLINE ZZX* ZZX_square(ZZX* x)
 {
-    struct ZZX* s = new ZZX();
+    ZZX* s = new ZZX();
     sqr(*s, *x);
     return s;
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_neg(struct ZZX* x)
+static CYTHON_INLINE ZZX* ZZX_neg(ZZX* x)
 {
-    struct ZZX* y = new ZZX();
+    ZZX* y = new ZZX();
     *y = -*x;
     return y;
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_left_shift(struct ZZX* x, long n)
+static CYTHON_INLINE ZZX* ZZX_left_shift(ZZX* x, long n)
 {
-    struct ZZX* y = new ZZX();
+    ZZX* y = new ZZX();
     LeftShift(*y, *x, n);
     return y;
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_right_shift(struct ZZX* x, long n)
+static CYTHON_INLINE ZZX* ZZX_right_shift(ZZX* x, long n)
 {
-    struct ZZX* y = new ZZX();
+    ZZX* y = new ZZX();
     RightShift(*y, *x, n);
     return y;
 }
 
-static CYTHON_INLINE struct ZZX* ZZX_primitive_part(struct ZZX* x)
+static CYTHON_INLINE ZZX* ZZX_primitive_part(ZZX* x)
 {
-    struct ZZX* p = new ZZX();
+    ZZX* p = new ZZX();
     PrimitivePart(*p, *x);
     return p;
 }
 
 
-static CYTHON_INLINE void ZZX_pseudo_quo_rem(struct ZZX* x, struct ZZX* y, struct ZZX** r, struct ZZX** q)
+static CYTHON_INLINE void ZZX_pseudo_quo_rem(ZZX* x, ZZX* y, ZZX** r, ZZX** q)
 {
     *r = new ZZX();
     *q = new ZZX();
@@ -230,16 +233,16 @@ static CYTHON_INLINE void ZZX_pseudo_quo_rem(struct ZZX* x, struct ZZX* y, struc
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_gcd(struct ZZX* x, struct ZZX* y)
+static CYTHON_INLINE ZZX* ZZX_gcd(ZZX* x, ZZX* y)
 {
-    struct ZZX* g = new ZZX();
+    ZZX* g = new ZZX();
     GCD(*g, *x, *y);
     return g;
 }
 
 
-static CYTHON_INLINE void ZZX_xgcd(struct ZZX* x, struct ZZX* y, struct ZZ** r, struct ZZX** s,
-          struct ZZX** t, int proof)
+static CYTHON_INLINE void ZZX_xgcd(ZZX* x, ZZX* y, ZZ** r, ZZX** s,
+          ZZX** t, int proof)
 {
     *r = new ZZ();
     *s = new ZZX();
@@ -248,19 +251,19 @@ static CYTHON_INLINE void ZZX_xgcd(struct ZZX* x, struct ZZX* y, struct ZZ** r, 
 }
 
 
-static CYTHON_INLINE void ZZX_set_x(struct ZZX* x)
+static CYTHON_INLINE void ZZX_set_x(ZZX* x)
 {
     SetX(*x);
 }
 
 
-static CYTHON_INLINE int ZZX_is_x(struct ZZX* x)
+static CYTHON_INLINE int ZZX_is_x(ZZX* x)
 {
     return IsX(*x);
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_derivative(struct ZZX* x)
+static CYTHON_INLINE ZZX* ZZX_derivative(ZZX* x)
 {
     ZZX* d = new ZZX();
     diff(*d, *x);
@@ -268,14 +271,14 @@ static CYTHON_INLINE struct ZZX* ZZX_derivative(struct ZZX* x)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_reverse(struct ZZX* x)
+static CYTHON_INLINE ZZX* ZZX_reverse(ZZX* x)
 {
     ZZX* r = new ZZX();
     reverse(*r, *x);
     return r;
 }
 
-static CYTHON_INLINE struct ZZX* ZZX_reverse_hi(struct ZZX* x, int hi)
+static CYTHON_INLINE ZZX* ZZX_reverse_hi(ZZX* x, int hi)
 {
     ZZX* r = new ZZX();
     reverse(*r, *x, hi);
@@ -283,7 +286,7 @@ static CYTHON_INLINE struct ZZX* ZZX_reverse_hi(struct ZZX* x, int hi)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_truncate(struct ZZX* x, long m)
+static CYTHON_INLINE ZZX* ZZX_truncate(ZZX* x, long m)
 {
     ZZX* t = new ZZX();
     trunc(*t, *x, m);
@@ -291,7 +294,7 @@ static CYTHON_INLINE struct ZZX* ZZX_truncate(struct ZZX* x, long m)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_multiply_and_truncate(struct ZZX* x, struct ZZX* y, long m)
+static CYTHON_INLINE ZZX* ZZX_multiply_and_truncate(ZZX* x, ZZX* y, long m)
 {
     ZZX* t = new ZZX();
     MulTrunc(*t, *x, *y, m);
@@ -299,7 +302,7 @@ static CYTHON_INLINE struct ZZX* ZZX_multiply_and_truncate(struct ZZX* x, struct
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_square_and_truncate(struct ZZX* x, long m)
+static CYTHON_INLINE ZZX* ZZX_square_and_truncate(ZZX* x, long m)
 {
     ZZX* t = new ZZX();
     SqrTrunc(*t, *x, m);
@@ -307,7 +310,7 @@ static CYTHON_INLINE struct ZZX* ZZX_square_and_truncate(struct ZZX* x, long m)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_invert_and_truncate(struct ZZX* x, long m)
+static CYTHON_INLINE ZZX* ZZX_invert_and_truncate(ZZX* x, long m)
 {
     ZZX* t = new ZZX();
     InvTrunc(*t, *x, m);
@@ -315,7 +318,7 @@ static CYTHON_INLINE struct ZZX* ZZX_invert_and_truncate(struct ZZX* x, long m)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_multiply_mod(struct ZZX* x, struct ZZX* y,  struct ZZX* modulus)
+static CYTHON_INLINE ZZX* ZZX_multiply_mod(ZZX* x, ZZX* y,  ZZX* modulus)
 {
     ZZX* p = new ZZX();
     MulMod(*p, *x, *y, *modulus);
@@ -323,7 +326,7 @@ static CYTHON_INLINE struct ZZX* ZZX_multiply_mod(struct ZZX* x, struct ZZX* y, 
 }
 
 
-static CYTHON_INLINE struct ZZ* ZZX_trace_mod(struct ZZX* x, struct ZZX* y)
+static CYTHON_INLINE ZZ* ZZX_trace_mod(ZZX* x, ZZX* y)
 {
     ZZ* p = new ZZ();
     TraceMod(*p, *x, *y);
@@ -331,7 +334,7 @@ static CYTHON_INLINE struct ZZ* ZZX_trace_mod(struct ZZX* x, struct ZZX* y)
 }
 
 
-static char* ZZX_trace_list(struct ZZX* x)
+static char* ZZX_trace_list(ZZX* x)
 {
     vec_ZZ v;
     TraceVec(v, *x);
@@ -344,7 +347,7 @@ static char* ZZX_trace_list(struct ZZX* x)
 }
 
 
-static CYTHON_INLINE struct ZZ* ZZX_resultant(struct ZZX* x, struct ZZX* y, int proof)
+static CYTHON_INLINE ZZ* ZZX_resultant(ZZX* x, ZZX* y, int proof)
 {
     ZZ* res = new ZZ();
     resultant(*res, *x, *y, proof);
@@ -352,7 +355,7 @@ static CYTHON_INLINE struct ZZ* ZZX_resultant(struct ZZX* x, struct ZZX* y, int 
 }
 
 
-static CYTHON_INLINE struct ZZ* ZZX_norm_mod(struct ZZX* x, struct ZZX* y, int proof)
+static CYTHON_INLINE ZZ* ZZX_norm_mod(ZZX* x, ZZX* y, int proof)
 {
     ZZ* res = new ZZ();
     NormMod(*res, *x, *y, proof);
@@ -360,7 +363,7 @@ static CYTHON_INLINE struct ZZ* ZZX_norm_mod(struct ZZX* x, struct ZZX* y, int p
 }
 
 
-static CYTHON_INLINE struct ZZ* ZZX_discriminant(struct ZZX* x, int proof)
+static CYTHON_INLINE ZZ* ZZX_discriminant(ZZX* x, int proof)
 {
     ZZ* d = new ZZ();
     discriminant(*d, *x, proof);
@@ -368,7 +371,7 @@ static CYTHON_INLINE struct ZZ* ZZX_discriminant(struct ZZX* x, int proof)
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_charpoly_mod(struct ZZX* x, struct ZZX* y, int proof)
+static CYTHON_INLINE ZZX* ZZX_charpoly_mod(ZZX* x, ZZX* y, int proof)
 {
     ZZX* f = new ZZX();
     CharPolyMod(*f, *x, *y, proof);
@@ -376,7 +379,7 @@ static CYTHON_INLINE struct ZZX* ZZX_charpoly_mod(struct ZZX* x, struct ZZX* y, 
 }
 
 
-static CYTHON_INLINE struct ZZX* ZZX_minpoly_mod(struct ZZX* x, struct ZZX* y)
+static CYTHON_INLINE ZZX* ZZX_minpoly_mod(ZZX* x, ZZX* y)
 {
     ZZX* f = new ZZX();
     MinPolyMod(*f, *x, *y);
@@ -384,18 +387,18 @@ static CYTHON_INLINE struct ZZX* ZZX_minpoly_mod(struct ZZX* x, struct ZZX* y)
 }
 
 
-static CYTHON_INLINE void ZZX_clear(struct ZZX* x)
+static CYTHON_INLINE void ZZX_clear(ZZX* x)
 {
     clear(*x);
 }
 
 
-static CYTHON_INLINE void ZZX_preallocate_space(struct ZZX* x, long n)
+static CYTHON_INLINE void ZZX_preallocate_space(ZZX* x, long n)
 {
     x->SetMaxLength(n);
 }
 
-static void ZZX_squarefree_decomposition(struct ZZX*** v, long** e, long* n, struct ZZX* x)
+static void ZZX_squarefree_decomposition(ZZX*** v, long** e, long* n, ZZX* x)
 {
     vec_pair_ZZX_long factors;
     SquareFreeDecomp(factors, *x);
@@ -412,7 +415,7 @@ static void ZZX_squarefree_decomposition(struct ZZX*** v, long** e, long* n, str
 //////// ZZ_pX //////////
 ///////////////////////////////////////////////
 
-static char* ZZ_pX_trace_list(struct ZZ_pX* x)
+static char* ZZ_pX_trace_list(ZZ_pX* x)
 {
     vec_ZZ_p v;
     TraceVec(v, *x);
@@ -424,7 +427,7 @@ static char* ZZ_pX_trace_list(struct ZZ_pX* x)
     return buf;
 }
 
-static void ZZ_pX_factor(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, long verbose)
+static void ZZ_pX_factor(ZZ_pX*** v, long** e, long* n, ZZ_pX* x, long verbose)
 {
     long i;
     vec_pair_ZZ_pX_long factors;
@@ -438,7 +441,7 @@ static void ZZ_pX_factor(struct ZZ_pX*** v, long** e, long* n, struct ZZ_pX* x, 
     }
 }
 
-static void ZZ_pX_linear_roots(struct ZZ_p*** v, long* n, struct ZZ_pX* f)
+static void ZZ_pX_linear_roots(ZZ_p*** v, long* n, ZZ_pX* f)
 {
     long i;
     vec_ZZ_p w;
@@ -452,57 +455,57 @@ static void ZZ_pX_linear_roots(struct ZZ_p*** v, long* n, struct ZZ_pX* f)
 
 /////////// ZZ_pE //////////////
 
-static CYTHON_INLINE struct ZZ_pX ZZ_pE_to_ZZ_pX(struct ZZ_pE x)
+static CYTHON_INLINE ZZ_pX ZZ_pE_to_ZZ_pX(ZZ_pE x)
 {
     return ZZ_pX(rep(x));
 }
 
 //////// mat_ZZ //////////
 
-static CYTHON_INLINE void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const struct ZZ* z)
+static CYTHON_INLINE void mat_ZZ_setitem(mat_ZZ* x, int i, int j, const ZZ* z)
 {
     (*x)[i][j] = *z;
 
 }
 
-static CYTHON_INLINE struct ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j)
+static CYTHON_INLINE ZZ* mat_ZZ_getitem(const mat_ZZ* x, int i, int j)
 {
     return new ZZ((*x)(i,j));
 }
 
-static CYTHON_INLINE struct ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic)
+static CYTHON_INLINE ZZ* mat_ZZ_determinant(const mat_ZZ* x, long deterministic)
 {
     ZZ* d = new ZZ();
     determinant(*d, *x, deterministic);
     return d;
 }
 
-static CYTHON_INLINE mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const struct ZZ* D)
+static CYTHON_INLINE mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const ZZ* D)
 {
     mat_ZZ* W = new mat_ZZ();
     HNF(*W, *A, *D);
     return W;
 }
 
-static CYTHON_INLINE long mat_ZZ_LLL(struct ZZ **det, mat_ZZ *x, long a, long b, long verbose)
+static CYTHON_INLINE long mat_ZZ_LLL(ZZ **det, mat_ZZ *x, long a, long b, long verbose)
 {
     *det = new ZZ();
     return LLL(**det, *x, a, b, verbose);
 }
 
-static CYTHON_INLINE long mat_ZZ_LLL_U(struct ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose)
+static CYTHON_INLINE long mat_ZZ_LLL_U(ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose)
 {
     *det = new ZZ();
     return LLL(**det, *x, *U, a, b, verbose);
 }
 
 
-static CYTHON_INLINE void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const struct GF2E* z)
+static CYTHON_INLINE void mat_GF2E_setitem(mat_GF2E* x, int i, int j, const GF2E* z)
 {
     (*x)[i][j] = *z;
 }
 
-static CYTHON_INLINE void mat_GF2_setitem(mat_GF2* x, int i, int j, const struct GF2* z)
+static CYTHON_INLINE void mat_GF2_setitem(mat_GF2* x, int i, int j, const GF2* z)
 {
     (*x)[i][j] = *z;
 }
@@ -572,7 +575,7 @@ static void ZZ_pEX_conv_modulus(ZZ_pEX &fout, const ZZ_pEX &fin, const ZZ_pConte
     fout.normalize();
 }
 
-static void ZZ_pX_min_val_coeff(long & valuation, long &index, const struct ZZ_pX &f, const struct ZZ &p)
+static void ZZ_pX_min_val_coeff(long & valuation, long &index, const ZZ_pX &f, const ZZ &p)
 {
     // Sets index, where the indexth coefficient of f has the minimum p-adic valuation.
     // Sets valuation to be this valuation.
@@ -617,16 +620,16 @@ static void ZZ_pX_min_val_coeff(long & valuation, long &index, const struct ZZ_p
     delete u;
 }
 
-static CYTHON_INLINE long ZZ_pX_get_val_coeff(const struct ZZ_pX &f, const struct ZZ &p, long i)
+static CYTHON_INLINE long ZZ_pX_get_val_coeff(const ZZ_pX &f, const ZZ &p, long i)
 {
     // Gets the p-adic valuation of the ith coefficient of f.
     ZZ *u = new ZZ();
-    long ans = ZZ_remove(*u, rep(coeff(f, i)), p);
+    long ans = ZZ_remove(*u, rep((coeff)(f, i)), p);
     delete u;
     return ans;
 }
 
-static void ZZ_pX_left_pshift(struct ZZ_pX &x, const struct ZZ_pX &a, const struct ZZ &pn, const struct ZZ_pContext &c)
+static void ZZ_pX_left_pshift(ZZ_pX &x, const ZZ_pX &a, const ZZ &pn, const ZZ_pContext &c)
 {
     // Multiplies each coefficient by pn, and sets the context of the answer to c.
 
@@ -652,7 +655,7 @@ static void ZZ_pX_left_pshift(struct ZZ_pX &x, const struct ZZ_pX &a, const stru
     x.normalize();
 }
 
-static void ZZ_pX_right_pshift(struct ZZ_pX &x, const struct ZZ_pX &a, const struct ZZ &pn, const struct ZZ_pContext &c)
+static void ZZ_pX_right_pshift(ZZ_pX &x, const ZZ_pX &a, const ZZ &pn, const ZZ_pContext &c)
 {
     // Divides each coefficient by pn, and sets the context of the answer to c.
 
@@ -678,7 +681,7 @@ static void ZZ_pX_right_pshift(struct ZZ_pX &x, const struct ZZ_pX &a, const str
     x.normalize();
 }
 
-static void ZZ_pX_InvMod_newton_unram(struct ZZ_pX &x, const struct ZZ_pX &a, const struct ZZ_pXModulus &F, const struct ZZ_pContext &cpn, const struct ZZ_pContext &cp)
+static void ZZ_pX_InvMod_newton_unram(ZZ_pX &x, const ZZ_pX &a, const ZZ_pXModulus &F, const ZZ_pContext &cpn, const ZZ_pContext &cp)
 {
     //int j;
     cp.restore();
@@ -713,7 +716,7 @@ static void ZZ_pX_InvMod_newton_unram(struct ZZ_pX &x, const struct ZZ_pX &a, co
     delete xn;
 }
 
-static void ZZ_pX_InvMod_newton_ram(struct ZZ_pX &x, const struct ZZ_pX &a, const struct ZZ_pXModulus &F, const struct ZZ_pContext &cpn)
+static void ZZ_pX_InvMod_newton_ram(ZZ_pX &x, const ZZ_pX &a, const ZZ_pXModulus &F, const ZZ_pContext &cpn)
 {
     //int j;
     cpn.restore();

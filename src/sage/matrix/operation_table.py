@@ -189,7 +189,6 @@ class OperationTable(SageObject):
     :meth:`~sage.matrix.operation_table.OperationTable.column_keys`
     method.  ::
 
-        sage: # needs sage.groups
         sage: from sage.matrix.operation_table import OperationTable
         sage: G = QuaternionGroup()
         sage: T = OperationTable(G, operator.mul)
@@ -307,7 +306,6 @@ class OperationTable(SageObject):
     structure, in forms that can be coerced into the structure.
     Here we demonstrate the proper use first::
 
-        sage: # needs sage.groups
         sage: from sage.matrix.operation_table import OperationTable
         sage: H = CyclicPermutationGroup(4)
         sage: H.list()
@@ -322,7 +320,6 @@ class OperationTable(SageObject):
     This can be rewritten so as to pass the actual elements of the
     group ``H``, using a simple ``for`` loop::
 
-        sage: # needs sage.groups
         sage: L = H.list()    #list of elements of the group H
         sage: elts = [L[i] for i in {0, 2}]
         sage: elts
@@ -337,7 +334,6 @@ class OperationTable(SageObject):
     In case they are not closed, the argument ``closed=False`` can be used to tell that it is not a problem
     if the result of the operation is not among ``elements`` as long as it can be coerced into ``S``. ::
 
-        sage: # needs sage.groups
         sage: elts.append(L[1])
         sage: elts
         [(), (1,3)(2,4), (1,2,3,4)]
@@ -358,7 +354,6 @@ class OperationTable(SageObject):
 
     Here are a couple of improper uses::
 
-        sage: # needs sage.groups
         sage: elts[2] = 5
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
@@ -541,7 +536,8 @@ class OperationTable(SageObject):
           describing the elements.  This is used for formatting the ASCII
           version of the table.
         - ``name_list`` -- list of strings naming the elements, in the
-          same order as given by the :meth:`list` method
+          same order as given by the
+          :meth:`~sage.matrix.operation_table.OperationTable.column_keys` method
         - ``name_list_ext`` -- list of strings naming the elements that are
           not in the list of elements if passed
         - ``name_dict`` -- dictionary giving the correspondence between the
@@ -554,7 +550,6 @@ class OperationTable(SageObject):
         and :meth:`change_names` methods.  So we just demonstrate
         the nature of the output here. ::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = SymmetricGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -572,7 +567,6 @@ class OperationTable(SageObject):
         doctests for the :class:`OperationTable` and :meth:`change_names`
         methods that rely on this one. ::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = AlternatingGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -668,7 +662,6 @@ class OperationTable(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = DiCyclicGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -679,7 +672,6 @@ class OperationTable(SageObject):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = DiCyclicGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -727,7 +719,6 @@ class OperationTable(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = CyclicPermutationGroup(6)
             sage: H = CyclicPermutationGroup(3)
@@ -747,7 +738,6 @@ class OperationTable(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = CyclicPermutationGroup(6)
             sage: H = CyclicPermutationGroup(3)
@@ -792,7 +782,6 @@ class OperationTable(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = AlternatingGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -808,7 +797,6 @@ class OperationTable(SageObject):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = AlternatingGroup(3)
             sage: T = OperationTable(G, operator.mul)
@@ -894,7 +882,8 @@ class OperationTable(SageObject):
         The rows of the table, as a list of rows, each row
         being a list of integer entries.  The integers correspond
         to the order of the elements in the headings of the table
-        and the order of the output of the :meth:`list` method.
+        and the order of the output of the
+        :meth:`~sage.matrix.operation_table.OperationTable.column_keys` method.
 
         EXAMPLES::
 
@@ -916,11 +905,12 @@ class OperationTable(SageObject):
 
           * ``'letters'`` -- lowercase ASCII letters are used
             for a base 26 representation of the elements'
-            positions in the list given by :meth:`list`,
+            positions in the list given by
+            :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
             padded to a common width with leading 'a's.
           * ``'digits'`` -- base 10 representation of the
             elements' positions in the list given by
-            :meth:`list`, padded to a common width
+            :meth:`~sage.matrix.operation_table.OperationTable.column_keys`, padded to a common width
             with leading zeros.
           * ``'elements'`` -- the string representations
             of the elements themselves.
@@ -930,7 +920,7 @@ class OperationTable(SageObject):
         OUTPUT:
         ``None``.  This method changes the table "in-place",
         so any printed version will change and the output of
-        the :meth:`dict` will also change.  So any items of
+        the :meth:`~sage.matrix.operation_table.OperationTable.translation` will also change.  So any items of
         interest about a particular table need to be copied/saved
         prior to calling this method.
 
@@ -940,7 +930,6 @@ class OperationTable(SageObject):
         :class:`OperationTable` since creating a new
         operation table uses the same routine. ::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: D = DihedralGroup(2)
             sage: T = OperationTable(D, operator.mul)
@@ -997,7 +986,6 @@ class OperationTable(SageObject):
         The output here is from the doctests for the old
         ``cayley_table()`` method for permutation groups. ::
 
-            sage: # needs sage.groups
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = PermutationGroup(['(1,2,3)', '(2,3)'])
             sage: T = OperationTable(G, operator.mul)
@@ -1029,7 +1017,7 @@ class OperationTable(SageObject):
         - ``element_names`` -- (default: ``True``) whether to display text with
           element names on the image
 
-        - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
+        - ``cmap`` -- (default: ``matplotlib.cm.gist_rainbow``) color map for plot, see :mod:`matplotlib.cm`
 
         - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 
@@ -1186,7 +1174,7 @@ class OperationTable(SageObject):
         widenames = []
         for name in self._names:
             widenames.append('{0: >{1}s}'.format(name, width))
-        widenames_ext = [widename for widename in widenames]
+        widenames_ext = list(widenames)
         for name in self._names_ext:
             widenames_ext.append('{0: >{1}s}'.format(name, width))
 

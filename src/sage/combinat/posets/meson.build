@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'bubble_shuffle.py',
+  'chute_move.py',
   'cartesian_product.py',
   'd_complete.py',
   'elements.py',
@@ -18,6 +19,7 @@ py.install_sources(
   'moebius_algebra.py',
   'poset_examples.py',
   'posets.py',
+  'sashes.py',
   subdir: 'sage/combinat/posets',
 )
 

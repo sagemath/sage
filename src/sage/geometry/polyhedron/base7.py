@@ -44,7 +44,6 @@ class Polyhedron_base7(Polyhedron_base6):
 
     TESTS::
 
-        sage: # needs sage.combinat
         sage: from sage.geometry.polyhedron.base7 import Polyhedron_base7
         sage: P = polytopes.associahedron(['A', 3])
         sage: Polyhedron_base7.centroid(P)
@@ -93,8 +92,8 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.centroid()
             (1/4, 0, 0)
 
-            sage: P = polytopes.associahedron(['A', 2])                                 # needs sage.combinat
-            sage: P.centroid()                                                          # needs sage.combinat
+            sage: P = polytopes.associahedron(['A', 2])
+            sage: P.centroid()
             (2/21, 2/21)
 
             sage: P = polytopes.permutahedron(4, backend='normaliz')    # optional - pynormaliz
@@ -295,21 +294,20 @@ class Polyhedron_base7(Polyhedron_base6):
             if engine != 'normaliz':
                 pc.set_engine(engine)
                 return pc.triangulate()
-            else:
-                return pc(self._triangulate_normaliz())
-        else:  # From above, we have a pointed cone and the engine is normaliz
-            try:
-                pc = PointConfiguration((v.vector() for v in self.ray_generator()),
-                                        connected=connected, fine=fine, regular=regular, star=star)
-                return pc(self._triangulate_normaliz())
-            except AssertionError:
-                # PointConfiguration is not adapted to inhomogeneous cones
-                # This is a hack. TODO: Implement the necessary things in
-                # PointConfiguration to accept such cases.
-                c = self.representative_point()
-                normed_v = ((1/(r.vector()*c))*r.vector() for r in self.ray_generator())
-                pc = PointConfiguration(normed_v, connected=connected, fine=fine, regular=regular, star=star)
-                return pc(self._triangulate_normaliz())
+            return pc(self._triangulate_normaliz())
+        # From above, we have a pointed cone and the engine is normaliz
+        try:
+            pc = PointConfiguration((v.vector() for v in self.ray_generator()),
+                                    connected=connected, fine=fine, regular=regular, star=star)
+            return pc(self._triangulate_normaliz())
+        except AssertionError:
+            # PointConfiguration is not adapted to inhomogeneous cones
+            # This is a hack. TODO: Implement the necessary things in
+            # PointConfiguration to accept such cases.
+            c = self.representative_point()
+            normed_v = ((1/(r.vector()*c))*r.vector() for r in self.ray_generator())
+            pc = PointConfiguration(normed_v, connected=connected, fine=fine, regular=regular, star=star)
+            return pc(self._triangulate_normaliz())
 
     def _volume_lrs(self, verbose=False):
         """
@@ -515,13 +513,13 @@ class Polyhedron_base7(Polyhedron_base6):
 
         If the base ring is exact, the answer is exact::
 
-            sage: P5 = polytopes.regular_polygon(5)                                     # needs sage.rings.number_field
-            sage: P5.volume()                                                           # needs sage.rings.number_field
+            sage: P5 = polytopes.regular_polygon(5)
+            sage: P5.volume()
             2.377641290737884?
 
-            sage: polytopes.icosahedron().volume()                                      # needs sage.groups sage.rings.number_field
+            sage: polytopes.icosahedron().volume()
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.groups sage.rings.number_field
+            sage: numerical_approx(_)  # abs tol 1e-9
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
@@ -534,12 +532,11 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume()
             0
-            sage: P.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: P.volume(measure='induced')
             1.414213562373095?
             sage: P.volume(measure='induced_rational')                  # optional - latte_int
             1
 
-            sage: # needs sage.rings.number_field
             sage: S = polytopes.regular_polygon(6); S
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 6 vertices
             sage: edge = S.faces(1)[4].as_polyhedron()
@@ -556,7 +553,7 @@ class Polyhedron_base7(Polyhedron_base6):
             ....:                          [-1,1,1], [-1,2,0]])
             sage: P.volume()
             0
-            sage: P.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: P.volume(measure='induced')
             2.598076211353316?
             sage: P.volume(measure='induced', engine='normaliz')
             2.598076211353316
@@ -574,7 +571,6 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_lattice', engine='latte')   # optional - latte_int
             3
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: Dexact = polytopes.dodecahedron()
             sage: F0 = Dexact.faces(2)[0].as_polyhedron()
             sage: v = F0.volume(measure='induced', engine='internal'); v
@@ -585,26 +581,25 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: RDF(v)    # abs tol 1e-9
             1.53406271079044
 
-            sage: # needs sage.groups
             sage: Dinexact = polytopes.dodecahedron(exact=False)
             sage: F2 = Dinexact.faces(2)[2].as_polyhedron()
             sage: w = F2.volume(measure='induced', engine='internal')
             sage: RDF(w)    # abs tol 1e-9
             1.5340627082974878
 
-            sage: all(polytopes.simplex(d).volume(measure='induced')                    # needs sage.rings.number_field sage.symbolic
+            sage: all(polytopes.simplex(d).volume(measure='induced')
             ....:        == sqrt(d+1)/factorial(d)
             ....:     for d in range(1,5))
             True
 
             sage: I = Polyhedron([[-3, 0], [0, 9]])
-            sage: I.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: I.volume(measure='induced')
             9.48683298050514?
             sage: I.volume(measure='induced_rational')                  # optional - latte_int
             3
 
             sage: T = Polyhedron([[3, 0, 0], [0, 4, 0], [0, 0, 5]])
-            sage: T.volume(measure='induced')                                           # needs sage.rings.number_field
+            sage: T.volume(measure='induced')
             13.86542462386205?
             sage: T.volume(measure='induced_rational')                  # optional - latte_int
             1/2
@@ -663,7 +658,17 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib
             1.414213562373095?
-        """
+
+        TESTS:
+
+        Check for :issue:`30772`::
+
+            sage: R2.<sqrt2> = NumberField(x^2 - 2, embedding=AA(2).sqrt())
+            sage: R3.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())
+            sage: F2 = Polyhedron([[sqrt2,0],[0,sqrt3]])
+            sage: F2.volume(measure="induced")
+            2.236067977499790?
+       """
         from sage.features import FeatureNotPresentError
         if measure == 'induced_rational' and engine not in ['auto', 'latte', 'normaliz']:
             raise RuntimeError("the induced rational measure can only be computed with the engine set to `auto`, `latte`, or `normaliz`")
@@ -703,7 +708,7 @@ class Polyhedron_base7(Polyhedron_base6):
         if measure == 'ambient':
             if self.dim() < self.ambient_dim():
                 return self.base_ring().zero()
-            elif self.dim() == 0:
+            if self.dim() == 0:
                 return 1
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
@@ -711,15 +716,15 @@ class Polyhedron_base7(Polyhedron_base6):
                 return infinity
             if engine == 'lrs':
                 return self._volume_lrs(**kwds)
-            elif engine == 'latte':
+            if engine == 'latte':
                 return self._volume_latte(**kwds)
-            elif engine == 'normaliz':
+            if engine == 'normaliz':
                 return self._volume_normaliz(measure='ambient')
 
             triangulation = self.triangulate(engine=engine, **kwds)
             pc = triangulation.point_configuration()
             return sum([pc.volume(simplex) for simplex in triangulation]) / ZZ(self.dim()).factorial()
-        elif measure == 'induced':
+        if measure == 'induced':
             # if polyhedron is actually full-dimensional, return volume with ambient measure
             if self.dim() == self.ambient_dim():
                 return self.volume(measure='ambient', engine=engine, **kwds)
@@ -741,26 +746,25 @@ class Polyhedron_base7(Polyhedron_base6):
                 sqrt_Adet = AA(Adet).sqrt()
                 scaled_volume = AA(scaled_volume)
             return scaled_volume / sqrt_Adet
-        elif measure == 'induced_rational':
+        if measure == 'induced_rational':
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
                 from sage.rings.infinity import infinity
                 return infinity
             if engine == 'latte':
                 return self._volume_latte(**kwds)
-            else:  # engine is 'normaliz'
-                return self._volume_normaliz(measure='induced_lattice') / ZZ(self.dim()).factorial()
-        elif measure == 'induced_lattice':
+            # engine is 'normaliz'
+            return self._volume_normaliz(measure='induced_lattice') / ZZ(self.dim()).factorial()
+        if measure == 'induced_lattice':
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
                 from sage.rings.infinity import infinity
                 return infinity
             if engine == 'latte':
                 return self._volume_latte(**kwds) * ZZ(self.dim()).factorial()
-            else:  # engine is 'normaliz'
-                return self._volume_normaliz(measure='induced_lattice')
-        else:
-            raise TypeError("the measure should be `ambient`, `induced`, `induced_rational`, or `induced_lattice`")
+            # engine is 'normaliz'
+            return self._volume_normaliz(measure='induced_lattice')
+        raise TypeError("the measure should be `ambient`, `induced`, `induced_rational`, or `induced_lattice`")
 
     def integrate(self, function, measure='ambient', **kwds):
         r"""
@@ -781,7 +785,8 @@ class Polyhedron_base7(Polyhedron_base6):
           * ``induced``: Lebesgue measure of the affine hull,
           * ``induced_nonnormalized``: Lebesgue measure of the affine hull
             without the normalization by `\sqrt{\det(A^\top A)}` (with
-            `A` being the affine transformation matrix; see :meth:`affine_hull`).
+            `A` being the affine transformation matrix; see
+            :meth:`~sage.geometry.convex_set.ConvexSet_base.affine_hull`).
 
         - ``**kwds`` -- additional keyword arguments that
           are passed to the engine
@@ -828,21 +833,21 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: R.<x, y, z> = QQ[]
             sage: P = polytopes.simplex(2)
-            sage: V = AA(P.volume(measure='induced'))                                   # needs sage.rings.number_field
-            sage: V.radical_expression()                                                # needs sage.rings.number_field sage.symbolic
+            sage: V = AA(P.volume(measure='induced'))
+            sage: V.radical_expression()
             1/2*sqrt(3)
-            sage: P.integrate(R(1), measure='induced') == V             # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: P.integrate(R(1), measure='induced') == V             # optional - latte_int
             True
 
         Computing the mass center::
 
-            sage: (P.integrate(x, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(x, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
-            sage: (P.integrate(y, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(y, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
-            sage: (P.integrate(z, measure='induced')                    # optional - latte_int, needs sage.rings.number_field sage.symbolic
+            sage: (P.integrate(z, measure='induced')                    # optional - latte_int
             ....:     / V).radical_expression()
             1/3
 
@@ -857,8 +862,8 @@ class Polyhedron_base7(Polyhedron_base6):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
-            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.groups sage.rings.number_field
+            sage: P = polytopes.icosahedron()
+            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
@@ -907,7 +912,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
             return self._integrate_latte_(function, **kwds)
 
-        elif measure == 'induced' or measure == 'induced_nonnormalized':
+        if measure == 'induced' or measure == 'induced_nonnormalized':
             # if polyhedron is actually full-dimensional,
             # return with ambient measure
             if self.is_full_dimensional():
@@ -932,18 +937,16 @@ class Polyhedron_base7(Polyhedron_base6):
                                      measure='ambient', **kwds)
             if measure == 'induced_nonnormalized':
                 return I
-            else:
-                A = affine_hull_data.projection_linear_map.matrix()
-                Adet = (A.transpose() * A).det()
-                try:
-                    from sage.rings.qqbar import AA
-                    Adet = AA.coerce(Adet)
-                except TypeError:
-                    pass
-                return I / Adet.sqrt()
+            A = affine_hull_data.projection_linear_map.matrix()
+            Adet = (A.transpose() * A).det()
+            try:
+                from sage.rings.qqbar import AA
+                Adet = AA.coerce(Adet)
+            except TypeError:
+                pass
+            return I / Adet.sqrt()
 
-        else:
-            raise ValueError('unknown measure "{}"'.format(measure))
+        raise ValueError('unknown measure "{}"'.format(measure))
 
     def _integrate_latte_(self, polynomial, **kwds):
         r"""

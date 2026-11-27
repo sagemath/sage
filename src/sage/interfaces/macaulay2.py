@@ -69,7 +69,8 @@ which acquire that name in Macaulay2::
       4       3    4    4      2     3                2           2         2    4   5
     (x  + 2x*y  + y  + z  + x*y w + y w + x*y*z*w + 2y z*w + x*y*w  + 2x*z*w  + w )(y  + x)
 
-Use :meth:`eval` for explicit control over what is sent to the interpreter.
+Use :meth:`~sage.interfaces.macaulay2.Macaulay2.eval` for explicit control
+over what is sent to the interpreter.
 The argument is evaluated in Macaulay2 as is::
 
     sage: macaulay2.eval('compactMatrixForm')
@@ -117,9 +118,9 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 import os
 import re
-from collections.abc import Iterator
 
 import sage.interfaces.abc
 from sage.interfaces.expect import (
@@ -133,6 +134,10 @@ from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 from sage.misc.multireplace import multiple_replace
 from sage.structure.global_options import GlobalOptions
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def remove_output_labels(s) -> str:
@@ -862,8 +867,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
     """
     Instances of this class represent objects in Macaulay2.
 
-    Using the method :meth:`sage` we can translate some of them to
-    SageMath objects:
+    Using the method :meth:`~sage.interfaces.interface.InterfaceElement.sage`
+    we can translate some of them to SageMath objects:
 
     .. automethod:: _sage_
     """

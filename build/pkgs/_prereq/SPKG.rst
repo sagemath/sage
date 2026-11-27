@@ -20,9 +20,6 @@ computer:
 - **perl**: version 5.8.0 or later.
 - **ar** and **ranlib**: can be obtained as part of GNU binutils.
 - **tar**: GNU tar version 1.17 or later, or BSD tar (as provided on macOS).
-- **python**: Python 3.4 or later, or Python 2.7.
-  (This range of versions is a minimal requirement for internal purposes of the SageMath
-  build system, which is referred to as ``sage-bootstrap-python``.)
 - **patch**.
 - **boost**: the library ``boost`` with its headers.
 - **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.
@@ -35,6 +32,13 @@ computer:
   which, if needed, gets prepended to PKG_CONFIG_PATH by ./configure.
 
 Other versions of these may work, but they are untested.
+
+On macOS, building Sage's bundled M4RI, M4RIE or LinBox also
+requires system **autoconf**, **automake**, and **GNU libtool 2.6.2 or later**.
+Sage regenerates these packages' build machinery with the system tools so
+that OpenMP flags from external dependencies are handled correctly. These
+tools are not required when all three libraries are supplied externally.
+With Homebrew, install them using ``brew install autoconf automake libtool``.
 
 On macOS, suitable versions of most of these tools are provided
 by the Xcode Command Line Tools.  To install them, after installing XCode itself,

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Schur algebras for `GL_n`
 

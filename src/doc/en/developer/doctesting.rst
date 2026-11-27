@@ -531,8 +531,9 @@ parallel test the library using 10 threads with the following command
 Another way is run ``make ptestlong``, which builds Sage (if necessary),
 builds the Sage documentation (if necessary), and then runs parallel
 doctests.  This determines the number of threads by reading the
-environment variable :envvar:`MAKE`: if it is set to ``make -j12``, then
-use 12 threads.  If :envvar:`MAKE` is not set, then by default it uses
+environment variable :envvar:`MAKE <installation:MAKE>`: if it is set to
+``make -j12``, then use 12 threads.  If
+:envvar:`MAKE <installation:MAKE>` is not set, then by default it uses
 the number of CPU cores (as determined by the Python function
 :func:`multiprocessing.cpu_count`) with a minimum of 2 and a maximum of 8.
 (When this runs under the control of the `GNU make jobserver
@@ -1147,7 +1148,7 @@ under the control of gdb, use the ``--gdb`` flag
 
     $ ./sage -t --gdb \
         src/sage/schemes/elliptic_curves/constructor.py
-    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage/venv/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1461,10 +1462,9 @@ new failures, then ``sage -t`` will exit with status code 0 (success).
 Options for testing in virtual environments
 -------------------------------------------
 
-The distribution packages of the modularized Sage library can be tested in virtual environments.
-Sage has infrastructure to create such virtual environments using ``tox``, which is explained
-in detail in :ref:`section-modularized-doctesting`.  Our examples in this section
-refer to this setting, but it applies the same to any user-created virtual environments.
+Sage has infrastructure to test virtual environments using
+``tox``. These examples should apply to any user-created virtual
+environments.
 
 The virtual environments, set up in directories such as
 ``pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi-norequirements``
@@ -1766,22 +1766,3 @@ will be tested in sequence.  Using ``--distribution all`` is equivalent
 to a preset list of ``--distribution`` switches.  With the switch
 ``--fixed-point``, the doctest fixer runs the given distributions until
 no more changes are made.
-
-
-Updating baseline files
------------------------
-
-The modularized distribution packages ``pkgs/sagemath-categories`` and
-``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
-with the option ``--baseline-stats-path``, see section
-:ref:`section-doctest-auxiliary-files`.
-
-After running the doctesters of the distributions, for example, via
-``sage --fixdoctests``, you can use the test results stored in
-``timings2.json`` files to update the ``known-test-failures*.json`` files.
-This update can be done using the command
-
-.. code-block:: console
-
-    $ ./sage --fixdoctests --no-test                        \
-        --update-known-test-failures --distribution all

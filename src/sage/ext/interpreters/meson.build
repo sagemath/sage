@@ -24,7 +24,26 @@ interpreters = custom_target(
     '__init__.py',
   ],
   input: '../../../sage_setup/autogen/interpreters/internal/__init__.py',
-  command: ['../../../sage_setup/autogen/interpreters/__main__.py', '@OUTDIR@'],
+  depend_files: [
+    '../../../sage_setup/autogen/interpreters/internal/generator.py',
+    '../../../sage_setup/autogen/interpreters/internal/instructions.py',
+    '../../../sage_setup/autogen/interpreters/internal/memory.py',
+    '../../../sage_setup/autogen/interpreters/internal/storage.py',
+    '../../../sage_setup/autogen/interpreters/internal/utils.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/__init__.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/base.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/cc.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/cdf.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/element.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/python.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/rdf.py',
+    '../../../sage_setup/autogen/interpreters/internal/specs/rr.py',
+  ],
+  command: [
+    py,
+    files('../../../sage_setup/autogen/interpreters/__main__.py'),
+    '@OUTDIR@',
+  ],
   # Manually install the generated files instead of using install_sources
   # this is a workaround for https://github.com/mesonbuild/meson/issues/7372
   install: true,
@@ -67,6 +86,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/ext/interpreters',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari],
+    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
   )
 endforeach

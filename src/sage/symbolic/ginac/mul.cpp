@@ -377,7 +377,7 @@ void mul::do_print_rat_func(const print_context & c, unsigned level,
 
 }
 
-void mul::do_print_python_repr(const print_python_repr & c, unsigned level) const
+void mul::do_print_python_repr(const print_python_repr & c, unsigned /*level*/) const
 {
 	c.s << class_name() << '(';
 	op(0).print(c);
@@ -793,7 +793,8 @@ ex mul::eval(int level) const
 
 ex mul::eval_exponentials() const
 {
-	ex exp_arg = _ex0;
+	exvector exp_args;
+	exp_args.reserve(seq.size());
 	numeric oc = *_num1_p;
 	epvector s;
 	s.reserve(seq.size());
@@ -804,9 +805,10 @@ ex mul::eval_exponentials() const
 		if (likely(not simplifyable_exp))
 			s.push_back(elem);
 		else
-			exp_arg += elem.rest.op(0) * num_coeff;
+			exp_args.push_back(elem.rest.op(0) * num_coeff);
 	}
 
+	const ex exp_arg = add(exp_args);
 	ex new_exp = exp(exp_arg);
 	if (is_exactly_a<numeric>(new_exp))
 		oc = oc.mul(ex_to<numeric>(new_exp));

@@ -11,40 +11,41 @@ that is `L`.
 For example, the following line constructs the extension of
 finite fields `\mathbf{F}_{5^4}/\mathbf{F}_{5^2}`::
 
-    sage: GF(5^4).over(GF(5^2))                                                         # needs sage.rings.finite_rings
+    sage: GF(5^4).over(GF(5^2))
     Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
 
 By default, Sage reuses the canonical generator of the top ring
 (here `z_4 \in \mathbf{F}_{5^4}`), together with its name. However,
 the user can customize them by passing in appropriate arguments::
 
-    sage: # needs sage.rings.finite_rings
     sage: F = GF(5^2)
     sage: k = GF(5^4)
     sage: z4 = k.gen()
     sage: K.<a> = k.over(F, gen=1-z4); K
     Field in a with defining polynomial x^2 + z2*x + 4 over its base
 
-The base of the extension is available via the method :meth:`base` (or
-equivalently :meth:`base_ring`)::
+The base of the extension is available via the method
+:meth:`~sage.rings.ring_extension.RingExtension_generic.base` (or equivalently
+``base_ring``)::
 
-    sage: K.base()                                                                      # needs sage.rings.finite_rings
+    sage: K.base()
     Finite Field in z2 of size 5^2
 
 It is also possible to build an extension on top of another extension,
 obtaining this way a tower of extensions::
 
-    sage: L.<b> = GF(5^8).over(K); L                                                    # needs sage.rings.finite_rings
+    sage: L.<b> = GF(5^8).over(K); L
     Field in b with defining polynomial x^2 + (4*z2 + 3*a)*x + 1 - a over its base
-    sage: L.base()                                                                      # needs sage.rings.finite_rings
+    sage: L.base()
     Field in a with defining polynomial x^2 + z2*x + 4 over its base
-    sage: L.base().base()                                                               # needs sage.rings.finite_rings
+    sage: L.base().base()
     Finite Field in z2 of size 5^2
 
-The method :meth:`bases` gives access to the complete list of rings in
+The method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases` gives
+access to the complete list of rings in
 a tower::
 
-    sage: L.bases()                                                                     # needs sage.rings.finite_rings
+    sage: L.bases()
     [Field in b with defining polynomial x^2 + (4*z2 + 3*a)*x + 1 - a over its base,
      Field in a with defining polynomial x^2 + z2*x + 4 over its base,
      Finite Field in z2 of size 5^2]
@@ -53,28 +54,27 @@ Once we have constructed an extension (or a tower of extensions), we
 have interesting methods attached to it. As a basic example, one can
 compute a basis of the top ring over any base in the tower::
 
-    sage: L.basis_over(K)                                                               # needs sage.rings.finite_rings
+    sage: L.basis_over(K)
     [1, b]
-    sage: L.basis_over(F)                                                               # needs sage.rings.finite_rings
+    sage: L.basis_over(F)
     [1, a, b, a*b]
 
 When the base is omitted, the default is the natural base of the extension::
 
-    sage: L.basis_over()                                                                # needs sage.rings.finite_rings
+    sage: L.basis_over()
     [1, b]
 
-The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasis.vector`
+The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasisElement.vector`
 computes the coordinates of an element according to the above basis::
 
-    sage: u = a + 2*b + 3*a*b                                                           # needs sage.rings.finite_rings
-    sage: u.vector()   # over K                                                         # needs sage.rings.finite_rings
+    sage: u = a + 2*b + 3*a*b
+    sage: u.vector()   # over K
     (a, 2 + 3*a)
-    sage: u.vector(F)                                                                   # needs sage.rings.finite_rings
+    sage: u.vector(F)
     (0, 1, 2, 3)
 
 One can also compute traces and norms with respect to any base of the tower::
 
-    sage: # needs sage.rings.finite_rings
     sage: u.trace()           # over K
     (2*z2 + 1) + (2*z2 + 1)*a
     sage: u.trace(F)
@@ -88,9 +88,9 @@ One can also compute traces and norms with respect to any base of the tower::
 
 And minimal polynomials::
 
-    sage: u.minpoly()                                                                   # needs sage.rings.finite_rings
+    sage: u.minpoly()
     x^2 + ((3*z2 + 4) + (3*z2 + 4)*a)*x + (z2 + 1) + (4*z2 + 2)*a
-    sage: u.minpoly(F)                                                                  # needs sage.rings.finite_rings
+    sage: u.minpoly(F)
     x^4 + (4*z2 + 4)*x^3 + x^2 + (z2 + 1)*x + 2*z2 + 2
 
 
@@ -167,9 +167,9 @@ def tower_bases(ring, degree):
            Univariate Polynomial Ring in x over Rational Field],
          [1])
 
-        sage: K.<a> = Qq(5^2)                                                           # needs sage.rings.padics
-        sage: L.<w> = K.extension(x^3 - 5)                                              # needs sage.rings.padics
-        sage: tower_bases(L, True)                                                      # needs sage.rings.padics
+        sage: K.<a> = Qq(5^2)
+        sage: L.<w> = K.extension(x^3 - 5)
+        sage: tower_bases(L, True)
         ([5-adic Eisenstein Extension Field in w defined by x^3 - 5 over its base field,
           5-adic Unramified Extension Field in a defined by x^2 + 4*x + 2,
           5-adic Field with capped relative precision 20],
@@ -215,12 +215,12 @@ def common_base(K, L, degree):
 
         sage: from sage.rings.ring_extension import common_base
 
-        sage: common_base(GF(5^3), GF(5^7), False)                                      # needs sage.rings.finite_rings
+        sage: common_base(GF(5^3), GF(5^7), False)
         Finite Field of size 5
-        sage: common_base(GF(5^3), GF(5^7), True)                                       # needs sage.rings.finite_rings
+        sage: common_base(GF(5^3), GF(5^7), True)
         (Finite Field of size 5, 3, 7)
 
-        sage: common_base(GF(5^3), GF(7^5), False)                                      # needs sage.rings.finite_rings
+        sage: common_base(GF(5^3), GF(7^5), False)
         Traceback (most recent call last):
         ...
         NotImplementedError: unable to find a common base
@@ -250,8 +250,7 @@ def common_base(K, L, degree):
         raise NotImplementedError("unable to find a common base")
     if degree:
         return base, degrees_K[iK], degrees_L[iL]
-    else:
-        return base
+    return base
 
 
 def generators(ring, base):
@@ -281,8 +280,7 @@ def generators(ring, base):
         ring = ring.base_ring()
     if base is None:
         return gens
-    else:
-        return tuple([x for x in gens if x not in base])
+    return tuple([x for x in gens if x not in base])
 
 
 def variable_names(ring, base):
@@ -337,12 +335,12 @@ class RingExtensionFactory(UniqueFactory):
         True
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = QQ.extension(x^2 - 2)                                             # needs sage.rings.number_field
-        sage: E = K.over(QQ); E                                                         # needs sage.rings.number_field
+        sage: K.<a> = QQ.extension(x^2 - 2)
+        sage: E = K.over(QQ); E
         Field in a with defining polynomial x^2 - 2 over its base
 
-        sage: E2.<b> = K.over(QQ)                                                       # needs sage.rings.number_field
-        sage: E2 is E                                                                   # needs sage.rings.number_field
+        sage: E2.<b> = K.over(QQ)
+        sage: E2 is E
         False
     """
     def create_key_and_extra_args(self, ring, defining_morphism=None, gens=None, names=None, constructors=None):
@@ -382,7 +380,7 @@ class RingExtensionFactory(UniqueFactory):
                                 'print_options': {'print_elements_as': None,
                                                   'print_parent_as': None}})]})
 
-            sage: RingExtension.create_key_and_extra_args(GF(5^4), GF(5^2),             # needs sage.rings.finite_rings
+            sage: RingExtension.create_key_and_extra_args(GF(5^4), GF(5^2),
             ....:                                         names=('a',))
             ((Ring morphism:
                 From: Finite Field in z2 of size 5^2
@@ -559,8 +557,8 @@ cdef class RingExtension_generic(Parent):
             ...
             TypeError: only commutative rings are accepted
 
-            sage: K = GF(5^3)                                                           # needs sage.rings.finite_rings
-            sage: K.over(K.frobenius_endomorphism())                                    # needs sage.rings.finite_rings
+            sage: K = GF(5^3)
+            sage: K.over(K.frobenius_endomorphism())
             Traceback (most recent call last):
             ...
             ValueError: exotic defining morphism between two rings in the tower; consider using another variable name
@@ -621,7 +619,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = QQ.extension(x^2 - 2)
             sage: E = K.over()  # over QQ
@@ -659,10 +656,10 @@ cdef class RingExtension_generic(Parent):
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^2 - 2)                                         # needs sage.rings.number_field
-            sage: K.<a> = A.over()                                                      # needs sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^2 - 2)
+            sage: K.<a> = A.over()
 
-            sage: dir(K)                                                                # needs sage.rings.number_field
+            sage: dir(K)
             ['CartesianProduct',
              'Element',
              'Hom',
@@ -691,8 +688,8 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES:
 
-            sage: E = GF(5^3).over()                                                    # needs sage.rings.finite_rings
-            sage: hash(E)   # random                                                    # needs sage.rings.finite_rings
+            sage: E = GF(5^3).over()
+            sage: hash(E)   # random
             140257667982632
         """
         return hash_by_id(<void *>self)
@@ -704,10 +701,10 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: K = GF(7^3).over()                                                    # needs sage.rings.finite_rings
-            sage: type(K)                                                               # needs sage.rings.finite_rings
+            sage: K = GF(7^3).over()
+            sage: type(K)
             <class 'sage.rings.ring_extension.RingExtensionWithGen'>
-            sage: loads(dumps(K)) is K                                                  # needs sage.rings.finite_rings
+            sage: loads(dumps(K)) is K
             True
         """
         (defining_morphism, gens, names) = self._factory_data[2]
@@ -720,8 +717,8 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-             sage: E = GF(5^3).over()                                                   # needs sage.rings.finite_rings
-             sage: E.construction()                                                     # needs sage.rings.finite_rings
+             sage: E = GF(5^3).over()
+             sage: E.construction()
         """
         # One could define a construction functor K' -> K' otimes_K L, but we leave this to another issue
         pass
@@ -737,7 +734,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^3)
             sage: E = K.over()
             sage: E
@@ -761,7 +757,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(5)
             sage: K.<u> = GF(5^2).over(k)
             sage: L.<v> = GF(5^4).over(K)
@@ -793,7 +788,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<a> = GF(5^2).over()   # over GF(5)
             sage: B.<b> = GF(5^4).over(A)
             sage: C.<c> = GF(5^12).over(B)
@@ -801,7 +795,6 @@ cdef class RingExtension_generic(Parent):
 
         Observe what happens when we modify the option ``over``::
 
-            sage: # needs sage.rings.finite_rings
             sage: D
             Field in d with defining polynomial
              x^2 + ((1 - a) + ((1 + 2*a) - b)*c + ((2 + a) + (1 - a)*b)*c^2)*x + c over its base
@@ -820,7 +813,6 @@ cdef class RingExtension_generic(Parent):
 
         Now the option ``base``::
 
-            sage: # needs sage.rings.finite_rings
             sage: d^2
             -c + ((-1 + a) + ((-1 + 3*a) + b)*c + ((3 - a) + (-1 + a)*b)*c^2)*d
             sage: D.basis_over(B)
@@ -899,8 +891,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._repr_(**options)
-            else:
-                return str(print_as)
+            return str(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -962,8 +953,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._latex_(**options)
-            else:
-                return latex(print_as)
+            return latex(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -1031,7 +1021,6 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: E1 = GF(3^6).over(GF(3^3))
             sage: E1.coerce_map_from(GF(3^3))  # indirect doctest
             Ring morphism:
@@ -1052,7 +1041,6 @@ cdef class RingExtension_generic(Parent):
 
         A test with iterated extensions::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(3^18).over(GF(3^3))   #   simple extension GF(3^3) -> GF(3^18)
             sage: B = GF(3^18).over(E1)        # iterated extension GF(3^3) -> GF(3^6) -> GF(3^18)
             sage: A.has_coerce_map_from(B)
@@ -1076,22 +1064,22 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: F = GF(5^2)                                                           # needs sage.rings.finite_rings
-            sage: K = GF(5^4).over(F)                                                   # needs sage.rings.finite_rings
-            sage: K.base()                                                              # needs sage.rings.finite_rings
+            sage: F = GF(5^2)
+            sage: K = GF(5^4).over(F)
+            sage: K.base()
             Finite Field in z2 of size 5^2
 
         In case of iterated extensions, the base is itself an extension::
 
-            sage: L = GF(5^8).over(K)                                                   # needs sage.rings.finite_rings
-            sage: L.base()                                                              # needs sage.rings.finite_rings
+            sage: L = GF(5^8).over(K)
+            sage: L.base()
             Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-            sage: L.base() is K                                                         # needs sage.rings.finite_rings
+            sage: L.base() is K
             True
 
         .. SEEALSO::
 
-            :meth:`bases`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self._base
 
@@ -1102,7 +1090,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2).over()  # over GF(5)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -1122,7 +1109,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         L = [self]
         base = self
@@ -1140,7 +1127,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2).over()   # over GF(5)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -1153,7 +1139,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self.bases()[-1]
 
@@ -1169,7 +1155,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(5^4).over(GF(5^2))
             sage: B = GF(5^12).over(A)
             sage: A.is_defined_over(GF(5^2))
@@ -1177,7 +1162,6 @@ cdef class RingExtension_generic(Parent):
             sage: A.is_defined_over(GF(5))
             False
 
-            sage: # needs sage.rings.finite_rings
             sage: B.is_defined_over(A)
             True
             sage: B.is_defined_over(GF(5^4))
@@ -1189,14 +1173,14 @@ cdef class RingExtension_generic(Parent):
 
         Note that an extension is defined over itself::
 
-            sage: A.is_defined_over(A)                                                  # needs sage.rings.finite_rings
+            sage: A.is_defined_over(A)
             True
-            sage: A.is_defined_over(GF(5^4))                                            # needs sage.rings.finite_rings
+            sage: A.is_defined_over(GF(5^4))
             True
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`absolute_base`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`
         """
         cdef Parent b
         b = self
@@ -1218,11 +1202,10 @@ cdef class RingExtension_generic(Parent):
         OUTPUT:
 
         The base ``base`` normalized as a parent appearing in the
-        list of bases of this extension as returned by :meth:`bases`.
+        list of bases of this extension as returned by :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -1239,9 +1222,9 @@ cdef class RingExtension_generic(Parent):
 
         When ``base`` is ``None``, the base of the extension is returned::
 
-            sage: L._check_base(None)                                                   # needs sage.rings.finite_rings
+            sage: L._check_base(None)
             Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
-            sage: L._check_base(None) is L.base()                                       # needs sage.rings.finite_rings
+            sage: L._check_base(None) is L.base()
             True
         """
         cdef Parent b
@@ -1266,7 +1249,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -1283,15 +1265,15 @@ cdef class RingExtension_generic(Parent):
               Defn: z4 |--> z4
 
         One can also pass in a base over which the extension is explicitly
-        defined (see also :meth:`is_defined_over`)::
+        defined (see also :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`)::
 
-            sage: L.defining_morphism(F)                                                # needs sage.rings.finite_rings
+            sage: L.defining_morphism(F)
             Ring morphism:
               From: Finite Field in z2 of size 5^2
               To:   Field in z12 with defining polynomial
                     x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
               Defn: z2 |--> z2
-            sage: L.defining_morphism(GF(5))                                            # needs sage.rings.finite_rings
+            sage: L.defining_morphism(GF(5))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field of size 5
@@ -1327,7 +1309,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()  # over GF(5)
             sage: K.gens()
             (a,)
@@ -1359,7 +1340,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^2).over()   # over GF(5)
             sage: K.gens()
             (z2,)
@@ -1379,15 +1359,15 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: K = GF(5^2).over()   # over GF(5)                                     # needs sage.rings.finite_rings
-            sage: x = K.gen(); x                                                        # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()   # over GF(5)
+            sage: x = K.gen(); x
             z2
 
         Observe that the generator lives in the extension::
 
-            sage: x.parent()                                                            # needs sage.rings.finite_rings
+            sage: x.parent()
             Field in z2 with defining polynomial x^2 + 4*x + 2 over its base
-            sage: x.parent() is K                                                       # needs sage.rings.finite_rings
+            sage: x.parent() is K
             True
         """
         return self.gens()[0]
@@ -1398,7 +1378,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^2).over()   # over GF(5)
             sage: x = K.random_element(); x   # random
             3 + z2
@@ -1421,7 +1400,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -1435,15 +1413,15 @@ cdef class RingExtension_generic(Parent):
         If ``base`` is omitted, the degree is computed over the base
         of the extension::
 
-            sage: K.degree_over()                                                       # needs sage.rings.finite_rings
+            sage: K.degree_over()
             2
-            sage: L.degree_over()                                                       # needs sage.rings.finite_rings
+            sage: L.degree_over()
             3
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
-            sage: K.degree_over(GF(5))                                                  # needs sage.rings.finite_rings
+            sage: K.degree_over(GF(5))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field of size 5
@@ -1464,7 +1442,6 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
@@ -1488,7 +1465,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(5^4).over(GF(5^2))
             sage: B = GF(5^12).over(A)
             sage: A.degree(GF(5^2))
@@ -1499,9 +1475,9 @@ cdef class RingExtension_generic(Parent):
             6
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
-            sage: A.degree(GF(5))                                                       # needs sage.rings.finite_rings
+            sage: A.degree(GF(5))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field of size 5
@@ -1518,8 +1494,8 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: A = GF(5^4).over(GF(5^2))                                             # needs sage.rings.finite_rings
-            sage: A.relative_degree()                                                   # needs sage.rings.finite_rings
+            sage: A = GF(5^4).over(GF(5^2))
+            sage: A.relative_degree()
             2
 
         .. SEEALSO::
@@ -1534,7 +1510,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(5^4).over(GF(5^2))
             sage: B = GF(5^12).over(A)
             sage: A.absolute_degree()
@@ -1559,7 +1534,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^2).over()  # over GF(5)
             sage: L = GF(5^4).over(K)
             sage: L.is_finite_over(K)
@@ -1570,7 +1544,7 @@ cdef class RingExtension_generic(Parent):
         If ``base`` is omitted, it is set to its default which is the
         base of the extension::
 
-            sage: L.is_finite_over()                                                    # needs sage.rings.finite_rings
+            sage: L.is_finite_over()
             True
         """
         cdef Parent b
@@ -1604,8 +1578,8 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: K = GF(5^2).over()  # over GF(5)                                      # needs sage.rings.finite_rings
-            sage: K.is_finite_over()  # indirect doctest                                # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()  # over GF(5)
+            sage: K.is_finite_over()  # indirect doctest
             True
         """
         raise NotImplementedError
@@ -1622,7 +1596,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^2).over()  # over GF(5)
             sage: L = GF(5^4).over(K)
             sage: L.is_free_over(K)
@@ -1633,7 +1606,7 @@ cdef class RingExtension_generic(Parent):
         If ``base`` is omitted, it is set to its default which is the
         base of the extension::
 
-            sage: L.is_free_over()                                                      # needs sage.rings.finite_rings
+            sage: L.is_free_over()
             True
         """
         cdef Parent b
@@ -1667,8 +1640,8 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: K = GF(5^2).over()  # over GF(5)                                      # needs sage.rings.finite_rings
-            sage: K.is_free_over()  # indirect doctest                                  # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()  # over GF(5)
+            sage: K.is_free_over()  # indirect doctest
             True
         """
         raise NotImplementedError
@@ -1683,8 +1656,8 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: K = GF(5^5).over()  # over GF(5)                                      # needs sage.rings.finite_rings
-            sage: K.is_field()                                                          # needs sage.rings.finite_rings
+            sage: K = GF(5^5).over()  # over GF(5)
+            sage: K.is_field()
             True
 
             sage: S.<x> = QQ[]
@@ -1719,7 +1692,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
@@ -1745,16 +1717,16 @@ cdef class RingExtension_generic(Parent):
 
         Note that there is no coercion between `K_1` and `K_2`::
 
-            sage: K1.has_coerce_map_from(K2)                                            # needs sage.rings.number_field
+            sage: K1.has_coerce_map_from(K2)
             False
-            sage: K2.has_coerce_map_from(K1)                                            # needs sage.rings.number_field
+            sage: K2.has_coerce_map_from(K1)
             False
 
         We check that when the extension is a field, its fraction field does not change::
 
-            sage: K1.fraction_field() is K1                                             # needs sage.rings.number_field
+            sage: K1.fraction_field() is K1
             True
-            sage: K2.fraction_field() is K2                                             # needs sage.rings.number_field
+            sage: K2.fraction_field() is K2
             True
 
         TESTS::
@@ -1785,8 +1757,8 @@ cdef class RingExtension_generic(Parent):
 
         TESTS::
 
-            sage: K = GF(5^2).over()                                                    # needs sage.rings.finite_rings
-            sage: K.fraction_field()  # indirect doctest                                # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()
+            sage: K.fraction_field()  # indirect doctest
             Field in z2 with defining polynomial x^2 + 4*x + 2 over its base
 
             sage: K = QQ.over(ZZ)
@@ -1820,7 +1792,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(F)
@@ -1866,12 +1837,12 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: K.<a> = GF(5^2).over()    # over GF(5)                                # needs sage.rings.finite_rings
-            sage: L.<b> = GF(5^6).over(K)                                               # needs sage.rings.finite_rings
+            sage: K.<a> = GF(5^2).over()    # over GF(5)
+            sage: L.<b> = GF(5^6).over(K)
 
         We define (by hand) the relative Frobenius endomorphism of the extension `L/K`::
 
-            sage: L.hom([b^25])                                                         # needs sage.rings.finite_rings
+            sage: L.hom([b^25])
             Ring endomorphism of
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> 2 + 2*a*b + (2 - a)*b^2
@@ -1880,15 +1851,15 @@ cdef class RingExtension_generic(Parent):
         because it is not a homomorphism of `K`-algebras.
         For this reason, the construction ``L.hom([b^5])`` fails::
 
-            sage: L.hom([b^5])                                                          # needs sage.rings.finite_rings
+            sage: L.hom([b^5])
             Traceback (most recent call last):
             ...
             ValueError: images do not define a valid homomorphism
 
         What we need is to specify a base map::
 
-            sage: FrobK = K.hom([a^5])                                                  # needs sage.rings.finite_rings
-            sage: FrobL = L.hom([b^5], base_map=FrobK); FrobL                           # needs sage.rings.finite_rings
+            sage: FrobK = K.hom([a^5])
+            sage: FrobL = L.hom([b^5], base_map=FrobK); FrobL
             Ring endomorphism of
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
@@ -1897,13 +1868,13 @@ cdef class RingExtension_generic(Parent):
 
         As a shortcut, we may use the following construction::
 
-            sage: phi = L.hom([b^5, a^5]); phi                                          # needs sage.rings.finite_rings
+            sage: phi = L.hom([b^5, a^5]); phi
             Ring endomorphism of
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> (-1 + a) + (1 + 2*a)*b + a*b^2
                     with map on base ring:
                     a |--> 1 - a
-            sage: phi == FrobL                                                          # needs sage.rings.finite_rings
+            sage: phi == FrobL
             True
         """
         if codomain is None:
@@ -1920,7 +1891,6 @@ cdef class RingExtension_generic(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5^2).over()   # over GF(5)
             sage: K = GF(5^4).over(F)
             sage: L = GF(5^12).over(K)
@@ -2001,7 +1971,6 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
@@ -2023,7 +1992,6 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
@@ -2043,7 +2011,6 @@ cdef class RingExtensionFractionField(RingExtension_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 2)
             sage: OK = A.over()
@@ -2057,8 +2024,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
             sr = str(self._ring)
         if self._ring in Fields():
             return sr
-        else:
-            return "Fraction Field of %s" % sr
+        return "Fraction Field of %s" % sr
 
     def _latex_topring(self, **options):
         r"""
@@ -2074,8 +2040,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
         """
         if self._ring in Fields():
             return self._ring._latex_topring(**options)
-        else:
-            return "\\mathrm{Frac}(%s)" % latex(self._ring)
+        return "\\mathrm{Frac}(%s)" % latex(self._ring)
 
 
 # Finite free extensions
@@ -2088,10 +2053,10 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
     TESTS::
 
-        sage: E = GF(5^4).over(GF(5^2)); E                                              # needs sage.rings.finite_rings
+        sage: E = GF(5^4).over(GF(5^2)); E
         Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
 
-        sage: TestSuite(E).run()                                                        # needs sage.rings.finite_rings
+        sage: TestSuite(E).run()
     """
     Element = RingExtensionWithBasisElement
 
@@ -2114,11 +2079,11 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = QQ.extension(x^3 - 2)                                         # needs sage.rings.number_field
-            sage: E = K.over(); E                                                       # needs sage.rings.number_field
+            sage: K.<a> = QQ.extension(x^3 - 2)
+            sage: E = K.over(); E
             Field in a with defining polynomial x^3 - 2 over its base
 
-            sage: TestSuite(E).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(E).run()
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
         self._basis = [self(b) for b in basis]
@@ -2158,7 +2123,6 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: F = GF(5)
             sage: K = GF(5^2).over(F)
             sage: L = GF(5^4).over(K)
@@ -2203,7 +2167,6 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = QQ.extension(x^2 - 2)
             sage: B.<b> = QQ.extension(x^6 - 2)
@@ -2214,10 +2177,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         """
         if base is self:
             return ZZ(1)
-        elif base is self._base:
+        if base is self._base:
             return len(self._basis)
-        else:
-            return len(self._basis) * self._base._degree_over(base)
+        return len(self._basis) * self._base._degree_over(base)
 
     cpdef _is_finite_over(self, Parent base):
         r"""
@@ -2230,8 +2192,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: K = GF(5^2).over()  # over GF(5)                                      # needs sage.rings.finite_rings
-            sage: K.is_finite_over()  # indirect doctest                                # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()  # over GF(5)
+            sage: K.is_finite_over()  # indirect doctest
             True
         """
         if base is self or base is self._base:
@@ -2249,8 +2211,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: K = GF(5^2).over()  # over GF(5)                                      # needs sage.rings.finite_rings
-            sage: K.is_free_over()    # indirect doctest                                # needs sage.rings.finite_rings
+            sage: K = GF(5^2).over()  # over GF(5)
+            sage: K.is_free_over()    # indirect doctest
             True
         """
         if base is self or base is self._base:
@@ -2268,7 +2230,6 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(5^2).over()  # over GF(5)
             sage: K.<b> = GF(5^4).over(F)
             sage: L.<c> = GF(5^12).over(K)
@@ -2282,16 +2243,16 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         If ``base`` is omitted, it is set to its default which is the
         base of the extension::
 
-            sage: L.basis_over()                                                        # needs sage.rings.finite_rings
+            sage: L.basis_over()
             [1, c, c^2]
 
-            sage: K.basis_over()                                                        # needs sage.rings.finite_rings
+            sage: K.basis_over()
             [1, b]
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
-            sage: L.degree_over(GF(5^6))                                                # needs sage.rings.finite_rings
+            sage: L.degree_over(GF(5^6))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z6 of size 5^6
@@ -2311,9 +2272,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = QQ.extension(x^3 - 2)                                         # needs sage.rings.number_field
-            sage: K.<u> = A.over()                                                      # needs sage.rings.number_field
-            sage: K.basis_over()                                                        # needs sage.rings.number_field
+            sage: A.<a> = QQ.extension(x^3 - 2)
+            sage: K.<u> = A.over()
+            sage: K.basis_over()
             [1, u, u^2]
         """
         if base is self:
@@ -2341,7 +2302,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above
@@ -2350,14 +2311,13 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         EXAMPLES::
 
             sage: F = GF(11)
-            sage: K.<a> = GF(11^2).over()                                               # needs sage.rings.finite_rings
-            sage: L.<b> = GF(11^6).over(K)                                              # needs sage.rings.finite_rings
+            sage: K.<a> = GF(11^2).over()
+            sage: L.<b> = GF(11^6).over(K)
 
         Forgetting a part of the multiplicative structure, the field L
         can be viewed as a vector space of dimension 3 over K, equipped
         with a distinguished basis, namely `(1, b, b^2)`::
 
-            sage: # needs sage.rings.finite_rings
             sage: V, i, j = L.free_module(K)
             sage: V
             Vector space of dimension 3 over
@@ -2381,28 +2341,28 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         Similarly, one can view L as a F-vector space of dimension 6::
 
-            sage: V, i, j, = L.free_module(F)                                           # needs sage.rings.finite_rings
-            sage: V                                                                     # needs sage.rings.finite_rings
+            sage: V, i, j, = L.free_module(F)
+            sage: V
             Vector space of dimension 6 over Finite Field of size 11
 
         In this case, the isomorphisms between `V` and `L` are given by the
         basis `(1, a, b, ab, b^2, ab^2)`:
 
-            sage: j(a*b)                                                                # needs sage.rings.finite_rings
+            sage: j(a*b)
             (0, 0, 0, 1, 0, 0)
-            sage: i((1,2,3,4,5,6))                                                      # needs sage.rings.finite_rings
+            sage: i((1,2,3,4,5,6))
             (1 + 2*a) + (3 + 4*a)*b + (5 + 6*a)*b^2
 
         When ``base`` is omitted, the default is the base of this extension::
 
-            sage: L.free_module(map=False)                                              # needs sage.rings.finite_rings
+            sage: L.free_module(map=False)
             Vector space of dimension 3 over
              Field in a with defining polynomial x^2 + 7*x + 2 over its base
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
-            sage: L.degree(GF(11^3))                                                    # needs sage.rings.finite_rings
+            sage: L.degree(GF(11^3))
             Traceback (most recent call last):
             ...
             ValueError: not (explicitly) defined over Finite Field in z3 of size 11^3
@@ -2429,7 +2389,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above
@@ -2437,9 +2397,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         TESTS::
 
-            sage: K = GF(7^5).over()                                                    # needs sage.rings.finite_rings
-            sage: L = GF(7^15).over(K)                                                  # needs sage.rings.finite_rings
-            sage: for base in L.bases():                                                # needs sage.rings.finite_rings
+            sage: K = GF(7^5).over()
+            sage: L = GF(7^15).over(K)
+            sage: for base in L.bases():
             ....:     V, i, j = L.free_module(base)
             ....:     assert([i(v) for v in V.basis()] == L.basis_over(base))
             ....:     assert([j(x) for x in L.basis_over(base)] == V.basis())
@@ -2447,8 +2407,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         d = self._degree_over(base)
         if map:
             return base**d, MapFreeModuleToRelativeRing(self, base), MapRelativeRingToFreeModule(self, base)
-        else:
-            return base**d
+        return base**d
 
     @cached_method
     def fraction_field(self, extend_base=False):
@@ -2471,7 +2430,6 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
@@ -2496,16 +2454,16 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
 
         Note that there is no coercion map between `K_1` and `K_2`::
 
-            sage: K1.has_coerce_map_from(K2)                                            # needs sage.rings.number_field
+            sage: K1.has_coerce_map_from(K2)
             False
-            sage: K2.has_coerce_map_from(K1)                                            # needs sage.rings.number_field
+            sage: K2.has_coerce_map_from(K1)
             False
 
         We check that when the extension is a field, its fraction field does not change::
 
-            sage: K1.fraction_field() is K1                                             # needs sage.rings.number_field
+            sage: K1.fraction_field() is K1
             True
-            sage: K2.fraction_field() is K2                                             # needs sage.rings.number_field
+            sage: K2.fraction_field() is K2
             True
 
         TESTS::
@@ -2540,7 +2498,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
     TESTS::
 
-        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: A.<a> = QQ.extension(x^3 - 7)
         sage: K = A.over()
@@ -2567,11 +2524,11 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         TESTS::
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = QQ.extension(x^3 + 3*x + 1)                                   # needs sage.rings.number_field
-            sage: E = K.over(); E                                                       # needs sage.rings.number_field
+            sage: K.<a> = QQ.extension(x^3 + 3*x + 1)
+            sage: E = K.over(); E
             Field in a with defining polynomial x^3 + 3*x + 1 over its base
 
-            sage: TestSuite(E).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(E).run()
         """
         self._name = names[0]
         backend_base = backend_parent(defining_morphism.domain())
@@ -2597,7 +2554,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^3).over()
             sage: K._repr_topring()
             'Field in a with defining polynomial x^3 + 3*x + 3'
@@ -2615,7 +2571,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^3).over()
             sage: K._latex_topring()
             '\\Bold{F}_{5}[a]'
@@ -2627,8 +2582,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             return RingExtension_generic._latex_topring(self)
         if isinstance(self._base, RingExtension_generic):
             return "%s[%s]" % (self._base._latex_topring(), self.latex_variable_names()[0])
-        else:
-            return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
+        return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
 
     def modulus(self, var='x'):
         r"""
@@ -2641,7 +2595,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<u> = GF(7^10).over(GF(7^2)); K
             Field in u with defining polynomial x^5 + (6*z2 + 4)*x^4
              + (3*z2 + 5)*x^3 + (2*z2 + 2)*x^2 + 4*x + 6*z2 over its base
@@ -2652,7 +2605,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         We can use a different variable name::
 
-            sage: K.modulus('y')                                                        # needs sage.rings.finite_rings
+            sage: K.modulus('y')
             y^5 + (6*z2 + 4)*y^4 + (3*z2 + 5)*y^3 + (2*z2 + 2)*y^2 + 4*y + 6*z2
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -2673,7 +2626,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()  # over GF(5)
             sage: K.gens()
             (a,)
@@ -2714,7 +2666,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<a> = ZZ.extension(x^2 - 5)
             sage: OK = A.over()   # over ZZ
@@ -2740,16 +2691,16 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
 
         Note that there is no coercion map between `K_1` and `K_2`::
 
-            sage: K1.has_coerce_map_from(K2)                                            # needs sage.rings.number_field
+            sage: K1.has_coerce_map_from(K2)
             False
-            sage: K2.has_coerce_map_from(K1)                                            # needs sage.rings.number_field
+            sage: K2.has_coerce_map_from(K1)
             False
 
         We check that when the extension is a field, its fraction field does not change::
 
-            sage: K1.fraction_field() is K1                                             # needs sage.rings.number_field
+            sage: K1.fraction_field() is K1
             True
-            sage: K2.fraction_field() is K2                                             # needs sage.rings.number_field
+            sage: K2.fraction_field() is K2
             True
 
         TESTS::

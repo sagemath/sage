@@ -232,8 +232,7 @@ class Sage(ExtraTabCompletion, Expect):
         if isinstance(x, ExpectElement):
             if x.parent() is self:
                 return x
-            else:
-                return self(x.sage())
+            return self(x.sage())
 
         if isinstance(x, str):
             return SageElement(self, x)
@@ -243,12 +242,11 @@ class Sage(ExtraTabCompletion, Expect):
                 fobj.write(pickle.dumps(x, 2))
             code = '_sage0_load_local({!r})'.format(self._local_tmpfile())
             return SageElement(self, code)
-        else:
-            with open(self._local_tmpfile(), 'wb') as fobj:
-                fobj.write(dumps(x))   # my dumps is compressed by default
-            self._send_tmpfile_to_server()
-            code = '_sage0_load_remote({!r})'.format(self._remote_tmpfile())
-            return SageElement(self, code)
+        with open(self._local_tmpfile(), 'wb') as fobj:
+            fobj.write(dumps(x))   # my dumps is compressed by default
+        self._send_tmpfile_to_server()
+        code = '_sage0_load_remote({!r})'.format(self._remote_tmpfile())
+        return SageElement(self, code)
 
     def __reduce__(self):
         """
@@ -429,8 +427,7 @@ class Sage(ExtraTabCompletion, Expect):
 
         if '\n' in s:
             return "eval(compile({!r}, '<stdin>', 'single'))".format(s.strip())
-        else:
-            return s
+        return s
 
 
 @instancedoc
@@ -496,9 +493,8 @@ class SageElement(ExpectElement):
             P.eval('save({}, {!r})'.format(self.name(), P._remote_tmpfile()))
             P._get_tmpfile_from_server(self)
             return load(P._local_tmp_file())
-        else:
-            P.eval('save({}, {!r})'.format(self.name(), P._local_tmpfile()))
-            return load(P._local_tmpfile())
+        P.eval('save({}, {!r})'.format(self.name(), P._local_tmpfile()))
+        return load(P._local_tmpfile())
 
 
 @instancedoc

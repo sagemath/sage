@@ -6,7 +6,37 @@ This module provides base classes for Jacobians of function fields.
 Jacobian
 --------
 
-The Jacobian of a function field is created by default in the Hess model, with
+Sage currently has five models for Jacobian arithmetic on function fields.
+We denote the genus of the function field by `g`.
+Constructing each model requires either a base divisor or place `B`, with varying requirements:
+
+- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place.
+
+- Hess model (``hess``). Requires that `B` is a degree `g` divisor.
+
+- Khuri-Makdisi small model (``km_small``). Requires that `B` is an effective divisor with `\deg(B) \geq 2g + 1`.
+
+- Khuri-Makdisi medium model (``km_medium``). Requires that `B` is an effective divisor with `\deg(B) \geq 2g + 1`.
+
+- Khuri-Makdisi large model (``km_large``). Requires that `B` is an effective divisor with `\deg(B) \geq g + 1`.
+
+The ``unique_hess`` model is the only current model that computes with unique representatives
+of divisor classes, and so is the only model where Jacobian elements are hashable.
+
+All models will attempt to find an appropriate `B` if one is not provided.
+The current implementation does this by finding a degree 1 place and scaling it appropriately.
+If the function field does not have a degree one place, then the ``unique_hess`` model cannot be used,
+and other models will fail unless the user supplies an appropriate base divisor `B`.
+It is exceedingly rare for a global function field to not contain a degree one place,
+see [HLT2003]_ for a heuristic argument of this.
+
+In order to allow for future optimizations, the way we choose the base place/divisor is
+considered to be an implementation detail. It is not guaranteed that the default base
+place/divisor is chosen deterministically, or that the default base place/divisor will be
+the same between Sage versions or Sage installations. If the user wants a specific base
+place/divisor to be used, then they should specify one.
+
+The Jacobian of a function field is created by default in the ``hess`` model, with
 a base divisor of degree `g` the genus of the function field. The base divisor
 is automatically chosen if not given. ::
 
@@ -30,7 +60,7 @@ Group of rational points
 
 The group of rational points of a Jacobian is created from the Jacobian. A
 point of the Jacobian group is determined by a divisor of degree zero. To
-represent the point, a divisor of the form `D-B` is selected where `D` is an
+represent the point, a divisor of the form `D - B` is selected where `D` is an
 effective divisor of the same degree with the base divisor `B`. Hence the point
 is simply represented by the divisor `D`. ::
 
@@ -67,10 +97,12 @@ We can get the corresponding point in the Jacobian in a different model. ::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
+- Vincent Macri (2025-10-10): updates for ``unique_hess`` model
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                 (C) 2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -79,33 +111,90 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 import math
+from typing import TYPE_CHECKING
 
-from sage.arith.misc import integer_floor, integer_ceil
-
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement
-
+from sage.arith.misc import integer_ceil, integer_floor
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.categories.schemes import Jacobians
 from sage.categories.pushout import ConstructionFunctor, pushout
-
-from sage.rings.integer_ring import IntegerRing
+from sage.categories.schemes import Jacobians
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing
+from sage.structure.element import AdditiveGroupElement
+from sage.structure.parent import Parent
+
+if TYPE_CHECKING:
+    from sage.categories.map import Map
+    from sage.rings.ring import Field
+
+    from .divisor import FunctionFieldDivisor
+    from .function_field import FunctionField
+    from .place import FunctionFieldPlace
 
 
-class JacobianPoint_base(ModuleElement):
+class JacobianPoint_base(AdditiveGroupElement):
     """
     Abstract base class of points of Jacobian groups.
     """
-    pass
+
+    def addflip(self, other):
+        """
+        Return the addflip of this and ``other`` point.
+        This naive implementation simply returns ``-(self + other)``.
+        The Khuri-Makdisi implement this operation more efficiently than
+        naively adding and negating. This naive implementation of ``addflip``
+        is to provide compatibility with the Khuri-Makdisi models for the
+        models which do not implement ``addflip`` separately.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='hess', base_div=b).group()
+            sage: pl1 = C([-1,2,1]).place()
+            sage: pl2 = C([2,19,1]).place()
+            sage: p1 = G.point(pl1 - b)
+            sage: p2 = G.point(pl2 - b)
+            sage: p1.addflip(p2)
+            [Place (y + 8, z + 27)]
+            sage: _ == -(p1 + p2)
+            True
+        """
+        return -(self + other)
+
+    def divisor(self) -> FunctionFieldDivisor:
+        """
+        Return a function field divisor in the divisor class of this Jacobian element.
+        """
+        return NotImplemented
+
+    def _repr_(self) -> str:
+        """
+        Return string representation of ``self``.
+
+        The default implementation of ``_repr_`` for Jacobian points is to
+        call ``_repr_`` on ``self.divisor()``.
+        """
+        return self.divisor()._repr_()
+
+    def _latex_(self) -> str:
+        """
+        Return LaTeX representation of ``self``.
+
+        The default implementation of ``_latex_`` for Jacobian points is to
+        call ``_latex_`` on ``self.divisor()``.
+        """
+        return self.divisor()._latex_()
 
 
 class JacobianPoint_finite_field_base(JacobianPoint_base):
     """
     Points of Jacobians over finite fields.
     """
-    def order(self):
+    def additive_order(self):
         """
         Return the order of this point.
 
@@ -123,8 +212,18 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
             sage: p.order()
             15
 
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='hess', base_div=b).group()
+            sage: p = C([-1,2,1]).place()
+            sage: pt = G.point(p - b)
+            sage: pt.order()
+            30
+
         ALGORITHM: Shanks' Baby Step Giant Step
         """
+        # We implement BSGS instead of using sage.groups.generic because
+        # not all Jacobian models have hashable elements
+
         G = self.parent()
         B = G._bound_on_order()
         q = integer_ceil(B.sqrt())
@@ -140,7 +239,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
             g = g + self
 
         # giant steps
-        g0 = self.multiple(-q)
+        g0 = -q * self
         g = g0
         for i in range(q - 1):
             for r in range(q):
@@ -285,9 +384,9 @@ class JacobianGroup_base(Parent):
         sage: J.group()
         Group of rational points of Jacobian over Finite Field of size 7 (Hess model)
     """
-    _embedding_map_class = None
+    _embedding_map_class: type[Map] | None = None
 
-    def __init__(self, parent, function_field, base_div) -> None:
+    def __init__(self, parent, function_field: FunctionField, base_div: FunctionFieldDivisor) -> None:
         """
         Initialize.
 
@@ -386,7 +485,7 @@ class JacobianGroup_base(Parent):
         """
         return self._parent
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which this Jacobian group attached.
 
@@ -401,7 +500,7 @@ class JacobianGroup_base(Parent):
         """
         return self._function_field
 
-    def base_divisor(self):
+    def base_divisor(self) -> FunctionFieldDivisor:
         """
         Return the base divisor that is used to represent points of this group.
 
@@ -540,7 +639,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return sum(bs)
 
-    def get_points(self, n) -> list:
+    def get_points(self, n) -> list[JacobianPoint_finite_field_base]:
         """
         Return `n` points of the Jacobian group.
 
@@ -572,6 +671,9 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return lst
 
+    def some_elements(self) -> list[JacobianPoint_finite_field_base]:
+        return self.get_points(4)
+
 
 class Jacobian_base(Parent):
     """
@@ -584,7 +686,7 @@ class Jacobian_base(Parent):
         sage: F.jacobian()
         Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds) -> None:
+    def __init__(self, function_field: FunctionField, base_div: FunctionFieldDivisor | FunctionFieldPlace, **kwds) -> None:
         """
         Initialize.
 
@@ -597,7 +699,7 @@ class Jacobian_base(Parent):
         """
         self._function_field = function_field
         self._base_div = base_div
-        self._system = {}
+        self._system: dict[Field, tuple[JacobianGroup_base, Field]] = {}
         self._base_place = None
         self._curve = kwds.get('curve')
         super().__init__(category=Jacobians(function_field.constant_base_field()),
@@ -739,7 +841,7 @@ class Jacobian_base(Parent):
             return [self.group()]
         return [self.group(k) for k in self._system]
 
-    def base_divisor(self):
+    def base_divisor(self) -> FunctionFieldDivisor:
         """
         Return the base divisor used to construct the Jacobian.
 

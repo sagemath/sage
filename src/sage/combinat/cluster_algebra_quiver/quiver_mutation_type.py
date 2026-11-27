@@ -55,7 +55,7 @@ class QuiverMutationTypeFactory(SageObject):
         # data is a QuiverMutationType
         if isinstance(data, QuiverMutationType_Irreducible):
             return data
-        elif isinstance(data, QuiverMutationType_Reducible):
+        if isinstance(data, QuiverMutationType_Reducible):
             return data
 
         # check that data is a tuple or list
@@ -72,9 +72,8 @@ class QuiverMutationTypeFactory(SageObject):
                for data_component in data):
             if len(data) == 1:
                 return QuiverMutationType(data[0])
-            else:
-                data = tuple(QuiverMutationType(comp) for comp in data)
-                return QuiverMutationType_Reducible(*data)
+            data = tuple(QuiverMutationType(comp) for comp in data)
+            return QuiverMutationType_Reducible(*data)
 
         # check for irreducible types
         if len(data) == 2:
@@ -92,7 +91,7 @@ class QuiverMutationTypeFactory(SageObject):
         # mutation type casting
         if data == ('D', 2, None):
             return QuiverMutationType(('A', 1, None), ('A', 1, None))
-        elif data == ('D', 3, None):
+        if data == ('D', 3, None):
             data = ('A', 3, None)
         elif data == ('C', 2, None):
             data = ('B', 2, None)
@@ -1008,8 +1007,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         """
         if self.is_irreducible():
             return self._info['elliptic']
-        else:
-            return False
+        return False
 
     def properties(self) -> None:
         """
@@ -1755,7 +1753,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                     a += 2 * binomial(2*n//3, n//3)
                 return a // (n+3)
             # the formula is taken from Bastian, Prellberg, Rubey, Stump
-            elif self.is_affine():
+            if self.is_affine():
                 i, j = self._bi_rank
                 i = ZZ(i)
                 j = ZZ(j)
@@ -1766,11 +1764,10 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                             sum(f(k) * binomial(2 * i // k, i // k)**2
                                 for k in i.divisors()
                                 if k in j.divisors()) // n) // 4
-                else:
-                    return sum(f(k) * binomial(2 * i // k, i // k) *
-                               binomial(2 * j // k, j // k)
-                               for k in i.divisors()
-                               if k in j.divisors()) // (2 * n)
+                return sum(f(k) * binomial(2 * i // k, i // k) *
+                           binomial(2 * j // k, j // k)
+                           for k in i.divisors()
+                           if k in j.divisors()) // (2 * n)
 
         # types B and C (finite and affine)
         elif self._letter in ['B', 'C']:
@@ -1790,8 +1787,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
                     N = binomial(2 * n - 1, n - 1)
                     if n % 2:
                         return N
-                    else:
-                        return N + binomial(n - 1, n // 2 - 1)
+                    return N + binomial(n - 1, n // 2 - 1)
 
         # type BC (affine)
         elif self._letter == 'BC':
@@ -1819,23 +1815,20 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             if self.is_finite():
                 if self._rank == 4:
                     return 6
-                else:
-                    f = euler_phi
-                    n = ZZ(self._rank)
-                    return sum(f(n // k) * binomial(2 * k, k)
-                               for k in n.divisors()) // (2 * n)
+                f = euler_phi
+                n = ZZ(self._rank)
+                return sum(f(n // k) * binomial(2 * k, k)
+                           for k in n.divisors()) // (2 * n)
             # this formula is not yet proven
-            elif self.is_affine():
+            if self.is_affine():
                 n = self._rank - 3
                 if n == 2:
                     return 9
-                else:
-                    print("Warning: This method uses a formula "
-                          "which has not been proved correct.")
-                    if n % 2:
-                        return 2 * binomial(2 * n, n)
-                    else:
-                        return 2 * binomial(2 * n, n) + binomial(n, n // 2)
+                print("Warning: This method uses a formula "
+                      "which has not been proved correct.")
+                if n % 2:
+                    return 2 * binomial(2 * n, n)
+                return 2 * binomial(2 * n, n) + binomial(n, n // 2)
 
         # the exceptional types are hard-coded
         # type E (finite, affine and elliptic)
@@ -1843,32 +1836,32 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             if self.is_finite():
                 if self._rank == 6:
                     return 67
-                elif self._rank == 7:
+                if self._rank == 7:
                     return 416
-                elif self._rank == 8:
+                if self._rank == 8:
                     return 1574
             elif self.is_affine():
                 if self._rank == 7:
                     return 132
-                elif self._rank == 8:
+                if self._rank == 8:
                     return 1080
-                elif self._rank == 9:
+                if self._rank == 9:
                     return 7560
             elif self.is_elliptic():
                 if self._rank == 8:
                     return 49
-                elif self._rank == 9:
+                if self._rank == 9:
                     return 506
-                elif self._rank == 10:
+                if self._rank == 10:
                     return 5739
 
         # type F
         elif self._letter == 'F':
             if self.is_finite():
                 return 15
-            elif self.is_affine():
+            if self.is_affine():
                 return 60
-            elif self.is_elliptic():
+            if self.is_elliptic():
                 if self._twist == [1, 2]:
                     return 90
                 if self._twist in ([1, 1], [2, 2]):
@@ -1878,9 +1871,9 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
         elif self._letter == 'G':
             if self.is_finite():
                 return 2
-            elif self.is_affine():
+            if self.is_affine():
                 return 6
-            elif self.is_elliptic():
+            if self.is_elliptic():
                 if self._twist == [1, 3]:
                     return 7
                 if self._twist in ([1, 1], [3, 3]):
@@ -1890,7 +1883,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
         elif self._letter == 'X':
             if self._rank == 6:
                 return 5
-            elif self._rank == 7:
+            if self._rank == 7:
                 return 2
 
         # otherwise the size is returned to be unknown
@@ -1935,10 +1928,10 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             twist = self._twist
             return QuiverMutationType(letter, rank, twist)
         # the cases F and G have non-trivial duality in some cases
-        elif letter in ['F', 'G']:
+        if letter in ['F', 'G']:
             if self.is_finite():
                 return self
-            elif self.is_affine():
+            if self.is_affine():
                 rank = self._rank - 1
                 twist = - self._twist
             elif self.is_elliptic():
@@ -1957,8 +1950,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             else:
                 rank = self._rank
             return QuiverMutationType(letter, rank, twist)
-        else:
-            return self
+        return self
 
 
 class QuiverMutationType_Reducible(QuiverMutationType_abstract):
@@ -2090,10 +2082,9 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         if NotImplemented in sizes:
             print("Size unknown")
             return NotImplemented
-        else:
-            return prod(binomial(sizes[i] + multiplicities[i] - 1,
-                                 multiplicities[i])
-                        for i in range(len(sizes)))
+        return prod(binomial(sizes[i] + multiplicities[i] - 1,
+                             multiplicities[i])
+                    for i in range(len(sizes)))
 
     def dual(self):
         """

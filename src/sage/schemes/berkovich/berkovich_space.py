@@ -39,61 +39,15 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace_generic
-from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Affine,
-                                                         Berkovich_Element_Cp_Projective)
+from sage.schemes.berkovich.berkovich_cp_element import (
+    Berkovich_Element_Cp_Affine,
+    Berkovich_Element_Cp_Projective
+)
 from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
-
-
-def is_Berkovich(space) -> bool:
-    """
-    Check if ``space`` is a Berkovich space.
-
-    OUTPUT:
-
-    - ``True`` if ``space`` is a Berkovich space.
-    - ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
-        sage: is_Berkovich(B)
-        doctest:warning...
-        DeprecationWarning: The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.")
-    return isinstance(space, Berkovich)
-
-
-def is_Berkovich_Cp(space) -> bool:
-    """
-    Check if ``space`` is a Berkovich space over ``Cp``.
-
-    OUTPUT:
-
-    - ``True`` if ``space`` is a Berkovich space over ``Cp``.
-    - ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
-        sage: is_Berkovich_Cp(B)
-        doctest:warning...
-        DeprecationWarning: The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.")
-    return isinstance(space, Berkovich_Cp)
 
 
 class Berkovich(UniqueRepresentation, Parent):
@@ -132,7 +86,7 @@ class Berkovich_Cp(Berkovich):
 
     prime = residue_characteristic
 
-    def is_padic_base(self):
+    def is_padic_base(self) -> bool:
         """
         Return ``True`` if this Berkovich space is backed by a `p`-adic field.
 
@@ -155,7 +109,7 @@ class Berkovich_Cp(Berkovich):
         """
         return self._base_type == 'padic field'
 
-    def is_number_field_base(self):
+    def is_number_field_base(self) -> bool:
         """
         Return ``True`` if this Berkovich space is backed by a number field.
 
@@ -217,7 +171,7 @@ class Berkovich_Cp(Berkovich):
         """
         return self._ideal
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Equality operator.
 
@@ -262,10 +216,9 @@ class Berkovich_Cp(Berkovich):
             return False
         if self._base_type == 'padic field':
             return self.prime() == right.prime()
-        else:
-            return self.base() == right.base() and self.ideal() == right.ideal()
+        return self.base() == right.base() and self.ideal() == right.ideal()
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Inequality operator.
 
@@ -279,7 +232,7 @@ class Berkovich_Cp(Berkovich):
         """
         return not (self == right)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Hash function.
 
@@ -429,7 +382,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
     Element = Berkovich_Element_Cp_Affine
 
-    def __init__(self, base, ideal=None):
+    def __init__(self, base, ideal=None) -> None:
         """
         The Python constructor.
 
@@ -475,7 +428,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         self._p = prime
         Parent.__init__(self, base=base, category=TopologicalSpaces())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Berkovich Space.
 
@@ -496,11 +449,11 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Affine Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().precision_cap())
-        else:
-            return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base())
 
-    def _latex_(self):
+        return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
+                                                                    self.base())
+
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of this Berkovich Space.
 
@@ -624,7 +577,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
     Element = Berkovich_Element_Cp_Projective
 
-    def __init__(self, base, ideal=None):
+    def __init__(self, base, ideal=None) -> None:
         """
         The Python constructor.
 
@@ -709,7 +662,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         """
         return self.base().base_ring()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Berkovich Space.
 
@@ -730,11 +683,10 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Projective Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().base_ring().precision_cap())
-        else:
-            return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base().base_ring())
+        return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
+            self.base().base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of this Berkovich Space.
 

@@ -353,7 +353,7 @@ class Homspace(HomsetWithBase):
         if isinstance(M, morphism.Morphism):
             if M.parent() is self:
                 return M
-            elif M.domain() == self.domain() and M.codomain() == self.codomain():
+            if M.domain() == self.domain() and M.codomain() == self.codomain():
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
@@ -433,10 +433,9 @@ class Homspace(HomsetWithBase):
 
         if isinstance(g, morphism.Morphism):
             return g.matrix()
-        elif hasattr(g, 'list'):
+        if hasattr(g, 'list'):
             return self.matrix_space()(g.list())
-        else:
-            return self.matrix_space()(g)
+        return self.matrix_space()(g)
 
     def free_module(self):
         r"""
@@ -766,7 +765,7 @@ class EndomorphismSubring(Homspace):
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
         :issue:`16275` removed the custom ``__reduce__`` method, since
-        :meth:`Homset.__reduce__` already implements appropriate
+        ``Homset.__reduce__`` already implements appropriate
         unpickling by construction::
 
             sage: E.__reduce__.__module__
@@ -809,8 +808,7 @@ class EndomorphismSubring(Homspace):
         """
         if self._is_full_ring:
             return "Endomorphism ring of %s" % self._A
-        else:
-            return "Subring of endomorphism ring of %s" % self._A
+        return "Subring of endomorphism ring of %s" % self._A
 
     def abelian_variety(self):
         """

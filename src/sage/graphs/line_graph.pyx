@@ -189,7 +189,6 @@ def is_line_graph(g, certificate=False):
 
     But what is the graph whose line graph is the house ?::
 
-        sage: # needs sage.modules
         sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'

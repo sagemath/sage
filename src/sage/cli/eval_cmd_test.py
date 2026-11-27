@@ -18,5 +18,5 @@ def test_eval_cmd_invalid_command(capsys):
     eval_cmd = EvalCmd(options)
 
     with pytest.raises(NameError) as err:
-        result = eval_cmd.run()
+        eval_cmd.run()
     assert str(err.value) == "name 'invalid_command' is not defined"

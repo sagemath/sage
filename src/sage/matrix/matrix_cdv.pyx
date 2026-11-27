@@ -35,7 +35,6 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
 
     TESTS::
 
-        sage: # needs sage.rings.padics
         sage: K = Qp(5, print_mode='digits', prec=5)
         sage: H = matrix(K, 3, 3, range(9))
         sage: H

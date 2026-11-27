@@ -28,7 +28,6 @@ from platformdirs import site_data_dir, user_data_dir
 
 import sage.config
 from sage import version
-from sage.config import get_include_dirs
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
@@ -151,13 +150,12 @@ SAGE_DATE = var("SAGE_DATE", version.date)
 SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
-SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
 SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
-SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 
 # prefix hierarchy where non-Python packages are installed
-SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
+# Sage-the-Distro sets SAGE_LOCAL; pure Python installs use the active prefix.
+SAGE_LOCAL = var("SAGE_LOCAL", os.path.abspath(sys.prefix))
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
 SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
@@ -176,11 +174,7 @@ SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
 SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
-if sys.platform == 'win32':
-    home_dir = os.environ.get("USERPROFILE")
-else:  # Unix-like systems (Linux, macOS, etc.)
-    home_dir = os.environ.get("HOME")
-DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage"))
+DOT_SAGE = var("DOT_SAGE", os.path.expanduser("~/.sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv
@@ -206,7 +200,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
-MAXIMA_SHARE = var("MAXIMA_SHARE")
+MAXIMA_PREFIX = var("MAXIMA_PREFIX")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -220,7 +214,6 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
@@ -229,10 +222,12 @@ SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
+OPENMP_LDFLAGS = OPENMP_CFLAGS+" "+var("OPENMP_CLIB", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
-# Make sure mpmath uses Sage types
-os.environ['MPMATH_SAGE'] = '1'
+# Make sure that mpmath < 1.4 does not try to use Sage types
+os.environ.pop('MPMATH_SAGE', None)
+os.environ['MPMATH_NOSAGE'] = '1'
 
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
@@ -243,12 +238,6 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
 
-# The semicolon-separated search path for GAP packages. It is passed
-# directly to GAP via the -l flag.
-GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
-                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                               join(SAGE_LOCAL, "share", "gap")]))
-
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
     print("Your home directory has a space in it.  This")
@@ -257,71 +246,6 @@ if DOT_SAGE is not None and ' ' in DOT_SAGE:
     print("is to set the environment variable HOME to a")
     print("directory with no spaces that you have write")
     print("permissions to before you start sage.")
-
-
-def sage_include_directories(use_sources=False):
-    """
-    Return the list of include directories for compiling Sage extension modules.
-
-    INPUT:
-
-    - ``use_sources`` -- boolean (default: ``False``)
-
-    OUTPUT:
-
-    a list of include directories to be used to compile sage code
-    1. while building sage (use_sources='True')
-    2. while using sage (use_sources='False')
-
-    EXAMPLES:
-
-    Expected output while using Sage::
-
-        sage: import sage.env
-        sage: sage.env.sage_include_directories()
-        doctest:warning...
-        DeprecationWarning: use sage.config.get_include_dirs() instead
-        ...
-        ['...',
-         '.../numpy/...core/include',
-         '.../include/python...']
-
-    To check that C/C++ files are correctly found, we verify that we can
-    always find the include file ``sage/cpython/cython_metaclass.h``,
-    with both values for ``use_sources``::
-
-        sage: file = os.path.join("sage", "cpython", "cython_metaclass.h")
-        sage: dirs = sage.env.sage_include_directories(use_sources=True)
-        sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
-        True
-
-    ::
-
-        sage: # optional - !meson_editable (no need, see :issue:`39275`)
-        sage: dirs = sage.env.sage_include_directories(use_sources=False)
-        sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(40765, 'use sage.config.get_include_dirs() instead')
-
-    if use_sources:
-        dirs = [SAGE_SRC]
-    else:
-        import sage
-        dirs = [os.path.dirname(directory)
-                for directory in sage.__path__]
-    try:
-        import numpy
-        dirs.append(numpy.get_include())
-    except ModuleNotFoundError:
-        pass
-
-    dirs.append(sysconfig.get_config_var('INCLUDEPY'))
-
-    dirs.extend([dir.as_posix() for dir in get_include_dirs()])
-
-    return dirs
 
 
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
@@ -368,7 +292,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython(                                               # optional - sage.misc.cython
         ....: '''
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
-        ....: #distutils: extra_link_args = OPENMP_CFLAGS
+        ....: #distutils: extra_link_args = OPENMP_LDFLAGS
         ....: from cython.parallel import prange
         ....:
         ....: cdef int i
@@ -448,8 +372,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     def uname_specific(name, value, alternative):
         if name in UNAME[0]:
             return value
-        else:
-            return alternative
+        return alternative
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])
@@ -480,6 +403,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     # OpenMP
     aliases["OPENMP_CFLAGS"] = OPENMP_CFLAGS.split()
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
+    aliases["OPENMP_LDFLAGS"] = OPENMP_LDFLAGS.split()
 
     return aliases
 

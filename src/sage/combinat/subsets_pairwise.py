@@ -160,7 +160,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         """
         return self._element_class(subset_rest[0])
 
-    def children(self, subset_rest):
+    def children(self, subset_rest) -> list:
         """
         Return the children of a node in the tree.
 
@@ -173,11 +173,12 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
             sage: list(P.children( ((3,5), [14,11,7]) ))
             [((3, 5, 7), (11,)), ((3, 5, 11), (14,)), ((3, 5, 14), ())]
         """
-        (subset, rest) = subset_rest
+        subset, rest = subset_rest
         predicate = self._predicate
         result = []
         rest = list(rest)
         while rest:
             x = rest.pop()
-            result.append((subset+(x,), tuple( y for y in rest if predicate(x,y) )))
+            result.append((subset + (x,),
+                           tuple(y for y in rest if predicate(x, y))))
         return result

@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-bootstrap-python
+#!/usr/bin/env python3
 # vim: set filetype=python:
 """
 This script runs the given command under a file lock (similar to the flock

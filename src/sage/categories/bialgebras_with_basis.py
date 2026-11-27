@@ -11,7 +11,6 @@ Bialgebras with basis
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import tensor
-from sage.misc.superseded import deprecated_function_alias
 
 
 class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
@@ -70,7 +69,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                :meth:`sage.categories.bialgebras.ElementMethods.convolution_product`
+                :meth:`sage.categories.bialgebras_with_basis.BialgebrasWithBasis.ElementMethods.convolution_product`
 
             AUTHORS:
 
@@ -166,7 +165,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                :meth:`sage.categories.bialgebras.ElementMethods.convolution_product`
+                :meth:`sage.categories.bialgebras_with_basis.BialgebrasWithBasis.ParentMethods.convolution_product`
 
             .. TODO::
 
@@ -212,9 +211,6 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 T = lambda x: x
             return self.convolution_product([T] * n)
-
-        adams_operator = deprecated_function_alias(36396,
-                                                   convolution_power_of_id)
 
         def convolution_product(self, *maps):
             r"""

@@ -1,5 +1,5 @@
 r"""
-Jacobians in Khuri-Makdisi model
+Jacobians in the Khuri-Makdisi model
 
 This module implements Jacobian arithmetic by Khuri-Makdisi's algorithms
 [Khu2004]_ based on divisor representation by linear spaces.
@@ -119,27 +119,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, richcmp
-
-from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.homset import Hom
-
-from sage.matrix.constructor import matrix
-
+from sage.categories.map import Map
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .place import FunctionFieldPlace
 from .divisor import FunctionFieldDivisor
-
-from .jacobian_base import (Jacobian_base,
-                            JacobianGroup_base,
-                            JacobianGroup_finite_field_base,
-                            JacobianPoint_base,
-                            JacobianPoint_finite_field_base)
+from .jacobian_base import (
+    Jacobian_base,
+    JacobianGroup_base,
+    JacobianGroup_finite_field_base,
+    JacobianPoint_base,
+    JacobianPoint_finite_field_base,
+)
+from .place import FunctionFieldPlace
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -212,30 +210,6 @@ class JacobianPoint(JacobianPoint_base):
         """
         return f'Point of Jacobian determined by \n{self._w}'
 
-    def __hash__(self) -> int:
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: F = C.function_field()
-            sage: h = C.function(y/x).divisor_of_poles()
-            sage: J = C.jacobian(model='km_large', base_div=h)
-            sage: G = J.group()
-            sage: zero = G.zero()
-            sage: {zero: 1}
-            {Point of Jacobian determined by
-             [1 0 0 0 0 0 0 0 0]
-             [0 1 0 0 0 0 0 0 0]
-             [0 0 1 0 0 0 0 0 0]
-             [0 0 0 0 1 0 0 0 0]
-             [0 0 0 0 0 1 0 0 0]
-             [0 0 0 0 0 0 0 1 0]: 1}
-        """
-        return hash(self._w)
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` with ``other`` with respect to operator ``op``.
@@ -262,12 +236,30 @@ class JacobianPoint(JacobianPoint_base):
             True
             sage: p1 < p2
             False
+
+        We correctly handle divisor classes that are equal but have different defining matrices:
+
+            sage: Kx.<x> = FunctionField(GF(17))
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + (14*x + 3)*t^3 + (5*x + 7)*t^2 + (14*x^2 + 4*x + 8)*t + 4*x^3 + 7*x^2 + 4*x + 13)
+            sage: O = F.maximal_order()
+            sage: Oinf = F.maximal_order_infinite()
+            sage: B = 3 * O.ideal(x, y + 2).divisor()
+            sage: J = F.jacobian('km_small')
+            sage: D1 = 2 * Oinf.ideal(1/x, y/x).divisor() + Oinf.ideal(1/x, y/x + 14).divisor()
+            sage: D2 = O.ideal(x^3 + 6 * x^2 + x + 16, y).divisor()
+            sage: G = J.group()
+            sage: P1 = G.point(D1 - B)
+            sage: P2 = G.point(D2 - B)
+            sage: P1 == P2
+            True
+            sage: P1.defining_matrix() == P2.defining_matrix()
+            False
         """
-        if op is op_EQ:
-            km = self.parent()._km
-            return km.equal(self._w, other._w)
-        else:
+        if op not in (op_EQ, op_NE):
             return richcmp(self._w, other._w, op)
+        km = self.parent()._km
+        return km.equal(self._w, other._w) == (op is op_EQ)
 
     def _add_(self, other):
         """
@@ -330,7 +322,7 @@ class JacobianPoint(JacobianPoint_base):
         km = G._km
         return G.element_class(self.parent(), km.negate(self._w))
 
-    def _rmul_(self, n):
+    def _lmul_(self, n):
         """
         Return the ``n``-th multiple of this point.
 
@@ -351,38 +343,18 @@ class JacobianPoint(JacobianPoint_base):
             sage: 10*(10*p) == 100*p
             True
         """
-        return self.multiple(n)
-
-    def multiple(self, n):
-        """
-        Return the ``n``-th multiple of this point.
-
-        INPUT:
-
-        - ``n`` -- integer
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: h = C.function(y/x).divisor_of_poles()
-            sage: b = C([0,1,0]).place()
-            sage: pl = C([-1,2,1]).place()
-            sage: J = C.jacobian(model='km_large', base_div=h)
-            sage: G = J.group()
-            sage: p = G.point(pl - b)
-            sage: p.multiple(100)
-            Point of Jacobian determined by
-            [1 0 0 0 0 2 0 1 1]
-            [0 1 0 0 0 5 0 1 6]
-            [0 0 1 0 0 2 0 6 3]
-            [0 0 0 1 0 1 0 0 0]
-            [0 0 0 0 1 5 0 1 4]
-            [0 0 0 0 0 0 1 1 0]
-        """
+        # The coercion model can take care of multiplication
+        # without this method, but this implementation is faster.
         G = self.parent()
         km = G._km
-        return G.element_class(self.parent(), km.multiple(self._w, n))
+        return G.element_class(G, km.multiple(self._w, n))
+
+    def multiple(self, n):
+        r"""
+        Deprecated alias of ``self * n``.
+        """
+        deprecation(41453, 'this method is deprecated, use regular multiplication with * instead')
+        return self * n
 
     def addflip(self, other):
         """
@@ -620,7 +592,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         D0 = base_div
 
         self._base_div_degree = base_div.degree()
-        self._V_cache = dict()
+        self._V_cache: dict[int, tuple] = dict()
 
         def V(n):
             if n in self._V_cache:
@@ -644,7 +616,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         elif model == 'medium':
             div_L = 2 * D0
             L, from_L, to_L = V(2)
-            from sage.rings.function_field.khuri_makdisi import KhuriMakdisi_medium as KM
+            from sage.rings.function_field.khuri_makdisi import (
+                KhuriMakdisi_medium as KM,
+            )
         elif model == 'small':
             div_L = 3 * D0
             L, from_L, to_L = V(3)

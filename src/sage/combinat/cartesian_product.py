@@ -243,7 +243,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
              ['g', 'a'],
              ['g', 't']]
         """
-        return [e for e in self]
+        return list(self)
 
     def __iterate__(self):
         r"""

@@ -67,7 +67,6 @@ cimport cython
 from cpython.object cimport *
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR
 from cpython.tuple cimport PyTuple_New
-from cpython.weakref cimport PyWeakref_GetObject, PyWeakref_GET_OBJECT
 from cysignals.memory cimport check_calloc, sig_free
 
 cdef extern from "Python.h":
@@ -85,7 +84,7 @@ cdef inline bint is_dead_keyedref(x) noexcept:
     """
     if type(x) is not KeyedRef:
         return False
-    return PyWeakref_GET_OBJECT(x) is <PyObject*>None
+    return x() is None
 
 
 # Unique sentinel to indicate a deleted cell
@@ -235,7 +234,7 @@ cdef class MonoDictEraser:
             sage: len(D) # indirect doctest
             0
         """
-        cdef MonoDict md = <MonoDict>PyWeakref_GetObject(self.D)
+        cdef MonoDict md = self.D()
         if md is None or not md.mask:
             return
         cdef mono_cell* cursor = md.lookup(unwrap(r.key))
@@ -359,6 +358,26 @@ cdef class MonoDict:
         0
         sage: len(M)
         1
+
+    Reading weak values must not keep them alive (:issue:`43054`)::
+
+        sage: import sys
+        sage: from weakref import ref
+        sage: from sage.structure.coerce_dict import TripleDict
+        sage: for cls, key in [(MonoDict, 0), (TripleDict, (0, 0, 0))]:
+        ....:     value = Foo()
+        ....:     D = cls(weak_values=True)
+        ....:     D[key] = value
+        ....:     count = sys.getrefcount(value)
+        ....:     for _ in range(10):
+        ....:         assert D[key] is value
+        ....:         assert key in D
+        ....:         assert list(D.items()) == [(key, value)]
+        ....:     assert sys.getrefcount(value) == count
+        ....:     wr = ref(value)
+        ....:     del value
+        ....:     assert wr() is None
+        ....:     assert len(D) == 0
 
    Note that ``MW`` also accepts values that do not allow for weak references::
 
@@ -656,7 +675,7 @@ cdef class MonoDict:
         # we know that it's alive.
         value = <object>cursor.value
         if type(value) is KeyedRef:
-            value = <object>PyWeakref_GET_OBJECT(value)
+            value = value()
             if value is None:
                 raise KeyError(k)
         return value
@@ -795,12 +814,12 @@ cdef class MonoDict:
                 key = <object>(cursor.key_weakref)
                 value = <object>(cursor.value)
                 if type(key) is KeyedRef:
-                    key = <object>PyWeakref_GET_OBJECT(key)
+                    key = key()
                     if key is None:
                         print("found defunct key")
                         continue
                 if type(value) is KeyedRef:
-                    value = <object>PyWeakref_GET_OBJECT(value)
+                    value = value()
                     if value is None:
                         print("found defunct value")
                         continue
@@ -962,7 +981,7 @@ cdef class TripleDictEraser:
             sage: len(T)    # indirect doctest
             0
         """
-        cdef TripleDict td = <TripleDict>PyWeakref_GetObject(self.D)
+        cdef TripleDict td = self.D()
         if td is None or not td.mask:
             return
         k1, k2, k3 = r.key
@@ -1320,7 +1339,7 @@ cdef class TripleDict:
             raise KeyError((k1, k2, k3))
         value = <object>cursor.value
         if type(value) is KeyedRef:
-            value = <object>PyWeakref_GET_OBJECT(value)
+            value = value()
             if value is None:
                 raise KeyError((k1, k2, k3))
         return value
@@ -1460,22 +1479,22 @@ cdef class TripleDict:
                 key3 = <object>(cursor.key_weakref3)
                 value = <object>(cursor.value)
                 if type(key1) is KeyedRef:
-                    key1 = <object>PyWeakref_GET_OBJECT(key1)
+                    key1 = key1()
                     if key1 is None:
                         print("found defunct key1")
                         continue
                 if type(key2) is KeyedRef:
-                    key2 = <object>PyWeakref_GET_OBJECT(key2)
+                    key2 = key2()
                     if key2 is None:
                         print("found defunct key2")
                         continue
                 if type(key3) is KeyedRef:
-                    key3 = <object>PyWeakref_GET_OBJECT(key3)
+                    key3 = key3()
                     if key3 is None:
                         print("found defunct key3")
                         continue
                 if type(value) is KeyedRef:
-                    value = <object>PyWeakref_GET_OBJECT(value)
+                    value = value()
                     if value is None:
                         print("found defunct value")
                         continue

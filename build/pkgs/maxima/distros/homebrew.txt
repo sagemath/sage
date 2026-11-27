@@ -1,1 +1,1 @@
-maxima
+dimpase/tap/maxima-ecl

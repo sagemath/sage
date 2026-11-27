@@ -135,7 +135,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         sage: PCL = PseudoConwayLattice(2, use_database=False)
         sage: PCL.polynomial(3)   # random
@@ -163,13 +162,11 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(3)
             sage: PCL.polynomial(3)  # random
             x^3 + 2*x + 1
 
-            sage: # needs sage.rings.finite_rings
             sage: PCL = PseudoConwayLattice(5, use_database=False)
             sage: PCL.polynomial(12)  # random
             x^12 + 4*x^11 + 2*x^10 + 4*x^9 + 2*x^8 + 2*x^7 + 4*x^6 + x^5 + 2*x^4 + 2*x^2 + x + 2
@@ -212,7 +209,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.polynomial(3)   # random
@@ -281,7 +277,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.check_consistency(6)
@@ -313,7 +308,6 @@ def _find_pow_of_frobenius(p, n, x, y):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import _find_pow_of_frobenius
         sage: K.<a> = GF(3^14)
         sage: x = K.multiplicative_generator()
@@ -351,18 +345,17 @@ def _crt_non_coprime(running, a):
     g = running.modulus().gcd(a.modulus())
     if g == 1:
         return running.crt(a)
-    else:
-        assert running % g == a % g
-        running_modulus = running.modulus()
-        a_modulus = a.modulus()
-        for qq in g.prime_divisors():
-            a_val_unit = a_modulus.val_unit(qq)
-            running_val_unit = running_modulus.val_unit(qq)
-            if a_val_unit[0] > running_val_unit[0]:
-                running_modulus = running_val_unit[1]
-            else:
-                a_modulus = a_val_unit[1]
-        return (running % running_modulus).crt(a % a_modulus)
+    assert running % g == a % g
+    running_modulus = running.modulus()
+    a_modulus = a.modulus()
+    for qq in g.prime_divisors():
+        a_val_unit = a_modulus.val_unit(qq)
+        running_val_unit = running_modulus.val_unit(qq)
+        if a_val_unit[0] > running_val_unit[0]:
+            running_modulus = running_val_unit[1]
+        else:
+            a_modulus = a_val_unit[1]
+    return (running % running_modulus).crt(a % a_modulus)
 
 
 def _frobenius_shift(K, generators, check_only=False):
@@ -393,7 +386,6 @@ def _frobenius_shift(K, generators, check_only=False):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl sage.rings.finite_rings
         sage: R.<x> = GF(2)[]
         sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
         sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
@@ -472,7 +464,7 @@ def _frobenius_shift(K, generators, check_only=False):
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
-                elif j not in searched:
+                if j not in searched:
                     crt_possibles.append(j)
         for j in crt_possibles:
             path = find_leveller(qindex, level, x, xleveled, searched, j)

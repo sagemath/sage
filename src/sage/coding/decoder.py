@@ -343,8 +343,7 @@ class Decoder(SageObject):
         """
         if hasattr(self, "_input_space"):
             return self._input_space
-        else:
-            raise NotImplementedError("Decoder does not have an _input_space parameter")
+        raise NotImplementedError("Decoder does not have an _input_space parameter")
 
     @abstract_method(optional=True)
     def decoding_radius(self, **kwargs):

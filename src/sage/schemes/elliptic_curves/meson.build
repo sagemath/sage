@@ -10,6 +10,7 @@ py.install_sources(
   'descent_two_isogeny.pyx',
   'ec_database.py',
   'ell_curve_isogeny.py',
+  'ell_edwards.py',
   'ell_egros.py',
   'ell_field.py',
   'ell_finite_field.py',
@@ -71,7 +72,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/schemes/elliptic_curves',
     install: true,
     include_directories: [inc_cpython, inc_flint, inc_rings],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, numpy, pari],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, numpy],
   )
 endforeach
-

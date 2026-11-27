@@ -202,7 +202,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         We also substitute the generators in any base fields::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -226,7 +225,6 @@ cdef class FunctionFieldElement(FieldElement):
             ...
             TypeError: in_dict must be a dict
 
-            sage: # needs sage.rings.function_field
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
             sage: f = x + y
@@ -237,7 +235,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         We can also substitute using dictionary syntax::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -253,7 +250,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Check that we correctly handle extension fields::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -275,7 +271,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test that substitution works for rational functions::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^4 - 3)
@@ -304,7 +299,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Same purpose as above but over an extension field over the rationals::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -326,7 +320,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test proper handling of not making substitutions::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: f = x
             sage: f.subs() is f
@@ -365,7 +358,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test error handling with ambiguously named generators::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<x> = K[]
             sage: L.<x> = K.extension(x^3 - x)
@@ -463,7 +455,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         Now an example in a nontrivial extension of a rational function field::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: y.matrix()
@@ -475,7 +466,6 @@ cdef class FunctionFieldElement(FieldElement):
         An example in a relative extension, where neither function
         field is rational::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
@@ -498,7 +488,6 @@ cdef class FunctionFieldElement(FieldElement):
         We show that this matrix does indeed work as expected when making a
         vector space from a function field::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
@@ -605,7 +594,6 @@ cdef class FunctionFieldElement(FieldElement):
             sage: x.characteristic_polynomial('W')                                      # needs sage.modules
             W - x
 
-            sage: # needs sage.rings.function_field
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]
             sage: M.<z> = L.extension(z^3 - y^2*z + x)
             sage: y.characteristic_polynomial('W')
@@ -628,7 +616,6 @@ cdef class FunctionFieldElement(FieldElement):
             sage: x.minimal_polynomial('W')                                             # needs sage.modules
             W - x
 
-            sage: # needs sage.rings.function_field
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]
             sage: M.<z> = L.extension(z^3 - y^2*z + x)
             sage: y.minimal_polynomial('W')
@@ -646,7 +633,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: y.is_integral()
@@ -687,7 +673,6 @@ cdef class FunctionFieldElement(FieldElement):
             sage: x.differential()                                                      # needs sage.modules
             d(x)
 
-            sage: # needs sage.rings.function_field
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
             sage: R.<z> = L[]
@@ -894,7 +879,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         ::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -930,7 +914,6 @@ cdef class FunctionFieldElement(FieldElement):
 
         ::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: p, = L.places_infinite()

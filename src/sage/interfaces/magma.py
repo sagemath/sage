@@ -214,19 +214,24 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from pathlib import Path
+import os
 import re
 import sys
-import os
+from pathlib import Path
 
-from sage.structure.parent import Parent
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.env import SAGE_EXTCODE, DOT_SAGE
+import sage.interfaces.abc
 import sage.misc.misc
 import sage.misc.sage_eval
-import sage.interfaces.abc
+from sage.env import DOT_SAGE, SAGE_EXTCODE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.structure.parent import Parent
 
 PROMPT = ">>>"
 
@@ -372,10 +377,11 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: m = Magma() # optional - magma
-            sage: m.set_seed(1) # optional - magma
+            sage: # optional - magma
+            sage: m = Magma()
+            sage: m.set_seed(1)
             1
-            sage: [m.Random(100) for i in range(5)] # optional - magma
+            sage: [m.Random(100) for i in range(5)]  # random
             [14, 81, 45, 75, 67]
         """
         if seed is None:
@@ -1014,13 +1020,14 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(mode='w+t', suffix='.m') as f:  # optional - magma
+            sage: with NTF(mode='w+t', suffix='.m') as f:
             ....:     _ = f.write('function f(n) return n^2; end function;\nprint "hi";')
             ....:     print(magma.load(f.name))
             Loading "....m"
             hi
-            sage: magma('f(12)')  # optional - magma
+            sage: magma('f(12)')
             144
         """
         p = Path(filename)
@@ -2267,13 +2274,14 @@ class MagmaElement(ExtraTabCompletion, ExpectElement,
 
         EXAMPLES::
 
+            sage: # optional - magma
             sage: R.<x> = QQ[]
-            sage: f = magma(x^2 + 2/3*x + 5)                 # optional - magma
-            sage: f                                          # optional - magma
+            sage: f = magma(x^2 + 2/3*x + 5)
+            sage: f
             x^2 + 2/3*x + 5
-            sage: f.Type()                                   # optional - magma
+            sage: f.Type()
             RngUPolElt
-            sage: f._polynomial_(R)                          # optional - magma
+            sage: f._polynomial_(R)
             x^2 + 2/3*x + 5
         """
         return R(list(self.Eltseq()))
@@ -2888,10 +2896,9 @@ class MagmaGBLogPrettyPrinter:
                     if style == "sage" and verbosity >= 1:
                         print("Leading term degree: %2d. Critical pairs: %d." %
                               (self.curr_deg, self.curr_npairs))
-                else:
-                    if style == "sage" and verbosity >= 1:
-                        print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
-                              (self.curr_deg, self.curr_npairs))
+                elif style == "sage" and verbosity >= 1:
+                    print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
+                          (self.curr_deg, self.curr_npairs))
 
             if style == "magma" and verbosity >= 1:
                 print(line)

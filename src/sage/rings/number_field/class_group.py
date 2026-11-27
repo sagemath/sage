@@ -480,11 +480,10 @@ class ClassGroup(AbelianGroupWithValues_class):
         """
         if isinstance(args[0], FractionalIdealClass):
             return self.element_class(self, None, self._number_field.ideal(args[0].ideal()))
-        else:
-            I = self._number_field.ideal(*args, **kwds)
-            if I.is_zero():
-                raise TypeError("The zero ideal is not a fractional ideal")
-            return self.element_class(self, None, I)
+        I = self._number_field.ideal(*args, **kwds)
+        if I.is_zero():
+            raise TypeError("The zero ideal is not a fractional ideal")
+        return self.element_class(self, None, I)
 
     def _ideal_log(self, ideal):
         """
@@ -509,7 +508,7 @@ class ClassGroup(AbelianGroupWithValues_class):
         r"""
         Return generating ideals for the (`S`-)class group.
 
-        This is an alias for :meth:`gens_values`.
+        This is an alias for :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.gens_values`.
 
         OUTPUT: a tuple of ideals, one for each abstract Abelian group generator
 
@@ -523,10 +522,10 @@ class ClassGroup(AbelianGroupWithValues_class):
             sage: C = NumberField(x^2 + x + 23899, 'a').class_group(); C
             Class group of order 68 with structure C34 x C2 of Number Field
             in a with defining polynomial x^2 + x + 23899
-            sage: C.gens()
+            sage: C.gens()  # random - depends on pari version
             (Fractional ideal class (83, a + 21), Fractional ideal class (15, a + 8))
-            sage: C.gens_ideals()
-            (Fractional ideal (83, a + 21), Fractional ideal (15, a + 8))
+            sage: C.gens() == C.gens_ideals()
+            True
         """
         return self.gens_values()
 
@@ -736,11 +735,10 @@ class SClassGroup(ClassGroup):
         """
         if isinstance(args[0], FractionalIdealClass):
             return self.element_class(self, None, args[0].ideal())
-        else:
-            I = self.number_field().ideal(*args, **kwds)
-            if I.is_zero():
-                raise TypeError("The zero ideal is not a fractional ideal")
-            return self.element_class(self, None, I)
+        I = self.number_field().ideal(*args, **kwds)
+        if I.is_zero():
+            raise TypeError("The zero ideal is not a fractional ideal")
+        return self.element_class(self, None, I)
 
     def _repr_(self):
         r"""

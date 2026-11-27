@@ -1,5 +1,8 @@
 r"""
 Finite Enumerated Sets
+
+.. automethod:: sage.categories.finite_enumerated_sets::FiniteEnumeratedSets.ParentMethods._cardinality_from_iterator
+.. automethod:: sage.categories.finite_enumerated_sets::FiniteEnumeratedSets.ParentMethods._test_enumerated_set_iter_cardinality
 """
 # ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
@@ -119,8 +122,9 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C.cardinality
                 <bound method FiniteEnumeratedSets.ParentMethods._cardinality_from_iterator of FreshExample>
 
-            This method shall return an ``Integer``; we test this
-            here, because :meth:`_test_enumerated_set_iter_cardinality`
+            This method shall return an ``Integer``; for the default
+            :meth:`cardinality` implementation, we test this here because
+            :meth:`~sage.categories.finite_enumerated_sets.FiniteEnumeratedSets.ParentMethods._test_enumerated_set_iter_cardinality`
             does not do it for us::
 
                 sage: type(C._cardinality_from_iterator())
@@ -219,7 +223,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         def tuple(self):
             r"""
-            Return a :class:`tuple`of the elements of ``self``.
+            Return a ``tuple`` of the elements of ``self``.
 
             EXAMPLES::
 
@@ -625,7 +629,8 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
         def _test_enumerated_set_iter_cardinality(self, **options):
             """
             Check that the methods :meth:`.cardinality` and
-            :meth:`.__iter__` are consistent. Also checks that
+            :meth:`~sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.__iter__`
+            are consistent. Also checks that
             :meth:`.cardinality` returns an ``Integer``.
 
             For efficiency reasons, those tests are not run if

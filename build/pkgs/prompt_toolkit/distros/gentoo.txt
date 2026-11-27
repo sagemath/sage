@@ -1,1 +1,1 @@
-dev-python/prompt_toolkit
+dev-python/prompt-toolkit

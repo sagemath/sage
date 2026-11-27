@@ -412,8 +412,8 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: LQQ = L.change_ring(QQ)
             sage: LQQ.structure_coefficients()
             Finite family {('x', 'y'): z}
-            sage: LSR = LQQ.change_ring(SR)                                             # needs sage.symbolic
-            sage: LSR.structure_coefficients()                                          # needs sage.symbolic
+            sage: LSR = LQQ.change_ring(SR)
+            sage: LSR.structure_coefficients()
             Finite family {('x', 'y'): z}
         """
         return LieAlgebraWithStructureCoefficients(

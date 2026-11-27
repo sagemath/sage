@@ -78,8 +78,7 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
         """
         if self.level() == 1:
             return cuspidal_submodule.CuspidalSubmodule_level1_Q(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_g0_Q(self)
+        return cuspidal_submodule.CuspidalSubmodule_g0_Q(self)
 
     @cached_method
     def eisenstein_submodule(self):
@@ -115,5 +114,4 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
         if self.level() == 1:
             from sage.matrix.matrix_space import MatrixSpace
             return MatrixSpace(self.base_ring(), self.rank())(1)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError

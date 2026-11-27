@@ -1,1 +1,1 @@
-textproc/py-roman-numerals-py
+textproc/py-roman-numerals

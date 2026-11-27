@@ -268,8 +268,7 @@ class SymplecticForm(DiffForm):
             # The restriction is ready
             self._restrictions[subdomain] = restriction
             return restriction
-        else:
-            return self._restrictions[subdomain]
+        return self._restrictions[subdomain]
 
     @staticmethod
     def wrap(
@@ -334,7 +333,7 @@ class SymplecticForm(DiffForm):
         If ``expansion_symbol`` is set, then the zeroth order symplectic form must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use ``_del_derived()``.
 
         OUTPUT:
 
@@ -597,7 +596,7 @@ class SymplecticForm(DiffForm):
             \omega(\alpha, \beta) = \omega(\alpha^\sharp, \beta^\sharp),
 
         where `\alpha^\sharp` is the dual of `\alpha` with respect to `\omega`, see
-        :meth:`~sage.manifolds.differentiable.tensor_field.TensorField.up`.
+        :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.up`.
         This bilinear form induces a bilinear form on the space of all forms determined
         by its value on decomposable elements as:
 
@@ -809,7 +808,7 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
         If ``expansion_symbol`` is set, then the zeroth order symplectic form must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use ``_del_derived()``.
 
         OUTPUT:
 

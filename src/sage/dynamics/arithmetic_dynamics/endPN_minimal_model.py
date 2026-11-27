@@ -618,8 +618,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 
     if return_transformation:
         return classes
-    else:
-        return [funct for funct, matr in classes]
+    return [funct for funct, matr in classes]
 
 ###################################################
 # enumerative algorithms from Hutz-Stoll
@@ -776,8 +775,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
         # nothing to do if the prime doesn't divide the resultant
         if return_transformation:
             return [[f, m]]
-        else:
-            return [f]
+        return [f]
     to_do = [[F, m, prev]] # repns left to check
     reps = [[F, m]] # orbit representatives for f
     while to_do:
@@ -817,8 +815,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
 
     if return_transformation:
         return reps
-    else:
-        return [funct for funct, matr in reps]
+    return [funct for funct, matr in reps]
 
 #find all representatives of orbits
 
@@ -892,8 +889,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
         #there is only one orbit for even degree
         if return_transformation:
             return [[f, m]]
-        else:
-            return [f]
+        return [f]
     if D is None:
         res = ZZ(F.resultant())
         D = res.prime_divisors()
@@ -906,8 +902,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 
     if return_transformation:
         return M
-    else:
-        return [funct for funct, matr in M]
+    return [funct for funct, matr in M]
 
 #######################
 #functionality for smallest coefficients
@@ -1048,20 +1043,20 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         N = len(pts)
         if N == 0:
             return [item]
-        elif N == 1:
+        if N == 1:
             if item[index] > pts[0][index]:
                 pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else:  # binary insertion
-            left = 1
-            right = N
-            mid = (left + right) // 2  # these are ints so this is .floor()
-            if item[index] > pts[mid][index]: # item goes into first half
-                return insert_item(pts[:mid], item, index) + pts[mid:N]
-            else: # item goes into second half
-                return pts[:mid] + insert_item(pts[mid:N], item, index)
+        # binary insertion
+        left = 1
+        right = N
+        mid = (left + right) // 2  # these are ints so this is .floor()
+        if item[index] > pts[mid][index]: # item goes into first half
+            return insert_item(pts[:mid], item, index) + pts[mid:N]
+        # item goes into second half
+        return pts[:mid] + insert_item(pts[mid:N], item, index)
 
     def coshdelta(z):
         # The cosh of the hyperbolic distance from z = t+uj to j

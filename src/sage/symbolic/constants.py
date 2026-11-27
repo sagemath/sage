@@ -40,7 +40,7 @@ type the following::
     sage: gp(pi)
     3.1415926535897932384626433832795028842
     sage: pari(pi)
-    3.14159265358979
+    3.14159265358...
     sage: kash(pi)                    # optional - kash
     3.14159265358979323846264338328
     sage: mathematica(pi)             # optional - mathematica
@@ -264,9 +264,8 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
     if class_name == "Constant":
         return Constant(name, conversions=conversions, latex=latex,
                         mathml=mathml, domain=domain)
-    else:
-        cls = globals()[class_name]
-        return cls(name=name)
+    cls = globals()[class_name]
+    return cls(name=name)
 
 
 @richcmp_method
@@ -315,8 +314,7 @@ class Constant:
         """
         if self.__class__ == other.__class__ and self._name == other._name:
             return op in [op_EQ, op_GE, op_LE]
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __reduce__(self):
         """

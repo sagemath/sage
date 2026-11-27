@@ -36,7 +36,7 @@ thereof, for all the combinatorial maps that apply to it.
 .. NOTE::
 
     Since decorators are evaluated upon loading Python modules,
-    customizing :obj:`combinatorial map` needs to be done before the
+    customizing :func:`combinatorial_map` needs to be done before the
     modules using it are loaded. In the examples below, where we
     illustrate the customized ``combinatorial_map`` decorator on the
     :mod:`sage.combinat.permutation` module, we resort to force a
@@ -99,8 +99,7 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
     """
     if f is None:
         return lambda f: f
-    else:
-        return f
+    return f
 
 
 def combinatorial_map_wrapper(f=None, order=None, name=None):
@@ -183,8 +182,7 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
     """
     if f is None:
         return lambda f: CombinatorialMap(f, order=order, name=name)
-    else:
-        return CombinatorialMap(f, order=order, name=name)
+    return CombinatorialMap(f, order=order, name=name)
 
 
 ##############################################################################
@@ -306,8 +304,7 @@ class CombinatorialMap:
         """
         if self._inst is not None:
             return self._f(self._inst, *args, **kwds)
-        else:
-            return self._f(*args, **kwds)
+        return self._f(*args, **kwds)
 
     def unbounded_map(self):
         r"""
@@ -370,8 +367,7 @@ class CombinatorialMap:
         """
         if self._name is not None:
             return self._name
-        else:
-            return self._f.__name__
+        return self._f.__name__
 
 
 def combinatorial_maps_in_class(cls):

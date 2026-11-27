@@ -52,7 +52,7 @@ def group_divisible_design(v, K, G, existence=False, check=False):
     - `\mathcal G\cup \mathcal B` is a `(v,K\cup G)`-PBD
 
     For more information, see the documentation of
-    :class:`~sage.combinat.designs.incidence_structures.GroupDivisibleDesign` or
+    :class:`~sage.combinat.designs.group_divisible_designs.GroupDivisibleDesign` or
     :class:`~sage.combinat.designs.bibd.PairwiseBalancedDesign`.
 
     INPUT:
@@ -331,8 +331,7 @@ class GroupDivisibleDesign(IncidenceStructure):
         """
         if self._point_to_index is None:
             return [list(g) for g in self._groups]
-        else:
-            return [[self._points[i] for i in g] for g in self._groups]
+        return [[self._points[i] for i in g] for g in self._groups]
 
     def __repr__(self):
         r"""

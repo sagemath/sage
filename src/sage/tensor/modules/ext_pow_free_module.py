@@ -679,9 +679,8 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
                 for basis, comp in tensor._components.items():
                     resu._components[basis] = comp.copy()
                 return resu
-            else:
-                raise TypeError("cannot coerce the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot coerce the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)

@@ -341,7 +341,7 @@ cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
     while m >= 0:
         modp_rep, term = value[0]._modp_rep()
         if m:
-            if len(value._coeffs):
+            if value._coeffs:
                 value._coeffs[0] -= modp_rep
             else:
                 value._coeffs.append(-modp_rep)

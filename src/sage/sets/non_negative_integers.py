@@ -8,10 +8,10 @@ Non Negative Integers
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
@@ -108,11 +108,11 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             False
             sage: QQbar(sqrt(2)) in NN                                                  # needs sage.rings.number_field sage.symbolic
             False
-            sage: RIF(1,2) in NN                                                        # needs sage.rings.real_interval_field
+            sage: RIF(1,2) in NN
             False
             sage: QQbar(2) in NN                                                        # needs sage.rings.number_field
             True
-            sage: RIF(2) in NN                                                          # needs sage.rings.real_interval_field
+            sage: RIF(2) in NN
             True
         """
         try:
@@ -235,6 +235,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Naturals0
         """
         from sympy import Naturals0
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Naturals0

@@ -108,7 +108,6 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<a> = QuadraticField(-23)
             sage: from sage.rings.ideal_monoid import IdealMonoid
             sage: M = IdealMonoid(R)
@@ -138,7 +137,6 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
             sage: M.has_coerce_map_from(R) # indirect doctest
@@ -152,8 +150,7 @@ class IdealMonoid_c(Parent):
         """
         if isinstance(x, IdealMonoid_c):
             return self.ring().has_coerce_map_from(x.ring())
-        else:
-            return self.ring().has_coerce_map_from(x)
+        return self.ring().has_coerce_map_from(x)
 
     def __eq__(self, other):
         r"""
@@ -161,7 +158,6 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
             sage: M == QQ
@@ -173,8 +169,7 @@ class IdealMonoid_c(Parent):
         """
         if not isinstance(other, IdealMonoid_c):
             return False
-        else:
-            return self.ring() == other.ring()
+        return self.ring() == other.ring()
 
     def __ne__(self, other):
         r"""
@@ -182,7 +177,6 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
             sage: M != QQ
@@ -200,7 +194,6 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R = QuadraticField(-23, 'a')
             sage: M = R.ideal_monoid()
             sage: hash(M) == hash(QQ)

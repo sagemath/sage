@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebras
 
@@ -35,7 +34,6 @@ arithmetic is much faster than in the generic implementation.
 Moreover, we can compute Groebner bases with degree bound for its
 two-sided ideals, and thus provide ideal containment tests::
 
-    sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace'); F
     Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
     sage: I = F*[x*y+y*z,x^2+x*y-y*x-y^2]*F
@@ -55,7 +53,6 @@ two-sided ideals, and thus provide ideal containment tests::
 Positive integral degree weights for the letterplace implementation
 was introduced in :issue:`7797`::
 
-    sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
     sage: x.degree()
     2
@@ -76,7 +73,6 @@ TESTS::
     sage: F is loads(dumps(F))
     True
 
-    sage: # needs sage.libs.singular
     sage: F = FreeAlgebra(GF(5),3,'x', implementation='letterplace')
     sage: TestSuite(F).run()
     sage: F is loads(dumps(F))
@@ -89,7 +85,6 @@ TESTS::
     sage: F is loads(dumps(F))
     True
 
-    sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(GF(5),3, implementation='letterplace')
     sage: TestSuite(F).run()
     sage: F is loads(dumps(F))
@@ -102,7 +97,6 @@ TESTS::
     sage: F is loads(dumps(F))
     True
 
-    sage: # needs sage.libs.singular
     sage: F = FreeAlgebra(GF(5),3, ['xx', 'zba', 'Y'], implementation='letterplace')
     sage: TestSuite(F).run()
     sage: F is loads(dumps(F))
@@ -115,7 +109,6 @@ TESTS::
     sage: F is loads(dumps(F))
     True
 
-    sage: # needs sage.libs.singular
     sage: F = FreeAlgebra(GF(5),3, 'abc', implementation='letterplace')
     sage: TestSuite(F).run()
     sage: F is loads(dumps(F))
@@ -131,7 +124,7 @@ TESTS::
 Note that the letterplace implementation can only be used if the corresponding
 (multivariate) polynomial ring has an implementation in Singular::
 
-    sage: FreeAlgebra(FreeAlgebra(ZZ,2,'ab'), 2, 'x', implementation='letterplace')     # needs sage.libs.singular
+    sage: FreeAlgebra(FreeAlgebra(ZZ,2,'ab'), 2, 'x', implementation='letterplace')
     Traceback (most recent call last):
     ...
     NotImplementedError: polynomials over Free Algebra on 2 generators (a, b)
@@ -159,13 +152,14 @@ Some tests for the category::
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.functor import Functor
-from sage.categories.pushout import (ConstructionFunctor,
-                                     CompositeConstructionFunctor,
-                                     IdentityConstructionFunctor)
+from sage.categories.pushout import (
+    CompositeConstructionFunctor,
+    ConstructionFunctor,
+    IdentityConstructionFunctor,
+)
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
@@ -229,7 +223,6 @@ class FreeAlgebraFactory(UniqueFactory):
     elements are supported. Of course, isomorphic algebras in different
     implementations are not identical::
 
-        sage: # needs sage.libs.singular
         sage: G = FreeAlgebra(GF(5),['x','y','z'], implementation='letterplace')
         sage: F == G
         False
@@ -241,7 +234,6 @@ class FreeAlgebraFactory(UniqueFactory):
 
     ::
 
-        sage: # needs sage.libs.singular
         sage: H = FreeAlgebra(GF(5), ['x','y','z'], implementation='letterplace',
         ....:                 degrees=[1,2,3])
         sage: F != H != G
@@ -286,7 +278,6 @@ class FreeAlgebraFactory(UniqueFactory):
             sage: FreeAlgebra.create_key(GF(5),3,'xyz')
             (Finite Field of size 5, ('x', 'y', 'z'))
 
-            sage: # needs sage.libs.singular
             sage: FreeAlgebra.create_key(GF(5),['x','y','z'],
             ....:                        implementation='letterplace')
             (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,)
@@ -363,10 +354,14 @@ class FreeAlgebraFactory(UniqueFactory):
             False
         """
         if len(key) == 1:
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[0])
         if isinstance(key[0], tuple):
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         if len(key) == 2:
             return FreeAlgebra_generic(key[0], len(key[1]), key[1])
@@ -374,34 +369,6 @@ class FreeAlgebraFactory(UniqueFactory):
 
 
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
-
-
-def is_FreeAlgebra(x) -> bool:
-    """
-    Return ``True`` if x is a free algebra; otherwise, return ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.algebras.free_algebra import is_FreeAlgebra
-        sage: is_FreeAlgebra(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeAlgebra is deprecated;
-        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        False
-        sage: is_FreeAlgebra(ZZ)
-        False
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,100,'x'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace',
-        ....:                            degrees=list(range(1,11))))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
-    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
 class FreeAlgebra_generic(CombinatorialFreeModule):
@@ -470,7 +437,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     Element = FreeAlgebraElement
 
-    def __init__(self, R, n, names, degrees=None):
+    def __init__(self, R, n, names, degrees=None) -> None:
         """
         The free algebra on `n` generators over a base ring.
 
@@ -607,7 +574,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: # needs sage.libs.singular
             sage: F.<x,y,z> = FreeAlgebra(GF(5),3)
             sage: L.<x,y,z> = FreeAlgebra(ZZ,3,implementation='letterplace')
             sage: F(x)     # indirect doctest
@@ -619,7 +585,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         ::
 
-            sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: K.<z> = GF(25)
             sage: F.<a,b,c> = FreeAlgebra(K,3)
             sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')
@@ -744,7 +709,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: F.has_coerce_map_from(PolynomialRing(ZZ, 3, 'x,y,z'))
             False
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(25)
             sage: F.<a,b,c> = FreeAlgebra(K,3)
             sage: F._coerce_map_from_(ZZ)
@@ -760,8 +724,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             True
             sage: G._coerce_map_from_(F)
             False
-            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')            # needs sage.libs.singular
-            sage: F.1 + (z+1) * L.2                                                     # needs sage.libs.singular
+            sage: L.<a,b,c> = FreeAlgebra(K,3, implementation='letterplace')
+            sage: F.1 + (z+1) * L.2
             b + (z+1)*c
         """
         if self._indices.has_coerce_map_from(R):
@@ -907,7 +871,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         """
         if mats is None:
             return super().quotient(mons, names)
-        from . import free_algebra_quotient
+        from sage.algebras import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
     quo = quotient
@@ -937,21 +901,29 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         return self._indices
 
     def g_algebra(self, relations, names=None, order='degrevlex', check=True):
-        """
+        r"""
         The `G`-Algebra derived from this algebra by relations.
 
-        By default it is assumed that any two variables commute.
+        Each ``relations`` entry has the form ``v1*v2: c*v2*v1 + d`` where
+        ``v1``, ``v2`` are distinct generators with ``v1 > v2``, ``c`` is an
+        element of the base ring, and ``d`` is the remainder, written as a
+        linear combination of ordered/PBW monomials. Equivalently, ``d`` is
+        the part that is passed to Singular as a polynomial in the
+        commutative polynomial ring that encodes those monomials. For a valid
+        `G`-algebra, either ``d`` is zero or its leading monomial is smaller
+        than ``v2*v1`` in the chosen term order, so the relation reduces the
+        product ``v1*v2`` toward normal form. Pairs of generators not listed
+        in ``relations`` are assumed to commute.
 
-        .. TODO::
-
-            - Coercion doesn't work yet, there is some cheating about assumptions
-            - The optional argument ``check`` controls checking the degeneracy
-              conditions. Furthermore, the default values interfere with
-              non-degeneracy conditions.
+        If ``check`` is ``True`` (the default), Singular verifies the
+        non-degeneracy conditions of the resulting `G`-algebra at construction
+        time. Since the returned algebra is cached via
+        :class:`~sage.rings.polynomial.plural.G_AlgFactory`, only the first
+        request for a given set of relations is validated; pass ``check=False``
+        on that first call to skip the check entirely.
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: A.<x,y,z> = FreeAlgebra(QQ,3)
             sage: G = A.g_algebra({y*x: -x*y})
             sage: (x,y,z) = G.gens()
@@ -972,6 +944,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: y*x
             -x*y + z
 
+        Inputs are coerced into ``self`` when possible, so generators of a
+        sibling free algebra over the same base ring with the same variable
+        names can be used directly::
+
+            sage: B.<x,y,z> = FreeAlgebra(QQ, 3, degrees=(1,1,1))
+            sage: B is A
+            False
+            sage: H = A.g_algebra({B('y')*B('x'): -B('x')*B('y') + 1})
+            sage: H.gens()[1] * H.gens()[0]
+            -x*y + 1
+
         TESTS::
 
             sage: S = FractionField(QQ['t'])
@@ -981,41 +964,68 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: x,y = K.gens()
             sage: 1+t*y*x
             (-t)*x*y + t*y + (t + 1)
+
+        Invalid keys raise a clear error rather than tripping an assertion::
+
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: A.g_algebra({x*y: y*x})
+            Traceback (most recent call last):
+            ...
+            ValueError: relation key x*y must have v1 > v2; got v1 = x, v2 = y
+            sage: A.g_algebra({x*x: x*x})
+            Traceback (most recent call last):
+            ...
+            ValueError: relation key x^2 must be a product v1*v2 of two distinct generators
+            sage: A.g_algebra({y*x: z})
+            Traceback (most recent call last):
+            ...
+            ValueError: relation value z must contain the term x*y
         """
         from sage.matrix.constructor import Matrix
         commutative = not relations
 
         base_ring = self.base_ring()
-        polynomial_ring = PolynomialRing(base_ring, self.gens())
+        # Match the user's target ``order`` here so that ``G_AlgFactory``
+        # does not later need to ``change_ring`` ``dmat`` across an order
+        # mismatch -- doing so triggers an intermittent Singular segfault
+        # in ``nc_CallPlural``/``mp_Copy`` (:issue:`29528`).
+        polynomial_ring = PolynomialRing(base_ring, self.gens(), order=order)
         n = self.__ngens
         cmat = Matrix(base_ring, n)
         dmat = Matrix(polynomial_ring, n)
         for i in range(n):
             for j in range(i + 1, n):
                 cmat[i, j] = 1
+        gens = self.gens()
         for to_commute, commuted in relations.items():
-            # This is dirty, coercion is broken
-            assert isinstance(to_commute, FreeAlgebraElement), to_commute
-            assert isinstance(commuted, FreeAlgebraElement), commuted
-            (v1, e1), (v2, e2) = next(iter(to_commute))[0]
-            assert e1 == 1
-            assert e2 == 1
-            assert v1 > v2
-            c_coef = None
-            d_poly = None
+            to_commute = self(to_commute)
+            commuted = self(commuted)
+            key_mc = to_commute._monomial_coefficients
+            if len(key_mc) != 1:
+                raise ValueError(f"relation key {to_commute} must be a single "
+                                 "monomial v1*v2 of two distinct generators")
+            key_mon, key_coef = next(iter(key_mc.items()))
+            factors = list(key_mon)
+            if (key_coef != 1 or len(factors) != 2
+                    or factors[0][1] != 1 or factors[1][1] != 1):
+                raise ValueError(f"relation key {to_commute} must be a product "
+                                 "v1*v2 of two distinct generators")
+            v1, v2 = factors[0][0], factors[1][0]
+            if not (v1 > v2):
+                raise ValueError(f"relation key {to_commute} must have "
+                                 f"v1 > v2; got v1 = {v1}, v2 = {v2}")
             reverse_monomial = v2 * v1
-            for m, c in commuted:
-                if m == reverse_monomial:
-                    c_coef = c
-                    # buggy coercion workaround
-                    d_poly = commuted - c * self.monomial(m)
-                    break
-            assert c_coef is not None, m
-            v2_ind = self.gens().index(v2)
-            v1_ind = self.gens().index(v1)
+            val_mc = commuted._monomial_coefficients
+            if reverse_monomial not in val_mc:
+                raise ValueError(f"relation value {commuted} must contain the "
+                                 f"term {reverse_monomial}")
+            c_coef = val_mc[reverse_monomial]
+            v2_ind = gens.index(v2)
+            v1_ind = gens.index(v1)
             cmat[v2_ind, v1_ind] = c_coef
-            if d_poly:
-                dmat[v2_ind, v1_ind] = polynomial_ring(d_poly)
+            d_dict = {m: c for m, c in val_mc.items() if m != reverse_monomial}
+            if d_dict:
+                dmat[v2_ind, v1_ind] = polynomial_ring(self._from_dict(d_dict))
         from sage.rings.polynomial.plural import g_Algebra
         return g_Algebra(base_ring, cmat, dmat,
                          names=names or self.variable_names(),
@@ -1596,12 +1606,11 @@ class AssociativeFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return AssociativeFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], AssociativeFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

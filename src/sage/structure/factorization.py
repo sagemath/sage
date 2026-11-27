@@ -141,18 +141,22 @@ Factorizations can involve fairly abstract mathematical objects::
     sage: x = ZZ['x'].0
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
-    sage: f = K.factor(15); f
+    sage: f = K.factor(15); f  # random - depends on pari version
     (Fractional ideal (-a))^2 * (Fractional ideal (5))
     sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
     sage: f.unit()
     Fractional ideal (1)
-    sage: g = K.factor(9); g
+    sage: g = K.factor(9); g  # random - depends on pari version
     (Fractional ideal (-a))^4
-    sage: f.lcm(g)
+    sage: f.lcm(g)  # random - depends on pari version
     (Fractional ideal (-a))^4 * (Fractional ideal (5))
-    sage: f.gcd(g)
+    sage: list(f.lcm(g)) == [(K.ideal(a), 4), (K.ideal(5), 1)]
+    True
+    sage: f.gcd(g)  # random - depends on pari version
     (Fractional ideal (-a))^2
+    sage: list(f.gcd(g)) == [(K.ideal(a), 2)]
+    True
     sage: f.is_integral()
     True
 
@@ -1104,8 +1108,7 @@ class Factorization(SageObject):
             for a in set(d1).union(set(d2)):
                 s[a] = d1.get(a, 0) + d2.get(a, 0)
             return Factorization(list(s.items()), unit=self.unit() * other.unit())
-        else:
-            return Factorization(list(self) + list(other), unit=self.unit() * other.unit())
+        return Factorization(list(self) + list(other), unit=self.unit() * other.unit())
 
     def __pow__(self, n):
         """
@@ -1320,8 +1323,7 @@ class Factorization(SageObject):
             for a in set(d1).intersection(set(d2)):
                 s[a] = min(d1[a], d2[a])
             return Factorization(list(s.items()))
-        else:
-            raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
+        raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
 
     def lcm(self, other):
         r"""
@@ -1362,8 +1364,7 @@ class Factorization(SageObject):
             for a in set(d1).union(set(d2)):
                 s[a] = max(d1.get(a, 0), d2.get(a, 0))
             return Factorization(list(s.items()))
-        else:
-            raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
+        raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
 
     def is_integral(self) -> bool:
         r"""
@@ -1434,7 +1435,7 @@ class Factorization(SageObject):
         from sage.misc.misc_c import prod
         return prod([p for p, _ in self.__x])
 
-    def is_complete_factorization(self):
+    def is_complete_factorization(self) -> bool:
         """
         Return whether this factorization is a complete rather than
         a partial factorization, i.e., whether all the bases

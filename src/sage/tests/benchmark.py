@@ -520,10 +520,9 @@ class MPolynomialMult(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def macaulay2(self):
         """
@@ -722,10 +721,9 @@ class MPolynomialMult2(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def magma(self):
         """
@@ -1635,7 +1633,7 @@ class EllipticCurveMW(Benchmark):
 
             sage: from sage.tests.benchmark import EllipticCurveMW
             sage: B = EllipticCurveMW([1,2,3,4,5])
-            sage: isinstance(B.sage()[1], float)
+            sage: isinstance(B.sage()[1], float)  # needs eclib
             True
         """
         E = EllipticCurve(self.ainvs)

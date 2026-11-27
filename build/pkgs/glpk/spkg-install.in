@@ -16,6 +16,10 @@ cp "$SAGE_ROOT"/config/config.* .
 #          (already the default):
 CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 
+# Upstream does not belive in anything past 1990
+# https://lists.gnu.org/archive/html/bug-glpk/2025-05/msg00000.html
+CFLAGS="-ansi $CFLAGS"
+
 export CFLAGS LDFLAGS CPPFLAGS
 
 sdh_configure --with-gmp --disable-static

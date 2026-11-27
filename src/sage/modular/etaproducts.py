@@ -565,8 +565,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             dicts[-1][N] = v[-1]
         if reduce:
             return self.reduce_basis([self(d) for d in dicts])
-        else:
-            return [self(d) for d in dicts]
+        return [self(d) for d in dicts]
 
     def reduce_basis(self, long_etas) -> list:
         r"""
@@ -860,7 +859,7 @@ class CuspFamily(SageObject):
         """
         if self.width() == 1:
             return "(Inf)"
-        elif self.width() == self.level():
+        if self.width() == self.level():
             return "(0)"
         return "(c_{%s%s})" % (self.width(), ((self.label and ("," + self.label)) or ""))
 

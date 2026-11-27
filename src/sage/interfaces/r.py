@@ -405,8 +405,7 @@ def _setup_r_to_sage_converter():
     def list_to_singleton_if_possible(l):
         if len(l) == 1:
             return l[0]
-        else:
-            return l
+        return l
 
     def _vector(vec):
         attrs = vec.list_attrs()
@@ -423,9 +422,8 @@ def _setup_r_to_sage_converter():
                 '_Names': names,
                 '_r_class': rclass,
             }
-        else:
-            # if no names are present, convert to a normal list or a single value
-            return data
+        # if no names are present, convert to a normal list or a single value
+        return data
     rpy2py.register(SexpVector, _vector)
 
     def _matrix(mat):
@@ -448,10 +446,8 @@ def _setup_r_to_sage_converter():
 
     def _list_vector(vec):
         # we have a R list (vector of arbitrary elements)
-        attrs = vec.list_attrs()
         names = vec.do_slot('names')
         values = [rpy2py(val) for val in vec]
-        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
             'DATA': dict(data),
@@ -1592,18 +1588,17 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         if isinstance(n, str):
             n = n.replace('self', self._name)
             return P.new('%s[%s]' % (self._name, n))
-        elif parent(n) is P:  # the key is RElement itself
+        if parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]' % (self._name, n.name()))
-        elif not isinstance(n, tuple):
+        if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            L = []
-            for i in range(len(n)):
-                if parent(n[i]) is P:
-                    L.append(n[i].name())
-                else:
-                    L.append(str(n[i]))
-            return P.new('%s[%s]' % (self._name, ','.join(L)))
+        L = []
+        for i in range(len(n)):
+            if parent(n[i]) is P:
+                L.append(n[i].name())
+            else:
+                L.append(str(n[i]))
+        return P.new('%s[%s]' % (self._name, ','.join(L)))
 
     def __bool__(self):
         """
@@ -1818,7 +1813,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         self._check_valid()
         P = self.parent()
 
-        with localconverter(P._r_to_sage_converter) as cv:
+        with localconverter(P._r_to_sage_converter):
             return robjects.r(self.name())
 
     def _latex_(self):

@@ -102,50 +102,12 @@ from sage.misc.cachefunc import cached_function
 from sage.numerical.linear_functions import LinearFunction, LinearFunctionsParent_class
 from sage.numerical.linear_tensor_element import LinearTensor
 
-
-#*****************************************************************************
-#
-# Utility functions to test that something is a linear function / constraint
-#
-#*****************************************************************************
-
-def is_LinearTensor(x):
-    """
-    Test whether ``x`` is a tensor product of linear functions with a
-    free module.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable(nonnegative=False)
-        sage: from sage.numerical.linear_tensor import is_LinearTensor
-        sage: is_LinearTensor(x[0] - 2*x[2])
-        doctest:warning...
-        DeprecationWarning: The function is_LinearTensor is deprecated;
-        use 'isinstance(..., LinearTensor)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_LinearTensor('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_LinearTensor is deprecated; "
-                "use 'isinstance(..., LinearTensor)' instead.")
-    return isinstance(x, LinearTensor)
-
-
-#*****************************************************************************
+# ***************************************************************************
 #
 # Factory functions for the parents to ensure uniqueness
 #
-#*****************************************************************************
+# ***************************************************************************
+
 
 @cached_function
 def LinearTensorParent(free_module_parent, linear_functions_parent):
@@ -350,12 +312,11 @@ class LinearTensorParent_class(Parent):
                 m_matrix[i, i] = m
             m_matrix.set_immutable()
             return m_matrix
-        elif self.is_vector_space():
+        if self.is_vector_space():
             # Turn constants into vectors with all entries equal
             m_vector = M([m] * M.degree())
             return m_vector
-        else:
-            return M(m)
+        return M(m)
 
     def _element_constructor_(self, x):
         """

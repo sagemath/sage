@@ -376,9 +376,8 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                 except (ZeroDivisionError, TypeError):
                     raise TypeError(f"the {tens} is not invertible ")
                 return resu
-            else:
-                raise TypeError(f"the {tens} cannot be converted "
-                                + "to an automorphism.")
+            raise TypeError(f"the {tens} cannot be converted "
+                            + "to an automorphism.")
         if isinstance(comp, FiniteRankFreeModuleMorphism):
             # Conversion of an endomorphism to an automorphism
             endo = comp  # for readability
@@ -393,9 +392,8 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                 except (ZeroDivisionError, TypeError):
                     raise TypeError("the {} is not invertible ".format(endo))
                 return resu
-            else:
-                raise TypeError("cannot coerce the {}".format(endo) +
-                                " to an element of {}".format(self))
+            raise TypeError("cannot coerce the {}".format(endo) +
+                            " to an element of {}".format(self))
 
         # standard construction
         resu = self.element_class(self._fmodule, name=name,

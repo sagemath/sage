@@ -7,10 +7,10 @@ def dict_key(o: Any) -> Any:
 def cache_key(o: Any) -> Any:
     ...
 
-def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
+def cached_method(f=None, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
     ...
 
-def cached_function(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedFunction:
+def cached_function(f=None, name: str | None = None, key=None, do_pickle: bool = False) -> CachedFunction:
     ...
 
 class CachedFunction:

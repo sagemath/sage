@@ -13,7 +13,7 @@ done by :class:`SchemeHomset_points` and its subclasses.
 .. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
-    :meth:`~sage.structure.parent.Hom` method that is inherited by all
+    :meth:`~sage.structure.parent.Parent.Hom` method that is inherited by all
     schemes.
 
 AUTHORS:
@@ -354,11 +354,10 @@ class SchemeHomset_points_affine(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_number_field
             return enum_affine_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif isinstance(R, FiniteField):
+        if isinstance(R, FiniteField):
             from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
             return enum_affine_finite_field(self)
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -403,14 +402,15 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: X = A.subscheme([y^2 - x^2 - 3*x, x^2 - 10*y])
-            sage: len(X(QQ).numerical_points(F=ComplexField(100)))                      # needs sage.libs.singular
+            sage: len(X(QQ).numerical_points(F=CDF))                                    # needs sage.libs.singular
             4
 
-        ::
+        We use a higher-precision field for this higher-degree system and
+        the requested tolerance::
 
             sage: A.<x1, x2> = AffineSpace(QQ, 2)
             sage: E = A.subscheme([30*x1^100 + 1000*x2^2 + 2000*x1*x2 + 1, x1 + x2])
-            sage: len(E(A.base_ring()).numerical_points(F=CDF, zero_tolerance=1e-9))    # needs sage.libs.singular
+            sage: len(E(A.base_ring()).numerical_points(F=ComplexField(100), zero_tolerance=1e-9))  # needs sage.libs.singular
             100
 
         TESTS::

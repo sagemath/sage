@@ -61,7 +61,7 @@ always explicitly invoked, and never used by the coercion model to resolve
 binary operations.
 
 For more information on how to specify coercions, conversions, and actions,
-see the documentation for :class:`Parent`.
+see the documentation for :class:`~sage.structure.parent.Parent`.
 """
 
 # ****************************************************************************
@@ -77,7 +77,7 @@ see the documentation for :class:`Parent`.
 from cpython.object cimport (PyTypeObject, PyObject_CallObject,
                              PyObject_RichCompare, Py_TYPE,
                              Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT)
-from cpython.weakref cimport PyWeakref_GET_OBJECT, PyWeakref_NewRef
+from cpython.weakref cimport PyWeakref_NewRef
 from libc.string cimport strncmp
 cimport gmpy2
 
@@ -143,6 +143,12 @@ cpdef py_scalar_parent(py_type):
         Real Double Field
         sage: py_scalar_parent(gmpy2.mpc)                                               # needs sage.rings.complex_double
         Complex Double Field
+
+        sage: import mpmath
+        sage: py_scalar_parent(mpmath.mpf)
+        Real Double Field
+        sage: py_scalar_parent(mpmath.mpc)                                              # needs sage.rings.complex_double
+        Complex Double Field
     """
     if issubclass(py_type, int):
         import sage.rings.integer_ring
@@ -150,39 +156,46 @@ cpdef py_scalar_parent(py_type):
     if py_type is FractionType:
         import sage.rings.rational_field
         return sage.rings.rational_field.QQ
-    elif issubclass(py_type, float):
+    if issubclass(py_type, float):
         import sage.rings.real_double
         return sage.rings.real_double.RDF
-    elif issubclass(py_type, complex):
+    if issubclass(py_type, complex):
         import sage.rings.complex_double
         return sage.rings.complex_double.CDF
-    elif is_numpy_type(py_type):
+    if is_numpy_type(py_type):
         import numpy
         if issubclass(py_type, numpy.integer):
             import sage.rings.integer_ring
             return sage.rings.integer_ring.ZZ
-        elif issubclass(py_type, numpy.floating):
+        if issubclass(py_type, numpy.floating):
             import sage.rings.real_double
             return sage.rings.real_double.RDF
-        elif issubclass(py_type, numpy.complexfloating):
+        if issubclass(py_type, numpy.complexfloating):
             import sage.rings.complex_double
             return sage.rings.complex_double.CDF
-        else:
-            return None
-    elif issubclass(py_type, gmpy2.mpz):
+        return None
+    if issubclass(py_type, gmpy2.mpz):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
-    elif issubclass(py_type, gmpy2.mpq):
+    if issubclass(py_type, gmpy2.mpq):
         import sage.rings.rational_field
         return sage.rings.rational_field.QQ
-    elif issubclass(py_type, gmpy2.mpfr):
+    if issubclass(py_type, gmpy2.mpfr):
         import sage.rings.real_double
         return sage.rings.real_double.RDF
-    elif issubclass(py_type, gmpy2.mpc):
+    if issubclass(py_type, gmpy2.mpc):
         import sage.rings.complex_double
         return sage.rings.complex_double.CDF
-    else:
+    if is_mpmath_type(py_type):
+        import mpmath
+        if issubclass(py_type, mpmath.mpf):
+            from sage.rings.real_double import RDF
+            return RDF
+        if issubclass(py_type, mpmath.mpc):
+            from sage.rings.complex_double import CDF
+            return CDF
         return None
+    return None
 
 cpdef py_scalar_to_element(x):
     """
@@ -340,16 +353,14 @@ cpdef bint parent_is_integers(P) except -1:
     if isinstance(P, type):
         if issubclass(P, int):
             return True
-        elif is_numpy_type(P):
+        if is_numpy_type(P):
             from numpy import integer
             return issubclass(P, integer)
-        elif issubclass(P, gmpy2.mpz):
+        if issubclass(P, gmpy2.mpz):
             return True
-        else:
-            return False
-    else:
-        from sage.rings.integer_ring import ZZ
-        return P is ZZ
+        return False
+    from sage.rings.integer_ring import ZZ
+    return P is ZZ
 
 
 def parent_is_numerical(P):
@@ -468,14 +479,13 @@ cpdef bint is_numpy_type(t) noexcept:
         return True
     return False
 
+
 cpdef bint is_mpmath_type(t) noexcept:
     r"""
-    Check whether the type ``t`` is a type whose name starts with either
-    ``mpmath.`` or ``sage.libs.mpmath.``.
+    Check whether the type ``t`` is a type whose name starts with ``mpmath.``
 
     EXAMPLES::
 
-        sage: # needs mpmath
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
@@ -488,7 +498,7 @@ cpdef bint is_mpmath_type(t) noexcept:
         True
     """
     return isinstance(t, type) and \
-           strncmp((<PyTypeObject*>t).tp_name, "sage.libs.mpmath.", 17) == 0
+           t.__module__.startswith("mpmath.")
 
 
 cdef class CoercionModel:
@@ -519,8 +529,7 @@ cdef class CoercionModel:
     Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
-        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
+        sage: __ = numpy.set_printoptions(legacy="1.25")                                # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -549,9 +558,8 @@ cdef class CoercionModel:
 
         sage: numpy.uint8('2') + 3                                                      # needs numpy
         5
-        sage: type(_)                                                                   # needs numpy
-        <class 'numpy.int32'>  # 32-bit
-        <class 'numpy.int64'>  # 64-bit
+        sage: type(_) in [numpy.int32, numpy.int64]                                     # needs numpy
+        True
 
         sage: numpy.int8('12') + 1/3                                                    # needs numpy
         12.333333333333334
@@ -758,7 +766,7 @@ cdef class CoercionModel:
 
         If all went well, this should be the empty list. If things aren't
         happening as you expect, this is a good place to check. See also
-        :func:`coercion_traceback`.
+        :func:`~sage.structure.element.coercion_traceback`.
 
         EXAMPLES::
 
@@ -785,7 +793,8 @@ cdef class CoercionModel:
             TypeError: no common canonical parent for objects with parents:
             'Rational Field' and 'Finite Field of size 3'
 
-        This is typically accessed via the :func:`coercion_traceback` function.
+        This is typically accessed via the
+        :func:`~sage.structure.element.coercion_traceback` function.
 
         ::
 
@@ -970,7 +979,7 @@ cdef class CoercionModel:
 
         all = []
         if xp is yp:
-            all.append("Identical parents, arithmetic performed immediately." % xp)
+            all.append("Identical parents, arithmetic performed immediately.")
             if op is truediv and isinstance(xp, Parent):
                 xp = self.division_parent(xp)
             return all, xp
@@ -1044,8 +1053,9 @@ cdef class CoercionModel:
 
         OUTPUT:
 
-        A :class:`Parent` into which each input should coerce, or raises a
-        :exc:`TypeError` if no such :class:`Parent` can be found.
+        A :class:`~sage.structure.parent.Parent` into which each input should
+        coerce, or raises a :exc:`TypeError` if no such
+        :class:`~sage.structure.parent.Parent` can be found.
 
         EXAMPLES::
 
@@ -1231,8 +1241,7 @@ cdef class CoercionModel:
         if action is not None:
             if (<Action>action)._is_left:
                 return (<Action>action)._act_(x, y)
-            else:
-                return (<Action>action)._act_(y, x)
+            return (<Action>action)._act_(y, x)
 
         # Now coerce to a common parent and do the operation there
         try:
@@ -1392,8 +1401,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(x))
                 if sage_parent is None or sage_parent.has_coerce_map_from(yp):
                     return x, x.__class__(y)
-                else:
-                    return self.canonical_coercion(sage_parent(x), y)
+                return self.canonical_coercion(sage_parent(x), y)
             except (TypeError, ValueError):
                 self._record_exception()
 
@@ -1402,8 +1410,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(y))
                 if sage_parent is None or sage_parent.has_coerce_map_from(xp):
                     return y.__class__(x), y
-                else:
-                    return self.canonical_coercion(x, sage_parent(y))
+                return self.canonical_coercion(x, sage_parent(y))
             except (TypeError, ValueError):
                 self._record_exception()
 
@@ -1537,16 +1544,16 @@ cdef class CoercionModel:
                 return None
             R_map_ref, S_map_ref = refs
             if R_map_ref is None:
-                S_map = <object>PyWeakref_GET_OBJECT(S_map_ref)
+                S_map = S_map_ref()
                 if S_map is not None:
                     return None, S_map
             elif S_map_ref is None:
-                R_map = <object>PyWeakref_GET_OBJECT(R_map_ref)
+                R_map = R_map_ref()
                 if R_map is not None:
                     return R_map, None
             else:
-                R_map = <object>PyWeakref_GET_OBJECT(R_map_ref)
-                S_map = <object>PyWeakref_GET_OBJECT(S_map_ref)
+                R_map = R_map_ref()
+                S_map = S_map_ref()
                 if R_map is not None and S_map is not None:
                     return R_map, S_map
         except KeyError:
@@ -1831,8 +1838,8 @@ cdef class CoercionModel:
         """
         INPUT:
 
-        - ``R`` -- the left :class:`Parent` (or type)
-        - ``S`` -- the right :class:`Parent` (or type)
+        - ``R`` -- the left :class:`~sage.structure.parent.Parent` (or type)
+        - ``S`` -- the right :class:`~sage.structure.parent.Parent` (or type)
         - ``op`` -- the operand, typically an element of the :mod:`operator` module
         - ``r`` -- (optional) element of `R`
         - ``s`` -- (optional) element of `S`
@@ -1851,7 +1858,8 @@ cdef class CoercionModel:
             True
             sage: cm = sage.structure.element.get_coercion_model()
 
-        If `R` or `S` is a :class:`Parent`, ask it for an action by/on `R`::
+        If `R` or `S` is a :class:`~sage.structure.parent.Parent`, ask it
+        for an action by/on `R`::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
             Left scalar multiplication by Integer Ring on

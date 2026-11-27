@@ -86,6 +86,7 @@ Miscellaneous Useful Functions
 
    sage/misc/misc
    sage/misc/misc_c
+   sage/misc/derivative
    sage/misc/verbose
 
 Laziness
@@ -210,7 +211,6 @@ Interactive Sage Sessions
    sage/misc/pager
    sage/misc/sagedoc
    sage/misc/sagedoc_conf
-   sage/misc/sphinxify
 
 Distribution
 ~~~~~~~~~~~~
