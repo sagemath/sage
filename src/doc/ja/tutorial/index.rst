@@ -1,6 +1,6 @@
-
+============================
 Sageチュートリアルへようこそ
-================================
+============================
 
 Sageは，代数学，幾何学，数論，暗号理論，数値解析，および関連諸分野の研究と教育を支援する，フリーなオープンソース数学ソフトウェアである．
 Sageの開発モデルとテクノロジーに共通する著しい特徴は，公開，共有，協調と協働の原則の徹底的な遵守である．
@@ -10,7 +10,7 @@ Sageの開発モデルとテクノロジーに共通する著しい特徴は，�
 Sageがどんなものか，短時間で知りたければ，まずこのチュートリアルを読んでみていただきたい．
 HTML版とPDF版のどちらを読んでもいいし，Sageノートブックを経由することもできる(チュートリアル内容を対話的に実行するには，ノートブックで ``Help`` ，  続けて ``Tutorial`` をクリックする)．
 
-この文章の著作権は `Creative Commons Attribution-Share Alike 3.0 License`__ 
+この文章の著作権は `Creative Commons Attribution-Share Alike 3.0 License`__
 に準ずる．
 
 __ http://creativecommons.org/licenses/by-sa/3.0/
@@ -29,8 +29,8 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    appendix
    bibliography
 
-Indices and tables
-==================
+索引と検索
+==========
 
 * :ref:`genindex`
 * :ref:`modindex`
