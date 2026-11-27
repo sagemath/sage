@@ -984,7 +984,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
     """
     __name__ = 'options'
 
-    def __init__(self, NAME=None, module='', option_class='', doc='', end_doc='', **options) -> None:
+    def __init__(self, NAME=None, module: str='', option_class: str='', doc: str='', end_doc: str='', **options) -> None:
         r"""
         Initialize ``self``.
 

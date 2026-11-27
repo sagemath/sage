@@ -128,7 +128,7 @@ class IndexedGenerators:
         sage: I._repr_generator(2)
         'x|2>'
     """
-    def __init__(self, indices, prefix='x', **kwds) -> None:
+    def __init__(self, indices, prefix: str='x', **kwds) -> None:
         """
         Initialize ``self``.
 
