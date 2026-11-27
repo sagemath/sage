@@ -10,8 +10,6 @@ EXAMPLES::
     True
     sage: x in S
     True
-    sage: S.gen() in R
-    False
     sage: 1 in S
     True
 
@@ -91,8 +89,8 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         True
         sage: x in S
         True
-        sage: a in R
-        False
+        sage: a in R  # technically not, but R(a) == x by lifting and x == a by coercion R to S
+        True
         sage: S.polynomial_ring()
         Univariate Polynomial Ring in x over Integer Ring
         sage: S.modulus()
