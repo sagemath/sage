@@ -262,6 +262,7 @@ from sage.data_structures.stream import (
     Stream_dirichlet_convolve,
     Stream_dirichlet_invert,
     Stream_plethysm,
+    Stream_plethysm_multi,
     Stream_pseudo_diff_mul
 )
 
@@ -6975,6 +6976,88 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             0
             sage: (3+f)(0, 0)                                                           # needs sage.modules
             3
+
+        Check composition of a lazy symmetric function with more than
+        one alphabet::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: T = tensor([p, p])
+            sage: L = LazySymmetricFunctions(T)
+            sage: X = tensor([p[1], p[[]]])
+            sage: Y = tensor([p[[]], p[1]])
+            sage: L(X + Y)(L(X), L(Y))
+            (p[]#p[1]+p[1]#p[]) + O^8
+            sage: r = L(X + Y)(p[1], p[1])
+            sage: r
+            2*p[1]
+            sage: r.parent() is p
+            True
+            sage: L(X + Y)(2, 3)
+            5
+            sage: L(tensor([p[2], p[1]]))(2, 3)
+            6
+            sage: f = 1 / (1 - L(X))
+            sage: f(1, L(Y))
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose with a positive valuation series
+
+        Check that argument streams remain visible to implicit definitions::
+
+            sage: S = LazySymmetricFunctions(p)
+            sage: H = L(tensor([p[1], p[1]]))
+            sage: z = S(p[1])
+            sage: A = S.undefined(valuation=1)
+            sage: S.define_implicitly([A], [A - z - H(A, z)])
+            sage: A[:5]
+            [p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
+
+        Undetermined coefficients in the outer stream and in arguments with
+        nonzero constant term remain in the solver's temporary base ring::
+
+            sage: A = S.undefined(valuation=1)
+            sage: S.define_implicitly([A], [A - z - A(z) / 2])
+            sage: A[:4]
+            [2*p[1], 0, 0]
+            sage: F = S(p[1, 1])
+            sage: A = S.undefined(valuation=0)
+            sage: S.define_implicitly([(A, [p[[]]])],
+            ....:     [A - S(QQ(3)/4) - z - F(A) / 4])
+            sage: A[:5]
+            [p[], 2*p[1], 2*p[1, 1], 4*p[1, 1, 1], 10*p[1, 1, 1, 1]]
+
+        Every multiplicity used by an exact outer function is registered
+        before an implicit-definition dependency snapshot is taken::
+
+            sage: la = Partition([2]*8 + [1]*3)
+            sage: F = S(p[la])
+            sage: A = S.undefined(valuation=0)
+            sage: equation = A - S(QQ(15)/16) - z - F(A) / 16
+            sage: S.define_implicitly([(A, [p[[]]])], [equation])
+            sage: _ = A[:6]
+            sage: (A - S(QQ(15)/16) - z - F(A) / 16)[:6]
+            []
+
+        All homogeneous parts of an exact outer function can contribute when
+        the argument has a nonzero constant term::
+
+            sage: g = S(lambda n: p[[]] if n == 0 else
+            ....:       (p[1] if n == 1 else 0), valuation=0)
+            sage: S(p[[1]*5])(g)[:3]
+            [p[], 5*p[1], 10*p[1, 1]]
+
+        The same temporary-base-ring handling applies in the multisort case::
+
+            sage: F = L(tensor([p[[1]*8], p[[]]]))
+            sage: A = S.undefined(valuation=0)
+            sage: S.define_implicitly([(A, [p[[]]])],
+            ....:     [A - S(QQ(15)/16) - z - F(A, z) / 16])
+            sage: A[:5]
+            [p[], 2*p[1], 14*p[1, 1], 252*p[1, 1, 1], 5530*p[1, 1, 1, 1]]
+            sage: A = L.undefined(valuation=1)
+            sage: L.define_implicitly([A], [A - L(X) - A(L(Y), L(X)) / 2])
+            sage: A[:3]
+            [2/3*p[] # p[1] + 4/3*p[1] # p[], 0]
         """
         fP = parent(self)
         if len(args) != fP._arity:
@@ -7003,6 +7086,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                 return P(f.leading_coefficient())
             return P.zero()
 
+        from sage.rings.lazy_series_ring import LazySymmetricFunctions
         if len(args) == 1:
             g = args[0]
             if (isinstance(self._coeff_stream, Stream_exact)
@@ -7021,7 +7105,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             if isinstance(g, LazySymmetricFunction):
                 R = P._laurent_poly_ring
             else:
-                from sage.rings.lazy_series_ring import LazySymmetricFunctions
                 R = g.parent()
                 P = LazySymmetricFunctions(R)
                 g = P(g)
@@ -7048,7 +7131,61 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             )
             return P.element_class(P, coeff_stream)
 
-        raise NotImplementedError("only implemented for arity 1")
+        f_is_polynomial = (isinstance(self._coeff_stream, Stream_exact)
+                           and not self._coeff_stream._constant)
+        fR = fP._laurent_poly_ring
+        ps = tensor([B.realization_of().p() for B in fR.tensor_factors()])
+        ps_factors = ps.tensor_factors()
+        if not isinstance(P, LazySymmetricFunctions):
+            if f_is_polynomial:
+                args = [P(g) for g in args]
+                ret = P.zero()
+                for k in range(self._coeff_stream._approximate_order,
+                               self._coeff_stream._degree):
+                    fk = self[k]
+                    if not fk:
+                        continue
+                    for la, c in ps(fk):
+                        ret += P(c) * prod(
+                           (ps_factors[i][mu](args[i])
+                            for i, mu in enumerate(la)),
+                            P.one(),
+                        )
+                return ret
+
+            try:
+                P = LazySymmetricFunctions(P)
+            except ValueError:
+                raise ValueError(
+                    "can only compose with a positive valuation series"
+                ) from None
+        args = [P(g) for g in args]
+        R = P._laurent_poly_ring
+
+        if not f_is_polynomial:
+            for g in args:
+                if isinstance(g._coeff_stream, Stream_zero):
+                    continue
+                if g._coeff_stream._approximate_order == 0:
+                    if not g._coeff_stream.is_uninitialized() and g[0]:
+                        raise ValueError("can only compose with a positive "
+                                         "valuation series")
+                    g._coeff_stream._approximate_order = 1
+
+        if P._arity == 1:
+            target_ps = R.realization_of().p()
+        else:
+            target_ps = tensor([B.realization_of().p()
+                                for B in R.tensor_factors()])
+        coeff_stream = Stream_plethysm_multi(
+            self._coeff_stream,
+            tuple(g._coeff_stream for g in args),
+            P.is_sparse(),
+            target_ps,
+            R,
+            p_outer=ps,
+        )
+        return P.element_class(P, coeff_stream)
 
     plethysm = __call__
 
