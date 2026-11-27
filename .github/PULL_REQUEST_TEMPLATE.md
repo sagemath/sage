@@ -1,9 +1,14 @@
 <!-- ^ Please provide a concise and informative title. -->
 <!-- ^ Don't put issue numbers in the title, do this in the PR description below. -->
 <!-- ^ For example, instead of "Fixes #12345" use "Introduce new method to calculate 1 + 2". -->
-<!-- v Describe your changes below in detail. -->
-<!-- v Why is this change required? What problem does it solve? -->
+<!-- v Start with the problem this PR solves, then describe your changes. -->
 <!-- v If this PR resolves an open issue, please link to it here. For example, "Fixes #12345". -->
+
+
+
+### :mag: What was checked
+
+<!-- What did you verify by hand, what is untested, and which parts need a closer look? -->
 
 
 
@@ -19,8 +24,11 @@
 
 ### :hourglass: Dependencies
 
+<!-- This second may be omitted if the PR has no dependencies. -->
 <!-- List all open PRs that this PR logically depends on. For example, -->
 <!-- - #12345: short description why this is a dependency -->
 <!-- - #34567: ... -->
 
+### :robot: AI disclosure
 
+<!-- Explain if and how AI was used in preparing this PR. -->

@@ -33,3 +33,24 @@ contributions.
 
 See [FAQ: Contributing to Sage](https://doc.sagemath.org/html/en/faq/faq-contribute.html)
 for more information.
+
+## Pull requests and AI tools
+
+AI tools are allowed in SageMath development, for writing code and for
+reviewing it. Reviewer time is what limits how much the project can take
+in, so these rules aim to keep it well spent. They apply to every pull
+request, whoever or whatever wrote it.
+
+- Start the pull request description with the problem it solves. A
+  reviewer who cannot tell what a pull request is for may close it.
+- Fill in the "What was checked" section of the pull request template: what
+  you verified by hand, what is untested, and which parts need a closer look.
+- You are expected to understand and to be able to defend everything you
+  submit. A tool may draft the code or the description; you answer for both.
+- If you have access to an AI agent, have one that did not write the change
+  review it before you ask for a human review. Give it only what a human
+  reviewer gets: the branch, the title, and the description. Address its
+  findings. Reviewers may run one as well.
+- Keep a pull request to one problem, and send unrelated changes separately.
+- A commit speaks for its own change, so tool attribution belongs in the
+  pull request, not in a commit trailer.

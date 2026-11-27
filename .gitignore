@@ -29,6 +29,9 @@
 /environment-3.[0-9].yml
 /environment-3.[0-9][0-9].yml
 
+# Personal agent instructions; see AGENTS.md
+AGENTS.local.md
+
 # Various editors
 *~
 **/*~
