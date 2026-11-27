@@ -1305,6 +1305,24 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         """
         raise NotImplementedError
 
+    def _weight_variables(self):
+        r"""
+        Return the list of degree one weight variables of the base ring
+        into which undetermined coefficients are refined.
+
+        By default, undetermined coefficients are not refined: the
+        default is relevant for rings without a plethysm (composition)
+        operation, where the base ring variables are not raised by
+        Adams operations.  Subclasses with a plethysm override this.
+
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(QQ['q'], 'z')
+            sage: L._weight_variables()
+            []
+        """
+        return []
+
     def define_implicitly(self, series, equations, max_lookahead=1):
         r"""
         Define series by solving functional equations.
@@ -1528,21 +1546,22 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         equation or a list of equations, typically closing over the
         series.  The solver then checks the residual of the solution
         on freshly built equations, so that a wrong solution is caught
-        instead of returned silently.  Here the solver treats the
-        undetermined coefficient as fixed under the Adams operation and
-        commits to a wrong solution, which the residual check turns
-        into a loud failure (the solution is `D = q Y`)::
+        instead of returned silently.  Over a fraction field, the
+        undetermined coefficients are not refined by weight variables,
+        so that the solver treats them as fixed under the Adams
+        operation and commits to a wrong solution, which the residual
+        check turns into a loud failure (the solution is `C = q`)::
 
-            sage: R = PolynomialRing(QQ, 'q'); q = R.gen()
-            sage: h = SymmetricFunctions(R).h()
-            sage: L = LazySymmetricFunctions(h)
-            sage: p2 = L(SymmetricFunctions(R).p()([2]))
-            sage: D = L.undefined(1)
-            sage: L.define_implicitly([D], [lambda: p2(D) - q**2*p2])
-            sage: D[2]
+            sage: R = PolynomialRing(QQ, 'q'); K = R.fraction_field(); q = K.gen()
+            sage: p = SymmetricFunctions(K).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: P2 = L(p[2])
+            sage: C = L.undefined(0)
+            sage: L.define_implicitly([C], [lambda: C*P2 + P2(C*L(p[1])) - (q+q**2)*P2])
+            sage: C[2]
             Traceback (most recent call last):
             ...
-            ValueError: the implicit definition is not satisfied: the equation has residual (-q^4+q^2)*h[1, 1] + (2*q^4-2*q^2)*h[2] in degree 2
+            ValueError: the implicit definition is not satisfied: the equation has residual (1/2*q^4-1/2*q)*p[2] in degree 2
 
         A single factory may be given for all the equations of a
         system::
@@ -1554,6 +1573,21 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.define_implicitly([A], lambda: A - X - E2(A))
             sage: [A[i] for i in range(4)]
             [0, h[1], h[2], h[2, 1]]
+
+        The weight degree of the solution of an implicit definition
+        may exceed the weight-degree support in which the undetermined
+        coefficients are initially searched.  If the equations are
+        given as factories, the search is then restarted with a larger
+        support::
+
+            sage: h = SymmetricFunctions(QQ['q']).h()
+            sage: q = h.base_ring().gen(0)
+            sage: L = LazySymmetricFunctions(h)
+            sage: p_2 = L(h[2])
+            sage: D = L.undefined(1)
+            sage: L.define_implicitly([D], [lambda: p_2(D) - q^10*p_2])
+            sage: D[1]
+            q^5*h[1]
 
         TESTS::
 
@@ -1777,7 +1811,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                                 self._stream_coefficient_ring,
                                 self._terms_of_degree,
                                 max_lookahead=max_lookahead,
-                                equation_factories=factories)
+                                equation_factories=factories,
+                                weight_variables=self._weight_variables())
 
     class options(GlobalOptions):
         r"""
@@ -4442,9 +4477,44 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         return L(c)
 
     @cached_method
-    def _terms_of_degree(self, n, R):
+    def _weight_variables(self):
+        r"""
+        Return the list of degree one weight variables of the base ring.
+
+        These are raised by the Adams operations in plethysm, so that
+        undetermined coefficients are refined into psi fixed
+        coordinates.  There are no such variables if the base ring is a
+        field (fraction fields need a separate treatment) or cannot
+        decide whether it is a field (lazy series rings).
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: L = LazySymmetricFunctions(SymmetricFunctions(R).h())
+            sage: L._weight_variables()
+            [q]
+
+            sage: L2 = LazySymmetricFunctions(SymmetricFunctions(QQ).h())
+            sage: L2._weight_variables()
+            []
+        """
+        from sage.combinat.sf.sfa import _variables_recursive
+        try:
+            is_field = self.base_ring().is_field()
+        except (NotImplementedError, TypeError):
+            # e.g. a lazy series ring, which cannot decide
+            return []
+        if is_field:
+            return []
+        return _variables_recursive(self.base_ring())
+
+    def _terms_of_degree(self, n, R, weight_bound=0):
         r"""
         Return the list of basis elements of degree ``n``.
+
+        If the base ring contains degree one weight variables, the
+        terms are refined by the monomials in the weights up to weight
+        degree ``2 * (n + 1) + weight_bound``.
 
         EXAMPLES::
 
@@ -4475,12 +4545,57 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         from sage.categories.tensor import tensor
         B = self._stream_coefficient_ring
         B = B.change_ring(R)
-        if self._arity != 1:
-            return [tensor(m)
-                    for c in IntegerVectors(n, self._arity)
-                    for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
-                                                         for F, p in zip(B.tensor_factors(), c)])]
-        return list(B.homogeneous_component_basis(n))
+        if self._arity == 1:
+            terms = list(B.homogeneous_component_basis(n))
+        else:
+            terms = [tensor(m)
+                     for c in IntegerVectors(n, self._arity)
+                     for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
+                                                          for F, p in zip(B.tensor_factors(), c)])]
+
+        weights = self._weight_variables()
+        if not weights:
+            return terms
+
+        # There are weight variables (degree one elements of the base
+        # ring, raised by the Adams operations): refine the terms by
+        # the monomials in the weights, so that an undetermined
+        # coefficient is a linear combination of pool variables (which
+        # are fixed by the Adams operations) times weight monomials
+        # (which are raised); the implicit equations then determine
+        # the pool variables.
+        # the bound on the weight degree of an undetermined
+        # coefficient; the implicit solver starts with a minimal
+        # support and enlarges it when the linear system turns out to
+        # be infeasible
+        J = 2 * (n + 1) + weight_bound
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_generic
+        if any(isinstance(w.parent(), LaurentPolynomialRing_generic)
+               for w in weights):
+            # Laurent weights allow negative exponents
+            from itertools import product
+            ranges = [range(-J, J + 1)
+                      if isinstance(w.parent(), LaurentPolynomialRing_generic)
+                      else range(J + 1) for w in weights]
+            monomials = []
+            for exponent in product(*ranges):
+                d = sum(abs(e) for e in exponent)
+                if d > J:
+                    continue
+                m = R.one()
+                for w, e in zip(weights, exponent):
+                    if e:
+                        m *= R(w)**e
+                monomials.append(m)
+        else:
+            monomials = []
+            for d in range(J + 1):
+                for exponent in IntegerVectors(d, len(weights)):
+                    m = R.one()
+                    for w, e in zip(weights, exponent):
+                        m *= R(w)**e
+                    monomials.append(m)
+        return [mon * t for t in terms for mon in monomials]
 
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True, *, coefficients=None):
         r"""

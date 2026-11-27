@@ -95,6 +95,7 @@ AUTHORS:
 # ****************************************************************************
 
 from itertools import islice
+from collections import defaultdict
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
@@ -1542,6 +1543,20 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
         return super()._get_action_(S, op, self_on_left)
 
 
+_MAX_WEIGHT_BOUND = 32
+
+
+class _WeightSupportTooSmall(Exception):
+    """
+    Internal exception signalling that the linear system of an
+    implicit definition with weight variables is infeasible, so that
+    the weight-degree support may be too small.
+
+    Caught in :meth:`Stream_uninitialized.__getitem__`, which restarts
+    the definition with a larger support.
+    """
+
+
 class Stream_uninitialized(Stream):
     r"""
     Coefficient stream for an uninitialized series.
@@ -1594,7 +1609,8 @@ class Stream_uninitialized(Stream):
 
     def __del__(self):
         """
-        Remove variables from the pool on destruction.
+        Remove the variables that are still contained in our cache
+        from the pool on destruction.
 
         TESTS::
 
@@ -1610,26 +1626,35 @@ class Stream_uninitialized(Stream):
             sage: pool = A._coeff_stream._pool
             sage: len(pool.variables())
             17
-            sage: del A
-            sage: del B
-            sage: del eq0
-            sage: del eq1
-            sage: gc.collect()
-            ...
+            sage: del A, B, eq0, eq1
+            sage: _ = gc.collect()
             sage: len(pool.variables())
             0
         """
-        if hasattr(self, '_pool') and hasattr(self, '_good_cache'):
-            # self._good_cache is a lower bound
-            if self._coefficient_ring == self._base_ring:
+        try:
+            if not hasattr(self, '_pool') or not hasattr(self, '_good_cache'):
+                return
+            # ``self._good_cache`` is a lower bound; a cached entry may
+            # be a linear combination of several variables, so we have
+            # to remove each of the variables it contains
+            def cached_variables():
                 for c in self._cache[self._good_cache:]:
                     if c.parent() is self._PF:
-                        self._pool.del_variable(c.numerator())
-            else:
-                for c in self._cache[self._good_cache:]:
-                    for c0 in c.coefficients():
-                        if c0.parent() is self._PF:
-                            self._pool.del_variable(c0.numerator())
+                        yield c.numerator()
+                    else:
+                        for c0 in c.coefficients():
+                            if c0.parent() is self._PF:
+                                yield c0.numerator()
+            for num in cached_variables():
+                for v in num.variables():
+                    try:
+                        self._pool.del_variable(v)
+                    except KeyError:
+                        # the same variable may occur in several entries
+                        pass
+        except Exception:                                         # noqa: BLE001
+            # the stream was destroyed before it was fully defined
+            pass
 
     def input_streams(self):
         r"""
@@ -1680,7 +1705,8 @@ class Stream_uninitialized(Stream):
 
     def define_implicitly(self, series, initial_values, equations,
                           base_ring, coefficient_ring, terms_of_degree,
-                          max_lookahead=1, equation_factories=None):
+                          max_lookahead=1, equation_factories=None,
+                          weight_variables=()):
         r"""
         Define ``self`` via ``equations == 0``.
 
@@ -1700,6 +1726,11 @@ class Stream_uninitialized(Stream):
         - ``equation_factories`` -- (optional) a list of callables
           returning an equation, used to verify the residual of the
           solution on freshly built equations
+        - ``weight_variables`` -- (default: ``()``) the degree one
+          weight variables into which the undetermined coefficients
+          have been refined by ``terms_of_degree``; the linear equations
+          are then split by their weight monomials, so that the system
+          is solved over the psi fixed base ring
 
         EXAMPLES::
 
@@ -1715,9 +1746,27 @@ class Stream_uninitialized(Stream):
         """
         assert self._target is None
 
+        # data for restarting the definition with a larger
+        # weight-degree support
+        self._define_order = self._approximate_order
+        self._define_true_order = self._true_order
+        self._weight_bound = 0
+
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
-        self._PF = CoefficientRing(self._base_ring)
+        B = base_ring
+        if B.characteristic() == 0 and not B.has_coerce_map_from(QQ):
+            # Conversions to the powersum basis of symmetric functions
+            # may require denominators, which may not exist in the base
+            # ring (e.g. over the integers).  We therefore solve over
+            # the base ring extended by the rational numbers and retract
+            # the results to the base ring.
+            try:
+                from sage.categories.pushout import pushout
+                B = pushout(B, QQ)
+            except Exception:                                     # noqa: BLE001
+                pass
+        self._PF = CoefficientRing(B)
         self._P = self._PF.base()
         if self._coefficient_ring == self._base_ring:
             self._U = self._PF
@@ -1727,15 +1776,16 @@ class Stream_uninitialized(Stream):
         # the initial values are cached, coerced into the coefficient
         # ring, since cached coefficients are assumed to be ring
         # elements, e.g., by _is_determined
-        for i, val in enumerate(initial_values):
+        self._initial_values = [self._coefficient_ring(v)
+                                for v in initial_values]
+        for i, val in enumerate(self._initial_values):
             if val:
                 self._approximate_order += i
                 self._true_order = True
-                self._cache = [self._coefficient_ring(v)
-                               for v in initial_values[i:]]
+                self._cache = self._initial_values[i:]
                 break
         else:
-            self._approximate_order += len(initial_values)
+            self._approximate_order += len(self._initial_values)
             self._cache = []
         self._pool = VariablePool(self._P)
         self._uncomputed = True
@@ -1751,11 +1801,111 @@ class Stream_uninitialized(Stream):
             if len(self._series) > 1:
                 self._name += str(self._series.index(self))
         self._max_lookahead = max_lookahead
+        # the degree one weight variables into which undetermined
+        # coefficients have been refined, if any
+        self._weight_variables = tuple(weight_variables)
         # residual verification
         self._eq_factories = equation_factories
         self._residual_eqs = None
         self._verified = -1
+        # degrees whose residual still contains undetermined
+        # coefficients and must be rechecked
+        self._pending = set()
         self._verifying = False
+        self._failure = None
+
+    def _restart_with_larger_weight_support(self):
+        r"""
+        Restart the implicit definition of all series in
+        ``self._series`` with a larger weight-degree support.
+
+        Raise a :class:`ValueError` if the support cannot be enlarged,
+        either because the maximum support has been reached or because
+        the equations were not given as factories, which are needed
+        to rebuild them.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: C = L.undefined(0)
+            sage: C._coeff_stream._restart_with_larger_weight_support()
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
+        """
+        if self._eqs is None:
+            raise ValueError("stream is not yet defined")
+        if self._weight_bound >= _MAX_WEIGHT_BOUND:
+            raise ValueError(
+                "no solution within the searched weight-degree support"
+                " (up to weight degree 2*(n+1) + %s); the system may"
+                " have no solution at all, or the solution may involve"
+                " higher weight degrees" % _MAX_WEIGHT_BOUND)
+        if self._eq_factories is None:
+            raise ValueError(
+                "no solution within the searched weight-degree support;"
+                " the system may have no solution at all, or the solution"
+                " may involve higher weight degrees.  Provide the"
+                " equations as factories to allow searching for a solution"
+                " with higher weight degrees")
+        bound = min(2 * self._weight_bound + 1, _MAX_WEIGHT_BOUND)
+        for s in self._series:
+            s._restart(bound)
+
+    def _restart(self, weight_bound):
+        r"""
+        Reset ``self`` to its state right after creation and set the
+        bound on the weight degree of the refinement to
+        ``weight_bound``.
+
+        The equations are rebuilt from the factories, so that no
+        cache computed with the previous, smaller refinement is
+        reused.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: C = L.undefined(0)
+            sage: C._coeff_stream._restart(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: stream is not yet defined
+        """
+        if self._eqs is None:
+            raise ValueError("stream is not yet defined")
+        self._weight_bound = weight_bound
+        self._failure = None
+        self._verified = -1
+        self._pending = set()
+        self._verifying = False
+        self._residual_eqs = None
+        # rebuild the equations from the factories, so that no cache
+        # holding variables of the previous refinement is reused
+        eqs = []
+        for factory in self._eq_factories:
+            built = factory()
+            if isinstance(built, (list, tuple)):
+                eqs.extend(e._coeff_stream for e in built)
+            else:
+                eqs.append(built._coeff_stream)
+        self._eqs = eqs
+        # reset the caches of the undetermined coefficients
+        self._cache = []
+        self._approximate_order = self._define_order
+        self._true_order = self._define_true_order
+        for i, val in enumerate(self._initial_values):
+            if val:
+                self._approximate_order += i
+                self._true_order = True
+                self._cache = self._initial_values[i:]
+                break
+        else:
+            self._approximate_order += len(self._initial_values)
+            self._cache = []
+        # the good cache restarts at the beginning
+        self._good_cache = 0
 
     def _input_streams(self):
         r"""
@@ -1960,14 +2110,44 @@ class Stream_uninitialized(Stream):
         if self._good_cache > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
+        if self._failure is not None:
+            # the attempt to determine the coefficients of this series
+            # has failed; do not try again, but fail consistently
+            raise self._failure
+
         if self._uncomputed:
             for f in self._series:
                 f._uncomputed = False
-            while self._good_cache < n - self._approximate_order + 1:
-                self._compute()
+            try:
+                while True:
+                    try:
+                        while self._good_cache < n - self._approximate_order + 1:
+                            self._compute()
+                        break
+                    except _WeightSupportTooSmall:
+                        # the weight-degree support of the refinement
+                        # may be too small: restart the definition with
+                        # a larger support; raises a ValueError if the
+                        # support cannot be enlarged
+                        self._restart_with_larger_weight_support()
+            except Exception as e:
+                self._failure = e
+                for f in self._series:
+                    f._uncomputed = True
+                raise
             for f in self._series:
                 f._uncomputed = True
-            self._verify_residuals(n)
+            try:
+                self._verify_residuals(n)
+            except _WeightSupportTooSmall:
+                # A concrete violated residual can indicate that the
+                # current weight-degree box is too small, not that the
+                # unrestricted equations are inconsistent.  Rebuild with
+                # a larger support and compute the requested coefficient
+                # afresh, using the same protocol as above for
+                # infeasibility of the collected linear system.
+                self._restart_with_larger_weight_support()
+                return self[n]
 
         if n < self._approximate_order:
             return ZZ.zero()
@@ -1977,14 +2157,21 @@ class Stream_uninitialized(Stream):
         # it may happen, that a variable for a coefficient of higher
         # degree is requested, so we have to fill in all the degrees
         for n0 in range(len(self._cache) + self._approximate_order, n+1):
+            if self._weight_variables:
+                # the bound on the weight degree of the refinement is
+                # grown when the linear system turns out to be
+                # infeasible
+                terms = self._terms_of_degree(n0, self._P, self._weight_bound)
+            else:
+                terms = self._terms_of_degree(n0, self._P)
             # WARNING: coercing the new variable to self._PF slows
             # down the multiplication enormously
             if self._coefficient_ring == self._base_ring:
                 x = (self._pool.new_variable(self._name + "[%s]" % n0)
-                     * self._terms_of_degree(n0, self._P)[0])
+                     * terms[0])
             else:
                 x = sum(self._pool.new_variable(self._name + "[%s]" % m) * m
-                        for m in self._terms_of_degree(n0, self._P))
+                        for m in terms)
             x = self._U(x)
             self._cache.append(x)
 
@@ -2053,14 +2240,36 @@ class Stream_uninitialized(Stream):
 
         self._verifying = True
         try:
-            for stream in eqs:
-                for d in range(self._verified + 1, n + 1):
+            # residuals that could not be checked in an earlier round,
+            # because they still contained undetermined coefficients,
+            # are rechecked: the coefficients may have been determined
+            # in the meantime
+            pending = set()
+            for d in sorted(set(self._pending)
+                            | set(range(self._verified + 1, n + 1))):
+                for stream in eqs:
                     res = stream[d]
-                    if res and determined(res):
-                        raise ValueError(
-                            "the implicit definition is not satisfied:"
-                            " the equation has residual %s in degree %s"
-                            % (res, d))
+                    if res:
+                        if determined(res):
+                            if (self._weight_variables
+                                    and self._weight_bound < _MAX_WEIGHT_BOUND
+                                    and self._eq_factories is not None):
+                                # The unknowns can only have coefficients in
+                                # the current weight-degree support.  If an
+                                # equation needs a coefficient outside it,
+                                # the residual becomes concrete after the
+                                # too-small box has determined other
+                                # coefficients.  Rebuild with a larger
+                                # support instead of declaring the equation
+                                # inconsistent.
+                                raise _WeightSupportTooSmall()
+                            raise ValueError(
+                                "the implicit definition is not satisfied:"
+                                " the equation has residual %s in degree %s"
+                                % (res, d))
+                        # still undetermined: check again later
+                        pending.add(d)
+            self._pending = pending
             self._verified = n
         finally:
             self._verifying = False
@@ -2253,6 +2462,106 @@ class Stream_uninitialized(Stream):
                     lin_coeffs.append(c1 * v)
         return lin_coeffs, all_coeffs
 
+    def _split_equations_by_weight(self, equations):
+        r"""
+        Return the equations obtained by splitting each element of
+        ``equations``, a list of elements of the pool ring, by the
+        weight monomials occurring in the coefficients.
+
+        The base ring contains degree one (weight) variables: split
+        the equations by the weight monomials, so that the system is
+        solved over the psi fixed base ring.  Without the split, the
+        system over the base ring may have nonunique solutions
+        although the solution is unique as a system over the base ring
+        (e.g. x0 + q^2*x1 = q^2).
+
+        The parts are indexed by joint monomials in all weight
+        variables, independently of the presentation of the base ring
+        as a polynomial tower: over ``QQ[q]['t']``, the coefficient
+        ``q^2 t`` of a pool monomial contributes to the part ``q^2 t``
+        just as it would over ``QQ['q,t']``.
+
+        Setting all the parts of an equation to zero is equivalent to
+        setting the equation to zero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: C = L.undefined(0)
+            sage: C._coeff_stream._split_equations_by_weight([])
+            []
+
+        Fractions are cleared before splitting, so that the weight of a
+        part is not confused with the weight of the numerator of its
+        denominator::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_sub
+            sage: R = PolynomialRing(QQ, 'q'); q = R.gen(); K = R.fraction_field()
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: C = Stream_uninitialized(0)
+            sage: eq = Stream_sub(C, Stream_exact([1], order=0), True)
+            sage: C.define_implicitly([C], [], [eq], K, K, terms_of_degree,
+            ....:     weight_variables=(q,))
+            sage: x = C._pool.new_variable('x')
+            sage: C._split_equations_by_weight([(q+1)/q*x - 1/q])
+            [FESDUMMY_0, FESDUMMY_0 - 1]
+        """
+        def weight_decomposition(c):
+            r"""
+            Yield the pairs (weight monomial, scalar coefficient) of
+            the base ring element ``c``, recursing through the
+            coefficients of the monomials.
+            """
+            if not hasattr(c, "monomials"):
+                # a scalar that cannot be split further
+                yield (None, c)
+                return
+            for mon in c.monomials():
+                v = c.monomial_coefficient(mon)
+                for mon2, v2 in weight_decomposition(v):
+                    yield (mon if mon2 is None else mon * mon2, v2)
+
+        split = []
+        for L in equations:
+            if not hasattr(L, "monomials"):
+                # a fraction; take the numerator
+                L = L.numerator()
+            # Clear a common denominator of the coefficients before
+            # splitting.  Splitting numerators while retaining a
+            # weight-dependent denominator would associate a part with
+            # the numerator weight, not with the weight of its value.
+            # For example, this must not turn (q+1)/q*x + 1/q*y into
+            # independent equations x+y and x.
+            common_denominator = None
+            for monomial in L.monomials():
+                coefficient = L.monomial_coefficient(monomial)
+                if hasattr(coefficient, "denominator"):
+                    denominator = coefficient.denominator()
+                    if common_denominator is None:
+                        common_denominator = denominator
+                    else:
+                        common_denominator *= denominator
+            if common_denominator is not None:
+                L = L * common_denominator
+            parts = defaultdict(lambda: self._P.zero())
+            for monomial in L.monomials():
+                coefficient = L.monomial_coefficient(monomial)
+                # split the coefficient, an element of the base ring,
+                # by its monomials in the weight variables; coefficients
+                # that cannot be split (constants, or elements of a lazy
+                # series ring) form the constant weight part
+                numerator = (coefficient.numerator()
+                             if hasattr(coefficient, "numerator")
+                             else coefficient)
+                for weight, value in weight_decomposition(numerator):
+                    if weight is None:
+                        parts[None] += coefficient * monomial
+                    else:
+                        parts[weight] += value * monomial
+            split.extend(e for e in parts.values() if e)
+        return split
+
     def _solve_linear_equations_and_subs(self, lin_coeffs):
         """
         Return whether any of the variables is determined uniquely when
@@ -2279,8 +2588,32 @@ class Stream_uninitialized(Stream):
             [1]
         """
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        if self._weight_variables:
+            lin_coeffs = self._split_equations_by_weight(lin_coeffs)
         eqs = PolynomialSequence(lin_coeffs)
         m1, v1 = eqs.coefficients_monomials()
+        if self._weight_variables:
+            # after the split, the entries are scalars of the psi fixed
+            # base ring: descend the tower of weight variables and solve
+            # over it.  Solving over the base ring itself is not only
+            # slower, but may be unsupported (e.g. a polynomial tower
+            # whose implementation requires principal ideals)
+            R = self._base_ring
+            while True:
+                gens = R.gens() if hasattr(R, "gens") else ()
+                if not gens or any(g not in self._weight_variables
+                                   for g in gens):
+                    break
+                B = R.base_ring()
+                if B is R:
+                    break
+                R = B
+            try:
+                m1 = m1.change_ring(R)
+            except (TypeError, ValueError):
+                # e.g. a coefficient of a lazy series ring: solve over
+                # the base ring, as before
+                pass
         # there should be at most one entry in v1 of degree 0
         for j, c in enumerate(v1):
             if c.degree() == 0:
@@ -2293,7 +2626,16 @@ class Stream_uninitialized(Stream):
             b = zero_vector(m1.nrows())
             m = m1
             v = list(v1)
-        x = m.solve_right(b)
+        try:
+            x = m.solve_right(b)
+        except ValueError:
+            if self._weight_variables:
+                # the system is infeasible in the searched
+                # weight-degree support; the support may be too
+                # small -- restart the definition with a larger one
+                # if possible
+                raise _WeightSupportTooSmall()
+            raise
         k = m.right_kernel_matrix(basis="computed").transpose()
         good = False
         for sol, row, var in zip(x, k, v):
