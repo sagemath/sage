@@ -794,6 +794,31 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
 
+        The result is an immutable matrix, so if you want to modify the
+        result then you need to make a copy. This checks that :issue:`42531`
+        is fixed::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: E = A.echelon_form()
+            sage: E.is_mutable()
+            False
+            sage: F = copy(E)
+            sage: F[0, 0] = 50
+            sage: A.echelon_form()[0, 0]  # unaffected by mutating the copy
+            1
+
+        Modifying the cached result must not be possible, and must not
+        corrupt the cache used by later calls::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: E = A.echelon_form()
+            sage: E[0, 0] = 0
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+            sage: A.echelon_form() == E
+            True
+
         TESTS:
 
         ``proof`` defaults to ``None``, so that the global
@@ -818,18 +843,85 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [None, True]
             sage: default == forced == matrix(QQ, [[1, 2/3]])
             True
+
+        In-place echelonization must still produce an immutable result from
+        this method, while preserving cache-corruption detection::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: A.echelonize()
+            sage: E = A.echelon_form()
+            sage: E == A, E.is_mutable(), E is A
+            (True, False, False)
+            sage: E is A.echelon_form()
+            True
+
+        An immutable matrix that is already in echelon form is its own echelon
+        form, and is not copied::
+
+            sage: E.echelon_form() is E
+            True
+
+        This holds even if a copy was cached while the matrix was still
+        mutable::
+
+            sage: A.set_immutable()
+            sage: A.echelon_form() is A
+            True
+
+        ::
+
+            sage: B = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: B.echelonize()
+            sage: _ = B.echelon_form()
+            sage: del B._cache['echelon_form']
+            sage: B.echelon_form()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: in_echelon_form set but not echelon_form
+            sage: C = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: C.echelonize()
+            sage: _ = C.echelon_form()
+            sage: del C._cache['pivots']
+            sage: C.echelon_form()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: in_echelon_form set but not pivots
         """
+        cdef Matrix_rational_sparse E
         label = 'echelon_form_%s' % algorithm
+        in_echelon_form = self.fetch('in_echelon_form')
+        if in_echelon_form:
+            if self.fetch('echelon_form') is None:
+                raise RuntimeError('in_echelon_form set but not echelon_form')
+            pivots = self.fetch('pivots')
+            if pivots is None:
+                raise RuntimeError('in_echelon_form set but not pivots')
+        if in_echelon_form and self.is_immutable():
+            # ``self`` is its own echelon form and cannot drift away from it.
+            # This takes precedence over an equal copy cached under ``label``
+            # back when ``self`` was still mutable.
+            self.cache(label, self)
+            self.cache('rank', len(pivots))
+            return self
+
         x = self.fetch(label)
         if x is not None:
             return x
-        if self.fetch('in_echelon_form'):
-            return self
 
-        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
+        if in_echelon_form:
+            E = self.__copy__()
+        else:
+            E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
+
+        E.cache('in_echelon_form', True)
+        E.cache('echelon_form', E)
+        E.cache('pivots', pivots)
+        E.cache('rank', len(pivots))
+        E.set_immutable()
 
         self.cache(label, E)
         self.cache('pivots', pivots)
+        self.cache('rank', len(pivots))
         return E
 
     # Multimodular echelonization algorithms
