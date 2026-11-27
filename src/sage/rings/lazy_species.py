@@ -2228,6 +2228,25 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             sage: C = L1.Cycles()(Y)
             sage: C[20]
             C_20(Y)
+
+        Composition requires the inner species to have positive
+        valuation, since structures on the empty set cannot be placed
+        by the weighted compositions::
+
+            sage: R.<q> = QQ[]
+            sage: Lq = LazyCombinatorialSpecies(R, "Y")
+            sage: E2 = Lq(SymmetricGroup(2))
+            sage: D = Lq.undefined()
+            sage: Lq.define_implicitly([D], [E2(D) - q^2*E2])
+            sage: D[0]
+            Traceback (most recent call last):
+            ...
+            ValueError: can only compose lazy species with series of positive valuation
+
+            sage: D = Lq.undefined(1)
+            sage: Lq.define_implicitly([D], [E2(D) - q^2*E2])
+            sage: D[1], D[2]
+            (q*Y, 0)
         """
         fP = left.parent()
         # Find a good parent for the result
@@ -2272,10 +2291,15 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
                     if left[0]:
                         return R(list(left[0])[0][1])
                     return R.zero()
-                # the outer series has infinite support, so every
-                # argument must have positive valuation
-                _assume_positive_valuation([g._coeff_stream for g in args],
-                                           None)
+                # every argument must have positive valuation: the
+                # weighted compositions below can only place structures
+                # with at least one atom, so a structure on the empty
+                # set could not be represented
+                _assume_positive_valuation(
+                    [g._coeff_stream for g in args],
+                    None,
+                    message="can only compose lazy species with series"
+                            " of positive valuation")
                 # Rebuild the lazy views of the arguments for each call:
                 # while an argument is implicitly defined, its cached
                 # coefficients are substituted with concrete values.

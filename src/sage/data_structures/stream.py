@@ -4188,7 +4188,7 @@ def _to_powersum(f, scalar_basis, is_sparse, is_tensor=False):
     return Stream_map_coefficients(f, convert, is_sparse)
 
 
-def _assume_positive_valuation(gs, degree_f, K0=1):
+def _assume_positive_valuation(gs, degree_f, K0=1, message=None):
     r"""
     Check that the streams ``gs`` are admissible inner series and
     sharpen their approximate orders.
@@ -4203,19 +4203,25 @@ def _assume_positive_valuation(gs, degree_f, K0=1):
     coefficients could trigger a premature computation; its constant
     term is read when the coefficients of the composition are read.
 
+    INPUT:
+
+    - ``message`` -- the error message to raise when an inner series
+      with a nonzero coefficient below ``K0`` is inadmissible
+
     Return whether a nonzero coefficient below ``K0`` was found, so
     that the caller can bound the degrees of the outer series by
     ``degree_f``.
     """
+    if message is None:
+        message = ("can only compose with a series of positive valuation, "
+                   "or of valuation zero if the outer series has finite "
+                   "support")
     nonzero = False
     for g in gs:
         if not g.is_uninitialized() and g._approximate_order < K0:
             if any(g[i] for i in range(g._approximate_order, K0)):
                 if degree_f is None:
-                    raise ValueError(
-                        "can only compose with a series of positive valuation, "
-                        "or of valuation zero if the outer series has finite "
-                        "support")
+                    raise ValueError(message)
                 nonzero = True
             else:
                 g._approximate_order = K0
