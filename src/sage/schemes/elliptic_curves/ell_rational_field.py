@@ -4875,7 +4875,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if not l.is_prime():
             raise ValueError("l must be a prime")
 
-        bound = sturm_bound(self.conductor().lcm(other.conductor()))
+        N1 = self.conductor()
+        N2 = other.conductor()
+        if l >= 19:
+            # Frey-Mazur conjecture has been proven up to conductor 500000
+            if N1 < 500000 and N2 < 500000:
+                return self.is_isogenous(other)
+            elif self.is_isogenous(other):
+                return True
+
+        bound = sturm_bound(N1.lcm(N2))
         for p in prime_range(bound):
             if p != l and self.is_good(p) and other.is_good(p) and (self.ap(p) - other.ap(p)) % l != 0:
                 return False
