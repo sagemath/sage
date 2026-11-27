@@ -11,7 +11,7 @@ EXAMPLES::
     sage: x in S
     True
     sage: S.gen() in R
-    False
+    True
     sage: 1 in S
     True
 
@@ -92,7 +92,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         sage: x in S
         True
         sage: a in R
-        False
+        True
         sage: S.polynomial_ring()
         Univariate Polynomial Ring in x over Integer Ring
         sage: S.modulus()
