@@ -26,11 +26,12 @@ from sphinx import highlighting
 from sphinx.util import logging as sphinx_logging
 
 import sage.version
-from sage.env import MATHJAX_DIR, SAGE_DOC, SAGE_DOC_SRC
+from sage.env import SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load documentation configuration and helpers
+from sage_docbuild.config import MATHJAX_DIR
 
 logger = sphinx_logging.getLogger(__name__)
 
@@ -472,7 +473,7 @@ mathjax3_config = {
     },
 }
 
-if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
+if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes' or not MATHJAX_DIR:
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
     mathjax_path = os.path.join(MATHJAX_DIR, 'tex-chtml.js')

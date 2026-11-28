@@ -203,7 +203,8 @@ worktree*
 !/subprojects/packagefiles
 !/subprojects/README.md
 
-# Meson temporary files
+# Meson files
+src/sage_docbuild/config.py
 subprojects/wrapdb.json
 subprojects/maxima-5.47.0
 subprojects/packagecache
