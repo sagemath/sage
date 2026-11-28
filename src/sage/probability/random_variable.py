@@ -131,6 +131,20 @@ class DiscreteRandomVariable(RandomVariable_generic):
         The expectation of the discrete random variable, namely
         `\sum_{x \in S} p(x) X[x]`, where `X` = ``self`` and
         `S` is the probability space of `X`.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1,2,3,4,5,6],
+            ....:     {i: 1/6 for i in [1..6]}, codomain=QQ)
+            sage: F = DiscreteRandomVariable(X, {i: i for i in [1..6]}, codomain=QQ)
+            sage: F.expectation()
+            7/2
+
+        An empty function has zero expectation::
+
+            sage: H = DiscreteRandomVariable(X, {}, codomain=QQ)
+            sage: H.expectation()
+            0
         """
         E = 0
         Omega = self.probability_space()
@@ -161,7 +175,21 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
         .. MATH::
 
-           \mathrm{var}(X) = E((X-E(x))^2) = \sum_{x \in S} p(x) (X(x) - E(x))^2
+           \mathrm{var}(X) = E((X-E(X))^2) = \sum_{x \in S} p(x) (X(x) - E(X))^2
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1,2,3,4,5,6],
+            ....:     {i: 1/6 for i in [1..6]}, codomain=QQ)
+            sage: F = DiscreteRandomVariable(X, {i: i for i in [1..6]}, codomain=QQ)
+            sage: F.variance()
+            35/12
+
+        A constant random variable has zero variance::
+
+            sage: G = DiscreteRandomVariable(X, {i: 7 for i in [1..6]}, codomain=QQ)
+            sage: G.variance()
+            0
         """
         Omega = self.probability_space()
         mu = self.expectation()
@@ -247,7 +275,21 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
         .. MATH::
 
-                     \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(x))^2}
+           \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(X))^2}
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1,2,3,4,5,6],
+            ....:     {i: 1/6 for i in [1..6]}, codomain=QQ)
+            sage: F = DiscreteRandomVariable(X, {i: i for i in [1..6]}, codomain=QQ)
+            sage: F.standard_deviation()
+            1/2*sqrt(35/3)
+
+        A constant random variable has zero standard deviation::
+
+            sage: G = DiscreteRandomVariable(X, {i: 7 for i in [1..6]}, codomain=QQ)
+            sage: G.standard_deviation()
+            0
         """
         return sqrt(self.variance())
 
