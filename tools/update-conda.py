@@ -3,6 +3,7 @@
 
 import argparse
 import subprocess
+import sys
 import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -35,7 +36,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13", "3.14"]
+pythons = ["3.13", "3.14"]
 tags = [""]
 
 
@@ -111,7 +112,10 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             )
             subprocess.run(
                 [
-                    "conda-lock",
+                    # conda-lock requires virtualenv <21, unlike Sage's
+                    # development environment. Run it in its own environment.
+                    "uv", "tool", "run", "--python", sys.executable,
+                    "--from", "conda-lock", "conda-lock",
                     "--mamba",
                     "--channel",
                     "conda-forge",
@@ -133,7 +137,9 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
             with open(lock_file_gen, "r+") as f:
                 content = f.read()
                 f.seek(0, 0)
-                f.write(f"name: sage{tag or '-dev'}\n{content}")
+                f.write(
+                    f"name: sage{tag or '-dev'}\n{content}"
+                )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [

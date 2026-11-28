@@ -54,9 +54,9 @@ def q_bernoulli(m, p=None):
 
     REFERENCES:
 
-    .. [Ca1948] Leonard Carlitz, "q-Bernoulli numbers and polynomials". Duke Math J. 15, 987-1000 (1948), :doi:`10.1215/S0012-7094-48-01588-9`
+    - [Ca1948]_
 
-    .. [Ca1954] Leonard Carlitz, "q-Bernoulli and Eulerian numbers". Trans Am Soc. 76, 332-350 (1954), :doi:`10.1090/S0002-9947-1954-0060538-2`
+    - [Ca1954]_
     """
     m = ZZ(m)
     if m < 0:

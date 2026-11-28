@@ -108,7 +108,7 @@ class Dokchitser(SageObject):
         0.305999773834052
         sage: L.derivative(1,2)
         0.373095594536324
-        sage: L.cost()
+        sage: L.cost()  # random
         205
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
@@ -122,7 +122,7 @@ class Dokchitser(SageObject):
 
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
-        sage: L.cost()
+        sage: L.cost()  # random
         666
         sage: L.derivative(1,E.rank())
         1.51863300057685
@@ -138,7 +138,7 @@ class Dokchitser(SageObject):
         sage: L = K.zeta_function(algorithm='gp')
         sage: L.conductor
         400
-        sage: L.cost()
+        sage: L.cost()  # random
         5499
         sage: L(2)
         1.10398438736918
@@ -158,10 +158,10 @@ class Dokchitser(SageObject):
     coefgrow(n)= `(4n)^{11/2}` (by a factor 1024), so
     re-defining coefgrow() improves efficiency (slightly faster). ::
 
-        sage: L.cost()
+        sage: L.cost()  # random
         12
         sage: L.set_coeff_growth('2*n^(11/2)')
-        sage: L.cost()
+        sage: L.cost()  # random
         11
 
     Now we're ready to evaluate, etc. ::
@@ -201,7 +201,7 @@ class Dokchitser(SageObject):
         Initialization of Dokchitser calculator EXAMPLES::
 
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.cost()
+            sage: L.cost()  # random
             4
         """
         self.conductor = conductor
@@ -345,14 +345,14 @@ class Dokchitser(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
+            sage: L.cost()  # random
             112
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
-            sage: L.cost()
+            sage: L.cost()  # random
             2406
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.cost()
+            sage: L.cost()  # random
             4
 
         Verify that ``cost`` works with non-real spectral
@@ -361,7 +361,7 @@ class Dokchitser(SageObject):
 
             sage: ev = 2.7341055592527126
             sage: L = Dokchitser(conductor=10, gammaV=[ev*i, -ev*i],weight=2,eps=1)
-            sage: L.cost()
+            sage: L.cost()  # random
             26
         """
         return Integer(self._gp_call_inst('cflength', T))

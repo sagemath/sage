@@ -1,8 +1,12 @@
 # pylint: disable=missing-function-docstring,missing-class-docstring
+from __future__ import annotations
 import pytest
 
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
 
 
 class TestR3VectorSpace:

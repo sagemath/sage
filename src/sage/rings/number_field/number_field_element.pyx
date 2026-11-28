@@ -523,6 +523,55 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
+            sage: K.<a> = QuadraticField(3)
+            sage: libgap(a)                                                              # needs sage.libs.gap
+            a
+            sage: libgap(a + 2)                                                          # needs sage.libs.gap
+            a+2
+            sage: libgap(a)^2                                                            # needs sage.libs.gap
+            !3
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - a)
+            sage: libgap(b)                                                              # needs sage.libs.gap
+            b
+            sage: libgap(a*b + 2)                                                        # needs sage.libs.gap
+            a*b+!2
+
+        The relative generator need not be a primitive element of the
+        absolute field (here ``b`` does not generate ``L`` over ``QQ``)::
+
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 2)
+            sage: libgap(a*b)                                                            # needs sage.libs.gap
+            a*b
+            sage: L(libgap(a*b)) == a*b                                                  # needs sage.libs.gap
+            True
+            sage: L(libgap(a + b)) == a + b                                              # needs sage.libs.gap
+            True
+
+        Reusing a printed generator name below the immediate base field is
+        unambiguous because conversion uses power-basis coordinates::
+
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 3)
+            sage: T.<z> = L[]
+            sage: M.<a> = L.extension(z^2 - 5)
+            sage: top = M.gen()
+            sage: bottom = M(K.gen())
+            sage: all(M(libgap(v)) == v for v in (top, bottom, top + bottom))             # needs sage.libs.gap
+            True
+
+        Unicode generator names do not need special parsing::
+
+            sage: N = L.extension(z^2 - 5, 'λ')
+            sage: all(N(libgap(v)) == v for v in N.gens())                               # needs sage.libs.gap
+            True
+
         Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
@@ -535,10 +584,21 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         P = self.parent()
-        if not isinstance(P, NumberField_cyclotomic):
-            raise NotImplementedError("libgap conversion is only implemented for cyclotomic fields")
-
         from sage.libs.gap.libgap import libgap
+        if not isinstance(P, NumberField_cyclotomic):
+            gap_field = libgap(P)
+            E = gap_field.GeneratorsOfField()[0]
+            # For a relative field, ``self.list()`` gives the coordinates in
+            # the relative power basis; ``self.polynomial()`` instead uses the
+            # absolute primitive element.
+            coefficients = self.polynomial().list() if P.is_absolute() else self.list()
+            total = gap_field.Zero()
+            power = gap_field.One()
+            for coeff in coefficients:
+                total += libgap(coeff) * power
+                power *= E
+            return total
+
         E = libgap(P).GeneratorsOfField()[0]
         n = P._n()
         if n % 4 == 2:
@@ -1823,7 +1883,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: RR(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (a^2)._mpfr_(RR)
             -1.00000000000000
 
@@ -1835,7 +1895,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: RR(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: K.<a> = NumberField(x^3 + 2, embedding=-1.25)
             sage: RR(a)
             -1.25992104989487
@@ -1866,7 +1926,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: CBF(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
         """
         from sage.rings.complex_arb import ComplexBallField
         if self.parent().coerce_embedding() is None:
@@ -1902,7 +1962,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: float(a)
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce a to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (a^2).__float__()
             -1.0
             sage: k.<a> = NumberField(x^2 + 1,embedding=I)
@@ -2794,12 +2854,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (~I)._integer_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce -I to an integer
+            TypeError: no conversion of this number field element to an integer
             sage: (2*I*I)._integer_()
             -2
         """
         if ZZX_deg(self._numerator) >= 1:
-            raise TypeError("Unable to coerce %s to an integer" % self)
+            raise TypeError("no conversion of this number field element to an integer")
         return ZZ(self._rational_())
 
     def _rational_(self):
@@ -2813,12 +2873,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (~I)._rational_()
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce -I to a rational
+            TypeError: no conversion of this number field element to a rational
             sage: (I*I/2)._rational_()
             -1/2
         """
         if ZZX_deg(self._numerator) >= 1:
-            raise TypeError("Unable to coerce %s to a rational" % self)
+            raise TypeError("no conversion of this number field element to a rational")
         cdef Integer num = Integer.__new__(Integer)
         ZZX_getitem_as_mpz(num.value, &self._numerator, 0)
         cdef Integer den = Integer.__new__(Integer)

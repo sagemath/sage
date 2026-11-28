@@ -1291,7 +1291,7 @@ class _Function_swap_harmonic(BuiltinFunction):
     EXAMPLES::
 
         sage: # needs sage.symbolic
-        sage: maxima(harmonic_number(x, 2))  # maxima expect interface
+        sage: maxima(harmonic_number(x, 2))
         gen_harmonic_number(2,_SAGE_VAR_x)
         sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms
         sage: sefms('gen_harmonic_number(3,x)')

@@ -2306,12 +2306,36 @@ cdef class MixedIntegerLinearProgram(SageObject):
             True
             sage: mip._is_redundant_constraint((x[1]).dict(), 1, None)
             False
+
+        TESTS:
+
+        Zero coefficients do not prevent detection of equivalent constraints
+        (:issue:`34887`)::
+
+            sage: mip = MixedIntegerLinearProgram(check_redundant=True, solver='Highs')
+            sage: x = mip.new_variable()
+            sage: constraints = [x[0] <= x[0] + x[1],
+            ....:                0 <= x[1], 0 <= x[1] + 0*x[2]]
+            sage: [mip.add_constraint(c, return_indices=True) for c in constraints]
+            [[0], [], []]
+            sage: mip.number_of_constraints()
+            1
+
+        Different bounds and nonzero coefficients still give new constraints,
+        while negative scaling reverses the bounds as usual::
+
+            sage: mip.add_constraint(x[1], min=1, return_indices=True)
+            [1]
+            sage: mip.add_constraint(-2*x[1] + 0*x[2], max=-2, return_indices=True)
+            []
+            sage: mip.add_constraint(x[1] + x[2], min=0, return_indices=True)
+            [2]
         """
         assert self._constraints is not None, 'must be initialized with check_redundant=True'
         assert -1 not in constraint, 'no constant term allowed'
         i0 = min([i for i, c in constraint.items() if c != 0])
         rescale = constraint[i0]
-        constraint = tuple((i, c/rescale) for i, c in constraint.items())
+        constraint = tuple((i, c/rescale) for i, c in constraint.items() if c != 0)
         if rescale > 0:
             min_scaled = min_bound/rescale if min_bound is not None else None
             max_scaled = max_bound/rescale if max_bound is not None else None
@@ -3032,22 +3056,22 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     def get_relative_objective_gap(self):
         r"""
-        Return the relative objective gap of the best known solution.
+        Return the relative objective gap reported by the solver.
 
-        For a minimization problem, this value is computed by
-        `(\texttt{bestinteger} - \texttt{bestobjective}) / (1e-10 +
-        |\texttt{bestobjective}|)`, where ``bestinteger`` is the value returned
-        by :meth:`~MixedIntegerLinearProgram.get_objective_value` and
-        ``bestobjective`` is the value returned by
-        :meth:`~MixedIntegerLinearProgram.best_known_objective_bound`. For a
-        maximization problem, the value is computed by `(\texttt{bestobjective}
-        - \texttt{bestinteger}) / (1e-10 + |\texttt{bestobjective}|)`.
+        The gap compares the best integer objective value with the best known
+        objective bound. Its normalization depends on the solver. For HiGHS,
+        it is `|p - d| / |p|`, where `p` is the integer objective value and `d`
+        is the bound. HiGHS reports zero if both are zero, and infinity if only
+        `p` is zero.
 
         .. NOTE::
 
            Has no meaning unless ``solve`` has been called before.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        A relative gap tolerance is an upper bound for termination; the solver
+        may find a better solution, including an optimum with zero gap::
 
             sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
@@ -3058,18 +3082,30 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: for v in g:
             ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
             sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
-            sage: p.solve() # rel tol 100
-            1.0
-            sage: p.get_relative_objective_gap()  # random
-            46.99999999999999
-
-        TESTS:
-
-        Just make sure that the variable *has* been defined, and is not just
-        undefined::
-
-            sage: p.get_relative_objective_gap() > 1                                    # needs sage.graphs
+            sage: objective = p.solve()
+            sage: bound = p.best_known_objective_bound()
+            sage: gap = p.get_relative_objective_gap()
+            sage: from math import isclose, isfinite
+            sage: all(isfinite(value) for value in (objective, bound, gap))
             True
+            sage: 1 <= objective <= bound
+            True
+            sage: 0 <= gap <= p.solver_parameter("mip_gap_tolerance")
+            True
+            sage: isclose(gap, abs(bound - objective) / abs(objective),
+            ....:         rel_tol=1e-12, abs_tol=1e-12)
+            True
+
+        An integer program with a known optimum has zero gap::
+
+            sage: p = MixedIntegerLinearProgram(solver='HiGHS')
+            sage: x = p.new_variable(integer=True, nonnegative=True)
+            sage: p.add_constraint(2*x[0] <= 3)
+            sage: p.set_objective(x[0])
+            sage: p.solve()
+            1.0
+            sage: p.get_relative_objective_gap()
+            0.0
         """
         return self._backend.get_relative_objective_gap()
 

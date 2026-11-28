@@ -1609,8 +1609,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         REFERENCES:
 
-        .. [Thom2006] Hugh Thomas, *An analogue of distributivity for
-           ungraded lattices*. Order 23 (2006), no. 2-3, 249-269.
+        - [Thom2006]_
         """
         ji = len(self.join_irreducibles())
         mi = len(self.meet_irreducibles())

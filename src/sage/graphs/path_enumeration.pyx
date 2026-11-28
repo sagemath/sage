@@ -972,7 +972,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
       See [Feng2014]_ for more details on this algorithm.
 
     - ``postponed=True``
-      This algorithm is based on the the above algorithm in [Feng2014]_, but
+      This algorithm is based on the above algorithm in [Feng2014]_, but
       postpones the shortest path tree computation when non-simple deviations
       occur. See Postponed Node Classification algorithm in [ACN2023]_ for the
       algorithm description. When not all simple paths are needed, this algorithm

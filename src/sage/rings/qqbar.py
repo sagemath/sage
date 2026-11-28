@@ -424,7 +424,7 @@ Here are examples of all of these conversions::
     sage: convert_test_all(float)
     [42.0, 3.142857142857143, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(complex)
-    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951536j)]
+    [(42+0j), (3.142857142857143+0j), (1.618033988749895+0j), (-13+0j), (1.6181818181818182+0j), (-2.6457513110645907+0j), (0.30901699437494745+0.9510565162951535j)]
     sage: convert_test_all(RDF)
     [42.0, 3.1428571428571432, 1.618033988749895, -13.0, 1.6181818181818182, -2.6457513110645907, None]
     sage: convert_test_all(CDF)
@@ -5134,29 +5134,41 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def __complex__(self):
         r"""
-        Compute a good complex approximation to ``self``.
+        Compute a complex approximation to ``self``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(2)).__complex__()                                          # needs sage.symbolic
-            (1.414213562373095+0j)
+            sage: QQbar(2).sqrt().__complex__()
+            (1.4142135623730951+0j)
             sage: complex(QQbar.zeta(3))
             (-0.5+0.8660254037844386j)
+
+        TESTS:
+
+        Exact zero elements should not have non-zero complex
+        approximations::
+
+            sage: a = QQbar.zeta(5).real()
+            sage: z = QQbar((a^2 - a*a).abs())
+            sage: complex(z)
+            0j
+
         """
-        return CC(self).__complex__()
+        return complex(self.real().__float__(),
+                       self.imag().__float__())
 
     def _complex_double_(self, cdf):
         r"""
-        Compute a good approximation to ``self`` in CDF.
+        Compute an approximation to ``self`` in ``cdf``.
 
         EXAMPLES::
 
-            sage: QQbar(sqrt(-5))._complex_double_(CDF)                                 # needs sage.symbolic
+            sage: QQbar(-5).sqrt()._complex_double_(CDF)
             2.23606797749979*I
             sage: CDF(QQbar.zeta(12))
             0.8660254037844386 + 0.5*I
         """
-        return cdf(CC(self))
+        return cdf(self.__complex__())
 
     def _interval_fast(self, prec):
         r"""
@@ -6244,11 +6256,26 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: float(AA(-T))
             -inf
 
+        Ensure that signed zero is handled correctly even in the
+        adjacent-endpoints case::
+
+            sage: q = QQ(2)^(-1077)
+            sage: x = (AA(2).sqrt()^2 - 2) / 2^1012 + q
+            sage: x == q
+            True
+            sage: float(x).hex()
+            '0x0.0p+0'
+            sage: float(q).hex() == float(x).hex()
+            True
+
         """
         value = self._value
         if value.is_zero():
             return 0.0
 
+        # Algorithm: call self._more_precision() to refine the
+        # interval until the floating point approximations to the
+        # lower and upper endpoints are either equal, or adjacent.
         while True:
             # Converting an MPFI endpoint directly would preserve its
             # directed rounding mode.  Convert its exact rational value
@@ -6256,9 +6283,9 @@ class AlgebraicReal(AlgebraicNumber_base):
             lower = float(value.lower().exact_rational())
             upper = float(value.upper().exact_rational())
 
-            # Float conversion is monotone, so equal endpoint results
-            # certify the result for every number in the interval.  Signed
-            # zero needs a little care because -0.0 == 0.0 in Python.
+            # If the endpoint approximations are equal, then modulo
+            # signed zero, we just return one of them. Care is needed
+            # only because +0.0 == -0.0 in python.
             if lower == upper:
                 if lower != 0.0:
                     return lower
@@ -6266,28 +6293,40 @@ class AlgebraicReal(AlgebraicNumber_base):
                     return -0.0
                 return 0.0
 
-            # When one endpoint rounds to zero and the interval still
-            # contains zero, refine instead of asking an exact sign
-            # question.  Exact zero tests can otherwise dominate callers
-            # that only need a double approximation.
-            if value.contains_zero() and (lower == 0.0 or upper == 0.0):
-                self._more_precision()
-                value = self._value
-                continue
-
-            # If the endpoint results are adjacent, their exact midpoint
-            # is the only possible rounding boundary inside the interval.
-            # Overflow has a finite boundary but an infinite endpoint.
+            # The endpoints are not equal, but they are adjacent.
             if math.nextafter(lower, math.inf) == upper:
+                # There are two sub-cases here. If we are lucky, the
+                # true value lies closer to one endpoint, and further
+                # refining the interval will eventually producer equal
+                # endpoints. What we would like do is check whether or
+                # not value.contains(lower) or value.contains(upper),
+                # and (if so) further refine in hope that the
+                # endpoints become equal. However, there is no such
+                # containment check for non-zero numbers! Instead we
+                # settle for value.contains_zero(), when one of the
+                # endpoints is zero.
+                #
+                # Note: this is more than a mere optimization; it
+                # allows us to ignore signed zero issues in the
+                # midpoint comparisons below.
+                if (lower == 0.0 or upper == 0.0):
+                    if value.contains_zero():
+                        self._more_precision()
+                        value = self._value
+                        continue
+
+                # If they're adjacent and if we can't be sure that
+                # further refinement will do any good (the true value
+                # can lie exactly halfway between two floats, for
+                # example), we just have to compute the midpoint and
+                # see which side, if any, the true value lies on.
+                two = QQ(2)
                 if math.isinf(lower) or math.isinf(upper):
-                    midpoint = QQ(2)**1024 - QQ(2)**970
+                    midpoint = two**1024 - two**970
                     if lower < 0:
                         midpoint = -midpoint
                 else:
-                    lower_num, lower_den = lower.as_integer_ratio()
-                    upper_num, upper_den = upper.as_integer_ratio()
-                    midpoint = (QQ(lower_num) / lower_den +
-                                QQ(upper_num) / upper_den) / 2
+                    midpoint = (QQ(lower) + QQ(upper)) / two
 
                 if self < midpoint:
                     return lower
@@ -6295,9 +6334,7 @@ class AlgebraicReal(AlgebraicNumber_base):
                     return upper
                 return float(midpoint)
 
-            # The cached enclosure is too wide to determine a binary64
-            # rounding cell.  Algebraic-number intervals double their
-            # precision when refined.
+            # Endpoints are neither equal nor adjacent, keep going.
             self._more_precision()
             value = self._value
 

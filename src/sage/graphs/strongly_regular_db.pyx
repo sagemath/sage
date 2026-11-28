@@ -1502,7 +1502,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t                        # needs sage.rings.finite_rings
         (<...is_twograph_descendant_of_srg...>, 8, 2)
         sage: g = t[0](*t[1:]); g                                                       # needs sage.rings.finite_rings
-        descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
+        descendant of complement(Johnson graph with parameters 8,2) at (0, 1): Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
         (27, 10, 1, 5)
         sage: t = is_twograph_descendant_of_srg(5,5,5,5); t
@@ -1860,7 +1860,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v``, ``k``, ``l``, ``mu`` -- - (integrs) parameters of the graph
+    - ``v``, ``k``, ``l``, ``mu`` -- - (integers) parameters of the graph
 
     OUTPUT:
 

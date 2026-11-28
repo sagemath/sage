@@ -1,35 +1,23 @@
-name: CI
+name: Build & Test using uv
 
 on:
-  push:
-    tags:
-      - '*'
-  pull_request:
-    paths:
-      - '**.build'
-      - 'uv.lock'
-      - 'subprojects/**'
-      - '.github/workflows/ci.yml'
-      - 'build/pkgs/*/distros/*.txt'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_call:
 
 jobs:
   linux:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
         container:
-          - fedora:41
-          - fedora:42
           - fedora:43
+          - fedora:44
+          - fedora:45
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
           #- ubuntu:22.04 - gap is outdated there (only 4.11)
-          - ubuntu:24.04
           - ubuntu:26.04
     container:
       image: ${{ matrix.container }}
@@ -61,7 +49,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.2.0
+        uses: astral-sh/setup-uv@v10.3.3
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -118,8 +106,8 @@ jobs:
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
-            build/cp313/meson-logs/
-            build/cp313/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/
 
   macos:
     name: Build and Test (${{ matrix.runner }})
@@ -137,28 +125,45 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.2.0
+        uses: astral-sh/setup-uv@v10.3.3
 
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.12' 
+          python-version: '3.15'
 
       - name: Install dependencies
         run: |
           eval $(build/bin/sage-print-system-package-command homebrew update)
+          brew tap dimpase/tap
+          brew tap dimpase/gap
+          brew tap macaulay2/tap
+          brew tap apaffenholz/polymake
+          brew trust --tap dimpase/tap dimpase/gap macaulay2/tap apaffenholz/polymake
+          # Replace core PARI and data packages with the matching tap formulae.
+          for formula in pari pari-elldata pari-galdata pari-galpol pari-seadata; do
+            if brew list --formula --full-name | grep -x "$formula" > /dev/null; then
+              HOMEBREW_NO_AUTOREMOVE=1 brew uninstall --force --ignore-dependencies "$formula"
+            fi
+          done
+          brew install dimpase/tap/pari
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(uv run --no-project build/bin/sage-package list :standard:)))
 
       - name: Build
         run: |
           source ./.homebrew-build-env
+          uv venv --python 3.15 --allow-existing
+          # Build the locked PARI-compatible cypari2 source for this Python.
+          # Homebrew's cypari2 formula does not supply Python 3.15 bindings.
+          pari_prefix=$(brew --prefix dimpase/tap/pari)
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
-          uv sync --frozen --inexact --no-install-project -v
-          uv sync --frozen --inexact --no-build-isolation -v
+          uv sync --frozen --inexact --no-install-project --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
+          uv sync --frozen --inexact --no-build-isolation --config-settings-package "cypari2:setup-args=-Dpari_prefix=$pari_prefix" -v
 
       - name: Test
         run: |
-          uv run --frozen ./sage -t --all -p4 || true
+          source ./.homebrew-build-env # Needed for runtime Cython and MeatAxe tables.
+          uv run --frozen --no-sync ./sage -t --all -p4 || true
 
       - name: Upload log
         uses: actions/upload-artifact@v7
@@ -166,5 +171,5 @@ jobs:
         with:
           name: ${{ matrix.runner }}-log
           path: |
-            build/cp312/meson-logs/
-            build/cp312/meson-info/
+            build/cp315/meson-logs/
+            build/cp315/meson-info/

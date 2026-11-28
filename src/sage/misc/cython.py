@@ -85,12 +85,21 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = cython_aliases()
-    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m", "ec", "gsl", "ntl"]
+    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m"]
+    from sage.features.eclib import Eclib
+    if Eclib().is_present():
+        # eclib is an optional dependency of the sage library
+        # and may not even be installed. The order of -l flags
+        # can be important; this is why we stop in the middle
+        # of the list to check for / append it.
+        standard_libs.append("ec")
+    standard_libs += ["gsl", "ntl"]
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
     standard_libdirs.extend(aliases["NTL_LIBDIR"])
-    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(aliases["GSL_LIBDIR"])
+    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"] + aliases["GSL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################

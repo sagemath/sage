@@ -9,15 +9,15 @@
 ###############################################################################
 
 from sage.structure.sage_object import SageObject
-from sage.interfaces.maxima import MaximaFunctionElement
+from sage.interfaces.maxima_abstract import MaximaAbstractFunctionElement
 from sage.misc.instancedoc import instancedoc
 
 
 @instancedoc
-class MaximaFunctionElementWrapper(MaximaFunctionElement):
+class MaximaFunctionElementWrapper(MaximaAbstractFunctionElement):
     def __call__(self, *args, **kwds):
         """
-        Return a Sage expression instead of a Maxima pexpect interface element.
+        Return a Sage expression instead of a Maxima interface element.
 
         EXAMPLES::
 

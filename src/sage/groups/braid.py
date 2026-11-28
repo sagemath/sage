@@ -968,8 +968,7 @@ class Braid(FiniteTypeArtinGroupElement):
             R = LaurentPolynomialRing(ZZ, 'A')
             A = R.gens()[0]
             one = ZZ.one()
-
-            def quantum_integer(d): return R({i: one for i in range(-2*d, 2*d+1, 4)})
+            quantum_integer = lambda d: R(dict.fromkeys(range(-2 * d, 2 * d + 1, 4), one))
         else:
             A = variab
 
