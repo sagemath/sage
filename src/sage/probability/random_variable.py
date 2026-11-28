@@ -38,15 +38,55 @@ class RandomVariable_generic(Parent):
         self._codomain = RR
 
     def probability_space(self):
+        r"""
+        Return the probability space on which this random variable is defined.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 10, 2: 20})
+            sage: F.probability_space() is X
+            True
+        """
         return self.base()
 
     def domain(self):
+        r"""
+        Return the domain of this random variable.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 10, 2: 20})
+            sage: F.domain() is X
+            True
+        """
         return self.base()
 
     def codomain(self):
+        r"""
+        Return the codomain of this random variable.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 10, 2: 20}, codomain=QQ)
+            sage: F.codomain()
+            Rational Field
+        """
         return self._codomain
 
     def field(self):
+        r"""
+        Return the field of this random variable.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 10, 2: 20}, codomain=QQ)
+            sage: F.field()
+            Rational Field
+        """
         return self._codomain
 
 
@@ -105,8 +145,23 @@ class DiscreteRandomVariable(RandomVariable_generic):
         self._function = f
 
     def __call__(self, x):
-        """
-        Return the value of the random variable at x.
+        r"""
+        Return the value of the random variable at ``x``.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/3, 2: 1/3, 3: 1/3},
+            ....:                              codomain=QQ)
+            sage: F = DiscreteRandomVariable(X, {1: 10, 2: 20}, codomain=QQ)
+            sage: F(1)
+            10
+            sage: F(2)
+            20
+
+        For an element not in the function's dictionary, the value is zero::
+
+            sage: F(3)
+            0
         """
         RR = self.field()
         try:
@@ -117,6 +172,16 @@ class DiscreteRandomVariable(RandomVariable_generic):
             return RR(0)
 
     def __repr__(self):
+        r"""
+        Return a string representation of this discrete random variable.
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+            sage: F = DiscreteRandomVariable(X, {1: 5, 2: 7})
+            sage: F
+            Discrete random variable defined by {1: 5, 2: 7}
+        """
         F = pformat(self._function)
         return "Discrete random variable defined by %s" % F
 
