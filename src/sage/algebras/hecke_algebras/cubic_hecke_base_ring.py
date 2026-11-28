@@ -656,8 +656,9 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         # make sure that all given cubic equation roots and their inverses
         # belong to image_ring
         # ----------------------------------------------------------------------
+        non_units = tuple([x for x in im_gens if not x.is_unit()])
         try:
-            image_ring = image_ring.localization(tuple(im_gens))
+            image_ring = image_ring.localization(non_units)
         except ValueError:
             pass
 
@@ -1002,9 +1003,9 @@ class CubicHeckeRingOfDefinition(Localization):
         # ----------------------------------------------------------------------
         self._mirror = None
 
-    # ########################################################################
+    ############################################################################
     # overloaded inherited methods
-    # ########################################################################
+    ############################################################################
     def _defining_names(self):
         r"""
         Return the generators of ``self`` as the defining names.
@@ -1247,10 +1248,11 @@ class CubicHeckeRingOfDefinition(Localization):
         # ----------------------------------------------------------------------
         # make sure that the inverse of w belongs to image_ring
         # ----------------------------------------------------------------------
-        try:
-            image_ring = image_ring.localization(w)
-        except ValueError:
-            pass
+        if not w.is_unit():
+            try:
+                image_ring = image_ring.localization(w)
+            except ValueError:
+                pass
 
         im_gens = [image_ring(para) for para in im_gens]
 

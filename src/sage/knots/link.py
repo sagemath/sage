@@ -3464,6 +3464,81 @@ class Link(SageObject):
             return -L(auxdic)
         raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
+    def kauffman_polynomial(self, params='a, z', skein_normalization=(1, 1, 1)):
+        r"""
+        Return the Kauffman polynomial of ``self``.
+
+        The Kauffman polynomial `F(L)` respectivlely its corresponding invariant
+        under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
+        writhe of the link `L` satisfies the following skein relation
+        (see the corresponding `KnotInfo description page
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
+
+        .. MATH::
+
+            \Delta(O) = 1, \qquad\qquad
+            \Delta(L_+) +  \Delta(L_-) = z (\Delta(L_0 + \Delta(L_{\infty})).
+
+        Furthermore, removing a curl of sign `\epsilon` leads to a multiplication
+        of `\Delta(L)` with `a^{\epsilon}`.
+
+        INPUT:
+
+        - ``params`` -- string (default: ``"a,z"``); the variable names of the polynomial
+          separated by a comma
+
+        - ``skein_normalization`` -- a triple of signs (given as integers ``1`` and
+          ``-1``). This allows to switch to other conventions concerning the signs
+          in the skein relation and curl-relation. By default all three signs are
+          positive which matches the convention according to
+          `KnotInfo <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__.
+          For more information see the description of the corresponding argument of
+          :class:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra`
+
+        OUTPUT: a Laurent polynomial in the given variable names
+
+        REFERENCES:
+
+        - :wikipedia:`Kauffman_polynomial`
+
+        EXAMPLES::
+
+            sage: Hopf = Link([[1, 3, 2, 4], [4, 2, 3, 1]])
+            sage: Hopf.kauffman_polynomial()
+            a^3*z - a^3*z^-1 + a^2 + a*z - a*z^-1
+
+        Using the keywords::
+
+            sage: Hopf.kauffman_polynomial(params='l, m')
+            l^3*m - l^3*m^-1 + l^2 + l*m - l*m^-1
+            sage: Hopf.kauffman_polynomial(params='l, m', skein_normalization=(1, 1, -1))
+            l^-1*m - l^-1*m^-1 + l^-2 + l^-3*m - l^-3*m^-1
+            sage: Hopf.kauffman_polynomial(skein_normalization=(-1, -1, 1))
+            a^3*z + a^3*z^-1 + a^2 - a*z - a*z^-1
+
+        Compare with results from KnotInfo::
+
+            sage: K = KnotInfo.K6_2
+            sage: kfp = K.link().kauffman_polynomial(); kfp
+            z^4 + a^-1*z^5 - 3*z^2 - 2*a^-1*z^3 + 3*a^-2*z^4 + a^-3*z^5 + 2
+             - 6*a^-2*z^2 + 2*a^-4*z^4 + 2*a^-2 - a^-3*z - 2*a^-4*z^2
+             + 2*a^-5*z^3 + a^-4 - a^-5*z + a^-6*z^2
+            sage: K.kauffman_polynomial() == kfp
+            True
+        """
+        from sage.algebras.birman_murakami_wenzl_algebra import BirmanMurakamiWenzlAlgebra
+        b = self.braid()
+        w = self.writhe()
+        BMW = BirmanMurakamiWenzlAlgebra(b.strands(), params=params, skein_normalization=skein_normalization)
+        R = BMW.base_ring()
+        if not self.pd_code():
+            # since the braid representation of ``self`` is the
+            # trivial braid on two strands
+            return R.one()
+        w *= -skein_normalization[2]
+        a = R.gen(0)
+        return a**w * BMW(b).markov_trace()
+
     def links_gould_polynomial(self, varnames='t0, t1'):
         r"""
         Return the Links-Gould polynomial of ``self``. See [MW2012]_, section 3
