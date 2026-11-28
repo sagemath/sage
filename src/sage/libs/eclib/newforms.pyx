@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 """
 Modular symbols using eclib newforms
 """
