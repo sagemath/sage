@@ -55,6 +55,7 @@ py.install_sources(
   'polynomial_complex_arb.pyx',
   'polynomial_element.pxd',
   'polynomial_element.pyx',
+  'polynomial_element.pyi',
   'polynomial_element_generic.py',
   'polynomial_fateman.py',
   'polynomial_gf2x.pxd',

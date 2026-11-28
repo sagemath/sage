@@ -4699,7 +4699,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         defaults = {}
         defaults.update(super()._default_kwds_construction_())
         defaults.update(
-            {'valid_from': {v: 0 for v in self.growth_group.variable_names()}})
+            {'valid_from': dict.fromkeys(self.growth_group.variable_names(), 0)})
         return defaults
 
     def _convert_construction_(self, kwds_construction):
@@ -4880,7 +4880,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
         from sage.rings.semirings.non_negative_integer_semiring import NN
         return (self(g,
                      coefficient=c,
-                     valid_from={v: f for v in self.growth_group.variable_names()})
+                     valid_from=dict.fromkeys(self.growth_group.variable_names(), f))
                 for (g, c), f in zip(cantor_product(
                         self.growth_group.some_elements(),
                         (c for c in self.coefficient_ring.some_elements() if c != 0)),

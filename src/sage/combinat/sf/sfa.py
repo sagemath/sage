@@ -691,7 +691,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             Let `\lambda` be a partition. The *Gessel-Reutenauer
             symmetric function* `\mathbf{GR}_\lambda` corresponding to
             `\lambda` is the symmetric function denoted `L_\lambda` in
-            [GR1993]_ and in Exercise 7.89 of [STA]_ and denoted
+            [GR1993]_ and in Exercise 7.89 of [EnumComb2]_ and denoted
             `\mathbf{GR}_\lambda` in Definition 6.6.34 of [GriRei18]_.
             It is also called the *higher Lie character*, for instance
             in [Sch2003b]_.
@@ -1163,11 +1163,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             REFERENCES:
 
-            .. [ShaWach2014] John Shareshian, Michelle L. Wachs.
-               *Chromatic quasisymmetric functions*.
-               :arxiv:`1405.4629v2`.
+            - [ShaWach2014]_
 
-            .. [GriRei18]_
+            - [GriRei18]_
 
             INPUT:
 
@@ -3693,7 +3691,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         defining it as the infinite sum `h_0 + h_1 + h_2 + \cdots` (where
         `h_i` means the `i`-th complete homogeneous symmetric function)
         in the completion of this ring with respect to its grading. This is
-        how [SchaThi1994]_ defines `1 \{ g \}`. The present method,
+        how [ST94]_ defines `1 \{ g \}`. The present method,
         however, sets it to be the sum of `h_i` over all `i` for which the
         `i`-th homogeneous component of `g` is nonzero. This is rather a
         hack than a reasonable definition. Use with caution!
@@ -3709,14 +3707,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         REFERENCES:
 
-        .. [King] King, R. Branching rules for `GL_m \supset \Sigma_n`
-           and the evaluation of inner plethysms.
-           J. Math. Phys. 15, 258 (1974) :doi:`10.1063/1.1666632`
+        - [King]_
 
-        .. [SchaThi1994] Thomas Scharf, Jean-Yves Thibon.
-           *A Hopf-algebra approach to inner plethysm*.
-           Advances in Mathematics 104 (1994), pp. 30-58.
-           ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz
+        - [ST94]_
 
         INPUT:
 
@@ -5348,7 +5341,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             ....:      for lam in Partitions(4) )
             True
 
-        By Exercise 7.61 in Stanley's EC2 [STA]_ (see the errata on his
+        By Exercise 7.61 in Stanley's EC2 [EnumComb2]_ (see the errata on his
         website), `\mathbf{f}_n(h_m)` is a linear combination of
         Schur polynomials (of straight shapes) using coefficients `0`,
         `1` and `-1` only; moreover, all partitions whose Schur
@@ -5373,7 +5366,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             bases, while all other bases get converted to the
             monomial basis. For most bases, this is probably the
             quickest way to do, but at least the Schur basis should
-            have a better option. (Quoting from Stanley's EC2 [STA]_:
+            have a better option. (Quoting from Stanley's EC2 [EnumComb2]_:
             "D. G. Duncan, J. London Math. Soc. 27 (1952), 235-236,
             or Y. M. Chen, A. M. Garsia, and J. B. Remmel, Contemp.
             Math. 34 (1984), 109-153".)
@@ -5424,7 +5417,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier
         than necessary) description can be obtained by solving exercise
-        7.61 in Stanley's [STA]_.
+        7.61 in Stanley's [EnumComb2]_.
 
         Let `\lambda` be a partition. Let `n` be a positive integer. If
         the `n`-core of `\lambda` is nonempty, then
@@ -5993,9 +5986,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         REFERENCES:
 
-        .. [SZ2001] \M. Shimozono, M. Zabrocki,
-           Hall-Littlewood vertex operators and generalized Kostka polynomials.
-           Adv. Math. 158 (2001), no. 1, 66-85.
+        - [SZ2001]_
 
         EXAMPLES::
 

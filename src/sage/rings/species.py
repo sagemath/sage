@@ -1316,6 +1316,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair (X, a)
              specifying a group action of the symmetric group on pi=None
+
+        Input checking is skipped if ``check`` is ``False``::
+
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: M(G, {0: [1,2,3,4,4]}, check=False)
+            {((1,2)(3,4),)}
+            sage: M(G, {0: [1,2,3,4,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: values of pi (=dict_values([[1, 2, 3, 4, 4]])) must partition the domain of G (={1, 2, 3, 4})
+
+        The result of the construction does not depend on ``check``::
+
+            sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
+            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+            sage: M(G) == M(G, check=False)
+            True
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -1357,12 +1377,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             elif not isinstance(pi, dict):
                 pi = dict(enumerate(pi))
             domain = [e for p in pi.values() for e in p]
-            if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
-                raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
+            if check:
+                if not set(pi).issubset(range(self._arity)):
+                    raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
+                if len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
+                    raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
 
             components = G.disjoint_direct_product_decomposition()
             if len(components) == 1:
-                return self.gen(self._indices(G, pi, check=check))
+                # G is directly indecomposable, since it consists of a
+                # single component of the direct product decomposition
+                return self.gen(self._indices(G, pi, check=False))
 
             elm = self.one()
             for component in components:
@@ -1380,7 +1405,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                          domain=component)
                     pi_H = {k: [e for e in v if e in component]
                             for k, v in pi.items()}
-                a = self._indices(H, pi_H, check=check)
+                # H is directly indecomposable, since the components of
+                # the direct product decomposition are
+                a = self._indices(H, pi_H, check=False)
                 elm *= self.gen(a)
             return elm
 
@@ -1779,7 +1806,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
-                pi.update({e: i for e in s})
+                pi.update(dict.fromkeys(s, i))
 
 
             def cycle_type(g):
@@ -1844,6 +1871,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             TESTS::
 
+                sage: M0 = MolecularSpecies([])
+                sage: M0.one()()
+                1
+
                 sage: M = MolecularSpecies("X")
                 sage: M.one()()
                 Traceback (most recent call last):
@@ -1870,6 +1901,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 raise ValueError("all args must have the same parent")
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
+
+            if not args:
+                # the parent has arity zero, so self is the unit
+                return self
 
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
@@ -2111,7 +2146,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         sage: TestSuite(E2*X + C3).run()
     """
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if this is a constant polynomial species.
 
@@ -2131,7 +2166,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return self.is_zero() or not self.maximal_degree()
 
-    def is_virtual(self):
+    def is_virtual(self) -> bool:
         r"""
         Return if ``self`` is a virtual species.
 
@@ -2150,7 +2185,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return any(x < 0 for x in self.coefficients(sort=False))
 
-    def is_molecular(self):
+    def is_molecular(self) -> bool:
         r"""
         Return if ``self`` is a molecular species.
 
@@ -2171,7 +2206,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
 
-    def is_atomic(self):
+    def is_atomic(self) -> bool:
         r"""
         Return if ``self`` is an atomic species.
 
@@ -2193,6 +2228,25 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             True
         """
         return self.is_molecular() and len(self.support()[0]) == 1
+
+    def is_singleton(self) -> bool:
+        r"""
+        Return whether this is one of the singleton species of the parent.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, ["X", "Y"])
+            sage: X, Y = P._first_ngens(P._arity)
+            sage: Y.is_singleton()
+            True
+            sage: (X + Y).is_singleton()
+            False
+            sage: (2*X).is_singleton()
+            False
+        """
+        P = self.parent()
+        return self in P._first_ngens(P._arity)
 
     def tilde(self):
         r"""
@@ -2495,11 +2549,41 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         The `k`-sort species ``self`` should be homogeneous.
 
+        The entries of ``multiplicities`` are elements of the base ring.  They
+        are weights, not necessarily integer multiplicities.  The unweighted
+        composition with the corresponding singleton species is computed first;
+        the result is then combined by a Hadamard product with the exponential
+        species
+
+        .. MATH::
+
+            \prod_i E\left(\sum_j m_{i,j} X_{i,j}\right).
+
+        Thus the usual lambda-ring structure of the base ring is used.  In
+        particular, if `q` has lambda degree one, then
+
+        .. MATH::
+
+            \psi_n(q) = q^n.
+
+        Consequently, for example,
+
+        .. MATH::
+
+            E((1+q)X)
+              = 1 + (1+q)X
+                + (1+q^2)E_2
+                + (q+q^2)XE_2
+                + \cdots
+
         INPUT:
 
         - ``names`` -- the (flat) list of names of the result
-        - ``multiplicities`` -- a (flat) list of constants, of the
-          same length as ``names``
+
+        - ``multiplicities`` -- a (flat) list of elements of the base
+          ring, of the same length as ``names``; these are the weights
+          of the singleton species
+
         - ``degrees`` -- a `k`-tuple of compositions `c_1, \ldots,
           c_k`, such that the size of `c_i` is the degree of ``self``
           in sort `i`, and the total length of the compositions is
@@ -2545,9 +2629,16 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: F._compose_with_weighted_singletons(["X0", "X1", "Y0"], [1, 1, 1], [[1, 1], [2]])
             X0*X1*E_2(Y0) + 2*X0*X1*Y0^2
 
-            sage: Q.<X0, X1, Y0> = PolynomialSpecies(QQ)
-            sage: F(X0 + X1, Y0)
-            E_2(X0)*E_2(Y0) + X0^2*Y0^2 + X0*X1*E_2(Y0) + 2*X0*X1*Y0^2 + E_2(X1)*E_2(Y0) + X1^2*Y0^2
+        The weights may be indeterminates in the base ring::
+
+            sage: R.<q> = QQ[]
+            sage: P = PolynomialSpecies(R, ["X"])
+            sage: E3 = P(SymmetricGroup(3))
+            sage: E3._compose_with_weighted_singletons(["X"], [1+q], [[3]])
+            (q^3+1)*E_3 + (q^2+q)*X*E_2
+
+        This is the lambda-ring interpretation of the weight `1+q`,
+        treating `q` as a degree one element.
 
         TESTS::
 
@@ -2667,8 +2758,34 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             ...
             ValueError: all args must have the same parent
 
+        Substitution reduces to relabelling the sorts if every
+        argument is either zero or a singleton::
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: Q.<A, B, C> = PolynomialSpecies(QQ)
+            sage: Z = Q.zero()
+            sage: E2 = P(SymmetricGroup(2), {0: [1, 2]})
+            sage: (X + Y + E2)(A, B)
+            A + B + E_2(A)
+            sage: (X + Y + E2)(A, A)
+            2*A + E_2(A)
+            sage: (X + Y + E2)(A, Z)
+            A + E_2(A)
+            sage: (X + Y + E2)(Z, A)
+            A
+            sage: (X + Y + E2)(Z, Z)
+            0
+
             sage: P.zero()(X, X)
             0
+
+        Check the case of arity zero::
+
+            sage: P = PolynomialSpecies(QQ, [])
+            sage: P.one()()
+            1
+            sage: (5*P.one())()
+            5
         """
         P = self.parent()
         if len(args) != P._arity:
@@ -2676,11 +2793,46 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         if len(set(arg.parent() for arg in args)) > 1:
             raise ValueError("all args must have the same parent")
 
-        P0 = args[0].parent()
+        P0 = args[0].parent() if args else P
         if not isinstance(P0, PolynomialSpecies):
             raise ValueError("the args must be PolynomialSpecies")
         if not self.support():
             return P0.zero()
+
+        # composition with zero and singleton species only relabels
+        # the sorts.  Atomic species supported on a sort that is
+        # substituted by zero vanish.
+        if args and all(g.is_zero() or g.is_singleton() for g in args):
+            target_singletons = P0._first_ngens(P0._arity)
+            sorts = [None if g.is_zero() else target_singletons.index(g)
+                     for g in args]
+            M = P0._indices
+            A = M._indices
+            R = P0.base_ring()
+
+            def relabel_atomic(a):
+                pi = {}
+                for s, block in zip(sorts, a._dompart):
+                    if block:
+                        if s is None:
+                            return None
+                        pi.setdefault(s, []).extend(block)
+                return A(a._dis, pi, check=False)
+
+            result = {}
+            for mol, c in self.monomial_coefficients().items():
+                factors = {}
+                for a, e in mol._monomial.items():
+                    a_new = relabel_atomic(a)
+                    if a_new is None:
+                        factors = None
+                        break
+                    factors[a_new] = factors.get(a_new, ZZ.zero()) + e
+                if factors is None:
+                    continue
+                mol_new = M(factors, check=False)
+                result[mol_new] = result.get(mol_new, R.zero()) + c
+            return P0._from_dict(result)
 
         args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
         multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
@@ -3023,6 +3175,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
+    @cached_method
     def _first_ngens(self, n):
         r"""
         Used by the preparser for ``F.<x> = ...``.
@@ -3037,10 +3190,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P.<X, Y> = PolynomialSpecies(QQ)  # indirect doctest
             sage: X + 2*Y
             X + 2*Y
+
+        Only the first ``n`` singletons are returned::
+
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: P._first_ngens(1)
+            (X,)
+            sage: P._first_ngens(2)
+            (X, Y)
         """
         B = self.basis()
-        return tuple([B[i] for grade in IntegerVectors(1, length=self._arity)
-                      for i in self._indices.graded_component(grade)])
+        singletons = [B[i] for grade in IntegerVectors(1, length=self._arity)
+                      for i in self._indices.graded_component(grade)]
+        return tuple(singletons[:n])
 
     def change_ring(self, R):
         r"""

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Homsets between simplicial complexes
 
@@ -173,5 +172,5 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
             if not X_vertices:
                 return {}
             raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
-        f = {x: i for x in X_vertices}
+        f = dict.fromkeys(X_vertices, i)
         return SimplicialComplexMorphism(f, self._domain, self._codomain)

@@ -797,6 +797,15 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: R.<x,y,z> = F[]
             sage: R('d*z+x^2*y')
             x^2*y + d*z
+
+        A variable with the same name as a generator of the base ring
+        stays a variable (:issue:`34100`)::
+
+            sage: K.<z> = GF(9)
+            sage: S.<x,y,z> = K[]
+            sage: T.<y,z> = K[]
+            sage: T(S.gen(2)).is_constant()
+            False
         """
         cdef poly *_p
         cdef poly *mon
@@ -989,9 +998,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if self.base_ring().gen() != 1:
                 if hasattr(self.base_ring(), 'gens'):
                     for gen in self.base_ring().gens():
-                        d[str(gen)] = gen
+                        d.setdefault(str(gen), gen)
                 else:
-                    d[str(self.base_ring().gen())] = self.base_ring_gen()
+                    d.setdefault(str(self.base_ring().gen()), self.base_ring_gen())
             try:
                 if '/' in element:
                     element = sage_eval(element,d)
@@ -2984,7 +2993,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         .. NOTE::
 
-           For coefficients of specific monomials, look at :meth:`monomial_coefficient`.
+            In the libSINGULAR backend, polynomials are represented as linked
+            lists of terms. Extracting coefficients by scanning the polynomial
+            takes linear time in the number of terms. For repeated lookups or bulk
+            operations, consider converting to a dictionary using :meth:`dict`
+            (or :meth:`monomial_coefficients`), iterating with
+            ``for c, m in f``, or using ``implementation='generic'``.
+
+            For coefficients of specific monomials, look at :meth:`monomial_coefficient`.
 
         EXAMPLES::
 
@@ -3011,6 +3027,27 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: f.coefficient({x:1,y:0})
             1
 
+        When all variable degrees are specified, search terminates as soon
+        as the matching term is found (:issue:`38630`)::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: R.<x,y> = QQ[]
+            sage: g = x*y + 2*x + 3*y + 4
+            sage: g.coefficient({x: 1, y: 1})
+            1
+            sage: g.coefficient([1, 0])
+            2
+            sage: g.coefficient(ETuple([0, 1]))
+            3
+            sage: g.coefficient({x: 0, y: 0})
+            4
+            sage: g.coefficient({x: 2, y: 2})
+            0
+            sage: g.coefficient({x: 1})
+            y + 2
+            sage: g.coefficient([0, None])
+            3*y + 4
+
         Be aware that this may not be what you think! The physical
         appearance of the variable x is deceiving -- particularly if
         the exponent would be a variable. ::
@@ -3035,6 +3072,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef poly *newptemp
         cdef int i
         cdef int flag
+        cdef bint all_specified
         cdef int gens = self._parent.ngens()
         cdef int *exps = <int*>sig_malloc(sizeof(int)*gens)
         for i from 0<=i<gens:
@@ -3068,6 +3106,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         else:
             raise TypeError("The input degrees must be a dictionary of variables to exponents.")
 
+        # Determine whether all variables have their degrees specified
+        all_specified = True
+        for i from 0<=i<gens:
+            if exps[i] == -1:
+                all_specified = False
+                break
+
         # Extract the monomials that match the specifications
         # this loop needs improvement
         while p:
@@ -3083,6 +3128,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                         p_SetExp(newptemp,i+1,0,r)
                 p_Setm(newptemp,r)
                 newp = p_Add_q(newp,newptemp,r)
+                if all_specified:
+                    break
             p = pNext(p)
 
         sig_free(exps)
@@ -3103,6 +3150,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         - ``mon`` -- a monomial
 
         OUTPUT: coefficient in base ring
+
+        .. NOTE::
+
+            In the libSINGULAR backend, polynomials are represented as linked
+            lists of terms. Accessing a coefficient via this method takes
+            linear time in the number of terms. For repeated or bulk lookups,
+            consider converting the polynomial to a dictionary using
+            :meth:`dict` (or :meth:`monomial_coefficients`), iterating with
+            ``for c, m in f``, or using ``implementation='generic'``.
 
         .. SEEALSO::
 
@@ -3308,6 +3364,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     def __getitem__(self, x):
         """
         Same as ``self.monomial_coefficient`` but for exponent vectors.
+
+        .. NOTE::
+
+            In the libSINGULAR backend, polynomials are represented as linked
+            lists of terms. Accessing a coefficient via indexing ``f[...]``
+            takes linear time in the number of terms. For repeated or bulk
+            lookups, consider converting the polynomial to a dictionary using
+            :meth:`dict` (or :meth:`monomial_coefficients`), iterating with
+            ``for c, m in f``, or using ``implementation='generic'``.
 
         INPUT:
 

@@ -4,7 +4,7 @@ Features that can be explicitly enabled or disabled at build time
 These features are unique in that, if they are enabled or disabled at
 build-time, then we usually do not want to detect them on-the-fly.
 Instead we trust the value supplied (or detected) at build-time. There
-is however an overrride to defer these checks to run-time (the classic
+is however an override to defer these checks to run-time (the classic
 behavior) for use on binary distros or anywhere it is desirable to
 enable/disable features without rebuilding sage.
 
@@ -13,6 +13,7 @@ This is an implementation of Option 3 in `Github discussion 41067
 """
 
 from sage.features import Feature, FeatureTestResult
+
 
 class BuildFeature(Feature):
     r"""
@@ -74,7 +75,7 @@ class BuildFeature(Feature):
     # def is_present_at_runtime(self):
     #     pass
 
-    def is_runtime_detectable(self):
+    def is_runtime_detectable(self) -> bool:
         r"""
         Return whether or not this feature can (and should) be
         detected at runtime.

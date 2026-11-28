@@ -202,7 +202,7 @@ class PrincipalIdealDomains(Category_singleton):
                 sage: R.gcd(f, g)
                 Traceback (most recent call last):
                 ...
-                TypeError: Unable to coerce 2*a to a rational
+                TypeError: no conversion of this number field element to a rational
                 sage: R.base_extend(S).gcd(f,g)
                 x^2 - 2
                 sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))
