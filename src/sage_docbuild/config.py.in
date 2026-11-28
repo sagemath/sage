@@ -1,0 +1,3 @@
+# Directory containing MathJax's tex-chtml.js. Empty if MathJax was not
+# found at build time.
+MATHJAX_DIR: str = @SAGE_MATHJAX_DIR@
