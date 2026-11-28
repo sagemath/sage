@@ -154,6 +154,16 @@ Check that :issue:`25686` is fixed::
     sage: UCF.is_finite()
     False
 
+Check that :issue:`43202` is fixed::
+
+    sage: UCF = UniversalCyclotomicField()
+    sage: UCF.zero() < UCF.zero().abs()
+    False
+    sage: elts = [ring(x) for ring in [UCF, AA, QQbar] for x in [-1, 0, 1]]
+    sage: elts.sort()
+    sage: elts
+    [-1, -1, -1, 0, 0, 0, 1, 1, 1]
+
 AUTHORS:
 
 - Christian Stump (2013): initial Sage version (see :issue:`8327`)
