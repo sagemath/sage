@@ -31,6 +31,7 @@ AUTHORS:
 #***************************************************************************************
 
 import os
+import re
 import urllib.request
 
 from sage.structure.sage_object import SageObject
@@ -143,7 +144,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         sage: X.ambient()
         PP^4
         sage: p = X.point(); p
-        one-point scheme in PP^4 of coordinates [1, 36707, 23826, 46818, 34972]
+        one-point scheme in PP^4 of coordinates [...]
         sage: p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)
         True
 
@@ -266,7 +267,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
         r"""
         Return the ambient projective space of the variety
 
-        This is mathematically equal to the output of the :meth:`ambient_space` method.
+        This is mathematically equal to the output of the :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.ambient_space` method.
 
         EXAMPLES::
 
@@ -509,8 +510,8 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
 
             sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
             sage: X = Veronese(2,2)
-            sage: with seed(0): p = X.point(); p
-            one-point scheme in PP^5 of coordinates [1, 10850, 2338, 30739, 2409, 33291]
+            sage: p = X.point(); p
+            one-point scheme in PP^5 of coordinates [...]
             sage: type(p) is type(X) and p.dimension() == 0 and p.degree() == 1 and p.is_subset(X)
             True
 
@@ -873,7 +874,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             sage: C.defining_ideal()
             Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate Polynomial Ring in x0, x1, x2, x3 over Finite Field of size 13
             sage: D = C.random_coordinate_change()
-            sage: D.defining_ideal()
+            sage: D.defining_ideal()  # random
             Ideal (2*x0^2 + 5*x0*x1 - 4*x1^2 - 2*x0*x2 - x1*x2 + 3*x2^2 - 2*x0*x3 + x1*x3 + 2*x2*x3 + 6*x3^2, 6*x0^2 + x0*x1 + 5*x1^2 - x0*x2 - 4*x1*x2 - 2*x2^2 - x0*x3 - 4*x1*x3 - 6*x2*x3 + 4*x3^2, -5*x0^2 - 3*x0*x1 + 5*x1^2 - 3*x0*x2 + 5*x1*x2 + 6*x2^2 + 4*x0*x3 - x1*x3 + 4*x2*x3 - 2*x3^2) of Multivariate Polynomial Ring in x0, x1, x2, x3 over Finite Field of size 13
 
         TESTS::
@@ -1009,12 +1010,12 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             source: PP^7
             target: PP^7
 
-            sage: with seed(0): p = PP(4,KK=GF(65521)).point(); p
-            one-point scheme in PP^4 of coordinates [1, 37782, 10657, 17260, 21224]
+            sage: p = PP(4,KK=GF(65521)).point(); p
+            one-point scheme in PP^4 of coordinates [...]
             sage: p.parametrize()
             dominant rational map defined by forms of degree 1
             source: PP^0
-            target: one-point scheme in PP^4 of coordinates [1, 37782, 10657, 17260, 21224]
+            target: one-point scheme in PP^4 of coordinates [...]
 
             sage: from sage.schemes.hodge_special_fourfolds.sff import Veronese
             sage: Veronese(2,2).parametrize()
@@ -2302,7 +2303,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
             rational map defined by forms of degree 3
             source: PP^1
             target: PP^3
-            sage: g.defining_polynomials()
+            sage: g.defining_polynomials()  # random
             (-t0^3 - 6*t0^2*t1 - t0*t1^2 - 6*t1^3,
             5*t0^3 - 4*t0^2*t1 - 5*t0*t1^2 - 2*t1^3,
             4*t0^3 + 4*t0^2*t1 + t0*t1^2 + 4*t1^3,
@@ -3108,7 +3109,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         ``num_checks`` -- an optional integer with default value 3, check that the congruence works by testing so many random points on the ambient fivefold.
 
-        ``point`` -- optional, a point on the ambient fivefold. This is only useful when you want to perform calculations on infinite fields, where the function :meth:`point` might not work.
+        ``point`` -- optional, a point on the ambient fivefold. This is only useful when you want to perform calculations on infinite fields, where the function :meth:`~Embedded_projective_variety.point` might not work.
 
         ``verbose`` -- a boolean value, turn on or off verbose output.
 
@@ -3249,7 +3250,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         The surface contained in the fourfold ``self`` must admit
         a congruence of secant curves inside the ambient fivefold.
         The generic curve of this congruence can be realized
-        as the generic fiber of the returned map. See also :meth:`detect_congruence`.
+        as the generic fiber of the returned map. See also :meth:`congruence`.
 
         EXAMPLES::
 
@@ -3293,7 +3294,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
             x1^2 - x0*x3)
             sage: Y = X.random_coordinate_change(); Y
             Cubic fourfold in C_20 containing a surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
-            sage: Y.surface().defining_polynomials()
+            sage: Y.surface().defining_polynomials()  # random
             (x2^2 - 28*x0*x3 + 31*x1*x3 + 15*x2*x3 + 32*x3^2 + 9*x0*x4 - 34*x1*x4 + 33*x2*x4 + 37*x3*x4 - x4^2 - 18*x0*x5 - 37*x1*x5 + 32*x2*x5 - 22*x3*x5 + x4*x5 + 20*x5^2,
             x1*x2 - 46*x0*x3 + 15*x1*x3 + 28*x2*x3 - 13*x3^2 - 32*x0*x4 - 44*x1*x4 + 27*x2*x4 + 19*x3*x4 - 29*x4^2 + 28*x0*x5 + 48*x1*x5 - 10*x2*x5 - 48*x3*x5 - 33*x4*x5 + 6*x5^2,
             x0*x2 + 6*x0*x3 - 9*x1*x3 - 47*x2*x3 + 34*x3^2 + 40*x0*x4 + 15*x1*x4 + 39*x2*x4 + 17*x3*x4 + 23*x4^2 - x0*x5 + 43*x1*x5 - 38*x2*x5 + 8*x3*x5 - 46*x4*x5 + 49*x5^2,
@@ -4631,6 +4632,9 @@ def _set_macaulay2_():
     if _MACAULAY2_IS_INITIALIZED:
         return
     macaulay2('needsPackage "SpecialFanoFourfolds"')
+    sff_version = macaulay2('SpecialFanoFourfolds.Options.Version').sage()
+    if tuple(int(a) for a in re.findall(r'\d+', sff_version)) < (2, 8, 1):
+        raise RuntimeError("the Macaulay2 package SpecialFanoFourfolds version 2.8.1 or later is required (found version " + sff_version + "); update it with _update_macaulay2_packages() or upgrade Macaulay2 to version 1.26.11 or later")
     macaulay2.options.after_print = True
     macaulay2('importFrom_MultiprojectiveVarieties {"coordinates"}')
     macaulay2('importFrom_SpecialFanoFourfolds {"eulerCharacteristic", "numberNodes", "fanoMap", "recognize", "imageOfAssociatedMap", "latticeIntersectionMatrix3x3", "latticeMatrix"}')
