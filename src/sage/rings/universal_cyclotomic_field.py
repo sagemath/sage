@@ -1570,6 +1570,74 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         if isinstance(other, sage.rings.abc.NumberField_cyclotomic):
             return True
 
+    def _pushout_(self, other):
+        r"""
+        Return the common parent of ``self`` and ``other`` when it is
+        the universal cyclotomic field or the algebraic field.
+
+        INPUT:
+
+        - ``other`` -- a parent
+
+        OUTPUT: ``self`` if ``other`` is a cyclotomic field, ``QQbar`` if
+        ``other`` is ``AA`` or a number field embedded in ``AA`` or
+        ``QQbar``, and ``None`` otherwise
+
+        EXAMPLES::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: AA.zero() + UCF.zero()
+            0
+            sage: (AA.zero() + UCF.zero()).parent()
+            Algebraic Field
+            sage: (UCF.zero() + AA.zero()).parent()
+            Algebraic Field
+            sage: (UCF.gen(5) + AA(2).sqrt()).parent()
+            Algebraic Field
+
+        Number fields embedded in the algebraic numbers::
+
+            sage: from sage.categories.pushout import pushout
+            sage: x = polygen(QQ, 'x')
+            sage: K = NumberField(x^2 - 2, 'a', embedding=AA(2).sqrt())
+            sage: pushout(UCF, K)
+            Algebraic Field
+            sage: pushout(K, UCF)
+            Algebraic Field
+            sage: M = NumberField(x^3 - 2, 'c',
+            ....:                 embedding=QQbar(2)^(1/3) * QQbar.zeta(3))
+            sage: pushout(UCF, M)
+            Algebraic Field
+            sage: pushout(M, UCF)
+            Algebraic Field
+
+        A cyclotomic field keeps the universal cyclotomic field as
+        pushout, whatever its embedding::
+
+            sage: pushout(UCF, CyclotomicField(5, embedding=QQbar.zeta(5)^2))
+            Universal Cyclotomic Field
+
+        TESTS::
+
+            sage: pushout(UCF, QuadraticField(2))
+            Traceback (most recent call last):
+            ...
+            CoercionException: ...
+            sage: pushout(UCF, RR)
+            Traceback (most recent call last):
+            ...
+            CoercionException: ...
+        """
+        if isinstance(other, sage.rings.abc.NumberField_cyclotomic):
+            return self
+        from sage.rings.number_field.number_field_base import NumberField
+        if other is AA:
+            return QQbar
+        if isinstance(other, NumberField):
+            emb = other.coerce_embedding()
+            if emb is not None and emb.codomain() in (AA, QQbar):
+                return QQbar
+
     def _factor_univariate_polynomial(self, f):
         """
         Factor the univariate polynomial ``f``.
