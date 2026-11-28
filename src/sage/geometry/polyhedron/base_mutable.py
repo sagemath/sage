@@ -134,7 +134,7 @@ class Polyhedron_mutable(Polyhedron_base):
             raise ValueError
         self._dependent_objects.append(ob)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
@@ -149,7 +149,7 @@ class Polyhedron_mutable(Polyhedron_base):
         """
         return self._is_mutable
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 

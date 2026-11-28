@@ -12,15 +12,13 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-from sage.structure.sage_object import SageObject
-from sage.structure.element import Vector
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.rings.integer_ring import ZZ
-from sage.modules.free_module_element import vector
 from copy import copy
 
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Vector
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.sage_object import SageObject
 
 # Numeric values to distinguish representation types
 INEQUALITY = 0
@@ -91,7 +89,7 @@ class PolyhedronRepresentation(SageObject):
         """
         return self._vector[i]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -106,7 +104,7 @@ class PolyhedronRepresentation(SageObject):
         # Hrepresentation._set_data below).
         return hash(tuple(self._vector))
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare two representation objects.
 
@@ -355,7 +353,7 @@ class PolyhedronRepresentation(SageObject):
             raise TypeError('Can only concatenate with a list of coordinates')
         return coordinate_list + list(self)
 
-    def count(self, i):
+    def count(self, i) -> int:
         """
         Count the number of occurrences of ``i`` in the coordinates.
 
@@ -382,7 +380,7 @@ class Hrepresentation(PolyhedronRepresentation):
     a polyhedron. Inherits from ``PolyhedronRepresentation``.
     """
 
-    def __init__(self, polyhedron_parent):
+    def __init__(self, polyhedron_parent) -> None:
         """
         Initialize the PolyhedronRepresentation object.
 
@@ -436,7 +434,7 @@ class Hrepresentation(PolyhedronRepresentation):
         if polyhedron.is_mutable():
             polyhedron._add_dependent_object(self)
 
-    def is_H(self):
+    def is_H(self) -> bool:
         """
         Return ``True`` if the object is part of a H-representation
         (inequality or equation).
@@ -450,7 +448,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return True
 
-    def is_inequality(self):
+    def is_inequality(self) -> bool:
         """
         Return ``True`` if the object is an inequality of the H-representation.
 
@@ -463,7 +461,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_equation(self):
+    def is_equation(self) -> bool:
         """
         Return ``True`` if the object is an equation of the H-representation.
 
@@ -574,7 +572,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return self.neighbors()
 
-    def is_incident(self, Vobj):
+    def is_incident(self, Vobj) -> bool:
         """
         Return whether the incidence matrix element (Vobj,self) == 1.
 
@@ -692,7 +690,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return repr_pretty(self.vector(), self.type(), **kwds)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX-representation of this equality/inequality.
 
@@ -717,7 +715,7 @@ class Inequality(Hrepresentation):
     polyhedron. Inherits from ``Hrepresentation``.
     """
 
-    def type(self):
+    def type(self) -> int:
         r"""
         Return the type (equation/inequality/vertex/ray/line) as an
         integer.
@@ -746,7 +744,7 @@ class Inequality(Hrepresentation):
         """
         return self.INEQUALITY
 
-    def is_inequality(self):
+    def is_inequality(self) -> bool:
         """
         Return ``True`` since this is, by construction, an inequality.
 
@@ -759,7 +757,7 @@ class Inequality(Hrepresentation):
         """
         return True
 
-    def is_facet_defining_inequality(self, other):
+    def is_facet_defining_inequality(self, other) -> bool:
         r"""
         Check if ``self`` defines a facet of ``other``.
 
@@ -866,7 +864,7 @@ class Inequality(Hrepresentation):
         # entries of ``cross_slack_matrix`` are nonnegative.
         return incidences.row(0) in other.incidence_matrix().columns()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the inequality.
 
@@ -908,7 +906,7 @@ class Inequality(Hrepresentation):
         s += repr(abs(self.b())) + ' >= 0'
         return s
 
-    def contains(self, Vobj):
+    def contains(self, Vobj) -> bool:
         """
         Test whether the halfspace (including its boundary) defined
         by the inequality contains the given vertex/ray/line.
@@ -933,7 +931,7 @@ class Inequality(Hrepresentation):
             return self.polyhedron()._is_zero( self.eval(Vobj) )
         return self.polyhedron()._is_nonneg( self.eval(Vobj) )
 
-    def interior_contains(self, Vobj):
+    def interior_contains(self, Vobj) -> bool:
         """
         Test whether the interior of the halfspace (excluding its
         boundary) defined by the inequality contains the given
@@ -992,7 +990,7 @@ class Equation(Hrepresentation):
     in this hyperplane. Inherits from ``Hrepresentation``.
     """
 
-    def type(self):
+    def type(self) -> int:
         r"""
         Return the type (equation/inequality/vertex/ray/line) as an
         integer.
@@ -1021,7 +1019,7 @@ class Equation(Hrepresentation):
         """
         return self.EQUATION
 
-    def is_equation(self):
+    def is_equation(self) -> bool:
         """
         Test if this object is an equation.  By construction, it must be.
 
@@ -1034,7 +1032,7 @@ class Equation(Hrepresentation):
         """
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         A string representation of this object.
 
@@ -1061,7 +1059,7 @@ class Equation(Hrepresentation):
         s += repr(abs(self.b())) + ' == 0'
         return s
 
-    def contains(self, Vobj):
+    def contains(self, Vobj) -> bool:
         """
         Test whether the hyperplane defined by the equation contains
         the given vertex/ray/line.
@@ -1080,7 +1078,7 @@ class Equation(Hrepresentation):
         """
         return self.polyhedron()._is_zero( self.eval(Vobj) )
 
-    def interior_contains(self, Vobj):
+    def interior_contains(self, Vobj) -> bool:
         """
         Test whether the interior of the halfspace (excluding its
         boundary) defined by the inequality contains the given
@@ -1111,7 +1109,7 @@ class Vrepresentation(PolyhedronRepresentation):
     polyhedron. Inherits from ``PolyhedronRepresentation``.
     """
 
-    def __init__(self, polyhedron_parent):
+    def __init__(self, polyhedron_parent) -> None:
         """
         Initialize the PolyhedronRepresentation object.
 
@@ -1162,7 +1160,7 @@ class Vrepresentation(PolyhedronRepresentation):
         if polyhedron.is_mutable():
             polyhedron._add_dependent_object(self)
 
-    def is_V(self):
+    def is_V(self) -> bool:
         """
         Return ``True`` if the object is part of a V-representation
         (a vertex, ray, or line).
@@ -1176,9 +1174,10 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return True
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         """
         Return ``True`` if the object is a vertex of the V-representation.
+
         This method is over-ridden by the corresponding method in the
         derived class Vertex.
 
@@ -1195,9 +1194,10 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_ray(self):
+    def is_ray(self) -> bool:
         """
         Return ``True`` if the object is a ray of the V-representation.
+
         This method is over-ridden by the corresponding method in the
         derived class Ray.
 
@@ -1215,9 +1215,10 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_line(self):
+    def is_line(self) -> bool:
         """
         Return ``True`` if the object is a line of the V-representation.
+
         This method is over-ridden by the corresponding method in the
         derived class Line.
 
@@ -1264,7 +1265,7 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return self.neighbors()
 
-    def is_incident(self, Hobj):
+    def is_incident(self, Hobj) -> bool:
         """
         Return whether the incidence matrix element (self,Hobj) == 1.
 
@@ -1329,7 +1330,7 @@ class Vertex(Vrepresentation):
     A vertex of the polyhedron. Inherits from ``Vrepresentation``.
     """
 
-    def type(self):
+    def type(self) -> int:
         r"""
         Return the type (equation/inequality/vertex/ray/line) as an
         integer.
@@ -1358,7 +1359,7 @@ class Vertex(Vrepresentation):
         """
         return self.VERTEX
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         """
         Test if this object is a vertex.  By construction it always is.
 
@@ -1371,7 +1372,7 @@ class Vertex(Vrepresentation):
         """
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the vertex.
 
@@ -1426,7 +1427,7 @@ class Vertex(Vrepresentation):
         """
         return Hobj.A() * self.vector() + Hobj.b()
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Return whether the coordinates of the vertex are all integral.
 
@@ -1446,7 +1447,7 @@ class Ray(Vrepresentation):
     A ray of the polyhedron. Inherits from ``Vrepresentation``.
     """
 
-    def type(self):
+    def type(self) -> int:
         r"""
         Return the type (equation/inequality/vertex/ray/line) as an
         integer.
@@ -1475,7 +1476,7 @@ class Ray(Vrepresentation):
         """
         return self.RAY
 
-    def is_ray(self):
+    def is_ray(self) -> bool:
         """
         Test if this object is a ray.  Always ``True`` by construction.
 
@@ -1488,7 +1489,7 @@ class Ray(Vrepresentation):
         """
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         A string representation of the ray.
 
@@ -1544,7 +1545,7 @@ class Line(Vrepresentation):
     polyhedron. Inherits from ``Vrepresentation``.
     """
 
-    def type(self):
+    def type(self) -> int:
         r"""
         Return the type (equation/inequality/vertex/ray/line) as an
         integer.
@@ -1573,7 +1574,7 @@ class Line(Vrepresentation):
         """
         return self.LINE
 
-    def is_line(self):
+    def is_line(self) -> bool:
         """
         Test if the object is a line.  By construction it must be.
 
@@ -1586,7 +1587,7 @@ class Line(Vrepresentation):
         """
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         A string representation of the line.
 
@@ -1637,7 +1638,7 @@ class Line(Vrepresentation):
 
 
 def repr_pretty(coefficients, type, prefix='x', indices=None,
-                latex=False, style='>=', split=False):
+                latex=False, style='>=', split=False) -> str | tuple:
     r"""
     Return a pretty representation of equation/inequality represented
     by the coefficients.

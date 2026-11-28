@@ -331,7 +331,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
             pass
         raise LatticePolytopesNotIsomorphicError('different polygons')
 
-    def is_isomorphic(self, polytope):
+    def is_isomorphic(self, polytope) -> bool:
         """
         Test if ``self`` and ``polytope`` are isomorphic.
 

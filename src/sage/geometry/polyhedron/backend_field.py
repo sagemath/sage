@@ -71,7 +71,7 @@ class Polyhedron_field(Polyhedron_base):
         sage: Polyhedron(lines=[[1]], backend='field')
         A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex and 1 line
     """
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
@@ -91,7 +91,7 @@ class Polyhedron_field(Polyhedron_base):
         """
         return x == 0
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
@@ -111,7 +111,7 @@ class Polyhedron_field(Polyhedron_base):
         """
         return x >= 0
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 

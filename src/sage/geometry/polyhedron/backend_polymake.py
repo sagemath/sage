@@ -135,7 +135,7 @@ class Polyhedron_polymake(Polyhedron_base):
         1
     """
 
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
@@ -155,7 +155,7 @@ class Polyhedron_polymake(Polyhedron_base):
         """
         return x == 0
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
@@ -175,7 +175,7 @@ class Polyhedron_polymake(Polyhedron_base):
         """
         return x >= 0
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 

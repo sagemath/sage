@@ -370,7 +370,7 @@ class DoubleDescriptionPair:
             self.zero_set_cache[ray] = (len(self.A), t)
         return t
 
-    def is_extremal(self, ray):
+    def is_extremal(self, ray) -> bool:
         """
         Test whether the ray is extremal.
 

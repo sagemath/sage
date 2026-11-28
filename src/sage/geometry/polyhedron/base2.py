@@ -83,7 +83,7 @@ class Polyhedron_base2(Polyhedron_base1):
     """
 
     @cached_method
-    def is_lattice_polytope(self):
+    def is_lattice_polytope(self) -> bool:
         r"""
         Return whether the polyhedron is a lattice polytope.
 
